@@ -28,6 +28,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class SwingUtil {
     private static final Logger LOG = Logger.getLogger(SwingUtil.class.getName());
 
+    // Utility class, should not be instantiated
+    private SwingUtil() {
+        // nop
+    }
+
 	public static void setNativeLookAndFeel() {
 		if(System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "My app name");
@@ -35,7 +40,7 @@ public class SwingUtil {
             //Need for macos global menubar
             System.setProperty("apple.laf.useScreenMenuBar", "true");
 		}
-		
+
         try {
             // Set system L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -44,7 +49,7 @@ public class SwingUtil {
             LOG.log(Level.SEVERE, null, ex);
         }
 	}
-	
+
     public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             private static final long serialVersionUID = 1L;
