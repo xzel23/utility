@@ -12,8 +12,18 @@ import org.junit.Test;
 public class FileSystemViewTest {
 
     @Test
-    public void test() throws IOException {
-        Class<?> clazz = getClass();
+    public void testClass() throws IOException {
+        // at least when run from within eclipse (and probalbly other IDEs as well) *.class is loaded from the file system
+        testClassHelper(getClass());
+    }
+
+    @Test
+    public void testJdkClass() throws IOException {
+        // java.lang.String should be loaded from rt.jar, so this tests the jar functionality
+        testClassHelper(java.lang.String.class);
+    }
+
+    public void testClassHelper(Class<?> clazz) throws IOException {
         try (FileSystemView fsv = FileSystemView.create(clazz)) {
             assertNotNull(fsv);
 

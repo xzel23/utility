@@ -3,6 +3,7 @@ package com.dua3.utility.io;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -110,8 +111,9 @@ public class FileSystemView implements AutoCloseable {
             case "file":
                 return create(Paths.get(uri.resolve(".")));
             case "jar":
-                String jar = uri.toString().replaceAll("^jar:(file:.*)!.*$", "$1");
-                String jarPath = uri.toString().replaceAll("^jar:file:.*!(.*)"+classFile+"$", "$1");
+                String uriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8.name());
+                String jar = uriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
+                String jarPath = uriStr.replaceAll("^jar:file:.*!(.*)"+classFile+"$", "$1");
                 URI jarUri = new URI("jar", jar, null);
                 FileSystem jarFs = FileSystems.newFileSystem(jarUri, Collections.emptyMap());
                 Path jarRoot = jarFs.getPath(jarPath);
