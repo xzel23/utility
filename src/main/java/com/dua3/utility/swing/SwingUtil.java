@@ -15,6 +15,9 @@
  */
 package com.dua3.utility.swing;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -33,10 +36,18 @@ public class SwingUtil {
         // nop
     }
 
-	public static void setNativeLookAndFeel() {
+    /**
+     * Set the Swing Look&Feel to the native Look&Feel.
+     *
+     * On Mac OS, the global menubar is also enabled.
+     *
+     * @param applicationName
+     *  the application name to set
+     */
+	public static void setNativeLookAndFeel(String applicationName) {
 		if(System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "My app name");
-            System.setProperty("apple.awt.application.name", "My app name");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
+            System.setProperty("apple.awt.application.name", applicationName);
             //Need for macos global menubar
             System.setProperty("apple.laf.useScreenMenuBar", "true");
 		}
@@ -49,6 +60,18 @@ public class SwingUtil {
             LOG.log(Level.SEVERE, null, ex);
         }
 	}
+
+    /**
+     * Set clipboard content.
+     *
+     * @param text
+     *  the text to set
+     */
+    public static void setClipboardText(String text) {
+        StringSelection selection = new StringSelection(text);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(selection, selection);
+    }
 
     public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
