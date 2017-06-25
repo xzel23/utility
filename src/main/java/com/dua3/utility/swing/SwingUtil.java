@@ -55,6 +55,7 @@ public class SwingUtil {
      */
 	public static void setNativeLookAndFeel(String applicationName) {
 		if(System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
+			LOG.info("enabling global menu");
 		    if (applicationName!=null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
                 System.setProperty("apple.awt.application.name", applicationName);
@@ -65,7 +66,9 @@ public class SwingUtil {
 
         try {
             // Set system L&F
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            String lafName = UIManager.getSystemLookAndFeelClassName();
+			LOG.log(Level.INFO, "setting L&F to {}", lafName);
+			UIManager.setLookAndFeel(lafName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
             LOG.log(Level.SEVERE, null, ex);
