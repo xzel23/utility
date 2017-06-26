@@ -67,7 +67,7 @@ public class SwingUtil {
         try {
             // Set system L&F
             String lafName = UIManager.getSystemLookAndFeelClassName();
-			LOG.log(Level.INFO, "setting L&F to {}", lafName);
+			LOG.log(Level.INFO, "setting L&F to {0}", lafName);
 			UIManager.setLookAndFeel(lafName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
