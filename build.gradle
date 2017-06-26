@@ -1,6 +1,9 @@
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+apply plugin: 'jacoco'
 
 group = 'com.dua3.utility'
 
@@ -17,3 +20,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+tasks.withType(FindBugs) {
+    reports {
+        effort = "max"
+        reportLevel = "high"
+        xml.enabled = false
+        html.enabled = true
+    }
+}
