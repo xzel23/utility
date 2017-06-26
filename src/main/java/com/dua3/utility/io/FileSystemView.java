@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * An abstraction for accessing files stored in different location.
@@ -76,6 +77,8 @@ public class FileSystemView implements AutoCloseable {
      * @throws IOException if the view cannot be created
      */
     public static FileSystemView create(Path root) throws IOException {
+        Objects.requireNonNull(root);
+
         if (!Files.exists(root)) {
             throw new IOException("Path does not exist: "+root);
         }
