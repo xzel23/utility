@@ -19,8 +19,8 @@ public final class MathUtil {
     /**
      * Round to decimal places.
      *
-     * @param x
-     * @param n
+     * @param x value to round
+     * @param n number of decimal places
      * @return x rounded to n decimal places
      */
     public static double round(double x, int n) {
@@ -101,7 +101,7 @@ public final class MathUtil {
     /**
      * Calculate ceil(log10(x)).
      *
-     * @param x
+     * @param x argument
      * @return ceil(log10(x))
      */
     public static int ilog10(double x) {
@@ -198,11 +198,11 @@ public final class MathUtil {
      *
      * The function is evaluated a fixed number of times to find starting values for root finding.
      *
-     * @param f
-     * @param x0
-     * @param x1
-     * @param steps
-     * @param eps
+     * @param f the function
+     * @param x0 first limit of intervall
+     * @param x1 second limit of intervall, must be different from {@code x0}
+     * @param steps maximum number of iterations
+     * @param eps maximum error
      * @return list of all calculated roots
      */
     public static List<Double> findRootsInInterval(DoubleUnaryOperator f, double x0, double x1, int steps, double eps) {
@@ -254,7 +254,7 @@ public final class MathUtil {
     /**
      * Calculate the greatest common divisor.
      * The greatest common divisor is calculated using the Euclidean algorithm.
-     * 
+     *
      * @param a
      *            first argument
      * @param b
@@ -275,7 +275,7 @@ public final class MathUtil {
 	 * @param min minimal value
 	 * @param max maximum value
 	 * @param arg argument
-	 * @return 
+	 * @return
 	 * <ul>
 	 * <li>	min, if arg < min
 	 * <li> max, if arg > max
@@ -284,15 +284,15 @@ public final class MathUtil {
 	 */
 	public static int clamp(int min, int max, int arg) {
 		assert min<=max;
-		
+
 		if (arg<min) {
 			return min;
 		}
-		
+
 		if (arg>max) {
 			return max;
 		}
-		
+
 		return arg;
 	}
 }
