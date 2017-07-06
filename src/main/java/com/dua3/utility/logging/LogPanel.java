@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -44,6 +45,7 @@ public class LogPanel extends JPanel implements LogListener {
 	
 	private static final Column[] COLUMNS = {
 			new Column("Time", r -> Instant.ofEpochMilli(r.getMillis())),
+			new Column("Logger", r -> r.getLoggerName()),
 			new Column("Level", r -> r.getLevel()),
 			new Column("Message", r -> r.getMessage())
 	};
@@ -74,6 +76,11 @@ public class LogPanel extends JPanel implements LogListener {
 			return COLUMNS[columnIndex].get(getRecordForRow(rowIndex));
 		}
 
+		@Override
+		public String getColumnName(int column) {
+			return COLUMNS[column].name();
+		}
+		
 		private LogRecord getRecordForRow(int rowIndex) {
 			return records.get(rowIndex);
 		}
@@ -141,13 +148,13 @@ public class LogPanel extends JPanel implements LogListener {
 		setLayout(new BorderLayout());
 
 		table = new JTable();
-		add(table);
+		add(new JScrollPane(table));
 
 	    dataModel = new LogTableModel();
 		
 		table.setModel(dataModel);
 
-		table.getColumnModel().getColumn(1).setCellRenderer(new LogRecordTableCellRenderer());
+		table.getColumnModel().getColumn(2).setCellRenderer(new LogRecordTableCellRenderer());
 		dispatcher = new LogDispatcher(this);
 	}
 
