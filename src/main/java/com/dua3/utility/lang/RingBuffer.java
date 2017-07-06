@@ -58,4 +58,23 @@ public class RingBuffer<T> {
 		sb.append("]");
 		return sb.toString();
 	}
+	
+	public void setCapacity(int n) {
+		if (n!=capacity()) {
+			Object[] dataNew = new Object[n];
+			for (int i=0; i<Math.min(size(), n); i++) {
+				dataNew[i] = get(i);
+			}
+			start=0;
+			entries = Math.min(entries, n);
+		}
+	}
+
+	public void clear() {
+		start = entries = 0;
+	}
+	
+	public boolean isEmpty() {
+		return entries==0;
+	}
 }

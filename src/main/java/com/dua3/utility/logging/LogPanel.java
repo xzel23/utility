@@ -2,97 +2,166 @@ package com.dua3.utility.logging;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import com.dua3.utility.lang.RingBuffer;
+
 public class LogPanel extends JPanel implements LogListener {
 
 	private static final long serialVersionUID = 1L;
-	private final JTextPane textPane;
+	private final JTable table;
 	private final LogDispatcher dispatcher;
 
-	class MessageStyle {
-		public MessageStyle(Style style) {
-			this.styleMessage = style;
-			this.styleLevel = style;
-			this.styleTimestamp = style;
+	private static class Column {
+		String name;
+		Function<LogRecord, Object> extractor;
+		
+		Column(String name, Function<LogRecord,Object> extractor) {
+			this.name = name;
+			this.extractor = extractor;
+		}
+		
+		String name() {
+			return name;
+		}
+		
+		Object get(LogRecord r) {
+			return extractor.apply(r);
+		}
+	}
+	
+	private static final Column[] COLUMNS = {
+			new Column("Time", r -> Instant.ofEpochMilli(r.getMillis())),
+			new Column("Level", r -> r.getLevel()),
+			new Column("Message", r -> r.getMessage())
+	};
+	
+	private static final class LogTableModel extends AbstractTableModel {
+		LogTableModel(){
+			initStyles();			
+		}
+		
+		private static final long serialVersionUID = 1L;
+		
+		private RingBuffer<LogRecord> records = new RingBuffer<>(1000);
+
+		private final TreeMap<Integer, MessageStyle> styles = new TreeMap<>();
+
+		@Override
+		public int getRowCount() {
+			return records.size();
 		}
 
-		Style styleMessage;
-		Style styleTimestamp;
-		Style styleLevel;
+		@Override
+		public int getColumnCount() {
+			return COLUMNS.length;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			return COLUMNS[columnIndex].get(getRecordForRow(rowIndex));
+		}
+
+		private LogRecord getRecordForRow(int rowIndex) {
+			return records.get(rowIndex);
+		}
+		
+		public void publish(LogRecord r) {
+			SwingUtilities.invokeLater(() -> addRecord(r));
+		}
+		
+		private void addRecord(LogRecord r) {
+			records.add(r);
+			fireTableDataChanged();
+		}
+
+		private MessageStyle getStyle(Level level) {
+			Entry<Integer, MessageStyle> entry = styles.ceilingEntry(level.intValue());
+			return entry == null ? styles.lastEntry().getValue() : entry.getValue();
+		}
+
+		private MessageStyle createStyle(Level level, Color color) {
+			MessageStyle ms = new MessageStyle(color);
+			styles.put(level.intValue(), ms);
+		
+			return ms;
+		}
+
+		private void initStyles() {
+			createStyle(Level.SEVERE, Color.RED);
+			createStyle(Level.WARNING, Color.RED);
+			createStyle(Level.INFO, Color.BLUE);
+			createStyle(Level.CONFIG, Color.BLACK);
+			createStyle(Level.FINE, Color.BLACK);
+			createStyle(Level.FINER, Color.BLACK);
+			createStyle(Level.FINEST, Color.BLACK);
+		}
+
 	}
 
-	private final TreeMap<Integer, MessageStyle> styles = new TreeMap<>();
+	static class LogRecordTableCellRenderer extends DefaultTableCellRenderer {
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			LogTableModel model = (LogTableModel) table.getModel();
+			LogRecord r = model.getRecordForRow(row);
+			MessageStyle style = model.getStyle(r.getLevel());
+			comp.setForeground(style.color);
+			return comp;
+		}
+	}
 
-	LogPanel() {
+	static class MessageStyle {
+		public MessageStyle(Color color) {
+			this.color = color;
+		}
+	
+		Color color;
+	}
+
+	private LogTableModel dataModel;
+
+	public LogPanel() {
 		super();
 		setLayout(new BorderLayout());
 
-		textPane = new JTextPane();
-		add(textPane);
+		table = new JTable();
+		add(table);
 
-		initStyles();
+	    dataModel = new LogTableModel();
+		
+		table.setModel(dataModel);
 
+		table.getColumnModel().getColumn(1).setCellRenderer(new LogRecordTableCellRenderer());
 		dispatcher = new LogDispatcher(this);
 	}
 
 	@Override
 	public void publish(LogRecord record) {
-		Level level = record.getLevel();
-
-		MessageStyle ms = getStyle(level);
-		StyledDocument doc = textPane.getStyledDocument();
-
-		String time = Instant.ofEpochMilli(record.getMillis()).toString() + ": ";
-		String levelStr = level.getName() + " - ";
-		String message = record.getMessage() + "\n";
-
-		try {
-			doc.insertString(doc.getLength(), time, ms.styleTimestamp);
-			doc.insertString(doc.getLength(), levelStr, ms.styleLevel);
-			doc.insertString(doc.getLength(), message, ms.styleMessage);
-		} catch (BadLocationException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-	private MessageStyle getStyle(Level level) {
-		Entry<Integer, MessageStyle> entry = styles.ceilingEntry(level.intValue());
-		return entry == null ? styles.lastEntry().getValue() : entry.getValue();
-	}
-
-	private MessageStyle createStyle(Level level, Color color) {
-		String name = level.getName();
-
-		Style style = textPane.addStyle(name, null);
-		StyleConstants.setForeground(style, color);
-
-		MessageStyle ms = new MessageStyle(style);
-		styles.put(level.intValue(), ms);
-
-		return ms;
-	}
-
-	private void initStyles() {
-		createStyle(Level.SEVERE, Color.RED);
-		createStyle(Level.WARNING, Color.RED);
-		createStyle(Level.INFO, Color.BLUE);
-		createStyle(Level.CONFIG, Color.BLACK);
-		createStyle(Level.FINE, Color.BLACK);
-		createStyle(Level.FINER, Color.BLACK);
-		createStyle(Level.FINEST, Color.BLACK);
+		dataModel.publish(record);
 	}
 
 	@Override
