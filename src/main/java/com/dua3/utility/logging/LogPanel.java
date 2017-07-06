@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -15,17 +13,9 @@ import java.util.logging.LogRecord;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import com.dua3.utility.lang.RingBuffer;
 
 public class LogPanel extends JPanel implements LogListener {
@@ -122,6 +112,8 @@ public class LogPanel extends JPanel implements LogListener {
 	}
 
 	static class LogRecordTableCellRenderer extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
@@ -171,7 +163,7 @@ public class LogPanel extends JPanel implements LogListener {
 	}
 
 	@Override
-	public void close() throws SecurityException {
+	public void close() {
 		// nop
 	}
 
