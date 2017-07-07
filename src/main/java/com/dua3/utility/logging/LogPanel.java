@@ -4,12 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.time.Instant;
+import java.util.Enumeration;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -190,6 +192,15 @@ public class LogPanel extends JPanel implements LogListener {
 
 	public void addLogger(Logger logger) {
 		logger.addHandler(getHandler());
+	}
+	
+	public void addAllKnowLoggers() {
+		LogManager logManager = LogManager.getLogManager();
+		Enumeration<String> loggerNames = logManager.getLoggerNames();
+		while (loggerNames.hasMoreElements()) {
+			String loggerName = loggerNames.nextElement();
+			addLogger(logManager.getLogger(loggerName));
+		}
 	}
 
 }

@@ -24,4 +24,8 @@ public class LogWindow extends JFrame {
 		logPanel.addLogger(logger);
 	}
 
+	public void addAllKnowLoggers() {
+		logPanel.addAllKnowLoggers();
+	}
+
 }
