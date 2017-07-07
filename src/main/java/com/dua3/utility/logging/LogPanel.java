@@ -7,9 +7,12 @@ import java.time.Instant;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,6 +25,9 @@ import com.dua3.utility.lang.RingBuffer;
 public class LogPanel extends JPanel implements LogListener {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final Formatter formatter = new SimpleFormatter();
+
 	private final JTable table;
 	private final LogDispatcher dispatcher;
 
@@ -47,7 +53,7 @@ public class LogPanel extends JPanel implements LogListener {
 			new Column("Time", r -> Instant.ofEpochMilli(r.getMillis())),
 			new Column("Logger", r -> r.getLoggerName()),
 			new Column("Level", r -> r.getLevel()),
-			new Column("Message", r -> r.getMessage())
+			new Column("Message", r -> formatter.formatMessage(r))
 	};
 	
 	private static final class LogTableModel extends AbstractTableModel {
@@ -143,7 +149,7 @@ public class LogPanel extends JPanel implements LogListener {
 
 	private LogTableModel dataModel;
 
-	public LogPanel() {
+	public LogPanel(Logger... loggers) {
 		super();
 		setLayout(new BorderLayout());
 
@@ -156,6 +162,10 @@ public class LogPanel extends JPanel implements LogListener {
 
 		table.getColumnModel().getColumn(2).setCellRenderer(new LogRecordTableCellRenderer());
 		dispatcher = new LogDispatcher(this);
+		
+		for (Logger logger: loggers) {
+			addLogger(logger);
+		}
 	}
 
 	@Override
@@ -176,6 +186,10 @@ public class LogPanel extends JPanel implements LogListener {
 
 	public Handler getHandler() {
 		return dispatcher;
+	}
+
+	public void addLogger(Logger logger) {
+		logger.addHandler(getHandler());
 	}
 
 }

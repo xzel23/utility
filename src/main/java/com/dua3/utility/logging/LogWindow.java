@@ -9,19 +9,19 @@ public class LogWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final LogPanel logPanel;
 
-	LogWindow() {
+	public LogWindow() {
 		this("Log");
 	}
 
-	LogWindow(String title) {
+	public LogWindow(String title, Logger... loggers) {
 		super(title);
 		setLayout(new BorderLayout());
-		logPanel = new LogPanel();
+		logPanel = new LogPanel(loggers);
 		add(logPanel, BorderLayout.CENTER);
 	}
 
 	public void addLogger(Logger logger) {
-		logger.addHandler(logPanel.getHandler());
+		logPanel.addLogger(logger);
 	}
 
 }
