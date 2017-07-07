@@ -20,6 +20,9 @@ import java.util.logging.Logger;
 
 import com.aquafx_project.AquaFx;
 
+/**
+ * A Utility class for JavaFx.
+ */
 public class JfxUtil {
     private static final Logger LOG = Logger.getLogger(JfxUtil.class.getName());
 

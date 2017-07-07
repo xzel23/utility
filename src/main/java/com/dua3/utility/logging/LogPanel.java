@@ -177,10 +177,9 @@ public class LogPanel extends JPanel implements LogListener {
 	@Override
 	public void publish(LogRecord record) {
 		JScrollBar vs = scrollPane.getVerticalScrollBar();
-		boolean autoScrollDown = true;
-		System.err.println("bottom = "+autoScrollDown);
+		boolean autoScrollDown = true; // FIXME does not work
+		
 		dataModel.publish(record);
-		System.out.println("||| "+record);
 
 		if (autoScrollDown) {
 			vs.setValue(vs.getMaximum());

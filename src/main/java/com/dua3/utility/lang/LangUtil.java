@@ -1,5 +1,8 @@
 package com.dua3.utility.lang;
 
+/**
+ * A Utility class with general purpose methods.
+ */
 public class LangUtil {
 
     private LangUtil() {
