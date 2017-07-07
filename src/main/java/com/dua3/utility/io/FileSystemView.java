@@ -24,14 +24,14 @@ import java.util.Objects;
  * The {@link java.net.URL} for a resource returned by {@link Class#getResource(String)} can be converted to a {@link java.nio.file.Path}
  * by calling {@link java.nio.file.Paths#get(URI)}. This however fails if the class that the resource belongs to was
  * loaded from a Jar. To solve this, use the following code:
- * <code><pre>
+ * <pre><code>
  * // create a FileSystemView
  * try (FileSystemView fsv = FileSystemView.create(clazz)) {
  *   // resolve the resource path
  *   Path path = fsv.resolve("resource.txt");
  *   ...
  * }
- * </pre></code>
+ * </code></pre>
  * @author a5xysq1
  *
  */

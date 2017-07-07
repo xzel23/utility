@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -31,6 +33,7 @@ public class LogPanel extends JPanel implements LogListener {
 	private static final Formatter formatter = new SimpleFormatter();
 
 	private final JTable table;
+	private JScrollPane scrollPane;
 	private final LogDispatcher dispatcher;
 
 	private static class Column {
@@ -156,7 +159,8 @@ public class LogPanel extends JPanel implements LogListener {
 		setLayout(new BorderLayout());
 
 		table = new JTable();
-		add(new JScrollPane(table));
+		scrollPane = new JScrollPane(table);
+		add(scrollPane);
 
 	    dataModel = new LogTableModel();
 		
@@ -172,7 +176,15 @@ public class LogPanel extends JPanel implements LogListener {
 
 	@Override
 	public void publish(LogRecord record) {
+		JScrollBar vs = scrollPane.getVerticalScrollBar();
+		boolean autoScrollDown = true;
+		System.err.println("bottom = "+autoScrollDown);
 		dataModel.publish(record);
+		System.out.println("||| "+record);
+
+		if (autoScrollDown) {
+			vs.setValue(vs.getMaximum());
+		}
 	}
 
 	@Override
@@ -191,7 +203,10 @@ public class LogPanel extends JPanel implements LogListener {
 	}
 
 	public void addLogger(Logger logger) {
-		logger.addHandler(getHandler());
+		 Handler handler = getHandler();
+		if (!Arrays.asList(logger.getHandlers()).contains(handler)) {
+			logger.addHandler(handler);
+		}
 	}
 	
 	public void addAllKnowLoggers() {

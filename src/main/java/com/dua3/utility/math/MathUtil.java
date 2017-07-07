@@ -199,8 +199,8 @@ public final class MathUtil {
      * The function is evaluated a fixed number of times to find starting values for root finding.
      *
      * @param f the function
-     * @param x0 first limit of intervall
-     * @param x1 second limit of intervall, must be different from {@code x0}
+     * @param x0 first limit of interval
+     * @param x1 second limit of interval, must be different from {@code x0}
      * @param steps maximum number of iterations
      * @param eps maximum error
      * @return list of all calculated roots
@@ -277,8 +277,8 @@ public final class MathUtil {
 	 * @param arg argument
 	 * @return
 	 * <ul>
-	 * <li>	min, if arg < min
-	 * <li> max, if arg > max
+	 * <li>	min, if arg &lt; min
+	 * <li> max, if arg &gt; max
 	 * <li> else arg
 	 * </ul>
 	 */

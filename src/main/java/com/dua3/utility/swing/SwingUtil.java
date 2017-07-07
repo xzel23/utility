@@ -37,7 +37,7 @@ public class SwingUtil {
     }
 
     /**
-     * Set the Swing Look&Feel to the native Look&Feel.
+     * Set the Swing Look&amp;Feel to the native Look&amp;Feel.
      *
      * On Mac OS, the global menubar is also enabled.
      */
@@ -46,7 +46,7 @@ public class SwingUtil {
     }
 
     /**
-     * Set the Swing Look&Feel to the native Look&Feel.
+     * Set the Swing Look&amp;Feel to the native Look&amp;Feel.
      *
      * On Mac OS, the global menubar is also enabled.
      *
