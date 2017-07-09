@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import com.dua3.utility.lang.RingBuffer;
+import com.dua3.utility.swing.SwingUtil;
 
 public class LogPanel extends JPanel implements LogListener {
 
@@ -176,14 +177,7 @@ public class LogPanel extends JPanel implements LogListener {
 
 	@Override
 	public void publish(LogRecord record) {
-		JScrollBar vs = scrollPane.getVerticalScrollBar();
-		boolean autoScrollDown = true; // FIXME does not work
-		
-		dataModel.publish(record);
-
-		if (autoScrollDown) {
-			vs.setValue(vs.getMaximum());
-		}
+		SwingUtil.updateAndScrollToBottom(scrollPane, () -> dataModel.publish(record));
 	}
 
 	@Override

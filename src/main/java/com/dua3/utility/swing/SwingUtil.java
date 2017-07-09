@@ -15,16 +15,21 @@
  */
 package com.dua3.utility.swing;
 
+import java.awt.Adjustable;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -107,6 +112,62 @@ public class SwingUtil {
                 onActionPerformed.run();
             }
         };
+    }
+
+    /**
+     * Scroll scrollbar to end.
+     * @param sb a scroll bar
+     */
+    public static void scrollToEnd(JScrollBar sb) {
+        AdjustmentListener autoScroller = new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                Adjustable adjustable = e.getAdjustable();
+                adjustable.setValue(adjustable.getMaximum());
+                sb.removeAdjustmentListener(this);
+            }
+        };
+        sb.addAdjustmentListener(autoScroller);
+    }
+    
+    /**
+     * Execute update and scroll to end.
+     * <p>
+     * If the JScrollBar given as parameter is scrolled to the end prior to performing the update,
+     * it will be scrolled to the end again after executing the update. Otherwise, only the update is performed.
+     * </p>
+     * @param sb a scroll bar
+     * @param update Runnable to do the update
+     */
+    public static void updateAndScrollToEnd(JScrollBar sb, Runnable update) {
+    		boolean atEnd = sb.getMaximum () == sb.getValue () + sb.getVisibleAmount ();
+    		
+    		update.run();
+    		
+    		if (atEnd) {
+    			scrollToEnd(sb);
+    		}
+    }    
+    
+    /**
+     * Scroll scrollpane to bottom.
+     * @param sp a scroll pane
+     */
+    public static void scrollToBottom(JScrollPane sp) {
+    		scrollToEnd(sp.getVerticalScrollBar());
+    }
+    
+    /**
+     * Execute update and scroll to bottom.
+     * <p>
+     * If the JScrollPane given as parameter is scrolled to the bottom prior to performing the update,
+     * it will be scrolled to the bottom after executing the update. Otherwise, only the update is performed.
+     * </p>
+     * @param sp a scroll pane
+     * @param update Runnable to do the update
+     */
+    public static void updateAndScrollToBottom(JScrollPane sp, Runnable update) {
+    		updateAndScrollToEnd(sp.getVerticalScrollBar(), update);
     }
 
 }
