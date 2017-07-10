@@ -15,7 +15,7 @@ public class FileSystemViewTest {
 	 * Construct a FileSystemView for classpath resources and try to access a class file.
 	 * In this test, a user supplied class is used which at least when run from eclipse
 	 * is loaded from a class file on the file system.
-	 * @throws IOException
+     * @throws IOException if resource could not be loaded
 	 */
     @Test
     public void testClass() throws IOException {
@@ -26,7 +26,7 @@ public class FileSystemViewTest {
 	/**
 	 * Construct a FileSystemView for classpath resources and try to access a class file.
 	 * In this test, a JDK class is used which is loaded from within a jar file.
-	 * @throws IOException
+	 * @throws IOException if resource could not be loaded
 	 */
     @Test
     public void testJdkClass() throws IOException {
@@ -34,7 +34,7 @@ public class FileSystemViewTest {
         testClassHelper(java.lang.String.class);
     }
 
-    public void testClassHelper(Class<?> clazz) throws IOException {
+    private void testClassHelper(Class<?> clazz) throws IOException {
         try (FileSystemView fsv = FileSystemView.create(clazz)) {
             assertNotNull(fsv);
 
