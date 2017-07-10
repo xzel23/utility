@@ -18,19 +18,19 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+
 import com.dua3.utility.lang.RingBuffer;
 import com.dua3.utility.swing.SwingUtil;
 
 public class LogPanel extends JPanel implements LogListener {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final Formatter formatter = new SimpleFormatter();
 
 	private final JTable table;
@@ -40,36 +40,36 @@ public class LogPanel extends JPanel implements LogListener {
 	private static class Column {
 		String name;
 		Function<LogRecord, Object> extractor;
-		
+
 		Column(String name, Function<LogRecord,Object> extractor) {
 			this.name = name;
 			this.extractor = extractor;
 		}
-		
+
 		String name() {
 			return name;
 		}
-		
+
 		Object get(LogRecord r) {
 			return extractor.apply(r);
 		}
 	}
-	
+
 	private static final Column[] COLUMNS = {
 			new Column("Time", r -> Instant.ofEpochMilli(r.getMillis())),
 			new Column("Logger", r -> r.getLoggerName()),
 			new Column("Level", r -> r.getLevel()),
-			new Column("Message", r -> formatter.formatMessage(r))
+			new Column("Message", formatter::formatMessage)
 	};
-	
+
 	private static final class LogTableModel extends AbstractTableModel {
 		LogTableModel(){
-			initStyles();			
+			initStyles();
 		}
-		
+
 		private static final long serialVersionUID = 1L;
-		
-		private RingBuffer<LogRecord> records = new RingBuffer<>(1000);
+
+		private final RingBuffer<LogRecord> records = new RingBuffer<>(1000);
 
 		private final TreeMap<Integer, MessageStyle> styles = new TreeMap<>();
 
@@ -92,15 +92,15 @@ public class LogPanel extends JPanel implements LogListener {
 		public String getColumnName(int column) {
 			return COLUMNS[column].name();
 		}
-		
+
 		private LogRecord getRecordForRow(int rowIndex) {
 			return records.get(rowIndex);
 		}
-		
+
 		public void publish(LogRecord r) {
 			SwingUtilities.invokeLater(() -> addRecord(r));
 		}
-		
+
 		private void addRecord(LogRecord r) {
 			records.add(r);
 			fireTableDataChanged();
@@ -114,7 +114,7 @@ public class LogPanel extends JPanel implements LogListener {
 		private MessageStyle createStyle(Level level, Color color) {
 			MessageStyle ms = new MessageStyle(color);
 			styles.put(level.intValue(), ms);
-		
+
 			return ms;
 		}
 
@@ -149,7 +149,7 @@ public class LogPanel extends JPanel implements LogListener {
 		public MessageStyle(Color color) {
 			this.color = color;
 		}
-	
+
 		Color color;
 	}
 
@@ -164,12 +164,12 @@ public class LogPanel extends JPanel implements LogListener {
 		add(scrollPane);
 
 	    dataModel = new LogTableModel();
-		
+
 		table.setModel(dataModel);
 
 		table.getColumnModel().getColumn(2).setCellRenderer(new LogRecordTableCellRenderer());
 		dispatcher = new LogDispatcher(this);
-		
+
 		for (Logger logger: loggers) {
 			addLogger(logger);
 		}
@@ -201,7 +201,7 @@ public class LogPanel extends JPanel implements LogListener {
 			logger.addHandler(handler);
 		}
 	}
-	
+
 	public void addAllKnowLoggers() {
 		LogManager logManager = LogManager.getLogManager();
 		Enumeration<String> loggerNames = logManager.getLoggerNames();
