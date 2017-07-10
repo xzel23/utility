@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Theis class behaves much like @see {@link ArrayList}, but with a fixed maximum size.
  * The collection grows when new elements are added until the capacity is reached. If even more items
  * are added, the oldest element is removed and the new element is appended to the collection.
- * 
+ *
  * Adding is O(1).
  *
  * @param <T> the element type
@@ -17,7 +17,7 @@ public class RingBuffer<T> {
 	private Object[] data;
 	private int entries;
 	private int start;
-	
+
 	/**
 	 * Construct a new RingBuffer instance.
 	 * @param capacity the initial capacity
@@ -27,7 +27,7 @@ public class RingBuffer<T> {
 		start = 0;
 		entries = 0;
 	}
-	
+
 	/**
 	 * Get number of items in collection.
 	 * @return number of elements
@@ -35,7 +35,7 @@ public class RingBuffer<T> {
 	public int size() {
 		return entries;
 	}
-	
+
 	/**
 	 * Get collection's capacity.
 	 * @return the capacitiy
@@ -54,7 +54,7 @@ public class RingBuffer<T> {
 		checkIndex(i);
 		return (T) data[index(i)];
 	}
-	
+
 	private int index(int i) {
 		return (start+i)%capacity();
 	}
@@ -64,7 +64,7 @@ public class RingBuffer<T> {
 			throw new IndexOutOfBoundsException("size="+size()+", index="+i);
 		}
 	}
-	
+
 	/**
 	 * Add item to end of collection.
 	 * @param item the item to add
@@ -77,7 +77,7 @@ public class RingBuffer<T> {
 			data[index(entries-1)] = item;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(16*(1+size()));
@@ -86,12 +86,12 @@ public class RingBuffer<T> {
 		for (int i=0; i<size(); i++) {
 			sb.append(d);
 			sb.append(get(i));
-			d = ", ";			
+			d = ", ";
 		}
 		sb.append("]");
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Set the capacity. Elements are retained.
 	 * @param n the new capacity.
@@ -99,9 +99,12 @@ public class RingBuffer<T> {
 	public void setCapacity(int n) {
 		if (n!=capacity()) {
 			Object[] dataNew = new Object[n];
-			for (int i=0; i<Math.min(size(), n); i++) {
-				dataNew[i] = get(i);
+			int itemsToCopy = Math.min(size(), n);
+			int startIndex = Math.max(0, size()-n);
+            for (int i=0; i<itemsToCopy; i++) {
+				dataNew[i] = get(startIndex+i);
 			}
+			data = dataNew;
 			start=0;
 			entries = Math.min(entries, n);
 		}
@@ -113,7 +116,7 @@ public class RingBuffer<T> {
 	public void clear() {
 		start = entries = 0;
 	}
-	
+
 	/**
 	 * Test if collection is empty.
 	 */
