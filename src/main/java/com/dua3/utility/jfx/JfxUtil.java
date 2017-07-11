@@ -16,7 +16,8 @@ package com.dua3.utility.jfx;
  */
 
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.aquafx_project.AquaFx;
 
@@ -24,7 +25,7 @@ import com.aquafx_project.AquaFx;
  * A Utility class for JavaFx.
  */
 public class JfxUtil {
-    private static final Logger LOG = Logger.getLogger(JfxUtil.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JfxUtil.class);
 
     // Utility class, should not be instantiated
     private JfxUtil() {
@@ -50,7 +51,7 @@ public class JfxUtil {
      */
 	public static void setNativeLookAndFeel(String applicationName) {
 		if(System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
-			LOG.info("Applying Aquastyle");
+			LOGGER.info("Applying Aquastyle.");
 			AquaFx.style();
 		}
 	}

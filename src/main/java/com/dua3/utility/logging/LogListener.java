@@ -18,7 +18,6 @@ public interface LogListener {
 
 	/**
 	 * Close.
-	 * @throws SecurityException
 	 * @see java.util.logging.Handler#close()
 	 */
 	void close();

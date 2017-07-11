@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * A ring buffer implementation.
- * Theis class behaves much like @see {@link ArrayList}, but with a fixed maximum size.
+ * This class behaves much like @see {@link ArrayList}, but with a fixed maximum size.
  * The collection grows when new elements are added until the capacity is reached. If even more items
  * are added, the oldest element is removed and the new element is appended to the collection.
  *
@@ -38,7 +38,7 @@ public class RingBuffer<T> {
 
 	/**
 	 * Get collection's capacity.
-	 * @return the capacitiy
+	 * @return the capacity
 	 */
 	public int capacity() {
 		return data.length;
@@ -119,6 +119,7 @@ public class RingBuffer<T> {
 
 	/**
 	 * Test if collection is empty.
+	 * @return true if this buffer is empty
 	 */
 	public boolean isEmpty() {
 		return entries==0;

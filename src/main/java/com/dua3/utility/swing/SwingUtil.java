@@ -23,8 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -33,8 +31,11 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SwingUtil {
-    private static final Logger LOG = Logger.getLogger(SwingUtil.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwingUtil.class);
 
     // Utility class, should not be instantiated
     private SwingUtil() {
@@ -60,7 +61,7 @@ public class SwingUtil {
      */
 	public static void setNativeLookAndFeel(String applicationName) {
 		if(System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
-			LOG.info("enabling global menu");
+			LOGGER.info("enabling global menu");
 		    if (applicationName!=null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
                 System.setProperty("apple.awt.application.name", applicationName);
@@ -72,11 +73,11 @@ public class SwingUtil {
         try {
             // Set system L&F
             String lafName = UIManager.getSystemLookAndFeelClassName();
-			LOG.log(Level.INFO, "setting L&F to {0}", lafName);
+			LOGGER.info("setting L&F to {}", lafName);
 			UIManager.setLookAndFeel(lafName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
-            LOG.log(Level.SEVERE, null, ex);
+            LOGGER.warn("Could not set Look&Feel.", ex);
         }
 	}
 
