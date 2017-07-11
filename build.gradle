@@ -19,7 +19,7 @@ dependencies {
  	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     def sl4jVersion = "1.7.25"
 	compile "org.slf4j:slf4j-api:${sl4jVersion}"
-	testCompile "org.slf4j:slf4j-simple:${sl4jVersion}"
+	testRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
