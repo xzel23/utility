@@ -27,6 +27,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 import com.dua3.utility.lang.RingBuffer;
 import com.dua3.utility.swing.SwingUtil;
 
+/**
+ * A panel that displays log messages.
+ * <p>
+ * <b>Attention:</b>
+ * Only works with java.util.logging (or jdk14 binding for SLF4J).
+ * </p>
+ */
 public class LogPanel extends JPanel implements LogListener {
 
 	private static final long serialVersionUID = 1L;

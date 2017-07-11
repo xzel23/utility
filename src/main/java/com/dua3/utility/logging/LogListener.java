@@ -2,6 +2,10 @@ package com.dua3.utility.logging;
 
 import java.util.logging.LogRecord;
 
+/**
+ * An interface intended to be used as replacement for {@link java.util.logging.Handler}.
+ * @see LogDispatcher
+ */
 public interface LogListener {
 	/**
 	 * Publish a log record.

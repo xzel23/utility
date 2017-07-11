@@ -9,6 +9,9 @@ import java.nio.file.Path;
 
 import org.junit.Test;
 
+/**
+ * Test the FileSystemView class.
+ */
 public class FileSystemViewTest {
 
 	/**
