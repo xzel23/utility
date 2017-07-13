@@ -91,13 +91,16 @@ public class FileSystemView implements AutoCloseable {
         // is it a zip?
         if (root.getFileName().endsWith(".zip")||root.getFileName().endsWith(".ZIP")) {
             URI uri = URI.create("jar:" + root.toUri());
-            FileSystem zipFs = FileSystems.newFileSystem(uri, Collections.emptyMap());
-            Path zipRoot = zipFs.getPath("/");
-            return new FileSystemView(zipRoot, zipFs::close);
+            return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
         }
 
         // other are not implemented
         throw new IllegalArgumentException("Don't know how to handle this path: "+root);
+    }
+
+    private static FileSystemView createFileSystemView(FileSystem zipFs, String path) {
+        Path zipRoot = zipFs.getPath(path);
+        return new FileSystemView(zipRoot, zipFs::close);
     }
 
     /**
@@ -118,9 +121,7 @@ public class FileSystemView implements AutoCloseable {
                 String jar = uriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
                 String jarPath = uriStr.replaceAll("^jar:file:.*!(.*)"+classFile+"$", "$1");
                 URI jarUri = new URI("jar", jar, null);
-                FileSystem jarFs = FileSystems.newFileSystem(jarUri, Collections.emptyMap());
-                Path jarRoot = jarFs.getPath(jarPath);
-                return new FileSystemView(jarRoot, jarFs::close);
+                return createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
             default:
                 throw new IOException("unsupported scheme: "+uri.getScheme());
             }
