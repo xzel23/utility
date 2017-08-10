@@ -34,6 +34,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dua3.utility.Color;
+
 public class SwingUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(SwingUtil.class);
 
@@ -169,6 +171,14 @@ public class SwingUtil {
      */
     public static void updateAndScrollToBottom(JScrollPane sp, Runnable update) {
     		updateAndScrollToEnd(sp.getVerticalScrollBar(), update);
+    }
+
+    public static java.awt.Color toAwtColor(Color color) {
+        return new java.awt.Color(color.argb());
+    }
+
+    public static java.awt.Color toAwtColor(String s) {
+        return toAwtColor(Color.valueOf(s));
     }
 
 }
