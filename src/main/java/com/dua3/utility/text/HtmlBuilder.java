@@ -31,7 +31,19 @@ public class HtmlBuilder extends TextBuilder<String> {
     protected void append(Run run) {
         // handle attributes
         Style style = run.getStyle();
-        String separator = "<span style=\"";
+        String closeStyleTags = appendStyleTags(style);
+
+        // append text (need to do characterwise because of escaping)
+        for (int idx = 0; idx < run.length(); idx++) {
+            appendChar(run.charAt(idx));
+        }
+
+        // add end tag
+        buffer.append(closeStyleTags);
+    }
+
+	private String appendStyleTags(Style style) {
+		String separator = "<span style=\"";
         String closing = "";
         String endTag = "";
         for (Map.Entry<String, String> e : style.properties().entrySet()) {
@@ -42,15 +54,8 @@ public class HtmlBuilder extends TextBuilder<String> {
             endTag = "</span>";
         }
         buffer.append(closing);
-
-        // append text (need to do characterwise because of escaping)
-        for (int idx = 0; idx < run.length(); idx++) {
-            appendChar(run.charAt(idx));
-        }
-
-        // add end tag
-        buffer.append(endTag);
-    }
+		return endTag;
+	}
 
     private void appendChar(char c) {
         // escape characters as suggested by OWASP.org
@@ -84,4 +89,9 @@ public class HtmlBuilder extends TextBuilder<String> {
         return new String(buffer);
     }
 
+    public static String toHtml(RichText text) {
+        HtmlBuilder builder = new HtmlBuilder();
+        builder.add(text);
+        return builder.get();
+    }
 }

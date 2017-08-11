@@ -34,28 +34,28 @@ public enum MarkDownStyle {
 	
 	private static Map<String, Style> createDefaultStyles() {
 		Map<String, Style> styles = new HashMap<>();
-		// BLOCK_QUOTE,
-	    // BULLET_LIST,
+		// BLOCK_QUOTE
+	    // BULLET_LIST
 	    put(styles, CODE, Pair.of(Style.FONT_FAMILY, "monospaced"));
-		// DOCUMENT,
+		// DOCUMENT
 	    put(styles, EMPHASIS, Pair.of(Style.FONT_STYLE, "italic"));
-		// FENCED_CODE_BLOCK,
-		// HARD_LINE_BREAK,
+		// FENCED_CODE_BLOCK
+		// HARD_LINE_BREAK
 	    put(styles, HEADING, Pair.of(Style.FONT_WEIGHT, "bold"));
-		// THEMATIC_BREAK,
-		// HTML_BLOCK,
-		// HTML_INLINE,
-		// IMAGE,
-		// INDENTED_CODE_BLOCK,
+		// THEMATIC_BREAK
+		// HTML_BLOCK
+		// HTML_INLINE
+		// IMAGE
+		// INDENTED_CODE_BLOCK
 	    put(styles, LINK, Pair.of(Style.COLOR, "blue"));
-		// LIST_ITEM,
-		// ORDERED_LIST,
-		// PARAGRAPH,
-		// SOFT_LINE_BREAK,
+		// LIST_ITEM
+		// ORDERED_LIST
+		// PARAGRAPH
+		// SOFT_LINE_BREAK
 	    put(styles, EMPHASIS, Pair.of(Style.FONT_WEIGHT, "bold"));
-		// TEXT,
-		// CUSTOM_BLOCK,
-		// CUSTOM_NODE;
+		// TEXT
+		// CUSTOM_BLOCK
+		// CUSTOM_NODE
 		return Collections.unmodifiableMap(styles);
 	}
 
