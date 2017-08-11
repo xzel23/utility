@@ -15,7 +15,9 @@
  */
 package com.dua3.utility.swing;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -41,6 +43,9 @@ import com.dua3.utility.text.TextBuilder;
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
 
+    private final Function<String,Style> styleSupplier;
+    private Map<String,AttributeSet> styleAttributes = new HashMap<>();
+    
     /**
      * Convert {@code RichText} to {@code StyledDocument} conserving text
      * attributes.
@@ -65,15 +70,37 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private final StyledDocument doc = new DefaultStyledDocument();
     private final double scale;
 
-    public StyledDocumentBuilder(double scale) {
+    public StyledDocumentBuilder(double scale, Function<String,Style> styleSupplier) {
         this.scale = scale;
+        this.styleSupplier = styleSupplier;
+    }
+
+    public StyledDocumentBuilder(double scale) {
+        this(scale, styleName -> Style.none());
     }
 
     @Override
     protected void append(Run run) {
-        SimpleAttributeSet as = new SimpleAttributeSet();
-        for (Map.Entry<String, String> e : run.getStyle().properties().entrySet()) {
+        try {
+        		AttributeSet as = getAttributeSet(run);
+            doc.insertString(doc.getLength(), run.toString(), as);
+        } catch (BadLocationException ex) {
+            LOG.error("Exception in StyledDocumentBuilder.append()", ex);
+        }
+    }
+
+    private AttributeSet getAttributes(Style style) {
+		SimpleAttributeSet as = new SimpleAttributeSet();
+		applyAttributes(style.properties(), as);
+		return as;
+    }
+
+	private void applyAttributes(Map<String, String> styleAttributes, SimpleAttributeSet as) {
+		for (Map.Entry<String, String> e : styleAttributes.entrySet()) {
             switch (e.getKey()) {
+            case Style.STYLE_NAME:
+            		// is handled before entering the loop
+            		break;
             case Style.FONT_FAMILY:
                 StyleConstants.setFontFamily(as, e.getValue());
                 break;
@@ -121,13 +148,19 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 break;
             }
         }
-
-        try {
-            doc.insertString(doc.getLength(), run.toString(), as);
-        } catch (BadLocationException ex) {
-            LOG.error("Exception in StyledDocumentBuilder.append()", ex);
-        }
+	}
+    
+    private AttributeSet getAttributes(String styleName) {
+    		return styleAttributes.computeIfAbsent(styleName, s -> getAttributes(styleSupplier.apply(s)));
     }
+    
+	private SimpleAttributeSet getAttributeSet(Run run) {
+		Map<String, String> styleProps = run.getStyle().properties();
+		AttributeSet das = getAttributes(styleProps.get(Style.STYLE_NAME));
+		SimpleAttributeSet as = new SimpleAttributeSet(das);
+		applyAttributes(styleProps, as);
+		return as;
+	}
 
     @Override
     public StyledDocument get() {

@@ -19,10 +19,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dua3.utility.Pair;
+
 /**
  * A Style is a set of text attributes.
  */
 public class Style {
+
+    // style
+    public static final String STYLE_NAME = "style";
 
     // font properties
     public static final String FONT_FAMILY = "font-family";
@@ -39,8 +44,26 @@ public class Style {
 
     private static final Style NONE = new Style();
 
+    /**
+     * The empty style instance.
+     * @return the empty style
+     */
     public static Style none() {
         return NONE;
+    }
+
+    /**
+     * Construct style with attributes.
+     * @param entries the attribute/value pairs to add
+     * @return the new style
+     */
+    @SafeVarargs
+	public static Style of(Pair<String,String>... entries) {
+        Style style = new Style();
+        for (Pair<String,String> entry: entries) {
+        		style.put(entry.first, entry.second);
+        }
+        return style;
     }
 
     private final Map<String, String> properties = new HashMap<>();

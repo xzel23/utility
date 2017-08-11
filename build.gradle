@@ -21,6 +21,9 @@ dependencies {
 	compile "org.slf4j:slf4j-api:${sl4jVersion}"
 	testRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
 
+    // markdown parser
+    compile group: 'com.atlassian.commonmark', name: 'commonmark', version: '0.9.0'
+
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }

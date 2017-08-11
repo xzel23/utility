@@ -83,5 +83,4 @@ public class TextUtil {
         transform(template, env, s -> sb.append(s));
         return sb.toString();
     }
-
 }
