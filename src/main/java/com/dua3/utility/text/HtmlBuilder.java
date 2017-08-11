@@ -84,4 +84,9 @@ public class HtmlBuilder extends TextBuilder<String> {
         return new String(buffer);
     }
 
+    public static String toHtml(RichText text) {
+        HtmlBuilder builder = new HtmlBuilder();
+        builder.add(text);
+        return builder.get();
+    }
 }

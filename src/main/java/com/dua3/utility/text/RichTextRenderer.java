@@ -28,7 +28,7 @@ import org.commonmark.node.ThematicBreak;
 class RichTextRenderer {
 
 	static class RTVisitor extends AbstractVisitor {
-		
+
 		private final RichTextBuilder app;
 
 		public RTVisitor(RichTextBuilder app) {
@@ -36,9 +36,9 @@ class RichTextRenderer {
 		}
 
 		@Override
-		public void visit(BlockQuote blockQuote) {
+		public void visit(BlockQuote node) {
 			app.push(Style.STYLE_NAME, MarkDownStyle.BLOCK_QUOTE.name());
-			super.visit(blockQuote);
+			super.visit(node);
 		}
 
 		@Override
@@ -152,6 +152,7 @@ class RichTextRenderer {
 		@Override
 		public void visit(Text node) {
 			app.push(Style.STYLE_NAME, MarkDownStyle.TEXT.name());
+            app.append(node.getLiteral());
 			super.visit(node);
 		}
 
@@ -166,9 +167,9 @@ class RichTextRenderer {
 			app.push(Style.STYLE_NAME, MarkDownStyle.CUSTOM_NODE.name());
 			super.visit(node);
 		}
-		
+
 	}
-	
+
 	public void render(Node node, RichTextBuilder app) {
 		node.accept(new RTVisitor(app));
 	}
@@ -177,5 +178,5 @@ class RichTextRenderer {
 		RichTextBuilder app = new RichTextBuilder();
 		render(node, app);
 		return app.toRichText();
-	}	
+	}
 }
