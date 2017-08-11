@@ -1,5 +1,7 @@
 package com.dua3.utility;
 
+import java.util.Objects;
+
 /**
  * A pair helper class.
  *
@@ -26,16 +28,37 @@ public class Pair<T1, T2> {
 
     /**
      * Create a Pair
-     * @param first the first member 
+     * @param first the first member
      * @param second the second member
      * @return a new Pair
      */
     public static <T1, T2> Pair<T1, T2> of(T1 first, T2 second) {
         return new Pair<>(first, second);
     }
-    
+
     @Override
     public String toString() {
-    		return "[" + first + ", " + second +"]";
+    		return "[" + first + "," + second +"]";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      Pair<?, ?> other = (Pair<?, ?>) obj;
+      return Objects.equals(first, other.first) && Objects.equals(second, other.second);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(first, second);
+    }
+
 }
