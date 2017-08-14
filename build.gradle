@@ -1,9 +1,10 @@
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-apply plugin: 'findbugs'
-apply plugin: 'pmd'
-apply plugin: 'jacoco'
+
+// apply plugin: 'findbugs'
+// apply plugin: 'pmd'
+// apply plugin: 'jacoco'
 
 group = 'com.dua3.utility'
 

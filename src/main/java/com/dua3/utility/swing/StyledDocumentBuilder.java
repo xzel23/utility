@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
-import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextBuilder;
 
 /**
@@ -43,9 +43,9 @@ import com.dua3.utility.text.TextBuilder;
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
 
-    private final Function<String,Style> styleSupplier;
+    private final Function<String,TextAttributes> styleSupplier;
     private Map<String,AttributeSet> styleAttributes = new HashMap<>();
-    
+
     /**
      * Convert {@code RichText} to {@code StyledDocument} conserving text
      * attributes.
@@ -70,13 +70,13 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private final StyledDocument doc = new DefaultStyledDocument();
     private final double scale;
 
-    public StyledDocumentBuilder(double scale, Function<String,Style> styleSupplier) {
+    public StyledDocumentBuilder(double scale, Function<String,TextAttributes> styleSupplier) {
         this.scale = scale;
         this.styleSupplier = styleSupplier;
     }
 
     public StyledDocumentBuilder(double scale) {
-        this(scale, styleName -> Style.none());
+        this(scale, styleName -> TextAttributes.none());
     }
 
     @Override
@@ -89,34 +89,34 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         }
     }
 
-    private AttributeSet getAttributes(Style style) {
+    private AttributeSet getAttributes(TextAttributes style) {
 		SimpleAttributeSet as = new SimpleAttributeSet();
 		applyAttributes(style.properties(), as);
 		return as;
     }
 
-	private void applyAttributes(Map<String, String> styleAttributes, SimpleAttributeSet as) {
-		for (Map.Entry<String, String> e : styleAttributes.entrySet()) {
+	private void applyAttributes(Map<String, Object> styleAttributes, SimpleAttributeSet as) {
+		for (Map.Entry<String, Object> e : styleAttributes.entrySet()) {
             switch (e.getKey()) {
-            case Style.NAME:
+            case TextAttributes.STYLE_NAME:
             		// not used in styled document
             		break;
-            case Style.FONT_FAMILY:
+            case TextAttributes.FONT_FAMILY:
                 StyleConstants.setFontFamily(as, String.valueOf(e.getValue()));
                 break;
-            case Style.FONT_SIZE:
+            case TextAttributes.FONT_SIZE:
                 StyleConstants.setFontSize(as, (int) Math.round(scale * decodeFontSize(String.valueOf(e.getValue()))));
                 break;
-            case Style.COLOR:
+            case TextAttributes.COLOR:
                 StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(e.getValue())));
                 break;
-            case Style.BACKGROUND_COLOR:
+            case TextAttributes.BACKGROUND_COLOR:
                 StyleConstants.setBackground(as, SwingUtil.toAwtColor(String.valueOf(e.getValue())));
                 break;
-            case Style.FONT_WEIGHT:
+            case TextAttributes.FONT_WEIGHT:
                 StyleConstants.setBold(as, e.getValue().equals("bold"));
                 break;
-            case Style.FONT_STYLE:
+            case TextAttributes.FONT_STYLE:
                 switch (String.valueOf(e.getValue())) {
                 case "normal":
                     StyleConstants.setItalic(as, false);
@@ -130,7 +130,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                     break;
                 }
                 break;
-            case Style.TEXT_DECORATION:
+            case TextAttributes.TEXT_DECORATION:
                 switch (String.valueOf(e.getValue())) {
                 case "line-through":
                     StyleConstants.setStrikeThrough(as, true);
@@ -149,14 +149,14 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             }
         }
 	}
-    
+
     private AttributeSet getAttributes(String styleName) {
     		return styleAttributes.computeIfAbsent(styleName, s -> getAttributes(styleSupplier.apply(s)));
     }
-    
+
 	private SimpleAttributeSet getAttributeSet(Run run) {
-		Map<String, String> styleProps = run.getStyle().properties();
-		AttributeSet das = getAttributes(styleProps.get(Style.NAME));
+		Map<String, Object> styleProps = run.getStyle().properties();
+		AttributeSet das = getAttributes((String)styleProps.get(TextAttributes.STYLE_NAME));
 		SimpleAttributeSet as = new SimpleAttributeSet(das);
 		applyAttributes(styleProps, as);
 		return as;

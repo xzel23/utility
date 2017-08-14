@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
-import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextAttributes;
 
 /**
  *
@@ -38,9 +38,9 @@ public class RichTextTest {
     public void testRichTextBuilding() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.push(Style.FONT_WEIGHT, "bold");
+        builder.push(TextAttributes.FONT_WEIGHT, "bold");
         builder.append("world");
-        builder.pop(Style.FONT_WEIGHT);
+        builder.pop(TextAttributes.FONT_WEIGHT);
         builder.append("!");
 
         RichText rt = builder.toRichText();

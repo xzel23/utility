@@ -26,7 +26,7 @@ public class Run
     private final String text;
     private final int start;
     private final int length;
-    private final Style style;
+    private final TextAttributes style;
 
     /**
      * Construct a new Run.
@@ -35,7 +35,7 @@ public class Run
      * @param length length of Run in characters
      * @param style style for the Run
      */
-    Run(String text, int start, int length, Style style) {
+    Run(String text, int start, int length, TextAttributes style) {
         if (start < 0 || start > text.length() || length < 0 || start + length > text.length()) {
             throw new IllegalArgumentException();
         }
@@ -94,7 +94,7 @@ public class Run
      * Get style of this Run.
      * @return style of this Run
      */
-    public Style getStyle() {
+    public TextAttributes getStyle() {
         return style;
     }
 

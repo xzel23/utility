@@ -28,13 +28,13 @@ public class RichTextBuilder implements Appendable {
 
     private final StringBuilder buffer = new StringBuilder();
 
-    private final SortedMap<Integer, Style> parts = new TreeMap<>();
+    private final SortedMap<Integer, TextAttributes> parts = new TreeMap<>();
 
     /**
      * Construct a new empty builder.
      */
     public RichTextBuilder() {
-        parts.put(0, new Style());
+        parts.put(0, new TextAttributes());
     }
 
     @Override
@@ -55,12 +55,12 @@ public class RichTextBuilder implements Appendable {
         return this;
     }
 
-    private Style currentStyle() {
-        final Style style;
+    private TextAttributes currentStyle() {
+        final TextAttributes style;
         if (parts.lastKey() == buffer.length()) {
             style = parts.get(parts.lastKey());
         } else {
-            style = new Style();
+            style = new TextAttributes();
             parts.put(buffer.length(), style);
         }
         return style;
@@ -71,24 +71,24 @@ public class RichTextBuilder implements Appendable {
      * @param property the property
      * @return value of the property
      */
-    public String get(String property) {
+    public Object get(String property) {
         return currentStyle().get(property);
     }
 
     /**
-     * Remove and return the value of a property from the property stack. 
+     * Remove and return the value of a property from the property stack.
      * @param property the property
      * @return the last stored value for this property on the stack
      */
-    public String pop(String property) {
-        String prev = null;
-        for (Map.Entry<Integer, Style> e : parts.entrySet()) {
+    public Object pop(String property) {
+        Object prev = null;
+        for (Map.Entry<Integer, TextAttributes> e : parts.entrySet()) {
             if (Objects.equals(e.getKey(), parts.lastKey())) {
                 break;
             }
             prev = e.getValue().getOrDefault(property, prev);
         }
-        String current = currentStyle().get(property);
+        Object current = currentStyle().get(property);
         if (prev != null) {
             currentStyle().put(property, prev);
         } else {
@@ -105,7 +105,7 @@ public class RichTextBuilder implements Appendable {
      * @param value
      *            the value to be set
      */
-    public void push(String property, String value) {
+    public void push(String property, Object value) {
         currentStyle().put(property, value);
     }
 
@@ -119,8 +119,8 @@ public class RichTextBuilder implements Appendable {
 
         int runIdx = 0;
         int start = parts.firstKey();
-        Style style = parts.get(start);
-        for (Map.Entry<Integer, Style> e : parts.entrySet()) {
+        TextAttributes style = parts.get(start);
+        for (Map.Entry<Integer, TextAttributes> e : parts.entrySet()) {
             int end = e.getKey();
             int runLength = end - start;
 

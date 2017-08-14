@@ -22,13 +22,35 @@ import java.util.Map;
 import com.dua3.utility.Pair;
 
 /**
- * A Style is a set of text attributes.
+ * A set of text attributes.
  */
-public class Style {
+public class TextAttributes {
+
+    public static class Attribute {
+        public final MarkDownStyle style;
+        public final Map<String,Object> args;
+
+        @SafeVarargs
+        Attribute(MarkDownStyle style,Pair<String,Object>... args) {
+            this.style = style;
+            Map<String,Object> m = new HashMap<>();
+            for (Pair<String,Object> arg: args) {
+                m.put(arg.first, arg.second);
+            }
+            this.args = Collections.unmodifiableMap(m);
+        }
+    }
+
+    public static final String ATTR_HEADING_LEVEL = "level";
+    public static final String ATTR_IMAGE_SRC = "src";
 
 	// meta
-	public static final String NAME = "name";
-	
+    public static final String STYLE_START_RUN = "__style-start-run";
+    public static final String STYLE_END_RUN = "__style-end-run";
+
+    // style name
+    public static final String STYLE_NAME = "style-name";
+
     // font properties
     public static final String FONT_FAMILY = "font-family";
     public static final String FONT_STYLE = "font-style";
@@ -42,13 +64,13 @@ public class Style {
     public static final String COLOR = "color";
     public static final String BACKGROUND_COLOR = "background-color";
 
-    private static final Style NONE = new Style();
+    private static final TextAttributes NONE = new TextAttributes();
 
     /**
      * The empty style instance.
      * @return the empty style
      */
-    public static Style none() {
+    public static TextAttributes none() {
         return NONE;
     }
 
@@ -58,15 +80,15 @@ public class Style {
      * @return the new style
      */
     @SafeVarargs
-	public static Style of(Pair<String,String>... entries) {
-        Style style = new Style();
+	public static TextAttributes of(Pair<String,String>... entries) {
+        TextAttributes style = new TextAttributes();
         for (Pair<String,String> entry: entries) {
         		style.put(entry.first, entry.second);
         }
         return style;
     }
 
-    private final Map<String, String> properties = new HashMap<>();
+    private final Map<String, Object> properties = new HashMap<>();
 
     @Override
     public boolean equals(Object obj) {
@@ -74,15 +96,15 @@ public class Style {
             return false;
         }
 
-        Style other = (Style) obj;
+        TextAttributes other = (TextAttributes) obj;
         return properties.equals(other.properties);
     }
 
-    String get(String property) {
+    Object get(String property) {
         return properties.get(property);
     }
 
-    String getOrDefault(String property, String def) {
+    Object getOrDefault(String property, Object def) {
         return properties.getOrDefault(property, def);
     }
 
@@ -91,11 +113,11 @@ public class Style {
         return properties.hashCode();
     }
 
-    public Map<String, String> properties() {
+    public Map<String, Object> properties() {
         return Collections.unmodifiableMap(properties);
     }
 
-    void put(String property, String value) {
+    void put(String property, Object value) {
         properties.put(property, value);
     }
 
