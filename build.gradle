@@ -52,3 +52,5 @@ tasks.withType(FindBugs) {
         html.enabled = true
     }
 }
+
+defaultTasks 'build', 'install'
