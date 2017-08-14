@@ -26,9 +26,9 @@ import com.dua3.utility.Pair;
  */
 public class Style {
 
-    // style
-    public static final String STYLE_NAME = "style";
-
+	// meta
+	public static final String NAME = "name";
+	
     // font properties
     public static final String FONT_FAMILY = "font-family";
     public static final String FONT_STYLE = "font-style";

@@ -98,26 +98,26 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 	private void applyAttributes(Map<String, String> styleAttributes, SimpleAttributeSet as) {
 		for (Map.Entry<String, String> e : styleAttributes.entrySet()) {
             switch (e.getKey()) {
-            case Style.STYLE_NAME:
-            		// is handled before entering the loop
+            case Style.NAME:
+            		// not used in styled document
             		break;
             case Style.FONT_FAMILY:
-                StyleConstants.setFontFamily(as, e.getValue());
+                StyleConstants.setFontFamily(as, String.valueOf(e.getValue()));
                 break;
             case Style.FONT_SIZE:
-                StyleConstants.setFontSize(as, (int) Math.round(scale * decodeFontSize(e.getValue())));
+                StyleConstants.setFontSize(as, (int) Math.round(scale * decodeFontSize(String.valueOf(e.getValue()))));
                 break;
             case Style.COLOR:
-                StyleConstants.setForeground(as, SwingUtil.toAwtColor(e.getValue()));
+                StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(e.getValue())));
                 break;
             case Style.BACKGROUND_COLOR:
-                StyleConstants.setBackground(as, SwingUtil.toAwtColor(e.getValue()));
+                StyleConstants.setBackground(as, SwingUtil.toAwtColor(String.valueOf(e.getValue())));
                 break;
             case Style.FONT_WEIGHT:
                 StyleConstants.setBold(as, e.getValue().equals("bold"));
                 break;
             case Style.FONT_STYLE:
-                switch (e.getValue()) {
+                switch (String.valueOf(e.getValue())) {
                 case "normal":
                     StyleConstants.setItalic(as, false);
                     break;
@@ -131,7 +131,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 }
                 break;
             case Style.TEXT_DECORATION:
-                switch (e.getValue()) {
+                switch (String.valueOf(e.getValue())) {
                 case "line-through":
                     StyleConstants.setStrikeThrough(as, true);
                     break;
@@ -156,7 +156,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     
 	private SimpleAttributeSet getAttributeSet(Run run) {
 		Map<String, String> styleProps = run.getStyle().properties();
-		AttributeSet das = getAttributes(styleProps.get(Style.STYLE_NAME));
+		AttributeSet das = getAttributes(styleProps.get(Style.NAME));
 		SimpleAttributeSet as = new SimpleAttributeSet(das);
 		applyAttributes(styleProps, as);
 		return as;

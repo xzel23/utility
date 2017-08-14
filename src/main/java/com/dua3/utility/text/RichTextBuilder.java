@@ -71,7 +71,7 @@ public class RichTextBuilder implements Appendable {
      * @param property the property
      * @return value of the property
      */
-    public Object get(String property) {
+    public String get(String property) {
         return currentStyle().get(property);
     }
 
@@ -80,7 +80,7 @@ public class RichTextBuilder implements Appendable {
      * @param property the property
      * @return the last stored value for this property on the stack
      */
-    public Object pop(String property) {
+    public String pop(String property) {
         String prev = null;
         for (Map.Entry<Integer, Style> e : parts.entrySet()) {
             if (Objects.equals(e.getKey(), parts.lastKey())) {
@@ -88,7 +88,7 @@ public class RichTextBuilder implements Appendable {
             }
             prev = e.getValue().getOrDefault(property, prev);
         }
-        Object current = currentStyle().get(property);
+        String current = currentStyle().get(property);
         if (prev != null) {
             currentStyle().put(property, prev);
         } else {

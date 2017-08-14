@@ -37,134 +37,134 @@ class RichTextRenderer {
 
 		@Override
 		public void visit(BlockQuote node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.BLOCK_QUOTE.name());
+			app.push(RichText.STYLE, MarkDownStyle.BLOCK_QUOTE.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(BulletList node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.BULLET_LIST.name());
+			app.push(RichText.STYLE, MarkDownStyle.BULLET_LIST.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(Code node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.CODE.name());
+			app.push(RichText.STYLE, MarkDownStyle.CODE.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(Document node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.DOCUMENT.name());
+			app.push(RichText.STYLE, MarkDownStyle.DOCUMENT.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(Emphasis node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.EMPHASIS.name());
+			app.push(RichText.STYLE, MarkDownStyle.EMPHASIS.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(FencedCodeBlock node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.FENCED_CODE_BLOCK.name());
+			app.push(RichText.STYLE, MarkDownStyle.FENCED_CODE_BLOCK.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(HardLineBreak node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.HARD_LINE_BREAK.name());
+			app.push(RichText.STYLE, MarkDownStyle.HARD_LINE_BREAK.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(Heading node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.HEADING.name());
+			app.push(RichText.STYLE, MarkDownStyle.HEADING.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(ThematicBreak node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.THEMATIC_BREAK.name());
+			app.push(RichText.STYLE, MarkDownStyle.THEMATIC_BREAK.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(HtmlInline node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.HTML_INLINE.name());
+			app.push(RichText.STYLE, MarkDownStyle.HTML_INLINE.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(HtmlBlock node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.HTML_BLOCK.name());
+			app.push(RichText.STYLE, MarkDownStyle.HTML_BLOCK.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(Image node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.IMAGE.name());
+			app.push(RichText.STYLE, MarkDownStyle.IMAGE.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(IndentedCodeBlock node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.INDENTED_CODE_BLOCK.name());
+			app.push(RichText.STYLE, MarkDownStyle.INDENTED_CODE_BLOCK.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(Link node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.LINK.name());
+			app.push(RichText.STYLE, MarkDownStyle.LINK.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(ListItem node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.LIST_ITEM.name());
+			app.push(RichText.STYLE, MarkDownStyle.LIST_ITEM.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(OrderedList node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.ORDERED_LIST.name());
+			app.push(RichText.STYLE, MarkDownStyle.ORDERED_LIST.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(Paragraph node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.PARAGRAPH.name());
+			app.push(RichText.STYLE, MarkDownStyle.PARAGRAPH.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(SoftLineBreak node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.SOFT_LINE_BREAK.name());
+			app.push(RichText.STYLE, MarkDownStyle.SOFT_LINE_BREAK.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(StrongEmphasis node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.STRONG_EMPHASIS.name());
+			app.push(RichText.STYLE, MarkDownStyle.STRONG_EMPHASIS.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(Text node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.TEXT.name());
+			app.push(RichText.STYLE, MarkDownStyle.TEXT.name());
             app.append(node.getLiteral());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(CustomBlock node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.CUSTOM_BLOCK.name());
+			app.push(RichText.STYLE, MarkDownStyle.CUSTOM_BLOCK.name());
 			super.visit(node);
 		}
 
 		@Override
 		public void visit(CustomNode node) {
-			app.push(Style.STYLE_NAME, MarkDownStyle.CUSTOM_NODE.name());
+			app.push(RichText.STYLE, MarkDownStyle.CUSTOM_NODE.name());
 			super.visit(node);
 		}
 

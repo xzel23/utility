@@ -29,6 +29,8 @@ import java.util.stream.Stream;
 public class RichText
         implements Iterable<Run> {
 
+	public static final String STYLE = "style";
+	
     private static final RichText EMPTY_TEXT = RichText.valueOf("");
 
     private static final Comparator<RichText> COMPARATOR = (RichText o1, RichText o2) -> o1.text.compareTo(o2.text);
