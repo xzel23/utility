@@ -123,11 +123,10 @@ public class HtmlBuilder extends TextBuilder<String> {
     	    // THEMATIC_BREAK
     	    // HTML_BLOCK
     	    // HTML_INLINE
-    	    // IMAGE
             putTags(tags, "IMAGE",
                     attr -> "<img"
                             + " src=\""+attr.args.get(TextAttributes.ATTR_IMAGE_SRC)+"\""
-                            + "\">",
+                            + ">",
                     attr -> "</img>");
     	    // INDENTED_CODE_BLOCK
     	    // LINK
