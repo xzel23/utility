@@ -191,7 +191,7 @@ public class HtmlBuilder extends TextBuilder<String> {
     	    putTags(tags, MarkDownStyle.CODE.name(), attr -> "<code>", attr -> "</code>");
     	    putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
     	    putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> "<em>", attr -> "</em>");
-    	    putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre>", attr -> "</pre>");
+    	    putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
     	    putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "<br>\n", attr -> "");
     	    putTags(tags, MarkDownStyle.HEADING.name(),
     	            attr -> "\n<h"+attr.args.get(TextAttributes.ATTR_HEADING_LEVEL)
@@ -207,7 +207,7 @@ public class HtmlBuilder extends TextBuilder<String> {
                             + attrText(attr.args, TextAttributes.ATTR_IMAGE_TITLE, "title", null)
                             + ">",
                     attr -> "");
-    	    // INDENTED_CODE_BLOCK
+            putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
             putTags(tags, MarkDownStyle.LINK.name(),
                     attr -> {
                         String href = attr.args.getOrDefault(TextAttributes.ATTR_LINK_HREF, "").toString();
