@@ -16,28 +16,35 @@
 package com.dua3.utility.swing;
 
 import java.awt.Adjustable;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFileChooser;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dua3.utility.Color;
+import com.dua3.utility.Pair;
 
 public class SwingUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SwingUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SwingUtil.class);
 
     // Utility class, should not be instantiated
     private SwingUtil() {
@@ -63,7 +70,7 @@ public class SwingUtil {
      */
 	public static void setNativeLookAndFeel(String applicationName) {
 		if(System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
-			LOGGER.info("enabling global menu");
+			LOG.debug("enabling global menu");
 		    if (applicationName!=null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
                 System.setProperty("apple.awt.application.name", applicationName);
@@ -75,11 +82,11 @@ public class SwingUtil {
         try {
             // Set system L&F
             String lafName = UIManager.getSystemLookAndFeelClassName();
-			LOGGER.info("setting L&F to {}", lafName);
+			LOG.debug("setting L&F to {}", lafName);
 			UIManager.setLookAndFeel(lafName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
-            LOGGER.warn("Could not set Look&Feel.", ex);
+            LOG.warn("Could not set Look&Feel.", ex);
         }
 	}
 
@@ -95,6 +102,15 @@ public class SwingUtil {
         clipboard.setContents(selection, selection);
     }
 
+    /**
+     * Create an action to be used in menus.
+     * @param name
+     *  the name to display
+     * @param onActionPerformed
+     *  the Consumer that gets called when the Action is invoked
+     * @return
+     *  new Action instance
+     */
     public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             private static final long serialVersionUID = 1L;
@@ -106,6 +122,15 @@ public class SwingUtil {
         };
     }
 
+    /**
+     * Create an action to be used in menus.
+     * @param name
+     *  the name to display
+     * @param onActionPerformed
+     *  the Runnable that gets called when the Action is invoked
+     * @return
+     *  new Action instance
+     */
     public static Action createAction(String name, Runnable onActionPerformed) {
         return new AbstractAction(name) {
             private static final long serialVersionUID = 1L;
@@ -173,12 +198,66 @@ public class SwingUtil {
     		updateAndScrollToEnd(sp.getVerticalScrollBar(), update);
     }
 
+    /**
+     * Convert Color to java.awt.Color.
+     * @param color
+     *  Color to be converted
+     * @return
+     *  java.awt.Color
+     */
     public static java.awt.Color toAwtColor(Color color) {
         return new java.awt.Color(color.argb());
     }
 
+    /**
+     * Convert String to java.awt.Color.
+     * @param s
+     *  String to be converted
+     * @return
+     *  java.awt.Color
+     * @see Color#valueOf(String)
+     * @see #toAwtColor(Color)
+     */
     public static java.awt.Color toAwtColor(String s) {
         return toAwtColor(Color.valueOf(s));
     }
 
+    /**
+     * Show file open dialog.
+     * @param parent
+     *  the parent component for the dialog
+     * @param current
+     *  the current file, it determines the folder shown when the dialog opens
+     * @param types
+     *  the choosable file name filters, given as pairs of description and one or more extensions
+     * @return
+     *  Optional containing the path to the selected file.
+     */
+    @SafeVarargs
+	public static Optional<Path> showOpenDialog(Component parent, Path current, Pair<String,String[]>... types) {
+    		File file;
+    	    try {
+    	    		file = current ==null ? null : current.toFile();
+    	    } catch (UnsupportedOperationException e) {
+    	    		LOG.warn("path cannot be converted to file: {}", current);
+    	    		file = new File(".");
+    	    }
+    	    
+        JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
+        for(Pair<String,String[]> entry: types) {
+        		jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first, entry.second));
+        }
+
+        int rc = jfc.showOpenDialog(parent);
+
+        if (rc != JFileChooser.APPROVE_OPTION) {
+        		LOG.debug("file dialog was cancelled");
+            return Optional.empty();
+        }
+
+        Path path = jfc.getSelectedFile().toPath();
+		LOG.debug("selected path: {}", path);
+        
+        return Optional.of(path);
+    }
 }
