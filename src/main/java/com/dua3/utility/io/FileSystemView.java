@@ -135,4 +135,12 @@ public class FileSystemView implements AutoCloseable {
         cleanup.run();
     }
 
+    /**
+     * Get this FileSystemView's root. 
+     * @return the root path
+     */
+    public Path getRoot() {
+		return root;
+	}
+    
 }
