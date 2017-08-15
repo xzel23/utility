@@ -30,9 +30,13 @@ import com.dua3.utility.text.TextAttributes.Attribute;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class HtmlBuilder extends TextBuilder<String> {
+public class HtmlBuilder extends TextBuilder<String> implements AutoCloseable {
 
     public enum Option {
+        /** Header */
+        HTML_OPEN(String.class, "<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\">\n"),
+        /** Header */
+        HTML_CLOSE(String.class, "</body>\n</html>\n"),
         /** Where to open extern links */
         TARGET_FOR_EXTERN_LINKS(String.class, "_blank"),
         /** Replace '.md' file extension in local links (i.e. with ".html") */
@@ -49,6 +53,8 @@ public class HtmlBuilder extends TextBuilder<String> {
 
     private final StringBuilder buffer = new StringBuilder();
 
+    private final String htmlOpen;
+    private final String htmlClose;
     private final String targetForExternLinks;
     private final String replaceMdExtensionWith;
 
@@ -59,8 +65,12 @@ public class HtmlBuilder extends TextBuilder<String> {
     public HtmlBuilder(Pair<Option,Object>[] options) {
         Map<Option, Object> optionMap = Pair.toMap(options);
 
+        this.htmlOpen = (String) getOption(optionMap, Option.HTML_OPEN);
+        this.htmlClose = (String) getOption(optionMap, Option.HTML_CLOSE);
         this.targetForExternLinks = (String) getOption(optionMap, Option.TARGET_FOR_EXTERN_LINKS);
         this.replaceMdExtensionWith = (String) getOption(optionMap, Option.REPLACEMENT_FOR_MD_EXTENSION_IN_LINK);
+
+        buffer.append(htmlOpen);
     }
 
     @Override
@@ -270,8 +280,16 @@ public class HtmlBuilder extends TextBuilder<String> {
 
     @SafeVarargs
     public static String toHtml(RichText text, Pair<Option,Object>... options) {
-        HtmlBuilder builder = new HtmlBuilder(options);
-        builder.add(text);
-        return builder.get();
+        String html;
+        try (HtmlBuilder builder = new HtmlBuilder(options)) {
+            builder.add(text);
+            html = builder.get();
+        }
+        return html;
+    }
+
+    @Override
+    public void close() {
+        buffer.append(htmlClose);
     }
 }
