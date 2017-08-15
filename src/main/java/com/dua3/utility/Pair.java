@@ -1,5 +1,7 @@
 package com.dua3.utility;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -62,4 +64,12 @@ public class Pair<T1, T2> {
       return Objects.hash(first, second);
     }
 
+    @SafeVarargs
+    public static <K extends Object, V extends Object> Map<K,V> toMap(Pair<K,V>... args) {
+        Map<K,V> m = new HashMap<>();
+        for (Pair<K,V> arg: args ) {
+            m.put(arg.first, arg.second);
+        }
+        return m;
+    }
 }

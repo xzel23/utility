@@ -41,8 +41,13 @@ public class TextAttributes {
         }
     }
 
+    public static final String ATTR_ID = "id";
     public static final String ATTR_HEADING_LEVEL = "level";
     public static final String ATTR_IMAGE_SRC = "src";
+    public static final String ATTR_IMAGE_TITLE = "title";
+    public static final String ATTR_LINK_HREF = "href";
+    public static final String ATTR_LINK_TITLE = "title";
+    public static final String ATTR_LINK_EXTERN = "extern";
 
 	// meta
     public static final String STYLE_START_RUN = "__style-start-run";

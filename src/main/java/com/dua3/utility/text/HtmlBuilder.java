@@ -32,7 +32,36 @@ import com.dua3.utility.text.TextAttributes.Attribute;
  */
 public class HtmlBuilder extends TextBuilder<String> {
 
+    public enum Option {
+        /** Where to open extern links */
+        TARGET_FOR_EXTERN_LINKS(String.class, "_blank"),
+        /** Replace '.md' file extension in local links (i.e. with ".html") */
+        REPLACEMENT_FOR_MD_EXTENSION_IN_LINK(String.class, null);
+
+        final Class<?> valueClass;
+        final Object defaultValue;
+
+        private <T> Option(Class<T> clazz, T dflt) {
+            this.valueClass=clazz;
+            this.defaultValue=dflt;
+        }
+    }
+
     private final StringBuilder buffer = new StringBuilder();
+
+    private final String targetForExternLinks;
+    private final String replaceMdExtensionWith;
+
+    private static Object getOption(Map<Option, Object> optionMap, Option o) {
+        return optionMap.getOrDefault(o, o.defaultValue);
+    }
+
+    public HtmlBuilder(Pair<Option,Object>[] options) {
+        Map<Option, Object> optionMap = Pair.toMap(options);
+
+        this.targetForExternLinks = (String) getOption(optionMap, Option.TARGET_FOR_EXTERN_LINKS);
+        this.replaceMdExtensionWith = (String) getOption(optionMap, Option.REPLACEMENT_FOR_MD_EXTENSION_IN_LINK);
+    }
 
     @Override
     protected void append(Run run) {
@@ -103,46 +132,111 @@ public class HtmlBuilder extends TextBuilder<String> {
         }
     }
 
+    /**
+     * Add information about opening and closing tags for a style.
+     * @param tags
+     *  the map that stores mapping stylen ame -> (opening_tag, closing_tag)
+     * @param styleName
+     *  the style name
+     * @param opening
+     *  the opening tag(s)
+     * @param closing
+     *  the closing tag(s), should be in reverse order of the corresponding opening tags
+     */
     private static void putTags(Map<String, Pair<Function<Attribute,String>, Function<Attribute,String>>> tags, String styleName, Function<Attribute,String> opening, Function<Attribute,String> closing) {
         tags.put(styleName, Pair.of(opening, closing));
+    }
+
+    /**
+     * Create attribute text for HTML tags.
+     * @param args
+     *  the current node's arguments
+     * @param textAttribute
+     *  the TextAttribute to retrieve
+     * @param htmlAttribute
+     *  the attribute name of the HTML tag
+     * @param dflt
+     *  the value to use if attribute is not set. pass {@code null} to omit the attribute if not set
+     * @return
+     *  the text to set the attribute in the HTML tag
+     */
+    private String attrText(Map<String,Object> args, String textAttribute, String htmlAttribute, String dflt) {
+        Object value = args.getOrDefault(textAttribute, dflt);
+
+        if (value==null) {
+            return "";
+        }
+
+        return " "+htmlAttribute+"=\""+value.toString()+"\"";
+    }
+
+    private String ifSet(Map<String, Object> args, String textAttribute, String textIfPresent) {
+        Object value = args.get(textAttribute);
+
+        boolean isSet;
+        if (value instanceof Boolean) {
+            isSet = (boolean) value;
+        } else {
+            isSet = Boolean.valueOf(String.valueOf(value));
+        }
+
+        return isSet ? textIfPresent : "";
     }
 
     private Map<String, Pair<Function<Attribute,String>, Function<Attribute,String>>> defaultStyleTags() {
         Map<String, Pair<Function<Attribute,String>, Function<Attribute,String>>> tags = new HashMap<>();
 
-    		putTags(tags, "BLOCK_QUOTE", attr -> "<blockquote>\n", attr -> "</blockquote>\n");
-    		putTags(tags, "BULLET_LIST", attr -> "<ul>\n", attr -> "</ul>\n");
-    	    putTags(tags, "CODE", attr -> "<code>", attr -> "</code>");
-    	    putTags(tags, "DOCUMENT", attr -> "", attr -> "");
-    	    putTags(tags, "EMPHASIS", attr -> "<em>", attr -> "</em>");
-    	    putTags(tags, "FENCED_CODE_BLOCK", attr -> "<pre>", attr -> "</pre>");
-    	    putTags(tags, "HARD_LINE_BREAK", attr -> "<br>", attr -> "\n");
-    	    putTags(tags, "HEADING",
-    	            attr -> "<h"+attr.args.get(TextAttributes.ATTR_HEADING_LEVEL)+">",
+    		putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "<blockquote>\n", attr -> "</blockquote>\n");
+    		putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "<ul>\n", attr -> "</ul>\n");
+    	    putTags(tags, MarkDownStyle.CODE.name(), attr -> "<code>", attr -> "</code>");
+    	    putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
+    	    putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> "<em>", attr -> "</em>");
+    	    putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre>", attr -> "</pre>");
+    	    putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "<br>\n", attr -> "");
+    	    putTags(tags, MarkDownStyle.HEADING.name(),
+    	            attr -> "\n<h"+attr.args.get(TextAttributes.ATTR_HEADING_LEVEL)
+                    + attrText(attr.args, TextAttributes.ATTR_ID, "id", "")
+    	            +">",
     	            attr -> "</h"+attr.args.get(TextAttributes.ATTR_HEADING_LEVEL)+">\n");
-    	    // THEMATIC_BREAK
+            putTags(tags, MarkDownStyle.THEMATIC_BREAK.name(), attr -> "\n<hr>\n", attr -> "");
     	    // HTML_BLOCK
     	    // HTML_INLINE
-            putTags(tags, "IMAGE",
+            putTags(tags, MarkDownStyle.IMAGE.name(),
                     attr -> "<img"
-                            + " src=\""+attr.args.get(TextAttributes.ATTR_IMAGE_SRC)+"\""
+                            + attrText(attr.args, TextAttributes.ATTR_IMAGE_SRC, "src", "")
+                            + attrText(attr.args, TextAttributes.ATTR_IMAGE_TITLE, "title", null)
                             + ">",
-                    attr -> "</img>");
+                    attr -> "");
     	    // INDENTED_CODE_BLOCK
-    	    // LINK
-    	    putTags(tags, "LIST_ITEM", attr -> "<li>", attr -> "</li>\n");
-    	    putTags(tags, "ORDERED_LIST", attr -> "<ol>\n", attr -> "</ol>\n");
-    	    putTags(tags, "PARAGRAPH", attr -> "<p>", attr -> "</p>");
-    	    putTags(tags, "SOFT_LINE_BREAK", attr -> "", attr -> "&shy;\n");
-    	    putTags(tags, "STRONG_EMPHASIS", attr -> "<strong>", attr -> "</strong>");
-    	    putTags(tags, "TEXT", attr -> "", attr -> "");
+            putTags(tags, MarkDownStyle.LINK.name(),
+                    attr -> {
+                        String href = attr.args.getOrDefault(TextAttributes.ATTR_LINK_HREF, "").toString();
+                        if (replaceMdExtensionWith!= null) {
+                            href = href.replaceAll("(\\.md|\\.MD)(\\?|$)", replaceMdExtensionWith+"$2");
+                        }
+                        String hrefAttr = " href=\""+href+"\"";
+
+                        //
+                        return "<a"
+                            + hrefAttr
+                            + attrText(attr.args, TextAttributes.ATTR_LINK_TITLE, "title", null)
+                            + ifSet(attr.args, TextAttributes.ATTR_LINK_EXTERN, " target=\""+targetForExternLinks+"\"")
+                            + ">";
+                    },
+                    attr -> "</a>");
+    	    putTags(tags, MarkDownStyle.LIST_ITEM.name(), attr -> "<li>", attr -> "</li>\n");
+    	    putTags(tags, MarkDownStyle.ORDERED_LIST.name(), attr -> "<ol>\n", attr -> "</ol>\n");
+    	    putTags(tags, MarkDownStyle.PARAGRAPH.name(), attr -> "<p>", attr -> "</p>");
+    	    putTags(tags, MarkDownStyle.SOFT_LINE_BREAK.name(), attr -> "", attr -> "&shy;\n");
+    	    putTags(tags, MarkDownStyle.STRONG_EMPHASIS.name(), attr -> "<strong>", attr -> "</strong>");
+    	    putTags(tags, MarkDownStyle.TEXT.name(), attr -> "", attr -> "");
     	    // CUSTOM_BLOCK
     	    // CUSTOM_NODE
 
 		return Collections.unmodifiableMap(tags);
 	}
 
-	private void appendChar(char c) {
+    private void appendChar(char c) {
         // escape characters as suggested by OWASP.org
         switch (c) {
         case '<':
@@ -174,8 +268,9 @@ public class HtmlBuilder extends TextBuilder<String> {
         return new String(buffer);
     }
 
-    public static String toHtml(RichText text) {
-        HtmlBuilder builder = new HtmlBuilder();
+    @SafeVarargs
+    public static String toHtml(RichText text, Pair<Option,Object>... options) {
+        HtmlBuilder builder = new HtmlBuilder(options);
         builder.add(text);
         return builder.get();
     }

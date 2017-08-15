@@ -27,11 +27,15 @@ import org.commonmark.node.SoftLineBreak;
 import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.node.ThematicBreak;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.utility.Pair;
 import com.dua3.utility.text.TextAttributes.Attribute;
 
 class RichTextRenderer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RichTextRenderer.class);
 
     static class RTVisitor extends AbstractVisitor {
 
@@ -111,7 +115,18 @@ class RichTextRenderer {
 
         @Override
         public void visit(Heading node) {
-            Attribute attr = new Attribute(MarkDownStyle.HEADING, Pair.of(TextAttributes.ATTR_HEADING_LEVEL, node.getLevel()));
+            Node firstChild = node.getFirstChild();
+            Node lastChild = node.getLastChild();
+            String id;
+            if (firstChild instanceof Text && firstChild == lastChild) {
+                id = ((Text)firstChild).getLiteral().toLowerCase();
+            } else {
+                LOG.warn("Could not generate ID for header");
+                id = null;
+            }
+            Attribute attr = new Attribute(MarkDownStyle.HEADING,
+                    Pair.of(TextAttributes.ATTR_HEADING_LEVEL, node.getLevel()),
+                    Pair.of(TextAttributes.ATTR_ID, id));
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
@@ -146,9 +161,10 @@ class RichTextRenderer {
         @Override
         public void visit(Image node) {
             Attribute attr = new Attribute(MarkDownStyle.IMAGE,
-                    Pair.of(TextAttributes.ATTR_IMAGE_SRC, node.getDestination()));
+                    Pair.of(TextAttributes.ATTR_IMAGE_SRC, node.getDestination()),
+                    Pair.of(TextAttributes.ATTR_IMAGE_TITLE, node.getTitle()));
             push(TextAttributes.STYLE_START_RUN, attr);
-            //super.visit(node);
+            super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -163,7 +179,10 @@ class RichTextRenderer {
 
         @Override
         public void visit(Link node) {
-            Attribute attr = new Attribute(MarkDownStyle.LINK);
+            Attribute attr = new Attribute(MarkDownStyle.LINK,
+                    Pair.of(TextAttributes.ATTR_LINK_HREF, node.getDestination()),
+                    Pair.of(TextAttributes.ATTR_LINK_TITLE, node.getTitle()),
+                    Pair.of(TextAttributes.ATTR_LINK_EXTERN, !node.getDestination().startsWith("#")));
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
