@@ -222,8 +222,8 @@ public class HtmlBuilder extends TextBuilder<String> implements AutoCloseable {
             putTags(tags, MarkDownStyle.LINK.name(),
                     attr -> {
                         String href = attr.args.getOrDefault(TextAttributes.ATTR_LINK_HREF, "").toString();
-                        if (replaceMdExtensionWith!= null) {
-                            href = href.replaceAll("(\\.md|\\.MD)(\\?|$)", replaceMdExtensionWith+"$2");
+                        if (replaceMdExtensionWith != null) {
+                            href = href.replaceAll("(\\.md|\\.MD)(\\?|#|$)", replaceMdExtensionWith+"$2");
                         }
                         String hrefAttr = " href=\""+href+"\"";
 
