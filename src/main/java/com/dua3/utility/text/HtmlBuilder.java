@@ -215,14 +215,15 @@ public class HtmlBuilder extends TextBuilder<String> implements AutoCloseable {
                     attr -> "<img"
                             + attrText(attr.args, TextAttributes.ATTR_IMAGE_SRC, "src", "")
                             + attrText(attr.args, TextAttributes.ATTR_IMAGE_TITLE, "title", null)
+                            + attrText(attr.args, TextAttributes.ATTR_IMAGE_ALT, "alt", null)
                             + ">",
                     attr -> "");
             putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
             putTags(tags, MarkDownStyle.LINK.name(),
                     attr -> {
                         String href = attr.args.getOrDefault(TextAttributes.ATTR_LINK_HREF, "").toString();
-                        if (replaceMdExtensionWith!= null) {
-                            href = href.replaceAll("(\\.md|\\.MD)(\\?|$)", replaceMdExtensionWith+"$2");
+                        if (replaceMdExtensionWith != null) {
+                            href = href.replaceAll("(\\.md|\\.MD)(\\?|#|$)", replaceMdExtensionWith+"$2");
                         }
                         String hrefAttr = " href=\""+href+"\"";
 
