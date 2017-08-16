@@ -53,4 +53,4 @@ tasks.withType(FindBugs) {
     }
 }
 
-defaultTasks 'build', 'install'
+defaultTasks 'build', 'publishToMavenLocal', 'install'

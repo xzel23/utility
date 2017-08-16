@@ -251,24 +251,27 @@ public class SwingUtil {
      *  Optional containing the path to the selected file.
      */
 	public static Optional<Path> showDirectoryOpenDialog(Component parent, Path current) {
-    		return showOpenDialog(parent, JFileChooser.DIRECTORIES_ONLY, current);
+    		return showOpenDialog(parent,JFileChooser.DIRECTORIES_ONLY, current);
     }
     
     @SafeVarargs
 	private static Optional<Path> showOpenDialog(Component parent, int selectionMode, Path current, Pair<String,String[]>... types) {
-    		File file;
-    	    try {
-    	    		file = current ==null ? null : current.toFile();
-    	    } catch (UnsupportedOperationException e) {
-    	    		LOG.warn("path cannot be converted to file: {}", current);
-    	    		file = new File(".");
-    	    }
+    		File file=null;
+    		if (current!=null) {
+    			try {    	    	
+    	    			file = current.toFile();
+    			} catch (UnsupportedOperationException e) {
+    	    			LOG.warn("path cannot be converted to file: {}", current);
+    	    			file = new File(".");
+    			}
+    		}
     	    
-        JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
+        JFileChooser jfc = new JFileChooser();
         for(Pair<String,String[]> entry: types) {
         		jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first, entry.second));
         }
 
+        jfc.setSelectedFile(file.getAbsoluteFile());
         jfc.setFileSelectionMode(selectionMode);
         
         int rc = jfc.showOpenDialog(parent);
