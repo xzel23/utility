@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.dua3.utility.io.IOUtil;
 
 public class MarkDownTest {
 
@@ -35,14 +37,14 @@ public class MarkDownTest {
 		String htmlActual = getHtml();
 
         Path expectedPath = Paths.get(MarkDownTest.class.getResource("syntax.html").toURI());
-        String htmlExpected = new String(Files.readAllBytes(expectedPath));
+        String htmlExpected = IOUtil.read(expectedPath, StandardCharsets.UTF_8);
 
         Assert.assertEquals(htmlExpected, htmlActual);
 	}
 
     static String getHtml() throws URISyntaxException, IOException {
         Path mdPath = Paths.get(MarkDownTest.class.getResource("syntax.md").toURI());
-		String mdText = new String(Files.readAllBytes(mdPath));
+		String mdText = IOUtil.read(mdPath, StandardCharsets.UTF_8);
 		RichText richText = MarkDownUtil.convert(mdText);
 		String htmlActual = HtmlBuilder.toHtml(richText);
         return htmlActual;
