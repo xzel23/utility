@@ -85,18 +85,41 @@ public class FileSystemView implements AutoCloseable {
 
         // is it a directory?
         if (Files.isDirectory(root)) {
-            return new FileSystemView(root, () -> { /*NOOP*/ });
+            return forDirectory(root);
         }
 
         // is it a zip?
         if (root.getFileName().endsWith(".zip")||root.getFileName().endsWith(".ZIP")) {
-            URI uri = URI.create("jar:" + root.toUri());
-            return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
+            return forArchive(root);
         }
 
         // other are not implemented
         throw new IllegalArgumentException("Don't know how to handle this path: "+root);
     }
+
+    /**
+     * Create a FileSystemView for a file in Zip-Format.
+     * @param root
+     *  denotes the Zip-File
+     * @return
+     *  FileSystemView
+     * @throws IOException
+     */
+	public static FileSystemView forArchive(Path root) throws IOException {
+		URI uri = URI.create("jar:" + root.toUri());
+		return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
+	}
+
+	/**
+	 * Create a FileSystemView for an existing directory.
+	 * @param root
+	 *  the directory that will be root of this view
+	 * @return
+	 *  FileSystemView
+	 */
+	public static FileSystemView forDirectory(Path root) {
+		return new FileSystemView(root, () -> { /*NOOP*/ });
+	}
 
     private static FileSystemView createFileSystemView(FileSystem zipFs, String path) {
         Path zipRoot = zipFs.getPath(path);
@@ -109,7 +132,7 @@ public class FileSystemView implements AutoCloseable {
      * @return a new FileSystemView
      * @throws IOException if the view cannot be created
      */
-    public static FileSystemView create(Class<?> clazz) throws IOException {
+    public static FileSystemView forClass(Class<?> clazz) throws IOException {
         try {
             String classFile = clazz.getSimpleName()+".class";
             URI uri = clazz.getResource(classFile).toURI();

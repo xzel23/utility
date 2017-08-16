@@ -38,7 +38,7 @@ public class FileSystemViewTest {
     }
 
     private void testClassHelper(Class<?> clazz) throws IOException {
-        try (FileSystemView fsv = FileSystemView.create(clazz)) {
+        try (FileSystemView fsv = FileSystemView.forClass(clazz)) {
             assertNotNull(fsv);
 
             String pathToClassFile = clazz.getSimpleName()+".class";
