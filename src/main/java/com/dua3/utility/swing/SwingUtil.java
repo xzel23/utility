@@ -43,6 +43,9 @@ import org.slf4j.LoggerFactory;
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 
+/**
+ * Utility methods for Swing applications.
+ */
 public class SwingUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SwingUtil.class);
 
@@ -234,7 +237,25 @@ public class SwingUtil {
      *  Optional containing the path to the selected file.
      */
     @SafeVarargs
-	public static Optional<Path> showOpenDialog(Component parent, Path current, Pair<String,String[]>... types) {
+	public static Optional<Path> showFileOpenDialog(Component parent, Path current, Pair<String,String[]>... types) {
+    		return showOpenDialog(parent, JFileChooser.FILES_ONLY, current, types);
+    }
+    
+    /**
+     * Show directory open dialog.
+     * @param parent
+     *  the parent component for the dialog
+     * @param current
+     *  the current file, it determines the folder shown when the dialog opens
+     * @return
+     *  Optional containing the path to the selected file.
+     */
+	public static Optional<Path> showDirectoryOpenDialog(Component parent, Path current) {
+    		return showOpenDialog(parent, JFileChooser.DIRECTORIES_ONLY, current);
+    }
+    
+    @SafeVarargs
+	private static Optional<Path> showOpenDialog(Component parent, int selectionMode, Path current, Pair<String,String[]>... types) {
     		File file;
     	    try {
     	    		file = current ==null ? null : current.toFile();
@@ -248,6 +269,8 @@ public class SwingUtil {
         		jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first, entry.second));
         }
 
+        jfc.setFileSelectionMode(selectionMode);
+        
         int rc = jfc.showOpenDialog(parent);
 
         if (rc != JFileChooser.APPROVE_OPTION) {
