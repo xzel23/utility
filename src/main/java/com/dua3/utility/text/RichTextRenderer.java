@@ -37,6 +37,21 @@ class RichTextRenderer {
 
     private static final Logger LOG = LoggerFactory.getLogger(RichTextRenderer.class);
 
+    static class LiteralCollectingVisitor extends AbstractVisitor {
+        private StringBuilder sb = new StringBuilder();
+
+        @Override
+        public void visit(Text node) {
+            sb.append(node.getLiteral());
+            super.visit(node);
+        }
+
+        @Override
+        public String toString() {
+            return sb.toString();
+        }
+    }
+
     static class RTVisitor extends AbstractVisitor {
 
         private final RichTextBuilder app;
@@ -160,11 +175,15 @@ class RichTextRenderer {
 
         @Override
         public void visit(Image node) {
+            LiteralCollectingVisitor lcv = new LiteralCollectingVisitor();
+            lcv.visit(node);
+            String altText = lcv.toString();
+
             Attribute attr = new Attribute(MarkDownStyle.IMAGE,
                     Pair.of(TextAttributes.ATTR_IMAGE_SRC, node.getDestination()),
-                    Pair.of(TextAttributes.ATTR_IMAGE_TITLE, node.getTitle()));
+                    Pair.of(TextAttributes.ATTR_IMAGE_TITLE, node.getTitle()),
+                    Pair.of(TextAttributes.ATTR_IMAGE_ALT, altText));
             push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
