@@ -12,6 +12,10 @@ import org.junit.Test;
  */
 public class IOUtilTest {
     
+    /**
+     * Test getting extension for a Path.
+     * @throws IOException
+     */
     @Test
     public void testGetExtension() throws IOException {
         Path path = Paths.get("folder", "text.txt");
