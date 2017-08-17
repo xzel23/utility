@@ -13,10 +13,10 @@ import java.util.Objects;
  *            type of second member
  */
 public class Pair<T1, T2> {
-    
+
     /**
      * Add pairs to a map.
-     * 
+     *
      * @param m
      *            the map to add the pairs to
      * @param args
@@ -28,7 +28,7 @@ public class Pair<T1, T2> {
             m.put(arg.first, arg.second);
         }
     }
-    
+
     /**
      * Create a Pair.
      *
@@ -45,7 +45,7 @@ public class Pair<T1, T2> {
     public static <T1, T2> Pair<T1, T2> of(T1 first, T2 second) {
         return new Pair<>(first, second);
     }
-    
+
     /**
      * Create a Pair.
      *
@@ -63,13 +63,13 @@ public class Pair<T1, T2> {
     public static <T1, T2> Pair<T1, T2[]> ofArray(T1 first, T2... second) {
         return new Pair<>(first, second);
     }
-    
+
     /**
      * Convert an {@code Array<Pair<K,V>>} to {@code Map<K,V>}.
      * <p>
      * The returned Map can be modified by adding or removing entries.
      * </p>
-     * 
+     *
      * @param args
      *            the entries to add to the resulting map
      * @return a new {@code Map<K,V>} whose entries correspond to the pairs given as arguments
@@ -80,13 +80,13 @@ public class Pair<T1, T2> {
         addToMap(m, args);
         return m;
     }
-    
+
     /** first member */
     public final T1 first;
-    
+
     /** second member */
     public final T2 second;
-    
+
     /**
      * Construct a new Pair.
      *
@@ -99,7 +99,7 @@ public class Pair<T1, T2> {
         this.first = first;
         this.second = second;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -114,12 +114,12 @@ public class Pair<T1, T2> {
         Pair<?, ?> other = (Pair<?, ?>) obj;
         return Objects.equals(first, other.first) && Objects.equals(second, other.second);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(first, second);
     }
-    
+
     @Override
     public String toString() {
         return "[" + first + "," + second + "]";

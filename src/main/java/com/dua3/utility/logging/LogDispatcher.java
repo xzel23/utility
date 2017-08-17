@@ -11,9 +11,9 @@ import java.util.logging.LogRecord;
  * and not an interface.
  */
 public class LogDispatcher extends Handler {
-
+    
     private final LogListener listener;
-
+    
     /**
      * Create a new instance that forwards all method calls to a {@link LogListener}.
      *
@@ -23,20 +23,20 @@ public class LogDispatcher extends Handler {
     public LogDispatcher(LogListener listener) {
         this.listener = listener;
     }
-
+    
     @Override
     public void close() {
         listener.close();
     }
-
+    
     @Override
     public void flush() {
         listener.flush();
     }
-
+    
     @Override
     public void publish(LogRecord record) {
         listener.publish(record);
     }
-
+    
 }

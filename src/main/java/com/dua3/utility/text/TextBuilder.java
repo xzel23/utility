@@ -73,8 +73,8 @@ public abstract class TextBuilder<T> {
     /**
      * Check state of this TextBuilder.
      *
-     * @throws IllegalStateExceptionvif
-     *             this builder's get() was already called
+     * @throws IllegalStateException
+     *             if this builder's get() was already called
      */
     protected void checkState() {
         if (wasGetCalled()) {

@@ -29,14 +29,14 @@ import java.util.stream.Stream;
  */
 public class RichText
         implements Iterable<Run> {
-
+    
     private static final RichText EMPTY_TEXT = RichText.valueOf("");
-
+    
     private static final Comparator<RichText> COMPARATOR = (RichText o1, RichText o2) -> o1.text.compareTo(o2.text);
-
+    
     private static final Comparator<RichText> COMPARATOR_CASE_INSENSITIVE = (RichText o1, RichText o2) -> o1.text
             .compareToIgnoreCase(o2.text);
-
+    
     /**
      * Get comparator.
      *
@@ -51,7 +51,7 @@ public class RichText
     public static Comparator<RichText> comparator() {
         return COMPARATOR;
     }
-
+    
     /**
      * Get case insensitive comparator. <b>Note:</b> this ordering is
      * inconsistent with equals.
@@ -61,7 +61,7 @@ public class RichText
     public static Comparator<RichText> comparatorIgnoreCase() {
         return COMPARATOR_CASE_INSENSITIVE;
     }
-
+    
     /**
      * Returns the empty String as RichText.
      *
@@ -70,11 +70,11 @@ public class RichText
     public static RichText emptyText() {
         return EMPTY_TEXT;
     }
-
+    
     public static RichText valueOf(Object o) {
         return valueOf(String.valueOf(o));
     }
-
+    
     /**
      * Convert String to RichText.
      *
@@ -85,35 +85,35 @@ public class RichText
     public static RichText valueOf(String s) {
         return new RichText(s, Arrays.asList(new Run(s, 0, s.length(), TextAttributes.none())));
     }
-
+    
     private final String text;
-
+    
     private final List<Run> runs;
-
+    
     RichText(String text, List<Run> runs) {
         this.text = Objects.requireNonNull(text);
         this.runs = runs;
     }
-
+    
     RichText(String text, Run[] runs) {
         this(text, Arrays.asList(runs));
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
+        
         RichText other = (RichText) obj;
         return runs.equals(other.runs);
     }
-
+    
     @Override
     public int hashCode() {
         return text.hashCode() + 17 * runs.size();
     }
-
+    
     /**
      * Test if empty.
      *
@@ -122,12 +122,12 @@ public class RichText
     public boolean isEmpty() {
         return text.isEmpty();
     }
-
+    
     @Override
     public Iterator<Run> iterator() {
         return runs.iterator();
     }
-
+    
     /**
      * Length of text in characters.
      *
@@ -136,7 +136,7 @@ public class RichText
     public int length() {
         return text.length();
     }
-
+    
     /**
      * A stream of the Runs this text consists of.
      *
@@ -145,10 +145,10 @@ public class RichText
     public Stream<Run> stream() {
         return runs.stream();
     }
-
+    
     @Override
     public String toString() {
         return text;
     }
-
+    
 }

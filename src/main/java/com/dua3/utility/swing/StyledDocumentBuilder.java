@@ -42,7 +42,7 @@ import com.dua3.utility.text.TextBuilder;
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
-
+    
     /**
      * Convert {@code RichText} to {@code StyledDocument} conserving text
      * attributes.
@@ -63,30 +63,30 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         doc.setParagraphAttributes(0, doc.getLength(), dfltAttr, false);
         return doc;
     }
-    
+
     private final Function<String, TextAttributes> styleSupplier;
-
+    
     private Map<String, AttributeSet> styleAttributes = new HashMap<>();
-
+    
     private StyledDocument doc = new DefaultStyledDocument();
     private final double scale;
-
+    
     public StyledDocumentBuilder(double scale) {
         this(scale, styleName -> TextAttributes.none());
     }
-
+    
     public StyledDocumentBuilder(double scale, Function<String, TextAttributes> styleSupplier) {
         this.scale = scale;
         this.styleSupplier = styleSupplier;
     }
-
+    
     @Override
     public StyledDocument get() {
         StyledDocument tmp = doc;
         doc = null;
         return tmp;
     }
-
+    
     private void applyAttributes(Map<String, Object> styleAttributes, SimpleAttributeSet as) {
         for (Map.Entry<String, Object> e : styleAttributes.entrySet()) {
             switch (e.getKey()) {
@@ -141,17 +141,17 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             }
         }
     }
-
+    
     private AttributeSet getAttributes(String styleName) {
         return styleAttributes.computeIfAbsent(styleName, s -> getAttributes(styleSupplier.apply(s)));
     }
-
+    
     private AttributeSet getAttributes(TextAttributes style) {
         SimpleAttributeSet as = new SimpleAttributeSet();
         applyAttributes(style.properties(), as);
         return as;
     }
-
+    
     private SimpleAttributeSet getAttributeSet(Run run) {
         Map<String, Object> styleProps = run.getStyle().properties();
         AttributeSet das = getAttributes((String) styleProps.get(TextAttributes.STYLE_NAME));
@@ -159,7 +159,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         applyAttributes(styleProps, as);
         return as;
     }
-
+    
     @Override
     protected void append(Run run) {
         try {
@@ -169,10 +169,10 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             LOG.error("Exception in StyledDocumentBuilder.append()", ex);
         }
     }
-
+    
     @Override
     protected boolean wasGetCalled() {
         return doc == null;
     }
-
+    
 }

@@ -319,17 +319,17 @@ public final class Color implements Serializable {
     public static final Color YELLOWGREEN = register("YELLOWGREEN", 0xFF9ACD32);
     private static final Map<String, Color> COLORS = new LinkedHashMap<>();
     private static final double F_BRIGHTEN = 0.7;
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private static final int SHIFT_A = 24;
-    
+
     private static final int SHIFT_B = 0;
-    
+
     private static final int SHIFT_G = 8;
-    
+
     private static final int SHIFT_R = 16;
-    
+
     /**
      * Get a mapping from color name to Color instance.
      *
@@ -338,7 +338,7 @@ public final class Color implements Serializable {
     public static Map<String, Color> palette() {
         return Collections.unmodifiableMap(COLORS);
     }
-    
+
     /**
      * Convert String to Color.
      * Lookup is tried i these steps:
@@ -359,13 +359,13 @@ public final class Color implements Serializable {
         if (color != null) {
             return color;
         }
-        
+
         // HEX colors
         if (s.startsWith("#")) {
             int i = Integer.parseUnsignedInt(s.substring(1), 16);
             return new Color(i);
         }
-        
+
         // RGB colors. example: "rgb(255, 0, 0)"
         if (s.startsWith("rgb")) {
             String s1 = s.substring(3).trim();
@@ -380,7 +380,7 @@ public final class Color implements Serializable {
             }
             throw new IllegalArgumentException("Cannot parse \"" + s + "\" as rgb color.");
         }
-        
+
         // RGBA colors. example: "rgb(255, 0, 0, 0.3)"
         if (s.startsWith("rgba")) {
             String s1 = s.substring(4).trim();
@@ -396,38 +396,38 @@ public final class Color implements Serializable {
             }
             throw new IllegalArgumentException("Cannot parse \"" + s + "\" as rgba color.");
         }
-        
+
         // no luck so far
         throw new IllegalArgumentException("\"" + s + "\" is no valid color.");
     }
-    
+
     /**
      * Get Iterable over all declared color values.
-     * 
+     *
      * @return Iterable
      */
     public static Iterable<Color> values() {
         return COLORS.values();
     }
-    
+
     private static Color register(String name, int code) {
         Color c = new Color(code);
         COLORS.put(name, c);
         return c;
     }
-    
+
     private static int shiftComponentValue(int value, int bits) {
         if (value < 0 || value > 255) {
             throw new IllegalArgumentException();
         }
         return value << bits;
     }
-    
-    private final int argb;
 
+    private final int argb;
+    
     /**
      * Create a new Color.
-     * 
+     *
      * @param r
      *            red (0..255)
      * @param g
@@ -438,10 +438,10 @@ public final class Color implements Serializable {
     public Color(int r, int g, int b) {
         this(r, g, b, 255);
     }
-    
+
     /**
      * Create a new Color.
-     * 
+     *
      * @param r
      *            red (0..255)
      * @param g
@@ -455,59 +455,59 @@ public final class Color implements Serializable {
         argb = shiftComponentValue(a, SHIFT_A) + shiftComponentValue(r, SHIFT_R) + shiftComponentValue(g, SHIFT_G)
                 + shiftComponentValue(b, SHIFT_B);
     }
-    
+
     private Color(int argb) {
         this.argb = argb;
     }
-    
+
     /**
      * Get alpha component of color.
-     * 
+     *
      * @return alpha component
      */
     public int a() {
         return (argb >> SHIFT_A) & 0xff;
     }
-    
+
     /**
      * Get alpha component of color.
-     * 
+     *
      * @return alpha component as float (between 0.0 and 1.0)
      */
     public float af() {
         return a() / 255f;
     }
-    
+
     /**
      * Get color value.
-     * 
+     *
      * @return this color encoded as an integer value
      */
     public int argb() {
         return argb;
     }
-    
+
     /**
      * Get blue component of color.
-     * 
+     *
      * @return blue component
      */
     public int b() {
         return (argb >> SHIFT_B) & 0xff;
     }
-    
+
     /**
      * Get blue component of color.
-     * 
+     *
      * @return blue component as float (between 0.0 and 1.0)
      */
     public float bf() {
         return b() / 255f;
     }
-    
+
     /**
      * Get a brighter color.
-     * 
+     *
      * @return a brighter version of this color
      */
     public Color brighter() {
@@ -515,12 +515,12 @@ public final class Color implements Serializable {
         int g = g();
         int b = b();
         int alpha = a();
-        
+
         int i = (int) (1.0 / (1.0 - F_BRIGHTEN));
         if (r == 0 && g == 0 && b == 0) {
             return new Color(i, i, i, alpha);
         }
-        
+
         if (r > 0 && r < i) {
             r = i;
         }
@@ -530,88 +530,88 @@ public final class Color implements Serializable {
         if (b > 0 && b < i) {
             b = i;
         }
-        
+
         return new Color(Math.min((int) (r / F_BRIGHTEN), 255), Math.min((int) (g / F_BRIGHTEN), 255),
                 Math.min((int) (b / F_BRIGHTEN), 255), alpha);
     }
-    
+
     /**
      * Get a darker color.
-     * 
+     *
      * @return a darker version of this color
      */
     public Color darker() {
         return new Color(Math.max((int) (r() * F_BRIGHTEN), 0), Math.max((int) (g() * F_BRIGHTEN), 0),
                 Math.max((int) (b() * F_BRIGHTEN), 0), a());
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null || obj.getClass() != getClass()) {
             return false;
         }
-        
+
         return ((Color) obj).argb == argb;
     }
-    
+
     /**
      * Get green component of color.
-     * 
+     *
      * @return green component
      */
     public int g() {
         return (argb >> SHIFT_G) & 0xff;
     }
-    
+
     /**
      * Get green component of color.
-     * 
+     *
      * @return green component as float (between 0.0 and 1.0)
      */
     public float gf() {
         return g() / 255f;
     }
-    
+
     @Override
     public int hashCode() {
         return argb;
     }
-    
+
     /**
      * Get red component of color.
-     * 
+     *
      * @return red component
      */
     public int r() {
         return (argb >> SHIFT_R) & 0xff;
     }
-    
+
     /**
      * Get red component of color.
-     * 
+     *
      * @return red component as float (between 0.0 and 1.0)
      */
     public float rf() {
         return r() / 255f;
     }
-    
+
     /**
      * Get color components.
-     * 
+     *
      * @return byte array of size 4 containing this color's components in argb order
      */
     public byte[] toByteArray() {
         return new byte[] { (byte) a(), (byte) r(), (byte) g(), (byte) b() };
     }
-    
+
     /**
      * Get string representation of color.
-     * 
+     *
      * @return this color as hex value (format #aarrggbb)
      */
     @Override
     public String toString() {
         return "#" + Integer.toHexString(argb);
     }
-    
+
 }
