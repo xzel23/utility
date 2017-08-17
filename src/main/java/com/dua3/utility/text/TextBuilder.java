@@ -49,11 +49,15 @@ public abstract class TextBuilder<T> {
      *
      * @param text
      *            the richt text to add
+     * @return this TextBuider
      */
-    public void add(RichText text) {
+    public TextBuilder<T> add(RichText text) {
+        checkState();
+        
         for (Run r : text) {
             append(r);
         }
+        return this;
     }
 
     /**
@@ -67,9 +71,23 @@ public abstract class TextBuilder<T> {
     protected abstract void append(Run run);
 
     /**
+     * Check state of this TextBuilder.
+     *
+     * @throws IllegalStateExceptionvif
+     *             this builder's get() was already called
+     */
+    protected void checkState() {
+        if (wasGetCalled()) {
+            throw new IllegalStateException("This builder's get() method was already called.");
+        }
+    }
+
+    /**
      * Get document.
      *
      * @return the document after transformation.
      */
     protected abstract T get();
+
+    protected abstract boolean wasGetCalled();
 }
