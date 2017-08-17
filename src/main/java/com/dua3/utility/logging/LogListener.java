@@ -14,14 +14,14 @@ public interface LogListener {
      * @see java.util.logging.Handler#close()
      */
     void close();
-
+    
     /**
      * Flush log records.
      *
      * @see java.util.logging.Handler#flush()
      */
     void flush();
-
+    
     /**
      * Publish a log record.
      *

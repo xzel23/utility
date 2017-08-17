@@ -25,11 +25,11 @@ import com.dua3.utility.Pair;
  * A set of text attributes.
  */
 public class TextAttributes {
-
+    
     public static class Attribute {
         public final MarkDownStyle style;
         public final Map<String, Object> args;
-
+        
         @SafeVarargs
         Attribute(MarkDownStyle style, Pair<String, Object>... args) {
             this.style = style;
@@ -40,7 +40,7 @@ public class TextAttributes {
             this.args = Collections.unmodifiableMap(m);
         }
     }
-
+    
     public static final String ATTR_ID = "id";
     public static final String ATTR_HEADING_LEVEL = "level";
     public static final String ATTR_IMAGE_SRC = "src";
@@ -49,29 +49,29 @@ public class TextAttributes {
     public static final String ATTR_LINK_HREF = "href";
     public static final String ATTR_LINK_TITLE = "title";
     public static final String ATTR_LINK_EXTERN = "extern";
-
+    
     // meta
     public static final String STYLE_START_RUN = "__style-start-run";
     public static final String STYLE_END_RUN = "__style-end-run";
-
+    
     // style name
     public static final String STYLE_NAME = "style-name";
-
+    
     // font properties
     public static final String FONT_FAMILY = "font-family";
     public static final String FONT_STYLE = "font-style";
     public static final String FONT_SIZE = "font-size";
     public static final String FONT_WEIGHT = "font-weight";
     public static final String FONT_VARIANT = "font-variant";
-
+    
     public static final String TEXT_DECORATION = "text-decoration";
-
+    
     // colors
     public static final String COLOR = "color";
     public static final String BACKGROUND_COLOR = "background-color";
-
+    
     private static final TextAttributes NONE = new TextAttributes();
-
+    
     /**
      * The empty style instance.
      *
@@ -80,7 +80,7 @@ public class TextAttributes {
     public static TextAttributes none() {
         return NONE;
     }
-
+    
     /**
      * Construct style with attributes.
      *
@@ -96,42 +96,42 @@ public class TextAttributes {
         }
         return style;
     }
-
+    
     private final Map<String, Object> properties = new HashMap<>();
-
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
+        
         TextAttributes other = (TextAttributes) obj;
         return properties.equals(other.properties);
     }
-
+    
     @Override
     public int hashCode() {
         return properties.hashCode();
     }
-
+    
     public Map<String, Object> properties() {
         return Collections.unmodifiableMap(properties);
     }
-
+    
     Object get(String property) {
         return properties.get(property);
     }
-
+    
     Object getOrDefault(String property, Object def) {
         return properties.getOrDefault(property, def);
     }
-
+    
     void put(String property, Object value) {
         properties.put(property, value);
     }
-
+    
     void remove(String property) {
         properties.remove(property);
     }
-
+    
 }

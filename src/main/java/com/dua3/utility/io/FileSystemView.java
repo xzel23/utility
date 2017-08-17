@@ -41,12 +41,12 @@ import java.util.Objects;
  *
  */
 public class FileSystemView implements AutoCloseable {
-
+    
     @FunctionalInterface
     private interface CleanUp {
         void run() throws IOException;
     }
-
+    
     /**
      * Create FileSystemView.
      *
@@ -58,25 +58,25 @@ public class FileSystemView implements AutoCloseable {
      */
     public static FileSystemView create(Path root) throws IOException {
         Objects.requireNonNull(root);
-
+        
         if (!Files.exists(root)) {
             throw new IOException("Path does not exist: " + root);
         }
-
+        
         // is it a directory?
         if (Files.isDirectory(root)) {
             return forDirectory(root);
         }
-
+        
         // is it a zip?
         if (root.getFileName().endsWith(".zip") || root.getFileName().endsWith(".ZIP")) {
             return forArchive(root);
         }
-
+        
         // other are not implemented
         throw new IllegalArgumentException("Don't know how to handle this path: " + root);
     }
-    
+
     /**
      * Create a FileSystemView for a file in Zip-Format.
      *
@@ -90,7 +90,7 @@ public class FileSystemView implements AutoCloseable {
         URI uri = URI.create("jar:" + root.toUri());
         return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
     }
-
+    
     /**
      * Create FileSystemView.
      *
@@ -120,7 +120,7 @@ public class FileSystemView implements AutoCloseable {
             throw new IOException(e);
         }
     }
-
+    
     /**
      * Create a FileSystemView for an existing directory.
      *
@@ -133,26 +133,26 @@ public class FileSystemView implements AutoCloseable {
         return new FileSystemView(root, () -> {
             /* NOOP */ });
     }
-
+    
     private static FileSystemView createFileSystemView(FileSystem zipFs, String path) {
         Path zipRoot = zipFs.getPath(path);
         return new FileSystemView(zipRoot, zipFs::close);
     }
-
+    
     private final Path root;
-
+    
     private final CleanUp cleanup;
-
+    
     private FileSystemView(Path root, CleanUp cleanup) {
         this.cleanup = cleanup;
         this.root = root;
     }
-
+    
     @Override
     public void close() throws IOException {
         cleanup.run();
     }
-
+    
     /**
      * Get this FileSystemView's root.
      *
@@ -161,7 +161,7 @@ public class FileSystemView implements AutoCloseable {
     public Path getRoot() {
         return root;
     }
-
+    
     /**
      * Resolve path.
      *
@@ -173,7 +173,7 @@ public class FileSystemView implements AutoCloseable {
     public Path resolve(String path) {
         return root.resolve(path);
     }
-
+    
     /**
      * Resolve path.
      *
@@ -185,5 +185,5 @@ public class FileSystemView implements AutoCloseable {
     Path resolve(Path path) {
         return root.resolve(path);
     }
-
+    
 }

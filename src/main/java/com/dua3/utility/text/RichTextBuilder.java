@@ -25,36 +25,36 @@ import java.util.TreeMap;
  * @author axel
  */
 public class RichTextBuilder implements Appendable {
-
+    
     private final StringBuilder buffer = new StringBuilder();
-
+    
     private final SortedMap<Integer, TextAttributes> parts = new TreeMap<>();
-
+    
     /**
      * Construct a new empty builder.
      */
     public RichTextBuilder() {
         parts.put(0, new TextAttributes());
     }
-
+    
     @Override
     public RichTextBuilder append(char c) {
         buffer.append(c);
         return this;
     }
-
+    
     @Override
     public RichTextBuilder append(CharSequence csq) {
         buffer.append(csq);
         return this;
     }
-
+    
     @Override
     public Appendable append(CharSequence csq, int start, int end) {
         buffer.append(csq, start, end);
         return this;
     }
-
+    
     /**
      * Get attribute of the current Run.
      *
@@ -65,7 +65,7 @@ public class RichTextBuilder implements Appendable {
     public Object get(String property) {
         return currentStyle().get(property);
     }
-
+    
     /**
      * Remove and return the value of a property from the property stack.
      *
@@ -89,7 +89,7 @@ public class RichTextBuilder implements Appendable {
         }
         return current;
     }
-
+    
     /**
      * Push a style property.
      *
@@ -101,7 +101,7 @@ public class RichTextBuilder implements Appendable {
     public void push(String property, Object value) {
         currentStyle().put(property, value);
     }
-
+    
     /**
      * Convert to RichText.
      *
@@ -110,32 +110,32 @@ public class RichTextBuilder implements Appendable {
     public RichText toRichText() {
         String text = buffer.toString();
         Run[] runs = new Run[parts.size()];
-
+        
         int runIdx = 0;
         int start = parts.firstKey();
         TextAttributes style = parts.get(start);
         for (Map.Entry<Integer, TextAttributes> e : parts.entrySet()) {
             int end = e.getKey();
             int runLength = end - start;
-
+            
             if (runLength == 0) {
                 continue;
             }
-
+            
             runs[runIdx++] = new Run(text, start, end - start, style);
             start = end;
             style = e.getValue();
         }
         runs[runIdx] = new Run(text, start, text.length() - start, style);
-
+        
         return new RichText(text, runs);
     }
-
+    
     @Override
     public String toString() {
         return buffer.toString();
     }
-
+    
     private TextAttributes currentStyle() {
         final TextAttributes style;
         if (parts.lastKey() == buffer.length()) {
@@ -146,5 +146,5 @@ public class RichTextBuilder implements Appendable {
         }
         return style;
     }
-
+    
 }
