@@ -2,6 +2,8 @@ package com.dua3.utility.text;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.BiConsumer;
 
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BlockQuote;
@@ -27,8 +29,7 @@ import org.commonmark.node.SoftLineBreak;
 import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.node.ThematicBreak;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.commonmark.node.Visitor;
 
 import com.dua3.utility.Pair;
 import com.dua3.utility.text.TextAttributes.Attribute;
@@ -134,15 +135,7 @@ class RichTextRenderer {
 
         @Override
         public void visit(Heading node) {
-            Node firstChild = node.getFirstChild();
-            Node lastChild = node.getLastChild();
-            String id;
-            if (firstChild instanceof Text && firstChild == lastChild) {
-                id = ((Text) firstChild).getLiteral().toLowerCase();
-            } else {
-                LOG.warn("Could not generate ID for header");
-                id = null;
-            }
+            String id = extractText(node, (v,n) -> v.visit(n)).toLowerCase(Locale.ROOT).trim();
             Attribute attr = new Attribute(MarkDownStyle.HEADING,
                     Pair.of(TextAttributes.ATTR_HEADING_LEVEL, node.getLevel()),
                     Pair.of(TextAttributes.ATTR_ID, id));
@@ -171,16 +164,21 @@ class RichTextRenderer {
 
         @Override
         public void visit(Image node) {
-            LiteralCollectingVisitor lcv = new LiteralCollectingVisitor();
-            lcv.visit(node);
-            String altText = lcv.toString();
+            String altText = extractText(node, (v,n) -> v.visit(n));
 
             Attribute attr = new Attribute(MarkDownStyle.IMAGE,
                     Pair.of(TextAttributes.ATTR_IMAGE_SRC, node.getDestination()),
                     Pair.of(TextAttributes.ATTR_IMAGE_TITLE, node.getTitle()),
                     Pair.of(TextAttributes.ATTR_IMAGE_ALT, altText));
+
             push(TextAttributes.STYLE_START_RUN, attr);
             push(TextAttributes.STYLE_END_RUN, attr);
+        }
+
+        private <N extends Node> String extractText(N node, BiConsumer<? super Visitor,N> consumer) {
+            LiteralCollectingVisitor lcv = new LiteralCollectingVisitor();
+            consumer.accept(lcv,node);
+            return lcv.toString();
         }
 
         @Override
@@ -268,8 +266,6 @@ class RichTextRenderer {
         }
 
     }
-
-    private static final Logger LOG = LoggerFactory.getLogger(RichTextRenderer.class);
 
     public RichText render(Node node) {
         RichTextBuilder app = new RichTextBuilder();
