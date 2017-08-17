@@ -28,13 +28,13 @@ public class TextAttributes {
 
     public static class Attribute {
         public final MarkDownStyle style;
-        public final Map<String,Object> args;
+        public final Map<String, Object> args;
 
         @SafeVarargs
-        Attribute(MarkDownStyle style,Pair<String,Object>... args) {
+        Attribute(MarkDownStyle style, Pair<String, Object>... args) {
             this.style = style;
-            Map<String,Object> m = new HashMap<>();
-            for (Pair<String,Object> arg: args) {
+            Map<String, Object> m = new HashMap<>();
+            for (Pair<String, Object> arg : args) {
                 m.put(arg.first, arg.second);
             }
             this.args = Collections.unmodifiableMap(m);
@@ -50,7 +50,7 @@ public class TextAttributes {
     public static final String ATTR_LINK_TITLE = "title";
     public static final String ATTR_LINK_EXTERN = "extern";
 
-	// meta
+    // meta
     public static final String STYLE_START_RUN = "__style-start-run";
     public static final String STYLE_END_RUN = "__style-end-run";
 
@@ -74,6 +74,7 @@ public class TextAttributes {
 
     /**
      * The empty style instance.
+     *
      * @return the empty style
      */
     public static TextAttributes none() {
@@ -82,14 +83,16 @@ public class TextAttributes {
 
     /**
      * Construct style with attributes.
-     * @param entries the attribute/value pairs to add
+     *
+     * @param entries
+     *            the attribute/value pairs to add
      * @return the new style
      */
     @SafeVarargs
-	public static TextAttributes of(Pair<String,String>... entries) {
+    public static TextAttributes of(Pair<String, String>... entries) {
         TextAttributes style = new TextAttributes();
-        for (Pair<String,String> entry: entries) {
-        		style.put(entry.first, entry.second);
+        for (Pair<String, String> entry : entries) {
+            style.put(entry.first, entry.second);
         }
         return style;
     }
@@ -106,14 +109,6 @@ public class TextAttributes {
         return properties.equals(other.properties);
     }
 
-    Object get(String property) {
-        return properties.get(property);
-    }
-
-    Object getOrDefault(String property, Object def) {
-        return properties.getOrDefault(property, def);
-    }
-
     @Override
     public int hashCode() {
         return properties.hashCode();
@@ -121,6 +116,14 @@ public class TextAttributes {
 
     public Map<String, Object> properties() {
         return Collections.unmodifiableMap(properties);
+    }
+
+    Object get(String property) {
+        return properties.get(property);
+    }
+
+    Object getOrDefault(String property, Object def) {
+        return properties.getOrDefault(property, def);
     }
 
     void put(String property, Object value) {

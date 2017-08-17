@@ -10,29 +10,35 @@ import java.nio.file.Path;
  */
 public class IOUtil {
 
-	private IOUtil() {
-		// utility class
-	}
-	
-	/**
-	 * Get file extension.
-	 * @param path the path
-	 * @return the extension
-	 */
-	public static String getExtension(Path path) {
-		String fname = path.getFileName().toString();
-		int pos = fname.lastIndexOf('.');
-		return pos<0 ? "" : fname.substring(pos+1);
-	}
+    /**
+     * Get file extension.
+     *
+     * @param path
+     *            the path
+     * @return the extension
+     */
+    public static String getExtension(Path path) {
+        String fname = path.getFileName().toString();
+        int pos = fname.lastIndexOf('.');
+        return pos < 0 ? "" : fname.substring(pos + 1);
+    }
 
-	/**
-	 * Read content of path into String.
-	 * @param path the Path
-	 * @param cs the Charset
-	 * @return content of path
-	 * @throws IOException if content could not be read
-	 */
-	public static String read(Path path, Charset cs) throws IOException {
-		return new String(Files.readAllBytes(path), cs);
-	}
+    /**
+     * Read content of path into String.
+     *
+     * @param path
+     *            the Path
+     * @param cs
+     *            the Charset
+     * @return content of path
+     * @throws IOException
+     *             if content could not be read
+     */
+    public static String read(Path path, Charset cs) throws IOException {
+        return new String(Files.readAllBytes(path), cs);
+    }
+
+    private IOUtil() {
+        // utility class
+    }
 }

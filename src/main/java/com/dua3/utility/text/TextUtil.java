@@ -5,9 +5,9 @@ import java.util.function.Function;
 
 public class TextUtil {
 
-    private TextUtil() {
-        // nop: utility class
-    }
+    private static final String TRANSFORM_REF_START = "${";
+
+    private static final String TRANSFORM_REF_END = "}";
 
     public static String escapeHTML(String s) {
         StringBuilder out = new StringBuilder(Math.max(16, s.length()));
@@ -23,24 +23,39 @@ public class TextUtil {
         }
         return out.toString();
     }
-
-    private static final String TRANSFORM_REF_START = "${";
-    private static final String TRANSFORM_REF_END = "}";
+    
+    /**
+     * Transform a templated String.
+     *
+     * @param template
+     *            the template
+     * @param env
+     *            substitution environment
+     * @return
+     *         result of transformation
+     * @see #transform(String, Function, Consumer)
+     */
+    public static String transform(String template, Function<String, String> env) {
+        StringBuilder sb = new StringBuilder(Math.max(16, template.length()));
+        transform(template, env, s -> sb.append(s));
+        return sb.toString();
+    }
 
     /**
-     * Transform a templated  String.
+     * Transform a templated String.
      * <p>
      * Read {@code template} and copy its contents to {@code output}. For each reference in the form
      * {@code ${VARIABLE}}, the substitution is determined by calling {@code env.apply("VARIABLE")}.
      * </p>
+     *
      * @param template
-     *  the template
+     *            the template
      * @param env
-     *  substitution environment
+     *            substitution environment
      * @param output
-     *  output
+     *            output
      */
-    public static void transform(String template, Function<String,String> env, Consumer<CharSequence> output) {
+    public static void transform(String template, Function<String, String> env, Consumer<CharSequence> output) {
         int pos = 0;
         while (pos < template.length()) {
             // find next ref
@@ -68,19 +83,7 @@ public class TextUtil {
         }
     }
 
-    /**
-     * Transform a templated  String.
-     * @param template
-     *  the template
-     * @param env
-     *  substitution environment
-     * @return
-     *  result of transformation
-     * @see #transform(String, Function, Consumer)
-     */
-    public static String transform(String template, Function<String, String> env) {
-        StringBuilder sb = new StringBuilder(Math.max(16,  template.length()));
-        transform(template, env, s -> sb.append(s));
-        return sb.toString();
+    private TextUtil() {
+        // nop: utility class
     }
 }

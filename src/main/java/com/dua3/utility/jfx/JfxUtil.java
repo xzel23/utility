@@ -15,7 +15,6 @@ package com.dua3.utility.jfx;
  * the License.
  */
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +25,6 @@ import com.aquafx_project.AquaFx;
  */
 public class JfxUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JfxUtil.class);
-
-    // Utility class, should not be instantiated
-    private JfxUtil() {
-        // nop
-    }
 
     /**
      * Set the Look&amp;Feel to the native Look&amp;Feel.
@@ -47,13 +41,18 @@ public class JfxUtil {
      * On Mac OS, the global menubar is also enabled.
      *
      * @param applicationName
-     *  the application name to set
+     *            the application name to set
      */
-	public static void setNativeLookAndFeel(String applicationName) {
-		if(System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
-			LOGGER.info("Applying Aquastyle.");
-			AquaFx.style();
-		}
-	}
+    public static void setNativeLookAndFeel(String applicationName) {
+        if (System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
+            LOGGER.info("Applying Aquastyle.");
+            AquaFx.style();
+        }
+    }
+
+    // Utility class, should not be instantiated
+    private JfxUtil() {
+        // nop
+    }
 
 }

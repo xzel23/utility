@@ -55,20 +55,11 @@ public class RichTextBuilder implements Appendable {
         return this;
     }
 
-    private TextAttributes currentStyle() {
-        final TextAttributes style;
-        if (parts.lastKey() == buffer.length()) {
-            style = parts.get(parts.lastKey());
-        } else {
-            style = new TextAttributes();
-            parts.put(buffer.length(), style);
-        }
-        return style;
-    }
-
     /**
      * Get attribute of the current Run.
-     * @param property the property
+     *
+     * @param property
+     *            the property
      * @return value of the property
      */
     public Object get(String property) {
@@ -77,7 +68,9 @@ public class RichTextBuilder implements Appendable {
 
     /**
      * Remove and return the value of a property from the property stack.
-     * @param property the property
+     *
+     * @param property
+     *            the property
      * @return the last stored value for this property on the stack
      */
     public Object pop(String property) {
@@ -111,6 +104,7 @@ public class RichTextBuilder implements Appendable {
 
     /**
      * Convert to RichText.
+     *
      * @return RichText representation of this builder's content
      */
     public RichText toRichText() {
@@ -140,6 +134,17 @@ public class RichTextBuilder implements Appendable {
     @Override
     public String toString() {
         return buffer.toString();
+    }
+
+    private TextAttributes currentStyle() {
+        final TextAttributes style;
+        if (parts.lastKey() == buffer.length()) {
+            style = parts.get(parts.lastKey());
+        } else {
+            style = new TextAttributes();
+            parts.put(buffer.length(), style);
+        }
+        return style;
     }
 
 }

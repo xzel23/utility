@@ -35,20 +35,18 @@ import com.dua3.utility.text.TextAttributes.Attribute;
 
 class RichTextRenderer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RichTextRenderer.class);
-
     static class LiteralCollectingVisitor extends AbstractVisitor {
         private StringBuilder sb = new StringBuilder();
+
+        @Override
+        public String toString() {
+            return sb.toString();
+        }
 
         @Override
         public void visit(Text node) {
             sb.append(node.getLiteral());
             super.visit(node);
-        }
-
-        @Override
-        public String toString() {
-            return sb.toString();
         }
     }
 
@@ -58,16 +56,6 @@ class RichTextRenderer {
 
         public RTVisitor(RichTextBuilder app) {
             this.app = app;
-        }
-
-        private void push(String key, Attribute attr) {
-            @SuppressWarnings("unchecked")
-            List<Attribute> current = (List<Attribute>) app.pop(key);
-            if (current == null) {
-                current = new LinkedList<>();
-            }
-            current.add(attr);
-            app.push(key, current);
         }
 
         @Override
@@ -91,6 +79,22 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.CODE);
             push(TextAttributes.STYLE_START_RUN, attr);
             app.append(node.getLiteral());
+            super.visit(node);
+            push(TextAttributes.STYLE_END_RUN, attr);
+        }
+
+        @Override
+        public void visit(CustomBlock node) {
+            Attribute attr = new Attribute(MarkDownStyle.CUSTOM_BLOCK);
+            push(TextAttributes.STYLE_START_RUN, attr);
+            super.visit(node);
+            push(TextAttributes.STYLE_END_RUN, attr);
+        }
+
+        @Override
+        public void visit(CustomNode node) {
+            Attribute attr = new Attribute(MarkDownStyle.CUSTOM_NODE);
+            push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
         }
@@ -134,7 +138,7 @@ class RichTextRenderer {
             Node lastChild = node.getLastChild();
             String id;
             if (firstChild instanceof Text && firstChild == lastChild) {
-                id = ((Text)firstChild).getLiteral().toLowerCase();
+                id = ((Text) firstChild).getLiteral().toLowerCase();
             } else {
                 LOG.warn("Could not generate ID for header");
                 id = null;
@@ -148,16 +152,8 @@ class RichTextRenderer {
         }
 
         @Override
-        public void visit(ThematicBreak node) {
-            Attribute attr = new Attribute(MarkDownStyle.THEMATIC_BREAK);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
-        }
-
-        @Override
-        public void visit(HtmlInline node) {
-            Attribute attr = new Attribute(MarkDownStyle.HTML_INLINE);
+        public void visit(HtmlBlock node) {
+            Attribute attr = new Attribute(MarkDownStyle.HTML_BLOCK);
             push(TextAttributes.STYLE_START_RUN, attr);
             app.append(node.getLiteral());
             super.visit(node);
@@ -165,8 +161,8 @@ class RichTextRenderer {
         }
 
         @Override
-        public void visit(HtmlBlock node) {
-            Attribute attr = new Attribute(MarkDownStyle.HTML_BLOCK);
+        public void visit(HtmlInline node) {
+            Attribute attr = new Attribute(MarkDownStyle.HTML_INLINE);
             push(TextAttributes.STYLE_START_RUN, attr);
             app.append(node.getLiteral());
             super.visit(node);
@@ -254,30 +250,34 @@ class RichTextRenderer {
         }
 
         @Override
-        public void visit(CustomBlock node) {
-            Attribute attr = new Attribute(MarkDownStyle.CUSTOM_BLOCK);
+        public void visit(ThematicBreak node) {
+            Attribute attr = new Attribute(MarkDownStyle.THEMATIC_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
-        @Override
-        public void visit(CustomNode node) {
-            Attribute attr = new Attribute(MarkDownStyle.CUSTOM_NODE);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+        private void push(String key, Attribute attr) {
+            @SuppressWarnings("unchecked")
+            List<Attribute> current = (List<Attribute>) app.pop(key);
+            if (current == null) {
+                current = new LinkedList<>();
+            }
+            current.add(attr);
+            app.push(key, current);
         }
 
     }
 
-    public void render(Node node, RichTextBuilder app) {
-        node.accept(new RTVisitor(app));
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(RichTextRenderer.class);
 
     public RichText render(Node node) {
         RichTextBuilder app = new RichTextBuilder();
         render(node, app);
         return app.toRichText();
+    }
+
+    public void render(Node node, RichTextBuilder app) {
+        node.accept(new RTVisitor(app));
     }
 }

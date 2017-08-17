@@ -36,186 +36,188 @@ import com.dua3.utility.swing.SwingUtil;
  */
 public class LogPanel extends JPanel implements LogListener {
 
-	private static final long serialVersionUID = 1L;
+    private static class Column {
+        String name;
+        Function<LogRecord, Object> extractor;
 
-	private static final Formatter formatter = new SimpleFormatter();
+        Column(String name, Function<LogRecord, Object> extractor) {
+            this.name = name;
+            this.extractor = extractor;
+        }
 
-	private final JTable table;
-	private JScrollPane scrollPane;
-	private final LogDispatcher dispatcher;
+        Object get(LogRecord r) {
+            return extractor.apply(r);
+        }
 
-	private static class Column {
-		String name;
-		Function<LogRecord, Object> extractor;
+        String name() {
+            return name;
+        }
+    }
 
-		Column(String name, Function<LogRecord,Object> extractor) {
-			this.name = name;
-			this.extractor = extractor;
-		}
+    private static final class LogTableModel extends AbstractTableModel {
+        private static final long serialVersionUID = 1L;
 
-		String name() {
-			return name;
-		}
+        private final RingBuffer<LogRecord> records = new RingBuffer<>(1000);
 
-		Object get(LogRecord r) {
-			return extractor.apply(r);
-		}
-	}
+        private final TreeMap<Integer, MessageStyle> styles = new TreeMap<>();
 
-	private static final Column[] COLUMNS = {
-			new Column("Time", r -> Instant.ofEpochMilli(r.getMillis())),
-			new Column("Logger", r -> r.getLoggerName()),
-			new Column("Level", r -> r.getLevel()),
-			new Column("Message", formatter::formatMessage)
-	};
+        LogTableModel() {
+            initStyles();
+        }
 
-	private static final class LogTableModel extends AbstractTableModel {
-		LogTableModel(){
-			initStyles();
-		}
+        @Override
+        public int getColumnCount() {
+            return COLUMNS.length;
+        }
 
-		private static final long serialVersionUID = 1L;
+        @Override
+        public String getColumnName(int column) {
+            return COLUMNS[column].name();
+        }
 
-		private final RingBuffer<LogRecord> records = new RingBuffer<>(1000);
+        @Override
+        public int getRowCount() {
+            return records.size();
+        }
 
-		private final TreeMap<Integer, MessageStyle> styles = new TreeMap<>();
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return COLUMNS[columnIndex].get(getRecordForRow(rowIndex));
+        }
 
-		@Override
-		public int getRowCount() {
-			return records.size();
-		}
+        public void publish(LogRecord r) {
+            SwingUtilities.invokeLater(() -> addRecord(r));
+        }
 
-		@Override
-		public int getColumnCount() {
-			return COLUMNS.length;
-		}
+        private void addRecord(LogRecord r) {
+            records.add(r);
+            fireTableDataChanged();
+        }
 
-		@Override
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			return COLUMNS[columnIndex].get(getRecordForRow(rowIndex));
-		}
+        private MessageStyle createStyle(Level level, Color color) {
+            MessageStyle ms = new MessageStyle(color);
+            styles.put(level.intValue(), ms);
 
-		@Override
-		public String getColumnName(int column) {
-			return COLUMNS[column].name();
-		}
+            return ms;
+        }
 
-		private LogRecord getRecordForRow(int rowIndex) {
-			return records.get(rowIndex);
-		}
+        private LogRecord getRecordForRow(int rowIndex) {
+            return records.get(rowIndex);
+        }
 
-		public void publish(LogRecord r) {
-			SwingUtilities.invokeLater(() -> addRecord(r));
-		}
+        private MessageStyle getStyle(Level level) {
+            Entry<Integer, MessageStyle> entry = styles.ceilingEntry(level.intValue());
+            return entry == null ? styles.lastEntry().getValue() : entry.getValue();
+        }
 
-		private void addRecord(LogRecord r) {
-			records.add(r);
-			fireTableDataChanged();
-		}
+        private void initStyles() {
+            createStyle(Level.SEVERE, Color.RED);
+            createStyle(Level.WARNING, Color.RED);
+            createStyle(Level.INFO, Color.BLUE);
+            createStyle(Level.CONFIG, Color.BLACK);
+            createStyle(Level.FINE, Color.BLACK);
+            createStyle(Level.FINER, Color.BLACK);
+            createStyle(Level.FINEST, Color.BLACK);
+        }
 
-		private MessageStyle getStyle(Level level) {
-			Entry<Integer, MessageStyle> entry = styles.ceilingEntry(level.intValue());
-			return entry == null ? styles.lastEntry().getValue() : entry.getValue();
-		}
+    }
 
-		private MessageStyle createStyle(Level level, Color color) {
-			MessageStyle ms = new MessageStyle(color);
-			styles.put(level.intValue(), ms);
+    static class LogRecordTableCellRenderer extends DefaultTableCellRenderer {
+        private static final long serialVersionUID = 1L;
 
-			return ms;
-		}
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            LogTableModel model = (LogTableModel) table.getModel();
+            LogRecord r = model.getRecordForRow(row);
+            MessageStyle style = model.getStyle(r.getLevel());
+            comp.setForeground(style.color);
+            return comp;
+        }
+    }
+    
+    static class MessageStyle {
+        Color color;
 
-		private void initStyles() {
-			createStyle(Level.SEVERE, Color.RED);
-			createStyle(Level.WARNING, Color.RED);
-			createStyle(Level.INFO, Color.BLUE);
-			createStyle(Level.CONFIG, Color.BLACK);
-			createStyle(Level.FINE, Color.BLACK);
-			createStyle(Level.FINER, Color.BLACK);
-			createStyle(Level.FINEST, Color.BLACK);
-		}
+        public MessageStyle(Color color) {
+            this.color = color;
+        }
+    }
+    
+    private static final long serialVersionUID = 1L;
 
-	}
+    private static final Formatter formatter = new SimpleFormatter();
 
-	static class LogRecordTableCellRenderer extends DefaultTableCellRenderer {
-		private static final long serialVersionUID = 1L;
+    private static final Column[] COLUMNS = {
+            new Column("Time", r -> Instant.ofEpochMilli(r.getMillis())),
+            new Column("Logger", r -> r.getLoggerName()),
+            new Column("Level", r -> r.getLevel()),
+            new Column("Message", formatter::formatMessage)
+    };
 
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-				int row, int column) {
-			Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			LogTableModel model = (LogTableModel) table.getModel();
-			LogRecord r = model.getRecordForRow(row);
-			MessageStyle style = model.getStyle(r.getLevel());
-			comp.setForeground(style.color);
-			return comp;
-		}
-	}
+    private final JTable table;
 
-	static class MessageStyle {
-		public MessageStyle(Color color) {
-			this.color = color;
-		}
+    private JScrollPane scrollPane;
 
-		Color color;
-	}
+    private final LogDispatcher dispatcher;
 
-	private LogTableModel dataModel;
+    private LogTableModel dataModel;
 
-	public LogPanel(Logger... loggers) {
-		super();
-		setLayout(new BorderLayout());
+    public LogPanel(Logger... loggers) {
+        super();
+        setLayout(new BorderLayout());
 
-		table = new JTable();
-		scrollPane = new JScrollPane(table);
-		add(scrollPane);
+        table = new JTable();
+        scrollPane = new JScrollPane(table);
+        add(scrollPane);
 
-	    dataModel = new LogTableModel();
+        dataModel = new LogTableModel();
 
-		table.setModel(dataModel);
+        table.setModel(dataModel);
 
-		table.getColumnModel().getColumn(2).setCellRenderer(new LogRecordTableCellRenderer());
-		dispatcher = new LogDispatcher(this);
+        table.getColumnModel().getColumn(2).setCellRenderer(new LogRecordTableCellRenderer());
+        dispatcher = new LogDispatcher(this);
 
-		for (Logger logger: loggers) {
-			addLogger(logger);
-		}
-	}
+        for (Logger logger : loggers) {
+            addLogger(logger);
+        }
+    }
 
-	@Override
-	public void publish(LogRecord record) {
-		SwingUtil.updateAndScrollToBottom(scrollPane, () -> dataModel.publish(record));
-	}
+    public void addAllKnowLoggers() {
+        LogManager logManager = LogManager.getLogManager();
+        Enumeration<String> loggerNames = logManager.getLoggerNames();
+        while (loggerNames.hasMoreElements()) {
+            String loggerName = loggerNames.nextElement();
+            addLogger(logManager.getLogger(loggerName));
+        }
+    }
 
-	@Override
-	public void flush() {
-		// nop
+    public void addLogger(Logger logger) {
+        Handler handler = getHandler();
+        if (!Arrays.asList(logger.getHandlers()).contains(handler)) {
+            logger.addHandler(handler);
+        }
+    }
 
-	}
+    @Override
+    public void close() {
+        // nop
+    }
 
-	@Override
-	public void close() {
-		// nop
-	}
+    @Override
+    public void flush() {
+        // nop
 
-	public Handler getHandler() {
-		return dispatcher;
-	}
+    }
 
-	public void addLogger(Logger logger) {
-		 Handler handler = getHandler();
-		if (!Arrays.asList(logger.getHandlers()).contains(handler)) {
-			logger.addHandler(handler);
-		}
-	}
+    public Handler getHandler() {
+        return dispatcher;
+    }
 
-	public void addAllKnowLoggers() {
-		LogManager logManager = LogManager.getLogManager();
-		Enumeration<String> loggerNames = logManager.getLoggerNames();
-		while (loggerNames.hasMoreElements()) {
-			String loggerName = loggerNames.nextElement();
-			addLogger(logManager.getLogger(loggerName));
-		}
-	}
+    @Override
+    public void publish(LogRecord record) {
+        SwingUtil.updateAndScrollToBottom(scrollPane, () -> dataModel.publish(record));
+    }
 
 }

@@ -42,10 +42,7 @@ import com.dua3.utility.text.TextBuilder;
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
-
-    private final Function<String,TextAttributes> styleSupplier;
-    private Map<String,AttributeSet> styleAttributes = new HashMap<>();
-
+    
     /**
      * Convert {@code RichText} to {@code StyledDocument} conserving text
      * attributes.
@@ -67,40 +64,33 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         return doc;
     }
 
+    private final Function<String, TextAttributes> styleSupplier;
+    
+    private Map<String, AttributeSet> styleAttributes = new HashMap<>();
+    
     private final StyledDocument doc = new DefaultStyledDocument();
     private final double scale;
-
-    public StyledDocumentBuilder(double scale, Function<String,TextAttributes> styleSupplier) {
-        this.scale = scale;
-        this.styleSupplier = styleSupplier;
-    }
-
+    
     public StyledDocumentBuilder(double scale) {
         this(scale, styleName -> TextAttributes.none());
     }
-
+    
+    public StyledDocumentBuilder(double scale, Function<String, TextAttributes> styleSupplier) {
+        this.scale = scale;
+        this.styleSupplier = styleSupplier;
+    }
+    
     @Override
-    protected void append(Run run) {
-        try {
-        		AttributeSet as = getAttributeSet(run);
-            doc.insertString(doc.getLength(), run.toString(), as);
-        } catch (BadLocationException ex) {
-            LOG.error("Exception in StyledDocumentBuilder.append()", ex);
-        }
+    public StyledDocument get() {
+        return doc;
     }
-
-    private AttributeSet getAttributes(TextAttributes style) {
-		SimpleAttributeSet as = new SimpleAttributeSet();
-		applyAttributes(style.properties(), as);
-		return as;
-    }
-
-	private void applyAttributes(Map<String, Object> styleAttributes, SimpleAttributeSet as) {
-		for (Map.Entry<String, Object> e : styleAttributes.entrySet()) {
+    
+    private void applyAttributes(Map<String, Object> styleAttributes, SimpleAttributeSet as) {
+        for (Map.Entry<String, Object> e : styleAttributes.entrySet()) {
             switch (e.getKey()) {
             case TextAttributes.STYLE_NAME:
-            		// not used in styled document
-            		break;
+                // not used in styled document
+                break;
             case TextAttributes.FONT_FAMILY:
                 StyleConstants.setFontFamily(as, String.valueOf(e.getValue()));
                 break;
@@ -148,23 +138,34 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 break;
             }
         }
-	}
-
+    }
+    
     private AttributeSet getAttributes(String styleName) {
-    		return styleAttributes.computeIfAbsent(styleName, s -> getAttributes(styleSupplier.apply(s)));
+        return styleAttributes.computeIfAbsent(styleName, s -> getAttributes(styleSupplier.apply(s)));
     }
-
-	private SimpleAttributeSet getAttributeSet(Run run) {
-		Map<String, Object> styleProps = run.getStyle().properties();
-		AttributeSet das = getAttributes((String)styleProps.get(TextAttributes.STYLE_NAME));
-		SimpleAttributeSet as = new SimpleAttributeSet(das);
-		applyAttributes(styleProps, as);
-		return as;
-	}
-
+    
+    private AttributeSet getAttributes(TextAttributes style) {
+        SimpleAttributeSet as = new SimpleAttributeSet();
+        applyAttributes(style.properties(), as);
+        return as;
+    }
+    
+    private SimpleAttributeSet getAttributeSet(Run run) {
+        Map<String, Object> styleProps = run.getStyle().properties();
+        AttributeSet das = getAttributes((String) styleProps.get(TextAttributes.STYLE_NAME));
+        SimpleAttributeSet as = new SimpleAttributeSet(das);
+        applyAttributes(styleProps, as);
+        return as;
+    }
+    
     @Override
-    public StyledDocument get() {
-        return doc;
+    protected void append(Run run) {
+        try {
+            AttributeSet as = getAttributeSet(run);
+            doc.insertString(doc.getLength(), run.toString(), as);
+        } catch (BadLocationException ex) {
+            LOG.error("Exception in StyledDocumentBuilder.append()", ex);
+        }
     }
-
+    
 }

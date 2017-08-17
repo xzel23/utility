@@ -24,7 +24,8 @@ import java.util.stream.Stream;
 
 /**
  * A class for rich text, i.e. text together with attributes like color, font etc.
- * <p>Sequences of characters that share the same formatting attributes form a {@link Run}.
+ * <p>
+ * Sequences of characters that share the same formatting attributes form a {@link Run}.
  */
 public class RichText
         implements Iterable<Run> {
@@ -63,6 +64,7 @@ public class RichText
 
     /**
      * Returns the empty String as RichText.
+     *
      * @return the empty text
      */
     public static RichText emptyText() {
@@ -75,7 +77,9 @@ public class RichText
 
     /**
      * Convert String to RichText.
-     * @param s String to convert
+     *
+     * @param s
+     *            String to convert
      * @return RichText representation of s
      */
     public static RichText valueOf(String s) {
@@ -112,6 +116,7 @@ public class RichText
 
     /**
      * Test if empty.
+     *
      * @return true, if the text is empty.
      */
     public boolean isEmpty() {
@@ -125,6 +130,7 @@ public class RichText
 
     /**
      * Length of text in characters.
+     *
      * @return the text length
      */
     public int length() {
@@ -133,6 +139,7 @@ public class RichText
 
     /**
      * A stream of the Runs this text consists of.
+     *
      * @return stream of Runs
      */
     public Stream<Run> stream() {

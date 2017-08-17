@@ -21,19 +21,15 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextBuilder;
-import com.dua3.utility.text.TextAttributes;
-
 /**
  *
  * @author Axel Howind
  */
 public class RichTextTest {
-
+    
     public RichTextTest() {
     }
-
+    
     @Test
     public void testRichTextBuilding() {
         RichTextBuilder builder = new RichTextBuilder();
@@ -42,10 +38,10 @@ public class RichTextTest {
         builder.append("world");
         builder.pop(TextAttributes.FONT_WEIGHT);
         builder.append("!");
-
+        
         RichText rt = builder.toRichText();
         assertEquals("Hello world!", rt.toString());
         assertEquals("Hello world!", rt.stream().collect(Collectors.joining()));
     }
-
+    
 }

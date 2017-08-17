@@ -26,6 +26,18 @@ package com.dua3.utility.text;
  */
 public abstract class TextBuilder<T> {
 
+    public static float decodeFontSize(String s) {
+        float factor = 1f;
+        if (s.endsWith("pt")) {
+            s = s.substring(0, s.length() - 2);
+            factor = 1f;
+        } else if (s.endsWith("px")) {
+            s = s.substring(0, s.length() - 2);
+            factor = 96f / 72f;
+        }
+        return factor * Float.parseFloat(s);
+    }
+
     /**
      * Constructor.
      */
@@ -60,16 +72,4 @@ public abstract class TextBuilder<T> {
      * @return the document after transformation.
      */
     protected abstract T get();
-
-    public static float decodeFontSize(String s) {
-        float factor = 1f;
-        if (s.endsWith("pt")) {
-            s = s.substring(0, s.length() - 2);
-            factor = 1f;
-        } else if (s.endsWith("px")) {
-            s = s.substring(0, s.length() - 2);
-            factor = 96f / 72f;
-        }
-        return factor * Float.parseFloat(s);
-    }
 }

@@ -17,21 +17,26 @@ import java.util.Objects;
  * <p>
  * This class abstracts accessing files stored in locations such as
  * <ul>
- * <li> directories
- * <li> zip files
- * <li> jar files
+ * <li>directories
+ * <li>zip files
+ * <li>jar files
  * </ul>
- * The {@link java.net.URL} for a resource returned by {@link Class#getResource(String)} can be converted to a {@link java.nio.file.Path}
+ * The {@link java.net.URL} for a resource returned by {@link Class#getResource(String)} can be converted to a
+ * {@link java.nio.file.Path}
  * by calling {@link java.nio.file.Paths#get(URI)}. This however fails if the class that the resource belongs to was
  * loaded from a Jar. To solve this, use the following code:
- * <pre><code>
+ *
+ * <pre>
+ * <code>
  * // create a FileSystemView
  * try (FileSystemView fsv = FileSystemView.create(clazz)) {
  *   // resolve the resource path
  *   Path path = fsv.resolve("resource.txt");
  *   ...
  * }
- * </code></pre>
+ * </code>
+ * </pre>
+ *
  * @author a5xysq1
  *
  */
@@ -42,45 +47,20 @@ public class FileSystemView implements AutoCloseable {
         void run() throws IOException;
     }
 
-    private final Path root;
-    private final CleanUp cleanup;
-
-    private FileSystemView(Path root, CleanUp cleanup) {
-        this.cleanup = cleanup;
-        this.root=root;
-    }
-
-    /**
-     * Resolve path.
-     * @param path the path to resolve
-     * @return the resolved path
-     * @see java.nio.file.Path#resolve(Path)
-     */
-    Path resolve(Path path) {
-        return root.resolve(path);
-    }
-
-    /**
-     * Resolve path.
-     * @param path the path to resolve
-     * @return the resolved path
-     * @see java.nio.file.Path#resolve(String)
-     */
-    public Path resolve(String path) {
-        return root.resolve(path);
-    }
-
     /**
      * Create FileSystemView.
-     * @param root the path to the FileSystemView's root. It can either be an existing directory or a zip-file.
+     *
+     * @param root
+     *            the path to the FileSystemView's root. It can either be an existing directory or a zip-file.
      * @return a new FileSystemView
-     * @throws IOException if the view cannot be created
+     * @throws IOException
+     *             if the view cannot be created
      */
     public static FileSystemView create(Path root) throws IOException {
         Objects.requireNonNull(root);
 
         if (!Files.exists(root)) {
-            throw new IOException("Path does not exist: "+root);
+            throw new IOException("Path does not exist: " + root);
         }
 
         // is it a directory?
@@ -89,52 +69,40 @@ public class FileSystemView implements AutoCloseable {
         }
 
         // is it a zip?
-        if (root.getFileName().endsWith(".zip")||root.getFileName().endsWith(".ZIP")) {
+        if (root.getFileName().endsWith(".zip") || root.getFileName().endsWith(".ZIP")) {
             return forArchive(root);
         }
 
         // other are not implemented
-        throw new IllegalArgumentException("Don't know how to handle this path: "+root);
+        throw new IllegalArgumentException("Don't know how to handle this path: " + root);
     }
-
+    
     /**
      * Create a FileSystemView for a file in Zip-Format.
+     *
      * @param root
-     *  denotes the Zip-File
+     *            denotes the Zip-File
      * @return
-     *  FileSystemView
+     *         FileSystemView
      * @throws IOException
      */
-	public static FileSystemView forArchive(Path root) throws IOException {
-		URI uri = URI.create("jar:" + root.toUri());
-		return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
-	}
-
-	/**
-	 * Create a FileSystemView for an existing directory.
-	 * @param root
-	 *  the directory that will be root of this view
-	 * @return
-	 *  FileSystemView
-	 */
-	public static FileSystemView forDirectory(Path root) {
-		return new FileSystemView(root, () -> { /*NOOP*/ });
-	}
-
-    private static FileSystemView createFileSystemView(FileSystem zipFs, String path) {
-        Path zipRoot = zipFs.getPath(path);
-        return new FileSystemView(zipRoot, zipFs::close);
+    public static FileSystemView forArchive(Path root) throws IOException {
+        URI uri = URI.create("jar:" + root.toUri());
+        return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
     }
 
     /**
      * Create FileSystemView.
-     * @param clazz the class relative to which paths should be resolved. Classes loaded from Jar files are supported.
+     *
+     * @param clazz
+     *            the class relative to which paths should be resolved. Classes loaded from Jar files are supported.
      * @return a new FileSystemView
-     * @throws IOException if the view cannot be created
+     * @throws IOException
+     *             if the view cannot be created
      */
     public static FileSystemView forClass(Class<?> clazz) throws IOException {
         try {
-            String classFile = clazz.getSimpleName()+".class";
+            String classFile = clazz.getSimpleName() + ".class";
             URI uri = clazz.getResource(classFile).toURI();
             switch (uri.getScheme()) {
             case "file":
@@ -142,15 +110,42 @@ public class FileSystemView implements AutoCloseable {
             case "jar":
                 String uriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8.name());
                 String jar = uriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
-                String jarPath = uriStr.replaceAll("^jar:file:.*!(.*)"+classFile+"$", "$1");
+                String jarPath = uriStr.replaceAll("^jar:file:.*!(.*)" + classFile + "$", "$1");
                 URI jarUri = new URI("jar", jar, null);
                 return createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
             default:
-                throw new IOException("unsupported scheme: "+uri.getScheme());
+                throw new IOException("unsupported scheme: " + uri.getScheme());
             }
         } catch (URISyntaxException e) {
             throw new IOException(e);
         }
+    }
+
+    /**
+     * Create a FileSystemView for an existing directory.
+     *
+     * @param root
+     *            the directory that will be root of this view
+     * @return
+     *         FileSystemView
+     */
+    public static FileSystemView forDirectory(Path root) {
+        return new FileSystemView(root, () -> {
+            /* NOOP */ });
+    }
+
+    private static FileSystemView createFileSystemView(FileSystem zipFs, String path) {
+        Path zipRoot = zipFs.getPath(path);
+        return new FileSystemView(zipRoot, zipFs::close);
+    }
+
+    private final Path root;
+
+    private final CleanUp cleanup;
+
+    private FileSystemView(Path root, CleanUp cleanup) {
+        this.cleanup = cleanup;
+        this.root = root;
     }
 
     @Override
@@ -159,11 +154,36 @@ public class FileSystemView implements AutoCloseable {
     }
 
     /**
-     * Get this FileSystemView's root. 
+     * Get this FileSystemView's root.
+     *
      * @return the root path
      */
     public Path getRoot() {
-		return root;
-	}
-    
+        return root;
+    }
+
+    /**
+     * Resolve path.
+     *
+     * @param path
+     *            the path to resolve
+     * @return the resolved path
+     * @see java.nio.file.Path#resolve(String)
+     */
+    public Path resolve(String path) {
+        return root.resolve(path);
+    }
+
+    /**
+     * Resolve path.
+     *
+     * @param path
+     *            the path to resolve
+     * @return the resolved path
+     * @see java.nio.file.Path#resolve(Path)
+     */
+    Path resolve(Path path) {
+        return root.resolve(path);
+    }
+
 }

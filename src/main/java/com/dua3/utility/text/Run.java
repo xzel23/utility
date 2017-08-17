@@ -30,10 +30,15 @@ public class Run
 
     /**
      * Construct a new Run.
-     * @param text the text that contains the Run
-     * @param start start of Run
-     * @param length length of Run in characters
-     * @param style style for the Run
+     *
+     * @param text
+     *            the text that contains the Run
+     * @param start
+     *            start of Run
+     * @param length
+     *            length of Run in characters
+     * @param style
+     *            style for the Run
      */
     Run(String text, int start, int length, TextAttributes style) {
         if (start < 0 || start > text.length() || length < 0 || start + length > text.length()) {
@@ -76,6 +81,7 @@ public class Run
 
     /**
      * Get position of end of Run.
+     *
      * @return end of Run
      */
     public int getEnd() {
@@ -84,6 +90,7 @@ public class Run
 
     /**
      * Get position of start of Run.
+     *
      * @return start of Run
      */
     public int getStart() {
@@ -92,6 +99,7 @@ public class Run
 
     /**
      * Get style of this Run.
+     *
      * @return style of this Run
      */
     public TextAttributes getStyle() {
