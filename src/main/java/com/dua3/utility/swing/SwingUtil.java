@@ -271,10 +271,10 @@ public class SwingUtil {
         File file = null;
         if (current != null) {
             try {
-                file = current.toFile();
+                file = current.toFile().getAbsoluteFile();
             } catch (UnsupportedOperationException e) {
                 LOG.warn("path cannot be converted to file: {}", current);
-                file = new File(".");
+                file = new File(".").getAbsoluteFile();
             }
         }
         
@@ -283,7 +283,7 @@ public class SwingUtil {
             jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first, entry.second));
         }
         
-        jfc.setSelectedFile(file.getAbsoluteFile());
+        jfc.setSelectedFile(file);
         jfc.setFileSelectionMode(selectionMode);
         
         int rc = jfc.showOpenDialog(parent);
