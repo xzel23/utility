@@ -4,11 +4,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class TextUtil {
-    
+
     private static final String TRANSFORM_REF_START = "${";
-    
+
     private static final String TRANSFORM_REF_END = "}";
-    
+
     public static String escapeHTML(String s) {
         StringBuilder out = new StringBuilder(Math.max(16, s.length()));
         for (int i = 0; i < s.length(); i++) {
@@ -37,10 +37,10 @@ public class TextUtil {
      */
     public static String transform(String template, Function<String, String> env) {
         StringBuilder sb = new StringBuilder(Math.max(16, template.length()));
-        transform(template, env, s -> sb.append(s));
+        transform(template, env, sb::append);
         return sb.toString();
     }
-    
+
     /**
      * Transform a templated String.
      * <p>
@@ -65,11 +65,11 @@ public class TextUtil {
                 output.accept(template.subSequence(pos, template.length()));
                 break;
             }
-            
+
             // copy text from current position to start of ref
             output.accept(template.subSequence(pos, varPos));
             pos = varPos + TRANSFORM_REF_START.length();
-            
+
             // determine ref name
             int varEnd = template.indexOf(TRANSFORM_REF_END, pos);
             if (varEnd == -1) {
@@ -77,12 +77,12 @@ public class TextUtil {
             }
             String varName = template.substring(pos, varEnd);
             pos = varEnd + TRANSFORM_REF_END.length();
-            
+
             // insert ref substitution
             output.accept(env.apply(varName));
         }
     }
-    
+
     private TextUtil() {
         // nop: utility class
     }
