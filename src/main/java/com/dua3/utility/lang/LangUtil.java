@@ -4,7 +4,7 @@ package com.dua3.utility.lang;
  * A Utility class with general purpose methods.
  */
 public class LangUtil {
-    
+
     /**
      * Check that condition is fulfilled.
      *
@@ -18,7 +18,7 @@ public class LangUtil {
             throw new IllegalStateException();
         }
     }
-    
+
     /**
      * Check that condition is fulfilled.
      *
@@ -37,9 +37,25 @@ public class LangUtil {
             throw new IllegalStateException(message);
         }
     }
-    
+
+    /**
+     * Do nothing.
+     * <p>
+     * This method does exactly nothing. It's purpose is to keep static code
+     * analysis tools happy that complain about ignored return values of methods
+     * like BufferedReader.readLine(). Use this method to explicitly ignore the
+     * return value and avoid false positives from static code checkers.
+     * </p>
+     *
+     * @param arg
+     *            the variable to ignore
+     */
+    public static <T> void ignore(T arg) {
+        // nop
+    }
+
     private LangUtil() {
         // nop
     }
-    
+
 }
