@@ -23,7 +23,11 @@ import java.util.Map;
 /**
  * Color in ARGB format.
  */
-public final class Color implements Serializable {
+public final class Color
+        implements
+        Serializable {
+    private static final Map<String, Color> COLORS = new LinkedHashMap<>();
+
     // predefined Color constants
     /** The color ALICEBLUE. */
     public static final Color ALICEBLUE = register("ALICEBLUE", 0xFFF0F8FF);
@@ -317,7 +321,7 @@ public final class Color implements Serializable {
     public static final Color YELLOW = register("YELLOW", 0xFFFFFF00);
     /** The color YELLOWGREEN. */
     public static final Color YELLOWGREEN = register("YELLOWGREEN", 0xFF9ACD32);
-    private static final Map<String, Color> COLORS = new LinkedHashMap<>();
+
     private static final double F_BRIGHTEN = 0.7;
 
     private static final long serialVersionUID = 1L;
@@ -340,11 +344,11 @@ public final class Color implements Serializable {
     }
 
     /**
-     * Convert String to Color.
-     * Lookup is tried i these steps:
+     * Convert String to Color. Lookup is tried i these steps:
      * <ol>
      * <li>directly look up the String in the map of predefined colors.
-     * <li>if first character is '#', interprete s as hex representation of the RGB value
+     * <li>if first character is '#', interprete s as hex representation of the
+     * RGB value
      * <li>if s starts with rgb, s should be something like "rgb(123,210,120)"
      * <li>otherwise an exception is thrown
      * </ol>
@@ -367,10 +371,11 @@ public final class Color implements Serializable {
         }
 
         // RGB colors. example: "rgb(255, 0, 0)"
-        if (s.startsWith("rgb")) {
+        if (s.startsWith("rgb(")) {
             String s1 = s.substring(3).trim();
-            if (s1.charAt(0) == '(' && s1.charAt(s.length() - 1) == ')') {
-                String[] parts = s1.split(",");
+            if (s1.charAt(0) == '(' && s1.charAt(s1.length() - 1) == ')') {
+                String s2 = s1.substring(1, s1.length() - 1);
+                String[] parts = s2.split(",");
                 if (parts.length == 3) {
                     int r = Integer.parseInt(parts[0]);
                     int g = Integer.parseInt(parts[1]);
@@ -382,15 +387,16 @@ public final class Color implements Serializable {
         }
 
         // RGBA colors. example: "rgb(255, 0, 0, 0.3)"
-        if (s.startsWith("rgba")) {
+        if (s.startsWith("rgba(")) {
             String s1 = s.substring(4).trim();
-            if (s1.charAt(0) == '(' && s1.charAt(s.length() - 1) == ')') {
-                String[] parts = s1.split(",");
+            if (s1.charAt(0) == '(' && s1.charAt(s1.length() - 1) == ')') {
+                String s2 = s1.substring(1, s1.length() - 1);
+                String[] parts = s2.split(",");
                 if (parts.length == 4) {
                     int r = Integer.parseInt(parts[0]);
                     int g = Integer.parseInt(parts[1]);
                     int b = Integer.parseInt(parts[2]);
-                    int a = Math.round(255 * Float.parseFloat(parts[3]));
+                    int a = Integer.parseInt(parts[3]);
                     return new Color(r, g, b, a);
                 }
             }
@@ -424,7 +430,7 @@ public final class Color implements Serializable {
     }
 
     private final int argb;
-    
+
     /**
      * Create a new Color.
      *
@@ -598,7 +604,8 @@ public final class Color implements Serializable {
     /**
      * Get color components.
      *
-     * @return byte array of size 4 containing this color's components in argb order
+     * @return byte array of size 4 containing this color's components in argb
+     *         order
      */
     public byte[] toByteArray() {
         return new byte[] { (byte) a(), (byte) r(), (byte) g(), (byte) b() };
