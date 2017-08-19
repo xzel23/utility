@@ -17,11 +17,13 @@ package com.dua3.utility.swing;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -95,58 +97,52 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         return tmp;
     }
 
-    private void applyAttributes(Map<String, Object> styleAttributes, SimpleAttributeSet as) {
-        for (Map.Entry<String, Object> e : styleAttributes.entrySet()) {
-            switch (e.getKey()) {
-            case TextAttributes.STYLE_NAME:
-                // not used in styled document
+    Map<String, BiConsumer<MutableAttributeSet, Object>> styles = defaultStyles();
+    
+    Map<String, BiConsumer<MutableAttributeSet, Object>> defaultStyles() {
+        Map<String, BiConsumer<MutableAttributeSet,Object>> styles = new HashMap<>();
+        
+        // TextAttributes.STYLE_NAME: unused
+        styles.put(TextAttributes.FONT_FAMILY, (as,v) -> StyleConstants.setFontFamily(as, String.valueOf(v)) );
+        styles.put(TextAttributes.FONT_FAMILY, (as,v) -> StyleConstants.setFontFamily(as, String.valueOf(v)));
+        styles.put(TextAttributes.FONT_SIZE, (as,v) -> StyleConstants.setFontSize(as, (int) Math.round(scale * decodeFontSize(String.valueOf(v)))));
+        styles.put(TextAttributes.COLOR, (as,v) -> StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(v))));
+        styles.put(TextAttributes.BACKGROUND_COLOR, (as,v) -> StyleConstants.setBackground(as, SwingUtil.toAwtColor(String.valueOf(v))));
+        styles.put(TextAttributes.FONT_WEIGHT, (as,v) -> StyleConstants.setBold(as, v.equals("bold")));
+        styles.put(TextAttributes.FONT_STYLE, (as,v) -> {
+            switch (String.valueOf(v)) {
+            case "normal":
+                StyleConstants.setItalic(as, false);
                 break;
-            case TextAttributes.FONT_FAMILY:
-                StyleConstants.setFontFamily(as, String.valueOf(e.getValue()));
-                break;
-            case TextAttributes.FONT_SIZE:
-                StyleConstants.setFontSize(as, (int) Math.round(scale * decodeFontSize(String.valueOf(e.getValue()))));
-                break;
-            case TextAttributes.COLOR:
-                StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(e.getValue())));
-                break;
-            case TextAttributes.BACKGROUND_COLOR:
-                StyleConstants.setBackground(as, SwingUtil.toAwtColor(String.valueOf(e.getValue())));
-                break;
-            case TextAttributes.FONT_WEIGHT:
-                StyleConstants.setBold(as, e.getValue().equals("bold"));
-                break;
-            case TextAttributes.FONT_STYLE:
-                switch (String.valueOf(e.getValue())) {
-                case "normal":
-                    StyleConstants.setItalic(as, false);
-                    break;
-                case "italic":
-                case "oblique":
-                    StyleConstants.setItalic(as, true);
-                    break;
-                default:
-                    LOG.warn("Unknown value for FONT_STYLE: {}", e.getValue());
-                    break;
-                }
-                break;
-            case TextAttributes.TEXT_DECORATION:
-                switch (String.valueOf(e.getValue())) {
-                case "line-through":
-                    StyleConstants.setStrikeThrough(as, true);
-                    break;
-                case "underline":
-                    StyleConstants.setUnderline(as, true);
-                    break;
-                default:
-                    LOG.warn("Unknown value for TEXT_DECORATION: {}", e.getValue());
-                    break;
-                }
+            case "italic":
+            case "oblique":
+                StyleConstants.setItalic(as, true);
                 break;
             default:
-                LOG.warn("Unknown Style: {}", e.getKey());
+                LOG.warn("Unknown value for FONT_STYLE: {}", v);
                 break;
             }
+        });
+
+        styles.put(TextAttributes.TEXT_DECORATION, (as,v) -> {
+            switch (String.valueOf(v)) {
+            case "line-through":
+                StyleConstants.setStrikeThrough(as, true);
+                break;
+            case "underline":
+                StyleConstants.setUnderline(as, true);
+                break;
+            default:
+                LOG.warn("Unknown value for TEXT_DECORATION: {}", v);
+                break;
+            }
+        });
+        return styles;
+    }
+
+    private void applyAttributes(Map<String, Object> styleAttributes, SimpleAttributeSet as) {
+        for (Map.Entry<String, Object> e : styleAttributes.entrySet()) {
+            styles.getOrDefault(e.getKey(), (k,v) -> LOG.warn("Unknown style: {}.", v)).accept(as,e.getValue());
         }
     }
 
