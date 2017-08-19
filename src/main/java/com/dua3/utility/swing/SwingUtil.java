@@ -181,7 +181,7 @@ public class SwingUtil {
      *         Optional containing the path to the selected file.
      */
     public static Optional<Path> showDirectoryOpenDialog(Component parent, Path current) {
-        return showOpenDialog(parent, JFileChooser.DIRECTORIES_ONLY, current);
+        return showOpenDialog(parent, current, JFileChooser.DIRECTORIES_ONLY);
     }
     
     /**
@@ -198,7 +198,7 @@ public class SwingUtil {
      */
     @SafeVarargs
     public static Optional<Path> showFileOpenDialog(Component parent, Path current, Pair<String, String[]>... types) {
-        return showOpenDialog(parent, JFileChooser.FILES_ONLY, current, types);
+        return showOpenDialog(parent, current, JFileChooser.FILES_ONLY, types);
     }
     
     /**
@@ -266,7 +266,7 @@ public class SwingUtil {
     }
     
     @SafeVarargs
-    private static Optional<Path> showOpenDialog(Component parent, int selectionMode, Path current,
+    public static Optional<Path> showOpenDialog(Component parent, Path current, int selectionMode,
             Pair<String, String[]>... types) {
         File file = null;
         if (current != null) {
