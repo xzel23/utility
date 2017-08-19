@@ -14,11 +14,11 @@ import java.util.ArrayList;
  *            the element type
  */
 public class RingBuffer<T> {
-    
+
     private Object[] data;
     private int entries;
     private int start;
-    
+
     /**
      * Construct a new RingBuffer instance.
      *
@@ -30,7 +30,7 @@ public class RingBuffer<T> {
         start = 0;
         entries = 0;
     }
-    
+
     /**
      * Add item to end of collection.
      *
@@ -45,7 +45,7 @@ public class RingBuffer<T> {
             data[index(entries - 1)] = item;
         }
     }
-    
+
     /**
      * Get collection's capacity.
      *
@@ -54,14 +54,14 @@ public class RingBuffer<T> {
     public int capacity() {
         return data.length;
     }
-    
+
     /**
      * Remove all elements.
      */
     public void clear() {
         start = entries = 0;
     }
-    
+
     /**
      * Get element.
      *
@@ -74,7 +74,7 @@ public class RingBuffer<T> {
         checkIndex(i);
         return (T) data[index(i)];
     }
-    
+
     /**
      * Test if collection is empty.
      *
@@ -83,7 +83,7 @@ public class RingBuffer<T> {
     public boolean isEmpty() {
         return entries == 0;
     }
-    
+
     /**
      * Set the capacity. Elements are retained.
      *
@@ -103,7 +103,7 @@ public class RingBuffer<T> {
             entries = Math.min(entries, n);
         }
     }
-    
+
     /**
      * Get number of items in collection.
      *
@@ -112,7 +112,7 @@ public class RingBuffer<T> {
     public int size() {
         return entries;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16 * (1 + size()));
@@ -126,13 +126,13 @@ public class RingBuffer<T> {
         sb.append("]");
         return sb.toString();
     }
-    
+
     private void checkIndex(int i) {
         if (i < 0 || i >= size()) {
             throw new IndexOutOfBoundsException("size=" + size() + ", index=" + i);
         }
     }
-    
+
     private int index(int i) {
         return (start + i) % capacity();
     }

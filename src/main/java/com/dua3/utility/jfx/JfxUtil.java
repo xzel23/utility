@@ -25,7 +25,7 @@ import com.aquafx_project.AquaFx;
  */
 public class JfxUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JfxUtil.class);
-    
+
     /**
      * Set the Look&amp;Feel to the native Look&amp;Feel.
      *
@@ -34,7 +34,7 @@ public class JfxUtil {
     public static void setNativeLookAndFeel() {
         setNativeLookAndFeel(null);
     }
-    
+
     /**
      * Set the Look&amp;Feel to the native Look&amp;Feel.
      *
@@ -49,10 +49,10 @@ public class JfxUtil {
             AquaFx.style();
         }
     }
-    
+
     // Utility class, should not be instantiated
     private JfxUtil() {
         // nop
     }
-    
+
 }

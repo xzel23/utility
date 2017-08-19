@@ -11,10 +11,10 @@ import org.junit.Test;
  * Test the FileSystemView class.
  */
 public class IOUtilTest {
-
+    
     /**
      * Test getting extension for a Path.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -24,5 +24,5 @@ public class IOUtilTest {
         String actual = IOUtil.getExtension(path);
         Assert.assertEquals(expected, actual);
     }
-
+    
 }

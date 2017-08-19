@@ -13,7 +13,7 @@ import org.junit.Test;
  * Test the FileSystemView class.
  */
 public class FileSystemViewTest {
-
+    
     /**
      * Construct a FileSystemView for classpath resources and try to access a class file.
      * In this test, a user supplied class is used which at least when run from eclipse
@@ -28,7 +28,7 @@ public class FileSystemViewTest {
         // system
         testClassHelper(getClass());
     }
-
+    
     /**
      * Construct a FileSystemView for classpath resources and try to access a class file.
      * In this test, a JDK class is used which is loaded from within a jar file.
@@ -41,17 +41,17 @@ public class FileSystemViewTest {
         // java.lang.String should be loaded from rt.jar, so this tests the jar functionality
         testClassHelper(java.lang.String.class);
     }
-
+    
     private void testClassHelper(Class<?> clazz) throws IOException {
         try (FileSystemView fsv = FileSystemView.forClass(clazz)) {
             assertNotNull(fsv);
-
+            
             String pathToClassFile = clazz.getSimpleName() + ".class";
             Path path = fsv.resolve(pathToClassFile);
-
+            
             assertTrue(Files.exists(path));
             assertTrue(Files.size(path) > 0);
         }
     }
-
+    
 }

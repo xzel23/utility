@@ -22,12 +22,12 @@ import java.util.Objects;
  */
 public class Run
         implements CharSequence {
-    
+
     private final String text;
     private final int start;
     private final int length;
     private final TextAttributes style;
-    
+
     /**
      * Construct a new Run.
      *
@@ -44,25 +44,25 @@ public class Run
         if (start < 0 || start > text.length() || length < 0 || start + length > text.length()) {
             throw new IllegalArgumentException();
         }
-        
+
         this.text = Objects.requireNonNull(text);
         this.style = Objects.requireNonNull(style);
         this.start = start;
         this.length = length;
     }
-    
+
     @Override
     public char charAt(int index) {
         assert index >= 0 && index < length;
         return text.charAt(start + index);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        
+
         Run other = (Run) obj;
         // it is not sufficient to compare text since even for different
         // strings, the char sequences represented by two runs might be
@@ -75,10 +75,10 @@ public class Run
                 return false;
             }
         }
-        
+
         return style.equals(other.style);
     }
-    
+
     /**
      * Get position of end of Run.
      *
@@ -87,7 +87,7 @@ public class Run
     public int getEnd() {
         return start + length;
     }
-    
+
     /**
      * Get position of start of Run.
      *
@@ -96,7 +96,7 @@ public class Run
     public int getStart() {
         return start;
     }
-    
+
     /**
      * Get style of this Run.
      *
@@ -105,7 +105,7 @@ public class Run
     public TextAttributes getStyle() {
         return style;
     }
-    
+
     @Override
     public int hashCode() {
         int h = style.hashCode();
@@ -114,20 +114,20 @@ public class Run
         }
         return h;
     }
-    
+
     @Override
     public int length() {
         return length;
     }
-    
+
     @Override
     public CharSequence subSequence(int start, int end) {
         return new Run(text, this.start + start, end - start, style);
     }
-    
+
     @Override
     public String toString() {
         return text.substring(start, start + length);
     }
-    
+
 }

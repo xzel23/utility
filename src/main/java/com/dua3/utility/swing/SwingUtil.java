@@ -48,7 +48,7 @@ import com.dua3.utility.Pair;
  */
 public class SwingUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SwingUtil.class);
-
+    
     /**
      * Create an action to be used in menus.
      *
@@ -62,14 +62,14 @@ public class SwingUtil {
     public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             private static final long serialVersionUID = 1L;
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 onActionPerformed.accept(e);
             }
         };
     }
-
+    
     /**
      * Create an action to be used in menus.
      *
@@ -83,14 +83,14 @@ public class SwingUtil {
     public static Action createAction(String name, Runnable onActionPerformed) {
         return new AbstractAction(name) {
             private static final long serialVersionUID = 1L;
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 onActionPerformed.run();
             }
         };
     }
-
+    
     /**
      * Scroll scrollpane to bottom.
      *
@@ -100,7 +100,7 @@ public class SwingUtil {
     public static void scrollToBottom(JScrollPane sp) {
         scrollToEnd(sp.getVerticalScrollBar());
     }
-
+    
     /**
      * Scroll scrollbar to end.
      *
@@ -118,7 +118,7 @@ public class SwingUtil {
         };
         sb.addAdjustmentListener(autoScroller);
     }
-
+    
     /**
      * Set clipboard content.
      *
@@ -130,7 +130,7 @@ public class SwingUtil {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);
     }
-
+    
     /**
      * Set the Swing Look&amp;Feel to the native Look&amp;Feel.
      *
@@ -139,7 +139,7 @@ public class SwingUtil {
     public static void setNativeLookAndFeel() {
         setNativeLookAndFeel(null);
     }
-
+    
     /**
      * Set the Swing Look&amp;Feel to the native Look&amp;Feel.
      *
@@ -158,7 +158,7 @@ public class SwingUtil {
             // Need for macos global menubar
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         }
-
+        
         try {
             // Set system L&F
             String lafName = UIManager.getSystemLookAndFeelClassName();
@@ -169,7 +169,7 @@ public class SwingUtil {
             LOG.warn("Could not set Look&Feel.", ex);
         }
     }
-
+    
     /**
      * Show directory open dialog.
      *
@@ -183,7 +183,7 @@ public class SwingUtil {
     public static Optional<Path> showDirectoryOpenDialog(Component parent, Path current) {
         return showOpenDialog(parent, JFileChooser.DIRECTORIES_ONLY, current);
     }
-
+    
     /**
      * Show file open dialog.
      *
@@ -200,7 +200,7 @@ public class SwingUtil {
     public static Optional<Path> showFileOpenDialog(Component parent, Path current, Pair<String, String[]>... types) {
         return showOpenDialog(parent, JFileChooser.FILES_ONLY, current, types);
     }
-
+    
     /**
      * Convert Color to java.awt.Color.
      *
@@ -212,7 +212,7 @@ public class SwingUtil {
     public static java.awt.Color toAwtColor(Color color) {
         return new java.awt.Color(color.argb());
     }
-
+    
     /**
      * Convert String to java.awt.Color.
      *
@@ -226,7 +226,7 @@ public class SwingUtil {
     public static java.awt.Color toAwtColor(String s) {
         return toAwtColor(Color.valueOf(s));
     }
-
+    
     /**
      * Execute update and scroll to bottom.
      * <p>
@@ -242,7 +242,7 @@ public class SwingUtil {
     public static void updateAndScrollToBottom(JScrollPane sp, Runnable update) {
         updateAndScrollToEnd(sp.getVerticalScrollBar(), update);
     }
-
+    
     /**
      * Execute update and scroll to end.
      * <p>
@@ -257,14 +257,14 @@ public class SwingUtil {
      */
     public static void updateAndScrollToEnd(JScrollBar sb, Runnable update) {
         boolean atEnd = sb.getMaximum() == sb.getValue() + sb.getVisibleAmount();
-
+        
         update.run();
-
+        
         if (atEnd) {
             scrollToEnd(sb);
         }
     }
-
+    
     @SafeVarargs
     private static Optional<Path> showOpenDialog(Component parent, int selectionMode, Path current,
             Pair<String, String[]>... types) {
@@ -277,28 +277,28 @@ public class SwingUtil {
                 file = new File(".").getAbsoluteFile();
             }
         }
-
+        
         JFileChooser jfc = new JFileChooser();
         for (Pair<String, String[]> entry : types) {
             jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first, entry.second));
         }
-
+        
         jfc.setSelectedFile(file);
         jfc.setFileSelectionMode(selectionMode);
-
+        
         int rc = jfc.showOpenDialog(parent);
-
+        
         if (rc != JFileChooser.APPROVE_OPTION) {
             LOG.debug("file dialog was cancelled");
             return Optional.empty();
         }
-
+        
         Path path = jfc.getSelectedFile().toPath();
         LOG.debug("selected path: {}", path);
-
+        
         return Optional.of(path);
     }
-
+    
     // Utility class, should not be instantiated
     private SwingUtil() {
         // nop

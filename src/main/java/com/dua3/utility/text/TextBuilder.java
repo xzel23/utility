@@ -25,7 +25,7 @@ package com.dua3.utility.text;
  *            class matching produced document type
  */
 public abstract class TextBuilder<T> {
-    
+
     public static float decodeFontSize(String s) {
         float factor = 1f;
         if (s.endsWith("pt")) {
@@ -37,13 +37,13 @@ public abstract class TextBuilder<T> {
         }
         return factor * Float.parseFloat(s);
     }
-    
+
     /**
      * Constructor.
      */
     protected TextBuilder() {
     }
-    
+
     /**
      * Add text.
      *
@@ -53,13 +53,13 @@ public abstract class TextBuilder<T> {
      */
     public TextBuilder<T> add(RichText text) {
         checkState();
-
+        
         for (Run r : text) {
             append(r);
         }
         return this;
     }
-    
+
     /**
      * Add text to document. Implementations must override this method to append
      * {@code text} which is attributed with {@code attributes} to the result
@@ -69,7 +69,7 @@ public abstract class TextBuilder<T> {
      *            the {@link com.dua3.utility.text.Run} to append
      */
     protected abstract void append(Run run);
-    
+
     /**
      * Check state of this TextBuilder.
      *
@@ -81,13 +81,13 @@ public abstract class TextBuilder<T> {
             throw new IllegalStateException("This builder's get() method was already called.");
         }
     }
-    
+
     /**
      * Get document.
      *
      * @return the document after transformation.
      */
     protected abstract T get();
-    
+
     protected abstract boolean wasGetCalled();
 }

@@ -9,7 +9,7 @@ import java.nio.file.Path;
  * Utility class for Inpit/Output.
  */
 public class IOUtil {
-    
+
     /**
      * Get file extension.
      *
@@ -22,7 +22,7 @@ public class IOUtil {
         int pos = fname.lastIndexOf('.');
         return pos < 0 ? "" : fname.substring(pos + 1);
     }
-    
+
     /**
      * Read content of path into String.
      *
@@ -37,7 +37,7 @@ public class IOUtil {
     public static String read(Path path, Charset cs) throws IOException {
         return new String(Files.readAllBytes(path), cs);
     }
-    
+
     private IOUtil() {
         // utility class
     }

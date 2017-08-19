@@ -15,30 +15,30 @@ import org.junit.Test;
  * @author axel
  */
 public class MathUtilTest {
-
+    
     @BeforeClass
     public static void setUpClass() {
         // nop
     }
-
+    
     @AfterClass
     public static void tearDownClass() {
         // nop
     }
-
+    
     public MathUtilTest() {
     }
-
+    
     @Before
     public void setUp() {
         // nop
     }
-
+    
     @After
     public void tearDown() {
         // nop
     }
-
+    
     /**
      * Test of findRoot method, of class MathUtil.
      */
@@ -49,7 +49,7 @@ public class MathUtilTest {
         double expResult = 5;
         assertEquals(expResult, result, 1e-15);
     }
-
+    
     /**
      * Test of findRootsInIntervall method, of class MathUtil.
      */
@@ -61,7 +61,7 @@ public class MathUtilTest {
         assertEquals(0, result.get(0), 1e-15);
         assertEquals(2.0 / 3.0, result.get(1), 1e-15);
     }
-
+    
     /**
      * Test of ilog10 method, of class MathUtil.
      */
@@ -103,7 +103,7 @@ public class MathUtilTest {
         assertEquals(1, MathUtil.ilog10(99.0), 1e-15);
         assertEquals(2, MathUtil.ilog10(100.0), 1e-15);
     }
-
+    
     /**
      * Test of pow10 method, of class MathUtil.
      */
@@ -116,7 +116,7 @@ public class MathUtilTest {
         assertEquals(10.0, MathUtil.pow10(1), 1e-15);
         assertEquals(100.0, MathUtil.pow10(2), 1e-15);
     }
-
+    
     /**
      * Test of round method, of class MathUtil.
      */
@@ -126,7 +126,7 @@ public class MathUtilTest {
         double[][] tests = {
                 // arg, round(arg,2), round(arg,-2)
                 { 0, 0, 0 }, { 1.234, 1.23, 0 }, { -1.234, -1.23, 0 }, { -1234.567, -1234.57, -1200 }, };
-
+        
         for (double[] test : tests) {
             double arg = test[0];
             double expected = test[1];
@@ -134,7 +134,7 @@ public class MathUtilTest {
             assertEquals(expected, result, 1e-15);
         }
     }
-
+    
     /**
      * Test of roundToPrecision method, of class MathUtil.
      */
@@ -144,7 +144,7 @@ public class MathUtilTest {
         assertEquals(1.2, MathUtil.roundToPrecision(1.2345, 2), 1e-10);
         assertEquals(1.235, MathUtil.roundToPrecision(1.2345, 4), 1e-10);
     }
-
+    
     /**
      * Test of toDecimalString method, of class MathUtil.
      */
@@ -153,5 +153,5 @@ public class MathUtilTest {
         System.out.println("toDecimalString");
         assertEquals("1.0", MathUtil.toDecimalString(1.0, 1));
     }
-
+    
 }
