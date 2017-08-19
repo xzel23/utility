@@ -46,7 +46,7 @@ public class FileSystemView implements AutoCloseable {
     private interface CleanUp {
         void run() throws IOException;
     }
-    
+
     /**
      * Create FileSystemView.
      *
@@ -128,13 +128,13 @@ public class FileSystemView implements AutoCloseable {
      *            the directory that will be root of this view
      * @return
      *         FileSystemView
+     * @throws IOException 
      */
-    public static FileSystemView forDirectory(Path root) {
-        return new FileSystemView(root, () -> {
-            /* NOOP */ });
+    public static FileSystemView forDirectory(Path root) throws IOException {
+        return new FileSystemView(root, () -> { /* NOOP */ });
     }
     
-    private static FileSystemView createFileSystemView(FileSystem zipFs, String path) {
+    private static FileSystemView createFileSystemView(FileSystem zipFs, String path) throws IOException {
         Path zipRoot = zipFs.getPath(path);
         return new FileSystemView(zipRoot, zipFs::close);
     }
@@ -143,9 +143,9 @@ public class FileSystemView implements AutoCloseable {
     
     private final CleanUp cleanup;
     
-    private FileSystemView(Path root, CleanUp cleanup) {
+    private FileSystemView(Path root, CleanUp cleanup) throws IOException {
         this.cleanup = cleanup;
-        this.root = root;
+        this.root = root.toRealPath();
     }
     
     @Override
@@ -171,7 +171,9 @@ public class FileSystemView implements AutoCloseable {
      * @see java.nio.file.Path#resolve(String)
      */
     public Path resolve(String path) {
-        return root.resolve(path);
+        Path resolvedPath = root.resolve(path).normalize();
+        assertThatResolvedPathIsValid(resolvedPath, path);
+        return resolvedPath;
     }
     
     /**
@@ -183,7 +185,15 @@ public class FileSystemView implements AutoCloseable {
      * @see java.nio.file.Path#resolve(Path)
      */
     Path resolve(Path path) {
-        return root.resolve(path);
+        Path resolvedPath = root.resolve(path).normalize();
+        assertThatResolvedPathIsValid(resolvedPath, path);
+        return resolvedPath;
+    }
+
+    private void assertThatResolvedPathIsValid(Path resolvedPath, Object originalPath) {
+        if (!resolvedPath.toAbsolutePath().startsWith(root)) {
+            throw new IllegalArgumentException("Path is not in this FileSystemViews subtree: "+originalPath);
+        }
     }
     
 }
