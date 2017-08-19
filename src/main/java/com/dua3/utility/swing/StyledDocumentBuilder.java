@@ -64,6 +64,14 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         return doc;
     }
     
+    public static StyledDocument toStyledDocument(RichText text, AttributeSet dfltAttr) {
+        return toStyledDocument(text, dfltAttr, 1f);
+    }
+    
+    public static StyledDocument toStyledDocument(RichText text) {
+        return toStyledDocument(text, new SimpleAttributeSet());
+    }
+    
     private final Function<String, TextAttributes> styleSupplier;
 
     private Map<String, AttributeSet> styleAttributes = new HashMap<>();
