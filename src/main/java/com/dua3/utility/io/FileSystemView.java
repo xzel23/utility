@@ -46,7 +46,7 @@ public class FileSystemView implements AutoCloseable {
     private interface CleanUp {
         void run() throws IOException;
     }
-    
+
     /**
      * Create FileSystemView.
      *
@@ -128,13 +128,25 @@ public class FileSystemView implements AutoCloseable {
      *            the directory that will be root of this view
      * @return
      *         FileSystemView
+<<<<<<< HEAD
      * @throws IOException
+=======
+     * @throws IOException 
+>>>>>>> branch 'master' of https://github.com/xzel23/utility.git
      */
     public static FileSystemView forDirectory(Path root) throws IOException {
+<<<<<<< HEAD
         return new FileSystemView(root, () -> {
             /* NOOP */ });
+=======
+        return new FileSystemView(root, () -> { /* NOOP */ });
+>>>>>>> branch 'master' of https://github.com/xzel23/utility.git
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> branch 'master' of https://github.com/xzel23/utility.git
     private static FileSystemView createFileSystemView(FileSystem zipFs, String path) throws IOException {
         Path zipRoot = zipFs.getPath(path);
         return new FileSystemView(zipRoot, zipFs::close);
@@ -143,7 +155,11 @@ public class FileSystemView implements AutoCloseable {
     private final Path root;
 
     private final CleanUp cleanup;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> branch 'master' of https://github.com/xzel23/utility.git
     private FileSystemView(Path root, CleanUp cleanup) throws IOException {
         this.cleanup = cleanup;
         this.root = root.toRealPath();
@@ -175,12 +191,15 @@ public class FileSystemView implements AutoCloseable {
         Path resolvedPath = root.resolve(path).normalize();
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;
+<<<<<<< HEAD
     }
 
     private void assertThatResolvedPathIsValid(Path resolvedPath, Object originalPath) {
         if (!resolvedPath.toAbsolutePath().startsWith(root)) {
             throw new IllegalArgumentException("Path is not in this FileSystemViews subtree: " + originalPath);
         }
+=======
+>>>>>>> branch 'master' of https://github.com/xzel23/utility.git
     }
     
     /**
@@ -195,6 +214,15 @@ public class FileSystemView implements AutoCloseable {
         Path resolvedPath = root.resolve(path).normalize();
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;
+<<<<<<< HEAD
+=======
+    }
+
+    private void assertThatResolvedPathIsValid(Path resolvedPath, Object originalPath) {
+        if (!resolvedPath.toAbsolutePath().startsWith(root)) {
+            throw new IllegalArgumentException("Path is not in this FileSystemViews subtree: "+originalPath);
+        }
+>>>>>>> branch 'master' of https://github.com/xzel23/utility.git
     }
 
 }
