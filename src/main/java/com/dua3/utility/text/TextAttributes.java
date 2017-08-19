@@ -39,6 +39,11 @@ public class TextAttributes {
             }
             this.args = Collections.unmodifiableMap(m);
         }
+        
+        @Override
+        public String toString() {
+            return style.toString()+args;
+        }
     }
 
     public static final String ATTR_ID = "id";
