@@ -112,14 +112,14 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         styles.put(TextAttributes.FONT_SIZE, (as,v) -> StyleConstants.setFontSize(as, (int) Math.round(scale * decodeFontSize(String.valueOf(v)))));
         styles.put(TextAttributes.COLOR, (as,v) -> StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(v))));
         styles.put(TextAttributes.BACKGROUND_COLOR, (as,v) -> StyleConstants.setBackground(as, SwingUtil.toAwtColor(String.valueOf(v))));
-        styles.put(TextAttributes.FONT_WEIGHT, (as,v) -> StyleConstants.setBold(as, v.equals("bold")));
+        styles.put(TextAttributes.FONT_WEIGHT, (as,v) -> StyleConstants.setBold(as, v.equals(TextAttributes.FONT_WEIGHT_VALUE_BOLD)));
         styles.put(TextAttributes.FONT_STYLE, (as,v) -> {
             switch (String.valueOf(v)) {
-            case "normal":
+            case TextAttributes.FONT_STYLE_VALUE_NORMAL:
                 StyleConstants.setItalic(as, false);
                 break;
-            case "italic":
-            case "oblique":
+            case TextAttributes.FONT_STYLE_VALUE_ITALIC:
+            case TextAttributes.FONT_STYLE_VALUE_OBLIQUE:
                 StyleConstants.setItalic(as, true);
                 break;
             default:
@@ -129,10 +129,10 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         });
         styles.put(TextAttributes.TEXT_DECORATION, (as,v) -> {
             switch (String.valueOf(v)) {
-            case "line-through":
+            case TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH:
                 StyleConstants.setStrikeThrough(as, true);
                 break;
-            case "underline":
+            case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE:
                 StyleConstants.setUnderline(as, true);
                 break;
             default:

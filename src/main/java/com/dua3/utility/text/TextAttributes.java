@@ -55,12 +55,29 @@ public class TextAttributes {
 
     // font properties
     public static final String FONT_FAMILY = "font-family";
-    public static final String FONT_STYLE = "font-style";
-    public static final String FONT_SIZE = "font-size";
-    public static final String FONT_WEIGHT = "font-weight";
-    public static final String FONT_VARIANT = "font-variant";
 
+    /** property name for the font style */
+    public static final String FONT_STYLE = "font-style";
+    public static final String FONT_STYLE_VALUE_NORMAL = "normal";
+    public static final String FONT_STYLE_VALUE_ITALIC = "italic";
+    public static final String FONT_STYLE_VALUE_OBLIQUE = "oblique";
+
+    /** property name for the font weight */
+    public static final String FONT_SIZE = "font-size";
+    
+    /** property name for the font weight */
+    public static final String FONT_WEIGHT = "font-weight";
+    public static final String FONT_WEIGHT_VALUE_BOLD = "bold";
+    public static final String FONT_WEIGHT_VALUE_NORMAL = "normal";
+    
+    /** property name for the font variant */
+    public static final String FONT_VARIANT = "font-variant";
+    public static final String FONT_VARIANT_VALUE_NORMAL = "normal";
+    
+    /** property name for the text decoration */
     public static final String TEXT_DECORATION = "text-decoration";
+    public static final String TEXT_DECORATION_VALUE_LINE_THROUGH = "line-through";
+    public static final String TEXT_DECORATION_VALUE_UNDERLINE = "underline";
 
     // colors
     public static final String COLOR = "color";
