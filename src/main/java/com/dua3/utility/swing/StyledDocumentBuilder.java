@@ -77,7 +77,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         return toStyledDocument(text, new SimpleAttributeSet());
     }
     
-    private final Function<String, TextAttributes> styleSupplier;
+    private final Function<Map<String, Object>, TextAttributes> styleSupplier;
 
     private Map<String, AttributeSet> styleAttributes = new HashMap<>();
 
@@ -88,7 +88,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         this(scale, styleName -> TextAttributes.none());
     }
 
-    public StyledDocumentBuilder(double scale, Function<String, TextAttributes> styleSupplier) {
+    public StyledDocumentBuilder(double scale, Function<Map<String, Object>, TextAttributes> styleSupplier) {
         this.scale = scale;
         this.styleSupplier = styleSupplier;
     }
@@ -143,8 +143,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         styles.put(TextAttributes.STYLE_START_RUN, (as,v) -> {
             List<Attribute> attrs = (List<Attribute>) v;
             for (Attribute attr: attrs) {
-                MarkDownStyle style = attr.style;
-                AttributeSet attributes = getAttributeSetForStyle(style.name());
+                AttributeSet attributes = getAttributeSetForStyleProperties(attr.args);
                 as.addAttributes(attributes);
                 LOG.debug("style");
             }
@@ -166,8 +165,9 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         }
     }
 
-    private AttributeSet getAttributeSetForStyle(String styleName) {
-        return styleAttributes.computeIfAbsent(styleName, s -> getAttributes(styleSupplier.apply(s)));
+    private AttributeSet getAttributeSetForStyleProperties(Map<String, Object> properties) {
+        String styleName = String.valueOf(properties.get(TextAttributes.STYLE_NAME));
+        return styleAttributes.computeIfAbsent(styleName , s -> getAttributes(styleSupplier.apply(properties)));
     }
 
     private AttributeSet getAttributes(TextAttributes style) {
@@ -178,7 +178,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     private SimpleAttributeSet getAttributeSet(Run run) {
         Map<String, Object> styleProps = run.getStyle().properties();
-        AttributeSet das = getAttributeSetForStyle((String) styleProps.get(TextAttributes.STYLE_NAME));
+        AttributeSet das = getAttributeSetForStyleProperties(styleProps);
         SimpleAttributeSet as = new SimpleAttributeSet(das);
         applyAttributes(styleProps, as);
         return as;

@@ -34,6 +34,7 @@ public class TextAttributes {
         Attribute(MarkDownStyle style, Pair<String, Object>... args) {
             this.style = style;
             Map<String, Object> m = new HashMap<>();
+            m.put(TextAttributes.STYLE_NAME, style.name());
             for (Pair<String, Object> arg : args) {
                 m.put(arg.first, arg.second);
             }
