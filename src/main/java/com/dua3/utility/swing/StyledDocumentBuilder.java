@@ -16,6 +16,7 @@
 package com.dua3.utility.swing;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -31,9 +32,11 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.TextAttributes;
+import com.dua3.utility.text.TextAttributes.Attribute;
 import com.dua3.utility.text.TextBuilder;
 
 /**
@@ -99,6 +102,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     Map<String, BiConsumer<MutableAttributeSet, Object>> styles = defaultStyles();
     
+    @SuppressWarnings("unchecked")
     Map<String, BiConsumer<MutableAttributeSet, Object>> defaultStyles() {
         Map<String, BiConsumer<MutableAttributeSet,Object>> styles = new HashMap<>();
         
@@ -123,7 +127,6 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 break;
             }
         });
-
         styles.put(TextAttributes.TEXT_DECORATION, (as,v) -> {
             switch (String.valueOf(v)) {
             case "line-through":
@@ -137,16 +140,33 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 break;
             }
         });
+        styles.put(TextAttributes.STYLE_START_RUN, (as,v) -> {
+            List<Attribute> attrs = (List<Attribute>) v;
+            for (Attribute attr: attrs) {
+                MarkDownStyle style = attr.style;
+                AttributeSet attributes = getAttributeSetForStyle(style.name());
+                as.addAttributes(attributes);
+                LOG.debug("style");
+            }
+        });
+        styles.put(TextAttributes.STYLE_END_RUN, (as,v) -> {
+            // nop: StyledDocument Runs don't need end tags
+        });
         return styles;
     }
 
-    private void applyAttributes(Map<String, Object> styleAttributes, SimpleAttributeSet as) {
+    /**
+     * Add style Attributes to an attribute set.
+     * @param styleAttributes the styleAttributes to add
+     * @param as the target MutableAttributeSet
+     */
+    private void applyAttributes(Map<String, Object> styleAttributes, MutableAttributeSet as) {
         for (Map.Entry<String, Object> e : styleAttributes.entrySet()) {
             styles.getOrDefault(e.getKey(), (k,v) -> LOG.warn("Unknown style: {}.", v)).accept(as,e.getValue());
         }
     }
 
-    private AttributeSet getAttributes(String styleName) {
+    private AttributeSet getAttributeSetForStyle(String styleName) {
         return styleAttributes.computeIfAbsent(styleName, s -> getAttributes(styleSupplier.apply(s)));
     }
 
@@ -158,7 +178,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     private SimpleAttributeSet getAttributeSet(Run run) {
         Map<String, Object> styleProps = run.getStyle().properties();
-        AttributeSet das = getAttributes((String) styleProps.get(TextAttributes.STYLE_NAME));
+        AttributeSet das = getAttributeSetForStyle((String) styleProps.get(TextAttributes.STYLE_NAME));
         SimpleAttributeSet as = new SimpleAttributeSet(das);
         applyAttributes(styleProps, as);
         return as;
