@@ -137,8 +137,8 @@ class RichTextRenderer {
         public void visit(Heading node) {
             String id = extractText(node, (v, n) -> v.visit(n)).toLowerCase(Locale.ROOT).trim();
             Attribute attr = new Attribute(MarkDownStyle.HEADING,
-                    Pair.of(TextAttributes.ATTR_HEADING_LEVEL, node.getLevel()),
-                    Pair.of(TextAttributes.ATTR_ID, id));
+                    Pair.of(MarkDownStyle.ATTR_HEADING_LEVEL, node.getLevel()),
+                    Pair.of(MarkDownStyle.ATTR_ID, id));
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
@@ -167,9 +167,9 @@ class RichTextRenderer {
             String altText = extractText(node, (v, n) -> v.visit(n));
 
             Attribute attr = new Attribute(MarkDownStyle.IMAGE,
-                    Pair.of(TextAttributes.ATTR_IMAGE_SRC, node.getDestination()),
-                    Pair.of(TextAttributes.ATTR_IMAGE_TITLE, node.getTitle()),
-                    Pair.of(TextAttributes.ATTR_IMAGE_ALT, altText));
+                    Pair.of(MarkDownStyle.ATTR_IMAGE_SRC, node.getDestination()),
+                    Pair.of(MarkDownStyle.ATTR_IMAGE_TITLE, node.getTitle()),
+                    Pair.of(MarkDownStyle.ATTR_IMAGE_ALT, altText));
 
             push(TextAttributes.STYLE_START_RUN, attr);
             push(TextAttributes.STYLE_END_RUN, attr);
@@ -187,9 +187,9 @@ class RichTextRenderer {
         @Override
         public void visit(Link node) {
             Attribute attr = new Attribute(MarkDownStyle.LINK,
-                    Pair.of(TextAttributes.ATTR_LINK_HREF, node.getDestination()),
-                    Pair.of(TextAttributes.ATTR_LINK_TITLE, node.getTitle()),
-                    Pair.of(TextAttributes.ATTR_LINK_EXTERN, !node.getDestination().startsWith("#")));
+                    Pair.of(MarkDownStyle.ATTR_LINK_HREF, node.getDestination()),
+                    Pair.of(MarkDownStyle.ATTR_LINK_TITLE, node.getTitle()),
+                    Pair.of(MarkDownStyle.ATTR_LINK_EXTERN, !node.getDestination().startsWith("#")));
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
