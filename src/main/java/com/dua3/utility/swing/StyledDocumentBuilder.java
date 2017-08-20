@@ -32,7 +32,6 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.TextAttributes;
@@ -78,8 +77,6 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     }
     
     private final Function<Map<String, Object>, TextAttributes> styleSupplier;
-
-    private Map<String, AttributeSet> styleAttributes = new HashMap<>();
 
     private StyledDocument doc = new DefaultStyledDocument();
     private final double scale;
@@ -166,8 +163,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     }
 
     private AttributeSet getAttributeSetForStyleProperties(Map<String, Object> properties) {
-        String styleName = String.valueOf(properties.get(TextAttributes.STYLE_NAME));
-        return styleAttributes.computeIfAbsent(styleName , s -> getAttributes(styleSupplier.apply(properties)));
+        return getAttributes(styleSupplier.apply(properties));
     }
 
     private AttributeSet getAttributes(TextAttributes style) {
