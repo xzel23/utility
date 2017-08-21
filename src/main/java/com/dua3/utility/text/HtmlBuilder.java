@@ -42,7 +42,7 @@ public class HtmlBuilder extends TextBuilder<String> {
         HTML_OPEN(String.class, "<html>\n<head><meta charset=\"UTF-8\"></head>\n<body>\n"),
         /** Header */
         HTML_CLOSE(String.class, "\n</body>\n</html>\n"),
-        /** Where to open extern links */
+        /** Where to open external links */
         TARGET_FOR_EXTERN_LINKS(String.class, "_blank"),
         /** Replace '.md' file extension in local links (i.e. with ".html") */
         REPLACEMENT_FOR_MD_EXTENSION_IN_LINK(String.class, null);
@@ -258,7 +258,7 @@ public class HtmlBuilder extends TextBuilder<String> {
                             + ">";
                 },
                 attr -> "</a>");
-        putTags(tags, MarkDownStyle.LIST_ITEM.name(), attr -> "<li>", attr -> "</li>\n");
+        putTags(tags, MarkDownStyle.LIST_ITEM.name(), attr -> "<li>", attr -> "</li>");
         putTags(tags, MarkDownStyle.ORDERED_LIST.name(), attr -> "<ol>\n", attr -> "</ol>\n");
         putTags(tags, MarkDownStyle.PARAGRAPH.name(), attr -> "<p>", attr -> "</p>");
         putTags(tags, MarkDownStyle.SOFT_LINE_BREAK.name(), attr -> "", attr -> "&shy;\n");

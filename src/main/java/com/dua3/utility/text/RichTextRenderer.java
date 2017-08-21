@@ -145,8 +145,8 @@ class RichTextRenderer {
                     Pair.of(MarkDownStyle.ATTR_ID, id));
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
+            app.append('\n');
         }
 
         @Override
@@ -207,8 +207,8 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.LIST_ITEM);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
+            app.append('\n');
         }
 
         @Override
@@ -224,8 +224,8 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.PARAGRAPH);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
+            app.append('\n');
         }
 
         @Override
