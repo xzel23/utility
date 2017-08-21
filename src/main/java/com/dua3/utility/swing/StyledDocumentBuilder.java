@@ -142,7 +142,6 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             for (Attribute attr: attrs) {
                 AttributeSet attributes = getAttributeSetForStyleProperties(attr.args);
                 as.addAttributes(attributes);
-                LOG.debug("style");
             }
         });
         styles.put(TextAttributes.STYLE_END_RUN, (as,v) -> {
