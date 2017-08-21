@@ -162,20 +162,19 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         }
     }
 
-    private AttributeSet getAttributeSetForStyleProperties(Map<String, Object> properties) {
+    private MutableAttributeSet getAttributeSetForStyleProperties(Map<String, Object> properties) {
         return getAttributes(styleSupplier.apply(properties));
     }
 
-    private AttributeSet getAttributes(TextAttributes style) {
+    private MutableAttributeSet getAttributes(TextAttributes style) {
         SimpleAttributeSet as = new SimpleAttributeSet();
         applyAttributes(style.properties(), as);
         return as;
     }
 
-    private SimpleAttributeSet getAttributeSet(Run run) {
+    private MutableAttributeSet getAttributeSet(Run run) {
         Map<String, Object> styleProps = run.getStyle().properties();
-        AttributeSet das = getAttributeSetForStyleProperties(styleProps);
-        SimpleAttributeSet as = new SimpleAttributeSet(das);
+        MutableAttributeSet as = getAttributeSetForStyleProperties(styleProps);
         applyAttributes(styleProps, as);
         return as;
     }
