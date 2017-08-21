@@ -54,6 +54,7 @@ class RichTextRenderer {
     static class RTVisitor extends AbstractVisitor {
 
         private final RichTextBuilder app;
+        private boolean atStartOfLine = true;
 
         public RTVisitor(RichTextBuilder app) {
             this.app = app;
@@ -64,7 +65,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.BLOCK_QUOTE);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            app.append('\n');
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -80,9 +81,16 @@ class RichTextRenderer {
         public void visit(Code node) {
             Attribute attr = new Attribute(MarkDownStyle.CODE);
             push(TextAttributes.STYLE_START_RUN, attr);
-            app.append(node.getLiteral());
+            appendText(node.getLiteral());
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
+        }
+
+        private void appendText(String literal) {
+            app.append(literal);
+            if (!literal.isEmpty()) {
+                atStartOfLine = literal.charAt(literal.length()-1)=='\n';
+            }
         }
 
         @Override
@@ -90,7 +98,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.CUSTOM_BLOCK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            app.append('\n');
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -122,9 +130,9 @@ class RichTextRenderer {
         public void visit(FencedCodeBlock node) {
             Attribute attr = new Attribute(MarkDownStyle.FENCED_CODE_BLOCK);
             push(TextAttributes.STYLE_START_RUN, attr);
-            app.append(node.getLiteral());
+            appendText(node.getLiteral());
             super.visit(node);
-            app.append('\n');
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -133,7 +141,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.HARD_LINE_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            app.append('\n');
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -143,19 +151,20 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.HEADING,
                     Pair.of(MarkDownStyle.ATTR_HEADING_LEVEL, node.getLevel()),
                     Pair.of(MarkDownStyle.ATTR_ID, id));
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
-            app.append('\n');
+            appendNewLine();
         }
 
         @Override
         public void visit(HtmlBlock node) {
             Attribute attr = new Attribute(MarkDownStyle.HTML_BLOCK);
             push(TextAttributes.STYLE_START_RUN, attr);
-            app.append(node.getLiteral());
+            appendText(node.getLiteral());
             super.visit(node);
-            app.append('\n');
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -163,7 +172,7 @@ class RichTextRenderer {
         public void visit(HtmlInline node) {
             Attribute attr = new Attribute(MarkDownStyle.HTML_INLINE);
             push(TextAttributes.STYLE_START_RUN, attr);
-            app.append(node.getLiteral());
+            appendText(node.getLiteral());
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
         }
@@ -185,9 +194,9 @@ class RichTextRenderer {
         public void visit(IndentedCodeBlock node) {
             Attribute attr = new Attribute(MarkDownStyle.INDENTED_CODE_BLOCK);
             push(TextAttributes.STYLE_START_RUN, attr);
-            app.append(node.getLiteral());
+            appendText(node.getLiteral());
             super.visit(node);
-            app.append('\n');
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -208,7 +217,7 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
-            app.append('\n');
+            appendNewLineIfNeeded();
         }
 
         @Override
@@ -225,7 +234,18 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
+        }
+
+        private void appendNewLineIfNeeded() {
+            if (!atStartOfLine) {
+                appendNewLine();
+            }
+        }
+
+        private void appendNewLine() {
             app.append('\n');
+            atStartOfLine = true;
         }
 
         @Override
@@ -247,7 +267,7 @@ class RichTextRenderer {
 
         @Override
         public void visit(Text node) {
-            app.append(node.getLiteral());
+            appendText(node.getLiteral());
             super.visit(node);
         }
 
@@ -256,7 +276,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.THEMATIC_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            app.append('\n');
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 

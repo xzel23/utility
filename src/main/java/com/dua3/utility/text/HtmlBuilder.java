@@ -41,7 +41,7 @@ public class HtmlBuilder extends TextBuilder<String> {
         /** Header */
         HTML_OPEN(String.class, "<html>\n<head><meta charset=\"UTF-8\"></head>\n<body>\n"),
         /** Header */
-        HTML_CLOSE(String.class, "\n</body>\n</html>\n"),
+        HTML_CLOSE(String.class, "</body>\n</html>\n"),
         /** Where to open external links */
         TARGET_FOR_EXTERN_LINKS(String.class, "_blank"),
         /** Replace '.md' file extension in local links (i.e. with ".html") */
@@ -218,19 +218,19 @@ public class HtmlBuilder extends TextBuilder<String> {
     private Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> defaultStyleTags() {
         Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> tags = new HashMap<>();
         
-        putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "<blockquote>\n", attr -> "</blockquote>\n");
-        putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "<ul>\n", attr -> "</ul>\n");
+        putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "<blockquote>", attr -> "</blockquote>");
+        putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "<ul>", attr -> "</ul>");
         putTags(tags, MarkDownStyle.CODE.name(), attr -> "<code>", attr -> "</code>");
         putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
         putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> "<em>", attr -> "</em>");
-        putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
-        putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "<br>\n", attr -> "");
+        putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre><code>", attr -> "</code></pre>");
+        putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "<br>", attr -> "");
         putTags(tags, MarkDownStyle.HEADING.name(),
-                attr -> "\n<h" + attr.args.get(MarkDownStyle.ATTR_HEADING_LEVEL)
+                attr -> "<h" + attr.args.get(MarkDownStyle.ATTR_HEADING_LEVEL)
                         + attrText(attr.args, MarkDownStyle.ATTR_ID, "id", "")
                         + ">",
-                attr -> "</h" + attr.args.get(MarkDownStyle.ATTR_HEADING_LEVEL) + ">\n");
-        putTags(tags, MarkDownStyle.THEMATIC_BREAK.name(), attr -> "\n<hr>\n", attr -> "");
+                attr -> "</h" + attr.args.get(MarkDownStyle.ATTR_HEADING_LEVEL) + ">");
+        putTags(tags, MarkDownStyle.THEMATIC_BREAK.name(), attr -> "<hr>", attr -> "");
         // HTML_BLOCK
         // HTML_INLINE
         putTags(tags, MarkDownStyle.IMAGE.name(),
@@ -240,7 +240,7 @@ public class HtmlBuilder extends TextBuilder<String> {
                         + attrText(attr.args, MarkDownStyle.ATTR_IMAGE_ALT, "alt", null)
                         + ">",
                 attr -> "");
-        putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
+        putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "<pre><code>", attr -> "</code></pre>");
         putTags(tags, MarkDownStyle.LINK.name(),
                 attr -> {
                     String href = attr.args.getOrDefault(MarkDownStyle.ATTR_LINK_HREF, "").toString();
@@ -259,9 +259,9 @@ public class HtmlBuilder extends TextBuilder<String> {
                 },
                 attr -> "</a>");
         putTags(tags, MarkDownStyle.LIST_ITEM.name(), attr -> "<li>", attr -> "</li>");
-        putTags(tags, MarkDownStyle.ORDERED_LIST.name(), attr -> "<ol>\n", attr -> "</ol>\n");
+        putTags(tags, MarkDownStyle.ORDERED_LIST.name(), attr -> "<ol>", attr -> "</ol>");
         putTags(tags, MarkDownStyle.PARAGRAPH.name(), attr -> "<p>", attr -> "</p>");
-        putTags(tags, MarkDownStyle.SOFT_LINE_BREAK.name(), attr -> "", attr -> "&shy;\n");
+        putTags(tags, MarkDownStyle.SOFT_LINE_BREAK.name(), attr -> "", attr -> "&shy;");
         putTags(tags, MarkDownStyle.STRONG_EMPHASIS.name(), attr -> "<strong>", attr -> "</strong>");
         putTags(tags, MarkDownStyle.TEXT.name(), attr -> "", attr -> "");
         // CUSTOM_BLOCK
