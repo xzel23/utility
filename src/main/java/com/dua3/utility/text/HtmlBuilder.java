@@ -37,7 +37,9 @@ public class HtmlBuilder extends TextBuilder<String> {
      */
     public enum Option {
         /** Header */
-        HTML_OPEN(String.class, "<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\">\n"),
+        DOCTYPE(String.class, "<!DOCTYPE html>\n"),
+        /** Header */
+        HTML_OPEN(String.class, "<html>\n<head><meta charset=\"UTF-8\"></head>\n<body>\n"),
         /** Header */
         HTML_CLOSE(String.class, "\n</body>\n</html>\n"),
         /** Where to open extern links */
@@ -81,6 +83,9 @@ public class HtmlBuilder extends TextBuilder<String> {
     }
 
     private StringBuilder buffer = new StringBuilder();
+    
+    private final String docType;
+
     private final String htmlOpen;
     
     private final String htmlClose;
@@ -94,11 +99,13 @@ public class HtmlBuilder extends TextBuilder<String> {
     public HtmlBuilder(Pair<Option, Object>[] options) {
         Map<Option, Object> optionMap = Pair.toMap(options);
         
+        this.docType = (String) getOption(optionMap, Option.DOCTYPE);
         this.htmlOpen = (String) getOption(optionMap, Option.HTML_OPEN);
         this.htmlClose = (String) getOption(optionMap, Option.HTML_CLOSE);
         this.targetForExternLinks = (String) getOption(optionMap, Option.TARGET_FOR_EXTERN_LINKS);
         this.replaceMdExtensionWith = (String) getOption(optionMap, Option.REPLACEMENT_FOR_MD_EXTENSION_IN_LINK);
         
+        buffer.append(docType);
         buffer.append(htmlOpen);
     }
     

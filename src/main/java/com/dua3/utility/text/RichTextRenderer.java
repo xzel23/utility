@@ -64,6 +64,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.BLOCK_QUOTE);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -89,6 +90,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.CUSTOM_BLOCK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -122,6 +124,7 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             app.append(node.getLiteral());
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -130,6 +133,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.HARD_LINE_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -141,6 +145,7 @@ class RichTextRenderer {
                     Pair.of(MarkDownStyle.ATTR_ID, id));
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -150,6 +155,7 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             app.append(node.getLiteral());
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -181,6 +187,7 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             app.append(node.getLiteral());
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -200,6 +207,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.LIST_ITEM);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -216,6 +224,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.PARAGRAPH);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -224,6 +233,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.SOFT_LINE_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
+            // TODO what to put here?
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
@@ -246,6 +256,7 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.THEMATIC_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
+            app.append('\n');
             push(TextAttributes.STYLE_END_RUN, attr);
         }
 
