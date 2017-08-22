@@ -53,7 +53,7 @@ public abstract class TextBuilder<T> {
      */
     public TextBuilder<T> add(RichText text) {
         checkState();
-        
+
         for (Run r : text) {
             append(r);
         }
@@ -87,7 +87,7 @@ public abstract class TextBuilder<T> {
      *
      * @return the document after transformation.
      */
-    protected abstract T get();
+    public abstract T get();
 
     protected abstract boolean wasGetCalled();
 }

@@ -136,6 +136,14 @@ public class HtmlBuilder extends TextBuilder<String> {
         }
     }
 
+    /**
+     * Append tags to set the style for this run.
+     *
+     * @param run
+     *      the run
+     * @return
+     *      the closing tags that have to be inserted after the run to reset all styles
+     */
     private String appendStyleTags(Run run) {
         StringBuilder openingTag = new StringBuilder();
         StringBuilder closingTag = new StringBuilder();
@@ -298,7 +306,7 @@ public class HtmlBuilder extends TextBuilder<String> {
     }
 
     @Override
-    protected String get() {
+    public String get() {
         buffer.append(htmlClose);
         String html = new String(buffer);
         buffer = null;
