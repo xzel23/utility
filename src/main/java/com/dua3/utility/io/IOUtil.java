@@ -1,8 +1,10 @@
 package com.dua3.utility.io;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 
 /**
@@ -36,6 +38,12 @@ public class IOUtil {
      */
     public static String read(Path path, Charset cs) throws IOException {
         return new String(Files.readAllBytes(path), cs);
+    }
+
+    public static void write(Path path, String text, OpenOption... options) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(path, options)) {
+            writer.append(text);
+        }
     }
 
     private IOUtil() {

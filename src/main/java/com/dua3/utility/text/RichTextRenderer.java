@@ -158,7 +158,7 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
-            appendNewLine();
+            appendNewLineIfNeeded();
         }
 
         @Override

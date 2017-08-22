@@ -31,7 +31,7 @@ import com.dua3.utility.text.TextAttributes.Attribute;
  * @author Axel Howind (axel@dua3.com)
  */
 public class HtmlBuilder extends TextBuilder<String> {
-    
+
     /**
      * Enumeration of options that control generation of HTML.
      */
@@ -41,26 +41,26 @@ public class HtmlBuilder extends TextBuilder<String> {
         /** Header */
         HTML_OPEN(String.class, "<html>\n<head><meta charset=\"UTF-8\"></head>\n<body>\n"),
         /** Header */
-        HTML_CLOSE(String.class, "</body>\n</html>\n"),
+        HTML_CLOSE(String.class, "\n</body>\n</html>\n"),
         /** Where to open external links */
         TARGET_FOR_EXTERN_LINKS(String.class, "_blank"),
         /** Replace '.md' file extension in local links (i.e. with ".html") */
         REPLACEMENT_FOR_MD_EXTENSION_IN_LINK(String.class, null);
-        
+
         final Class<?> valueClass;
         final Object defaultValue;
-        
+
         private <T> Option(Class<T> clazz, T dflt) {
             this.valueClass = clazz;
             this.defaultValue = dflt;
         }
     }
-    
+
     @SafeVarargs
     public static String toHtml(RichText text, Pair<Option, Object>... options) {
         return new HtmlBuilder(options).add(text).get();
     }
-    
+
     private static Object getOption(Map<Option, Object> optionMap, Option o) {
         return optionMap.getOrDefault(o, o.defaultValue);
     }
@@ -83,32 +83,32 @@ public class HtmlBuilder extends TextBuilder<String> {
     }
 
     private StringBuilder buffer = new StringBuilder();
-    
+
     private final String docType;
 
     private final String htmlOpen;
-    
+
     private final String htmlClose;
-    
+
     private final String targetForExternLinks;
-    
+
     private final String replaceMdExtensionWith;
-    
+
     private final Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> styleTags = defaultStyleTags();
-    
+
     public HtmlBuilder(Pair<Option, Object>[] options) {
         Map<Option, Object> optionMap = Pair.toMap(options);
-        
+
         this.docType = (String) getOption(optionMap, Option.DOCTYPE);
         this.htmlOpen = (String) getOption(optionMap, Option.HTML_OPEN);
         this.htmlClose = (String) getOption(optionMap, Option.HTML_CLOSE);
         this.targetForExternLinks = (String) getOption(optionMap, Option.TARGET_FOR_EXTERN_LINKS);
         this.replaceMdExtensionWith = (String) getOption(optionMap, Option.REPLACEMENT_FOR_MD_EXTENSION_IN_LINK);
-        
+
         buffer.append(docType);
         buffer.append(htmlOpen);
     }
-    
+
     private void appendChar(char c) {
         // escape characters as suggested by OWASP.org
         switch (c) {
@@ -135,28 +135,28 @@ public class HtmlBuilder extends TextBuilder<String> {
             break;
         }
     }
-    
+
     private String appendStyleTags(Run run) {
         StringBuilder openingTag = new StringBuilder();
         StringBuilder closingTag = new StringBuilder();
-        
+
         // process styles whose runs terminate at this position and insert their closing tags (p.second)
         appendTagsForRun(openingTag, run, TextAttributes.STYLE_END_RUN, p -> p.second);
         // process styles whose runs start at this position and insert their opening tags (p.first)
         appendTagsForRun(openingTag, run, TextAttributes.STYLE_START_RUN, p -> p.first);
-        
+
         String separator = "<span style=\"";
         String closing = "";
         String closeThisElement = "";
         for (Map.Entry<String, Object> e : run.getStyle().properties().entrySet()) {
             String key = e.getKey();
             Object value = e.getValue();
-            
+
             if (key.startsWith("__")) {
                 // don't create spans for meta info
                 continue;
             }
-            
+
             openingTag.append(separator).append(key).append(":").append(value);
             separator = "; ";
             closing = "\">";
@@ -164,22 +164,22 @@ public class HtmlBuilder extends TextBuilder<String> {
         }
         openingTag.append(closing);
         closingTag.append(closeThisElement);
-        
+
         buffer.append(openingTag);
         return closingTag.toString();
     }
-    
+
     private void appendTagsForRun(StringBuilder openingTag, Run run, String property,
             Function<Pair<Function<Attribute, String>, Function<Attribute, String>>, Function<Attribute, String>> selector) {
         TextAttributes style = run.getStyle();
         Object value = style.properties().get(property);
-        
+
         if (value != null) {
             if (!(value instanceof List)) {
                 throw new IllegalStateException(
                         "expected a value of class List but got " + value.getClass() + " (property=" + property + ")");
             }
-            
+
             @SuppressWarnings("unchecked")
             List<Attribute> attributes = (List<Attribute>) value;
             for (Attribute attr : attributes) {
@@ -190,7 +190,7 @@ public class HtmlBuilder extends TextBuilder<String> {
             }
         }
     }
-    
+
     /**
      * Create attribute text for HTML tags.
      *
@@ -207,30 +207,30 @@ public class HtmlBuilder extends TextBuilder<String> {
      */
     private String attrText(Map<String, Object> args, String textAttribute, String htmlAttribute, String dflt) {
         Object value = args.getOrDefault(textAttribute, dflt);
-        
+
         if (value == null) {
             return "";
         }
-        
+
         return " " + htmlAttribute + "=\"" + value.toString() + "\"";
     }
-    
+
     private Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> defaultStyleTags() {
         Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> tags = new HashMap<>();
-        
+
         putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "<blockquote>", attr -> "</blockquote>");
-        putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "<ul>", attr -> "</ul>");
+        putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "<ul>\n", attr -> "</ul>\n");
         putTags(tags, MarkDownStyle.CODE.name(), attr -> "<code>", attr -> "</code>");
         putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
         putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> "<em>", attr -> "</em>");
-        putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre><code>", attr -> "</code></pre>");
-        putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "<br>", attr -> "");
+        putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
+        putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "\n<br>", attr -> "");
         putTags(tags, MarkDownStyle.HEADING.name(),
                 attr -> "<h" + attr.args.get(MarkDownStyle.ATTR_HEADING_LEVEL)
                         + attrText(attr.args, MarkDownStyle.ATTR_ID, "id", "")
                         + ">",
                 attr -> "</h" + attr.args.get(MarkDownStyle.ATTR_HEADING_LEVEL) + ">");
-        putTags(tags, MarkDownStyle.THEMATIC_BREAK.name(), attr -> "<hr>", attr -> "");
+        putTags(tags, MarkDownStyle.THEMATIC_BREAK.name(), attr -> "\n<hr>", attr -> "");
         // HTML_BLOCK
         // HTML_INLINE
         putTags(tags, MarkDownStyle.IMAGE.name(),
@@ -240,7 +240,7 @@ public class HtmlBuilder extends TextBuilder<String> {
                         + attrText(attr.args, MarkDownStyle.ATTR_IMAGE_ALT, "alt", null)
                         + ">",
                 attr -> "");
-        putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "<pre><code>", attr -> "</code></pre>");
+        putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
         putTags(tags, MarkDownStyle.LINK.name(),
                 attr -> {
                     String href = attr.args.getOrDefault(MarkDownStyle.ATTR_LINK_HREF, "").toString();
@@ -248,7 +248,7 @@ public class HtmlBuilder extends TextBuilder<String> {
                         href = href.replaceAll("(\\.md|\\.MD)(\\?|#|$)", replaceMdExtensionWith + "$2");
                     }
                     String hrefAttr = " href=\"" + href + "\"";
-                    
+
                     //
                     return "<a"
                             + hrefAttr
@@ -259,44 +259,44 @@ public class HtmlBuilder extends TextBuilder<String> {
                 },
                 attr -> "</a>");
         putTags(tags, MarkDownStyle.LIST_ITEM.name(), attr -> "<li>", attr -> "</li>");
-        putTags(tags, MarkDownStyle.ORDERED_LIST.name(), attr -> "<ol>", attr -> "</ol>");
+        putTags(tags, MarkDownStyle.ORDERED_LIST.name(), attr -> "<ol>\n", attr -> "</ol>\n");
         putTags(tags, MarkDownStyle.PARAGRAPH.name(), attr -> "<p>", attr -> "</p>");
         putTags(tags, MarkDownStyle.SOFT_LINE_BREAK.name(), attr -> "", attr -> "&shy;");
         putTags(tags, MarkDownStyle.STRONG_EMPHASIS.name(), attr -> "<strong>", attr -> "</strong>");
         putTags(tags, MarkDownStyle.TEXT.name(), attr -> "", attr -> "");
         // CUSTOM_BLOCK
         // CUSTOM_NODE
-        
+
         return Collections.unmodifiableMap(tags);
     }
-    
+
     private String ifSet(Map<String, Object> args, String textAttribute, String textIfPresent) {
         Object value = args.get(textAttribute);
-        
+
         boolean isSet;
         if (value instanceof Boolean) {
             isSet = (boolean) value;
         } else {
             isSet = Boolean.valueOf(String.valueOf(value));
         }
-        
+
         return isSet ? textIfPresent : "";
     }
-    
+
     @Override
     protected void append(Run run) {
         // handle attributes
         String closeStyleTags = appendStyleTags(run);
-        
+
         // append text (need to do characterwise because of escaping)
         for (int idx = 0; idx < run.length(); idx++) {
             appendChar(run.charAt(idx));
         }
-        
+
         // add end tag
         buffer.append(closeStyleTags);
     }
-    
+
     @Override
     protected String get() {
         buffer.append(htmlClose);
@@ -304,9 +304,14 @@ public class HtmlBuilder extends TextBuilder<String> {
         buffer = null;
         return html;
     }
-    
+
     @Override
     protected boolean wasGetCalled() {
         return buffer == null;
+    }
+
+    @Override
+    public String toString() {
+        return buffer.toString();
     }
 }
