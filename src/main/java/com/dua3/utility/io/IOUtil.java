@@ -40,6 +40,18 @@ public class IOUtil {
         return new String(Files.readAllBytes(path), cs);
     }
 
+    /**
+     * Write content String to a path.
+     *
+     * @param path
+     *            the Path
+     * @param text
+     *            the text
+     * @param options
+     *            the options to use (see {@link OpenOption})
+     * @throws IOException
+     *             if something goes wrong
+     */
     public static void write(Path path, String text, OpenOption... options) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, options)) {
             writer.append(text);
