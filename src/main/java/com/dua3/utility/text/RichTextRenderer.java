@@ -63,15 +63,17 @@ class RichTextRenderer {
         @Override
         public void visit(BlockQuote node) {
             Attribute attr = new Attribute(MarkDownStyle.BLOCK_QUOTE);
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         @Override
         public void visit(BulletList node) {
             Attribute attr = new Attribute(MarkDownStyle.BULLET_LIST);
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
@@ -96,10 +98,11 @@ class RichTextRenderer {
         @Override
         public void visit(CustomBlock node) {
             Attribute attr = new Attribute(MarkDownStyle.CUSTOM_BLOCK);
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         @Override
@@ -132,8 +135,8 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             appendText(node.getLiteral());
             super.visit(node);
-            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         @Override
@@ -141,8 +144,8 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.HARD_LINE_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         @Override
@@ -164,8 +167,8 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             appendText(node.getLiteral());
             super.visit(node);
-            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         @Override
@@ -196,8 +199,8 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             appendText(node.getLiteral());
             super.visit(node);
-            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         @Override
@@ -214,6 +217,7 @@ class RichTextRenderer {
         @Override
         public void visit(ListItem node) {
             Attribute attr = new Attribute(MarkDownStyle.LIST_ITEM);
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
@@ -223,9 +227,11 @@ class RichTextRenderer {
         @Override
         public void visit(OrderedList node) {
             Attribute attr = new Attribute(MarkDownStyle.ORDERED_LIST);
+            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         @Override
@@ -234,7 +240,6 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
-            appendNewLineIfNeeded();
         }
 
         private void appendNewLineIfNeeded() {
@@ -255,6 +260,7 @@ class RichTextRenderer {
             super.visit(node);
             // TODO what to put here?
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         @Override
@@ -276,8 +282,8 @@ class RichTextRenderer {
             Attribute attr = new Attribute(MarkDownStyle.THEMATIC_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
-            appendNewLineIfNeeded();
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendNewLineIfNeeded();
         }
 
         private <N extends Node> String extractText(N node, BiConsumer<? super Visitor, N> consumer) {
