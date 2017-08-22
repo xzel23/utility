@@ -53,17 +53,32 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private MutableAttributeSet currentAttributes = new SimpleAttributeSet();
 
     public static StyledDocument toStyledDocument(RichText text) {
-        return new StyledDocumentBuilder().add(text).get();
+        StyledDocumentBuilder builder = new StyledDocumentBuilder();
+        return builder.add(text).get();
     }
 
-    private final Function<Attribute, TextAttributes> styleSupplier;
+    public static StyledDocument toStyledDocument(RichText text, AttributeSet defaultAttributes, double scale) {
+        StyledDocumentBuilder builder = new StyledDocumentBuilder(defaultAttributes);
+        builder.setScale(scale);
+        return builder.add(text).get();
+    }
 
-    public StyledDocumentBuilder(Function<Attribute, TextAttributes> styleSupplier) {
+    private Function<Attribute, TextAttributes> styleSupplier;
+
+    public void setStyleSupplier(Function<Attribute, TextAttributes> styleSupplier) {
         this.styleSupplier = styleSupplier;
     }
 
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
     public StyledDocumentBuilder() {
-        this(s->TextAttributes.none());
+        this.currentAttributes = new SimpleAttributeSet();
+    }
+
+    public StyledDocumentBuilder(AttributeSet defaultAttributes) {
+        this.currentAttributes = new SimpleAttributeSet(defaultAttributes);
     }
 
     /**
@@ -125,7 +140,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         }
     }
 
-    private float scale = 1f;
+    private double scale = 1;
 
     Map<String, BiConsumer<MutableAttributeSet, Object>> defaultStyles() {
         Map<String, BiConsumer<MutableAttributeSet,Object>> styles = new HashMap<>();
@@ -133,7 +148,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         // TextAttributes.STYLE_NAME: unused
         styles.put(TextAttributes.FONT_FAMILY, (as,v) -> StyleConstants.setFontFamily(as, String.valueOf(v)) );
         styles.put(TextAttributes.FONT_FAMILY, (as,v) -> StyleConstants.setFontFamily(as, String.valueOf(v)));
-        styles.put(TextAttributes.FONT_SIZE, (as,v) -> StyleConstants.setFontSize(as, Math.round(scale * decodeFontSize(String.valueOf(v)))));
+        styles.put(TextAttributes.FONT_SIZE, (as,v) -> StyleConstants.setFontSize(as, (int) Math.round(scale * decodeFontSize(String.valueOf(v)))));
         styles.put(TextAttributes.COLOR, (as,v) -> StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(v))));
         styles.put(TextAttributes.BACKGROUND_COLOR, (as,v) -> StyleConstants.setBackground(as, SwingUtil.toAwtColor(String.valueOf(v))));
         styles.put(TextAttributes.FONT_WEIGHT, (as,v) -> StyleConstants.setBold(as, v.equals(TextAttributes.FONT_WEIGHT_VALUE_BOLD)));
