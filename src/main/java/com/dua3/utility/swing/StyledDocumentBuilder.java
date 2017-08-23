@@ -15,10 +15,16 @@
  */
 package com.dua3.utility.swing;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Stack;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -91,12 +97,14 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
      * @return
      *      a pair consisting of the attributes to set and to reset
      */
-    private Pair<MutableAttributeSet,MutableAttributeSet> getStyleAttributes(AttributeSet currentAttributes, Run run) {
+    private Pair<MutableAttributeSet,Integer> getStyleAttributes(AttributeSet currentAttributes, Run run) {
         MutableAttributeSet setAttributes = new SimpleAttributeSet();
         MutableAttributeSet resetAttributes = new SimpleAttributeSet();
 
         // process styles whose runs terminate at this position and insert their closing tags (p.second)
-        appendAttributesForRun(resetAttributes, run, TextAttributes.STYLE_END_RUN);
+        List<?> attrEndOfRun = (List<?>) run.getStyle().properties().get(TextAttributes.STYLE_END_RUN);
+        int runEnds = attrEndOfRun == null ? 0 : attrEndOfRun.size();
+        
         // process styles whose runs start at this position and insert their opening tags (p.first)
         appendAttributesForRun(setAttributes, run, TextAttributes.STYLE_START_RUN);
 
@@ -113,8 +121,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             resetAttributes.addAttribute(key, currentAttributes.getAttribute(key));
         }
 
-
-        return Pair.of(setAttributes, resetAttributes);
+        return Pair.of(setAttributes, runEnds);
     }
 
     private void appendAttributesForRun(MutableAttributeSet attributeSet, Run run, String property) {
@@ -187,16 +194,44 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     @Override
     protected void append(Run run) {
         // handle attributes
-        Pair<? extends AttributeSet,? extends AttributeSet> attributes = getStyleAttributes(currentAttributes, run);
+        Pair<? extends AttributeSet,Integer> attributes = getStyleAttributes(currentAttributes, run);
 
         AttributeSet setAttributes = attributes.first;
-        AttributeSet resetAttributes = attributes.second;
+        int runEnds = attributes.second;
 
-        currentAttributes.removeAttributes(resetAttributes);
-        currentAttributes.addAttributes(setAttributes);
+        for (int i=0;i<runEnds;i++) {
+            resetAttributes();
+        }
+        setAttributes(setAttributes);
 
         // append text (need to do characterwise because of escaping)
         append(run.toString(),currentAttributes);
+    }
+
+    private Deque<List<Pair<Object,Object>>> resetAttr = new LinkedList<>();
+    
+    private void setAttributes(AttributeSet attrs) {
+        List<Pair<Object,Object>> originalValues = new ArrayList<>(attrs.getAttributeCount());
+        Enumeration<?> names = attrs.getAttributeNames();
+        while (names.hasMoreElements()) {
+            Object attr = names.nextElement();
+            originalValues.add(Pair.of(attr, currentAttributes.getAttribute(attr)));
+        }
+        resetAttr.push(originalValues);
+        
+        currentAttributes.addAttributes(attrs);
+    }
+
+    private void resetAttributes() {
+        for (Pair<Object, Object> e: resetAttr.pop()) {
+            Object attr = e.first;
+            Object value = e.second;
+            if(value!=null) {
+                currentAttributes.addAttribute(attr, value);
+            } else {
+                currentAttributes.removeAttribute(attr);
+            }
+        }
     }
 
     private void append(String text, AttributeSet as) {
