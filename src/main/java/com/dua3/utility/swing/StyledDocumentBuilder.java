@@ -15,7 +15,11 @@
  */
 package com.dua3.utility.swing;
 
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -81,62 +85,45 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         this.currentAttributes = new SimpleAttributeSet(defaultAttributes);
     }
 
-    /**
-     * Get Attributes that have to be set for this run.
-     *
-     * @param currentAttributes
-     *      the current attributes
-     * @param run
-     *      the run
-     * @return
-     *      a pair consisting of the attributes to set and to reset
-     */
-    private Pair<MutableAttributeSet,MutableAttributeSet> getStyleAttributes(AttributeSet currentAttributes, Run run) {
-        MutableAttributeSet setAttributes = new SimpleAttributeSet();
-        MutableAttributeSet resetAttributes = new SimpleAttributeSet();
-
-        // process styles whose runs terminate at this position and insert their closing tags (p.second)
-        appendAttributesForRun(resetAttributes, run, TextAttributes.STYLE_END_RUN);
-        // process styles whose runs start at this position and insert their opening tags (p.first)
-        appendAttributesForRun(setAttributes, run, TextAttributes.STYLE_START_RUN);
-
-        for (Map.Entry<String, Object> e : run.getStyle().properties().entrySet()) {
-            String key = e.getKey();
-            Object value = e.getValue();
-
-            if (key.startsWith("__")) {
-                // don't create spans for meta info
-                continue;
-            }
-
-            setAttributes.addAttribute(key, value);
-            resetAttributes.addAttribute(key, currentAttributes.getAttribute(key));
-        }
-
-
-        return Pair.of(setAttributes, resetAttributes);
+    private int countRunEnds(Run run) {
+        List<?> attrEndOfRun = (List<?>) run.getStyle().properties().get(TextAttributes.STYLE_END_RUN);
+        return  attrEndOfRun == null ? 0 : attrEndOfRun.size();
     }
 
     private void appendAttributesForRun(MutableAttributeSet attributeSet, Run run, String property) {
         TextAttributes style = run.getStyle();
         Object value = style.properties().get(property);
 
-        if (value != null) {
-            if (!(value instanceof List)) {
-                throw new IllegalStateException(
-                        "expected a value of class List but got " + value.getClass() + " (property=" + property + ")");
-            }
+        if (value == null) {
+            return;
+        }
 
-            @SuppressWarnings("unchecked")
-            List<Attribute> attributes = (List<Attribute>) value;
-            for (Attribute attr : attributes) {
-                for (Entry<String, Object> e: styleSupplier.apply(attr).properties().entrySet()) {
-                    Object attrName = e.getKey();
-                    Object attrValue = e.getValue();
-                    BiConsumer<MutableAttributeSet, Object> consumer = styles.get(attrName);
-                    consumer.accept(attributeSet, attrValue);
-                }
+        if (!(value instanceof List)) {
+            throw new IllegalStateException(
+                    "expected a value of class List but got " + value.getClass() + " (property=" + property + ")");
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Attribute> attributes = (List<Attribute>) value;
+        for (Attribute attr : attributes) {
+            // collect attributes
+            MutableAttributeSet runAttributes = new SimpleAttributeSet();
+            for (Entry<String, Object> e: styleSupplier.apply(attr).properties().entrySet()) {
+                Object attrName = e.getKey();
+                Object attrValue = e.getValue();
+                BiConsumer<MutableAttributeSet, Object> consumer = styles.get(attrName);
+                consumer.accept(runAttributes, attrValue);
             }
+            // store current values
+            List<Pair<Object,Object>> resetAttributes = new ArrayList<>();
+            Enumeration<?> names = runAttributes.getAttributeNames();
+            while (names.hasMoreElements()) {
+                Object name = names.nextElement();
+                resetAttributes.add(Pair.of(name, currentAttributes.getAttribute(attr)));
+            }
+            pushRunAttributes(resetAttributes);
+            // apply runn attributes to the set
+            attributeSet.addAttributes(runAttributes);
         }
     }
 
@@ -186,17 +173,67 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     @Override
     protected void append(Run run) {
-        // handle attributes
-        Pair<? extends AttributeSet,? extends AttributeSet> attributes = getStyleAttributes(currentAttributes, run);
-
-        AttributeSet setAttributes = attributes.first;
-        AttributeSet resetAttributes = attributes.second;
-
-        currentAttributes.removeAttributes(resetAttributes);
-        currentAttributes.addAttributes(setAttributes);
-
-        // append text (need to do characterwise because of escaping)
+        handleRunEnds(run);
+        handleRunStarts(run);
         append(run.toString(),currentAttributes);
+    }
+
+    void handleRunStarts(Run run) {
+        MutableAttributeSet setAttributes = new SimpleAttributeSet();
+
+        // process styles whose runs start at this position and insert their opening tags (p.first)
+        appendAttributesForRun(setAttributes, run, TextAttributes.STYLE_START_RUN);
+
+        for (Map.Entry<String, Object> e : run.getStyle().properties().entrySet()) {
+            String key = e.getKey();
+            Object value = e.getValue();
+
+            if (key.startsWith("__")) {
+                // don't create spans for meta info
+                continue;
+            }
+
+            setAttributes.addAttribute(key, value);
+        }
+
+        applyRunAttributes(setAttributes);
+    }
+
+    void handleRunEnds(Run run) {
+        // handle run ends
+        int runEnds = countRunEnds(run);
+        for (int i=0;i<runEnds;i++) {
+            popRunAttributes();
+        }
+    }
+
+    private void applyRunAttributes(AttributeSet attrs) {
+        List<Pair<Object,Object>> originalValues = new ArrayList<>(attrs.getAttributeCount());
+        Enumeration<?> names = attrs.getAttributeNames();
+        while (names.hasMoreElements()) {
+            Object attr = names.nextElement();
+            originalValues.add(Pair.of(attr, currentAttributes.getAttribute(attr)));
+        }
+
+        currentAttributes.addAttributes(attrs);
+    }
+
+    private Deque<List<Pair<Object,Object>>> resetAttr = new LinkedList<>();
+
+    private void pushRunAttributes(List<Pair<Object, Object>> as) {
+        resetAttr.push(as);
+    }
+
+    private void popRunAttributes() {
+        for (Pair<Object, Object> e: resetAttr.pop()) {
+            Object attr = e.first;
+            Object value = e.second;
+            if(value!=null) {
+                currentAttributes.addAttribute(attr, value);
+            } else {
+                currentAttributes.removeAttribute(attr);
+            }
+        }
     }
 
     private void append(String text, AttributeSet as) {
