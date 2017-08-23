@@ -61,10 +61,12 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         return builder.add(text).get();
     }
 
-    public static StyledDocument toStyledDocument(RichText text, AttributeSet defaultAttributes, double scale) {
-        StyledDocumentBuilder builder = new StyledDocumentBuilder(defaultAttributes);
+    public static StyledDocument toStyledDocument(RichText text, AttributeSet dfltAttr, double scale) {
+        StyledDocumentBuilder builder = new StyledDocumentBuilder();
         builder.setScale(scale);
-        return builder.add(text).get();
+        StyledDocument doc = builder.add(text).get();
+        doc.setParagraphAttributes(0, doc.getLength(), dfltAttr, false);
+        return doc;
     }
 
     private Function<Attribute, TextAttributes> styleSupplier;
@@ -79,10 +81,6 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     public StyledDocumentBuilder() {
         this.currentAttributes = new SimpleAttributeSet();
-    }
-
-    public StyledDocumentBuilder(AttributeSet defaultAttributes) {
-        this.currentAttributes = new SimpleAttributeSet(defaultAttributes);
     }
 
     private int countRunEnds(Run run) {
@@ -187,6 +185,9 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         for (Map.Entry<String, Object> e : run.getStyle().properties().entrySet()) {
             String key = e.getKey();
             Object value = e.getValue();
+
+            assert key != null;
+            assert value != null;
 
             if (key.startsWith("__")) {
                 // don't create spans for meta info
