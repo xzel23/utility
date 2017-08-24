@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -61,6 +62,18 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         return builder.add(text).get();
     }
 
+    public static StyledDocument toStyledDocument(RichText text, Function<Attribute, TextAttributes> styleSupplier) {
+        StyledDocumentBuilder builder = new StyledDocumentBuilder();
+        builder.setStyleSupplier(styleSupplier);
+        return builder.add(text).get();
+    }
+
+    public static StyledDocument toStyledDocument(RichText text, Map<String, Function<Attribute, TextAttributes>> styleMap) {
+        StyledDocumentBuilder builder = new StyledDocumentBuilder();
+        builder.setStyleMap(styleMap);
+        return builder.add(text).get();
+    }
+
     public static StyledDocument toStyledDocument(RichText text, AttributeSet dfltAttr, double scale) {
         StyledDocumentBuilder builder = new StyledDocumentBuilder();
         builder.setScale(scale);
@@ -72,7 +85,15 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private Function<Attribute, TextAttributes> styleSupplier;
 
     public void setStyleSupplier(Function<Attribute, TextAttributes> styleSupplier) {
-        this.styleSupplier = styleSupplier;
+        this.styleSupplier = Objects.requireNonNull(styleSupplier);
+    }
+
+    public void setStyleMap(Map<String, Function<Attribute, TextAttributes>> styleMap) {
+        Function<Attribute, TextAttributes> supplier = s -> {
+            String styleName = String.valueOf(s.args.get(TextAttributes.STYLE_NAME));
+            return styleMap.getOrDefault(styleName, attr -> TextAttributes.none()).apply(s);
+        };
+        this.styleSupplier = supplier;
     }
 
     public void setScale(double scale) {
@@ -81,6 +102,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     public StyledDocumentBuilder() {
         this.currentAttributes = new SimpleAttributeSet();
+        this.styleSupplier = attr -> TextAttributes.none();
     }
 
     private int countRunEnds(Run run) {
