@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
+import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.text.TextAttributes.Attribute;
 
@@ -83,7 +84,7 @@ public enum MarkDownStyle {
         m.put(MarkDownStyle.HTML_INLINE.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.IMAGE.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> TextAttributes.of(Pair.of(TextAttributes.FONT_FAMILY, TextAttributes.FONT_FAMILY_VALUE_MONOSPACE)));
-        m.put(MarkDownStyle.LINK.name(), attr -> TextAttributes.of());
+        m.put(MarkDownStyle.LINK.name(), attr -> TextAttributes.of(Pair.of(TextAttributes.COLOR, Color.DARKBLUE.toString()), Pair.of(TextAttributes.TEXT_DECORATION, TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE)));
         m.put(MarkDownStyle.LIST_ITEM.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.ORDERED_LIST.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.PARAGRAPH.name(), attr -> TextAttributes.of());
