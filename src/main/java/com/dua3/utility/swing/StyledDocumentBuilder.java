@@ -153,9 +153,8 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         Map<String, BiConsumer<MutableAttributeSet,Object>> styles = new HashMap<>();
 
         // TextAttributes.STYLE_NAME: unused
-        styles.put(TextAttributes.FONT_FAMILY, (as,v) -> StyleConstants.setFontFamily(as, String.valueOf(v)) );
-        styles.put(TextAttributes.FONT_FAMILY, (as,v) -> StyleConstants.setFontFamily(as, String.valueOf(v)));
-        styles.put(TextAttributes.FONT_SIZE, (as,v) -> StyleConstants.setFontSize(as, (int) Math.round(scale * decodeFontSize(String.valueOf(v)))));
+        styles.put(TextAttributes.FONT_FAMILY, this::setFontFamily );
+        styles.put(TextAttributes.FONT_SIZE, this::setFontSize);
         styles.put(TextAttributes.COLOR, (as,v) -> StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(v))));
         styles.put(TextAttributes.BACKGROUND_COLOR, (as,v) -> StyleConstants.setBackground(as, SwingUtil.toAwtColor(String.valueOf(v))));
         styles.put(TextAttributes.FONT_WEIGHT, (as,v) -> StyleConstants.setBold(as, v.equals(TextAttributes.FONT_WEIGHT_VALUE_BOLD)));
@@ -187,6 +186,34 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             }
         });
         return styles;
+    }
+
+    private void setFontSize(MutableAttributeSet as, Object value) {
+        double fontSize = decodeFontSize(String.valueOf(value));
+        StyleConstants.setFontSize(as, (int) Math.round(scale * fontSize));
+    }
+
+    private void setFontFamily(MutableAttributeSet as, Object value) {
+        String family = String.valueOf(value);
+        // translate standard fontspec families to corresponding Java names that are guaranteed to be present
+        // see https://docs.oracle.com/javase/8/docs/technotes/guides/intl/fontconfig.html
+        // > The Java Platform defines five logical font names that every implementation must support:
+        // > Serif, SansSerif, Monospaced, Dialog, and DialogInput. These logical font names are mapped
+        // > to physical fonts in implementation dependent ways.
+        switch (family) {
+        case TextAttributes.FONT_FAMILY_VALUE_MONOSPACE:
+            StyleConstants.setFontFamily(as, "Monospaced");
+            break;
+        case TextAttributes.FONT_FAMILY_VALUE_SANS_SERIF:
+            StyleConstants.setFontFamily(as, "SansSerif");
+            break;
+        case TextAttributes.FONT_FAMILY_VALUE_SERIF:
+            StyleConstants.setFontFamily(as, "Serif");
+            break;
+        default:
+            StyleConstants.setFontFamily(as, family);
+            break;
+        }
     }
 
     private final Map<String, BiConsumer<MutableAttributeSet, Object>> styles = defaultStyles();
