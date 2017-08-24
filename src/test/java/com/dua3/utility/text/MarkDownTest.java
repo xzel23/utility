@@ -1,10 +1,8 @@
 package com.dua3.utility.text;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,7 +14,7 @@ import com.dua3.utility.io.IOUtil;
 
 public class MarkDownTest {
 
-    public static void main(String[] args) throws URISyntaxException, IOException {
+    public static void main(String[] args) throws Exception {
         System.err.println("WARNING! This will overwrite expected unit test results!!!\nEnter 'YES' to continue.");
         if (!"YES".equals(new BufferedReader(new InputStreamReader(System.in)).readLine().trim())) {
             System.err.println("aborted.");
@@ -32,9 +30,8 @@ public class MarkDownTest {
         }
     }
 
-    static String getHtml() throws URISyntaxException, IOException {
-        Path mdPath = Paths.get(MarkDownTest.class.getResource("syntax.md").toURI());
-        String mdText = IOUtil.read(mdPath, StandardCharsets.UTF_8);
+    static String getHtml() throws Exception {
+        String mdText = getTestDataSource();
         RichText richText = MarkDownUtil.convert(mdText);
         return HtmlBuilder.toHtml(richText);
     }
@@ -42,11 +39,16 @@ public class MarkDownTest {
     @Test
     public void testMarkDown() throws Exception {
         String htmlActual = getHtml();
-
-        Path expectedPath = Paths.get(MarkDownTest.class.getResource("syntax.html").toURI());
-        String htmlExpected = IOUtil.read(expectedPath, StandardCharsets.UTF_8);
+        String htmlExpected = getTestDataExpectedHtml();
 
         Assert.assertEquals(htmlExpected, htmlActual);
     }
 
+    public static String getTestDataSource() throws Exception {
+        return IOUtil.read(Paths.get(MarkDownTest.class.getResource("syntax.md").toURI()), StandardCharsets.UTF_8);
+    }
+
+    public static String getTestDataExpectedHtml() throws Exception {
+        return IOUtil.read(Paths.get(MarkDownTest.class.getResource("syntax.html").toURI()), StandardCharsets.UTF_8);
+    }
 }
