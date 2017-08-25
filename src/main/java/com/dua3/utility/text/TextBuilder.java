@@ -53,7 +53,6 @@ public abstract class TextBuilder<T> {
      */
     public TextBuilder<T> add(RichText text) {
         checkState();
-
         for (Run r : text) {
             append(r);
         }

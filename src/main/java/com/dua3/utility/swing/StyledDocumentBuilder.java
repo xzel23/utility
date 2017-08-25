@@ -289,10 +289,28 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         }
     }
 
+    private static final Object[] PARAGRAPH_ATTRIBUTES = {
+      StyleConstants.ParagraphConstants.LeftIndent
+    };
+
+    private AttributeSet getParagraphAttributes(AttributeSet as) {
+        SimpleAttributeSet pa = new SimpleAttributeSet();
+        for (Object attr: PARAGRAPH_ATTRIBUTES) {
+            Object value = as.getAttribute(attr);
+            if (value != null) {
+                pa.addAttribute(attr, value);
+            }
+        }
+        return pa;
+    }
+
     private void append(String text, AttributeSet as) {
         try {
             int pos = doc.getLength();
             doc.insertString(pos, text, as);
+
+            AttributeSet pa = getParagraphAttributes(as);
+            doc.setParagraphAttributes(pos, text.length(), pa, false);
         } catch (BadLocationException e) {
             // this should not happen
             throw new IllegalStateException(e);
