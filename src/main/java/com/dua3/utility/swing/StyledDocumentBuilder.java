@@ -304,13 +304,15 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         return pa;
     }
 
+    private Deque<Pair<Integer,AttributeSet>> paragraphAttributes = new LinkedList<>();
+
     private void append(String text, AttributeSet as) {
         try {
             int pos = doc.getLength();
             doc.insertString(pos, text, as);
 
             AttributeSet pa = getParagraphAttributes(as);
-            doc.setParagraphAttributes(pos, text.length(), pa, false);
+            paragraphAttributes.add(Pair.of(text.length(), pa));
         } catch (BadLocationException e) {
             // this should not happen
             throw new IllegalStateException(e);
@@ -319,6 +321,14 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     @Override
     public StyledDocument get() {
+        // apply paragraph styles
+        int pos = 0;
+        for (Pair<Integer,AttributeSet> e: paragraphAttributes) {
+            doc.setParagraphAttributes(pos, e.first, e.second, false);
+            pos += e.first;
+        }
+
+        // mark builder invalid by clearing doc
         StyledDocument ret = doc;
         doc=null;
         return ret;
