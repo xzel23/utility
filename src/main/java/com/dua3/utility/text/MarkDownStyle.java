@@ -73,7 +73,8 @@ public enum MarkDownStyle {
         m.put(MarkDownStyle.CODE.name(), attr -> TextAttributes.of(Pair.of(TextAttributes.FONT_FAMILY, TextAttributes.FONT_FAMILY_VALUE_MONOSPACE)));
         m.put(MarkDownStyle.DOCUMENT.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.EMPHASIS.name(), attr -> TextAttributes.of(Pair.of(TextAttributes.FONT_STYLE, TextAttributes.FONT_STYLE_VALUE_ITALIC)));
-        m.put(MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> TextAttributes.of(Pair.of(TextAttributes.FONT_FAMILY, TextAttributes.FONT_FAMILY_VALUE_MONOSPACE)));
+        m.put(MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> TextAttributes.of(Pair.of(TextAttributes.FONT_FAMILY, TextAttributes.FONT_FAMILY_VALUE_MONOSPACE),
+                Pair.of(TextAttributes.TEXT_INDENT_LEFT, TextAttributes.TEXT_INDENT_LEFT_VALUE_1)));
         m.put(MarkDownStyle.HARD_LINE_BREAK.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.HEADING.name(), attr -> TextAttributes.of(
                 Pair.of(TextAttributes.FONT_SIZE, getFontSizeForHeading.apply((Integer)attr.args.getOrDefault(MarkDownStyle.ATTR_HEADING_LEVEL, 1))),
@@ -83,7 +84,10 @@ public enum MarkDownStyle {
         m.put(MarkDownStyle.HTML_BLOCK.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.HTML_INLINE.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.IMAGE.name(), attr -> TextAttributes.of());
-        m.put(MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> TextAttributes.of(Pair.of(TextAttributes.FONT_FAMILY, TextAttributes.FONT_FAMILY_VALUE_MONOSPACE)));
+        m.put(MarkDownStyle.INDENTED_CODE_BLOCK.name(), 
+                attr -> TextAttributes.of(
+                        Pair.of(TextAttributes.FONT_FAMILY, TextAttributes.FONT_FAMILY_VALUE_MONOSPACE),
+                        Pair.of(TextAttributes.TEXT_INDENT_LEFT, TextAttributes.TEXT_INDENT_LEFT_VALUE_1)));
         m.put(MarkDownStyle.LINK.name(), attr -> TextAttributes.of(Pair.of(TextAttributes.COLOR, Color.DARKBLUE.toString()), Pair.of(TextAttributes.TEXT_DECORATION, TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE)));
         m.put(MarkDownStyle.LIST_ITEM.name(), attr -> TextAttributes.of());
         m.put(MarkDownStyle.ORDERED_LIST.name(), attr -> TextAttributes.of());

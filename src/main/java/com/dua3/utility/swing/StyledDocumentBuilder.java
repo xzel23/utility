@@ -185,6 +185,9 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 break;
             }
         });
+        styles.put(TextAttributes.TEXT_INDENT_LEFT, (as,v) -> {
+            StyleConstants.setLeftIndent(as, Float.valueOf(v.toString()));
+        });
         return styles;
     }
 
@@ -288,7 +291,8 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     private void append(String text, AttributeSet as) {
         try {
-            doc.insertString(doc.getLength(), text, as);
+            int pos = doc.getLength();
+            doc.insertString(pos, text, as);
         } catch (BadLocationException e) {
             // this should not happen
             throw new IllegalStateException(e);

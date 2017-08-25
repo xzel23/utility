@@ -83,6 +83,10 @@ public class TextAttributes {
     public static final String TEXT_DECORATION_VALUE_LINE_THROUGH = "line-through";
     public static final String TEXT_DECORATION_VALUE_UNDERLINE = "underline";
 
+    /** text indentation */
+    public static final String TEXT_INDENT_LEFT = "indent-left";
+    public static final String TEXT_INDENT_LEFT_VALUE_1 = "40";
+    
     // colors
     public static final String COLOR = "color";
     public static final String BACKGROUND_COLOR = "background-color";
