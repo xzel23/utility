@@ -22,9 +22,9 @@ import java.util.TreeMap;
 
 /**
  * A builder class for rich text data.
- * <p> A rich text is created by appending strings to the builder using one of the {@link #append(CharSequence)}
- * method or one of its overloads. Style properties are set using {@link #push(String, Object)} and then reset using 
- * {@link #pop(String)}.
+ * <p> A rich text is created by appending strings to the builder using the {@link #append(CharSequence)}
+ * method or one of its overloads. Style properties are set using {@link #push(String, Object)} and then 
+ * reset using {@link #pop(String)}.
  * </p>
  * @author axel
  */
