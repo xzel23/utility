@@ -44,11 +44,15 @@ public class MarkDownTest {
         Assert.assertEquals(htmlExpected, htmlActual);
     }
 
+    public static String getTestData(String filename) throws Exception {
+        return IOUtil.read(Paths.get(MarkDownTest.class.getResource(filename).toURI()), StandardCharsets.UTF_8);        
+    }
+    
     public static String getTestDataSource() throws Exception {
-        return IOUtil.read(Paths.get(MarkDownTest.class.getResource("syntax.md").toURI()), StandardCharsets.UTF_8);
+        return getTestData("syntax.md");
     }
 
     public static String getTestDataExpectedHtml() throws Exception {
-        return IOUtil.read(Paths.get(MarkDownTest.class.getResource("syntax.html").toURI()), StandardCharsets.UTF_8);
+        return getTestData("syntax.html");
     }
 }

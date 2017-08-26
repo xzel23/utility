@@ -21,17 +21,18 @@ public class SwingUtilTest extends JFrame {
     public static void main(String[] args) throws Exception {
         SwingUtil.setNativeLookAndFeel(SwingUtilTest.class.getSimpleName());
 
-        SwingUtilTest inst = new SwingUtilTest();
+        String testfile = args.length == 0 ? "syntax.md" : args[0];
+        SwingUtilTest inst = new SwingUtilTest(testfile);
         inst.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         inst.setSize(new Dimension(800,600));
         inst.setVisible(true);
     }
 
-    public SwingUtilTest() throws Exception {
+    public SwingUtilTest(String testfile) throws Exception {
         super("Swing Utilities test");
         JTabbedPane tabs = new JTabbedPane();
         add(tabs);
-        tabs.add("MarkDown Test", new MdTestPanel());
+        tabs.add("MarkDown Test", new MdTestPanel(testfile));
         pack();
     }
 
@@ -41,9 +42,9 @@ public class SwingUtilTest extends JFrame {
         private JTextPane mdComponent = new JTextPane();
         private JTextArea sourceComponent = new JTextArea();
 
-        public MdTestPanel() throws Exception {
+        public MdTestPanel(String testfile) throws Exception {
             setLayout(new BorderLayout());
-            String mdSource = MarkDownTest.getTestDataSource();
+            String mdSource = MarkDownTest.getTestData(testfile);
 
             JTabbedPane tabs = new JTabbedPane();
             add(tabs, BorderLayout.CENTER);
