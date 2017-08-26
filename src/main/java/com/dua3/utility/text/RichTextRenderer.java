@@ -143,6 +143,7 @@ class RichTextRenderer {
         public void visit(HardLineBreak node) {
             Attribute attr = new Attribute(MarkDownStyle.HARD_LINE_BREAK);
             push(TextAttributes.STYLE_START_RUN, attr);
+            appendText("\n");
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
             appendNewLineIfNeeded();
@@ -240,6 +241,7 @@ class RichTextRenderer {
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
+            appendText("\n");
         }
 
         private void appendNewLineIfNeeded() {
