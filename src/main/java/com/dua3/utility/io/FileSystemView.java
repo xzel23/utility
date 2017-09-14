@@ -41,12 +41,12 @@ import java.util.Objects;
  *
  */
 public class FileSystemView implements AutoCloseable {
-    
+
     @FunctionalInterface
     private interface CleanUp {
         void run() throws IOException;
     }
-    
+
     /**
      * Create FileSystemView.
      *
@@ -58,21 +58,21 @@ public class FileSystemView implements AutoCloseable {
      */
     public static FileSystemView create(Path root) throws IOException {
         Objects.requireNonNull(root);
-        
+
         if (!Files.exists(root)) {
             throw new IOException("Path does not exist: " + root);
         }
-        
+
         // is it a directory?
         if (Files.isDirectory(root)) {
             return forDirectory(root);
         }
-        
+
         // is it a zip?
         if (root.getFileName().endsWith(".zip") || root.getFileName().endsWith(".ZIP")) {
             return forArchive(root);
         }
-        
+
         // other are not implemented
         throw new IllegalArgumentException("Don't know how to handle this path: " + root);
     }
@@ -85,12 +85,13 @@ public class FileSystemView implements AutoCloseable {
      * @return
      *         FileSystemView
      * @throws IOException
+     *          if the file does not exist or an I/O error occurs
      */
     public static FileSystemView forArchive(Path root) throws IOException {
         URI uri = URI.create("jar:" + root.toUri());
         return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
     }
-    
+
     /**
      * Create FileSystemView.
      *
@@ -120,7 +121,7 @@ public class FileSystemView implements AutoCloseable {
             throw new IOException(e);
         }
     }
-    
+
     /**
      * Create a FileSystemView for an existing directory.
      *
@@ -129,31 +130,32 @@ public class FileSystemView implements AutoCloseable {
      * @return
      *         FileSystemView
      * @throws IOException
+     *          if the directory denoted by {@code path} does not exist or an I/O error occurs
      */
     public static FileSystemView forDirectory(Path root) throws IOException {
         return new FileSystemView(root, () -> {
             /* NOOP */ });
     }
-    
+
     private static FileSystemView createFileSystemView(FileSystem zipFs, String path) throws IOException {
         Path zipRoot = zipFs.getPath(path);
         return new FileSystemView(zipRoot, zipFs::close);
     }
-    
+
     private final Path root;
-    
+
     private final CleanUp cleanup;
-    
+
     private FileSystemView(Path root, CleanUp cleanup) throws IOException {
         this.cleanup = cleanup;
         this.root = root.toRealPath();
     }
-    
+
     @Override
     public void close() throws IOException {
         cleanup.run();
     }
-    
+
     /**
      * Get this FileSystemView's root.
      *
@@ -162,7 +164,7 @@ public class FileSystemView implements AutoCloseable {
     public Path getRoot() {
         return root;
     }
-    
+
     /**
      * Resolve path.
      *
@@ -176,7 +178,7 @@ public class FileSystemView implements AutoCloseable {
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;
     }
-    
+
     private void assertThatResolvedPathIsValid(Path resolvedPath, Object originalPath) {
         if (!resolvedPath.toAbsolutePath().startsWith(root)) {
             throw new IllegalArgumentException("Path is not in this FileSystemViews subtree: " + originalPath);
@@ -196,5 +198,5 @@ public class FileSystemView implements AutoCloseable {
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;
     }
-    
+
 }

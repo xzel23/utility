@@ -4,7 +4,7 @@ package com.dua3.utility.lang;
  * A Utility class with general purpose methods.
  */
 public class LangUtil {
-    
+
     /**
      * Check that condition is fulfilled.
      *
@@ -18,7 +18,7 @@ public class LangUtil {
             throw new IllegalStateException();
         }
     }
-    
+
     /**
      * Check that condition is fulfilled.
      *
@@ -37,7 +37,7 @@ public class LangUtil {
             throw new IllegalStateException(message);
         }
     }
-    
+
     /**
      * Do nothing.
      * <p>
@@ -47,15 +47,17 @@ public class LangUtil {
      * return value and avoid false positives from static code checkers.
      * </p>
      *
+     * @param <T>
+     *            the parameter type
      * @param arg
      *            the variable to ignore
      */
     public static <T> void ignore(T arg) {
         // nop
     }
-    
+
     private LangUtil() {
         // nop
     }
-    
+
 }
