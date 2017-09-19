@@ -2,6 +2,7 @@ package com.dua3.utility.io;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -55,6 +56,35 @@ public class IOUtil {
     public static void write(Path path, String text, OpenOption... options) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, options)) {
             writer.append(text);
+        }
+    }
+
+    /**
+     * Functional interface for IO operations.
+     * @param <T>
+     *  the operation's result type
+     * @see IOUtil#wrapIO(IOOperation)
+     */
+    @FunctionalInterface
+    public static interface IOOperation<T> {
+        T run() throws IOException;
+    }
+    
+    /**
+     * A helper method for use in lambda expressions that wraps IO operations and converts
+     * thrown IOException to UncheckedIOExcetion.
+     * @param <T>
+     *  the return type of the wrapped operation
+     * @param op
+     *  the operation to wrap
+     * @return
+     *  the result of the wrapped operation
+     */
+    public static <T> T wrapIO(IOOperation<T> op) {
+        try {
+            return op.run();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 

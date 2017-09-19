@@ -55,7 +55,7 @@ public class LangUtil {
     public static <T> void ignore(T arg) {
         // nop
     }
-
+    
     private LangUtil() {
         // nop
     }
