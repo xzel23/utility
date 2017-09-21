@@ -1,5 +1,7 @@
 package com.dua3.utility.lang;
 
+import java.util.Objects;
+
 /**
  * A Utility class with general purpose methods.
  */
@@ -55,7 +57,23 @@ public class LangUtil {
     public static <T> void ignore(T arg) {
         // nop
     }
-    
+
+    /**
+     * Test if first argument is equal to one of the other arguments.
+     * @param arg first argument
+     * @param rest remaining arguments
+     * @return true, if {@code rest} contains at least one item that is equal to {@code arg}
+     */
+    @SafeVarargs
+    public static <T> boolean isOneOf(T arg, T... rest) {
+        for (T t:rest) {
+            if (Objects.equals(arg, t)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private LangUtil() {
         // nop
     }
