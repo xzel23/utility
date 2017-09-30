@@ -109,11 +109,16 @@ public class FileSystemView implements AutoCloseable {
             case "file":
                 return create(Paths.get(uri.resolve(".")));
             case "jar":
-                String uriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8.name());
-                String jar = uriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
-                String jarPath = uriStr.replaceAll("^jar:file:.*!(.*)" + classFile + "$", "$1");
+                String jarUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8.name());
+                String jar = jarUriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
+                String jarPath = jarUriStr.replaceAll("^jar:file:.*!(.*)" + classFile + "$", "$1");
                 URI jarUri = new URI("jar", jar, null);
                 return createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
+            case "jrt":
+                String jrtUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8.name());
+                String jrtPath = jrtUriStr.replaceAll("^jrt:/(.*)" + classFile + "$", "$1");
+                URI jrtUri = URI.create("jrt:/");
+                return createFileSystemView(FileSystems.newFileSystem(jrtUri, Collections.emptyMap()), jrtPath);
             default:
                 throw new IOException("unsupported scheme: " + uri.getScheme());
             }
@@ -137,9 +142,9 @@ public class FileSystemView implements AutoCloseable {
             /* NOOP */ });
     }
 
-    private static FileSystemView createFileSystemView(FileSystem zipFs, String path) throws IOException {
-        Path zipRoot = zipFs.getPath(path);
-        return new FileSystemView(zipRoot, zipFs::close);
+    private static FileSystemView createFileSystemView(FileSystem fs, String path) throws IOException {
+        Path root = fs.getPath(path);
+        return new FileSystemView(root, fs::close);
     }
 
     private final Path root;
@@ -148,7 +153,7 @@ public class FileSystemView implements AutoCloseable {
 
     private FileSystemView(Path root, CleanUp cleanup) throws IOException {
         this.cleanup = cleanup;
-        this.root = root.toRealPath();
+        this.root = root.toAbsolutePath();
     }
 
     @Override

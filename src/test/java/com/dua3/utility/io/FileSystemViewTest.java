@@ -37,9 +37,9 @@ public class FileSystemViewTest {
      *             if resource could not be loaded
      */
     @Test
-    public void testJdkClass() throws IOException {
-        // java.lang.String should be loaded from rt.jar, so this tests the jar functionality
-        testClassHelper(java.lang.String.class);
+    public void testJarClass() throws IOException {
+        // org.junit.Assert should be loaded from rt.jar, so this tests the jar functionality
+        testClassHelper(org.junit.Assert.class);
     }
     
     private void testClassHelper(Class<?> clazz) throws IOException {
