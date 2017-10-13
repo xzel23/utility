@@ -60,6 +60,7 @@ public class LangUtil {
 
     /**
      * Test if first argument is equal to one of the other arguments.
+     * @param <T> argument type
      * @param arg first argument
      * @param rest remaining arguments
      * @return true, if {@code rest} contains at least one item that is equal to {@code arg}
