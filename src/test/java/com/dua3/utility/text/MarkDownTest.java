@@ -3,6 +3,7 @@ package com.dua3.utility.text;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,15 +16,17 @@ import com.dua3.utility.io.IOUtil;
 public class MarkDownTest {
 
     public static void main(String[] args) throws Exception {
+        Charset cs = StandardCharsets.UTF_8;
+        
         System.err.println("WARNING! This will overwrite expected unit test results!!!\nEnter 'YES' to continue.");
-        if (!"YES".equals(new BufferedReader(new InputStreamReader(System.in)).readLine().trim())) {
+        if (!"YES".equals(new BufferedReader(new InputStreamReader(System.in, cs)).readLine().trim())) {
             System.err.println("aborted.");
             System.exit(1);
         }
 
         String html = getHtml();
         Path htmlPath = Paths.get(MarkDownTest.class.getResource("syntax.html").toURI());
-        try (PrintStream out = new PrintStream(htmlPath.toFile())) {
+        try (PrintStream out = new PrintStream(htmlPath.toFile(), cs.name())) {
             out.print(html);
             System.out.println("Wrote new expected unit test result.");
             System.err.println("Copy " + htmlPath + " to resources folder to permanently update tests.");
