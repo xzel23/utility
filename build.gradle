@@ -5,7 +5,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.com.github.spotbugs:gradlePlugin:1.4"
+    classpath "gradle.plugin.com.github.spotbugs:gradlePlugin:1.5"
   }
 }
 
