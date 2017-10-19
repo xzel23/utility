@@ -12,6 +12,8 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Objects;
 
+import com.dua3.utility.lang.LangUtil;
+
 /**
  * An abstraction for accessing files stored in different location.
  * <p>
@@ -69,7 +71,7 @@ public class FileSystemView implements AutoCloseable {
         }
 
         // is it a zip?
-        if (root.getFileName().endsWith(".zip") || root.getFileName().endsWith(".ZIP")) {
+        if (LangUtil.isOneOf(IOUtil.getExtension(root), "zip", "ZIP")) {
             return forArchive(root);
         }
 

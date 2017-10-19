@@ -21,7 +21,13 @@ public class IOUtil {
      * @return the extension
      */
     public static String getExtension(Path path) {
-        String fname = path.getFileName().toString();
+        Path fnamePath = path.getFileName();
+        
+        if (fnamePath==null) {
+            return "";
+        }
+        
+        String fname = fnamePath.toString();
         int pos = fname.lastIndexOf('.');
         return pos < 0 ? "" : fname.substring(pos + 1);
     }
