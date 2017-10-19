@@ -46,11 +46,6 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
         xml.enabled false
         html.enabled true
     }
-
-    spotbugs {
-        effort = "max"
-        reportLevel = "high"
-    }
 }
 
 tasks.withType(JacocoReport) {
