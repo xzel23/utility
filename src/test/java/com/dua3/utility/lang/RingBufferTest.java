@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class RingBufferTest {
     
-    private final int CAPACITY = 10;
+    private static final int CAPACITY = 10;
     private RingBuffer<Object> buffer = new RingBuffer<>(CAPACITY);
     
     @Test
@@ -35,7 +35,7 @@ public class RingBufferTest {
     public void testGet() {
         buffer.clear();
         try {
-            buffer.get(0);
+            System.out.println(buffer.get(0));
             Assert.fail("IndexOutOfBoundsException not thrown.");
         } catch (IndexOutOfBoundsException e) {
             // nop
@@ -43,13 +43,13 @@ public class RingBufferTest {
         buffer.add("Test1");
         Assert.assertEquals("Test1", buffer.get(0));
         try {
-            buffer.get(1);
+            System.out.println(buffer.get(1));
             Assert.fail("IndexOutOfBoundsException not thrown.");
         } catch (IndexOutOfBoundsException e) {
             // nop
         }
         try {
-            buffer.get(-1);
+            System.out.println(buffer.get(-1));
             Assert.fail("IndexOutOfBoundsException not thrown.");
         } catch (IndexOutOfBoundsException e) {
             // nop

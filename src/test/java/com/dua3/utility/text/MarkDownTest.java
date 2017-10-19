@@ -19,7 +19,7 @@ public class MarkDownTest {
         Charset cs = StandardCharsets.UTF_8;
         
         System.err.println("WARNING! This will overwrite expected unit test results!!!\nEnter 'YES' to continue.");
-        if (!"YES".equals(new BufferedReader(new InputStreamReader(System.in, cs)).readLine().trim())) {
+        if (!"YES".equals(new BufferedReader(new InputStreamReader(System.in, cs)).readLine())) {
             System.err.println("aborted.");
             System.exit(1);
         }
