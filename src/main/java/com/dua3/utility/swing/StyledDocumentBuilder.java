@@ -142,7 +142,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 resetAttributes.add(Pair.of(name, currentAttributes.getAttribute(attr)));
             }
             pushRunAttributes(resetAttributes);
-            // apply runn attributes to the set
+            // apply run attributes to the set
             attributeSet.addAttributes(runAttributes);
         }
     }
@@ -261,13 +261,6 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     }
 
     private void applyRunAttributes(AttributeSet attrs) {
-        List<Pair<Object,Object>> originalValues = new ArrayList<>(attrs.getAttributeCount());
-        Enumeration<?> names = attrs.getAttributeNames();
-        while (names.hasMoreElements()) {
-            Object attr = names.nextElement();
-            originalValues.add(Pair.of(attr, currentAttributes.getAttribute(attr)));
-        }
-
         currentAttributes.addAttributes(attrs);
     }
 
