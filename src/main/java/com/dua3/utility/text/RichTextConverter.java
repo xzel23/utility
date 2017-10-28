@@ -16,15 +16,15 @@
 package com.dua3.utility.text;
 
 /**
- * Base class for text builders. This class is intended a s a common base class
- * for creating builders that transform text represented as {@code RichText}
+ * Base class for text converters. This class is intended a s a common base class
+ * for creating converters that transform text represented as {@code RichText}
  * into other formats.
  *
  * @author Axel Howind (axel@dua3.com)
  * @param <T>
  *            class matching produced document type
  */
-public abstract class TextBuilder<T> {
+public abstract class RichTextConverter<T> {
 
     public static float decodeFontSize(String s) {
         float factor = 1f;
@@ -41,7 +41,7 @@ public abstract class TextBuilder<T> {
     /**
      * Constructor.
      */
-    protected TextBuilder() {
+    protected RichTextConverter() {
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class TextBuilder<T> {
      *            the richt text to add
      * @return this TextBuider
      */
-    public TextBuilder<T> add(RichText text) {
+    public RichTextConverter<T> add(RichText text) {
         checkState();
         for (Run r : text) {
             append(r);

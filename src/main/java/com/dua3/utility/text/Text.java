@@ -1,13 +1,17 @@
 package com.dua3.utility.text;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.dua3.utility.lang.LangUtil;
 
@@ -15,56 +19,53 @@ public class Text extends AbstractList<String> {
 
     private static final char NEWLINE = '\n';
     private static final String NEWLINE_STR = "" + '\n';
+    private static final Text EMPTY_TEXT = new Text(Collections.emptyList());
+
+    public static Text collect(Stream<String> lines) {
+        return new Text(lines.peek(Text::checkNoLineBreaks));
+    }
 
     public static Text empty() {
-        return new Text();
+        return EMPTY_TEXT;
     }
 
     public static Text load(Path path, Charset cs) throws IOException {
-        try (BufferedReader reader = Files.newBufferedReader(path, cs)) {
-            Text text = new Text();
-            for (;;) {
-                String line = reader.readLine();
-                if (line == null) {
-                    break;
-                }
-                text.addUnchecked(line);
-            }
-            return text;
-        }
+        return new Text(Files.lines(path, cs));
     }
 
-    private static void checkNoLineBreaks(String line) {
-        if (containsLineBreaks(line)) {
-            throw new IllegalArgumentException("line must not contain linebreaks");
-        }
+    public static Text valueOf(String s) {
+        return new Text(Arrays.stream(s.split(NEWLINE_STR)));
+    }
+    
+    public static Text valueOf(String[] lines) {
+        return collect(Arrays.stream(lines));
+    }
+    
+    public static Text valueOf(Collection<String> lines) {
+        return collect(lines.stream());
+    }
+    
+    static void checkNoLineBreaks(String line) {
+        LangUtil.check(!containsLineBreaks(line), "line must not contain linebreaks");
     }
 
-    private static boolean containsLineBreaks(String line) {
+    static boolean containsLineBreaks(String line) {
         return line.indexOf(NEWLINE) >= 0;
     }
 
     private final List<String> lines;
 
-    public Text() {
-        lines = new ArrayList<>();
+    private Text(List<String> lines) {
+        this.lines = lines;
     }
 
-    public Text(List<String> lines) {
-        this.lines = new ArrayList<>(lines);
+    private Text(Stream<String> lines) {
+        this.lines = lines.collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public boolean add(String line) {
-        checkNoLineBreaks(line);
-        return addUnchecked(line);
-    }
-
-    public boolean addText(String text) {
-        for (String s : text.split(NEWLINE_STR)) {
-            addUnchecked(s);
-        }
-        return true;
+    public boolean equals(Object o) {
+        return lines.equals(o);
     }
 
     @Override
@@ -72,9 +73,14 @@ public class Text extends AbstractList<String> {
         return lines.get(index);
     }
 
+    @Override
+    public int hashCode() {
+        return lines.hashCode();
+    }
+
     public Text region(int begin, int end) {
         LangUtil.check(begin >= 0 && begin < end && end <= lines.size(), "invalid region from {} to {}", begin, end);
-        return new Text(lines.subList(begin, end));
+        return new Text(new ArrayList<>(lines.subList(begin, end)));
     }
 
     @Override
@@ -91,9 +97,5 @@ public class Text extends AbstractList<String> {
             sep = NEWLINE_STR;
         }
         return sb.toString();
-    }
-
-    private boolean addUnchecked(String line) {
-        return lines.add(line);
     }
 }

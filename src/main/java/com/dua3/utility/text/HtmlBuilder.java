@@ -25,12 +25,12 @@ import com.dua3.utility.Pair;
 import com.dua3.utility.text.TextAttributes.Attribute;
 
 /**
- * A {@link TextBuilder} implementation for translating {@code RichText} to
+ * A {@link RichTextConverter} implementation for translating {@code RichText} to
  * HTML.
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class HtmlBuilder extends TextBuilder<String> {
+public class HtmlBuilder extends RichTextConverter<String> {
 
     /**
      * Enumeration of options that control generation of HTML.

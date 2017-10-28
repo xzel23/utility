@@ -43,15 +43,15 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextAttributes.Attribute;
-import com.dua3.utility.text.TextBuilder;
+import com.dua3.utility.text.RichTextConverter;
 
 /**
- * A {@link TextBuilder} implementation for translating {@code RichText} to
+ * A {@link RichTextConverter} implementation for translating {@code RichText} to
  * HTML.
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
+public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
 
     private StyledDocument doc = new DefaultStyledDocument();
