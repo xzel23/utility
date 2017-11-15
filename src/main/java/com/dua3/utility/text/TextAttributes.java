@@ -155,4 +155,8 @@ public class TextAttributes {
         properties.remove(property);
     }
 
+    @Override
+    public String toString() {
+        return properties.toString();
+    }
 }
