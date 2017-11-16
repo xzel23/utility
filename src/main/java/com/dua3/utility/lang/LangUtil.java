@@ -1,6 +1,8 @@
 package com.dua3.utility.lang;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * A Utility class with general purpose methods.
@@ -74,6 +76,21 @@ public class LangUtil {
         }
         return false;
     }
+
+	public static <E extends Enum<E>>
+	Optional<E> enumConstant(Class<E> clazz, Predicate<E> condition) {
+		for (E ec: clazz.getEnumConstants()) {
+			if (condition.test(ec)) {
+				return Optional.of(ec);
+			}
+		}
+		return Optional.empty();
+	}
+	
+	public static <E extends Enum<E>>
+	Optional<E> enumConstant(Class<E> clazz, String value) {
+		return enumConstant(clazz, ec -> ec.toString().equals(value));
+	}
 
     private LangUtil() {
         // nop

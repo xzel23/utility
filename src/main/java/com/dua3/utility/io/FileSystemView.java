@@ -187,9 +187,7 @@ public class FileSystemView implements AutoCloseable {
     }
 
     private void assertThatResolvedPathIsValid(Path resolvedPath, Object originalPath) {
-        if (!resolvedPath.toAbsolutePath().startsWith(root)) {
-            throw new IllegalArgumentException("Path is not in this FileSystemViews subtree: " + originalPath);
-        }
+        LangUtil.check(resolvedPath.toAbsolutePath().startsWith(root), "Path is not in this FileSystemViews subtree: %s", originalPath);
     }
 
     /**

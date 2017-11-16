@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.dua3.utility.lang.LangUtil;
+
 /**
  * Color in ARGB format.
  */
@@ -418,9 +420,7 @@ public final class Color {
     }
 
     private static int shiftComponentValue(int value, int bits) {
-        if (value < 0 || value > 255) {
-            throw new IllegalArgumentException();
-        }
+    	LangUtil.check(value >= 0 && value <= 255);
         return value << bits;
     }
 

@@ -17,6 +17,8 @@ package com.dua3.utility.text;
 
 import java.util.Objects;
 
+import com.dua3.utility.lang.LangUtil;
+
 /**
  * A sequence of characters that share the same proerties.
  */
@@ -41,9 +43,7 @@ public class Run
      *            style for the Run
      */
     Run(String text, int start, int length, TextAttributes style) {
-        if (start < 0 || start > text.length() || length < 0 || start + length > text.length()) {
-            throw new IllegalArgumentException();
-        }
+    	LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
 
         this.text = Objects.requireNonNull(text);
         this.style = Objects.requireNonNull(style);

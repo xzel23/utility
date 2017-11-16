@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
+import com.dua3.utility.lang.LangUtil;
+
 /**
  *
  * @author axel
@@ -129,9 +131,7 @@ public final class MathUtil {
      * @return list of all calculated roots
      */
     public static List<Double> findRootsInInterval(DoubleUnaryOperator f, double x0, double x1, int steps, double eps) {
-        if (x0 == x1) {
-            throw new IllegalArgumentException("Empty interval.");
-        }
+        LangUtil.check(x0!=x1, "Empty interval.");
         
         if (x0 > x1) {
             double tmp = x0;
@@ -198,9 +198,9 @@ public final class MathUtil {
      * @return ceil(log10(x))
      */
     public static int ilog10(double x) {
-        if (x <= 0 || Double.isNaN(x) || Double.isInfinite(x)) {
-            throw new IllegalArgumentException(Double.toString(x));
-        } else if (x >= 1.0) {
+        LangUtil.check(x > 0 && !Double.isNaN(x) && !Double.isInfinite(x), "Illegal argument: %f", x);
+        
+        if (x >= 1.0) {
             int i = 0;
             while ((x /= 10.0) >= 1) {
                 i++;
