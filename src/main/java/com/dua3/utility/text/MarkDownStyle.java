@@ -7,7 +7,6 @@ import java.util.function.IntFunction;
 
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
-import com.dua3.utility.text.TextAttributes.Attribute;
 
 public enum MarkDownStyle {
     BLOCK_QUOTE,
@@ -44,7 +43,7 @@ public enum MarkDownStyle {
     public static final String ATTR_LINK_EXTERN = "extern";
 
     // styles definitions to use when converting markdown source to StyledDocument
-    public static Map<String, Function<Attribute, TextAttributes>> defaultStyles() {
+    public static Map<String, Function<Style, TextAttributes>> defaultStyles() {
         IntFunction<String> getFontSizeForHeading = level -> {
             switch (level) {
             case 1:
@@ -65,8 +64,8 @@ public enum MarkDownStyle {
         return defaultStyles(getFontSizeForHeading);
     }
 
-    public static Map<String, Function<Attribute,TextAttributes>> defaultStyles(IntFunction<String> getFontSizeForHeading) {
-        Map<String, Function<Attribute,TextAttributes>> m = new HashMap<>();
+    public static Map<String, Function<Style,TextAttributes>> defaultStyles(IntFunction<String> getFontSizeForHeading) {
+        Map<String, Function<Style,TextAttributes>> m = new HashMap<>();
 
         m.put(MarkDownStyle.BLOCK_QUOTE.name(), attr -> TextAttributes.of(
                 Pair.of(TextAttributes.TEXT_INDENT_LEFT, TextAttributes.TEXT_INDENT_LEFT_VALUE_1)
@@ -89,7 +88,7 @@ public enum MarkDownStyle {
         m.put(MarkDownStyle.HARD_LINE_BREAK.name(), attr -> TextAttributes.of(
                 ));
         m.put(MarkDownStyle.HEADING.name(), attr -> TextAttributes.of(
-                Pair.of(TextAttributes.FONT_SIZE, getFontSizeForHeading.apply((Integer)attr.args.getOrDefault(MarkDownStyle.ATTR_HEADING_LEVEL, 1)))
+                Pair.of(TextAttributes.FONT_SIZE, getFontSizeForHeading.apply((Integer)attr.getOrDefault(MarkDownStyle.ATTR_HEADING_LEVEL, 1)))
                 ));
         m.put(MarkDownStyle.THEMATIC_BREAK.name(), attr -> TextAttributes.of(
                 ));

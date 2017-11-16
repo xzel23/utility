@@ -41,8 +41,8 @@ import org.slf4j.LoggerFactory;
 import com.dua3.utility.Pair;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
-import com.dua3.utility.text.TextAttributes.Attribute;
 import com.dua3.utility.text.RichTextConverter;
 
 /**
@@ -62,13 +62,13 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         return builder.add(text).get();
     }
 
-    public static StyledDocument toStyledDocument(RichText text, Function<Attribute, TextAttributes> styleSupplier) {
+    public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleSupplier) {
         StyledDocumentBuilder builder = new StyledDocumentBuilder();
         builder.setStyleSupplier(styleSupplier);
         return builder.add(text).get();
     }
 
-    public static StyledDocument toStyledDocument(RichText text, Map<String, Function<Attribute, TextAttributes>> styleMap) {
+    public static StyledDocument toStyledDocument(RichText text, Map<String, Function<Style, TextAttributes>> styleMap) {
         StyledDocumentBuilder builder = new StyledDocumentBuilder();
         builder.setStyleMap(styleMap);
         return builder.add(text).get();
@@ -82,15 +82,15 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         return doc;
     }
 
-    private Function<Attribute, TextAttributes> styleSupplier;
+    private Function<Style, TextAttributes> styleSupplier;
 
-    public void setStyleSupplier(Function<Attribute, TextAttributes> styleSupplier) {
+    public void setStyleSupplier(Function<Style, TextAttributes> styleSupplier) {
         this.styleSupplier = Objects.requireNonNull(styleSupplier);
     }
 
-    public void setStyleMap(Map<String, Function<Attribute, TextAttributes>> styleMap) {
-        Function<Attribute, TextAttributes> supplier = s -> {
-            String styleName = String.valueOf(s.args.get(TextAttributes.STYLE_NAME));
+    public void setStyleMap(Map<String, Function<Style, TextAttributes>> styleMap) {
+        Function<Style, TextAttributes> supplier = s -> {
+            String styleName = String.valueOf(s.get(TextAttributes.STYLE_NAME));
             return styleMap.getOrDefault(styleName, attr -> TextAttributes.none()).apply(s);
         };
         this.styleSupplier = supplier;
@@ -124,8 +124,8 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         }
 
         @SuppressWarnings("unchecked")
-        List<Attribute> attributes = (List<Attribute>) value;
-        for (Attribute attr : attributes) {
+        List<Style> attributes = (List<Style>) value;
+        for (Style attr : attributes) {
             // collect attributes
             MutableAttributeSet runAttributes = new SimpleAttributeSet();
             for (Entry<String, Object> e: styleSupplier.apply(attr).properties().entrySet()) {

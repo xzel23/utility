@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.dua3.utility.Pair;
-import com.dua3.utility.text.TextAttributes.Attribute;
 
 /**
  * A {@link RichTextConverter} implementation for translating {@code RichText} to
@@ -77,8 +76,8 @@ public class HtmlBuilder extends RichTextConverter<String> {
      * @param closing
      *            the closing tag(s), should be in reverse order of the corresponding opening tags
      */
-    private static void putTags(Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> tags,
-            String styleName, Function<Attribute, String> opening, Function<Attribute, String> closing) {
+    private static void putTags(Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags,
+            String styleName, Function<Style, String> opening, Function<Style, String> closing) {
         tags.put(styleName, Pair.of(opening, closing));
     }
 
@@ -94,7 +93,7 @@ public class HtmlBuilder extends RichTextConverter<String> {
 
     private final String replaceMdExtensionWith;
 
-    private final Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> styleTags = defaultStyleTags();
+    private final Map<String, Pair<Function<Style, String>, Function<Style, String>>> styleTags = defaultStyleTags();
 
     public HtmlBuilder(Pair<Option, Object>[] options) {
         Map<Option, Object> optionMap = Pair.toMap(options);
@@ -178,9 +177,9 @@ public class HtmlBuilder extends RichTextConverter<String> {
     }
 
     private void appendTagsForRun(StringBuilder openingTag, Run run, String property,
-            Function<Pair<Function<Attribute, String>, Function<Attribute, String>>, Function<Attribute, String>> selector) {
-        TextAttributes style = run.getStyle();
-        Object value = style.properties().get(property);
+            Function<Pair<Function<Style, String>, Function<Style, String>>, Function<Style, String>> selector) {
+        TextAttributes attrs = run.getStyle();
+        Object value = attrs.properties().get(property);
 
         if (value != null) {
             if (!(value instanceof List)) {
@@ -189,11 +188,11 @@ public class HtmlBuilder extends RichTextConverter<String> {
             }
 
             @SuppressWarnings("unchecked")
-            List<Attribute> attributes = (List<Attribute>) value;
-            for (Attribute attr : attributes) {
-                Pair<Function<Attribute, String>, Function<Attribute, String>> tag = styleTags.get(attr.style.name());
+            List<Style> styles = (List<Style>) value;
+            for (Style style : styles) {
+                Pair<Function<Style, String>, Function<Style, String>> tag = styleTags.get(style.name());
                 if (tag != null) {
-                    openingTag.append(selector.apply(tag).apply(attr));
+                    openingTag.append(selector.apply(tag).apply(style));
                 }
             }
         }
@@ -202,9 +201,9 @@ public class HtmlBuilder extends RichTextConverter<String> {
     /**
      * Create attribute text for HTML tags.
      *
-     * @param args
-     *            the current node's arguments
-     * @param textAttribute
+     * @param style
+     *            the current style
+     * @param property
      *            the TextAttribute to retrieve
      * @param htmlAttribute
      *            the attribute name of the HTML tag
@@ -213,8 +212,8 @@ public class HtmlBuilder extends RichTextConverter<String> {
      * @return
      *         the text to set the attribute in the HTML tag
      */
-    private String attrText(Map<String, Object> args, String textAttribute, String htmlAttribute, String dflt) {
-        Object value = args.getOrDefault(textAttribute, dflt);
+    private String attrText(Style style, String property, String htmlAttribute, String dflt) {
+        Object value = style.getOrDefault(property, dflt);
 
         if (value == null) {
             return "";
@@ -223,8 +222,8 @@ public class HtmlBuilder extends RichTextConverter<String> {
         return " " + htmlAttribute + "=\"" + value.toString() + "\"";
     }
 
-    private Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> defaultStyleTags() {
-        Map<String, Pair<Function<Attribute, String>, Function<Attribute, String>>> tags = new HashMap<>();
+    private Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
+        Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
 
         putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "<blockquote>", attr -> "</blockquote>");
         putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "<ul>\n", attr -> "</ul>\n");
@@ -234,24 +233,24 @@ public class HtmlBuilder extends RichTextConverter<String> {
         putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
         putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "\n<br>", attr -> "");
         putTags(tags, MarkDownStyle.HEADING.name(),
-                attr -> "<h" + attr.args.get(MarkDownStyle.ATTR_HEADING_LEVEL)
-                        + attrText(attr.args, MarkDownStyle.ATTR_ID, "id", "")
+                attr -> "<h" + attr.get(MarkDownStyle.ATTR_HEADING_LEVEL)
+                        + attrText(attr, MarkDownStyle.ATTR_ID, "id", "")
                         + ">",
-                attr -> "</h" + attr.args.get(MarkDownStyle.ATTR_HEADING_LEVEL) + ">");
+                attr -> "</h" + attr.get(MarkDownStyle.ATTR_HEADING_LEVEL) + ">");
         putTags(tags, MarkDownStyle.THEMATIC_BREAK.name(), attr -> "\n<hr>", attr -> "");
         // HTML_BLOCK
         // HTML_INLINE
         putTags(tags, MarkDownStyle.IMAGE.name(),
                 attr -> "<img"
-                        + attrText(attr.args, MarkDownStyle.ATTR_IMAGE_SRC, "src", "")
-                        + attrText(attr.args, MarkDownStyle.ATTR_IMAGE_TITLE, "title", null)
-                        + attrText(attr.args, MarkDownStyle.ATTR_IMAGE_ALT, "alt", null)
+                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_SRC, "src", "")
+                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_TITLE, "title", null)
+                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_ALT, "alt", null)
                         + ">",
                 attr -> "");
         putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
         putTags(tags, MarkDownStyle.LINK.name(),
                 attr -> {
-                    String href = attr.args.getOrDefault(MarkDownStyle.ATTR_LINK_HREF, "").toString();
+                    String href = attr.getOrDefault(MarkDownStyle.ATTR_LINK_HREF, "").toString();
                     if (replaceMdExtensionWith != null) {
                         href = href.replaceAll("(\\.md|\\.MD)(\\?|#|$)", replaceMdExtensionWith + "$2");
                     }
@@ -260,8 +259,8 @@ public class HtmlBuilder extends RichTextConverter<String> {
                     //
                     return "<a"
                             + hrefAttr
-                            + attrText(attr.args, MarkDownStyle.ATTR_LINK_TITLE, "title", null)
-                            + ifSet(attr.args, MarkDownStyle.ATTR_LINK_EXTERN,
+                            + attrText(attr, MarkDownStyle.ATTR_LINK_TITLE, "title", null)
+                            + ifSet(attr, MarkDownStyle.ATTR_LINK_EXTERN,
                                     " target=\"" + targetForExternLinks + "\"")
                             + ">";
                 },
@@ -278,8 +277,8 @@ public class HtmlBuilder extends RichTextConverter<String> {
         return Collections.unmodifiableMap(tags);
     }
 
-    private String ifSet(Map<String, Object> args, String textAttribute, String textIfPresent) {
-        Object value = args.get(textAttribute);
+    private String ifSet(Style style, String textAttribute, String textIfPresent) {
+        Object value = style.get(textAttribute);
 
         boolean isSet;
         if (value instanceof Boolean) {

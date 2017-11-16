@@ -26,27 +26,6 @@ import com.dua3.utility.Pair;
  */
 public class TextAttributes {
 
-    public static class Attribute {
-        public final MarkDownStyle style;
-        public final Map<String, Object> args;
-
-        @SafeVarargs
-        Attribute(MarkDownStyle style, Pair<String, Object>... args) {
-            this.style = style;
-            Map<String, Object> m = new HashMap<>();
-            m.put(TextAttributes.STYLE_NAME, style.name());
-            for (Pair<String, Object> arg : args) {
-                m.put(arg.first, arg.second);
-            }
-            this.args = Collections.unmodifiableMap(m);
-        }
-
-        @Override
-        public String toString() {
-            return style.toString()+args;
-        }
-    }
-
     // meta
     public static final String STYLE_START_RUN = "__style-start-run";
     public static final String STYLE_END_RUN = "__style-end-run";
@@ -91,7 +70,7 @@ public class TextAttributes {
     public static final String COLOR = "color";
     public static final String BACKGROUND_COLOR = "background-color";
 
-    private static final TextAttributes NONE = new TextAttributes();
+    private static final TextAttributes NONE = new TextAttributes(Collections.emptyMap());
 
     /**
      * The empty style instance.
@@ -111,14 +90,22 @@ public class TextAttributes {
      */
     @SafeVarargs
     public static TextAttributes of(Pair<String, String>... entries) {
-        TextAttributes style = new TextAttributes();
+        HashMap<String,Object> map = new HashMap<>();
         for (Pair<String, String> entry : entries) {
-            style.put(entry.first, entry.second);
+            map.put(entry.first, entry.second);
         }
-        return style;
+        return new TextAttributes(map);
     }
 
-    private final Map<String, Object> properties = new HashMap<>();
+    public static TextAttributes of(Map<String, Object> entries) {
+        return new TextAttributes(new HashMap<>(entries));
+    }
+    
+    private TextAttributes(Map<String, Object> entries) {
+        this.properties = entries;
+    }
+    
+    private final Map<String, Object> properties;
 
     @Override
     public boolean equals(Object obj) {

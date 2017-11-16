@@ -15,6 +15,7 @@
  */
 package com.dua3.utility.text;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
@@ -32,13 +33,13 @@ public class RichTextBuilder implements Appendable {
 
     private final StringBuilder buffer = new StringBuilder();
 
-    private final SortedMap<Integer, TextAttributes> parts = new TreeMap<>();
+    private final SortedMap<Integer, Map<String,Object>> parts = new TreeMap<>();
 
     /**
      * Construct a new empty builder.
      */
     public RichTextBuilder() {
-        parts.put(0, new TextAttributes());
+        parts.put(0, new HashMap<>());
     }
 
     @Override
@@ -79,7 +80,7 @@ public class RichTextBuilder implements Appendable {
      */
     public Object pop(String property) {
         Object prev = null;
-        for (Map.Entry<Integer, TextAttributes> e : parts.entrySet()) {
+        for (Map.Entry<Integer, Map<String,Object>> e : parts.entrySet()) {
             if (Objects.equals(e.getKey(), parts.lastKey())) {
                 break;
             }
@@ -117,8 +118,8 @@ public class RichTextBuilder implements Appendable {
 
         int runIdx = 0;
         int start = parts.firstKey();
-        TextAttributes style = parts.get(start);
-        for (Map.Entry<Integer, TextAttributes> e : parts.entrySet()) {
+        Map<String,Object> style = parts.get(start);
+        for (Map.Entry<Integer, Map<String,Object>> e : parts.entrySet()) {
             int end = e.getKey();
             int runLength = end - start;
 
@@ -126,11 +127,11 @@ public class RichTextBuilder implements Appendable {
                 continue;
             }
 
-            runs[runIdx++] = new Run(text, start, end - start, style);
+            runs[runIdx++] = new Run(text, start, end - start, TextAttributes.of(style));
             start = end;
             style = e.getValue();
         }
-        runs[runIdx] = new Run(text, start, text.length() - start, style);
+        runs[runIdx] = new Run(text, start, text.length() - start, TextAttributes.of(style));
 
         return new RichText(text, runs);
     }
@@ -140,12 +141,12 @@ public class RichTextBuilder implements Appendable {
         return buffer.toString();
     }
 
-    private TextAttributes currentStyle() {
-        final TextAttributes style;
+    private Map<String,Object> currentStyle() {
+        final Map<String,Object> style;
         if (parts.lastKey() == buffer.length()) {
             style = parts.get(parts.lastKey());
         } else {
-            style = new TextAttributes();
+            style = new HashMap<>();
             parts.put(buffer.length(), style);
         }
         return style;
