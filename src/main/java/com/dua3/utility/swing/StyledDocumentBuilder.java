@@ -77,8 +77,8 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         return StyledDocumentBuilder.create(styleMap).add(text).get();
     }
     
-    public static StyledDocument toStyledDocument(RichText text, AttributeSet dfltAttr, double scale) {
-        StyledDocumentBuilder builder = StyledDocumentBuilder.create(s -> TextAttributes.none()); // FIXME
+    public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleSupplier, AttributeSet dfltAttr, double scale) {
+        StyledDocumentBuilder builder = StyledDocumentBuilder.create(styleSupplier);
         builder.setScale(scale);
         StyledDocument doc = builder.add(text).get();
         doc.setParagraphAttributes(0, doc.getLength(), dfltAttr, false);
