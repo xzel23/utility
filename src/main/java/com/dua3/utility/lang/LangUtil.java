@@ -42,6 +42,23 @@ public class LangUtil {
         }
     }
 
+
+    /**
+     * Check that index is valid.
+     *
+     * @param idx
+     *            index to test
+     * @param size
+     *            collection size
+     * @throws IndexOutOfBoundsException
+     *             if index is out of range
+     */
+    public static void checkIndex(int idx, int size) {
+        if (idx<0 || idx>=size) {
+            throw new IndexOutOfBoundsException("index: "+idx);
+        }
+    }
+
     /**
      * Do nothing.
      * <p>
@@ -94,6 +111,35 @@ public class LangUtil {
 
     private LangUtil() {
         // nop
+    }
+
+    /** The byte order mark in UTF files */
+    public static final char UTF_BYTE_ORDER_MARK = 0xfeff;
+    
+    /**
+     * Test if character is the byte order mark.
+     * @param c
+     * @return true if c is the byte order mark
+     */
+    public boolean isByteOrderMark(char c) {
+        return c==UTF_BYTE_ORDER_MARK;
+    }
+    
+    /**
+     * Trim string, remove prepending byte order mark.
+     * @param s the string to trim
+     * @return the trimmed string
+     */
+    public static String trimWithByteOrderMark(String s) {
+        if (s.isEmpty()) {
+            return s;
+        }
+        
+        if (s.charAt(0)==0xfeff) {
+            s = s.substring(1);
+        }
+        
+        return s.trim();
     }
 
 }
