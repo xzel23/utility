@@ -307,7 +307,7 @@ public class HtmlBuilder extends RichTextConverter<String> {
     @Override
     public String get() {
         buffer.append(htmlClose);
-        String html = new String(buffer);
+        String html = buffer.toString();
         buffer = null;
         return html;
     }
