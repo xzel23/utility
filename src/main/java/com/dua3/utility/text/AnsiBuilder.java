@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.dua3.utility.Pair;
+import com.dua3.utility.io.AnsiCode;
 
 /**
  * A {@link RichTextConverter} implementation for translating {@code RichText} to
@@ -126,30 +127,6 @@ public class AnsiBuilder extends RichTextConverter<String> {
         }
     }
 
-    /**
-     * Create attribute text for HTML tags.
-     *
-     * @param style
-     *            the current style
-     * @param property
-     *            the TextAttribute to retrieve
-     * @param htmlAttribute
-     *            the attribute name of the HTML tag
-     * @param dflt
-     *            the value to use if attribute is not set. pass {@code null} to omit the attribute if not set
-     * @return
-     *         the text to set the attribute in the HTML tag
-     */
-    private String attrText(Style style, String property, String htmlAttribute, String dflt) {
-        Object value = style.getOrDefault(property, dflt);
-
-        if (value == null) {
-            return "";
-        }
-
-        return " " + htmlAttribute + "=\"" + value.toString() + "\"";
-    }
-
     private Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
         Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
 /*
@@ -157,7 +134,9 @@ public class AnsiBuilder extends RichTextConverter<String> {
         putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "<ul>\n", attr -> "</ul>\n");
         putTags(tags, MarkDownStyle.CODE.name(), attr -> "<code>", attr -> "</code>");
         putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
-        putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> "<em>", attr -> "</em>");
+        */
+        putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> AnsiCode.italic(true), attr -> AnsiCode.italic(false));
+        /*
         putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
         putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "\n<br>", attr -> "");
         putTags(tags, MarkDownStyle.HEADING.name(),

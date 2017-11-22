@@ -18,18 +18,24 @@ public class MarkDownTest {
     public static void main(String[] args) throws Exception {
         Charset cs = StandardCharsets.UTF_8;
         
-        System.err.println("WARNING! This will overwrite expected unit test results!!!\nEnter 'YES' to continue.");
-        if (!"YES".equals(new BufferedReader(new InputStreamReader(System.in, cs)).readLine())) {
-            System.err.println("aborted.");
-            System.exit(1);
+        if (args.length == 0) {
+        	System.out.println(getAnsi());
         }
-
-        String html = getHtml();
-        Path htmlPath = Paths.get(MarkDownTest.class.getResource("syntax.html").toURI());
-        try (PrintStream out = new PrintStream(htmlPath.toFile(), cs.name())) {
-            out.print(html);
-            System.out.println("Wrote new expected unit test result.");
-            System.err.println("Copy " + htmlPath + " to resources folder to permanently update tests.");
+        
+        if (args.length== 1 && args[0].equals("-update")) {
+	        System.err.println("WARNING! This will overwrite expected unit test results!!!\nEnter 'YES' to continue.");
+	        if (!"YES".equals(new BufferedReader(new InputStreamReader(System.in, cs)).readLine())) {
+	            System.err.println("aborted.");
+	            System.exit(1);
+	        }
+	
+	        String html = getHtml();
+	        Path htmlPath = Paths.get(MarkDownTest.class.getResource("syntax.html").toURI());
+	        try (PrintStream out = new PrintStream(htmlPath.toFile(), cs.name())) {
+	            out.print(html);
+	            System.out.println("Wrote new expected unit test result.");
+	            System.err.println("Copy " + htmlPath + " to resources folder to permanently update tests.");
+	        }
         }
     }
 
@@ -39,6 +45,12 @@ public class MarkDownTest {
         return HtmlBuilder.toHtml(richText);
     }
 
+    static String getAnsi() throws Exception {
+        String mdText = getTestDataSource();
+        RichText richText = MarkDownUtil.convert(mdText);
+        return AnsiBuilder.toAnsi(richText);
+    }
+    
     @Test
     public void testMarkDown() throws Exception {
         String htmlActual = getHtml();

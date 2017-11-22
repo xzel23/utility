@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.dua3.utility.swing;
+package com.dua3.utility.text;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -23,13 +23,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -38,83 +38,79 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dua3.utility.Pair;
-import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextConverter;
-import com.dua3.utility.text.Run;
-import com.dua3.utility.text.Style;
-import com.dua3.utility.text.TextAttributes;
+import com.dua3.utility.swing.SwingUtil;
 
 /**
  * A {@link RichTextConverter} implementation for translating {@code RichText} to
- * HTML.
+ * Text with ANSI control codes.
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
-    private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
+public class AnsiBuilder2 extends RichTextConverter<String> {
+    private static final Logger LOG = LoggerFactory.getLogger(AnsiBuilder2.class);
     
     private static final Object[] PARAGRAPH_ATTRIBUTES = {
             StyleConstants.ParagraphConstants.LeftIndent
     };
     
-    public static StyledDocumentBuilder create(Function<Style, TextAttributes> supplier) {
-        return new StyledDocumentBuilder(supplier);
+    public static AnsiBuilder2 create(Function<Style, TextAttributes> supplier) {
+        return new AnsiBuilder2(supplier);
     }
     
-    public static StyledDocumentBuilder create(Map<String, Function<Style, TextAttributes>> styleMap) {
+    public static AnsiBuilder2 create(Map<String, Function<Style, TextAttributes>> styleMap) {
         return create(s -> {
             String styleName = String.valueOf(s.get(TextAttributes.STYLE_NAME));
             return styleMap.getOrDefault(styleName, attr -> TextAttributes.none()).apply(s);
         });
     }
     
-    public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleSupplier) {
-        return StyledDocumentBuilder.create(styleSupplier).add(text).get();
+    public static String toString(RichText text, Function<Style, TextAttributes> styleSupplier) {
+        return AnsiBuilder2.create(styleSupplier).add(text).get();
     }
     
-    public static StyledDocument toStyledDocument(RichText text,
+    public static String toString(RichText text,
             Map<String, Function<Style, TextAttributes>> styleMap) {
-        return StyledDocumentBuilder.create(styleMap).add(text).get();
+        return AnsiBuilder2.create(styleMap).add(text).get();
     }
     
-    public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleSupplier, AttributeSet dfltAttr, double scale) {
-        StyledDocumentBuilder builder = StyledDocumentBuilder.create(styleSupplier);
+    public static String toString(RichText text, Function<Style, TextAttributes> styleSupplier, AttributeSet dfltAttr, double scale) {
+        AnsiBuilder2 builder = AnsiBuilder2.create(styleSupplier);
         builder.setScale(scale);
-        StyledDocument doc = builder.add(text).get();
-        doc.setParagraphAttributes(0, doc.getLength(), dfltAttr, false);
+        String doc = builder.add(text).get();
+        doc.setParagraphAttributes(0, doc.length(), dfltAttr, false);
         return doc;
     }
 
-    private StyledDocument doc = new DefaultStyledDocument();
+    private StringBuilder doc = new StringBuilder();
 
-    private final MutableAttributeSet currentAttributes;
+    private final Map<Object,Object> currentAttributes;
     
     private final Function<Style, TextAttributes> styleSupplier;
     
     private double scale = 1;
     
-    private final Map<String, BiConsumer<MutableAttributeSet, Object>> styles = defaultStyles();
+    private final Map<String, BiConsumer<Map<Object,Object>, Object>> styles = defaultStyles();
     
     private Deque<List<Pair<Object, Object>>> resetAttr = new LinkedList<>();
     
-    private Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
+    private Deque<Pair<Integer, Map<Object,Object>>> paragraphAttributes = new LinkedList<>();
     
-    private StyledDocumentBuilder(Function<Style, TextAttributes> styleSupplier) {
-        this.currentAttributes = new SimpleAttributeSet();
+    private AnsiBuilder2(Function<Style, TextAttributes> styleSupplier) {
+        this.currentAttributes = new HashMap<>();
         this.styleSupplier = styleSupplier;
     }
     
     @Override
-    public StyledDocument get() {
+    public String get() {
         // apply paragraph styles
         int pos = 0;
-        for (Pair<Integer, AttributeSet> e : paragraphAttributes) {
+        for (Pair<Integer, Map<Object,Object>> e : paragraphAttributes) {
             doc.setParagraphAttributes(pos, e.first, e.second, false);
             pos += e.first;
         }
         
         // mark builder invalid by clearing doc
-        StyledDocument ret = doc;
+        String ret = doc.toString();
         doc = null;
         return ret;
     }
@@ -130,10 +126,10 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
     
     private void append(String text, AttributeSet as) {
         try {
-            int pos = doc.getLength();
+            int pos = doc.length();
             doc.insertString(pos, text, as);
             
-            AttributeSet pa = getParagraphAttributes(as);
+            Map<Object,Object> pa = getParagraphAttributes(as);
             paragraphAttributes.add(Pair.of(text.length(), pa));
         } catch (BadLocationException e) {
             // this should not happen
@@ -141,7 +137,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         }
     }
     
-    private void appendAttributesForRun(MutableAttributeSet attributeSet, Run run, String property) {
+    private void appendAttributesForRun(Map<Object,Object> attributeSet, Run run, String property) {
         TextAttributes style = run.getStyle();
         Object value = style.properties().get(property);
         
@@ -158,19 +154,17 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         List<Style> attributes = (List<Style>) value;
         for (Style attr : attributes) {
             // collect attributes
-            MutableAttributeSet runAttributes = new SimpleAttributeSet();
+        	Map<Object,Object>  runAttributes = new HashMap<>();
             for (Entry<String, Object> e : styleSupplier.apply(attr).properties().entrySet()) {
                 Object attrName = e.getKey();
                 Object attrValue = e.getValue();
-                BiConsumer<MutableAttributeSet, Object> consumer = styles.get(attrName);
+                BiConsumer<Map<Object,Object> , Object> consumer = styles.get(attrName);
                 consumer.accept(runAttributes, attrValue);
             }
             // store current values
             List<Pair<Object, Object>> resetAttributes = new ArrayList<>();
-            Enumeration<?> names = runAttributes.getAttributeNames();
-            while (names.hasMoreElements()) {
-                Object name = names.nextElement();
-                resetAttributes.add(Pair.of(name, currentAttributes.getAttribute(attr)));
+            for (Object name: runAttributes.keySet()) {
+                resetAttributes.add(Pair.of(name, currentAttributes.get(attr)));
             }
             pushRunAttributes(resetAttributes);
             // apply run attributes to the set
@@ -178,7 +172,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         }
     }
     
-    private void applyRunAttributes(AttributeSet attrs) {
+    private void applyRunAttributes(Map<Object,Object>  attrs) {
         currentAttributes.addAttributes(attrs);
     }
     
@@ -187,12 +181,12 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         return attrEndOfRun == null ? 0 : attrEndOfRun.size();
     }
     
-    private AttributeSet getParagraphAttributes(AttributeSet as) {
-        SimpleAttributeSet pa = new SimpleAttributeSet();
+    private Map<Object, Object> getParagraphAttributes(AttributeSet as) {
+    	Map<Object,Object>  pa = new HashMap<>();
         for (Object attr : PARAGRAPH_ATTRIBUTES) {
             Object value = as.getAttribute(attr);
             if (value != null) {
-                pa.addAttribute(attr, value);
+                pa.put(attr, value);
             }
         }
         return pa;
@@ -203,9 +197,9 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
             Object attr = e.first;
             Object value = e.second;
             if (value != null) {
-                currentAttributes.addAttribute(attr, value);
+                currentAttributes.put(attr, value);
             } else {
-                currentAttributes.removeAttribute(attr);
+                currentAttributes.remove(attr);
             }
         }
     }
@@ -214,7 +208,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         resetAttr.push(as);
     }
     
-    private void setFontFamily(MutableAttributeSet as, Object value) {
+    private void setFontFamily(Map<Object,Object>  as, Object value) {
         String family = String.valueOf(value);
         // translate standard fontspec families to corresponding Java names that are guaranteed to be present
         // see https://docs.oracle.com/javase/8/docs/technotes/guides/intl/fontconfig.html
@@ -237,7 +231,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         }
     }
     
-    private void setFontSize(MutableAttributeSet as, Object value) {
+    private void setFontSize(Map<Object,Object>  as, Object value) {
         double fontSize = decodeFontSize(String.valueOf(value));
         StyleConstants.setFontSize(as, (int) Math.round(scale * fontSize));
     }
@@ -254,8 +248,8 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         return doc == null;
     }
     
-    Map<String, BiConsumer<MutableAttributeSet, Object>> defaultStyles() {
-        Map<String, BiConsumer<MutableAttributeSet, Object>> dfltStyles = new HashMap<>();
+    Map<String, BiConsumer<Map<Object,Object> , Object>> defaultStyles() {
+        Map<String, BiConsumer<Map<Object,Object>, Object>> dfltStyles = new HashMap<>();
         
         // TextAttributes.STYLE_NAME: unused
         dfltStyles.put(TextAttributes.FONT_FAMILY, this::setFontFamily);
@@ -308,7 +302,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
     }
     
     void handleRunStarts(Run run) {
-        MutableAttributeSet setAttributes = new SimpleAttributeSet();
+    	Map<Object,Object>  setAttributes = new HashMap<>();
         
         // process styles whose runs start at this position and insert their opening tags (p.first)
         appendAttributesForRun(setAttributes, run, TextAttributes.STYLE_START_RUN);
@@ -325,7 +319,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
                 continue;
             }
             
-            setAttributes.addAttribute(key, value);
+            setAttributes.put(key, value);
         }
         
         applyRunAttributes(setAttributes);
