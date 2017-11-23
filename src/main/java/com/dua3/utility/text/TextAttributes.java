@@ -19,7 +19,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * A set of text attributes.
@@ -33,7 +35,7 @@ public class TextAttributes {
     // style name
     public static final String STYLE_NAME = "style-name";
 
-    // font properties
+    /** property name for the font family */
     public static final String FONT_FAMILY = "font-family";
     public static final String FONT_FAMILY_VALUE_SANS_SERIF = "sans-serif";
     public static final String FONT_FAMILY_VALUE_SERIF = "serif";
@@ -59,18 +61,45 @@ public class TextAttributes {
 
     /** property name for the text decoration */
     public static final String TEXT_DECORATION = "text-decoration";
+    public static final String TEXT_DECORATION_VALUE_NONE = "";
     public static final String TEXT_DECORATION_VALUE_LINE_THROUGH = "line-through";
     public static final String TEXT_DECORATION_VALUE_UNDERLINE = "underline";
 
     /** text indentation */
     public static final String TEXT_INDENT_LEFT = "indent-left";
+    public static final String TEXT_INDENT_LEFT_VALUE_0 = "0";
     public static final String TEXT_INDENT_LEFT_VALUE_1 = "40";
-    
+
     // colors
     public static final String COLOR = "color";
     public static final String BACKGROUND_COLOR = "background-color";
 
     private static final TextAttributes NONE = new TextAttributes(Collections.emptyMap());
+
+    private static final Map<String,Object> DEFAULTS = LangUtil.map(
+            Pair.of(FONT_FAMILY, FONT_FAMILY_VALUE_SANS_SERIF),
+            Pair.of(FONT_STYLE, FONT_STYLE_VALUE_NORMAL),
+            Pair.of(FONT_SIZE, "10pt"),
+            Pair.of(FONT_WEIGHT, FONT_WEIGHT_VALUE_NORMAL),
+            Pair.of(FONT_VARIANT, FONT_VARIANT_VALUE_NORMAL),
+            Pair.of(TEXT_DECORATION, TEXT_DECORATION_VALUE_NONE),
+            Pair.of(TEXT_INDENT_LEFT, TEXT_INDENT_LEFT_VALUE_0),
+            Pair.of(COLOR, Color.WHITE),
+            Pair.of(BACKGROUND_COLOR, Color.BLACK)
+            );
+
+    /**
+     * Get default value for attribute.
+     * @param attribute the attribute
+     * @return the default value for the attribute or {@code null} if not set
+     */
+    public static Object getDefault(String attribute) {
+        return DEFAULTS.get(attribute);
+    }
+
+    public static TextAttributes defaults() {
+        return TextAttributes.of(DEFAULTS);
+    }
 
     /**
      * The empty style instance.
@@ -89,9 +118,9 @@ public class TextAttributes {
      * @return the new style
      */
     @SafeVarargs
-    public static TextAttributes of(Pair<String, String>... entries) {
+    public static TextAttributes of(Pair<String, ?>... entries) {
         HashMap<String,Object> map = new HashMap<>();
-        for (Pair<String, String> entry : entries) {
+        for (Pair<String, ?> entry : entries) {
             map.put(entry.first, entry.second);
         }
         return new TextAttributes(map);
@@ -100,11 +129,11 @@ public class TextAttributes {
     public static TextAttributes of(Map<String, Object> entries) {
         return new TextAttributes(new HashMap<>(entries));
     }
-    
+
     private TextAttributes(Map<String, Object> entries) {
         this.properties = entries;
     }
-    
+
     private final Map<String, Object> properties;
 
     @Override

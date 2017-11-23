@@ -8,6 +8,9 @@ import com.dua3.utility.lang.LangUtil;
 
 public class AnsiCode {
 
+    public static final String ESC_START = "\033[";
+    public static final String ESC_END = "m";
+
     public static final char RESET = 0;
     public static final char REVERSE_VIDEO_ON = 7;
     public static final char REVERSE_VIDEO_OFF = 27;
@@ -17,6 +20,8 @@ public class AnsiCode {
     public static final char UNDERLINE_OFF = 24;
     public static final char STRIKE_THROUGH_ON = 9;
     public static final char STRIKE_THROUGH_OFF = 29;
+    public static final char COLOR = 38;
+    public static final char BACKGROUND_COLOR = 48;
 
     private static String byteStr(int b) {
         LangUtil.check(b>=0 && b<=255);
@@ -25,22 +30,21 @@ public class AnsiCode {
 
     public static <T extends Appendable>
     void esc(T out, int code, int... args) throws IOException {
-        out.append("\033[");
+        out.append(ESC_START);
         out.append(byteStr(code));
         for (int arg: args) {
             out.append(';').append(byteStr(arg));
         }
-        out.append('m');
+        out.append(ESC_END);
     }
-
     public static <T extends Appendable>
     void fg(T out, int r, int g, int b) throws IOException {
-        esc(out, 38, 2, r, g, b);
+        esc(out, COLOR, 2, r, g, b);
     }
 
     public static <T extends Appendable>
     void bg(T out, int r, int g, int b) throws IOException {
-        esc(out, 48, 2, r, g, b);
+        esc(out, BACKGROUND_COLOR, 2, r, g, b);
     }
 
     public static <T extends Appendable>
@@ -78,9 +82,6 @@ public class AnsiCode {
         esc(out, on ? ITALIC_ON : ITALIC_OFF);
     }
 
-
-    
-    
     public static String esc(int code, int... args) {
     	StringBuilder out = new StringBuilder();
     	try {

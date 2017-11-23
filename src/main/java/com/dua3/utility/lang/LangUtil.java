@@ -1,8 +1,14 @@
 package com.dua3.utility.lang;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import com.dua3.utility.Pair;
 
 /**
  * A Utility class with general purpose methods.
@@ -41,7 +47,6 @@ public class LangUtil {
             throw new IllegalStateException(message);
         }
     }
-
 
     /**
      * Check that index is valid.
@@ -103,7 +108,7 @@ public class LangUtil {
 		}
 		return Optional.empty();
 	}
-	
+
 	public static <E extends Enum<E>>
 	Optional<E> enumConstant(Class<E> clazz, String value) {
 		return enumConstant(clazz, ec -> ec.toString().equals(value));
@@ -115,16 +120,16 @@ public class LangUtil {
 
     /** The byte order mark in UTF files */
     public static final char UTF_BYTE_ORDER_MARK = 0xfeff;
-    
+
     /**
      * Test if character is the byte order mark.
-     * @param c
+     * @param c the character to test
      * @return true if c is the byte order mark
      */
     public boolean isByteOrderMark(char c) {
         return c==UTF_BYTE_ORDER_MARK;
     }
-    
+
     /**
      * Trim string, remove prepending byte order mark.
      * @param s the string to trim
@@ -134,12 +139,32 @@ public class LangUtil {
         if (s.isEmpty()) {
             return s;
         }
-        
+
         if (s.charAt(0)==0xfeff) {
             s = s.substring(1);
         }
-        
+
         return s.trim();
     }
 
+    /**
+     * Insert key-value pairs into map.
+     * @param items key-value pairs
+     */
+    @SafeVarargs
+    public static <K,V> void putAllIfAbsent(Map<K,V> map, Pair<K,V>... items) {
+        Arrays.stream(items).forEach(item -> map.putIfAbsent(item.first, item.second));
+    }
+
+    /**
+     * Create an unmodifiable map from key-value pairs.
+     * @param items key-value pairs
+     * @return unmodifiable map
+     */
+    @SafeVarargs
+    public static <K,V> Map<K,V> map(Pair<K,V>... items) {
+        HashMap<K,V> map = new HashMap<>();
+        putAllIfAbsent(map, items);
+        return Collections.unmodifiableMap(map);
+    }
 }
