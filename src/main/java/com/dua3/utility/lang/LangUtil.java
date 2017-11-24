@@ -148,8 +148,11 @@ public class LangUtil {
     }
 
     /**
-     * Insert key-value pairs into map.
-     * @param items key-value pairs
+     * Insert key-value pairs into map, <em>not</em> overwriting existing mappings.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map the map to insert into
+     * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
     public static <K,V> void putAllIfAbsent(Map<K,V> map, Pair<K,V>... items) {
@@ -157,8 +160,22 @@ public class LangUtil {
     }
 
     /**
+     * Insert key-value pairs into map, <em>replacing</em> existing mappings.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map the map to insert into
+     * @param items the key-value pairs to put into the map
+     */
+    @SafeVarargs
+    public static <K,V> void putAll(Map<K,V> map, Pair<K,V>... items) {
+        Arrays.stream(items).forEach(item -> map.put(item.first, item.second));
+    }
+
+    /**
      * Create an unmodifiable map from key-value pairs.
-     * @param items key-value pairs
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param items the key-value pairs to put into the map
      * @return unmodifiable map
      */
     @SafeVarargs

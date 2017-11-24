@@ -17,11 +17,11 @@ package com.dua3.utility.text;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import com.dua3.utility.Pair;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * A {@link RichTextConverter} implementation for translating {@code RichText} to
@@ -29,105 +29,32 @@ import com.dua3.utility.Pair;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class HtmlBuilder extends RichTextConverter<String> {
+public class HtmlBuilder extends AbstractStringBasedBuilder {
 
-    /**
-     * Enumeration of options that control generation of HTML.
-     */
-    public enum Option {
-        /** Header */
-        DOCTYPE(String.class, "<!DOCTYPE html>\n"),
-        /** Header */
-        HTML_OPEN(String.class, "<html>\n<head><meta charset=\"UTF-8\"></head>\n<body>\n"),
-        /** Header */
-        HTML_CLOSE(String.class, "\n</body>\n</html>\n"),
-        /** Where to open external links */
-        TARGET_FOR_EXTERN_LINKS(String.class, "_blank"),
-        /** Replace '.md' file extension in local links (i.e. with ".html") */
-        REPLACEMENT_FOR_MD_EXTENSION_IN_LINK(String.class, null);
-
-        final Class<?> valueClass;
-        final Object defaultValue;
-
-        private <T> Option(Class<T> clazz, T dflt) {
-            this.valueClass = clazz;
-            this.defaultValue = dflt;
-        }
-    }
+    private static final Map<String,String> DEFAULT_OPTIONS = LangUtil.map(
+            Pair.of(TAG_DOC_START, "<!DOCTYPE html>\n"),
+            Pair.of(TAG_TEXT_START, "<html>\n<head><meta charset=\"UTF-8\"></head>\n<body>\n"),
+            Pair.of(TAG_TEXT_END, "\n</body>\n</html>\n"),
+            Pair.of(TARGET_FOR_EXTERN_LINKS, "_blank"),
+            Pair.of(REPLACEMENT_FOR_MD_EXTENSION_IN_LINK, null)
+            );
 
     @SafeVarargs
-    public static String toHtml(RichText text, Pair<Option, Object>... options) {
-        return new HtmlBuilder(options).add(text).get();
+    public static String toHtml(RichText text, Pair<String, String>... options) {
+        // create map with default options
+        Map<String,String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
+        // add overrrides
+        LangUtil.putAll(optionMap, options);
+
+        return new HtmlBuilder(optionMap).add(text).get();
     }
 
-    private static Object getOption(Map<Option, Object> optionMap, Option o) {
-        return optionMap.getOrDefault(o, o.defaultValue);
+    private HtmlBuilder(Map<String,String> options) {
+        super(options);
     }
 
-    /**
-     * Add information about opening and closing tags for a style.
-     *
-     * @param tags
-     *            the map that stores mapping stylen ame -> (opening_tag, closing_tag)
-     * @param styleName
-     *            the style name
-     * @param opening
-     *            the opening tag(s)
-     * @param closing
-     *            the closing tag(s), should be in reverse order of the corresponding opening tags
-     */
-    private static void putTags(Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags,
-            String styleName, Function<Style, String> opening, Function<Style, String> closing) {
-        tags.put(styleName, Pair.of(opening, closing));
-    }
-
-    /** The internal buffer that stores the HTML data. */
-    private StringBuilder buffer = new StringBuilder();
-
-    /** The document type declaration to use. */
-    private final String docType;
-
-    /** The text that starts HTML code (something like "{@code <html>}"). */
-    private final String htmlOpen;
-
-    /** The text that ends HTML code (something like "{@code </html>}"). */
-    private final String htmlClose;
-
-    private final String targetForExternLinks;
-
-    /** The extension to use for MD-files (i.e. so that links point to the translated HTML). */
-    private final String replaceMdExtensionWith;
-
-    /**
-     * A map with default style information.
-     * <ul>
-     * <li> key: the style name
-     * <li> value: a pair consisting of two {@code Function<Style, String>}. The first part generates
-     * HTML to be inserted before the text the style is being applied to (i.e. opening tags); the second part
-     * generates HTML to be appended after the text  (i.e. closing tags).
-     * </ul>
-     * Both functions take an argument of type {@link Style} and return the generated HTML code as a {@code String}.
-     */
-    private final Map<String, Pair<Function<Style, String>, Function<Style, String>>> styleTags = defaultStyleTags();
-
-    public HtmlBuilder(Pair<Option, Object>[] options) {
-        Map<Option, Object> optionMap = Pair.toMap(options);
-
-        this.docType = (String) getOption(optionMap, Option.DOCTYPE);
-        this.htmlOpen = (String) getOption(optionMap, Option.HTML_OPEN);
-        this.htmlClose = (String) getOption(optionMap, Option.HTML_CLOSE);
-        this.targetForExternLinks = (String) getOption(optionMap, Option.TARGET_FOR_EXTERN_LINKS);
-        this.replaceMdExtensionWith = (String) getOption(optionMap, Option.REPLACEMENT_FOR_MD_EXTENSION_IN_LINK);
-
-        buffer.append(docType);
-        buffer.append(htmlOpen);
-    }
-
-    /**
-     * Appand a single character to the buffer. This method escapes characters and replaces them by HTML entities.
-     * @param c the character to append
-     */
-    private void appendChar(char c) {
+    @Override
+    protected void appendChar(char c) {
         // escape characters as suggested by OWASP.org
         switch (c) {
         case '<':
@@ -154,99 +81,8 @@ public class HtmlBuilder extends RichTextConverter<String> {
         }
     }
 
-    /**
-     * Append tags to set the style for this run.
-     *
-     * @param run
-     *      the run
-     * @return
-     *      the closing tags that have to be inserted after the run to reset all styles
-     */
-    private String appendStyleTags(Run run) {
-        StringBuilder openingTag = new StringBuilder();
-        StringBuilder closingTag = new StringBuilder();
-
-        // process styles whose runs terminate at this position and insert their closing tags (p.second)
-        appendTagsForRun(openingTag, run, TextAttributes.STYLE_END_RUN, p -> p.second);
-        // process styles whose runs start at this position and insert their opening tags (p.first)
-        appendTagsForRun(openingTag, run, TextAttributes.STYLE_START_RUN, p -> p.first);
-
-        String separator = "<span style=\"";
-        String closing = "";
-        String closeThisElement = "";
-        for (Map.Entry<String, Object> e : run.getStyle().properties().entrySet()) {
-            String key = e.getKey();
-            Object value = e.getValue();
-
-            if (key.startsWith("__")) {
-                // don't create spans for meta info
-                continue;
-            }
-
-            openingTag.append(separator).append(key).append(":").append(value);
-            separator = "; ";
-            closing = "\">";
-            closeThisElement = "</span>";
-        }
-        openingTag.append(closing);
-        closingTag.append(closeThisElement);
-
-        buffer.append(openingTag);
-        return closingTag.toString();
-    }
-
-    private void appendTagsForRun(StringBuilder openingTag, Run run, String property,
-            Function<Pair<Function<Style, String>, Function<Style, String>>, Function<Style, String>> selector) {
-        TextAttributes attrs = run.getStyle();
-        Object value = attrs.properties().get(property);
-
-        if (value != null) {
-            if (!(value instanceof List)) {
-                throw new IllegalStateException(
-                        "expected a value of class List but got " + value.getClass() + " (property=" + property + ")");
-            }
-
-            @SuppressWarnings("unchecked")
-            List<Style> styles = (List<Style>) value;
-            for (Style style : styles) {
-                Pair<Function<Style, String>, Function<Style, String>> tag = styleTags.get(style.name());
-                if (tag != null) {
-                    openingTag.append(selector.apply(tag).apply(style));
-                }
-            }
-        }
-    }
-
-    /**
-     * Create attribute text for HTML tags.
-     *
-     * @param style
-     *            the current style
-     * @param property
-     *            the TextAttribute to retrieve
-     * @param htmlAttribute
-     *            the attribute name of the HTML tag
-     * @param dflt
-     *            the value to use if attribute is not set. pass {@code null} to omit the attribute if not set
-     * @return
-     *         the text to set the attribute in the HTML tag
-     */
-    private String attrText(Style style, String property, String htmlAttribute, String dflt) {
-        Object value = style.getOrDefault(property, dflt);
-
-        if (value == null) {
-            return "";
-        }
-
-        return " " + htmlAttribute + "=\"" + value.toString() + "\"";
-    }
-
-    /**
-     * Set up default styles and their HTML rendering.
-     * @see #styleTags
-     * @return map with the default styles
-     */
-    private Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
+    @Override
+    protected Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
         Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
 
         putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "<blockquote>", attr -> "</blockquote>");
@@ -299,50 +135,5 @@ public class HtmlBuilder extends RichTextConverter<String> {
         // CUSTOM_NODE
 
         return Collections.unmodifiableMap(tags);
-    }
-
-    private String ifSet(Style style, String textAttribute, String textIfPresent) {
-        Object value = style.get(textAttribute);
-
-        boolean isSet;
-        if (value instanceof Boolean) {
-            isSet = (boolean) value;
-        } else {
-            isSet = Boolean.valueOf(String.valueOf(value));
-        }
-
-        return isSet ? textIfPresent : "";
-    }
-
-    @Override
-    protected void append(Run run) {
-        // handle attributes
-        String closeStyleTags = appendStyleTags(run);
-
-        // append text (need to do characterwise because of escaping)
-        for (int idx = 0; idx < run.length(); idx++) {
-            appendChar(run.charAt(idx));
-        }
-
-        // add end tag
-        buffer.append(closeStyleTags);
-    }
-
-    @Override
-    public String get() {
-        buffer.append(htmlClose);
-        String html = buffer.toString();
-        buffer = null;
-        return html;
-    }
-
-    @Override
-    protected boolean wasGetCalled() {
-        return buffer == null;
-    }
-
-    @Override
-    public String toString() {
-        return buffer.toString();
     }
 }
