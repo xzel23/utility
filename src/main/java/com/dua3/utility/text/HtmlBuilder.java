@@ -81,18 +81,33 @@ public class HtmlBuilder extends RichTextConverter<String> {
         tags.put(styleName, Pair.of(opening, closing));
     }
 
+    /** The internal buffer that stores the HTML data. */
     private StringBuilder buffer = new StringBuilder();
 
+    /** The document type declaration to use. */
     private final String docType;
 
+    /** The text that starts HTML code (something like "{@code <html>}"). */
     private final String htmlOpen;
 
+    /** The text that ends HTML code (something like "{@code </html>}"). */
     private final String htmlClose;
 
     private final String targetForExternLinks;
 
+    /** The extension to use for MD-files (i.e. so that links point to the translated HTML). */
     private final String replaceMdExtensionWith;
 
+    /**
+     * A map with default style information.
+     * <ul>
+     * <li> key: the style name
+     * <li> value: a pair consisting of two {@code Function<Style, String>}. The first part generates
+     * HTML to be inserted before the text the style is being applied to (i.e. opening tags); the second part
+     * generates HTML to be appended after the text  (i.e. closing tags).
+     * </ul>
+     * Both functions take an argument of type {@link Style} and return the generated HTML code as a {@code String}.
+     */
     private final Map<String, Pair<Function<Style, String>, Function<Style, String>>> styleTags = defaultStyleTags();
 
     public HtmlBuilder(Pair<Option, Object>[] options) {
@@ -108,6 +123,10 @@ public class HtmlBuilder extends RichTextConverter<String> {
         buffer.append(htmlOpen);
     }
 
+    /**
+     * Appand a single character to the buffer. This method escapes characters and replaces them by HTML entities.
+     * @param c the character to append
+     */
     private void appendChar(char c) {
         // escape characters as suggested by OWASP.org
         switch (c) {
@@ -222,6 +241,11 @@ public class HtmlBuilder extends RichTextConverter<String> {
         return " " + htmlAttribute + "=\"" + value.toString() + "\"";
     }
 
+    /**
+     * Set up default styles and their HTML rendering.
+     * @see #styleTags
+     * @return map with the default styles
+     */
     private Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
         Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
 
