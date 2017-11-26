@@ -67,7 +67,7 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
         putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "\n", attr -> "\n");
         putTags(tags, MarkDownStyle.CODE.name(), attr -> "", attr -> "");
         putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
-        putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> "", attr -> "");
+        putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> AnsiCode.italic(true), attr -> AnsiCode.italic(false));
         putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "\n", attr -> "\n");
         putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "\n", attr -> "");
         putTags(tags, MarkDownStyle.HEADING.name(),
