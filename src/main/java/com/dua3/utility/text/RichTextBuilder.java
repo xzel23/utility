@@ -29,7 +29,7 @@ import java.util.TreeMap;
  * </p>
  * @author axel
  */
-public class RichTextBuilder implements Appendable {
+public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer = new StringBuilder();
 
@@ -112,6 +112,7 @@ public class RichTextBuilder implements Appendable {
      *
      * @return RichText representation of this builder's content
      */
+    @Override
     public RichText toRichText() {
         String text = buffer.toString();
         Run[] runs = new Run[parts.size()];
