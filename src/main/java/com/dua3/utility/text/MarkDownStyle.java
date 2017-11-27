@@ -79,7 +79,8 @@ public enum MarkDownStyle {
         m.put(MarkDownStyle.HARD_LINE_BREAK.name(), attr -> TextAttributes.of(
                 ));
         m.put(MarkDownStyle.HEADING.name(), attr -> TextAttributes.of(
-                Pair.of(TextAttributes.FONT_SIZE, getFontSizeForHeading.apply((Integer)attr.getOrDefault(MarkDownStyle.ATTR_HEADING_LEVEL, 1)))
+                Pair.of(TextAttributes.FONT_SIZE, getFontSizeForHeading.apply((Integer)attr.getOrDefault(MarkDownStyle.ATTR_HEADING_LEVEL, 1))),
+                Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD)
                 ));
         m.put(MarkDownStyle.THEMATIC_BREAK.name(), attr -> TextAttributes.of(
                 ));

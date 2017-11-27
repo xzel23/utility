@@ -13,7 +13,7 @@ public class AnsiCode {
 
     public static final char RESET = 0;
     public static final char BOLD_ON = 1;
-    public static final char BOLD_OFF = 21;
+    public static final char BOLD_OFF = 22;
     public static final char REVERSE_VIDEO_ON = 7;
     public static final char REVERSE_VIDEO_OFF = 27;
     public static final char ITALIC_ON = 3;
