@@ -43,6 +43,7 @@ import com.dua3.utility.text.RichTextConverter;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
+import com.dua3.utility.text.TextUtil;
 
 /**
  * A {@link RichTextConverter} implementation for translating {@code RichText} to
@@ -52,31 +53,31 @@ import com.dua3.utility.text.TextAttributes;
  */
 public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
-    
+
     private static final Object[] PARAGRAPH_ATTRIBUTES = {
             StyleConstants.ParagraphConstants.LeftIndent
     };
-    
+
     public static StyledDocumentBuilder create(Function<Style, TextAttributes> supplier) {
         return new StyledDocumentBuilder(supplier);
     }
-    
+
     public static StyledDocumentBuilder create(Map<String, Function<Style, TextAttributes>> styleMap) {
         return create(s -> {
             String styleName = String.valueOf(s.get(TextAttributes.STYLE_NAME));
             return styleMap.getOrDefault(styleName, attr -> TextAttributes.none()).apply(s);
         });
     }
-    
+
     public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleSupplier) {
         return StyledDocumentBuilder.create(styleSupplier).add(text).get();
     }
-    
+
     public static StyledDocument toStyledDocument(RichText text,
             Map<String, Function<Style, TextAttributes>> styleMap) {
         return StyledDocumentBuilder.create(styleMap).add(text).get();
     }
-    
+
     public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleSupplier, AttributeSet dfltAttr, double scale) {
         StyledDocumentBuilder builder = StyledDocumentBuilder.create(styleSupplier);
         builder.setScale(scale);
@@ -88,22 +89,22 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
     private StyledDocument doc = new DefaultStyledDocument();
 
     private final MutableAttributeSet currentAttributes;
-    
+
     private final Function<Style, TextAttributes> styleSupplier;
-    
+
     private double scale = 1;
-    
+
     private final Map<String, BiConsumer<MutableAttributeSet, Object>> styles = defaultStyles();
-    
+
     private Deque<List<Pair<Object, Object>>> resetAttr = new LinkedList<>();
-    
+
     private Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
-    
+
     private StyledDocumentBuilder(Function<Style, TextAttributes> styleSupplier) {
         this.currentAttributes = new SimpleAttributeSet();
         this.styleSupplier = styleSupplier;
     }
-    
+
     @Override
     public StyledDocument get() {
         // apply paragraph styles
@@ -112,27 +113,27 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
             doc.setParagraphAttributes(pos, e.first, e.second, false);
             pos += e.first;
         }
-        
+
         // mark builder invalid by clearing doc
         StyledDocument ret = doc;
         doc = null;
         return ret;
     }
-    
+
     public void setScale(double scale) {
         this.scale = scale;
     }
-    
+
     @Override
     public String toString() {
         return doc.toString();
     }
-    
+
     private void append(String text, AttributeSet as) {
         try {
             int pos = doc.getLength();
             doc.insertString(pos, text, as);
-            
+
             AttributeSet pa = getParagraphAttributes(as);
             paragraphAttributes.add(Pair.of(text.length(), pa));
         } catch (BadLocationException e) {
@@ -140,20 +141,20 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
             throw new IllegalStateException(e);
         }
     }
-    
+
     private void appendAttributesForRun(MutableAttributeSet attributeSet, Run run, String property) {
         TextAttributes style = run.getStyle();
         Object value = style.properties().get(property);
-        
+
         if (value == null) {
             return;
         }
-        
+
         if (!(value instanceof List)) {
             throw new IllegalStateException(
                     "expected a value of class List but got " + value.getClass() + " (property=" + property + ")");
         }
-        
+
         @SuppressWarnings("unchecked")
         List<Style> attributes = (List<Style>) value;
         for (Style attr : attributes) {
@@ -177,16 +178,16 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
             attributeSet.addAttributes(runAttributes);
         }
     }
-    
+
     private void applyRunAttributes(AttributeSet attrs) {
         currentAttributes.addAttributes(attrs);
     }
-    
+
     private int countRunEnds(Run run) {
         List<?> attrEndOfRun = (List<?>) run.getStyle().properties().get(TextAttributes.STYLE_END_RUN);
         return attrEndOfRun == null ? 0 : attrEndOfRun.size();
     }
-    
+
     private AttributeSet getParagraphAttributes(AttributeSet as) {
         SimpleAttributeSet pa = new SimpleAttributeSet();
         for (Object attr : PARAGRAPH_ATTRIBUTES) {
@@ -197,7 +198,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         }
         return pa;
     }
-    
+
     private void popRunAttributes() {
         for (Pair<Object, Object> e : resetAttr.pop()) {
             Object attr = e.first;
@@ -209,11 +210,11 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
             }
         }
     }
-    
+
     private void pushRunAttributes(List<Pair<Object, Object>> as) {
         resetAttr.push(as);
     }
-    
+
     private void setFontFamily(MutableAttributeSet as, Object value) {
         String family = String.valueOf(value);
         // translate standard fontspec families to corresponding Java names that are guaranteed to be present
@@ -236,27 +237,27 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
             break;
         }
     }
-    
+
     private void setFontSize(MutableAttributeSet as, Object value) {
-        double fontSize = decodeFontSize(String.valueOf(value));
+        double fontSize = TextUtil.decodeFontSize(String.valueOf(value));
         StyleConstants.setFontSize(as, (int) Math.round(scale * fontSize));
     }
-    
+
     @Override
     protected void append(Run run) {
         handleRunEnds(run);
         handleRunStarts(run);
         append(run.toString(), currentAttributes);
     }
-    
+
     @Override
     protected boolean wasGetCalled() {
         return doc == null;
     }
-    
+
     Map<String, BiConsumer<MutableAttributeSet, Object>> defaultStyles() {
         Map<String, BiConsumer<MutableAttributeSet, Object>> dfltStyles = new HashMap<>();
-        
+
         // TextAttributes.STYLE_NAME: unused
         dfltStyles.put(TextAttributes.FONT_FAMILY, this::setFontFamily);
         dfltStyles.put(TextAttributes.FONT_SIZE, this::setFontSize);
@@ -298,7 +299,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         });
         return dfltStyles;
     }
-    
+
     void handleRunEnds(Run run) {
         // handle run ends
         int runEnds = countRunEnds(run);
@@ -306,28 +307,28 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
             popRunAttributes();
         }
     }
-    
+
     void handleRunStarts(Run run) {
         MutableAttributeSet setAttributes = new SimpleAttributeSet();
-        
+
         // process styles whose runs start at this position and insert their opening tags (p.first)
         appendAttributesForRun(setAttributes, run, TextAttributes.STYLE_START_RUN);
-        
+
         for (Map.Entry<String, Object> e : run.getStyle().properties().entrySet()) {
             String key = e.getKey();
             Object value = e.getValue();
-            
+
             assert key != null;
             assert value != null;
-            
+
             if (key.startsWith("__")) {
                 // don't create spans for meta info
                 continue;
             }
-            
+
             setAttributes.addAttribute(key, value);
         }
-        
+
         applyRunAttributes(setAttributes);
     }
 }

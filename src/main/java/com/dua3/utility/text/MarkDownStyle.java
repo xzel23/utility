@@ -1,6 +1,7 @@
 package com.dua3.utility.text;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -43,23 +44,13 @@ public enum MarkDownStyle {
     public static final String ATTR_LINK_EXTERN = "extern";
 
     // styles definitions to use when converting markdown source to StyledDocument
-    public static Map<String, Function<Style, TextAttributes>> defaultStyles() {
+    private static final double HEADER_SIZES[] = { 2.0, 1.5, 1.17, 1.12, 0.83, 0.75 };
+    public static Map<String, Function<Style, TextAttributes>> defaultStyles(float baseFontSizeInPt) {
+
         IntFunction<String> getFontSizeForHeading = level -> {
-            switch (level) {
-            case 1:
-                return "32px";
-            case 2:
-                return "24px";
-            case 3:
-                return "18px";
-            case 4:
-                return "15px";
-            case 5:
-                return "13px";
-            case 6:
-                default:
-                return "10px";
-            }
+            double f = level >0&&level<=HEADER_SIZES.length ? HEADER_SIZES[level-1] : 1.0f;
+            double pt = f*baseFontSizeInPt;
+            return String.format(Locale.ROOT, "%.2fpt", pt);
         };
         return defaultStyles(getFontSizeForHeading);
     }
