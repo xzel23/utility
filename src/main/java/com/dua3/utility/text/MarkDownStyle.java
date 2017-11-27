@@ -44,9 +44,10 @@ public enum MarkDownStyle {
     public static final String ATTR_LINK_EXTERN = "extern";
 
     // styles definitions to use when converting markdown source to StyledDocument
+    /** Font sizes for headers as recommended by w3.org. */
     private static final double HEADER_SIZES[] = { 2.0, 1.5, 1.17, 1.0, 0.83, 0.75 };
-    public static Map<String, Function<Style, TextAttributes>> defaultStyles(float baseFontSizeInPt) {
 
+    public static Map<String, Function<Style, TextAttributes>> defaultStyles(float baseFontSizeInPt) {
         IntFunction<String> getFontSizeForHeading = level -> {
             double f = level >0&&level<=HEADER_SIZES.length ? HEADER_SIZES[level-1] : 1.0f;
             double pt = f*baseFontSizeInPt;
