@@ -44,7 +44,7 @@ public enum MarkDownStyle {
     public static final String ATTR_LINK_EXTERN = "extern";
 
     // styles definitions to use when converting markdown source to StyledDocument
-    private static final double HEADER_SIZES[] = { 2.0, 1.5, 1.17, 1.12, 0.83, 0.75 };
+    private static final double HEADER_SIZES[] = { 2.0, 1.5, 1.17, 1.0, 0.83, 0.75 };
     public static Map<String, Function<Style, TextAttributes>> defaultStyles(float baseFontSizeInPt) {
 
         IntFunction<String> getFontSizeForHeading = level -> {
@@ -55,7 +55,7 @@ public enum MarkDownStyle {
         return defaultStyles(getFontSizeForHeading);
     }
 
-    public static Map<String, Function<Style,TextAttributes>> defaultStyles(IntFunction<String> getFontSizeForHeading) {
+    private static Map<String, Function<Style,TextAttributes>> defaultStyles(IntFunction<String> getFontSizeForHeading) {
         Map<String, Function<Style,TextAttributes>> m = new HashMap<>();
 
         m.put(MarkDownStyle.BLOCK_QUOTE.name(), attr -> TextAttributes.of(
