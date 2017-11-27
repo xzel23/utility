@@ -64,7 +64,9 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
         Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
 
         putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "\n", attr -> "\n");
-        putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "\n", attr -> "\n");
+        putTags(tags, MarkDownStyle.BULLET_LIST.name(),
+                attr -> { startList(ListType.UNORDERED); return "\n"; },
+                attr -> { endList(); return "\n"; });
         putTags(tags, MarkDownStyle.CODE.name(), attr -> "", attr -> "");
         putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
         putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> AnsiCode.italic(true), attr -> AnsiCode.italic(false));
@@ -100,8 +102,22 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
                             + ">";
                 },
                 attr -> "</a>");
-        putTags(tags, MarkDownStyle.LIST_ITEM.name(), attr -> "• ", attr -> "\n");
-        putTags(tags, MarkDownStyle.ORDERED_LIST.name(), attr -> "\n", attr -> "\n");
+        putTags(tags, MarkDownStyle.LIST_ITEM.name(),
+                attr -> {
+                    Pair<ListType,Integer> info = newListItem();
+                    switch (info.first) {
+                    case UNORDERED:
+                        return "• ";
+                    case ORDERED:
+                        return info.second + ". ";
+                    default:
+                        throw new IllegalStateException();
+                    }
+                },
+                attr -> "");
+        putTags(tags, MarkDownStyle.ORDERED_LIST.name(),
+                attr -> { startList(ListType.ORDERED); return "\n"; },
+                attr -> { endList(); return "\n"; });
         putTags(tags, MarkDownStyle.PARAGRAPH.name(), attr -> "", attr -> "\n");
         putTags(tags, MarkDownStyle.SOFT_LINE_BREAK.name(), attr -> "", attr -> "");
         putTags(tags, MarkDownStyle.STRONG_EMPHASIS.name(), attr -> "", attr -> "");

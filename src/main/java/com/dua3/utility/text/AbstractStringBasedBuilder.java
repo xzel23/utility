@@ -1,10 +1,14 @@
 package com.dua3.utility.text;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import com.dua3.utility.Pair;
+import com.dua3.utility.lang.LangUtil;
 
 public abstract class AbstractStringBasedBuilder extends RichTextConverter<String> {
 
@@ -69,6 +73,42 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
     protected final String targetForExternLinks;
     /** The extension to use for MD-files (i.e. so that links point to the translated HTML). */
     protected final String replaceMdExtensionWith;
+
+    protected enum ListType {
+        UNORDERED,
+        ORDERED
+    }
+
+    private final Deque<Pair<ListType,AtomicInteger>> listStack = new LinkedList<>();
+
+    /**
+     * Update the item count for this list.
+     * @return pair with list type and the item number for the new item (1-based)
+     */
+    protected Pair<ListType,Integer> newListItem() {
+        LangUtil.check(!listStack.isEmpty(), "item definition is not inside list");
+        Pair<ListType, AtomicInteger> current = listStack.peekLast();
+        ListType type = current.first;
+        int nr = current.second.incrementAndGet();
+        return Pair.of(type, nr);
+    }
+
+    /**
+     * Starts a new list definition.
+     * @param type the type of the list
+     */
+    protected void startList(ListType type) {
+        listStack.add(Pair.of(type, new AtomicInteger()));
+    }
+
+    /**
+     * Closes the current list definition
+     */
+    protected void endList() {
+        LangUtil.check(!listStack.isEmpty(), "there is no list open");
+        listStack.removeLast();
+    }
+
     /**
      * A map with default style information.
      * <ul>
