@@ -28,7 +28,7 @@ public class Run
     private final String text;
     private final int start;
     private final int length;
-    private final TextAttributes style;
+    private final TextAttributes attributes;
 
     /**
      * Construct a new Run.
@@ -46,7 +46,7 @@ public class Run
     	LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
 
         this.text = Objects.requireNonNull(text);
-        this.style = Objects.requireNonNull(style);
+        this.attributes = Objects.requireNonNull(style);
         this.start = start;
         this.length = length;
     }
@@ -76,7 +76,7 @@ public class Run
             }
         }
 
-        return style.equals(other.style);
+        return attributes.equals(other.attributes);
     }
 
     /**
@@ -102,13 +102,13 @@ public class Run
      *
      * @return style of this Run
      */
-    public TextAttributes getStyle() {
-        return style;
+    public TextAttributes getAttributes() {
+        return attributes;
     }
 
     @Override
     public int hashCode() {
-        int h = style.hashCode();
+        int h = attributes.hashCode();
         for (int i = 0; i < length; i++) {
             h = 31 * h + charAt(i);
         }
@@ -122,7 +122,7 @@ public class Run
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return new Run(text, this.start + start, end - start, style);
+        return new Run(text, this.start + start, end - start, attributes);
     }
 
     @Override

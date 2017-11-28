@@ -24,7 +24,7 @@ import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
 
 /**
- * A {@link RichTextConverter} implementation for translating {@code RichText} to
+ * A {@link RichTextConverterBase} implementation for translating {@code RichText} to
  * HTML.
  *
  * @author Axel Howind (axel@dua3.com)
@@ -91,6 +91,43 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
             buffer.append(c);
             break;
         }
+    }
+
+    /**
+     * Create attribute text for HTML tags.
+     *
+     * @param style
+     *            the current style
+     * @param property
+     *            the TextAttribute to retrieve
+     * @param htmlAttribute
+     *            the attribute name of the HTML tag
+     * @param dflt
+     *            the value to use if attribute is not set. pass {@code null} to omit the attribute if not set
+     * @return
+     *         the text to set the attribute in the HTML tag
+     */
+    protected String attrText(Style style, String property, String htmlAttribute, String dflt) {
+        Object value = style.getOrDefault(property, dflt);
+
+        if (value == null) {
+            return "";
+        }
+
+        return " " + htmlAttribute + "=\"" + value.toString() + "\"";
+    }
+
+    protected String ifSet(Style style, String textAttribute, String textIfPresent) {
+        Object value = style.get(textAttribute);
+
+        boolean isSet;
+        if (value instanceof Boolean) {
+            isSet = (boolean) value;
+        } else {
+            isSet = Boolean.valueOf(String.valueOf(value));
+        }
+
+        return isSet ? textIfPresent : "";
     }
 
     @Override

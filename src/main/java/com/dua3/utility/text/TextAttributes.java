@@ -15,9 +15,11 @@
  */
 package com.dua3.utility.text;
 
+import java.util.AbstractMap;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
@@ -26,7 +28,7 @@ import com.dua3.utility.lang.LangUtil;
 /**
  * A set of text attributes.
  */
-public class TextAttributes {
+public class TextAttributes extends AbstractMap<String,Object> {
 
     // meta
     public static final String STYLE_START_RUN = "__style-start-run";
@@ -74,7 +76,7 @@ public class TextAttributes {
     public static final String COLOR = "color";
     public static final String BACKGROUND_COLOR = "background-color";
 
-    private static final TextAttributes NONE = new TextAttributes(Collections.emptyMap());
+    private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
 
     private static final Map<String,Object> DEFAULTS = LangUtil.map(
             Pair.of(FONT_FAMILY, FONT_FAMILY_VALUE_SANS_SERIF),
@@ -119,60 +121,26 @@ public class TextAttributes {
      */
     @SafeVarargs
     public static TextAttributes of(Pair<String, ?>... entries) {
-        HashMap<String,Object> map = new HashMap<>();
+        Set<Entry<String, Object>> entrySet = new HashSet<>();
         for (Pair<String, ?> entry : entries) {
-            map.put(entry.first, entry.second);
+            entrySet.add(new SimpleEntry<>(entry.first, entry.second));
         }
-        return new TextAttributes(map);
+        return new TextAttributes(entrySet);
     }
 
-    public static TextAttributes of(Map<String, Object> entries) {
-        return new TextAttributes(new HashMap<>(entries));
+    public static TextAttributes of(Map<String, Object> map) {
+        return new TextAttributes(map.entrySet());
     }
 
-    private TextAttributes(Map<String, Object> entries) {
-        this.properties = entries;
+    private TextAttributes(Set<Entry<String, Object>> entries) {
+        this.entries = entries;
     }
 
-    private final Map<String, Object> properties;
+    private final Set<Entry<String, Object>> entries;
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-
-        TextAttributes other = (TextAttributes) obj;
-        return properties.equals(other.properties);
+    public Set<Entry<String, Object>> entrySet() {
+        return entries;
     }
 
-    @Override
-    public int hashCode() {
-        return properties.hashCode();
-    }
-
-    public Map<String, Object> properties() {
-        return Collections.unmodifiableMap(properties);
-    }
-
-    Object get(String property) {
-        return properties.get(property);
-    }
-
-    Object getOrDefault(String property, Object def) {
-        return properties.getOrDefault(property, def);
-    }
-
-    void put(String property, Object value) {
-        properties.put(property, value);
-    }
-
-    void remove(String property) {
-        properties.remove(property);
-    }
-
-    @Override
-    public String toString() {
-        return properties.toString();
-    }
 }

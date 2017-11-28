@@ -1,16 +1,11 @@
 package com.dua3.utility.text;
 
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import com.dua3.utility.Pair;
-import com.dua3.utility.lang.LangUtil;
 
-public abstract class AbstractStringBasedBuilder extends RichTextConverter<String> {
+public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<String> {
 
     /*
      * Definition of option names
@@ -28,13 +23,6 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
     public static final String TARGET_FOR_EXTERN_LINKS = "TARGET_FOR_EXTERN_LINKS";
     /** Replace '.md' file extension in local links (i.e. with ".html") */
     public static final String REPLACEMENT_FOR_MD_EXTENSION_IN_LINK = "REPLACEMENT_FOR_MD_EXTENSION_IN_LINK";
-
-    /**
-     * Set up default styles and how they are rendered.
-     * @see #styleTags
-     * @return map with the default styles
-     */
-    protected abstract Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags();
 
     /**
      * Add information about opening and closing tags for a style.
@@ -62,44 +50,8 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
     protected final String textStart;
     /** The text that ends HTML code (something like "{@code </html>}"). */
     protected final String textEnd;
-    protected final String targetForExternLinks;
     /** The extension to use for MD-files (i.e. so that links point to the translated HTML). */
     protected final String replaceMdExtensionWith;
-
-    protected enum ListType {
-        UNORDERED,
-        ORDERED
-    }
-
-    private final Deque<Pair<ListType,AtomicInteger>> listStack = new LinkedList<>();
-
-    /**
-     * Update the item count for this list.
-     * @return pair with list type and the item number for the new item (1-based)
-     */
-    protected Pair<ListType,Integer> newListItem() {
-        LangUtil.check(!listStack.isEmpty(), "item definition is not inside list");
-        Pair<ListType, AtomicInteger> current = listStack.peekLast();
-        ListType type = current.first;
-        int nr = current.second.incrementAndGet();
-        return Pair.of(type, nr);
-    }
-
-    /**
-     * Starts a new list definition.
-     * @param type the type of the list
-     */
-    protected void startList(ListType type) {
-        listStack.add(Pair.of(type, new AtomicInteger()));
-    }
-
-    /**
-     * Closes the current list definition
-     */
-    protected void endList() {
-        LangUtil.check(!listStack.isEmpty(), "there is no list open");
-        listStack.removeLast();
-    }
 
     /**
      * A map with default style information.
@@ -118,7 +70,6 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
         this.docEnd = options.getOrDefault(TAG_DOC_END, "");
         this.textStart = options.getOrDefault(TAG_TEXT_START, "");
         this.textEnd = options.getOrDefault(TAG_TEXT_END, "");
-        this.targetForExternLinks = options.getOrDefault(TARGET_FOR_EXTERN_LINKS, "");
         this.replaceMdExtensionWith = options.getOrDefault(REPLACEMENT_FOR_MD_EXTENSION_IN_LINK, "");
 
         buffer.append(docStart);
@@ -145,7 +96,7 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
         String separator = "<span style=\"";
         String closing = "";
         String closeThisElement = "";
-        for (Map.Entry<String, Object> e : run.getStyle().properties().entrySet()) {
+        for (Map.Entry<String, Object> e : run.getAttributes().properties().entrySet()) {
             String key = e.getKey();
             Object value = e.getValue();
 
@@ -166,76 +117,6 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
         return closingTag.toString();
     }
 
-    private void appendTagsForRun(StringBuilder openingTag, Run run, String property, Function<Pair<Function<Style, String>, Function<Style, String>>, Function<Style, String>> selector) {
-        TextAttributes attrs = run.getStyle();
-        Object value = attrs.properties().get(property);
-
-        if (value != null) {
-            if (!(value instanceof List)) {
-                throw new IllegalStateException(
-                        "expected a value of class List but got " + value.getClass() + " (property=" + property + ")");
-            }
-
-            @SuppressWarnings("unchecked")
-            List<Style> styles = (List<Style>) value;
-            for (Style style : styles) {
-                Pair<Function<Style, String>, Function<Style, String>> tag = styleTags.get(style.name());
-                if (tag != null) {
-                    openingTag.append(selector.apply(tag).apply(style));
-                }
-            }
-        }
-    }
-
-    /**
-     * Create attribute text for HTML tags.
-     *
-     * @param style
-     *            the current style
-     * @param property
-     *            the TextAttribute to retrieve
-     * @param htmlAttribute
-     *            the attribute name of the HTML tag
-     * @param dflt
-     *            the value to use if attribute is not set. pass {@code null} to omit the attribute if not set
-     * @return
-     *         the text to set the attribute in the HTML tag
-     */
-    protected String attrText(Style style, String property, String htmlAttribute, String dflt) {
-        Object value = style.getOrDefault(property, dflt);
-
-        if (value == null) {
-            return "";
-        }
-
-        return " " + htmlAttribute + "=\"" + value.toString() + "\"";
-    }
-
-    protected String ifSet(Style style, String textAttribute, String textIfPresent) {
-        Object value = style.get(textAttribute);
-
-        boolean isSet;
-        if (value instanceof Boolean) {
-            isSet = (boolean) value;
-        } else {
-            isSet = Boolean.valueOf(String.valueOf(value));
-        }
-
-        return isSet ? textIfPresent : "";
-    }
-
-    @Override
-    protected void append(Run run) {
-        // handle attributes
-        String closeStyleTags = appendStyleTags(run);
-
-        // append text (need to do characterwise because of escaping)
-        appendChars(run);
-
-        // add end tag
-        buffer.append(closeStyleTags);
-    }
-
     protected void appendChars(CharSequence run) {
         buffer.append(run);
     }
@@ -243,14 +124,14 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
     @Override
     public String get() {
         buffer.append(textEnd);
-        String html = buffer.toString();
+        String text = buffer.toString();
         buffer = null;
-        return html;
+        return text;
     }
 
     @Override
-    protected boolean wasGetCalled() {
-        return buffer == null;
+    protected boolean isValid() {
+        return buffer != null;
     }
 
     @Override

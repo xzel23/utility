@@ -15,19 +15,14 @@
  */
 package com.dua3.utility.swing;
 
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -39,19 +34,18 @@ import org.slf4j.LoggerFactory;
 
 import com.dua3.utility.Pair;
 import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextConverter;
-import com.dua3.utility.text.Run;
+import com.dua3.utility.text.RichTextConverterBase;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextUtil;
 
 /**
- * A {@link RichTextConverter} implementation for translating {@code RichText} to
+ * A {@link RichTextConverterBase} implementation for translating {@code RichText} to
  * HTML.
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
+public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument> {
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
 
     private static final Object[] PARAGRAPH_ATTRIBUTES = {
@@ -86,23 +80,16 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         return doc;
     }
 
-    private StyledDocument doc = new DefaultStyledDocument();
-
-    private final MutableAttributeSet currentAttributes;
-
-    private final Function<Style, TextAttributes> styleSupplier;
+    private StyledDocument buffer = new DefaultStyledDocument();
 
     private double scale = 1;
 
     private final Map<String, BiConsumer<MutableAttributeSet, Object>> styles = defaultStyles();
 
-    private Deque<List<Pair<Object, Object>>> resetAttr = new LinkedList<>();
-
     private Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
 
     private StyledDocumentBuilder(Function<Style, TextAttributes> styleSupplier) {
-        this.currentAttributes = new SimpleAttributeSet();
-        this.styleSupplier = styleSupplier;
+        super(styleSupplier);
     }
 
     @Override
@@ -110,13 +97,14 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         // apply paragraph styles
         int pos = 0;
         for (Pair<Integer, AttributeSet> e : paragraphAttributes) {
-            doc.setParagraphAttributes(pos, e.first, e.second, false);
+            buffer.setParagraphAttributes(pos, e.first, e.second, false);
             pos += e.first;
         }
 
-        // mark builder invalid by clearing doc
-        StyledDocument ret = doc;
-        doc = null;
+        // mark builder invalid by clearing buffer
+        StyledDocument ret = buffer;
+        buffer = null;
+
         return ret;
     }
 
@@ -126,66 +114,7 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
 
     @Override
     public String toString() {
-        return doc.toString();
-    }
-
-    private void append(String text, AttributeSet as) {
-        try {
-            int pos = doc.getLength();
-            doc.insertString(pos, text, as);
-
-            AttributeSet pa = getParagraphAttributes(as);
-            paragraphAttributes.add(Pair.of(text.length(), pa));
-        } catch (BadLocationException e) {
-            // this should not happen
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private void appendAttributesForRun(MutableAttributeSet attributeSet, Run run, String property) {
-        TextAttributes style = run.getStyle();
-        Object value = style.properties().get(property);
-
-        if (value == null) {
-            return;
-        }
-
-        if (!(value instanceof List)) {
-            throw new IllegalStateException(
-                    "expected a value of class List but got " + value.getClass() + " (property=" + property + ")");
-        }
-
-        @SuppressWarnings("unchecked")
-        List<Style> attributes = (List<Style>) value;
-        for (Style attr : attributes) {
-            // collect attributes
-            MutableAttributeSet runAttributes = new SimpleAttributeSet();
-            for (Entry<String, Object> e : styleSupplier.apply(attr).properties().entrySet()) {
-                Object attrName = e.getKey();
-                Object attrValue = e.getValue();
-                BiConsumer<MutableAttributeSet, Object> consumer = styles.get(attrName);
-                consumer.accept(runAttributes, attrValue);
-            }
-            // store current values
-            List<Pair<Object, Object>> resetAttributes = new ArrayList<>();
-            Enumeration<?> names = runAttributes.getAttributeNames();
-            while (names.hasMoreElements()) {
-                Object name = names.nextElement();
-                resetAttributes.add(Pair.of(name, currentAttributes.getAttribute(attr)));
-            }
-            pushRunAttributes(resetAttributes);
-            // apply run attributes to the set
-            attributeSet.addAttributes(runAttributes);
-        }
-    }
-
-    private void applyRunAttributes(AttributeSet attrs) {
-        currentAttributes.addAttributes(attrs);
-    }
-
-    private int countRunEnds(Run run) {
-        List<?> attrEndOfRun = (List<?>) run.getStyle().properties().get(TextAttributes.STYLE_END_RUN);
-        return attrEndOfRun == null ? 0 : attrEndOfRun.size();
+        return buffer.toString();
     }
 
     private AttributeSet getParagraphAttributes(AttributeSet as) {
@@ -197,22 +126,6 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
             }
         }
         return pa;
-    }
-
-    private void popRunAttributes() {
-        for (Pair<Object, Object> e : resetAttr.pop()) {
-            Object attr = e.first;
-            Object value = e.second;
-            if (value != null) {
-                currentAttributes.addAttribute(attr, value);
-            } else {
-                currentAttributes.removeAttribute(attr);
-            }
-        }
-    }
-
-    private void pushRunAttributes(List<Pair<Object, Object>> as) {
-        resetAttr.push(as);
     }
 
     private void setFontFamily(MutableAttributeSet as, Object value) {
@@ -244,15 +157,8 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
     }
 
     @Override
-    protected void append(Run run) {
-        handleRunEnds(run);
-        handleRunStarts(run);
-        append(run.toString(), currentAttributes);
-    }
-
-    @Override
-    protected boolean wasGetCalled() {
-        return doc == null;
+    protected boolean isValid() {
+        return buffer != null;
     }
 
     Map<String, BiConsumer<MutableAttributeSet, Object>> defaultStyles() {
@@ -300,35 +206,16 @@ public class StyledDocumentBuilder extends RichTextConverter<StyledDocument> {
         return dfltStyles;
     }
 
-    void handleRunEnds(Run run) {
-        // handle run ends
-        int runEnds = countRunEnds(run);
-        for (int i = 0; i < runEnds; i++) {
-            popRunAttributes();
-        }
+    @Override
+    protected void applyRunAttributes(Map<String, Object> setAttributes) {
+        // TODO Auto-generated method stub
+
     }
 
-    void handleRunStarts(Run run) {
-        MutableAttributeSet setAttributes = new SimpleAttributeSet();
+    @Override
+    protected void appendChars(CharSequence run, Map<String, Object> attributesToSet) {
+        // TODO Auto-generated method stub
 
-        // process styles whose runs start at this position and insert their opening tags (p.first)
-        appendAttributesForRun(setAttributes, run, TextAttributes.STYLE_START_RUN);
-
-        for (Map.Entry<String, Object> e : run.getStyle().properties().entrySet()) {
-            String key = e.getKey();
-            Object value = e.getValue();
-
-            assert key != null;
-            assert value != null;
-
-            if (key.startsWith("__")) {
-                // don't create spans for meta info
-                continue;
-            }
-
-            setAttributes.addAttribute(key, value);
-        }
-
-        applyRunAttributes(setAttributes);
     }
+
 }

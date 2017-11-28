@@ -25,7 +25,7 @@ import com.dua3.utility.io.AnsiCode;
 import com.dua3.utility.lang.LangUtil;
 
 /**
- * A {@link RichTextConverter} implementation for translating {@code RichText} to
+ * A {@link RichTextConverterBase} implementation for translating {@code RichText} to
  * HTML.
  *
  * @author Axel Howind (axel@dua3.com)

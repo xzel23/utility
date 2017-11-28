@@ -14,7 +14,7 @@ public class Style {
         this.name = name;
         this.properties = Collections.unmodifiableMap(args);
     }
-    
+
     @Override
     public String toString() {
         return name+properties;
@@ -33,16 +33,20 @@ public class Style {
     public static Style create(String name, Map<String, Object> args) {
         return new Style(name, new HashMap<>(args));
     }
-    
+
     public String name() {
         return name;
     }
-    
+
     public Object get(String property) {
         return properties.get(property);
     }
-    
+
     public Object getOrDefault(String property, Object dflt) {
         return properties.getOrDefault(property, dflt);
+    }
+
+    public Map<String, Object> properties() {
+        return properties;
     }
 }
