@@ -37,14 +37,6 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
     protected abstract Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags();
 
     /**
-     * Appand a single character to the buffer.
-     * Implementations of the method must make sure Special characters (where the meaning of "special" depends
-     * upon the concrete implementation) are handled (i.e. quoted) correctly.
-     * @param c the character to append
-     */
-    protected abstract void appendChar(char c);
-
-    /**
      * Add information about opening and closing tags for a style.
      *
      * @param tags
@@ -238,12 +230,14 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverter<Strin
         String closeStyleTags = appendStyleTags(run);
 
         // append text (need to do characterwise because of escaping)
-        for (int idx = 0; idx < run.length(); idx++) {
-            appendChar(run.charAt(idx));
-        }
+        appendChars(run);
 
         // add end tag
         buffer.append(closeStyleTags);
+    }
+
+    protected void appendChars(CharSequence run) {
+        buffer.append(run);
     }
 
     @Override

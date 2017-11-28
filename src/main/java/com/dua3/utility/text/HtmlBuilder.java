@@ -54,6 +54,18 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
     }
 
     @Override
+    protected void appendChars(CharSequence run) {
+        for (int idx = 0; idx < run.length(); idx++) {
+            appendChar(run.charAt(idx));
+        }
+    }
+
+    /**
+     * Append a single character to the buffer.
+     * Implementations of the method must make sure Special characters (where the meaning of "special" depends
+     * upon the concrete implementation) are handled (i.e. quoted) correctly.
+     * @param c the character to append
+     */
     protected void appendChar(char c) {
         // escape characters as suggested by OWASP.org
         switch (c) {

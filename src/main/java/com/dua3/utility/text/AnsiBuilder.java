@@ -55,11 +55,6 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
     }
 
     @Override
-    protected void appendChar(char c) {
-        buffer.append(c);
-    }
-
-    @Override
     protected Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
         Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
 
