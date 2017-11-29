@@ -53,7 +53,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     };
 
     public static StyledDocumentBuilder create(Function<Style, RunTraits> supplier) {
-        return new StyledDocumentBuilder(supplier);
+        return new StyledDocumentBuilder();
     }
 
     public static StyledDocumentBuilder create(Map<String, Function<Style, RunTraits>> traitsMap) {
@@ -88,8 +88,8 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 
     private Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
 
-    private StyledDocumentBuilder(Function<Style, RunTraits> traitSupplier) {
-        super(traitSupplier);
+    private StyledDocumentBuilder() {
+    	// nop
     }
 
     @Override
@@ -213,9 +213,15 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     }
 
 	@Override
-	protected void appendChars(CharSequence run) {
+	protected void appendUnquoted(CharSequence run) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected RunTraits getTraits(Style style) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

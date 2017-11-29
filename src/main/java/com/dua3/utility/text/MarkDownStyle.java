@@ -86,11 +86,13 @@ public enum MarkDownStyle {
         }
     }
 
+    public static final String CLASS = "MARKDOWN";
+    
     private final TextAttributes attributes;
 
     @SafeVarargs
     private MarkDownStyle(Pair<String,Object>... attributes) {
-        this.attributes = TextAttributes.of(attributes);
+		this.attributes = TextAttributes.of(attributes);
     }
 
     public TextAttributes textAttributes() {

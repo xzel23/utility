@@ -34,24 +34,106 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
             Pair.of(TAG_DOC_START, "<!DOCTYPE html>\n"),
             Pair.of(TAG_TEXT_START, "<html>\n<head><meta charset=\"UTF-8\"></head>\n<body>\n"),
             Pair.of(TAG_TEXT_END, "\n</body>\n</html>\n"),
-            Pair.of(TARGET_FOR_EXTERN_LINKS, "_blank"),
+            Pair.of(TARGET_FOR_EXTERNAL_LINKS, "_blank"),
             Pair.of(REPLACEMENT_FOR_MD_EXTENSION_IN_LINK, null)
             );
 
     @SafeVarargs
-    public static String toHtml(RichText text, Pair<String, String>... options) {
+    public static String toHtml(RichText text, Function<Style,TextAttributes> styleTraits, Pair<String, String>... options) {
         // create map with default options
         Map<String,String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
         LangUtil.putAll(optionMap, options); // add overrrides
 
-		// create trait supplier
-        Function<Style, RunTraits> traitSupplier = style -> new SimpleRunTraits(TextAttributes.none());
-
-        return new HtmlBuilder(traitSupplier, optionMap).add(text).get();
+        return new HtmlBuilder(styleTraits, optionMap).add(text).get();
     }
 
-    private HtmlBuilder(Function<Style, RunTraits> traitSupplier, Map<String,String> options) {
-        super(traitSupplier, options);
+    @Override
+    protected RunTraits getTraits(Style style) {
+    	String styleClass = style.getOrDefault(TextAttributes.STYLE_CLASS, "none").toString();
+    	String styleName = style.getOrDefault(TextAttributes.STYLE_NAME, "").toString();
+    	
+    	if (styleClass.equals(MarkDownStyle.CLASS)) {
+	    	MarkDownStyle mds = MarkDownStyle.valueOf(styleName);
+			switch(mds) {
+	        case BLOCK_QUOTE:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<blockquote>", "</blockquote>");
+	        case BULLET_LIST:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<ul>\n", "</ul>\n");
+	        case CODE:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<code>", "</code>");
+	        case DOCUMENT:
+	        		return new SimpleRunTraits(TextAttributes.none(), "", "");
+	        case EMPHASIS:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<em>", "</em>");
+	        case FENCED_CODE_BLOCK:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<pre><code>\n", "</code></pre>\n");
+	        case HARD_LINE_BREAK:
+	        		return new SimpleRunTraits(TextAttributes.none(), "\n<br>", "");
+			case HEADING:
+        		return new SimpleRunTraits(
+        				TextAttributes.none(), 
+        				"<h" + style.get(MarkDownStyle.ATTR_HEADING_LEVEL)
+	                        + attrText(style, MarkDownStyle.ATTR_ID, "id", "")
+	                        + ">",
+	                "</h" + style.get(MarkDownStyle.ATTR_HEADING_LEVEL) + ">");
+	        case THEMATIC_BREAK:
+	        		return new SimpleRunTraits(TextAttributes.none(), "\n<hr>", "");
+	        // HTML_BLOCK
+	        // HTML_INLINE
+	        case IMAGE:
+        		return new SimpleRunTraits(TextAttributes.none(), 
+	                "<img"
+	                        + attrText(style, MarkDownStyle.ATTR_IMAGE_SRC, "src", "")
+	                        + attrText(style, MarkDownStyle.ATTR_IMAGE_TITLE, "title", null)
+	                        + attrText(style, MarkDownStyle.ATTR_IMAGE_ALT, "alt", null)
+	                        + ">",
+	                "");
+	        case INDENTED_CODE_BLOCK:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<pre><code>\n", "</code></pre>\n");
+	        case LINK:
+        		return new SimpleRunTraits(TextAttributes.none(), createHRefOpen(style), createHRefClose(style));
+	        case LIST_ITEM:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<li>", "</li>");
+	        case ORDERED_LIST:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<ol>\n", "</ol>\n");
+	        case PARAGRAPH:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<p>", "</p>\n");
+	        case SOFT_LINE_BREAK:
+	        		return new SimpleRunTraits(TextAttributes.none(), "", "&shy;");
+	        case STRONG_EMPHASIS:
+	        		return new SimpleRunTraits(TextAttributes.none(), "<strong>", "</strong>");
+	        // CUSTOM_BLOCK
+	        // CUSTOM_NODE
+	    		default:
+	    			break;
+	    	}
+    	}
+		return super.getTraits(style);
+    }
+
+	private String createHRefClose(Style style) {
+		return "</a>";
+	}
+	
+	private String createHRefOpen(Style style) {
+		String href = style.getOrDefault(MarkDownStyle.ATTR_LINK_HREF, "").toString();
+		if (replaceMdExtensionWith != null) {
+			href = href.replaceAll("(\\.md|\\.MD)(\\?|#|$)", replaceMdExtensionWith + "$2");
+		}
+		String hrefAttr = " href=\"" + href + "\"";
+		
+		//
+		String open = "<a"
+		+ hrefAttr
+		+ attrText(style, MarkDownStyle.ATTR_LINK_TITLE, "title", null)
+		+ ifSet(style, MarkDownStyle.ATTR_LINK_EXTERN,
+				" target=\"" + targetForExternalLinks + "\"")
+		+ ">";
+		return open;
+	}
+    
+    private HtmlBuilder(Function<Style, TextAttributes> styleTraits, Map<String,String> options) {
+        super(styleTraits, options);
     }
 
     @Override
@@ -108,7 +190,7 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
      * @return
      *         the text to set the attribute in the HTML tag
      */
-    protected String attrText(Style style, String property, String htmlAttribute, String dflt) {
+    private static String attrText(Style style, String property, String htmlAttribute, String dflt) {
         Object value = style.getOrDefault(property, dflt);
 
         if (value == null) {
@@ -130,63 +212,6 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
 
         return isSet ? textIfPresent : "";
     }
-/*
-    @Override
-    protected Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
-        Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
-
-        putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "<blockquote>", attr -> "</blockquote>");
-        putTags(tags, MarkDownStyle.BULLET_LIST.name(), attr -> "<ul>\n", attr -> "</ul>\n");
-        putTags(tags, MarkDownStyle.CODE.name(), attr -> "<code>", attr -> "</code>");
-        putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
-        putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> "<em>", attr -> "</em>");
-        putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
-        putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "\n<br>", attr -> "");
-        putTags(tags, MarkDownStyle.HEADING.name(),
-                attr -> "<h" + attr.get(MarkDownStyle.ATTR_HEADING_LEVEL)
-                        + attrText(attr, MarkDownStyle.ATTR_ID, "id", "")
-                        + ">",
-                attr -> "</h" + attr.get(MarkDownStyle.ATTR_HEADING_LEVEL) + ">");
-        putTags(tags, MarkDownStyle.THEMATIC_BREAK.name(), attr -> "\n<hr>", attr -> "");
-        // HTML_BLOCK
-        // HTML_INLINE
-        putTags(tags, MarkDownStyle.IMAGE.name(),
-                attr -> "<img"
-                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_SRC, "src", "")
-                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_TITLE, "title", null)
-                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_ALT, "alt", null)
-                        + ">",
-                attr -> "");
-        putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "<pre><code>\n", attr -> "</code></pre>\n");
-        putTags(tags, MarkDownStyle.LINK.name(),
-                attr -> {
-                    String href = attr.getOrDefault(MarkDownStyle.ATTR_LINK_HREF, "").toString();
-                    if (replaceMdExtensionWith != null) {
-                        href = href.replaceAll("(\\.md|\\.MD)(\\?|#|$)", replaceMdExtensionWith + "$2");
-                    }
-                    String hrefAttr = " href=\"" + href + "\"";
-
-                    //
-                    return "<a"
-                            + hrefAttr
-                            + attrText(attr, MarkDownStyle.ATTR_LINK_TITLE, "title", null)
-                            + ifSet(attr, MarkDownStyle.ATTR_LINK_EXTERN,
-                                    " target=\"" + targetForExternLinks + "\"")
-                            + ">";
-                },
-                attr -> "</a>");
-        putTags(tags, MarkDownStyle.LIST_ITEM.name(), attr -> "<li>", attr -> "</li>");
-        putTags(tags, MarkDownStyle.ORDERED_LIST.name(), attr -> "<ol>\n", attr -> "</ol>\n");
-        putTags(tags, MarkDownStyle.PARAGRAPH.name(), attr -> "<p>", attr -> "</p>");
-        putTags(tags, MarkDownStyle.SOFT_LINE_BREAK.name(), attr -> "", attr -> "&shy;");
-        putTags(tags, MarkDownStyle.STRONG_EMPHASIS.name(), attr -> "<strong>", attr -> "</strong>");
-        putTags(tags, MarkDownStyle.TEXT.name(), attr -> "", attr -> "");
-        // CUSTOM_BLOCK
-        // CUSTOM_NODE
-
-        return Collections.unmodifiableMap(tags);
-    }
-    */
 
     @Override
     protected void applyAttributes(TextAttributes attributes) {

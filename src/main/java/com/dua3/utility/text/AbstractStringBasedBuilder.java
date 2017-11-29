@@ -18,7 +18,7 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     /** Header */
     public static final String TAG_TEXT_END="TAG_TEXT_END";
     /** Where to open external links */
-    public static final String TARGET_FOR_EXTERN_LINKS = "TARGET_FOR_EXTERN_LINKS";
+    public static final String TARGET_FOR_EXTERNAL_LINKS = "TARGET_FOR_EXTERN_LINKS";
     /** Replace '.md' file extension in local links (i.e. with ".html") */
     public static final String REPLACEMENT_FOR_MD_EXTENSION_IN_LINK = "REPLACEMENT_FOR_MD_EXTENSION_IN_LINK";
 
@@ -34,24 +34,26 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     protected final String textEnd;
     /** The extension to use for MD-files (i.e. so that links point to the translated HTML). */
     protected final String replaceMdExtensionWith;
+    /** Target for external links (i.e. in HTML). */
+    protected final String targetForExternalLinks;
 
-    protected AbstractStringBasedBuilder(
-    		Function<Style, RunTraits> styleSupplier, Map<String, String> options) {
-    	super(styleSupplier);
-
+    protected AbstractStringBasedBuilder(Function<Style, TextAttributes> styleTraits, Map<String, String> options) {
+    	this.styleTraits = styleTraits;
+    	
         this.docStart = options.getOrDefault(TAG_DOC_START, "");
         this.docEnd = options.getOrDefault(TAG_DOC_END, "");
         this.textStart = options.getOrDefault(TAG_TEXT_START, "");
         this.textEnd = options.getOrDefault(TAG_TEXT_END, "");
         this.replaceMdExtensionWith = options.getOrDefault(REPLACEMENT_FOR_MD_EXTENSION_IN_LINK, "");
+        this.targetForExternalLinks = options.getOrDefault(TARGET_FOR_EXTERNAL_LINKS, "_blank");
 
         buffer.append(docStart);
         buffer.append(textStart);
     }
 
     @Override
-    protected void appendChars(CharSequence run) {
-        buffer.append(run);
+    protected void appendUnquoted(CharSequence chars) {
+        buffer.append(chars);
     }
 
     @Override
@@ -71,5 +73,12 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     public String toString() {
         return buffer.toString();
     }
+
+    private Function<Style,TextAttributes> styleTraits;
+    
+	@Override
+	protected RunTraits getTraits(Style style) {
+		return new SimpleRunTraits(styleTraits.apply(style));
+	}
 
 }

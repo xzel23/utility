@@ -45,7 +45,7 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
             Pair.of(TAG_DOC_START, AnsiCode.reset()),
             Pair.of(TAG_TEXT_START, ""),
             Pair.of(TAG_TEXT_END, "\n"),
-            Pair.of(TARGET_FOR_EXTERN_LINKS, "_blank"),
+            Pair.of(TARGET_FOR_EXTERNAL_LINKS, "_blank"),
             Pair.of(REPLACEMENT_FOR_MD_EXTENSION_IN_LINK, null)
             );
 
@@ -55,14 +55,11 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
         Map<String,String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
         LangUtil.putAll(optionMap, options); // add overrrides
 
-		// create trait supplier
-        Function<Style, RunTraits> traitSupplier = style -> new SimpleRunTraits(styleTraits.apply(style));
-
-        return new AnsiBuilder(traitSupplier, optionMap).add(text).get();
+        return new AnsiBuilder(styleTraits, optionMap).add(text).get();
     }
 
-    private AnsiBuilder(Function<Style, RunTraits> traitSupplier, Map<String,String> options) {
-        super(traitSupplier, options);
+    private AnsiBuilder(Function<Style, TextAttributes> styleTraits, Map<String,String> options) {
+        super(styleTraits, options);
     }
 
     private final Color defaultColor = Color.BLACK;

@@ -35,6 +35,7 @@ public class TextAttributes extends AbstractMap<String,Object> {
     public static final String STYLE_END_RUN = "__style-end-run";
 
     // style name
+    public static final String STYLE_CLASS = "style-class";
     public static final String STYLE_NAME = "style-name";
 
     /** property name for the font family */

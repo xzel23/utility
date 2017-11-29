@@ -21,13 +21,14 @@ public class Style {
     }
 
     @SafeVarargs
-    public static Style create(String name, Pair<String, Object>... args) {
+    public static Style create(String styleName, String styleClass, Pair<String, Object>... args) {
         Map<String, Object> m = new HashMap<>();
-        m.put(TextAttributes.STYLE_NAME, name);
+        m.put(TextAttributes.STYLE_NAME, styleName);
+        m.put(TextAttributes.STYLE_CLASS, styleClass);
         for (Pair<String, Object> arg : args) {
             m.put(arg.first, arg.second);
         }
-        return new Style(name, m);
+        return new Style(styleName, m);
     }
 
     public static Style create(String name, Map<String, Object> args) {

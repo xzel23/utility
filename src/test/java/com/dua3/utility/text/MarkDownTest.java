@@ -42,7 +42,7 @@ public class MarkDownTest {
     static String getHtml() throws Exception {
         String mdText = getTestDataSource();
         RichText richText = MarkDownUtil.convert(mdText);
-        return HtmlBuilder.toHtml(richText);
+        return HtmlBuilder.toHtml(richText, MarkDownStyle::getAttributes);
     }
 
     static String getAnsi() throws Exception {

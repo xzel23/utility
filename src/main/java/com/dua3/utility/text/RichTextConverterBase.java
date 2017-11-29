@@ -39,7 +39,7 @@ import com.dua3.utility.lang.LangUtil;
  */
 public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 
-    private final Function<Style, RunTraits> traitSupplier;
+	protected abstract RunTraits getTraits(Style style);
 
     private final Map<String,Object> currentAttributes = new HashMap<>();
 
@@ -70,9 +70,13 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 		private final String suffix;
 
 		public SimpleRunTraits(TextAttributes attributes) {
+			this(attributes, "", "");
+		}
+		
+		public SimpleRunTraits(TextAttributes attributes, String prefix, String suffix) {
 			this.attributes = attributes;
-			this.prefix = extract(attributes, TextAttributes.STYLE_START_RUN, TextAttributes.TEXT_PREFIX);
-            this.suffix = extract(attributes, TextAttributes.STYLE_END_RUN, TextAttributes.TEXT_SUFFIX);
+			this.prefix = extract(attributes, TextAttributes.STYLE_START_RUN, TextAttributes.TEXT_PREFIX)+prefix;
+            this.suffix = suffix+extract(attributes, TextAttributes.STYLE_END_RUN, TextAttributes.TEXT_SUFFIX);
 		}
 
 		private static String extract(TextAttributes attributes, String tagStartOrEnd, String tag) {
@@ -123,8 +127,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     /**
      * Constructor.
      */
-    protected RichTextConverterBase(Function<Style, RunTraits> traitSupplier) {
-        this.traitSupplier = traitSupplier;
+    protected RichTextConverterBase() {
     }
 
     /**
@@ -160,9 +163,9 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 
         handleRunEnds(run);
         CollectingRunTraits traits = handleRunStarts(run);
-        appendChars(traits.prefix());
+        appendUnquoted(traits.prefix());
         appendChars(run);
-        appendChars(traits.suffix());
+        appendUnquoted(traits.suffix());
     }
 
     private Deque<Map<String, Object>> resetAttr = new LinkedList<>();
@@ -213,7 +216,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 
         CollectingRunTraits traits = new CollectingRunTraits();
         HashMap<String,Object> m = new HashMap<>();
-		Stream.concat(styles.stream().map(traitSupplier), Stream.of(currentTraits))
+		Stream.concat(styles.stream().map(this::getTraits), Stream.of(currentTraits))
 			.forEach(t -> {
 				// store current attributes for resetting at end of style
 			    t.attributes().keySet().stream()
@@ -227,7 +230,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 		return traits;
     }
 
-    SimpleRunTraits createTraits(Run run) {
+    protected SimpleRunTraits createTraits(Run run) {
         TextAttributes attributes = run.getAttributes();
         return new SimpleRunTraits(attributes);
     }
@@ -241,7 +244,11 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         return (List<Style>) value;
 	}
 
-    protected abstract void appendChars(CharSequence run);
+    protected void appendChars(CharSequence chars) {
+    	appendUnquoted(chars);
+    }
+    
+    protected abstract void appendUnquoted(CharSequence chars);
 
     protected abstract boolean isValid();
 
