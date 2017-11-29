@@ -89,6 +89,20 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
                     esc.add(AnsiCode.BOLD_OFF);
                 }
                 break;
+            case TextAttributes.TEXT_DECORATION:
+            	if (TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH.equals(value)) {
+                    esc.add(AnsiCode.UNDERLINE_ON);            		
+            	} else {
+                    esc.add(AnsiCode.UNDERLINE_OFF);            		
+            	}
+                break;
+            case TextAttributes.FONT_STYLE:
+            	if (TextAttributes.FONT_STYLE_VALUE_ITALIC.equals(value)
+            			|| TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value)) {
+                    esc.add(AnsiCode.ITALIC_ON);            		
+            	} else {
+                    esc.add(AnsiCode.ITALIC_OFF);            		
+            	}	
             default:
                 break;
             }
