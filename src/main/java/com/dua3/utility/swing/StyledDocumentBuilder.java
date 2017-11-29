@@ -52,27 +52,27 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
             StyleConstants.ParagraphConstants.LeftIndent
     };
 
-    public static StyledDocumentBuilder create(Function<Style, TextAttributes> supplier) {
+    public static StyledDocumentBuilder create(Function<Style, RunTraits> supplier) {
         return new StyledDocumentBuilder(supplier);
     }
 
-    public static StyledDocumentBuilder create(Map<String, Function<Style, TextAttributes>> styleMap) {
+    public static StyledDocumentBuilder create(Map<String, Function<Style, RunTraits>> traitsMap) {
         return create(s -> {
             String styleName = String.valueOf(s.get(TextAttributes.STYLE_NAME));
-            return styleMap.getOrDefault(styleName, attr -> TextAttributes.none()).apply(s);
+            return traitsMap.getOrDefault(styleName, attr -> new SimpleRunTraits(TextAttributes.none())).apply(s);
         });
     }
 
-    public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleSupplier) {
+    public static StyledDocument toStyledDocument(RichText text, Function<Style, RunTraits> styleSupplier) {
         return StyledDocumentBuilder.create(styleSupplier).add(text).get();
     }
 
     public static StyledDocument toStyledDocument(RichText text,
-            Map<String, Function<Style, TextAttributes>> styleMap) {
-        return StyledDocumentBuilder.create(styleMap).add(text).get();
+            Map<String, Function<Style, RunTraits>> traitsMap) {
+        return StyledDocumentBuilder.create(traitsMap).add(text).get();
     }
 
-    public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleSupplier, AttributeSet dfltAttr, double scale) {
+    public static StyledDocument toStyledDocument(RichText text, Function<Style, RunTraits> styleSupplier, AttributeSet dfltAttr, double scale) {
         StyledDocumentBuilder builder = StyledDocumentBuilder.create(styleSupplier);
         builder.setScale(scale);
         StyledDocument doc = builder.add(text).get();
@@ -88,8 +88,8 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 
     private Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
 
-    private StyledDocumentBuilder(Function<Style, TextAttributes> styleSupplier) {
-        super(styleSupplier);
+    private StyledDocumentBuilder(Function<Style, RunTraits> traitSupplier) {
+        super(traitSupplier);
     }
 
     @Override
@@ -206,16 +206,16 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         return dfltStyles;
     }
 
-    @Override
-    protected void applyRunAttributes(Map<String, Object> setAttributes) {
-        // TODO Auto-generated method stub
+	@Override
+	protected void applyAttributes(TextAttributes attributes) {
+		// TODO Auto-generated method stub
+		
+	}
 
-    }
-
-    @Override
-    protected void appendChars(CharSequence run, Map<String, Object> attributesToSet) {
-        // TODO Auto-generated method stub
-
-    }
+	@Override
+	protected void appendChars(CharSequence run) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

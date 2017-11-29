@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
@@ -39,15 +41,80 @@ import com.dua3.utility.lang.LangUtil;
  */
 public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 
-    private final Function<Style, TextAttributes> styleSupplier;
+    private final Function<Style, RunTraits> traitSupplier;
 
     private final Map<String,Object> currentAttributes = new HashMap<>();
 
     /**
+     * The traits of a Run, consisting of:
+     * <ul>
+     * <li> the TextAttributes to apply
+     * <li> text to prepend
+     * <li> text to append
+     * </ul>
+     */
+    public interface RunTraits {    	
+    	TextAttributes attributes();
+    	String prefix();
+    	String postfix();
+    }
+    
+    public static class SimpleRunTraits implements RunTraits {
+    	private final TextAttributes attributes;
+		private final String prefix;
+		private final String postfix;
+
+		public SimpleRunTraits(TextAttributes attributes, String prefix, String postfix) {
+    		this.attributes = attributes;
+    		this.prefix = prefix;
+    		this.postfix = postfix;
+    	}
+
+		public SimpleRunTraits(TextAttributes attributes) {
+			this(attributes, "", "");
+		}
+
+		public TextAttributes attributes() { return attributes; }
+		public String prefix() { return prefix; }
+		public String postfix() { return postfix; }
+    }
+
+    private static class CollectingRunTraits implements RunTraits {
+    	private final Map<String,Object> attributes = new HashMap<>();
+    	private final Deque<String> prefix = new LinkedList<>();
+    	private final Deque<String> postfix = new LinkedList<>();
+    	
+    	/**
+    	 * Merge properties of another RunTraits instance.
+    	 * @param other the RunTraits instance to merge
+    	 */
+    	public void mergeIn(RunTraits other) {
+    		attributes.putAll(other.attributes());
+    		prefix.addLast(other.prefix());
+    		postfix.addFirst(other.prefix());
+    	}
+    	
+    	@Override
+    	public TextAttributes attributes() {
+    		return TextAttributes.of(attributes);
+    	}
+    	
+    	@Override
+    	public String prefix() {
+    		return prefix.stream().collect(Collectors.joining());
+    	}
+    	
+    	@Override
+    	public String postfix() {
+    		return postfix.stream().collect(Collectors.joining());
+    	}    	
+    }
+    
+    /**
      * Constructor.
      */
-    protected RichTextConverterBase(Function<Style, TextAttributes> styleSupplier) {
-        this.styleSupplier = styleSupplier;
+    protected RichTextConverterBase(Function<Style, RunTraits> traitSupplier) {
+        this.traitSupplier = traitSupplier;
     }
 
     /**
@@ -65,6 +132,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     @Override
     public RichTextConverter<T> add(RichText text) {
         checkState();
+        resetAttr.add(Collections.emptyMap());
         for (Run r : text) {
             append(r);
         }
@@ -80,12 +148,25 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      *            the {@link com.dua3.utility.text.Run} to append
      */
     protected void append(Run run) {
+        
         handleRunEnds(run);
-        handleRunStarts(run);
-        appendChars(run, currentAttributes);
+        CollectingRunTraits traits = handleRunStarts(run);
+        appendChars(traits.prefix());
+        appendChars(run);
+        appendChars(traits.postfix());
     }
 
     private Deque<Map<String, Object>> resetAttr = new LinkedList<>();
+
+    private void pushRunAttributes(Map<String, Object> resetAttributes) {
+        resetAttr.push(resetAttributes);
+    }
+
+    void handleRunEnds(Run run) {
+        // handle run ends
+    	getStyleList(run, TextAttributes.STYLE_START_RUN)
+    		.forEach(style -> popRunAttributes());
+    }
 
     private void popRunAttributes() {
         for (Entry<String, Object> e : resetAttr.pop().entrySet()) {
@@ -99,66 +180,45 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         }
     }
 
-    private void pushRunAttributes(Map<String, Object> resetAttributes) {
-        resetAttr.push(resetAttributes);
+    CollectingRunTraits handleRunStarts(Run run) {
+    	// process styles whose runs start at this position
+        CollectingRunTraits traits = extractRunTraits(run);
+        applyAttributes(traits.attributes());
+        return traits;
     }
 
-    void handleRunEnds(Run run) {
-        // handle run ends
-        List<?> runEnds = (List<?>) run.getAttributes().getOrDefault(TextAttributes.STYLE_END_RUN, Collections.emptyList());
-        for (int i = 0; i < runEnds.size(); i++) {
-            popRunAttributes();
-        }
+    protected abstract void applyAttributes(TextAttributes attributes);
+
+    private CollectingRunTraits extractRunTraits(Run run) {    	
+    	List<Style> styles = getStyleList(run, TextAttributes.STYLE_START_RUN);
+
+        // collect traits for this run
+        RunTraits currentTraits = new SimpleRunTraits(run.getAttributes());
+        
+        CollectingRunTraits traits = new CollectingRunTraits();
+		Stream.concat(styles.stream().map(traitSupplier), Stream.of(currentTraits)) 
+			.forEach(t -> {
+				// store current attributes for resetting at end of style
+				pushRunAttributes(
+        			t.attributes().keySet().stream()
+            		.collect(Collectors.toMap(attr -> attr, attr -> currentAttributes.get(attr))));
+				// merge traits
+				traits.mergeIn(t);
+			});
+		
+		return traits;
     }
 
-    void handleRunStarts(Run run) {
-        Map<String,Object> setAttributes = new HashMap<>();
+	@SuppressWarnings("unchecked")
+	private List<Style> getStyleList(Run run, String property) {
+		TextAttributes attributes = run.getAttributes();
+		Object value = attributes.getOrDefault(property, Collections.emptyList());
+        
+		LangUtil.check(value instanceof List, "expected instance of List but got %s", value.getClass());
+        return (List<Style>) value;
+	}
 
-        // process styles whose runs start at this position and insert their opening tags (p.first)
-        appendAttributesForRun(setAttributes, run, TextAttributes.STYLE_START_RUN);
-
-        for (Map.Entry<String, Object> e : run.getAttributes().entrySet()) {
-            String key = e.getKey();
-            Object value = e.getValue();
-
-            assert key != null;
-            assert value != null;
-
-            if (key.startsWith("__")) {
-                // don't create spans for meta info
-                continue;
-            }
-
-            setAttributes.put(key, value);
-        }
-
-        applyRunAttributes(setAttributes);
-    }
-
-    protected abstract void applyRunAttributes(Map<String, Object> setAttributes);
-
-    private void appendAttributesForRun(Map<String,Object> attributeSet, Run run, String property) {
-        TextAttributes attributes = run.getAttributes();
-        Object value = attributes.getOrDefault(property, Collections.emptyList());
-
-        LangUtil.check(value instanceof List, "expected a value of class List but got %s (property=%s)",value.getClass(), property);
-
-        @SuppressWarnings("unchecked")
-        List<Style> styles = (List<Style>) value;
-        for (Style style : styles) {
-            // collect attributes
-            TextAttributes styleAttributes = styleSupplier.apply(style);
-            attributeSet.putAll(styleAttributes);
-            // store current values
-            Map<String,Object> resetAttributes = new HashMap<>();
-            for (String attr: styleAttributes.keySet()) {
-                resetAttributes.put(attr, currentAttributes.get(attr));
-            }
-            pushRunAttributes(resetAttributes);
-        }
-    }
-
-    protected abstract void appendChars(CharSequence run, Map<String, Object> attributesToSet);
+    protected abstract void appendChars(CharSequence run);
 
     protected abstract boolean isValid();
 

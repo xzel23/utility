@@ -2,6 +2,7 @@ package com.dua3.utility.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.function.Function;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,6 +16,9 @@ import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.MarkDownTest;
 import com.dua3.utility.text.MarkDownUtil;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextConverterBase.RunTraits;
+import com.dua3.utility.text.RichTextConverterBase.SimpleRunTraits;
+import com.dua3.utility.text.Style;
 
 public class SwingUtilTest extends JFrame {
 
@@ -51,14 +55,16 @@ public class SwingUtilTest extends JFrame {
             tabs.add("preview", new JScrollPane(mdComponent));
             tabs.add("source", new JScrollPane(sourceComponent));
 
-            setSource(mdSource);
+           // setSource(mdSource);
         }
-
+/*
         void setSource(String mdSource) {
             sourceComponent.setText(mdSource);
             RichText richtext = MarkDownUtil.convert(mdSource);
-            StyledDocument doc = StyledDocumentBuilder.toStyledDocument(richtext, MarkDownStyle.defaultStyles(16f));
+            Function<Style, RunTraits> traitsMap = s -> new SimpleRunTraits(MarkDownStyle.defaultStyles(16f).get(s));
+			StyledDocument doc = StyledDocumentBuilder.toStyledDocument(richtext, traitsMap);
             mdComponent.setDocument(doc);
         }
+ */
     }
 }

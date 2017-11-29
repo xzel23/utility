@@ -22,6 +22,8 @@ import java.util.function.Function;
 
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.RichTextConverterBase.RunTraits;
+import com.dua3.utility.text.RichTextConverterBase.SimpleRunTraits;
 
 /**
  * A {@link RichTextConverterBase} implementation for translating {@code RichText} to
@@ -43,14 +45,16 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
     public static String toHtml(RichText text, Pair<String, String>... options) {
         // create map with default options
         Map<String,String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
-        // add overrrides
-        LangUtil.putAll(optionMap, options);
+        LangUtil.putAll(optionMap, options); // add overrrides
 
-        return new HtmlBuilder(optionMap).add(text).get();
+		// create trait supplier
+        Function<Style, RunTraits> traitSupplier = style -> new SimpleRunTraits(TextAttributes.none());
+        
+        return new HtmlBuilder(traitSupplier, optionMap).add(text).get();
     }
 
-    private HtmlBuilder(Map<String,String> options) {
-        super(options);
+    private HtmlBuilder(Function<Style, RunTraits> traitSupplier, Map<String,String> options) {
+        super(traitSupplier, options);
     }
 
     @Override
@@ -129,7 +133,7 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
 
         return isSet ? textIfPresent : "";
     }
-
+/*
     @Override
     protected Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
         Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
@@ -185,4 +189,11 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
 
         return Collections.unmodifiableMap(tags);
     }
+    */
+
+	@Override
+	protected void applyAttributes(TextAttributes attributes) {
+		// TODO Auto-generated method stub
+		
+	}
 }

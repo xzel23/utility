@@ -44,16 +44,18 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
     public static String toAnsi(RichText text, Pair<String, String>... options) {
         // create map with default options
         Map<String,String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
-        // add overrrides
-        LangUtil.putAll(optionMap, options);
+        LangUtil.putAll(optionMap, options); // add overrrides
 
-        return new AnsiBuilder(optionMap).add(text).get();
+		// create trait supplier
+        Function<Style, RunTraits> traitSupplier = style -> new SimpleRunTraits(TextAttributes.none());
+        
+        return new AnsiBuilder(traitSupplier, optionMap).add(text).get();
     }
 
-    private AnsiBuilder(Map<String,String> options) {
-        super(options);
+    private AnsiBuilder(Function<Style, RunTraits> traitSupplier, Map<String,String> options) {
+        super(traitSupplier, options);
     }
-
+/*
     @Override
     protected Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
         Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
@@ -122,4 +124,10 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
 
         return Collections.unmodifiableMap(tags);
     }
+*/
+	@Override
+	protected void applyAttributes(TextAttributes attributes) {
+		// TODO Auto-generated method stub
+		
+	}
 }
