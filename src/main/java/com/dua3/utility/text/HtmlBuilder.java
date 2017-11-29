@@ -15,15 +15,12 @@
  */
 package com.dua3.utility.text;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.RichTextConverterBase.RunTraits;
-import com.dua3.utility.text.RichTextConverterBase.SimpleRunTraits;
 
 /**
  * A {@link RichTextConverterBase} implementation for translating {@code RichText} to
@@ -49,7 +46,7 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
 
 		// create trait supplier
         Function<Style, RunTraits> traitSupplier = style -> new SimpleRunTraits(TextAttributes.none());
-        
+
         return new HtmlBuilder(traitSupplier, optionMap).add(text).get();
     }
 
@@ -191,9 +188,9 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
     }
     */
 
-	@Override
-	protected void applyAttributes(TextAttributes attributes) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void applyAttributes(TextAttributes attributes) {
+        // TODO Auto-generated method stub
+
+    }
 }

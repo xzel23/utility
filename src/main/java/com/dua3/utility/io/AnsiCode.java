@@ -31,14 +31,27 @@ public class AnsiCode {
     }
 
     public static <T extends Appendable>
-    void esc(T out, int code, int... args) throws IOException {
+    void esc(T out, Iterable<Character> args) throws IOException {
         out.append(ESC_START);
-        out.append(byteStr(code));
+        String delimiter = "";
         for (int arg: args) {
-            out.append(';').append(byteStr(arg));
+            out.append(delimiter).append(byteStr(arg));
+            delimiter = ";";
         }
         out.append(ESC_END);
     }
+
+    public static <T extends Appendable>
+    void esc(T out, int... args) throws IOException {
+        out.append(ESC_START);
+        String delimiter = "";
+        for (int arg: args) {
+            out.append(delimiter).append(byteStr(arg));
+            delimiter = ";";
+        }
+        out.append(ESC_END);
+    }
+
     public static <T extends Appendable>
     void fg(T out, int r, int g, int b) throws IOException {
         esc(out, COLOR, 2, r, g, b);
@@ -84,10 +97,10 @@ public class AnsiCode {
         esc(out, on ? ITALIC_ON : ITALIC_OFF);
     }
 
-    public static String esc(int code, int... args) {
+    public static String esc(int... args) {
     	StringBuilder out = new StringBuilder();
     	try {
-			esc(out, code, args);
+			esc(out, args);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

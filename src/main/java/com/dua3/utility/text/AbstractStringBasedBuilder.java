@@ -38,7 +38,7 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     protected AbstractStringBasedBuilder(
     		Function<Style, RunTraits> styleSupplier, Map<String, String> options) {
     	super(styleSupplier);
-    	
+
         this.docStart = options.getOrDefault(TAG_DOC_START, "");
         this.docEnd = options.getOrDefault(TAG_DOC_END, "");
         this.textStart = options.getOrDefault(TAG_TEXT_START, "");
@@ -49,6 +49,7 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
         buffer.append(textStart);
     }
 
+    @Override
     protected void appendChars(CharSequence run) {
         buffer.append(run);
     }

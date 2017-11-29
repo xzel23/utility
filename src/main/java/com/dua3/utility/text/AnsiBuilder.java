@@ -15,11 +15,19 @@
  */
 package com.dua3.utility.text;
 
-import java.util.Collections;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.io.AnsiCode;
 import com.dua3.utility.lang.LangUtil;
@@ -31,6 +39,7 @@ import com.dua3.utility.lang.LangUtil;
  * @author Axel Howind (axel@dua3.com)
  */
 public class AnsiBuilder extends AbstractStringBasedBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(AnsiBuilder.class);
 
     private static final Map<String,String> DEFAULT_OPTIONS = LangUtil.map(
             Pair.of(TAG_DOC_START, AnsiCode.reset()),
@@ -41,93 +50,66 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
             );
 
     @SafeVarargs
-    public static String toAnsi(RichText text, Pair<String, String>... options) {
+    public static String toAnsi(RichText text, Function<Style,TextAttributes> styleTraits, Pair<String, String>... options) {
         // create map with default options
         Map<String,String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
         LangUtil.putAll(optionMap, options); // add overrrides
 
 		// create trait supplier
-        Function<Style, RunTraits> traitSupplier = style -> new SimpleRunTraits(TextAttributes.none());
-        
+        Function<Style, RunTraits> traitSupplier = style -> new SimpleRunTraits(styleTraits.apply(style));
+
         return new AnsiBuilder(traitSupplier, optionMap).add(text).get();
     }
 
     private AnsiBuilder(Function<Style, RunTraits> traitSupplier, Map<String,String> options) {
         super(traitSupplier, options);
     }
-/*
+
+    private final Color defaultColor = Color.BLACK;
+
     @Override
-    protected Map<String, Pair<Function<Style, String>, Function<Style, String>>> defaultStyleTags() {
-        Map<String, Pair<Function<Style, String>, Function<Style, String>>> tags = new HashMap<>();
+    protected void applyAttributes(TextAttributes attributes) {
+        ArrayList<Character> esc = new ArrayList<>();
 
-        putTags(tags, MarkDownStyle.BLOCK_QUOTE.name(), attr -> "\n", attr -> "\n");
-        putTags(tags, MarkDownStyle.BULLET_LIST.name(),
-                attr -> { startList(ListType.UNORDERED); return "\n"; },
-                attr -> { endList(); return "\n"; });
-        putTags(tags, MarkDownStyle.CODE.name(), attr -> "", attr -> "");
-        putTags(tags, MarkDownStyle.DOCUMENT.name(), attr -> "", attr -> "");
-        putTags(tags, MarkDownStyle.EMPHASIS.name(), attr -> AnsiCode.italic(true), attr -> AnsiCode.italic(false));
-        putTags(tags, MarkDownStyle.FENCED_CODE_BLOCK.name(), attr -> "\n", attr -> "\n");
-        putTags(tags, MarkDownStyle.HARD_LINE_BREAK.name(), attr -> "\n", attr -> "");
-        putTags(tags, MarkDownStyle.HEADING.name(),
-                attr -> AnsiCode.esc(AnsiCode.BOLD_ON)+"\n", attr -> AnsiCode.esc(AnsiCode.BOLD_OFF)+"\n");
-        putTags(tags, MarkDownStyle.THEMATIC_BREAK.name(), attr -> "\n ---\n", attr -> "\n");
-        // HTML_BLOCK
-        // HTML_INLINE
-        putTags(tags, MarkDownStyle.IMAGE.name(),
-                attr -> "<img"
-                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_SRC, "src", "")
-                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_TITLE, "title", null)
-                        + attrText(attr, MarkDownStyle.ATTR_IMAGE_ALT, "alt", null)
-                        + ">",
-                attr -> "");
-        putTags(tags, MarkDownStyle.INDENTED_CODE_BLOCK.name(), attr -> "\n", attr -> "\n");
-        putTags(tags, MarkDownStyle.LINK.name(),
-                attr -> {
-                    String href = attr.getOrDefault(MarkDownStyle.ATTR_LINK_HREF, "").toString();
-                    if (replaceMdExtensionWith != null) {
-                        href = href.replaceAll("(\\.md|\\.MD)(\\?|#|$)", replaceMdExtensionWith + "$2");
-                    }
-                    String hrefAttr = " href=\"" + href + "\"";
+        for (Entry<String, Object> entry: attributes.entrySet()) {
+            String attribute = entry.getKey();
+            Object value = entry.getValue();
 
-                    //
-                    return "<a"
-                            + hrefAttr
-                            + attrText(attr, MarkDownStyle.ATTR_LINK_TITLE, "title", null)
-                            + ifSet(attr, MarkDownStyle.ATTR_LINK_EXTERN,
-                                    " target=\"" + targetForExternLinks + "\"")
-                            + ">";
-                },
-                attr -> "</a>");
-        putTags(tags, MarkDownStyle.LIST_ITEM.name(),
-                attr -> {
-                    Pair<ListType,Integer> info = newListItem();
-                    switch (info.first) {
-                    case UNORDERED:
-                        return "• ";
-                    case ORDERED:
-                        return info.second + ". ";
-                    default:
-                        throw new IllegalStateException();
-                    }
-                },
-                attr -> "");
-        putTags(tags, MarkDownStyle.ORDERED_LIST.name(),
-                attr -> { startList(ListType.ORDERED); return "\n"; },
-                attr -> { endList(); return "\n"; });
-        putTags(tags, MarkDownStyle.PARAGRAPH.name(), attr -> "", attr -> "\n");
-        putTags(tags, MarkDownStyle.SOFT_LINE_BREAK.name(), attr -> "", attr -> "");
-        putTags(tags, MarkDownStyle.STRONG_EMPHASIS.name(), attr -> "", attr -> "");
-        putTags(tags, MarkDownStyle.TEXT.name(), attr -> "", attr -> "");
-        // CUSTOM_BLOCK
-        // CUSTOM_NODE
+            switch (attribute) {
+            case TextAttributes.COLOR:
+                addColor(esc, AnsiCode.COLOR, value);
+                break;
+            case TextAttributes.BACKGROUND_COLOR:
+                addColor(esc, AnsiCode.BACKGROUND_COLOR, value);
+                break;
+            case TextAttributes.FONT_WEIGHT:
+                if (TextAttributes.FONT_WEIGHT_VALUE_BOLD.equals(value)) {
+                    esc.add(AnsiCode.BOLD_ON);
+                } else {
+                    esc.add(AnsiCode.BOLD_OFF);
+                }
+                break;
+            default:
+                break;
+            }
+        }
 
-        return Collections.unmodifiableMap(tags);
+        if (!esc.isEmpty()) {
+            try {
+                AnsiCode.esc(buffer, esc);
+            } catch (IOException e) {
+                LOG.error("could not apply text attributes", e);
+                throw new UncheckedIOException(e);
+            }
+        }
     }
-*/
-	@Override
-	protected void applyAttributes(TextAttributes attributes) {
-		// TODO Auto-generated method stub
-		
-	}
+
+    private void addColor(List<Character> esc, char code, Object color) {
+        Color c = color==null ? defaultColor : Color.valueOf(color.toString());
+        esc.add(code);
+        esc.add((char)c.r());
+        esc.add((char)c.g());
+        esc.add((char)c.b());
+    }
+
 }

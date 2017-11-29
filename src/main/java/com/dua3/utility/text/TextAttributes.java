@@ -72,6 +72,11 @@ public class TextAttributes extends AbstractMap<String,Object> {
     public static final String TEXT_INDENT_LEFT_VALUE_0 = "0";
     public static final String TEXT_INDENT_LEFT_VALUE_1 = "40";
 
+    /** prefix */
+    public static final String TEXT_PREFIX = "PREFIX";
+    /** suffix */
+    public static final String TEXT_SUFFIX = "SUFFIX";
+
     // colors
     public static final String COLOR = "color";
     public static final String BACKGROUND_COLOR = "background-color";

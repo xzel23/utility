@@ -206,16 +206,16 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         return dfltStyles;
     }
 
-	@Override
-	protected void applyAttributes(TextAttributes attributes) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void applyAttributes(TextAttributes attributes) {
+        // TODO Auto-generated method stub
+
+    }
 
 	@Override
 	protected void appendChars(CharSequence run) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

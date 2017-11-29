@@ -22,12 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
 
 /**
@@ -53,37 +51,49 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      * <li> text to append
      * </ul>
      */
-    public interface RunTraits {    	
+    public interface RunTraits {
     	TextAttributes attributes();
     	String prefix();
-    	String postfix();
+    	String suffix();
     }
-    
+
+
+    private static final RunTraits EMPTY_RUN_TRAITS = new SimpleRunTraits(TextAttributes.none());
+
+    public static RunTraits emptyTraits() {
+        return EMPTY_RUN_TRAITS;
+    }
+
     public static class SimpleRunTraits implements RunTraits {
     	private final TextAttributes attributes;
 		private final String prefix;
-		private final String postfix;
-
-		public SimpleRunTraits(TextAttributes attributes, String prefix, String postfix) {
-    		this.attributes = attributes;
-    		this.prefix = prefix;
-    		this.postfix = postfix;
-    	}
+		private final String suffix;
 
 		public SimpleRunTraits(TextAttributes attributes) {
-			this(attributes, "", "");
+			this.attributes = attributes;
+			this.prefix = extract(attributes, TextAttributes.STYLE_START_RUN, TextAttributes.TEXT_PREFIX);
+            this.suffix = extract(attributes, TextAttributes.STYLE_END_RUN, TextAttributes.TEXT_SUFFIX);
 		}
 
-		public TextAttributes attributes() { return attributes; }
-		public String prefix() { return prefix; }
-		public String postfix() { return postfix; }
+		private static String extract(TextAttributes attributes, String tagStartOrEnd, String tag) {
+            @SuppressWarnings("unchecked")
+            List<Style> styles = (List<Style>) attributes.getOrDefault(tagStartOrEnd, Collections.emptyList());
+            return styles.stream().map(s -> s.getOrDefault(tag,"").toString()).collect(Collectors.joining());
+        }
+
+        @Override
+        public TextAttributes attributes() { return attributes; }
+		@Override
+        public String prefix() { return prefix; }
+		@Override
+        public String suffix() { return suffix; }
     }
 
     private static class CollectingRunTraits implements RunTraits {
     	private final Map<String,Object> attributes = new HashMap<>();
     	private final Deque<String> prefix = new LinkedList<>();
-    	private final Deque<String> postfix = new LinkedList<>();
-    	
+    	private final Deque<String> suffix = new LinkedList<>();
+
     	/**
     	 * Merge properties of another RunTraits instance.
     	 * @param other the RunTraits instance to merge
@@ -91,25 +101,25 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     	public void mergeIn(RunTraits other) {
     		attributes.putAll(other.attributes());
     		prefix.addLast(other.prefix());
-    		postfix.addFirst(other.prefix());
+    		suffix.addFirst(other.suffix());
     	}
-    	
+
     	@Override
     	public TextAttributes attributes() {
     		return TextAttributes.of(attributes);
     	}
-    	
+
     	@Override
     	public String prefix() {
     		return prefix.stream().collect(Collectors.joining());
     	}
-    	
+
     	@Override
-    	public String postfix() {
-    		return postfix.stream().collect(Collectors.joining());
-    	}    	
+    	public String suffix() {
+    		return suffix.stream().collect(Collectors.joining());
+    	}
     }
-    
+
     /**
      * Constructor.
      */
@@ -132,7 +142,6 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     @Override
     public RichTextConverter<T> add(RichText text) {
         checkState();
-        resetAttr.add(Collections.emptyMap());
         for (Run r : text) {
             append(r);
         }
@@ -148,12 +157,12 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      *            the {@link com.dua3.utility.text.Run} to append
      */
     protected void append(Run run) {
-        
+
         handleRunEnds(run);
         CollectingRunTraits traits = handleRunStarts(run);
         appendChars(traits.prefix());
         appendChars(run);
-        appendChars(traits.postfix());
+        appendChars(traits.suffix());
     }
 
     private Deque<Map<String, Object>> resetAttr = new LinkedList<>();
@@ -164,12 +173,15 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 
     void handleRunEnds(Run run) {
         // handle run ends
-    	getStyleList(run, TextAttributes.STYLE_START_RUN)
+    	getStyleList(run, TextAttributes.STYLE_END_RUN)
     		.forEach(style -> popRunAttributes());
     }
 
     private void popRunAttributes() {
-        for (Entry<String, Object> e : resetAttr.pop().entrySet()) {
+        TextAttributes attributes = TextAttributes.of(resetAttr.pop());
+        applyAttributes(attributes);
+
+        for (Entry<String, Object> e : attributes.entrySet()) {
             String attr = e.getKey();
             Object value = e.getValue();
             if (value != null) {
@@ -187,33 +199,44 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         return traits;
     }
 
+    /**
+     * Apply text attributes to use for the following characters.
+     * @param attributes the attributes to apply
+     */
     protected abstract void applyAttributes(TextAttributes attributes);
 
-    private CollectingRunTraits extractRunTraits(Run run) {    	
+    private CollectingRunTraits extractRunTraits(Run run) {
     	List<Style> styles = getStyleList(run, TextAttributes.STYLE_START_RUN);
 
         // collect traits for this run
-        RunTraits currentTraits = new SimpleRunTraits(run.getAttributes());
-        
+        RunTraits currentTraits = createTraits(run);
+
         CollectingRunTraits traits = new CollectingRunTraits();
-		Stream.concat(styles.stream().map(traitSupplier), Stream.of(currentTraits)) 
+        HashMap<String,Object> m = new HashMap<>();
+		Stream.concat(styles.stream().map(traitSupplier), Stream.of(currentTraits))
 			.forEach(t -> {
 				// store current attributes for resetting at end of style
-				pushRunAttributes(
-        			t.attributes().keySet().stream()
-            		.collect(Collectors.toMap(attr -> attr, attr -> currentAttributes.get(attr))));
+			    t.attributes().keySet().stream()
+			        .filter(attr ->  !attr.startsWith("__"))
+			        .forEach(attr -> m.put(attr, currentAttributes.get(attr)));
 				// merge traits
 				traits.mergeIn(t);
 			});
-		
+		pushRunAttributes(m);
+
 		return traits;
+    }
+
+    SimpleRunTraits createTraits(Run run) {
+        TextAttributes attributes = run.getAttributes();
+        return new SimpleRunTraits(attributes);
     }
 
 	@SuppressWarnings("unchecked")
 	private List<Style> getStyleList(Run run, String property) {
 		TextAttributes attributes = run.getAttributes();
 		Object value = attributes.getOrDefault(property, Collections.emptyList());
-        
+
 		LangUtil.check(value instanceof List, "expected instance of List but got %s", value.getClass());
         return (List<Style>) value;
 	}
@@ -221,47 +244,6 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     protected abstract void appendChars(CharSequence run);
 
     protected abstract boolean isValid();
-
-    /**
-     * Enumeration of supported List types.
-     */
-    protected enum ListType {
-        /** Unordered (bulleted) list. */
-        UNORDERED,
-        /** Ordered (numbered) list. */
-        ORDERED
-    }
-
-    /** Stack of the currently processed lists. */
-    private final Deque<Pair<ListType,AtomicInteger>> listStack = new LinkedList<>();
-
-    /**
-     * Update the item count for this list.
-     * @return pair with list type and the item number for the new item (1-based)
-     */
-    protected Pair<ListType,Integer> newListItem() {
-        LangUtil.check(!listStack.isEmpty(), "item definition is not inside list");
-        Pair<ListType, AtomicInteger> current = listStack.peekLast();
-        ListType type = current.first;
-        int nr = current.second.incrementAndGet();
-        return Pair.of(type, nr);
-    }
-
-    /**
-     * Starts a new list definition.
-     * @param type the type of the list
-     */
-    protected void startList(ListType type) {
-        listStack.add(Pair.of(type, new AtomicInteger()));
-    }
-
-    /**
-     * Closes the current list definition
-     */
-    protected void endList() {
-        LangUtil.check(!listStack.isEmpty(), "there is no list open");
-        listStack.removeLast();
-    }
 
 }
 

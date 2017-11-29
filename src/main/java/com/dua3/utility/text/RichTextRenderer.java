@@ -1,8 +1,10 @@
 package com.dua3.utility.text;
 
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 import org.commonmark.node.AbstractVisitor;
@@ -32,6 +34,7 @@ import org.commonmark.node.ThematicBreak;
 import org.commonmark.node.Visitor;
 
 import com.dua3.utility.Pair;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * Render MD to RichText.
@@ -58,6 +61,47 @@ class RichTextRenderer {
         private final RichTextBuilder app;
         private boolean atStartOfLine = true;
 
+        /**
+         * Enumeration of supported List types.
+         */
+        protected enum ListType {
+            /** Unordered (bulleted) list. */
+            UNORDERED,
+            /** Ordered (numbered) list. */
+            ORDERED
+        }
+
+        /** Stack of the currently processed lists. */
+        private final Deque<Pair<ListType,AtomicInteger>> listStack = new LinkedList<>();
+
+        /**
+         * Update the item count for this list.
+         * @return pair with list type and the item number for the new item (1-based)
+         */
+        protected Pair<ListType,Integer> newListItem() {
+            LangUtil.check(!listStack.isEmpty(), "item definition is not inside list");
+            Pair<ListType, AtomicInteger> current = listStack.peekLast();
+            ListType type = current.first;
+            int nr = current.second.incrementAndGet();
+            return Pair.of(type, nr);
+        }
+
+        /**
+         * Starts a new list definition.
+         * @param type the type of the list
+         */
+        protected void startList(ListType type) {
+            listStack.add(Pair.of(type, new AtomicInteger()));
+        }
+
+        /**
+         * Closes the current list definition
+         */
+        protected void endList() {
+            LangUtil.check(!listStack.isEmpty(), "there is no list open");
+            listStack.removeLast();
+        }
+
         public RTVisitor(RichTextBuilder app) {
             this.app = app;
         }
@@ -74,11 +118,13 @@ class RichTextRenderer {
 
         @Override
         public void visit(BulletList node) {
+            startList(ListType.UNORDERED);
             Style attr = Style.create(MarkDownStyle.BULLET_LIST.name());
             appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
+            endList();
         }
 
         @Override
@@ -219,7 +265,12 @@ class RichTextRenderer {
 
         @Override
         public void visit(ListItem node) {
-            Style attr = Style.create(MarkDownStyle.LIST_ITEM.name());
+            Pair<ListType,Integer> item = newListItem();
+            Style attr = Style.create(MarkDownStyle.LIST_ITEM.name(),
+                    Pair.of(MarkDownStyle.ATTR_LIST_ITEM_TYPE, item.first),
+                    Pair.of(MarkDownStyle.ATTR_LIST_ITEM_NR, item.second),
+                    Pair.of(TextAttributes.TEXT_PREFIX, getListItemPrefix(item.first, item.second))
+                );
             appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
@@ -227,14 +278,27 @@ class RichTextRenderer {
             appendNewLineIfNeeded();
         }
 
+        private String getListItemPrefix(ListType type, int itemNr) {
+            switch (type) {
+            case ORDERED:
+                return " "+Integer.toString(itemNr)+". ";
+            case UNORDERED:
+                return " • ";
+            default:
+                throw new IllegalStateException();
+            }
+        }
+
         @Override
         public void visit(OrderedList node) {
+            startList(ListType.ORDERED);
             Style attr = Style.create(MarkDownStyle.ORDERED_LIST.name());
             appendNewLineIfNeeded();
             push(TextAttributes.STYLE_START_RUN, attr);
             super.visit(node);
             push(TextAttributes.STYLE_END_RUN, attr);
             appendNewLineIfNeeded();
+            endList();
         }
 
         @Override

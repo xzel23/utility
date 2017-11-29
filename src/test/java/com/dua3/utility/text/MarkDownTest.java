@@ -17,18 +17,18 @@ public class MarkDownTest {
 
     public static void main(String[] args) throws Exception {
         Charset cs = StandardCharsets.UTF_8;
-        
+
         if (args.length == 0) {
         	System.out.println(getAnsi());
         }
-        
+
         if (args.length== 1 && args[0].equals("-update")) {
 	        System.err.println("WARNING! This will overwrite expected unit test results!!!\nEnter 'YES' to continue.");
 	        if (!"YES".equals(new BufferedReader(new InputStreamReader(System.in, cs)).readLine())) {
 	            System.err.println("aborted.");
 	            System.exit(1);
 	        }
-	
+
 	        String html = getHtml();
 	        Path htmlPath = Paths.get(MarkDownTest.class.getResource("syntax.html").toURI());
 	        try (PrintStream out = new PrintStream(htmlPath.toFile(), cs.name())) {
@@ -48,9 +48,9 @@ public class MarkDownTest {
     static String getAnsi() throws Exception {
         String mdText = getTestDataSource();
         RichText richText = MarkDownUtil.convert(mdText);
-        return AnsiBuilder.toAnsi(richText);
+        return AnsiBuilder.toAnsi(richText, MarkDownStyle::getAttributes);
     }
-    
+
     @Test
     public void testMarkDown() throws Exception {
         String htmlActual = getHtml();
@@ -60,9 +60,9 @@ public class MarkDownTest {
     }
 
     public static String getTestData(String filename) throws Exception {
-        return IOUtil.read(Paths.get(MarkDownTest.class.getResource(filename).toURI()), StandardCharsets.UTF_8);        
+        return IOUtil.read(Paths.get(MarkDownTest.class.getResource(filename).toURI()), StandardCharsets.UTF_8);
     }
-    
+
     public static String getTestDataSource() throws Exception {
         return getTestData("syntax.md");
     }
