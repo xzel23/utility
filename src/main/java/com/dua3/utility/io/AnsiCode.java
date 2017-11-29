@@ -108,12 +108,12 @@ public class AnsiCode {
     }
 
     public static String fg(int r, int g, int b) {
-        return esc(38, 2, r, g, b);
+        return esc(COLOR, 2, r, g, b);
     }
 
 
     public static String bg(int r, int g, int b) {
-    	return esc(48, 2, r, g, b);
+    	return esc(BACKGROUND_COLOR, 2, r, g, b);
     }
 
 

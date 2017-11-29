@@ -90,7 +90,7 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
                 }
                 break;
             case TextAttributes.TEXT_DECORATION:
-            	if (TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH.equals(value)) {
+            	if (TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE.equals(value)) {
                     esc.add(AnsiCode.UNDERLINE_ON);            		
             	} else {
                     esc.add(AnsiCode.UNDERLINE_OFF);            		
@@ -121,6 +121,7 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
     private void addColor(List<Character> esc, char code, Object color) {
         Color c = color==null ? defaultColor : Color.valueOf(color.toString());
         esc.add(code);
+        esc.add((char)2);
         esc.add((char)c.r());
         esc.add((char)c.g());
         esc.add((char)c.b());
