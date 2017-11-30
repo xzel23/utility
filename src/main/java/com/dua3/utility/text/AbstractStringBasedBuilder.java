@@ -38,8 +38,8 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     protected final String targetForExternalLinks;
 
     protected AbstractStringBasedBuilder(Function<Style, TextAttributes> styleTraits, Map<String, String> options) {
-    	this.styleTraits = styleTraits;
-    	
+        super(styleTraits);
+
         this.docStart = options.getOrDefault(TAG_DOC_START, "");
         this.docEnd = options.getOrDefault(TAG_DOC_END, "");
         this.textStart = options.getOrDefault(TAG_TEXT_START, "");
@@ -73,12 +73,5 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     public String toString() {
         return buffer.toString();
     }
-
-    private Function<Style,TextAttributes> styleTraits;
-    
-	@Override
-	protected RunTraits getTraits(Style style) {
-		return new SimpleRunTraits(styleTraits.apply(style));
-	}
 
 }

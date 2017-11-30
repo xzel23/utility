@@ -19,10 +19,12 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -33,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dua3.utility.Pair;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextConverterBase;
 import com.dua3.utility.text.Style;
@@ -52,44 +55,37 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
             StyleConstants.ParagraphConstants.LeftIndent
     };
 
-    public static StyledDocumentBuilder create(Function<Style, RunTraits> supplier) {
-        return new StyledDocumentBuilder();
-    }
+    /** Option to set the scaling factor. */
+    public static final String SCALE = "scale";
+    public static final String ATTRIBUTE_SET = "attribute-set";
+    public static final String FONT_SIZE = "font-size";
 
-    public static StyledDocumentBuilder create(Map<String, Function<Style, RunTraits>> traitsMap) {
-        return create(s -> {
-            String styleName = String.valueOf(s.get(TextAttributes.STYLE_NAME));
-            return traitsMap.getOrDefault(styleName, attr -> new SimpleRunTraits(TextAttributes.none())).apply(s);
-        });
-    }
+    private static final Map<String, Object> DEFAULT_OPTIONS = LangUtil.map(Pair.of(SCALE, 1f));
 
-    public static StyledDocument toStyledDocument(RichText text, Function<Style, RunTraits> styleSupplier) {
-        return StyledDocumentBuilder.create(styleSupplier).add(text).get();
-    }
+    @SafeVarargs
+    public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleTraits,
+            Pair<String, Object>... options) {
+        // create map with default options
+        Map<String, Object> optionMap = new HashMap<>(DEFAULT_OPTIONS);
+        LangUtil.putAll(optionMap, options); // add overrrides
 
-    public static StyledDocument toStyledDocument(RichText text,
-            Map<String, Function<Style, RunTraits>> traitsMap) {
-        return StyledDocumentBuilder.create(traitsMap).add(text).get();
-    }
-
-    public static StyledDocument toStyledDocument(RichText text, Function<Style, RunTraits> styleSupplier, AttributeSet dfltAttr, double scale) {
-        StyledDocumentBuilder builder = StyledDocumentBuilder.create(styleSupplier);
-        builder.setScale(scale);
-        StyledDocument doc = builder.add(text).get();
-        doc.setParagraphAttributes(0, doc.getLength(), dfltAttr, false);
-        return doc;
+        return new StyledDocumentBuilder(styleTraits, optionMap).add(text).get();
     }
 
     private StyledDocument buffer = new DefaultStyledDocument();
 
-    private double scale = 1;
-
-    private final Map<String, BiConsumer<MutableAttributeSet, Object>> styles = defaultStyles();
+    private float scale = 1;
 
     private Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
 
-    private StyledDocumentBuilder() {
-    	// nop
+    private final float defaultFontSize;
+
+    private StyledDocumentBuilder(Function<Style, TextAttributes> styleTraits, Map<String, Object> options) {
+    	super(styleTraits);
+
+    	this.scale = (float) options.getOrDefault(SCALE, 1f);
+    	this.defaultFontSize = (float) options.getOrDefault(FONT_SIZE, 12f);
+    	this.attributeSet = (MutableAttributeSet) options.getOrDefault(ATTRIBUTE_SET, new SimpleAttributeSet());
     }
 
     @Override
@@ -108,7 +104,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         return ret;
     }
 
-    public void setScale(double scale) {
+    public void setScale(float scale) {
         this.scale = scale;
     }
 
@@ -151,6 +147,9 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         }
     }
 
+    private void setFontScale(MutableAttributeSet as, Object value) {
+        setFontSize(as, ((Number)value).floatValue()*defaultFontSize );
+    }
     private void setFontSize(MutableAttributeSet as, Object value) {
         double fontSize = TextUtil.decodeFontSize(String.valueOf(value));
         StyleConstants.setFontSize(as, (int) Math.round(scale * fontSize));
@@ -166,6 +165,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 
         // TextAttributes.STYLE_NAME: unused
         dfltStyles.put(TextAttributes.FONT_FAMILY, this::setFontFamily);
+        dfltStyles.put(TextAttributes.FONT_SCALE, this::setFontScale);
         dfltStyles.put(TextAttributes.FONT_SIZE, this::setFontSize);
         dfltStyles.put(TextAttributes.COLOR,
                 (as, v) -> StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(v))));
@@ -206,22 +206,70 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         return dfltStyles;
     }
 
+    private final MutableAttributeSet attributeSet;
+
     @Override
     protected void applyAttributes(TextAttributes attributes) {
-        // TODO Auto-generated method stub
+        for (Entry<String, Object> entry : attributes.entrySet()) {
+            String attribute = entry.getKey();
+            Object value = entry.getValue();
 
+            switch (attribute) {
+            case TextAttributes.COLOR:
+                StyleConstants.setForeground(attributeSet, SwingUtil.toAwtColor(getColor(value)));
+                break;
+            case TextAttributes.BACKGROUND_COLOR:
+                StyleConstants.setBackground(attributeSet, SwingUtil.toAwtColor(getColor(value)));
+                break;
+            case TextAttributes.FONT_FAMILY:
+                StyleConstants.setFontFamily(attributeSet, String.valueOf(value));
+                break;
+            case TextAttributes.FONT_STYLE:
+                StyleConstants.setItalic(attributeSet, TextAttributes.FONT_STYLE_VALUE_ITALIC.equals(value)
+                        || TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value));
+                break;
+            case TextAttributes.FONT_SIZE:
+                StyleConstants.setFontSize(attributeSet, Math.round(scale*Float.parseFloat(String.valueOf(value))));
+                break;
+            case TextAttributes.FONT_WEIGHT:
+                StyleConstants.setBold(attributeSet, TextAttributes.FONT_WEIGHT_VALUE_BOLD.equals(value));
+                break;
+            case TextAttributes.TEXT_DECORATION:
+                switch (String.valueOf(value)) {
+                case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE:
+                    StyleConstants.setUnderline(attributeSet, true);
+                    break;
+                case TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH:
+                    StyleConstants.setStrikeThrough(attributeSet, true);
+                    break;
+                case TextAttributes.TEXT_DECORATION_VALUE_NONE:
+                default:
+                    StyleConstants.setUnderline(attributeSet, false);
+                    StyleConstants.setStrikeThrough(attributeSet, false);
+                    break;
+                }
+                break;
+            case TextAttributes.TEXT_INDENT_LEFT:
+                // TODO
+                break;
+            default:
+                break;
+            }
+        }
     }
 
 	@Override
-	protected void appendUnquoted(CharSequence run) {
-		// TODO Auto-generated method stub
+	protected void appendUnquoted(CharSequence chars) {
+	    try {
+            int pos = buffer.getLength();
+            buffer.insertString(pos, chars.toString(), attributeSet);
 
-	}
-
-	@Override
-	protected RunTraits getTraits(Style style) {
-		// TODO Auto-generated method stub
-		return null;
+            AttributeSet pa = getParagraphAttributes(attributeSet);
+            paragraphAttributes.add(Pair.of(chars.length(), pa));
+	    } catch (BadLocationException e) {
+	        LOG.error("unexpected error", e);
+	        throw new IllegalStateException(e);
+	    }
 	}
 
 }

@@ -48,8 +48,6 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
             Pair.of(TARGET_FOR_EXTERNAL_LINKS, "_blank"),
             Pair.of(REPLACEMENT_FOR_MD_EXTENSION_IN_LINK, null));
 
-    private Color defaultColor = Color.BLACK;
-
     @SafeVarargs
     public static String toAnsi(RichText text, Function<Style, TextAttributes> styleTraits,
             Pair<String, String>... options) {
@@ -64,16 +62,8 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
         super(styleTraits, options);
     }
 
-    public Color getDefaultColor() {
-        return defaultColor;
-    }
-
-    public void setDefaultColor(Color defaultColor) {
-        this.defaultColor = defaultColor;
-    }
-
     private void addColor(List<Character> esc, char code, Object color) {
-        Color c = color == null ? defaultColor : Color.valueOf(color.toString());
+        Color c = getColor(color);
         esc.add(code);
         esc.add((char) 2);
         esc.add((char) c.r());

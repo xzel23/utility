@@ -22,9 +22,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.dua3.utility.Color;
 import com.dua3.utility.lang.LangUtil;
 
 /**
@@ -38,9 +40,12 @@ import com.dua3.utility.lang.LangUtil;
  */
 public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 
-	protected abstract RunTraits getTraits(Style style);
-
     private final Map<String,Object> currentAttributes = new HashMap<>();
+    private final Function<Style, TextAttributes> styleTraits;
+
+    protected RunTraits getTraits(Style style) {
+        return new SimpleRunTraits(styleTraits.apply(style));
+    }
 
     /**
      * The traits of a Run, consisting of:
@@ -56,6 +61,19 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     	String suffix();
     }
 
+    private Color defaultColor = Color.BLACK;
+
+    public Color getDefaultColor() {
+        return defaultColor;
+    }
+
+    public void setDefaultColor(Color defaultColor) {
+        this.defaultColor = defaultColor;
+    }
+
+    protected Color getColor(Object color) {
+        return color == null ? defaultColor : Color.valueOf(color.toString());
+    }
 
     private static final RunTraits EMPTY_RUN_TRAITS = new SimpleRunTraits(TextAttributes.none());
 
@@ -93,7 +111,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 
 		@Override
 		public String toString() {
-			return attributes.toString()+","+prefix+","+suffix;
+			return attributes.toString()+",\""+prefix+"\",\""+suffix+"\"";
 		}
     }
 
@@ -144,8 +162,10 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 
     /**
      * Constructor.
+     * @param styleTraits the style traits to use
      */
-    protected RichTextConverterBase() {
+    protected RichTextConverterBase(Function<Style, TextAttributes> styleTraits) {
+        this.styleTraits = styleTraits;
     }
 
     /**

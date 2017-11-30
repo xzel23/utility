@@ -27,7 +27,16 @@ public enum MarkDownStyle {
     HARD_LINE_BREAK,
     HEADING(
             Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD)
-            ),
+            ) {
+                @Override
+                public TextAttributes textAttributes(Style s) {
+                    return TextAttributes.of(
+                            Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD),
+                            Pair.of(TextAttributes.FONT_SCALE,
+                                    getFontScaleForHeadingLevel((int)s.get(ATTR_HEADING_LEVEL)))
+                            );
+                }
+            },
     THEMATIC_BREAK,
     HTML_BLOCK,
     HTML_INLINE,
@@ -66,7 +75,11 @@ public enum MarkDownStyle {
     public static final String ATTR_LIST_ITEM_NR = "LIST_ITEM_NR";
     public static final String ATTR_LIST_ITEM_PREFIX = "LIST_ITEM_PREFIX";
 
-    /** Font sizes for headers as recommended by w3.org. */
+    /**
+     * Font sizes for headers as recommended by w3.org.
+     * @param level the heading level
+     * @return the relative font size to use for the heading (1.0 = 100%)
+     */
     public static double getFontScaleForHeadingLevel(int level) {
         switch (level) {
         case 1:
@@ -87,7 +100,7 @@ public enum MarkDownStyle {
     }
 
     public static final String CLASS = "MARKDOWN";
-    
+
     private final TextAttributes attributes;
 
     @SafeVarargs
@@ -95,7 +108,7 @@ public enum MarkDownStyle {
 		this.attributes = TextAttributes.of(attributes);
     }
 
-    public TextAttributes textAttributes() {
+    public TextAttributes textAttributes(Style s) {
         return attributes;
     }
 
@@ -109,7 +122,9 @@ public enum MarkDownStyle {
     }
 
     public static TextAttributes getAttributes(Style style) {
-        return lookup(style.name()).map(MarkDownStyle::textAttributes).orElse(TextAttributes.none());
+        return lookup(style.name())
+                .map(mds -> mds.textAttributes(style))
+                .orElse(TextAttributes.none());
     }
 
 }

@@ -41,6 +41,8 @@ import com.dua3.utility.lang.LangUtil;
  */
 class RichTextRenderer {
 
+    public static final float DEFAULT_FONT_SIZE = 12;
+
     static class LiteralCollectingVisitor extends AbstractVisitor {
         private StringBuilder sb = new StringBuilder();
 

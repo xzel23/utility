@@ -54,6 +54,9 @@ public class TextAttributes extends AbstractMap<String,Object> {
     public static final String FONT_SIZE = "font-size";
 
     /** property name for the font weight */
+    public static final String FONT_SCALE = "font-scale";
+
+    /** property name for the font weight */
     public static final String FONT_WEIGHT = "font-weight";
     public static final String FONT_WEIGHT_VALUE_BOLD = "bold";
     public static final String FONT_WEIGHT_VALUE_NORMAL = "normal";
