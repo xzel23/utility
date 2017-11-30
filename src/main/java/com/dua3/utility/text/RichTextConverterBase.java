@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -72,7 +71,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 		public SimpleRunTraits(TextAttributes attributes) {
 			this(attributes, "", "");
 		}
-		
+
 		public SimpleRunTraits(TextAttributes attributes, String prefix, String suffix) {
 			this.attributes = attributes;
 			this.prefix = extract(attributes, TextAttributes.STYLE_START_RUN, TextAttributes.TEXT_PREFIX)+prefix;
@@ -91,7 +90,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         public String prefix() { return prefix; }
 		@Override
         public String suffix() { return suffix; }
-		
+
 		@Override
 		public String toString() {
 			return attributes.toString()+","+prefix+","+suffix;
@@ -106,11 +105,20 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     	/**
     	 * Merge properties of another RunTraits instance.
     	 * @param other the RunTraits instance to merge
+    	 * @param mergeAttributes flag whether attributes should be merged
+    	 * @param mergePrefix flag whether prefixes should be merged
+    	 * @param mergeSuffix flag whether suffixes should be merged
     	 */
-    	public void mergeIn(RunTraits other) {
-    		attributes.putAll(other.attributes());
-    		prefix.addLast(other.prefix());
-    		suffix.addFirst(other.suffix());
+    	public void mergeIn(RunTraits other, boolean mergeAttributes, boolean mergePrefix, boolean mergeSuffix) {
+            if (mergeAttributes) {
+                attributes.putAll(other.attributes());
+            }
+    		if (mergePrefix) {
+    		    prefix.add(other.prefix());
+    		}
+    		if (mergeSuffix) {
+    		    suffix.add(other.suffix());
+    		}
     	}
 
     	@Override
@@ -171,11 +179,11 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      */
     protected void append(Run run) {
 
-        handleRunEnds(run);
-        CollectingRunTraits traits = handleRunStarts(run);
-        appendUnquoted(traits.prefix());
+        String suffix = handleRunEnds(run);
+        String prefix = handleRunStarts(run);
+        appendUnquoted(suffix);
+        appendUnquoted(prefix);
         appendChars(run);
-        appendUnquoted(traits.suffix());
     }
 
     private Deque<Map<String, Object>> resetAttr = new LinkedList<>();
@@ -184,10 +192,18 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         resetAttr.push(resetAttributes);
     }
 
-    void handleRunEnds(Run run) {
-        // handle run ends
-    	getStyleList(run, TextAttributes.STYLE_END_RUN)
-    		.forEach(style -> popRunAttributes());
+    String handleRunEnds(Run run) {
+        List<Style> styles = getStyleList(run, TextAttributes.STYLE_END_RUN);
+
+        CollectingRunTraits traits = new CollectingRunTraits();
+        styles.stream().map(this::getTraits)
+        .forEach(t -> {
+            popRunAttributes();
+            // merge traits
+            traits.mergeIn(t, false, false, true);
+        });
+
+        return  traits.suffix();
     }
 
     private void popRunAttributes() {
@@ -205,11 +221,11 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         }
     }
 
-    CollectingRunTraits handleRunStarts(Run run) {
+    String handleRunStarts(Run run) {
     	// process styles whose runs start at this position
         CollectingRunTraits traits = extractRunTraits(run);
         applyAttributes(traits.attributes());
-        return traits;
+        return traits.prefix();
     }
 
     /**
@@ -233,7 +249,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
 			        .filter(attr ->  !attr.startsWith("__"))
 			        .forEach(attr -> m.put(attr, currentAttributes.get(attr)));
 				// merge traits
-				traits.mergeIn(t);
+				traits.mergeIn(t, true, true, false);
 			});
 		pushRunAttributes(m);
 
@@ -257,7 +273,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     protected void appendChars(CharSequence chars) {
     	appendUnquoted(chars);
     }
-    
+
     protected abstract void appendUnquoted(CharSequence chars);
 
     protected abstract boolean isValid();

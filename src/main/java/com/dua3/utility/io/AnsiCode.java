@@ -2,6 +2,7 @@ package com.dua3.utility.io;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Collection;
 
 import com.dua3.utility.Color;
 import com.dua3.utility.lang.LangUtil;
@@ -31,7 +32,11 @@ public class AnsiCode {
     }
 
     public static <T extends Appendable>
-    void esc(T out, Iterable<Character> args) throws IOException {
+    void esc(T out, Collection<Character> args) throws IOException {
+        if (args.isEmpty()) {
+            return;
+        }
+
         out.append(ESC_START);
         String delimiter = "";
         for (int arg: args) {

@@ -33,42 +33,59 @@ import com.dua3.utility.io.AnsiCode;
 import com.dua3.utility.lang.LangUtil;
 
 /**
- * A {@link RichTextConverterBase} implementation for translating {@code RichText} to
- * HTML.
+ * A {@link RichTextConverterBase} implementation for translating
+ * {@code RichText} to HTML.
  *
  * @author Axel Howind (axel@dua3.com)
  */
 public class AnsiBuilder extends AbstractStringBasedBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(AnsiBuilder.class);
 
-    private static final Map<String,String> DEFAULT_OPTIONS = LangUtil.map(
+    private static final Map<String, String> DEFAULT_OPTIONS = LangUtil.map(
             Pair.of(TAG_DOC_START, AnsiCode.reset()),
             Pair.of(TAG_TEXT_START, ""),
             Pair.of(TAG_TEXT_END, "\n"),
             Pair.of(TARGET_FOR_EXTERNAL_LINKS, "_blank"),
-            Pair.of(REPLACEMENT_FOR_MD_EXTENSION_IN_LINK, null)
-            );
+            Pair.of(REPLACEMENT_FOR_MD_EXTENSION_IN_LINK, null));
+
+    private Color defaultColor = Color.BLACK;
 
     @SafeVarargs
-    public static String toAnsi(RichText text, Function<Style,TextAttributes> styleTraits, Pair<String, String>... options) {
+    public static String toAnsi(RichText text, Function<Style, TextAttributes> styleTraits,
+            Pair<String, String>... options) {
         // create map with default options
-        Map<String,String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
+        Map<String, String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
         LangUtil.putAll(optionMap, options); // add overrrides
 
         return new AnsiBuilder(styleTraits, optionMap).add(text).get();
     }
 
-    private AnsiBuilder(Function<Style, TextAttributes> styleTraits, Map<String,String> options) {
+    private AnsiBuilder(Function<Style, TextAttributes> styleTraits, Map<String, String> options) {
         super(styleTraits, options);
     }
 
-    private final Color defaultColor = Color.BLACK;
+    public Color getDefaultColor() {
+        return defaultColor;
+    }
+
+    public void setDefaultColor(Color defaultColor) {
+        this.defaultColor = defaultColor;
+    }
+
+    private void addColor(List<Character> esc, char code, Object color) {
+        Color c = color == null ? defaultColor : Color.valueOf(color.toString());
+        esc.add(code);
+        esc.add((char) 2);
+        esc.add((char) c.r());
+        esc.add((char) c.g());
+        esc.add((char) c.b());
+    }
 
     @Override
     protected void applyAttributes(TextAttributes attributes) {
         ArrayList<Character> esc = new ArrayList<>();
 
-        for (Entry<String, Object> entry: attributes.entrySet()) {
+        for (Entry<String, Object> entry : attributes.entrySet()) {
             String attribute = entry.getKey();
             Object value = entry.getValue();
 
@@ -87,41 +104,31 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
                 }
                 break;
             case TextAttributes.TEXT_DECORATION:
-            	if (TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE.equals(value)) {
-                    esc.add(AnsiCode.UNDERLINE_ON);            		
-            	} else {
-                    esc.add(AnsiCode.UNDERLINE_OFF);            		
-            	}
+                if (TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE.equals(value)) {
+                    esc.add(AnsiCode.UNDERLINE_ON);
+                } else {
+                    esc.add(AnsiCode.UNDERLINE_OFF);
+                }
                 break;
             case TextAttributes.FONT_STYLE:
-            	if (TextAttributes.FONT_STYLE_VALUE_ITALIC.equals(value)
-            			|| TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value)) {
-                    esc.add(AnsiCode.ITALIC_ON);            		
-            	} else {
-                    esc.add(AnsiCode.ITALIC_OFF);            		
-            	}	
+                if (TextAttributes.FONT_STYLE_VALUE_ITALIC.equals(value)
+                        || TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value)) {
+                    esc.add(AnsiCode.ITALIC_ON);
+                } else {
+                    esc.add(AnsiCode.ITALIC_OFF);
+                }
+                break;
             default:
                 break;
             }
         }
 
-        if (!esc.isEmpty()) {
-            try {
-                AnsiCode.esc(buffer, esc);
-            } catch (IOException e) {
-                LOG.error("could not apply text attributes", e);
-                throw new UncheckedIOException(e);
-            }
+        try {
+            AnsiCode.esc(buffer, esc);
+        } catch (IOException e) {
+            LOG.error("could not apply text attributes", e);
+            throw new UncheckedIOException(e);
         }
-    }
-
-    private void addColor(List<Character> esc, char code, Object color) {
-        Color c = color==null ? defaultColor : Color.valueOf(color.toString());
-        esc.add(code);
-        esc.add((char)2);
-        esc.add((char)c.r());
-        esc.add((char)c.g());
-        esc.add((char)c.b());
     }
 
 }
