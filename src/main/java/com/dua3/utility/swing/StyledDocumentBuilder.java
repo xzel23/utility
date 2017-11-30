@@ -83,8 +83,8 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     private StyledDocumentBuilder(Function<Style, TextAttributes> styleTraits, Map<String, Object> options) {
     	super(styleTraits);
 
-    	this.scale = (float) options.getOrDefault(SCALE, 1f);
-    	this.defaultFontSize = (float) options.getOrDefault(FONT_SIZE, 12f);
+    	this.scale = ((Number) options.getOrDefault(SCALE, 1)).floatValue();
+    	this.defaultFontSize = ((Number) options.getOrDefault(FONT_SIZE, 12)).floatValue();
     	this.attributeSet = (MutableAttributeSet) options.getOrDefault(ATTRIBUTE_SET, new SimpleAttributeSet());
     }
 
@@ -229,7 +229,18 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
                         || TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value));
                 break;
             case TextAttributes.FONT_SIZE:
-                StyleConstants.setFontSize(attributeSet, Math.round(scale*Float.parseFloat(String.valueOf(value))));
+                StyleConstants.setFontSize(
+                		attributeSet,
+                		value==null 
+                		? Math.round(scale*defaultFontSize)
+                		: Math.round(scale*TextUtil.decodeFontSize(String.valueOf(value))));
+                break;
+            case TextAttributes.FONT_SCALE:
+                StyleConstants.setFontSize(
+                		attributeSet, 
+                		value==null 
+                		? Math.round(scale*defaultFontSize)
+                		: Math.round(scale*defaultFontSize*Float.parseFloat(String.valueOf(value))));
                 break;
             case TextAttributes.FONT_WEIGHT:
                 StyleConstants.setBold(attributeSet, TextAttributes.FONT_WEIGHT_VALUE_BOLD.equals(value));
