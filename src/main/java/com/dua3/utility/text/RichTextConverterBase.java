@@ -91,6 +91,11 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         public String prefix() { return prefix; }
 		@Override
         public String suffix() { return suffix; }
+		
+		@Override
+		public String toString() {
+			return attributes.toString()+","+prefix+","+suffix;
+		}
     }
 
     private static class CollectingRunTraits implements RunTraits {
@@ -122,6 +127,11 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     	public String suffix() {
     		return suffix.stream().collect(Collectors.joining());
     	}
+
+    	@Override
+		public String toString() {
+			return attributes.toString()+","+prefix+","+suffix;
+		}
     }
 
     /**
