@@ -154,32 +154,32 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
             MarkDownStyle mds = MarkDownStyle.valueOf(styleName);
             switch (mds) {
             case BLOCK_QUOTE:
-                return new SimpleRunTraits(TextAttributes.none(), "<blockquote>", "</blockquote>");
+                return new RunTraits(TextAttributes.none(), "<blockquote>", "</blockquote>");
             case BULLET_LIST:
-                return new SimpleRunTraits(TextAttributes.none(), "<ul>\n", "</ul>\n");
+                return new RunTraits(TextAttributes.none(), "<ul>\n", "</ul>\n");
             case CODE:
-                return new SimpleRunTraits(TextAttributes.none(), "<code>", "</code>");
+                return new RunTraits(TextAttributes.none(), "<code>", "</code>");
             case DOCUMENT:
-                return new SimpleRunTraits(TextAttributes.none(), "", "");
+                return new RunTraits(TextAttributes.none(), "", "");
             case EMPHASIS:
-                return new SimpleRunTraits(TextAttributes.none(), "<em>", "</em>");
+                return new RunTraits(TextAttributes.none(), "<em>", "</em>");
             case FENCED_CODE_BLOCK:
-                return new SimpleRunTraits(TextAttributes.none(), "<pre><code>\n", "</code></pre>\n");
+                return new RunTraits(TextAttributes.none(), "<pre><code>\n", "</code></pre>\n");
             case HARD_LINE_BREAK:
-                return new SimpleRunTraits(TextAttributes.none(), "\n<br>", "");
+                return new RunTraits(TextAttributes.none(), "\n<br>", "");
             case HEADING:
-                return new SimpleRunTraits(
+                return new RunTraits(
                         TextAttributes.none(),
                         "<h" + style.get(MarkDownStyle.ATTR_HEADING_LEVEL)
                                 + attrText(style, MarkDownStyle.ATTR_ID, "id", "")
                                 + ">",
                         "</h" + style.get(MarkDownStyle.ATTR_HEADING_LEVEL) + ">");
             case THEMATIC_BREAK:
-                return new SimpleRunTraits(TextAttributes.none(), "\n<hr>", "");
+                return new RunTraits(TextAttributes.none(), "\n<hr>", "");
             // HTML_BLOCK
             // HTML_INLINE
             case IMAGE:
-                return new SimpleRunTraits(TextAttributes.none(),
+                return new RunTraits(TextAttributes.none(),
                         "<img"
                                 + attrText(style, MarkDownStyle.ATTR_IMAGE_SRC, "src", "")
                                 + attrText(style, MarkDownStyle.ATTR_IMAGE_TITLE, "title", null)
@@ -187,19 +187,19 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
                                 + ">",
                         "");
             case INDENTED_CODE_BLOCK:
-                return new SimpleRunTraits(TextAttributes.none(), "<pre><code>\n", "</code></pre>\n");
+                return new RunTraits(TextAttributes.none(), "<pre><code>\n", "</code></pre>\n");
             case LINK:
-                return new SimpleRunTraits(TextAttributes.none(), createHRefOpen(style), createHRefClose(style));
+                return new RunTraits(TextAttributes.none(), createHRefOpen(style), createHRefClose(style));
             case LIST_ITEM:
-                return new SimpleRunTraits(TextAttributes.none(), "<li>", "</li>");
+                return new RunTraits(TextAttributes.none(), "<li>", "</li>");
             case ORDERED_LIST:
-                return new SimpleRunTraits(TextAttributes.none(), "<ol>\n", "</ol>\n");
+                return new RunTraits(TextAttributes.none(), "<ol>\n", "</ol>\n");
             case PARAGRAPH:
-                return new SimpleRunTraits(TextAttributes.none(), "<p>", "</p>");
+                return new RunTraits(TextAttributes.none(), "<p>", "</p>");
             case SOFT_LINE_BREAK:
-                return new SimpleRunTraits(TextAttributes.none(), "", "&shy;");
+                return new RunTraits(TextAttributes.none(), "", "&shy;");
             case STRONG_EMPHASIS:
-                return new SimpleRunTraits(TextAttributes.none(), "<strong>", "</strong>");
+                return new RunTraits(TextAttributes.none(), "<strong>", "</strong>");
             // CUSTOM_BLOCK
             // CUSTOM_NODE
             default:
@@ -223,11 +223,11 @@ public class HtmlBuilder extends AbstractStringBasedBuilder {
     }
 
     @Override
-    protected SimpleRunTraits createTraits(Run run) {
+    protected RunTraits createTraits(Run run) {
         TextAttributes attributes = TextAttributes.of(
                 run.getAttributes().entrySet().stream()
                 .collect(Collectors.toMap(Entry::getKey, this::getFilteredValue)));
-        return new SimpleRunTraits(attributes);
+        return new RunTraits(attributes);
     }
 
     @SuppressWarnings("unchecked")

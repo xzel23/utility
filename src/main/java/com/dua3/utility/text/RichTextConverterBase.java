@@ -21,10 +21,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.dua3.utility.Color;
 import com.dua3.utility.lang.LangUtil;
@@ -44,21 +42,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     private final Function<Style, TextAttributes> styleTraits;
 
     protected RunTraits getTraits(Style style) {
-        return new SimpleRunTraits(styleTraits.apply(style));
-    }
-
-    /**
-     * The traits of a Run, consisting of:
-     * <ul>
-     * <li> the TextAttributes to apply
-     * <li> text to prepend
-     * <li> text to append
-     * </ul>
-     */
-    public interface RunTraits {
-    	TextAttributes attributes();
-    	String prefix();
-    	String suffix();
+        return new RunTraits(styleTraits.apply(style));
     }
 
     private Color defaultColor = Color.BLACK;
@@ -75,22 +59,30 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         return color == null ? defaultColor : Color.valueOf(color.toString());
     }
 
-    private static final RunTraits EMPTY_RUN_TRAITS = new SimpleRunTraits(TextAttributes.none());
+    private static final RunTraits EMPTY_RUN_TRAITS = new RunTraits(TextAttributes.none());
 
     public static RunTraits emptyTraits() {
         return EMPTY_RUN_TRAITS;
     }
 
-    public static class SimpleRunTraits implements RunTraits {
+    /**
+     * The traits of a Run, consisting of:
+     * <ul>
+     * <li> the TextAttributes to apply
+     * <li> text to prepend
+     * <li> text to append
+     * </ul>
+     */
+    public static class RunTraits {
     	private final TextAttributes attributes;
 		private final String prefix;
 		private final String suffix;
 
-		public SimpleRunTraits(TextAttributes attributes) {
+		public RunTraits(TextAttributes attributes) {
 			this(attributes, "", "");
 		}
 
-		public SimpleRunTraits(TextAttributes attributes, String prefix, String suffix) {
+		public RunTraits(TextAttributes attributes, String prefix, String suffix) {
 			this.attributes = attributes;
 			this.prefix = extract(attributes, TextAttributes.STYLE_START_RUN, TextAttributes.TEXT_PREFIX)+prefix;
             this.suffix = suffix+extract(attributes, TextAttributes.STYLE_END_RUN, TextAttributes.TEXT_SUFFIX);
@@ -102,61 +94,13 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
             return styles.stream().map(s -> s.getOrDefault(tag,"").toString()).collect(Collectors.joining());
         }
 
-        @Override
         public TextAttributes attributes() { return attributes; }
-		@Override
         public String prefix() { return prefix; }
-		@Override
         public String suffix() { return suffix; }
 
 		@Override
-		public String toString() {
+        public String toString() {
 			return attributes.toString()+",\""+prefix+"\",\""+suffix+"\"";
-		}
-    }
-
-    private static class CollectingRunTraits implements RunTraits {
-    	private final Map<String,Object> attributes = new HashMap<>();
-    	private final Deque<String> prefix = new LinkedList<>();
-    	private final Deque<String> suffix = new LinkedList<>();
-
-    	/**
-    	 * Merge properties of another RunTraits instance.
-    	 * @param other the RunTraits instance to merge
-    	 * @param mergeAttributes flag whether attributes should be merged
-    	 * @param mergePrefix flag whether prefixes should be merged
-    	 * @param mergeSuffix flag whether suffixes should be merged
-    	 */
-    	public void mergeIn(RunTraits other, boolean mergeAttributes, boolean mergePrefix, boolean mergeSuffix) {
-            if (mergeAttributes) {
-                attributes.putAll(other.attributes());
-            }
-    		if (mergePrefix) {
-    		    prefix.add(other.prefix());
-    		}
-    		if (mergeSuffix) {
-    		    suffix.add(other.suffix());
-    		}
-    	}
-
-    	@Override
-    	public TextAttributes attributes() {
-    		return TextAttributes.of(attributes);
-    	}
-
-    	@Override
-    	public String prefix() {
-    		return prefix.stream().collect(Collectors.joining());
-    	}
-
-    	@Override
-    	public String suffix() {
-    		return suffix.stream().collect(Collectors.joining());
-    	}
-
-    	@Override
-		public String toString() {
-			return attributes.toString()+","+prefix+","+suffix;
 		}
     }
 
@@ -198,7 +142,6 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      *            the {@link com.dua3.utility.text.Run} to append
      */
     protected void append(Run run) {
-
         String suffix = handleRunEnds(run);
         String prefix = handleRunStarts(run);
         appendUnquoted(suffix);
@@ -212,40 +155,53 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         resetAttr.push(resetAttributes);
     }
 
-    String handleRunEnds(Run run) {
-        List<Style> styles = getStyleList(run, TextAttributes.STYLE_END_RUN);
+    private String handleRunEnds(Run run) {
+        StringBuilder suffix = new StringBuilder();
 
-        CollectingRunTraits traits = new CollectingRunTraits();
+        List<Style> styles = getStyleList(run, TextAttributes.STYLE_END_RUN);
         styles.stream().map(this::getTraits)
         .forEach(t -> {
             popRunAttributes();
-            // merge traits
-            traits.mergeIn(t, false, false, true);
+            suffix.append(t.suffix());
         });
 
-        return  traits.suffix();
+        return  suffix.toString();
     }
 
     private void popRunAttributes() {
+        // restore the attributes
         TextAttributes attributes = TextAttributes.of(resetAttr.pop());
         applyAttributes(attributes);
-
-        for (Entry<String, Object> e : attributes.entrySet()) {
-            String attr = e.getKey();
-            Object value = e.getValue();
-            if (value != null) {
-                currentAttributes.put(attr, value);
-            } else {
-                currentAttributes.remove(attr);
-            }
-        }
+        // update currentAttributes with the new values
+        attributes.entrySet().forEach(entry -> currentAttributes.put(entry.getKey(), entry.getValue()));
     }
 
     String handleRunStarts(Run run) {
+        StringBuilder prefix = new StringBuilder();
+
     	// process styles whose runs start at this position
-        CollectingRunTraits traits = extractRunTraits(run);
-        applyAttributes(traits.attributes());
-        return traits.prefix();
+        List<Style> styles = getStyleList(run, TextAttributes.STYLE_START_RUN);
+
+        // collect traits for this run
+        RunTraits currentTraits = createTraits(run);
+        prefix.append(currentTraits.prefix());
+
+        Map<String,Object> attributes = new HashMap<>(currentTraits.attributes());
+        styles.stream().map(this::getTraits)
+        	.forEach(t -> {
+        		// store current attributes for resetting at end of style
+                Map<String,Object> m = new HashMap<>();
+        	    t.attributes().keySet().stream()
+        	        .filter(attr ->  !attr.startsWith("__"))
+        	        .forEach(attr -> m.put(attr, currentAttributes.get(attr)));
+        	    pushRunAttributes(m);
+        	    // also store for updating the actual style
+                attributes.putAll(t.attributes());
+        		// merge traits
+        	    prefix.append(t.prefix());
+        	});
+        applyAttributes(TextAttributes.of(attributes));
+        return prefix.toString();
     }
 
     /**
@@ -254,31 +210,9 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      */
     protected abstract void applyAttributes(TextAttributes attributes);
 
-    private CollectingRunTraits extractRunTraits(Run run) {
-    	List<Style> styles = getStyleList(run, TextAttributes.STYLE_START_RUN);
-
-        // collect traits for this run
-        RunTraits currentTraits = createTraits(run);
-
-        CollectingRunTraits traits = new CollectingRunTraits();
-        HashMap<String,Object> m = new HashMap<>();
-		Stream.concat(styles.stream().map(this::getTraits), Stream.of(currentTraits))
-			.forEach(t -> {
-				// store current attributes for resetting at end of style
-			    t.attributes().keySet().stream()
-			        .filter(attr ->  !attr.startsWith("__"))
-			        .forEach(attr -> m.put(attr, currentAttributes.get(attr)));
-				// merge traits
-				traits.mergeIn(t, true, true, false);
-			});
-		pushRunAttributes(m);
-
-		return traits;
-    }
-
-    protected SimpleRunTraits createTraits(Run run) {
+    protected RunTraits createTraits(Run run) {
         TextAttributes attributes = run.getAttributes();
-        return new SimpleRunTraits(attributes);
+        return new RunTraits(attributes);
     }
 
 	@SuppressWarnings("unchecked")

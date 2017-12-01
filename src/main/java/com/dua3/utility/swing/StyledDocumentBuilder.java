@@ -225,20 +225,21 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
                 StyleConstants.setFontFamily(attributeSet, String.valueOf(value));
                 break;
             case TextAttributes.FONT_STYLE:
-                StyleConstants.setItalic(attributeSet, TextAttributes.FONT_STYLE_VALUE_ITALIC.equals(value)
+                StyleConstants.setItalic(attributeSet,
+                        TextAttributes.FONT_STYLE_VALUE_ITALIC.equals(value)
                         || TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value));
                 break;
             case TextAttributes.FONT_SIZE:
                 StyleConstants.setFontSize(
                 		attributeSet,
-                		value==null 
+                		value==null
                 		? Math.round(scale*defaultFontSize)
                 		: Math.round(scale*TextUtil.decodeFontSize(String.valueOf(value))));
                 break;
             case TextAttributes.FONT_SCALE:
                 StyleConstants.setFontSize(
-                		attributeSet, 
-                		value==null 
+                		attributeSet,
+                		value==null
                 		? Math.round(scale*defaultFontSize)
                 		: Math.round(scale*defaultFontSize*Float.parseFloat(String.valueOf(value))));
                 break;
