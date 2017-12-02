@@ -216,10 +216,10 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 
             switch (attribute) {
             case TextAttributes.COLOR:
-                StyleConstants.setForeground(attributeSet, SwingUtil.toAwtColor(getColor(value)));
+                StyleConstants.setForeground(attributeSet, SwingUtil.toAwtColor(getColor(value, getDefaultFgColor())));
                 break;
             case TextAttributes.BACKGROUND_COLOR:
-                StyleConstants.setBackground(attributeSet, SwingUtil.toAwtColor(getColor(value)));
+                StyleConstants.setBackground(attributeSet, SwingUtil.toAwtColor(getColor(value, getDefaultBgColor())));
                 break;
             case TextAttributes.FONT_FAMILY:
                 StyleConstants.setFontFamily(attributeSet, String.valueOf(value));

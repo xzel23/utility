@@ -45,17 +45,26 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         return new RunTraits(styleTraits.apply(style));
     }
 
-    private Color defaultColor = Color.BLACK;
+    private Color defaultFgColor = Color.BLACK;
+    private Color defaultBgColor = Color.WHITE;
 
-    public Color getDefaultColor() {
-        return defaultColor;
+    public Color getDefaultFgColor() {
+        return defaultFgColor;
     }
 
-    public void setDefaultColor(Color defaultColor) {
-        this.defaultColor = defaultColor;
+    public void setDefaultFgColor(Color c) {
+        this.defaultFgColor = c;
     }
 
-    protected Color getColor(Object color) {
+    public Color getDefaultBgColor() {
+		return defaultBgColor;
+	}
+    
+    public void setDefaultBgColor(Color defaultBgColor) {
+		this.defaultBgColor = defaultBgColor;
+	}
+    
+    protected Color getColor(Object color, Color defaultColor) {
         return color == null ? defaultColor : Color.valueOf(color.toString());
     }
 

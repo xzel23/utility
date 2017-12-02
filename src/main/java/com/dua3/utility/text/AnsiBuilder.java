@@ -62,8 +62,7 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
         super(styleTraits, options);
     }
 
-    private void addColor(List<Character> esc, char code, Object color) {
-        Color c = getColor(color);
+    private void addColor(List<Character> esc, char code, Color c) {
         esc.add(code);
         esc.add((char) 2);
         esc.add((char) c.r());
@@ -81,10 +80,10 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
 
             switch (attribute) {
             case TextAttributes.COLOR:
-                addColor(esc, AnsiCode.COLOR, value);
+                addColor(esc, AnsiCode.COLOR, getColor(value, getDefaultFgColor()));
                 break;
             case TextAttributes.BACKGROUND_COLOR:
-                addColor(esc, AnsiCode.BACKGROUND_COLOR, value);
+                addColor(esc, AnsiCode.BACKGROUND_COLOR, getColor(value, getDefaultBgColor()));
                 break;
             case TextAttributes.FONT_WEIGHT:
                 if (TextAttributes.FONT_WEIGHT_VALUE_BOLD.equals(value)) {
