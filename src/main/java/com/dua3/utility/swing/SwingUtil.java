@@ -222,7 +222,7 @@ public class SwingUtil {
      *         java.awt.Color
      */
     public static java.awt.Color toAwtColor(Color color) {
-        return new java.awt.Color(color.argb());
+        return new java.awt.Color(color.argb(), color.a()!=0xff);
     }
     
     /**
