@@ -320,7 +320,11 @@ public final class Color {
     public static final Color YELLOW = register("YELLOW", 0xFFFFFF00);
     /** The color YELLOWGREEN. */
     public static final Color YELLOWGREEN = register("YELLOWGREEN", 0xFF9ACD32);
-
+    /** The color TRANSPARENT. */
+    public static final Color TRANSPARENT_WHITE = register("TRANSPARENT_WHITE", 0x00FFFFFF);
+    /** The color TRANSPARENT. */
+    public static final Color TRANSPARENT_BLACK = register("TRANSPARENT_WHITE", 0x00000000);
+    
     private static final double F_BRIGHTEN = 0.7;
 
     private static final int SHIFT_A = 24;

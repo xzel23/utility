@@ -202,6 +202,18 @@ public class SwingUtil {
     }
     
     /**
+     * Convert java.awt.Color to Color.
+     *
+     * @param color
+     *         java.awt.Color to be converted
+     * @return
+     *         Color
+     */
+    public static Color toColor(java.awt.Color color) {
+        return new Color(color.getRed(),color.getGreen(),color.getBlue(), color.getAlpha());
+    }
+    
+    /**
      * Convert Color to java.awt.Color.
      *
      * @param color

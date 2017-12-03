@@ -34,6 +34,7 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
@@ -86,8 +87,16 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     	this.scale = ((Number) options.getOrDefault(SCALE, 1)).floatValue();
     	this.defaultFontSize = ((Number) options.getOrDefault(FONT_SIZE, 12)).floatValue();
     	this.attributeSet = (MutableAttributeSet) options.getOrDefault(ATTRIBUTE_SET, new SimpleAttributeSet());
+
+        setDefaultFgColor(getColor(this.attributeSet, StyleConstants.Foreground, Color.BLACK));
+        setDefaultBgColor(getColor(this.attributeSet, StyleConstants.Foreground, Color.TRANSPARENT_WHITE));
     }
 
+    private static Color getColor(AttributeSet as, Object key, Color dfltColor) {
+        Object value = as.getAttribute(key);
+        return value != null ? SwingUtil.toColor((java.awt.Color) value) : dfltColor;
+    }
+    
     @Override
     public StyledDocument get() {
         // apply paragraph styles
