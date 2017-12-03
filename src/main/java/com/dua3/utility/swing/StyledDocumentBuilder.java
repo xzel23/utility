@@ -89,7 +89,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     	this.attributeSet = (MutableAttributeSet) options.getOrDefault(ATTRIBUTE_SET, new SimpleAttributeSet());
 
         setDefaultFgColor(getColor(this.attributeSet, StyleConstants.Foreground, Color.BLACK));
-        setDefaultBgColor(getColor(this.attributeSet, StyleConstants.Foreground, Color.TRANSPARENT_WHITE));
+        setDefaultBgColor(getColor(this.attributeSet, StyleConstants.Background, Color.TRANSPARENT_WHITE));
     }
 
     private static Color getColor(AttributeSet as, Object key, Color dfltColor) {

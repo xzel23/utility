@@ -37,10 +37,13 @@ public class ColorTest {
             int r = c.r();
             int g = c.g();
             int b = c.b();
-            String text = String.format("rgb(%d,%d,%d)", r, g, b);
-            Color actual = Color.valueOf(text);
+            int a = c.a();
             
-            Assert.assertEquals(expected, actual);
+            if (a==0xFF) {
+            	String text = String.format("rgb(%d,%d,%d)", r, g, b);
+            	Color actual = Color.valueOf(text);
+                Assert.assertEquals(expected, actual);
+            }            
         }
     }
     

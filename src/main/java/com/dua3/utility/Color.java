@@ -617,7 +617,7 @@ public final class Color {
      */
     @Override
     public String toString() {
-        return "#" + Integer.toHexString(argb);
+    	return String.format("#%08x", argb);
     }
 
 }
