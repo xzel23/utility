@@ -53,7 +53,8 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
 
     private static final Object[] PARAGRAPH_ATTRIBUTES = {
-            StyleConstants.ParagraphConstants.LeftIndent
+            StyleConstants.ParagraphConstants.LeftIndent,
+            StyleConstants.ParagraphConstants.Alignment
     };
 
     /** Option to set the scaling factor. */
@@ -274,6 +275,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
                 // TODO
                 break;
             default:
+            	LOG.warn("unknown: {}", attribute);
                 break;
             }
         }
