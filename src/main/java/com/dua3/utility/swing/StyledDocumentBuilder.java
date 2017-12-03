@@ -271,9 +271,14 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
                     break;
                 }
                 break;
+            case TextAttributes.FONT_VARIANT:
+            	break;
             case TextAttributes.TEXT_INDENT_LEFT:
                 // TODO
                 break;
+            case TextAttributes.STYLE_START_RUN:
+            case TextAttributes.STYLE_END_RUN:
+            	break;
             default:
             	LOG.warn("unknown: {}", attribute);
                 break;
