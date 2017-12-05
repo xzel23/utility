@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.swing.text.AttributeSet;
@@ -134,86 +133,9 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         return pa;
     }
 
-    private void setFontFamily(MutableAttributeSet as, Object value) {
-        String family = String.valueOf(value);
-        // translate standard fontspec families to corresponding Java names that are guaranteed to be present
-        // see https://docs.oracle.com/javase/8/docs/technotes/guides/intl/fontconfig.html
-        // > The Java Platform defines five logical font names that every implementation must support:
-        // > Serif, SansSerif, Monospaced, Dialog, and DialogInput. These logical font names are mapped
-        // > to physical fonts in implementation dependent ways.
-        switch (family) {
-        case TextAttributes.FONT_FAMILY_VALUE_MONOSPACE:
-            StyleConstants.setFontFamily(as, "Monospaced");
-            break;
-        case TextAttributes.FONT_FAMILY_VALUE_SANS_SERIF:
-            StyleConstants.setFontFamily(as, "SansSerif");
-            break;
-        case TextAttributes.FONT_FAMILY_VALUE_SERIF:
-            StyleConstants.setFontFamily(as, "Serif");
-            break;
-        default:
-            StyleConstants.setFontFamily(as, family);
-            break;
-        }
-    }
-
-    private void setFontScale(MutableAttributeSet as, Object value) {
-        setFontSize(as, ((Number)value).floatValue()*defaultFontSize );
-    }
-    private void setFontSize(MutableAttributeSet as, Object value) {
-        double fontSize = TextUtil.decodeFontSize(String.valueOf(value));
-        StyleConstants.setFontSize(as, (int) Math.round(scale * fontSize));
-    }
-
     @Override
     protected boolean isValid() {
         return buffer != null;
-    }
-
-    Map<String, BiConsumer<MutableAttributeSet, Object>> defaultStyles() {
-        Map<String, BiConsumer<MutableAttributeSet, Object>> dfltStyles = new HashMap<>();
-
-        // TextAttributes.STYLE_NAME: unused
-        dfltStyles.put(TextAttributes.FONT_FAMILY, this::setFontFamily);
-        dfltStyles.put(TextAttributes.FONT_SCALE, this::setFontScale);
-        dfltStyles.put(TextAttributes.FONT_SIZE, this::setFontSize);
-        dfltStyles.put(TextAttributes.COLOR,
-                (as, v) -> StyleConstants.setForeground(as, SwingUtil.toAwtColor(String.valueOf(v))));
-        dfltStyles.put(TextAttributes.BACKGROUND_COLOR,
-                (as, v) -> StyleConstants.setBackground(as, SwingUtil.toAwtColor(String.valueOf(v))));
-        dfltStyles.put(TextAttributes.FONT_WEIGHT,
-                (as, v) -> StyleConstants.setBold(as, v.equals(TextAttributes.FONT_WEIGHT_VALUE_BOLD)));
-        dfltStyles.put(TextAttributes.FONT_STYLE, (as, v) -> {
-            switch (String.valueOf(v)) {
-            case TextAttributes.FONT_STYLE_VALUE_NORMAL:
-                StyleConstants.setItalic(as, false);
-                break;
-            case TextAttributes.FONT_STYLE_VALUE_ITALIC:
-            case TextAttributes.FONT_STYLE_VALUE_OBLIQUE:
-                StyleConstants.setItalic(as, true);
-                break;
-            default:
-                LOG.warn("Unknown value for FONT_STYLE: {}", v);
-                break;
-            }
-        });
-        dfltStyles.put(TextAttributes.TEXT_DECORATION, (as, v) -> {
-            switch (String.valueOf(v)) {
-            case TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH:
-                StyleConstants.setStrikeThrough(as, true);
-                break;
-            case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE:
-                StyleConstants.setUnderline(as, true);
-                break;
-            default:
-                LOG.warn("Unknown value for TEXT_DECORATION: {}", v);
-                break;
-            }
-        });
-        dfltStyles.put(TextAttributes.TEXT_INDENT_LEFT, (as, v) -> {
-            StyleConstants.setLeftIndent(as, Float.valueOf(v.toString()));
-        });
-        return dfltStyles;
     }
 
     private final MutableAttributeSet attributeSet;
