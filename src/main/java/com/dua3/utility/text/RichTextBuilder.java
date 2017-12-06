@@ -17,6 +17,7 @@ package com.dua3.utility.text;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -32,13 +33,18 @@ import java.util.TreeMap;
 public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer = new StringBuilder();
-
     private final SortedMap<Integer, Map<String,Object>> parts = new TreeMap<>();
-
+    private final TextAttributes defaults;
+    
     /**
      * Construct a new empty builder.
      */
     public RichTextBuilder() {
+        this(TextAttributes.defaults());
+    }
+
+    public RichTextBuilder(TextAttributes defaultAttributes) {
+        this.defaults = defaultAttributes;
         parts.put(0, new HashMap<>());
     }
 
@@ -57,6 +63,11 @@ public class RichTextBuilder implements Appendable, ToRichText {
     @Override
     public Appendable append(CharSequence csq, int start, int end) {
         buffer.append(csq, start, end);
+        return this;
+    }
+
+    public RichTextBuilder append(ToRichText trt) {
+        trt.appendTo(this);
         return this;
     }
 
@@ -79,7 +90,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @return the last stored value for this property on the stack
      */
     public Object pop(String property) {
-        Object prev = null;
+        Object prev = defaults.get(property);
         for (Map.Entry<Integer, Map<String,Object>> e : parts.entrySet()) {
             if (Objects.equals(e.getKey(), parts.lastKey())) {
                 break;
@@ -114,6 +125,11 @@ public class RichTextBuilder implements Appendable, ToRichText {
      */
     @Override
     public RichText toRichText() {
+        Run[] runs = getRuns();
+        return new RichText(runs);
+    }
+
+    private Run[] getRuns() {
         String text = buffer.toString();
         Run[] runs = new Run[parts.size()];
 
@@ -133,8 +149,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
             style = e.getValue();
         }
         runs[runIdx] = new Run(text, start, text.length() - start, TextAttributes.of(style));
-
-        return new RichText(text, runs);
+        return runs;
     }
 
     @Override
@@ -151,6 +166,23 @@ public class RichTextBuilder implements Appendable, ToRichText {
             parts.put(buffer.length(), style);
         }
         return style;
+    }
+
+    @Override
+    public void appendTo(RichTextBuilder buffer) {
+        for (Run run: getRuns()) {
+            buffer.appendRun(run);
+        }
+    }
+
+    private void appendRun(Run run) {
+        for ( Entry<String, Object> entry: run.getAttributes().entrySet()) {
+            push(entry.getKey(), entry.getValue());            
+        }
+        append(run);
+        for (String k: run.getAttributes().keySet()) {
+            pop(k);            
+        }
     }
 
 }

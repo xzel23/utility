@@ -25,7 +25,7 @@ import com.dua3.utility.lang.LangUtil;
 public class Run
         implements CharSequence {
 
-    private final String text;
+    private final CharSequence text;
     private final int start;
     private final int length;
     private final TextAttributes attributes;
@@ -42,7 +42,7 @@ public class Run
      * @param style
      *            style for the Run
      */
-    Run(String text, int start, int length, TextAttributes style) {
+    Run(CharSequence text, int start, int length, TextAttributes style) {
     	LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
 
         this.text = Objects.requireNonNull(text);
@@ -127,7 +127,10 @@ public class Run
 
     @Override
     public String toString() {
-        return text.substring(start, start + length);
+        return text.subSequence(start, start + length).toString();
     }
 
+    CharSequence base() {
+        return text;
+    }
 }

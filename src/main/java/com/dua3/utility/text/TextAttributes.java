@@ -93,6 +93,7 @@ public class TextAttributes extends AbstractMap<String,Object> {
             Pair.of(FONT_FAMILY, FONT_FAMILY_VALUE_SANS_SERIF),
             Pair.of(FONT_STYLE, FONT_STYLE_VALUE_NORMAL),
             Pair.of(FONT_SIZE, "10pt"),
+            Pair.of(FONT_SCALE, 1),
             Pair.of(FONT_WEIGHT, FONT_WEIGHT_VALUE_NORMAL),
             Pair.of(FONT_VARIANT, FONT_VARIANT_VALUE_NORMAL),
             Pair.of(TEXT_DECORATION, TEXT_DECORATION_VALUE_NONE),

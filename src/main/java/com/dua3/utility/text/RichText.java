@@ -16,10 +16,8 @@
 package com.dua3.utility.text;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -31,36 +29,6 @@ public class RichText
         implements Iterable<Run> {
 
     private static final RichText EMPTY_TEXT = RichText.valueOf("");
-
-    private static final Comparator<RichText> COMPARATOR = (RichText o1, RichText o2) -> o1.text.compareTo(o2.text);
-
-    private static final Comparator<RichText> COMPARATOR_CASE_INSENSITIVE = (RichText o1, RichText o2) -> o1.text
-            .compareToIgnoreCase(o2.text);
-
-    /**
-     * Get comparator.
-     *
-     * <b>Note:</b> This ordering is inconsistent with equals because the
-     * comparator returned only compares texts and completely ignores
-     * formatting. In consequence, the comparator violates the condition
-     * {@code (x.compareTo(y)==0) == (x.equals(y)) } if {@code x} and {@code y}
-     * are instances of {@code RichText} that differ only in formatting.
-     *
-     * @return comparator for instances of {@code RichText}.
-     */
-    public static Comparator<RichText> comparator() {
-        return COMPARATOR;
-    }
-
-    /**
-     * Get case insensitive comparator. <b>Note:</b> this ordering is
-     * inconsistent with equals.
-     *
-     * @return case insensitive comparator for instances of {@code RichText}.
-     */
-    public static Comparator<RichText> comparatorIgnoreCase() {
-        return COMPARATOR_CASE_INSENSITIVE;
-    }
 
     /**
      * Returns the empty String as RichText.
@@ -83,20 +51,29 @@ public class RichText
      * @return RichText representation of s
      */
     public static RichText valueOf(String s) {
-        return new RichText(s, Arrays.asList(new Run(s, 0, s.length(), TextAttributes.none())));
+        return new RichText(Arrays.asList(new Run(s, 0, s.length(), TextAttributes.none())));
     }
 
-    private final String text;
-
+    private final CharSequence text;
     private final List<Run> runs;
 
-    RichText(String text, List<Run> runs) {
-        this.text = Objects.requireNonNull(text);
-        this.runs = runs;
+    RichText(List<Run> runs) {
+        this.text = runs.isEmpty() ? "" : runs.get(0).base();
+        this.runs = runs;        
+        
+        assert checkAllRunsHaveTextAsBase(runs);
     }
 
-    RichText(String text, Run[] runs) {
-        this(text, Arrays.asList(runs));
+    private boolean checkAllRunsHaveTextAsBase(List<Run> runs) {
+        boolean ok = true;
+        for (Run run: runs) {
+            ok &= run.base()==text;
+        }
+        return ok;
+    }
+
+    RichText(Run[] runs) {
+        this(Arrays.asList(runs));
     }
 
     @Override
@@ -120,7 +97,7 @@ public class RichText
      * @return true, if the text is empty.
      */
     public boolean isEmpty() {
-        return text.isEmpty();
+        return text.length()==0;
     }
 
     @Override
@@ -148,7 +125,7 @@ public class RichText
 
     @Override
     public String toString() {
-        return text;
+        return text.toString();
     }
 
 }

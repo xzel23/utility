@@ -3,10 +3,12 @@ package com.dua3.utility.lang;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.dua3.utility.Pair;
 
@@ -183,5 +185,21 @@ public class LangUtil {
         HashMap<K,V> map = new HashMap<>();
         putAllIfAbsent(map, items);
         return Collections.unmodifiableMap(map);
+    }
+
+    /** 
+     * Test streams for equality.
+     * @param s1 first stream
+     * @param s2 second stream
+     * @return true, if and only if both streams are equal elementwise
+     */
+    public static <T> boolean equals(Stream<T> s1, Stream<T> s2) {
+        Iterator<T> iter1 = s1.iterator(), iter2 = s2.iterator();
+        while(iter1.hasNext() && iter2.hasNext()) {
+            if (!Objects.equals(iter1.next(), iter2.next())) {
+                return false;
+            }
+        }
+        return !!iter1.hasNext() && !iter2.hasNext();
     }
 }
