@@ -16,6 +16,7 @@ public class SoftResource<T> {
 
     /**
      * Create a soft resource.
+     * @param <T> the type of the resource
      * @param supplier the resource supplier; the supplier should upon each invocation return equal instances
      * @return soft resource
      */
@@ -25,6 +26,7 @@ public class SoftResource<T> {
 
     /**
      * Create an empty soft resource.
+     * @param <T> the type of the resource
      * @return empty soft resource
      */
     public static <T> SoftResource<T> emptyReference() {

@@ -187,19 +187,21 @@ public class LangUtil {
         return Collections.unmodifiableMap(map);
     }
 
-    /** 
+    /**
      * Test streams for equality.
+     * @param <T> the element type
      * @param s1 first stream
      * @param s2 second stream
      * @return true, if and only if both streams are equal elementwise
      */
     public static <T> boolean equals(Stream<T> s1, Stream<T> s2) {
-        Iterator<T> iter1 = s1.iterator(), iter2 = s2.iterator();
+        Iterator<T> iter1 = s1.iterator();
+        Iterator<T> iter2 = s2.iterator();
         while(iter1.hasNext() && iter2.hasNext()) {
             if (!Objects.equals(iter1.next(), iter2.next())) {
                 return false;
             }
         }
-        return !!iter1.hasNext() && !iter2.hasNext();
+        return !iter1.hasNext() && !iter2.hasNext();
     }
 }

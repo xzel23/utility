@@ -139,16 +139,36 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public void appendTo(RichTextBuilder buffer) {
+    public void appendTo(RichTextBuilder builder) {
+        builder.ensureCapacity(builder.length()+this.length());
         for (Run run: getRuns()) {
-            buffer.appendRun(run);
+            builder.appendRun(run);
         }
     }
 
+    /**
+     * Ensures that the capacity is at least equal to the specified minimum.
+     * @param   minimumCapacity   the minimum desired capacity.
+     * @see StringBuilder#ensureCapacity(int)
+     */
+    public void ensureCapacity (int minimumCapacity) {
+        buffer.ensureCapacity(minimumCapacity);
+    }
+
+    /**
+     * Returns the length (character count).
+     * @return  the length of the sequence of characters
+     */
+    public int length() {
+        return buffer.length();
+    }
+
     private void appendRun(Run run) {
-        for ( Entry<String, Object> entry: run.getAttributes().entrySet()) {
+        // set attributes
+        for (Entry<String, Object> entry: run.getAttributes().entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
+        // append CharSequence
         append(run);
     }
 
