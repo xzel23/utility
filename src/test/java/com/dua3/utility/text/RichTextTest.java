@@ -26,22 +26,22 @@ import org.junit.Test;
  * @author Axel Howind
  */
 public class RichTextTest {
-    
+
     public RichTextTest() {
     }
-    
+
     @Test
     public void testRichTextBuilding() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.push(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
         builder.append("world");
-        builder.pop(TextAttributes.FONT_WEIGHT);
+        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
         builder.append("!");
-        
+
         RichText rt = builder.toRichText();
         assertEquals("Hello world!", rt.toString());
         assertEquals("Hello world!", rt.stream().collect(Collectors.joining()));
     }
-    
+
 }

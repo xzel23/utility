@@ -18,15 +18,13 @@ package com.dua3.utility.text;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
  * A builder class for rich text data.
  * <p> A rich text is created by appending strings to the builder using the {@link #append(CharSequence)}
- * method or one of its overloads. Style properties are set using {@link #push(String, Object)} and then 
- * reset using {@link #pop(String)}.
+ * method or one of its overloads. Style properties are set using {@link #put(String, Object)}.
  * </p>
  * @author axel
  */
@@ -34,17 +32,11 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer = new StringBuilder();
     private final SortedMap<Integer, Map<String,Object>> parts = new TreeMap<>();
-    private final TextAttributes defaults;
-    
+
     /**
      * Construct a new empty builder.
      */
     public RichTextBuilder() {
-        this(TextAttributes.defaults());
-    }
-
-    public RichTextBuilder(TextAttributes defaultAttributes) {
-        this.defaults = defaultAttributes;
         parts.put(0, new HashMap<>());
     }
 
@@ -83,39 +75,17 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     /**
-     * Remove and return the value of a property from the property stack.
-     *
-     * @param property
-     *            the property
-     * @return the last stored value for this property on the stack
-     */
-    public Object pop(String property) {
-        Object prev = defaults.get(property);
-        for (Map.Entry<Integer, Map<String,Object>> e : parts.entrySet()) {
-            if (Objects.equals(e.getKey(), parts.lastKey())) {
-                break;
-            }
-            prev = e.getValue().getOrDefault(property, prev);
-        }
-        Object current = currentStyle().get(property);
-        if (prev != null) {
-            currentStyle().put(property, prev);
-        } else {
-            currentStyle().remove(property);
-        }
-        return current;
-    }
-
-    /**
      * Push a style property.
      *
      * @param property
      *            the property to set
      * @param value
      *            the value to be set
+     * @return
+     *            the old value for this attribute
      */
-    public void push(String property, Object value) {
-        currentStyle().put(property, value);
+    public Object put(String property, Object value) {
+        return currentStyle().put(property, value);
     }
 
     /**
@@ -177,12 +147,9 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private void appendRun(Run run) {
         for ( Entry<String, Object> entry: run.getAttributes().entrySet()) {
-            push(entry.getKey(), entry.getValue());            
+            put(entry.getKey(), entry.getValue());
         }
         append(run);
-        for (String k: run.getAttributes().keySet()) {
-            pop(k);            
-        }
     }
 
 }
