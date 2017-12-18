@@ -133,4 +133,12 @@ public class Run
     CharSequence base() {
         return text;
     }
+
+    /**
+     * Check if run is empty.
+     * @return true, if this run does not contain text.
+     */
+    public boolean isEmpty() {
+        return length==0;
+    }
 }

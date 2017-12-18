@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BlockQuote;
@@ -60,6 +61,30 @@ class RichTextRenderer {
 
     static class RTVisitor extends AbstractVisitor {
 
+        RunStyle setRunAttr(Style s) {
+            return new RunStyle(s);
+        }
+
+        private class RunStyle implements AutoCloseable {
+            final Style style;
+
+            RunStyle(Style style) {
+                push(TextAttributes.STYLE_START_RUN, style);
+                this.style = style;
+            }
+
+            @Override
+            public void close() {
+                push(TextAttributes.STYLE_END_RUN, style);
+            }
+
+            private void push(String key, Style attr) {
+                @SuppressWarnings("unchecked")
+                List<Style> current = (List<Style>) app.getOrSupply(key, LinkedList::new);
+                current.add(attr);
+            }
+        }
+
         private final RichTextBuilder app;
         private boolean atStartOfLine = true;
 
@@ -112,10 +137,20 @@ class RichTextRenderer {
         public void visit(BlockQuote node) {
 			Style attr = createStyle(MarkDownStyle.BLOCK_QUOTE);
             appendNewLineIfNeeded();
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
             appendNewLineIfNeeded();
+        }
+
+        private <N extends Node> void applyStyleAndVisit(N node, Style attr, Consumer<N> visitor, String prefix, String suffix) {
+            try (RunStyle runStyle = new RunStyle(attr)) {
+                appendText(prefix);
+                visitor.accept(node);
+                appendText(suffix);
+            }
+        }
+
+        private <N extends Node> void applyStyleAndVisit(N node, Style attr, Consumer<N> visitor) {
+            applyStyleAndVisit(node, attr, visitor, "", "");
         }
 
 		@SafeVarargs
@@ -128,19 +163,14 @@ class RichTextRenderer {
             startList(ListType.UNORDERED);
             Style attr = createStyle(MarkDownStyle.BULLET_LIST);
             appendNewLineIfNeeded();
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
             endList();
         }
 
         @Override
         public void visit(Code node) {
             Style attr = createStyle(MarkDownStyle.CODE);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            appendText(node.getLiteral());
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit, node.getLiteral(), "");
         }
 
         private void appendText(String literal) {
@@ -154,53 +184,39 @@ class RichTextRenderer {
         public void visit(CustomBlock node) {
             Style attr = createStyle(MarkDownStyle.CUSTOM_BLOCK);
             appendNewLineIfNeeded();
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
             appendNewLineIfNeeded();
         }
 
         @Override
         public void visit(CustomNode node) {
             Style attr = createStyle(MarkDownStyle.CUSTOM_NODE);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
         }
 
         @Override
         public void visit(Document node) {
             Style attr = createStyle(MarkDownStyle.DOCUMENT);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
         }
 
         @Override
         public void visit(Emphasis node) {
             Style attr = createStyle(MarkDownStyle.EMPHASIS);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
         }
 
         @Override
         public void visit(FencedCodeBlock node) {
             Style attr = createStyle(MarkDownStyle.FENCED_CODE_BLOCK);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            appendText(node.getLiteral());
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit, node.getLiteral(), "");
             appendNewLineIfNeeded();
         }
 
         @Override
         public void visit(HardLineBreak node) {
             Style attr = createStyle(MarkDownStyle.HARD_LINE_BREAK);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            appendText("\n");
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit, "\n", "");
             appendNewLineIfNeeded();
         }
 
@@ -211,29 +227,21 @@ class RichTextRenderer {
                     Pair.of(MarkDownStyle.ATTR_HEADING_LEVEL, node.getLevel()),
                     Pair.of(MarkDownStyle.ATTR_ID, id));
             appendNewLineIfNeeded();
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
             appendNewLineIfNeeded();
         }
 
         @Override
         public void visit(HtmlBlock node) {
             Style attr = createStyle(MarkDownStyle.HTML_BLOCK);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            appendText(node.getLiteral());
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit, node.getLiteral(), "");
             appendNewLineIfNeeded();
         }
 
         @Override
         public void visit(HtmlInline node) {
             Style attr = createStyle(MarkDownStyle.HTML_INLINE);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            appendText(node.getLiteral());
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit, node.getLiteral(), "");
         }
 
         @Override
@@ -245,17 +253,13 @@ class RichTextRenderer {
                     Pair.of(MarkDownStyle.ATTR_IMAGE_TITLE, node.getTitle()),
                     Pair.of(MarkDownStyle.ATTR_IMAGE_ALT, altText));
 
-            push(TextAttributes.STYLE_START_RUN, attr);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, n -> {/*TODO*/});
         }
 
         @Override
         public void visit(IndentedCodeBlock node) {
             Style attr = createStyle(MarkDownStyle.INDENTED_CODE_BLOCK);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            appendText(node.getLiteral());
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit, node.getLiteral(), "");
             appendNewLineIfNeeded();
         }
 
@@ -265,9 +269,7 @@ class RichTextRenderer {
                     Pair.of(MarkDownStyle.ATTR_LINK_HREF, node.getDestination()),
                     Pair.of(MarkDownStyle.ATTR_LINK_TITLE, node.getTitle()),
                     Pair.of(MarkDownStyle.ATTR_LINK_EXTERN, !node.getDestination().startsWith("#")));
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
         }
 
         @Override
@@ -279,9 +281,7 @@ class RichTextRenderer {
                     Pair.of(TextAttributes.TEXT_PREFIX, getListItemPrefix(item.first, item.second))
                 );
             appendNewLineIfNeeded();
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
             appendNewLineIfNeeded();
         }
 
@@ -301,9 +301,7 @@ class RichTextRenderer {
             startList(ListType.ORDERED);
             Style attr = createStyle(MarkDownStyle.ORDERED_LIST);
             appendNewLineIfNeeded();
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
             appendNewLineIfNeeded();
             endList();
         }
@@ -311,9 +309,7 @@ class RichTextRenderer {
         @Override
         public void visit(Paragraph node) {
             Style attr = createStyle(MarkDownStyle.PARAGRAPH);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
             appendText("\n");
         }
 
@@ -331,19 +327,14 @@ class RichTextRenderer {
         @Override
         public void visit(SoftLineBreak node) {
             Style attr = createStyle(MarkDownStyle.SOFT_LINE_BREAK);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            // TODO what to put here?
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit, /* TODO: soft linebreak in RichText? */ "", "");
             appendNewLineIfNeeded();
         }
 
         @Override
         public void visit(StrongEmphasis node) {
             Style attr = createStyle(MarkDownStyle.STRONG_EMPHASIS);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
         }
 
         @Override
@@ -355,9 +346,7 @@ class RichTextRenderer {
         @Override
         public void visit(ThematicBreak node) {
             Style attr = createStyle(MarkDownStyle.THEMATIC_BREAK);
-            push(TextAttributes.STYLE_START_RUN, attr);
-            super.visit(node);
-            push(TextAttributes.STYLE_END_RUN, attr);
+            applyStyleAndVisit(node, attr, super::visit);
             appendNewLineIfNeeded();
         }
 
@@ -365,12 +354,6 @@ class RichTextRenderer {
             LiteralCollectingVisitor lcv = new LiteralCollectingVisitor();
             consumer.accept(lcv, node);
             return lcv.toString();
-        }
-
-        private void push(String key, Style attr) {
-            @SuppressWarnings("unchecked")
-            List<Style> current = (List<Style>) app.getOrSupply(key, LinkedList::new);
-            current.add(attr);
         }
 
     }

@@ -59,11 +59,11 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     public Color getDefaultBgColor() {
 		return defaultBgColor;
 	}
-    
+
     public void setDefaultBgColor(Color defaultBgColor) {
 		this.defaultBgColor = defaultBgColor;
 	}
-    
+
     protected Color getColor(Object color, Color defaultColor) {
         return color == null ? defaultColor : Color.valueOf(color.toString());
     }
