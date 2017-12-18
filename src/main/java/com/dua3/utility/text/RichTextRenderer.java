@@ -1,6 +1,7 @@
 package com.dua3.utility.text;
 
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -67,21 +68,42 @@ class RichTextRenderer {
 
         private class RunStyle implements AutoCloseable {
             final Style style;
+            final int start;
+            final List<Style> styleList;
 
+            @SuppressWarnings("unchecked")
             RunStyle(Style style) {
-                push(TextAttributes.STYLE_START_RUN, style);
                 this.style = style;
+                this.start = app.length();
+                this.styleList = (List<Style>) app.getOrSupply(TextAttributes.STYLE_START_RUN, LinkedList::new);
+                this.styleList.add(style);
             }
 
             @Override
             public void close() {
-                push(TextAttributes.STYLE_END_RUN, style);
+                int end = app.length();
+                if (end==start) {
+                    pop(style);
+                } else {
+                    push(TextAttributes.STYLE_END_RUN, style);
+                }
             }
 
             private void push(String key, Style attr) {
                 @SuppressWarnings("unchecked")
                 List<Style> current = (List<Style>) app.getOrSupply(key, LinkedList::new);
                 current.add(attr);
+            }
+
+            private void pop(Style attr) {
+                for (Iterator<Style> iter = styleList.iterator(); iter.hasNext(); ) {
+                    if (iter.next()== attr) {
+                        iter.remove();
+                        return;
+                    }
+                }
+                // should never happen because style was added in push()
+                throw new IllegalStateException();
             }
         }
 
