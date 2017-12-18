@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
 /**
  * A builder class for rich text data.
@@ -72,6 +73,19 @@ public class RichTextBuilder implements Appendable, ToRichText {
      */
     public Object get(String property) {
         return currentStyle().get(property);
+    }
+
+    /**
+     * Get attribute of the current Run, or compute and store a new one if not present.
+     *
+     * @param property
+     *            the property
+     * @param supplier
+     *            the supplier to create a new value if the property is not yet set
+     * @return value of the property
+     */
+    public Object getOrSupply(String property, Supplier<? extends Object> supplier) {
+        return currentStyle().computeIfAbsent(property, key -> supplier.get());
     }
 
     /**
@@ -128,14 +142,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     private Map<String,Object> currentStyle() {
-        final Map<String,Object> style;
-        if (parts.lastKey() == buffer.length()) {
-            style = parts.get(parts.lastKey());
-        } else {
-            style = new HashMap<>();
-            parts.put(buffer.length(), style);
-        }
-        return style;
+        return parts.computeIfAbsent(buffer.length(), key -> new HashMap<>());
     }
 
     @Override

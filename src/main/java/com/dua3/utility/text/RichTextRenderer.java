@@ -369,11 +369,7 @@ class RichTextRenderer {
 
         private void push(String key, Style attr) {
             @SuppressWarnings("unchecked")
-            List<Style> current = (List<Style>) app.get(key);
-            if (current == null) {
-                current = new LinkedList<>();
-                app.put(key, current);
-            }
+            List<Style> current = (List<Style>) app.getOrSupply(key, LinkedList::new);
             current.add(attr);
         }
 
