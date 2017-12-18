@@ -46,7 +46,7 @@ public enum MarkDownStyle {
             Pair.of(TextAttributes.TEXT_INDENT_LEFT, TextAttributes.TEXT_INDENT_LEFT_VALUE_1)
             ),
     LINK(
-            Pair.of(TextAttributes.COLOR, Color.DARKBLUE.toString()),
+            Pair.of(TextAttributes.COLOR, Color.BLUE.toString()),
             Pair.of(TextAttributes.TEXT_DECORATION, TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE)
             ),
     LIST_ITEM,
