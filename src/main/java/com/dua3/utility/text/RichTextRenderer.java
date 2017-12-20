@@ -368,7 +368,7 @@ class RichTextRenderer {
         @Override
         public void visit(ThematicBreak node) {
             Style attr = createStyle(MarkDownStyle.THEMATIC_BREAK);
-            applyStyleAndVisit(node, attr, super::visit);
+            applyStyleAndVisit(node, attr, super::visit, "\n", "");
             appendNewLineIfNeeded();
         }
 
