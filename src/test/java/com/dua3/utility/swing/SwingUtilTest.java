@@ -18,7 +18,9 @@ import com.dua3.utility.text.RichText;
 
 public class SwingUtilTest extends JFrame {
 
-    public static void main(String[] args) throws Exception {
+	private static final long serialVersionUID = 1L;
+
+	public static void main(String[] args) throws Exception {
         SwingUtil.setNativeLookAndFeel(SwingUtilTest.class.getSimpleName());
 
         String testfile = args.length == 0 ? "syntax.md" : args[0];
