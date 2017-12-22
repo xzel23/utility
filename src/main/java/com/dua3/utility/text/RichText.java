@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * Sequences of characters that share the same formatting attributes form a {@link Run}.
  */
 public class RichText
-        implements Iterable<Run> {
+        implements Iterable<Run>, ToRichText {
 
     private static final RichText EMPTY_TEXT = RichText.valueOf("");
 
@@ -128,4 +128,14 @@ public class RichText
         return text.toString();
     }
 
+	@Override
+	public void appendTo(RichTextBuilder builder) {
+        builder.ensureCapacity(builder.length()+this.length());
+        stream().forEach(builder::appendRun);
+	}
+
+	@Override
+	public RichText toRichText() {
+		return this;
+	}
 }

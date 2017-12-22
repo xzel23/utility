@@ -170,7 +170,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
         return buffer.length();
     }
 
-    private void appendRun(Run run) {
+    void appendRun(Run run) {
         // set attributes
         for (Entry<String, Object> entry: run.getAttributes().entrySet()) {
             put(entry.getKey(), entry.getValue());
