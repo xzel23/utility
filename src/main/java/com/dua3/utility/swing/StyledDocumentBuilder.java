@@ -15,9 +15,11 @@
  */
 package com.dua3.utility.swing;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -36,8 +38,10 @@ import org.slf4j.LoggerFactory;
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextConverterBase;
+import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextUtil;
@@ -70,10 +74,10 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         Map<String, Object> optionMap = new HashMap<>(DEFAULT_OPTIONS);
         LangUtil.putAll(optionMap, options); // add overrrides
 
-        return new StyledDocumentBuilder(styleTraits, optionMap).add(text).get();
+        return new StyledDocumentBuilder(new DefaultStyledDocument(), styleTraits, optionMap).add(text).get();
     }
 
-    private StyledDocument buffer = new DefaultStyledDocument();
+    private StyledDocument buffer;
 
     private float scale = 1;
 
@@ -81,9 +85,11 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 
     private final float defaultFontSize;
 
-    private StyledDocumentBuilder(Function<Style, TextAttributes> styleTraits, Map<String, Object> options) {
+    private StyledDocumentBuilder(StyledDocument buffer, Function<Style, TextAttributes> styleTraits, Map<String, Object> options) {
     	super(styleTraits);
 
+    	this.buffer = buffer;
+    	
     	this.scale = ((Number) options.getOrDefault(SCALE, 1)).floatValue();
     	this.defaultFontSize = ((Number) options.getOrDefault(FONT_SIZE, 12)).floatValue();
     	this.attributeSet = (MutableAttributeSet) options.getOrDefault(ATTRIBUTE_SET, new SimpleAttributeSet());
@@ -222,4 +228,53 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 	    }
 	}
 
+	private boolean htmlMode = false;
+	
+	@Override
+	protected void append(Run run) {
+		TextAttributes attrs = run.getAttributes();
+
+		// look if HTML mode ends here
+		List<?> styleEnd = (List<?>) attrs.getOrDefault(TextAttributes.STYLE_END_RUN, Collections.emptyList());		
+		toggleHtmlMode(styleEnd, false);
+		
+		// look if HTML mode starts here
+		List<?> styleStart = (List<?>) attrs.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList());		
+		toggleHtmlMode(styleStart, true);
+		
+		super.append(run);
+	}
+	
+	@Override
+	protected void appendChars(CharSequence chars) {
+		if (htmlMode) { 
+			appendHTML(chars);
+		} else {
+			super.appendChars(chars);
+		}
+		
+	}
+
+	private void appendHTML(CharSequence chars) {
+		// TODO
+		appendUnquoted(chars);
+	}
+
+	private void toggleHtmlMode(List<?> styleEnd, boolean enable) {
+		for (Object obj: styleEnd) {
+			if (obj instanceof Style) {
+				Style s = (Style) obj;
+				Object styleClass = s.get(TextAttributes.STYLE_CLASS);
+				Object styleName = s.get(TextAttributes.STYLE_NAME);
+				if (MarkDownStyle.CLASS.equals(styleClass)
+						&& (MarkDownStyle.HTML_BLOCK.name().equals(styleName)
+								|| MarkDownStyle.HTML_INLINE.name().equals(styleName))) {
+					if (htmlMode==enable) {
+						LOG.warn("HTML-mode: inconsistency detected");
+					}
+					htmlMode = enable;
+				}
+			}
+		}
+	}
 }
