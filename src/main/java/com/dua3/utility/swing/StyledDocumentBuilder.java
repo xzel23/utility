@@ -255,8 +255,13 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 
 	}
 
+    private static String PATTERN_TAG_OPEN = "<(?<tag>[a-zA-Z]\\w*)( (?<attribute>[a-zA-Z]\\\\w*)=(?<value>(\"[^\"]*\"|'[^']*'|\\w+)))*(?<closing>/)?>";
+    private static String PATTERN_TAG_CLOSE = "</(?<tag>[a-zA-Z]\\w*)>";
+
 	private void appendHTML(CharSequence chars) {
-		// TODO
+	    // TODO extract and hanlde tags
+	    int start = TextUtil.indexOf(chars, '<');
+
 		appendUnquoted(chars);
 	}
 
