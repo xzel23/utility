@@ -22,15 +22,15 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     /** Replace '.md' file extension in local links (i.e. with ".html") */
     public static final String REPLACEMENT_FOR_MD_EXTENSION_IN_LINK = "REPLACEMENT_FOR_MD_EXTENSION_IN_LINK";
 
-    /** The internal buffer that stores the HTML data. */
+    /** The internal buffer that stores the data. */
     protected StringBuilder buffer = new StringBuilder();
     /** Text to place at document start (i.e. document type declaration in HTML). */
     protected final String docStart;
     /** Text to place at document end. */
     protected final String docEnd;
-    /** The text that starts HTML code (something like "{@code <html>}"). */
+    /** The text to be prefixed to the buffer (i.e. "{@code <html>}" in HTML). */
     protected final String textStart;
-    /** The text that ends HTML code (something like "{@code </html>}"). */
+    /** The text to be appended to the buffer (i.e. "{@code </html>}" in HTML). */
     protected final String textEnd;
     /** The extension to use for MD-files (i.e. so that links point to the translated HTML). */
     protected final String replaceMdExtensionWith;
