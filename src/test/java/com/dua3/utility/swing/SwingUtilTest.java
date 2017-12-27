@@ -11,6 +11,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.text.StyledDocument;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.MarkDownTest;
 import com.dua3.utility.text.MarkDownUtil;
@@ -20,13 +23,20 @@ public class SwingUtilTest extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
+    private static final Logger LOG = LoggerFactory.getLogger(SwingUtilTest.class);
+
 	public static void main(String[] args) throws Exception {
+	    LOG.info("setting native look and feel");
         SwingUtil.setNativeLookAndFeel(SwingUtilTest.class.getSimpleName());
 
         String testfile = args.length == 0 ? "syntax.md" : args[0];
+        LOG.info("test file is '{}'", testfile);
+
         SwingUtilTest inst = new SwingUtilTest(testfile);
         inst.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         inst.setSize(new Dimension(800,600));
+        LOG.info("instance created");
+
         inst.setVisible(true);
     }
 
@@ -57,10 +67,15 @@ public class SwingUtilTest extends JFrame {
         }
 
         void setSource(String mdSource) {
+            LOG.info("setting source");
             sourceComponent.setText(mdSource);
+            LOG.info("creating RichText from source");
             RichText richtext = MarkDownUtil.convert(mdSource);
+            LOG.info("converting RichText to StyledDocument");
 			StyledDocument doc = StyledDocumentBuilder.toStyledDocument(richtext, MarkDownStyle::getAttributes);
+            LOG.info("updating document in UI component");
             mdComponent.setDocument(doc);
+            LOG.info("source set");
         }
 
     }
