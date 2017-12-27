@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.StyledDocument;
 
 import org.slf4j.Logger;
@@ -32,20 +33,23 @@ public class SwingUtilTest extends JFrame {
         String testfile = args.length == 0 ? "syntax.md" : args[0];
         LOG.info("test file is '{}'", testfile);
 
-        SwingUtilTest inst = new SwingUtilTest(testfile);
-        inst.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        inst.setSize(new Dimension(800,600));
-        LOG.info("instance created");
-
-        inst.setVisible(true);
+        SwingUtilities.invokeLater(()->{
+            SwingUtilTest inst = new SwingUtilTest(testfile);
+            inst.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            inst.setSize(new Dimension(800,600));
+            LOG.info("instance created");
+            inst.setVisible(true);
+        });
     }
 
-    public SwingUtilTest(String testfile) throws Exception {
+    public SwingUtilTest(String testfile) {
         super("Swing Utilities test");
         JTabbedPane tabs = new JTabbedPane();
         add(tabs);
         tabs.add("MarkDown Test", new MdTestPanel(testfile));
+        LOG.info("packing layout");
         pack();
+        LOG.info("SwingUtilTest");
     }
 
     static class MdTestPanel extends JPanel {
@@ -54,7 +58,7 @@ public class SwingUtilTest extends JFrame {
         private JTextPane mdComponent = new JTextPane();
         private JTextArea sourceComponent = new JTextArea();
 
-        public MdTestPanel(String testfile) throws Exception {
+        public MdTestPanel(String testfile) {
             setLayout(new BorderLayout());
             String mdSource = MarkDownTest.getTestData(testfile);
 
