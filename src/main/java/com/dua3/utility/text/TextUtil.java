@@ -129,4 +129,76 @@ public class TextUtil {
         return !iter1.hasNext() && !iter2.hasNext();
     }
 
+    /**
+     * Find char in CharSequence.
+     * @param haystack
+     *      the sequence to search
+     * @param needle
+     *      the char to find
+     * @return
+     *      the position where the char was found or -1 if not found
+     */
+    public static int indexOf(CharSequence haystack, char needle) {
+        return indexOf(haystack, needle, 0);
+    }
+
+    /**
+     * Find text in CharSequence.
+     * @param haystack
+     *      the sequence to search
+     * @param needle
+     *      the sequence to find
+     * @return
+     *      the position where the sequence was found or -1 if not found
+     */
+    public static int indexOf(CharSequence haystack, CharSequence needle) {
+        return indexOf(haystack, needle, 0);
+    }
+
+    /**
+     * Find char in CharSequence.
+     * @param haystack
+     *      the sequence to search
+     * @param needle
+     *      the char to find
+     * @param fromIndex
+     *      the index to start from
+     * @return
+     *      the position where the char was found or -1 if not found
+     */
+    public static int indexOf(CharSequence haystack, char needle, int fromIndex) {
+        final int haystackLength = haystack.length();
+        for (int pos=fromIndex; pos<haystackLength; pos++) {
+            if (haystack.charAt(pos) == needle) {
+                return pos;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Find text in CharSequence.
+     * @param haystack
+     *      the sequence to search
+     * @param needle
+     *      the sequence to find
+     * @param fromIndex
+     *      the index to start from
+     * @return
+     *      the position where the sequence was found or -1 if not found
+     */
+    public static int indexOf(CharSequence haystack, CharSequence needle, int fromIndex) {
+        final int haystackLength = haystack.length();
+        final int needleLength = needle.length();
+        outer: for (int pos=fromIndex; pos<haystackLength-needleLength+1; pos++) {
+            for (int i=0;i<needleLength;i++) {
+                if (haystack.charAt(pos+i) != needle.charAt(i)) {
+                    continue outer;
+                }
+            }
+            return pos;
+        }
+        return -1;
+    }
+
 }
