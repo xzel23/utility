@@ -89,7 +89,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     	super(styleTraits);
 
     	this.buffer = buffer;
-    	
+
     	this.scale = ((Number) options.getOrDefault(SCALE, 1)).floatValue();
     	this.defaultFontSize = ((Number) options.getOrDefault(FONT_SIZE, 12)).floatValue();
     	this.attributeSet = (MutableAttributeSet) options.getOrDefault(ATTRIBUTE_SET, new SimpleAttributeSet());
@@ -102,7 +102,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         Object value = as.getAttribute(key);
         return value != null ? SwingUtil.toColor((java.awt.Color) value) : dfltColor;
     }
-    
+
     @Override
     public StyledDocument get() {
         // apply paragraph styles
@@ -229,30 +229,30 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 	}
 
 	private boolean htmlMode = false;
-	
+
 	@Override
 	protected void append(Run run) {
 		TextAttributes attrs = run.getAttributes();
 
 		// look if HTML mode ends here
-		List<?> styleEnd = (List<?>) attrs.getOrDefault(TextAttributes.STYLE_END_RUN, Collections.emptyList());		
+		List<?> styleEnd = (List<?>) attrs.getOrDefault(TextAttributes.STYLE_END_RUN, Collections.emptyList());
 		toggleHtmlMode(styleEnd, false);
-		
+
 		// look if HTML mode starts here
-		List<?> styleStart = (List<?>) attrs.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList());		
+		List<?> styleStart = (List<?>) attrs.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList());
 		toggleHtmlMode(styleStart, true);
-		
+
 		super.append(run);
 	}
-	
+
 	@Override
 	protected void appendChars(CharSequence chars) {
-		if (htmlMode) { 
+		if (htmlMode) {
 			appendHTML(chars);
 		} else {
 			super.appendChars(chars);
 		}
-		
+
 	}
 
 	private void appendHTML(CharSequence chars) {
@@ -267,8 +267,9 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 				Object styleClass = s.get(TextAttributes.STYLE_CLASS);
 				Object styleName = s.get(TextAttributes.STYLE_NAME);
 				if (MarkDownStyle.CLASS.equals(styleClass)
-						&& (MarkDownStyle.HTML_BLOCK.name().equals(styleName)
-								|| MarkDownStyle.HTML_INLINE.name().equals(styleName))) {
+				        && LangUtil.isOneOf(styleName,
+				                MarkDownStyle.HTML_BLOCK.name(),
+				                MarkDownStyle.HTML_INLINE.name().equals(styleName))) {
 					if (htmlMode==enable) {
 						LOG.warn("HTML-mode: inconsistency detected");
 					}
