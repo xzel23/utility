@@ -1,8 +1,11 @@
 package com.dua3.utility.text;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -39,35 +42,41 @@ public class MarkDownTest {
         }
     }
 
-    static String getHtml() throws Exception {
+    static String getHtml() {
         String mdText = getTestDataSource();
         RichText richText = MarkDownUtil.convert(mdText);
         return HtmlBuilder.toHtml(richText, MarkDownStyle::getAttributes);
     }
 
-    static String getAnsi() throws Exception {
+    static String getAnsi() {
         String mdText = getTestDataSource();
         RichText richText = MarkDownUtil.convert(mdText);
         return AnsiBuilder.toAnsi(richText, MarkDownStyle::getAttributes);
     }
 
     @Test
-    public void testMarkDown() throws Exception {
+    public void testMarkDown() {
         String htmlActual = getHtml();
         String htmlExpected = getTestDataExpectedHtml();
 
         Assert.assertEquals(htmlExpected, htmlActual);
     }
 
-    public static String getTestData(String filename) throws Exception {
-        return IOUtil.read(Paths.get(MarkDownTest.class.getResource(filename).toURI()), StandardCharsets.UTF_8);
+    public static String getTestData(String filename) {
+        try {
+            return IOUtil.read(Paths.get(MarkDownTest.class.getResource(filename).toURI()), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException();
+        }
     }
 
-    public static String getTestDataSource() throws Exception {
+    public static String getTestDataSource() {
         return getTestData("syntax.md");
     }
 
-    public static String getTestDataExpectedHtml() throws Exception {
+    public static String getTestDataExpectedHtml() {
         return getTestData("syntax.html");
     }
 }
