@@ -144,7 +144,7 @@ public class FileSystemView implements AutoCloseable {
             /* NOOP */ });
     }
 
-    private static FileSystemView createFileSystemView(FileSystem fs, String path) throws IOException {
+    private static FileSystemView createFileSystemView(FileSystem fs, String path) {
         Path root = fs.getPath(path);
         return new FileSystemView(root, fs::close);
     }
@@ -153,7 +153,7 @@ public class FileSystemView implements AutoCloseable {
 
     private final CleanUp cleanup;
 
-    private FileSystemView(Path root, CleanUp cleanup) throws IOException {
+    private FileSystemView(Path root, CleanUp cleanup) {
         this.cleanup = cleanup;
         this.root = root.toAbsolutePath();
     }
