@@ -1,5 +1,7 @@
 package com.dua3.utility.swing;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +60,16 @@ public class DocumentExt extends DefaultStyledDocument {
 		public void addComponent(String id, String name, JTextField component) {
 			component.addActionListener(e -> {
 				getDocument().set(name, component.getText());
+			});
+			component.addFocusListener(new FocusListener() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					getDocument().set(name, component.getText());
+				}				
+				@Override
+				public void focusGained(FocusEvent e) {
+					// nop
+				}
 			});
 			addComponentRef(id, component);
 		}
