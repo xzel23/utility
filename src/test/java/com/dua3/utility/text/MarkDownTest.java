@@ -44,13 +44,13 @@ public class MarkDownTest {
 
     static String getHtml() {
         String mdText = getTestDataSource();
-        RichText richText = MarkDownUtil.convert(mdText);
+        RichText richText = MarkDownUtil.toRichText(mdText);
         return HtmlBuilder.toHtml(richText, MarkDownStyle::getAttributes);
     }
 
     static String getAnsi() {
         String mdText = getTestDataSource();
-        RichText richText = MarkDownUtil.convert(mdText);
+        RichText richText = MarkDownUtil.toRichText(mdText);
         return AnsiBuilder.toAnsi(richText, MarkDownStyle::getAttributes);
     }
 

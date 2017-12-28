@@ -73,7 +73,7 @@ public class SwingUtilTest extends JFrame {
             LOG.info("setting source");
             sourceComponent.setText(mdSource);
             LOG.info("creating RichText from source");
-            RichText richtext = MarkDownUtil.convert(mdSource);
+            RichText richtext = MarkDownUtil.toRichText(mdSource);
             LOG.info("converting RichText to StyledDocument");
 			DocumentExt doc = StyledDocumentBuilder.toStyledDocument(richtext, MarkDownStyle::getAttributes);
             LOG.info("updating document in UI component");

@@ -328,6 +328,8 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
 	}
 
     static class Tag {
+        private static final java.awt.Color TRANSPARENT = new java.awt.Color(0xffffff, true);
+
         private final String name;
         private final Map<String,String> attributes;
 
@@ -358,11 +360,14 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
             case "checkbox": {
                     JCheckBox component = new JCheckBox();
                     LangUtil.consumeIfPresent(attributes, "checked", v -> component.setSelected(true));
+                    component.setBackground(TRANSPARENT);
+                    component.setBackground(TRANSPARENT);
                     return component;
                 }
             case "radio": {
                 JRadioButton component = new JRadioButton();
                 LangUtil.consumeIfPresent(attributes, "selected", v -> component.setSelected(true));
+                component.setBackground(TRANSPARENT);
                 return component;
             }
             default:
