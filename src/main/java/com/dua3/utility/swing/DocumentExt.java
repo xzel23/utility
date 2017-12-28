@@ -89,7 +89,7 @@ public class DocumentExt extends DefaultStyledDocument {
 		}
 		
 		public void addComponent(String id, String name, JRadioButton component) {
-			ButtonGroup group = getButtonGroup(id);
+			ButtonGroup group = getButtonGroup(name);
 			group.add(component);
 			component.addActionListener(e -> {
 				ButtonModel selection = group.getSelection();
