@@ -11,4 +11,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.dua3.utility.swing.SwingUtilTest"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="form.md"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="utility"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.slf4j.simpleLogger.defaultLogLevel=trace"/>
 </launchConfiguration>

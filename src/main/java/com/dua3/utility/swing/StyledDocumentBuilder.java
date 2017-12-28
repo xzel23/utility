@@ -15,6 +15,7 @@
  */
 package com.dua3.utility.swing;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -22,7 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -66,6 +70,10 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     public static final String FONT_SIZE = "font-size";
 
     private static final Map<String, Object> DEFAULT_OPTIONS = LangUtil.map(Pair.of(SCALE, 1f));
+
+    private static final List<String> VOID_HTML_ELEMENTS = Arrays.asList(
+            "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"
+        );
 
     @SafeVarargs
     public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleTraits,
@@ -111,6 +119,9 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
             buffer.setParagraphAttributes(pos, e.first, e.second, false);
             pos += e.first;
         }
+
+        // consistency checks
+        LangUtil.check(openedTags.isEmpty(), "there still are open tags");
 
         // mark builder invalid by clearing buffer
         StyledDocument ret = buffer;
@@ -255,17 +266,116 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 
 	}
 
-    private static String PATTERN_TAG_OPEN = "<(?<tag>[a-zA-Z]\\w*)( (?<attribute>[a-zA-Z]\\\\w*)=(?<value>(\"[^\"]*\"|'[^']*'|\\w+)))*(?<closing>/)?>";
-    private static String PATTERN_TAG_CLOSE = "</(?<tag>[a-zA-Z]\\w*)>";
+	private static final Pattern PATTERN_ATTRIBUTE = Pattern.compile(
+	        "(?<attribute>[a-zA-Z]\\w*)=(?<value>(\"[^\"]*\"|'[^']*'|\\w+))"
+	    );
+    private static final Pattern PATTERN_TAG_OPEN = Pattern.compile(
+            "<(?<tagOpen>[a-zA-Z]\\w*)(?<attributes>( "+PATTERN_ATTRIBUTE+")*)(?<selfclosing>/)?>"
+        );
+    private static final Pattern PATTERN_TAG_CLOSE = Pattern.compile(
+            "</(?<tagClose>[a-zA-Z]\\w*)>"
+        );
+    private static final Pattern PATTERN_TAG = Pattern.compile(
+            PATTERN_TAG_OPEN.toString()+"|"+PATTERN_TAG_CLOSE.toString()
+        );
 
-	private void appendHTML(CharSequence chars) {
-	    // TODO extract and hanlde tags
-	    int start = TextUtil.indexOf(chars, '<');
+    private final Deque<String> openedTags = new LinkedList<>();
 
-		appendUnquoted(chars);
+    private void appendHTML(CharSequence chars) {
+	    Matcher matcher = PATTERN_TAG.matcher(chars);
+
+	    int pos = 0;
+	    while (matcher.find(pos)) {
+	        int start = matcher.start();
+	        int end = matcher.end();
+
+	        // append normal text that comes before the next tag found
+	        CharSequence textBefore = chars.subSequence(pos, start);
+	        super.appendChars(textBefore);
+
+	        // handle tag
+	        Optional<CharSequence> tagOpen = TextUtil.group(matcher, chars, "tagOpen");
+            Optional<CharSequence> tagClose = TextUtil.group(matcher, chars, "tagClose");
+            LangUtil.check(
+                    tagOpen.isPresent()^tagClose.isPresent(),
+                    "matcher is expected to find either an opening or a closing tag"
+                );
+
+            if (tagOpen.isPresent()) {
+                // opening tag
+                String tag = tagOpen.get().toString();
+                Map<String,String> attributes = extractAttributes(TextUtil.group(matcher, chars, "attributes")
+                        .orElseThrow(IllegalStateException::new));
+                boolean selfClosing = TextUtil.group(matcher, chars, "selfclosing").isPresent();
+
+                appendTag(tag, attributes, selfClosing);
+            }
+
+            if (tagClose.isPresent()) {
+                // closing tag
+                closeTag(tagClose.get().toString());
+            }
+
+            // advance position to the end of this match
+            pos = end;
+	    }
+
+	    CharSequence text = chars.subSequence(pos, chars.length());
+        super.appendChars(text);
 	}
 
-	private void toggleHtmlMode(List<?> styleEnd, boolean enable) {
+	private void appendTag(String tag, Map<String, String> attributes, boolean selfClosing) {
+        LOG.debug("insert {}tag <{}> with attributes {}", selfClosing?"selfclosing " : "", tag, attributes);
+
+        if (selfClosing) {
+            LOG.debug("<{}/>", tag);
+        } else if (VOID_HTML_ELEMENTS.contains(tag)) {
+            LOG.debug("<{}> [void element, no closing tag expected]", tag);
+        } else {
+            openedTags.push(tag);
+            LOG.debug("<{}>", tag);
+        }
+    }
+
+    private void closeTag(String tag) {
+        LangUtil.check(!openedTags.isEmpty(), "there are no tags open (trying to close <%s>)", tag);
+        String popped = openedTags.pop();
+        LangUtil.check(popped.equals(tag), "tag mismatch, expected </%s>, found </%s>", popped, tag);
+        LOG.debug("</{}>", tag);
+    }
+
+    /**
+	 * Extract attribute definitions from tag declaration.
+	 * @param chars
+	 *     the text to process, a sequence in the form {@code attr1=value1 attr2="value2" attr3='value3' ...}
+	 * @return
+	 *     map {@code attribute -> value}
+	 */
+	private Map<String, String> extractAttributes(CharSequence chars) {
+	    if (chars==null || chars.length()==0) {
+	        return Collections.emptyMap();
+	    }
+
+	    Matcher matcher = PATTERN_ATTRIBUTE.matcher(chars);
+	    int pos=0;
+	    Map<String,String> attributes = new HashMap<>();
+	    while (matcher.find(pos)) {
+	        String attribute = matcher.group("attribute");
+
+	        String value = matcher.group("value");
+            if (value.length()>=2
+                    && (value.charAt(0)=='"' || value.charAt(0)=='\'')
+                    && (value.charAt(value.length()-1)==value.charAt(0))) {
+                // remove single and double quotes around value
+                value = value.substring(1, value.length()-1);
+            }
+            attributes.put(attribute, value);
+            pos = matcher.end();
+	    }
+        return attributes;
+    }
+
+    private void toggleHtmlMode(List<?> styleEnd, boolean enable) {
 		for (Object obj: styleEnd) {
 			if (obj instanceof Style) {
 				Style s = (Style) obj;
@@ -274,7 +384,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 				if (MarkDownStyle.CLASS.equals(styleClass)
 				        && LangUtil.isOneOf(styleName,
 				                MarkDownStyle.HTML_BLOCK.name(),
-				                MarkDownStyle.HTML_INLINE.name().equals(styleName))) {
+				                MarkDownStyle.HTML_INLINE.name())) {
 					if (htmlMode==enable) {
 						LOG.warn("HTML-mode: inconsistency detected");
 					}

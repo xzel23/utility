@@ -1,9 +1,11 @@
 package com.dua3.utility.text;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 
 public class TextUtil {
 
@@ -190,6 +192,7 @@ public class TextUtil {
     public static int indexOf(CharSequence haystack, CharSequence needle, int fromIndex) {
         final int haystackLength = haystack.length();
         final int needleLength = needle.length();
+
         outer: for (int pos=fromIndex; pos<haystackLength-needleLength+1; pos++) {
             for (int i=0;i<needleLength;i++) {
                 if (haystack.charAt(pos+i) != needle.charAt(i)) {
@@ -198,7 +201,24 @@ public class TextUtil {
             }
             return pos;
         }
+
         return -1;
+    }
+
+    /**
+     * Get capturing group.
+     * @param matcher
+     *      the matcher instance
+     * @param input
+     *      the input sequence
+     * @param name
+     *      the capturing group name
+     * @return
+     *      the sequence matched or {@code Optional.empty()}, if not matched
+     */
+    public static Optional<CharSequence> group(Matcher matcher, CharSequence input, String name) {
+        int start = matcher.start(name);
+        return start < 0 ? Optional.empty() : Optional.of(input.subSequence(start, matcher.end(name)));
     }
 
 }
