@@ -29,6 +29,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
@@ -45,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.swing.DocumentExt.ComponentData;
 import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextConverterBase;
@@ -336,17 +339,17 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
             this.attributes = attributes;
         }
 
-        public Component createComponent() {
+        public Component createComponent(ComponentData data) {
             switch (name) {
             case "input":
-                return createInput();
+                return createInput(data);
             default:
                 LOG.warn("unknown tag: <{}>", name);
                 return new JLabel(attributes.getOrDefault("value", ""));
             }
         }
 
-        Component createInput() {
+        Component createInput(ComponentData data) {
             String type = attributes.getOrDefault("type", "");
             switch (type) {
             case "text": {
@@ -363,6 +366,8 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
             case "radio": {
                 JRadioButton component = new JRadioButton();
                 LangUtil.consumeIfPresent(attributes, "selected", v -> component.setSelected(true));
+                ButtonGroup group = data.getButtonGroup(attributes.getOrDefault("name", ""));
+                group.add(component);
                 return component;
             }
             default:
