@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -203,5 +205,37 @@ public class LangUtil {
             }
         }
         return !iter1.hasNext() && !iter2.hasNext();
+    }
+
+    /**
+     * Consume value if mapping exists.
+     * @param map
+     *      the map
+     * @param k
+     *      the key to lookup
+     * @param consumer
+     *      the consumer to consume the mapped value
+     */
+    public static <K,V> void consumeIfPresent(Map<K, V> map, K k, Consumer<V> consumer) {
+        V v = map.get(k);
+        if (v!=null) {
+            consumer.accept(v);
+        }
+    }
+
+    /**
+     * Consume value if mapping exists.
+     * @param map
+     *      the map
+     * @param k
+     *      the key to lookup
+     * @param consumer
+     *      the consumer to consume the mapped value
+     */
+    public static <K,V> void consumeIfPresent(Map<K, V> map, K k, BiConsumer<K,V> consumer) {
+        V v = map.get(k);
+        if (v!=null) {
+            consumer.accept(k,v);
+        }
     }
 }

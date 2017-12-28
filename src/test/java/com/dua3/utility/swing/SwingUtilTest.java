@@ -10,7 +10,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
-import javax.swing.text.StyledDocument;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,9 +75,9 @@ public class SwingUtilTest extends JFrame {
             LOG.info("creating RichText from source");
             RichText richtext = MarkDownUtil.convert(mdSource);
             LOG.info("converting RichText to StyledDocument");
-			StyledDocument doc = StyledDocumentBuilder.toStyledDocument(richtext, MarkDownStyle::getAttributes);
+			DocumentExt doc = StyledDocumentBuilder.toStyledDocument(richtext, MarkDownStyle::getAttributes);
             LOG.info("updating document in UI component");
-            mdComponent.setDocument(doc);
+            doc.setDocumentInto(mdComponent);
             LOG.info("source set");
         }
 
