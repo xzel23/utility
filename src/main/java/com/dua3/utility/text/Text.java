@@ -30,7 +30,9 @@ public class Text extends AbstractList<String> {
     }
 
     public static Text load(Path path, Charset cs) throws IOException {
-        return new Text(Files.lines(path, cs));
+        try (Stream<String> lines = Files.lines(path, cs)) {
+        	return new Text(lines);
+        }
     }
 
     public static Text valueOf(String s) {
