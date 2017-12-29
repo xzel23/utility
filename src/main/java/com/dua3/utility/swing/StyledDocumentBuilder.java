@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.swing.DocumentExt.ComponentData;
 import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextConverterBase;
@@ -338,36 +340,42 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
             this.attributes = attributes;
         }
 
-        public Component createComponent() {
+        public Component createComponent(ComponentData data) {
             switch (name) {
             case "input":
-                return createInput();
+                return createInput(data);
             default:
                 LOG.warn("unknown tag: <{}>", name);
                 return new JLabel(attributes.getOrDefault("value", ""));
             }
         }
 
-        Component createInput() {
+        Component createInput(ComponentData data) {
+            String id = attributes.get("id");
+            String name = Objects.requireNonNull(attributes.get("name"), "attribute 'name' is not set");
+
             String type = attributes.getOrDefault("type", "");
             switch (type) {
             case "text": {
                     JTextField component = new JTextField();
                     LangUtil.consumeIfPresent(attributes, "size", v -> component.setColumns(Integer.parseInt(v)));
                     LangUtil.consumeIfPresent(attributes, "value", v -> component.setText(v));
+                    data.addComponent(id, name, component);
                     return component;
                 }
             case "checkbox": {
                     JCheckBox component = new JCheckBox();
                     LangUtil.consumeIfPresent(attributes, "checked", v -> component.setSelected(true));
                     component.setBackground(TRANSPARENT);
-                    component.setBackground(TRANSPARENT);
+                    data.addComponent(id, name, component);
                     return component;
                 }
             case "radio": {
                 JRadioButton component = new JRadioButton();
+                LangUtil.consumeIfPresent(attributes, "value", v -> component.setActionCommand(v));
                 LangUtil.consumeIfPresent(attributes, "selected", v -> component.setSelected(true));
                 component.setBackground(TRANSPARENT);
+                data.addComponent(id, name, component);
                 return component;
             }
             default:

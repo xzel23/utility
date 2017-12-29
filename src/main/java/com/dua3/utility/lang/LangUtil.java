@@ -210,9 +210,9 @@ public class LangUtil {
     /**
      * Consume value if mapping exists.
      * @param <K>
-     *      the key type
+     * 		the key type
      * @param <V>
-     *      the value type
+     * 		the value type
      * @param map
      *      the map
      * @param k
@@ -230,9 +230,9 @@ public class LangUtil {
     /**
      * Consume value if mapping exists.
      * @param <K>
-     *      the key type
+     * 		the key type
      * @param <V>
-     *      the value type
+     * 		the value type
      * @param map
      *      the map
      * @param k
