@@ -15,10 +15,19 @@ package com.dua3.utility.jfx;
  * the License.
  */
 
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.aquafx_project.AquaFx;
+import com.dua3.utility.io.NetUtil;
+
+import javafx.scene.web.WebEngine;
 
 /**
  * A Utility class for JavaFx.
@@ -49,6 +58,35 @@ public class JfxUtil {
             AquaFx.style();
         }
     }
+
+	/**
+	 * Read JavaScript or CSS and inject into WebView.
+	 * @param engine
+	 *  the web engine
+	 * @param resources
+	 *  the resources to inject
+	 * @throws IOException
+	 *  if resources can not be read
+	 */
+	public static void injectResources(WebEngine engine, URL... resources) throws IOException {
+	    for (URL resource : resources) {
+	        String data = NetUtil.readContent(resource, StandardCharsets.UTF_8);
+	        switch (resource.getPath().replaceAll("^.*\\.", "")) { // switch on extension
+	        case "js":
+	            engine.executeScript(data);
+	            break;
+	        case "css":
+	            Document doc = engine.getDocument();
+	            Element styleNode = doc.createElement("style");
+	            styleNode.setAttribute("type", "text/css");
+	            styleNode.setTextContent(data);
+	            doc.getElementsByTagName("head").item(0).appendChild(styleNode);
+	            break;
+	        default:
+	            throw new IllegalArgumentException("Resource has unsupported extension: " + resource);
+	        }
+	    }
+	}
 
     // Utility class, should not be instantiated
     private JfxUtil() {
