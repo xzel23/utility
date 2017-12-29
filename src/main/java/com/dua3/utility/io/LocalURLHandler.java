@@ -1,4 +1,4 @@
-package com.dua3.utility.jfx;
+package com.dua3.utility.io;
 
 import java.io.IOException;
 import java.net.URL;

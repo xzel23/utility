@@ -1,4 +1,4 @@
-package com.dua3.utility.jfx;
+package com.dua3.utility.io;
 
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;

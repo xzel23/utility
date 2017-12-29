@@ -7,14 +7,12 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 
-import com.dua3.utility.jfx.LocalURLStreamHandlerFactory;
-
 public class NetUtil {
 
     private NetUtil() {
         // nop: utility class
     }
-    
+
     /**
      * Register a custom URLHandler that deviates all non-local URL-connections to a local path.
      * @param clazz
@@ -26,7 +24,7 @@ public class NetUtil {
 
 	/**
 	 * Reads a complete resource into a string.
-	 * 
+	 *
 	 * @param url
 	 *            URL to read from
 	 * @param cs
@@ -34,11 +32,12 @@ public class NetUtil {
 	 * @return
 	 *         String with the complete content read from URL
 	 * @throws IOException
+	 *         if an I/O error occurs
 	 */
 	public static String readContent(URL url, Charset cs) throws IOException {
 	    try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), cs))) {
 	        return reader.lines().collect(Collectors.joining("\n"));
 	    }
 	}
-    
+
 }
