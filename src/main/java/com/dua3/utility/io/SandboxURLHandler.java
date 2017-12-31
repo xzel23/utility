@@ -8,13 +8,13 @@ import java.net.URLStreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LocalURLHandler extends URLStreamHandler {
+public class SandboxURLHandler extends URLStreamHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LocalURLHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SandboxURLHandler.class);
     
     private final Class<?> clazz;
 
-    LocalURLHandler(Class<?> clazz) {
+    SandboxURLHandler(Class<?> clazz) {
         this.clazz = clazz;
     }
     

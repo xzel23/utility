@@ -3,11 +3,11 @@ package com.dua3.utility.io;
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
 
-public class LocalURLStreamHandlerFactory implements URLStreamHandlerFactory{
+public class SandboxURLStreamHandlerFactory implements URLStreamHandlerFactory{
 
     private final Class<?> clazz;
 
-    public LocalURLStreamHandlerFactory(Class<?> clazz) {
+    public SandboxURLStreamHandlerFactory(Class<?> clazz) {
         this.clazz = clazz;
     }
 
@@ -19,7 +19,7 @@ public class LocalURLStreamHandlerFactory implements URLStreamHandlerFactory{
         case "jar":
             return null;
         default:
-            return new LocalURLHandler(clazz);
+            return new SandboxURLHandler(clazz);
         }
     }
 

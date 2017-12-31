@@ -28,9 +28,20 @@ public class IOUtil {
         }
         
         String fname = fnamePath.toString();
-        int pos = fname.lastIndexOf('.');
-        return pos < 0 ? "" : fname.substring(pos + 1);
+        return getExtension(fname);
     }
+
+    /**
+     * Get file extension.
+     *
+     * @param fname
+     *            the filename
+     * @return the extension
+     */
+	public static String getExtension(String fname) {
+		int pos = fname.lastIndexOf('.');
+        return pos < 0 ? "" : fname.substring(pos + 1);
+	}
 
     /**
      * Read content of path into String.

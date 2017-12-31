@@ -15,11 +15,13 @@ public class NetUtil {
 
     /**
      * Register a custom URLHandler that deviates all non-local URL-connections to a local path.
+     * Note: this should be called exactly once at the start of the application.
+     * 
      * @param clazz
      *   The class relative to which the resources are stored.
      */
-    public static void registerLocalURLHandler(Class<?> clazz) {
-        URL.setURLStreamHandlerFactory(new LocalURLStreamHandlerFactory(clazz));
+    public static void registerSandboxURLHandler(Class<?> clazz) {
+        URL.setURLStreamHandlerFactory(new SandboxURLStreamHandlerFactory(clazz));
     }
 
 	/**
