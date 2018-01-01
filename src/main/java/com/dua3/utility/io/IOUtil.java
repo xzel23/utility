@@ -3,6 +3,7 @@ package com.dua3.utility.io;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -29,6 +30,17 @@ public class IOUtil {
         
         String fname = fnamePath.toString();
         return getExtension(fname);
+    }
+
+    /**
+     * Get file extension.
+     *
+     * @param url
+     *            the URL
+     * @return the extension
+     */
+    public static String getExtension(URL url) {
+        return getExtension(url.getFile());
     }
 
     /**

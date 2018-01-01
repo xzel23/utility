@@ -10,16 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.commonmark.node.Image;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
-import org.commonmark.parser.PostProcessor;
-import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.AttributeProvider;
 import org.commonmark.renderer.html.AttributeProviderContext;
 import org.commonmark.renderer.html.AttributeProviderFactory;
-import org.commonmark.renderer.html.HtmlNodeRendererContext;
-import org.commonmark.renderer.html.HtmlNodeRendererFactory;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.html.HtmlRenderer.Builder;
 import org.slf4j.Logger;
@@ -28,6 +23,13 @@ import org.slf4j.LoggerFactory;
 public class MarkDownUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(MarkDownUtil.class);
 
+	/**
+	 * Convert markdown to RichText.
+	 * @param source
+	 * 		the markdown source
+	 * @return
+	 * 		the generated RichText
+	 */
 	public static RichText toRichText(String source) {
 		Parser parser = Parser.builder().build();
 		Node node = parser.parse(source);
@@ -36,6 +38,13 @@ public class MarkDownUtil {
 		return renderer.render(node);
 	}
 
+	/**
+	 * Convert markdown to HTML.
+	 * @param source
+	 * 		the markdown source
+	 * @return
+	 * 		the generated HTML
+	 */
 	public static String toHTML(String source) {
 		Parser parser = Parser.builder().build();
 		Node node = parser.parse(source);
@@ -51,21 +60,35 @@ public class MarkDownUtil {
 			this.baseUri = baseUri;
 		}
 
+		private void resolve(Map<String, String> attributes, String attribute) {
+			attributes.computeIfPresent(attribute, (k, v) -> {
+				try {
+					return baseUri.resolve(new URI(v)).toString();
+				} catch (URISyntaxException e) {
+					LOG.warn("could not resolve value of attribute '{}', leaving unchanged: {}", attribute, v);
+					return v;
+				}
+			});			
+		}
+		
 		@Override
 		public void setAttributes(Node node, String tagName, Map<String, String> attributes) {
-			if (node instanceof Image) {
-				attributes.computeIfPresent("src", (k, v) -> {
-					try {
-						return baseUri.resolve(new URI(v)).toString();
-					} catch (URISyntaxException e) {
-						LOG.warn("could not parse src attribute: ", v);
-						return v;
-					}
-				});
-			}
+			resolve(attributes, "href");
+			resolve(attributes, "src");
 		}
 	}
 
+	/**
+	 * Retrieve HTML for a markdownresource through an URL.
+	 * @param url
+	 * 		the markdown document's URL
+	 * @param resolveLinks
+	 * 		if true, relative links will be resolved against the document's URL
+	 * @return
+	 * 		the generated HTML
+	 * @throws IOException
+	 * 		if the source could not be read
+	 */
 	public static String toHTML(URL url, boolean resolveLinks) throws IOException {
 		try {
 			URI uri = url.toURI();
@@ -94,6 +117,7 @@ public class MarkDownUtil {
 
 	private MarkDownUtil() {
 		// utility class
+		throw new UnsupportedOperationException();
 	}
 
 }
