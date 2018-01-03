@@ -23,11 +23,11 @@ public class IOUtil {
      */
     public static String getExtension(Path path) {
         Path fnamePath = path.getFileName();
-        
+
         if (fnamePath==null) {
             return "";
         }
-        
+
         String fname = fnamePath.toString();
         return getExtension(fname);
     }
@@ -54,6 +54,18 @@ public class IOUtil {
 		int pos = fname.lastIndexOf('.');
         return pos < 0 ? "" : fname.substring(pos + 1);
 	}
+
+    /**
+     * Remove file extension.
+     *
+     * @param fname
+     *            the filename
+     * @return filename without extension
+     */
+    public static String stripExtension(String fname) {
+        int pos = fname.lastIndexOf('.');
+        return pos < 0 ? "" : fname.substring(0, pos);
+    }
 
     /**
      * Read content of path into String.
@@ -98,7 +110,7 @@ public class IOUtil {
     public static interface IOOperation<T> {
         T run() throws IOException;
     }
-    
+
     /**
      * A helper method for use in lambda expressions that wraps IO operations and converts
      * thrown IOException to UncheckedIOExcetion.
