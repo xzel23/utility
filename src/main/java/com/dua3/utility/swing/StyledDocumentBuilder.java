@@ -15,30 +15,21 @@
  */
 package com.dua3.utility.swing;
 
-import java.awt.Component;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,22 +37,19 @@ import org.slf4j.LoggerFactory;
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.swing.DocumentExt.ComponentData;
-import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextConverterBase;
-import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextUtil;
 
 /**
  * A {@link RichTextConverterBase} implementation for translating {@code RichText} to
- * HTML.
+ * StyledDocument.
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
+public class StyledDocumentBuilder extends RichTextConverterBase<Document> {
     private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
 
     private static final Object[] PARAGRAPH_ATTRIBUTES = {
@@ -76,21 +64,17 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
 
     private static final Map<String, Object> DEFAULT_OPTIONS = LangUtil.map(Pair.of(SCALE, 1f));
 
-    private static final List<String> VOID_HTML_ELEMENTS = Arrays.asList(
-            "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"
-        );
-
     @SafeVarargs
-    public static DocumentExt toStyledDocument(RichText text, Function<Style, TextAttributes> styleTraits,
+    public static Document toStyledDocument(RichText text, Function<Style, TextAttributes> styleTraits,
             Pair<String, Object>... options) {
         // create map with default options
         Map<String, Object> optionMap = new HashMap<>(DEFAULT_OPTIONS);
         LangUtil.putAll(optionMap, options); // add overrrides
 
-        return new StyledDocumentBuilder(new DocumentExt(), styleTraits, optionMap).add(text).get();
+        return new StyledDocumentBuilder(new DefaultStyledDocument(), styleTraits, optionMap).add(text).get();
     }
 
-    private DocumentExt buffer;
+    private StyledDocument buffer;
 
     private float scale = 1;
 
@@ -98,7 +82,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
 
     private final float defaultFontSize;
 
-    private StyledDocumentBuilder(DocumentExt buffer, Function<Style, TextAttributes> styleTraits, Map<String, Object> options) {
+    private StyledDocumentBuilder(StyledDocument buffer, Function<Style, TextAttributes> styleTraits, Map<String, Object> options) {
     	super(styleTraits);
 
     	this.buffer = buffer;
@@ -117,7 +101,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
     }
 
     @Override
-    public DocumentExt get() {
+    public StyledDocument get() {
         // apply paragraph styles
         int pos = 0;
         for (Pair<Integer, AttributeSet> e : paragraphAttributes) {
@@ -129,7 +113,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
         LangUtil.check(openedTags.isEmpty(), "there still are open tags");
 
         // mark builder invalid by clearing buffer
-        DocumentExt ret = buffer;
+        StyledDocument ret = buffer;
         buffer = null;
 
         return ret;
@@ -244,221 +228,6 @@ public class StyledDocumentBuilder extends RichTextConverterBase<DocumentExt> {
 	    }
 	}
 
-	private boolean htmlMode = false;
-
-	@Override
-	protected void append(Run run) {
-		TextAttributes attrs = run.getAttributes();
-
-		// look if HTML mode ends here
-		List<?> styleEnd = (List<?>) attrs.getOrDefault(TextAttributes.STYLE_END_RUN, Collections.emptyList());
-		toggleHtmlMode(styleEnd, false);
-
-		// look if HTML mode starts here
-		List<?> styleStart = (List<?>) attrs.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList());
-		toggleHtmlMode(styleStart, true);
-
-		super.append(run);
-	}
-
-	@Override
-	protected void appendChars(CharSequence chars) {
-		if (htmlMode) {
-			appendHTML(chars);
-		} else {
-			super.appendChars(chars);
-		}
-
-	}
-
-	private static final Pattern PATTERN_ATTRIBUTE = Pattern.compile(
-	        "(?<attribute>[a-zA-Z]\\w*)=(?<value>(\"[^\"]*\"|'[^']*'|\\w+))"
-	    );
-    private static final Pattern PATTERN_TAG_OPEN = Pattern.compile(
-            "<(?<tagOpen>[a-zA-Z]\\w*)(?<attributes>( "+PATTERN_ATTRIBUTE+")*)(?<selfclosing>/)?>"
-        );
-    private static final Pattern PATTERN_TAG_CLOSE = Pattern.compile(
-            "</(?<tagClose>[a-zA-Z]\\w*)>"
-        );
-    private static final Pattern PATTERN_TAG = Pattern.compile(
-            PATTERN_TAG_OPEN.toString()+"|"+PATTERN_TAG_CLOSE.toString()
-        );
-
     private final Deque<String> openedTags = new LinkedList<>();
 
-    private void appendHTML(CharSequence chars) {
-	    Matcher matcher = PATTERN_TAG.matcher(chars);
-
-	    int pos = 0;
-	    while (matcher.find(pos)) {
-	        int start = matcher.start();
-	        int end = matcher.end();
-
-	        // append normal text that comes before the next tag found
-	        CharSequence textBefore = chars.subSequence(pos, start);
-	        super.appendChars(textBefore);
-
-	        // handle tag
-	        Optional<CharSequence> tagOpen = TextUtil.group(matcher, chars, "tagOpen");
-            Optional<CharSequence> tagClose = TextUtil.group(matcher, chars, "tagClose");
-            LangUtil.check(
-                    tagOpen.isPresent()^tagClose.isPresent(),
-                    "matcher is expected to find either an opening or a closing tag"
-                );
-
-            if (tagOpen.isPresent()) {
-                // opening tag
-                String tag = tagOpen.get().toString();
-                Map<String,String> attributes = extractAttributes(TextUtil.group(matcher, chars, "attributes")
-                        .orElseThrow(IllegalStateException::new));
-                boolean selfClosing = TextUtil.group(matcher, chars, "selfclosing").isPresent();
-
-                appendTag(tag, attributes, selfClosing);
-            }
-
-            if (tagClose.isPresent()) {
-                // closing tag
-                closeTag(tagClose.get().toString());
-            }
-
-            // advance position to the end of this match
-            pos = end;
-	    }
-
-	    CharSequence text = chars.subSequence(pos, chars.length());
-        super.appendChars(text);
-	}
-
-    static class Tag {
-        private static final java.awt.Color TRANSPARENT = new java.awt.Color(0xffffff, true);
-
-        private final String name;
-        private final Map<String,String> attributes;
-
-        public Tag(String name, Map<String,String> attributes) {
-            this.name = name;
-            this.attributes = attributes;
-        }
-
-        public Component createComponent(ComponentData data) {
-            switch (name) {
-            case "input":
-                return createInput(data);
-            default:
-                LOG.warn("unknown tag: <{}>", name);
-                return new JLabel(attributes.getOrDefault("value", ""));
-            }
-        }
-
-        Component createInput(ComponentData data) {
-            String id = attributes.get("id");
-            String name = Objects.requireNonNull(attributes.get("name"), "attribute 'name' is not set");
-
-            String type = attributes.getOrDefault("type", "");
-            switch (type) {
-            case "text": {
-                    JTextField component = new JTextField();
-                    LangUtil.consumeIfPresent(attributes, "size", v -> component.setColumns(Integer.parseInt(v)));
-                    LangUtil.consumeIfPresent(attributes, "value", v -> component.setText(v));
-                    data.addComponent(id, name, component);
-                    return component;
-                }
-            case "checkbox": {
-                    JCheckBox component = new JCheckBox();
-                    LangUtil.consumeIfPresent(attributes, "checked", v -> component.setSelected(true));
-                    component.setBackground(TRANSPARENT);
-                    data.addComponent(id, name, component);
-                    return component;
-                }
-            case "radio": {
-                JRadioButton component = new JRadioButton();
-                LangUtil.consumeIfPresent(attributes, "value", v -> component.setActionCommand(v));
-                LangUtil.consumeIfPresent(attributes, "selected", v -> component.setSelected(true));
-                component.setBackground(TRANSPARENT);
-                data.addComponent(id, name, component);
-                return component;
-            }
-            default:
-                LOG.warn("unknown input type: '{}'", type);
-                return new JLabel(attributes.getOrDefault("value", ""));
-            }
-        }
-    }
-
-	private void appendTag(String tag, Map<String, String> attributes, boolean selfClosing) {
-        LOG.debug("insert {}tag <{}> with attributes {}", selfClosing?"selfclosing " : "", tag, attributes);
-
-       addTag(new Tag(tag, attributes));
-
-        if (selfClosing) {
-            LOG.debug("<{}/>", tag);
-        } else if (VOID_HTML_ELEMENTS.contains(tag)) {
-            LOG.debug("<{}> [void element, no closing tag expected]", tag);
-        } else {
-            openedTags.push(tag);
-            LOG.debug("<{}>", tag);
-        }
-    }
-
-    private void addTag(Tag tag) {
-        int pos = buffer.getLength();
-        buffer.insertTag(pos, tag);
-    }
-
-    private void closeTag(String tag) {
-        LangUtil.check(!openedTags.isEmpty(), "there are no tags open (trying to close <%s>)", tag);
-        String popped = openedTags.pop();
-        LangUtil.check(popped.equals(tag), "tag mismatch, expected </%s>, found </%s>", popped, tag);
-        LOG.debug("</{}>", tag);
-    }
-
-    /**
-	 * Extract attribute definitions from tag declaration.
-	 * @param chars
-	 *     the text to process, a sequence in the form {@code attr1=value1 attr2="value2" attr3='value3' ...}
-	 * @return
-	 *     map {@code attribute -> value}
-	 */
-	private Map<String, String> extractAttributes(CharSequence chars) {
-	    if (chars==null || chars.length()==0) {
-	        return Collections.emptyMap();
-	    }
-
-	    Matcher matcher = PATTERN_ATTRIBUTE.matcher(chars);
-	    int pos=0;
-	    Map<String,String> attributes = new HashMap<>();
-	    while (matcher.find(pos)) {
-	        String attribute = matcher.group("attribute");
-
-	        String value = matcher.group("value");
-            if (value.length()>=2
-                    && (value.charAt(0)=='"' || value.charAt(0)=='\'')
-                    && (value.charAt(value.length()-1)==value.charAt(0))) {
-                // remove single and double quotes around value
-                value = value.substring(1, value.length()-1);
-            }
-            attributes.put(attribute, value);
-            pos = matcher.end();
-	    }
-        return attributes;
-    }
-
-    private void toggleHtmlMode(List<?> styleEnd, boolean enable) {
-		for (Object obj: styleEnd) {
-			if (obj instanceof Style) {
-				Style s = (Style) obj;
-				Object styleClass = s.get(TextAttributes.STYLE_CLASS);
-				Object styleName = s.get(TextAttributes.STYLE_NAME);
-				if (MarkDownStyle.CLASS.equals(styleClass)
-				        && LangUtil.isOneOf(styleName,
-				                MarkDownStyle.HTML_BLOCK.name(),
-				                MarkDownStyle.HTML_INLINE.name())) {
-					if (htmlMode==enable) {
-						LOG.warn("HTML-mode: inconsistency detected");
-					}
-					htmlMode = enable;
-				}
-			}
-		}
-	}
 }
