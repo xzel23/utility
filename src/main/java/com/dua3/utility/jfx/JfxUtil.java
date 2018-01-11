@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.aquafx_project.AquaFx;
 import com.dua3.utility.io.NetUtil;
 
 import javafx.scene.web.WebEngine;
@@ -33,31 +32,7 @@ import javafx.scene.web.WebEngine;
  * A Utility class for JavaFx.
  */
 public class JfxUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JfxUtil.class);
-
-    /**
-     * Set the Look&amp;Feel to the native Look&amp;Feel.
-     *
-     * On Mac OS, the global menubar is also enabled.
-     */
-    public static void setNativeLookAndFeel() {
-        setNativeLookAndFeel(null);
-    }
-
-    /**
-     * Set the Look&amp;Feel to the native Look&amp;Feel.
-     *
-     * On Mac OS, the global menubar is also enabled.
-     *
-     * @param applicationName
-     *            the application name to set
-     */
-    public static void setNativeLookAndFeel(String applicationName) {
-        if (System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
-            LOGGER.info("Applying Aquastyle.");
-            AquaFx.style();
-        }
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(JfxUtil.class);
 
 	/**
 	 * Read JavaScript or CSS and inject into WebView.
@@ -73,9 +48,11 @@ public class JfxUtil {
 	        String data = NetUtil.readContent(resource, StandardCharsets.UTF_8);
 	        switch (resource.getPath().replaceAll("^.*\\.", "")) { // switch on extension
 	        case "js":
+	        		LOG.debug("injecting JavaScript into WebView: {}", resource);
 	            engine.executeScript(data);
 	            break;
 	        case "css":
+	        		LOG.debug("injecting stylesheet into WebView: {}", resource);
 	            Document doc = engine.getDocument();
 	            Element styleNode = doc.createElement("style");
 	            styleNode.setAttribute("type", "text/css");
@@ -83,6 +60,7 @@ public class JfxUtil {
 	            doc.getElementsByTagName("head").item(0).appendChild(styleNode);
 	            break;
 	        default:
+	        		LOG.warn("don't know how to inject resource into WebView: {}", resource);
 	            throw new IllegalArgumentException("Resource has unsupported extension: " + resource);
 	        }
 	    }
