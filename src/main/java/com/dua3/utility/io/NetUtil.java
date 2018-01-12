@@ -88,10 +88,12 @@ public class NetUtil {
     }
 
     /**
-     * Get invalid URL.
-     * @return an instance of an invalid (yet not {@code null}) URL that cannot be referenced.
+     * Get an instance of an invalid (yet not {@code null}) URL that cannot be referenced.
+     * The void URL will have the protocol set to the text {@code "null"}.
+     *
+     * @return the void URL
      */
-    URL voidURL() {
+    public static URL voidURL() {
         return VOID_URL;
     }
 }
