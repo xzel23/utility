@@ -1,13 +1,17 @@
 package com.dua3.utility.io;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for Inpit/Output.
@@ -83,6 +87,23 @@ public class IOUtil {
     }
 
     /**
+     * Read content of URL into String.
+     *
+     * @param url
+     *            the url
+     * @param cs
+     *            the Charset
+     * @return content of url
+     * @throws IOException
+     *             if content could not be read
+     */
+    public static String read(URL url, Charset cs) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), cs))) {
+            return reader.lines().collect(Collectors.joining("\n"));
+        }
+    }
+
+    /**
      * Write content String to a path.
      *
      * @param path
@@ -126,6 +147,20 @@ public class IOUtil {
             return op.run();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Get URL for path.
+     * @param path the path
+     * @return the URL
+     * @throws IllegalStateException if conversion fails
+     */
+    public static URL toURL(Path path) {
+        try {
+            return path.toUri().toURL();
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e);
         }
     }
 
