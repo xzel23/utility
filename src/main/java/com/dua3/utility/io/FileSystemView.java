@@ -140,27 +140,32 @@ public class FileSystemView implements AutoCloseable {
      *          if the directory denoted by {@code path} does not exist or an I/O error occurs
      */
     public static FileSystemView forDirectory(Path root) throws IOException {
-        return new FileSystemView(root, () -> {
-            /* NOOP */ });
+        return new FileSystemView(root, () -> { /* NOOP */ }, root.toString());
     }
 
     private static FileSystemView createFileSystemView(FileSystem fs, String path) {
         Path root = fs.getPath(path);
-        return new FileSystemView(root, fs::close);
+        return new FileSystemView(root, fs::close, "["+fs.toString()+"]"+path);
     }
 
     private final Path root;
-
+    private final String name;
     private final CleanUp cleanup;
 
-    private FileSystemView(Path root, CleanUp cleanup) {
+    private FileSystemView(Path root, CleanUp cleanup, String name) {
         this.cleanup = cleanup;
         this.root = root.toAbsolutePath();
+        this.name = name;
     }
 
     @Override
     public void close() throws IOException {
         cleanup.run();
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     /**
