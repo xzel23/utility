@@ -13,16 +13,89 @@ public class TextUtil {
 
     private static final String TRANSFORM_REF_END = "}";
 
+    /**
+     * HTML-escape a string.
+     * @param s the string
+     * @return the HTML-escaped string
+     */
     public static String escapeHTML(String s) {
         StringBuilder out = new StringBuilder(16 + s.length() * 11 / 10);
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+            if (c >= 127 || c == '"' || c == '<' || c == '>' || c == '&' || c=='\0') {
                 out.append("&#");
                 out.append((int) c);
                 out.append(';');
             } else {
                 out.append(c);
+            }
+        }
+        return out.toString();
+    }
+
+    /**
+     * Backslash-escape a string.
+     * @param s the string
+     * @return the escaped string
+     */
+    public static String escape(String s) {
+        StringBuilder out = new StringBuilder(16 + s.length() * 11 / 10);
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (0<=c && c<127) {
+                // ASCII characters
+                switch (c) {
+                case '\0':
+                    out.append("\\u0000"); // "\0" might be ambiguous if followed by digits
+                    break;
+                case '\\':
+                    out.append("\\\\");
+                    break;
+                case '\t':
+                    out.append("\\t");
+                    break;
+                case '\b':
+                    out.append("\\b");
+                    break;
+                case '\n':
+                    out.append("\\n");
+                    break;
+                case '\r':
+                    out.append("\\r");
+                    break;
+                case '\f':
+                    out.append("\\f");
+                    break;
+                case '\'':
+                    out.append("\\'");
+                    break;
+                case '\"':
+                    out.append("\\\"");
+                    break;
+                default:
+                    out.append(c);
+                    break;
+                }
+            } else {
+                // non-ASCII characters
+                switch (Character.getType(c)) {
+                // numbers: pass through
+                case Character.DECIMAL_DIGIT_NUMBER:
+                case Character.LETTER_NUMBER:
+                case Character.OTHER_NUMBER:
+                    out.append(c);
+                    break;
+                // letters: pass all non-modifying letters through
+                case Character.UPPERCASE_LETTER:
+                case Character.LOWERCASE_LETTER:
+                case Character.OTHER_LETTER:
+                case Character.TITLECASE_LETTER:
+                    out.append(c);
+                    break;
+                // escape all remaining characters
+                default:
+                    out.append("\\u").append(String.format("%04X", (int) c));
+                }
             }
         }
         return out.toString();
