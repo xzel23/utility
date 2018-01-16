@@ -33,9 +33,6 @@ repositories {
 }
 
 dependencies {
-    // native L&F on MAC OS
-    compile "com.aquafx-project:aquafx:0.2"
-    
  	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     def sl4jVersion = "1.7.25"
 	compile "org.slf4j:slf4j-api:${sl4jVersion}"
