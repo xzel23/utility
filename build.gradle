@@ -24,10 +24,16 @@ eclipse {
 
 sourceCompatibility = 9
 <<<<<<< Upstream, based on origin/master
+<<<<<<< Upstream, based on origin/master
+=======
+>>>>>>> d07fd50 jdk 9
 targetCompatibility = 9
+<<<<<<< Upstream, based on origin/master
 =======
 targetCompatibility = 1.8
 >>>>>>> fc389ea module.info
+=======
+>>>>>>> d07fd50 jdk 9
 
 group = 'com.dua3.utility'
 

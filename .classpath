@@ -20,12 +20,18 @@
 	</classpathentry>
 <<<<<<< Upstream, based on origin/master
 <<<<<<< Upstream, based on origin/master
+<<<<<<< Upstream, based on origin/master
 =======
 >>>>>>> fc389ea module.info
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/">
 =======
+=======
+>>>>>>> d07fd50 jdk 9
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-9/">
+<<<<<<< Upstream, based on origin/master
 >>>>>>> aa3276a switch to JDK 9
+=======
+>>>>>>> d07fd50 jdk 9
 		<accessrules>
 			<accessrule kind="accessible" pattern="javafx/**"/>
 		</accessrules>
