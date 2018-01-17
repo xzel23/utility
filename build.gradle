@@ -23,7 +23,11 @@ eclipse {
 }
 
 sourceCompatibility = 9
+<<<<<<< HEAD
 targetCompatibility = 1.8
+=======
+targetCompatibility = 9
+>>>>>>> refs/remotes/origin/jdk9
 
 group = 'com.dua3.utility'
 
