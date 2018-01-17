@@ -22,7 +22,7 @@ eclipse {
     }
 }
 
-sourceCompatibility = 1.8
+sourceCompatibility = 9
 targetCompatibility = 1.8
 
 group = 'com.dua3.utility'
