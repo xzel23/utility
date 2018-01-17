@@ -1,4 +1,8 @@
 eclipse.preferences.version=1
+<<<<<<< Upstream, based on origin/master
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=9
+=======
+org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.8
+>>>>>>> fc389ea module.info
 org.eclipse.jdt.core.compiler.compliance=9
 org.eclipse.jdt.core.compiler.source=9

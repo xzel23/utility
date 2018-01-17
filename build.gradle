@@ -23,7 +23,11 @@ eclipse {
 }
 
 sourceCompatibility = 9
+<<<<<<< Upstream, based on origin/master
 targetCompatibility = 9
+=======
+targetCompatibility = 1.8
+>>>>>>> fc389ea module.info
 
 group = 'com.dua3.utility'
 
