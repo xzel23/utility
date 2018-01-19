@@ -33,13 +33,11 @@ repositories {
 }
 
 dependencies {
- 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    def sl4jVersion = "1.7.25"
-	compile "org.slf4j:slf4j-api:${sl4jVersion}"
-	testRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
+  compile     group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
+  testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
 
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+  // Use JUnit test framework
+  testImplementation 'junit:junit:4.12'
 }
 
 compileJava {
