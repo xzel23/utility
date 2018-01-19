@@ -5,19 +5,19 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SandboxURLHandler extends URLStreamHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SandboxURLHandler.class);
-    
+    private static final Logger LOG = LogManager.getLogger(SandboxURLHandler.class);
+
     private final Class<?> clazz;
 
     SandboxURLHandler(Class<?> clazz) {
         this.clazz = clazz;
     }
-    
+
     @Override
     protected URLConnection openConnection(URL url) throws IOException
     {
@@ -29,5 +29,5 @@ public class SandboxURLHandler extends URLStreamHandler {
         URLConnection connection = localURL.openConnection();
         return connection;
     }
-    
+
 }
