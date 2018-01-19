@@ -8,6 +8,7 @@ import java.net.URLStreamHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 public class SandboxURLHandler extends URLStreamHandler {
 
     private static final Logger LOG = LogManager.getLogger(SandboxURLHandler.class);
