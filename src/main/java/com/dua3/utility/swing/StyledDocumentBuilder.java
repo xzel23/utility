@@ -30,8 +30,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
@@ -49,7 +49,7 @@ import com.dua3.utility.text.TextUtil;
  * @author Axel Howind (axel@dua3.com)
  */
 public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument> {
-	private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
+	private static final Logger LOG = LogManager.getLogger(StyledDocumentBuilder.class);
 
 	private static final Object[] PARAGRAPH_ATTRIBUTES = { StyleConstants.ParagraphConstants.LeftIndent,
 			StyleConstants.ParagraphConstants.Alignment };
