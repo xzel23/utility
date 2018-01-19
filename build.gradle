@@ -23,17 +23,7 @@ eclipse {
 }
 
 sourceCompatibility = 9
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
-=======
->>>>>>> d07fd50 jdk 9
 targetCompatibility = 9
-<<<<<<< Upstream, based on origin/master
-=======
-targetCompatibility = 1.8
->>>>>>> fc389ea module.info
-=======
->>>>>>> d07fd50 jdk 9
 
 group = 'com.dua3.utility'
 
@@ -43,10 +33,8 @@ repositories {
 }
 
 dependencies {
- 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    def sl4jVersion = "1.7.25"
-	api "org.slf4j:slf4j-api:${sl4jVersion}"
-	testRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
+  compile     group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
+  testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
