@@ -37,8 +37,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
@@ -47,7 +47,7 @@ import com.dua3.utility.Pair;
  * Utility methods for Swing applications.
  */
 public class SwingUtil {
-    private static final Logger LOG = LoggerFactory.getLogger(SwingUtil.class);
+    private static final Logger LOG = LogManager.getLogger(SwingUtil.class);
 
     /**
      * Create an action to be used in menus.

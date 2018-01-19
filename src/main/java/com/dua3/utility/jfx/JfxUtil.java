@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,7 +32,7 @@ import javafx.scene.web.WebEngine;
  * A Utility class for JavaFx.
  */
 public class JfxUtil {
-    private static final Logger LOG = LoggerFactory.getLogger(JfxUtil.class);
+    private static final Logger LOG = LogManager.getLogger(JfxUtil.class);
 
 	/**
 	 * Read JavaScript or CSS and inject into WebView.
