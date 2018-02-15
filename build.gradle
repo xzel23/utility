@@ -1,5 +1,6 @@
 plugins {
   id "com.github.spotbugs" version "1.6.0"
+  id 'org.gradle.java.experimental-jigsaw' version '0.1.1'
 }
 
 apply plugin: 'maven'
@@ -22,8 +23,9 @@ eclipse {
     }
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 9
+targetCompatibility = 9
+javaModule.name = 'com.dua3.utility'
 
 group = 'com.dua3.utility'
 
@@ -34,10 +36,10 @@ repositories {
 
 dependencies {
   compile     group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
-  compile     group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
+  testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
 
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+  // Use JUnit test framework
+  testImplementation 'junit:junit:4.12'
 }
 
 compileJava {
@@ -72,7 +74,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
+// fails with jigsaw:    archives javadocJar
 }
 
 defaultTasks 'build', 'publishToMavenLocal', 'install'
