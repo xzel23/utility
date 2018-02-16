@@ -49,9 +49,16 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 }
 
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "--add-modules ALL-SYSTEM"
+tasks.withType(AbstractCompile) {
+  options.encoding = 'UTF-8'
+  options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+  options.compilerArgs += ["--add-modules", "javafx.controls"]
+  options.compilerArgs += ["--add-modules", "javafx.web"]
+}
+
+tasks.withType(Test) {
+  jvmArgs += ["--add-modules", "javafx.controls"]
+  jvmArgs += ["--add-modules", "javafx.web"]
 }
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
