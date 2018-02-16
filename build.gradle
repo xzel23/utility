@@ -10,17 +10,24 @@ apply plugin: 'com.github.spotbugs'
 apply plugin: 'jacoco'
 apply plugin: 'eclipse'
 
-// make JavaFX classes accessible in eclipse
 import org.gradle.plugins.ide.eclipse.model.AccessRule
 eclipse {
     classpath {
         file {
             whenMerged {
+                // make JavaFX classes accessible in eclipse
                 def jre = entries.find { it.path.contains 'org.eclipse.jdt.launching.JRE_CONTAINER' }
                 jre.accessRules.add(new AccessRule('0', 'javafx/**'))
+                // use modules
+                entries.findAll { isModule(it) }.each { it.entryAttributes['module'] = 'true' }
             }
         }
     }
+}
+
+boolean isModule(entry) {
+    // filter java 9 modules
+    entry.kind == 'lib'  // Only libraries can be modules
 }
 
 sourceCompatibility = 9
