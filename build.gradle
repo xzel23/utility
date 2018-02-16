@@ -51,7 +51,7 @@ dependencies {
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "--add-modules ALL-SYSTEM"
 }
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
