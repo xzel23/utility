@@ -1,38 +1,14 @@
 plugins {
   id "com.github.spotbugs" version "1.6.0"
-  id 'org.gradle.java.experimental-jigsaw' version '0.1.1'
 }
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
 apply plugin: 'com.github.spotbugs'
-apply plugin: 'jacoco'
-apply plugin: 'eclipse'
-
-import org.gradle.plugins.ide.eclipse.model.AccessRule
-eclipse {
-    classpath {
-        file {
-            whenMerged {
-                // make JavaFX classes accessible in eclipse
-                def jre = entries.find { it.path.contains 'org.eclipse.jdt.launching.JRE_CONTAINER' }
-                jre.accessRules.add(new AccessRule('0', 'javafx/**'))
-                // use modules
-                entries.findAll { isModule(it) }.each { it.entryAttributes['module'] = 'true' }
-            }
-        }
-    }
-}
-
-boolean isModule(entry) {
-    // filter java 9 modules
-    entry.kind == 'lib'  // Only libraries can be modules
-}
 
 sourceCompatibility = 9
 targetCompatibility = 9
-javaModule.name = 'com.dua3.utility'
 
 group = 'com.dua3.utility'
 
@@ -49,28 +25,21 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 }
 
-tasks.withType(AbstractCompile) {
-  options.encoding = 'UTF-8'
-  options.compilerArgs += [ '-Xlint:unchecked', '-Xlint:deprecation' ]
-  options.compilerArgs += ['-source','9']
-  options.compilerArgs += ["--add-modules", "javafx.controls,javafx.web"]
-}
+ext.moduleName = 'org.gradle.actors' 
 
-tasks.withType(Test) {
-  jvmArgs += ["--add-modules", "javafx.controls,javafx.web"]
+compileJava {
+    inputs.property("moduleName", moduleName)
+    doFirst {
+        options.compilerArgs = [
+            '--module-path', classpath.asPath,
+        ]
+        classpath = files()  
+    }
 }
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
         xml.enabled false
-        html.enabled true
-    }
-}
-
-tasks.withType(JacocoReport) {
-    reports {
-        xml.enabled false
-        csv.enabled false
         html.enabled true
     }
 }
