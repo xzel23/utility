@@ -32,6 +32,7 @@ compileJava {
     doFirst {
         options.compilerArgs = [
             '--module-path', classpath.asPath,
+            '--add-modules', 'javafx.controls'
         ]
         classpath = files()  
     }
