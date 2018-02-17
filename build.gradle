@@ -51,14 +51,13 @@ dependencies {
 
 tasks.withType(AbstractCompile) {
   options.encoding = 'UTF-8'
-  options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
-  options.compilerArgs += ["--add-modules", "javafx.controls"]
-  options.compilerArgs += ["--add-modules", "javafx.web"]
+  options.compilerArgs += [ '-Xlint:unchecked', '-Xlint:deprecation' ]
+  options.compilerArgs += ['-source','9']
+  options.compilerArgs += ["--add-modules", "javafx.controls,javafx.web"]
 }
 
 tasks.withType(Test) {
-  jvmArgs += ["--add-modules", "javafx.controls"]
-  jvmArgs += ["--add-modules", "javafx.web"]
+  jvmArgs += ["--add-modules", "javafx.controls,javafx.web"]
 }
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
