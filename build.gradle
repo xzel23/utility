@@ -30,9 +30,6 @@ ext.moduleName = 'com.dua3.utility'
 sourceSets {
     moduleInfo {
         java {
-            dependencies {
-                compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
-            }
             srcDir 'src/module-info/java'            
         }
     }
@@ -49,7 +46,7 @@ compileModuleInfoJava {
         
         options.compilerArgs = [
             '--module-path', classpath.asPath,
-            '--add-modules', 'ALL-SYSTEM,org.apache.logging.log4j',
+            '--add-modules', 'ALL-SYSTEM',
             '-d', sourceSets.main.output.classesDirs.asPath
         ]
     }
