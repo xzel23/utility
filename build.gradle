@@ -7,8 +7,8 @@ apply plugin: 'maven-publish'
 apply plugin: 'java-library'
 apply plugin: 'com.github.spotbugs'
 
-sourceCompatibility = 9
-targetCompatibility = 9
+sourceCompatibility = 8
+targetCompatibility = 8
 
 group = 'com.dua3.utility'
 
@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-  compile     group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
+  compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
   testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
 
   // Use JUnit test framework
@@ -27,15 +27,42 @@ dependencies {
 
 ext.moduleName = 'com.dua3.utility' 
 
-compileJava {
+sourceSets {
+    moduleInfo {
+        java {
+            dependencies {
+                compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
+            }
+            srcDir 'src/module-info/java'            
+        }
+    }
+}
+
+compileModuleInfoJava {
+    sourceCompatibility = 9
+    targetCompatibility = 9
+
     inputs.property("moduleName", moduleName)
+
     doFirst {
+        classpath += sourceSets.main.compileClasspath
+        
         options.compilerArgs = [
             '--module-path', classpath.asPath,
-            '--add-modules', 'ALL-SYSTEM'
+            '--add-modules', 'ALL-SYSTEM,org.apache.logging.log4j',
+            '-d', sourceSets.main.output.classesDirs.asPath
         ]
-        classpath = files()  
     }
+}
+
+jar 
+{
+    from sourceSets.main.output
+    from sourceSets.moduleInfo.output
+}
+
+spotbugs {
+    sourceSets = [sourceSets.main]
 }
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
@@ -57,7 +84,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 artifacts {
     archives sourcesJar
-// fails with jigsaw:    archives javadocJar
+    archives javadocJar
 }
 
 defaultTasks 'build', 'publishToMavenLocal', 'install'
