@@ -20,6 +20,31 @@ import com.dua3.utility.Pair;
 public class LangUtil {
 
     /**
+     * Exception derived from IllegalStateException thrown by {@link LangUtil#check(boolean)}.
+     * The intent is to make it possible to distinguish failed checks from other IllegalStateExceptions
+     * in try-blocks.
+     */
+    public static class FailedCheckException extends IllegalStateException {
+        private static final long serialVersionUID = 1L;
+
+        public FailedCheckException() {
+            super();
+        }
+
+        public FailedCheckException(String msg) {
+            super(msg);
+        }
+
+        public FailedCheckException(Throwable cause) {
+            super(cause);
+        }
+
+        public FailedCheckException(String msg, Throwable cause) {
+            super(msg, cause);
+        }
+    }
+
+    /**
      * Check that condition is fulfilled.
      *
      * @param condition
@@ -29,7 +54,7 @@ public class LangUtil {
      */
     public static void check(boolean condition) {
         if (!condition) {
-            throw new IllegalStateException();
+            throw new FailedCheckException();
         }
     }
 
@@ -42,13 +67,13 @@ public class LangUtil {
      *            message format (@see {@link String#format(String, Object...)})
      * @param args
      *            format arguments
-     * @throws IllegalStateException
+     * @throws FailedCheckException
      *             if condition is not {@code true}
      */
     public static void check(boolean condition, String fmt, Object... args) {
         if (!condition) {
             String message = String.format(fmt, args);
-            throw new IllegalStateException(message);
+            throw new FailedCheckException(message);
         }
     }
 
