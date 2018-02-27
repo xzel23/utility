@@ -49,8 +49,8 @@ public class LangUtil {
      *
      * @param condition
      *            condition to test
-     * @throws IllegalStateException
-     *             if condition is not {@code true}
+     * @throws FailedCheckException
+     *             if condition does not evaluate to {@code true}
      */
     public static void check(boolean condition) {
         if (!condition) {
@@ -68,7 +68,7 @@ public class LangUtil {
      * @param args
      *            format arguments
      * @throws FailedCheckException
-     *             if condition is not {@code true}
+     *             if condition does not evaluate to {@code true}
      */
     public static void check(boolean condition, String fmt, Object... args) {
         if (!condition) {
