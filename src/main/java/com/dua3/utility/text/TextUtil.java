@@ -1,11 +1,15 @@
 package com.dua3.utility.text;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
+
+import javax.xml.bind.DatatypeConverter;
 
 public class TextUtil {
 
@@ -294,4 +298,41 @@ public class TextUtil {
         return start < 0 ? Optional.empty() : Optional.of(input.subSequence(start, matcher.end(name)));
     }
 
+    /**
+     * Get MD5 digest as hex string.
+     * @param text
+     *  the text for which to calculate the digest
+     * @return
+     *  the MD5 digest as hex string
+     */
+    public static String getMD5String(String text) {
+        return DatatypeConverter.printHexBinary(getMD5(text));
+    }
+
+    /**
+     * Get MD5 digest.
+     * @param text
+     *  the text for which to calculate the digest
+     * @return
+     *  the MD5 digest as byte array
+     */
+    public static byte[] getMD5(String text) {
+        return getMD5(text.getBytes());
+    }
+
+    /**
+     * Get MD5 digest.
+     * @param data
+     *  the data for which to calculate the digest
+     * @return
+     *  the MD5 digest as byte array
+     */
+    public static byte[] getMD5(byte[] data) {
+        try {
+            return MessageDigest.getInstance("MD5").digest(data);
+        } catch (NoSuchAlgorithmException e) {
+            // this should never happen
+            throw new IllegalStateException(e);
+        }
+    }
 }
