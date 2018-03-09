@@ -1,5 +1,6 @@
 package com.dua3.utility.text;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -317,7 +318,7 @@ public class TextUtil {
      *  the MD5 digest as byte array
      */
     public static byte[] getMD5(String text) {
-        return getMD5(text.getBytes());
+        return getMD5(text.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

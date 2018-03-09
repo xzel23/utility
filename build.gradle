@@ -25,38 +25,52 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 }
 
-ext.moduleName = 'com.dua3.utility' 
+/*
+ * --- Jigsaw --- 
+ */
+ 
+def jigsaw = JavaVersion.current().isJava9Compatible()
 
-sourceSets {
-    moduleInfo {
-        java {
-            srcDir 'src/module-info/java'            
+if (jigsaw) {
+    println("Creating a module-info")
+    
+    ext.moduleName = 'com.dua3.utility' 
+    
+    sourceSets {
+        moduleInfo {
+            java {
+                srcDir 'src/module-info/java'            
+            }
         }
     }
-}
-
-compileModuleInfoJava {
-    sourceCompatibility = 9
-    targetCompatibility = 9
-
-    inputs.property("moduleName", moduleName)
-
-    doFirst {
-        classpath += sourceSets.main.compileClasspath
-        
-        options.compilerArgs = [
-            '--module-path', classpath.asPath,
-            '--add-modules', 'ALL-SYSTEM',
-            '-d', sourceSets.main.output.classesDirs.asPath
-        ]
+    
+    compileModuleInfoJava {
+        sourceCompatibility = 9
+        targetCompatibility = 9
+    
+        inputs.property("moduleName", moduleName)
+    
+        doFirst {
+            classpath += sourceSets.main.compileClasspath
+            
+            options.compilerArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'ALL-SYSTEM',
+                '-d', sourceSets.main.output.classesDirs.asPath
+            ]
+        }
+    }
+    
+    jar 
+    {
+        from sourceSets.main.output
+        from sourceSets.moduleInfo.output
     }
 }
 
-jar 
-{
-    from sourceSets.main.output
-    from sourceSets.moduleInfo.output
-}
+/*
+ * --- --- 
+ */
 
 spotbugs {
     sourceSets = [sourceSets.main]
