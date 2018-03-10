@@ -10,8 +10,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 
-import javax.xml.bind.DatatypeConverter;
-
 public class TextUtil {
 
     private static final String TRANSFORM_REF_START = "${";
@@ -307,7 +305,7 @@ public class TextUtil {
      *  the MD5 digest as hex string
      */
     public static String getMD5String(String text) {
-        return DatatypeConverter.printHexBinary(getMD5(text));
+        return byteArrayToHex(getMD5(text));
     }
 
     /**
@@ -336,4 +334,18 @@ public class TextUtil {
             throw new IllegalStateException(e);
         }
     }
+    
+    /**
+     * Format a byte array to a hex string.
+     * @param a
+     * 	the byte array
+     * @return
+     *  hex string
+     */
+    public static String byteArrayToHex(byte[] a) {
+    	   StringBuilder sb = new StringBuilder(a.length * 2);
+    	   for(byte b: a)
+    	      sb.append(String.format("%02x", b));
+    	   return sb.toString();
+    	}
 }

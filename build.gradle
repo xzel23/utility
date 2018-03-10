@@ -1,5 +1,6 @@
 plugins {
   id "com.github.spotbugs" version "1.6.0"
+  id "com.jfrog.bintray" version "1.8.0"
 }
 
 apply plugin: 'maven'
@@ -11,6 +12,31 @@ sourceCompatibility = 8
 targetCompatibility = 8
 
 group = 'com.dua3.utility'
+def ver = '0.11.1'
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+
+    dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
+    publish = false //[Default: false] Whether version should be auto published after an upload    
+    override = false //[Default: false] Whether to override version artifacts already published    
+
+    pkg {
+        repo = 'public'
+        name = 'com.dua3.utility'
+        userOrg = 'dua3'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://gitlab.com/com.dua3.public/utility.git'
+
+	    version {
+	        name = ver
+	        desc = 'utility 0.11.1'
+	        released  = new Date()
+	        vcsTag = '0.11.1'
+	    }
+    }
+}
 
 repositories {
     mavenLocal()
@@ -72,6 +98,52 @@ if (jigsaw) {
  * --- --- 
  */
 
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+    }
+    developers {
+        developer {
+            id "xzel23"
+            name "Axel Howind"
+            email "axel@dua3.com"
+        }
+    }
+    
+    scm {
+       url 'https://gitlab.com/com.dua3.public/utility.git'
+    }
+}
+
+// Create the publication with the pom configuration:
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId 'com.dua3.utility'
+            artifactId 'utility'
+            version ver
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'utilites and helper classes')
+                root.appendNode('name', 'com.dua3.utility')
+                root.appendNode('url', 'https://gitlab.com/com.dua3.public/utility')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+/*
+ *
+ */
+ 
 spotbugs {
     sourceSets = [sourceSets.main]
 }
