@@ -15,8 +15,8 @@ group = 'com.dua3.utility'
 def ver = '0.11.1'
 
 bintray {
-    user = "${BINTRAY_USER}"
-    key = "${BINTRAY_KEY}"
+    user = findProperty('BINTRAY_USER') ?: 'NONE'
+    key = findProperty('BINTRAY_KEY') ?: 'NONE'
 
     println("**bintray**")
     println("user: "+user)
