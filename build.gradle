@@ -11,8 +11,10 @@ apply plugin: 'com.github.spotbugs'
 sourceCompatibility = 8
 targetCompatibility = 8
 
+def ver = '0.11.2'
+
 group = 'com.dua3.utility'
-def ver = '0.11.1'
+version = ver;
 
 bintray {
     user = findProperty('BINTRAY_USER') ?: 'NONE'
