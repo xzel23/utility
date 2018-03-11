@@ -15,10 +15,15 @@ group = 'com.dua3.utility'
 def ver = '0.11.1'
 
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
+    user = "${BINTRAY_USER}"
+    key = "${BINTRAY_KEY}"
 
-    dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
+    println("**bintray**")
+    println("user: "+user)
+    
+    configurations = ['archives']
+
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
     publish = false //[Default: false] Whether version should be auto published after an upload    
     override = false //[Default: false] Whether to override version artifacts already published    
 
@@ -31,9 +36,9 @@ bintray {
 
 	    version {
 	        name = ver
-	        desc = 'utility 0.11.1'
+	        desc = 'utility '+ver
 	        released  = new Date()
-	        vcsTag = '0.11.1'
+	        vcsTag = ver
 	    }
     }
 }
@@ -94,10 +99,6 @@ if (jigsaw) {
     }
 }
 
-/*
- * --- --- 
- */
-
 // Create the pom configuration:
 def pomConfig = {
     licenses {
@@ -122,7 +123,7 @@ def pomConfig = {
 // Create the publication with the pom configuration:
 publishing {
     publications {
-        MyPublication(MavenPublication) {
+        UtilityPublication(MavenPublication) {
             from components.java
             artifact sourcesJar
             artifact javadocJar
@@ -140,10 +141,6 @@ publishing {
     }
 }
 
-/*
- *
- */
- 
 spotbugs {
     sourceSets = [sourceSets.main]
 }
@@ -166,6 +163,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
+	archives jar
     archives sourcesJar
     archives javadocJar
 }
