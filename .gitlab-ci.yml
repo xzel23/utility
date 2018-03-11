@@ -7,7 +7,7 @@ before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
   - export BINTRAY_USER='NONE'
-  - export BINTRY_KEY='NONE'
+  - export BINTRAY_KEY='NONE'
 
 cache:
   paths:
