@@ -30,7 +30,7 @@ bintray {
     pkg {
         repo = 'public'
         name = 'com.dua3.utility'
-        userOrg = 'dua3'
+        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://gitlab.com/com.dua3.public/utility.git'
 
