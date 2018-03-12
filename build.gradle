@@ -8,42 +8,18 @@ apply plugin: 'maven-publish'
 apply plugin: 'java-library'
 apply plugin: 'com.github.spotbugs'
 
-sourceCompatibility = 8
-targetCompatibility = 8
-
-def ver = '0.11.2'
-
-group = 'com.dua3.utility'
-version = ver;
-
-bintray {
-    user = findProperty('BINTRAY_USER') ?: 'NONE'
-    key = findProperty('BINTRAY_KEY') ?: 'NONE'
-
-    println("**bintray**")
-    println("user: "+user)
-    
-    configurations = ['archives']
-
-    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-    publish = false //[Default: false] Whether version should be auto published after an upload    
-    override = false //[Default: false] Whether to override version artifacts already published    
-
-    pkg {
-        repo = 'public'
-        name = 'com.dua3.utility'
-        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://gitlab.com/com.dua3.public/utility.git'
-
-	    version {
-	        name = ver
-	        desc = 'utility '+ver
-	        released  = new Date()
-	        vcsTag = ver
-	    }
-    }
-}
+/////////////////////////////////////////////////////////////////////////////
+	group              = 'com.dua3.utility'
+	version            = '0.11.2'
+	ext.moduleName     = project.group 
+	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
+	ext.repo           = 'public'
+	ext.description    = 'utilites and helper classes'
+	
+	ext.developerId    = 'xzel23'
+	ext.developerName  = 'Axel Howind'
+	ext.developerEmail = 'axel@dua3.com'
+/////////////////////////////////////////////////////////////////////////////
 
 repositories {
     mavenLocal()
@@ -58,17 +34,44 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 }
 
-/*
- * --- Jigsaw --- 
- */
+sourceCompatibility = 8
+targetCompatibility = 8
+
+// === BINTRAY === >
+
+bintray {
+    user = findProperty('BINTRAY_USER') ?: 'NONE'
+    key = findProperty('BINTRAY_KEY') ?: 'NONE'
+
+    configurations = ['archives']
+
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+    publish = false //[Default: false] Whether version should be auto published after an upload    
+    override = false //[Default: false] Whether to override version artifacts already published    
+
+    pkg {
+        repo = project.repo
+        name = project.group
+        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
+        licenses = ['Apache-2.0']
+        vcsUrl = project.scm
+
+	    version {
+	        name = project.version
+	        desc = project.name+version
+	        released  = new Date()
+	        vcsTag = project.version
+	    }
+    }
+}
+
+// === JIGSAW === >
  
 def jigsaw = JavaVersion.current().isJava9Compatible()
 
 if (jigsaw) {
     println("Creating a module-info")
-    
-    ext.moduleName = 'com.dua3.utility' 
-    
+        
     sourceSets {
         moduleInfo {
             java {
@@ -101,6 +104,8 @@ if (jigsaw) {
     }
 }
 
+// === MAVEN publication === >
+
 // Create the pom configuration:
 def pomConfig = {
     licenses {
@@ -111,14 +116,14 @@ def pomConfig = {
     }
     developers {
         developer {
-            id "xzel23"
-            name "Axel Howind"
-            email "axel@dua3.com"
+            id    project.developerId
+            name  project.developerName
+            email project.developerEmail
         }
     }
     
     scm {
-       url 'https://gitlab.com/com.dua3.public/utility.git'
+       url project.scm
     }
 }
 
@@ -129,19 +134,21 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            groupId 'com.dua3.utility'
-            artifactId 'utility'
-            version ver
+            groupId project.group
+            artifactId project.name
+            version version
             pom.withXml {
                 def root = asNode()
-                root.appendNode('description', 'utilites and helper classes')
-                root.appendNode('name', 'com.dua3.utility')
-                root.appendNode('url', 'https://gitlab.com/com.dua3.public/utility')
+                root.appendNode('description', project.description)
+                root.appendNode('name', project.group)
+                root.appendNode('url', project.scm)
                 root.children().last() + pomConfig
             }
         }
     }
 }
+
+// === SPOTBUGS === >
 
 spotbugs {
     sourceSets = [sourceSets.main]
@@ -153,6 +160,8 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
         html.enabled true
     }
 }
+
+// === ARTIFACTS === >
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
@@ -169,5 +178,7 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+// === DEFAULT TASKS === >
 
 defaultTasks 'build', 'publishToMavenLocal', 'install'
