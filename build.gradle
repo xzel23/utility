@@ -103,7 +103,7 @@ if (hasModuleInfo) {
             source = sourceSets.main.java.srcDirs
             classpath = sourceSets.main.compileClasspath 
             include '**/module-info.java'
-            destinationDir = sourceSets.main.output.classesDir
+            destinationDir = sourceSets.main.output.classesDirs.singleFile
         }
 		
         sourceSets.main.java { 
