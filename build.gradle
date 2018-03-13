@@ -84,24 +84,26 @@ if (hasModuleInfo) {
     // if sourceCompatibility is < Java9, exclude module-info.java from the
     // main sourceSet and compile it seperately with compatibility set to Java9
     if (!sourceCompatibility.isJava9Compatible()) {
-        println 'Compiling module-info.java in Java 9 compatibility mode.'
-
         task compileModuleInfo (type: JavaCompile) {
+            println 'Compiling module-info.java in Java 9 compatibility mode.'
+            
             inputs.property("moduleName", project.moduleName)
 
             sourceCompatibility = 9
             targetCompatibility = 9
 
             source = sourceSets.main.java.srcDirs
-            include '**/module-info.java'
             classpath = sourceSets.main.compileClasspath 
+            include '**/module-info.java'
             destinationDir = sourceSets.main.output.classesDir
 
-            options.compilerArgs = [
-                '--module-path', classpath.asPath,
-                '--add-modules', 'ALL-SYSTEM',
-                '-d', sourceSets.main.output.classesDirs.asPath
-            ]
+            doFirst {
+                options.compilerArgs = [
+                    '--module-path', classpath.asPath,
+                    '--add-modules', 'ALL-SYSTEM',
+                    '-d', sourceSets.main.output.classesDirs.asPath
+                ]
+            }
         }
 
         sourceSets.main.java { 
