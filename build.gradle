@@ -11,6 +11,7 @@ apply plugin: 'com.github.spotbugs'
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
 	version            = '0.11.2'
+	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
 	ext.repo           = 'public'
@@ -27,11 +28,12 @@ repositories {
 }
 
 dependencies {
-  compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
-  testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
-
-  // Use JUnit test framework
-  testImplementation 'junit:junit:4.12'
+    // Log4J2
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
+    testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
+    
+    // JUnit
+    testImplementation 'junit:junit:4.12'
 }
 
 sourceCompatibility = 8
@@ -66,42 +68,48 @@ bintray {
 }
 
 // === JIGSAW === >
- 
-def jigsaw = JavaVersion.current().isJava9Compatible()
 
-if (jigsaw) {
-    println("Creating a module-info")
-        
-    sourceSets {
-        moduleInfo {
-            java {
-                srcDir 'src/module-info/java'            
-            }
+def moduleInfo = sourceSets.main.allJava.matching { 
+    include '**/module-info.java'
+}
+
+def hasModuleInfo = !moduleInfo.isEmpty()
+
+if (hasModuleInfo) {
+    // check Java version
+    if (!JavaVersion.current().isJava9Compatible()) {
+        throw new GradleException('At least Java 9 is needed if a module-info.java file is present.')
+    }
+    
+    // if sourceCompatibility is < Java9, exclude module-info.java from the
+    // main sourceSet and compile it seperately with compatibility set to Java9
+    if (!sourceCompatibility.isJava9Compatible()) {
+        println 'Compiling module-info.java in Java 9 compatibility mode.'
+
+        task compileModuleInfo (type: JavaCompile) {
+            inputs.property("moduleName", project.moduleName)
+            sourceCompatibility = 9
+            targetCompatibility = 9
+            source = sourceSets.main.java.srcDirs
+            include '**/module-info.java'
+            classpath = sourceSets.main.compileClasspath
+            destinationDir = sourceSets.main.output.classesDir
+
+                options.compilerArgs = [
+                    '--module-path', classpath.asPath,
+                    '--add-modules', 'ALL-SYSTEM',
+                    '-d', sourceSets.main.output.classesDirs.asPath
+                ]
         }
-    }
-    
-    compileModuleInfoJava {
-        sourceCompatibility = 9
-        targetCompatibility = 9
-    
-        inputs.property("moduleName", moduleName)
-    
-        doFirst {
-            classpath += sourceSets.main.compileClasspath
-            
-            options.compilerArgs = [
-                '--module-path', classpath.asPath,
-                '--add-modules', 'ALL-SYSTEM',
-                '-d', sourceSets.main.output.classesDirs.asPath
-            ]
+
+        sourceSets.main.java { 
+            exclude '**/module-info.java'
         }
-    }
-    
-    jar 
-    {
-        from sourceSets.main.output
-        from sourceSets.moduleInfo.output
-    }
+     
+        compileJava.doLast {
+            tasks.compileModuleInfo.execute()
+        }
+    }         
 }
 
 // === MAVEN publication === >
