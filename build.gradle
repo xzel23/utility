@@ -78,7 +78,7 @@ def hasModuleInfo = !moduleInfo.isEmpty()
 if (hasModuleInfo) {
     // check Java version
     if (!JavaVersion.current().isJava9Compatible()) {
-        throw new GradleException('At least Java 9 is needed if a module-info.java file is present.')
+        logger.warn('At least Java 9 is needed if a module-info.java file is present. Build will probably fail!')
     }
     
     // if sourceCompatibility is < Java9, exclude module-info.java from the
