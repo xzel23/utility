@@ -84,7 +84,7 @@ if (hasModuleInfo) {
     // if sourceCompatibility is < Java9, exclude module-info.java from the
     // main sourceSet and compile it seperately with compatibility set to Java9
     if (!sourceCompatibility.isJava9Compatible()) {
-        task compileModuleInfo (type: JavaCompile, dependsOn: compileJava) {
+        task compileModuleInfo (type: JavaCompile) {
             doFirst {
                 println 'Compiling module-info.java in Java 9 compatibility mode.'
 
@@ -105,14 +105,13 @@ if (hasModuleInfo) {
             include '**/module-info.java'
             destinationDir = sourceSets.main.output.classesDir
         }
-
+		
         sourceSets.main.java { 
             exclude '**/module-info.java'
         }
      
-        compileJava.doLast {
-            tasks.compileModuleInfo.execute()
-        }
+		compileModuleInfo.dependsOn compileJava
+		assemble.dependsOn compileModuleInfo
     }         
 }
 
