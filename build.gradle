@@ -88,18 +88,20 @@ if (hasModuleInfo) {
 
         task compileModuleInfo (type: JavaCompile) {
             inputs.property("moduleName", project.moduleName)
+
             sourceCompatibility = 9
             targetCompatibility = 9
+
             source = sourceSets.main.java.srcDirs
             include '**/module-info.java'
-            classpath = sourceSets.main.compileClasspath
+            classpath = sourceSets.main.compileClasspath 
             destinationDir = sourceSets.main.output.classesDir
 
-                options.compilerArgs = [
-                    '--module-path', classpath.asPath,
-                    '--add-modules', 'ALL-SYSTEM',
-                    '-d', sourceSets.main.output.classesDirs.asPath
-                ]
+            options.compilerArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'ALL-SYSTEM',
+                '-d', sourceSets.main.output.classesDirs.asPath
+            ]
         }
 
         sourceSets.main.java { 
