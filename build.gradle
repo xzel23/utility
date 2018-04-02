@@ -1,12 +1,21 @@
+buildscript {
+  repositories {
+    maven { url  "https://dl.bintray.com/dua3/public" }
+  }  
+  dependencies {
+    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.1'
+  }
+}
+
 plugins {
-  id "com.github.spotbugs" version "1.6.0"
+  id "com.github.spotbugs" version "1.6.1"
   id "com.jfrog.bintray" version "1.8.0"
 }
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-apply plugin: 'com.github.spotbugs'
+apply plugin: 'com.dua3.gradle.jpms'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
@@ -65,54 +74,6 @@ bintray {
 	        vcsTag = project.version
 	    }
     }
-}
-
-// === JIGSAW === >
-
-def moduleInfo = sourceSets.main.allJava.matching { 
-    include '**/module-info.java'
-}
-
-def hasModuleInfo = !moduleInfo.isEmpty()
-
-if (hasModuleInfo) {
-    // check Java version
-    if (!JavaVersion.current().isJava9Compatible()) {
-        logger.warn('At least Java 9 is needed if a module-info.java file is present. Build will probably fail!')
-    }
-    
-    // if sourceCompatibility is < Java9, exclude module-info.java from the
-    // main sourceSet and compile it seperately with compatibility set to Java9
-    if (!sourceCompatibility.isJava9Compatible()) {
-        task compileModuleInfo (type: JavaCompile) {
-            doFirst {
-                println 'Compiling module-info.java in Java 9 compatibility mode.'
-
-                options.compilerArgs = [
-                    '--module-path', classpath.asPath,
-                    '--add-modules', 'ALL-SYSTEM',
-                    '-d', sourceSets.main.output.classesDirs.asPath
-                ]
-            }
-            
-            inputs.property("moduleName", project.moduleName)
-
-            sourceCompatibility = 9
-            targetCompatibility = 9
-
-            source = sourceSets.main.java.srcDirs
-            classpath = sourceSets.main.compileClasspath 
-            include '**/module-info.java'
-            destinationDir = sourceSets.main.output.classesDirs.singleFile
-        }
-		
-        sourceSets.main.java { 
-            exclude '**/module-info.java'
-        }
-     
-		compileModuleInfo.dependsOn compileJava
-		assemble.dependsOn compileModuleInfo
-    }         
 }
 
 // === MAVEN publication === >
