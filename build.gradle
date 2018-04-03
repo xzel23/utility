@@ -3,7 +3,7 @@ buildscript {
     maven { url  "https://dl.bintray.com/dua3/public" }
   }  
   dependencies {
-    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.1'
+    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.1.1'
   }
 }
 
@@ -19,7 +19,7 @@ apply plugin: 'com.dua3.gradle.jpms'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '0.11.2'
+	version            = '0.11.2-jpms'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
@@ -124,6 +124,7 @@ publishing {
 
 spotbugs {
     sourceSets = [sourceSets.main]
+    toolVersion = '3.1.2'
 }
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
