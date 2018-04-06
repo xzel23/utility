@@ -3,7 +3,7 @@ buildscript {
     maven { url  "https://dl.bintray.com/dua3/public" }
   }  
   dependencies {
-    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.1.2'
+    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.2.1'
   }
 }
 
@@ -19,7 +19,7 @@ apply plugin: 'com.dua3.gradle.jpms'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '0.11.2-jpms'
+	version            = '0.11.3'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
@@ -32,14 +32,13 @@ apply plugin: 'com.dua3.gradle.jpms'
 /////////////////////////////////////////////////////////////////////////////
 
 repositories {
-    mavenLocal()
     jcenter()
 }
 
 dependencies {
     // Log4J2
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
-    testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
+    testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
     
     // JUnit
     testImplementation 'junit:junit:4.12'
@@ -121,11 +120,6 @@ publishing {
 }
 
 // === SPOTBUGS === >
-
-spotbugs {
-    sourceSets = [sourceSets.main]
-    toolVersion = '3.1.2'
-}
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
