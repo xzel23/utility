@@ -19,7 +19,7 @@ apply plugin: 'com.dua3.gradle.jpms'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '0.11.3'
+	version            = '0.11.4'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
@@ -36,10 +36,6 @@ repositories {
 }
 
 dependencies {
-    // Log4J2
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
-    testRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
-    
     // JUnit
     testImplementation 'junit:junit:4.12'
 }

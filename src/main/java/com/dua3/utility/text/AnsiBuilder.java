@@ -24,9 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.io.AnsiCode;
@@ -39,7 +36,6 @@ import com.dua3.utility.lang.LangUtil;
  * @author Axel Howind (axel@dua3.com)
  */
 public class AnsiBuilder extends AbstractStringBasedBuilder {
-    private static final Logger LOG = LogManager.getLogger(AnsiBuilder.class);
 
     private static final Map<String, String> DEFAULT_OPTIONS = LangUtil.map(
             Pair.of(TAG_DOC_START, AnsiCode.reset()),
@@ -115,8 +111,7 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
         try {
             AnsiCode.esc(buffer, esc);
         } catch (IOException e) {
-            LOG.error("could not apply text attributes", e);
-            throw new UncheckedIOException(e);
+            throw new UncheckedIOException("could not apply text attributes", e);
         }
     }
 

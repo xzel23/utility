@@ -30,9 +30,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
@@ -49,7 +46,6 @@ import com.dua3.utility.text.TextUtil;
  * @author Axel Howind (axel@dua3.com)
  */
 public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument> {
-	private static final Logger LOG = LogManager.getLogger(StyledDocumentBuilder.class);
 
 	private static final Object[] PARAGRAPH_ATTRIBUTES = { StyleConstants.ParagraphConstants.LeftIndent,
 			StyleConstants.ParagraphConstants.Alignment };
@@ -199,7 +195,6 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 			case TextAttributes.STYLE_END_RUN:
 				break;
 			default:
-				LOG.warn("unknown: {}", attribute);
 				break;
 			}
 		}
@@ -214,7 +209,6 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 			AttributeSet pa = getParagraphAttributes(attributeSet);
 			paragraphAttributes.add(Pair.of(chars.length(), pa));
 		} catch (BadLocationException e) {
-			LOG.error("unexpected error", e);
 			throw new IllegalStateException(e);
 		}
 	}

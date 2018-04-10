@@ -37,9 +37,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 
@@ -47,7 +44,6 @@ import com.dua3.utility.Pair;
  * Utility methods for Swing applications.
  */
 public class SwingUtil {
-    private static final Logger LOG = LogManager.getLogger(SwingUtil.class);
 
     /**
      * Create an action to be used in menus.
@@ -150,7 +146,6 @@ public class SwingUtil {
      */
     public static void setNativeLookAndFeel(String applicationName) {
         if (System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
-            LOG.debug("enabling global menu");
             if (applicationName != null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
                 System.setProperty("apple.awt.application.name", applicationName);
@@ -162,11 +157,10 @@ public class SwingUtil {
         try {
             // Set system L&F
             String lafName = UIManager.getSystemLookAndFeelClassName();
-            LOG.debug("setting L&F to {}", lafName);
             UIManager.setLookAndFeel(lafName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
-            LOG.warn("Could not set Look&Feel.", ex);
+            java.util.logging.Logger.getGlobal().warning("Could not set Look&Feel.");
         }
     }
 
@@ -285,7 +279,7 @@ public class SwingUtil {
             try {
                 file = current.toFile().getAbsoluteFile();
             } catch (UnsupportedOperationException e) {
-                LOG.warn("path cannot be converted to file: {}", current);
+                java.util.logging.Logger.getGlobal().warning("path cannot be converted to file: " + current);
                 file = new File(".").getAbsoluteFile();
             }
         }
@@ -301,12 +295,10 @@ public class SwingUtil {
         int rc = jfc.showOpenDialog(parent);
 
         if (rc != JFileChooser.APPROVE_OPTION) {
-            LOG.debug("file dialog was cancelled");
             return Optional.empty();
         }
 
         Path path = jfc.getSelectedFile().toPath();
-        LOG.debug("selected path: {}", path);
 
         return Optional.of(path);
     }

@@ -11,5 +11,4 @@ module com.dua3.utility {
     requires javafx.web;
     requires java.xml;
     requires java.desktop;
-    requires org.apache.logging.log4j;
 }

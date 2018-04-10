@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,7 +30,6 @@ import javafx.scene.web.WebEngine;
  * A Utility class for JavaFx.
  */
 public class JfxUtil {
-    private static final Logger LOG = LogManager.getLogger(JfxUtil.class);
 
 	/**
 	 * Read JavaScript or CSS and inject into WebView.
@@ -48,11 +45,9 @@ public class JfxUtil {
 	        String data = NetUtil.readContent(resource, StandardCharsets.UTF_8);
 	        switch (resource.getPath().replaceAll("^.*\\.", "")) { // switch on extension
 	        case "js":
-	        		LOG.debug("injecting JavaScript into WebView: {}", resource);
 	            engine.executeScript(data);
 	            break;
 	        case "css":
-	        		LOG.debug("injecting stylesheet into WebView: {}", resource);
 	            Document doc = engine.getDocument();
 	            Element styleNode = doc.createElement("style");
 	            styleNode.setAttribute("type", "text/css");
@@ -60,7 +55,6 @@ public class JfxUtil {
 	            doc.getElementsByTagName("head").item(0).appendChild(styleNode);
 	            break;
 	        default:
-	        		LOG.warn("don't know how to inject resource into WebView: {}", resource);
 	            throw new IllegalArgumentException("Resource has unsupported extension: " + resource);
 	        }
 	    }
