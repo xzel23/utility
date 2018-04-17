@@ -4,12 +4,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.dua3.utility.Pair;
@@ -271,4 +273,14 @@ public class LangUtil {
             consumer.accept(k,v);
         }
     }
+    
+    /**
+     * Create a log message supplier.
+     * @param fmt format, {@link String#format(Locale, String, Object...)} with the root locale
+     * @param args arguments
+     * @return a supplier that returns the formatted message
+     */
+	public static Supplier<String> msgs(String fmt, Object... args) {
+		return () -> String.format(Locale.ROOT, fmt, args);
+	}
 }
