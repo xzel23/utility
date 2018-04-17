@@ -8,9 +8,12 @@ import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -132,6 +135,18 @@ public class IOUtil {
         T run() throws IOException;
     }
 
+    @FunctionalInterface
+    public static interface IOConsumer<T> {
+    	static <T> IOConsumer<T> create(Consumer<T> consumer) {
+    		return new IOConsumer<T>() {
+				@Override
+				public void accept(T arg) throws IOException {
+				}
+    		};
+    	}
+        void accept(T arg) throws IOException;
+    }
+
     /**
      * A helper method for use in lambda expressions that wraps IO operations and converts
      * thrown IOException to UncheckedIOExcetion.
@@ -150,6 +165,19 @@ public class IOUtil {
         }
     }
 
+    public static <T> Consumer<T> wrapIO(IOConsumer<T> op) {
+    	return new Consumer<T>() {
+			@Override
+			public void accept(T t) {
+				try {
+					op.accept(t);
+				} catch (IOException e) {
+					throw new UncheckedIOException(e);
+				}
+			}
+    	};
+    }
+
     /**
      * Get URL for path.
      * @param path the path
@@ -162,6 +190,21 @@ public class IOUtil {
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
+    }
+    
+    /**
+     * Delete a file or directory recursively.
+     * @param path the file or directory to delete
+     * @throws IOException
+     */
+    public static void deleteRecursive(Path path) throws IOException {
+    	try {
+	    	Files.walk(path, FileVisitOption.FOLLOW_LINKS)
+	        .sorted(Comparator.reverseOrder())
+	        .forEach(p -> wrapIO((Path p2) -> Files.deleteIfExists(p2)));
+    	} catch (UncheckedIOException e) {
+    		throw new IOException(e.getCause());
+    	}
     }
 
     private IOUtil() {
