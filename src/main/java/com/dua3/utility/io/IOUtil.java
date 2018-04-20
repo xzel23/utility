@@ -182,7 +182,7 @@ public class IOUtil {
     /**
      * Delete a file or directory recursively.
      * @param path the file or directory to delete
-     * @throws IOException
+     * @throws IOException if a file or directory could not be deleted
      */
     public static void deleteRecursive(Path path) throws IOException {
     	try {
