@@ -165,19 +165,6 @@ public class IOUtil {
         }
     }
 
-    public static <T> Consumer<T> wrapIO(IOConsumer<T> op) {
-    	return new Consumer<T>() {
-			@Override
-			public void accept(T t) {
-				try {
-					op.accept(t);
-				} catch (IOException e) {
-					throw new UncheckedIOException(e);
-				}
-			}
-    	};
-    }
-
     /**
      * Get URL for path.
      * @param path the path
@@ -201,7 +188,7 @@ public class IOUtil {
     	try {
 	    	Files.walk(path, FileVisitOption.FOLLOW_LINKS)
 	        .sorted(Comparator.reverseOrder())
-	        .forEach(p -> wrapIO((Path p2) -> Files.deleteIfExists(p2)));
+	        .forEach(p -> wrapIO(() -> Files.deleteIfExists(p)));
     	} catch (UncheckedIOException e) {
     		throw new IOException(e.getCause());
     	}
