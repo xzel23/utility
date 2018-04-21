@@ -14,19 +14,25 @@ public class SandboxURLHandler extends URLStreamHandler {
 
     SandboxURLHandler(Class<?> clazz, String path) {
         this.clazz = Objects.requireNonNull(clazz);
-        this.root = Objects.requireNonNull(path);
+        Objects.requireNonNull(path);
+    
+        String prefix = clazz.getPackage().getName().replace('.', '/');
+        this.root = path.isEmpty() ? prefix : prefix + "/" + path;
     }
 
     @Override
     protected URLConnection openConnection(URL url) throws IOException
     {
         String name = root+url.getHost()+url.getPath();
-		URL localURL = clazz.getResource(name);
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        
+        URL localURL = cl.getResource(name);
+        
         if (localURL==null) {
-        	throw new IOException("Missing local file: "+name+" ["+url+"]");
+        	throw new IOException("Missing local file for "+url);
         }
-        URLConnection connection = localURL.openConnection();
-        return connection;
+
+        return localURL.openConnection();
     }
 
 }
