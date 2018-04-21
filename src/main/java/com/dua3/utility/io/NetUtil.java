@@ -25,9 +25,22 @@ public class NetUtil {
      *
      * @param clazz
      *   The class relative to which the resources are stored.
+     * @param pathToRoot
+     *  The path to folder containing the local files, with "/" referring to the class's folder
+     */
+    public static void registerSandboxURLHandler(Class<?> clazz, String pathToRoot) {
+        URL.setURLStreamHandlerFactory(new SandboxURLStreamHandlerFactory(clazz, pathToRoot));
+    }
+
+    /**
+     * Register a custom URLHandler that deviates all non-local URL-connections to a local path.
+     * Note: this should be called exactly once at the start of the application.
+     *
+     * @param clazz
+     *   The class relative to which the resources are stored.
      */
     public static void registerSandboxURLHandler(Class<?> clazz) {
-        URL.setURLStreamHandlerFactory(new SandboxURLStreamHandlerFactory(clazz));
+    	registerSandboxURLHandler(clazz, "");
     }
 
 	/**
