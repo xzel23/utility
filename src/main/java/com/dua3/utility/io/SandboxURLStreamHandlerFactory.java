@@ -6,12 +6,10 @@ import java.util.Objects;
 
 public class SandboxURLStreamHandlerFactory implements URLStreamHandlerFactory{
 
-    private final Class<?> clazz;
-    private final String root;
+    private final FileSystemView localFiles;
 
-    public SandboxURLStreamHandlerFactory(Class<?> clazz, String root) {
-        this.clazz = Objects.requireNonNull(clazz);
-        this.root = Objects.requireNonNull(root);
+    public SandboxURLStreamHandlerFactory(FileSystemView localFiles) {
+        this.localFiles = Objects.requireNonNull(localFiles);
     }
 
     @Override
@@ -22,7 +20,7 @@ public class SandboxURLStreamHandlerFactory implements URLStreamHandlerFactory{
         case "jar":
             return null;
         default:
-            return new SandboxURLHandler(clazz, root);
+            return new SandboxURLHandler(localFiles);
         }
     }
 
