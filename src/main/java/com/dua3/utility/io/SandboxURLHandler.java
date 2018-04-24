@@ -8,10 +8,15 @@ import java.net.URLStreamHandler;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.dua3.utility.lang.LangUtil;
 
 
 public class SandboxURLHandler extends URLStreamHandler {
 
+    private static final Logger LOG = Logger.getLogger(SandboxURLHandler.class.getName());
     private final FileSystemView localFiles;
 
     SandboxURLHandler(FileSystemView localFiles) {
@@ -23,9 +28,11 @@ public class SandboxURLHandler extends URLStreamHandler {
     {
         Path path;
 		try {
-			path = localFiles.resolve(Paths.get(url.toURI()));
+            LOG.info(LangUtil.msgs("opening connecting to local version of: %s", url));
+            path = localFiles.resolve(Paths.get(url.toURI()));
             return path.toUri().toURL().openConnection();
 		} catch (URISyntaxException e) {
+            LOG.log(Level.SEVERE, "Invalid URL: "+url, e);
             throw new IOException(e);
 		}
     }

@@ -11,9 +11,13 @@ import java.net.URLDecoder;
 import java.net.URLStreamHandler;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.dua3.utility.lang.LangUtil;
+
 public class NetUtil {
+    private static final Logger LOG = Logger.getLogger(NetUtil.class.getName());
 
     private NetUtil() {
         // nop: utility class
@@ -27,6 +31,7 @@ public class NetUtil {
      *   A view to the local file's root.
      */
     public static void registerSandboxURLHandler(FileSystemView localFiles) {
+        LOG.fine(LangUtil.msgs("Setting SandBoxURLHandler with root %s", localFiles));
         URL.setURLStreamHandlerFactory(new SandboxURLStreamHandlerFactory(localFiles));
     }
 
