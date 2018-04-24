@@ -1,21 +1,13 @@
-buildscript {
-  repositories {
-    maven { url  "https://dl.bintray.com/dua3/public" }
-  }  
-  dependencies {
-    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.2.4'
-  }
-}
-
 plugins {
   id "com.github.spotbugs" version "1.6.1"
   id "com.jfrog.bintray" version "1.8.0"
+  id "com.dua3.gradle.jpms" version "0.3.1"
 }
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-apply plugin: 'com.dua3.gradle.jpms'
+//apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
