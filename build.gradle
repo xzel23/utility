@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-//apply plugin: 'eclipse'
+apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
@@ -34,6 +34,11 @@ dependencies {
 
 sourceCompatibility = 8
 targetCompatibility = 8
+
+// remove module-info.java from eclipse source folder
+eclipse.classpath.file.whenMerged {
+    entries.find { it.path.matches('src/[^/]+/java') }.excludes += 'module-info.java'
+}
 
 // === BINTRAY === >
 
