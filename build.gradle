@@ -37,7 +37,9 @@ targetCompatibility = 8
 
 // remove module-info.java from eclipse source folder
 eclipse.classpath.file.whenMerged {
-    entries.find { it.path.matches('src/[^/]+/java') }.excludes += 'module-info.java'
+    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
+    	item.excludes += 'module-info.java'
+    }
 }
 
 // === BINTRAY === >
