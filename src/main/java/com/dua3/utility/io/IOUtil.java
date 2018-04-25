@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -135,18 +134,6 @@ public class IOUtil {
         T run() throws IOException;
     }
 
-    @FunctionalInterface
-    public static interface IOConsumer<T> {
-    	static <T> IOConsumer<T> create(Consumer<T> consumer) {
-    		return new IOConsumer<T>() {
-				@Override
-				public void accept(T arg) throws IOException {
-				}
-    		};
-    	}
-        void accept(T arg) throws IOException;
-    }
-
     /**
      * A helper method for use in lambda expressions that wraps IO operations and converts
      * thrown IOException to UncheckedIOExcetion.
@@ -178,7 +165,7 @@ public class IOUtil {
             throw new IllegalStateException(e);
         }
     }
-    
+
     /**
      * Delete a file or directory recursively.
      * @param path the file or directory to delete
