@@ -1,5 +1,7 @@
 package com.dua3.utility.lang;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -162,6 +165,64 @@ public class LangUtil {
     }
 
     /**
+     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     *
+     * @param <T> the argument type
+     * @param c the consumer to call (instance of {@link ConsumerThrows})
+     *
+     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     */
+    public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<T> c) {
+        return arg -> {
+            try {
+                c.apply(arg);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            } catch (Exception e) {
+                throw new WrappedException(e);
+            }
+        };
+    }
+
+    /**
+     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     *
+     * @param <T> the argument type
+     * @param <R> the result type
+     * @param f the function to call (instance of {@link FunctionThrows})
+     *
+     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     */
+    public static <T,R> Function<T, R> uncheckedFunction(FunctionThrows<T,R> f) {
+        return arg -> {
+            try {
+                return f.apply(arg);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            } catch (Exception e) {
+                throw new WrappedException(e);
+            }
+        };
+    }
+
+    /**
+     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     * @param r the Runnable to call (instance of {@link RunnableThrows})
+     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     */
+    public static Runnable uncheckedRunnable(RunnableThrows r) {
+        return () -> {
+            try {
+                r.run();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            } catch (Exception e) {
+                throw new WrappedException(e);
+            }
+        };
+    }
+
+    /**
      * Trim string, remove prepending byte order mark.
      * @param s the string to trim
      * @return the trimmed string
@@ -287,12 +348,10 @@ public class LangUtil {
     /**
      * Interface similar to {@link java.lang.Runnable} that declares thrown exceptions
      * on its {@code run()} method.
-     *
-     * @param <E> the exception type
      */
     @FunctionalInterface
-    public static interface RunnableThrows<E extends Exception> {
-        void run() throws E;
+    public static interface RunnableThrows {
+        void run() throws Exception;
     }
 
     /**
@@ -301,11 +360,10 @@ public class LangUtil {
 	 *
 	 * @param <T> the argument type
 	 * @param <R> the result type
-	 * @param <E> the exception type
 	 */
 	@FunctionalInterface
-	public static interface FunctionThrows<T,R, E extends Exception> {
-	    R apply(T arg) throws E;
+	public static interface FunctionThrows<T,R> {
+	    R apply(T arg) throws Exception;
 	}
 
 	/**
@@ -313,10 +371,9 @@ public class LangUtil {
      * on its {@code apply()} method.
      *
      * @param <T> the argument type
-     * @param <E> the exception type
      */
     @FunctionalInterface
-    public static interface ConsumerThrows<T, E extends Exception> {
-        void apply(T arg) throws E;
+    public static interface ConsumerThrows<T> {
+        void apply(T arg) throws Exception;
     }
 }
