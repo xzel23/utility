@@ -191,7 +191,7 @@ public class IOUtil {
     	try {
 	    	Files.walk(path, FileVisitOption.FOLLOW_LINKS)
 	        .sorted(Comparator.reverseOrder())
-	        .forEach(uncheckedConsume(Files::deleteIfExists));
+	        .forEach(uncheckedConsumer(Files::deleteIfExists));
     	} catch (UncheckedIOException e) {
     		throw new IOException(e.getCause());
     	}
@@ -205,7 +205,7 @@ public class IOUtil {
      *
      * @return instance of Function that invokes f and converts IOException to UncheckedIOException
      */
-    public static <T> Consumer<T> uncheckedConsume(ConsumerThrows<T,IOException> c) {
+    public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<T,IOException> c) {
         return arg -> {
             try {
                 c.apply(arg);
