@@ -13,14 +13,22 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.LangUtil.ConsumerThrows;
+import com.dua3.utility.lang.LangUtil.FunctionThrows;
+import com.dua3.utility.lang.LangUtil.RunnableThrows;
 
 /**
  * Utility class for Inpit/Output.
  */
 public class IOUtil {
+
+    private IOUtil() {
+        // utility class
+    }
 
     /**
      * Get file extension.
@@ -131,7 +139,7 @@ public class IOUtil {
      *  the operation's result type
      * @see IOUtil#wrapIO(IOOperation)
      * @deprecated
-     *  Use {@link LangUtil#uncheckedIO(com.dua3.utility.lang.LangUtil.FunctionThrows)} instead.
+     *  Use {@link #uncheckedFunction(com.dua3.utility.lang.LangUtil.FunctionThrows)} instead.
      */
     @Deprecated
     @FunctionalInterface
@@ -149,7 +157,7 @@ public class IOUtil {
      * @return
      *  the result of the wrapped operation
      * @deprecated
-     *  Use {@link LangUtil#uncheckedIO(com.dua3.utility.lang.LangUtil.FunctionThrows)} instead.
+     *  Use {@link #uncheckedFunction(com.dua3.utility.lang.LangUtil.FunctionThrows)} instead.
      */
     @Deprecated
     public static <T> T wrapIO(IOOperation<T> op) {
@@ -183,13 +191,61 @@ public class IOUtil {
     	try {
 	    	Files.walk(path, FileVisitOption.FOLLOW_LINKS)
 	        .sorted(Comparator.reverseOrder())
-	        .forEach(p -> wrapIO(() -> Files.deleteIfExists(p)));
+	        .forEach(uncheckedConsume(Files::deleteIfExists));
     	} catch (UncheckedIOException e) {
     		throw new IOException(e.getCause());
     	}
     }
 
-    private IOUtil() {
-        // utility class
+    /**
+     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     *
+     * @param <T> the argument type
+     * @param c the consumer to call (instance of {@link ConsumerThrows})
+     *
+     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     */
+    public static <T> Consumer<T> uncheckedConsume(ConsumerThrows<T,IOException> c) {
+        return arg -> {
+            try {
+                c.apply(arg);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        };
+    }
+
+    /**
+     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     *
+     * @param <T> the argument type
+     * @param <R> the result type
+     * @param f the function to call (instance of {@link FunctionThrows})
+     *
+     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     */
+    public static <T,R> Function<T, R> uncheckedFunction(FunctionThrows<T,R,IOException> f) {
+        return arg -> {
+            try {
+                return f.apply(arg);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        };
+    }
+
+    /**
+     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     * @param r the Runnable to call (instance of {@link RunnableThrows})
+     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     */
+    public static Runnable uncheckedRunnable(RunnableThrows<IOException> r) {
+        return () -> {
+            try {
+                r.run();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        };
     }
 }

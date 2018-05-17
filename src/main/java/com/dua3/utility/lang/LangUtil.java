@@ -1,7 +1,5 @@
 package com.dua3.utility.lang;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -299,21 +296,6 @@ public class LangUtil {
     }
 
     /**
-     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
-     * @param r the Runnable to call (instance of {@link RunnableThrows})
-     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
-     */
-    public static Runnable uncheckedIO(RunnableThrows<IOException> r) {
-        return () -> {
-            try {
-                r.run();
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        };
-    }
-
-	/**
 	 * Interface similar to {@link java.util.function.Function} that declares thrown exceptions
 	 * on its {@code apply()} method.
 	 *
@@ -327,21 +309,14 @@ public class LangUtil {
 	}
 
 	/**
-	 * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
-	 *
-	 * @param <T> the argument type
-	 * @param <R> the result type
-	 * @param f the function to call (instance of {@link FunctionThrows})
-	 *
-	 * @return instance of Function that invokes f and converts IOException to UncheckedIOException
-	 */
-	public static <T,R> Function<T, R> uncheckedIO(FunctionThrows<T,R,IOException> f) {
-	    return arg -> {
-            try {
-                return f.apply(arg);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        };
-	}
+     * Interface similar to {@link java.util.function.Consumer} that declares thrown exceptions
+     * on its {@code apply()} method.
+     *
+     * @param <T> the argument type
+     * @param <E> the exception type
+     */
+    @FunctionalInterface
+    public static interface ConsumerThrows<T, E extends Exception> {
+        void apply(T arg) throws E;
+    }
 }
