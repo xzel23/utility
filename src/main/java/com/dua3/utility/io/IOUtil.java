@@ -15,6 +15,8 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+import com.dua3.utility.lang.LangUtil;
+
 /**
  * Utility class for Inpit/Output.
  */
@@ -128,7 +130,10 @@ public class IOUtil {
      * @param <T>
      *  the operation's result type
      * @see IOUtil#wrapIO(IOOperation)
+     * @deprecated
+     *  Use {@link LangUtil#uncheckedIO(com.dua3.utility.lang.LangUtil.FunctionThrows)} instead.
      */
+    @Deprecated
     @FunctionalInterface
     public static interface IOOperation<T> {
         T run() throws IOException;
@@ -143,7 +148,10 @@ public class IOUtil {
      *  the operation to wrap
      * @return
      *  the result of the wrapped operation
+     * @deprecated
+     *  Use {@link LangUtil#uncheckedIO(com.dua3.utility.lang.LangUtil.FunctionThrows)} instead.
      */
+    @Deprecated
     public static <T> T wrapIO(IOOperation<T> op) {
         try {
             return op.run();
