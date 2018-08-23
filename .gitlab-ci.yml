@@ -21,6 +21,7 @@ build:
   artifacts:
     paths:
     - build/libs/*.jar
+    - build/reports
     expire_in: 1 week
 
 after_script:
