@@ -116,7 +116,7 @@ public class FileSystemView implements AutoCloseable {
         env.put("create", String.valueOf(create));
 
         URI uri = URI.create("jar:" + root.toUri());
-        return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
+        return createFileSystemView(FileSystems.newFileSystem(uri, env), "/");
     }
 
     /**
