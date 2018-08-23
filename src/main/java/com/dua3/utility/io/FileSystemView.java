@@ -9,7 +9,11 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.dua3.utility.lang.LangUtil;
@@ -39,10 +43,14 @@ import com.dua3.utility.lang.LangUtil;
  * </code>
  * </pre>
  *
- * @author a5xysq1
+ * @author Axel Howind
  *
  */
 public class FileSystemView implements AutoCloseable {
+
+    public enum Flags {
+        CREATE_IF_MISSING
+    }
 
     @FunctionalInterface
     private interface CleanUp {
@@ -53,26 +61,34 @@ public class FileSystemView implements AutoCloseable {
      * Create FileSystemView.
      *
      * @param root
-     *            the path to the FileSystemView's root. It can either be an existing directory or a zip-file.
+     *              the path to the FileSystemView's root. It can either be an existing directory or a zip-file.
+     * @param flags
+     *              the {@link Flags} to use
      * @return a new FileSystemView
      * @throws IOException
      *             if the view cannot be created
      */
-    public static FileSystemView create(Path root) throws IOException {
+    public static FileSystemView create(Path root, Flags... flags) throws IOException {
         Objects.requireNonNull(root);
 
-        if (!Files.exists(root)) {
-            throw new IOException("Path does not exist: " + root);
-        }
+        List<Flags> flagList = Arrays.asList(flags);
+        boolean createIfMissing = flagList.contains(Flags.CREATE_IF_MISSING);
 
-        // is it a directory?
-        if (Files.isDirectory(root)) {
-            return forDirectory(root);
-        }
+        // determine type
+        boolean exists = Files.exists(root);
+        LangUtil.check(exists  || createIfMissing, "Path does not exist: %s", root);
+
+        boolean hasZipExtension = IOUtil.getExtension(root).equalsIgnoreCase("zip");
+        boolean isDirectory = Files.isDirectory(root) || !exists && !hasZipExtension;
+        boolean isZip = !isDirectory && hasZipExtension;
 
         // is it a zip?
-        if (LangUtil.isOneOf(IOUtil.getExtension(root), "zip", "ZIP")) {
-            return forArchive(root);
+        if (isZip) {
+            return forArchive(root, flags);
+        }
+
+        if (isDirectory) {
+            return forDirectory(Files.createDirectories(root));
         }
 
         // other are not implemented
@@ -84,12 +100,21 @@ public class FileSystemView implements AutoCloseable {
      *
      * @param root
      *            denotes the Zip-File
+     * @param flags
+     *              the {@link Flags} to use
      * @return
      *         FileSystemView
      * @throws IOException
      *          if the file does not exist or an I/O error occurs
      */
-    public static FileSystemView forArchive(Path root) throws IOException {
+    public static FileSystemView forArchive(Path root, Flags... flags) throws IOException {
+        List<Flags> flagList = Arrays.asList(flags);
+
+        Map<String, String> env = new HashMap<>();
+        boolean exists = Files.notExists(root);
+        boolean create =  flagList.contains(Flags.CREATE_IF_MISSING) && !exists;
+        env.put("create", String.valueOf(create));
+
         URI uri = URI.create("jar:" + root.toUri());
         return createFileSystemView(FileSystems.newFileSystem(uri, Collections.emptyMap()), "/");
     }
