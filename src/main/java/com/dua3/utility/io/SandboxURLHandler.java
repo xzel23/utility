@@ -26,15 +26,10 @@ public class SandboxURLHandler extends URLStreamHandler {
     @Override
     protected URLConnection openConnection(URL url) throws IOException
     {
-        Path path;
-		try {
-            LOG.info(LangUtil.msgs("opening connecting to local version of: %s", url));
-            path = localFiles.resolve(Paths.get(url.toURI()));
-            return path.toUri().toURL().openConnection();
-		} catch (URISyntaxException e) {
-            LOG.log(Level.SEVERE, "Invalid URL: "+url, e);
-            throw new IOException(e);
-		}
+        LOG.info(LangUtil.msgs("opening connection to local version of: %s", url));
+        String stripped = url.toExternalForm().replaceFirst(".*://", "");
+        Path path = localFiles.resolve(stripped);
+        return path.toUri().toURL().openConnection();
     }
 
 }
