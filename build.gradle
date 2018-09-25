@@ -1,7 +1,7 @@
 plugins {
-  id "com.github.spotbugs" version "1.6.1"
-  id "com.jfrog.bintray" version "1.8.0"
-  id "com.dua3.gradle.jpms" version "0.4.0"
+  id "com.github.spotbugs" version "1.6.3"
+  id "com.jfrog.bintray" version "1.8.3"
+  id "com.dua3.gradle.jpms" version "0.4.1"
 }
 
 apply plugin: 'maven'
@@ -11,7 +11,7 @@ apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '1.0'
+	version            = '1.1'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
@@ -32,8 +32,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-sourceCompatibility = 8
-targetCompatibility = 8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 // remove module-info.java from eclipse source folder
 eclipse.classpath.file.whenMerged {
@@ -116,7 +116,7 @@ publishing {
 
 // === SPOTBUGS === >
 
-spotbugs.toolVersion = '3.1.3'
+spotbugs.toolVersion = '3.1.7'
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
