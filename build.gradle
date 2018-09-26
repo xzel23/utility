@@ -27,20 +27,32 @@ repositories {
     jcenter()
 }
 
+// get OS (because JavaFX packages are OS dependent)
+def currentOS = org.gradle.internal.os.OperatingSystem.current()
+def platform
+if (currentOS.isWindows()) {
+    platform = 'win'
+} else if (currentOS.isLinux()) {
+    platform = 'linux'
+} else if (currentOS.isMacOsX()) {
+    platform = 'mac'
+}
+
 dependencies {
+    // JavaFX
+    compile "org.openjfx:javafx-base:11:${platform}"
+    compile "org.openjfx:javafx-fxml:11:${platform}"
+    compile "org.openjfx:javafx-graphics:11:${platform}"
+    compile "org.openjfx:javafx-controls:11:${platform}"
+    compile "org.openjfx:javafx-web:11:${platform}"
+    compile "org.openjfx:javafx-media:11:${platform}"
+
     // JUnit
     testCompile 'junit:junit:4.12'
 }
 
 sourceCompatibility = 11
 targetCompatibility = 11
-
-// remove module-info.java from eclipse source folder
-eclipse.classpath.file.whenMerged {
-    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
-    	item.excludes += 'module-info.java'
-    }
-}
 
 // === BINTRAY === >
 

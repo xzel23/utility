@@ -7,9 +7,10 @@ module com.dua3.utility {
     exports com.dua3.utility.math;
     exports com.dua3.utility.text;
 
-    requires javafx.controls;
-    requires javafx.web;
     requires java.xml;
     requires java.desktop;
     requires java.logging;
+
+    requires javafx.controls;
+    requires javafx.web;
 }
