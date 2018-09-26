@@ -141,6 +141,8 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
         xml.enabled false
         html.enabled true
     }
+    // ignore failures until spotbugs bug is fixed: https://github.com/spotbugs/spotbugs/issues/756
+    ignoreFailures = true
 }
 
 // === ARTIFACTS === >
