@@ -1,15 +1,13 @@
 package com.dua3.utility.test.io;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.dua3.utility.io.FileSystemView;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.junit.Test;
 
 /**
  * Test the FileSystemView class.
@@ -41,7 +39,7 @@ public class FileSystemViewTest {
     @Test
     public void testJarClass() throws IOException {
         // org.junit.Assert should be loaded from rt.jar, so this tests the jar functionality
-        testClassHelper(org.junit.Assert.class);
+        testClassHelper(org.junit.jupiter.api.Test.class);
     }
     
     private void testClassHelper(Class<?> clazz) throws IOException {

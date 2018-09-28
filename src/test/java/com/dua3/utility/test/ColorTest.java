@@ -2,8 +2,8 @@ package com.dua3.utility.test;
 
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.dua3.utility.Color;
 
@@ -13,10 +13,10 @@ public class ColorTest {
     public void testToStringAndValueOfWithHex() {
         for (Color c : Color.values()) {
             String hex = c.toString();
-            Assert.assertTrue(hex.matches("#[a-f0-9]{8}"));
+            assertTrue(hex.matches("#[a-f0-9]{8}"));
             
             Color d = Color.valueOf(hex);
-            Assert.assertEquals(c, d);
+            assertEquals(c, d);
         }
     }
     
@@ -27,7 +27,7 @@ public class ColorTest {
             Color expected = entry.getValue();
             Color colorByName = Color.valueOf(name);
             
-            Assert.assertEquals(expected, colorByName);
+            assertEquals(expected, colorByName);
         }
     }
     
@@ -44,7 +44,7 @@ public class ColorTest {
             if (a==0xFF) {
             	String text = String.format("rgb(%d,%d,%d)", r, g, b);
             	Color actual = Color.valueOf(text);
-                Assert.assertEquals(expected, actual);
+                assertEquals(expected, actual);
             }            
         }
     }
@@ -61,7 +61,7 @@ public class ColorTest {
             String text = String.format("rgba(%d,%d,%d,%d)", r, g, b, a);
             Color actual = Color.valueOf(text);
             
-            Assert.assertEquals(expected, actual);
+            assertEquals(expected, actual);
         }
     }
     
