@@ -1,4 +1,4 @@
-package com.dua3.utility.math;
+package com.dua3.utility.test.math;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,6 +9,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.dua3.utility.math.MathUtil;
 
 /**
  *

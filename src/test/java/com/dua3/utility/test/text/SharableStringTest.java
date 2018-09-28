@@ -1,7 +1,10 @@
-package com.dua3.utility.text;
+package com.dua3.utility.test.text;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.dua3.utility.text.SharableString;
+import com.dua3.utility.text.SharedString;
 
 public class SharableStringTest {
     

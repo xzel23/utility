@@ -1,7 +1,9 @@
-package com.dua3.utility.lang;
+package com.dua3.utility.test.lang;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.dua3.utility.lang.RingBuffer;
 
 public class RingBufferTest {
     

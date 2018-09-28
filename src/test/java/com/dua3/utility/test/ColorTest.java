@@ -1,9 +1,11 @@
-package com.dua3.utility;
+package com.dua3.utility.test;
 
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.dua3.utility.Color;
 
 public class ColorTest {
     
