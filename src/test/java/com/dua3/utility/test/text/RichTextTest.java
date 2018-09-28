@@ -15,11 +15,10 @@
  */
 package com.dua3.utility.test.text;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.stream.Collectors;
-
-import org.junit.Test;
 
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;

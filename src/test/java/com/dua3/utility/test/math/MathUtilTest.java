@@ -1,14 +1,10 @@
 package com.dua3.utility.test.math;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.dua3.utility.math.MathUtil;
 
@@ -18,12 +14,12 @@ import com.dua3.utility.math.MathUtil;
  */
 public class MathUtilTest {
     
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         // nop
     }
     
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() {
         // nop
     }
@@ -31,12 +27,12 @@ public class MathUtilTest {
     public MathUtilTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
         // nop
     }
     
-    @After
+    @AfterEach
     public void tearDown() {
         // nop
     }

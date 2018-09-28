@@ -3,8 +3,8 @@ package com.dua3.utility.test.io;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.dua3.utility.io.IOUtil;
 
@@ -21,7 +21,7 @@ public class IOUtilTest {
         Path path = Paths.get("folder", "text.txt");
         String expected = "txt";
         String actual = IOUtil.getExtension(path);
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class IOUtilTest {
         Path path = Paths.get("folder", "text.txt");
         String expected = "text";
         String actual = IOUtil.stripExtension(String.valueOf(path.getFileName()));
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
 }

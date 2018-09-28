@@ -1,7 +1,7 @@
 package com.dua3.utility.test.text;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.dua3.utility.text.SharableString;
 import com.dua3.utility.text.SharedString;
@@ -13,8 +13,8 @@ public class SharableStringTest {
         String original = "0123456789abcdefghijklmnopqrstuvwxyz";
         SharableString sharable = new SharableString(original);
         
-        Assert.assertEquals(original, sharable.toString());
-        Assert.assertEquals(original.hashCode(), sharable.toString().hashCode());
+        assertEquals(original, sharable.toString());
+        assertEquals(original.hashCode(), sharable.toString().hashCode());
     }
     
     @Test
@@ -22,7 +22,7 @@ public class SharableStringTest {
         String original = "0123456789abcdefghijklmnopqrstuvwxyz";
         SharableString sharable = new SharableString(original);
         
-        Assert.assertEquals(original.substring(5, 15), sharable.subSequence(5, 15).toString());
+        assertEquals(original.substring(5, 15), sharable.subSequence(5, 15).toString());
     }
     
     @Test
@@ -35,8 +35,8 @@ public class SharableStringTest {
         SharedString actual_sub1 = actual.subSequence(5, 15);
         SharedString actual_sub2 = actual_sub1.subSequence(2, 8);
         
-        Assert.assertEquals(original, actual.toString());
-        Assert.assertEquals(original_sub1, actual_sub1.toString());
-        Assert.assertEquals(original_sub2, actual_sub2.toString());
+        assertEquals(original, actual.toString());
+        assertEquals(original_sub1, actual_sub1.toString());
+        assertEquals(original_sub2, actual_sub2.toString());
     }
 }

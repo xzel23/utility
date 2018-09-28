@@ -8,5 +8,5 @@ module com.dua3.utility.test {
     requires javafx.controls;
     requires javafx.web;
 
-    requires junit;
+    requires org.junit.jupiter.api;
 }
