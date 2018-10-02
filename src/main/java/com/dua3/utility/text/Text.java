@@ -38,15 +38,15 @@ public class Text extends AbstractList<String> {
     public static Text valueOf(String s) {
         return new Text(Arrays.stream(s.split(NEWLINE_STR)));
     }
-    
+
     public static Text valueOf(String[] lines) {
         return collect(Arrays.stream(lines));
     }
-    
+
     public static Text valueOf(Collection<String> lines) {
         return collect(lines.stream());
     }
-    
+
     static void checkNoLineBreaks(String line) {
         LangUtil.check(!containsLineBreaks(line), "line must not contain linebreaks");
     }
@@ -81,7 +81,7 @@ public class Text extends AbstractList<String> {
     }
 
     public Text region(int begin, int end) {
-        LangUtil.check(begin >= 0 && begin < end && end <= lines.size(), "invalid region from {} to {}", begin, end);
+        LangUtil.check(begin >= 0 && begin < end && end <= lines.size(), "invalid region from %d to %d", begin, end);
         return new Text(new ArrayList<>(lines.subList(begin, end)));
     }
 
