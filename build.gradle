@@ -1,5 +1,5 @@
 plugins {
-  id "com.github.spotbugs" version "1.6.3"
+  id "com.github.spotbugs" version "1.6.5"
   id "com.jfrog.bintray" version "1.8.3"
   id "com.dua3.gradle.jpms" version "0.4.1"
 }
@@ -151,7 +151,7 @@ publishing {
 
 // === SPOTBUGS === >
 
-spotbugs.toolVersion = '3.1.7'
+spotbugs.toolVersion = '3.1.8'
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
