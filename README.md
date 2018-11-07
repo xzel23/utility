@@ -19,6 +19,6 @@ Binary buils are available on bintray:
     dependencies {
         ...
         
-        def utilityVersion = "1.2.0"
+        def utilityVersion = "1.2.1"
         compile        "com.dua3.utility:utility:${utilityVersion}"
     }

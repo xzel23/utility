@@ -440,14 +440,6 @@ public class LangUtil {
                 initialized = false;
             }
         }
-
-        /**
-         * Check if the return value has been initialized.
-         * @return true, if `get()` was called
-         */
-        boolean isInitialized() {
-            return initialized;
-        }
     }
 
  }
