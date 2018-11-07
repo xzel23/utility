@@ -1,20 +1,8 @@
-buildscript {
-  repositories {
-    mavenLocal()
-  }  
-  dependencies {
-    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.4.2'
-  }
-}
-
 plugins {
   id "com.github.spotbugs" version "1.6.5"
   id "com.jfrog.bintray" version "1.8.3"
-//  id "com.dua3.gradle.jpms" version "0.4.2"
+  id "com.dua3.gradle.jpms" version "0.5"
 }
-
-apply plugin: 'com.dua3.gradle.jpms'
-// <---- cut
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
