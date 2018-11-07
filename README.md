@@ -1,10 +1,10 @@
 # com.dua3.utility
 
-A small library with utility classes. As of version 1.2, Java 11 is required.
+A small library with utility classes. As of version 1.2, Java 8 is required.
 
 ## Requirements
 
- - JDK 11 or later
+ - JDK 8 or later
 
 ## Using with Gradle
 
