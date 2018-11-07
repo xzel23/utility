@@ -382,30 +382,71 @@ public class LangUtil {
      * Upon first invocation of `get()`, `s.get()` is called to create the object to be returned.
      * Each subsequent call will return the same object without invoking `s.get()` again.
      * @param <T> the result type
-     * @param s the Supplier
+     * @param supplier the Supplier
      * @return caching Supplier
      */
-    public static <T> Supplier<T> cache(Supplier<T> s) {
-        return new CachingSupplier<>(s);
+    public static <T> Supplier<T> cache(Supplier<T> supplier) {
+        return new CachingSupplier<>(supplier, t -> {});
     }
 
-    static private class CachingSupplier<T> implements Supplier<T> {
-        private final Supplier<T> s;
+    /**
+     * Create a lazy, caching, and auto-closable Supplier.
+     * Upon first invocation of `get()`, `s.get()` is called to create the object to be returned.
+     * Each subsequent call will return the same object without invoking `s.get()` again.
+     * 
+     * If the supplier is closed, it is reset to uninitialized state and can be reused.
+     * A new object will be created when the supplier is reused.
+     * 
+     * @param <T> the result type
+     * @param supplier the Supplier
+     * @param cleaner the cleanup operation to be executed on `close()`
+     * @return caching Supplier
+     */
+    public static <T> AutoCloseableSupplier<T> cache(Supplier<T> supplier, Consumer<T> cleaner) {
+        return new CachingSupplier<>(supplier, cleaner);
+    }
+
+    public static interface AutoCloseableSupplier<T> extends AutoCloseable, Supplier<T> {
+        @Override
+        void close();
+    }
+
+    static private class CachingSupplier<T> implements AutoCloseableSupplier<T> {
+        private final Supplier<T> supplier;
+        private final Consumer<T> cleaner;
         private T obj  = null;
         private boolean initialized = false;
 
-        CachingSupplier(Supplier<T> s) {
-            this.s = s;
+        CachingSupplier(Supplier<T> supplier, Consumer<T> cleaner) {
+            this.supplier = supplier;
+            this.cleaner = cleaner;
         }
 
         @Override
         public T get() {
             if (!initialized) {                
-                obj = s.get();
+                obj = supplier.get();
                 initialized = true;
             }
 
             return obj;
+        }
+
+        @Override
+        public void close() {
+            if (initialized) {
+                cleaner.accept(obj);
+                obj = null;
+                initialized = false;
+            }
+        }
+
+        /**
+         * Check if the return value has been initialized.
+         * @return true, if `get()` was called
+         */
+        boolean isInitialized() {
+            return initialized;
         }
     }
 
