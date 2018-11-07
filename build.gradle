@@ -1,8 +1,20 @@
+buildscript {
+  repositories {
+    mavenLocal()
+  }  
+  dependencies {
+    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.4.2'
+  }
+}
+
 plugins {
   id "com.github.spotbugs" version "1.6.5"
   id "com.jfrog.bintray" version "1.8.3"
-  id "com.dua3.gradle.jpms" version "0.4.1"
+//  id "com.dua3.gradle.jpms" version "0.4.2"
 }
+
+apply plugin: 'com.dua3.gradle.jpms'
+// <---- cut
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
@@ -105,6 +117,24 @@ bintray {
     }
 }
 
+// === ARTIFACTS === >
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+	archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
 // === MAVEN publication === >
 
 // Create the pom configuration:
@@ -160,24 +190,6 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
     }
     // ignore failures until spotbugs bug is fixed: https://github.com/spotbugs/spotbugs/issues/756
     ignoreFailures = true
-}
-
-// === ARTIFACTS === >
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-	archives jar
-    archives sourcesJar
-    archives javadocJar
 }
 
 // === DEFAULT TASKS === >
