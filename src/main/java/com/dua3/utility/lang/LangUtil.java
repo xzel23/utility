@@ -376,4 +376,37 @@ public class LangUtil {
     public static interface ConsumerThrows<T> {
         void apply(T arg) throws Exception;
     }
-}
+
+    /**
+     * Create a lazy, caching Supplier.
+     * Upon first invocation of `get()`, `s.get()` is called to create the object to be returned.
+     * Each subsequent call will return the same object without invoking `s.get()` again.
+     * @param <T> the result type
+     * @param s the Supplier
+     * @return caching Supplier
+     */
+    public static <T> Supplier<T> cache(Supplier<T> s) {
+        return new CachingSupplier<>(s);
+    }
+
+    static private class CachingSupplier<T> implements Supplier<T> {
+        private final Supplier<T> s;
+        private T obj  = null;
+        private boolean initialized = false;
+
+        CachingSupplier(Supplier<T> s) {
+            this.s = s;
+        }
+
+        @Override
+        public T get() {
+            if (!initialized) {                
+                obj = s.get();
+                initialized = true;
+            }
+
+            return obj;
+        }
+    }
+
+ }
