@@ -1,6 +1,7 @@
 package com.dua3.utility.lang;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -472,13 +473,7 @@ public class LangUtil {
      *  if the resource could not be loaded
      */ 
     public static String getResourceAsString(Class<?> clazz, String resource) throws IOException {
-        URL url = getResourceURL(clazz, resource);
-        try {
-            return Files.readString(Paths.get(url.toURI()), StandardCharsets.UTF_8);
-        } catch (URISyntaxException e) {
-            // url.toURI() should never throw URISE
-            throw new IllegalStateException(e);
-        }
+        return new String(getResource(clazz, resource), StandardCharsets.UTF_8);
     }
 
     /**
@@ -495,11 +490,8 @@ public class LangUtil {
      */ 
     public static byte[] getResource(Class<?> clazz, String resource) throws IOException {
         URL url = getResourceURL(clazz, resource);
-        try {
-            return Files.readAllBytes(Paths.get(url.toURI()));
-        } catch (URISyntaxException e) {
-            // url.toURI() should never throw URISE
-            throw new IllegalStateException(e);
+        try (InputStream in = url.openStream()) {
+            return in.readAllBytes();
         }
     }
 }
