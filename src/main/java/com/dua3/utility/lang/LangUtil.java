@@ -2,6 +2,11 @@ package com.dua3.utility.lang;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -442,4 +447,59 @@ public class LangUtil {
         }
     }
 
- }
+    /** Get URL for a resource on the classpath.
+     * @param clazz
+     *  the Class that's used to load the resource.
+     * @param resource
+     *  path (relative to clazz) of resource to load
+     * @return
+     *  URL for the given resource
+     */
+    public static URL getResourceURL(Class<?> clazz, String resource) {
+        return Objects.requireNonNull(clazz.getResource(resource), "Resource not found: "+resource);
+    }
+
+    /**
+     * Read the content of a resource on the classpath into a String.
+     * 
+     * @param clazz
+     *  the Class that's used to load the resource.
+     * @param resource
+     *  path (relative to clazz) of resource to load
+     * @return 
+     *  A String containing the resource's content
+     * @throws IOException
+     *  if the resource could not be loaded
+     */ 
+    public static String getResourceAsString(Class<?> clazz, String resource) throws IOException {
+        URL url = getResourceURL(clazz, resource);
+        try {
+            return Files.readString(Paths.get(url.toURI()), StandardCharsets.UTF_8);
+        } catch (URISyntaxException e) {
+            // url.toURI() should never throw URISE
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Read the content of a resource on the classpath.
+     * 
+     * @param clazz
+     *  the Class that's used to load the resource.
+     * @param resource
+     *  path (relative to clazz) of resource to load
+     * @return 
+     *  A byte array containing the resource's content
+     * @throws IOException
+     *  if the resource could not be loaded
+     */ 
+    public static byte[] getResource(Class<?> clazz, String resource) throws IOException {
+        URL url = getResourceURL(clazz, resource);
+        try {
+            return Files.readAllBytes(Paths.get(url.toURI()));
+        } catch (URISyntaxException e) {
+            // url.toURI() should never throw URISE
+            throw new IllegalStateException(e);
+        }
+    }
+}

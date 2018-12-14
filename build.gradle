@@ -1,5 +1,5 @@
 plugins {
-  id "com.github.spotbugs" version "1.6.5"
+  id "com.github.spotbugs" version "1.6.6"
   id "com.jfrog.bintray" version "1.8.3"
   id "com.dua3.gradle.jpms" version "0.5"
 }
@@ -11,7 +11,7 @@ apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '1.2.1'
+	version            = '1.2.2'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
@@ -169,7 +169,7 @@ publishing {
 
 // === SPOTBUGS === >
 
-spotbugs.toolVersion = '3.1.8'
+//spotbugs.toolVersion = '3.1.8'
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
