@@ -11,7 +11,7 @@ apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '1.2.2'
+	version            = '1.2.4'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
