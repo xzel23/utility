@@ -1,7 +1,7 @@
 plugins {
   id "com.github.spotbugs" version "1.6.6"
   id "com.jfrog.bintray" version "1.8.3"
-  id "com.dua3.gradle.jpms" version "0.5"
+  id "com.dua3.gradle.jpms" version "0.5.1"
 }
 
 apply plugin: 'maven'
@@ -11,7 +11,7 @@ apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '1.2.4'
+	version            = '2.0'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
@@ -25,13 +25,6 @@ apply plugin: 'eclipse'
 
 repositories {
     jcenter()
-}
-
-// remove module-info.java from eclipse source folder
-eclipse.classpath.file.whenMerged {
-    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
-    	item.excludes += 'module-info.java'
-    }
 }
 
 // get OS (because JavaFX packages are OS dependent)
@@ -74,8 +67,8 @@ javadoc {
     }
 }
 
-sourceCompatibility = 8
-targetCompatibility = 8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 // === BINTRAY === >
 
@@ -169,7 +162,7 @@ publishing {
 
 // === SPOTBUGS === >
 
-//spotbugs.toolVersion = '3.1.8'
+spotbugs.toolVersion = '3.1.9'
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
