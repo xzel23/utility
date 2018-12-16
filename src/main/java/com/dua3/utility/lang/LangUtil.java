@@ -498,6 +498,8 @@ public class LangUtil {
     
     /**
      * Set java.util.logging log level.
+     * @param level
+     *  the log level to set
      */
     public static void setLogLevel(Level level) {
         // set log level
