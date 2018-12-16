@@ -3,11 +3,13 @@ package com.dua3.utility.io;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -106,9 +108,9 @@ public class IOUtil {
      * @throws IOException
      *             if content could not be read
      */
-    public static String read(URL url, Charset cs) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), cs))) {
-            return reader.lines().collect(Collectors.joining("\n"));
+    public static String read(URL url, Charset cs) throws IOException {     
+        try (InputStream in = url.openStream()) {
+            return new String(in.readAllBytes(), cs);
         }
     }
 
