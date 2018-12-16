@@ -18,6 +18,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import com.dua3.utility.Pair;
@@ -489,6 +493,18 @@ public class LangUtil {
         URL url = getResourceURL(clazz, resource);
         try (InputStream in = url.openStream()) {
             return in.readAllBytes();
+        }
+    }
+    
+    /**
+     * Set java.util.logging log level.
+     */
+    public static void setLogLevel(Level level) {
+        // set log level
+        Logger rootLogger = LogManager.getLogManager().getLogger("");
+        rootLogger.setLevel(level);
+        for (Handler h : rootLogger.getHandlers()) {
+            h.setLevel(level);
         }
     }
 }
