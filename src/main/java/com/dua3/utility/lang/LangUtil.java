@@ -32,9 +32,9 @@ import com.dua3.utility.Pair;
 public class LangUtil {
 
     /**
-     * Exception derived from IllegalStateException thrown by {@link LangUtil#check(boolean)}.
-     * The intent is to make it possible to distinguish failed checks from other IllegalStateExceptions
-     * in try-blocks.
+     * Exception derived from IllegalStateException thrown by
+     * {@link LangUtil#check(boolean)}. The intent is to make it possible to
+     * distinguish failed checks from other IllegalStateExceptions in try-blocks.
      */
     public static class FailedCheckException extends IllegalStateException {
         private static final long serialVersionUID = 1L;
@@ -59,10 +59,8 @@ public class LangUtil {
     /**
      * Check that condition is fulfilled.
      *
-     * @param condition
-     *            condition to test
-     * @throws FailedCheckException
-     *             if condition does not evaluate to {@code true}
+     * @param condition condition to test
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
     public static void check(boolean condition) {
         if (!condition) {
@@ -73,14 +71,11 @@ public class LangUtil {
     /**
      * Check that condition is fulfilled.
      *
-     * @param condition
-     *            condition to test
-     * @param fmt
-     *            message format (@see {@link String#format(String, Object...)})
-     * @param args
-     *            format arguments
-     * @throws FailedCheckException
-     *             if condition does not evaluate to {@code true}
+     * @param condition condition to test
+     * @param fmt       message format (@see
+     *                  {@link String#format(String, Object...)})
+     * @param args      format arguments
+     * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
     public static void check(boolean condition, String fmt, Object... args) {
         if (!condition) {
@@ -92,16 +87,13 @@ public class LangUtil {
     /**
      * Check that index is valid.
      *
-     * @param idx
-     *            index to test
-     * @param size
-     *            collection size
-     * @throws IndexOutOfBoundsException
-     *             if index is out of range
+     * @param idx  index to test
+     * @param size collection size
+     * @throws IndexOutOfBoundsException if index is out of range
      */
     public static void checkIndex(int idx, int size) {
-        if (idx<0 || idx>=size) {
-            throw new IndexOutOfBoundsException("index: "+idx);
+        if (idx < 0 || idx >= size) {
+            throw new IndexOutOfBoundsException("index: " + idx);
         }
     }
 
@@ -114,10 +106,8 @@ public class LangUtil {
      * return value and avoid false positives from static code checkers.
      * </p>
      *
-     * @param <T>
-     *            the parameter type
-     * @param arg
-     *            the variable to ignore
+     * @param     <T> the parameter type
+     * @param arg the variable to ignore
      */
     public static <T> void ignore(T arg) {
         // nop
@@ -125,14 +115,16 @@ public class LangUtil {
 
     /**
      * Test if first argument is equal to one of the other arguments.
-     * @param <T> argument type
-     * @param arg first argument
+     * 
+     * @param      <T> argument type
+     * @param arg  first argument
      * @param rest remaining arguments
-     * @return true, if {@code rest} contains at least one item that is equal to {@code arg}
+     * @return true, if {@code rest} contains at least one item that is equal to
+     *         {@code arg}
      */
     @SafeVarargs
     public static <T> boolean isOneOf(T arg, T... rest) {
-        for (T t:rest) {
+        for (T t : rest) {
             if (Objects.equals(arg, t)) {
                 return true;
             }
@@ -140,20 +132,18 @@ public class LangUtil {
         return false;
     }
 
-	public static <E extends Enum<E>>
-	Optional<E> enumConstant(Class<E> clazz, Predicate<E> condition) {
-		for (E ec: clazz.getEnumConstants()) {
-			if (condition.test(ec)) {
-				return Optional.of(ec);
-			}
-		}
-		return Optional.empty();
-	}
+    public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, Predicate<E> condition) {
+        for (E ec : clazz.getEnumConstants()) {
+            if (condition.test(ec)) {
+                return Optional.of(ec);
+            }
+        }
+        return Optional.empty();
+    }
 
-	public static <E extends Enum<E>>
-	Optional<E> enumConstant(Class<E> clazz, String value) {
-		return enumConstant(clazz, ec -> ec.toString().equals(value));
-	}
+    public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, String value) {
+        return enumConstant(clazz, ec -> ec.toString().equals(value));
+    }
 
     private LangUtil() {
         // nop
@@ -164,20 +154,23 @@ public class LangUtil {
 
     /**
      * Test if character is the byte order mark.
+     * 
      * @param c the character to test
      * @return true if c is the byte order mark
      */
     public boolean isByteOrderMark(char c) {
-        return c==UTF_BYTE_ORDER_MARK;
+        return c == UTF_BYTE_ORDER_MARK;
     }
 
     /**
-     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     * Helper method that converts checked {@link java.io.IOException} to
+     * {@link java.io.UncheckedIOException}.
      *
-     * @param <T> the argument type
+     * @param   <T> the argument type
      * @param c the consumer to call (instance of {@link ConsumerThrows})
      *
-     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     * @return instance of Function that invokes f and converts IOException to
+     *         UncheckedIOException
      */
     public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<T> c) {
         return arg -> {
@@ -192,15 +185,17 @@ public class LangUtil {
     }
 
     /**
-     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     * Helper method that converts checked {@link java.io.IOException} to
+     * {@link java.io.UncheckedIOException}.
      *
-     * @param <T> the argument type
-     * @param <R> the result type
+     * @param   <T> the argument type
+     * @param   <R> the result type
      * @param f the function to call (instance of {@link FunctionThrows})
      *
-     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     * @return instance of Function that invokes f and converts IOException to
+     *         UncheckedIOException
      */
-    public static <T,R> Function<T, R> uncheckedFunction(FunctionThrows<T,R> f) {
+    public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<T, R> f) {
         return arg -> {
             try {
                 return f.apply(arg);
@@ -213,9 +208,12 @@ public class LangUtil {
     }
 
     /**
-     * Helper method that converts checked {@link java.io.IOException} to {@link java.io.UncheckedIOException}.
+     * Helper method that converts checked {@link java.io.IOException} to
+     * {@link java.io.UncheckedIOException}.
+     * 
      * @param r the Runnable to call (instance of {@link RunnableThrows})
-     * @return instance of Function that invokes f and converts IOException to UncheckedIOException
+     * @return instance of Function that invokes f and converts IOException to
+     *         UncheckedIOException
      */
     public static Runnable uncheckedRunnable(RunnableThrows r) {
         return () -> {
@@ -231,6 +229,7 @@ public class LangUtil {
 
     /**
      * Trim string, remove prepending byte order mark.
+     * 
      * @param s the string to trim
      * @return the trimmed string
      */
@@ -239,7 +238,7 @@ public class LangUtil {
             return s;
         }
 
-        if (s.charAt(0)==0xfeff) {
+        if (s.charAt(0) == 0xfeff) {
             s = s.substring(1);
         }
 
@@ -248,45 +247,49 @@ public class LangUtil {
 
     /**
      * Insert key-value pairs into map, <em>not</em> overwriting existing mappings.
-     * @param <K> the key type
-     * @param <V> the value type
-     * @param map the map to insert into
+     * 
+     * @param       <K> the key type
+     * @param       <V> the value type
+     * @param map   the map to insert into
      * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
-    public static <K,V> void putAllIfAbsent(Map<K,V> map, Pair<K,V>... items) {
+    public static <K, V> void putAllIfAbsent(Map<K, V> map, Pair<K, V>... items) {
         Arrays.stream(items).forEach(item -> map.putIfAbsent(item.first, item.second));
     }
 
     /**
      * Insert key-value pairs into map, <em>replacing</em> existing mappings.
-     * @param <K> the key type
-     * @param <V> the value type
-     * @param map the map to insert into
+     * 
+     * @param       <K> the key type
+     * @param       <V> the value type
+     * @param map   the map to insert into
      * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
-    public static <K,V> void putAll(Map<K,V> map, Pair<K,V>... items) {
+    public static <K, V> void putAll(Map<K, V> map, Pair<K, V>... items) {
         Arrays.stream(items).forEach(item -> map.put(item.first, item.second));
     }
 
     /**
      * Create an unmodifiable map from key-value pairs.
-     * @param <K> the key type
-     * @param <V> the value type
+     * 
+     * @param       <K> the key type
+     * @param       <V> the value type
      * @param items the key-value pairs to put into the map
      * @return unmodifiable map
      */
     @SafeVarargs
-    public static <K,V> Map<K,V> map(Pair<K,V>... items) {
-        HashMap<K,V> map = new HashMap<>();
+    public static <K, V> Map<K, V> map(Pair<K, V>... items) {
+        HashMap<K, V> map = new HashMap<>();
         putAllIfAbsent(map, items);
         return Collections.unmodifiableMap(map);
     }
 
     /**
      * Test streams for equality.
-     * @param <T> the element type
+     * 
+     * @param    <T> the element type
      * @param s1 first stream
      * @param s2 second stream
      * @return true, if and only if both streams are equal elementwise
@@ -294,7 +297,7 @@ public class LangUtil {
     public static <T> boolean equals(Stream<T> s1, Stream<T> s2) {
         Iterator<T> iter1 = s1.iterator();
         Iterator<T> iter2 = s2.iterator();
-        while(iter1.hasNext() && iter2.hasNext()) {
+        while (iter1.hasNext() && iter2.hasNext()) {
             if (!Objects.equals(iter1.next(), iter2.next())) {
                 return false;
             }
@@ -304,57 +307,51 @@ public class LangUtil {
 
     /**
      * Consume value if mapping exists.
-     * @param <K>
-     * 		the key type
-     * @param <V>
-     * 		the value type
-     * @param map
-     *      the map
-     * @param k
-     *      the key to lookup
-     * @param consumer
-     *      the consumer to consume the mapped value
+     * 
+     * @param          <K> the key type
+     * @param          <V> the value type
+     * @param map      the map
+     * @param k        the key to lookup
+     * @param consumer the consumer to consume the mapped value
      */
-    public static <K,V> void consumeIfPresent(Map<K, V> map, K k, Consumer<V> consumer) {
+    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, Consumer<V> consumer) {
         V v = map.get(k);
-        if (v!=null) {
+        if (v != null) {
             consumer.accept(v);
         }
     }
 
     /**
      * Consume value if mapping exists.
-     * @param <K>
-     * 		the key type
-     * @param <V>
-     * 		the value type
-     * @param map
-     *      the map
-     * @param k
-     *      the key to lookup
-     * @param consumer
-     *      the consumer to consume the mapped value
+     * 
+     * @param          <K> the key type
+     * @param          <V> the value type
+     * @param map      the map
+     * @param k        the key to lookup
+     * @param consumer the consumer to consume the mapped value
      */
-    public static <K,V> void consumeIfPresent(Map<K, V> map, K k, BiConsumer<K,V> consumer) {
+    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, BiConsumer<K, V> consumer) {
         V v = map.get(k);
-        if (v!=null) {
-            consumer.accept(k,v);
+        if (v != null) {
+            consumer.accept(k, v);
         }
     }
 
     /**
      * Create a log message supplier.
-     * @param fmt format, {@link String#format(Locale, String, Object...)} with the root locale
+     * 
+     * @param fmt  format, {@link String#format(Locale, String, Object...)} with the
+     *             root locale
      * @param args arguments
      * @return a supplier that returns the formatted message
      */
-	public static Supplier<String> msgs(String fmt, Object... args) {
-		return () -> String.format(Locale.ROOT, fmt, args);
-	}
+    public static Supplier<String> msgs(String fmt, Object... args) {
+        return () -> String.format(Locale.ROOT, fmt, args);
+    }
 
     /**
-     * Interface similar to {@link java.lang.Runnable} that declares thrown exceptions
-     * on its {@code run()} method.
+     * Interface similar to {@link java.lang.Runnable} that declares thrown
+     * exceptions on its {@code run()} method.
      */
     @FunctionalInterface
     public static interface RunnableThrows {
@@ -362,20 +359,20 @@ public class LangUtil {
     }
 
     /**
-	 * Interface similar to {@link java.util.function.Function} that declares thrown exceptions
-	 * on its {@code apply()} method.
-	 *
-	 * @param <T> the argument type
-	 * @param <R> the result type
-	 */
-	@FunctionalInterface
-	public static interface FunctionThrows<T,R> {
-	    R apply(T arg) throws Exception;
-	}
+     * Interface similar to {@link java.util.function.Function} that declares thrown
+     * exceptions on its {@code apply()} method.
+     *
+     * @param <T> the argument type
+     * @param <R> the result type
+     */
+    @FunctionalInterface
+    public static interface FunctionThrows<T, R> {
+        R apply(T arg) throws Exception;
+    }
 
-	/**
-     * Interface similar to {@link java.util.function.Consumer} that declares thrown exceptions
-     * on its {@code apply()} method.
+    /**
+     * Interface similar to {@link java.util.function.Consumer} that declares thrown
+     * exceptions on its {@code apply()} method.
      *
      * @param <T> the argument type
      */
@@ -385,28 +382,30 @@ public class LangUtil {
     }
 
     /**
-     * Create a lazy, caching Supplier.
-     * Upon first invocation of `get()`, `s.get()` is called to create the object to be returned.
-     * Each subsequent call will return the same object without invoking `s.get()` again.
-     * @param <T> the result type
+     * Create a lazy, caching Supplier. Upon first invocation of `get()`, `s.get()`
+     * is called to create the object to be returned. Each subsequent call will
+     * return the same object without invoking `s.get()` again.
+     * 
+     * @param          <T> the result type
      * @param supplier the Supplier
      * @return caching Supplier
      */
     public static <T> Supplier<T> cache(Supplier<T> supplier) {
-        return new CachingSupplier<>(supplier, t -> {});
+        return new CachingSupplier<>(supplier, t -> {
+        });
     }
 
     /**
-     * Create a lazy, caching, and auto-closable Supplier.
-     * Upon first invocation of `get()`, `s.get()` is called to create the object to be returned.
-     * Each subsequent call will return the same object without invoking `s.get()` again.
+     * Create a lazy, caching, and auto-closable Supplier. Upon first invocation of
+     * `get()`, `s.get()` is called to create the object to be returned. Each
+     * subsequent call will return the same object without invoking `s.get()` again.
      * 
-     * If the supplier is closed, it is reset to uninitialized state and can be reused.
-     * A new object will be created when the supplier is reused.
+     * If the supplier is closed, it is reset to uninitialized state and can be
+     * reused. A new object will be created when the supplier is reused.
      * 
-     * @param <T> the result type
+     * @param          <T> the result type
      * @param supplier the Supplier
-     * @param cleaner the cleanup operation to be executed on `close()`
+     * @param cleaner  the cleanup operation to be executed on `close()`
      * @return caching Supplier
      */
     public static <T> AutoCloseableSupplier<T> cache(Supplier<T> supplier, Consumer<T> cleaner) {
@@ -421,7 +420,7 @@ public class LangUtil {
     static private class CachingSupplier<T> implements AutoCloseableSupplier<T> {
         private final Supplier<T> supplier;
         private final Consumer<T> cleaner;
-        private T obj  = null;
+        private T obj = null;
         private boolean initialized = false;
 
         CachingSupplier(Supplier<T> supplier, Consumer<T> cleaner) {
@@ -431,7 +430,7 @@ public class LangUtil {
 
         @Override
         public T get() {
-            if (!initialized) {                
+            if (!initialized) {
                 obj = supplier.get();
                 initialized = true;
             }
@@ -449,30 +448,25 @@ public class LangUtil {
         }
     }
 
-    /** Get URL for a resource on the classpath.
-     * @param clazz
-     *  the Class that's used to load the resource.
-     * @param resource
-     *  path (relative to clazz) of resource to load
-     * @return
-     *  URL for the given resource
+    /**
+     * Get URL for a resource on the classpath.
+     * 
+     * @param clazz    the Class that's used to load the resource.
+     * @param resource path (relative to clazz) of resource to load
+     * @return URL for the given resource
      */
     public static URL getResourceURL(Class<?> clazz, String resource) {
-        return Objects.requireNonNull(clazz.getResource(resource), "Resource not found: "+resource);
+        return Objects.requireNonNull(clazz.getResource(resource), "Resource not found: " + resource);
     }
 
     /**
      * Read the content of a resource on the classpath into a String.
      * 
-     * @param clazz
-     *  the Class that's used to load the resource.
-     * @param resource
-     *  path (relative to clazz) of resource to load
-     * @return 
-     *  A String containing the resource's content
-     * @throws IOException
-     *  if the resource could not be loaded
-     */ 
+     * @param clazz    the Class that's used to load the resource.
+     * @param resource path (relative to clazz) of resource to load
+     * @return A String containing the resource's content
+     * @throws IOException if the resource could not be loaded
+     */
     public static String getResourceAsString(Class<?> clazz, String resource) throws IOException {
         return new String(getResource(clazz, resource), StandardCharsets.UTF_8);
     }
@@ -480,26 +474,22 @@ public class LangUtil {
     /**
      * Read the content of a resource on the classpath.
      * 
-     * @param clazz
-     *  the Class that's used to load the resource.
-     * @param resource
-     *  path (relative to clazz) of resource to load
-     * @return 
-     *  A byte array containing the resource's content
-     * @throws IOException
-     *  if the resource could not be loaded
-     */ 
+     * @param clazz    the Class that's used to load the resource.
+     * @param resource path (relative to clazz) of resource to load
+     * @return A byte array containing the resource's content
+     * @throws IOException if the resource could not be loaded
+     */
     public static byte[] getResource(Class<?> clazz, String resource) throws IOException {
         URL url = getResourceURL(clazz, resource);
         try (InputStream in = url.openStream()) {
             return in.readAllBytes();
         }
     }
-    
+
     /**
      * Set java.util.logging log level.
-     * @param level
-     *  the log level to set
+     * 
+     * @param level the log level to set
      */
     public static void setLogLevel(Level level) {
         // set log level
