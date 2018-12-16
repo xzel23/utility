@@ -5,8 +5,5 @@ module com.dua3.utility.test {
     requires java.desktop;
     requires java.logging;
 
-    requires javafx.controls;
-    requires javafx.web;
-
     requires org.junit.jupiter.api;
 }
