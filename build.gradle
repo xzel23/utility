@@ -3,7 +3,7 @@ plugins {
   id 'maven-publish'
   id 'java-library'
   id 'eclipse'
-  id 'com.github.spotbugs' version '1.6.6'
+  id 'com.github.spotbugs' version '1.6.8'
   id 'com.jfrog.bintray' version '1.8.3'
   id 'com.dua3.gradle.jpms' version '0.5.1'
 }
@@ -17,7 +17,7 @@ plugins {
 	ext.repo           = 'public'
 	ext.description    = 'utilites and helper classes'
 	
-	ext.developerId    = 'xzel23'
+	ext.developerId    = 'axh'
 	ext.developerName  = 'Axel Howind'
 	ext.developerEmail = 'axel@dua3.com'
 /////////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ publishing {
 
 // === SPOTBUGS === >
 
-spotbugs.toolVersion = '3.1.9'
+spotbugs.toolVersion = '3.1.10'
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
