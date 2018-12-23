@@ -4,13 +4,13 @@ plugins {
   id 'java-library'
   id 'eclipse'
   id 'com.github.spotbugs' version '1.6.8'
-  id 'com.jfrog.bintray' version '1.8.3'
+  id 'com.jfrog.bintray' version '1.8.4'
   id 'com.dua3.gradle.jpms' version '0.5.1'
 }
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '2.0-SNAPSHOT'
+	version            = '2.0'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
