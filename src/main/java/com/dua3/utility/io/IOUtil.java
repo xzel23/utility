@@ -6,12 +6,15 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import com.dua3.utility.lang.LangUtil;
@@ -156,4 +159,53 @@ public class IOUtil {
     		throw new IOException(e.getCause());
     	}
     }
+
+    /**
+     * Load text with unknown character encoding.
+     * 
+     * Tries to load text into a String. Several encodings are tried in the order
+     * given in the parameters to this method. On success, calls `onCharsetDetected`
+     * to report back the encoding and returns the text.
+     * 
+     * In case no matching encoding was found, `onNoMatchingEncoding` is called to
+     * handle the data. It's up to the user to either throw `IOException` or
+     * encode the text.
+     * 
+     * @param path
+     *  the path to load the text from
+     * @param onCharsetDetected
+     *  callback to call when a character encoding was successfull.
+     * @param onNoMatchingEncoding
+     *  callback to call when no encoding was found
+     * @param charsets
+     *  the encodings to try
+     * @return
+     *  the text read
+     * @throws IOException
+     *  if an exception occurs during loading the data
+     */
+    public static String loadText(
+        Path path, 
+        Consumer<Charset> onCharsetDetected, 
+        java.util.function.Function<ByteBuffer, String> onNoMatchingEncoding,
+        Charset... charsets)
+    throws IOException {
+        ByteBuffer data = ByteBuffer.wrap(Files.readAllBytes(path));
+        data.mark();
+        for (Charset cs : charsets) {
+            try {
+                data.reset();
+                String text = cs.newDecoder()
+                    .decode(data)
+                    .toString();
+                onCharsetDetected.accept(cs);
+                return text;
+            } catch (CharacterCodingException e) {
+                // ignore
+            }
+        }
+
+        return onNoMatchingEncoding.apply(data);
+    }
+
 }
