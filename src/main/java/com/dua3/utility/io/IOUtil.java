@@ -9,11 +9,16 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -160,6 +165,24 @@ public class IOUtil {
     	}
     }
 
+	/** The default character encoding. */
+	private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+
+	/** The default character encoding. */
+	private static final Charset PLATFORM_CHARSET = Charset.defaultCharset();
+
+	/** The character encodings used to load files. */
+	private static final Charset[] CHARSETS;
+
+	static {
+		// setup list of charset; use a set to avoid duplicate entries
+		Set<Charset> charsets = new LinkedHashSet<>();
+		charsets.add(DEFAULT_CHARSET);
+		charsets.add(PLATFORM_CHARSET);
+        charsets.add(StandardCharsets.ISO_8859_1);
+        CHARSETS = charsets.toArray(Charset[]::new);
+    }
+    
     /**
      * Load text with unknown character encoding.
      * 
@@ -167,16 +190,10 @@ public class IOUtil {
      * given in the parameters to this method. On success, calls `onCharsetDetected`
      * to report back the encoding and returns the text.
      * 
-     * In case no matching encoding was found, `onNoMatchingEncoding` is called to
-     * handle the data. It's up to the user to either throw `IOException` or
-     * encode the text.
-     * 
      * @param path
      *  the path to load the text from
      * @param onCharsetDetected
      *  callback to call when a character encoding was successfull.
-     * @param onNoMatchingEncoding
-     *  callback to call when no encoding was found
      * @param charsets
      *  the encodings to try
      * @return
@@ -187,7 +204,6 @@ public class IOUtil {
     public static String loadText(
         Path path, 
         Consumer<Charset> onCharsetDetected, 
-        java.util.function.Function<ByteBuffer, String> onNoMatchingEncoding,
         Charset... charsets)
     throws IOException {
         ByteBuffer data = ByteBuffer.wrap(Files.readAllBytes(path));
@@ -205,7 +221,27 @@ public class IOUtil {
             }
         }
 
-        return onNoMatchingEncoding.apply(data);
+        throw new IOException("no matching encoding found for "+path);
     }
 
+    /**
+     * Load text with unknown character encoding.
+     * 
+     * Tries to load text into a String. These encodings are tried sequentially:
+     *  - UTF-8
+     *  - the default encoding for the platform
+     *  - ISO 8859-1
+     * 
+     * @param path
+     *  the path to load the text from
+     * @param onCharsetDetected
+     *  callback to call when a character encoding was successfull.
+     * @return
+     *  the text read
+     * @throws IOException
+     *  if an exception occurs during loading the data
+     */
+    public static String loadText( Path path, Consumer<Charset> onCharsetDetected) throws IOException {
+        return loadText(path, onCharsetDetected, CHARSETS);
+    }
 }
