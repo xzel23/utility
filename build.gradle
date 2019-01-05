@@ -10,7 +10,7 @@ plugins {
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '2.1'
+	version            = '2.2'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'
@@ -24,13 +24,6 @@ plugins {
 
 repositories {
     jcenter()
-}
-
-// remove module-info.java from eclipse source folder
-eclipse.classpath.file.whenMerged {
-    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
-    	item.excludes += 'module-info.java'
-    }
 }
 
 dependencies {
