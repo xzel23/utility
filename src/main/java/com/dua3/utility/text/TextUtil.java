@@ -289,7 +289,7 @@ public class TextUtil {
 	 * @return the MD5 digest as hex string
 	 */
 	public static String getMD5String(String text) {
-		return toHexString(getMD5(text));
+		return byteArrayToHexString(getMD5(text));
 	}
 
 	/**
@@ -323,11 +323,50 @@ public class TextUtil {
 	 * @param a the byte array
 	 * @return hex string
 	 */
-	public static String toHexString(byte[] a) {
+	public static String byteArrayToHexString(byte[] a) {
 		StringBuilder sb = new StringBuilder(a.length * 2);
 		for (byte b : a)
 			sb.append(String.format("%02x", b));
 		return sb.toString();
+	}
+
+	/**
+	 * Convert hex string to byte array.
+	 * 
+	 * @param s 
+	 *  hex string
+	 * @return 
+	 *  the byte array
+	 */
+	public static byte[] hexStringToByteArray(String s) {
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			int h1 = getHexDigit(s, i);
+			int h2 = getHexDigit(s, i+1);
+			data[i / 2] = (byte) ((h1 << 4) + h2);
+		}
+		return data;
+	}
+
+	/**
+	 * Get hex value for character at index.
+	 * @param s
+	 *  the String
+	 * @param idx
+	 *  index of character in s
+	 * @return
+	 *  hex value between 0 and 15
+	 * @throws IllegalArgumentException
+	 *  if the character is not a valid hex character
+	 */
+	private static int getHexDigit(String s, int idx) {
+		char c = s.charAt(idx);
+		int hex = Character.digit(c, 16);
+		if (hex<0) {
+			throw new IllegalStateException("not a hex digit: "+c);
+		}
+		return hex;
 	}
 
 	/**

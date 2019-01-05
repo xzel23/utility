@@ -29,7 +29,8 @@ Binary buils are available on bintray:
  - New class CryptUtil: encryption and decryption utility.
  - TextUtil.base64Encode()
  - TextUtil.base64Decode()
- - *breaking change*: TextUtil.byteArrayToHex() has been renamed to toHexString()
+ - *breaking change*: TextUtil.byteArrayToHex() has been renamed to byteArrayToHexString()
+ - TextUtil.hexStringToByteArrayToHex()
  
 ### version 2.1
 

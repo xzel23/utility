@@ -25,7 +25,7 @@ public class CryptUtilTest {
     		System.out.format("Testing encryption with keylength %d bits%n", keyLength);
     	
     		byte[] key = CryptUtil.generateKey(keyLength);
-    		System.out.format("key = %s%n", TextUtil.toHexString(key));
+    		System.out.format("key = %s%n", TextUtil.byteArrayToHexString(key));
     		
     		for (String message: MESSAGES) {
         		System.out.format("message length = %d%n", message.length());
