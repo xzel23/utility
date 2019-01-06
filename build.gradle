@@ -21,7 +21,7 @@ subprojects {
 	
 	ext.moduleName     = project.group 
 	ext.scm            = ''
-	ext.repo           = 'private'
+	ext.repo           = 'public'
 	ext.description    = 'Java utilities'
 	
 	ext.developerId    = 'axh'
