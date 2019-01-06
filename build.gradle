@@ -10,7 +10,7 @@ plugins {
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '2.2'
+	version            = '3.0-SNAPSHOT'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3.public/utility.git'

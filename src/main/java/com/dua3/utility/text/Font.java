@@ -15,7 +15,7 @@
  */
 package com.dua3.utility.text;
 
-import java.awt.font.FontRenderContext;
+import java.util.Objects;
 
 import com.dua3.utility.Color;
 
@@ -33,7 +33,8 @@ public class Font {
     private final boolean italic;
     private final boolean underline;
     private final boolean strikeThrough;
-
+    private int hash = 0;
+    
     /**
      * Construct a new {@code GenericFont}.
      */
@@ -68,8 +69,6 @@ public class Font {
         this.italic = italic;
         this.underline = underlined;
         this.strikeThrough = strikeThrough;
-        this.awtFont = getAwtFont(family, size, color, bold, italic, underlined, strikeThrough);
-        this.awtFontRenderContext = new FontRenderContext(awtFont.getTransform(), false, true);
     }
     /**
      * A mutable class holding font attributes to help creating immutable font
@@ -233,15 +232,6 @@ public class Font {
         }
     }
 
-    protected final java.awt.Font awtFont;
-    protected final java.awt.font.FontRenderContext awtFontRenderContext;
-
-    private static java.awt.Font getAwtFont(String family, float size, Color color, boolean bold, boolean italic, boolean underlined,
-        boolean strikeThrough) {
-      int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
-      return new java.awt.Font(family, style, Math.round(size));
-    }
-
     /**
      * Derive font.
      * <p>
@@ -359,40 +349,34 @@ public class Font {
         return sb.toString();
     }
 
-    /**
-     * Get the corresponding AWT font instance.
-     * @return instance of java.awt.Font for this font
-     */
-    public java.awt.Font toAwtFont() {
-        return awtFont;
-    }
-
-    /**
-     * Calculate width of text.
-     * @param text the text
-     * @return width in points
-     */
-    public float getTextWidth(String text) {
-        return (float) awtFont.getStringBounds(text, awtFontRenderContext).getWidth();
-    }
-
     @Override
     public String toString() {
         return fontspec();
     }
-
-    @Override
+        
+    @SuppressWarnings("boxing")
+	@Override
     public int hashCode() {
-        // java.awt.Font caches its hashcode. no use trying to be smarter than that
-        return toAwtFont().hashCode();
+        int h = hash;
+        if (h == 0) {
+        	hash = h = Objects.hash(family,size,bold,italic,underline,strikeThrough,color);
+        }
+        return h;
     }
 
     @Override
     public boolean equals(Object obj) {
-        // important: compare the actual classes using getClass()
-        return obj!=null
-                && obj.getClass()==getClass()
-                && toAwtFont().equals(((Font)obj).toAwtFont())
-                && getColor().equals(((Font)obj).getColor());
+    	if (obj==null || obj.getClass()!=this.getClass() || obj.hashCode() != this.hashCode()) {
+    		return false;
+    	}
+    	
+    	Font other = (Font) obj;
+        return other.family.equals(family) 
+	        && other.size==size
+	        && other.bold==bold
+	        && other.italic==italic
+	        && other.underline==underline
+	        && other.strikeThrough==strikeThrough
+	        && other.color.equals(color);
     }
 }

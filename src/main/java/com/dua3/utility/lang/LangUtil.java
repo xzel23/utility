@@ -487,16 +487,29 @@ public class LangUtil {
     }
 
     /**
-     * Set java.util.logging log level.
+     * Set java.util.logging log level for the root logger.
      * 
      * @param level the log level to set
      */
-    public static void setLogLevel(Level level) {
-        // set log level
+    @SuppressWarnings("exports")
+	public static void setLogLevel(Level level) {
         Logger rootLogger = LogManager.getLogManager().getLogger("");
-        rootLogger.setLevel(level);
-        for (Handler h : rootLogger.getHandlers()) {
+        setLogLevel(level, rootLogger);
+    }
+
+    /**
+     * Set java.util.logging log level.
+     * 
+     * @param level 
+     *  the log level to set
+     * @param logger
+     *  the logger for which to set the level
+     */
+	@SuppressWarnings("exports")
+	public static void setLogLevel(Level level, Logger logger) {
+		logger.setLevel(level);
+        for (Handler h : logger.getHandlers()) {
             h.setLevel(level);
         }
-    }
+	}
 }

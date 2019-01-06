@@ -24,6 +24,15 @@ Binary buils are available on bintray:
 
 ## Changes
 
+### VERSION 3.0
+
+ - REMOVED: package `com.dua3.util.db` was moved to a separate library `util.db`
+ - REMOVED: `Font.getAwtFont()` and `Font.getTextWidth()`; these introduced a dependency on java.desktop and can be easily replaced where needed.
+ - dependencies on these modules were removed, allowing for smaller `jlink` images: 
+    - java.xml
+    - java.desktop
+    - java.sql
+ 
 ### version 2.2
 
  - New class CryptUtil: encryption and decryption utility.
