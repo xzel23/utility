@@ -81,7 +81,7 @@ bintray {
     user = findProperty('BINTRAY_USER') ?: 'NONE'
     key = findProperty('BINTRAY_KEY') ?: 'NONE'
 
-    dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
     publish = true //[Default: false] Whether version should be auto published after an upload    
     override = true //[Default: false] Whether to override version artifacts already published    
 
