@@ -1,15 +1,20 @@
 package com.dua3.utility.db;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Driver;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Optional;
 import java.util.logging.Logger;
+
+import javax.sql.DataSource;
 
 import com.dua3.utility.io.IOUtil;
 
@@ -65,37 +70,107 @@ public class DbUtil {
 		throw new IllegalStateException(item.getClass().getName()+" cannot be converted to LocalDateTime");
 	}
 	
-	public static Optional<Class<? extends java.sql.Driver>> loaDriver(URLClassLoader loader) throws ClassNotFoundException, IOException {
-	    final String RESOURCE_PATH_TO_DRIVER_INFO = "/META-INF/services/java.sql.Driver";
-	    
-		// read JDBC driver class name from meta data
-		Enumeration<URL> meta = loader.getResources(RESOURCE_PATH_TO_DRIVER_INFO);
-        URL driverInfo = meta.hasMoreElements() ? meta.nextElement() : null;
-        if (driverInfo==null) {
-        	LOG.warning(RESOURCE_PATH_TO_DRIVER_INFO + " not found.");
-        	LOG.warning("URLs: "+Arrays.toString(loader.getURLs()));
-        	return Optional.empty();
-        }
-        if (meta.hasMoreElements()) {
-        	LOG.warning("more than one entries found, which one gets loaded is undefined: "+RESOURCE_PATH_TO_DRIVER_INFO);
-        	LOG.warning("URLs: "+Arrays.toString(loader.getURLs()));
-        }
-        String driverClassName = IOUtil.read(driverInfo, StandardCharsets.UTF_8).strip();
-        
-        // load the driver class
-        Class<?> cls = loader.loadClass(driverClassName);
-        
-        if (!java.sql.Driver.class.isInstance(cls)) {
-        	LOG.warning(cls.getName()+" does not implement java.sql.Driver: ");
-        	return Optional.empty();
-        }
-
-        @SuppressWarnings("unchecked") // type is checked above
-		Class<? extends java.sql.Driver> driver = (Class<? extends java.sql.Driver>) cls;
-
-        LOG.info(() -> "loaded "+driver.getName());
-        
-        return Optional.of(driver);
+	/**
+	 * Load JDBC driver.
+	 * 
+	 * @param urls
+	 *  the URLs used to construct a ClassLoader instance
+	 * @return
+	 *  an Optional containing the driver object or an empty Optional if not driver class is found
+	 * @throws ClassNotFoundException
+	 *  if a driver class could be determined but could not be loaded
+	 * @throws SQLException
+	 *  if a driver class was found and loaded but could not be instantiated
+	 */
+	public static Optional<? extends java.sql.Driver> loadDriver(URL... urls) throws ClassNotFoundException, SQLException {
+    	LOG.fine(() -> "loadDriver() - URLs: "+Arrays.toString(urls));
+	    URLClassLoader loader = new URLClassLoader(urls);
+		return loadDriver(loader);
 	}
 
+	/**
+	 * Load JDBC driver.
+	 * <p>
+	 * <strong>Note:</strong> the Driver returned can in general cannot be used with `DriverManager.getConnection()`
+	 * because the `DriverManager` class checks that the class can be loaded from the parent class loader which
+	 * is not the case. It can however be used directly or as driver for a `JdbcDataSource`.
+	 * 
+	 * @param loader
+	 *  the ClassLoader instance
+	 * @return
+	 *  an Optional containing the driver object or an empty Optional if not driver class is found on the classpath
+	 * @throws ClassNotFoundException
+	 *  if a driver class could be determined but could not be loaded
+	 * @throws SQLException
+	 *  if a driver class was found and loaded but could not be instantiated
+	 */
+	public static Optional<? extends java.sql.Driver> loadDriver(ClassLoader loader) throws ClassNotFoundException, SQLException {
+	    final String RESOURCE_PATH_TO_DRIVER_INFO = "META-INF/services/java.sql.Driver";
+	    	    
+	    try {
+			// read JDBC driver class name from meta data
+			Enumeration<URL> meta = loader.getResources(RESOURCE_PATH_TO_DRIVER_INFO);
+	        URL driverInfo = meta.hasMoreElements() ? meta.nextElement() : null;
+	        if (driverInfo==null) {
+	        	LOG.warning(RESOURCE_PATH_TO_DRIVER_INFO + " not found.");
+	        	return Optional.empty();
+	        }
+	        if (meta.hasMoreElements()) {
+	        	LOG.warning("more than one entries found, which one gets loaded is undefined: "+RESOURCE_PATH_TO_DRIVER_INFO);
+	        }
+	        String driverClassName = IOUtil.read(driverInfo, StandardCharsets.UTF_8).strip();
+	        
+	        // load the driver class
+	        Class<?> cls = loader.loadClass(driverClassName);
+	        
+	        if (!java.sql.Driver.class.isAssignableFrom(cls)) {
+	        	LOG.warning(cls.getName()+" does not implement java.sql.Driver: ");
+	        	return Optional.empty();
+	        }
+	
+	        @SuppressWarnings("unchecked") // type is checked above
+			Class<? extends java.sql.Driver> driverClass = (Class<? extends java.sql.Driver>) cls;
+	
+	        LOG.fine(() -> "loaded driver class "+driverClass.getName());
+	        
+	        try {	
+	        	Driver driver = driverClass.getConstructor().newInstance();
+	        	return Optional.of(driver);
+	        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+	        	throw new SQLException("could instantiate driver", e);
+	        }	        
+	    } catch (IOException e) {
+	    	throw new ClassNotFoundException("IOException while trying to load driver", e);
+	    }
+	}
+
+	/**
+	 * Create DataSource.
+	 * 
+	 * @param driver
+	 *  the driver to use
+	 * @param url
+	 *  the database URL
+	 * @param user
+	 *  the database user
+	 * @param password
+	 *  the database password
+	 * @return
+	 *  DataSource instance
+	 * @throws SQLException
+	 *  if the driver dies not accept the URL or connecting fails
+	 */
+	public static DataSource createDataSource(Driver driver, String url , String user, String password) throws SQLException {
+		if (!driver.acceptsURL(url)) {
+			throw new SQLException("URL not accepted by driver");
+		}
+		
+		JdbcDataSource ds = new JdbcDataSource();
+		ds.setDriver(driver);
+		ds.setUrl(url);
+		ds.setUser(user);
+		ds.setPassword(password);
+		return ds;
+	}
+    
 }
