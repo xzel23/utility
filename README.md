@@ -26,9 +26,9 @@ Binary buils are available on bintray:
 
 ### VERSION 3.0
 
- - REMOVED: package `com.dua3.util.db` was moved to a separate library `util.db`
+ - BREAKING: package `com.dua3.utility.db` was moved to a separate library `utility.db`. You have to update dependencies and module-info.
  - REMOVED: `Font.getAwtFont()` and `Font.getTextWidth()`; these introduced a dependency on java.desktop and can be easily replaced where needed.
- - dependencies on these modules were removed, allowing for smaller `jlink` images: 
+ - dependencies on these modules were removed from the main library, allowing for smaller `jlink` images: 
     - java.xml
     - java.desktop
     - java.sql

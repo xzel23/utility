@@ -1,5 +1,7 @@
 /bin
 /build
-/gradle.properties
-/.*
-**/.DS_Store
+*/bin
+*/build
+*/gradle.properties
+*/.*
+**/.*
