@@ -491,7 +491,6 @@ public class LangUtil {
      * 
      * @param level the log level to set
      */
-    @SuppressWarnings("exports")
 	public static void setLogLevel(Level level) {
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         setLogLevel(level, rootLogger);
@@ -505,7 +504,6 @@ public class LangUtil {
      * @param logger
      *  the logger for which to set the level
      */
-	@SuppressWarnings("exports")
 	public static void setLogLevel(Level level, Logger logger) {
 		logger.setLevel(level);
         for (Handler h : logger.getHandlers()) {
