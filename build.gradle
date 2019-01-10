@@ -61,12 +61,6 @@ test {
     }
 }
 
-javadoc {
-    doFirst {
-        options.addStringOption('-module-path', classpath.asPath)
-    }
-}
-
 sourceCompatibility = 11
 targetCompatibility = 11
 
