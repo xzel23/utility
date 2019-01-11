@@ -35,6 +35,13 @@ repositories {
     mavenLocal()
 }
 
+// remove module-info.java from eclipse source folder
+eclipse.classpath.file.whenMerged {
+    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
+    	item.excludes += 'module-info.java'
+    }
+}
+
 // get OS (because JavaFX packages are OS dependent)
 def currentOS = org.gradle.internal.os.OperatingSystem.current()
 def platform
