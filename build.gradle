@@ -86,6 +86,8 @@ bintray {
     publish = true //[Default: false] Whether version should be auto published after an upload    
     override = true //[Default: false] Whether to override version artifacts already published    
 
+    publications = ['projectPublication']
+
     pkg {
         repo = project.repo
         name = project.group
@@ -146,7 +148,7 @@ def pomConfig = {
 // Create the publication with the pom configuration:
 publishing {
     publications {
-        Publication(MavenPublication) {
+        projectPublication(MavenPublication) {
             from components.java
             artifact sourcesJar
             artifact javadocJar
