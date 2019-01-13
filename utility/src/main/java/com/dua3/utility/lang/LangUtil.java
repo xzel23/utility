@@ -510,4 +510,18 @@ public class LangUtil {
             h.setLevel(level);
         }
 	}
+
+    /**
+     * Set java.util.logging log level.
+     * 
+     * @param level 
+     *  the log level to set
+     * @param loggers
+     *  the loggers to set the level for
+     */
+	public static void setLogLevel(Level level, Logger... loggers) {
+		for (Logger logger : loggers) {
+			setLogLevel(level, logger);
+		}
+	}
 }
