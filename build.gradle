@@ -1,5 +1,5 @@
 plugins {
-  id 'com.dua3.gradle.jpms' version '0.7.1'   apply false
+  id 'com.dua3.gradle.jpms' version '0.8.0' apply false
   id 'com.github.spotbugs'  version '1.6.8' apply false
   id 'com.jfrog.bintray'    version '1.8.4' apply false
 }
@@ -40,17 +40,6 @@ eclipse.classpath.file.whenMerged {
     for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
     	item.excludes += 'module-info.java'
     }
-}
-
-// get OS (because JavaFX packages are OS dependent)
-def currentOS = org.gradle.internal.os.OperatingSystem.current()
-def platform
-if (currentOS.isWindows()) {
-    platform = 'win'
-} else if (currentOS.isLinux()) {
-    platform = 'linux'
-} else if (currentOS.isMacOsX()) {
-    platform = 'mac'
 }
 
 dependencies {
