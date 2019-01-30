@@ -25,6 +25,10 @@ Binary buils are available on bintray:
 
 ## Changes
 
+### VERSION 3.0.1
+
+ - changed license to MIT to make it possible to use in pre-V3 GPL projects
+
 ### VERSION 3.0
 
  - BREAKING: package `com.dua3.utility.db` was moved to a separate library `utility.db`. You have to update dependencies and module-info.
