@@ -86,7 +86,7 @@ bintray {
         repo = project.repo
         name = project.group
         userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
-        licenses = ['Apache-2.0']
+        licenses = ['MIT']
         vcsUrl = project.scm
 
 	    version {
@@ -122,8 +122,8 @@ artifacts {
 def pomConfig = {
     licenses {
         license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            name "MIT"
+            url "https://opensource.org/licenses/MIT"
         }
     }
     developers {
