@@ -5,7 +5,7 @@
 
 plugins {
   id 'com.dua3.gradle.jpms' version '0.8.1' apply false
-  id 'com.github.spotbugs'  version '1.6.8' apply false
+  id 'com.github.spotbugs'  version '1.6.9' apply false
   id 'com.jfrog.bintray'    version '1.8.4' apply false
 }
 
@@ -162,7 +162,7 @@ publishing {
 
 // === SPOTBUGS === >
 
-spotbugs.toolVersion = '3.1.10'
+spotbugs.toolVersion = '3.1.11'
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
