@@ -1,5 +1,10 @@
+// Copyright (c) 2019 Axel Howind
+// 
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 plugins {
-  id 'com.dua3.gradle.jpms' version '0.8.0' apply false
+  id 'com.dua3.gradle.jpms' version '0.8.1' apply false
   id 'com.github.spotbugs'  version '1.6.8' apply false
   id 'com.jfrog.bintray'    version '1.8.4' apply false
 }
@@ -17,7 +22,7 @@ subprojects {
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '3.0'
+	version            = '3.0.1'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = ''
