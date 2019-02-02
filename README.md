@@ -8,22 +8,22 @@ A small library with utility classes.
 
 ## Using with Gradle
 
-Binary buils are available on bintray:
+Binary builds are available on jcenter:
 
     repositories {
-        ...
-        
-        maven { url  "https://dl.bintray.com/dua3/public" }
+        jcenter()
     }
     
     dependencies {
-        ...
-        
-        compile        "com.dua3.utility:utility:3.0"
-        compile        "com.dua3.utility:utility.db:3.0"
+        compile        "com.dua3.utility:utility:3.1.0"
+        compile        "com.dua3.utility:utility.db:3.1.0"
     }
 
 ## Changes
+
+### VERSION 3.1.0
+
+ - factored out `NamedParameterQuery` from `NamedParameterStatement`. This makes it possible to parse a Statement without having to supply a database connection.
 
 ### VERSION 3.0.1
 
@@ -33,7 +33,7 @@ Binary buils are available on bintray:
 
  - BREAKING: package `com.dua3.utility.db` was moved to a separate library `utility.db`. You have to update dependencies and module-info.
  - REMOVED: `Font.getAwtFont()` and `Font.getTextWidth()`; these introduced a dependency on java.desktop and can be easily replaced where needed.
- - The utility.db library now include methods to dynamically load JDBC drivers. This allows to use jlink on applications that use non-modular JDBC-drivers.
+ - The utility.db library now includes methods to dynamically load JDBC drivers. This allows to use jlink on applications that use non-modular JDBC-drivers.
  - dependencies on these modules were removed from the main library, allowing for smaller `jlink` images: 
     - java.xml
     - java.desktop
