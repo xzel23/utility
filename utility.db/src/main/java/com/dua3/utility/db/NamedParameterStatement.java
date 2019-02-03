@@ -14,6 +14,11 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -64,7 +69,7 @@ public class NamedParameterStatement implements AutoCloseable {
   /**
    * Maps parameter names to arrays of ints which are the parameter indices.
    */
-  private final NamedParameterQuery query;
+  private final Map<String,List<Integer>> indexMap;
 
   /**
    * Creates a NamedParameterStatement. Wraps a call to
@@ -78,12 +83,83 @@ public class NamedParameterStatement implements AutoCloseable {
    *           if the statement could not be created
    */
   public NamedParameterStatement(Connection connection, String query) throws SQLException {
-	this(connection, new NamedParameterQuery(query));
+    indexMap = new HashMap<>();
+    String parsedQuery = parse(query, indexMap);
+    statement = connection.prepareStatement(parsedQuery);
   }
 
-  public NamedParameterStatement(Connection connection, NamedParameterQuery query) throws SQLException {
-	this.query = query;
-	this.statement = connection.prepareStatement(query.getParsedQuery());
+  /**
+   * Parses a query with named parameters. The parameter-index mappings are put
+   * into the map, and the parsed query is returned. DO NOT CALL FROM CLIENT
+   * CODE. This method is non-private so JUnit code can test it.
+   *
+   * @param query
+   *          query to parse
+   * @param paramMap
+   *          map to hold parameter-index mappings
+   * @return the parsed query
+   */
+  static final String parse(String query, Map<String, List<Integer>> paramMap) {
+    // I was originally using regular expressions, but they didn't work well for
+    // ignoring parameter-like strings inside quotes.
+    int length = query.length();
+    StringBuilder parsedQuery = new StringBuilder(length);
+    boolean inSingleQuote = false;
+    boolean inDoubleQuote = false;
+    int index = 1;
+
+    for (int i = 0; i < length; i++) {
+      char c = query.charAt(i);
+      if (inSingleQuote) {
+        if (c == '\'') {
+          inSingleQuote = false;
+        }
+      } else if (inDoubleQuote) {
+        if (c == '"') {
+          inDoubleQuote = false;
+        }
+      } else {
+        if (c == '\'') {
+          inSingleQuote = true;
+        } else if (c == '"') {
+          inDoubleQuote = true;
+        } else if (c == ':' && i + 1 < length
+            && Character.isJavaIdentifierStart(query.charAt(i + 1))) {
+          int j = i + 2;
+          while (j < length && Character.isJavaIdentifierPart(query.charAt(j))) {
+            j++;
+          }
+          String name = query.substring(i + 1, j);
+          c = '?'; // replace the parameter with a question mark
+          i += name.length(); // skip past the end if the parameter
+
+          List<Integer> indexList = paramMap.get(name);
+          if (indexList==null) {
+            indexList = new ArrayList<>();
+            paramMap.put(name, indexList);
+          }
+          indexList.add(index);
+
+          index++;
+        }
+      }
+      parsedQuery.append(c);
+    }
+
+    return parsedQuery.toString();
+  }
+
+  /**
+   * Returns the indexes for a parameter.
+   *
+   * @param name
+   *          parameter name
+   * @return parameter indexes
+   * @throws IllegalArgumentException
+   *           if the parameter does not exist
+   */
+  private List<Integer> getIndexes(String name) {
+    return Objects.requireNonNull(indexMap.get(name), "Unbekannter Parameter '"+name+"'.");
   }
 
   /**
@@ -100,7 +176,7 @@ public class NamedParameterStatement implements AutoCloseable {
    * @see PreparedStatement#setObject(int, java.lang.Object)
    */
   public void setObject(String name, Object value) throws SQLException {
-    for (int idx: query.getIndexes(name)) {
+    for (int idx: getIndexes(name)) {
       statement.setObject(idx, value);
     }
   }
@@ -119,7 +195,7 @@ public class NamedParameterStatement implements AutoCloseable {
    * @see PreparedStatement#setString(int, java.lang.String)
    */
   public void setString(String name, String value) throws SQLException {
-    for (int idx: query.getIndexes(name)) {
+    for (int idx: getIndexes(name)) {
       statement.setString(idx, value);
     }
   }
@@ -138,7 +214,7 @@ public class NamedParameterStatement implements AutoCloseable {
    * @see PreparedStatement#setInt(int, int)
    */
   public void setInt(String name, int value) throws SQLException {
-    for (int idx: query.getIndexes(name)) {
+    for (int idx: getIndexes(name)) {
       statement.setInt(idx, value);
     }
   }
@@ -157,7 +233,7 @@ public class NamedParameterStatement implements AutoCloseable {
    * @see PreparedStatement#setInt(int, int)
    */
   public void setLong(String name, long value) throws SQLException {
-    for (int idx: query.getIndexes(name)) {
+    for (int idx: getIndexes(name)) {
       statement.setLong(idx, value);
     }
   }
@@ -176,7 +252,7 @@ public class NamedParameterStatement implements AutoCloseable {
    * @see PreparedStatement#setTimestamp(int, java.sql.Timestamp)
    */
   public void setTimestamp(String name, Timestamp value) throws SQLException {
-    for (int idx: query.getIndexes(name)) {
+    for (int idx: getIndexes(name)) {
       statement.setTimestamp(idx, value);
     }
   }
@@ -282,7 +358,7 @@ public class NamedParameterStatement implements AutoCloseable {
    */
   public void setLocalDate(String name, LocalDate value) throws SQLException {
     Date date = Date.valueOf(value);
-    for (int idx: query.getIndexes(name)) {
+    for (int idx: getIndexes(name)) {
       statement.setDate(idx, date);
     }
   }
@@ -302,7 +378,7 @@ public class NamedParameterStatement implements AutoCloseable {
    */
   public void setLocalDateTime(String name, LocalDateTime value) throws SQLException {
     Timestamp t = Timestamp.valueOf(value);
-    for (int idx: query.getIndexes(name)) {
+    for (int idx: getIndexes(name)) {
       statement.setTimestamp(idx, t);
     }
   }
