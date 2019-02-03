@@ -7,6 +7,8 @@ package com.dua3.utility.db;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.JDBCType;
+import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,11 +16,13 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <p>
@@ -66,10 +70,60 @@ public class NamedParameterStatement implements AutoCloseable {
   /** The statement this object is wrapping. */
   private final PreparedStatement statement;
 
+  public static class ParameterInfo {
+	  final String name;
+	  final List<Integer> indexes = new LinkedList<>();
+	  JDBCType type = null;
+	  
+	  ParameterInfo(String name) {
+		  this.name = name;
+		  this.type = null;
+	  }
+
+	public void addIndex(int index) {
+		indexes.add(index);
+	}
+	
+	/**
+	 * Get parameter name.
+	 * 
+	 * @return
+	 *  the parameter name
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Get the JDBC type for this parameter.
+	 * 
+	 * @return
+	 *  the type of this parameter
+	 */
+	public JDBCType getType() {
+		return type;
+	}
+	
+	/**
+	 * Get the list of positional indexes for this parameter.
+	 * 
+	 * @return
+	 *  positional indexes
+	 */
+	public List<Integer> getIndexes() {
+		return Collections.unmodifiableList(indexes);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s[%s] : %s", name, type, indexes);
+	}
+  }
+  
   /**
    * Maps parameter names to arrays of ints which are the parameter indices.
    */
-  private final Map<String,List<Integer>> indexMap;
+  private final Map<String, ParameterInfo> indexMap;
 
   /**
    * Creates a NamedParameterStatement. Wraps a call to
@@ -86,6 +140,22 @@ public class NamedParameterStatement implements AutoCloseable {
     indexMap = new HashMap<>();
     String parsedQuery = parse(query, indexMap);
     statement = connection.prepareStatement(parsedQuery);
+    addParameterTypes(indexMap, statement);
+  }
+
+  private void addParameterTypes(Map<String, ParameterInfo> indexMap2, PreparedStatement statement2) throws SQLException {
+	  for (var param: indexMap.values()) {
+		  param.type=null;
+		  for (int index: param.indexes) {
+			  ParameterMetaData meta = statement.getParameterMetaData();
+			  JDBCType type = JDBCType.valueOf(meta.getParameterType(index));
+			  if (param.type!=null && type!=param.type) {
+				  String msg = String.format("parameter type mismatch for parameter '%s': %s, %s", param.name, param.type, meta);
+				  throw new IllegalStateException(msg);
+			  }
+			  param.type = type;
+		  }
+	  }
   }
 
   /**
@@ -99,7 +169,7 @@ public class NamedParameterStatement implements AutoCloseable {
    *          map to hold parameter-index mappings
    * @return the parsed query
    */
-  static final String parse(String query, Map<String, List<Integer>> paramMap) {
+  static final String parse(String query, Map<String, ParameterInfo> paramMap) {
     // I was originally using regular expressions, but they didn't work well for
     // ignoring parameter-like strings inside quotes.
     int length = query.length();
@@ -133,12 +203,8 @@ public class NamedParameterStatement implements AutoCloseable {
           c = '?'; // replace the parameter with a question mark
           i += name.length(); // skip past the end if the parameter
 
-          List<Integer> indexList = paramMap.get(name);
-          if (indexList==null) {
-            indexList = new ArrayList<>();
-            paramMap.put(name, indexList);
-          }
-          indexList.add(index);
+          ParameterInfo info = paramMap.computeIfAbsent(name, n -> new ParameterInfo(n));
+          info.addIndex(index);
 
           index++;
         }
@@ -159,7 +225,7 @@ public class NamedParameterStatement implements AutoCloseable {
    *           if the parameter does not exist
    */
   private List<Integer> getIndexes(String name) {
-    return Objects.requireNonNull(indexMap.get(name), "Unbekannter Parameter '"+name+"'.");
+    return Objects.requireNonNull(indexMap.get(name), "Unbekannter Parameter '"+name+"'.").indexes;
   }
 
   /**
@@ -382,5 +448,45 @@ public class NamedParameterStatement implements AutoCloseable {
       statement.setTimestamp(idx, t);
     }
   }
+  
+  /**
+   * Get update count.
+   * @throws SQLException 
+   * @see Statement#getUpdateCount()
+   */
+  public int getUpdateCount() throws SQLException {
+	  return statement.getUpdateCount();
+  }
+  
+  /**
+   * Get result set.
+   * @throws SQLException 
+   * @see Statement#getResultSet()
+   */
+  public ResultSet getResultSet() throws SQLException {
+	  return statement.getResultSet();
+  }
+  
+  /**
+   * Get parameter information.
+   * 
+   * @return
+   *  list with parameter meta data
+   */
+  public List<ParameterInfo> getParameterInfo() {
+	  return List.copyOf(indexMap.values());
+  }
 
+  /**
+   * Get parameter information.
+   * 
+   * @param name
+   *  name of the parameter
+   * @return
+   *  parameter meta data
+   */
+  public Optional<ParameterInfo> getParameterInfo(String name) {
+	  return Optional.ofNullable(indexMap.get(name));
+  }
+  
 }
