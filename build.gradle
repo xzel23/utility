@@ -22,7 +22,7 @@ subprojects {
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '3.0.2-SNAPSHOT'
+	version            = '3.1.0-SNAPSHOT'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = ''

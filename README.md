@@ -4,27 +4,30 @@ A small library with utility classes.
 
 ## Requirements
 
- - JDK 11 or later (starting with version 2.0)
+ - JDK 11 or later
 
 ## Using with Gradle
 
-Binary buils are available on bintray:
+Binary builds are available on jcenter:
 
     repositories {
-        ...
-        
-        maven { url  "https://dl.bintray.com/dua3/public" }
+        jcenter()
     }
     
     dependencies {
-        ...
-        
-        compile        "com.dua3.utility:utility:3.0"
-        compile        "com.dua3.utility:utility.db:3.0"
+        compile        "com.dua3.utility:utility:3.1.0"
+        compile        "com.dua3.utility:utility.db:3.1.0"
+        ...        
     }
 
 ## Changes
 
+### Version 3.1.0
+
+ - Added `NamedParameterStatement.getParameterInfo()` and `NamedParameterStatement.getParameterInfo(String)` to query parameter meta data (i.e. the corresponding SQL type)
+ - Added `NamedParameterStatement.getResultSet()`
+ - Added `NamedParameterStatement.getUpdateCount()`
+ 
 ### VERSION 3.0.1
 
  - changed license to MIT to make it possible to use in pre-V3 GPL projects
