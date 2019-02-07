@@ -27,6 +27,7 @@ Binary builds are available on jcenter:
  - Added `NamedParameterStatement.getParameterInfo()` and `NamedParameterStatement.getParameterInfo(String)` to query parameter meta data (i.e. the corresponding SQL type)
  - Added `NamedParameterStatement.getResultSet()`
  - Added `NamedParameterStatement.getUpdateCount()`
+ - Added `DbUtil.toLocalTime()`
  
 ### VERSION 3.0.1
 
