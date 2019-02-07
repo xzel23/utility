@@ -24,6 +24,7 @@ Binary builds are available on jcenter:
 
 ### Version 3.1.0
 
+ - The git repository moved to https://gitlab.com/com.dua3/lib/utility.git
  - Added `NamedParameterStatement.getParameterInfo()` and `NamedParameterStatement.getParameterInfo(String)` to query parameter meta data (i.e. the corresponding SQL type)
  - Added `NamedParameterStatement.getResultSet()`
  - Added `NamedParameterStatement.getUpdateCount()`

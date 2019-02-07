@@ -22,10 +22,10 @@ subprojects {
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '3.1.0-SNAPSHOT'
+	version            = '3.1.0'
 	
 	ext.moduleName     = project.group 
-	ext.scm            = ''
+	ext.scm            = 'https://gitlab.com/com.dua3/lib/utility.git'
 	ext.repo           = 'public'
 	ext.description    = 'Java utilities'
 	
@@ -36,8 +36,6 @@ subprojects {
 
 repositories {
     jcenter()
-    maven { url  "https://dl.bintray.com/dua3/public" }
-    mavenLocal()
 }
 
 // remove module-info.java from eclipse source folder
