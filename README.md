@@ -15,12 +15,16 @@ Binary builds are available on jcenter:
     }
     
     dependencies {
-        compile        "com.dua3.utility:utility:3.1.0"
-        compile        "com.dua3.utility:utility.db:3.1.0"
+        compile        "com.dua3.utility:utility:3.1.1"
+        compile        "com.dua3.utility:utility.db:3.1.1"
         ...        
     }
 
 ## Changes
+
+### Version 3.1.1
+
+ - Fix NamedParameterStatement throwing exception when using ojdbc8.jar with certain statements.
 
 ### Version 3.1.0
 

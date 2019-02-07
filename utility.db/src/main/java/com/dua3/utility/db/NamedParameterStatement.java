@@ -12,6 +12,7 @@ import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -95,13 +96,13 @@ public class NamedParameterStatement implements AutoCloseable {
 	}
 	
 	/**
-	 * Get the JDBC type for this parameter.
+	 * Get the JDBC type for this parameter (if supported by database/driver).
 	 * 
 	 * @return
-	 *  the type of this parameter
+	 *  the type of this parameter or JDBCType.JAVA_OBJECT if unknown
 	 */
 	public JDBCType getType() {
-		return type;
+		return type != null ? type : JDBCType.JAVA_OBJECT;
 	}
 	
 	/**
@@ -148,7 +149,7 @@ public class NamedParameterStatement implements AutoCloseable {
 		  param.type=null;
 		  for (int index: param.indexes) {
 			  ParameterMetaData meta = statement.getParameterMetaData();
-			  JDBCType type = JDBCType.valueOf(meta.getParameterType(index));
+			  JDBCType type = getParameterType(meta, index);
 			  if (param.type!=null && type!=param.type) {
 				  String msg = String.format("parameter type mismatch for parameter '%s': %s, %s", param.name, param.type, meta);
 				  throw new IllegalStateException(msg);
@@ -156,6 +157,15 @@ public class NamedParameterStatement implements AutoCloseable {
 			  param.type = type;
 		  }
 	  }
+  }
+
+  private JDBCType getParameterType(ParameterMetaData meta, int index) {
+    try {
+      return JDBCType.valueOf(meta.getParameterType(index));
+    } catch (SQLException e) {
+      // same bug as https://jira.spring.io/si/jira.issueviews:issue-html/SPR-13825/SPR-13825.html
+      return null;
+    }
   }
 
   /**
