@@ -17,6 +17,7 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Optional;
@@ -77,6 +78,28 @@ public class DbUtil {
 		if (item instanceof java.sql.Timestamp)
 			return ((java.sql.Timestamp)item).toLocalDateTime();
 		throw new IllegalStateException(item.getClass().getName()+" cannot be converted to LocalDateTime");
+	}
+	
+	/**
+	 * Get {@link java.time.LocalTime} from SQL result.
+	 * {@link java.sql.ResultSet#getObject(String)} might return
+	 * either {@link java.sql.Time} or {@link LocalTime}. This method
+	 * returns an instance of {@link java.time.LocalTime} in both cases.
+	 * @param item 
+	 *  an Object representating a time value in an SQL ResultSet
+	 * @return
+	 *  LocalTime instance or {@code null}
+	 * @throws IllegalStateException
+	 *  if {@code item} is neither {@code null} nor of any of the supported types
+	 */
+	public static LocalTime toLocalTime(Object item) {
+		if (item==null) 
+			return null;
+		if (item instanceof LocalTime)
+			return (LocalTime) item;
+		if (item instanceof java.sql.Time)
+			return ((java.sql.Time)item).toLocalTime();
+		throw new IllegalStateException(item.getClass().getName()+" cannot be converted to LocalDate");
 	}
 	
 	/**
