@@ -5,6 +5,8 @@
 
 package com.dua3.utility.text;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +14,7 @@ import java.util.Base64;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.PrimitiveIterator.OfInt;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -338,17 +341,15 @@ public class TextUtil {
 	/**
 	 * Convert hex string to byte array.
 	 * 
-	 * @param s 
-	 *  hex string
-	 * @return 
-	 *  the byte array
+	 * @param s hex string
+	 * @return the byte array
 	 */
 	public static byte[] hexStringToByteArray(String s) {
 		int len = s.length();
 		byte[] data = new byte[len / 2];
 		for (int i = 0; i < len; i += 2) {
 			int h1 = getHexDigit(s, i);
-			int h2 = getHexDigit(s, i+1);
+			int h2 = getHexDigit(s, i + 1);
 			data[i / 2] = (byte) ((h1 << 4) + h2);
 		}
 		return data;
@@ -356,20 +357,18 @@ public class TextUtil {
 
 	/**
 	 * Get hex value for character at index.
-	 * @param s
-	 *  the String
-	 * @param idx
-	 *  index of character in s
-	 * @return
-	 *  hex value between 0 and 15
-	 * @throws IllegalArgumentException
-	 *  if the character is not a valid hex character
+	 * 
+	 * @param s   the String
+	 * @param idx index of character in s
+	 * @return hex value between 0 and 15
+	 * @throws IllegalArgumentException if the character is not a valid hex
+	 *                                  character
 	 */
 	private static int getHexDigit(String s, int idx) {
 		char c = s.charAt(idx);
 		int hex = Character.digit(c, 16);
-		if (hex<0) {
-			throw new IllegalStateException("not a hex digit: "+c);
+		if (hex < 0) {
+			throw new IllegalStateException("not a hex digit: " + c);
 		}
 		return hex;
 	}
@@ -392,6 +391,53 @@ public class TextUtil {
 	 */
 	public static byte[] base64Decode(String text) {
 		return Base64.getDecoder().decode(text);
+	}
+
+	private static final String SWING_UTIL_CLASS = "com.dua3.utility.swing.SwingUtil";
+	private static final String FX_UTIL_CLASS = "com.dua3.utility.swing.SwingUtil";
+
+	private static BiFunction<String, Font, Float> mtdGetTextWidth;
+
+	private static Method getMethod(ClassLoader loader, String className, String methodName,
+			Class<?>... parameterTypes) {
+		Class<?> cls;
+		try {
+			cls = loader.loadClass(className);
+			return cls.getMethod(methodName, parameterTypes);
+		} catch (ClassNotFoundException e) {
+			return null;
+		} catch (NoSuchMethodException | SecurityException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	static {
+		ClassLoader loader = TextUtil.class.getClassLoader();
+
+		Method m = getMethod(loader, FX_UTIL_CLASS, "getTextWidth", String.class, Font.class);
+		if (m == null) {
+			m = getMethod(loader, SWING_UTIL_CLASS, "getTextWidth", String.class, Font.class);
+		}
+
+		if (m == null) {
+			mtdGetTextWidth = (t, f) -> {
+				throw new UnsupportedOperationException(
+						"Either " + FX_UTIL_CLASS + " or " + SWING_UTIL_CLASS + " must be on the classpath");
+			};
+		} else {
+			final Method fm = m;
+			mtdGetTextWidth = (t, f) -> {
+				try {
+					return (Float) fm.invoke(null, t, f);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					throw new IllegalStateException(e);
+				}
+			};
+		}
+	}
+
+	public static float getTextWidth(String text, Font font) {
+		return mtdGetTextWidth.apply(text,font);
 	}
 
 }
