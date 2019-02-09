@@ -370,56 +370,6 @@ public class SwingUtil {
         return jsp;
     }
 
-    /**
-     * Get text width.
-     * 
-     * @param text
-     *  the text
-     * 
-     * @param font
-     *  the font
-     * 
-     * @return
-     *  the text width
-     */
-    public static float getTextWidth(String text, Font font) {
-        java.awt.Font awtFont = getAwtFont(
-            font.getFamily(), 
-            font.getSizeInPoints(), 
-            font.getColor(), 
-            font.isBold(), 
-            font.isItalic(), 
-            font.isUnderlined(), 
-            font.isStrikeThrough());
-        FontRenderContext frc = new FontRenderContext(awtFont.getTransform(), false, true);
-        return (float) awtFont.getStringBounds(text, frc).getWidth();
-    }
-
-    /**
-     * Get awt font for font. 
-     * 
-     * @param font
-     *  the Font
-     * @return
-     *  corresponding java.awt.Font
-     */
-    public static java.awt.Font getAwtFont(Font font) {
-        return getAwtFont(
-            font.getFamily(), 
-            font.getSizeInPoints(), 
-            font.getColor(), 
-            font.isBold(), 
-            font.isItalic(), 
-            font.isUnderlined(), 
-            font.isStrikeThrough());
-    }
-
-    private static java.awt.Font getAwtFont(String family, float size, Color color, boolean bold, boolean italic, boolean underlined,
-        boolean strikeThrough) {
-      int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
-      return new java.awt.Font(family, style, Math.round(size));
-    }
-
 
     // Utility class, should not be instantiated
     private SwingUtil() {

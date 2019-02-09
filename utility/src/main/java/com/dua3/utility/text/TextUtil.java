@@ -5,8 +5,6 @@
 
 package com.dua3.utility.text;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,10 +12,12 @@ import java.util.Base64;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.PrimitiveIterator.OfInt;
-import java.util.function.BiFunction;
+import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
+
+import com.dua3.utility.text.FontUtil.Bounds;
 
 public class TextUtil {
 
@@ -393,51 +393,36 @@ public class TextUtil {
 		return Base64.getDecoder().decode(text);
 	}
 
-	private static final String SWING_UTIL_CLASS = "com.dua3.utility.swing.SwingUtil";
-	private static final String FX_UTIL_CLASS = "com.dua3.utility.swing.SwingUtil";
-
-	private static BiFunction<String, Font, Float> mtdGetTextWidth;
-
-	private static Method getMethod(ClassLoader loader, String className, String methodName,
-			Class<?>... parameterTypes) {
-		Class<?> cls;
-		try {
-			cls = loader.loadClass(className);
-			return cls.getMethod(methodName, parameterTypes);
-		} catch (ClassNotFoundException e) {
-			return null;
-		} catch (NoSuchMethodException | SecurityException e) {
-			throw new IllegalStateException(e);
-		}
-	}
+	private static final FontUtil FONT_UTIL;
 
 	static {
-		ClassLoader loader = TextUtil.class.getClassLoader();
-
-		Method m = getMethod(loader, FX_UTIL_CLASS, "getTextWidth", String.class, Font.class);
-		if (m == null) {
-			m = getMethod(loader, SWING_UTIL_CLASS, "getTextWidth", String.class, Font.class);
-		}
-
-		if (m == null) {
-			mtdGetTextWidth = (t, f) -> {
-				throw new UnsupportedOperationException(
-						"Either " + FX_UTIL_CLASS + " or " + SWING_UTIL_CLASS + " must be on the classpath");
-			};
-		} else {
-			final Method fm = m;
-			mtdGetTextWidth = (t, f) -> {
-				try {
-					return (Float) fm.invoke(null, t, f);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new IllegalStateException(e);
+		FONT_UTIL = ServiceLoader
+			.load(FontUtil.class)
+			.findFirst()
+			.orElseGet(
+				() -> new FontUtil<Void>() {
+					@Override
+					public Void convert(Font f) {
+						throw new UnsupportedOperationException("no FontUtil implementation present");
+					}
+					@Override
+					public Bounds getTextBounds(String s, Font f) {
+						throw new UnsupportedOperationException("no FontUtil implementation present");
+					}
 				}
-			};
-		}
+			);
 	}
 
-	public static float getTextWidth(String text, Font font) {
-		return mtdGetTextWidth.apply(text,font);
+	public static double getTextWidth(String text, Font font) {
+		return FONT_UTIL.getTextWidth(text,font);
+	}
+
+	public static double getTextHeight(String text, Font font) {
+		return FONT_UTIL.getTextWidth(text,font);
+	}
+
+	public static Bounds getTextHBounds(String text, Font font) {
+		return FONT_UTIL.getTextBounds(text,font);
 	}
 
 }
