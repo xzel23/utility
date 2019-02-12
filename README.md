@@ -25,6 +25,7 @@ Binary builds are available on jcenter:
 ### Version 3.1.4
 
 - add `uses` declarations in `module-info.java` files (fix ServiceLoader issues when run from eclipse)
+- spotbugs: use exclude filter for false positives; don't ignore failures
 
 ### Version 3.1.3
 
