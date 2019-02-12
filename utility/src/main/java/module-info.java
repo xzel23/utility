@@ -11,4 +11,6 @@ module com.dua3.utility {
     exports com.dua3.utility.text;
 
     requires java.logging;
+
+    uses com.dua3.utility.text.FontUtil;
 } 
