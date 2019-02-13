@@ -15,12 +15,16 @@ Binary builds are available on jcenter:
     }
     
     dependencies {
-        compile        "com.dua3.utility:utility:3.1.4"
-        compile        "com.dua3.utility:utility.db:3.1.4"
+        compile        "com.dua3.utility:utility:3.1.5"
+        compile        "com.dua3.utility:utility.db:3.1.5"
         ...        
     }
 
 ## Changes
+
+### Version 3.1.5
+
+- update gradle wrapper
 
 ### Version 3.1.4
 
