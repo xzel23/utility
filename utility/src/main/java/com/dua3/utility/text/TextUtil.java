@@ -393,7 +393,7 @@ public class TextUtil {
 		return Base64.getDecoder().decode(text);
 	}
 
-	private static final FontUtil FONT_UTIL;
+	private static final FontUtil<?> FONT_UTIL;
 
 	static {
 		FONT_UTIL = ServiceLoader
