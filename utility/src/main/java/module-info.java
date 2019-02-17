@@ -5,6 +5,7 @@
 
 module com.dua3.utility {
     exports com.dua3.utility;
+    exports com.dua3.utility.data;
     exports com.dua3.utility.io;
     exports com.dua3.utility.lang;
     exports com.dua3.utility.math;
