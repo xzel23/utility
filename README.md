@@ -22,7 +22,9 @@ Binary builds are available on jcenter:
 
 ## Changes
 
-### Version 4.0.0 (BETA)
+### Version 4.0.0
+
+__BETA 1__
 
 - update gradle wrapper
 - `CsvReader` and `CsvWriter` classes
