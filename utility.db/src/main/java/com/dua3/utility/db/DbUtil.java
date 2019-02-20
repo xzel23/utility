@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -78,20 +77,23 @@ public class DbUtil {
 
 				List<String> data = rb.getRow();
 
-				String className = String.valueOf(entry.getKey());
+				String key = String.valueOf(entry.getKey());
 				
-				final int expectedFields = 4;
+				final int expectedFields = 5;
 				LangUtil.check(
 						data.size()==expectedFields, 
-						"Wrong data for driver %s: expected %d fields, found %d", className, expectedFields, data.size());
+						"invalid driver data for %s: expected %d fields, found %d", key, expectedFields, data.size());
 
 				String name = data.get(0);
-				String urlPrefix = data.get(1);
-				String urlScheme = data.get(2);
-				String link = data.get(3);
+				String className = data.get(1);
+				String urlPrefix = data.get(2);
+				String urlScheme = data.get(3);
+				String link = data.get(4);
 
 				JdbcDriverInfo di = new JdbcDriverInfo(name, className, urlPrefix, urlScheme, link);
-				drivers.put(className, di);
+				var rc = drivers.put(urlPrefix, di);
+				
+				LangUtil.check(rc==null, "duplicate entry for URL prefix %s", urlPrefix);
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}
