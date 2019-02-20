@@ -25,12 +25,12 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,7 +51,7 @@ public class DbUtil {
 	private static final Logger LOG = Logger.getLogger(DbUtil.class.getName());
 	
 	/** List of know JDBC drivers. */
-	private static final Map<String, JdbcDriverInfo> drivers = new HashMap<>();
+	private static final SortedMap<String, JdbcDriverInfo> drivers = new TreeMap<>();
 	
 	static {
 		// load properties
@@ -91,7 +91,7 @@ public class DbUtil {
 				String link = data.get(4);
 
 				JdbcDriverInfo di = new JdbcDriverInfo(name, className, urlPrefix, urlScheme, link);
-				var rc = drivers.put(urlPrefix, di);
+				var rc = drivers.put(name, di);
 				
 				LangUtil.check(rc==null, "duplicate entry for URL prefix %s", urlPrefix);
 			} catch (IOException e) {
