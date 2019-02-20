@@ -5,7 +5,7 @@
 
 plugins {
   id 'com.dua3.gradle.jpms' version '0.8.2' apply false
-  id 'com.github.spotbugs'  version '1.6.9' apply false
+  id 'com.github.spotbugs'  version '1.6.10' apply false
   id 'com.jfrog.bintray'    version '1.8.4' apply false
 }
 
