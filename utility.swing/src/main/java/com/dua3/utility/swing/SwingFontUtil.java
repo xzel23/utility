@@ -3,7 +3,7 @@ package com.dua3.utility.swing;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import com.dua3.utility.Pair;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.text.TextUtil;
 
 public class TextUtilTest {

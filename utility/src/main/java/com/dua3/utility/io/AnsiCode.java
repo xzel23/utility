@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Collection;
 
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 
 public class AnsiCode {

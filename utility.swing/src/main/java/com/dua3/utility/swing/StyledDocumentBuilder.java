@@ -20,8 +20,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import com.dua3.utility.Color;
-import com.dua3.utility.Pair;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextConverterBase;

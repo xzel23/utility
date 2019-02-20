@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 
 /**

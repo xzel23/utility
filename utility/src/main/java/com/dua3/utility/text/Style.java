@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.dua3.utility.Pair;
+import com.dua3.utility.data.Pair;
 
 public class Style {
     private final String name;

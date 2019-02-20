@@ -5,7 +5,11 @@
 
 package com.dua3.utility.db;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,14 +23,25 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
+import com.dua3.utility.io.CsvReader;
+import com.dua3.utility.io.CsvReader.ListRowBuilder;
 import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.options.Options;
 
 public class DbUtil {
 	private DbUtil() {
@@ -35,7 +50,62 @@ public class DbUtil {
 	
 	/** Logger instance. */
 	private static final Logger LOG = Logger.getLogger(DbUtil.class.getName());
+	
+	/** List of know JDBC drivers. */
+	private static final Map<String, JdbcDriverInfo> drivers = new HashMap<>();
+	
+	static {
+		// load properties
+		Properties p = new Properties();
+		try (InputStream in = DbUtil.class.getResourceAsStream("jdbc_drivers.properties")) {
+			p.load(in);
+		} catch (IOException e) {
+			LOG.log(Level.WARNING, "could not load JDBC driver data", e);
+		}
+		
+		// parse entries
+		p.entrySet().forEach(entry -> {
+			try {
+				ListRowBuilder rb = new ListRowBuilder();
+				CsvReader reader = CsvReader.create(
+					rb, 
+					new BufferedReader(
+						new StringReader(Objects.toString(entry.getValue()))
+					),
+					Options.empty());
+				int n = reader.readSome(1);
+				assert n==1;
 
+				List<String> data = rb.getRow();
+
+				String className = String.valueOf(entry.getKey());
+				
+				final int expectedFields = 4;
+				LangUtil.check(
+						data.size()==expectedFields, 
+						"Wrong data for driver %s: expected %d fields, found %d", className, expectedFields, data.size());
+
+				String name = data.get(0);
+				String urlPrefix = data.get(1);
+				String urlScheme = data.get(2);
+				String link = data.get(3);
+
+				JdbcDriverInfo di = new JdbcDriverInfo(name, className, urlPrefix, urlScheme, link);
+				drivers.put(className, di);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		});
+	}
+	
+	/**
+	 * Get Map with known JDBC drivers.
+	 * @return collection of DriverInfo instances for the known JDBC drivers
+	 */
+	public static Collection<JdbcDriverInfo> getJdbcDrivers() {
+		return drivers.values();
+	}
+	
 	/**
 	 * Get {@link java.time.LocalDate} from SQL result.
 	 * {@link java.sql.ResultSet#getObject(String)} might return

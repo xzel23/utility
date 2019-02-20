@@ -460,7 +460,8 @@ public class NamedParameterStatement implements AutoCloseable {
   
   /**
    * Get update count.
-   * @throws SQLException 
+   * @return the update count
+   * @throws SQLException on error
    * @see Statement#getUpdateCount()
    */
   public int getUpdateCount() throws SQLException {
@@ -469,7 +470,8 @@ public class NamedParameterStatement implements AutoCloseable {
   
   /**
    * Get result set.
-   * @throws SQLException 
+   * @return the result set
+   * @throws SQLException on error
    * @see Statement#getResultSet()
    */
   public ResultSet getResultSet() throws SQLException {

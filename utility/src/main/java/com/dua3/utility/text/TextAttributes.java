@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.dua3.utility.Color;
-import com.dua3.utility.Pair;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 
 /**

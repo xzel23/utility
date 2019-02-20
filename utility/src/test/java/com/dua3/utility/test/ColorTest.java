@@ -10,7 +10,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 
 public class ColorTest {
     

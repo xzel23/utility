@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import com.dua3.utility.Color;
-import com.dua3.utility.Pair;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
 import com.dua3.utility.lang.LangUtil;
 

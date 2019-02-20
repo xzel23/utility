@@ -22,9 +22,13 @@ Binary builds are available on jcenter:
 
 ## Changes
 
-### Version 3.1.5
+### Version 4.0.0 (BETA)
 
 - update gradle wrapper
+- `CsvReader` and `CsvWriter` classes
+- new classes `Option` (an option to control object behavior), `OptionSet` (a set of options to control object behavior), and `Options` (a set of options and corresponding values)
+- new package `com.dua3.utility.data` with classes `TreeNode` (to build tree data structures) and `FileTreeNode` to create a tree of files and subdirectories of a directory
+- moved the `Pair` and `Color` classes to the `com.dua3.utility.data` package
 
 ### Version 3.1.4
 

@@ -28,8 +28,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.dua3.utility.Color;
-import com.dua3.utility.Pair;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.text.Font;
 
 /**

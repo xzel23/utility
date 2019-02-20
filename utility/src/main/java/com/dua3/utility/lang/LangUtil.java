@@ -29,7 +29,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import com.dua3.utility.Pair;
+import com.dua3.utility.data.Pair;
 
 /**
  * A Utility class with general purpose methods.

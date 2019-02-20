@@ -7,7 +7,7 @@ package com.dua3.utility.text;
 
 import java.util.Objects;
 
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 
 /**
  * Interface describing fonts used in workbooks.

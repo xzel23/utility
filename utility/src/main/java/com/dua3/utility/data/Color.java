@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-package com.dua3.utility;
+package com.dua3.utility.data;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
