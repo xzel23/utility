@@ -23,7 +23,7 @@ public class Options extends HashMap<Option<?>,Supplier<?>> {
     public Options() {
     }
 
-    private Options(Map<Option<?>, Supplier<?>> options) {
+    public Options(Map<Option<?>, Supplier<?>> options) {
         super(options);
     }
 
