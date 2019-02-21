@@ -84,11 +84,11 @@ public class DbUtil {
 						data.size()==expectedFields, 
 						"invalid driver data for %s: expected %d fields, found %d", key, expectedFields, data.size());
 
-				String name = data.get(0);
-				String className = data.get(1);
-				String urlPrefix = data.get(2);
-				String urlScheme = data.get(3);
-				String link = data.get(4);
+				String name = data.get(0).trim();
+				String className = data.get(1).trim();
+				String urlPrefix = data.get(2).trim();
+				String urlScheme = data.get(3).trim();
+				String link = data.get(4).trim();
 
 				JdbcDriverInfo di = new JdbcDriverInfo(name, className, urlPrefix, urlScheme, link);
 				var rc = drivers.put(name, di);
