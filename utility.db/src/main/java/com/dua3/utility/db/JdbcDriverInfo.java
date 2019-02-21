@@ -22,4 +22,15 @@ public class JdbcDriverInfo {
 		this.options = new OptionSet(Option.parseScheme(urlScheme));
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("%s%n  driver class : %s%n  URL prefix   : %s%n  URL scheme   : %s%n  vendor link  : %s%n  Options      : %s%n",
+		name,
+		className,
+		urlPrefix,
+		urlScheme,
+		link,
+		options
+		);
+	}
 }
