@@ -6,6 +6,9 @@
 package com.dua3.utility.test.db;
 
 import com.dua3.utility.db.DbUtil;
+import com.dua3.utility.db.JdbcDriverInfo;
+
+import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +19,10 @@ public class DbUtilTest {
 
     @Test
     public void testGetDrivers() {
-    	System.out.println(DbUtil.getJdbcDrivers());
+    	Collection<JdbcDriverInfo> drivers = DbUtil.getJdbcDrivers();
+    	for (var d: drivers) {
+    		System.out.println(d);
+    	}
     }
 
 }

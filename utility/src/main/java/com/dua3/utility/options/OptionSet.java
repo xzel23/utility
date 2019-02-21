@@ -1,6 +1,7 @@
 package com.dua3.utility.options;
 
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -130,4 +131,15 @@ public class OptionSet {
         return value.get();
     }
 
+    @Override
+    public String toString() {
+    	try (Formatter fmt = new Formatter()) {
+    		fmt.format("{%n");
+	    	for (var option: options) {
+	    		fmt.format("  %s%n", option);
+	    	}
+    		fmt.format("}%n");
+	    	return fmt.toString();
+    	}
+    }
 }

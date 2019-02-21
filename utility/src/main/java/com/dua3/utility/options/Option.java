@@ -157,14 +157,14 @@ public abstract class Option<T> {
 
     @Override
     public String toString() {
-        return name + "[" + klass + ",default=" + getDefault() + "]";
+        return name + "[" + getDefault() + "]";
     }
 
     private static final String PATTERN_VAR_START = "\\$\\{";
     private static final String PATTERN_VAR_NAME = "\\p{Alpha}\\p{Alnum}*";
     private static final String PATTERN_VAR_END = "\\}";
 
-    private static final Pattern PATTERN_VAR = Pattern.compile(PATTERN_VAR_START+PATTERN_VAR_NAME+PATTERN_VAR_END);
+    private static final Pattern PATTERN_VAR = Pattern.compile(PATTERN_VAR_START+"("+PATTERN_VAR_NAME+")"+PATTERN_VAR_END);
 
     /**
      * Parse a configuration schema string.
@@ -178,7 +178,7 @@ public abstract class Option<T> {
     public static List<Option<?>> parseScheme(String s) {
     	List<Option<?>> list = new ArrayList<>();
         Matcher matcher = PATTERN_VAR.matcher(s);
-        while (matcher.lookingAt()) {
+        while (matcher.find()) {
             String var = matcher.group(1);
             list.add(Option.stringOption(var));
         }
