@@ -16,6 +16,11 @@ public class Options extends HashMap<Option<?>,Supplier<?>> {
 
 	private static final Options EMPTY_OPTIONS = new Options(Collections.emptyMap());
 
+	/**
+	 * An empty set of option values.
+	 * @return
+	 *  empty options
+	 */
     public static Options empty() {
         return EMPTY_OPTIONS;
     }

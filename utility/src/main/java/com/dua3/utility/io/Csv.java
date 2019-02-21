@@ -80,7 +80,7 @@ public abstract class Csv {
     static {
         Locale[] locales = Locale.getAvailableLocales();
         Arrays.sort(locales, (a, b) -> a.toString().compareTo(b.toString()));
-        OPTIONS.addOption(OPTION_LOCALE, Locale.class, OptionSet.value("default", Locale.ROOT),
+        OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT),
                 OptionSet.wrap(locales));
         OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset(),
                 Charset.availableCharsets().values().toArray(new Charset[0]));
@@ -93,7 +93,7 @@ public abstract class Csv {
             NamedFunction.create("|", locale -> '|'), 
             NamedFunction.create("TAB", locale -> '\t'));
 
-        OPTIONS.addOption(OPTION_DELIMITER, Character.class, OptionSet.value("\"", '"'), OptionSet.value("'", '\''));
+        OPTIONS.addOption(OPTION_DELIMITER, Character.class, Option.value("\"", '"'), Option.value("'", '\''));
     }
 
     public static Charset getCharset(Options options) {
