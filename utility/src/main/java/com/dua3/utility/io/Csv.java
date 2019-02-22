@@ -19,7 +19,6 @@ import java.nio.charset.Charset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
@@ -116,8 +115,8 @@ public abstract class Csv {
         return OPTIONS.getOption(name);
     }
 
-    public static List<Option<?>> getOptions() {
-        return OPTIONS.asList();
+    public static OptionSet getOptions() {
+        return new OptionSet(OPTIONS);
     }
 
     public static Object getOptionValue(String name, Options overrides) {

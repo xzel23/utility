@@ -2,6 +2,7 @@ package com.dua3.utility.options;
 
 import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.function.Supplier;
  * A Set of possible options to configure a classes behavior, i.e. all possible options
  * for configuring a CSV reader.
  */
-public class OptionSet {
+public class OptionSet implements Iterable<Option<?>>{
 
     // replace by map()?
     public static <T> Supplier<T>[] wrap(T[] choices) {
@@ -38,8 +39,8 @@ public class OptionSet {
      * @param options
      *  the options
      */
-    public OptionSet(List<Option<?>> options) {
-		this.options.addAll(options);
+    public OptionSet(Iterable<Option<?>> options) {
+    	options.forEach(this.options::add);
 	}
 
 	/**
@@ -142,4 +143,13 @@ public class OptionSet {
 	    	return fmt.toString();
     	}
     }
+    
+    public int size() {
+    	return options.size();
+    }
+
+	@Override
+	public Iterator<Option<?>> iterator() {
+		return options.iterator();
+	}
 }
