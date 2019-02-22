@@ -40,7 +40,7 @@ import com.dua3.utility.io.CsvReader;
 import com.dua3.utility.io.CsvReader.ListRowBuilder;
 import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 public class DbUtil {
 	private DbUtil() {
@@ -71,7 +71,7 @@ public class DbUtil {
 					new BufferedReader(
 						new StringReader(Objects.toString(entry.getValue()))
 					),
-					Options.empty());
+					OptionValues.empty());
 				int n = reader.readSome(1);
 				assert n==1;
 

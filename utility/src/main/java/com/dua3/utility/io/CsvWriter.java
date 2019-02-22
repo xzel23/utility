@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 /**
  *
@@ -34,20 +34,20 @@ import com.dua3.utility.options.Options;
 public class CsvWriter extends Csv implements AutoCloseable, Flushable {
     private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
-    public static CsvWriter create(BufferedWriter writer, Options options) {
+    public static CsvWriter create(BufferedWriter writer, OptionValues options) {
         return new CsvWriter(writer, options);
     }
 
-    public static CsvWriter create(File file, Options options) throws IOException {
+    public static CsvWriter create(File file, OptionValues options) throws IOException {
         return create(file.toPath(), options);
     }
 
-    public static CsvWriter create(Path path, Options options) throws IOException {
+    public static CsvWriter create(Path path, OptionValues options) throws IOException {
         Charset cs = getCharset(options);
         return create(Files.newBufferedWriter(path, cs), options);
     }
 
-    public static CsvWriter create(OutputStream out, Options options) {
+    public static CsvWriter create(OutputStream out, OptionValues options) {
         Charset cs = getCharset(options);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
         return create(writer, options);
@@ -59,7 +59,7 @@ public class CsvWriter extends Csv implements AutoCloseable, Flushable {
     private final String delimiter;
     private int fieldsInRow = 0;
 
-    public CsvWriter(BufferedWriter out, Options options) {
+    public CsvWriter(BufferedWriter out, OptionValues options) {
         this.separator = String.valueOf(getSeparator(options));
         this.delimiter = String.valueOf(getDelimiter(options));
         this.lineDelimiter = String.format("%n");

@@ -119,7 +119,7 @@ public class OptionSet implements Iterable<Option<?>>{
      *  the option's value, or {@code null} if no value is present
      */
     // TODO Optional?
-    public Object getOptionValue(String name, Options overrides) {
+    public Object getOptionValue(String name, OptionValues overrides) {
         Optional<Option<?>> option = getOption(name);
 
         // the requested option does not exist

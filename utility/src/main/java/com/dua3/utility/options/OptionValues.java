@@ -11,24 +11,24 @@ import java.util.function.Supplier;
  * {@code Options.get(option)} will return the option's default value (if set) instead
  * of {@code null}.
  */
-public class Options extends HashMap<Option<?>,Supplier<?>> {
+public class OptionValues extends HashMap<Option<?>,Supplier<?>> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Options EMPTY_OPTIONS = new Options(Collections.emptyMap());
+	private static final OptionValues EMPTY_OPTIONS = new OptionValues(Collections.emptyMap());
 
 	/**
 	 * An empty set of option values.
 	 * @return
 	 *  empty options
 	 */
-    public static Options empty() {
+    public static OptionValues empty() {
         return EMPTY_OPTIONS;
     }
 
-    public Options() {
+    public OptionValues() {
     }
 
-    public Options(Map<Option<?>, Supplier<?>> options) {
+    public OptionValues(Map<Option<?>, Supplier<?>> options) {
         super(options);
     }
 
@@ -36,6 +36,7 @@ public class Options extends HashMap<Option<?>,Supplier<?>> {
         return getOrDefault(op, op.getDefault());
     }
 
+    @Override
     public Supplier<?> put(Option<?> option, Supplier<?> value) {
         Class<?> klassO = option.getOptionClass();
         Class<?> klassV = value.get().getClass();

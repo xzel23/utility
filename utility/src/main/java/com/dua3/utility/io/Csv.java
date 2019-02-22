@@ -26,7 +26,7 @@ import java.util.function.Function;
 import com.dua3.utility.lang.NamedFunction;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 /**
  *
@@ -95,19 +95,19 @@ public abstract class Csv {
         OPTIONS.addOption(OPTION_DELIMITER, Character.class, Option.value("\"", '"'), Option.value("'", '\''));
     }
 
-    public static Charset getCharset(Options options) {
+    public static Charset getCharset(OptionValues options) {
         return (Charset) getOptionValue(OPTION_CHARSET, options);
     }
 
-    public static PredefinedDateFormat getDateFormat(Options options) {
+    public static PredefinedDateFormat getDateFormat(OptionValues options) {
         return (PredefinedDateFormat) Csv.getOptionValue(Csv.OPTION_DATEFORMAT, options);
     }
 
-    public static Character getDelimiter(Options options) {
+    public static Character getDelimiter(OptionValues options) {
         return (Character) getOptionValue(OPTION_DELIMITER, options);
     }
 
-    public static Locale getLocale(Options options) {
+    public static Locale getLocale(OptionValues options) {
         return (Locale) getOptionValue(OPTION_LOCALE, options);
     }
 
@@ -119,11 +119,11 @@ public abstract class Csv {
         return new OptionSet(OPTIONS);
     }
 
-    public static Object getOptionValue(String name, Options overrides) {
+    public static Object getOptionValue(String name, OptionValues overrides) {
         return OPTIONS.getOptionValue(name, overrides);
     }
 
-    public static Character getSeparator(Options options) {
+    public static Character getSeparator(OptionValues options) {
         Locale locale = getLocale(options);
         @SuppressWarnings("unchecked")
         NamedFunction<Locale, Character> selector = (NamedFunction<Locale, Character>) getOptionValue(OPTION_SEPARATOR,

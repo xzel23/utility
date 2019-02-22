@@ -32,7 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 /**
  * @author axel TODO: see below
@@ -91,20 +91,20 @@ public class CsvReader extends Csv implements AutoCloseable {
     // the bytes sequence the UTF-8 BOM
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
-    public static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) throws IOException {
+    public static CsvReader create(RowBuilder builder, BufferedReader reader, OptionValues options) throws IOException {
         return new CsvReader(builder, reader, "[stream]", options);
     }
 
-    public static CsvReader create(RowBuilder builder, File file, Options options) throws IOException {
+    public static CsvReader create(RowBuilder builder, File file, OptionValues options) throws IOException {
         return create(builder, file.toPath(), options);
     }
 
-    public static CsvReader create(RowBuilder builder, Path path, Options options) throws IOException {
+    public static CsvReader create(RowBuilder builder, Path path, OptionValues options) throws IOException {
         Charset cs = getCharset(options);
         return create(builder, Files.newBufferedReader(path, cs), options);
     }
 
-    public static CsvReader create(RowBuilder builder, InputStream in, Options options) throws IOException {
+    public static CsvReader create(RowBuilder builder, InputStream in, OptionValues options) throws IOException {
         // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
         // selection in options)
         Charset charset = getCharset(options);
@@ -134,7 +134,7 @@ public class CsvReader extends Csv implements AutoCloseable {
     private boolean ignoreMissingFields;
     private final String source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, Options options) throws IOException {
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, OptionValues options) throws IOException {
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;
