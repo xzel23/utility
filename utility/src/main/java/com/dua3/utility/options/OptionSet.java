@@ -30,7 +30,10 @@ public class OptionSet implements Iterable<Option<?>>{
     /**
      * Create an empty OptionSet.
      */
-    public OptionSet() {
+    public OptionSet(Option<?>... options) {
+        for (Option<?> option: options) {
+            this.options.add(option);
+        }
     }
 
     /**
@@ -151,5 +154,9 @@ public class OptionSet implements Iterable<Option<?>>{
 	@Override
 	public Iterator<Option<?>> iterator() {
 		return options.iterator();
-	}
+    }
+    
+    public boolean isEmpty() {
+        return options.isEmpty();
+    }
 }
