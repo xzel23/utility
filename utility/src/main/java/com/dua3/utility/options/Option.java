@@ -22,6 +22,10 @@ public abstract class Option<T> {
         default int compareTo(Value<T> other) {
             return toString().compareTo(String.valueOf(other));
         }
+        
+        default Value<T> makeStatic() {
+        	return new StaticValue<T>(toString(), get());
+        }
     }
 
 	/**
@@ -45,6 +49,11 @@ public abstract class Option<T> {
         @Override
         public String toString() {
             return name;
+        }
+        
+        @Override
+        public StaticValue<T> makeStatic() {
+        	return this;
         }
     }
 
