@@ -39,11 +39,15 @@ public class OptionValues extends HashMap<Option<?>,Supplier<?>> {
     @Override
     public Supplier<?> put(Option<?> option, Supplier<?> value) {
         Class<?> klassO = option.getOptionClass();
-        Class<?> klassV = value.get().getClass();
-        if (!(klassO.isAssignableFrom(klassV))) {
+        Class<?> klassV = getClass(value.get());
+        if (klassV != null && !(klassO.isAssignableFrom(klassV))) {
             throw new IllegalArgumentException("Incompatible value for option '" + option.getName() + "' - expected: "
                     + klassO + ", is: " + klassV);
         }
         return super.put(option, value);
+    }
+
+    private Class<?> getClass(Object o) {
+        return o != null ? o.getClass() : null;
     }
 }
