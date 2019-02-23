@@ -51,4 +51,25 @@ public class OptionValues extends HashMap<Option<?>,Value<?>> {
     private Class<?> getClass(Object o) {
         return o != null ? o.getClass() : null;
     }
+    
+    @Override
+    public String toString() {
+        var i = entrySet().iterator();
+        if (! i.hasNext())
+            return "{}";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        for (;;) {
+            Entry<Option<?>, Value<?>> e = i.next();
+            String name = e.getKey().getName();
+            String value = e.getValue().name();
+            sb.append(name);
+            sb.append('=');
+            sb.append(value);
+            if (! i.hasNext())
+                return sb.append('}').toString();
+            sb.append(',').append(' ');
+        }
+    }
 }

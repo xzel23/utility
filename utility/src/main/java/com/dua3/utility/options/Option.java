@@ -20,11 +20,15 @@ public abstract class Option<T> {
     
     public static interface Value<T> extends Supplier<T>, Comparable<Value<T>> {
         default int compareTo(Value<T> other) {
-            return toString().compareTo(String.valueOf(other));
+            return name().compareTo(other.name());
         }
         
         default Value<T> makeStatic() {
         	return new StaticValue<T>(toString(), get());
+        }
+        
+        default String name() {
+        	return String.valueOf(get());
         }
     }
 
@@ -47,13 +51,18 @@ public abstract class Option<T> {
         }
 
         @Override
-        public String toString() {
+        public String name() {
             return name;
         }
         
         @Override
         public StaticValue<T> makeStatic() {
         	return this;
+        }
+        
+        @Override
+        public String toString() {
+        	return name();
         }
     }
 
