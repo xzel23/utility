@@ -25,12 +25,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.dua3.utility.lang.NamedFunction;
 import com.dua3.utility.options.Option;
+import com.dua3.utility.options.Option.Value;
 import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
 
@@ -83,21 +83,21 @@ public abstract class Csv {
 
     static {
         // locale
-        List<Supplier<Locale>> localesAll = Arrays.stream(Locale.getAvailableLocales())
+        List<Value<Locale>> localesAll = Arrays.stream(Locale.getAvailableLocales())
             .filter(locale -> !Locale.ROOT.equals(locale)) // filter out root - we will add it again later with a different name
             .sorted((lc1,lc2) -> lc1.toString().compareTo(lc2.toString())).distinct().map(Option::value).collect(Collectors.toList());
         OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesAll);
 
-        List<Supplier<Locale>> localesCommon = Set.of(Locale.ROOT, Locale.getDefault(), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN, Locale.CHINESE, Locale.JAPANESE, Locale.KOREAN)
+        List<Value<Locale>> localesCommon = Set.of(Locale.ROOT, Locale.getDefault(), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN, Locale.CHINESE, Locale.JAPANESE, Locale.KOREAN)
             .stream().sorted((lc1,lc2) -> lc1.toString().compareTo(lc2.toString())).distinct().map(Option::value).collect(Collectors.toList());
         COMMON_OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesCommon);
  
         // charset
-        List<Supplier<Charset>> charsetsAll = Charset.availableCharsets().entrySet().stream()
+        List<Value<Charset>> charsetsAll = Charset.availableCharsets().entrySet().stream()
             .map( entry -> Option.value(entry.getKey(), entry.getValue())).sorted().collect(Collectors.toList());
         OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset().toString(), charsetsAll);
 
-        List<Supplier<Charset>> charSetsCommon = Stream.of("UTF-8", "ISO-8859-1", "ISO-8859-2", "windows-1252")
+        List<Value<Charset>> charSetsCommon = Stream.of("UTF-8", "ISO-8859-1", "ISO-8859-2", "windows-1252")
             .map(name -> Map.entry(name, Charset.availableCharsets().get(name)))
             .filter(entry -> entry.getValue() != null)
             .map(entry -> Option.value(entry.getKey(), entry.getValue()))

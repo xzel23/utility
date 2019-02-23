@@ -3,15 +3,16 @@ package com.dua3.utility.options;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+
+import com.dua3.utility.options.Option.Value;
 
 /**
  * A Mapping of options to values. 
- * The only difference to a normal {@code Map<Option<?>,Supplier<?>>} is that
+ * The only difference to a normal {@code Map<Option<?>,Value<?>>} is that
  * {@code Options.get(option)} will return the option's default value (if set) instead
  * of {@code null}.
  */
-public class OptionValues extends HashMap<Option<?>,Supplier<?>> {
+public class OptionValues extends HashMap<Option<?>,Value<?>> {
 	private static final long serialVersionUID = 1L;
 
 	private static final OptionValues EMPTY_OPTIONS = new OptionValues(Collections.emptyMap());
@@ -28,16 +29,16 @@ public class OptionValues extends HashMap<Option<?>,Supplier<?>> {
     public OptionValues() {
     }
 
-    public OptionValues(Map<Option<?>, Supplier<?>> options) {
+    public OptionValues(Map<Option<?>, Value<?>> options) {
         super(options);
     }
 
-    public Supplier<?> get(Option<?> op) {
+    public Value<?> get(Option<?> op) {
         return getOrDefault(op, op.getDefault());
     }
 
     @Override
-    public Supplier<?> put(Option<?> option, Supplier<?> value) {
+    public Value<?> put(Option<?> option, Value<?> value) {
         Class<?> klassO = option.getOptionClass();
         Class<?> klassV = getClass(value.get());
         if (klassV != null && !(klassO.isAssignableFrom(klassV))) {

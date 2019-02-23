@@ -72,38 +72,38 @@ public abstract class Option<T> {
      * @return
      *  the named value
      */
-    public static <T> Supplier<T> value(T value) {
+    public static <T> Value<T> value(T value) {
         return new StaticValue<>(String.valueOf(value), value);
     }
 
 	public static class StringOption extends Option<String> {
-		StringOption(String name, Supplier<String> defaultValue) {
+		StringOption(String name, Value<String> defaultValue) {
 			super(name, String.class, defaultValue);
 		}		
 	}
 	
 	public static class ChoiceOption<T> extends Option<T> {		
-		private final List<Supplier<T>> choices;
+		private final List<Value<T>> choices;
 
 	    ChoiceOption(
     		String name, 
     		Class<T> klass, 
-    		Supplier<T> defaultValue, 
-    		Collection<Supplier<T>> choices) {
+    		Value<T> defaultValue, 
+    		Collection<Value<T>> choices) {
 	    	super(name, klass, defaultValue);
 
 	    	// make sure this.choices does not contain a duplicate for defaultValue
 	        if (choices.contains(defaultValue)) {
 	            this.choices = new ArrayList<>(choices);
 	        } else {
-	            List<Supplier<T>> allChoices = new ArrayList<>(choices.size() + 1);
+	            List<Value<T>> allChoices = new ArrayList<>(choices.size() + 1);
 	            allChoices.add(defaultValue);
 	            allChoices.addAll(choices);
 	            this.choices = allChoices;
 	        }
 	    }
 	    
-		public List<Supplier<T>> getChoices() {
+		public List<Value<T>> getChoices() {
 	        return Collections.unmodifiableList(choices);
 	    }
 	}
@@ -116,23 +116,23 @@ public abstract class Option<T> {
 		return new StringOption(name, () -> defaultValue);
 	}
 	
-	public static StringOption stringOption(String name, Supplier<String> defaultValue) {
+	public static StringOption stringOption(String name, Value<String> defaultValue) {
 		return new StringOption(name, defaultValue);
 	}
 	
-	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Supplier<T> defaultValue, Collection <Supplier<T>> choices) {
+	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue, Collection <Value<T>> choices) {
 		return new ChoiceOption<T>(name, klass, defaultValue, choices);
 	}
 	
-	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Supplier<T> defaultValue, @SuppressWarnings("unchecked") Supplier<T>... choices) {
+	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue, @SuppressWarnings("unchecked") Value<T>... choices) {
 		return new ChoiceOption<T>(name, klass, defaultValue, Arrays.asList(choices));
 	}
 	
     private final String name;
     private final Class<T> klass;
-    private final Supplier<T> defaultValue;
+    private final Value<T> defaultValue;
 
-    protected Option(String name, Class<T> klass, Supplier<T> defaultValue) {
+    protected Option(String name, Class<T> klass, Value<T> defaultValue) {
         this.name = Objects.requireNonNull(name);
         this.klass = Objects.requireNonNull(klass);
         this.defaultValue = defaultValue;
@@ -148,7 +148,7 @@ public abstract class Option<T> {
         return name.equals(other.name) && klass.equals(other.klass);
     }
 
-    public Supplier<T> getDefault() {
+    public Value<T> getDefault() {
         return defaultValue;
     }
 

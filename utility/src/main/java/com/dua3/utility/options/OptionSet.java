@@ -12,13 +12,15 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.dua3.utility.options.Option.Value;
+
 /**
  * A Set of possible options to configure a classes behavior, i.e. all possible options
  * for configuring a CSV reader.
  */
 public class OptionSet implements Iterable<Option<?>>{
 
-    public static <T> List<Supplier<T>> wrap(Collection<T> choices) {
+    public static <T> List<Value<T>> wrap(Collection<T> choices) {
         return choices.stream().map(Option::value).collect(Collectors.toList());
     }
 
@@ -74,9 +76,8 @@ public class OptionSet implements Iterable<Option<?>>{
      * @param choices
      *  the values this option can take
      */
-    @SuppressWarnings({ "unchecked" })
     public <T> void addOption(String name, Class<T> klass, T defaultValue, Collection<T> choices) {
-        List<Supplier<T>> values = wrap(choices);
+        List<Value<T>> values = wrap(choices);
         options.add(Option.choiceOption(name, klass, Option.value(String.valueOf(defaultValue), defaultValue), values));
     }
 
@@ -94,7 +95,7 @@ public class OptionSet implements Iterable<Option<?>>{
      *  the values this option can take
      */
     @SafeVarargs
-    public final <T> void addOption(String name, Class<T> klass, Supplier<T> defaultValue, Supplier<T>... values) {
+    public final <T> void addOption(String name, Class<T> klass, Value<T> defaultValue, Value<T>... values) {
         addOption(name, klass, defaultValue, Arrays.asList(values));
     }
 
@@ -111,7 +112,7 @@ public class OptionSet implements Iterable<Option<?>>{
      * @param values
      *  the values this option can take
      */
-    public final <T> void addOption(String name, Class<T> klass, Supplier<T> defaultValue, Collection<Supplier<T>> values) {
+    public final <T> void addOption(String name, Class<T> klass, Value<T> defaultValue, Collection<Value<T>> values) {
         options.add(Option.choiceOption(name, klass, defaultValue, values));
     }
 
@@ -129,7 +130,7 @@ public class OptionSet implements Iterable<Option<?>>{
      *  the values this option can take
      */
     @SafeVarargs
-    public final <T> void addOption(String name, Class<T> klass, String defaultValue, Supplier<T>... values) {
+    public final <T> void addOption(String name, Class<T> klass, String defaultValue, Value<T>... values) {
         addOption(name, klass, defaultValue, Arrays.asList(values));
     }
 
@@ -146,10 +147,10 @@ public class OptionSet implements Iterable<Option<?>>{
      * @param values
      *  the values this option can take
      */
-    public final <T> void addOption(String name, Class<T> klass, String defaultValue, Collection<Supplier<T>> values) {
+    public final <T> void addOption(String name, Class<T> klass, String defaultValue, Collection<Value<T>> values) {
         // find default by name
-        Supplier<T> defaultChoice = null;
-        for (Supplier<T> choice: values) {
+    	Value<T> defaultChoice = null;
+        for (Value<T> choice: values) {
             // use first entry as default if default not found
             if (defaultChoice==null) {
                 defaultChoice = choice;
