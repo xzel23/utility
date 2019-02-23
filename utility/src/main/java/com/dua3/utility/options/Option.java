@@ -2,6 +2,7 @@ package com.dua3.utility.options;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -16,11 +17,17 @@ import java.util.regex.Pattern;
  * @param <T> the type of this option's values
  */
 public abstract class Option<T> {
-	
+    
+    public static interface Value<T> extends Supplier<T>, Comparable<Value<T>> {
+        default int compareTo(Value<T> other) {
+            return toString().compareTo(String.valueOf(other));
+        }
+    }
+
 	/**
 	 * A value with a substituted, human-readable name.
 	 */
-    private static class StaticValue<T> implements Supplier<T> {
+    private static class StaticValue<T> implements Value<T> {
 
         private final String name;
         private final T value;
@@ -52,7 +59,7 @@ public abstract class Option<T> {
      * @return
      *  the named value
      */
-    public static <T> Supplier<T> value(String name, T value) {
+    public static <T> Value<T> value(String name, T value) {
         return new StaticValue<>(name, value);
     }
 
@@ -82,17 +89,16 @@ public abstract class Option<T> {
     		String name, 
     		Class<T> klass, 
     		Supplier<T> defaultValue, 
-    		@SuppressWarnings("unchecked") Supplier<T>... choices) {
+    		Collection<Supplier<T>> choices) {
 	    	super(name, klass, defaultValue);
 
 	    	// make sure this.choices does not contain a duplicate for defaultValue
-	        List<Supplier<T>> choices_ = Arrays.asList(choices);
-	        if (choices_.contains(defaultValue)) {
-	            this.choices = Arrays.asList(choices);
+	        if (choices.contains(defaultValue)) {
+	            this.choices = new ArrayList<>(choices);
 	        } else {
-	            List<Supplier<T>> allChoices = new ArrayList<>(choices.length + 1);
+	            List<Supplier<T>> allChoices = new ArrayList<>(choices.size() + 1);
 	            allChoices.add(defaultValue);
-	            allChoices.addAll(choices_);
+	            allChoices.addAll(choices);
 	            this.choices = allChoices;
 	        }
 	    }
@@ -114,8 +120,12 @@ public abstract class Option<T> {
 		return new StringOption(name, defaultValue);
 	}
 	
-	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Supplier<T> defaultValue, @SuppressWarnings("unchecked") Supplier<T>... choices) {
+	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Supplier<T> defaultValue, Collection <Supplier<T>> choices) {
 		return new ChoiceOption<T>(name, klass, defaultValue, choices);
+	}
+	
+	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Supplier<T> defaultValue, @SuppressWarnings("unchecked") Supplier<T>... choices) {
+		return new ChoiceOption<T>(name, klass, defaultValue, Arrays.asList(choices));
 	}
 	
     private final String name;

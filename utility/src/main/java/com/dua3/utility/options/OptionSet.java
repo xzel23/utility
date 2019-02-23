@@ -1,6 +1,8 @@
 package com.dua3.utility.options;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * A Set of possible options to configure a classes behavior, i.e. all possible options
@@ -15,14 +18,8 @@ import java.util.function.Supplier;
  */
 public class OptionSet implements Iterable<Option<?>>{
 
-    // replace by map()?
-    public static <T> Supplier<T>[] wrap(T[] choices) {
-        @SuppressWarnings("unchecked")
-        Supplier<T>[] values = new Supplier[choices.length];
-        for (int i = 0; i < choices.length; i++) {
-            values[i] = Option.value(choices[i]);
-        }
-        return values;
+    public static <T> List<Supplier<T>> wrap(Collection<T> choices) {
+        return choices.stream().map(Option::value).collect(Collectors.toList());
     }
 
     private final Set<Option<?>> options = new LinkedHashSet<>();
@@ -59,9 +56,27 @@ public class OptionSet implements Iterable<Option<?>>{
      * @param choices
      *  the values this option can take
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     public <T> void addOption(String name, Class<T> klass, T defaultValue, T... choices) {
-        Supplier[] values = wrap(choices);
+        addOption(name, klass, defaultValue, Arrays.asList(choices));
+    }
+
+    /**
+     * Add option to set.
+     * @param <T>
+     *  the parameter type
+     * @param name
+     *  the option's name
+     * @param klass
+     *  the type of the option's parameter value
+     * @param defaultValue
+     *  the option's default value
+     * @param choices
+     *  the values this option can take
+     */
+    @SuppressWarnings({ "unchecked" })
+    public <T> void addOption(String name, Class<T> klass, T defaultValue, Collection<T> choices) {
+        List<Supplier<T>> values = wrap(choices);
         options.add(Option.choiceOption(name, klass, Option.value(String.valueOf(defaultValue), defaultValue), values));
     }
 
@@ -80,7 +95,73 @@ public class OptionSet implements Iterable<Option<?>>{
      */
     @SafeVarargs
     public final <T> void addOption(String name, Class<T> klass, Supplier<T> defaultValue, Supplier<T>... values) {
+        addOption(name, klass, defaultValue, Arrays.asList(values));
+    }
+
+    /**
+     * Add option to set.
+     * @param <T>
+     *  the parameter type
+     * @param name
+     *  the option's name
+     * @param klass
+     *  the type of the option's parameter value
+     * @param defaultValue
+     *  the option's default value
+     * @param values
+     *  the values this option can take
+     */
+    public final <T> void addOption(String name, Class<T> klass, Supplier<T> defaultValue, Collection<Supplier<T>> values) {
         options.add(Option.choiceOption(name, klass, defaultValue, values));
+    }
+
+    /**
+     * Add option to set.
+     * @param <T>
+     *  the parameter type
+     * @param name
+     *  the option's name
+     * @param klass
+     *  the type of the option's parameter value
+     * @param defaultValue
+     *  the option's default value
+     * @param values
+     *  the values this option can take
+     */
+    @SafeVarargs
+    public final <T> void addOption(String name, Class<T> klass, String defaultValue, Supplier<T>... values) {
+        addOption(name, klass, defaultValue, Arrays.asList(values));
+    }
+
+    /**
+     * Add option to set.
+     * @param <T>
+     *  the parameter type
+     * @param name
+     *  the option's name
+     * @param klass
+     *  the type of the option's parameter value
+     * @param defaultValue
+     *  the option's default value
+     * @param values
+     *  the values this option can take
+     */
+    public final <T> void addOption(String name, Class<T> klass, String defaultValue, Collection<Supplier<T>> values) {
+        // find default by name
+        Supplier<T> defaultChoice = null;
+        for (Supplier<T> choice: values) {
+            // use first entry as default if default not found
+            if (defaultChoice==null) {
+                defaultChoice = choice;
+            }
+            // and of course use default if found
+            if (String.valueOf(choice).equals(defaultValue)) {
+                defaultChoice = choice;
+                break;
+            }
+        }
+
+        options.add(Option.choiceOption(name, klass, defaultChoice, values));
     }
 
     /**
