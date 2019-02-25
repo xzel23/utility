@@ -55,7 +55,7 @@ public class OptionValues extends HashMap<Option<?>,Value<?>> {
     @Override
     public String toString() {
         var i = entrySet().iterator();
-        if (! i.hasNext())
+        if (!i.hasNext())
             return "{}";
 
         StringBuilder sb = new StringBuilder();
@@ -67,7 +67,7 @@ public class OptionValues extends HashMap<Option<?>,Value<?>> {
             sb.append(name);
             sb.append('=');
             sb.append(value);
-            if (! i.hasNext())
+            if (!i.hasNext())
                 return sb.append('}').toString();
             sb.append(',').append(' ');
         }
