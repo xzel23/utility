@@ -13,7 +13,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.font.FontRenderContext;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -30,7 +29,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.text.Font;
 
 /**
  * Utility methods for Swing applications.
