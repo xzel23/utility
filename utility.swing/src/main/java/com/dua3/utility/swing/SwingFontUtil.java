@@ -34,19 +34,20 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     @Override
     public java.awt.Font convert(Font font) {
         return getAwtFont(
-            font.getFamily(), 
-            font.getSizeInPoints(), 
-            font.getColor(), 
-            font.isBold(), 
-            font.isItalic(), 
-            font.isUnderlined(), 
-            font.isStrikeThrough());
+                font.getFamily(),
+                font.getSizeInPoints(),
+                font.getColor(),
+                font.isBold(),
+                font.isItalic(),
+                font.isUnderlined(),
+                font.isStrikeThrough());
     }
 
-    private static java.awt.Font getAwtFont(String family, float size, Color color, boolean bold, boolean italic, boolean underlined,
-        boolean strikeThrough) {
-      int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
-      return new java.awt.Font(family, style, Math.round(size));
+    private static java.awt.Font getAwtFont(String family, float size, Color color, boolean bold, boolean italic,
+            boolean underlined,
+            boolean strikeThrough) {
+        int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
+        return new java.awt.Font(family, style, Math.round(size));
     }
 
 }

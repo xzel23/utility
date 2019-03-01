@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -15,14 +15,14 @@ public class Style {
     private final String name;
     private final Map<String, Object> properties;
 
-    private Style(String name, Map<String,Object> args) {
+    private Style(String name, Map<String, Object> args) {
         this.name = name;
         this.properties = Collections.unmodifiableMap(args);
     }
 
     @Override
     public String toString() {
-        return name+properties;
+        return name + properties;
     }
 
     @SafeVarargs

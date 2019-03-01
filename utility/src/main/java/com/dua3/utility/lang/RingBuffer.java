@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -9,14 +9,16 @@ import java.util.ArrayList;
 
 /**
  * A ring buffer implementation.
- * This class behaves much like @see {@link ArrayList}, but with a fixed maximum size.
- * The collection grows when new elements are added until the capacity is reached. If even more items
- * are added, the oldest element is removed and the new element is appended to the collection.
- *
+ * This class behaves much like @see {@link ArrayList}, but with a fixed maximum
+ * size.
+ * The collection grows when new elements are added until the capacity is
+ * reached. If even more items
+ * are added, the oldest element is removed and the new element is appended to
+ * the collection.
  * Adding is O(1).
  *
  * @param <T>
- *            the element type
+ *        the element type
  */
 public class RingBuffer<T> {
 
@@ -28,7 +30,7 @@ public class RingBuffer<T> {
      * Construct a new RingBuffer instance.
      *
      * @param capacity
-     *            the initial capacity
+     *                 the initial capacity
      */
     public RingBuffer(int capacity) {
         data = new Object[capacity];
@@ -40,7 +42,7 @@ public class RingBuffer<T> {
      * Add item to end of collection.
      *
      * @param item
-     *            the item to add
+     *             the item to add
      */
     public void add(T item) {
         if (entries < capacity()) {
@@ -70,9 +72,9 @@ public class RingBuffer<T> {
     /**
      * Get element.
      *
-     * @param i
-     *            index
-     * @return the i-th element
+     * @param  i
+     *           index
+     * @return   the i-th element
      */
     @SuppressWarnings("unchecked")
     public T get(int i) {
@@ -93,7 +95,7 @@ public class RingBuffer<T> {
      * Set the capacity. Elements are retained.
      *
      * @param n
-     *            the new capacity.
+     *          the new capacity.
      */
     public void setCapacity(int n) {
         if (n != capacity()) {

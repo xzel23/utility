@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -24,31 +24,31 @@ public class Font {
     private final boolean underline;
     private final boolean strikeThrough;
     private int hash = 0;
-    
+
     /**
      * Construct a new {@code GenericFont}.
      */
     public Font() {
-        this("Helvetica",10f,Color.BLACK,false,false,false,false);
+        this("Helvetica", 10f, Color.BLACK, false, false, false, false);
     }
 
     /**
      * Construct a new {@code GenerivFont}.
      *
      * @param family
-     *            the font family
+     *                      the font family
      * @param size
-     *            the font size in points
+     *                      the font size in points
      * @param color
-     *            the color to use for text
+     *                      the color to use for text
      * @param bold
-     *            if text should be displayed in bold lettters
+     *                      if text should be displayed in bold lettters
      * @param italic
-     *            if text should be displayed in italics
+     *                      if text should be displayed in italics
      * @param underlined
-     *            if text should be displayed underlined
+     *                      if text should be displayed underlined
      * @param strikeThrough
-     *            if text should be displayed strike-through
+     *                      if text should be displayed strike-through
      */
     public Font(String family, float size, Color color, boolean bold, boolean italic, boolean underlined,
             boolean strikeThrough) {
@@ -60,6 +60,7 @@ public class Font {
         this.underline = underlined;
         this.strikeThrough = strikeThrough;
     }
+
     /**
      * A mutable class holding font attributes to help creating immutable font
      * instances.
@@ -68,9 +69,9 @@ public class Font {
         /**
          * Create FontDef instance with only the color attribute set.
          *
-         * @param col
-         *            the color
-         * @return new FontDef instance
+         * @param  col
+         *             the color
+         * @return     new FontDef instance
          */
         public static FontDef color(Color col) {
             FontDef fd = new FontDef();
@@ -81,9 +82,9 @@ public class Font {
         /**
          * Create FontDef instance with only the font family attribute set.
          *
-         * @param family
-         *            the font family
-         * @return new FontDef instance
+         * @param  family
+         *                the font family
+         * @return        new FontDef instance
          */
         public static FontDef family(String family) {
             FontDef fd = new FontDef();
@@ -94,9 +95,9 @@ public class Font {
         /**
          * Create FontDef instance with only the font size set.
          *
-         * @param size
-         *            the font size in points
-         * @return new FontDef instance
+         * @param  size
+         *              the font size in points
+         * @return      new FontDef instance
          */
         public static FontDef size(Float size) {
             FontDef fd = new FontDef();
@@ -167,7 +168,7 @@ public class Font {
 
         /**
          * @param bold
-         *            the bold to set
+         *             the bold to set
          */
         public void setBold(Boolean bold) {
             this.bold = bold;
@@ -175,7 +176,7 @@ public class Font {
 
         /**
          * @param color
-         *            the color to set
+         *              the color to set
          */
         public void setColor(Color color) {
             this.color = color;
@@ -183,7 +184,7 @@ public class Font {
 
         /**
          * @param family
-         *            the family to set
+         *               the family to set
          */
         public void setFamily(String family) {
             this.family = family;
@@ -191,7 +192,7 @@ public class Font {
 
         /**
          * @param italic
-         *            the italic to set
+         *               the italic to set
          */
         public void setItalic(Boolean italic) {
             this.italic = italic;
@@ -199,7 +200,7 @@ public class Font {
 
         /**
          * @param size
-         *            the size in points to set
+         *             the size in points to set
          */
         public void setSize(Float size) {
             this.size = size;
@@ -207,7 +208,7 @@ public class Font {
 
         /**
          * @param strikeThrough
-         *            the strikeThrough to set
+         *                      the strikeThrough to set
          */
         public void setStrikeThrough(Boolean strikeThrough) {
             this.strikeThrough = strikeThrough;
@@ -215,7 +216,7 @@ public class Font {
 
         /**
          * @param underline
-         *            the underline to set
+         *                  the underline to set
          */
         public void setUnderline(Boolean underline) {
             this.underline = underline;
@@ -230,9 +231,9 @@ public class Font {
      * not set, the attribute is copied from this font.
      * </p>
      *
-     * @param fd
+     * @param  fd
      *            the {@link FontDef} describing the attributes to set
-     * @return new {@link Font} instance
+     * @return    new {@link Font} instance
      */
     public Font deriveFont(FontDef fd) {
         String fontFamily = fd.getFamily() != null ? fd.getFamily() : this.getFamily();
@@ -312,6 +313,7 @@ public class Font {
 
     /**
      * Get a description of the font.
+     *
      * @return font description
      */
     public String fontspec() {
@@ -343,30 +345,30 @@ public class Font {
     public String toString() {
         return fontspec();
     }
-        
+
     @SuppressWarnings("boxing")
-	@Override
+    @Override
     public int hashCode() {
         int h = hash;
         if (h == 0) {
-        	hash = h = Objects.hash(family,size,bold,italic,underline,strikeThrough,color);
+            hash = h = Objects.hash(family, size, bold, italic, underline, strikeThrough, color);
         }
         return h;
     }
 
     @Override
     public boolean equals(Object obj) {
-    	if (obj==null || obj.getClass()!=this.getClass() || obj.hashCode() != this.hashCode()) {
-    		return false;
-    	}
-    	
-    	Font other = (Font) obj;
-        return other.family.equals(family) 
-	        && other.size==size
-	        && other.bold==bold
-	        && other.italic==italic
-	        && other.underline==underline
-	        && other.strikeThrough==strikeThrough
-	        && other.color.equals(color);
+        if (obj == null || obj.getClass() != this.getClass() || obj.hashCode() != this.hashCode()) {
+            return false;
+        }
+
+        Font other = (Font) obj;
+        return other.family.equals(family)
+                && other.size == size
+                && other.bold == bold
+                && other.italic == italic
+                && other.underline == underline
+                && other.strikeThrough == strikeThrough
+                && other.color.equals(color);
     }
 }

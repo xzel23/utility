@@ -17,24 +17,25 @@ import java.util.regex.Pattern;
  * @param <T> the type of this option's values
  */
 public abstract class Option<T> {
-    
-    public static interface Value<T> extends Supplier<T>, Comparable<Value<T>> {
+
+    public interface Value<T> extends Supplier<T>, Comparable<Value<T>> {
+        @Override
         default int compareTo(Value<T> other) {
             return name().compareTo(other.name());
         }
-        
+
         default Value<T> makeStatic() {
-        	return new StaticValue<T>(toString(), get());
+            return new StaticValue<>(toString(), get());
         }
-        
+
         default String name() {
-        	return String.valueOf(get());
+            return String.valueOf(get());
         }
     }
 
-	/**
-	 * A value with a substituted, human-readable name.
-	 */
+    /**
+     * A value with a substituted, human-readable name.
+     */
     private static class StaticValue<T> implements Value<T> {
 
         private final String name;
@@ -54,28 +55,29 @@ public abstract class Option<T> {
         public String name() {
             return name;
         }
-        
+
         @Override
         public StaticValue<T> makeStatic() {
-        	return this;
+            return this;
         }
-        
+
         @Override
         public String toString() {
-        	return name();
+            return name();
         }
     }
 
     /**
      * Create a named value.
-     * @param <T>
-     *  the parameter type
-     * @param name
-     *  the name to use
-     * @param value
-     *  the value
+     *
+     * @param        <T>
+     *               the parameter type
+     * @param  name
+     *               the name to use
+     * @param  value
+     *               the value
      * @return
-     *  the named value
+     *               the named value
      */
     public static <T> Value<T> value(String name, T value) {
         return new StaticValue<>(name, value);
@@ -83,69 +85,72 @@ public abstract class Option<T> {
 
     /**
      * Create a value.
-     * @param <T>
-     *  the parameter type
-     * @param value
-     *  the value
+     *
+     * @param        <T>
+     *               the parameter type
+     * @param  value
+     *               the value
      * @return
-     *  the named value
+     *               the named value
      */
     public static <T> Value<T> value(T value) {
         return new StaticValue<>(String.valueOf(value), value);
     }
 
-	public static class StringOption extends Option<String> {
-		StringOption(String name, Value<String> defaultValue) {
-			super(name, String.class, defaultValue);
-		}		
-	}
-	
-	public static class ChoiceOption<T> extends Option<T> {		
-		private final List<Value<T>> choices;
+    public static class StringOption extends Option<String> {
+        StringOption(String name, Value<String> defaultValue) {
+            super(name, String.class, defaultValue);
+        }
+    }
 
-	    ChoiceOption(
-    		String name, 
-    		Class<T> klass, 
-    		Value<T> defaultValue, 
-    		Collection<Value<T>> choices) {
-	    	super(name, klass, defaultValue);
+    public static class ChoiceOption<T> extends Option<T> {
+        private final List<Value<T>> choices;
 
-	    	// make sure this.choices does not contain a duplicate for defaultValue
-	        if (choices.contains(defaultValue)) {
-	            this.choices = new ArrayList<>(choices);
-	        } else {
-	            List<Value<T>> allChoices = new ArrayList<>(choices.size() + 1);
-	            allChoices.add(defaultValue);
-	            allChoices.addAll(choices);
-	            this.choices = allChoices;
-	        }
-	    }
-	    
-		public List<Value<T>> getChoices() {
-	        return Collections.unmodifiableList(choices);
-	    }
-	}
-	
-	public static StringOption stringOption(String name) {
-		return new StringOption(name, () -> "");
-	}
-	
-	public static StringOption stringOption(String name, String defaultValue) {
-		return new StringOption(name, () -> defaultValue);
-	}
-	
-	public static StringOption stringOption(String name, Value<String> defaultValue) {
-		return new StringOption(name, defaultValue);
-	}
-	
-	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue, Collection <Value<T>> choices) {
-		return new ChoiceOption<T>(name, klass, defaultValue, choices);
-	}
-	
-	public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue, @SuppressWarnings("unchecked") Value<T>... choices) {
-		return new ChoiceOption<T>(name, klass, defaultValue, Arrays.asList(choices));
-	}
-	
+        ChoiceOption(
+                String name,
+                Class<T> klass,
+                Value<T> defaultValue,
+                Collection<Value<T>> choices) {
+            super(name, klass, defaultValue);
+
+            // make sure this.choices does not contain a duplicate for defaultValue
+            if (choices.contains(defaultValue)) {
+                this.choices = new ArrayList<>(choices);
+            } else {
+                List<Value<T>> allChoices = new ArrayList<>(choices.size() + 1);
+                allChoices.add(defaultValue);
+                allChoices.addAll(choices);
+                this.choices = allChoices;
+            }
+        }
+
+        public List<Value<T>> getChoices() {
+            return Collections.unmodifiableList(choices);
+        }
+    }
+
+    public static StringOption stringOption(String name) {
+        return new StringOption(name, () -> "");
+    }
+
+    public static StringOption stringOption(String name, String defaultValue) {
+        return new StringOption(name, () -> defaultValue);
+    }
+
+    public static StringOption stringOption(String name, Value<String> defaultValue) {
+        return new StringOption(name, defaultValue);
+    }
+
+    public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue,
+            Collection<Value<T>> choices) {
+        return new ChoiceOption<>(name, klass, defaultValue, choices);
+    }
+
+    public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue,
+            @SuppressWarnings("unchecked") Value<T>... choices) {
+        return new ChoiceOption<>(name, klass, defaultValue, Arrays.asList(choices));
+    }
+
     private final String name;
     private final Class<T> klass;
     private final Value<T> defaultValue;
@@ -192,19 +197,21 @@ public abstract class Option<T> {
     private static final String PATTERN_VAR_NAME = "\\p{Alpha}\\p{Alnum}*";
     private static final String PATTERN_VAR_END = "\\}";
 
-    private static final Pattern PATTERN_VAR = Pattern.compile(PATTERN_VAR_START+"("+PATTERN_VAR_NAME+")"+PATTERN_VAR_END);
+    private static final Pattern PATTERN_VAR = Pattern
+            .compile(PATTERN_VAR_START + "(" + PATTERN_VAR_NAME + ")" + PATTERN_VAR_END);
 
     /**
      * Parse a configuration schema string.
      * <p>
      * Example: https://${SERVER}:${PORT}
-     * @param s
-     *  the scheme to parse
+     *
+     * @param  s
+     *           the scheme to parse
      * @return
-     *  list of options
+     *           list of options
      */
     public static List<Option<?>> parseScheme(String s) {
-    	List<Option<?>> list = new ArrayList<>();
+        List<Option<?>> list = new ArrayList<>();
         Matcher matcher = PATTERN_VAR.matcher(s);
         while (matcher.find()) {
             String var = matcher.group(1);

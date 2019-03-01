@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -36,7 +36,7 @@ public class Text extends AbstractList<String> {
 
     public static Text load(Path path, Charset cs) throws IOException {
         try (Stream<String> lines = Files.lines(path, cs)) {
-        	return new Text(lines);
+            return new Text(lines);
         }
     }
 

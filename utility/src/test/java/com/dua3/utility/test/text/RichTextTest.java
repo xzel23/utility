@@ -1,21 +1,21 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
 package com.dua3.utility.test.text;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Test;
 
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.TextAttributes;
 
 /**
- *
  * @author Axel Howind
  */
 public class RichTextTest {

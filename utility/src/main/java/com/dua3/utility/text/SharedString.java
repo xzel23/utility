@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -26,33 +26,33 @@ public class SharedString implements CharSequence {
 
     @Override
     public int length() {
-        return end-start;
+        return end - start;
     }
 
     @Override
     public char charAt(int index) {
         LangUtil.checkIndex(index, end);
-        return base.charAt(start+index);
+        return base.charAt(start + index);
     }
 
     @Override
     public SharedString subSequence(int s, int e) {
-        LangUtil.check(e>=s && this.start+e<=this.end);
-        return new SharedString(base, this.start+s, this.start+e);
+        LangUtil.check(e >= s && this.start + e <= this.end);
+        return new SharedString(base, this.start + s, this.start + e);
     }
-    
+
     @Override
     public String toString() {
         return base.substring(start, end);
     }
-    
+
     @Override
     public int hashCode() {
         int h = hash;
-        if (h == 0 && end!=start) {
-            int len = end-start;
+        if (h == 0 && end != start) {
+            int len = end - start;
             for (int i = 0; i < len; i++) {
-                h = 31 * h + base.charAt(start+i);
+                h = 31 * h + base.charAt(start + i);
             }
             hash = h;
         }
@@ -65,11 +65,11 @@ public class SharedString implements CharSequence {
             return true;
         }
         if (anObject instanceof SharedString) {
-            SharedString anotherString = (SharedString)anObject;
+            SharedString anotherString = (SharedString) anObject;
             int n = length();
             if (n == anotherString.length()) {
-                for (int i=0;i<n; i++) {
-                    if (anotherString.charAt(i)!=charAt(i)) {                        
+                for (int i = 0; i < n; i++) {
+                    if (anotherString.charAt(i) != charAt(i)) {
                         return false;
                     }
                 }

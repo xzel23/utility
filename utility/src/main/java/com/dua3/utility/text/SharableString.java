@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -29,12 +29,12 @@ public class SharableString implements CharSequence {
     public SharedString subSequence(int s, int e) {
         return new SharedString(base, s, e);
     }
-    
+
     @Override
     public String toString() {
         return base;
     }
-    
+
     @Override
     public int hashCode() {
         return base.hashCode();
@@ -46,7 +46,7 @@ public class SharableString implements CharSequence {
             return true;
         }
         if (anObject instanceof SharableString) {
-            SharableString anotherString = (SharableString)anObject;
+            SharableString anotherString = (SharableString) anObject;
             return base.equals(anotherString.base);
         }
         return false;

@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 import com.dua3.utility.lang.LangUtil;
 
-
 public class SandboxURLHandler extends URLStreamHandler {
 
     private static final Logger LOG = Logger.getLogger(SandboxURLHandler.class.getName());
@@ -26,8 +25,7 @@ public class SandboxURLHandler extends URLStreamHandler {
     }
 
     @Override
-    protected URLConnection openConnection(URL url) throws IOException
-    {
+    protected URLConnection openConnection(URL url) throws IOException {
         LOG.info(LangUtil.msgs("opening connection to local version of: %s", url));
         String stripped = url.toExternalForm().replaceFirst(".*://", "");
         Path path = localFiles.resolve(stripped);

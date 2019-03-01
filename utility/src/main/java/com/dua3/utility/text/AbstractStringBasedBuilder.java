@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -21,7 +21,7 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     /** Header */
     public static final String TAG_TEXT_START = "TAG_TEXT_START";
     /** Header */
-    public static final String TAG_TEXT_END="TAG_TEXT_END";
+    public static final String TAG_TEXT_END = "TAG_TEXT_END";
     /** Where to open external links */
     public static final String TARGET_FOR_EXTERNAL_LINKS = "TARGET_FOR_EXTERN_LINKS";
     /** Replace '.md' file extension in local links (i.e. with ".html") */
@@ -37,7 +37,10 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     protected final String textStart;
     /** The text to be appended to the buffer (i.e. "{@code </html>}" in HTML). */
     protected final String textEnd;
-    /** The extension to use for MD-files (i.e. so that links point to the translated HTML). */
+    /**
+     * The extension to use for MD-files (i.e. so that links point to the translated
+     * HTML).
+     */
     protected final String replaceMdExtensionWith;
     /** Target for external links (i.e. in HTML). */
     protected final String targetForExternalLinks;

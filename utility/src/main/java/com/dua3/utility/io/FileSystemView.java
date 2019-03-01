@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -32,9 +32,11 @@ import com.dua3.utility.lang.LangUtil;
  * <li>zip files
  * <li>jar files
  * </ul>
- * The {@link java.net.URL} for a resource returned by {@link Class#getResource(String)} can be converted to a
+ * The {@link java.net.URL} for a resource returned by
+ * {@link Class#getResource(String)} can be converted to a
  * {@link java.nio.file.Path}
- * by calling {@link java.nio.file.Paths#get(URI)}. This however fails if the class that the resource belongs to was
+ * by calling {@link java.nio.file.Paths#get(URI)}. This however fails if the
+ * class that the resource belongs to was
  * loaded from a Jar. To solve this, use the following code:
  *
  * <pre>
@@ -49,7 +51,6 @@ import com.dua3.utility.lang.LangUtil;
  * </pre>
  *
  * @author Axel Howind
- *
  */
 public class FileSystemView implements AutoCloseable {
 
@@ -65,13 +66,14 @@ public class FileSystemView implements AutoCloseable {
     /**
      * Create FileSystemView.
      *
-     * @param root
-     *              the path to the FileSystemView's root. It can either be an existing directory or a zip-file.
-     * @param flags
-     *              the {@link Flags} to use
-     * @return a new FileSystemView
+     * @param  root
+     *                     the path to the FileSystemView's root. It can either be
+     *                     an existing directory or a zip-file.
+     * @param  flags
+     *                     the {@link Flags} to use
+     * @return             a new FileSystemView
      * @throws IOException
-     *             if the view cannot be created
+     *                     if the view cannot be created
      */
     public static FileSystemView create(Path root, Flags... flags) throws IOException {
         Objects.requireNonNull(root);
@@ -81,7 +83,7 @@ public class FileSystemView implements AutoCloseable {
 
         // determine type
         boolean exists = Files.exists(root);
-        LangUtil.check(exists  || createIfMissing, "Path does not exist: %s", root);
+        LangUtil.check(exists || createIfMissing, "Path does not exist: %s", root);
 
         boolean hasZipExtension = IOUtil.getExtension(root).equalsIgnoreCase("zip");
         boolean isDirectory = Files.isDirectory(root) || !exists && !hasZipExtension;
@@ -103,21 +105,21 @@ public class FileSystemView implements AutoCloseable {
     /**
      * Create a FileSystemView for a file in Zip-Format.
      *
-     * @param root
-     *            denotes the Zip-File
-     * @param flags
-     *              the {@link Flags} to use
+     * @param  root
+     *                     denotes the Zip-File
+     * @param  flags
+     *                     the {@link Flags} to use
      * @return
-     *         FileSystemView
+     *                     FileSystemView
      * @throws IOException
-     *          if the file does not exist or an I/O error occurs
+     *                     if the file does not exist or an I/O error occurs
      */
     public static FileSystemView forArchive(Path root, Flags... flags) throws IOException {
         List<Flags> flagList = Arrays.asList(flags);
 
         Map<String, String> env = new HashMap<>();
         boolean exists = Files.notExists(root);
-        boolean create =  flagList.contains(Flags.CREATE_IF_MISSING) && !exists;
+        boolean create = flagList.contains(Flags.CREATE_IF_MISSING) && !exists;
         env.put("create", String.valueOf(create));
 
         URI uri = URI.create("jar:" + root.toUri());
@@ -127,11 +129,12 @@ public class FileSystemView implements AutoCloseable {
     /**
      * Create FileSystemView.
      *
-     * @param clazz
-     *            the class relative to which paths should be resolved. Classes loaded from Jar files are supported.
-     * @return a new FileSystemView
+     * @param  clazz
+     *                     the class relative to which paths should be resolved.
+     *                     Classes loaded from Jar files are supported.
+     * @return             a new FileSystemView
      * @throws IOException
-     *             if the view cannot be created
+     *                     if the view cannot be created
      */
     public static FileSystemView forClass(Class<?> clazz) throws IOException {
         try {
@@ -162,20 +165,22 @@ public class FileSystemView implements AutoCloseable {
     /**
      * Create a FileSystemView for an existing directory.
      *
-     * @param root
-     *            the directory that will be root of this view
+     * @param  root
+     *                     the directory that will be root of this view
      * @return
-     *         FileSystemView
+     *                     FileSystemView
      * @throws IOException
-     *          if the directory denoted by {@code path} does not exist or an I/O error occurs
+     *                     if the directory denoted by {@code path} does not exist
+     *                     or an I/O error occurs
      */
     public static FileSystemView forDirectory(Path root) throws IOException {
-        return new FileSystemView(root, () -> { /* NOOP */ }, root.toString());
+        return new FileSystemView(root, () -> {
+            /* NOOP */ }, root.toString());
     }
 
     private static FileSystemView createFileSystemView(FileSystem fs, String path) {
         Path root = fs.getPath(path);
-        return new FileSystemView(root, fs::close, "["+fs.toString()+"]"+path);
+        return new FileSystemView(root, fs::close, "[" + fs.toString() + "]" + path);
     }
 
     private final Path root;
@@ -210,10 +215,10 @@ public class FileSystemView implements AutoCloseable {
     /**
      * Resolve path.
      *
-     * @param path
-     *            the path to resolve
-     * @return the resolved path
-     * @see java.nio.file.Path#resolve(String)
+     * @param  path
+     *              the path to resolve
+     * @return      the resolved path
+     * @see         java.nio.file.Path#resolve(String)
      */
     public Path resolve(String path) {
         Path resolvedPath = root.resolve(path).normalize();
@@ -222,16 +227,17 @@ public class FileSystemView implements AutoCloseable {
     }
 
     private void assertThatResolvedPathIsValid(Path resolvedPath, Object originalPath) {
-        LangUtil.check(resolvedPath.toAbsolutePath().startsWith(root), "Path is not in this FileSystemViews subtree: %s", originalPath);
+        LangUtil.check(resolvedPath.toAbsolutePath().startsWith(root),
+                "Path is not in this FileSystemViews subtree: %s", originalPath);
     }
 
     /**
      * Resolve path.
      *
-     * @param path
-     *            the path to resolve
-     * @return the resolved path
-     * @see java.nio.file.Path#resolve(Path)
+     * @param  path
+     *              the path to resolve
+     * @return      the resolved path
+     * @see         java.nio.file.Path#resolve(Path)
      */
     Path resolve(Path path) {
         Path resolvedPath = root.resolve(path).normalize();

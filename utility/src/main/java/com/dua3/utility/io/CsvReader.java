@@ -1,12 +1,9 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
- *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -36,31 +33,31 @@ import com.dua3.utility.options.OptionValues;
 
 /**
  * @author axel TODO: see below
- *  number of fields require fixed number of columns
- *  allow lesser fields than columns append columns as necessary
- *  optional: trim field values
+ *         number of fields require fixed number of columns
+ *         allow lesser fields than columns append columns as necessary
+ *         optional: trim field values
  */
 public class CsvReader extends Csv implements AutoCloseable {
 
-	public interface RowBuilder {
+    public interface RowBuilder {
 
-	    /**
-	     * Add a value.
-	     *
-	     * @param value the value to add
-	     */
-	    public void add(String value);
+        /**
+         * Add a value.
+         *
+         * @param value the value to add
+         */
+        void add(String value);
 
-	    /**
-	     * End the current row.
-	     */
-	    public void endRow();
+        /**
+         * End the current row.
+         */
+        void endRow();
 
-	    /**
-	     * Start a new row.
-	     */
-	    public void startRow();
-	}
+        /**
+         * Start a new row.
+         */
+        void startRow();
+    }
 
     public static class ListRowBuilder implements RowBuilder {
 
@@ -85,7 +82,7 @@ public class CsvReader extends Csv implements AutoCloseable {
             row = new ArrayList<>();
         }
     }
-	
+
     // the unicode codepoint for the UTF-8 BOM
     private static final int UTF8_BOM = 0xfeff;
     // the bytes sequence the UTF-8 BOM
@@ -134,7 +131,8 @@ public class CsvReader extends Csv implements AutoCloseable {
     private boolean ignoreMissingFields;
     private final String source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, OptionValues options) throws IOException {
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, OptionValues options)
+            throws IOException {
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;
@@ -168,7 +166,8 @@ public class CsvReader extends Csv implements AutoCloseable {
         // pattern group1: unquoted field
         String regexUnquotedField = "(?:((?:[^" + del + sep + "][^" + sep + "]*)?)" + regexEnd + ")";
         // pattern group2: quoted field
-        String regexQuotedField = " *(?:" + del + "((?:[^" + del + "]|" + del + del + ")*)" + del + " *" + regexEnd + ")";
+        String regexQuotedField = " *(?:" + del + "((?:[^" + del + "]|" + del + del + ")*)" + del + " *" + regexEnd
+                + ")";
         // pattern group3: start of quoted field with embedded newline (group
         // must contain delimiter!)
         String regexStartQuotedFieldWithLineBreak = "(" + del + "(?:[^" + del + "]*(?:" + del + del + ")?)*$)";
@@ -184,8 +183,8 @@ public class CsvReader extends Csv implements AutoCloseable {
     }
 
     /**
-     * @param columnNr the column number
-     * @return name of column or columnNr as String if no name was set
+     * @param  columnNr the column number
+     * @return          name of column or columnNr as String if no name was set
      */
     public String getColumnName(int columnNr) {
         if (columnNames == null) {
@@ -260,7 +259,8 @@ public class CsvReader extends Csv implements AutoCloseable {
     /**
      * read a single row of CSV data.
      *
-     * @return number of fields in row or -1 when end of input is reached
+     * @return             number of fields in row or -1 when end of input is
+     *                     reached
      * @throws IOException
      */
     private int readRow(RowBuilder rb) throws IOException {
@@ -333,9 +333,10 @@ public class CsvReader extends Csv implements AutoCloseable {
     /**
      * read some rows with CSV data.
      *
-     * @param maxRows maximum number of rows to be read or 0 to read till end of
-     *                input
-     * @return number of rows read
+     * @param  maxRows            maximum number of rows to be read or 0 to read
+     *                            till end of
+     *                            input
+     * @return                    number of rows read
      * @throws IOException
      * @throws CsvFormatException
      */

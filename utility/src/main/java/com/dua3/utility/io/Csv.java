@@ -1,12 +1,9 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
- *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -35,7 +32,6 @@ import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
 
 /**
- *
  * @author axel
  */
 public abstract class Csv {
@@ -84,46 +80,53 @@ public abstract class Csv {
     static {
         // locale
         List<Value<Locale>> localesAll = Arrays.stream(Locale.getAvailableLocales())
-            .filter(locale -> !Locale.ROOT.equals(locale)) // filter out root - we will add it again later with a different name
-            .sorted((lc1,lc2) -> lc1.toString().compareTo(lc2.toString())).distinct().map(Option::value).collect(Collectors.toList());
+                .filter(locale -> !Locale.ROOT.equals(locale)) // filter out root - we will add it again later with a
+                                                               // different name
+                .sorted((lc1, lc2) -> lc1.toString().compareTo(lc2.toString())).distinct().map(Option::value)
+                .collect(Collectors.toList());
         OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesAll);
 
-        List<Value<Locale>> localesCommon = Set.of(Locale.ROOT, Locale.getDefault(), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN, Locale.CHINESE, Locale.JAPANESE, Locale.KOREAN)
-            .stream().sorted((lc1,lc2) -> lc1.toString().compareTo(lc2.toString())).distinct().map(Option::value).collect(Collectors.toList());
+        List<Value<Locale>> localesCommon = Set
+                .of(Locale.ROOT, Locale.getDefault(), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN,
+                        Locale.CHINESE, Locale.JAPANESE, Locale.KOREAN)
+                .stream().sorted((lc1, lc2) -> lc1.toString().compareTo(lc2.toString())).distinct().map(Option::value)
+                .collect(Collectors.toList());
         COMMON_OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesCommon);
- 
+
         // charset
         List<Value<Charset>> charsetsAll = Charset.availableCharsets().entrySet().stream()
-            .map( entry -> Option.value(entry.getKey(), entry.getValue())).sorted().collect(Collectors.toList());
+                .map(entry -> Option.value(entry.getKey(), entry.getValue())).sorted().collect(Collectors.toList());
         OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset().toString(), charsetsAll);
 
         List<Value<Charset>> charSetsCommon = Stream.of("UTF-8", "ISO-8859-1", "ISO-8859-2", "windows-1252")
-            .map(name -> Map.entry(name, Charset.availableCharsets().get(name)))
-            .filter(entry -> entry.getValue() != null)
-            .map(entry -> Option.value(entry.getKey(), entry.getValue()))
-            .collect(Collectors.toList());            
+                .map(name -> Map.entry(name, Charset.availableCharsets().get(name)))
+                .filter(entry -> entry.getValue() != null)
+                .map(entry -> Option.value(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
         COMMON_OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset().toString(), charSetsCommon);
 
         // dateformat
-        OPTIONS.addOption(OPTION_DATEFORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT, PredefinedDateFormat.values());
-        COMMON_OPTIONS.addOption(OPTION_DATEFORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT, PredefinedDateFormat.values());
+        OPTIONS.addOption(OPTION_DATEFORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT,
+                PredefinedDateFormat.values());
+        COMMON_OPTIONS.addOption(OPTION_DATEFORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT,
+                PredefinedDateFormat.values());
 
         // separator
         OPTIONS.addOption(OPTION_SEPARATOR, NamedFunction.class,
-            NamedFunction.create(";", locale -> ';'),
-            NamedFunction.create(",", locale -> ','), 
-            NamedFunction.create("|", locale -> '|'), 
-            NamedFunction.create("TAB", locale -> '\t'));
-        
+                NamedFunction.create(";", locale -> ';'),
+                NamedFunction.create(",", locale -> ','),
+                NamedFunction.create("|", locale -> '|'),
+                NamedFunction.create("TAB", locale -> '\t'));
+
         COMMON_OPTIONS.addOption(OPTION_SEPARATOR, NamedFunction.class,
-            NamedFunction.create(";", locale -> ';'),
-            NamedFunction.create(",", locale -> ','), 
-            NamedFunction.create("|", locale -> '|'), 
-            NamedFunction.create("TAB", locale -> '\t'));
+                NamedFunction.create(";", locale -> ';'),
+                NamedFunction.create(",", locale -> ','),
+                NamedFunction.create("|", locale -> '|'),
+                NamedFunction.create("TAB", locale -> '\t'));
 
         // deleimiter
         OPTIONS.addOption(OPTION_DELIMITER, Character.class, Option.value("\"", '"'), Option.value("'", '\''));
-        
+
         COMMON_OPTIONS.addOption(OPTION_DELIMITER, Character.class, Option.value("\"", '"'), Option.value("'", '\''));
     }
 

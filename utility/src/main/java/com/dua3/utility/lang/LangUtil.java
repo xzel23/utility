@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -64,7 +64,7 @@ public class LangUtil {
     /**
      * Check that condition is fulfilled.
      *
-     * @param condition condition to test
+     * @param  condition            condition to test
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
     public static void check(boolean condition) {
@@ -76,10 +76,10 @@ public class LangUtil {
     /**
      * Check that condition is fulfilled.
      *
-     * @param condition condition to test
-     * @param fmt       message format (@see
-     *                  {@link String#format(String, Object...)})
-     * @param args      format arguments
+     * @param  condition            condition to test
+     * @param  fmt                  message format (@see
+     *                              {@link String#format(String, Object...)})
+     * @param  args                 format arguments
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
     public static void check(boolean condition, String fmt, Object... args) {
@@ -92,8 +92,8 @@ public class LangUtil {
     /**
      * Check that index is valid.
      *
-     * @param idx  index to test
-     * @param size collection size
+     * @param  idx                       index to test
+     * @param  size                      collection size
      * @throws IndexOutOfBoundsException if index is out of range
      */
     public static void checkIndex(int idx, int size) {
@@ -120,12 +120,13 @@ public class LangUtil {
 
     /**
      * Test if first argument is equal to one of the other arguments.
-     * 
-     * @param      <T> argument type
-     * @param arg  first argument
-     * @param rest remaining arguments
-     * @return true, if {@code rest} contains at least one item that is equal to
-     *         {@code arg}
+     *
+     * @param       <T> argument type
+     * @param  arg  first argument
+     * @param  rest remaining arguments
+     * @return      true, if {@code rest} contains at least one item that is equal
+     *              to
+     *              {@code arg}
      */
     @SafeVarargs
     public static <T> boolean isOneOf(T arg, T... rest) {
@@ -159,9 +160,9 @@ public class LangUtil {
 
     /**
      * Test if character is the byte order mark.
-     * 
-     * @param c the character to test
-     * @return true if c is the byte order mark
+     *
+     * @param  c the character to test
+     * @return   true if c is the byte order mark
      */
     public boolean isByteOrderMark(char c) {
         return c == UTF_BYTE_ORDER_MARK;
@@ -171,11 +172,10 @@ public class LangUtil {
      * Helper method that converts checked {@link java.io.IOException} to
      * {@link java.io.UncheckedIOException}.
      *
-     * @param   <T> the argument type
-     * @param c the consumer to call (instance of {@link ConsumerThrows})
-     *
-     * @return instance of Function that invokes f and converts IOException to
-     *         UncheckedIOException
+     * @param    <T> the argument type
+     * @param  c the consumer to call (instance of {@link ConsumerThrows})
+     * @return   instance of Function that invokes f and converts IOException to
+     *           UncheckedIOException
      */
     public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<T> c) {
         return arg -> {
@@ -193,12 +193,11 @@ public class LangUtil {
      * Helper method that converts checked {@link java.io.IOException} to
      * {@link java.io.UncheckedIOException}.
      *
-     * @param   <T> the argument type
-     * @param   <R> the result type
-     * @param f the function to call (instance of {@link FunctionThrows})
-     *
-     * @return instance of Function that invokes f and converts IOException to
-     *         UncheckedIOException
+     * @param    <T> the argument type
+     * @param    <R> the result type
+     * @param  f the function to call (instance of {@link FunctionThrows})
+     * @return   instance of Function that invokes f and converts IOException to
+     *           UncheckedIOException
      */
     public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<T, R> f) {
         return arg -> {
@@ -215,10 +214,10 @@ public class LangUtil {
     /**
      * Helper method that converts checked {@link java.io.IOException} to
      * {@link java.io.UncheckedIOException}.
-     * 
-     * @param r the Runnable to call (instance of {@link RunnableThrows})
-     * @return instance of Function that invokes f and converts IOException to
-     *         UncheckedIOException
+     *
+     * @param  r the Runnable to call (instance of {@link RunnableThrows})
+     * @return   instance of Function that invokes f and converts IOException to
+     *           UncheckedIOException
      */
     public static Runnable uncheckedRunnable(RunnableThrows r) {
         return () -> {
@@ -234,9 +233,9 @@ public class LangUtil {
 
     /**
      * Trim string, remove prepending byte order mark.
-     * 
-     * @param s the string to trim
-     * @return the trimmed string
+     *
+     * @param  s the string to trim
+     * @return   the trimmed string
      */
     public static String trimWithByteOrderMark(String s) {
         if (s.isEmpty()) {
@@ -252,7 +251,7 @@ public class LangUtil {
 
     /**
      * Insert key-value pairs into map, <em>not</em> overwriting existing mappings.
-     * 
+     *
      * @param       <K> the key type
      * @param       <V> the value type
      * @param map   the map to insert into
@@ -265,7 +264,7 @@ public class LangUtil {
 
     /**
      * Insert key-value pairs into map, <em>replacing</em> existing mappings.
-     * 
+     *
      * @param       <K> the key type
      * @param       <V> the value type
      * @param map   the map to insert into
@@ -278,11 +277,11 @@ public class LangUtil {
 
     /**
      * Create an unmodifiable map from key-value pairs.
-     * 
-     * @param       <K> the key type
-     * @param       <V> the value type
-     * @param items the key-value pairs to put into the map
-     * @return unmodifiable map
+     *
+     * @param        <K> the key type
+     * @param        <V> the value type
+     * @param  items the key-value pairs to put into the map
+     * @return       unmodifiable map
      */
     @SafeVarargs
     public static <K, V> Map<K, V> map(Pair<K, V>... items) {
@@ -293,11 +292,11 @@ public class LangUtil {
 
     /**
      * Test streams for equality.
-     * 
-     * @param    <T> the element type
-     * @param s1 first stream
-     * @param s2 second stream
-     * @return true, if and only if both streams are equal elementwise
+     *
+     * @param     <T> the element type
+     * @param  s1 first stream
+     * @param  s2 second stream
+     * @return    true, if and only if both streams are equal elementwise
      */
     public static <T> boolean equals(Stream<T> s1, Stream<T> s2) {
         Iterator<T> iter1 = s1.iterator();
@@ -312,7 +311,7 @@ public class LangUtil {
 
     /**
      * Consume value if mapping exists.
-     * 
+     *
      * @param          <K> the key type
      * @param          <V> the value type
      * @param map      the map
@@ -328,7 +327,7 @@ public class LangUtil {
 
     /**
      * Consume value if mapping exists.
-     * 
+     *
      * @param          <K> the key type
      * @param          <V> the value type
      * @param map      the map
@@ -344,11 +343,12 @@ public class LangUtil {
 
     /**
      * Create a log message supplier.
-     * 
-     * @param fmt  format, {@link String#format(Locale, String, Object...)} with the
-     *             root locale
-     * @param args arguments
-     * @return a supplier that returns the formatted message
+     *
+     * @param  fmt  format, {@link String#format(Locale, String, Object...)} with
+     *              the
+     *              root locale
+     * @param  args arguments
+     * @return      a supplier that returns the formatted message
      */
     public static Supplier<String> msgs(String fmt, Object... args) {
         return () -> String.format(Locale.ROOT, fmt, args);
@@ -359,7 +359,7 @@ public class LangUtil {
      * exceptions on its {@code run()} method.
      */
     @FunctionalInterface
-    public static interface RunnableThrows {
+    public interface RunnableThrows {
         void run() throws Exception;
     }
 
@@ -371,7 +371,7 @@ public class LangUtil {
      * @param <R> the result type
      */
     @FunctionalInterface
-    public static interface FunctionThrows<T, R> {
+    public interface FunctionThrows<T, R> {
         R apply(T arg) throws Exception;
     }
 
@@ -382,7 +382,7 @@ public class LangUtil {
      * @param <T> the argument type
      */
     @FunctionalInterface
-    public static interface ConsumerThrows<T> {
+    public interface ConsumerThrows<T> {
         void apply(T arg) throws Exception;
     }
 
@@ -390,10 +390,10 @@ public class LangUtil {
      * Create a lazy, caching Supplier. Upon first invocation of `get()`, `s.get()`
      * is called to create the object to be returned. Each subsequent call will
      * return the same object without invoking `s.get()` again.
-     * 
-     * @param          <T> the result type
-     * @param supplier the Supplier
-     * @return caching Supplier
+     *
+     * @param           <T> the result type
+     * @param  supplier the Supplier
+     * @return          caching Supplier
      */
     public static <T> Supplier<T> cache(Supplier<T> supplier) {
         return new CachingSupplier<>(supplier, t -> {
@@ -404,20 +404,19 @@ public class LangUtil {
      * Create a lazy, caching, and auto-closable Supplier. Upon first invocation of
      * `get()`, `s.get()` is called to create the object to be returned. Each
      * subsequent call will return the same object without invoking `s.get()` again.
-     * 
      * If the supplier is closed, it is reset to uninitialized state and can be
      * reused. A new object will be created when the supplier is reused.
-     * 
-     * @param          <T> the result type
-     * @param supplier the Supplier
-     * @param cleaner  the cleanup operation to be executed on `close()`
-     * @return caching Supplier
+     *
+     * @param           <T> the result type
+     * @param  supplier the Supplier
+     * @param  cleaner  the cleanup operation to be executed on `close()`
+     * @return          caching Supplier
      */
     public static <T> AutoCloseableSupplier<T> cache(Supplier<T> supplier, Consumer<T> cleaner) {
         return new CachingSupplier<>(supplier, cleaner);
     }
 
-    public static interface AutoCloseableSupplier<T> extends AutoCloseable, Supplier<T> {
+    public interface AutoCloseableSupplier<T> extends AutoCloseable, Supplier<T> {
         @Override
         void close();
     }
@@ -455,10 +454,10 @@ public class LangUtil {
 
     /**
      * Get URL for a resource on the classpath.
-     * 
-     * @param clazz    the Class that's used to load the resource.
-     * @param resource path (relative to clazz) of resource to load
-     * @return URL for the given resource
+     *
+     * @param  clazz    the Class that's used to load the resource.
+     * @param  resource path (relative to clazz) of resource to load
+     * @return          URL for the given resource
      */
     public static URL getResourceURL(Class<?> clazz, String resource) {
         return Objects.requireNonNull(clazz.getResource(resource), "Resource not found: " + resource);
@@ -466,10 +465,10 @@ public class LangUtil {
 
     /**
      * Read the content of a resource on the classpath into a String.
-     * 
-     * @param clazz    the Class that's used to load the resource.
-     * @param resource path (relative to clazz) of resource to load
-     * @return A String containing the resource's content
+     *
+     * @param  clazz       the Class that's used to load the resource.
+     * @param  resource    path (relative to clazz) of resource to load
+     * @return             A String containing the resource's content
      * @throws IOException if the resource could not be loaded
      */
     public static String getResourceAsString(Class<?> clazz, String resource) throws IOException {
@@ -478,10 +477,10 @@ public class LangUtil {
 
     /**
      * Read the content of a resource on the classpath.
-     * 
-     * @param clazz    the Class that's used to load the resource.
-     * @param resource path (relative to clazz) of resource to load
-     * @return A byte array containing the resource's content
+     *
+     * @param  clazz       the Class that's used to load the resource.
+     * @param  resource    path (relative to clazz) of resource to load
+     * @return             A byte array containing the resource's content
      * @throws IOException if the resource could not be loaded
      */
     public static byte[] getResource(Class<?> clazz, String resource) throws IOException {
@@ -493,40 +492,40 @@ public class LangUtil {
 
     /**
      * Set java.util.logging log level for the root logger.
-     * 
+     *
      * @param level the log level to set
      */
-	public static void setLogLevel(Level level) {
+    public static void setLogLevel(Level level) {
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         setLogLevel(level, rootLogger);
     }
 
     /**
      * Set java.util.logging log level.
-     * 
-     * @param level 
-     *  the log level to set
+     *
+     * @param level
+     *               the log level to set
      * @param logger
-     *  the logger for which to set the level
+     *               the logger for which to set the level
      */
-	public static void setLogLevel(Level level, Logger logger) {
-		logger.setLevel(level);
+    public static void setLogLevel(Level level, Logger logger) {
+        logger.setLevel(level);
         for (Handler h : logger.getHandlers()) {
             h.setLevel(level);
         }
-	}
+    }
 
     /**
      * Set java.util.logging log level.
-     * 
-     * @param level 
-     *  the log level to set
+     *
+     * @param level
+     *                the log level to set
      * @param loggers
-     *  the loggers to set the level for
+     *                the loggers to set the level for
      */
-	public static void setLogLevel(Level level, Logger... loggers) {
-		for (Logger logger : loggers) {
-			setLogLevel(level, logger);
-		}
-	}
+    public static void setLogLevel(Level level, Logger... loggers) {
+        for (Logger logger : loggers) {
+            setLogLevel(level, logger);
+        }
+    }
 }

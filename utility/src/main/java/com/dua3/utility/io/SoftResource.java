@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -21,9 +21,11 @@ public class SoftResource<T> {
 
     /**
      * Create a soft resource.
-     * @param <T> the type of the resource
-     * @param supplier the resource supplier; the supplier should upon each invocation return equal instances
-     * @return soft resource
+     *
+     * @param           <T> the type of the resource
+     * @param  supplier the resource supplier; the supplier should upon each
+     *                  invocation return equal instances
+     * @return          soft resource
      */
     public static <T> SoftResource<T> of(Supplier<T> supplier) {
         return new SoftResource<>(Objects.requireNonNull(supplier));
@@ -31,7 +33,8 @@ public class SoftResource<T> {
 
     /**
      * Create an empty soft resource.
-     * @param <T> the type of the resource
+     *
+     * @param  <T> the type of the resource
      * @return empty soft resource
      */
     public static <T> SoftResource<T> emptyReference() {
@@ -40,17 +43,18 @@ public class SoftResource<T> {
 
     /**
      * Get the resource.
+     *
      * @return the resource;
-     *          if it has not yet been set or has been garbage collected, it will be
-     *          restored by invoking the supplier
+     *         if it has not yet been set or has been garbage collected, it will be
+     *         restored by invoking the supplier
      */
     public T get() {
-        T  obj = ref.get();
-        if (obj==null && supplier!=null) {
+        T obj = ref.get();
+        if (obj == null && supplier != null) {
             obj = supplier.get();
 
-            if (obj==null) {
-                supplier=null;
+            if (obj == null) {
+                supplier = null;
             }
 
             ref = new SoftReference<>(obj);
@@ -59,16 +63,19 @@ public class SoftResource<T> {
     }
 
     /**
-     * Check if it is already known that {@code get()} will return {@code null} for this soft resource.
+     * Check if it is already known that {@code get()} will return {@code null} for
+     * this soft resource.
+     *
      * @return true, if this soft resource is known to be {@code null}
      */
     public boolean isKnownToBeNull() {
-        return supplier==null;
+        return supplier == null;
     }
 
     /**
      * Get a strong reference holder for this resource to avoid thrashing.
      * Intended for use in try-with-resources.
+     *
      * @return ResourceHolder for this Resource
      */
     public ResourceHolder<T> hold() {
@@ -89,6 +96,7 @@ public class SoftResource<T> {
 
         /**
          * Get the resource being held.
+         *
          * @return the resource
          */
         public T get() {
@@ -97,6 +105,7 @@ public class SoftResource<T> {
 
         /**
          * Get the SoftResource instance this holder belongs to.
+         *
          * @return the soft resource
          */
         public SoftResource<T> getSoftResource() {
@@ -110,7 +119,7 @@ public class SoftResource<T> {
 
         @Override
         public String toString() {
-            return "ResourceHolder("+soft+")";
+            return "ResourceHolder(" + soft + ")";
         }
     }
 }

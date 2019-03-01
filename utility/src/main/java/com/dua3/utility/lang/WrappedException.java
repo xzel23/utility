@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -22,6 +22,6 @@ public class WrappedException extends RuntimeException {
 
     @Override
     public String toString() {
-        return "WrappedException("+super.getCause().toString()+")";
+        return "WrappedException(" + super.getCause().toString() + ")";
     }
 }

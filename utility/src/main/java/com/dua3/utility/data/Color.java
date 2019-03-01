@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -314,7 +314,7 @@ public final class Color {
     public static final Color TRANSPARENT_WHITE = register("TRANSPARENT_WHITE", 0x00FFFFFF);
     /** The color TRANSPARENT. */
     public static final Color TRANSPARENT_BLACK = register("TRANSPARENT_WHITE", 0x00000000);
-    
+
     private static final double F_BRIGHTEN = 0.7;
 
     private static final int SHIFT_A = 24;
@@ -344,9 +344,9 @@ public final class Color {
      * <li>otherwise an exception is thrown
      * </ol>
      *
-     * @param s
-     *            the text
-     * @return result of conversion
+     * @param  s
+     *           the text
+     * @return   result of conversion
      */
     public static Color valueOf(String s) {
         // try named colors first
@@ -414,7 +414,7 @@ public final class Color {
     }
 
     private static int shiftComponentValue(int value, int bits) {
-    	LangUtil.check(value >= 0 && value <= 255);
+        LangUtil.check(value >= 0 && value <= 255);
         return value << bits;
     }
 
@@ -424,11 +424,11 @@ public final class Color {
      * Create a new Color.
      *
      * @param r
-     *            red (0..255)
+     *          red (0..255)
      * @param g
-     *            green (0..255)
+     *          green (0..255)
      * @param b
-     *            blue (0..255)
+     *          blue (0..255)
      */
     public Color(int r, int g, int b) {
         this(r, g, b, 255);
@@ -438,13 +438,13 @@ public final class Color {
      * Create a new Color.
      *
      * @param r
-     *            red (0..255)
+     *          red (0..255)
      * @param g
-     *            green (0..255)
+     *          green (0..255)
      * @param b
-     *            blue (0..255)
+     *          blue (0..255)
      * @param a
-     *            alpha (0..255)
+     *          alpha (0..255)
      */
     public Color(int r, int g, int b, int a) {
         argb = shiftComponentValue(a, SHIFT_A) + shiftComponentValue(r, SHIFT_R) + shiftComponentValue(g, SHIFT_G)
@@ -607,7 +607,7 @@ public final class Color {
      */
     @Override
     public String toString() {
-    	return String.format("#%08x", argb);
+        return String.format("#%08x", argb);
     }
 
 }

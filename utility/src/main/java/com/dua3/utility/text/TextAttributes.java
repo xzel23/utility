@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -20,7 +20,7 @@ import com.dua3.utility.lang.LangUtil;
 /**
  * A set of text attributes.
  */
-public class TextAttributes extends AbstractMap<String,Object> {
+public class TextAttributes extends AbstractMap<String, Object> {
 
     // meta
     public static final String STYLE_START_RUN = "__style-start-run";
@@ -79,7 +79,7 @@ public class TextAttributes extends AbstractMap<String,Object> {
 
     private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
 
-    private static final Map<String,Object> DEFAULTS = LangUtil.map(
+    private static final Map<String, Object> DEFAULTS = LangUtil.map(
             Pair.of(FONT_FAMILY, FONT_FAMILY_VALUE_SANS_SERIF),
             Pair.of(FONT_STYLE, FONT_STYLE_VALUE_NORMAL),
             Pair.of(FONT_SIZE, "10pt"),
@@ -89,13 +89,14 @@ public class TextAttributes extends AbstractMap<String,Object> {
             Pair.of(TEXT_DECORATION, TEXT_DECORATION_VALUE_NONE),
             Pair.of(TEXT_INDENT_LEFT, TEXT_INDENT_LEFT_VALUE_0),
             Pair.of(COLOR, Color.WHITE),
-            Pair.of(BACKGROUND_COLOR, Color.BLACK)
-            );
+            Pair.of(BACKGROUND_COLOR, Color.BLACK));
 
     /**
      * Get default value for attribute.
-     * @param attribute the attribute
-     * @return the default value for the attribute or {@code null} if not set
+     *
+     * @param  attribute the attribute
+     * @return           the default value for the attribute or {@code null} if not
+     *                   set
      */
     public static Object getDefault(String attribute) {
         return DEFAULTS.get(attribute);
@@ -117,9 +118,9 @@ public class TextAttributes extends AbstractMap<String,Object> {
     /**
      * Construct style with attributes.
      *
-     * @param entries
-     *            the attribute/value pairs to add
-     * @return the new style
+     * @param  entries
+     *                 the attribute/value pairs to add
+     * @return         the new style
      */
     @SafeVarargs
     public static TextAttributes of(Pair<String, ?>... entries) {
@@ -129,9 +130,9 @@ public class TextAttributes extends AbstractMap<String,Object> {
     /**
      * Construct style with attributes.
      *
-     * @param entries
-     *            the attribute/value pairs to add
-     * @return the new style
+     * @param  entries
+     *                 the attribute/value pairs to add
+     * @return         the new style
      */
     public static TextAttributes of(Collection<Pair<String, ?>> entries) {
         Set<Entry<String, Object>> entrySet = new HashSet<>();

@@ -7,21 +7,23 @@ import java.util.Map;
 import com.dua3.utility.options.Option.Value;
 
 /**
- * A Mapping of options to values. 
+ * A Mapping of options to values.
  * The only difference to a normal {@code Map<Option<?>,Value<?>>} is that
- * {@code Options.get(option)} will return the option's default value (if set) instead
+ * {@code Options.get(option)} will return the option's default value (if set)
+ * instead
  * of {@code null}.
  */
-public class OptionValues extends HashMap<Option<?>,Value<?>> {
-	private static final long serialVersionUID = 1L;
+public class OptionValues extends HashMap<Option<?>, Value<?>> {
+    private static final long serialVersionUID = 1L;
 
-	private static final OptionValues EMPTY_OPTIONS = new OptionValues(Collections.emptyMap());
+    private static final OptionValues EMPTY_OPTIONS = new OptionValues(Collections.emptyMap());
 
-	/**
-	 * An empty set of option values.
-	 * @return
-	 *  empty options
-	 */
+    /**
+     * An empty set of option values.
+     *
+     * @return
+     *         empty options
+     */
     public static OptionValues empty() {
         return EMPTY_OPTIONS;
     }
@@ -51,12 +53,13 @@ public class OptionValues extends HashMap<Option<?>,Value<?>> {
     private Class<?> getClass(Object o) {
         return o != null ? o.getClass() : null;
     }
-    
+
     @Override
     public String toString() {
         var i = entrySet().iterator();
-        if (!i.hasNext())
+        if (!i.hasNext()) {
             return "{}";
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append('{');
@@ -67,8 +70,9 @@ public class OptionValues extends HashMap<Option<?>,Value<?>> {
             sb.append(name);
             sb.append('=');
             sb.append(value);
-            if (!i.hasNext())
+            if (!i.hasNext()) {
                 return sb.append('}').toString();
+            }
             sb.append(',').append(' ');
         }
     }

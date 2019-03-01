@@ -1,20 +1,24 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
 package com.dua3.utility.test.lang;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.junit.jupiter.api.Test;
 
 import com.dua3.utility.lang.RingBuffer;
 
 public class RingBufferTest {
-    
+
     private static final int CAPACITY = 10;
     private RingBuffer<Object> buffer = new RingBuffer<>(CAPACITY);
-    
+
     @Test
     public void testAddAndGet() {
         for (int i = 0; i < 2 * CAPACITY; i++) {
@@ -28,7 +32,7 @@ public class RingBufferTest {
             }
         }
     }
-    
+
     @Test
     public void testCapacity() {
         assertEquals(CAPACITY, buffer.capacity());
@@ -37,14 +41,14 @@ public class RingBufferTest {
             assertEquals(CAPACITY, buffer.capacity());
         }
     }
-    
+
     @Test
     public void testGet() {
         buffer.clear();
         try {
             System.out.println(buffer.get(0));
             fail("IndexOutOfBoundsException not thrown.");
-        } catch (IndexOutOfBoundsException e) {
+        } catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
             // nop
         }
         buffer.add("Test1");
@@ -52,13 +56,13 @@ public class RingBufferTest {
         try {
             System.out.println(buffer.get(1));
             fail("IndexOutOfBoundsException not thrown.");
-        } catch (IndexOutOfBoundsException e) {
+        } catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
             // nop
         }
         try {
             System.out.println(buffer.get(-1));
             fail("IndexOutOfBoundsException not thrown.");
-        } catch (IndexOutOfBoundsException e) {
+        } catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
             // nop
         }
         buffer.add("Test2");
@@ -66,7 +70,7 @@ public class RingBufferTest {
         assertEquals("Test2", buffer.get(1));
         assertEquals("Test3", buffer.get(2));
     }
-    
+
     @Test
     public void testIsEmpty() {
         buffer.clear();
@@ -76,7 +80,7 @@ public class RingBufferTest {
         buffer.clear();
         assertTrue(buffer.isEmpty());
     }
-    
+
     @Test
     public void testSetCapacity() {
         for (int i = 0; i < 2 * CAPACITY; i++) {
@@ -84,21 +88,21 @@ public class RingBufferTest {
         }
         assertEquals(CAPACITY, buffer.capacity());
         assertEquals(CAPACITY, buffer.size());
-        
+
         // elements should be retained when capacity is increased
         String asText = buffer.toString(); // compare content after resetting capacity
         buffer.setCapacity(2 * CAPACITY);
         assertEquals(2 * CAPACITY, buffer.capacity());
         assertEquals(CAPACITY, buffer.size());
         assertEquals(asText, buffer.toString());
-        
+
         // add elements to see if capacity is set as expected
         for (int i = 0; i < 2 * CAPACITY; i++) {
             buffer.add("test " + i);
         }
         assertEquals(2 * CAPACITY, buffer.capacity());
         assertEquals(2 * CAPACITY, buffer.size());
-        
+
         // now reduce the size
         buffer.setCapacity(CAPACITY);
         assertEquals(CAPACITY, buffer.capacity());
@@ -107,7 +111,7 @@ public class RingBufferTest {
             assertEquals("test " + (CAPACITY + i), buffer.get(i));
         }
     }
-    
+
     @Test
     public void testSize() {
         for (int i = 0; i < 2 * CAPACITY; i++) {
@@ -115,7 +119,7 @@ public class RingBufferTest {
             buffer.add("test " + i);
         }
     }
-    
+
     @Test
     public void testToString() {
         buffer.clear();
@@ -127,5 +131,5 @@ public class RingBufferTest {
         buffer.add("Test3");
         assertEquals("[Test1, Test2, Test3]", buffer.toString());
     }
-    
+
 }

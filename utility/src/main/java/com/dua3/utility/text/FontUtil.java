@@ -13,41 +13,35 @@ public interface FontUtil<F> {
 
     /**
      * Convert font.
-     * 
-     * @param f
-     *  the font
-     * 
+     *
+     * @param  f
+     *           the font
      * @return
-     *  the font implementation
-     * 
+     *           the font implementation
      */
     F convert(Font f);
 
     /**
      * Get text bounds.
-     * 
-     * @param s
-     *  the text
-     * 
-     * @param f
-     *  the font
-     * 
+     *
+     * @param  s
+     *           the text
+     * @param  f
+     *           the font
      * @return
-     *  the text bounds
+     *           the text bounds
      */
     Bounds getTextBounds(String s, Font f);
 
     /**
      * Get text width.
-     * 
-     * @param s
-     *  the text
-     * 
-     * @param f
-     *  the font
-     * 
+     *
+     * @param  s
+     *           the text
+     * @param  f
+     *           the font
      * @return
-     *  the text width
+     *           the text width
      */
     default double getTextWidth(String s, Font f) {
         return getTextBounds(s, f).width;
@@ -55,15 +49,13 @@ public interface FontUtil<F> {
 
     /**
      * Get text height.
-     * 
-     * @param s
-     *  the text
-     * 
-     * @param f
-     *  the font
-     * 
+     *
+     * @param  s
+     *           the text
+     * @param  f
+     *           the font
      * @return
-     *  the text height
+     *           the text height
      */
     default double getTextHeight(String s, Font f) {
         return getTextBounds(s, f).height;

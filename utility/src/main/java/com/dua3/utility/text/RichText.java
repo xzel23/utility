@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * A class for rich text, i.e. text together with attributes like color, font etc.
+ * A class for rich text, i.e. text together with attributes like color, font
+ * etc.
  * <p>
- * Sequences of characters that share the same formatting attributes form a {@link Run}.
+ * Sequences of characters that share the same formatting attributes form a
+ * {@link Run}.
  */
 public class RichText
         implements Iterable<Run>, ToRichText {
@@ -36,9 +38,9 @@ public class RichText
     /**
      * Convert String to RichText.
      *
-     * @param s
-     *            String to convert
-     * @return RichText representation of s
+     * @param  s
+     *           String to convert
+     * @return   RichText representation of s
      */
     public static RichText valueOf(String s) {
         return new RichText(Arrays.asList(new Run(s, 0, s.length(), TextAttributes.none())));
@@ -49,15 +51,15 @@ public class RichText
 
     RichText(List<Run> runs) {
         this.text = runs.isEmpty() ? "" : runs.get(0).base();
-        this.runs = runs;        
-        
+        this.runs = runs;
+
         assert checkAllRunsHaveTextAsBase(runs);
     }
 
     private boolean checkAllRunsHaveTextAsBase(List<Run> runs) {
         boolean ok = true;
-        for (Run run: runs) {
-            ok &= run.base()==text;
+        for (Run run : runs) {
+            ok &= run.base() == text;
         }
         return ok;
     }
@@ -87,7 +89,7 @@ public class RichText
      * @return true, if the text is empty.
      */
     public boolean isEmpty() {
-        return text.length()==0;
+        return text.length() == 0;
     }
 
     @Override
@@ -118,14 +120,14 @@ public class RichText
         return text.toString();
     }
 
-	@Override
-	public void appendTo(RichTextBuilder builder) {
-        builder.ensureCapacity(builder.length()+this.length());
+    @Override
+    public void appendTo(RichTextBuilder builder) {
+        builder.ensureCapacity(builder.length() + this.length());
         stream().forEach(builder::appendRun);
-	}
+    }
 
-	@Override
-	public RichText toRichText() {
-		return this;
-	}
+    @Override
+    public RichText toRichText() {
+        return this;
+    }
 }

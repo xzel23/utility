@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -29,52 +29,56 @@ public class NetUtil {
     }
 
     /**
-     * Register a custom URLHandler that deviates all non-local URL-connections to a local path.
+     * Register a custom URLHandler that deviates all non-local URL-connections to a
+     * local path.
      * Note: this should be called exactly once at the start of the application.
      *
      * @param localFiles
-     *   A view to the local file's root.
+     *                   A view to the local file's root.
      */
     public static void registerSandboxURLHandler(FileSystemView localFiles) {
         LOG.fine(LangUtil.msgs("Setting SandBoxURLHandler with root %s", localFiles));
         URL.setURLStreamHandlerFactory(new SandboxURLStreamHandlerFactory(localFiles));
     }
 
-	/**
-	 * Reads a complete resource into a string.
-	 *
-	 * @param url
-	 *            URL to read from
-	 * @param cs
-	 *            Charset
-	 * @return
-	 *         String with the complete content read from URL
-	 * @throws IOException
-	 *         if an I/O error occurs
-	 */
-	public static String readContent(URL url, Charset cs) throws IOException {
-	    try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), cs))) {
-	        return reader.lines().collect(Collectors.joining("\n"));
-	    }
-	}
+    /**
+     * Reads a complete resource into a string.
+     *
+     * @param  url
+     *                     URL to read from
+     * @param  cs
+     *                     Charset
+     * @return
+     *                     String with the complete content read from URL
+     * @throws IOException
+     *                     if an I/O error occurs
+     */
+    public static String readContent(URL url, Charset cs) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), cs))) {
+            return reader.lines().collect(Collectors.joining("\n"));
+        }
+    }
 
-	/**
-	 * Check if two URLS are the same.
-	 * @param u1 the first URL
-	 * @param u2 the second URL
-	 * @return true, if both are {@code null}, or if the decoded String representations of u1 and u2 are equal
-	 */
+    /**
+     * Check if two URLS are the same.
+     *
+     * @param  u1 the first URL
+     * @param  u2 the second URL
+     * @return    true, if both are {@code null}, or if the decoded String
+     *            representations of u1 and u2 are equal
+     */
     public static boolean sameURL(URL u1, URL u2) {
-        if (u1==u2) {
+        if (u1 == u2) {
             return true;
         }
 
-        if (u1==null || u2==null) {
+        if (u1 == null || u2 == null) {
             return false;
         }
 
         try {
-            return URLDecoder.decode(u1.toString(), StandardCharsets.UTF_8.name()).equals(URLDecoder.decode(u2.toString(), StandardCharsets.UTF_8.name()));
+            return URLDecoder.decode(u1.toString(), StandardCharsets.UTF_8.name())
+                    .equals(URLDecoder.decode(u2.toString(), StandardCharsets.UTF_8.name()));
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
@@ -98,7 +102,8 @@ public class NetUtil {
     }
 
     /**
-     * Get an instance of an invalid (yet not {@code null}) URL that cannot be referenced.
+     * Get an instance of an invalid (yet not {@code null}) URL that cannot be
+     * referenced.
      * The void URL will have the protocol set to the text {@code "null"}.
      *
      * @return the void URL

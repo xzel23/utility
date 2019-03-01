@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -24,16 +24,16 @@ public class Run
      * Construct a new Run.
      *
      * @param text
-     *            the text that contains the Run
+     *               the text that contains the Run
      * @param start
-     *            start of Run
+     *               start of Run
      * @param length
-     *            length of Run in characters
+     *               length of Run in characters
      * @param style
-     *            style for the Run
+     *               style for the Run
      */
     Run(CharSequence text, int start, int length, TextAttributes style) {
-    	LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
+        LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
 
         this.text = Objects.requireNonNull(text);
         this.attributes = Objects.requireNonNull(style);
@@ -126,9 +126,10 @@ public class Run
 
     /**
      * Check if run is empty.
+     *
      * @return true, if this run does not contain text.
      */
     public boolean isEmpty() {
-        return length==0;
+        return length == 0;
     }
 }

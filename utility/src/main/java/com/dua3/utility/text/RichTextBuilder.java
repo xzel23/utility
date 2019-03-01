@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -14,15 +14,19 @@ import java.util.function.Supplier;
 
 /**
  * A builder class for rich text data.
- * <p> A rich text is created by appending strings to the builder using the {@link #append(CharSequence)}
- * method or one of its overloads. Style properties are set using {@link #put(String, Object)}.
+ * <p>
+ * A rich text is created by appending strings to the builder using the
+ * {@link #append(CharSequence)}
+ * method or one of its overloads. Style properties are set using
+ * {@link #put(String, Object)}.
  * </p>
+ *
  * @author axel
  */
 public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer = new StringBuilder();
-    private final SortedMap<Integer, Map<String,Object>> parts = new TreeMap<>();
+    private final SortedMap<Integer, Map<String, Object>> parts = new TreeMap<>();
 
     /**
      * Construct a new empty builder.
@@ -57,22 +61,24 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Get attribute of the current Run.
      *
-     * @param property
-     *            the property
-     * @return value of the property
+     * @param  property
+     *                  the property
+     * @return          value of the property
      */
     public Object get(String property) {
         return currentStyle().get(property);
     }
 
     /**
-     * Get attribute of the current Run, or compute and store a new one if not present.
+     * Get attribute of the current Run, or compute and store a new one if not
+     * present.
      *
-     * @param property
-     *            the property
-     * @param supplier
-     *            the supplier to create a new value if the property is not yet set
-     * @return value of the property
+     * @param  property
+     *                  the property
+     * @param  supplier
+     *                  the supplier to create a new value if the property is not
+     *                  yet set
+     * @return          value of the property
      */
     public Object getOrSupply(String property, Supplier<? extends Object> supplier) {
         return currentStyle().computeIfAbsent(property, key -> supplier.get());
@@ -81,12 +87,12 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Push a style property.
      *
-     * @param property
-     *            the property to set
-     * @param value
-     *            the value to be set
+     * @param  property
+     *                  the property to set
+     * @param  value
+     *                  the value to be set
      * @return
-     *            the old value for this attribute
+     *                  the old value for this attribute
      */
     public Object put(String property, Object value) {
         return currentStyle().put(property, value);
@@ -109,8 +115,8 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
         int runIdx = 0;
         int start = parts.firstKey();
-        Map<String,Object> style = parts.get(start);
-        for (Map.Entry<Integer, Map<String,Object>> e : parts.entrySet()) {
+        Map<String, Object> style = parts.get(start);
+        for (Map.Entry<Integer, Map<String, Object>> e : parts.entrySet()) {
             int end = e.getKey();
             int runLength = end - start;
 
@@ -131,30 +137,32 @@ public class RichTextBuilder implements Appendable, ToRichText {
         return buffer.toString();
     }
 
-    private Map<String,Object> currentStyle() {
+    private Map<String, Object> currentStyle() {
         return parts.computeIfAbsent(buffer.length(), key -> new HashMap<>());
     }
 
     @Override
     public void appendTo(RichTextBuilder builder) {
-        builder.ensureCapacity(builder.length()+this.length());
-        for (Run run: getRuns()) {
+        builder.ensureCapacity(builder.length() + this.length());
+        for (Run run : getRuns()) {
             builder.appendRun(run);
         }
     }
 
     /**
      * Ensures that the capacity is at least equal to the specified minimum.
-     * @param   minimumCapacity   the minimum desired capacity.
-     * @see StringBuilder#ensureCapacity(int)
+     *
+     * @param minimumCapacity the minimum desired capacity.
+     * @see                   StringBuilder#ensureCapacity(int)
      */
-    public void ensureCapacity (int minimumCapacity) {
+    public void ensureCapacity(int minimumCapacity) {
         buffer.ensureCapacity(minimumCapacity);
     }
 
     /**
      * Returns the length (character count).
-     * @return  the length of the sequence of characters
+     *
+     * @return the length of the sequence of characters
      */
     public int length() {
         return buffer.length();
@@ -162,7 +170,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     void appendRun(Run run) {
         // set attributes
-        for (Entry<String, Object> entry: run.getAttributes().entrySet()) {
+        for (Entry<String, Object> entry : run.getAttributes().entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
         // append CharSequence

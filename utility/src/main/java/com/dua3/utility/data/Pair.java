@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
@@ -13,23 +13,23 @@ import java.util.Objects;
  * A pair helper class.
  *
  * @param <T1>
- *            type of first member
+ *        type of first member
  * @param <T2>
- *            type of second member
+ *        type of second member
  */
 public class Pair<T1, T2> {
 
     /**
      * Add pairs to a map.
-     *
      * @param<K>
-     *            the key type
+     *                the key type
      * @param<V>
-     *            the value type
-     * @param m
-     *            the map to add the pairs to
-     * @param args
-     *            the pairs to add
+     *                the value type
+     *
+     * @param    m
+     *                the map to add the pairs to
+     * @param    args
+     *                the pairs to add
      */
     @SafeVarargs
     public static <K, V> void addToMap(Map<K, V> m, Pair<K, V>... args) {
@@ -41,15 +41,15 @@ public class Pair<T1, T2> {
     /**
      * Create a Pair.
      *
-     * @param first
-     *            the first member
-     * @param second
-     *            the second member
-     * @param <T1>
-     *            type of first member
-     * @param <T2>
-     *            type of second member
-     * @return a new Pair
+     * @param  first
+     *                the first member
+     * @param  second
+     *                the second member
+     * @param         <T1>
+     *                type of first member
+     * @param         <T2>
+     *                type of second member
+     * @return        a new Pair
      */
     public static <T1, T2> Pair<T1, T2> of(T1 first, T2 second) {
         return new Pair<>(first, second);
@@ -58,15 +58,15 @@ public class Pair<T1, T2> {
     /**
      * Create a Pair.
      *
-     * @param first
-     *            the first member
-     * @param second
-     *            the remaining members
-     * @param <T1>
-     *            type of first member
-     * @param <T2>
-     *            type of remaining members
-     * @return a new Pair
+     * @param  first
+     *                the first member
+     * @param  second
+     *                the remaining members
+     * @param         <T1>
+     *                type of first member
+     * @param         <T2>
+     *                type of remaining members
+     * @return        a new Pair
      */
     @SafeVarargs
     public static <T1, T2> Pair<T1, T2[]> ofArray(T1 first, T2... second) {
@@ -78,14 +78,15 @@ public class Pair<T1, T2> {
      * <p>
      * The returned Map can be modified by adding or removing entries.
      * </p>
-     *
      * @param<K>
-     *            the key type
+     *                the key type
      * @param<V>
-     *            the value type
-     * @param args
-     *            the entries to add to the resulting map
-     * @return a new {@code Map<K,V>} whose entries correspond to the pairs given as arguments
+     *                the value type
+     *
+     * @param    args
+     *                the entries to add to the resulting map
+     * @return        a new {@code Map<K,V>} whose entries correspond to the pairs
+     *                given as arguments
      */
     @SafeVarargs
     public static <K extends Object, V extends Object> Map<K, V> toMap(Pair<K, V>... args) {
@@ -104,9 +105,9 @@ public class Pair<T1, T2> {
      * Construct a new Pair.
      *
      * @param first
-     *            the first member
+     *               the first member
      * @param second
-     *            the seond member
+     *               the seond member
      */
     public Pair(T1 first, T2 second) {
         this.first = first;
