@@ -24,6 +24,10 @@ public class JdbcDriverInfo {
 
     @Override
     public String toString() {
+        return name;
+    }
+    
+    public String description() {
         return String.format(
                 "%s%n  driver class : %s%n  URL prefix   : %s%n  URL scheme   : %s%n  vendor link  : %s%n%s%n",
                 name,
