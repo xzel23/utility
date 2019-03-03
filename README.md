@@ -1,6 +1,6 @@
 # com.dua3.utility
 
-A small library with utility classes.
+A library with utility classes.
 
 ## Requirements
 
@@ -8,15 +8,15 @@ A small library with utility classes.
 
 ## Using with Gradle
 
-Binary builds are available on jcenter:
+Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.dua3.utility):
 
     repositories {
         jcenter()
     }
     
     dependencies {
-        compile        "com.dua3.utility:utility:3.1.5"
-        compile        "com.dua3.utility:utility.db:3.1.5"
+        compile        "com.dua3.utility:utility:4.0.0"
+        compile        "com.dua3.utility:utility.db:4.0.0"
         ...        
     }
 
