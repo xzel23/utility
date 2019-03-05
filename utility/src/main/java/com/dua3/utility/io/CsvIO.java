@@ -13,12 +13,17 @@
 package com.dua3.utility.io;
 
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -34,12 +39,12 @@ import com.dua3.utility.options.OptionValues;
 /**
  * @author axel
  */
-public abstract class Csv {
+public abstract class CsvIo implements AutoCloseable {
 
     public enum PredefinedDateFormat {
         LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.SHORT)),
         LOCALE_LONG("long (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.LONG)),
-        ISO_DATE("2000-01-01 15:30:00", locale -> formatFromPattern("yyyy-MM-dd [HH:mm[:ss]]"));
+        ISO_DATE("ISO 8601 (2000-12-31)", locale -> formatFromPattern("yyyy-MM-dd[THH:mm[:ss]]"));
 
         private static DateTimeFormatter formatFromLocale(Locale locale, FormatStyle style) {
             return DateTimeFormatter.ofLocalizedDateTime(style).withLocale(locale);
@@ -135,7 +140,7 @@ public abstract class Csv {
     }
 
     public static PredefinedDateFormat getDateFormat(OptionValues options) {
-        return (PredefinedDateFormat) Csv.getOptionValue(Csv.OPTION_DATEFORMAT, options);
+        return (PredefinedDateFormat) getOptionValue(OPTION_DATEFORMAT, options);
     }
 
     public static Character getDelimiter(OptionValues options) {
@@ -170,4 +175,58 @@ public abstract class Csv {
         return selector.apply(locale);
     }
 
+    private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
+
+    protected final String lineDelimiter;
+    protected final String separator;
+    protected final String delimiter;
+    protected final Locale locale;
+    protected final DateTimeFormatter dateTimeFormatter;
+    protected final NumberFormat numberFormat;
+
+    public CsvIo(OptionValues options) {
+        this.separator = String.valueOf(getSeparator(options));
+        this.delimiter = String.valueOf(getDelimiter(options));
+        this.lineDelimiter = String.format("%n");
+        this.locale = getLocale(options);
+        this.dateTimeFormatter = getDateFormat(options).getFormatter(locale);
+        this.numberFormat = DecimalFormat.getInstance(locale);
+    }
+
+    protected String format(Object obj) {
+        final String text;
+        if (obj instanceof Number) {
+            text = numberFormat.format(obj);
+        } else if (obj instanceof LocalDate) {            
+            text = ((LocalDate)obj).format(dateTimeFormatter);
+        } else if (obj instanceof LocalDateTime) {
+            text = ((LocalDateTime)obj).format(dateTimeFormatter);
+        } else {
+            text = Objects.toString(obj);
+        }
+        return quoteIfNeeded(text);
+    }
+
+    protected boolean isQuoteNeeded(String text) {
+        // quote if separator or delimiter are present
+        if (text.indexOf(separator) >= 0 || text.indexOf(delimiter) >= 0) {
+            return true;
+        }
+
+        // also quote if unusual characters are present
+        for (char c : text.toCharArray()) {
+            if (!Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected String quote(String text) {
+        return delimiter + text.replace("\"", "\"\"") + delimiter;
+    }
+
+    protected String quoteIfNeeded(String text) {
+        return isQuoteNeeded(text) ? quote(text) : text;
+    }
 }

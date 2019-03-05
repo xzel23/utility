@@ -37,7 +37,7 @@ import com.dua3.utility.options.OptionValues;
  *         allow lesser fields than columns append columns as necessary
  *         optional: trim field values
  */
-public class CsvReader extends Csv implements AutoCloseable {
+public class CsvReader extends CsvIo implements AutoCloseable {
 
     public interface RowBuilder {
 
@@ -85,6 +85,7 @@ public class CsvReader extends Csv implements AutoCloseable {
 
     // the unicode codepoint for the UTF-8 BOM
     private static final int UTF8_BOM = 0xfeff;
+
     // the bytes sequence the UTF-8 BOM
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
@@ -133,6 +134,8 @@ public class CsvReader extends Csv implements AutoCloseable {
 
     public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, OptionValues options)
             throws IOException {
+        super(options);
+
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;
@@ -158,8 +161,8 @@ public class CsvReader extends Csv implements AutoCloseable {
             reader.reset();
         }
 
-        String sep = Pattern.quote(String.valueOf(getSeparator(options)));
-        String del = Pattern.quote(String.valueOf(getDelimiter(options)));
+        String sep = Pattern.quote(separator);
+        String del = Pattern.quote(delimiter);
 
         // create pattern for matching of csv fields
         String regexEnd = "(?:" + sep + "|$)";
