@@ -65,6 +65,21 @@ public abstract class Option<T> {
         public String toString() {
             return name();
         }
+        
+        @Override
+        public boolean equals(Object obj) {
+        	if (obj ==null || obj.getClass()!=getClass()) {
+        		return false;
+        	}
+        	
+        	StaticValue<?> other = (StaticValue<?>) obj;
+        	return Objects.equals(other.name, name) && Objects.equals(other.value, value);
+        }
+        
+        @Override
+        public int hashCode() {
+        	return Objects.hash(name, value);
+        }
     }
 
     /**
