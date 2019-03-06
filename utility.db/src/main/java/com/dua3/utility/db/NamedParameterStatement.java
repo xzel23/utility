@@ -141,16 +141,17 @@ public class NamedParameterStatement implements AutoCloseable {
      *                      the parameterized query
      * @throws SQLException
      *                      if the statement could not be created
+     * @throws IllegalStateException
+     *                      if the same parameter is used for different types
      */
     public NamedParameterStatement(Connection connection, String query) throws SQLException {
         indexMap = new HashMap<>();
         String parsedQuery = parse(query, indexMap);
         statement = connection.prepareStatement(parsedQuery);
-        addParameterTypes(indexMap, statement);
+        addParameterTypes();
     }
 
-    private void addParameterTypes(Map<String, ParameterInfo> indexMap2, PreparedStatement statement2)
-            throws SQLException {
+    private void addParameterTypes() throws SQLException {
         for (var param : indexMap.values()) {
             param.type = null;
             for (int index : param.indexes) {
@@ -175,7 +176,7 @@ public class NamedParameterStatement implements AutoCloseable {
             // https://jira.spring.io/si/jira.issueviews:issue-html/SPR-13825/SPR-13825.html
             // [SPR-13825] Oracle 12c JDBC driver throws inconsistent exception from
             // getParameterType (affecting setNull calls)
-            LOG.log(Level.WARNING, "Could not dtermine parameter type", e);
+            LOG.log(Level.WARNING, "Could not determine parameter type");
             return null;
         }
     }
