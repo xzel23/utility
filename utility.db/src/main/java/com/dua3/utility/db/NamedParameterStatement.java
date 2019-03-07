@@ -168,6 +168,8 @@ public class NamedParameterStatement implements AutoCloseable {
         }
     }
 
+    private static boolean showUnknownParameterTypeAsWarning = true;
+
     private JDBCType getParameterType(ParameterMetaData meta, int index) {
         try {
             return JDBCType.valueOf(meta.getParameterType(index));
@@ -176,7 +178,12 @@ public class NamedParameterStatement implements AutoCloseable {
             // https://jira.spring.io/si/jira.issueviews:issue-html/SPR-13825/SPR-13825.html
             // [SPR-13825] Oracle 12c JDBC driver throws inconsistent exception from
             // getParameterType (affecting setNull calls)
-            LOG.log(Level.WARNING, "Could not determine parameter type");
+            if (showUnknownParameterTypeAsWarning) {
+                LOG.log(Level.WARNING, "Could not determine parameter types");
+                showUnknownParameterTypeAsWarning = false;
+            } else {
+                LOG.log(Level.FINE, "(REPEAT) Could not determine parameter types");
+            }
             return null;
         }
     }
@@ -248,7 +255,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  if the parameter does not exist
      */
     private List<Integer> getIndexes(String name) {
-        return Objects.requireNonNull(indexMap.get(name), "Unbekannter Parameter '" + name + "'.").indexes;
+        return Objects.requireNonNull(indexMap.get(name), "unknown parameter '" + name + "'.").indexes;
     }
 
     /**
