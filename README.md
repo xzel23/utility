@@ -24,6 +24,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 4.0.0
 
+__BETA 2__
+
+- don't use decimal grouping in CSV output
+
 __BETA 1__
 
 - update gradle wrapper

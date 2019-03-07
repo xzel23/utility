@@ -191,6 +191,7 @@ public abstract class CsvIo implements AutoCloseable {
         this.locale = getLocale(options);
         this.dateTimeFormatter = getDateFormat(options).getFormatter(locale);
         this.numberFormat = DecimalFormat.getInstance(locale);
+        this.numberFormat.setGroupingUsed(false);
     }
 
     protected String format(Object obj) {
