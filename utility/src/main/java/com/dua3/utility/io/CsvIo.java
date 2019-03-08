@@ -203,7 +203,7 @@ public abstract class CsvIo implements AutoCloseable {
         } else if (obj instanceof LocalDateTime) {
             text = ((LocalDateTime)obj).format(dateTimeFormatter);
         } else {
-            text = Objects.toString(obj);
+            text = Objects.toString(obj, "");
         }
         return quoteIfNeeded(text);
     }
