@@ -66,7 +66,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
         for (;;) {
             Entry<Option<?>, Value<?>> e = i.next();
             String name = e.getKey().getName();
-            String value = e.getValue().name();
+            String value = e.getValue().text();
             sb.append(name);
             sb.append('=');
             sb.append(value);
