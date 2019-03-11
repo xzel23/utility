@@ -21,6 +21,15 @@ import com.dua3.utility.options.Option.Value;
  */
 public class OptionSet implements Iterable<Option<?>> {
 
+	/**
+	 * Tranform {@code List<T>} into {@code List<Value<T>>}.
+	 * @param <T>
+	 *  the item type
+	 * @param choices
+	 *  the items to map
+	 * @return
+	 *  list of values
+	 */
     public static <T> List<Value<T>> wrap(Collection<T> choices) {
         return choices.stream().map(Option::value).collect(Collectors.toList());
     }
@@ -28,7 +37,9 @@ public class OptionSet implements Iterable<Option<?>> {
     private final Set<Option<?>> options = new LinkedHashSet<>();
 
     /**
-     * Create an empty OptionSet.
+     * Create a new OptionSet.
+     * @param options
+     *  the options to include in this set
      */
     public OptionSet(Option<?>... options) {
         for (Option<?> option : options) {

@@ -1,8 +1,11 @@
 package com.dua3.utility.options;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.dua3.utility.options.Option.Value;
 
@@ -19,6 +22,63 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
     private static final OptionValues EMPTY_OPTIONS = new OptionValues(Collections.emptyMap());
 
     /**
+     * Listener interface for value changes.
+     * @param <T>
+     *  the value type
+     */
+    public interface ValueChangeListener<T> {
+    	/**
+    	 * Called when an option's value changes.
+    	 * @param option
+    	 *  the option the value belongs to
+    	 * @param o
+    	 *  the old value
+    	 * @param n
+    	 *  the new value
+    	 */
+    	void changed(Option<T> option, Value<T> o, Value<T> n);
+    }
+    
+    /** List of VlueChangeListeners. */
+    private transient List<ValueChangeListener<?>> changeListeners = new ArrayList<>();
+    
+    /**
+     * Add value change listener.
+     * @param listener
+     *  the listener to add
+     */
+    public void addChangeListener(ValueChangeListener<?> listener) {
+    	changeListeners.add(Objects.requireNonNull(listener));
+    }
+    
+    /**
+     * Remove value change listener.
+     * @param listener
+     *  the listener to remove
+     */
+    public void removeChangeListener(ValueChangeListener<?> listener) {
+    	changeListeners.remove(Objects.requireNonNull(listener));
+    }
+
+    /**
+     * Fire value change event.
+     * @param v
+     *  the option
+     * @param o
+     *  the option's old value
+     * @param n
+     *  the option's new value
+     */
+    @SuppressWarnings("unchecked")
+	private <T> void fireChange_(Option<T> v, Value<T> o, Value<T> n) {
+    	if (!Objects.equals(o, n)) {
+	    	changeListeners.forEach(listener -> {
+				((ValueChangeListener<T>)listener).changed(v, o, n);
+	    	});
+    	}
+    }
+    
+    /**
      * An empty set of option values.
      *
      * @return
@@ -28,17 +88,41 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
         return EMPTY_OPTIONS;
     }
 
+    /**
+     * Create a new empty instance.
+     */
     public OptionValues() {
     }
 
+    /**
+     * Create a new instance with values from map.
+     * @param options
+     *  mapping of options and corresponding values
+     */
     public OptionValues(Map<Option<?>, Value<?>> options) {
         super(options);
     }
 
+    /**
+     * Get an option's value.
+     * @param op
+     *  the option
+     * @return
+     *  the value
+     */
     public Value<?> get(Option<?> op) {
         return getOrDefault(op, op.getDefault());
     }
 
+    /**
+     * Set an option's value.
+     * @param option
+     *  the option
+     * @param value
+     *  the value
+     * @return
+     *  the old value
+     */
     @Override
     public Value<?> put(Option<?> option, Value<?> value) {
         Class<?> klassO = option.getOptionClass();
@@ -47,10 +131,17 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
             throw new IllegalArgumentException("Incompatible value for option '" + option.getName() + "' - expected: "
                     + klassO + ", is: " + klassV);
         }
-        return super.put(option, value);
+        Value<?> old = super.put(option, value);
+        fireChange(option, old, value);
+		return old;
     }
 
-    private Class<?> getClass(Object o) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	private void fireChange(Option v, Value o, Value n) {
+		fireChange_(v, o, n);
+	}
+
+	private Class<?> getClass(Object o) {
         return o != null ? o.getClass() : null;
     }
 
