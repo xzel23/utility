@@ -14,4 +14,5 @@ module com.dua3.utility {
     requires java.logging;
 
     uses com.dua3.utility.text.FontUtil;
-} 
+    uses com.dua3.utility.io.FileType;
+}

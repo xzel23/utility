@@ -16,11 +16,16 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.options.OptionSet;
+import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -30,8 +35,27 @@ public abstract class FileType<T> implements Comparable<FileType> {
 
     private static final Set<FileType<?>> types = new HashSet<>();
 
+    /**
+     * Add file type to set of available file types.
+     * @param ft
+     *  the type to add
+     * @param <T>
+     *  the file type's document type
+     */
     protected static final <T> void addType(FileType<T> ft) {
         types.add(ft);
+    }
+
+    /**
+     * Initialise and add this type to the set of available file types.
+     */
+    protected void init() {
+        addType(this);
+    }
+
+    // Load FileType  impelemantations
+    static {
+        ServiceLoader.load(FileType.class).forEach(FileType::init);
     }
 
     public static Collection<FileType> filetypes() {
@@ -42,6 +66,15 @@ public abstract class FileType<T> implements Comparable<FileType> {
         String ext = IOUtil.getExtension(p);
         for (FileType t: types) {
             if (t.extensions.contains(ext)) {
+                return Optional.of(t);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static <T> Optional<FileType<T>> forPath(Path p, Class<T> cls) {
+        for (FileType t: types) {
+            if (t.matches(p.toString()) && cls.isAssignableFrom(t.getDocumentClass())) {
                 return Optional.of(t);
             }
         }
@@ -124,8 +157,21 @@ public abstract class FileType<T> implements Comparable<FileType> {
      *  if an error occurs
      */
     public T read(Path path) throws IOException {
-        throw new UnsupportedOperationException("reading not supported");
+        return read(path, t -> OptionValues.empty());
     }
+
+    /**
+     * Read document from file.
+     * @param path
+     *  the path to read from
+     * @param options
+     *  the options to use
+     * @return
+     *  the document
+     * @throws IOException
+     *  if an error occurs
+     */
+    public abstract T read(Path path, Function<FileType, OptionValues> options) throws IOException;
 
     /**
      * Write document to file.
@@ -137,8 +183,21 @@ public abstract class FileType<T> implements Comparable<FileType> {
      *  if an error occurs
      */
     public void write(Path path, T document) throws IOException {
-        throw new UnsupportedOperationException("writing not supported");
+        write(path, document, t -> OptionValues.empty());
     }
+
+    /**
+     * Write document to file.
+     * @param path
+     *  the path to write to
+     * @param document
+     *  the document to write
+     * @param options
+     *  the options to use
+     * @throws IOException
+     *  if an error occurs
+     */
+    public abstract void write(Path path, T document, Function<FileType,OptionValues> options) throws IOException;
 
     /**
      * Get file types supporting mode.
@@ -168,9 +227,9 @@ public abstract class FileType<T> implements Comparable<FileType> {
         return types.stream()
                 .filter(t -> t.isSupported(mode))
                 // either reading is not requested or files of this type must be asignable to cls
-                .filter(t -> !t.isSupported(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))
+                .filter(t -> !mode.includes(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))
                 // either writing is not requested or the document must be assignable to this type's document type
-                .filter(t -> t.isSupported(OpenMode.WRITE) && t.getDocumentClass().isAssignableFrom(cls))
+                .filter(t -> !mode.includes(OpenMode.WRITE)  || t.getDocumentClass().isAssignableFrom(cls))
                 // add the generic parameter
                 .map(t -> (FileType<T>)t)
                 // make it a list
