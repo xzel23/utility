@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A class representing files of a certain type.
@@ -146,8 +147,8 @@ public abstract class FileType<T> implements Comparable<FileType> {
      * @return
      *  the list of file types supporting the requested mode
      */
-	public static List<FileType> getFileTypes(OpenMode mode) {
-        List<FileType> list = new LinkedList<>(types);
+	public static List<FileType<?>> getFileTypes(OpenMode mode) {
+        List<FileType<?>> list = new LinkedList<>(types);
         list.removeIf(t -> (t.mode.n&mode.n)!=mode.n);
 		return list;
 	}
@@ -163,11 +164,17 @@ public abstract class FileType<T> implements Comparable<FileType> {
      * @return
      *  list of file types that support reading/writing objects of the given class type
      */
-    public static <T> List<FileType> getFileTypes(OpenMode mode, Class<T> cls) {
-        List<FileType> list = getFileTypes(mode);
-        list.removeIf(f -> f.isSupported(OpenMode.READ) && !cls.isAssignableFrom(f.getDocumentClass()));
-        list.removeIf(f -> f.isSupported(OpenMode.WRITE) && !f.getDocumentClass().isAssignableFrom(cls));
-        return list;
+    public static <T> List<FileType<T>> getFileTypes(OpenMode mode, Class<T> cls) {
+        return types.stream()
+                .filter(t -> t.isSupported(mode))
+                // either reading is not requested or files of this type must be asignable to cls
+                .filter(t -> !t.isSupported(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))
+                // either writing is not requested or the document must be assignable to this type's document type
+                .filter(t -> t.isSupported(OpenMode.WRITE) && t.getDocumentClass().isAssignableFrom(cls))
+                // add the generic parameter
+                .map(t -> (FileType<T>)t)
+                // make it a list
+                .collect(Collectors.toList());
     }
 
     /**
