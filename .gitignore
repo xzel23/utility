@@ -2,6 +2,7 @@
 /build
 */bin
 */build
+*/out
 */gradle.properties
 */.*
 **/.*
