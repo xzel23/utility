@@ -28,6 +28,7 @@ __BETA 2__
 
 - don't use decimal grouping in CSV output
 - `ValueChangeListener` support in `OptionValues`
+- classes `FileType` and `OpenMode`
 
 __BETA 1__
 
