@@ -31,12 +31,6 @@ import java.util.regex.Pattern;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
 
-/**
- * @author axel TODO: see below
- *         number of fields require fixed number of columns
- *         allow lesser fields than columns append columns as necessary
- *         optional: trim field values
- */
 public class CsvReader extends CsvIo implements AutoCloseable {
 
     public interface RowBuilder {

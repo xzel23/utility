@@ -115,27 +115,27 @@ public abstract class FileType<T> implements Comparable<FileType> {
 
     /**
      * Read document from file.
-     * @param file
-     *  the file to read from
+     * @param path
+     *  the path to read from
      * @return
      *  the document
      * @throws IOException
      *  if an error occurs
      */
-    public T read(File file) throws IOException {
+    public T read(Path path) throws IOException {
         throw new UnsupportedOperationException("reading not supported");
     }
 
     /**
      * Write document to file.
-     * @param file
-     *  the file to write to
+     * @param path
+     *  the path to write to
      * @param document
      *  the document to write
      * @throws IOException
      *  if an error occurs
      */
-    public void write(File file, T document) throws IOException {
+    public void write(Path path, T document) throws IOException {
         throw new UnsupportedOperationException("writing not supported");
     }
 
