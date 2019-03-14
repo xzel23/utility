@@ -1,11 +1,6 @@
 package com.dua3.utility.options;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -162,7 +157,7 @@ public abstract class Option<T> {
     }
 
     public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue,
-            @SuppressWarnings("unchecked") Value<T>... choices) {
+            Value<T>... choices) {
         return new ChoiceOption<>(name, klass, defaultValue, Arrays.asList(choices));
     }
 
