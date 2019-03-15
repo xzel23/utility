@@ -41,10 +41,41 @@ import com.dua3.utility.options.OptionValues;
  */
 public abstract class CsvIo implements AutoCloseable {
 
+    public enum PredefinedDateFormat {
+        LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.SHORT)),
+        LOCALE_LONG("long (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.LONG)),
+        ISO_DATE("ISO 8601 (2000-12-31)", locale -> DateTimeFormatter.ISO_LOCAL_DATE);
+
+        private static DateTimeFormatter formatFromLocale(Locale locale, FormatStyle style) {
+            return DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
+        }
+
+        private static DateTimeFormatter formatFromPattern(String pattern) {
+            return DateTimeFormatter.ofPattern(pattern);
+        }
+
+        private String name;
+
+        private Function<Locale, DateTimeFormatter> factory;
+
+        private PredefinedDateFormat(String name, Function<Locale, DateTimeFormatter> factory) {
+            this.name = name;
+            this.factory = factory;
+        }
+
+        public DateTimeFormatter getFormatter(Locale locale) {
+            return factory.apply(locale);
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     public enum PredefinedDateTimeFormat {
         LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.SHORT)),
         LOCALE_LONG("long (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.LONG)),
-        ISO_DATE("ISO 8601 (2000-12-31)", locale -> DateTimeFormatter.ISO_LOCAL_DATE),
         ISO_DATE_TIME("ISO 8601 (2000-12-31T10:15:30)", locale -> DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
         private static DateTimeFormatter formatFromLocale(Locale locale, FormatStyle style) {
@@ -113,10 +144,10 @@ public abstract class CsvIo implements AutoCloseable {
         COMMON_OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset().toString(), charSetsCommon);
 
         // date format
-        OPTIONS.addOption(OPTION_DATE_FORMAT, PredefinedDateTimeFormat.class, PredefinedDateTimeFormat.LOCALE_SHORT,
-        PredefinedDateTimeFormat.values());
-        COMMON_OPTIONS.addOption(OPTION_DATE_FORMAT, PredefinedDateTimeFormat.class, PredefinedDateTimeFormat.LOCALE_SHORT,
-        PredefinedDateTimeFormat.LOCALE_LONG, PredefinedDateTimeFormat.ISO_DATE);
+        OPTIONS.addOption(OPTION_DATE_FORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT,
+        PredefinedDateFormat.values());
+        COMMON_OPTIONS.addOption(OPTION_DATE_FORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT,
+        PredefinedDateFormat.LOCALE_LONG, PredefinedDateFormat.ISO_DATE);
 
         // date/time format
         OPTIONS.addOption(OPTION_DATE_TIME_FORMAT, PredefinedDateTimeFormat.class, PredefinedDateTimeFormat.ISO_DATE_TIME);
@@ -145,8 +176,8 @@ public abstract class CsvIo implements AutoCloseable {
         return (Charset) getOptionValue(OPTION_CHARSET, options);
     }
 
-    public static PredefinedDateTimeFormat getDateFormat(OptionValues options) {
-        return (PredefinedDateTimeFormat) getOptionValue(OPTION_DATE_FORMAT, options);
+    public static PredefinedDateFormat getDateFormat(OptionValues options) {
+        return (PredefinedDateFormat) getOptionValue(OPTION_DATE_FORMAT, options);
     }
 
     public static PredefinedDateTimeFormat getDateTimeFormat(OptionValues options) {
