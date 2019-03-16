@@ -2,6 +2,10 @@ package com.dua3.utility.db;
 
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionSet;
+import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.text.TextUtil;
+
+import java.util.Objects;
 
 public class JdbcDriverInfo {
 
@@ -36,5 +40,9 @@ public class JdbcDriverInfo {
                 urlScheme,
                 link,
                 options);
+    }
+
+    public String getUrl(OptionValues values) {
+        return TextUtil.transform(urlScheme, s -> Objects.toString(values.get(options.getOption(s).orElseThrow()).get(), ""));
     }
 }

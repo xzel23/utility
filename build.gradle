@@ -22,7 +22,7 @@ subprojects {
 
 /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.utility'
-	version            = '4.0.0-BETA2'
+	version            = '4.0.0-SNAPSHOT'
 	
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3/lib/utility.git'
@@ -38,19 +38,12 @@ repositories {
     jcenter()
 }
 
-// remove module-info.java from eclipse source folder
-eclipse.classpath.file.whenMerged {
-    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
-    	item.excludes += 'module-info.java'
-    }
-}
-
-dependencies {
+  // dependencies
+  dependencies {
     // JUnit
-    def junitVersion = '5.3.1'
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-}
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${System.properties['org.junit.version']}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${System.properties['org.junit.version']}"
+  }
 
 test {
     useJUnitPlatform()
@@ -163,13 +156,6 @@ publishing {
 spotbugs.toolVersion = '3.1.12'
 spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
     
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
-    reports {
-        xml.enabled false
-        html.enabled true        
-    }
-}
-
 }
 
 // === DEFAULT TASKS === >

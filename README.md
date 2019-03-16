@@ -24,6 +24,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 4.0.0
 
+__BETA 3__
+
+- set dependency version information in gradle.properties file
+- JdbcDriverInfo: create connection URL from option values
+
 __BETA 2__
 
 - don't use decimal grouping in CSV output
