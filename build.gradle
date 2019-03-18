@@ -20,46 +20,48 @@ subprojects {
   apply plugin:  'com.dua3.gradle.jpms'
   apply plugin:  'com.jfrog.bintray'
 
-/////////////////////////////////////////////////////////////////////////////
-	group              = 'com.dua3.utility'
-	version            = "${System.properties['com.dua3.utility.version']}"
-	
-	ext.moduleName     = project.group 
-	ext.scm            = 'https://gitlab.com/com.dua3/lib/utility.git'
-	ext.repo           = 'public'
-	ext.description    = 'Java utilities'
-	
-	ext.developerId    = 'axh'
-	ext.developerName  = 'Axel Howind'
-	ext.developerEmail = 'axel@dua3.com'
-/////////////////////////////////////////////////////////////////////////////
+  ext.versionSuffix = project.hasProperty('release') ? "" : "-SNAPSHOT"
 
-repositories {
+  /////////////////////////////////////////////////////////////////////////////
+    group              = 'com.dua3.utility'
+    version            = rootProject.file('version').text.trim()+versionSuffix
+    
+    ext.moduleName     = project.group 
+    ext.scm            = 'https://gitlab.com/com.dua3/lib/utility.git'
+    ext.repo           = 'public'
+    ext.description    = 'Java utilities'
+    
+    ext.developerId    = 'axh'
+    ext.developerName  = 'Axel Howind'
+    ext.developerEmail = 'axel@dua3.com'
+  /////////////////////////////////////////////////////////////////////////////
+
+  sourceCompatibility = java_version
+  targetCompatibility = java_version
+
+  repositories {
     jcenter()
-}
+  }
 
   // dependencies
   dependencies {
     // JUnit
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${System.properties['org.junit.version']}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${System.properties['org.junit.version']}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
+    testRuntimeOnly    "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
   }
 
-test {
+  test {
     useJUnitPlatform()
 
     filter {
         exclude '**/module-info.class'
     }
-}
+  }
 
-sourceCompatibility = 11
-targetCompatibility = 11
-
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-}
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
 
 // === BINTRAY === >
 
@@ -80,12 +82,12 @@ bintray {
         licenses = ['MIT']
         vcsUrl = project.scm
 
-	    version {
-	        name = project.version
-	        desc = project.name+version
-	        released  = new Date()
-	        vcsTag = project.version
-	    }
+        version {
+            name = project.version
+            desc = project.name+version
+            released  = new Date()
+            vcsTag = project.version
+        }
     }
 }
 
@@ -102,7 +104,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
-	archives jar
+    archives jar
     archives sourcesJar
     archives javadocJar
 }
