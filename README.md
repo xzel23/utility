@@ -24,6 +24,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 4.0.0
 
+__SNAPSHOT__
+
+- Change default date format to use a 4-digit year.
+
 __BETA 4__
 
 - changed the build system to make life easier for me as developer :) - version information is stored in a file named `version` in the project root. This makes it possible to consistently update dependencies information automatically using a script.
