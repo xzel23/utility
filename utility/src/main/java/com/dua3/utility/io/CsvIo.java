@@ -17,15 +17,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,23 +38,47 @@ import com.dua3.utility.options.OptionValues;
 public abstract class CsvIo implements AutoCloseable {
 
     public enum PredefinedDateFormat {
-        LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.SHORT)),
+        LOCALE_DEFAULT("locale dependent", locale -> formatFromLocale(locale)),
+        LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.MEDIUM)),
         LOCALE_LONG("long (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.LONG)),
         ISO_DATE("ISO 8601 (2000-12-31)", locale -> DateTimeFormatter.ISO_LOCAL_DATE);
 
+        /**
+         * Create a date locale dependent date format.
+         * @param locale
+         *  the locale
+         * @param style
+         *  the {@link FormatStyle} to use
+         * @return
+         *  the DateDormatter
+         */
         private static DateTimeFormatter formatFromLocale(Locale locale, FormatStyle style) {
             return DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
         }
 
-        private static DateTimeFormatter formatFromPattern(String pattern) {
-            return DateTimeFormatter.ofPattern(pattern);
+        /**
+         * Create a date locale dependent short date format with a four-digit year.
+         * @param locale
+         *  the locale
+         * @return
+         *  the DateDormatter
+         */
+        private static DateTimeFormatter formatFromLocale(Locale locale) {
+            String formatPattern =
+                    DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+                            FormatStyle.SHORT,
+                            null,
+                            IsoChronology.INSTANCE,
+                            locale);
+            formatPattern = formatPattern.replaceAll("\\byy\\b", "yyyy");
+            return DateTimeFormatter.ofPattern(formatPattern, locale);
         }
 
         private String name;
 
         private Function<Locale, DateTimeFormatter> factory;
 
-        private PredefinedDateFormat(String name, Function<Locale, DateTimeFormatter> factory) {
+        PredefinedDateFormat(String name, Function<Locale, DateTimeFormatter> factory) {
             this.name = name;
             this.factory = factory;
         }
@@ -90,7 +110,7 @@ public abstract class CsvIo implements AutoCloseable {
 
         private Function<Locale, DateTimeFormatter> factory;
 
-        private PredefinedDateTimeFormat(String name, Function<Locale, DateTimeFormatter> factory) {
+        PredefinedDateTimeFormat(String name, Function<Locale, DateTimeFormatter> factory) {
             this.name = name;
             this.factory = factory;
         }
@@ -120,14 +140,14 @@ public abstract class CsvIo implements AutoCloseable {
         List<Value<Locale>> localesAll = Arrays.stream(Locale.getAvailableLocales())
                 .filter(locale -> !Locale.ROOT.equals(locale)) // filter out root - we will add it again later with a
                                                                // different name
-                .sorted((lc1, lc2) -> lc1.toString().compareTo(lc2.toString())).distinct().map(Option::value)
+                .sorted(Comparator.comparing(Locale::toString)).distinct().map(Option::value)
                 .collect(Collectors.toList());
         OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesAll);
 
         List<Value<Locale>> localesCommon = Set
                 .of(Locale.ROOT, Locale.getDefault(), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN,
                         Locale.CHINESE, Locale.JAPANESE, Locale.KOREAN)
-                .stream().sorted((lc1, lc2) -> lc1.toString().compareTo(lc2.toString())).distinct().map(Option::value)
+                .stream().sorted(Comparator.comparing(Locale::toString)).distinct().map(Option::value)
                 .collect(Collectors.toList());
         COMMON_OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesCommon);
 
@@ -255,7 +275,7 @@ public abstract class CsvIo implements AutoCloseable {
 
     protected boolean isQuoteNeeded(String text) {
         // quote if separator or delimiter are present
-        if (text.indexOf(separator) >= 0 || text.indexOf(delimiter) >= 0) {
+        if (text.contains(separator) || text.contains(delimiter)) {
             return true;
         }
 
