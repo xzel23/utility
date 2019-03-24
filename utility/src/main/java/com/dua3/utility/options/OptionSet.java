@@ -184,6 +184,18 @@ public class OptionSet implements Iterable<Option<?>> {
     }
 
     /**
+     * Add option to set.
+     *
+     * @param              <T>
+     *                     the parameter type
+     * @param option
+     *                     the option
+     */
+    public final <T> void addOption(Option<T> option) {
+        options.add(option);
+    }
+
+    /**
      * Get options as list.
      *
      * @return
