@@ -1,12 +1,8 @@
 package com.dua3.utility.options;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Option.Value;
 
 /**

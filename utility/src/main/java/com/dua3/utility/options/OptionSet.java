@@ -1,17 +1,10 @@
 package com.dua3.utility.options;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Formatter;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Option.Value;
 
 /**
@@ -55,6 +48,18 @@ public class OptionSet implements Iterable<Option<?>> {
      */
     public OptionSet(Iterable<Option<?>> options) {
         options.forEach(this.options::add);
+    }
+
+    /**
+     * Get an option's value by name.
+     * @param optionName
+     *  the option's name
+     * @return
+     *  the value
+     */
+    public <T> Value<T> getValue(String optionName, OptionValues values) {
+        Optional<Option<?>> option = getOption(optionName);
+        return (Value<T>) values.get(option);
     }
 
     /**
