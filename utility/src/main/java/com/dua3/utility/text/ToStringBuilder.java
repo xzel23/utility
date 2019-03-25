@@ -15,7 +15,7 @@ public class ToStringBuilder {
 
     public ToStringBuilder add(String name, Object value) {
         sb.append(sep);
-        sb.append(name).append(":").append(String.valueOf(value));
+        sb.append(name).append(":").append(value);
         sep = ", ";
         return this;
     }

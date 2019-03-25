@@ -5,20 +5,19 @@
 
 package com.dua3.utility.test.lang;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.dua3.utility.lang.CryptUtil;
+import com.dua3.utility.text.TextUtil;
+import org.junit.jupiter.api.Test;
 
 import java.security.GeneralSecurityException;
 
-import org.junit.jupiter.api.Test;
-
-import com.dua3.utility.lang.CryptUtil;
-import com.dua3.utility.text.TextUtil;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CryptUtilTest {
 
     private static final int[] KEY_LENGTHS = { 128, 192, 256 };
 
-    private String MESSAGES[] = {
+    private String[] MESSAGES = {
             "",
             "secret message",
             System.getProperties().toString()

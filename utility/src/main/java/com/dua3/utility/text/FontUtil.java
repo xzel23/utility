@@ -1,7 +1,7 @@
 package com.dua3.utility.text;
 
 public interface FontUtil<F> {
-    public static class Bounds {
+    class Bounds {
         public final double width;
         public final double height;
 
