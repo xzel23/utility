@@ -35,9 +35,7 @@ public class OptionSet implements Iterable<Option<?>> {
      *  the options to include in this set
      */
     public OptionSet(Option<?>... options) {
-        for (Option<?> option : options) {
-            this.options.add(option);
-        }
+        Collections.addAll(this.options, options);
     }
 
     /**
@@ -48,18 +46,6 @@ public class OptionSet implements Iterable<Option<?>> {
      */
     public OptionSet(Iterable<Option<?>> options) {
         options.forEach(this.options::add);
-    }
-
-    /**
-     * Get an option's value by name.
-     * @param optionName
-     *  the option's name
-     * @return
-     *  the value
-     */
-    public <T> Value<T> getValue(String optionName, OptionValues values) {
-        Optional<Option<?>> option = getOption(optionName);
-        return (Value<T>) values.get(option);
     }
 
     /**
@@ -240,18 +226,19 @@ public class OptionSet implements Iterable<Option<?>> {
      * @return
      *                   the option's value, or {@code null} if no value is present
      */
-    // TODO Optional?
-    public Object getOptionValue(String name, OptionValues overrides) {
+    public <T> T getOptionValue(String name, OptionValues overrides) {
         Optional<Option<?>> option = getOption(name);
 
         // the requested option does not exist
-        if (!option.isPresent()) {
+        if (option.isEmpty()) {
             return null;
         }
 
         Option<?> op = option.get();
         Supplier<?> value = overrides.get(op);
-        return value.get();
+        Object obj = value.get();
+
+        return (T) obj;
     }
 
     @Override

@@ -111,6 +111,25 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
     }
 
     /**
+     * Get an option's value.
+     *
+     * @param key
+     *  the key (option)
+     * @return
+     *  the value
+     * @deprecated
+     *  Use {@link #get(Option)}.
+     */
+    @Override
+    @Deprecated
+    public Value<?> get(Object key) {
+        if (key instanceof Option) {
+            return get((Option<?>) key);
+        }
+        return null;
+    }
+
+    /**
      * Set an option's value.
      * @param option
      *  the option
