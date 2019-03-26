@@ -41,29 +41,23 @@ import java.util.logging.Logger;
  * indices. Code such as this:
  *
  * <pre>
- * {
- *     &#64;code
  *     Connection con = getConnection();
  *     String query = "select * from my_table where name=? or address=?";
  *     PreparedStatement p = con.prepareStatement(query);
  *     p.setString(1, "bob");
  *     p.setString(2, "123 terrace ct");
  *     ResultSet rs = p.executeQuery();
- * }
  * </pre>
  *
  * can be replaced with:
  *
  * <pre>
- * {
- *     &#64;code
  *     Connection con = getConnection();
  *     String query = "select * from my_table where name=:name or address=:address";
  *     NamedParameterStatement p = new NamedParameterStatement(con, query);
  *     p.setString("name", "bob");
  *     p.setString("address", "123 terrace ct");
  *     ResultSet rs = p.executeQuery();
- * }
  * </pre>
  *
  * @author adam_crume
@@ -75,6 +69,9 @@ public class NamedParameterStatement implements AutoCloseable {
 
     /** The statement this object is wrapping. */
     private final PreparedStatement statement;
+
+    /** flag: has meta data been added to parameter info? */
+    private boolean hasMeta = false;
 
     public static class ParameterInfo {
         final String name;
@@ -148,14 +145,31 @@ public class NamedParameterStatement implements AutoCloseable {
         indexMap = new HashMap<>();
         String parsedQuery = parse(query, indexMap);
         statement = connection.prepareStatement(parsedQuery);
-        addParameterTypes();
+        addParameterMetInfo();
     }
 
-    private void addParameterTypes() throws SQLException {
+    /**
+     * Query parameter meta data.
+     * This is done only once and the result is cached.
+     * <strong>Warning:</strong> Not all databases support querying parameter meta data, and
+     * some that do have serious bugs (like returning wrong data types), so check your database
+     * manufacturer's documentation and test that you get the correct results when using this feature.
+     * @throws UnsupportedOperationException
+     *  if the database (driver) does not support querying parameter meta data
+     * @throws IllegalStateException
+     *  if the same variable is used in different places that require different datatypes
+     * @throws SQLException
+     *  if something else goes wrong
+     */
+    public void addParameterMetInfo() throws SQLException {
+        if (hasMeta) {
+            return;
+        }
+
+        ParameterMetaData meta = statement.getParameterMetaData();
         for (var param : indexMap.values()) {
             param.type = null;
             for (int index : param.indexes) {
-                ParameterMetaData meta = statement.getParameterMetaData();
                 JDBCType type = getParameterType(meta, index);
                 if (param.type != null && type != param.type) {
                     String msg = String.format("parameter type mismatch for parameter '%s': %s, %s", param.name,
@@ -166,6 +180,8 @@ public class NamedParameterStatement implements AutoCloseable {
                 param.type = type;
             }
         }
+
+        hasMeta = true;
     }
 
     private static boolean showUnknownParameterTypeAsWarning = true;
