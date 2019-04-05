@@ -1,5 +1,7 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.data.Pair;
+
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -204,11 +206,16 @@ public abstract class Option<T> {
     }
 
     private static final String PATTERN_VAR_START = "\\$\\{";
-    private static final String PATTERN_VAR_NAME = "\\p{Alpha}\\p{Alnum}*";
+    private static final String PATTERN_VAR_NAME = "(?<name>\\p{Alpha}(\\p{Alnum}|_)*)";
+    private static final String PATTERN_VAR_ARG_1 = "(:(?<arg1>\\p{Alpha}(\\p{Alnum}|_)*=(?<value1>[^,}]*)))";
+    private static final String PATTERN_VAR_ARG_N = "(,(?<argn>\\p{Alpha}(\\p{Alnum}|_)*=(?<valuen>[^,}]*)))*";
     private static final String PATTERN_VAR_END = "\\}";
 
     private static final Pattern PATTERN_VAR = Pattern
-            .compile(PATTERN_VAR_START + "(" + PATTERN_VAR_NAME + ")" + PATTERN_VAR_END);
+            .compile(PATTERN_VAR_START
+                    + PATTERN_VAR_NAME
+                    + "(" + PATTERN_VAR_ARG_1 + PATTERN_VAR_ARG_N +")?"
+                    + PATTERN_VAR_END);
 
     /**
      * Parse a configuration schema string.
@@ -218,15 +225,24 @@ public abstract class Option<T> {
      * @param  s
      *           the scheme to parse
      * @return
-     *           list of options
+     *          {@link Pair} consisting of
+     *          <ul>
+     *              <li>list of options
+     *              <li>scheme with var arguments removed
+     *          </ul>
      */
-    public static List<Option<?>> parseScheme(String s) {
+    public static Pair<String,List<Option<?>>> parseScheme(String s) {
+        // extract options
         List<Option<?>> list = new ArrayList<>();
         Matcher matcher = PATTERN_VAR.matcher(s);
         while (matcher.find()) {
             String var = matcher.group(1);
             list.add(Option.stringOption(var));
         }
-        return list;
+
+        // remove arguments from scheme
+        String r = PATTERN_VAR.matcher(s).replaceAll("\\$\\{${name}\\}");
+
+        return Pair.of(r, list);
     }
 }

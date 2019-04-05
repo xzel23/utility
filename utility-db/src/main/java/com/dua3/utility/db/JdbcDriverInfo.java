@@ -1,10 +1,12 @@
 package com.dua3.utility.db;
 
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.text.TextUtil;
 
+import java.util.List;
 import java.util.Objects;
 
 public class JdbcDriverInfo {
@@ -20,10 +22,11 @@ public class JdbcDriverInfo {
         this.name = name;
         this.className = className;
         this.urlPrefix = urlPrefix;
-        this.urlScheme = urlScheme;
         this.link = link;
 
-        this.options = new OptionSet(Option.parseScheme(urlScheme));
+        Pair<String, List<Option<?>>> parsed = Option.parseScheme(urlScheme);
+        this.urlScheme = parsed.first;
+        this.options = new OptionSet(parsed.second);
     }
 
     @Override
