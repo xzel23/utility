@@ -219,6 +219,8 @@ public class OptionSet implements Iterable<Option<?>> {
      * If {@code overrides} contains a value for the option, this value is used.
      * Otherwise, the option's default value is used if present.
      *
+     * @param <T>
+     *                   the value type
      * @param  name
      *                   the option name
      * @param  overrides
