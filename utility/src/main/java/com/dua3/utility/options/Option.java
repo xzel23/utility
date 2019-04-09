@@ -1,7 +1,7 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.OpenMode;
 
 import java.io.File;
 import java.util.*;
@@ -130,9 +130,19 @@ public abstract class Option<T> {
 
     public static class FileOption extends Option<File> {
         private final List<String> extensions;
-        FileOption(String name, Value<File> defaultValue, String... extensions) {
+        private final OpenMode mode;
+        FileOption(String name, Value<File> defaultValue, OpenMode mode, String... extensions) {
             super(name, File.class, defaultValue);
             this.extensions = List.of(extensions);
+            this.mode=mode;
+        }
+
+        public List<String> getExtensions() {
+            return Collections.unmodifiableList(extensions);
+        }
+
+        public OpenMode getMode() {
+            return mode;
         }
     }
 
@@ -199,19 +209,19 @@ public abstract class Option<T> {
     }
 
     public static FileOption fileOption(String name) {
-        return new FileOption(name, () -> null);
+        return new FileOption(name, () -> null, OpenMode.READ);
     }
 
     public static FileOption fileOption(String name, File defaultValue) {
-        return new FileOption(name, () -> defaultValue);
+        return new FileOption(name, () -> defaultValue, OpenMode.READ);
     }
 
     public static FileOption fileOption(String name, Value<File> defaultValue) {
-        return new FileOption(name, defaultValue);
+        return new FileOption(name, defaultValue, OpenMode.READ);
     }
 
     public static FileOption fileOption(String name, Value<File> defaultValue, String... extensions) {
-        return new FileOption(name, defaultValue, extensions);
+        return new FileOption(name, defaultValue, OpenMode.READ, extensions);
     }
 
     public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue,
