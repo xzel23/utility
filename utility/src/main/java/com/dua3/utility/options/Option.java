@@ -21,6 +21,8 @@ public abstract class Option<T> {
 
     /** Logger instance. */
     private static final Logger LOG = Logger.getLogger(Option.class.getName());
+    /** Identifier String for the option type. */
+    public static final String OPTION_TYPE = "type";
     /** Type identifier String for file options. */
     public static final String OPTION_TYPE_FILE = "file";
     /** Type identifier String for string options. */
@@ -152,6 +154,21 @@ public abstract class Option<T> {
         public OpenMode getMode() {
             return mode;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+
+            FileOption other = (FileOption) obj;
+            return other.mode.equals(mode) && other.extensions.equals(extensions);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(super.hashCode(), mode, extensions.size());
+        }
     }
 
     public static class ChoiceOption<T> extends Option<T> {
@@ -177,6 +194,21 @@ public abstract class Option<T> {
 
         public List<Value<T>> getChoices() {
             return Collections.unmodifiableList(choices);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) {
+                return false;
+            }
+
+            ChoiceOption other = (ChoiceOption) obj;
+            return other.choices.equals(choices);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(super.hashCode(), choices.size());
         }
     }
 
@@ -319,42 +351,9 @@ public abstract class Option<T> {
         Matcher matcher = PATTERN_VAR.matcher(s);
         while (matcher.find()) {
             String name = matcher.group("name");
-
-            Map<String,String> arguments = new HashMap<>();
-            String arg = matcher.group("arg1");
-            if (arg!=null) {
-                String val = matcher.group("value1");
-                addArgument(arguments, arg, val);
-                String remainingArgs = matcher.group("remainingargs");
-                if (!remainingArgs.isEmpty()) {
-                    Matcher matcherArgs = PATTERN_ARGN.matcher(remainingArgs);
-                    while (matcherArgs.find()) {
-                        arg = matcherArgs.group("argn");
-                        val = matcherArgs.group("valuen");
-                        addArgument(arguments, arg, val);
-                    }
-                }
-            }
-
-            String type = arguments.getOrDefault("type", "string");
-            String dflt = arguments.get("default");
-
-            switch (type) {
-                case OPTION_TYPE_STRING:
-                    list.add(Option.stringOption(name, dflt));
-                    break;
-                case OPTION_TYPE_FILE:
-                    list.add(Option.fileOption(name, () -> (dflt == null ? (File) null : new File(dflt)), arguments.get("extension")));
-                    break;
-                case OPTION_TYPE_INTEGER:
-                    list.add(Option.intOption(name, dflt==null?0:Integer.parseInt(dflt)));
-                    break;
-                case OPTION_TYPE_DOUBLE:
-                    list.add(Option.doubleOption(name, dflt==null?0.0:Double.parseDouble(dflt)));
-                    break;
-                default:
-                    throw new IllegalStateException("unsupported type: "+type);
-            }
+            Map<String, String> arguments = extractArgs(matcher);
+            Option<?> option = createOption(name, arguments);
+            list.add(option);
         }
 
         // remove arguments from scheme
@@ -363,10 +362,68 @@ public abstract class Option<T> {
         return Pair.of(r, list);
     }
 
+    /**
+     * Create Option instance (used by {@link #parseScheme(String)}).
+     * @param name
+     *      the option's name
+     * @param arguments
+     *      the option's arguments
+     * @return
+     *      new opzion instance
+     */
+    private static Option<?> createOption(String name, Map<String, String> arguments) {
+        String type = arguments.getOrDefault(OPTION_TYPE, OPTION_TYPE_STRING);
+        String dflt = arguments.get("default");
+        Option<?> option;
+        switch (type) {
+            case OPTION_TYPE_STRING:
+                option = Option.stringOption(name, dflt);
+                break;
+            case OPTION_TYPE_FILE:
+                option = Option.fileOption(name, () -> (dflt == null ? null : new File(dflt)), arguments.get("extension"));
+                break;
+            case OPTION_TYPE_INTEGER:
+                option = Option.intOption(name, dflt==null?0:Integer.parseInt(dflt));
+                break;
+            case OPTION_TYPE_DOUBLE:
+                option = Option.doubleOption(name, dflt==null?0.0:Double.parseDouble(dflt));
+                break;
+            default:
+                throw new IllegalStateException("unsupported type: "+type);
+        }
+        return option;
+    }
+
+    /**
+     * Extract arguments (used by {@link #parseScheme(String)}).
+     * @param matcher
+     *      the current matcher instance that matches a single option declaration
+     * @return
+     *      map of arguments for the option matched by matcher
+     */
+    private static Map<String, String> extractArgs(Matcher matcher) {
+        Map<String,String> arguments = new HashMap<>();
+        String arg = matcher.group("arg1");
+        if (arg!=null) {
+            String val = matcher.group("value1");
+            addArgument(arguments, arg, val);
+            String remainingArgs = matcher.group("remainingargs");
+            if (!remainingArgs.isEmpty()) {
+                Matcher matcherArgs = PATTERN_ARGN.matcher(remainingArgs);
+                while (matcherArgs.find()) {
+                    arg = matcherArgs.group("argn");
+                    val = matcherArgs.group("valuen");
+                    addArgument(arguments, arg, val);
+                }
+            }
+        }
+        return arguments;
+    }
+
     private static void addArgument(Map<String, String> arguments, String arg, String val) {
         var old = arguments.put(arg, val);
         if (old!=null) {
-            LOG.log(Level.WARNING, String.format("while parsing option string: multiple values for argument '%s'", arg));
+            LOG.log(Level.WARNING, () -> String.format("while parsing option string: multiple values for argument '%s'", arg));
         }
     }
 }

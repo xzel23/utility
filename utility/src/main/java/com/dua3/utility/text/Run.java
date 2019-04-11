@@ -43,7 +43,7 @@ public class Run
 
     @Override
     public char charAt(int index) {
-        assert index >= 0 && index < length;
+        LangUtil.checkIndex(index, length);
         return text.charAt(start + index);
     }
 

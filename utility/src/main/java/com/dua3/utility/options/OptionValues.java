@@ -2,7 +2,6 @@ package com.dua3.utility.options;
 
 import java.util.*;
 
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Option.Value;
 
 /**
@@ -68,9 +67,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
     @SuppressWarnings("unchecked")
 	private <T> void fireChange_(Option<T> v, Value<T> o, Value<T> n) {
     	if (!Objects.equals(o, n)) {
-	    	changeListeners.forEach(listener -> {
-				((ValueChangeListener<T>)listener).changed(v, o, n);
-	    	});
+	    	changeListeners.forEach(listener -> ((ValueChangeListener<T>)listener).changed(v, o, n));
     	}
     }
     
