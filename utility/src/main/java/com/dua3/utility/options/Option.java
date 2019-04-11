@@ -21,6 +21,14 @@ public abstract class Option<T> {
 
     /** Logger instance. */
     private static final Logger LOG = Logger.getLogger(Option.class.getName());
+    /** Type identifier String for file options. */
+    public static final String OPTION_TYPE_FILE = "file";
+    /** Type identifier String for string options. */
+    public static final String OPTION_TYPE_STRING = "string";
+    /** Type identifier String for integer options. */
+    public static final String OPTION_TYPE_INTEGER = "integer";
+    /** Type identifier String for double options. */
+    public static final String OPTION_TYPE_DOUBLE = "double";
 
     public interface Value<T> extends Supplier<T>, Comparable<Value<T>> {
         @Override
@@ -332,14 +340,17 @@ public abstract class Option<T> {
             String dflt = arguments.get("default");
 
             switch (type) {
-                case "file":
-                    list.add(Option.fileOption(name, () -> (dflt == null ? (File) null : new File(dflt)), arguments.get("extension")));
-                    break;
-                case "string":
+                case OPTION_TYPE_STRING:
                     list.add(Option.stringOption(name, dflt));
                     break;
-                case "integer":
+                case OPTION_TYPE_FILE:
+                    list.add(Option.fileOption(name, () -> (dflt == null ? (File) null : new File(dflt)), arguments.get("extension")));
+                    break;
+                case OPTION_TYPE_INTEGER:
                     list.add(Option.intOption(name, dflt==null?0:Integer.parseInt(dflt)));
+                    break;
+                case OPTION_TYPE_DOUBLE:
+                    list.add(Option.doubleOption(name, dflt==null?0.0:Double.parseDouble(dflt)));
                     break;
                 default:
                     throw new IllegalStateException("unsupported type: "+type);
