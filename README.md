@@ -27,6 +27,7 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 __SNAPSHOT__
 
 - Change default date format to use a 4-digit year.
+- utility-json.
 
 __BETA 4__
 
