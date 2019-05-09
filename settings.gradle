@@ -1,2 +1,2 @@
 rootProject.name = 'utility'
-include 'utility', 'utility-db', 'utility-swing'
+include 'utility', 'utility-db', 'utility-swing', 'utility-json'

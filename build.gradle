@@ -41,6 +41,7 @@ subprojects {
 
   repositories {
     jcenter()
+    maven { url "https://dl.bintray.com/dua3/oss" }
   }
 
   // dependencies

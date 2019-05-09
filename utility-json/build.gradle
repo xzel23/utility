@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':utility')
+    api 'com.dua3.oss:json-java11:20180813-java11'
+}
