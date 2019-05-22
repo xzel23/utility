@@ -64,6 +64,10 @@ subprojects {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
 
+    javadoc {
+        options.encoding = 'UTF-8'
+    }
+
 // === BINTRAY === >
 
 bintray {
