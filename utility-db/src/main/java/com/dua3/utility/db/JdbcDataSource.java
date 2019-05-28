@@ -5,6 +5,7 @@
 
 package com.dua3.utility.db;
 
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -13,8 +14,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Logger;
-
-import javax.sql.DataSource;
 
 public class JdbcDataSource implements DataSource {
 
@@ -94,15 +93,39 @@ public class JdbcDataSource implements DataSource {
         return loginTimeout;
     }
 
+    /**
+     * Set database URL.
+     * @param url the URL
+     */
     public void setUrl(String url) {
-        this.url = url;
+        this.url = Objects.requireNonNull(url);
     }
 
+    /**
+     * Set database user.
+     * @param user
+     *  the database user or `null` to unset
+     */
     public void setUser(String user) {
-        properties.put(USER, user);
+        if (user==null) {
+            // Properties class does not support storing null values!
+            properties.remove(USER);
+        } else {
+            properties.put(USER, user);
+        }
     }
 
+    /**
+     * Set database password.
+     * @param password
+     *  the database password or `null` to unset
+     */
     public void setPassword(String password) {
-        properties.put(PASSWORD, password);
+        if (password==null) {
+            // Properties class does not support storing null values!
+            properties.remove(PASSWORD);
+        } else {
+            properties.put(PASSWORD, password);
+        }
     }
 }

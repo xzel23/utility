@@ -22,9 +22,13 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
-### Version 4.0.0
+### Version 4.0.1
 
-__SNAPSHOT__
+__TO BE RELEASED__
+
+- `JdbcDataSource.setUser()` and `JdbcDataSource.setPassword()` suppoert `null` argument to unset value.
+
+### Version 4.0.0
 
 - Change default date format to use a 4-digit year.
 - utility-json.
