@@ -24,8 +24,6 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 4.0.1
 
-__TO BE RELEASED__
-
 - `JdbcDataSource.setUser()` and `JdbcDataSource.setPassword()` suppoert `null` argument to unset value.
 
 ### Version 4.0.0
