@@ -20,11 +20,9 @@ subprojects {
   apply plugin:  'com.dua3.gradle.jpms'
   apply plugin:  'com.jfrog.bintray'
 
-  ext.versionSuffix = project.hasProperty('release') ? "" : "-SNAPSHOT"
-
   /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.utility'
-    version            = rootProject.file('version').text.trim()+versionSuffix
+    version            = rootProject.file('version').text.trim()
     
     ext.moduleName     = project.group 
     ext.scm            = 'https://gitlab.com/com.dua3/lib/utility.git'

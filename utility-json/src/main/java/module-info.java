@@ -7,4 +7,5 @@ module com.dua3.utility.json {
     exports com.dua3.utility.json;
 
     requires org.json;
+    requires com.dua3.utility;
 }
