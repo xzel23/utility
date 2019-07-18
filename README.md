@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.0.2
+
+- new class `JsonUtil`:  loading JSON from URL/path
+
 ### Version 4.0.1
 
 - `JdbcDataSource.setUser()` and `JdbcDataSource.setPassword()` suppoert `null` argument to unset value.
