@@ -24,6 +24,8 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 4.0.3
 
+- remove version file
+
 ### Version 4.0.2
 
 - new class `JsonUtil`:  loading JSON from URL/path

@@ -22,7 +22,7 @@ subprojects {
 
   /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.utility'
-    version            = rootProject.file('version').text.trim()
+    version            = '4.0.3-SNAPSHOT'
     
     ext.moduleName     = project.group 
     ext.scm            = 'https://gitlab.com/com.dua3/lib/utility.git'
