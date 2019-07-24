@@ -10,15 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -63,6 +61,17 @@ public class IOUtil {
      */
     public static String getExtension(URL url) {
         return getExtension(url.getFile());
+    }
+
+    /**
+     * Get file extension.
+     *
+     * @param  uri
+     *             the URI
+     * @return     the extension
+     */
+    public static String getExtension(URI uri) {
+        return getExtension(Paths.get(uri));
     }
 
     /**
