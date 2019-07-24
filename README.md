@@ -25,6 +25,8 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 ### Version 4.0.3
 
 - remove version file
+- update spotbugs plugin
+- cleanup build file
 
 ### Version 4.0.2
 

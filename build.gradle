@@ -4,58 +4,58 @@
 // https://opensource.org/licenses/MIT
 
 plugins {
-  id 'com.dua3.gradle.jpms' version '0.8.3' apply false
-  id 'com.github.spotbugs'  version '1.6.10' apply false
-  id 'com.jfrog.bintray'    version '1.8.4' apply false
+    id 'com.dua3.gradle.jpms' version '0.8.3' apply false
+    id 'com.github.spotbugs' version '2.0.0' apply false
+    id 'com.jfrog.bintray' version '1.8.4' apply false
 }
 
 subprojects {
 
-  apply plugin:  'java'
-  apply plugin:  'java-library'
-  apply plugin:  'maven-publish'
-  apply plugin:  'eclipse'
-  apply plugin:  'idea'
-  apply plugin:  'com.github.spotbugs'
-  apply plugin:  'com.dua3.gradle.jpms'
-  apply plugin:  'com.jfrog.bintray'
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'com.github.spotbugs'
+    apply plugin: 'com.dua3.gradle.jpms'
+    apply plugin: 'com.jfrog.bintray'
 
-  /////////////////////////////////////////////////////////////////////////////
-    group              = 'com.dua3.utility'
-    version            = '4.0.3-SNAPSHOT'
-    
-    ext.moduleName     = project.group 
-    ext.scm            = 'https://gitlab.com/com.dua3/lib/utility.git'
-    ext.repo           = 'public'
-    ext.description    = 'Java utilities'
-    
-    ext.developerId    = 'axh'
-    ext.developerName  = 'Axel Howind'
+    /////////////////////////////////////////////////////////////////////////////
+    group = 'com.dua3.utility'
+    version = '4.0.3-SNAPSHOT'
+
+    ext.moduleName = project.group
+    ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
+    ext.repo = 'public'
+    ext.description = 'Java utilities'
+
+    ext.developerId = 'axh'
+    ext.developerName = 'Axel Howind'
     ext.developerEmail = 'axel@dua3.com'
-  /////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////
 
-  sourceCompatibility = java_version
-  targetCompatibility = java_version
+    sourceCompatibility = java_version
+    targetCompatibility = java_version
 
-  repositories {
-    jcenter()
-    maven { url "https://dl.bintray.com/dua3/oss" }
-  }
-
-  // dependencies
-  dependencies {
-    // JUnit
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
-    testRuntimeOnly    "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
-  }
-
-  test {
-    useJUnitPlatform()
-
-    filter {
-        exclude '**/module-info.class'
+    repositories {
+        jcenter()
+        maven { url "https://dl.bintray.com/dua3/oss" }
     }
-  }
+
+    // dependencies
+    dependencies {
+        // JUnit
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+    }
+
+    test {
+        useJUnitPlatform()
+
+        filter {
+            exclude '**/module-info.class'
+        }
+    }
 
     compileJava {
         options.encoding = 'UTF-8'
@@ -68,99 +68,105 @@ subprojects {
 
 // === BINTRAY === >
 
-bintray {
-    user = findProperty('BINTRAY_USER') ?: 'NONE'
-    key = findProperty('BINTRAY_KEY') ?: 'NONE'
+    bintray {
+        user = findProperty('BINTRAY_USER') ?: 'NONE'
+        key = findProperty('BINTRAY_KEY') ?: 'NONE'
 
-    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-    publish = true //[Default: false] Whether version should be auto published after an upload    
-    override = true //[Default: false] Whether to override version artifacts already published    
+        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+        publish = true //[Default: false] Whether version should be auto published after an upload
+        override = true //[Default: false] Whether to override version artifacts already published
 
-    publications = ['projectPublication']
+        publications = ['projectPublication']
 
-    pkg {
-        repo = project.repo
-        name = project.group
-        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
-        licenses = ['MIT']
-        vcsUrl = project.scm
+        pkg {
+            repo = project.repo
+            name = project.group
+            userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
+            licenses = ['MIT']
+            vcsUrl = project.scm
 
-        version {
-            name = project.version
-            desc = project.name+version
-            released  = new Date()
-            vcsTag = project.version
+            version {
+                name = project.version
+                desc = project.name + version
+                released = new Date()
+                vcsTag = project.version
+            }
         }
     }
-}
 
 // === ARTIFACTS === >
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
 
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+    }
 
 // === MAVEN publication === >
 
 // Create the pom configuration:
-def pomConfig = {
-    licenses {
-        license {
-            name "MIT"
-            url "https://opensource.org/licenses/MIT"
+    def pomConfig = {
+        licenses {
+            license {
+                name "MIT"
+                url "https://opensource.org/licenses/MIT"
+            }
+        }
+        developers {
+            developer {
+                id project.developerId
+                name project.developerName
+                email project.developerEmail
+            }
+        }
+
+        scm {
+            url project.scm
         }
     }
-    developers {
-        developer {
-            id    project.developerId
-            name  project.developerName
-            email project.developerEmail
-        }
-    }
-    
-    scm {
-       url project.scm
-    }
-}
 
 // Create the publication with the pom configuration:
-publishing {
-    publications {
-        projectPublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            groupId project.group
-            artifactId project.name
-            version version
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', project.description)
-                root.appendNode('name', project.group)
-                root.appendNode('url', project.scm)
-                root.children().last() + pomConfig
+    publishing {
+        publications {
+            projectPublication(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+                groupId project.group
+                artifactId project.name
+                version version
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', project.description)
+                    root.appendNode('name', project.group)
+                    root.appendNode('url', project.scm)
+                    root.children().last() + pomConfig
+                }
             }
         }
     }
-}
 
 // === SPOTBUGS === >
 
-spotbugs.toolVersion = '3.1.12'
-spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
-    
+    spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
+
+    tasks.withType(com.github.spotbugs.SpotBugsTask) {
+        reports {
+            xml.enabled false
+            html.enabled true
+        }
+    }
+
 }
 
 // === DEFAULT TASKS === >
