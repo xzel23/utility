@@ -14,7 +14,6 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-    apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.dua3.gradle.jpms'
@@ -33,6 +32,11 @@ subprojects {
     ext.developerName = 'Axel Howind'
     ext.developerEmail = 'axel@dua3.com'
     /////////////////////////////////////////////////////////////////////////////
+
+    ext {
+        java_version = '11'
+        junit_version = '5.3.1'
+    }
 
     sourceCompatibility = java_version
     targetCompatibility = java_version
