@@ -27,6 +27,7 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 - remove version file
 - update spotbugs plugin
 - cleanup build file
+- IOUtil.getFileExtension(URI)
 
 ### Version 4.0.2
 
