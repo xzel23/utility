@@ -10,7 +10,7 @@ import java.util.Objects;
 import com.dua3.utility.lang.LangUtil;
 
 /**
- * A sequence of characters that share the same proerties.
+ * A sequence of characters that share the same properties.
  */
 public class Run
         implements CharSequence {
