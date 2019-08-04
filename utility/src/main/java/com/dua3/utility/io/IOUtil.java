@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -153,14 +154,71 @@ public class IOUtil {
      *
      * @param  path                  the path
      * @return                       the URL
-     * @throws IllegalStateException if conversion fails
+     * @throws IllegalArgumentException if conversion fails
      */
     public static URL toURL(Path path) {
+        return toURL(toURI(path));
+    }
+
+    /**
+     * Get URI for path.
+     *
+     * @param  path                  the path
+     * @return                       the URI
+     */
+    public static URI toURI(Path path) {
+        return path.toUri();
+    }
+
+    /**
+     * Get URL for URI.
+     *
+     * @param  uri                   the URI
+     * @return                       the URL
+     * @throws IllegalArgumentException if conversion fails
+     */
+    public static URL toURL(URI uri) {
         try {
-            return path.toUri().toURL();
+            return uri.toURL();
         } catch (MalformedURLException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalArgumentException(e);
         }
+    }
+
+    /**
+     * Get Path for URI.
+     *
+     * @param  uri                   the URI
+     * @return                       the Path
+     */
+    public static Path toPath(URI uri) {
+        return Paths.get(uri);
+    }
+
+    /**
+     * Get URI for URL.
+     *
+     * @param  url                   the URL
+     * @return                       the URI
+     * @throws IllegalArgumentException if conversion fails
+     */
+    public static URI toURI(URL url) {
+        try {
+            return url.toURI();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    /**
+     * Get URI for URL.
+     *
+     * @param  url                   the URL
+     * @return                       the URI
+     * @throws IllegalArgumentException if conversion fails
+     */
+    public static Path toPath(URL url) {
+        return Paths.get(toURI(url));
     }
 
     /**
