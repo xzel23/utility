@@ -81,6 +81,11 @@ public abstract class FileType<T> implements Comparable<FileType> {
         return Optional.empty();
     }
 
+    public static <T> Optional<T> read(Path p, Class<T> cls) throws IOException {
+        var type = forPath(p, cls);
+        return type.isPresent() ? Optional.of(type.get().read(p)) : Optional.empty();
+    }
+
     private final String name;
     private final Class<T> cls;
     private final OpenMode mode;

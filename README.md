@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.0.5
+
+- FileType: new static `read(path, class)` method
+
 ### Version 4.0.4
 
 - IOUtil: add more conversion methods between URI, URL, and Path
