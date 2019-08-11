@@ -32,6 +32,10 @@ public abstract class Option<T> {
     /** Type identifier String for double options. */
     public static final String OPTION_TYPE_DOUBLE = "double";
 
+    public Value<T> toValue(Object v) {
+        return (Value<T>) value(v);
+    }
+
     public interface Value<T> extends Supplier<T>, Comparable<Value<T>> {
         @Override
         default int compareTo(Value<T> other) {
@@ -194,6 +198,16 @@ public abstract class Option<T> {
 
         public List<Value<T>> getChoices() {
             return Collections.unmodifiableList(choices);
+        }
+
+        @Override
+        public Value<T> toValue(Object v) {
+            for (Value<T> value: getChoices()) {
+                if (value.toString().equals(v.toString())) {
+                    return value;
+                }
+            }
+            throw new IllegalArgumentException(String.format("invalid value for option %s: %s", getName(), v));
         }
 
         @Override

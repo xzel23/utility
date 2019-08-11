@@ -26,6 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.NamedFunction;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.Option.Value;
@@ -36,6 +37,11 @@ import com.dua3.utility.options.OptionValues;
  * @author axel
  */
 public abstract class CsvIo implements AutoCloseable {
+
+    public static OptionValues getOptionValues(String optionName, Object value) {
+        Option<?> option = OPTIONS.getOption(optionName).orElseThrow();
+        return OptionValues.of(option, option.toValue(value));
+    }
 
     public enum PredefinedDateFormat {
         LOCALE_DEFAULT("locale dependent", locale -> formatFromLocale(locale)),
@@ -175,14 +181,14 @@ public abstract class CsvIo implements AutoCloseable {
 
         // separator
         OPTIONS.addOption(OPTION_SEPARATOR, NamedFunction.class,
-                NamedFunction.create(";", locale -> ';'),
                 NamedFunction.create(",", locale -> ','),
+                NamedFunction.create(";", locale -> ';'),
                 NamedFunction.create("|", locale -> '|'),
                 NamedFunction.create("TAB", locale -> '\t'));
 
         COMMON_OPTIONS.addOption(OPTION_SEPARATOR, NamedFunction.class,
-                NamedFunction.create(";", locale -> ';'),
                 NamedFunction.create(",", locale -> ','),
+                NamedFunction.create(";", locale -> ';'),
                 NamedFunction.create("|", locale -> '|'),
                 NamedFunction.create("TAB", locale -> '\t'));
 

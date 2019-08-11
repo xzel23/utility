@@ -81,6 +81,12 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
         return EMPTY_OPTIONS;
     }
 
+    public static OptionValues of(Option<?> option, Value<?> value) {
+        OptionValues ov = new OptionValues();
+        ov.put(option, value);
+        return ov;
+    }
+
     /**
      * Create a new empty instance.
      */
