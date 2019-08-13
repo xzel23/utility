@@ -1,10 +1,11 @@
 // Copyright (c) 2019 Axel Howind
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
 plugins {
-    id 'com.dua3.gradle.jpms' version '0.8.3' apply false
+    id 'com.dua3.gradle.jpms' version '1.0-BETA1' apply false
+    id 'com.adarshr.test-logger' version '1.7.0' apply false
     id 'com.github.spotbugs' version '2.0.0' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
 }
@@ -17,6 +18,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.dua3.gradle.jpms'
+    apply plugin: 'com.adarshr.test-logger'
     apply plugin: 'com.jfrog.bintray'
 
     /////////////////////////////////////////////////////////////////////////////
@@ -35,7 +37,11 @@ subprojects {
 
     ext {
         java_version = '11'
-        junit_version = '5.3.1'
+        junit_version = '5.5.1'
+    }
+
+    jigsaw {
+        module = 'com.dua3.utility'
     }
 
     sourceCompatibility = java_version
