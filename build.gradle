@@ -61,10 +61,10 @@ subprojects {
 
     test {
         useJUnitPlatform()
+    }
 
-        filter {
-            exclude '**/module-info.class'
-        }
+    testlogger {
+        theme 'standard-parallel'
     }
 
     compileJava {
