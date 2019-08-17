@@ -45,4 +45,46 @@ public class TextUtilTest {
         }
     }
 
+    @Test
+    public void testAlign() {
+        assertEquals("", TextUtil.align("",0, TextUtil.Alignment.LEFT));
+        assertEquals("", TextUtil.align("",0, TextUtil.Alignment.CENTER));
+        assertEquals("", TextUtil.align("",0, TextUtil.Alignment.RIGHT));
+
+        assertEquals("   ", TextUtil.align("",3, TextUtil.Alignment.LEFT));
+        assertEquals("   ", TextUtil.align("",3, TextUtil.Alignment.CENTER));
+        assertEquals("   ", TextUtil.align("",3, TextUtil.Alignment.RIGHT));
+
+        assertEquals("abc", TextUtil.align("abc",1, TextUtil.Alignment.LEFT));
+        assertEquals("abc", TextUtil.align("abc",1, TextUtil.Alignment.CENTER));
+        assertEquals("abc", TextUtil.align("abc",1, TextUtil.Alignment.RIGHT));
+
+        assertEquals("abc  ", TextUtil.align("abc",5, TextUtil.Alignment.LEFT));
+        assertEquals(" abc ", TextUtil.align("abc",5, TextUtil.Alignment.CENTER));
+        assertEquals("  abc", TextUtil.align("abc",5, TextUtil.Alignment.RIGHT));
+
+        assertEquals("abcd ", TextUtil.align("abcd",5, TextUtil.Alignment.LEFT));
+        assertEquals("abcd ", TextUtil.align("abcd",5, TextUtil.Alignment.CENTER));
+        assertEquals(" abcd", TextUtil.align("abcd",5, TextUtil.Alignment.RIGHT));
+
+        assertEquals("", TextUtil.align("",0, TextUtil.Alignment.LEFT, '_'));
+        assertEquals("", TextUtil.align("",0, TextUtil.Alignment.CENTER, '_'));
+        assertEquals("", TextUtil.align("",0, TextUtil.Alignment.RIGHT, '_'));
+
+        assertEquals("___", TextUtil.align("",3, TextUtil.Alignment.LEFT, '_'));
+        assertEquals("___", TextUtil.align("",3, TextUtil.Alignment.CENTER, '_'));
+        assertEquals("___", TextUtil.align("",3, TextUtil.Alignment.RIGHT, '_'));
+
+        assertEquals("abc", TextUtil.align("abc",1, TextUtil.Alignment.LEFT, '_'));
+        assertEquals("abc", TextUtil.align("abc",1, TextUtil.Alignment.CENTER, '_'));
+        assertEquals("abc", TextUtil.align("abc",1, TextUtil.Alignment.RIGHT, '_'));
+
+        assertEquals("abc__", TextUtil.align("abc",5, TextUtil.Alignment.LEFT, '_'));
+        assertEquals("_abc_", TextUtil.align("abc",5, TextUtil.Alignment.CENTER, '_'));
+        assertEquals("__abc", TextUtil.align("abc",5, TextUtil.Alignment.RIGHT, '_'));
+
+        assertEquals("abcd_", TextUtil.align("abcd",5, TextUtil.Alignment.LEFT, '_'));
+        assertEquals("abcd_", TextUtil.align("abcd",5, TextUtil.Alignment.CENTER, '_'));
+        assertEquals("_abcd", TextUtil.align("abcd",5, TextUtil.Alignment.RIGHT, '_'));
+    }
 }
