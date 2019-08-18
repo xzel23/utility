@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 plugins {
-    id 'com.dua3.gradle.jpms' version '1.0-BETA1' apply false
+    id 'com.dua3.gradle.jpms' version '1.0-BETA2' apply false
     id 'com.adarshr.test-logger' version '1.7.0' apply false
     id 'com.github.spotbugs' version '2.0.0' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
