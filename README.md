@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.0.8
+
+- new class `DataUtil`, methods for data conversion 
+
 ### Version 4.0.7
 
 - new helper method `TextUtil.align()` 
