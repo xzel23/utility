@@ -72,7 +72,7 @@ public class IOUtil {
      * @return     the extension
      */
     public static String getExtension(URI uri) {
-        return getExtension(Paths.get(uri));
+        return getExtension(uri.getSchemeSpecificPart());
     }
 
     /**
