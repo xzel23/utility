@@ -128,7 +128,7 @@ public class DataUtil {
                 try {
                     return (T) method.invoke(null, value);
                 } catch (IllegalAccessException|InvocationTargetException e) {
-                    throw new ConversionException(sourceClass, targetClass, "error invoking valueOf(String)");
+                    throw new ConversionException(sourceClass, targetClass, "error invoking valueOf(String)", e);
                 }
             }
         }
@@ -142,7 +142,7 @@ public class DataUtil {
                     try {
                         return (T) constructor.newInstance(value);
                     } catch (IllegalAccessException|InvocationTargetException|InstantiationException e) {
-                        throw new ConversionException(sourceClass, targetClass, "error constructor "+targetClass.getName()+"(String)");
+                        throw new ConversionException(sourceClass, targetClass, "error invoking constructor "+targetClass.getName()+"(String)", e);
                     }
                 }
             }
