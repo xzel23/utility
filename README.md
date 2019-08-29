@@ -32,7 +32,7 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 4.0.6
 
-- __BREAKING:__ default separator for CSV changed from to comma to make it compliant with RFCc4180. To change the separator, use `CsvIo.getOptionValues(CsvIo.OPTION_SEPARATOR, ';')` when creating the `CsvReader`/`CsvWriter` instance.
+- __BREAKING:__ default separator for CSV changed from semicolon to comma to make it compliant with RFCc4180. To change the separator, use `CsvIo.getOptionValues(CsvIo.OPTION_SEPARATOR, ';')` when creating the `CsvReader`/`CsvWriter` instance.
 
 ### Version 4.0.5
 
