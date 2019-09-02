@@ -33,7 +33,7 @@ public abstract class Option<T> {
     public static final String OPTION_TYPE_DOUBLE = "double";
 
     public Value<T> toValue(Object v) {
-        return (Value<T>) value(v);
+        return value((T) v);
     }
 
     public interface Value<T> extends Supplier<T>, Comparable<Value<T>> {
@@ -45,7 +45,7 @@ public abstract class Option<T> {
         default Value<T> makeStatic() {
             return new StaticValue<>(toString(), get());
         }
-        
+
         default String text() {
             return String.valueOf(get());
         }
@@ -83,17 +83,17 @@ public abstract class Option<T> {
         public String toString() {
             return text();
         }
-        
+
         @Override
         public boolean equals(Object obj) {
         	if (obj ==null || obj.getClass()!=getClass()) {
         		return false;
         	}
-        	
+
         	StaticValue<?> other = (StaticValue<?>) obj;
         	return Objects.equals(other.name, name) && Objects.equals(other.value, value);
         }
-        
+
         @Override
         public int hashCode() {
         	return Objects.hash(name, value);
@@ -283,6 +283,7 @@ public abstract class Option<T> {
         return new ChoiceOption<>(name, klass, defaultValue, choices);
     }
 
+    @SafeVarargs
     public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue,
             Value<T>... choices) {
         return new ChoiceOption<>(name, klass, defaultValue, Arrays.asList(choices));

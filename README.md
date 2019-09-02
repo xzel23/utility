@@ -22,6 +22,18 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA2
+
+ - `DataUtil.convert()` and `DataUtil.convertToArray()` for converting objects to other types. Conversion is done as follows:
+    * if value is {@code null}, {@code null} is returned;
+    * if the target class is assignment compatible, a simple cast is performed;
+    * if the target class is `String`, `Object.toString()` is used;
+    * if the target class is an integer type and the value is of type double, a conversion without loss of precision is tried;
+    * if the target class provides a method `public static T valueOf(T)` and `value instanceof U`, that method is invoked;
+    * if `useConstructor` is `true` and the target class provides a constructor taking a single argument of value's type, that constructor is used;
+    * otherwise an exception is thrown.
+
+ 
 ### Version 4.0.8
 
 - new class `DataUtil`, methods for data conversion 
