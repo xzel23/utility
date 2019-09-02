@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA3
+
+ - Support converting String to LocalDate in the DataUtil.convert...()-methods
+ 
 ### Version 4.1.0-BETA2
 
  - `DataUtil.convert()` and `DataUtil.convertToArray()` for converting objects to other types. Conversion is done as follows:

@@ -5,6 +5,9 @@ import com.dua3.utility.lang.LangUtil;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 public class DataUtil {
@@ -74,6 +77,8 @@ public class DataUtil {
      *     <li> if the target class is assignment compatible, a simple cast is performed;
      *     <li> if the target class is {@link String}, {@link Object#toString()} is used;
      *     <li> if the target class is an integer type and the value is of type double, a conversion without loss of precision is tried;
+     *     <li> if the target class is {@link LocalDate} and the source class is {@link String}, use DateTimeFormatter.ISO_DATE;
+     *     <li> if the target class is {@link java.time.LocalDateTime} and the source class is {@link String}, use DateTimeFormatter.ISO_DATE_TIME;
      *     <li> if the target class provides a method {@code public static T valueOf(U)} and {value instanceof U}, that method is invoked;
      *     <li> if {@code useConstructor} is {@code true} and the target class provides a constructor taking a single argument of value's type, that constructor is used;
      *     <li> otherwise an exception is thrown.
@@ -119,6 +124,16 @@ public class DataUtil {
                 return (T)(Long) n;
             }
             throw new ConversionException(sourceClass, targetClass, "unsupported numerical conversion");
+        }
+
+        // convert String to LocalDate using the ISO format
+        if (targetClass.equals(LocalDate.class) && sourceClass.equals(String.class)) {
+            return (T) LocalDate.parse(value.toString(), DateTimeFormatter.ISO_DATE);
+        }
+
+        // convert String to LocalDateTime using the ISO format
+        if (targetClass.equals(LocalDateTime.class) && sourceClass.equals(String.class)) {
+            return (T) LocalDate.parse(value.toString(), DateTimeFormatter.ISO_DATE_TIME);
         }
 
         // target provides public static valueOf(U) where value is instance of U
