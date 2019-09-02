@@ -126,6 +126,16 @@ public class DataUtil {
             throw new ConversionException(sourceClass, targetClass, "unsupported numerical conversion");
         }
 
+        // convert other numbers to double
+        if (targetClass.equals(Double.class) && Number.class.isAssignableFrom(sourceClass)) {
+            return (T) (Double) (((Number) value).doubleValue());
+        }
+
+        // convert other numbers to float
+        if (targetClass.equals(Float.class) && Number.class.isAssignableFrom(sourceClass)) {
+            return (T) (Float) (((Number) value).floatValue());
+        }
+
         // convert String to LocalDate using the ISO format
         if (targetClass.equals(LocalDate.class) && sourceClass.equals(String.class)) {
             return (T) LocalDate.parse(value.toString(), DateTimeFormatter.ISO_DATE);

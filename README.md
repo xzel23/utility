@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA4
+
+ - Support converting Long, Integer to Double, Float in DataUtil.convert...()-methods 
+
 ### Version 4.1.0-BETA3
 
  - Support converting String to LocalDate in the DataUtil.convert...()-methods
