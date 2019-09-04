@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Predicate;
 
 public class DataUtil {
 
@@ -226,6 +228,21 @@ public class DataUtil {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useStringConstructor))
                 .toArray( n -> (U[]) Array.newInstance(targetClass, n));
+    }
+
+    /**
+     * Create a filtering iterator that only lets through items matching a predicate.
+     * @param iterator
+     *  the base iterator
+     * @param predicate
+     *  the predicate to test items with
+     * @param <T>
+     *  the item type
+     * @return
+     *  iterator instance that skips items not matching the predicate
+     */
+    public static <T> Iterator<T> filter(Iterator<T> iterator, Predicate<T> predicate) {
+        return new FilterIterator<>(iterator, predicate);
     }
 
     // Utility class - private constructor

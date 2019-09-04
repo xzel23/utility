@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA5
+
+ - new class `FilterIterator` and method `DataUtil.filter(Iterator<T>, Predicate<T>)`
+
 ### Version 4.1.0-BETA4
 
  - Support converting Long, Integer to Double, Float in DataUtil.convert...()-methods 
