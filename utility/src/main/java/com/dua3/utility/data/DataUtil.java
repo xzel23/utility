@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class DataUtil {
@@ -245,6 +246,24 @@ public class DataUtil {
         return new FilterIterator<>(iterator, predicate);
     }
 
+    /**
+     * Create a mapping iterator that converts elements on the fly.
+     * @param iterator
+     *  the base iterator
+     * @param mapping
+     *  the mapping to apply to elements
+     * @param <T>
+     *  the source iterator item type
+     * @param <U>
+     *  the target iterator item type
+     * @return
+     *  iterator instance that converts items of type {@code T} to {@code U}
+     */
+    public static <T,U> Iterator<U> map(Iterator<T> iterator, Function<T,U> mapping) {
+        return new MappingIterator<>(iterator, mapping);
+    }
+
     // Utility class - private constructor
     private DataUtil() {}
+
 }
