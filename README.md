@@ -22,9 +22,13 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA8
+
+ - `DataUtil.collect()` and `DataUtil.collectArray()`
+ 
 ### Version 4.1.0-BETA7
 
- - `public static <E extends Exception> void check(boolean condition, Supplier<E> exceptionSupplier) throws E`
+ - LangUtil: `public static <E extends Exception> void check(boolean condition, Supplier<E> exceptionSupplier) throws E`
  
 ### Version 4.1.0-BETA6
 

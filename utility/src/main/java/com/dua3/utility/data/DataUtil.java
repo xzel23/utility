@@ -8,8 +8,10 @@ import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -261,6 +263,60 @@ public class DataUtil {
      */
     public static <T,U> Iterator<U> map(Iterator<T> iterator, Function<T,U> mapping) {
         return new MappingIterator<>(iterator, mapping);
+    }
+
+    /**
+     * Collect items from an iterable into a List.
+     * @param iterable
+     *  the iterable
+     * @param <T>
+     *  the element type
+     * @return
+     *  list of elements
+     */
+    public static <T>  List<T> collect(Iterable<T> iterable) {
+        return collect(iterable.iterator());
+    }
+
+    /**
+     * Collect items from an iterator into a List.
+     * @param iterator
+     *  the iterator
+     * @param <T>
+     *  the element type
+     * @return
+     *  list of elements
+     */
+    public static <T>  List<T> collect(Iterator<T> iterator) {
+        List<T> result = new ArrayList<T>();
+        iterator.forEachRemaining(result::add);
+        return result;
+    }
+
+    /**
+     * Collect items from an iterable into an array.
+     * @param iterable
+     *  the iterable
+     * @param <T>
+     *  the element type
+     * @return
+     *  array of elements
+     */
+    public static <T>  T[] collectArray(Iterable<T> iterable) {
+        return (T[]) collect(iterable.iterator()).toArray();
+    }
+
+    /**
+     * Collect items from an iterator into an array.
+     * @param <T>
+     *  the element type
+     * @param iterator
+     *  the iterator
+     * @return
+     *  array of elements
+     */
+    public static <T> T[] collectArray(Iterator<T> iterator) {
+        return (T[]) collect(iterator).toArray();
     }
 
     // Utility class - private constructor
