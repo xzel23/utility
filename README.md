@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA7
+
+ - `public static <E extends Exception> void check(boolean condition, Supplier<E> exceptionSupplier) throws E`
+ 
 ### Version 4.1.0-BETA6
 
  - new class `MappingIterator` and method `DataUtil.map(Iterator<T>, Function<T,U>)`

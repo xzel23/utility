@@ -77,6 +77,20 @@ public class LangUtil {
      * Check that condition is fulfilled.
      *
      * @param  condition            condition to test
+     * @param exceptionSupplier     the exception supplier
+     * @param <E>                   the exception type
+     * @throws E                    if condition does not evaluate to {@code true}
+     */
+    public static <E extends Exception> void check(boolean condition, Supplier<E> exceptionSupplier) throws E {
+        if (!condition) {
+            throw exceptionSupplier.get();
+        }
+    }
+
+    /**
+     * Check that condition is fulfilled.
+     *
+     * @param  condition            condition to test
      * @param  fmt                  message format (@see
      *                              {@link String#format(String, Object...)})
      * @param  args                 format arguments
