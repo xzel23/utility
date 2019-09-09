@@ -99,6 +99,7 @@ public class DataUtil {
      * @return
      *  the object converted to the target class
      */
+    @SuppressWarnings("unchecked") // types are checked with isassignable()
     public static<T> T convert(Object value, Class<T> targetClass, boolean useConstructor) {
         // null -> null
         if (value==null) {
@@ -302,6 +303,7 @@ public class DataUtil {
      * @return
      *  array of elements
      */
+    @SuppressWarnings("unchecked")
     public static <T>  T[] collectArray(Iterable<T> iterable) {
         return (T[]) collect(iterable.iterator()).toArray();
     }
@@ -315,6 +317,7 @@ public class DataUtil {
      * @return
      *  array of elements
      */
+    @SuppressWarnings("unchecked")
     public static <T> T[] collectArray(Iterator<T> iterator) {
         return (T[]) collect(iterator).toArray();
     }

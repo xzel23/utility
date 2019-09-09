@@ -76,6 +76,7 @@ public abstract class FileType<T> implements Comparable<FileType> {
         return forFileName(cls, uri.getSchemeSpecificPart());
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> Optional<FileType<T>> forFileName(Class<T> cls, String fileName) {
         for (FileType t: types) {
             if (t.matches(fileName) && cls.isAssignableFrom(t.getDocumentClass())) {
@@ -232,6 +233,7 @@ public abstract class FileType<T> implements Comparable<FileType> {
      * @return
      *  list of file types that support reading/writing objects of the given class type
      */
+    @SuppressWarnings("unchecked")
     public static <T> List<FileType<T>> getFileTypes(OpenMode mode, Class<T> cls) {
         return types.stream()
                 .filter(t -> t.isSupported(mode))

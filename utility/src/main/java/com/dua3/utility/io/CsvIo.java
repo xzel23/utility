@@ -38,7 +38,7 @@ import com.dua3.utility.options.OptionValues;
  */
 public abstract class CsvIo implements AutoCloseable {
 
-    public static OptionValues getOptionValues(String optionName, Object value) {
+    public static <T> OptionValues getOptionValues(String optionName, T value) {
         Option<?> option = OPTIONS.getOption(optionName).orElseThrow();
         return OptionValues.of(option, option.toValue(value));
     }
@@ -269,7 +269,7 @@ public abstract class CsvIo implements AutoCloseable {
         final String text;
         if (obj instanceof Number) {
             text = numberFormat.format(obj);
-        } else if (obj instanceof LocalDate) {            
+        } else if (obj instanceof LocalDate) {
             text = ((LocalDate)obj).format(dateFormatter);
         } else if (obj instanceof LocalDateTime) {
             text = ((LocalDateTime)obj).format(dateTimeFormatter);

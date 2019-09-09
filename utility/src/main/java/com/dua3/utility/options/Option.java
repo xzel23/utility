@@ -2,6 +2,7 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.OpenMode;
+import com.dua3.utility.lang.LangUtil;
 
 import java.io.File;
 import java.util.*;
@@ -32,8 +33,8 @@ public abstract class Option<T> {
     /** Type identifier String for double options. */
     public static final String OPTION_TYPE_DOUBLE = "double";
 
-    public Value<T> toValue(Object v) {
-        return value((T) v);
+    public <T> Value<T> toValue(T v) {
+        return value(v);
     }
 
     public interface Value<T> extends Supplier<T>, Comparable<Value<T>> {

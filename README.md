@@ -22,6 +22,8 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+ - fixed some compilation warnings
+
 ### Version 4.1.0-BETA8
 
  - `DataUtil.collect()` and `DataUtil.collectArray()`
