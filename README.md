@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA9
+
+ - new: `MathUtil.roundingOperation(int n, RoundingMode mode)` for bulk rounding, with support for all types of `java.math.RoundingMode`
+ - Better documentation for `MathUtil.round()` and `MathUtil.roundToPrecision()`
  - fixed some compilation warnings
 
 ### Version 4.1.0-BETA8

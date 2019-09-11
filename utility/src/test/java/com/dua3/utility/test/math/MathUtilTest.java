@@ -6,8 +6,13 @@
 package com.dua3.utility.test.math;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.RoundingMode;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.DoubleUnaryOperator;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -186,6 +191,44 @@ public class MathUtilTest {
         assertEquals(-1.2, MathUtil.roundToPrecision(-1.25, 2), 1e-10);
         assertEquals(-12.0, MathUtil.roundToPrecision(-12.5, 2), 1e-10);
         assertEquals(-120, MathUtil.roundToPrecision(-125, 2), 1e-10);
+    }
+
+    /**
+     * Test roundingOperation method, of class MathUtil.
+     */
+    @Test
+    public void testRoundingOperation() {
+        System.out.println("roundingOperation");
+
+        // create operations
+        Map<RoundingMode, DoubleUnaryOperator> operations = new EnumMap<>(RoundingMode.class);
+        for (var mode: RoundingMode.values()) {
+            operations.put(mode, MathUtil.roundingOperation(0, mode));
+        }
+
+        // check results
+        checkRounding(operations, 5.5, 6, 5, 6, 5, 6, 5, 6);
+        checkRounding(operations, 2.5, 3, 2, 3, 2, 3, 2, 2);
+        checkRounding(operations, 1.6, 2, 1, 2, 1, 2, 2, 2);
+        checkRounding(operations, 1.1, 2, 1, 2, 1, 1, 1, 1);
+        checkRounding(operations, 1.0, 1, 1, 1, 1, 1, 1, 1);
+        checkRounding(operations, -1.0, -1, -1,	-1, -1, -1, -1, -1);
+        checkRounding(operations, -1.1, -2, -1,	-1, -2, -1, -1, -1);
+        checkRounding(operations, -1.6, -2, -1,	-1, -2, -2, -2, -2);
+        checkRounding(operations, -2.5, -3, -2,	-2, -3, -3, -2, -2);
+        checkRounding(operations, -5.5, -6, -5,	-5, -6, -6, -5, -6);
+    }
+
+    private boolean checkRounding(Map<RoundingMode,DoubleUnaryOperator> operations, double x, double xUP, double xDOWN, double xCEILING, double xFLOOR, double xHALF_UP, double xHALF_DOWN, double xHALF_EVEN) {
+        assertEquals(xUP, operations.get(RoundingMode.UP).applyAsDouble(x));
+        assertEquals(xDOWN, operations.get(RoundingMode.DOWN).applyAsDouble(x));
+        assertEquals(xCEILING, operations.get(RoundingMode.CEILING).applyAsDouble(x));
+        assertEquals(xFLOOR, operations.get(RoundingMode.FLOOR).applyAsDouble(x));
+        assertEquals(xHALF_UP, operations.get(RoundingMode.HALF_UP).applyAsDouble(x));
+        assertEquals(xHALF_DOWN, operations.get(RoundingMode.HALF_DOWN).applyAsDouble(x));
+        assertEquals(xHALF_EVEN, operations.get(RoundingMode.HALF_EVEN).applyAsDouble(x));
+        assertEquals(x, operations.get(RoundingMode.UNNECESSARY).applyAsDouble(x));
+        return true;
     }
 
     /**

@@ -358,13 +358,13 @@ public final class MathUtil {
 
         // otherwise precalculate and use scale
         double scale = pow10(n);
-        return x-> scale * roundingOperation.applyAsDouble(x/scale);
+        return x-> roundingOperation.applyAsDouble(x*scale)/scale;
     }
 
     public static DoubleUnaryOperator getRoundingOperation(RoundingMode mode) {
         switch (mode) {
-            case HALF_UP: return x -> Math.floor(x+0.5);
-            case HALF_DOWN: return x -> Math.ceil(x-0.5);
+            case HALF_UP: return x -> x >= 0 ? Math.floor(x+0.5) : Math.ceil(x-0.5);
+            case HALF_DOWN: return x -> x >= 0 ? Math.ceil(x-0.5) : Math.floor(x+0.5);
             case HALF_EVEN: return Math::rint;
             case UP: return x -> x>=0 ? Math.ceil(x) : Math.floor(x);
             case DOWN: return x -> x>=0 ? Math.floor(x) : Math.ceil(x);
