@@ -5,6 +5,7 @@
 
 package com.dua3.utility.math;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
@@ -232,6 +233,13 @@ public final class MathUtil {
         return !Double.isNaN(a) && a == Math.floor(a);
     }
 
+    /**
+     * Calculate powers of 10.
+     * @param i
+     *  thje exponent to use
+     * @return
+     *  10 raisedd to the power of i
+     */
     public static double pow10(int i) {
         if (i == Integer.MIN_VALUE) {
             // -Integer.MIN_VALUE will overflow
@@ -249,6 +257,8 @@ public final class MathUtil {
 
     /**
      * Round to decimal places.
+     * <p><strong>Note:</strong> If this is a bulk operation, consider using {@link #roundingOperation(int, RoundingMode)}
+     * instead as the scale calculation will take place only once per instance.
      * <p>
      * Round {@code x} to {@code n} decimal places according to {@link java.math.RoundingMode#HALF_UP},
      * i.e. 1.5 will be rounded to 2 and -1.5 will be rounded to -1.
@@ -282,6 +292,7 @@ public final class MathUtil {
             f *= 10;
             m--;
         }
+
         double scale = n >= 0 ? f : 1.0 / f;
         return Math.round(x * scale) / scale;
     }
@@ -313,6 +324,55 @@ public final class MathUtil {
 
         int n = p - ilog10(Math.abs(x)) - 1;
         return round(x, n);
+    }
+
+    /**
+     * Get operation that performs rounding to a fixed number of decimal places.
+     * <p>
+     * Round {@code x} to {@code n} decimal places according to the supplied {@link java.math.RoundingMode}.
+     * <p>
+     * If {@link RoundingMode#UNNECESSARY} is used, {@code x} is returned unchanged.
+     * <p>
+     * The number of places {@code n} may be negative, resulting in rounding taking place before the decimal point.
+     *
+     * @param  n
+     *           number of decimal places
+     * @param mode
+     *           the {@link RoundingMode} to use
+     * @return
+     *           operation that performs the requested rounding
+     */
+    public static DoubleUnaryOperator roundingOperation(int n, RoundingMode mode) {
+        // special case: no rounding
+        if (mode==RoundingMode.UNNECESSARY) {
+            return x -> x;
+        }
+
+        // determine rounding operation to use
+        DoubleUnaryOperator roundingOperation = getRoundingOperation(mode);
+
+        // special case: rounding to integer needs no scale
+        if (n==0) {
+            return roundingOperation;
+        }
+
+        // otherwise precalculate and use scale
+        double scale = pow10(n);
+        return x-> scale * roundingOperation.applyAsDouble(x/scale);
+    }
+
+    public static DoubleUnaryOperator getRoundingOperation(RoundingMode mode) {
+        switch (mode) {
+            case HALF_UP: return x -> Math.floor(x+0.5);
+            case HALF_DOWN: return x -> Math.ceil(x-0.5);
+            case HALF_EVEN: return Math::rint;
+            case UP: return x -> x>=0 ? Math.ceil(x) : Math.floor(x);
+            case DOWN: return x -> x>=0 ? Math.floor(x) : Math.ceil(x);
+            case FLOOR: return Math::floor;
+            case CEILING: return Math::ceil;
+            case UNNECESSARY: return x -> x;
+            default: throw new IllegalStateException();
+        }
     }
 
     public static String toDecimalString(double xm, int digits) {
