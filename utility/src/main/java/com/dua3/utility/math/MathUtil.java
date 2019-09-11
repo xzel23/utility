@@ -249,6 +249,21 @@ public final class MathUtil {
 
     /**
      * Round to decimal places.
+     * <p>
+     * Round {@code x} to {@code n} decimal places according to {@link java.math.RoundingMode#HALF_UP},
+     * i.e. 1.5 will be rounded to 2 and -1.5 will be rounded to -1.
+     * <p>
+     * The number of places {@code n} may be negative, resulting in rounding taking place before the decimal point,
+     * i.e. {@code round(125, -1)=130}.
+     * <p>
+     * Examples rounding to 2 digits precision:
+     * <ul>
+     *     <li>0.123 -&gt; 0.12
+     *     <li>12.3 -&gt; 12.3
+     *     <li>123 -&gt; 123
+     *     <li>0.125 -&gt; 0.13
+     *     <li>-0.125 -&gt; -0.12
+     * </ul>
      *
      * @param  x
      *           value to round
@@ -271,10 +286,30 @@ public final class MathUtil {
         return Math.round(x * scale) / scale;
     }
 
+    /**
+     * Round to precision.
+     * <p>
+     * Round {@code x} to {@code p} digits of precision according to {@link java.math.RoundingMode#HALF_UP}.
+     * <p>
+     * Examples rounding to 2 digits precision:
+     * <ul>
+     *     <li>0.123 -&gt; 0.12
+     *     <li>12.3 -&gt; 12
+     *     <li>123 -&gt; 120
+     * </ul>
+     *
+     * @param  x
+     *           value to round
+     * @param  p
+     *           number of digits (p must be positive)
+     * @return   x rounded to p digits precision
+     */
     public static double roundToPrecision(double x, int p) {
         if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
             return x;
         }
+
+        LangUtil.check(p>0, "p must be positive: %d", p);
 
         int n = p - ilog10(Math.abs(x)) - 1;
         return round(x, n);

@@ -129,16 +129,40 @@ public class MathUtilTest {
     @Test
     public void testRound() {
         System.out.println("round");
-        double[][] tests = {
-                // arg, round(arg,2), round(arg,-2)
-                { 0, 0, 0 }, { 1.234, 1.23, 0 }, { -1.234, -1.23, 0 }, { -1234.567, -1234.57, -1200 }, };
 
-        for (double[] test : tests) {
-            double arg = test[0];
-            double expected = test[1];
-            double result = MathUtil.round(arg, 2);
-            assertEquals(expected, result, 1e-15);
-        }
+        // positive n
+        assertEquals(1.2, MathUtil.round(1.23, 1), 1e-10);
+        assertEquals(12.3, MathUtil.round(12.3, 1), 1e-10);
+        assertEquals(123.0, MathUtil.round(123, 1), 1e-10);
+
+        assertEquals(1.3, MathUtil.round(1.25, 1), 1e-10);
+        assertEquals(12.5, MathUtil.round(12.5, 1), 1e-10);
+        assertEquals(125.0, MathUtil.round(125, 1), 1e-10);
+
+        assertEquals(-1.2, MathUtil.round(-1.23, 1), 1e-10);
+        assertEquals(-12.3, MathUtil.round(-12.3, 1), 1e-10);
+        assertEquals(-123.0, MathUtil.round(-123, 1), 1e-10);
+
+        assertEquals(-1.2, MathUtil.round(-1.25, 1), 1e-10);
+        assertEquals(-12.5, MathUtil.round(-12.5, 1), 1e-10);
+        assertEquals(-125.0, MathUtil.round(-125, 1), 1e-10);
+
+        // negative n
+        assertEquals(0.0, MathUtil.round(1.23, -1), 1e-10);
+        assertEquals(10.0, MathUtil.round(12.3, -1), 1e-10);
+        assertEquals(120.0, MathUtil.round(123, -1), 1e-10);
+
+        assertEquals(0.0, MathUtil.round(1.25, -1), 1e-10);
+        assertEquals(20.0, MathUtil.round(15.0, -1), 1e-10);
+        assertEquals(130.0, MathUtil.round(125.0, -1), 1e-10);
+
+        assertEquals(0.0, MathUtil.round(-1.23, -1), 1e-10);
+        assertEquals(-10.0, MathUtil.round(-12.3, -1), 1e-10);
+        assertEquals(-120.0, MathUtil.round(-123, -1), 1e-10);
+
+        assertEquals(0.0, MathUtil.round(-1.25, -1), 1e-10);
+        assertEquals(-10.0, MathUtil.round(-15.0, -1), 1e-10);
+        assertEquals(-120.0, MathUtil.round(-125.0, -1), 1e-10);
     }
 
     /**
@@ -147,8 +171,21 @@ public class MathUtilTest {
     @Test
     public void testRoundToPrecision() {
         System.out.println("roundToPrecision");
-        assertEquals(1.2, MathUtil.roundToPrecision(1.2345, 2), 1e-10);
-        assertEquals(1.235, MathUtil.roundToPrecision(1.2345, 4), 1e-10);
+        assertEquals(1.2, MathUtil.roundToPrecision(1.23, 2), 1e-10);
+        assertEquals(12.0, MathUtil.roundToPrecision(12.3, 2), 1e-10);
+        assertEquals(120, MathUtil.roundToPrecision(123, 2), 1e-10);
+
+        assertEquals(1.3, MathUtil.roundToPrecision(1.25, 2), 1e-10);
+        assertEquals(13.0, MathUtil.roundToPrecision(12.5, 2), 1e-10);
+        assertEquals(130, MathUtil.roundToPrecision(125, 2), 1e-10);
+
+        assertEquals(-1.2, MathUtil.roundToPrecision(-1.23, 2), 1e-10);
+        assertEquals(-12.0, MathUtil.roundToPrecision(-12.3, 2), 1e-10);
+        assertEquals(-120, MathUtil.roundToPrecision(-123, 2), 1e-10);
+
+        assertEquals(-1.2, MathUtil.roundToPrecision(-1.25, 2), 1e-10);
+        assertEquals(-12.0, MathUtil.roundToPrecision(-12.5, 2), 1e-10);
+        assertEquals(-120, MathUtil.roundToPrecision(-125, 2), 1e-10);
     }
 
     /**
