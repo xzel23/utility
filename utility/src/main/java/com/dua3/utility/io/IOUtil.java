@@ -5,10 +5,7 @@
 
 package com.dua3.utility.io;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,9 +15,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -315,5 +310,117 @@ public class IOUtil {
      */
     public static String loadText(Path path, Consumer<Charset> onCharsetDetected) throws IOException {
         return loadText(path, onCharsetDetected, CHARSETS);
+    }
+
+    /**
+     * Get InputStream.
+     * <p>
+     * Supported classes:
+     * <ul>
+     *     <li>{@link InputStream}
+     *     <li>{@link URI}
+     *     <li>{@link URL}
+     *     <li>{@link Path}
+     *     <li>{@link File}
+     * </ul>
+     * @param o
+     *  object
+     * @return
+     *  InputStream
+     * @throws UnsupportedOperationException
+     *  if the object type is not supported
+     * @throws IOException
+     *  if the type is supported but an IOException occurs during stream creation
+     */
+    public static InputStream getInputStream(Object o) throws IOException {
+        return StreamSupplier.getInputStream(o);
+    }
+
+    /**
+     * Get InputStream.
+     * <p>
+     * Supported classes:
+     * <ul>
+     *     <li>{@link InputStream}
+     *     <li>{@link URI}
+     *     <li>{@link URL}
+     *     <li>{@link Path}
+     *     <li>{@link File}
+     * </ul>
+     * @param o
+     *  object
+     * @return
+     *  InputStream
+     * @throws UnsupportedOperationException
+     *  if the object type is not supported
+     * @throws IOException
+     *  if the type is supported but an IOException occurs during stream creation
+     */
+    public static OutputStream getOutputStream(Object o) throws IOException {
+        return StreamSupplier.getOutputStream(o);
+    }
+}
+
+class StreamSupplier<V> {
+
+    @FunctionalInterface
+    interface InputStreamSupplier<C> {
+        InputStream getInputStream(C connection) throws IOException;
+    }
+
+    @FunctionalInterface
+    interface OutputStreamSupplier<C> {
+        OutputStream getOutputStream(C connection) throws IOException;
+    }
+
+    private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
+
+    private static final List<StreamSupplier<?>> streamSuppliers = List.of (
+            def(InputStream.class, v -> (InputStream)v, StreamSupplier::outputUnsupported),
+            def(OutputStream.class, StreamSupplier::inputUnsupported, v-> (OutputStream) v),
+            def(URI.class, v->IOUtil.toURL((URI)v).openStream(), v->Files.newOutputStream(IOUtil.toPath((URI) v))),
+            def(URL.class, v->((URL) v).openStream(), v->Files.newOutputStream(IOUtil.toPath((URL) v))),
+            def(Path.class, v->Files.newInputStream((Path) v), v->Files.newOutputStream((Path) v)),
+            def(File.class, v->Files.newInputStream(((File) v).toPath()), v->Files.newOutputStream(((File) v).toPath()))
+    );
+
+    private static InputStream inputUnsupported(Object o) {
+        throw new UnsupportedOperationException("InputStream creation not supported: "+o.getClass().getName());
+    }
+
+    private static OutputStream outputUnsupported(Object o) {
+        throw new UnsupportedOperationException("OutputStream creation not supported: "+o.getClass().getName());
+    }
+
+    private final Class<V> clazz;
+    private final InputStreamSupplier<V> iss;
+    private final OutputStreamSupplier<V> oss;
+
+    private StreamSupplier(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
+        this.clazz = clazz;
+        this.iss = iss;
+        this.oss = oss;
+    }
+
+    private static <V> StreamSupplier<V> def(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
+        return new StreamSupplier<>(clazz, iss, oss);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <C> StreamSupplier<? super C> supplier(C o) {
+        for (var s: streamSuppliers) {
+            if (s.clazz.isInstance(o)) {
+                return (StreamSupplier<? super C>) s;
+            }
+        }
+        return (StreamSupplier<? super C>) UNSUPPORTED;
+    }
+
+    public static <C> InputStream getInputStream(C o) throws IOException {
+        return supplier(o).iss.getInputStream(o);
+    }
+
+    public static OutputStream getOutputStream(Object o) throws IOException {
+        return supplier(o).oss.getOutputStream(o);
     }
 }
