@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA11
+
+ - `LangUtil.uncheckedSupplier()`
+
 ### Version 4.1.0-BETA10
 
  - new: `ÌOUtil.getInputStream(Object)` and `ÌOUtil.getOutputStream(Object)`

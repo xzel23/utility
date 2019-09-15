@@ -184,7 +184,7 @@ public class LangUtil {
 
     /**
      * Helper method that converts checked {@link java.io.IOException} to
-     * {@link java.io.UncheckedIOException}.
+     * {@link java.io.UncheckedIOException} and other checked exceptions to {@link WrappedException}.
      *
      * @param    <T> the argument type
      * @param  c the consumer to call (instance of {@link ConsumerThrows})
@@ -205,13 +205,34 @@ public class LangUtil {
 
     /**
      * Helper method that converts checked {@link java.io.IOException} to
-     * {@link java.io.UncheckedIOException}.
+     * {@link java.io.UncheckedIOException} and other checked exceptions to {@link WrappedException}.
+     *
+     * @param    <T> the argument type
+     * @param  s the supplier to call (instance of {@link SupplierThrows})
+     * @return   instance of Supplier that calls s.get() and converts IOException to
+     *           UncheckedIOException and other checked exceptions to {@link WrappedException}
+     */
+    public static <T> Supplier<T> uncheckedSupplier(SupplierThrows<T> s) {
+        return () -> {
+            try {
+                return s.get();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            } catch (Exception e) {
+                throw new WrappedException(e);
+            }
+        };
+    }
+
+    /**
+     * Helper method that converts checked {@link java.io.IOException} to
+     * {@link java.io.UncheckedIOException} and other checked exceptions to {@link WrappedException}.
      *
      * @param    <T> the argument type
      * @param    <R> the result type
      * @param  f the function to call (instance of {@link FunctionThrows})
      * @return   instance of Function that invokes f and converts IOException to
-     *           UncheckedIOException
+     *           UncheckedIOException and other checked exceptions to {@link WrappedException}
      */
     public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<T, R> f) {
         return arg -> {
@@ -398,6 +419,17 @@ public class LangUtil {
     @FunctionalInterface
     public interface ConsumerThrows<T> {
         void apply(T arg) throws Exception;
+    }
+
+    /**
+     * Interface similar to {@link java.util.function.Supplier} that declares thrown
+     * exceptions on its {@code apply()} method.
+     *
+     * @param <T> the argument type
+     */
+    @FunctionalInterface
+    public interface SupplierThrows<T> {
+        T get() throws Exception;
     }
 
     /**
