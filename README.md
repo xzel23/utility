@@ -22,6 +22,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 4.1.0-BETA12
+
+ - `DataUtil.convert()` overload for converting collections to list
+ - `DataUtil.convertCollection()` for converting collections to collection of arbitrary type
+
 ### Version 4.1.0-BETA11
 
  - `LangUtil.uncheckedSupplier()`

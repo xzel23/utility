@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class DataUtil {
 
@@ -189,7 +191,7 @@ public class DataUtil {
     /**
      * Convert Collection to array.
      * <p>
-     * Converts a {@code Collection<T>} to {@code T[]} by using {@link #convert(Object, Class)} on
+     * Converts a {@code Collection<T>} to {@code U[]} by using {@link #convert(Object, Class)} on
      * the elements contained in the collection.
      *
      * @param data
@@ -203,7 +205,6 @@ public class DataUtil {
      * @return
      *  array containing the converted elements
      */
-    @SuppressWarnings("unchecked")
     public static <T,U> U[] convertToArray(Collection<T> data, Class<U> targetClass) {
         return convertToArray(data, targetClass, false);
     }
@@ -211,7 +212,7 @@ public class DataUtil {
     /**
      * Convert Collection to array.
      * <p>
-     * Converts a {@code Collection<T>} to {@code> T[]} by using {@link #convert(Object, Class)} on
+     * Converts a {@code Collection<T>} to {@code U[]} by using {@link #convert(Object, Class)} on
      * the elements contained in the collection.
      *
      * @param data
@@ -232,6 +233,106 @@ public class DataUtil {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useStringConstructor))
                 .toArray( n -> (U[]) Array.newInstance(targetClass, n));
+    }
+
+    /**
+     * Convert Collection to List.
+     * <p>
+     * Converts a {@code Collection<T>} to {@code List<U>} by using {@link #convert(Object, Class)} on
+     * the elements contained in the collection.
+     *
+     * @param data
+     *  the collection to convert
+     * @param targetClass
+     *  the element target class
+     * @param <T>
+     *  the element source type
+     * @param <U>
+     *  the element target type
+     * @return
+     *  list containing the converted elements
+     */
+    public static <T,U> List<U> convert(Collection<T> data, Class<U> targetClass) {
+        return convert(data, targetClass, false);
+    }
+
+    /**
+     * Convert Collection to list.
+     * <p>
+     * Converts a {@code Collection<T>} to {@code List<U>} by using {@link #convert(Object, Class)} on
+     * the elements contained in the collection.
+     *
+     * @param data
+     *  the collection to convert
+     * @param targetClass
+     *  the element target class
+     * @param useStringConstructor
+     *  flag whether a public constructor {@code T(String)} should be used in conversion if present
+     * @param <T>
+     *  the element source type
+     * @param <U>
+     *  the element target type
+     * @return
+     *  list containing the converted elements
+     */
+    public static <T,U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useStringConstructor) {
+        return data.stream()
+                .map(obj -> DataUtil.convert(obj, targetClass, useStringConstructor))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * Convert Collection.
+     * <p>
+     * Converts a {@code Collection<T>} to {@code Collection<U>} by using {@link #convert(Object, Class)} on
+     * the elements contained in the collection.
+     *
+     * @param data
+     *  the collection to convert
+     * @param targetClass
+     *  the element target class
+     * @param supplier
+     *  the collection supplier, i. e. {@code ArrayList::new}
+     * @param <T>
+     *  the element source type
+     * @param <U>
+     *  the element target type
+     * @param <C>
+     *  the target collection type
+     * @return
+     *  collection containing the converted elements
+     */
+    public static <T,U,C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier) {
+        return convertCollection(data, targetClass, supplier, false);
+    }
+
+    /**
+     * Convert Collection to list.
+     * <p>
+     * Converts a {@code Collection<T>} to {@code Collection<U>} by using {@link #convert(Object, Class)} on
+     * the elements contained in the collection.
+     *
+     * @param data
+     *  the collection to convert
+     * @param targetClass
+     *  the element target class
+     * @param supplier
+     *  the collection supplier, i. e. {@code ArrayList::new}
+     * @param useStringConstructor
+     *  flag whether a public constructor {@code T(String)} should be used in conversion if present
+     * @param <T>
+     *  the element source type
+     * @param <U>
+     *  the element target type
+     * @param <C>
+     *  the target collection type
+     * @return
+     *  collection containing the converted elements
+     */
+    public static <T,U,C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier, boolean useStringConstructor) {
+        return data.stream()
+                .map(obj -> DataUtil.convert(obj, targetClass, useStringConstructor))
+                .collect(Collectors.toCollection(supplier));
     }
 
     /**
