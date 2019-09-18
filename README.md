@@ -26,6 +26,7 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
  - `DataUtil.convert()` overload for converting collections to list
  - `DataUtil.convertCollection()` for converting collections to collection of arbitrary type
+ - (4.1.0-BETA12a): fix for `DataUtil.convert()` - don't bail out early if source type is `Double` or `Float`
 
 ### Version 4.1.0-BETA11
 

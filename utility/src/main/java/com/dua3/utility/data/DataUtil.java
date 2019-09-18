@@ -131,7 +131,6 @@ public class DataUtil {
                 LangUtil.check(n==d, "value cannot be converted to long without loss of precision: %f", value);
                 return (T)(Long) n;
             }
-            throw new ConversionException(sourceClass, targetClass, "unsupported numerical conversion");
         }
 
         // convert other numbers to double
@@ -219,8 +218,8 @@ public class DataUtil {
      *  the collection to convert
      * @param targetClass
      *  the element target class
-     * @param useStringConstructor
-     *  flag whether a public constructor {@code T(String)} should be used in conversion if present
+     * @param useConstructor
+     *  flag whether a public constructor {@code U(T)} should be used in conversion if present
      * @param <T>
      *  the element source type
      * @param <U>
@@ -229,9 +228,9 @@ public class DataUtil {
      *  array containing the converted elements
      */
     @SuppressWarnings("unchecked")
-    public static <T,U> U[] convertToArray(Collection<T> data, Class<U> targetClass, boolean useStringConstructor) {
+    public static <T,U> U[] convertToArray(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
-                .map(obj -> DataUtil.convert(obj, targetClass, useStringConstructor))
+                .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
                 .toArray( n -> (U[]) Array.newInstance(targetClass, n));
     }
 
@@ -274,8 +273,8 @@ public class DataUtil {
      *  the collection to convert
      * @param targetClass
      *  the element target class
-     * @param useStringConstructor
-     *  flag whether a public constructor {@code T(String)} should be used in conversion if present
+     * @param useConstructor
+     *  flag whether a public constructor {@code U(T)} should be used in conversion if present
      * @param <T>
      *  the element source type
      * @param <U>
@@ -283,9 +282,9 @@ public class DataUtil {
      * @return
      *  list containing the converted elements
      */
-    public static <T,U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useStringConstructor) {
+    public static <T,U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
-                .map(obj -> DataUtil.convert(obj, targetClass, useStringConstructor))
+                .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -326,8 +325,8 @@ public class DataUtil {
      *  the element target class
      * @param supplier
      *  the collection supplier, i. e. {@code ArrayList::new}
-     * @param useStringConstructor
-     *  flag whether a public constructor {@code T(String)} should be used in conversion if present
+     * @param useConstructor
+     *  flag whether a public constructor {@code U(T)} should be used in conversion if present
      * @param <T>
      *  the element source type
      * @param <U>
@@ -337,9 +336,9 @@ public class DataUtil {
      * @return
      *  collection containing the converted elements
      */
-    public static <T,U,C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier, boolean useStringConstructor) {
+    public static <T,U,C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier, boolean useConstructor) {
         return data.stream()
-                .map(obj -> DataUtil.convert(obj, targetClass, useStringConstructor))
+                .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toCollection(supplier));
     }
 
