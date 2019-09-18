@@ -240,6 +240,10 @@ public class DataUtil {
      * <p>
      * Converts a {@code Collection<T>} to {@code List<U>} by using {@link #convert(Object, Class)} on
      * the elements contained in the collection.
+     * <p>
+     * <strong>The source collection must not contain {@code null} values.
+     * Use {@link #convertCollection(Collection, Class, Supplier)} if the source collection contains
+     * {@code null} values.</strong>
      *
      * @param data
      *  the collection to convert
@@ -261,6 +265,10 @@ public class DataUtil {
      * <p>
      * Converts a {@code Collection<T>} to {@code List<U>} by using {@link #convert(Object, Class)} on
      * the elements contained in the collection.
+     * <p>
+     * <strong>The source collection must not contain {@code null} values.
+     * Use {@link #convertCollection(Collection, Class, Supplier, boolean)} if the source collection contains
+     * {@code null} values.</strong>
      *
      * @param data
      *  the collection to convert
