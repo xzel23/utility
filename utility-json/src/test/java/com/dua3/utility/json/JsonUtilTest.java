@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class JsonUtilTest {
 
     private final URL resourceUrl = getClass().getResource("test.json");
