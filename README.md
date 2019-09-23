@@ -22,6 +22,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5-BETA1
+
+ - fixed many small issues, typos (also in method names), so that I decided to also bump the major version
+ - module names changed to dua3_util*
+
 ### Version 4.1.0-BETA12
 
  - `DataUtil.convert()` overload for converting collections to list

@@ -17,6 +17,7 @@ import java.util.PrimitiveIterator.OfInt;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 
 public class TextUtil {
@@ -121,9 +122,9 @@ public class TextUtil {
      * @param template the template
      * @param env      substitution environment
      * @return result of transformation
-     * @see #transform(String, Function, Consumer)
+     * @see #transform(String, UnaryOperator, Consumer)
      */
-    public static String transform(String template, Function<String, String> env) {
+    public static String transform(String template, UnaryOperator<String> env) {
         StringBuilder sb = new StringBuilder(Math.max(16, template.length()));
         transform(template, env, sb::append);
         return sb.toString();
@@ -141,7 +142,7 @@ public class TextUtil {
      * @param env      substitution environment
      * @param output   output
      */
-    public static void transform(String template, Function<String, String> env, Consumer<CharSequence> output) {
+    public static void transform(String template, UnaryOperator<String> env, Consumer<CharSequence> output) {
         int pos = 0;
         while (pos < template.length()) {
             // find next ref

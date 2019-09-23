@@ -380,7 +380,7 @@ class StreamSupplier<V> {
             def(OutputStream.class, StreamSupplier::inputUnsupported, v-> v),
             def(URI.class, v->IOUtil.toURL(v).openStream(), v->Files.newOutputStream(IOUtil.toPath(v))),
             def(URL.class, URL::openStream, v->Files.newOutputStream(IOUtil.toPath(v))),
-            def(Path.class, v->Files.newInputStream(v), v->Files.newOutputStream(v)),
+            def(Path.class, Files::newInputStream, Files::newOutputStream),
             def(File.class, v->Files.newInputStream(v.toPath()), v->Files.newOutputStream(v.toPath()))
     );
 

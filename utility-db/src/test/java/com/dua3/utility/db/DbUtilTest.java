@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import com.dua3.utility.db.DbUtil;
 import com.dua3.utility.db.JdbcDriverInfo;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Test the FileSystemView class.
  */
@@ -23,6 +25,7 @@ public class DbUtilTest {
         for (var d : drivers) {
             System.out.println(d);
         }
+        assertTrue(!drivers.isEmpty());
     }
 
 }

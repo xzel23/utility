@@ -186,7 +186,7 @@ public class NamedParameterStatement implements AutoCloseable {
 
     private static boolean showUnknownParameterTypeAsWarning = true;
 
-    private JDBCType getParameterType(ParameterMetaData meta, int index) {
+    private static JDBCType getParameterType(ParameterMetaData meta, int index) {
         try {
             return JDBCType.valueOf(meta.getParameterType(index));
         } catch (SQLException e) {

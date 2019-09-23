@@ -16,7 +16,7 @@ public class WrappedException extends RuntimeException {
     }
 
     @Override
-    public Exception getCause() {
+    public synchronized Exception getCause() {
         return (Exception) super.getCause();
     }
 

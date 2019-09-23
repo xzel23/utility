@@ -467,7 +467,7 @@ public class LangUtil {
         void close();
     }
 
-    static private class CachingSupplier<T> implements AutoCloseableSupplier<T> {
+    private static class CachingSupplier<T> implements AutoCloseableSupplier<T> {
         private final Supplier<T> supplier;
         private final Consumer<T> cleaner;
         private T obj = null;

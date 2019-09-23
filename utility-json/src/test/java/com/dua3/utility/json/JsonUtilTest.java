@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 class JsonUtilTest {
 
     private final URL resourceUrl = getClass().getResource("test.json");
@@ -14,11 +16,11 @@ class JsonUtilTest {
 
     @Test
     void testReadUrl() throws IOException {
-        JsonUtil.read(resourceUrl);
+        assertNotNull(JsonUtil.read(resourceUrl));
     }
 
     @Test
     void testReadPath() throws IOException {
-        JsonUtil.read(resourcePath);
+        assertNotNull(JsonUtil.read(resourcePath));
     }
 }
