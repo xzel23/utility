@@ -52,7 +52,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
             Pair<String, Object>... options) {
         // create map with default options
         Map<String, Object> optionMap = new HashMap<>(DEFAULT_OPTIONS);
-        LangUtil.putAll(optionMap, options); // add overrrides
+        LangUtil.putAll(optionMap, options); // add overrides
 
         return new StyledDocumentBuilder(new DefaultStyledDocument(), styleTraits, optionMap).add(text).get();
     }

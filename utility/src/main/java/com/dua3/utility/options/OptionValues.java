@@ -33,10 +33,10 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
     	 */
     	void changed(Option<T> option, Value<T> o, Value<T> n);
     }
-    
-    /** List of VlueChangeListeners. */
+
+    /** List of ValueChangeListeners. */
     private transient List<ValueChangeListener<?>> changeListeners = new ArrayList<>();
-    
+
     /**
      * Add value change listener.
      * @param listener
@@ -45,7 +45,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
     public void addChangeListener(ValueChangeListener<?> listener) {
     	changeListeners.add(Objects.requireNonNull(listener));
     }
-    
+
     /**
      * Remove value change listener.
      * @param listener
@@ -70,7 +70,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
 	    	changeListeners.forEach(listener -> ((ValueChangeListener<T>)listener).changed(v, o, n));
     	}
     }
-    
+
     /**
      * An empty set of option values.
      *

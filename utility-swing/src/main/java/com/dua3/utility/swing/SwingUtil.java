@@ -84,7 +84,7 @@ public class SwingUtil {
     }
 
     /**
-     * Scroll scrollpane to bottom.
+     * Scroll pane to bottom.
      *
      * @param sp
      *           a scroll pane
@@ -182,7 +182,7 @@ public class SwingUtil {
      *                 the current file, it determines the folder shown when the
      *                 dialog opens
      * @param  types
-     *                 the choosable file name filters, given as pairs of
+     *                 the selectable file name filters, given as pairs of
      *                 description
      *                 and one or more extensions
      * @return

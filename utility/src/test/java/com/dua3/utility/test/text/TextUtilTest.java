@@ -18,7 +18,7 @@ import com.dua3.utility.text.TextUtil;
 public class TextUtilTest {
 
     @Test
-    public void testTransfrom() {
+    public void testTransform() {
         String template = "Hello ${NAME}.";
 
         String expected = "Hello Axel.";

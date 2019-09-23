@@ -31,8 +31,8 @@ public enum OpenMode {
      * Test if the functionality provided by this mode is a superset of that provided by another mode.
      * <p>
      *     <b>Example:</b>
-     *     {@code ÒpenMode.READ.includes(ÒpenMode.READ_AND_WRITE) = false}
-     *     {@code ÒpenMode.READ_AND_WRITE.includes(ÒpenMode.READ) = true}
+     *     {@code OpenMode.READ.includes(OpenMode.READ_AND_WRITE) = false}
+     *     {@code OpenMode.READ_AND_WRITE.includes(OpenMode.READ) = true}
      * </p>
      * @param other
      *  the other mode

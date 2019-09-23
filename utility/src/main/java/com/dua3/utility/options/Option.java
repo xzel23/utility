@@ -2,7 +2,6 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.OpenMode;
-import com.dua3.utility.lang.LangUtil;
 
 import java.io.File;
 import java.util.*;
@@ -202,6 +201,7 @@ public abstract class Option<T> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Value<T> toValue(Object v) {
             for (Value<T> value: getChoices()) {
                 if (value.toString().equals(v.toString())) {
@@ -385,7 +385,7 @@ public abstract class Option<T> {
      * @param arguments
      *      the option's arguments
      * @return
-     *      new opzion instance
+     *      new option instance
      */
     private static Option<?> createOption(String name, Map<String, String> arguments) {
         String type = arguments.getOrDefault(OPTION_TYPE, OPTION_TYPE_STRING);

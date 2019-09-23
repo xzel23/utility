@@ -13,7 +13,7 @@ public interface ToRichText {
     /**
      * Get RichText representation of this object (similar to {@code toString()}).
      *
-     * @return RichhText presentation of the object
+     * @return RichText presentation of the object
      */
     default RichText toRichText() {
         RichTextBuilder builder = new RichTextBuilder();

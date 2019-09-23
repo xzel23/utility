@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import com.dua3.utility.lang.LangUtil;
 
 /**
- * Utility class for Inpit/Output.
+ * Utility class for Input/Output.
  */
 public class IOUtil {
 
@@ -106,7 +106,7 @@ public class IOUtil {
      *                     if content could not be read
      */
     public static String read(Path path, Charset cs) throws IOException {
-        return new String(Files.readAllBytes(path), cs);
+        return Files.readString(path, cs);
     }
 
     /**
@@ -260,7 +260,7 @@ public class IOUtil {
      *                           the path to load the text from
      * @param  onCharsetDetected
      *                           callback to call when a character encoding was
-     *                           successfull.
+     *                           successful.
      * @param  charsets
      *                           the encodings to try
      * @return
@@ -302,7 +302,7 @@ public class IOUtil {
      *                           the path to load the text from
      * @param  onCharsetDetected
      *                           callback to call when a character encoding was
-     *                           successfull.
+     *                           successful.
      * @return
      *                           the text read
      * @throws IOException
@@ -376,12 +376,12 @@ class StreamSupplier<V> {
     private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
 
     private static final List<StreamSupplier<?>> streamSuppliers = List.of (
-            def(InputStream.class, v -> (InputStream)v, StreamSupplier::outputUnsupported),
-            def(OutputStream.class, StreamSupplier::inputUnsupported, v-> (OutputStream) v),
-            def(URI.class, v->IOUtil.toURL((URI)v).openStream(), v->Files.newOutputStream(IOUtil.toPath((URI) v))),
-            def(URL.class, v->((URL) v).openStream(), v->Files.newOutputStream(IOUtil.toPath((URL) v))),
-            def(Path.class, v->Files.newInputStream((Path) v), v->Files.newOutputStream((Path) v)),
-            def(File.class, v->Files.newInputStream(((File) v).toPath()), v->Files.newOutputStream(((File) v).toPath()))
+            def(InputStream.class, v -> v, StreamSupplier::outputUnsupported),
+            def(OutputStream.class, StreamSupplier::inputUnsupported, v-> v),
+            def(URI.class, v->IOUtil.toURL(v).openStream(), v->Files.newOutputStream(IOUtil.toPath(v))),
+            def(URL.class, URL::openStream, v->Files.newOutputStream(IOUtil.toPath(v))),
+            def(Path.class, v->Files.newInputStream(v), v->Files.newOutputStream(v)),
+            def(File.class, v->Files.newInputStream(v.toPath()), v->Files.newOutputStream(v.toPath()))
     );
 
     private static InputStream inputUnsupported(Object o) {
@@ -413,7 +413,7 @@ class StreamSupplier<V> {
                 return (StreamSupplier<? super C>) s;
             }
         }
-        return (StreamSupplier<? super C>) UNSUPPORTED;
+        return UNSUPPORTED;
     }
 
     public static <C> InputStream getInputStream(C o) throws IOException {

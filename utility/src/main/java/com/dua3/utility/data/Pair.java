@@ -21,9 +21,9 @@ public class Pair<T1, T2> {
 
     /**
      * Add pairs to a map.
-     * @param<K>
+     * @param <K>
      *                the key type
-     * @param<V>
+     * @param <V>
      *                the value type
      *
      * @param    m
@@ -78,9 +78,9 @@ public class Pair<T1, T2> {
      * <p>
      * The returned Map can be modified by adding or removing entries.
      * </p>
-     * @param<K>
+     * @param <K>
      *                the key type
-     * @param<V>
+     * @param <V>
      *                the value type
      *
      * @param    args
@@ -89,7 +89,7 @@ public class Pair<T1, T2> {
      *                given as arguments
      */
     @SafeVarargs
-    public static <K extends Object, V extends Object> Map<K, V> toMap(Pair<K, V>... args) {
+    public static <K, V> Map<K, V> toMap(Pair<K, V>... args) {
         Map<K, V> m = new HashMap<>();
         addToMap(m, args);
         return m;
@@ -107,7 +107,7 @@ public class Pair<T1, T2> {
      * @param first
      *               the first member
      * @param second
-     *               the seond member
+     *               the second member
      */
     public Pair(T1 first, T2 second) {
         this.first = first;

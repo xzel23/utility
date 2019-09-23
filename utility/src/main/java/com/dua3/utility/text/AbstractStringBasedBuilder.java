@@ -23,7 +23,7 @@ public abstract class AbstractStringBasedBuilder extends RichTextConverterBase<S
     /** Header */
     public static final String TAG_TEXT_END = "TAG_TEXT_END";
     /** Where to open external links */
-    public static final String TARGET_FOR_EXTERNAL_LINKS = "TARGET_FOR_EXTERN_LINKS";
+    public static final String TARGET_FOR_EXTERNAL_LINKS = "TARGET_FOR_EXTERNAL_LINKS";
     /** Replace '.md' file extension in local links (i.e. with ".html") */
     public static final String REPLACEMENT_FOR_MD_EXTENSION_IN_LINK = "REPLACEMENT_FOR_MD_EXTENSION_IN_LINK";
 

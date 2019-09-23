@@ -6,13 +6,13 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * A Filtering Iteratoe implementation.
+ * A Filtering Iterator implementation.
  * <p>
- * The constructor takes an {@link Iterator} instance and a predicate on the element type. It constrcuts a new
+ * The constructor takes an {@link Iterator} instance and a predicate on the element type. It constructs a new
  * Iterator instance with the same element type, but that leaves out all elements that do not match the
  * predicate.
  * @param <T>
- *  the elemen t type
+ *  the element t type
  */
 public class FilterIterator<T> implements Iterator<T> {
 

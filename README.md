@@ -112,7 +112,7 @@ rounding, with support for all types of `java.math.RoundingMode`
 
 ### Version 4.0.1
 
-- `JdbcDataSource.setUser()` and `JdbcDataSource.setPassword()` suppoert `null` argument to unset value.
+- `JdbcDataSource.setUser()` and `JdbcDataSource.setPassword()` support `null` argument to unset value.
 
 ### Version 4.0.0
 
@@ -151,7 +151,7 @@ __BETA 1__
 
 ### Version 3.1.3
 
-- Added methods to measure text in TextUtil. The concrete implementation is using either AWT or JavaFX and is loaded via a ServiceLoader. The AWT implementation is included in utility.swing whereas a JavaFX implementation is inlcuded in the fx.util subproject of the fx project.
+- Added methods to measure text in TextUtil. The concrete implementation is using either AWT or JavaFX and is loaded via a ServiceLoader. The AWT implementation is included in utility.swing whereas a JavaFX implementation is included in the fx.util subproject of the fx project.
 
 ### Version 3.1.2
 

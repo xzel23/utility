@@ -33,7 +33,7 @@ public class Font {
     }
 
     /**
-     * Construct a new {@code GenerivFont}.
+     * Construct a new {@code Font}.
      *
      * @param family
      *                      the font family
@@ -42,7 +42,7 @@ public class Font {
      * @param color
      *                      the color to use for text
      * @param bold
-     *                      if text should be displayed in bold lettters
+     *                      if text should be displayed in bold letters
      * @param italic
      *                      if text should be displayed in italics
      * @param underlined

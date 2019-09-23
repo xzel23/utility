@@ -182,7 +182,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         TextAttributes attributes = TextAttributes.of(resetAttr.pop());
         applyAttributes(attributes);
         // update currentAttributes with the new values
-        attributes.entrySet().forEach(entry -> currentAttributes.put(entry.getKey(), entry.getValue()));
+        attributes.forEach((key, value) -> currentAttributes.put(key, value));
     }
 
     String handleRunStarts(Run run) {

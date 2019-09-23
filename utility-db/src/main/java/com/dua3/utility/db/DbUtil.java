@@ -10,8 +10,6 @@ import com.dua3.utility.io.CsvReader;
 import com.dua3.utility.io.CsvReader.ListRowBuilder;
 import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.Option;
-import com.dua3.utility.options.OptionValues;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -52,18 +50,18 @@ public class DbUtil {
         }
 
         // parse entries
-        p.entrySet().forEach(entry -> {
+        p.forEach((key1, value) -> {
             try {
                 ListRowBuilder rb = new ListRowBuilder();
                 CsvReader reader = CsvReader.create(
                         rb,
-                        new BufferedReader(new StringReader(Objects.toString(entry.getValue()))),
+                        new BufferedReader(new StringReader(Objects.toString(value))),
                         CsvIo.getOptionValues(CsvIo.OPTION_SEPARATOR, ';'));
                 int n = reader.readSome(1);
                 assert n == 1;
                 List<String> data = rb.getRow();
 
-                String key = String.valueOf(entry.getKey());
+                String key = String.valueOf(key1);
 
                 final int expectedFields = 5;
                 LangUtil.check(
@@ -102,7 +100,7 @@ public class DbUtil {
      * returns an instance of {@link java.time.LocalDate} in both cases.
      *
      * @param  item
-     *                               an Object representating a date in an SQL
+     *                               an Object representing a date in an SQL
      *                               ResultSet
      * @return
      *                               LocalDate instance or {@code null}
@@ -130,7 +128,7 @@ public class DbUtil {
      * returns an instance of {@link java.time.LocalDateTime} in both cases.
      *
      * @param  item
-     *                               an Object representating a timestamp in an SQL
+     *                               an Object representing a timestamp in an SQL
      *                               ResultSet
      * @return
      *                               LocalDateTime instance or {@code null}
@@ -158,7 +156,7 @@ public class DbUtil {
      * returns an instance of {@link java.time.LocalTime} in both cases.
      *
      * @param  item
-     *                               an Object representating a time value in an SQL
+     *                               an Object representing a time value in an SQL
      *                               ResultSet
      * @return
      *                               LocalTime instance or {@code null}

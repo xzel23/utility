@@ -32,7 +32,7 @@ public class CryptUtil {
         int nBytes = bits / 8;
 
         if (nBytes * 8 != bits) {
-            throw new IllegalStateException("bit lenght must be a multiple of 8");
+            throw new IllegalStateException("bit length must be a multiple of 8");
         }
 
         byte[] key = new byte[nBytes];
@@ -45,7 +45,7 @@ public class CryptUtil {
     /**
      * Symmetrically encrypt text.
      * <p>
-     * The text is encrypted using AES and the resulting cyphertext is converted to
+     * The text is encrypted using AES and the resulting ciphertext is converted to
      * a String
      * by applying the Base64 algorithm.
      *
@@ -68,7 +68,7 @@ public class CryptUtil {
     /**
      * Symmetrically decrypt text.
      * <p>
-     * The text is encrypted using AES and the resulting cyphertext is converted to
+     * The text is encrypted using AES and the resulting ciphertext is converted to
      * a String
      * by applying the Base64 algorithm.
      *

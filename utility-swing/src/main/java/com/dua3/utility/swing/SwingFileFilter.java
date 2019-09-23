@@ -28,7 +28,7 @@ public class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
         List<FileType<T>> fileTypes = FileType.getFileTypes(mode, cls);
         List<SwingFileFilter<T>> filters = new ArrayList<>(fileTypes.size());
         for (FileType<T> ft : fileTypes) {
-            filters.add(new SwingFileFilter<T>(ft));
+            filters.add(new SwingFileFilter<>(ft));
         }
         return filters;
     }

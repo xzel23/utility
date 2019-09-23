@@ -80,7 +80,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *                  yet set
      * @return          value of the property
      */
-    public Object getOrSupply(String property, Supplier<? extends Object> supplier) {
+    public Object getOrSupply(String property, Supplier<?> supplier) {
         return currentStyle().computeIfAbsent(property, key -> supplier.get());
     }
 

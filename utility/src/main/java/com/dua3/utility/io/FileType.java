@@ -20,7 +20,6 @@ import com.dua3.utility.options.OptionValues;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,7 +38,7 @@ public abstract class FileType<T> implements Comparable<FileType> {
      * @param <T>
      *  the file type's document type
      */
-    protected static final <T> void addType(FileType<T> ft) {
+    protected static <T> void addType(FileType<T> ft) {
         types.add(ft);
     }
 
@@ -50,12 +49,12 @@ public abstract class FileType<T> implements Comparable<FileType> {
         addType(this);
     }
 
-    // Load FileType  impelemantations
+    // Load FileType  implementations
     static {
         ServiceLoader.load(FileType.class).forEach(FileType::init);
     }
 
-    public static Collection<FileType> filetypes() {
+    public static Collection<FileType> fileTypes() {
         return Collections.unmodifiableSet(types);
     }
 
@@ -237,7 +236,7 @@ public abstract class FileType<T> implements Comparable<FileType> {
     public static <T> List<FileType<T>> getFileTypes(OpenMode mode, Class<T> cls) {
         return types.stream()
                 .filter(t -> t.isSupported(mode))
-                // either reading is not requested or files of this type must be asignable to cls
+                // either reading is not requested or files of this type must be assignable to cls
                 .filter(t -> !mode.includes(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))
                 // either writing is not requested or the document must be assignable to this type's document type
                 .filter(t -> !mode.includes(OpenMode.WRITE)  || t.getDocumentClass().isAssignableFrom(cls))

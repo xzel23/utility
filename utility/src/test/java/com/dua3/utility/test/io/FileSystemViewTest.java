@@ -33,7 +33,7 @@ public class FileSystemViewTest {
      */
     @Test
     public void testClass() throws IOException {
-        // at least when run from within eclipse (and probalbly other IDEs as well)
+        // at least when run from within eclipse (and probably other IDEs as well)
         // *.class is loaded from the file
         // system
         testClassHelper(getClass());

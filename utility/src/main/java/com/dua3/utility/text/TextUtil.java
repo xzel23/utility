@@ -56,7 +56,7 @@ public class TextUtil {
         StringBuilder out = new StringBuilder(16 + s.length() * 11 / 10);
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (0 <= c && c < 127) {
+            if (c < 127) {
                 // ASCII characters
                 switch (c) {
                     case '\0':
@@ -430,7 +430,7 @@ public class TextUtil {
     }
 
     public enum Alignment {
-        LEFT, CENTER, RIGHT;
+        LEFT, CENTER, RIGHT
     }
 
     public static String align(String s, int width, Alignment align) {

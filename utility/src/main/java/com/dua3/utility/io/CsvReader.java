@@ -259,6 +259,7 @@ public class CsvReader extends CsvIo implements AutoCloseable {
      * @return             number of fields in row or -1 when end of input is
      *                     reached
      * @throws IOException
+     *  if an error occurs during reading
      */
     private int readRow(RowBuilder rb) throws IOException {
         String line = reader.readLine();
@@ -335,7 +336,9 @@ public class CsvReader extends CsvIo implements AutoCloseable {
      *                            input
      * @return                    number of rows read
      * @throws IOException
+     *  if an error occurs during reading
      * @throws CsvFormatException
+     *  if the data read can not be correctly interpreted
      */
     private int readRows(int maxRows) throws IOException {
         int read = 0;

@@ -40,11 +40,7 @@ public final class MathUtil {
             return min;
         }
 
-        if (arg > max) {
-            return max;
-        }
-
-        return arg;
+        return Math.min(arg, max);
     }
 
     /**
@@ -236,9 +232,9 @@ public final class MathUtil {
     /**
      * Calculate powers of 10.
      * @param i
-     *  thje exponent to use
+     *  the exponent to use
      * @return
-     *  10 raisedd to the power of i
+     *  10 raised to the power of i
      */
     public static double pow10(int i) {
         if (i == Integer.MIN_VALUE) {
@@ -388,8 +384,8 @@ public final class MathUtil {
         }
 
         // avoid error due to imprecise decimal representation
-        final double korr = pow10(-(digits + 1));
-        xm += korr;
+        final double corr = pow10(-(digits + 1));
+        xm += corr;
 
         // integer part
         final int xi = (int) round(xm, digits);

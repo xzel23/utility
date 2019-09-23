@@ -58,7 +58,7 @@ public class DataUtil {
      *     <li> if value is {@code null}, {@code null} is returned;
      *     <li> if the target class is assignment compatible, a simple cast is performed;
      *     <li> if the target class is {@link String}, {@link Object#toString()} is used;
-     *     <li> if the target class is an integer type and the value is of type double, a conversion witgout loss of precision is tried;
+     *     <li> if the target class is an integer type and the value is of type double, a conversion without loss of precision is tried;
      *     <li> if the value is of type {@link String} and the target class provides a method {@code public static T valueOf(String)}, that method is invoked;
      *     <li> otherwise an exception is thrown.
      * </ul>
@@ -101,14 +101,14 @@ public class DataUtil {
      * @return
      *  the object converted to the target class
      */
-    @SuppressWarnings("unchecked") // types are checked with isassignable()
+    @SuppressWarnings("unchecked") // types are checked with isAssignable()
     public static<T> T convert(Object value, Class<T> targetClass, boolean useConstructor) {
         // null -> null
         if (value==null) {
             return null;
         }
 
-        // assignemt compatible?
+        // assignment compatible?
         Class<?> sourceClass = value.getClass();
         if (targetClass.isAssignableFrom(sourceClass)) {
             return (T) value;
@@ -397,7 +397,7 @@ public class DataUtil {
      *  list of elements
      */
     public static <T>  List<T> collect(Iterator<T> iterator) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         iterator.forEachRemaining(result::add);
         return result;
     }

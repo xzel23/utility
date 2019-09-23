@@ -26,7 +26,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.NamedFunction;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.Option.Value;
@@ -44,7 +43,7 @@ public abstract class CsvIo implements AutoCloseable {
     }
 
     public enum PredefinedDateFormat {
-        LOCALE_DEFAULT("locale dependent", locale -> formatFromLocale(locale)),
+        LOCALE_DEFAULT("locale dependent", PredefinedDateFormat::formatFromLocale),
         LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.MEDIUM)),
         LOCALE_LONG("long (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.LONG)),
         ISO_DATE("ISO 8601 (2000-12-31)", locale -> DateTimeFormatter.ISO_LOCAL_DATE);
@@ -56,7 +55,7 @@ public abstract class CsvIo implements AutoCloseable {
          * @param style
          *  the {@link FormatStyle} to use
          * @return
-         *  the DateDormatter
+         *  the DateFormatter
          */
         private static DateTimeFormatter formatFromLocale(Locale locale, FormatStyle style) {
             return DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
@@ -67,7 +66,7 @@ public abstract class CsvIo implements AutoCloseable {
          * @param locale
          *  the locale
          * @return
-         *  the DateDormatter
+         *  the DateFormatter
          */
         private static DateTimeFormatter formatFromLocale(Locale locale) {
             String formatPattern =
@@ -192,7 +191,7 @@ public abstract class CsvIo implements AutoCloseable {
                 NamedFunction.create("|", locale -> '|'),
                 NamedFunction.create("TAB", locale -> '\t'));
 
-        // deleimiter
+        // delimiter
         OPTIONS.addOption(OPTION_DELIMITER, Character.class, Option.value("\"", '"'), Option.value("'", '\''));
 
         COMMON_OPTIONS.addOption(OPTION_DELIMITER, Character.class, Option.value("\"", '"'), Option.value("'", '\''));

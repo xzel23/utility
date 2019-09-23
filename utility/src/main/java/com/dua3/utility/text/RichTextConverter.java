@@ -11,8 +11,8 @@ public interface RichTextConverter<T> {
      * Add text.
      *
      * @param  text
-     *              the richt text to add
-     * @return      this TextBuider
+     *              the rich text to add
+     * @return      this TextBuilder
      */
     RichTextConverter<T> add(RichText text);
 

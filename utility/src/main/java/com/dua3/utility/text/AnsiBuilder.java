@@ -39,7 +39,7 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
             Pair<String, String>... options) {
         // create map with default options
         Map<String, String> optionMap = new HashMap<>(DEFAULT_OPTIONS);
-        LangUtil.putAll(optionMap, options); // add overrrides
+        LangUtil.putAll(optionMap, options); // add overrides
 
         return new AnsiBuilder(styleTraits, optionMap).add(text).get();
     }

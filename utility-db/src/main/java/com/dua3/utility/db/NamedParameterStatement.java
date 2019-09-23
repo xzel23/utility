@@ -76,7 +76,7 @@ public class NamedParameterStatement implements AutoCloseable {
     public static class ParameterInfo {
         final String name;
         final List<Integer> indexes = new LinkedList<>();
-        JDBCType type = null;
+        JDBCType type;
 
         ParameterInfo(String name) {
             this.name = name;
@@ -215,7 +215,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *                  map to hold parameter-index mappings
      * @return          the parsed query
      */
-    static final String parse(String query, Map<String, ParameterInfo> paramMap) {
+    static String parse(String query, Map<String, ParameterInfo> paramMap) {
         // I was originally using regular expressions, but they didn't work well for
         // ignoring parameter-like strings inside quotes.
         int length = query.length();
@@ -249,7 +249,7 @@ public class NamedParameterStatement implements AutoCloseable {
                     c = '?'; // replace the parameter with a question mark
                     i += name.length(); // skip past the end if the parameter
 
-                    ParameterInfo info = paramMap.computeIfAbsent(name, n -> new ParameterInfo(n));
+                    ParameterInfo info = paramMap.computeIfAbsent(name, ParameterInfo::new);
                     info.addIndex(index);
 
                     index++;

@@ -62,11 +62,11 @@ public class MathUtilTest {
     }
 
     /**
-     * Test of findRootsInIntervall method, of class MathUtil.
+     * Test of findRootsInInterval method, of class MathUtil.
      */
     @Test
-    public void testFindRootsInIntervall() {
-        System.out.println("findRootsInIntervall");
+    public void testFindRootsInInterval() {
+        System.out.println("findRootsInInterval");
         List<Double> result = MathUtil.findRootsInInterval(x -> 3 * x * (x - 2.0 / 3.0), -10.5, +10.5, 20, 1e-15);
         assertEquals(2, result.size());
         assertEquals(0, result.get(0), 1e-15);

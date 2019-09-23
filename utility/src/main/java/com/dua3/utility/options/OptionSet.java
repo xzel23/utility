@@ -14,7 +14,7 @@ import com.dua3.utility.options.Option.Value;
 public class OptionSet implements Iterable<Option<?>> {
 
 	/**
-	 * Tranform {@code List<T>} into {@code List<Value<T>>}.
+	 * Transform {@code List<T>} into {@code List<Value<T>>}.
 	 * @param <T>
 	 *  the item type
 	 * @param choices
@@ -227,6 +227,7 @@ public class OptionSet implements Iterable<Option<?>> {
      * @return
      *                   the option's value, or {@code null} if no value is present
      */
+    @SuppressWarnings("unchecked")
     public <T> T getOptionValue(String name, OptionValues overrides) {
         Optional<Option<?>> option = getOption(name);
 

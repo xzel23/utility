@@ -43,7 +43,7 @@ public class RichText
      * @return   RichText representation of s
      */
     public static RichText valueOf(String s) {
-        return new RichText(Arrays.asList(new Run(s, 0, s.length(), TextAttributes.none())));
+        return new RichText(List.of(new Run(s, 0, s.length(), TextAttributes.none())));
     }
 
     private final CharSequence text;

@@ -338,7 +338,7 @@ public final class Color {
      * Convert String to Color. Lookup is tried i these steps:
      * <ol>
      * <li>directly look up the String in the map of predefined colors.
-     * <li>if first character is '#', interprete s as hex representation of the
+     * <li>if first character is '#', interpret s as hex representation of the
      * RGB value
      * <li>if s starts with rgb, s should be something like "rgb(123,210,120)"
      * <li>otherwise an exception is thrown
