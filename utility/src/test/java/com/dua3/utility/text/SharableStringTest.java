@@ -3,14 +3,11 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-package com.dua3.utility.test.text;
+package com.dua3.utility.text;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-
-import com.dua3.utility.text.SharableString;
-import com.dua3.utility.text.SharedString;
 
 public class SharableStringTest {
 

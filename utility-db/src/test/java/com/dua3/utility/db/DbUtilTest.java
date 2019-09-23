@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-package com.dua3.utility.test.db;
+package com.dua3.utility.db;
 
 import java.util.Collection;
 

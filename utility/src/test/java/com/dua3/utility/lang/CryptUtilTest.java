@@ -3,9 +3,8 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-package com.dua3.utility.test.lang;
+package com.dua3.utility.lang;
 
-import com.dua3.utility.lang.CryptUtil;
 import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 

@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-package com.dua3.utility.test.text;
+package com.dua3.utility.text;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,7 +13,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.text.TextUtil;
 
 public class TextUtilTest {
 

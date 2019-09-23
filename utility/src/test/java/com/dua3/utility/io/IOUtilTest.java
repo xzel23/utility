@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-package com.dua3.utility.test.io;
+package com.dua3.utility.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,8 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
-
-import com.dua3.utility.io.IOUtil;
 
 /**
  * Test the FileSystemView class.
