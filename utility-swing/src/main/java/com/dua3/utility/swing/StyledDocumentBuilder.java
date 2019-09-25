@@ -59,7 +59,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
 
     private StyledDocument buffer;
 
-    private float scale = 1;
+    private float scale;
 
     private Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
 
