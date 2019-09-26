@@ -148,12 +148,7 @@ public abstract class FileType<T> implements Comparable<FileType> {
      */
     public boolean matches(String filename) {
         String ext1 = IOUtil.getExtension(filename);
-        for (String ext2: extensions) {
-            if (ext2.equals(ext1)) {
-                return true;
-            }
-        }
-        return false;
+        return extensions.stream().anyMatch(ext2 -> ext2.equals(ext1));
     }
 
     /**

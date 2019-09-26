@@ -6,6 +6,7 @@
 package com.dua3.utility.text;
 
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 import com.dua3.utility.lang.LangUtil;
 
@@ -68,12 +69,7 @@ public class SharedString implements CharSequence {
             SharedString anotherString = (SharedString) anObject;
             int n = length();
             if (n == anotherString.length()) {
-                for (int i = 0; i < n; i++) {
-                    if (anotherString.charAt(i) != charAt(i)) {
-                        return false;
-                    }
-                }
-                return true;
+                return IntStream.range(0, n).noneMatch(i -> anotherString.charAt(i) != charAt(i));
             }
         }
         return false;

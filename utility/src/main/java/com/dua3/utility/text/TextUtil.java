@@ -19,6 +19,7 @@ import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
+import java.util.stream.IntStream;
 
 public class TextUtil {
 
@@ -179,13 +180,13 @@ public class TextUtil {
      * @return font size in pt
      */
     public static float decodeFontSize(String s) {
-        float factor = 1f;
+        float factor = 1.0f;
         if (s.endsWith("pt")) {
             s = s.substring(0, s.length() - 2);
-            factor = 1f;
+            factor = 1.0f;
         } else if (s.endsWith("px")) {
             s = s.substring(0, s.length() - 2);
-            factor = 96f / 72f;
+            factor = 96.0f / 72.0f;
         }
         return factor * Float.parseFloat(s);
     }
@@ -244,12 +245,10 @@ public class TextUtil {
      */
     public static int indexOf(CharSequence haystack, char needle, int fromIndex) {
         final int haystackLength = haystack.length();
-        for (int pos = fromIndex; pos < haystackLength; pos++) {
-            if (haystack.charAt(pos) == needle) {
-                return pos;
-            }
-        }
-        return -1;
+        return IntStream.range(fromIndex, haystackLength)
+                .filter(pos -> haystack.charAt(pos) == needle)
+                .findFirst()
+                .orElse(-1);
     }
 
     /**

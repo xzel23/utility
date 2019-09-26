@@ -470,7 +470,7 @@ public final class Color {
      * @return alpha component as float (between 0.0 and 1.0)
      */
     public float af() {
-        return a() / 255f;
+        return a() / 255.0f;
     }
 
     /**
@@ -497,7 +497,7 @@ public final class Color {
      * @return blue component as float (between 0.0 and 1.0)
      */
     public float bf() {
-        return b() / 255f;
+        return b() / 255.0f;
     }
 
     /**
@@ -564,7 +564,7 @@ public final class Color {
      * @return green component as float (between 0.0 and 1.0)
      */
     public float gf() {
-        return g() / 255f;
+        return g() / 255.0f;
     }
 
     @Override
@@ -587,7 +587,7 @@ public final class Color {
      * @return red component as float (between 0.0 and 1.0)
      */
     public float rf() {
-        return r() / 255f;
+        return r() / 255.0f;
     }
 
     /**

@@ -45,7 +45,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
     public static final String ATTRIBUTE_SET = "attribute-set";
     public static final String FONT_SIZE = "font-size";
 
-    private static final Map<String, Object> DEFAULT_OPTIONS = LangUtil.map(Pair.of(SCALE, 1f));
+    private static final Map<String, Object> DEFAULT_OPTIONS = LangUtil.map(Pair.of(SCALE, 1.0f));
 
     @SafeVarargs
     public static StyledDocument toStyledDocument(RichText text, Function<Style, TextAttributes> styleTraits,

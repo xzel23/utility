@@ -58,7 +58,7 @@ class FilterIteratorTest {
     public void testSomeMatchingFirstMatching() {
         List<Integer> items = List.of(1,2,3,4,5,6,7,8,9,10);
 
-        Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->i%2==1);
+        Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->(i&1)==1);
         assertTrue(fi.hasNext());
         assertEquals(1, fi.next());
         assertTrue(fi.hasNext());

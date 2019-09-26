@@ -144,12 +144,7 @@ public class LangUtil {
      */
     @SafeVarargs
     public static <T> boolean isOneOf(T arg, T... rest) {
-        for (T t : rest) {
-            if (Objects.equals(arg, t)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(rest).anyMatch(t -> Objects.equals(arg, t));
     }
 
     public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, Predicate<E> condition) {

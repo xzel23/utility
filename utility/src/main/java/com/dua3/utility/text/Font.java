@@ -29,7 +29,7 @@ public class Font {
      * Construct a new {@code GenericFont}.
      */
     public Font() {
-        this("Helvetica", 10f, Color.BLACK, false, false, false, false);
+        this("Helvetica", 10.0f, Color.BLACK, false, false, false, false);
     }
 
     /**

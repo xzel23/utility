@@ -408,12 +408,10 @@ class StreamSupplier<V> {
 
     @SuppressWarnings("unchecked")
     private static <C> StreamSupplier<? super C> supplier(C o) {
-        for (var s: streamSuppliers) {
-            if (s.clazz.isInstance(o)) {
-                return (StreamSupplier<? super C>) s;
-            }
-        }
-        return UNSUPPORTED;
+        return streamSuppliers.stream()
+                .filter(s -> s.clazz.isInstance(o))
+                .findFirst().<StreamSupplier<? super C>>map(s -> (StreamSupplier<? super C>) s)
+                .orElse(UNSUPPORTED);
     }
 
     public static <C> InputStream getInputStream(C o) throws IOException {

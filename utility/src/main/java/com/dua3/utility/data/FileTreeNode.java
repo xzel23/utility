@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileTreeNode implements TreeNode<FileTreeNode> {
@@ -45,13 +46,10 @@ public class FileTreeNode implements TreeNode<FileTreeNode> {
 
     public void refresh() {
         try {
-            List<FileTreeNode> list = new ArrayList<>();
-            Files.walk(path, 1).forEach(p -> {
-                if (!p.equals(path)) {
-                    list.add(new FileTreeNode(this, p, lazy));
-                }
-            });
-            this.children = list;
+            this.children = Files.walk(path, 1)
+                    .filter(p -> !p.equals(path))
+                    .map(p -> new FileTreeNode(this, p, lazy))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
