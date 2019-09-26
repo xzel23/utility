@@ -115,18 +115,18 @@ public class DataUtil {
         }
 
         // target is String -> use toString()
-        if (targetClass.equals(String.class)) {
+        if (targetClass == String.class) {
             return (T) value.toString();
         }
 
         // convert floating point numbers without fractional part to integer types
         if (value instanceof Double || value instanceof Float) {
             double d = ((Number) value).doubleValue();
-            if (targetClass.equals(Integer.class)) {
+            if (targetClass == Integer.class) {
                 int n = (int) d;
                 LangUtil.check(n==d, "value cannot be converted to int without loss of precision: %f", value);
                 return (T)(Integer) n;
-            } else if (targetClass.equals(Long.class)) {
+            } else if (targetClass == Long.class) {
                 long n = (long) d;
                 LangUtil.check(n==d, "value cannot be converted to long without loss of precision: %f", value);
                 return (T)(Long) n;
@@ -134,22 +134,22 @@ public class DataUtil {
         }
 
         // convert other numbers to double
-        if (targetClass.equals(Double.class) && Number.class.isAssignableFrom(sourceClass)) {
+        if (targetClass == Double.class && Number.class.isAssignableFrom(sourceClass)) {
             return (T) (Double) (((Number) value).doubleValue());
         }
 
         // convert other numbers to float
-        if (targetClass.equals(Float.class) && Number.class.isAssignableFrom(sourceClass)) {
+        if (targetClass == Float.class && Number.class.isAssignableFrom(sourceClass)) {
             return (T) (Float) (((Number) value).floatValue());
         }
 
         // convert String to LocalDate using the ISO format
-        if (targetClass.equals(LocalDate.class) && sourceClass.equals(String.class)) {
+        if (targetClass == LocalDate.class && sourceClass == String.class) {
             return (T) LocalDate.parse(value.toString(), DateTimeFormatter.ISO_DATE);
         }
 
         // convert String to LocalDateTime using the ISO format
-        if (targetClass.equals(LocalDateTime.class) && sourceClass.equals(String.class)) {
+        if (targetClass == LocalDateTime.class && sourceClass == String.class) {
             return (T) LocalDate.parse(value.toString(), DateTimeFormatter.ISO_DATE_TIME);
         }
 
@@ -159,7 +159,7 @@ public class DataUtil {
             if ( method.getModifiers()==( Modifier.PUBLIC | Modifier.STATIC )
                  && method.getName().equals("valueOf")
                  && method.getParameterCount()==1
-                 && method.getParameterTypes()[0].equals(sourceClass)
+                 && method.getParameterTypes()[0] == sourceClass
                  && targetClass.isAssignableFrom(method.getReturnType())) {
                 try {
                     return (T) method.invoke(null, value);
@@ -174,7 +174,7 @@ public class DataUtil {
             for (var constructor: targetClass.getDeclaredConstructors()) {
                 if ( constructor.getModifiers()==( Modifier.PUBLIC )
                         && constructor.getParameterCount()==1
-                        && constructor.getParameterTypes()[0].equals(sourceClass)) {
+                        && constructor.getParameterTypes()[0] == sourceClass) {
                     try {
                         return (T) constructor.newInstance(value);
                     } catch (IllegalAccessException|InvocationTargetException|InstantiationException e) {

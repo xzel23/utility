@@ -10,18 +10,18 @@ public class ToStringBuilder {
     private String sep = "";
 
     public ToStringBuilder() {
-        sb.append("[");
+        sb.append('[');
     }
 
     public ToStringBuilder add(String name, Object value) {
         sb.append(sep);
-        sb.append(name).append(":").append(value);
+        sb.append(name).append(':').append(value);
         sep = ", ";
         return this;
     }
 
     @Override
     public String toString() {
-        return sb.toString() + "]"; // do not append so that more items can be added
+        return sb.toString() + ']'; // do not append so that more items can be added
     }
 }

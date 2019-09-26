@@ -253,7 +253,7 @@ public abstract class Option<T> {
         }
 
         Option<?> other = (Option<?>) obj;
-        return name.equals(other.name) && klass.equals(other.klass);
+        return name.equals(other.name) && klass == other.klass;
     }
 
     public Value<T> getDefault() {

@@ -501,7 +501,7 @@ public class LangUtil {
      * @return          URL for the given resource
      */
     public static URL getResourceURL(Class<?> clazz, String resource) {
-        return Objects.requireNonNull(clazz.getResource(resource), "Resource not found: " + resource);
+        return Objects.requireNonNull(clazz.getResource(resource), () -> "Resource not found: " + resource);
     }
 
     /**

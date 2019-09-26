@@ -271,7 +271,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  if the parameter does not exist
      */
     private List<Integer> getIndexes(String name) {
-        return Objects.requireNonNull(indexMap.get(name), "unknown parameter '" + name + "'.").indexes;
+        return Objects.requireNonNull(indexMap.get(name), () -> "unknown parameter '" + name + "'.").indexes;
     }
 
     /**
