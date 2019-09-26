@@ -44,8 +44,8 @@ public class FileTreeNode implements TreeNode<FileTreeNode> {
     }
 
     public void refresh() {
-        List<FileTreeNode> list = new ArrayList<>();
         try {
+            List<FileTreeNode> list = new ArrayList<>();
             Files.walk(path, 1).forEach(p -> {
                 if (!p.equals(path)) {
                     list.add(new FileTreeNode(this, p, lazy));

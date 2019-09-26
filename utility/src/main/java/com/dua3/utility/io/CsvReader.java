@@ -288,10 +288,12 @@ public class CsvReader extends CsvIo implements AutoCloseable {
             int currentLine = lineNumber;
             if (field == null && matcher.group(3) != null) {
                 String nextLine = reader.readLine();
-                if (nextLine == null) {
-                    throw new CsvFormatException("Unexpected end of input while looking for matching delimiter.",
-                            getSource(), currentLine);
-                }
+
+                LangUtil.check(
+                        nextLine != null,
+                        () -> new CsvFormatException("Unexpected end of input while looking for matching delimiter.",
+                                getSource(), currentLine));
+
                 lineNumber++;
                 line = matcher.group(3) + "\n" + nextLine;
                 matcher = patternField.matcher(line);
@@ -312,14 +314,11 @@ public class CsvReader extends CsvIo implements AutoCloseable {
         }
 
         // if unparsed input remains, the input line is not in csv-format
-        if (!matcher.hitEnd()) {
-            throw new CsvFormatException("invalid csv data.", getSource(), getLineNumber());
-        }
+        LangUtil.check(matcher.hitEnd(), () -> new CsvFormatException("invalid csv data.", getSource(), getLineNumber()));
 
         // check number of fields
-        if (!ignoreMissingFields && columnNames != null && columnNr < columnNames.size()) {
-            throw new CsvFormatException("not enough fields.", getSource(), getLineNumber());
-        }
+        LangUtil.check(ignoreMissingFields || columnNames == null || columnNr >= columnNames.size(),
+                () -> new CsvFormatException("not enough fields.", getSource(), getLineNumber()));
 
         rowNumber++;
         rowsRead++;

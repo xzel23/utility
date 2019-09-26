@@ -58,7 +58,7 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
 
     @Override
     protected void applyAttributes(TextAttributes attributes) {
-        ArrayList<Character> esc = new ArrayList<>();
+        List<Character> esc = new ArrayList<>();
 
         for (Entry<String, Object> entry : attributes.entrySet()) {
             String attribute = entry.getKey();

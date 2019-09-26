@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil.Bounds;
 
 import java.nio.charset.StandardCharsets;
@@ -158,9 +159,7 @@ public class TextUtil {
 
             // determine ref name
             int varEnd = template.indexOf(TRANSFORM_REF_END, pos);
-            if (varEnd == -1) {
-                throw new IllegalStateException();
-            }
+            LangUtil.check(varEnd != -1);
             String varName = template.substring(pos, varEnd);
             pos = varEnd + TRANSFORM_REF_END.length();
 
@@ -371,9 +370,7 @@ public class TextUtil {
     private static int getHexDigit(String s, int idx) {
         char c = s.charAt(idx);
         int hex = Character.digit(c, 16);
-        if (hex < 0) {
-            throw new IllegalStateException("not a hex digit: " + c);
-        }
+        LangUtil.check(hex >= 0, "not a hex digit: %s", c);
         return hex;
     }
 

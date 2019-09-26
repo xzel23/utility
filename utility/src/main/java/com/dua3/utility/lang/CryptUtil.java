@@ -30,10 +30,7 @@ public class CryptUtil {
 
     public static byte[] generateKey(int bits) {
         int nBytes = bits / 8;
-
-        if (nBytes * 8 != bits) {
-            throw new IllegalStateException("bit length must be a multiple of 8");
-        }
+        LangUtil.check(nBytes * 8 == bits, "bit length must be a multiple of 8");
 
         byte[] key = new byte[nBytes];
         SecureRandom secureRandom = new SecureRandom();
@@ -142,9 +139,8 @@ public class CryptUtil {
     public static byte[] decrypt(byte[] key, byte[] cipherMessage) throws GeneralSecurityException {
         ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);
         int ivLength = byteBuffer.getInt();
-        if (ivLength < 12 || ivLength >= 16) { // check input parameter
-            throw new IllegalArgumentException("invalid iv length");
-        }
+        LangUtil.check(ivLength >= 12 && ivLength < 16, "invalid iv length");
+
         byte[] iv = new byte[ivLength];
         byteBuffer.get(iv);
         byte[] cipherText = new byte[byteBuffer.remaining()];

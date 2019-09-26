@@ -23,9 +23,8 @@ public class RingBufferTest {
             assertEquals(Math.min(CAPACITY, i), buffer.size());
             buffer.add("test " + i);
             // test buffer content
-            int last = i;
-            int first = Math.max(0, last - CAPACITY + 1);
-            for (int j = first; j <= last; j++) {
+            int first = Math.max(0, i - CAPACITY + 1);
+            for (int j = first; j <= i; j++) {
                 assertEquals("test " + j, buffer.get(j - first));
             }
         }

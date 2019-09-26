@@ -21,7 +21,7 @@ public enum OpenMode {
      */
     READ_AND_WRITE(3);
 
-    int n;
+    final int n;
 
     OpenMode(int n) {
         this.n = n;

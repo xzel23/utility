@@ -12,8 +12,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.dua3.utility.data.Color;
-
 public class ColorTest {
 
     @Test
@@ -41,8 +39,6 @@ public class ColorTest {
     @Test
     public void testValueOfWithRgb() {
         for (Color c : Color.values()) {
-            Color expected = c;
-
             int r = c.r();
             int g = c.g();
             int b = c.b();
@@ -51,7 +47,7 @@ public class ColorTest {
             if (a == 0xFF) {
                 String text = String.format("rgb(%d,%d,%d)", r, g, b);
                 Color actual = Color.valueOf(text);
-                assertEquals(expected, actual);
+                assertEquals(c, actual);
             }
         }
     }
@@ -59,8 +55,6 @@ public class ColorTest {
     @Test
     public void testValueOfWithRgba() {
         for (Color c : Color.values()) {
-            Color expected = c;
-
             int r = c.r();
             int g = c.g();
             int b = c.b();
@@ -68,7 +62,7 @@ public class ColorTest {
             String text = String.format("rgba(%d,%d,%d,%d)", r, g, b, a);
             Color actual = Color.valueOf(text);
 
-            assertEquals(expected, actual);
+            assertEquals(c, actual);
         }
     }
 

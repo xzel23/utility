@@ -320,7 +320,7 @@ public class LangUtil {
      */
     @SafeVarargs
     public static <K, V> Map<K, V> map(Pair<K, V>... items) {
-        HashMap<K, V> map = new HashMap<>();
+        Map<K, V> map = new HashMap<>();
         putAllIfAbsent(map, items);
         return Collections.unmodifiableMap(map);
     }

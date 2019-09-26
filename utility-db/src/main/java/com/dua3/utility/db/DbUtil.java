@@ -298,9 +298,7 @@ public class DbUtil {
      */
     public static DataSource createDataSource(Driver driver, String url, String user, String password)
             throws SQLException {
-        if (!driver.acceptsURL(url)) {
-            throw new SQLException("URL not accepted by driver");
-        }
+        LangUtil.check(driver.acceptsURL(url), () -> new SQLException("URL not accepted by driver"));
 
         JdbcDataSource ds = new JdbcDataSource();
         ds.setDriver(driver);

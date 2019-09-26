@@ -141,7 +141,7 @@ public final class MathUtil {
             x1 = tmp;
         }
 
-        ArrayList<Double> roots = new ArrayList<>();
+        List<Double> roots = new ArrayList<>();
         double step = (x1 - x0) / steps;
         double xa = x0;
         double ya = f.applyAsDouble(xa);

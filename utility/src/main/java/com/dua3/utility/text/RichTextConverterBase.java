@@ -128,9 +128,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      *                               if this builder's get() was already called
      */
     protected void checkState() {
-        if (!isValid()) {
-            throw new IllegalStateException("This builder's get() method was already called.");
-        }
+        LangUtil.check(isValid(), "This builder's get() method was already called.");
     }
 
     @Override

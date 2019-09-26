@@ -79,9 +79,9 @@ public abstract class CsvIo implements AutoCloseable {
             return DateTimeFormatter.ofPattern(formatPattern, locale);
         }
 
-        private String name;
+        private final String name;
 
-        private Function<Locale, DateTimeFormatter> factory;
+        private final Function<Locale, DateTimeFormatter> factory;
 
         PredefinedDateFormat(String name, Function<Locale, DateTimeFormatter> factory) {
             this.name = name;
@@ -111,9 +111,9 @@ public abstract class CsvIo implements AutoCloseable {
             return DateTimeFormatter.ofPattern(pattern);
         }
 
-        private String name;
+        private final String name;
 
-        private Function<Locale, DateTimeFormatter> factory;
+        private final Function<Locale, DateTimeFormatter> factory;
 
         PredefinedDateTimeFormat(String name, Function<Locale, DateTimeFormatter> factory) {
             this.name = name;

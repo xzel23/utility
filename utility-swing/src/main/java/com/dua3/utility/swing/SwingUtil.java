@@ -15,6 +15,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -139,7 +140,7 @@ public class SwingUtil {
      *                        the application name to set
      */
     public static void setNativeLookAndFeel(String applicationName) {
-        if (System.getProperty("os.name").toUpperCase().startsWith("MAC")) {
+        if (System.getProperty("os.name").toUpperCase(Locale.ROOT).startsWith("MAC")) {
             if (applicationName != null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
                 System.setProperty("apple.awt.application.name", applicationName);

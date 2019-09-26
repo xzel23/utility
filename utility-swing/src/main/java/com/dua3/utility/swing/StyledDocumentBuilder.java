@@ -151,8 +151,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
                         || TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value));
                 break;
             case TextAttributes.FONT_SIZE:
-                StyleConstants.setFontSize(attributeSet, value == null ? Math.round(scale * defaultFontSize)
-                        : Math.round(scale * TextUtil.decodeFontSize(String.valueOf(value))));
+                StyleConstants.setFontSize(attributeSet, Math.round(scale * (value == null ? defaultFontSize : TextUtil.decodeFontSize(String.valueOf(value)))));
                 break;
             case TextAttributes.FONT_SCALE:
                 StyleConstants.setFontSize(attributeSet, value == null ? Math.round(scale * defaultFontSize)
