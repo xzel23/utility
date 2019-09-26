@@ -1,10 +1,10 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.options.Option.Value;
+
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import com.dua3.utility.options.Option.Value;
 
 /**
  * A Set of possible options to configure a classes behavior, i.e. all possible
@@ -13,25 +13,12 @@ import com.dua3.utility.options.Option.Value;
  */
 public class OptionSet implements Iterable<Option<?>> {
 
-	/**
-	 * Transform {@code List<T>} into {@code List<Value<T>>}.
-	 * @param <T>
-	 *  the item type
-	 * @param choices
-	 *  the items to map
-	 * @return
-	 *  list of values
-	 */
-    public static <T> List<Value<T>> wrap(Collection<T> choices) {
-        return choices.stream().map(Option::value).collect(Collectors.toList());
-    }
-
     private final Set<Option<?>> options = new LinkedHashSet<>();
 
     /**
      * Create a new OptionSet.
-     * @param options
-     *  the options to include in this set
+     *
+     * @param options the options to include in this set
      */
     public OptionSet(Option<?>... options) {
         Collections.addAll(this.options, options);
@@ -40,28 +27,33 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Create an OptionSet.
      *
-     * @param options
-     *                the options
+     * @param options the options
      */
     public OptionSet(Iterable<Option<?>> options) {
         options.forEach(this.options::add);
     }
 
     /**
+     * Transform {@code List<T>} into {@code List<Value<T>>}.
+     *
+     * @param <T>     the item type
+     * @param choices the items to map
+     * @return list of values
+     */
+    public static <T> List<Value<T>> wrap(Collection<T> choices) {
+        return choices.stream().map(Option::value).collect(Collectors.toList());
+    }
+
+    /**
      * Add option to set.
      *
-     * @param              <T>
-     *                     the parameter type
-     * @param name
-     *                     the option's name
-     * @param klass
-     *                     the type of the option's parameter value
-     * @param defaultValue
-     *                     the option's default value
-     * @param choices
-     *                     the values this option can take
+     * @param <T>          the parameter type
+     * @param name         the option's name
+     * @param klass        the type of the option's parameter value
+     * @param defaultValue the option's default value
+     * @param choices      the values this option can take
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public <T> void addOption(String name, Class<T> klass, T defaultValue, T... choices) {
         addOption(name, klass, defaultValue, Arrays.asList(choices));
     }
@@ -69,16 +61,11 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Add option to set.
      *
-     * @param              <T>
-     *                     the parameter type
-     * @param name
-     *                     the option's name
-     * @param klass
-     *                     the type of the option's parameter value
-     * @param defaultValue
-     *                     the option's default value
-     * @param choices
-     *                     the values this option can take
+     * @param <T>          the parameter type
+     * @param name         the option's name
+     * @param klass        the type of the option's parameter value
+     * @param defaultValue the option's default value
+     * @param choices      the values this option can take
      */
     public <T> void addOption(String name, Class<T> klass, T defaultValue, Collection<T> choices) {
         List<Value<T>> values = wrap(choices);
@@ -88,16 +75,11 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Add option to set.
      *
-     * @param              <T>
-     *                     the parameter type
-     * @param name
-     *                     the option's name
-     * @param klass
-     *                     the type of the option's parameter value
-     * @param defaultValue
-     *                     the option's default value
-     * @param values
-     *                     the values this option can take
+     * @param <T>          the parameter type
+     * @param name         the option's name
+     * @param klass        the type of the option's parameter value
+     * @param defaultValue the option's default value
+     * @param values       the values this option can take
      */
     @SafeVarargs
     public final <T> void addOption(String name, Class<T> klass, Value<T> defaultValue, Value<T>... values) {
@@ -107,16 +89,11 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Add option to set.
      *
-     * @param              <T>
-     *                     the parameter type
-     * @param name
-     *                     the option's name
-     * @param klass
-     *                     the type of the option's parameter value
-     * @param defaultValue
-     *                     the option's default value
-     * @param values
-     *                     the values this option can take
+     * @param <T>          the parameter type
+     * @param name         the option's name
+     * @param klass        the type of the option's parameter value
+     * @param defaultValue the option's default value
+     * @param values       the values this option can take
      */
     public final <T> void addOption(String name, Class<T> klass, Value<T> defaultValue, Collection<Value<T>> values) {
         options.add(Option.choiceOption(name, klass, defaultValue, values));
@@ -125,16 +102,11 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Add option to set.
      *
-     * @param              <T>
-     *                     the parameter type
-     * @param name
-     *                     the option's name
-     * @param klass
-     *                     the type of the option's parameter value
-     * @param defaultValue
-     *                     the option's default value
-     * @param values
-     *                     the values this option can take
+     * @param <T>          the parameter type
+     * @param name         the option's name
+     * @param klass        the type of the option's parameter value
+     * @param defaultValue the option's default value
+     * @param values       the values this option can take
      */
     @SafeVarargs
     public final <T> void addOption(String name, Class<T> klass, String defaultValue, Value<T>... values) {
@@ -144,16 +116,11 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Add option to set.
      *
-     * @param              <T>
-     *                     the parameter type
-     * @param name
-     *                     the option's name
-     * @param klass
-     *                     the type of the option's parameter value
-     * @param defaultValue
-     *                     the option's default value
-     * @param values
-     *                     the values this option can take
+     * @param <T>          the parameter type
+     * @param name         the option's name
+     * @param klass        the type of the option's parameter value
+     * @param defaultValue the option's default value
+     * @param values       the values this option can take
      */
     public final <T> void addOption(String name, Class<T> klass, String defaultValue, Collection<Value<T>> values) {
         // find default by name
@@ -176,10 +143,8 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Add option to set.
      *
-     * @param              <T>
-     *                     the parameter type
-     * @param option
-     *                     the option
+     * @param <T>    the parameter type
+     * @param option the option
      */
     public final <T> void addOption(Option<T> option) {
         options.add(option);
@@ -188,8 +153,7 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Get options as list.
      *
-     * @return
-     *         this set's options as a list
+     * @return this set's options as a list
      */
     public List<Option<?>> asList() {
         return new ArrayList<>(options);
@@ -198,10 +162,8 @@ public class OptionSet implements Iterable<Option<?>> {
     /**
      * Get option by name
      *
-     * @param  name
-     *              the option name
-     * @return
-     *              Optional containing the option
+     * @param name the option name
+     * @return Optional containing the option
      */
     public Optional<Option<?>> getOption(String name) {
         for (Option<?> o : options) {
@@ -218,14 +180,10 @@ public class OptionSet implements Iterable<Option<?>> {
      * If {@code overrides} contains a value for the option, this value is used.
      * Otherwise, the option's default value is used if present.
      *
-     * @param <T>
-     *                   the value type
-     * @param  name
-     *                   the option name
-     * @param  overrides
-     *                   the supplied option values
-     * @return
-     *                   the option's value, or {@code null} if no value is present
+     * @param <T>       the value type
+     * @param name      the option name
+     * @param overrides the supplied option values
+     * @return the option's value, or {@code null} if no value is present
      */
     @SuppressWarnings("unchecked")
     public <T> T getOptionValue(String name, OptionValues overrides) {

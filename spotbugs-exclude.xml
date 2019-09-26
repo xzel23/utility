@@ -1,25 +1,25 @@
 <FindBugsFilter>
 
-	<!-- false positive in Java 11, see https://github.com/spotbugs/spotbugs/issues/756 -->
-	<Match>
-		<Or>
-			<Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
-			<Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
-		</Or>
-	</Match>
+    <!-- false positive in Java 11, see https://github.com/spotbugs/spotbugs/issues/756 -->
+    <Match>
+        <Or>
+            <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+            <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+        </Or>
+    </Match>
 
-	<!-- ignore all bugs in test classes, except for those bugs specifically 
-		relating to JUnit tests -->
-	<!-- i.e. filter bug if ( classIsJUnitTest && ! bugIsRelatedToJUnit ) -->
-	<Match>
-		<!-- the Match filter is equivalent to a logical 'And' -->
+    <!-- ignore all bugs in test classes, except for those bugs specifically
+        relating to JUnit tests -->
+    <!-- i.e. filter bug if ( classIsJUnitTest && ! bugIsRelatedToJUnit ) -->
+    <Match>
+        <!-- the Match filter is equivalent to a logical 'And' -->
 
-		<Class name="~.*\.*Test" />
-		<!-- test classes are suffixed by 'Test' -->
+        <Class name="~.*\.*Test"/>
+        <!-- test classes are suffixed by 'Test' -->
 
-		<Not>
-			<Bug code="IJU" /> <!-- 'IJU' is the code for bugs related to JUnit test code -->
-		</Not>
-	</Match>
+        <Not>
+            <Bug code="IJU"/> <!-- 'IJU' is the code for bugs related to JUnit test code -->
+        </Not>
+    </Match>
 
 </FindBugsFilter>
