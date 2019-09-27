@@ -199,7 +199,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
                     // store current attributes for resetting at end of style
                     Map<String, Object> m = t.attributes().keySet().stream()
                             .filter(attr -> !attr.startsWith("__"))
-                            .collect(Collectors.toMap(Function.identity(), currentAttributes::get, (a, b) -> b));
+                            .collect(HashMap::new, (map, v) -> map.put(v, currentAttributes.get(v)), HashMap::putAll);
                     pushRunAttributes(m);
                     // also store for updating the actual style
                     attributes.putAll(t.attributes());
