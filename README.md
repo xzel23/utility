@@ -22,6 +22,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5-BETA2
+
+ - Update spotbugs to 4.0.0-beta4 to be able to compile using JDK 13.
+ - `DataUtil.convert()`: be more strict with boolean conversions. Converting a `String s` to `Boolean` will yield `null` if `s` is `null`, `Boolean.TRUE` if and only if `s` equals ignoring case `"true"`, `Boolean.FALSE` if and only if `s` equals ignoring case `"false"`. In all other cases `IllegalArgumentException` is thrown.
+ 
 ### Version 5-BETA1
 
  - fixed many small issues, typos (also in method names), so that I decided to also bump the major version

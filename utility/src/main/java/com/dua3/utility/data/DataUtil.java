@@ -8,10 +8,7 @@ import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -151,6 +148,20 @@ public class DataUtil {
         // convert String to LocalDateTime using the ISO format
         if (targetClass == LocalDateTime.class && sourceClass == String.class) {
             return (T) LocalDate.parse(value.toString(), DateTimeFormatter.ISO_DATE_TIME);
+        }
+
+        // convert String to Boolean
+        // Don't rely on Boolean.valueOf(String) because it might introduce subtle bugs,
+        // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw IllegalArgumentException instead.
+        if (targetClass == Boolean.class && sourceClass == String.class) {
+            switch (((String) value).toLowerCase(Locale.ROOT)) {
+                case "true":
+                    return (T) Boolean.TRUE;
+                case "false":
+                    return (T) Boolean.FALSE;
+                default:
+                    throw new IllegalArgumentException("invalid text for boolean conversion: "+value);
+            }
         }
 
         // target provides public static valueOf(U) where value is instance of U
