@@ -32,7 +32,7 @@ public class AnsiCode {
     public static final char BACKGROUND_COLOR = 48;
 
     private static String byteStr(int b) {
-        LangUtil.check(b >= 0 && b <= 255);
+        LangUtil.check((b >= 0) && (b <= 255));
         return Integer.toString(b);
     }
 

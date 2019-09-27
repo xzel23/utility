@@ -93,9 +93,6 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
             pos += e.first;
         }
 
-        // consistency checks
-        LangUtil.check(openedTags.isEmpty(), "there still are open tags");
-
         // mark builder invalid by clearing buffer
         StyledDocument ret = buffer;
         buffer = null;
@@ -201,7 +198,5 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
             throw new IllegalStateException(e);
         }
     }
-
-    private final Deque<String> openedTags = new LinkedList<>();
 
 }

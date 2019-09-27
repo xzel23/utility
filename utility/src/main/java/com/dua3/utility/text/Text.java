@@ -23,7 +23,7 @@ import com.dua3.utility.lang.LangUtil;
 public class Text extends AbstractList<String> {
 
     private static final char NEWLINE = '\n';
-    private static final String NEWLINE_STR = "" + '\n';
+    private static final String NEWLINE_STR = "\n";
     private static final Text EMPTY_TEXT = new Text(Collections.emptyList());
 
     public static Text collect(Stream<String> lines) {

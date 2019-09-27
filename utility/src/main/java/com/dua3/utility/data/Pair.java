@@ -136,6 +136,6 @@ public class Pair<T1, T2> {
 
     @Override
     public String toString() {
-        return "[" + first + "," + second + "]";
+        return "[" + first + ',' + second + ']';
     }
 }

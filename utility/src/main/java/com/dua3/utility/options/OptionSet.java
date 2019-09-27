@@ -53,7 +53,7 @@ public class OptionSet implements Iterable<Option<?>> {
      * @param defaultValue the option's default value
      * @param choices      the values this option can take
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings("unchecked")
     public <T> void addOption(String name, Class<T> klass, T defaultValue, T... choices) {
         addOption(name, klass, defaultValue, Arrays.asList(choices));
     }

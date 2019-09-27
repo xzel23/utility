@@ -542,11 +542,7 @@ public final class Color {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || obj.getClass() != getClass()) {
-            return false;
-        }
-
-        return ((Color) obj).argb == argb;
+        return obj != null && obj.getClass() == getClass() && ((Color) obj).argb == argb;
     }
 
     /**

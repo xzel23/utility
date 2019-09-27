@@ -251,7 +251,7 @@ public abstract class CsvIo implements AutoCloseable {
     protected final DateTimeFormatter dateFormatter;
     protected final NumberFormat numberFormat;
 
-    public CsvIo(OptionValues options) {
+    protected CsvIo(OptionValues options) {
         this.separator = String.valueOf(getSeparator(options));
         this.delimiter = String.valueOf(getDelimiter(options));
         this.lineDelimiter = String.format("%n");

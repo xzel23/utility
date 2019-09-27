@@ -351,11 +351,7 @@ public class CsvReader extends CsvIo implements AutoCloseable {
     }
 
     public int readSome(int rowsToRead) throws IOException {
-        if (rowsToRead > 0) {
-            return readRows(rowsToRead);
-        } else {
-            return 0;
-        }
+        return rowsToRead > 0 ? readRows(rowsToRead) : 0;
     }
 
     /**

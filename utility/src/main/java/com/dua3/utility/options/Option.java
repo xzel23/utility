@@ -379,7 +379,7 @@ public abstract class Option<T> {
             }
 
             FileOption other = (FileOption) obj;
-            return other.mode.equals(mode) && other.extensions.equals(extensions);
+            return other.mode == mode && other.extensions.equals(extensions);
         }
 
         @Override

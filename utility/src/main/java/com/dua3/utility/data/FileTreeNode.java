@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +18,7 @@ public class FileTreeNode implements TreeNode<FileTreeNode> {
     }
 
     private FileTreeNode parent;
-    private Path path;
+    private final Path path;
     private List<FileTreeNode> children = null;
     private boolean lazy;
 

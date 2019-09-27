@@ -404,7 +404,7 @@ public final class MathUtil {
             }
         }
 
-        return showSign ? sign + sb.toString() : sb.toString();
+        return showSign ? sign + sb : sb.toString();
     }
 
     /**
