@@ -10,14 +10,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -568,5 +561,35 @@ public class LangUtil {
         for (Logger logger : loggers) {
             setLogLevel(level, logger);
         }
+    }
+
+    /**
+     * Create an EnumSet. This method also works if values is empty.
+     * @param clss
+     *  the enum class
+     * @param values
+     *  the values
+     * @param <E>
+     *  the enum type
+     * @return
+     *  the EnumSet
+     */
+    public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, E... values) {
+        return enumSet(clss, Arrays.asList(values));
+    }
+
+    /**
+     * Create an EnumSet. This method also works if values is empty.
+     * @param clss
+     *  the enum class
+     * @param values
+     *  the values
+     * @param <E>
+     *  the enum type
+     * @return
+     *  the EnumSet
+     */
+    public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, Collection<E> values) {
+        return values.isEmpty() ? EnumSet.noneOf(clss) : EnumSet.copyOf(values);
     }
 }
