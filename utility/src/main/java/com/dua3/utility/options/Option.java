@@ -124,20 +124,20 @@ public abstract class Option<T> {
         return new SimpleOption<>(name, Double.class, defaultValue);
     }
 
-    public static FileOption fileOption(String name) {
-        return new FileOption(name, () -> null, OpenMode.READ);
+    public static FileOption fileOption(String name, OpenMode mode) {
+        return new FileOption(name, () -> null, mode);
     }
 
-    public static FileOption fileOption(String name, File defaultValue) {
-        return new FileOption(name, () -> defaultValue, OpenMode.READ);
+    public static FileOption fileOption(String name, OpenMode mode, File defaultValue) {
+        return new FileOption(name, () -> defaultValue, mode);
     }
 
-    public static FileOption fileOption(String name, Value<File> defaultValue) {
-        return new FileOption(name, defaultValue, OpenMode.READ);
+    public static FileOption fileOption(String name, OpenMode mode, Value<File> defaultValue) {
+        return new FileOption(name, defaultValue, mode);
     }
 
-    public static FileOption fileOption(String name, Value<File> defaultValue, String... extensions) {
-        return new FileOption(name, defaultValue, OpenMode.READ, extensions);
+    public static FileOption fileOption(String name, OpenMode mode, Value<File> defaultValue, String... extensions) {
+        return new FileOption(name, defaultValue, mode, extensions);
     }
 
     public static <T> ChoiceOption<T> choiceOption(String name, Class<T> klass, Value<T> defaultValue,
@@ -196,7 +196,7 @@ public abstract class Option<T> {
                 option = Option.stringOption(name, dflt);
                 break;
             case OPTION_TYPE_FILE:
-                option = Option.fileOption(name, () -> (dflt == null ? null : new File(dflt)), arguments.get("extension"));
+                option = Option.fileOption(name, OpenMode.valueOf(arguments.get("mode")), () -> (dflt == null ? null : new File(dflt)), arguments.get("extension"));
                 break;
             case OPTION_TYPE_INTEGER:
                 option = Option.intOption(name, dflt == null ? 0 : Integer.parseInt(dflt));

@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5-BETA4
+
+ - Option.fileOption(): added OpenMode
+
 ### Version 5-BETA3
 
  - code cleanup
