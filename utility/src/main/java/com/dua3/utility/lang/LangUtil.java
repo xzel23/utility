@@ -265,7 +265,7 @@ public class LangUtil {
             return s;
         }
 
-        if (s.charAt(0) == 0xfeff) {
+        if (s.charAt(0) == UTF_BYTE_ORDER_MARK) {
             s = s.substring(1);
         }
 
