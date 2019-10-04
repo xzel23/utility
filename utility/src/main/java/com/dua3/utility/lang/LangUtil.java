@@ -574,6 +574,7 @@ public class LangUtil {
      * @return
      *  the EnumSet
      */
+    @SafeVarargs
     public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, E... values) {
         return enumSet(clss, Arrays.asList(values));
     }
