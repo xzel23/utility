@@ -25,6 +25,7 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 ### Version 5-BETA3
 
  - code cleanup
+ - LangUtil.enumSet()
  
 ### Version 5-BETA2
 
