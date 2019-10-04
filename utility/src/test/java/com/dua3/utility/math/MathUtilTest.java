@@ -216,7 +216,7 @@ public class MathUtilTest {
         checkRounding(operations, -5.5, -6, -5,	-5, -6, -6, -5, -6);
     }
 
-    private boolean checkRounding(Map<RoundingMode,DoubleUnaryOperator> operations, double x, double xUP, double xDOWN, double xCEILING, double xFLOOR, double xHALF_UP, double xHALF_DOWN, double xHALF_EVEN) {
+    private static boolean checkRounding(Map<RoundingMode, DoubleUnaryOperator> operations, double x, double xUP, double xDOWN, double xCEILING, double xFLOOR, double xHALF_UP, double xHALF_DOWN, double xHALF_EVEN) {
         assertEquals(xUP, operations.get(RoundingMode.UP).applyAsDouble(x));
         assertEquals(xDOWN, operations.get(RoundingMode.DOWN).applyAsDouble(x));
         assertEquals(xCEILING, operations.get(RoundingMode.CEILING).applyAsDouble(x));

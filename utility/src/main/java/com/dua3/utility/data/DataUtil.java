@@ -120,10 +120,12 @@ public class DataUtil {
         if (value instanceof Double || value instanceof Float) {
             double d = ((Number) value).doubleValue();
             if (targetClass == Integer.class) {
+                //noinspection NumericCastThatLosesPrecision
                 int n = (int) d;
                 LangUtil.check(n==d, "value cannot be converted to int without loss of precision: %f", value);
                 return (T)(Integer) n;
             } else if (targetClass == Long.class) {
+                //noinspection NumericCastThatLosesPrecision
                 long n = (long) d;
                 LangUtil.check(n==d, "value cannot be converted to long without loss of precision: %f", value);
                 return (T)(Long) n;
@@ -154,6 +156,7 @@ public class DataUtil {
         // Don't rely on Boolean.valueOf(String) because it might introduce subtle bugs,
         // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw IllegalArgumentException instead.
         if (targetClass == Boolean.class && sourceClass == String.class) {
+            //noinspection ConstantConditions
             switch (((String) value).toLowerCase(Locale.ROOT)) {
                 case "true":
                     return (T) Boolean.TRUE;

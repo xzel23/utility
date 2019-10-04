@@ -100,6 +100,7 @@ public class Run
     public int hashCode() {
         int h = attributes.hashCode();
         for (int i = 0; i < length; i++) {
+            //noinspection CharUsedInArithmeticContext
             h = 31 * h + charAt(i);
         }
         return h;

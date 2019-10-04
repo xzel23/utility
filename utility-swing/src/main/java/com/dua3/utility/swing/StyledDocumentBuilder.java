@@ -109,7 +109,7 @@ public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument>
         return buffer.toString();
     }
 
-    private AttributeSet getParagraphAttributes(AttributeSet as) {
+    private static AttributeSet getParagraphAttributes(AttributeSet as) {
         SimpleAttributeSet pa = new SimpleAttributeSet();
         for (Object attr : PARAGRAPH_ATTRIBUTES) {
             Object value = as.getAttribute(attr);

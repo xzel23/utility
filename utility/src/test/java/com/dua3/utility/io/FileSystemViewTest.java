@@ -52,7 +52,7 @@ public class FileSystemViewTest {
         testClassHelper(org.junit.jupiter.api.Test.class);
     }
 
-    private void testClassHelper(Class<?> clazz) throws IOException {
+    private static void testClassHelper(Class<?> clazz) throws IOException {
         try (FileSystemView fsv = FileSystemView.forClass(clazz)) {
             assertNotNull(fsv);
 

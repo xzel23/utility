@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * A class representing files of a certain type.
  */
-public abstract class FileType<T> implements Comparable<FileType> {
+public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     private static final Set<FileType<?>> types = new HashSet<>();
 
@@ -37,11 +37,11 @@ public abstract class FileType<T> implements Comparable<FileType> {
     }
 
     private final String name;
-    private final Class<T> cls;
+    private final Class<? extends T> cls;
     private final OpenMode mode;
     private final List<String> extensions; // unmodifiable!
 
-    protected FileType(String name, OpenMode mode, Class<T> cls, String... extensions) {
+    protected FileType(String name, OpenMode mode, Class<? extends T> cls, String... extensions) {
         this.name = name;
         this.mode = mode;
         this.cls = cls;
@@ -58,12 +58,12 @@ public abstract class FileType<T> implements Comparable<FileType> {
         types.add(ft);
     }
 
-    public static Collection<FileType> fileTypes() {
+    public static Collection<FileType<?>> fileTypes() {
         return Collections.unmodifiableSet(types);
     }
 
     public static Optional<FileType<?>> forExtension(String ext) {
-        for (FileType t : types) {
+        for (FileType<?> t : types) {
             if (t.extensions.contains(ext)) {
                 return Optional.of(t);
             }
@@ -81,9 +81,9 @@ public abstract class FileType<T> implements Comparable<FileType> {
 
     @SuppressWarnings("unchecked")
     private static <T> Optional<FileType<T>> forFileName(Class<T> cls, String fileName) {
-        for (FileType t : types) {
+        for (FileType<?> t : types) {
             if (t.matches(fileName) && cls.isAssignableFrom(t.getDocumentClass())) {
-                return Optional.of(t);
+                return Optional.of((FileType<T>) t);
             }
         }
         return Optional.empty();
@@ -149,7 +149,7 @@ public abstract class FileType<T> implements Comparable<FileType> {
      *
      * @return the document type
      */
-    public Class<T> getDocumentClass() {
+    public Class<? extends T> getDocumentClass() {
         return cls;
     }
 
@@ -202,7 +202,7 @@ public abstract class FileType<T> implements Comparable<FileType> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public abstract T read(URI uri, Function<FileType, OptionValues> options) throws IOException;
+    public abstract T read(URI uri, Function<FileType<? extends T>, OptionValues> options) throws IOException;
 
     /**
      * Write document to file.
@@ -223,7 +223,7 @@ public abstract class FileType<T> implements Comparable<FileType> {
      * @param options  the options to use
      * @throws IOException if an error occurs
      */
-    public abstract void write(URI uri, T document, Function<FileType, OptionValues> options) throws IOException;
+    public abstract void write(URI uri, T document, Function<FileType<? super T>, OptionValues> options) throws IOException;
 
     /**
      * Get optional settings for this file type

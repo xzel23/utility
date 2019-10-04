@@ -223,11 +223,12 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Style> getStyleList(Run run, String property) {
+    private static List<Style> getStyleList(Run run, String property) {
         TextAttributes attributes = run.getAttributes();
         Object value = attributes.getOrDefault(property, Collections.emptyList());
 
         LangUtil.check(value instanceof List, "expected instance of List but got %s", value.getClass());
+        //noinspection ConstantConditions
         return (List<Style>) value;
     }
 

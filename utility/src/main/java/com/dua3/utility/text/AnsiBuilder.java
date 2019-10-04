@@ -48,7 +48,8 @@ public class AnsiBuilder extends AbstractStringBasedBuilder {
         super(styleTraits, options);
     }
 
-    private void addColor(List<Character> esc, char code, Color c) {
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private static void addColor(List<Character> esc, char code, Color c) {
         esc.add(code);
         esc.add((char) 2);
         esc.add((char) c.r());

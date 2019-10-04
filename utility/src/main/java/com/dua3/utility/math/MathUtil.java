@@ -388,6 +388,7 @@ public final class MathUtil {
         xm += corr;
 
         // integer part
+        //noinspection NumericCastThatLosesPrecision
         final int xi = (int) round(xm, digits);
         sb.append(xi);
         xm -= xi;
@@ -397,7 +398,9 @@ public final class MathUtil {
             sb.append(".");
             int k = 10;
             for (int i = 0; i < digits; i++) {
+                //noinspection NumericCastThatLosesPrecision
                 final int d = ((int) (xm * k)) % 10;
+                //noinspection CharUsedInArithmeticContext
                 sb.append((char) ('0' + d));
                 k *= 10;
                 showSign |= d != 0;

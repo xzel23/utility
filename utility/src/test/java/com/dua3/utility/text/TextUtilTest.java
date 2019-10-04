@@ -26,6 +26,7 @@ public class TextUtilTest {
         assertEquals(expected, actual);
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     private static final List<Pair<String, byte[]>> byteArrayHexStringTestData = List.of(
             Pair.of("00", new byte[] { 0x00 }),
             Pair.of("a0cafe", new byte[] { (byte) 0xa0, (byte) 0xca, (byte) 0xfe }));

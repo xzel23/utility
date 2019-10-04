@@ -59,6 +59,7 @@ public class RichText
     private boolean checkAllRunsHaveTextAsBase(List<Run> runs) {
         boolean ok = true;
         for (Run run : runs) {
+            //noinspection ObjectEquality
             ok &= run.base() == text;
         }
         return ok;

@@ -99,8 +99,6 @@ public class TextUtil {
                     case Character.DECIMAL_DIGIT_NUMBER:
                     case Character.LETTER_NUMBER:
                     case Character.OTHER_NUMBER:
-                        out.append(c);
-                        break;
                     // letters: pass all non-modifying letters through
                     case Character.UPPERCASE_LETTER:
                     case Character.LOWERCASE_LETTER:
@@ -352,6 +350,7 @@ public class TextUtil {
         for (int i = 0; i < len; i += 2) {
             int h1 = getHexDigit(s, i);
             int h2 = getHexDigit(s, i + 1);
+            //noinspection NumericCastThatLosesPrecision
             data[i / 2] = (byte) ((h1 << 4) + h2);
         }
         return data;

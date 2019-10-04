@@ -133,7 +133,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
         fireChange_(v, o, n);
     }
 
-    private Class<?> getClass(Object o) {
+    private static Class<?> getClass(Object o) {
         return o != null ? o.getClass() : null;
     }
 

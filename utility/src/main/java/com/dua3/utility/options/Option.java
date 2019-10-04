@@ -430,7 +430,7 @@ public abstract class Option<T> {
                 return false;
             }
 
-            ChoiceOption other = (ChoiceOption) obj;
+            ChoiceOption<?> other = (ChoiceOption<?>) obj;
             return other.choices.equals(choices);
         }
 

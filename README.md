@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5-BETA3
+
+ - code cleanup
+ 
 ### Version 5-BETA2
 
  - Update spotbugs to 4.0.0-beta4 to be able to compile using JDK 13.

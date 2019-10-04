@@ -81,6 +81,7 @@ public class CsvReader extends CsvIo implements AutoCloseable {
     private static final int UTF8_BOM = 0xfeff;
 
     // the bytes sequence the UTF-8 BOM
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
     public static CsvReader create(RowBuilder builder, BufferedReader reader, OptionValues options) throws IOException {

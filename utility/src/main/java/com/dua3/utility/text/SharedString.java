@@ -53,6 +53,7 @@ public class SharedString implements CharSequence {
         if (h == 0 && end != start) {
             int len = end - start;
             for (int i = 0; i < len; i++) {
+                //noinspection CharUsedInArithmeticContext
                 h = 31 * h + base.charAt(start + i);
             }
             hash = h;

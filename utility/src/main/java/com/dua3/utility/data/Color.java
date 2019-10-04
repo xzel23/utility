@@ -526,6 +526,7 @@ public final class Color {
             b = i;
         }
 
+        //noinspection NumericCastThatLosesPrecision
         return new Color(Math.min((int) (r / F_BRIGHTEN), 255), Math.min((int) (g / F_BRIGHTEN), 255),
                 Math.min((int) (b / F_BRIGHTEN), 255), alpha);
     }
@@ -536,6 +537,7 @@ public final class Color {
      * @return a darker version of this color
      */
     public Color darker() {
+        //noinspection NumericCastThatLosesPrecision
         return new Color(Math.max((int) (r() * F_BRIGHTEN), 0), Math.max((int) (g() * F_BRIGHTEN), 0),
                 Math.max((int) (b() * F_BRIGHTEN), 0), a());
     }
@@ -593,6 +595,7 @@ public final class Color {
      *         order
      */
     public byte[] toByteArray() {
+        //noinspection NumericCastThatLosesPrecision
         return new byte[] { (byte) a(), (byte) r(), (byte) g(), (byte) b() };
     }
 
