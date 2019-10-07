@@ -414,7 +414,7 @@ public final class Color {
     }
 
     private static int shiftComponentValue(int value, int bits) {
-        LangUtil.check(value >= 0 && value <= 255);
+        LangUtil.check(value >= 0 && value <= 255, () -> new IllegalArgumentException("value out of range: "+value));
         return value << bits;
     }
 

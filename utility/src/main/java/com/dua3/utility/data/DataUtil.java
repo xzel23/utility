@@ -29,12 +29,6 @@ public class DataUtil {
             this.targetClassName = targetClass.getName();
         }
 
-        ConversionException(Class<?> sourceClass, Class<?> targetClass, Throwable cause) {
-            super(cause);
-            this.sourceClassName = sourceClass.getName();
-            this.targetClassName = targetClass.getName();
-        }
-
         ConversionException(Class<?> sourceClass, Class<?> targetClass, String message, Throwable cause) {
             super(message, cause);
             this.sourceClassName = sourceClass.getName();
@@ -122,12 +116,12 @@ public class DataUtil {
             if (targetClass == Integer.class) {
                 //noinspection NumericCastThatLosesPrecision
                 int n = (int) d;
-                LangUtil.check(n==d, "value cannot be converted to int without loss of precision: %f", value);
+                LangUtil.check(n==d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
                 return (T)(Integer) n;
             } else if (targetClass == Long.class) {
                 //noinspection NumericCastThatLosesPrecision
                 long n = (long) d;
-                LangUtil.check(n==d, "value cannot be converted to long without loss of precision: %f", value);
+                LangUtil.check(n==d, () -> new IllegalArgumentException("value cannot be converted to long without loss of precision: " + value));
                 return (T)(Long) n;
             }
         }
@@ -149,7 +143,7 @@ public class DataUtil {
 
         // convert String to LocalDateTime using the ISO format
         if (targetClass == LocalDateTime.class && sourceClass == String.class) {
-            return (T) LocalDate.parse(value.toString(), DateTimeFormatter.ISO_DATE_TIME);
+            return (T) LocalDateTime.parse(value.toString(), DateTimeFormatter.ISO_DATE_TIME);
         }
 
         // convert String to Boolean

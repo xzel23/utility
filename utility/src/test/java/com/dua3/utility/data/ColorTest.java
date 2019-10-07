@@ -5,12 +5,12 @@
 
 package com.dua3.utility.data;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ColorTest {
 
@@ -23,6 +23,19 @@ public class ColorTest {
             Color d = Color.valueOf(hex);
             assertEquals(c, d);
         }
+        
+        // illegal char in hax
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("#1234567g")); 
+        // negative value
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgb(0,0,-1)")); 
+        // three components expected
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgb(0,0,0,0)")); 
+        // 256 is out of range
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgba(1,5,256,128)")); 
+        // four components expected
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgba(1,5,255)"));
+        // gibberish text
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("foobar"));
     }
 
     @Test
