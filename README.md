@@ -22,6 +22,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5-BETA5
+
+ - fix DataUtil.convert() to LocalDateTime conversion
+ - added some unit tests
+ 
 ### Version 5-BETA4
 
  - Option.fileOption(): added OpenMode
