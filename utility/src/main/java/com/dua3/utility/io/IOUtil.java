@@ -351,11 +351,11 @@ public class IOUtil {
     }
 
     /**
-     * Get InputStream.
+     * Get OutputStream.
      * <p>
      * Supported classes:
      * <ul>
-     *     <li>{@link InputStream}
+     *     <li>{@link OutputStream}
      *     <li>{@link URI}
      *     <li>{@link URL}
      *     <li>{@link Path}
