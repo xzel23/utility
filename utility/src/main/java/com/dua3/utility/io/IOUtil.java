@@ -91,9 +91,23 @@ public class IOUtil {
      */
     public static String stripExtension(String fname) {
         int pos = fname.lastIndexOf('.');
-        return pos < 0 ? "" : fname.substring(0, pos);
+        return pos < 0 ? fname : fname.substring(0, pos);
     }
 
+    /**
+     * Replace file extension.
+     *
+     * @param  fname
+     *               the filename
+     * @param extension
+     *              the new file extension
+     * @return       filename with replaced extension
+     */
+    public static String replaceExtension(String fname, String extension) {
+        String fnameNoExt = stripExtension(fname);
+        return fnameNoExt.isEmpty() ? "" : fnameNoExt+"."+extension;
+    }
+    
     /**
      * Read content of path into String.
      *
