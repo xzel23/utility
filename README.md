@@ -22,6 +22,14 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5-BETA7
+
+ - prefs package for file based java Preferences implementation
+ 
+### Version 5-BETA6
+
+ - update to gradle 6.0; fix gradle 7 compatibility warnings
+ 
 ### Version 5-BETA5
 
  - fix DataUtil.convert() to LocalDateTime conversion

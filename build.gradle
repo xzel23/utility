@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 plugins {
-    id 'com.dua3.gradle.jpms' version '1.0-BETA5' apply false
+    id 'com.dua3.gradle.jpms' version '1.0-BETA7' apply false
     id 'com.adarshr.test-logger' version '1.7.0' apply false
     id 'com.github.spotbugs' version '2.0.0' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
@@ -23,7 +23,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '5-BETA6'
+    version = '5-BETA7'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
