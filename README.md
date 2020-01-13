@@ -24,6 +24,9 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 5-BETA7 (to be released)
 
+ - update to gradle 6.0.1
+ - add Platform class
+
 ### Version 5-BETA6
 
  - update to gradle 6.0; fix gradle 7 compatibility warnings
