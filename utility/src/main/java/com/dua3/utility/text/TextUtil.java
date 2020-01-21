@@ -8,6 +8,7 @@ package com.dua3.utility.text;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil.Bounds;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -446,4 +447,25 @@ public class TextUtil {
                 throw new IllegalArgumentException(align.toString());
         }
     }
+    
+    public static String generateMailToLink(String email, String subject) {
+        // give some care to translate space to "%20"
+        String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8);
+        String s2 = URLEncoder.encode(subject.replaceAll(" ", "_"), StandardCharsets.UTF_8);
+        StringBuilder sb = new StringBuilder(s1.length());
+        for (int i = 0; i < s1.length(); i++) {
+            if (s1.charAt(i) == '+' && s2.charAt(i) == '_') {
+                sb.append("%20");
+            } else {
+                sb.append(s1.charAt(i));
+            }
+        }
+        String s = sb.toString();
+
+        return String.format(
+                "mailto:%s?subject=%s",
+                email,
+                s);
+    }
+    
 }

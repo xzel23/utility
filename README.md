@@ -22,6 +22,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5.0.1
+
+ - add Zip class
+ - add TextUtil.generateMailToLink()
+ 
 ### Version 5.0
 
  - update to gradle 6.0.1
