@@ -33,23 +33,23 @@ public class IOUtil {
     /**
      * Extract the filename from a path given as a String. In addition to the system dependent
      * {@link File#separatorChar}, the forward slash '/' is always considered a separator.
-     * @param pathStr the path of the file
+     * @param path the path of the file
      * @return the filename of the last element of the path
      */
-    public static String getFilename(String pathStr) {
+    public static String getFilename(String path) {
         // trim trailing separators
-        int end = pathStr.length();
-        while (end>0 && isSeparatorChar(pathStr.charAt(end-1))) {
+        int end = path.length();
+        while (end>0 && isSeparatorChar(path.charAt(end-1))) {
             end--;
         }
 
         // find start of filename
         int start = end;
-        while (start>0 && !isSeparatorChar(pathStr.charAt(start-1))) {
+        while (start>0 && !isSeparatorChar(path.charAt(start-1))) {
             start--;
         }
         
-        return pathStr.substring(start, end);
+        return path.substring(start, end);
     }
 
     /**
@@ -129,31 +129,33 @@ public class IOUtil {
     /**
      * Remove file extension.
      *
-     * @param  pathStr
+     * @param  path
      *               the file path
      * @return       filename without extension
      */
-    public static String stripExtension(String pathStr) {
+    public static String stripExtension(String path) {
         // trim trailing separators
-        int end = pathStr.length();
-        while (end>0 && isSeparatorChar(pathStr.charAt(end-1))) {
+        int end = path.length();
+        while (end>0 && isSeparatorChar(path.charAt(end-1))) {
             end--;
         }
 
         // find start of filename
         int start = end;
-        while (start>0 && !isSeparatorChar(pathStr.charAt(start-1))) {
+        while (start>0 && !isSeparatorChar(path.charAt(start-1))) {
             start--;
         }
         
         // find dot
-        int pos = pathStr.indexOf('.', start);
-        return pos==-1 || pos > end ? pathStr : pathStr.substring(0, pos);
+        int pos = path.indexOf('.', start);
+        return pos==-1 || pos > end ? path : path.substring(0, pos);
     }
 
     /**
      * Replace file extension.
-     *
+     * <p>
+     * If the filename doesn't have an extension, it will be appended.
+     * 
      * @param  path
      *               the file path
      * @param extension
@@ -161,8 +163,28 @@ public class IOUtil {
      * @return       filename with replaced extension
      */
     public static String replaceExtension(String path, String extension) {
-        String fnameNoExt = stripExtension(path);
-        return fnameNoExt.isEmpty() ? "" : fnameNoExt+"."+extension;
+        // trim trailing separators
+        int end = path.length();
+        while (end>0 && isSeparatorChar(path.charAt(end-1))) {
+            end--;
+        }
+
+        // find start of filename
+        int start = end;
+        while (start>0 && !isSeparatorChar(path.charAt(start-1))) {
+            start--;
+        }
+
+        // find dot
+        int pos = path.indexOf('.', start);
+        
+        if (pos==-1  || pos > end) {
+            // filename has no extension => insert extension
+            return path.substring(0,end)+'.'+extension+path.substring(end);
+        } else {
+            // filename has extension => replace extension
+            return path.substring(0, pos) + '.' + extension + path.substring(end);
+        }
     }
     
     /**
