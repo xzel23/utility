@@ -48,10 +48,19 @@ public class IOUtilTest {
 
     @Test
     public void testStripExtension() {
-        Path path = Paths.get("folder", "text.txt");
-        String expected = "text";
-        String actual = IOUtil.stripExtension(String.valueOf(path.getFileName()));
-        assertEquals(expected, actual);
-    }
+        assertEquals("test", IOUtil.stripExtension("test.txt"));
+        assertEquals("folder/subfolder/test", IOUtil.stripExtension("folder/subfolder/test.txt"));
+        assertEquals("folder/subfolder/test", IOUtil.stripExtension("folder/subfolder/test.txt/"));
+        assertEquals("./folder/subfolder/test", IOUtil.stripExtension("./folder/subfolder/test.txt"));
+        assertEquals("./folder/subfolder/test", IOUtil.stripExtension("./folder/subfolder/test.txt/"));
 
+        assertEquals("test", IOUtil.stripExtension("test"));
+        assertEquals("folder/subfolder/test", IOUtil.stripExtension("folder/subfolder/test"));
+        assertEquals("folder/subfolder/test/", IOUtil.stripExtension("folder/subfolder/test/"));
+        assertEquals("./folder/subfolder/test", IOUtil.stripExtension("./folder/subfolder/test"));
+        assertEquals("./folder/subfolder/test/", IOUtil.stripExtension("./folder/subfolder/test/"));
+        assertEquals("/test", IOUtil.stripExtension("/test"));
+        assertEquals("./test", IOUtil.stripExtension("./test"));
+        assertEquals("../test", IOUtil.stripExtension("../test"));
+    }
 }

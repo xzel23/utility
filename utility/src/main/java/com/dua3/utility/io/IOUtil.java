@@ -129,26 +129,39 @@ public class IOUtil {
     /**
      * Remove file extension.
      *
-     * @param  fname
-     *               the filename
+     * @param  pathStr
+     *               the file path
      * @return       filename without extension
      */
-    public static String stripExtension(String fname) {
-        int pos = fname.lastIndexOf('.');
-        return pos < 0 ? fname : fname.substring(0, pos);
+    public static String stripExtension(String pathStr) {
+        // trim trailing separators
+        int end = pathStr.length();
+        while (end>0 && isSeparatorChar(pathStr.charAt(end-1))) {
+            end--;
+        }
+
+        // find start of filename
+        int start = end;
+        while (start>0 && !isSeparatorChar(pathStr.charAt(start-1))) {
+            start--;
+        }
+        
+        // find dot
+        int pos = pathStr.indexOf('.', start);
+        return pos==-1 || pos > end ? pathStr : pathStr.substring(0, pos);
     }
 
     /**
      * Replace file extension.
      *
-     * @param  fname
-     *               the filename
+     * @param  path
+     *               the file path
      * @param extension
      *              the new file extension
      * @return       filename with replaced extension
      */
-    public static String replaceExtension(String fname, String extension) {
-        String fnameNoExt = stripExtension(fname);
+    public static String replaceExtension(String path, String extension) {
+        String fnameNoExt = stripExtension(getFilename(path));
         return fnameNoExt.isEmpty() ? "" : fnameNoExt+"."+extension;
     }
     
