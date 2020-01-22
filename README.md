@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5.1.1
+
+ - Methods in IOUtil that take a filename as a String argument have been changed to return correct results when instead of a filename a path is given.
+  
 ### Version 5.1
 
  - add Zip class

@@ -31,6 +31,41 @@ public class IOUtil {
     }
 
     /**
+     * Extract the filename from a path given as a String. In addition to the system dependent
+     * {@link File#separatorChar}, the forward slash '/' is always considered a separator.
+     * @param pathStr the path of the file
+     * @return the filename of the last element of the path
+     */
+    public static String getFilename(String pathStr) {
+        // trim trailing separators
+        int end = pathStr.length();
+        while (end>0 && isSeparatorChar(pathStr.charAt(end-1))) {
+            end--;
+        }
+
+        // find start of filename
+        int start = end;
+        while (start>0 && !isSeparatorChar(pathStr.charAt(start-1))) {
+            start--;
+        }
+        
+        return pathStr.substring(start, end);
+    }
+
+    /**
+     * Test whether {@code c} is a separator character.
+     * <p>
+     * In addition to the system dependent
+     * {@link File#separatorChar}, the forward slash '/' is always considered a separator.
+     *      
+     * @param c the char to test
+     * @return true if separator
+     */
+    public static boolean isSeparatorChar(char c) {
+        return c=='/' || c==File.separatorChar;
+    }
+    
+    /**
      * Get file extension.
      *
      * @param  path
@@ -45,7 +80,7 @@ public class IOUtil {
         }
 
         String fname = fnamePath.toString();
-        return getExtension(fname);
+        return getExtensionUnsafe(fname);
     }
 
     /**
@@ -62,8 +97,7 @@ public class IOUtil {
     /**
      * Get file extension.
      *
-     * @param  uri
-     *             the URI
+     * @param  uri the URI
      * @return     the extension
      */
     public static String getExtension(URI uri) {
@@ -73,11 +107,21 @@ public class IOUtil {
     /**
      * Get file extension.
      *
-     * @param  fname
-     *               the filename
+     * @param  path  the path
      * @return       the extension
      */
-    public static String getExtension(String fname) {
+    public static String getExtension(String path) {
+        return getExtensionUnsafe(getFilename(path));
+    }
+
+    /**
+     * Get file extension.
+     * <p>
+     * <em>NOTE:</em> {@code fname} must not contain path separators.
+     * @param  fname the filename
+     * @return       the extension
+     */
+    private static String getExtensionUnsafe(String fname) {
         int pos = fname.lastIndexOf('.');
         return pos < 0 ? "" : fname.substring(pos + 1);
     }
