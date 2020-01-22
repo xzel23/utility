@@ -161,7 +161,7 @@ public class IOUtil {
      * @return       filename with replaced extension
      */
     public static String replaceExtension(String path, String extension) {
-        String fnameNoExt = stripExtension(getFilename(path));
+        String fnameNoExt = stripExtension(path);
         return fnameNoExt.isEmpty() ? "" : fnameNoExt+"."+extension;
     }
     
