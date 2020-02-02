@@ -23,12 +23,15 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import com.dua3.utility.data.Pair;
+import com.dua3.utility.io.IOUtil;
 
 /**
  * A Utility class with general purpose methods.
  */
 public class LangUtil {
 
+    private static final Logger LOG = Logger.getLogger(LangUtil.class.getName());
+    
     /**
      * Exception derived from IllegalStateException thrown by
      * {@link LangUtil#check(boolean)}. The intent is to make it possible to
@@ -592,5 +595,94 @@ public class LangUtil {
      */
     public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, Collection<E> values) {
         return values.isEmpty() ? EnumSet.noneOf(clss) : EnumSet.copyOf(values);
+    }
+
+    /**
+     * Get language suffix to use for resource lookup.
+     * <p>
+     * Using {@link Locale#toLanguageTag()} does not always work, like for Indonesian which
+     * returns "id" whereas the bundle uses "in" as suffix.
+     *
+     * @param locale    the locale
+     *                  
+     * @return the language suffix as used by the resource bundle
+     */
+    public static String getLocaleSuffix(Locale locale) {
+        String language = locale.getLanguage();
+        if (language.isEmpty()) {
+            return "";
+        }
+
+        String country = locale.getCountry();
+        if (country.isEmpty()) {
+            return "_"+language;
+        }
+
+        String variant = locale.getVariant();
+        if (variant.isEmpty()) {
+            return "_" + language + "_" + country;
+        }
+
+        return "_" + language + "_" + country + "_" + variant;
+    }
+
+    /**
+     * Get localised resource.
+     * <p>
+     * This method follows the resource bundle lookup algorithm, starting to search from the most specific
+     * resource name towards the general one, returning the first found valid URL.
+     * <p>
+     * Implementation note: The suffix is not determined using {@link Locale#toLanguageTag()} as that's not
+     * how resource bundle lookup works. An example being the Indonesian locale for which {@code Locale.toLanguageTag()}
+     * returns "id" whereas the bundle uses "in" as suffix.
+     *
+     * @param cls       the class for resource loading
+     * @param name      the resource name
+     * @param locale    the locale
+     *
+     * @return the URL of the resource if found, or {@code null}
+     * 
+     * @throws NullPointerException if no resource was found
+     */
+    public static URL getResourceURL(Class<?> cls, String name, Locale locale) {
+        String basename = IOUtil.stripExtension(name);
+        String extension = IOUtil.getExtension(name);
+
+        // build the candidate list
+        List<String> candidates = new ArrayList<>();
+
+        String candidateName = basename;
+        candidates.add(candidateName+"."+extension);;
+        
+        String language = locale.getLanguage();
+        if (!language.isEmpty()) {
+            candidateName = candidateName + "_" + language;
+            candidates.add(candidateName+"."+extension);
+            
+            String country = locale.getCountry();
+            if (!country.isEmpty()) {
+                candidateName = candidateName + "_" + country;
+                candidates.add(candidateName+"."+extension);;
+
+                String variant = locale.getVariant();
+                if (!variant.isEmpty()) {
+                    candidateName = candidateName + "_" + variant;
+                    candidates.add(candidateName+"."+extension);;
+                }
+            }
+        }
+
+        // try loading in reverse order
+        for (int i=candidates.size()-1; i>=0; i--) {
+            URL url = cls.getResource(candidates.get(i));
+            if (url!=null) {
+                LOG.fine("requested resource '"+name+"', localised rescource found: "+url);
+                return url;
+            }
+        }
+        
+        // nothing found
+        LOG.warning("resource '"+name+"' not found. candidates: "+candidates.toString());
+        throw new NullPointerException("Resource not found: "+name);
     }
 }
