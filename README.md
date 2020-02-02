@@ -15,8 +15,8 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
     }
     
     dependencies {
-        compile        "com.dua3.utility:utility:4.0.0"
-        compile        "com.dua3.utility:utility.db:4.0.0"
+        compile        "com.dua3.utility:utility:5.1.2"
+        compile        "com.dua3.utility:utility.db:5.1.2"
         ...        
     }
 
