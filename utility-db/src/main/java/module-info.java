@@ -6,7 +6,8 @@
 module dua3_utility.db {
     exports com.dua3.utility.db;
 
-    requires java.logging;
     requires transitive java.sql;
+    
+    requires java.logging;
     requires dua3_utility;
 }

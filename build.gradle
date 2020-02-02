@@ -160,14 +160,14 @@ subprojects {
                 }
             }
         }
-
+        
         repositories {
             maven { url "file://"+System.getProperty("user.home")+"/dua3/repository" }
         }
     }
 
     // === SPOTBUGS === >
-    spotbugs.toolVersion = '4.0.0-beta4'
+    spotbugs.toolVersion = '4.0.0-RC1'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.SpotBugsTask) {
