@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil.Bounds;
 
@@ -114,6 +115,28 @@ public class TextUtil {
             }
         }
         return out.toString();
+    }
+
+    /**
+     * Transform a templated String.
+     *
+     * @param template the template
+     * @param substitutions the substitutions
+     * @return result of transformation
+     * @see #transform(String, UnaryOperator)
+     */
+    @SafeVarargs
+    public static String transform(String template, Pair<String,String>... substitutions) {
+        UnaryOperator<String> env = s -> {
+            for (var r: substitutions) {
+                if (Objects.equals(s, r.first)) {
+                    return r.second;
+                }
+            }
+            return s;
+        };
+        
+        return transform(template, env);
     }
 
     /**

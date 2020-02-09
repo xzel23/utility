@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5.1.3
+
+ - TextUtil.transform(String, Pair<String,String>...)
+ 
 ### Version 5.1.2
 
  - added methods in LangUtil to resolve localised resources
