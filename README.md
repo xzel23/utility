@@ -15,13 +15,17 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
     }
     
     dependencies {
-        compile        "com.dua3.utility:utility:5.1.2"
-        compile        "com.dua3.utility:utility.db:5.1.2"
+        compile        "com.dua3.utility:utility:5.2"
+        compile        "com.dua3.utility:utility.db:5.2"
         ...        
     }
 
 ## Changes
 
+### Version 5.2
+
+ - Removal of utility-json
+ 
 ### Version 5.1.3
 
  - TextUtil.transform(String, Pair<String,String>...)
