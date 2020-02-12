@@ -167,7 +167,7 @@ subprojects {
     }
 
     // === SPOTBUGS === >
-    spotbugs.toolVersion = '4.0.0-RC1'
+    spotbugs.toolVersion = '4.0.0-RC3'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.SpotBugsTask) {
