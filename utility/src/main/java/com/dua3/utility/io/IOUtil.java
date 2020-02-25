@@ -310,6 +310,41 @@ public class IOUtil {
     }
 
     /**
+     * Check if string denotes a URI.
+     * @param s the string
+     * @return true if string denotes a URI
+     */
+    private static boolean isURI(String s) {
+        return s.matches("^[a-z][a-z0-9]+:.*");
+    }
+
+    /**
+     * Convert string to URI.
+     * @param s the string
+     * @return the URI
+     */
+    public static URI toURI(String s) {
+        if (isURI(s)) {
+            return URI.create(s);
+        } else {
+            return Paths.get(s).toUri();
+        }
+    }
+
+    /**
+     * Convert string to Path.
+     * @param s the string
+     * @return the Path
+     */
+    public static Path toPath(String s) {
+        if (isURI(s)) {
+            return Paths.get(URI.create(s));
+        } else {
+            return Paths.get(s);
+        }
+    }
+    
+    /**
      * Delete a file or directory recursively.
      *
      * @param  path        the file or directory to delete

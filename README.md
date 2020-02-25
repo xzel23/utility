@@ -22,6 +22,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5.3
+
+ - IOUtil.toUri()
+ - IOUtil.toPath()
+ 
 ### Version 5.2
 
  - Removal of utility-json
