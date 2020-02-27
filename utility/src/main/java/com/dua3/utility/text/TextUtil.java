@@ -13,11 +13,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.PrimitiveIterator.OfInt;
-import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
@@ -233,6 +230,81 @@ public class TextUtil {
             }
         }
         return !iter1.hasNext() && !iter2.hasNext();
+    }
+
+    /**
+     * Find the index of the first occurence of a char in a string.
+     *
+     * @param s the string to search
+     * @param chars the chars to search for
+     * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
+     */
+    public static int indexOfFirst(CharSequence s, char... chars) {
+        for (int i=0;i<s.length(); i++) {
+            char c1 = s.charAt(i);
+            for (char c2: chars) {
+                if (c1==c2) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Find the index of the first occurence of a char in a string.
+     *
+     * @param s the string to search
+     * @param chars the chars to search for
+     * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
+     */
+    public static int indexOfFirst(CharSequence s, String chars) {
+        return indexOfFirst(s, chars.toCharArray());
+    }
+
+    /**
+     * Test if string contains none of the given characters.
+     *
+     * @param s the string to search
+     * @param chars the chars to search for
+     * @return true if {@code s} contains none of the characters in {@code chars}
+     */
+    public static boolean containsNoneOf(CharSequence s, String chars) {
+        return indexOfFirst(s, chars) < 0;
+    }
+
+    /**
+     * Test if string contains none of the given characters.
+     *
+     * @param s the string to search
+     * @param chars the chars to search for
+     * @return true if {@code s} contains none of the characters in {@code chars}
+     */
+    public static boolean containsNoneOf(CharSequence s, char... chars) {
+        return indexOfFirst(s, chars) < 0;
+    }
+
+    /**
+     * Test if string contains any of the given characters.
+     *
+     * @param s the string to search
+     * @param chars the chars to search for
+     * @return true if {@code s} contains one or more of the characters in {@code chars}
+     */
+    public static boolean containsAnyOf(CharSequence s, String chars) {
+        return indexOfFirst(s, chars) >= 0;
+    }
+
+    /**
+     * Test if string contains any of the given characters.
+     *
+     * @param s the string to search
+     * @param chars the chars to search for
+     * @return true if {@code s} contains one or more of the characters in {@code chars}
+     */
+    public static boolean containsAnyOf(CharSequence s, char... chars) {
+        return indexOfFirst(s, chars) >= 0;
     }
 
     /**

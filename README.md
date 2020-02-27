@@ -22,6 +22,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5.3.1
+
+ - TextUtil.containsAnyOf()
+ - TextUtil.containsNoneOf()
+ 
 ### Version 5.3
 
  - IOUtil.toUri()
