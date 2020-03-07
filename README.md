@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5.3.2
+
+ - IOUtil.toUnixPath()
+ 
 ### Version 5.3.1
 
  - TextUtil.containsAnyOf()

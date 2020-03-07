@@ -310,6 +310,22 @@ public class IOUtil {
     }
 
     /**
+     * Convert path to a string using the unix path separator (forward slash). 
+     * @param path the path
+     * @return the path as a string with path components separated by forward slashes
+     */
+    public static String toUnixPath(Path path) {
+        String sep = "";
+        StringBuilder sb = new StringBuilder();
+        for (Path p: path) {
+            sb.append(sep);
+            sb.append(p);
+            sep = "/";
+        }
+        return sb.toString();
+    }
+    
+    /**
      * Check if string denotes a URI.
      * @param s the string
      * @return true if string denotes a URI
