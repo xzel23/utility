@@ -23,7 +23,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '5.3.2'
+    version = '5.3.3'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
@@ -180,4 +180,4 @@ subprojects {
 }
 
 // === DEFAULT TASKS === >
-defaultTasks 'build', 'publishToMavenLocal'
+defaultTasks 'build', 'publishToMavenLocal', 'publish'

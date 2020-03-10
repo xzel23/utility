@@ -15,6 +15,7 @@ public class Stopwatch {
 
     private final String name;
     private final Instant start;
+    private Instant startSplit;
 
     /**
      * Construct instance.
@@ -23,7 +24,7 @@ public class Stopwatch {
      */
     public Stopwatch(String name) {
         this.name = name;
-        this.start = Instant.now();
+        this.start = this.startSplit = Instant.now();
     }
 
     /**
@@ -36,18 +37,43 @@ public class Stopwatch {
     }
 
     /**
+     * Get start instant of current split.
+     *
+     * @return the instant when this stopwatch was created
+     */
+    public Instant getStartSplit() {
+        return startSplit;
+    }
+
+    /**
+     * Get elapsed time in current split.
+     *
+     * @param newSplit if true, start a new split
+     * @return the duration since the start of the current split
+     */
+    public Duration elapsedSplit(boolean newSplit) {
+        Instant now = Instant.now();
+        Duration duration = Duration.between(startSplit, now);
+        if (newSplit) {
+            startSplit = now;
+        }
+        return duration;
+    }
+
+    /**
      * Get elapsed time.
      *
      * @return the duration since this instance was created
      */
     public Duration elapsed() {
         Instant now = Instant.now();
-        return Duration.between(start, now);
+        Duration duration = Duration.between(start, now);
+        return duration;
     }
 
     @Override
     public String toString() {
-        return "[" + name + "] running for " + elapsedString();
+        return "[" + name + "] current split: " + elapsedStringSplit(false) + " total: "+ elapsedString();
     }
 
     private static String formatDuration(Duration duration) {
@@ -77,5 +103,15 @@ public class Stopwatch {
      */
     public String elapsedString() {
         return formatDuration(elapsed());
+    }
+
+    /**
+     * Get elapsed time in current split as a string.
+     *
+     * @param newSplit if true, reset the stopwatch
+     * @return string with elapsed time
+     */
+    public String elapsedStringSplit(boolean newSplit) {
+        return formatDuration(elapsedSplit(newSplit));
     }
 }

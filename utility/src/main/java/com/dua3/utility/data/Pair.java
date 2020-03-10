@@ -58,6 +58,21 @@ public class Pair<T1, T2> {
     /**
      * Create a Pair.
      *
+     * @param  entry
+     *                a Map.Entry
+     * @param         <T1>
+     *                type of first member
+     * @param         <T2>
+     *                type of second member
+     * @return        a new Pair
+     */
+    public static <T1, T2> Pair<T1, T2> of(Map.Entry<T1,T2> entry) {
+        return new Pair<>(entry.getKey(), entry.getValue());
+    }
+    
+    /**
+     * Create a Pair.
+     *
      * @param  first
      *                the first member
      * @param  second
