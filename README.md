@@ -22,6 +22,11 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 5.3.4
+
+ - update gradle to 6.3 (for JDK 14 support)
+ - updatze SpotBugs and SpotBugs plugin
+ 
 ### Version 5.3.3
 
  - Pair.of(Map.Entry)

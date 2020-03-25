@@ -6,7 +6,7 @@
 plugins {
     id 'com.dua3.gradle.jpms' version '1.0' apply false
     id 'com.adarshr.test-logger' version '1.7.0' apply false
-    id 'com.github.spotbugs' version '3.0.0' apply false
+    id 'com.github.spotbugs' version '4.0.4' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
 }
 
@@ -167,10 +167,10 @@ subprojects {
     }
 
     // === SPOTBUGS === >
-    spotbugs.toolVersion = '4.0.0'
+    spotbugs.toolVersion = '4.0.1'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
-    tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         reports {
             xml.enabled false
             html.enabled true
