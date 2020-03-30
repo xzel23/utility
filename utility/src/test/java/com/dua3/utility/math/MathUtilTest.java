@@ -199,7 +199,7 @@ public class MathUtilTest {
 
         // create operations
         Map<RoundingMode, DoubleUnaryOperator> operations = new EnumMap<>(RoundingMode.class);
-        for (var mode: RoundingMode.values()) {
+        for (RoundingMode mode: RoundingMode.values()) {
             operations.put(mode, MathUtil.roundingOperation(0, mode));
         }
 

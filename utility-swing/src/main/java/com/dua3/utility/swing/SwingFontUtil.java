@@ -17,7 +17,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     @Override
     public Bounds getTextBounds(String s, Font f) {
-        var r = stringBounds(s, f);
+        Rectangle2D r = stringBounds(s, f);
         return new Bounds(r.getWidth(), r.getHeight());
     }
 

@@ -167,7 +167,7 @@ public class NamedParameterStatement implements AutoCloseable {
         }
 
         ParameterMetaData meta = statement.getParameterMetaData();
-        for (var param : indexMap.values()) {
+        for (ParameterInfo param : indexMap.values()) {
             param.type = null;
             for (int index : param.indexes) {
                 JDBCType type = getParameterType(meta, index);

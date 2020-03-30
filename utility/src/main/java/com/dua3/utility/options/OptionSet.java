@@ -205,7 +205,7 @@ public class OptionSet implements Iterable<Option<?>> {
     public String toString() {
         try (Formatter fmt = new Formatter()) {
             fmt.format("{%n");
-            for (var option : options) {
+            for (Option<?> option : options) {
                 fmt.format("  %s%n", option);
             }
             fmt.format("}%n");

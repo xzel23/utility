@@ -2,9 +2,7 @@ package com.dua3.utility.data;
 
 import com.dua3.utility.lang.LangUtil;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -163,7 +161,7 @@ public class DataUtil {
 
         // target provides public static valueOf(U) where value is instance of U
         // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
-        for (var method: targetClass.getDeclaredMethods()) {
+        for (Method method: targetClass.getDeclaredMethods()) {
             if ( method.getModifiers()==( Modifier.PUBLIC | Modifier.STATIC )
                  && method.getName().equals("valueOf")
                  && method.getParameterCount()==1
@@ -179,7 +177,7 @@ public class DataUtil {
 
         // ... or provides a public constructor taking the value's class (and is enabled by parameter)
         if (useConstructor) {
-            for (var constructor: targetClass.getDeclaredConstructors()) {
+            for (Constructor<?> constructor: targetClass.getDeclaredConstructors()) {
                 if ( constructor.getModifiers()==( Modifier.PUBLIC )
                         && constructor.getParameterCount()==1
                         && constructor.getParameterTypes()[0] == sourceClass) {

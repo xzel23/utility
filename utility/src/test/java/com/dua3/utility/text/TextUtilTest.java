@@ -33,14 +33,14 @@ public class TextUtilTest {
 
     @Test
     public void testByteArrayToHexString() {
-        for (var entry : byteArrayHexStringTestData) {
+        for (Pair<String, byte[]> entry : byteArrayHexStringTestData) {
             assertEquals(entry.first, TextUtil.byteArrayToHexString(entry.second));
         }
     }
 
     @Test
     public void testHexStringToByteArray() {
-        for (var entry : byteArrayHexStringTestData) {
+        for (Pair<String, byte[]> entry : byteArrayHexStringTestData) {
             assertArrayEquals(entry.second, TextUtil.hexStringToByteArray(entry.first));
         }
     }

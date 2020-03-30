@@ -19,7 +19,7 @@ public class DbUtilTest {
     @Test
     public void testGetDrivers() {
         Collection<JdbcDriverInfo> drivers = DbUtil.getJdbcDrivers();
-        for (var d : drivers) {
+        for (JdbcDriverInfo d : drivers) {
             System.out.println(d);
         }
         assertFalse(drivers.isEmpty());

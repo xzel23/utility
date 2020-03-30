@@ -4,7 +4,7 @@ A library with utility classes.
 
 ## Requirements
 
- - JDK 11 or later
+ - JDK 8 or later
 
 ## Using with Gradle
 
@@ -24,6 +24,7 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 5.3.4
 
+ - restore Java 8 compatibility (needed for my customer's project)
  - update gradle to 6.3 (for JDK 14 support)
  - updatze SpotBugs and SpotBugs plugin
  

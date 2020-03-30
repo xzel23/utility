@@ -139,7 +139,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
 
     @Override
     public String toString() {
-        var i = entrySet().iterator();
+        Iterator<Entry<Option<?>, Value<?>>> i = entrySet().iterator();
         if (!i.hasNext()) {
             return "{}";
         }

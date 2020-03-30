@@ -236,7 +236,7 @@ public abstract class Option<T> {
     }
 
     private static void addArgument(Map<String, String> arguments, String arg, String val) {
-        var old = arguments.put(arg, val);
+        String old = arguments.put(arg, val);
         if (old != null) {
             LOG.log(Level.WARNING, () -> String.format("while parsing option string: multiple values for argument '%s'", arg));
         }

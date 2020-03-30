@@ -90,7 +90,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     public static <T> Optional<T> read(URI uri, Class<T> cls) throws IOException {
-        var type = forUri(uri, cls);
+        Optional<com.dua3.utility.io.FileType<T>> type = forUri(uri, cls);
         return type.isPresent() ? Optional.of(type.get().read(uri)) : Optional.empty();
     }
 

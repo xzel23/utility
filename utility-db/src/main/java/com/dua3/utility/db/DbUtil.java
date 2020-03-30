@@ -75,7 +75,7 @@ public class DbUtil {
                 String link = data.get(4).trim();
 
                 JdbcDriverInfo di = new JdbcDriverInfo(name, className, urlPrefix, urlScheme, link);
-                var rc = drivers.put(name, di);
+                JdbcDriverInfo rc = drivers.put(name, di);
 
                 LangUtil.check(rc == null, "duplicate entry for URL prefix %s", urlPrefix);
             } catch (IOException e) {

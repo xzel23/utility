@@ -57,7 +57,7 @@ public class Zip implements AutoCloseable, Flushable {
     private void addFileEntry(String filename) throws IOException {
         LangUtil.check(!filename.isEmpty(), "the filename must not be empty");
         LangUtil.check(filename.indexOf('/')==-1, "the filename must not contain any '/'");
-        var entry = new ZipEntry(path+filename);
+        ZipEntry entry = new ZipEntry(path + filename);
         zout.putNextEntry(entry);
     }
 
