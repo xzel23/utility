@@ -190,7 +190,7 @@ public class OptionSet implements Iterable<Option<?>> {
         Optional<Option<?>> option = getOption(name);
 
         // the requested option does not exist
-        if (option.isEmpty()) {
+        if (!option.isPresent()) {
             return null;
         }
 

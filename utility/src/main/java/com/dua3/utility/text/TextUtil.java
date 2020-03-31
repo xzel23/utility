@@ -9,6 +9,7 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil.Bounds;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -533,34 +534,54 @@ public class TextUtil {
         int len = s.length();
         switch (align) {
             case LEFT:
-                return s + fill.repeat(Math.max(0, width - len));
+                return s + repeat(fill, Math.max(0, width - len));
             case RIGHT:
-                return fill.repeat(Math.max(0, width - len)) + s;
+                return repeat(fill, Math.max(0, width - len)) + s;
             case CENTER:
-                return fill.repeat(Math.max(0, width - len) / 2) + s + fill.repeat(Math.max(0, width - len - (width - len) / 2));
+                return repeat(fill, Math.max(0, width - len) / 2) + s + repeat(fill, Math.max(0, width - len - (width - len) / 2));
             default:
                 throw new IllegalArgumentException(align.toString());
         }
     }
-    
+
+    private static String repeat(String fill, int max) {
+        LangUtil.check(max>=0);
+        
+        if (max==0 || fill.isEmpty()) {
+            return "";
+        }
+
+        int capacity = max * fill.length();
+        StringBuilder sb = new StringBuilder(capacity);
+        for (int i=0; i< max; i++) {
+            sb.append(fill);
+        }
+        
+        return sb.toString();
+    }
+
     public static String generateMailToLink(String email, String subject) {
         // give some care to translate space to "%20"
-        String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8);
-        String s2 = URLEncoder.encode(subject.replaceAll(" ", "_"), StandardCharsets.UTF_8);
-        StringBuilder sb = new StringBuilder(s1.length());
-        for (int i = 0; i < s1.length(); i++) {
-            if (s1.charAt(i) == '+' && s2.charAt(i) == '_') {
-                sb.append("%20");
-            } else {
-                sb.append(s1.charAt(i));
+        try {
+            String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8.name());
+            String s2 = URLEncoder.encode(subject.replaceAll(" ", "_"), StandardCharsets.UTF_8.name());
+            StringBuilder sb = new StringBuilder(s1.length());
+            for (int i = 0; i < s1.length(); i++) {
+                if (s1.charAt(i) == '+' && s2.charAt(i) == '_') {
+                    sb.append("%20");
+                } else {
+                    sb.append(s1.charAt(i));
+                }
             }
+            String s = sb.toString();
+    
+            return String.format(
+                    "mailto:%s?subject=%s",
+                    email,
+                    s);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
         }
-        String s = sb.toString();
-
-        return String.format(
-                "mailto:%s?subject=%s",
-                email,
-                s);
     }
     
 }

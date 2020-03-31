@@ -291,7 +291,7 @@ public class DataUtil {
     public static <T,U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     /**

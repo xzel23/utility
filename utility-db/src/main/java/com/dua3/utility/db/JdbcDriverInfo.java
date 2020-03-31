@@ -7,6 +7,7 @@ import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.text.TextUtil;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class JdbcDriverInfo {
@@ -46,6 +47,8 @@ public class JdbcDriverInfo {
     }
 
     public String getUrl(OptionValues values) {
-        return TextUtil.transform(urlScheme, s -> Objects.toString(values.get(options.getOption(s).orElseThrow()).get(), ""));
+        return TextUtil.transform(urlScheme, 
+                s -> Objects.toString(
+                        values.get(options.getOption(s).orElseThrow(() -> new NoSuchElementException("No value present"))).get(), ""));
     }
 }

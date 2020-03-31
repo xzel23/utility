@@ -252,7 +252,7 @@ public class DbUtil {
                 LOG.warning(() -> "more than one entries found, which one gets loaded is undefined: "
                         + RESOURCE_PATH_TO_DRIVER_INFO);
             }
-            String driverClassName = IOUtil.read(driverInfo, StandardCharsets.UTF_8).strip();
+            String driverClassName = IOUtil.read(driverInfo, StandardCharsets.UTF_8).trim();
 
             // load the driver class
             Class<?> cls = loader.loadClass(driverClassName);

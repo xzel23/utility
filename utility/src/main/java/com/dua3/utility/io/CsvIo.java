@@ -38,7 +38,7 @@ import com.dua3.utility.options.OptionValues;
 public abstract class CsvIo implements AutoCloseable {
 
     public static <T> OptionValues getOptionValues(String optionName, T value) {
-        Option<?> option = OPTIONS.getOption(optionName).orElseThrow();
+        Option<?> option = OPTIONS.getOption(optionName).orElseThrow(() -> new NoSuchElementException("No value present"));
         return OptionValues.of(option, option.toValue(value));
     }
 

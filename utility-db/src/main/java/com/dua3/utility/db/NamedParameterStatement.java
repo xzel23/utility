@@ -16,13 +16,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -528,7 +522,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *         list with parameter meta data
      */
     public List<ParameterInfo> getParameterInfo() {
-        return List.copyOf(indexMap.values());
+        return Collections.unmodifiableList(new ArrayList<>(indexMap.values()));
     }
 
     /**
