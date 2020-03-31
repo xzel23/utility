@@ -544,17 +544,23 @@ public class TextUtil {
         }
     }
 
-    private static String repeat(String fill, int max) {
-        LangUtil.check(max>=0);
+    /**
+     * Repeat a string. Replacement for String.repeat(int) not present in Java 8.
+     * @param s the string to repeat
+     * @param n number of repetitions
+     * @return fill repeated n times
+     */
+    public static String repeat(String s, int n) {
+        LangUtil.check(n>=0);
         
-        if (max==0 || fill.isEmpty()) {
+        if (n==0 || s.isEmpty()) {
             return "";
         }
 
-        int capacity = max * fill.length();
+        int capacity = n * s.length();
         StringBuilder sb = new StringBuilder(capacity);
-        for (int i=0; i< max; i++) {
-            sb.append(fill);
+        for (int i=0; i< n; i++) {
+            sb.append(s);
         }
         
         return sb.toString();
