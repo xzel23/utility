@@ -199,7 +199,11 @@ public class IOUtil {
      *                     if content could not be read
      */
     public static String read(Path path, Charset cs) throws IOException {
-        return Files.readString(path, cs);
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(cs);
+
+        byte[] ba = Files.readAllBytes(path);
+        return new String(ba, cs);
     }
 
     /**
@@ -215,8 +219,24 @@ public class IOUtil {
      */
     public static String read(URL url, Charset cs) throws IOException {
         try (InputStream in = url.openStream()) {
-            return new String(in.readAllBytes(), cs);
+            return new String(readAllBytes(in), cs);
         }
+    }
+
+    /**
+     * Replacement for InputStream.readAllBytes() which is not available in Java 8.
+     * @param in InputStream to read from
+     * @return the bytes
+     * @throws IOException on Error
+     */
+    private static byte[] readAllBytes(InputStream in) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096]; // Or whatever size you want to read in at a time.
+        int n;
+        while ( (n = in.read(buffer)) > 0 ) {
+            baos.write(buffer, 0, n);
+        }
+        return baos.toByteArray();
     }
 
     /**
@@ -391,7 +411,7 @@ public class IOUtil {
         charsets.add(DEFAULT_CHARSET);
         charsets.add(PLATFORM_CHARSET);
         charsets.add(StandardCharsets.ISO_8859_1);
-        CHARSETS = charsets.toArray(Charset[]::new);
+        CHARSETS = charsets.toArray(new Charset[0]);
     }
 
     /**
@@ -519,14 +539,19 @@ class StreamSupplier<V> {
 
     private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
 
-    private static final List<StreamSupplier<?>> streamSuppliers = List.of (
-            def(InputStream.class, v -> v, StreamSupplier::outputUnsupported),
-            def(OutputStream.class, StreamSupplier::inputUnsupported, v-> v),
-            def(URI.class, v->IOUtil.toURL(v).openStream(), v->Files.newOutputStream(IOUtil.toPath(v))),
-            def(URL.class, URL::openStream, v->Files.newOutputStream(IOUtil.toPath(v))),
-            def(Path.class, Files::newInputStream, Files::newOutputStream),
-            def(File.class, v->Files.newInputStream(v.toPath()), v->Files.newOutputStream(v.toPath()))
-    );
+    private static final List<StreamSupplier<?>> streamSuppliers;
+    
+    // complicated initialization code because Java 8 does not support List.of
+    static {
+        List<StreamSupplier<?>> list = new ArrayList<>();
+        list.add(def(InputStream.class, v -> v, StreamSupplier::outputUnsupported));
+        list.add(def(OutputStream.class, StreamSupplier::inputUnsupported, v-> v));
+        list.add(def(URI.class, v->IOUtil.toURL((URI) v).openStream(), v->Files.newOutputStream(IOUtil.toPath(v))));
+        list.add(def(URL.class, URL::openStream, v->Files.newOutputStream(IOUtil.toPath(v))));
+        list.add(def(Path.class, Files::newInputStream, Files::newOutputStream));
+        list.add(def(File.class, v->Files.newInputStream(v.toPath()), v->Files.newOutputStream(v.toPath())));
+        streamSuppliers = list;
+    }
 
     private static InputStream inputUnsupported(Object o) {
         throw new UnsupportedOperationException("InputStream creation not supported: "+o.getClass().getName());

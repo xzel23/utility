@@ -24,6 +24,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ### Version 5.3.4
 
+ - remove usage of API not available in Java 8
+ 
+### Version 5.3.4
+
  - restore Java 8 compatibility (needed for my customer's project)
  - update gradle to 6.3 (for JDK 14 support)
  - updatze SpotBugs and SpotBugs plugin
