@@ -45,7 +45,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         this.name = name;
         this.mode = mode;
         this.cls = cls;
-        this.extensions = List.of(extensions);
+        this.extensions = Arrays.asList(extensions);
     }
 
     /**

@@ -79,7 +79,7 @@ class DataUtilTest {
     void convertCollection() {
         assertEquals(List.of(5,-7,13), DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new));
         assertEquals(ArrayList.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new).getClass());
-        assertEquals(new HashSet(List.of(5,-7,13)), DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, HashSet::new));
+        assertEquals(new HashSet<>(List.of(5,-7,13)), DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, HashSet::new));
         assertEquals(HashSet.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, HashSet::new).getClass());
     }
 

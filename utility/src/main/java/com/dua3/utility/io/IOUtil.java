@@ -229,7 +229,7 @@ public class IOUtil {
      * @return the bytes
      * @throws IOException on Error
      */
-    private static byte[] readAllBytes(InputStream in) throws IOException {
+    public static byte[] readAllBytes(InputStream in) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[4096]; // Or whatever size you want to read in at a time.
         int n;

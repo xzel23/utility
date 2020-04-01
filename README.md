@@ -22,7 +22,7 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
-### Version 5.3.4.1, 5.3.4.2
+### Version 5.3.4.1, 5.3.4.2, 5.3.4.3
 
  - Java 8 compatibility fixes: remove usage of API not available in Java 8
  

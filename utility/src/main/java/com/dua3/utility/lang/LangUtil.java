@@ -523,7 +523,7 @@ public class LangUtil {
     public static byte[] getResource(Class<?> clazz, String resource) throws IOException {
         URL url = getResourceURL(clazz, resource);
         try (InputStream in = url.openStream()) {
-            return in.readAllBytes();
+            return IOUtil.readAllBytes(in);
         }
     }
 

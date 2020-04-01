@@ -26,6 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.NamedFunction;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.Option.Value;
@@ -149,8 +150,8 @@ public abstract class CsvIo implements AutoCloseable {
                 .collect(Collectors.toList());
         OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesAll);
 
-        List<Value<Locale>> localesCommon = Set
-                .of(Locale.ROOT, Locale.getDefault(), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN,
+        List<Value<Locale>> localesCommon = Arrays.asList(
+                    Locale.ROOT, Locale.getDefault(), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN,
                         Locale.CHINESE, Locale.JAPANESE, Locale.KOREAN)
                 .stream().sorted(Comparator.comparing(Locale::toString)).distinct().map(Option::value)
                 .collect(Collectors.toList());
@@ -162,9 +163,9 @@ public abstract class CsvIo implements AutoCloseable {
         OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset().toString(), charsetsAll);
 
         List<Value<Charset>> charSetsCommon = Stream.of("UTF-8", "ISO-8859-1", "ISO-8859-2", "windows-1252")
-                .map(name -> Map.entry(name, Charset.availableCharsets().get(name)))
-                .filter(entry -> entry.getValue() != null)
-                .map(entry -> Option.value(entry.getKey(), entry.getValue()))
+                .map(name -> Pair.of(name, Charset.availableCharsets().get(name)))
+                .filter(entry -> entry.first != null)
+                .map(entry -> Option.value(entry.first, entry.second))
                 .collect(Collectors.toList());
         COMMON_OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset().toString(), charSetsCommon);
 

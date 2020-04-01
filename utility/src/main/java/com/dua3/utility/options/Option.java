@@ -360,7 +360,7 @@ public abstract class Option<T> {
 
         FileOption(String name, Value<File> defaultValue, OpenMode mode, String... extensions) {
             super(name, File.class, defaultValue);
-            this.extensions = List.of(extensions);
+            this.extensions = Arrays.asList(extensions);
             this.mode = mode;
         }
 

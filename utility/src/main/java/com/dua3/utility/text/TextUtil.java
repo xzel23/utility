@@ -492,21 +492,28 @@ public class TextUtil {
     private static final FontUtil<?> FONT_UTIL;
 
     static {
-        FONT_UTIL = ServiceLoader
+        Iterator<FontUtil> serviceIterator = ServiceLoader
                 .load(FontUtil.class)
-                .findFirst()
-                .orElseGet(
-                        () -> new FontUtil<Void>() {
-                            @Override
-                            public Void convert(Font f) {
-                                throw new UnsupportedOperationException("no FontUtil implementation present");
-                            }
+                .iterator();
+        
+        FontUtil<?> fu;
+        if (serviceIterator.hasNext()) {
+            fu = serviceIterator.next();
+        } else {
+            fu = new FontUtil<Void>() {
+                @Override
+                public Void convert(Font f) {
+                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                }
 
-                            @Override
-                            public Bounds getTextBounds(String s, Font f) {
-                                throw new UnsupportedOperationException("no FontUtil implementation present");
-                            }
-                        });
+                @Override
+                public Bounds getTextBounds(String s, Font f) {
+                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                }
+            };
+        }
+        
+        FONT_UTIL = fu;
     }
 
     public static double getTextWidth(String text, Font font) {
