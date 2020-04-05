@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 
 /**
@@ -37,6 +38,16 @@ public class IOUtil {
      * @return the filename of the last element of the path
      */
     public static String getFilename(String path) {
+        Pair<Integer, Integer> fi = getFilenameInfo(path);
+        return path.substring(fi.first, fi.second);
+    }
+
+    /**
+     * Find start and end index of the filename, discarding trailing path separators.
+     * @param path
+     * @return pair with start, end indices
+     */
+    private static Pair<Integer, Integer> getFilenameInfo(String path) {
         // trim trailing separators
         int end = path.length();
         while (end>0 && isSeparatorChar(path.charAt(end-1))) {
@@ -48,8 +59,7 @@ public class IOUtil {
         while (start>0 && !isSeparatorChar(path.charAt(start-1))) {
             start--;
         }
-        
-        return path.substring(start, end);
+        return Pair.of(start,end);
     }
 
     /**
@@ -134,21 +144,12 @@ public class IOUtil {
      * @return       filename without extension
      */
     public static String stripExtension(String path) {
-        // trim trailing separators
-        int end = path.length();
-        while (end>0 && isSeparatorChar(path.charAt(end-1))) {
-            end--;
-        }
+        Pair<Integer, Integer> fi = getFilenameInfo(path);
 
-        // find start of filename
-        int start = end;
-        while (start>0 && !isSeparatorChar(path.charAt(start-1))) {
-            start--;
-        }
-        
         // find dot
-        int pos = path.indexOf('.', start);
-        return pos==-1 || pos > end ? path : path.substring(0, pos);
+        int pos = path.indexOf('.', fi.first);
+
+        return pos==-1 || pos > fi.second ? path : path.substring(0, pos);
     }
 
     /**
@@ -163,27 +164,17 @@ public class IOUtil {
      * @return       filename with replaced extension
      */
     public static String replaceExtension(String path, String extension) {
-        // trim trailing separators
-        int end = path.length();
-        while (end>0 && isSeparatorChar(path.charAt(end-1))) {
-            end--;
-        }
-
-        // find start of filename
-        int start = end;
-        while (start>0 && !isSeparatorChar(path.charAt(start-1))) {
-            start--;
-        }
+        Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
-        int pos = path.indexOf('.', start);
+        int pos = path.indexOf('.', fi.first);
         
-        if (pos==-1  || pos > end) {
+        if (pos==-1  || pos > fi.second) {
             // filename has no extension => insert extension
-            return path.substring(0,end)+'.'+extension+path.substring(end);
+            return path.substring(0, fi.second)+'.'+extension+path.substring(fi.second);
         } else {
             // filename has extension => replace extension
-            return path.substring(0, pos) + '.' + extension + path.substring(end);
+            return path.substring(0, pos) + '.' + extension + path.substring(fi.second);
         }
     }
     
@@ -590,4 +581,9 @@ class StreamSupplier<V> {
     public static OutputStream getOutputStream(Object o) throws IOException {
         return supplier(o).oss.getOutputStream(o);
     }
+
+    public Stream<String> lines(Path path) throws IOException {
+        return Files.lines(path);
+    }
+
 }
