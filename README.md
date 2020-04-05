@@ -22,6 +22,13 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 6.0
+
+ - LangUtil.uncheckedXXX() methods don't wrap uncheckedExceptions
+ - relaxed some method parameters from String to CharSequence
+ - code cleanup
+ - improve unit test coverage
+
 ### Version 5.3.4.1, 5.3.4.2, 5.3.4.3
 
  - Java 8 compatibility fixes: remove usage of API not available in Java 8
