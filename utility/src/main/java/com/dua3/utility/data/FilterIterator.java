@@ -22,7 +22,7 @@ public class FilterIterator<T> implements Iterator<T> {
     private T current = null;
 
     /**
-     * Construct a new {@link FilterIterator}.
+     * Construct a new FilterIterator.
      * @param iterator
      *  the base iterator
      * @param predicate

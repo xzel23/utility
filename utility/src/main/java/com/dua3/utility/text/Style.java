@@ -11,7 +11,7 @@ import java.util.Map;
 
 import com.dua3.utility.data.Pair;
 
-public class Style {
+public final class Style {
     private final String name;
     private final Map<String, Object> properties;
 

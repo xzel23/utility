@@ -23,7 +23,7 @@ import com.dua3.utility.text.TextUtil;
  * Code is based on an article by Patrick Favre-Bulle.
  * https://proandroiddev.com/security-best-practices-symmetric-encryption-with-aes-in-java-7616beaaade9
  */
-public class CryptUtil {
+public final class CryptUtil {
 
     private CryptUtil() {
     }

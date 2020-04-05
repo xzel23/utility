@@ -21,7 +21,7 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.stream.IntStream;
 
-public class TextUtil {
+public final class TextUtil {
 
     private static final String TRANSFORM_REF_START = "${";
 
@@ -33,7 +33,7 @@ public class TextUtil {
      * @param s the string
      * @return the HTML-escaped string
      */
-    public static String escapeHTML(String s) {
+    public static String escapeHTML(CharSequence s) {
         StringBuilder out = new StringBuilder(16 + s.length() * 11 / 10);
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -54,7 +54,7 @@ public class TextUtil {
      * @param s the string
      * @return the escaped string
      */
-    public static String escape(String s) {
+    public static String escape(CharSequence s) {
         StringBuilder out = new StringBuilder(16 + s.length() * 11 / 10);
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -462,7 +462,7 @@ public class TextUtil {
      * @throws IllegalArgumentException if the character is not a valid hex
      *                                  character
      */
-    private static int getHexDigit(String s, int idx) {
+    private static int getHexDigit(CharSequence s, int idx) {
         char c = s.charAt(idx);
         int hex = Character.digit(c, 16);
         LangUtil.check(hex >= 0, "not a hex digit: %s", c);

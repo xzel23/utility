@@ -233,7 +233,7 @@ public class Font {
      *
      * @param  fd
      *            the {@link FontDef} describing the attributes to set
-     * @return    new {@link Font} instance
+     * @return    new Font instance
      */
     public Font deriveFont(FontDef fd) {
         String fontFamily = fd.getFamily() != null ? fd.getFamily() : this.getFamily();

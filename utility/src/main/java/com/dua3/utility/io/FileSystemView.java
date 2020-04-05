@@ -40,19 +40,19 @@ import com.dua3.utility.lang.LangUtil;
  * loaded from a Jar. To solve this, use the following code:
  *
  * <pre>
- * <code>
+ * {@code
  * // create a FileSystemView
  * try (FileSystemView fsv = FileSystemView.create(clazz)) {
  *   // resolve the resource path
  *   Path path = fsv.resolve("resource.txt");
  *   ...
  * }
- * </code>
+ * }
  * </pre>
  *
  * @author Axel Howind
  */
-public class FileSystemView implements AutoCloseable {
+public final class FileSystemView implements AutoCloseable {
 
     public enum Flags {
         CREATE_IF_MISSING

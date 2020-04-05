@@ -8,6 +8,7 @@ package com.dua3.utility.text;
 /**
  * An interface for classes that can be represented as RichText.
  */
+@FunctionalInterface
 public interface ToRichText {
 
     /**

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import com.dua3.utility.lang.LangUtil;
 
-public class NetUtil {
+public final class NetUtil {
     private static final Logger LOG = Logger.getLogger(NetUtil.class.getName());
 
     private NetUtil() {

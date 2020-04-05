@@ -163,7 +163,7 @@ public abstract class Option<T> {
      *     <li>scheme with var arguments removed
      * </ul>
      */
-    public static Pair<String, List<Option<?>>> parseScheme(String s) {
+    public static Pair<String, List<Option<?>>> parseScheme(CharSequence s) {
         // extract options
         List<Option<?>> list = new ArrayList<>();
         Matcher matcher = PATTERN_VAR.matcher(s);
@@ -278,6 +278,7 @@ public abstract class Option<T> {
         return name + "[" + getDefault() + "]";
     }
 
+    @FunctionalInterface
     public interface Value<T> extends Supplier<T>, Comparable<Value<T>> {
         @Override
         default int compareTo(Value<T> other) {
@@ -301,7 +302,7 @@ public abstract class Option<T> {
         private final String name;
         private final T value;
 
-        public StaticValue(String name, T value) {
+        StaticValue(String name, T value) {
             this.name = name;
             this.value = value;
         }

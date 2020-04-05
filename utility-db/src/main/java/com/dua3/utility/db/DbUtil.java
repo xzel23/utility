@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DbUtil {
+public final class DbUtil {
     private DbUtil() {
         // utility class
     }

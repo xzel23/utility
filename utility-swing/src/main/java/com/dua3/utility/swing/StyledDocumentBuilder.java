@@ -35,7 +35,7 @@ import com.dua3.utility.text.TextUtil;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument> {
+public final class StyledDocumentBuilder extends RichTextConverterBase<StyledDocument> {
 
     private static final Object[] PARAGRAPH_ATTRIBUTES = { StyleConstants.ParagraphConstants.LeftIndent,
             StyleConstants.ParagraphConstants.Alignment };

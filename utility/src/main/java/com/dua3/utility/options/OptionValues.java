@@ -165,6 +165,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
      *
      * @param <T> the value type
      */
+    @FunctionalInterface
     public interface ValueChangeListener<T> {
         /**
          * Called when an option's value changes.

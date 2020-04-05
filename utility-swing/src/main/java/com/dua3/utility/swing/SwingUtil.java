@@ -36,7 +36,7 @@ import com.dua3.utility.data.Pair;
 /**
  * Utility methods for Swing applications.
  */
-public class SwingUtil {
+public final class SwingUtil {
     /** Logger instance. */
     private static final Logger LOG = Logger.getLogger(SwingUtil.class.getName());
 

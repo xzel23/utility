@@ -9,7 +9,7 @@ import java.lang.ref.SoftReference;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class SoftResource<T> {
+public final class SoftResource<T> {
 
     private Supplier<T> supplier;
     private SoftReference<T> ref;
@@ -85,7 +85,7 @@ public class SoftResource<T> {
     /**
      * Helper class to prevent the resource from being garbage collected.
      */
-    public static class ResourceHolder<T> implements AutoCloseable {
+    public static final class ResourceHolder<T> implements AutoCloseable {
         private T strong;
         private final SoftResource<T> soft;
 

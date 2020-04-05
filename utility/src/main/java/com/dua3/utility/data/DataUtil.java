@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class DataUtil {
+public final class DataUtil {
 
     /**
      * Exception thrown when data conversion fails.
@@ -114,6 +114,7 @@ public class DataUtil {
             if (targetClass == Integer.class) {
                 //noinspection NumericCastThatLosesPrecision
                 int n = (int) d;
+                //noinspection FloatingPointEquality
                 LangUtil.check(n==d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
                 return (T)(Integer) n;
             } else if (targetClass == Long.class) {

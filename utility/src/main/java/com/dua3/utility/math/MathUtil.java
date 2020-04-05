@@ -132,6 +132,7 @@ public final class MathUtil {
      *               maximum error
      * @return       list of all calculated roots
      */
+    @SuppressWarnings("FloatingPointEquality")
     public static List<Double> findRootsInInterval(DoubleUnaryOperator f, double x0, double x1, int steps, double eps) {
         LangUtil.check(x0 != x1, "Empty interval.");
 
@@ -225,6 +226,7 @@ public final class MathUtil {
      * @return
      *           true, if {@code a} is integral
      */
+    @SuppressWarnings("FloatingPointEquality")
     public static boolean isIntegral(double a) {
         return !Double.isNaN(a) && a == Math.floor(a);
     }

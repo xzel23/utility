@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 import com.dua3.utility.lang.LangUtil;
 
-public class Text extends AbstractList<String> {
+public final class Text extends AbstractList<String> {
 
     private static final char NEWLINE = '\n';
     private static final String NEWLINE_STR = "\n";

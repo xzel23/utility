@@ -25,7 +25,7 @@ import com.dua3.utility.lang.LangUtil;
 /**
  * Utility class for Input/Output.
  */
-public class IOUtil {
+public final class IOUtil {
 
     private IOUtil() {
         // utility class
@@ -242,7 +242,7 @@ public class IOUtil {
      * @throws IOException
      *                     if something goes wrong
      */
-    public static void write(Path path, String text, OpenOption... options) throws IOException {
+    public static void write(Path path, CharSequence text, OpenOption... options) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, options)) {
             writer.append(text);
         }
@@ -516,7 +516,7 @@ public class IOUtil {
     }
 }
 
-class StreamSupplier<V> {
+final class StreamSupplier<V> {
 
     @FunctionalInterface
     interface InputStreamSupplier<C> {

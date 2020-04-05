@@ -22,7 +22,7 @@ import com.dua3.utility.io.OpenMode;
  * javax.swing.filechooser.FileFilter}</li>
  * </ul>
  */
-public class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
+public final class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
         implements java.io.FileFilter, java.io.FilenameFilter {
     public static <T> List<SwingFileFilter<T>> getFilters(OpenMode mode, Class<T> cls) {
         List<FileType<T>> fileTypes = FileType.getFileTypes(mode, cls);

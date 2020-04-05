@@ -20,7 +20,7 @@ import com.dua3.utility.lang.LangUtil;
 /**
  * A set of text attributes.
  */
-public class TextAttributes extends AbstractMap<String, Object> {
+public final class TextAttributes extends AbstractMap<String, Object> {
 
     // meta
     public static final String STYLE_START_RUN = "__style-start-run";

@@ -12,7 +12,7 @@ import java.util.Collection;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 
-public class AnsiCode {
+public final class AnsiCode {
 
     public static final String ESC_START = "\033[";
     public static final String ESC_END = "m";

@@ -28,7 +28,7 @@ import com.dua3.utility.io.IOUtil;
 /**
  * A Utility class with general purpose methods.
  */
-public class LangUtil {
+public final class LangUtil {
 
     private static final Logger LOG = Logger.getLogger(LangUtil.class.getName());
     

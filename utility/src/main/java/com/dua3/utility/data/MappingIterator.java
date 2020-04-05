@@ -21,7 +21,7 @@ class MappingIterator<T,U> implements Iterator<U> {
      * @param mapping
      *  the element mapping
      */
-    public MappingIterator(Iterator<T> iterator, Function<T, U> mapping) {
+    MappingIterator(Iterator<T> iterator, Function<T, U> mapping) {
         this.iterator = iterator;
         this.mapping = mapping;
     }

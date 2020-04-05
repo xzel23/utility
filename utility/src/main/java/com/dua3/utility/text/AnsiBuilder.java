@@ -25,7 +25,7 @@ import com.dua3.utility.lang.LangUtil;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class AnsiBuilder extends AbstractStringBasedBuilder {
+public final class AnsiBuilder extends AbstractStringBasedBuilder {
 
     private static final Map<String, String> DEFAULT_OPTIONS = LangUtil.map(
             Pair.of(TAG_DOC_START, AnsiCode.reset()),
