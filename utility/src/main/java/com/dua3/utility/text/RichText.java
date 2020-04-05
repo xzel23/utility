@@ -6,6 +6,7 @@
 package com.dua3.utility.text;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -43,7 +44,7 @@ public class RichText
      * @return   RichText representation of s
      */
     public static RichText valueOf(String s) {
-        return new RichText(Arrays.asList(new Run(s, 0, s.length(), TextAttributes.none())));
+        return new RichText(Collections.singletonList(new Run(s, 0, s.length(), TextAttributes.none())));
     }
 
     private final CharSequence text;

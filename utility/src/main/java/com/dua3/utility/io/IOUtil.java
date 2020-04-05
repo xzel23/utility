@@ -537,7 +537,7 @@ final class StreamSupplier<V> {
         List<StreamSupplier<?>> list = new ArrayList<>();
         list.add(def(InputStream.class, v -> v, StreamSupplier::outputUnsupported));
         list.add(def(OutputStream.class, StreamSupplier::inputUnsupported, v-> v));
-        list.add(def(URI.class, v->IOUtil.toURL((URI) v).openStream(), v->Files.newOutputStream(IOUtil.toPath(v))));
+        list.add(def(URI.class, v->IOUtil.toURL(v).openStream(), v->Files.newOutputStream(IOUtil.toPath(v))));
         list.add(def(URL.class, URL::openStream, v->Files.newOutputStream(IOUtil.toPath(v))));
         list.add(def(Path.class, Files::newInputStream, Files::newOutputStream));
         list.add(def(File.class, v->Files.newInputStream(v.toPath()), v->Files.newOutputStream(v.toPath())));

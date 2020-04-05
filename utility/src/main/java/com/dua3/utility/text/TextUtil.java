@@ -577,7 +577,7 @@ public final class TextUtil {
         // give some care to translate space to "%20"
         try {
             String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8.name());
-            String s2 = URLEncoder.encode(subject.replaceAll(" ", "_"), StandardCharsets.UTF_8.name());
+            String s2 = URLEncoder.encode(subject.replace(" ", "_"), StandardCharsets.UTF_8.name());
             StringBuilder sb = new StringBuilder(s1.length());
             for (int i = 0; i < s1.length(); i++) {
                 if (s1.charAt(i) == '+' && s2.charAt(i) == '_') {
