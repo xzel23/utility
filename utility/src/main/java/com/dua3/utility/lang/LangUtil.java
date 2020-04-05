@@ -31,7 +31,12 @@ import com.dua3.utility.io.IOUtil;
 public final class LangUtil {
 
     private static final Logger LOG = Logger.getLogger(LangUtil.class.getName());
-    
+
+    // private constructor for utility class
+    private LangUtil() {
+        // nop
+    }
+
     /**
      * Exception derived from IllegalStateException thrown by
      * {@link LangUtil#check(boolean)}. The intent is to make it possible to
@@ -156,10 +161,6 @@ public final class LangUtil {
         return enumConstant(clazz, ec -> ec.toString().equals(value));
     }
 
-    private LangUtil() {
-        // nop
-    }
-
     /** The byte order mark in UTF files */
     public static final char UTF_BYTE_ORDER_MARK = 0xfeff;
 
@@ -169,7 +170,7 @@ public final class LangUtil {
      * @param  c the character to test
      * @return   true if c is the byte order mark
      */
-    public boolean isByteOrderMark(char c) {
+    public static boolean isByteOrderMark(char c) {
         return c == UTF_BYTE_ORDER_MARK;
     }
 
@@ -179,13 +180,15 @@ public final class LangUtil {
      *
      * @param    <T> the argument type
      * @param  c the consumer to call (instance of {@link ConsumerThrows})
-     * @return   instance of Function that invokes f and converts IOException to
-     *           UncheckedIOException
+     * @return   instance of Consumer that invokes f and converts IOException to
+     *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      */
     public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<T> c) {
         return arg -> {
             try {
                 c.apply(arg);
+            } catch (RuntimeException e) {
+                throw e;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             } catch (Exception e) {
@@ -200,13 +203,15 @@ public final class LangUtil {
      *
      * @param    <T> the argument type
      * @param  s the supplier to call (instance of {@link SupplierThrows})
-     * @return   instance of Supplier that calls s.get() and converts IOException to
-     *           UncheckedIOException and other checked exceptions to {@link WrappedException}
+     * @return   instance of Sipplier that invokes f and converts IOException to
+     *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      */
     public static <T> Supplier<T> uncheckedSupplier(SupplierThrows<T> s) {
         return () -> {
             try {
                 return s.get();
+            } catch (RuntimeException e) {
+                throw e;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             } catch (Exception e) {
@@ -229,6 +234,8 @@ public final class LangUtil {
         return arg -> {
             try {
                 return f.apply(arg);
+            } catch (RuntimeException e) {
+                throw e;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             } catch (Exception e) {
@@ -249,6 +256,8 @@ public final class LangUtil {
         return () -> {
             try {
                 r.run();
+            } catch (RuntimeException e) {
+                throw e;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             } catch (Exception e) {
