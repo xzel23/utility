@@ -1,9 +1,14 @@
 package com.dua3.utility.lang;
 
+import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,14 +52,29 @@ class LangUtilTest {
         assertFalse(LangUtil.isOneOf(8, 3, 9, 7, 5));
     }
 
+    enum TestEnum {
+        A ("First Letter"),
+        B ("Second Letter");
+        
+        private final String s;
+        
+        TestEnum(String s) {
+            this.s = s;
+        }
+        
+        @Override
+        public String toString() {
+            return s;
+        }
+    }
+    
     @Test
     void enumConstant() {
-        // TODO
-    }
-
-    @Test
-    void testEnumConstant() {
-        // TODO
+        assertFalse(LangUtil.enumConstant(TestEnum.class, "A").isPresent());
+        assertFalse(LangUtil.enumConstant(TestEnum.class, "B").isPresent());
+        assertEquals(TestEnum.A, LangUtil.enumConstant(TestEnum.class, "First Letter").get());
+        assertEquals(TestEnum.B, LangUtil.enumConstant(TestEnum.class, "Second Letter").get());
+        assertFalse(LangUtil.enumConstant(TestEnum.class, "Third Letter").isPresent());
     }
 
     @Test
@@ -93,37 +113,98 @@ class LangUtilTest {
 
     @Test
     void trimWithByteOrderMark() {
-        // TODO
+        assertEquals("test", LangUtil.trimWithByteOrderMark(new String(new char[] { 0xfeff, 't', 'e', 's', 't' })));
+        assertEquals("test\n"+(char)0xfeff+"test", LangUtil.trimWithByteOrderMark(new String(new char[] { 0xfeff, 't', 'e', 's', 't', '\n', 0xfeff, 't', 'e', 's', 't', '\n' })));
     }
 
     @Test
     void putAllIfAbsent() {
-        // TODO
+        HashMap<Integer,String> map = new HashMap<>();
+        LangUtil.putAll(map, Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"), Pair.of(5, "e"));
+
+        LangUtil.putAllIfAbsent(map, Pair.of(1,"x"), Pair.of(3, "y"), Pair.of(5, "b"), Pair.of(4, "d"));
+        
+        HashMap<Integer,String> expected = new HashMap<>();
+        expected.put(1, "a");
+        expected.put(2, "b");
+        expected.put(3, "c");
+        expected.put(4, "d");
+        expected.put(5, "e");
+
+        assertEquals(expected, map);
     }
 
     @Test
     void putAll() {
-        // TODO
+        HashMap<Integer,String> map = new HashMap<>();
+        LangUtil.putAll(map, Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"));
+
+        HashMap<Integer,String> expected = new HashMap<>();
+        expected.put(1, "a");
+        expected.put(2, "b");
+        expected.put(3, "c");
+
+        assertEquals(expected, map);
     }
 
     @Test
     void map() {
-        // TODO
+        Map<Integer,String> map = LangUtil.map(Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"));
+
+        HashMap<Integer,String> expected = new HashMap<>();
+        expected.put(1, "a");
+        expected.put(2, "b");
+        expected.put(3, "c");
+
+        assertEquals(expected, map);
     }
 
     @Test
     void testEquals() {
-        // TODO
+        Integer[] a = new Integer[] {1,2,3,4,5};
+        Integer[] b = new Integer[] {1,2,3,4,5,6,7};
+        Integer[] c = new Integer[] {1,2,0,4,5};
+        Integer[] d = new Integer[] {};
+
+        assertTrue(LangUtil.equals(Arrays.stream(a), Arrays.stream(a)));
+        assertTrue(LangUtil.equals(Arrays.stream(d), Arrays.stream(d)));
+        
+        assertFalse(LangUtil.equals(Arrays.stream(a), Arrays.stream(b)));
+        assertFalse(LangUtil.equals(Arrays.stream(a), Arrays.stream(c)));
+        assertFalse(LangUtil.equals(Arrays.stream(a), Arrays.stream(d)));
     }
 
     @Test
     void consumeIfPresent() {
-        // TODO
+        HashMap<Integer,String> map = new HashMap<>();
+        map.put(1, "a");
+        map.put(2, "b");
+        map.put(3, "c");
+
+        AtomicReference<String> ref = new AtomicReference<>();
+        LangUtil.consumeIfPresent(map, 2, v -> ref.set(v));
+        assertEquals("b", ref.get());
+
+        LangUtil.consumeIfPresent(map, 4, v -> ref.set("x"));
+        assertEquals("b", ref.get());
     }
 
     @Test
-    void testConsumeIfPresent() {
-        // TODO
+    void testConsumeIfPresentBiConsumer() {
+        HashMap<Integer,String> map = new HashMap<>();
+        map.put(1, "a");
+        map.put(2, "b");
+        map.put(3, "c");
+
+        AtomicReference<Integer> ref1 = new AtomicReference<>();
+        AtomicReference<String> ref2 = new AtomicReference<>();
+        LangUtil.consumeIfPresent(map, 2, (k,v) -> { ref1.set(k); ref2.set(v); });
+        assertEquals(2, ref1.get());
+        assertEquals("b", ref2.get());
+
+        LangUtil.consumeIfPresent(map, 4, (k,v) -> { ref1.set(k); ref2.set(v); });
+        assertEquals(2, ref1.get());
+        assertEquals("b", ref2.get());
     }
 
     @Test
@@ -131,63 +212,47 @@ class LangUtilTest {
         // TODO
     }
 
+    static class Foo implements Supplier<Integer> {
+        public static int n = 0;
+        private final int value;
+
+        Foo(int value) {
+            this.value = value;
+        }
+        
+        @Override
+        public Integer get() {
+            n++;
+            return 5;
+        }
+    }
+    
     @Test
     void cache() {
-        // TODO
-    }
-
-    @Test
-    void testCache() {
-        // TODO
-    }
-
-    @Test
-    void getResourceURL() {
-        // TODO
-    }
-
-    @Test
-    void getResourceAsString() {
-        // TODO
-    }
-
-    @Test
-    void getResource() {
-        // TODO
-    }
-
-    @Test
-    void setLogLevel() {
-        // TODO
-    }
-
-    @Test
-    void testSetLogLevel() {
-        // TODO
-    }
-
-    @Test
-    void testSetLogLevel1() {
-        // TODO
+        Supplier<Integer> giveMe5 = LangUtil.cache(new Foo(5));
+        
+        for (int i=1; i<100; i++) {
+            assertEquals(5, giveMe5.get());
+        }
+        assertTrue(Foo.n < 50); // ideally n==1, but GC might kick in
     }
 
     @Test
     void enumSet() {
-        // TODO
+        assertTrue(LangUtil.enumSet(StandardOpenOption.class).isEmpty());
+        assertEquals(EnumSet.of(StandardOpenOption.CREATE), LangUtil.enumSet(StandardOpenOption.class, StandardOpenOption.CREATE));
     }
 
     @Test
-    void testEnumSet() {
-        // TODO
+    void enumSetCollection() {
+        assertTrue(LangUtil.enumSet(StandardOpenOption.class, Collections.emptyList()).isEmpty());
+        assertEquals(EnumSet.of(StandardOpenOption.CREATE), LangUtil.enumSet(StandardOpenOption.class, Collections.singletonList(StandardOpenOption.CREATE)));
     }
 
     @Test
     void getLocaleSuffix() {
-        // TODO
-    }
-
-    @Test
-    void testGetResourceURL() {
-        // TODO
+        assertEquals("_de_DE", LangUtil.getLocaleSuffix(Locale.GERMANY));
+        // Indonesian is a special case as the suffix differs from the language tag!
+        assertEquals("_in", LangUtil.getLocaleSuffix(Locale.forLanguageTag("id")));
     }
 }

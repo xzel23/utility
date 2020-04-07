@@ -148,6 +148,13 @@ public final class LangUtil {
         return Arrays.asList(rest).contains(arg);
     }
 
+    /**
+     * Find enum by Predicate.
+     * @param clazz the enum class
+     * @param condition the predicate
+     * @param <E> the generic enum parameter
+     * @return an Optional holding the enum constant or an empty Optional
+     */
     public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, Predicate<E> condition) {
         for (E ec : clazz.getEnumConstants()) {
             if (condition.test(ec)) {
@@ -157,6 +164,14 @@ public final class LangUtil {
         return Optional.empty();
     }
 
+    /**
+     * Find enum by the result of its {@code toString()} method as opposed to {@link Enum#valueOf(Class, String)} which 
+     * compares by {@link Enum#name()}.
+     * @param clazz the enum class
+     * @param value the value to look for
+     * @param <E> the generic enum parameter
+     * @return an Optional holding the enum constant or an empty Optional
+     */
     public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, String value) {
         return enumConstant(clazz, ec -> ec.toString().equals(value));
     }
