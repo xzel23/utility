@@ -64,7 +64,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     public static Optional<FileType<?>> forExtension(String ext) {
         for (FileType<?> t : types) {
-            if (t.extensions.contains(ext)) {
+            if (!t.isCompound() && t.extensions.contains(ext)) {
                 return Optional.of(t);
             }
         }
@@ -226,6 +226,21 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     public abstract void write(URI uri, T document, Function<FileType<? super T>, OptionValues> options) throws IOException;
 
     /**
+     * Whether this is a compund file type (a wrapper for different filetypes having common properties).
+     * <p>
+     * <strong>NOTE:</strong> Compund file types are excluded when looking up a file type by supported extensions.
+     * <p>
+     * Some file types are used in dialogs to group together different other types that have common properties, i. e.
+     * "All supported files" of an application. These compund file types can be useful to offer a better user experience
+     * but are not suitable for determininng in what file format data should be written (an example being "Excel files"
+     * which refers to both XLS and XLSX files).
+     * @return if this file type is a compund file type
+     */
+    public boolean isCompound() {
+        return false;
+    }
+    
+    /**
      * Get optional settings for this file type
      *
      * @return optional settings for file type
@@ -258,4 +273,5 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
         return getName().compareTo(o.getName());
     }
+    
 }

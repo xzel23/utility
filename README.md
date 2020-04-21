@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 6.0.1
+
+ - new method FileType.isCompound() is used to excldue file types from lookup by extension (default implementation returns false; see javadoc for details)
+ 
 ### Version 6.0
 
  - LangUtil.uncheckedXXX() methods don't wrap uncheckedExceptions
