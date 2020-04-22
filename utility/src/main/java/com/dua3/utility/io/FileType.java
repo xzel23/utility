@@ -80,6 +80,10 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return forFileName(cls, uri.getSchemeSpecificPart());
     }
 
+    public static <T> Optional<FileType<T>> forPath(Path path, Class<T> cls) {
+        return forFileName(cls, String.valueOf(path.getFileName()));
+    }
+
     @SuppressWarnings("unchecked")
     private static <T> Optional<FileType<T>> forFileName(Class<T> cls, String fileName) {
         for (FileType<?> t : types) {
@@ -93,6 +97,11 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     public static <T> Optional<T> read(URI uri, Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forUri(uri, cls);
         return type.isPresent() ? Optional.of(type.get().read(uri)) : Optional.empty();
+    }
+
+    public static <T> Optional<T> read(Path path, Class<T> cls) throws IOException {
+        Optional<com.dua3.utility.io.FileType<T>> type = forPath(path, cls);
+        return type.isPresent() ? Optional.of(type.get().read(path)) : Optional.empty();
     }
 
     /**
