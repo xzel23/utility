@@ -20,6 +20,7 @@ import com.dua3.utility.options.OptionValues;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -205,6 +206,29 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     public abstract T read(URI uri, Function<FileType<? extends T>, OptionValues> options) throws IOException;
 
     /**
+     * Read document from file.
+     *
+     * @param path the Path to read from
+     * @return the document
+     * @throws IOException if an error occurs
+     */
+    public T read(Path path) throws IOException {
+        return read(path, t -> OptionValues.empty());
+    }
+
+    /**
+     * Read document from file.
+     *
+     * @param path    the Path to read from
+     * @param options the options to use
+     * @return the document
+     * @throws IOException if an error occurs
+     */
+    public T read(Path path, Function<FileType<? extends T>, OptionValues> options) throws IOException {
+        return read(path.toUri());
+    }
+
+    /**
      * Write document to file.
      *
      * @param uri      the URI to write to
@@ -224,6 +248,29 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     public abstract void write(URI uri, T document, Function<FileType<? super T>, OptionValues> options) throws IOException;
+
+    /**
+     * Write document to file.
+     *
+     * @param path     the Path to write to
+     * @param document the document to write
+     * @throws IOException if an error occurs
+     */
+    public void write(Path path, T document) throws IOException {
+        write(path, document, t -> OptionValues.empty());
+    }
+
+    /**
+     * Write document to file.
+     *
+     * @param path     the Path to write to
+     * @param document the document to write
+     * @param options  the options to use
+     * @throws IOException if an error occurs
+     */
+    public void write(Path path, T document, Function<FileType<? super T>, OptionValues> options) throws IOException {
+        write(path.toUri(), document, options);
+    }
 
     /**
      * Whether this is a compund file type (a wrapper for different filetypes having common properties).
