@@ -15,14 +15,14 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
     }
     
     dependencies {
-        compile        "com.dua3.utility:utility:5.2"
-        compile        "com.dua3.utility:utility.db:5.2"
+        compile        "com.dua3.utility:utility:6.0.1"
+        compile        "com.dua3.utility:utility.db:6.0.1"
         ...        
     }
 
 ## Changes
 
-### Version 6.0.2
+### Version 6.0.2 (to be released)
 
  - support Path as argument to FileType.read()/write() methods
  
