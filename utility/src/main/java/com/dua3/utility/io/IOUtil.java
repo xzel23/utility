@@ -5,6 +5,9 @@
 
 package com.dua3.utility.io;
 
+import com.dua3.utility.data.Pair;
+import com.dua3.utility.lang.LangUtil;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -18,9 +21,6 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import com.dua3.utility.data.Pair;
-import com.dua3.utility.lang.LangUtil;
 
 /**
  * Utility class for Input/Output.
@@ -44,7 +44,7 @@ public final class IOUtil {
 
     /**
      * Find start and end index of the filename, discarding trailing path separators.
-     * @param path
+     * @param path the path to get the filename for
      * @return pair with start, end indices
      */
     private static Pair<Integer, Integer> getFilenameInfo(String path) {
@@ -328,6 +328,10 @@ public final class IOUtil {
     public static String toUnixPath(Path path) {
         String sep = "";
         StringBuilder sb = new StringBuilder();
+        Path root = path.getRoot();
+        if (root != null) {
+            sb.append(root.toString().replace("\\", sep));
+        }
         for (Path p: path) {
             sb.append(sep);
             sb.append(p);
