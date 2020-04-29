@@ -6,7 +6,7 @@
 plugins {
     id 'com.dua3.gradle.jpms' version '1.0' apply false
     id 'com.adarshr.test-logger' version '1.7.0' apply false
-    id 'com.github.spotbugs' version '4.0.4' apply false
+    id 'com.github.spotbugs' version '4.0.7' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
 }
 
@@ -23,7 +23,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '6.0.2'
+    version = '6.0.3'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
@@ -167,7 +167,7 @@ subprojects {
     }
 
     // === SPOTBUGS === >
-    spotbugs.toolVersion = '4.0.1'
+    spotbugs.toolVersion = '4.0.2'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {

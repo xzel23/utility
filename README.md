@@ -22,6 +22,10 @@ Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.
 
 ## Changes
 
+### Version 6.0.3
+
+ - fix missing root in getUnixPath()
+ 
 ### Version 6.0.2
 
  - support Path as argument to FileType.read()/write() methods
