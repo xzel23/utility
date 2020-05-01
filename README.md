@@ -4,24 +4,43 @@ A library with utility classes.
 
 ## Requirements
 
- - JDK 8 or later
+ - building: JDK 11 or later 
+ - using: JDK 8 or later
 
-## Using with Gradle
+## Including the library
 
-Binary builds are available on [jcenter](https://mvnrepository.com/artifact/com.dua3.utility):
+Binaries are available on Jcenter and Maven Central Repository.
 
-    repositories {
-        jcenter()
-    }
-    
+### Maven
+
+        <dependency>
+            <groupId>com.dua3.utility</groupId>
+            <artifactId>utility</artifactId>
+            <version>6.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dua3.utility</groupId>
+            <artifactId>utility-db</artifactId>
+            <version>6.0.4</version>
+        </dependency>
+        ...
+
+### Gradle
     dependencies {
-        compile        "com.dua3.utility:utility:6.0.1"
-        compile        "com.dua3.utility:utility.db:6.0.1"
+        compile        "com.dua3.utility:utility:6.0.4"
+        compile        "com.dua3.utility:utility-db:6.0.4"
         ...        
     }
 
 ## Changes
 
+### Version 6.0.4
+
+ - now included in Maven Central Repository
+ - add instructions for setting up Maven
+ - fix instructions for setting up Gradle
+ - utility methods TextUtil.format(...) for pretty-printing org.w3c.dom.Document 
+ 
 ### Version 6.0.3
 
  - fix missing root in getUnixPath()
