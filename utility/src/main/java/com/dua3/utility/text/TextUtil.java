@@ -8,9 +8,14 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil.Bounds;
+import org.w3c.dom.Document;
 
-import java.io.UnsupportedEncodingException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -596,5 +601,89 @@ public final class TextUtil {
             throw new IllegalStateException(e);
         }
     }
+
+    /**
+     * Pretty print W3C Document.
+     * @param doc the document
+     * @return HTML for the document
+     */
+    public static String format(Document doc) {
+        try (StringWriter writer = new StringWriter()) {
+            format(writer, doc, StandardCharsets.UTF_8);
+            return writer.toString();
+        } catch (IOException e) {
+            // should not happen when writing to a String
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Pretty print W3C Document using UTF-8 encoding.
+     * @param <O> the type of the OutputStream
+     * @param out the stream to write to
+     * @param doc the document
+     * @return {@code out}
+     * @throws IOException when an I/O error occurs
+     */
+    public static <O extends OutputStream> O format(O out, Document doc) throws IOException {
+        format(out, doc, StandardCharsets.UTF_8);
+        return out;
+    }
+
+    /**
+     * Pretty print W3C Document using the provided charset for encoding.
+     * @param <O> the type of the OutputStream
+     * @param out the stream to write to
+     * @param doc the document
+     * @param charset the {@link Charset} to use for encoding the output
+     * @return {@code out}
+     * @throws IOException when an I/O error occurs
+     */
+    public static <O extends OutputStream> O format(O out, Document doc, Charset charset) throws IOException {
+        format(new OutputStreamWriter(out, charset), doc, charset);
+        return out;
+    }
+
+    /**
+     * Pretty print W3C Document. 
+     * <br>
+     * <strong>Note:</strong> the writer should be using the UTF-8 character encoding!
+     *
+     * @param <W> the type of the Writer
+     * @param writer the writer to write to
+     * @param doc the document
+     * @return {@code writer}
+     * @throws IOException when an I/O error occurs
+     */
+    public static <W extends Writer> W format(W writer, Document doc) throws IOException {
+        return format(writer, doc, StandardCharsets.UTF_8);
+    }
     
+    /**
+     * Pretty print W3C Document. Note that the provided charset should match the one used by the writer!
+     * @param <W> the type of the Writer
+     * @param writer the writer to write to
+     * @param doc the document
+     * @param charset the {@link Charset} to use for encoding the output
+     * @return {@code writer}
+     * @throws IOException when an I/O error occurs
+     */
+    private static <W extends Writer> W format(W writer, Document doc, Charset charset) throws IOException {
+        try {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, charset.name());
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        } catch (TransformerConfigurationException e) {
+            // should not happen(tm)
+            throw new IllegalStateException(e);
+        } catch (TransformerException e) {
+            throw new IOException("error in transformation: "+e.getMessage(), e);
+        }
+        return writer;
+    }
 }
