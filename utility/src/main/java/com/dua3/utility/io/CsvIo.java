@@ -150,10 +150,10 @@ public abstract class CsvIo implements AutoCloseable {
                 .collect(Collectors.toList());
         OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesAll);
 
-        List<Value<Locale>> localesCommon = Arrays.asList(
+        List<Value<Locale>> localesCommon = Stream.of(
                     Locale.ROOT, Locale.getDefault(), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN,
-                        Locale.CHINESE, Locale.JAPANESE, Locale.KOREAN)
-                .stream().sorted(Comparator.comparing(Locale::toString)).distinct().map(Option::value)
+                    Locale.CHINESE, Locale.JAPANESE, Locale.KOREAN)
+                .sorted(Comparator.comparing(Locale::toString)).distinct().map(Option::value)
                 .collect(Collectors.toList());
         COMMON_OPTIONS.addOption(OPTION_LOCALE, Locale.class, Option.value("default", Locale.ROOT), localesCommon);
 

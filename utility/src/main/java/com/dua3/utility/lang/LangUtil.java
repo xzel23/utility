@@ -676,8 +676,8 @@ public final class LangUtil {
         List<String> candidates = new ArrayList<>();
 
         String candidateName = basename;
-        candidates.add(candidateName+"."+extension);;
-        
+        candidates.add(candidateName+"."+extension);
+
         String language = locale.getLanguage();
         if (!language.isEmpty()) {
             candidateName = candidateName + "_" + language;
@@ -686,12 +686,12 @@ public final class LangUtil {
             String country = locale.getCountry();
             if (!country.isEmpty()) {
                 candidateName = candidateName + "_" + country;
-                candidates.add(candidateName+"."+extension);;
+                candidates.add(candidateName+"."+extension);
 
                 String variant = locale.getVariant();
                 if (!variant.isEmpty()) {
                     candidateName = candidateName + "_" + variant;
-                    candidates.add(candidateName+"."+extension);;
+                    candidates.add(candidateName+"."+extension);
                 }
             }
         }

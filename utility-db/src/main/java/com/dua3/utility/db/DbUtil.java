@@ -193,6 +193,7 @@ public final class DbUtil {
      *                                if a driver class was found and loaded but
      *                                could not be instantiated
      */
+    @SuppressWarnings("ThrowInsideCatchBlockWhichIgnoresCaughtException")
     public static Optional<? extends java.sql.Driver> loadDriver(URL... urls)
             throws ClassNotFoundException, SQLException {
         LOG.fine(() -> "loadDriver() - URLs: " + Arrays.toString(urls));

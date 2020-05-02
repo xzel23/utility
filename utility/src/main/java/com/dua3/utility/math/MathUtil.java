@@ -369,7 +369,7 @@ public final class MathUtil {
             case FLOOR: return Math::floor;
             case CEILING: return Math::ceil;
             case UNNECESSARY: return x -> x;
-            default: throw new IllegalStateException();
+            default: throw new IllegalArgumentException("unsupported rounding mode: "+mode);
         }
     }
 

@@ -39,7 +39,8 @@ Binaries are available on Jcenter and Maven Central Repository.
  - now included in Maven Central Repository
  - add instructions for setting up Maven
  - fix instructions for setting up Gradle
- - utility methods TextUtil.format(...) for pretty-printing org.w3c.dom.Document 
+ - utility method TextUtil.prettyPrint(...) for pretty-printing org.w3c.dom.Document 
+ - utility methods IOUtil.format(...) for output of org.w3c.dom.Document 
  
 ### Version 6.0.3
 

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 public class RingBufferTest {
 
     private static final int CAPACITY = 10;
-    private RingBuffer<Object> buffer = new RingBuffer<>(CAPACITY);
+    private final RingBuffer<Object> buffer = new RingBuffer<>(CAPACITY);
 
     @Test
     public void testAddAndGet() {

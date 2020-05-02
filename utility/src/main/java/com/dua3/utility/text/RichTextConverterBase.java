@@ -156,7 +156,7 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         appendChars(run);
     }
 
-    private Deque<Map<String, Object>> resetAttr = new LinkedList<>();
+    private final Deque<Map<String, Object>> resetAttr = new LinkedList<>();
 
     private void pushRunAttributes(Map<String, Object> resetAttributes) {
         resetAttr.push(resetAttributes);

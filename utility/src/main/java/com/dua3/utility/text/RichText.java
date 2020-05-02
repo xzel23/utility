@@ -57,7 +57,7 @@ public class RichText
         assert checkAllRunsHaveTextAsBase(runs);
     }
 
-    private boolean checkAllRunsHaveTextAsBase(List<Run> runs) {
+    private boolean checkAllRunsHaveTextAsBase(Iterable<Run> runs) {
         boolean ok = true;
         for (Run run : runs) {
             //noinspection ObjectEquality

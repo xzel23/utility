@@ -8,6 +8,7 @@ package com.dua3.utility.text;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ public class TextUtilTest {
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private static final List<Pair<String, byte[]>> byteArrayHexStringTestData = List.of(
+    private static final List<Pair<String, byte[]>> byteArrayHexStringTestData = Arrays.asList(
             Pair.of("00", new byte[] { 0x00 }),
             Pair.of("a0cafe", new byte[] { (byte) 0xa0, (byte) 0xca, (byte) 0xfe }));
 

@@ -23,7 +23,7 @@ public class JdbcDataSource implements DataSource {
     private PrintWriter logWriter = null;
     private int loginTimeout;
     private Driver driver = null;
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
     public JdbcDataSource() {
         // nop

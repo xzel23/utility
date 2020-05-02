@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -25,7 +26,7 @@ class DataUtilTest {
         assertEquals(-0.5f, DataUtil.convert("-0.5", Float.class));
         assertEquals(Float.class, DataUtil.convert("-0.5", Float.class).getClass());
         assertThrows(IllegalArgumentException.class, () -> DataUtil.convert("", Integer.class));
-        assertEquals(null, DataUtil.convert((Object) null, Integer.class));
+        assertNull(DataUtil.convert((Object) null, Integer.class));
 
         // Number to Number
         assertEquals(123, DataUtil.convert(123.0, Integer.class));
@@ -72,24 +73,24 @@ class DataUtilTest {
 
     @Test
     void testConvertToArray() {
-        assertArrayEquals(new Integer[]{5,-7,13}, DataUtil.convertToArray(List.of("5", "-7", "13"), Integer.class));
+        assertArrayEquals(new Integer[]{5,-7,13}, DataUtil.convertToArray(Arrays.asList("5", "-7", "13"), Integer.class));
     }
 
     @Test
     void convertCollection() {
-        assertEquals(List.of(5,-7,13), DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new));
-        assertEquals(ArrayList.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, ArrayList::new).getClass());
-        assertEquals(new HashSet<>(List.of(5,-7,13)), DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, HashSet::new));
-        assertEquals(HashSet.class, DataUtil.convertCollection(List.of("5", "-7", "13"), Integer.class, HashSet::new).getClass());
+        assertEquals(Arrays.asList(5,-7,13), DataUtil.convertCollection(Arrays.asList("5", "-7", "13"), Integer.class, ArrayList::new));
+        assertEquals(ArrayList.class, DataUtil.convertCollection(Arrays.asList("5", "-7", "13"), Integer.class, ArrayList::new).getClass());
+        assertEquals(new HashSet<>(Arrays.asList(5,-7,13)), DataUtil.convertCollection(Arrays.asList("5", "-7", "13"), Integer.class, HashSet::new));
+        assertEquals(HashSet.class, DataUtil.convertCollection(Arrays.asList("5", "-7", "13"), Integer.class, HashSet::new).getClass());
     }
 
     @Test
     void testCollect() {
-        assertEquals(List.of(1,2,3), DataUtil.collect(List.of(1,2,3).iterator()));
+        assertEquals(Arrays.asList(1,2,3), DataUtil.collect(Arrays.asList(1,2,3).iterator()));
     }
 
     @Test
     void testCollectArray() {
-        assertArrayEquals(new Integer[]{1,2,3}, DataUtil.collectArray(List.of(1,2,3).iterator()));
+        assertArrayEquals(new Integer[]{1,2,3}, DataUtil.collectArray(Arrays.asList(1,2,3).iterator()));
     }
 }

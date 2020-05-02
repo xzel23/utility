@@ -116,12 +116,12 @@ public class CsvReader extends CsvIo implements AutoCloseable {
         return create(builder, reader, options);
     }
 
-    private RowBuilder rowBuilder;
+    private final RowBuilder rowBuilder;
     private int rowNumber;
     private int rowsRead;
     private int lineNumber;
-    private Pattern patternField;
-    private BufferedReader reader;
+    private final Pattern patternField;
+    private final BufferedReader reader;
     private List<String> columnNames;
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;

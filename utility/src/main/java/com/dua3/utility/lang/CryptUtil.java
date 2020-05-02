@@ -8,10 +8,11 @@ package com.dua3.utility.lang;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.security.SecureRandom;
+import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -101,14 +102,14 @@ public final class CryptUtil {
      */
     public static byte[] encrypt(byte[] key, byte[] data) throws GeneralSecurityException {
         // use AES encryption
-        SecretKey secretKey = new SecretKeySpec(key, "AES");
+        Key secretKey = new SecretKeySpec(key, "AES");
 
         byte[] iv = new byte[12];
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.nextBytes(iv);
 
         final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        GCMParameterSpec parameterSpec = new GCMParameterSpec(128, iv); // 128 bit auth tag length
+        AlgorithmParameterSpec parameterSpec = new GCMParameterSpec(128, iv); // 128 bit auth tag length
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
 
         byte[] cipherText = cipher.doFinal(data);

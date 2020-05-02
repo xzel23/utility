@@ -67,8 +67,7 @@ public class Stopwatch {
      */
     public Duration elapsed() {
         Instant now = Instant.now();
-        Duration duration = Duration.between(start, now);
-        return duration;
+        return Duration.between(start, now);
     }
 
     @Override

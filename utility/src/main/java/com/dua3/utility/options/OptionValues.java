@@ -18,7 +18,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
     /**
      * List of ValueChangeListeners.
      */
-    private transient List<ValueChangeListener<?>> changeListeners = new ArrayList<>();
+    private final transient List<ValueChangeListener<?>> changeListeners = new ArrayList<>();
 
     /**
      * Create a new empty instance.

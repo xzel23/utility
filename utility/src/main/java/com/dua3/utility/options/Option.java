@@ -181,7 +181,7 @@ public abstract class Option<T> {
     }
 
     /**
-     * Create Option instance (used by {@link #parseScheme(String)}).
+     * Create Option instance (used by {@link #parseScheme(CharSequence)}).
      *
      * @param name      the option's name
      * @param arguments the option's arguments
@@ -211,7 +211,7 @@ public abstract class Option<T> {
     }
 
     /**
-     * Extract arguments (used by {@link #parseScheme(String)}).
+     * Extract arguments (used by {@link #parseScheme(CharSequence)}).
      *
      * @param matcher the current matcher instance that matches a single option declaration
      * @return map of arguments for the option matched by matcher

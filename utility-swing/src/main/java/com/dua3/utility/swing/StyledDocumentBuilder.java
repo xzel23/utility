@@ -61,7 +61,7 @@ public final class StyledDocumentBuilder extends RichTextConverterBase<StyledDoc
 
     private float scale;
 
-    private Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
+    private final Deque<Pair<Integer, AttributeSet>> paragraphAttributes = new LinkedList<>();
 
     private final float defaultFontSize;
 

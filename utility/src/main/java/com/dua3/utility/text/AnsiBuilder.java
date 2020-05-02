@@ -7,10 +7,7 @@ package com.dua3.utility.text;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
@@ -49,7 +46,7 @@ public final class AnsiBuilder extends AbstractStringBasedBuilder {
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private static void addColor(List<Character> esc, char code, Color c) {
+    private static void addColor(Collection<Character> esc, char code, Color c) {
         esc.add(code);
         esc.add((char) 2);
         esc.add((char) c.r());

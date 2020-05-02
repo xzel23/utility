@@ -17,10 +17,10 @@ public class FileTreeNode implements TreeNode<FileTreeNode> {
         return new FileTreeNode(null, root, true);
     }
 
-    private FileTreeNode parent;
+    private final FileTreeNode parent;
     private final Path path;
     private List<FileTreeNode> children = null;
-    private boolean lazy;
+    private final boolean lazy;
 
     protected FileTreeNode(FileTreeNode parent, Path path) {
         this(parent, path, false);

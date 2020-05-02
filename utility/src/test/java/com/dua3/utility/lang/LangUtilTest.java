@@ -119,12 +119,12 @@ class LangUtilTest {
 
     @Test
     void putAllIfAbsent() {
-        HashMap<Integer,String> map = new HashMap<>();
+        Map<Integer, String> map = new HashMap<>();
         LangUtil.putAll(map, Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"), Pair.of(5, "e"));
 
         LangUtil.putAllIfAbsent(map, Pair.of(1,"x"), Pair.of(3, "y"), Pair.of(5, "b"), Pair.of(4, "d"));
         
-        HashMap<Integer,String> expected = new HashMap<>();
+        Map<Integer, String> expected = new HashMap<>();
         expected.put(1, "a");
         expected.put(2, "b");
         expected.put(3, "c");
@@ -136,10 +136,10 @@ class LangUtilTest {
 
     @Test
     void putAll() {
-        HashMap<Integer,String> map = new HashMap<>();
+        Map<Integer, String> map = new HashMap<>();
         LangUtil.putAll(map, Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"));
 
-        HashMap<Integer,String> expected = new HashMap<>();
+        Map<Integer, String> expected = new HashMap<>();
         expected.put(1, "a");
         expected.put(2, "b");
         expected.put(3, "c");
@@ -151,7 +151,7 @@ class LangUtilTest {
     void map() {
         Map<Integer,String> map = LangUtil.map(Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"));
 
-        HashMap<Integer,String> expected = new HashMap<>();
+        Map<Integer, String> expected = new HashMap<>();
         expected.put(1, "a");
         expected.put(2, "b");
         expected.put(3, "c");
@@ -161,10 +161,10 @@ class LangUtilTest {
 
     @Test
     void testEquals() {
-        Integer[] a = new Integer[] {1,2,3,4,5};
-        Integer[] b = new Integer[] {1,2,3,4,5,6,7};
-        Integer[] c = new Integer[] {1,2,0,4,5};
-        Integer[] d = new Integer[] {};
+        Integer[] a = {1,2,3,4,5};
+        Integer[] b = {1,2,3,4,5,6,7};
+        Integer[] c = {1,2,0,4,5};
+        Integer[] d = {};
 
         assertTrue(LangUtil.equals(Arrays.stream(a), Arrays.stream(a)));
         assertTrue(LangUtil.equals(Arrays.stream(d), Arrays.stream(d)));
@@ -176,13 +176,13 @@ class LangUtilTest {
 
     @Test
     void consumeIfPresent() {
-        HashMap<Integer,String> map = new HashMap<>();
+        Map<Integer, String> map = new HashMap<>();
         map.put(1, "a");
         map.put(2, "b");
         map.put(3, "c");
 
         AtomicReference<String> ref = new AtomicReference<>();
-        LangUtil.consumeIfPresent(map, 2, v -> ref.set(v));
+        LangUtil.consumeIfPresent(map, 2, ref::set);
         assertEquals("b", ref.get());
 
         LangUtil.consumeIfPresent(map, 4, v -> ref.set("x"));
@@ -191,7 +191,7 @@ class LangUtilTest {
 
     @Test
     void testConsumeIfPresentBiConsumer() {
-        HashMap<Integer,String> map = new HashMap<>();
+        Map<Integer, String> map = new HashMap<>();
         map.put(1, "a");
         map.put(2, "b");
         map.put(3, "c");
@@ -213,7 +213,7 @@ class LangUtilTest {
     }
 
     static class Foo implements Supplier<Integer> {
-        public static int n = 0;
+        private static int n = 0;
         private final int value;
 
         Foo(int value) {
@@ -223,7 +223,7 @@ class LangUtilTest {
         @Override
         public Integer get() {
             n++;
-            return 5;
+            return value;
         }
     }
     

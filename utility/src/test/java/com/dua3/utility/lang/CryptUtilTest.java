@@ -16,7 +16,7 @@ public class CryptUtilTest {
 
     private static final int[] KEY_LENGTHS = { 128, 192, 256 };
 
-    private String[] MESSAGES = {
+    private final String[] MESSAGES = {
             "",
             "secret message",
             System.getProperties().toString()
