@@ -221,6 +221,42 @@ public class Font {
         public void setUnderline(Boolean underline) {
             this.underline = underline;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            FontDef fontDef = (FontDef) o;
+            return Objects.equals(color, fontDef.color) &&
+                   Objects.equals(size, fontDef.size) &&
+                   Objects.equals(family, fontDef.family) &&
+                   Objects.equals(bold, fontDef.bold) &&
+                   Objects.equals(italic, fontDef.italic) &&
+                   Objects.equals(underline, fontDef.underline) &&
+                   Objects.equals(strikeThrough, fontDef.strikeThrough);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(color, size, family, bold, italic, underline, strikeThrough);
+        }
+
+        @Override
+        public String toString() {
+            return "FontDef{" +
+                   ( color  == null ? "" : "color: "+color.toString() + ";" ) +
+                   ( size   == null ? "" : "size: "+size + "pt;" ) +
+                   ( family == null ? "" : "font-family: " + family + ";" ) +
+                   ( bold   == null ? "" : "font-weight: " + (bold?"bold":"normal") + ";" ) +
+                   ( italic == null ? "" : "font-style: " + (italic ? "italic" :"regular") + ";" ) +
+                   ( underline == null && strikeThrough == null 
+                           ? "" 
+                           : "text-decoration:" +
+                             (underline!=null && underline ? " underline" : "") +
+                             (strikeThrough!=null && strikeThrough ? " uline-through" : "") + 
+                             ";") +
+                   "}";
+        }
     }
 
     /**

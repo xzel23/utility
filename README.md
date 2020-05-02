@@ -39,8 +39,11 @@ Binaries are available on Jcenter and Maven Central Repository.
  - now included in Maven Central Repository
  - add instructions for setting up Maven
  - fix instructions for setting up Gradle
+ - many code cleanups
+ - test code compatible with JDK 8 (but JDK 11+ is still required for the build)
  - utility method TextUtil.prettyPrint(...) for pretty-printing org.w3c.dom.Document 
  - utility methods IOUtil.format(...) for output of org.w3c.dom.Document 
+ - Font.FontDef: added equals(), hashCode(), toString()
  
 ### Version 6.0.3
 
