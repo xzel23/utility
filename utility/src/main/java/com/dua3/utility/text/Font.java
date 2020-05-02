@@ -253,7 +253,7 @@ public class Font {
                            ? "" 
                            : "text-decoration:" +
                              (underline!=null && underline ? " underline" : "") +
-                             (strikeThrough!=null && strikeThrough ? " uline-through" : "") + 
+                             (strikeThrough!=null && strikeThrough ? " line-through" : "") + 
                              ";") +
                    "}";
         }
