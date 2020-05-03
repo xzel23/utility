@@ -10,6 +10,7 @@ module dua3_utility {
     exports com.dua3.utility.math;
     exports com.dua3.utility.options;
     exports com.dua3.utility.text;
+    exports com.dua3.utility.incubator;
 
     requires java.logging;
 

@@ -34,7 +34,7 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
-### Version 6.0.4
+### Version 6.1
 
  - now included in Maven Central Repository
  - add instructions for setting up Maven
@@ -44,6 +44,9 @@ Binaries are available on Jcenter and Maven Central Repository.
  - utility method TextUtil.prettyPrint(...) for pretty-printing org.w3c.dom.Document 
  - utility methods IOUtil.format(...) for output of org.w3c.dom.Document 
  - Font.FontDef: added equals(), hashCode(), toString()
+ - added new package com.dua3.utility.incubator for incubating features
+ - new Utility class DomUtil (incubating)
+ - new class BatchCollector (incubating)
  
 ### Version 6.0.3
 
