@@ -34,6 +34,11 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.1.1
+
+ - new method IOUtil.openStream(URI)
+ - new overload IOUtil.read(URI, Charset)
+ 
 ### Version 6.1
 
  - now included in Maven Central Repository

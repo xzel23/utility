@@ -219,6 +219,37 @@ public final class IOUtil {
     }
 
     /**
+     * Read content of URI into String.
+     *
+     * @param  uri
+     *                     the uri
+     * @param  cs
+     *                     the Charset
+     * @return             content of uri
+     * @throws IOException
+     *                     if content could not be read
+     */
+    public static String read(URI uri, Charset cs) throws IOException {
+        try (InputStream in = openInputStream(uri)) {
+            return new String(readAllBytes(in), cs);
+        }
+    }
+
+    /**
+     * Open InputStream for URI-
+     * @param uri the URI
+     * @return InputStream
+     * @throws IOException on error
+     */
+    public static InputStream openInputStream(URI uri) throws IOException {
+        if (uri.isAbsolute()) {
+            return uri.toURL().openStream();
+        } else {
+            return Files.newInputStream(Paths.get(uri));
+        }
+    }
+
+    /**
      * Replacement for InputStream.readAllBytes() which is not available in Java 8.
      * @param in InputStream to read from
      * @return the bytes
@@ -422,8 +453,7 @@ public final class IOUtil {
      * @param  path
      *                           the path to load the text from
      * @param  onCharsetDetected
-     *                           callback to call when a character encoding was
-     *                           successful.
+     *                           callback to inform about the detected encoding.
      * @param  charsets
      *                           the encodings to try
      * @return
@@ -464,8 +494,7 @@ public final class IOUtil {
      * @param  path
      *                           the path to load the text from
      * @param  onCharsetDetected
-     *                           callback to call when a character encoding was
-     *                           successful.
+     *                           callback to inform about the detected encoding.
      * @return
      *                           the text read
      * @throws IOException
