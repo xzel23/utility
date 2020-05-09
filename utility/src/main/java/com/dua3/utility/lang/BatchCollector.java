@@ -1,4 +1,4 @@
-package com.dua3.utility.incubator;
+package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
 
@@ -13,8 +13,6 @@ import java.util.stream.Collector;
  * A collector that puts subsequent items into batches. A new batch is started by generating a new batch key.
  * @param <T> the item type
  * @param <K> the key type
- *           
- * @deprecated This is an incubator class. it may be significantly changed or removed without notice!
  */
 public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
     private final Function<T, K> keyMapper;
@@ -24,6 +22,16 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
         this(keyMapper, null);
     }
 
+    /**
+     * Create a new BatchCollector.
+     * <p>
+     * For each item in the stream, a key is determined applying the keyMapper. If the generated key is null, or
+     * equals the last item's key, the item is added to the current batch. If not, a new batch is created and the 
+     * item added.
+     * 
+     * @param keyMapper the key mapper
+     * @param defaultKey the default key
+     */
     public BatchCollector(Function<T,K> keyMapper, K defaultKey) {
         this.keyMapper = keyMapper;
         this.defaultKey = defaultKey;

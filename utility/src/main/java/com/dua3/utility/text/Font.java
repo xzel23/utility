@@ -244,18 +244,26 @@ public class Font {
         @Override
         public String toString() {
             return "FontDef{" +
-                   ( color  == null ? "" : "color: "+color.toString() + ";" ) +
-                   ( size   == null ? "" : "size: "+size + "pt;" ) +
-                   ( family == null ? "" : "font-family: " + family + ";" ) +
-                   ( bold   == null ? "" : "font-weight: " + (bold?"bold":"normal") + ";" ) +
-                   ( italic == null ? "" : "font-style: " + (italic ? "italic" :"regular") + ";" ) +
-                   ( underline == null && strikeThrough == null 
-                           ? "" 
-                           : "text-decoration:" +
-                             (underline!=null && underline ? " underline" : "") +
-                             (strikeThrough!=null && strikeThrough ? " line-through" : "") + 
-                             ";") +
+                   getCssStyle() +
                    "}";
+        }
+
+        /**
+         * Get CSS compatible fontstyle definition.
+         * @return fontstyle definition
+         */
+        public String getCssStyle() {
+            return (color == null ? "" : "color: " + color.toString() + ";") +
+                   (size == null ? "" : "size: " + size + "pt;") +
+                   (family == null ? "" : "font-family: " + family + ";") +
+                   (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + ";") +
+                   (italic == null ? "" : "font-style: " + (italic ? "italic" : "regular") + ";") +
+                   (underline == null && strikeThrough == null
+                           ? ""
+                           : "text-decoration:" +
+                             (underline != null && underline ? " underline" : "") +
+                             (strikeThrough != null && strikeThrough ? " line-through" : "") +
+                             ";");
         }
     }
 

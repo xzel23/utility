@@ -34,6 +34,11 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.2
+
+ - DomUtil and BatchCollector moved out of incubator
+ - new method FontDef.getCssStyle() returning CSS-compatible font definition
+ 
 ### Version 6.1.1
 
  - new method IOUtil.openStream(URI)
