@@ -37,6 +37,7 @@ Binaries are available on Jcenter and Maven Central Repository.
 ### Version 6.2.1
 
  - new Utility class StreamUtil
+ - TextUtil.indent()
  
 ### Version 6.2
 

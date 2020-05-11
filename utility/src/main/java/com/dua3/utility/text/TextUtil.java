@@ -21,6 +21,7 @@ import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public final class TextUtil {
@@ -615,4 +616,23 @@ public final class TextUtil {
         }
     }
 
+    /**
+     * Indent text.
+     * <p>
+     * Each line is indent the given amount of spaces. Line endings are not altered.
+     * <br>
+     * NOTE:  If you are targetting JDK 12+ exclusively, use String.indent() introduced in JDK 12 instead.
+     * @param s the text
+     * @param n the number of characters to indent
+     * @return the indented text
+     */
+    public static String indent(String s, int n) {
+        StringBuilder indent = new StringBuilder(n);
+        for (int i=0; i<n; i++) {
+            indent.append(' ');
+        }
+        
+        Pattern pattern = Pattern.compile("^", Pattern.MULTILINE);
+        return pattern.matcher(s).replaceAll(indent.toString());
+    }
 }
