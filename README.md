@@ -34,6 +34,10 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.2.1
+
+ - new Utility class StreamUtil
+ 
 ### Version 6.2
 
  - DomUtil and BatchCollector moved out of incubator
