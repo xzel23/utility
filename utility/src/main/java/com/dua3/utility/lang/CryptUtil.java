@@ -31,7 +31,7 @@ public final class CryptUtil {
 
     public static byte[] generateKey(int bits) {
         int nBytes = bits / 8;
-        LangUtil.check(nBytes * 8 == bits, "bit length must be a multiple of 8");
+        LangUtil.check(nBytes * 8 == bits, "bit length of key must be a multiple of 8");
 
         byte[] key = new byte[nBytes];
         SecureRandom secureRandom = new SecureRandom();
