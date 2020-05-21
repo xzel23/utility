@@ -266,6 +266,16 @@ public final class IOUtil {
     }
 
     /**
+     * Get stream of lines from InputStream instance.
+     * @param in the stream to read from
+     * @param cs the Charset to use
+     * @return stream of lines
+     */
+    public static Stream<String> lines(InputStream in, Charset cs) {
+        return new BufferedReader(new InputStreamReader(in, cs)).lines();
+    }
+
+    /**
      * Write content String to a path.
      *
      * @param  path

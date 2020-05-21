@@ -34,6 +34,11 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.2.2
+
+ - IOUtil.lines(InputStream, Charset)
+ - minor improvements
+ 
 ### Version 6.2.1
 
  - new Utility class StreamUtil
