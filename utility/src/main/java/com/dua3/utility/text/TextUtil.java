@@ -37,8 +37,9 @@ public final class TextUtil {
      * @return the HTML-escaped string
      */
     public static String escapeHTML(CharSequence s) {
-        StringBuilder out = new StringBuilder(16 + s.length() * 11 / 10);
-        for (int i = 0; i < s.length(); i++) {
+        int length = s.length();
+        StringBuilder out = new StringBuilder(16 + length * 11 / 10);
+        for (int i = 0; i < length; i++) {
             char c = s.charAt(i);
             if (c >= 127 || c == '"' || c == '<' || c == '>' || c == '&' || c == '\0') {
                 out.append("&#");
