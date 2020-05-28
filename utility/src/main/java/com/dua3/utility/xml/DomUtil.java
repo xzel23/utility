@@ -1,14 +1,8 @@
 package com.dua3.utility.xml;
 
-import com.dua3.utility.io.IOUtil;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;

@@ -33,7 +33,7 @@ public final class StreamUtil {
             }
 
             public Pair<A, B> next() {
-                return new Pair<A, B>(i1.next(), i2.next());
+                return new Pair<>(i1.next(), i2.next());
             }
         };
         return StreamSupport.stream(i.spliterator(), false);
