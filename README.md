@@ -39,6 +39,7 @@ Binaries are available on Jcenter and Maven Central Repository.
  - IOUtil.lines(InputStream, Charset)
  - always use "\r\n" as line delimiter in CSV files (as per RFC 4180)
  - minor improvements and code cleanups
+ - change Font.isUnderlined() to isUnderline()
  
 ### Version 6.2.1
 

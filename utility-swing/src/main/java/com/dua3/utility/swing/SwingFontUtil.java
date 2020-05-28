@@ -39,7 +39,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
                 font.getColor(),
                 font.isBold(),
                 font.isItalic(),
-                font.isUnderlined(),
+                font.isUnderline(),
                 font.isStrikeThrough());
     }
 

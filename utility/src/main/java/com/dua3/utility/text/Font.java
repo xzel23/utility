@@ -45,19 +45,19 @@ public class Font {
      *                      if text should be displayed in bold letters
      * @param italic
      *                      if text should be displayed in italics
-     * @param underlined
+     * @param underline
      *                      if text should be displayed underlined
      * @param strikeThrough
      *                      if text should be displayed strike-through
      */
-    public Font(String family, float size, Color color, boolean bold, boolean italic, boolean underlined,
+    public Font(String family, float size, Color color, boolean bold, boolean italic, boolean underline,
             boolean strikeThrough) {
         this.color = color;
         this.size = size;
         this.family = family;
         this.bold = bold;
         this.italic = italic;
-        this.underline = underlined;
+        this.underline = underline;
         this.strikeThrough = strikeThrough;
     }
 
@@ -285,10 +285,10 @@ public class Font {
         Color fontColor = fd.getColor() != null ? fd.getColor() : this.getColor();
         boolean fontBold = fd.getBold() != null ? fd.getBold() : this.isBold();
         boolean fontItalic = fd.getItalic() != null ? fd.getItalic() : this.isItalic();
-        boolean fontUnderlined = fd.getUnderline() != null ? fd.getUnderline() : this.isUnderlined();
+        boolean fontUnderline = fd.getUnderline() != null ? fd.getUnderline() : this.isUnderline();
         boolean fontStrikeThrough = fd.getStrikeThrough() != null ? fd.getStrikeThrough() : this.isStrikeThrough();
 
-        return new Font(fontFamily, fontSize, fontColor, fontBold, fontItalic, fontUnderlined,
+        return new Font(fontFamily, fontSize, fontColor, fontBold, fontItalic, fontUnderline,
                 fontStrikeThrough);
     }
 
@@ -350,8 +350,19 @@ public class Font {
      * Get underlined property.
      *
      * @return true if font is underlined.
+     * @deprecated use {@link #isUnderline()} instead
      */
+    @Deprecated(forRemoval = true)
     public boolean isUnderlined() {
+        return underline;
+    }
+
+    /**
+     * Get underline property.
+     *
+     * @return true if font is underline.
+     */
+    public boolean isUnderline() {
         return underline;
     }
 
@@ -371,7 +382,7 @@ public class Font {
         if (isItalic()) {
             sb.append('-').append("italic");
         }
-        if (isUnderlined()) {
+        if (isUnderline()) {
             sb.append('-').append("underline");
         }
         if (isStrikeThrough()) {
