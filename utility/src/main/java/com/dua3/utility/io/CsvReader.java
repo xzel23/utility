@@ -156,8 +156,8 @@ public class CsvReader extends CsvIo implements AutoCloseable {
             reader.reset();
         }
 
-        String sep = Pattern.quote(separator);
-        String del = Pattern.quote(delimiter);
+        String sep = Pattern.quote(Character.toString(separator));
+        String del = Pattern.quote(Character.toString(delimiter));
 
         // create pattern for matching of csv fields
         String regexEnd = "(?:" + sep + "|$)";

@@ -245,16 +245,16 @@ public abstract class CsvIo implements AutoCloseable {
     private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
     protected final String lineDelimiter;
-    protected final String separator;
-    protected final String delimiter;
+    protected final char separator;
+    protected final char delimiter;
     protected final Locale locale;
     protected final DateTimeFormatter dateTimeFormatter;
     protected final DateTimeFormatter dateFormatter;
     protected final NumberFormat numberFormat;
 
     protected CsvIo(OptionValues options) {
-        this.separator = String.valueOf(getSeparator(options));
-        this.delimiter = String.valueOf(getDelimiter(options));
+        this.separator = getSeparator(options);
+        this.delimiter = getDelimiter(options);
         this.lineDelimiter = "\r\n";
         this.locale = getLocale(options);
         this.dateTimeFormatter = getDateTimeFormat(options).getFormatter(locale);
@@ -280,14 +280,9 @@ public abstract class CsvIo implements AutoCloseable {
     }
 
     protected boolean isQuoteNeeded(String text) {
-        // quote if separator or delimiter are present
-        if (text.contains(separator) || text.contains(delimiter)) {
-            return true;
-        }
-
         // also quote if unusual characters are present
         for (char c : text.toCharArray()) {
-            if (!Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
+            if (c==separator || c == delimiter || !Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
                 return true;
             }
         }
