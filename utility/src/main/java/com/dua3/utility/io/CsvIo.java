@@ -255,7 +255,7 @@ public abstract class CsvIo implements AutoCloseable {
     protected CsvIo(OptionValues options) {
         this.separator = String.valueOf(getSeparator(options));
         this.delimiter = String.valueOf(getDelimiter(options));
-        this.lineDelimiter = String.format("%n");
+        this.lineDelimiter = "\r\n";
         this.locale = getLocale(options);
         this.dateTimeFormatter = getDateTimeFormat(options).getFormatter(locale);
         this.dateFormatter = getDateFormat(options).getFormatter(locale);

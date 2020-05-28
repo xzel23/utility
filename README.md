@@ -37,6 +37,7 @@ Binaries are available on Jcenter and Maven Central Repository.
 ### Version 6.2.2
 
  - IOUtil.lines(InputStream, Charset)
+ - always use "\r\n" as line delimiter in CSV files (as per RFC 4180)
  - minor improvements
  
 ### Version 6.2.1
