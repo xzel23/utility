@@ -36,6 +36,8 @@ public class IOUtilTest {
         assertEquals("txt", IOUtil.getExtension("./folder/subfolder/test.txt"));
         assertEquals("txt", IOUtil.getExtension("./folder/subfolder/test.txt/"));
 
+        assertEquals("def", IOUtil.getExtension("test.txt.def"));
+        
         assertEquals("", IOUtil.getExtension("test"));
         assertEquals("", IOUtil.getExtension("folder/subfolder/test"));
         assertEquals("", IOUtil.getExtension("folder/subfolder/test/"));
@@ -54,6 +56,8 @@ public class IOUtilTest {
         assertEquals("./folder/subfolder/test", IOUtil.stripExtension("./folder/subfolder/test.txt"));
         assertEquals("./folder/subfolder/test", IOUtil.stripExtension("./folder/subfolder/test.txt/"));
 
+        assertEquals("test.txt", IOUtil.stripExtension("test.txt.def"));
+
         assertEquals("test", IOUtil.stripExtension("test"));
         assertEquals("folder/subfolder/test", IOUtil.stripExtension("folder/subfolder/test"));
         assertEquals("folder/subfolder/test/", IOUtil.stripExtension("folder/subfolder/test/"));
@@ -71,6 +75,8 @@ public class IOUtilTest {
         assertEquals("folder/subfolder/test.xyz/", IOUtil.replaceExtension("folder/subfolder/test.txt/", "xyz"));
         assertEquals("./folder/subfolder/test.xyz", IOUtil.replaceExtension("./folder/subfolder/test.txt", "xyz"));
         assertEquals("./folder/subfolder/test.xyz/", IOUtil.replaceExtension("./folder/subfolder/test.txt/", "xyz"));
+
+        assertEquals("test.txt.abc", IOUtil.replaceExtension("test.txt.def", "abc"));
 
         assertEquals("test.xyz", IOUtil.replaceExtension("test", "xyz"));
         assertEquals("folder/subfolder/test.xyz", IOUtil.replaceExtension("folder/subfolder/test", "xyz"));

@@ -151,9 +151,9 @@ public final class IOUtil {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
-        int pos = path.indexOf('.', fi.first);
+        int pos = path.lastIndexOf('.', fi.second);
 
-        return pos==-1 || pos > fi.second ? path : path.substring(0, pos);
+        return pos < fi.first ? path : path.substring(0, pos);
     }
 
     /**
@@ -171,9 +171,9 @@ public final class IOUtil {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
-        int pos = path.indexOf('.', fi.first);
+        int pos = path.lastIndexOf('.', fi.second);
         
-        if (pos==-1  || pos > fi.second) {
+        if (pos < fi.first) {
             // filename has no extension => insert extension
             return path.substring(0, fi.second)+'.'+extension+path.substring(fi.second);
         } else {

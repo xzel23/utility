@@ -36,7 +36,7 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ### Version 6.2.3 (TBR)
 
-
+ - fix IOUtil.replaceExtension(), IOUtil.stripExtension() when path contains multiple dots
 
 ### Version 6.2.2
 
