@@ -34,7 +34,11 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
-### Version 6.2.3 (TBR)
+### Version 6.2.4
+
+ - interface ProgressTracker, incubating class SwingProgressView
+
+### Version 6.2.3
 
  - fix IOUtil.replaceExtension(), IOUtil.stripExtension() when path contains multiple dots
 
