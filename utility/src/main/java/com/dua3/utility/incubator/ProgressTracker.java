@@ -160,4 +160,12 @@ public interface ProgressTracker<T> {
     default TaskUpdater taskUpdater(T task) {
         return TaskUpdater.create(this, task);
     }
+
+    /**
+     * Create a no-op taskupdater.
+     * @return no-op task updater
+     */
+    static TaskUpdater nopTaskUpdater() {
+        return new TaskUpdater(nopTracker(), "none");
+    }
 }
