@@ -5,6 +5,9 @@ package com.dua3.utility.incubator;
  * @param <T> the task type
  */
 public interface ProgressTracker<T> {
+    /**
+     * Task status.
+     */
     enum Status {
         SCHEDLULED(false),
         PAUSED(false),
@@ -22,6 +25,28 @@ public interface ProgressTracker<T> {
         public boolean isTerminal() {
             return terminal;
         }
+    }
+    
+    static ProgressTracker nopTracker() {
+        return new ProgressTracker() {
+            @Override
+            public void start(Object task) { /* nop */ }
+
+            @Override
+            public void pause(Object task) { /* nop */ }
+
+            @Override
+            public void abort(Object task) { /* nop */ }
+
+            @Override
+            public void finish(Object task, Status s) { /* nop */ }
+
+            @Override
+            public void update(Object task, int total, int done) { /* nop */ }
+
+            @Override
+            public void update(Object task, double percentDone) { /* nop */ }
+        };
     }
 
     /**
