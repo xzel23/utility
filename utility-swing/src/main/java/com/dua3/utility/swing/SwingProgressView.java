@@ -46,6 +46,12 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     }
     
     @Override
+    public void schedule(T task) {
+        // getTaskRecord() will enter an entry for the task if it is not yet present
+        getTaskRecord(task);
+    }
+    
+    @Override
     public void start(T task) {
         TaskRecord r = getTaskRecord(task);
         LangUtil.check(r.status==Status.SCHEDLULED, "task not scheduled");
