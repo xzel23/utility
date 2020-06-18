@@ -7,6 +7,7 @@ package com.dua3.utility.data;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.dua3.utility.lang.LangUtil;
@@ -606,7 +607,7 @@ public final class Color {
      */
     @Override
     public String toString() {
-        return String.format("#%08x", argb);
+        return String.format(Locale.ROOT,"#%08x", argb);
     }
 
 }

@@ -238,7 +238,7 @@ public abstract class Option<T> {
     private static void addArgument(Map<String, String> arguments, String arg, String val) {
         String old = arguments.put(arg, val);
         if (old != null) {
-            LOG.log(Level.WARNING, () -> String.format("while parsing option string: multiple values for argument '%s'", arg));
+            LOG.log(Level.WARNING, () -> String.format(Locale.ROOT,"while parsing option string: multiple values for argument '%s'", arg));
         }
     }
 
@@ -422,7 +422,7 @@ public abstract class Option<T> {
                     return value;
                 }
             }
-            throw new IllegalArgumentException(String.format("invalid value for option %s: %s", getName(), v));
+            throw new IllegalArgumentException(String.format(Locale.ROOT,"invalid value for option %s: %s", getName(), v));
         }
 
         @Override

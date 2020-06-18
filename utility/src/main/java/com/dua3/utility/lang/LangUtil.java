@@ -99,7 +99,7 @@ public final class LangUtil {
      */
     public static void check(boolean condition, String fmt, Object... args) {
         if (!condition) {
-            String message = String.format(fmt, args);
+            String message = String.format(Locale.ROOT, fmt, args);
             throw new FailedCheckException(message);
         }
     }

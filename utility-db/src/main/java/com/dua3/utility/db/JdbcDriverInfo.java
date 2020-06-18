@@ -7,6 +7,7 @@ import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.text.TextUtil;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ public class JdbcDriverInfo {
     }
     
     public String description() {
-        return String.format(
+        return String.format(Locale.ROOT,
                 "%s%n  driver class : %s%n  URL prefix   : %s%n  URL scheme   : %s%n  vendor link  : %s%n%s%n",
                 name,
                 className,

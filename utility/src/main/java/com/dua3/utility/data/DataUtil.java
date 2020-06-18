@@ -35,7 +35,7 @@ public final class DataUtil {
 
         @Override
         public String getMessage() {
-            return String.format("%s%n[trying to convert %s -> %s]", super.getMessage(), sourceClassName, targetClassName);
+            return String.format(Locale.ROOT,"%s%n[trying to convert %s -> %s]", super.getMessage(), sourceClassName, targetClassName);
         }
     }
 

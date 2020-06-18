@@ -113,7 +113,7 @@ public class NamedParameterStatement implements AutoCloseable {
 
         @Override
         public String toString() {
-            return String.format("%s[%s] : %s", name, type, indexes);
+            return String.format(Locale.ROOT,"%s[%s] : %s", name, type, indexes);
         }
     }
 
@@ -166,7 +166,7 @@ public class NamedParameterStatement implements AutoCloseable {
             for (int index : param.indexes) {
                 JDBCType type = getParameterType(meta, index);
                 if (param.type != null && type != param.type) {
-                    String msg = String.format("parameter type mismatch for parameter '%s': %s, %s", param.name,
+                    String msg = String.format(Locale.ROOT,"parameter type mismatch for parameter '%s': %s, %s", param.name,
                             param.type,
                             meta);
                     throw new IllegalStateException(msg);

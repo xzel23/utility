@@ -5,6 +5,7 @@
 
 package com.dua3.utility.data;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ public class ColorTest {
             int a = c.a();
 
             if (a == 0xFF) {
-                String text = String.format("rgb(%d,%d,%d)", r, g, b);
+                String text = String.format(Locale.ROOT,"rgb(%d,%d,%d)", r, g, b);
                 Color actual = Color.valueOf(text);
                 assertEquals(c, actual);
             }
@@ -71,7 +72,7 @@ public class ColorTest {
             int g = c.g();
             int b = c.b();
             int a = c.a();
-            String text = String.format("rgba(%d,%d,%d,%d)", r, g, b, a);
+            String text = String.format(Locale.ROOT,"rgba(%d,%d,%d,%d)", r, g, b, a);
             Color actual = Color.valueOf(text);
 
             assertEquals(c, actual);

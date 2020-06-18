@@ -112,7 +112,7 @@ public final class TextUtil {
                         break;
                     // escape all remaining characters
                     default:
-                        out.append("\\u").append(String.format("%04X", (int) c));
+                        out.append("\\u").append(String.format(Locale.ROOT,"%04X", (int) c));
                 }
             }
         }
@@ -434,7 +434,7 @@ public final class TextUtil {
     public static String byteArrayToHexString(byte[] a) {
         StringBuilder sb = new StringBuilder(a.length * 2);
         for (byte b : a) {
-            sb.append(String.format("%02x", b));
+            sb.append(String.format(Locale.ROOT,"%02x", b));
         }
         return sb.toString();
     }
@@ -593,7 +593,7 @@ public final class TextUtil {
             }
             String s = sb.toString();
     
-            return String.format(
+            return String.format(Locale.ROOT,
                     "mailto:%s?subject=%s",
                     email,
                     s);

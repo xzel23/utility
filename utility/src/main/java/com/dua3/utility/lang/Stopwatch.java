@@ -7,6 +7,7 @@ package com.dua3.utility.lang;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 
 /**
  * A simple stopwatch class.
@@ -87,6 +88,7 @@ public class Stopwatch {
         double sec = absSeconds + nano / 1_000_000_000.0;
 
         String positive = String.format(
+                Locale.ROOT,
                 "%d:%02d:%06.3f",
                 hr,
                 min,

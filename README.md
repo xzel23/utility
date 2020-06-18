@@ -34,11 +34,13 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
-### Version 6.2.5
+### Version 6.3
 
  - mark Font.FontDef final
  - cache Font.fontspec
+ - Font.similar()
  - fix invalid CSS for Fontdef if underline or strikethrough is set explicitly to false
+ - fix exception and debug messages using default locale instead if Locale.ROOT
 
 ### Version 6.2.4
 

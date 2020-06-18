@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import com.dua3.utility.data.Color;
@@ -28,7 +29,7 @@ public class Font {
     private int hash = 0;
 
     /**
-     * Construct a new {@code GenericFont}.
+     * Construct a new {@code Font}.
      */
     public Font() {
         this("Helvetica", 10.0f, Color.BLACK, false, false, false, false);
@@ -63,11 +64,23 @@ public class Font {
         this.strikeThrough = strikeThrough;
     }
 
+    protected Font(Font baseFont, FontDef fd) {
+        this(
+            fd.getFamily() != null ? fd.getFamily() : baseFont.getFamily(),
+            fd.getSize() != null ? fd.getSize() : baseFont.getSizeInPoints(),
+            fd.getColor() != null ? fd.getColor() : baseFont.getColor(),
+            fd.getBold() != null ? fd.getBold() : baseFont.isBold(),
+            fd.getItalic() != null ? fd.getItalic() : baseFont.isItalic(),
+            fd.getUnderline() != null ? fd.getUnderline() : baseFont.isUnderline(),
+            fd.getStrikeThrough() != null ? fd.getStrikeThrough() : baseFont.isStrikeThrough()
+        );
+    }
+
     /**
      * A mutable class holding font attributes to help creating immutable font
      * instances.
      */
-    public static final class FontDef {
+                public static final class FontDef {
         /**
          * Create FontDef instance with only the color attribute set.
          *
@@ -284,16 +297,7 @@ public class Font {
      * @return    new Font instance
      */
     public Font deriveFont(FontDef fd) {
-        String fontFamily = fd.getFamily() != null ? fd.getFamily() : this.getFamily();
-        float fontSize = fd.getSize() != null ? fd.getSize() : this.getSizeInPoints();
-        Color fontColor = fd.getColor() != null ? fd.getColor() : this.getColor();
-        boolean fontBold = fd.getBold() != null ? fd.getBold() : this.isBold();
-        boolean fontItalic = fd.getItalic() != null ? fd.getItalic() : this.isItalic();
-        boolean fontUnderline = fd.getUnderline() != null ? fd.getUnderline() : this.isUnderline();
-        boolean fontStrikeThrough = fd.getStrikeThrough() != null ? fd.getStrikeThrough() : this.isStrikeThrough();
-
-        return new Font(fontFamily, fontSize, fontColor, fontBold, fontItalic, fontUnderline,
-                fontStrikeThrough);
+        return new Font(this, fd);
     }
 
     /**
@@ -425,13 +429,43 @@ public class Font {
             return false;
         }
 
-        Font other = (Font) obj;
-        return other.family.equals(family)
-                && other.size == size
-                && other.bold == bold
-                && other.italic == italic
-                && other.underline == underline
-                && other.strikeThrough == strikeThrough
-                && other.color.equals(color);
+        return similar(this, (Font) obj);
+    }
+
+    /**
+     * Test if two fonts are similar. This method is provided to be used when inheriting fonts because equals
+     * also tests both instances to be of the exact same class.
+     * @param a the first font
+     * @param b the second font
+     * @return true, if a and b have the same attributes
+     */
+    public static boolean similar(Font a, Font b) {
+        return b.family.equals(a.family)
+                && b.size == a.size
+                && b.bold == a.bold
+                && b.italic == a.italic
+                && b.underline == a.underline
+                && b.strikeThrough == a.strikeThrough
+                && b.color.equals(a.color);
+    }
+
+    /**
+     * Get CSS compatible fontstyle definition.
+     * @return fontstyle definition
+     */
+    public String getCssStyle() {
+        return String.format(Locale.ROOT, "color: %s; size: %spt; font-family: %s; font-weight: %s; font-style: %s;%s",
+               color,
+               size, // use "%s" for size to avoid unnecessary zeros after decimal point
+               family,
+               bold ? "bold" : "normal",
+               italic ? "italic" : "regular",
+               strikeThrough || underline
+                   ? "text-decoration:" +
+                     (underline ? " underline" : "") +
+                     (strikeThrough ? " line-through": "") +
+                     ";"
+                   : ""
+        );
     }
 }
