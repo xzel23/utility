@@ -34,6 +34,12 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.2.5
+
+ - mark Font.FontDef final
+ - cache Font.fontspec
+ - fix invalid CSS for Fontdef if underline or strikethrough is set explicitly to false
+
 ### Version 6.2.4
 
  - interface ProgressTracker, incubating class SwingProgressView

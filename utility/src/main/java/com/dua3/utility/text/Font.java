@@ -23,6 +23,8 @@ public class Font {
     private final boolean italic;
     private final boolean underline;
     private final boolean strikeThrough;
+
+    private String fontspec = null;
     private int hash = 0;
 
     /**
@@ -65,7 +67,7 @@ public class Font {
      * A mutable class holding font attributes to help creating immutable font
      * instances.
      */
-    public static class FontDef {
+    public static final class FontDef {
         /**
          * Create FontDef instance with only the color attribute set.
          *
@@ -253,17 +255,19 @@ public class Font {
          * @return fontstyle definition
          */
         public String getCssStyle() {
+            boolean isUnderline = underline != null && underline;
+            boolean isStrikeThrough = strikeThrough != null && strikeThrough;
             return (color == null ? "" : "color: " + color.toString() + ";") +
                    (size == null ? "" : "size: " + size + "pt;") +
                    (family == null ? "" : "font-family: " + family + ";") +
                    (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + ";") +
                    (italic == null ? "" : "font-style: " + (italic ? "italic" : "regular") + ";") +
-                   (underline == null && strikeThrough == null
-                           ? ""
-                           : "text-decoration:" +
-                             (underline != null && underline ? " underline" : "") +
-                             (strikeThrough != null && strikeThrough ? " line-through" : "") +
-                             ";");
+                   (isStrikeThrough || isUnderline
+                           ? "text-decoration:" +
+                             (isUnderline ? " underline" : "") +
+                             (isStrikeThrough ? " line-through": "") +
+                             ";"
+                           : "");
         }
     }
 
@@ -372,28 +376,32 @@ public class Font {
      * @return font description
      */
     public String fontspec() {
-        StringBuilder sb = new StringBuilder(32);
+        if (fontspec==null) {
+            StringBuilder sb = new StringBuilder(32);
 
-        sb.append(getFamily());
+            sb.append(getFamily());
 
-        if (isBold()) {
-            sb.append('-').append("bold");
+            if (isBold()) {
+                sb.append('-').append("bold");
+            }
+            if (isItalic()) {
+                sb.append('-').append("italic");
+            }
+            if (isUnderline()) {
+                sb.append('-').append("underline");
+            }
+            if (isStrikeThrough()) {
+                sb.append('-').append("strikethrough");
+            }
+            sb.append('-');
+            sb.append(getSizeInPoints());
+            sb.append('-');
+            sb.append(getColor());
+            
+            fontspec = sb.toString();
         }
-        if (isItalic()) {
-            sb.append('-').append("italic");
-        }
-        if (isUnderline()) {
-            sb.append('-').append("underline");
-        }
-        if (isStrikeThrough()) {
-            sb.append('-').append("strikethrough");
-        }
-        sb.append('-');
-        sb.append(getSizeInPoints());
-        sb.append('-');
-        sb.append(getColor());
-
-        return sb.toString();
+        
+        return fontspec;
     }
 
     @Override
