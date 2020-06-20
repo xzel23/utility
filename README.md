@@ -34,6 +34,10 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.3.1
+
+ - Color: new methods isOpaque(), toRgba(), toArgb(), toCss()
+
 ### Version 6.3
 
  - mark Font.FontDef final

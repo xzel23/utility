@@ -484,6 +484,15 @@ public final class Color {
     }
 
     /**
+     * Get color value.
+     *
+     * @return this color encoded as an integer value
+     */
+    public int rgba() {
+        return (argb<<24) + (argb>>>8);
+    }
+
+    /**
      * Get blue component of color.
      *
      * @return blue component
@@ -607,7 +616,47 @@ public final class Color {
      */
     @Override
     public String toString() {
+        return toArgb();
+    }
+
+    /**
+     * Get CSS compatible string representation of color.
+     * <p>
+     * Opaque colors are represented as 3 component hex strings, i. e. "#ff0000" for red.
+     * Colors using transparency are represented as 4 component hex strings in rrggbbaa format.
+     * 
+     * @return this color as hex value (in rgb or rgba representation)
+     */
+    public String toCss() {
+        if (isOpaque()) {
+            return toRgba();
+        } else {
+            return String.format(Locale.ROOT,"#%06x", argb&0x00ffffff);
+        }
+    }
+
+    /**
+     * Test if color is Opaque. 
+     * @return true, if the color uses the maximum alpha value
+     */
+    public boolean isOpaque() {
+        return (argb & 0xff000000) != 0xff000000;
+    }
+
+    /**
+     * Get hex-string in ARGB form for color.
+     * @return hex-string
+     */
+    public String toArgb() {
         return String.format(Locale.ROOT,"#%08x", argb);
+    }
+
+    /**
+     * Get hex-string in RGBA form for color.
+     * @return hex-string
+     */
+    public String toRgba() {
+        return String.format(Locale.ROOT,"#%08x", rgba());
     }
 
 }
