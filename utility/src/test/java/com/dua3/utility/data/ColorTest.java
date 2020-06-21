@@ -17,13 +17,12 @@ public class ColorTest {
     @Test
     public void testToStringAndValueOfWithHex() {
         for (Color c : Color.values()) {
-            String hex = c.toString();
-            assertTrue(hex.matches("#[a-f0-9]{8}"));
+            String hex = c.toCss();
+            assertTrue(hex.matches("#[a-f0-9]{6,8}"));
 
             Color d = Color.valueOf(hex);
             assertEquals(c, d);
 
-            assertTrue(c.toCss().matches("#[a-f0-9]{6,8}"));
             assertEquals((c.isOpaque()?9:7), c.toCss().length());
         }
         

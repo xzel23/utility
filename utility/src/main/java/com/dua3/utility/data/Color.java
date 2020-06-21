@@ -358,8 +358,10 @@ public final class Color {
 
         // HEX colors
         if (s.startsWith("#")) {
-            int i = Integer.parseUnsignedInt(s.substring(1), 16);
-            return new Color(i);
+            String v = s.substring(1);
+            int i = Integer.parseUnsignedInt(v, 16);
+            boolean hasAlpha = v.length()>6; // use RGBA if alpha is present, else add opaque alpha
+            return new Color(hasAlpha ? rgba2argb(i) : i+0xff000000);
         }
 
         // RGB colors. example: "rgb(255, 0, 0)"
@@ -489,9 +491,17 @@ public final class Color {
      * @return this color encoded as an integer value
      */
     public int rgba() {
-        return (argb<<24) + (argb>>>8);
+        return argb2rgba(argb);
     }
 
+    private static int argb2rgba(int v) {
+        return (v<<8) + (v>>>24);
+    }
+    
+    private static int rgba2argb(int v) {
+        return (v<<24) + (v>>>8);
+    }
+    
     /**
      * Get blue component of color.
      *
@@ -616,7 +626,7 @@ public final class Color {
      */
     @Override
     public String toString() {
-        return toArgb();
+        return toCss();
     }
 
     /**

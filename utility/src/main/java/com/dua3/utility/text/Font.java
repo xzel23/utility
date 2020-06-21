@@ -5,10 +5,10 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Color;
+
 import java.util.Locale;
 import java.util.Objects;
-
-import com.dua3.utility.data.Color;
 
 /**
  * Interface describing fonts used in workbooks.
@@ -29,10 +29,66 @@ public class Font {
     private int hash = 0;
 
     /**
+     * Parse fontspec.
+     * @param fontspec the fontspec
+     * @return FonrDef instance matching fontspec 
+     */
+    public static FontDef parseFontspec(String fontspec) {
+        String[] parts = fontspec.split("-");
+
+        FontDef fd = new FontDef();
+
+        // font-family must come first
+        fd.setFamily(parts[0]);
+
+        // check remaining parts
+        for(int i=1;i<parts.length;i++) {
+            String s = parts[i];
+            // check for text-decoration
+            switch (s) {
+                case "bold":
+                    fd.setBold(true);
+                    break;
+                case "italic":
+                    fd.setItalic(true);
+                    break;
+                case "underline":
+                    fd.setUnderline(true);
+                    break;
+                case "strikethrough":
+                    fd.setStrikeThrough(true);
+                    break;
+                default:
+                    break;
+            }
+
+            // check for font size
+            if (s.matches("\\d+(\\.\\d*)")) {
+                fd.setSize(Float.parseFloat(s));
+                break;
+            }
+
+            // check for color
+            fd.setColor(Color.valueOf(s));
+        }
+
+        return fd;
+    }
+
+    /**
      * Construct a new {@code Font}.
      */
     public Font() {
         this("Helvetica", 10.0f, Color.BLACK, false, false, false, false);
+    }
+
+    /**
+     * Construct a new {@code Font} from a fontspec string.
+     * 
+     * @param fontspec the fontspec
+     */
+    public Font(String fontspec) {
+        this(new Font(), parseFontspec(fontspec));
     }
 
     /**
@@ -400,7 +456,7 @@ public class Font {
             sb.append('-');
             sb.append(getSizeInPoints());
             sb.append('-');
-            sb.append(getColor());
+            sb.append(getColor().toCss());
             
             fontspec = sb.toString();
         }

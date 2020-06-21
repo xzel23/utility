@@ -34,6 +34,12 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.4
+
+ - fontspec color part changed to CSS format (might break app that rely on the fontspec format)
+ - new constructor Font(String fontspec)
+ - Font valueOf(String) expects arg in CSS format (might be breaking)
+
 ### Version 6.3.1
 
  - Color: new methods isOpaque(), toRgba(), toArgb(), toCss()
