@@ -34,6 +34,10 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.4.2
+
+ - Font: fix fontspec parsing
+ 
 ### Version 6.4.1
 
  - Font: fix fontspec parsing when font size does not containing a fractional part; do not output fractional part in fontspec if unneeded

@@ -59,17 +59,16 @@ public class Font {
                     fd.setStrikeThrough(true);
                     break;
                 default:
+                    // check for font size
+                    if (s.matches("\\d+(\\.\\d*)?")) {
+                        fd.setSize(Float.parseFloat(s));
+                        break;
+                    }
+        
+                    // check for color
+                    fd.setColor(Color.valueOf(s));
                     break;
             }
-
-            // check for font size
-            if (s.matches("\\d+(\\.\\d*)?")) {
-                fd.setSize(Float.parseFloat(s));
-                break;
-            }
-
-            // check for color
-            fd.setColor(Color.valueOf(s));
         }
 
         return fd;
