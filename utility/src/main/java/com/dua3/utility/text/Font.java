@@ -63,7 +63,7 @@ public class Font {
             }
 
             // check for font size
-            if (s.matches("\\d+(\\.\\d*)")) {
+            if (s.matches("\\d+(\\.\\d*)?")) {
                 fd.setSize(Float.parseFloat(s));
                 break;
             }
@@ -454,7 +454,7 @@ public class Font {
                 sb.append('-').append("strikethrough");
             }
             sb.append('-');
-            sb.append(getSizeInPoints());
+            sb.append(Float.toString(getSizeInPoints()));
             sb.append('-');
             sb.append(getColor().toCss());
             
