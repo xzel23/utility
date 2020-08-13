@@ -13,22 +13,27 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ### Maven
 
+Replace `${utility_version}` with the current version.
+
         <dependency>
             <groupId>com.dua3.utility</groupId>
             <artifactId>utility</artifactId>
-            <version>6.0.4</version>
+            <version>${utility_version}</version>
         </dependency>
         <dependency>
             <groupId>com.dua3.utility</groupId>
             <artifactId>utility-db</artifactId>
-            <version>6.0.4</version>
+            <version>${utility_version}</version>
         </dependency>
         ...
 
 ### Gradle
+
+Replace `${utility_version}` with the current version.
+
     dependencies {
-        compile        "com.dua3.utility:utility:6.0.4"
-        compile        "com.dua3.utility:utility-db:6.0.4"
+        compile        "com.dua3.utility:utility:${utility_version}"
+        compile        "com.dua3.utility:utility-db:${utility_version}"
         ...        
     }
 
