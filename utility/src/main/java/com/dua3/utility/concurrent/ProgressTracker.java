@@ -1,4 +1,4 @@
-package com.dua3.utility.incubator;
+package com.dua3.utility.concurrent;
 
 import java.util.Objects;
 
@@ -10,7 +10,7 @@ public interface ProgressTracker<T> {
     /**
      * Task status.
      */
-    enum Status {
+    enum State {
         SCHEDLULED(false),
         PAUSED(false),
         RUNNING(false),
@@ -20,7 +20,7 @@ public interface ProgressTracker<T> {
         
         private final boolean terminal;
         
-        Status(boolean terminal) {
+        State(boolean terminal) {
             this.terminal = terminal;
         }
         
@@ -65,7 +65,7 @@ public interface ProgressTracker<T> {
          * Mark task as completed.
          * @param s terminal status of task
          */
-        public void finish(Status s) { tracker.finish(task, s); }
+        public void finish(State s) { tracker.finish(task, s); }
 
         /**
          * Update progress of task.
@@ -96,7 +96,7 @@ public interface ProgressTracker<T> {
             public void abort(T task) { /* nop */ }
 
             @Override
-            public void finish(T task, Status s) { /* nop */ }
+            public void finish(T task, State s) { /* nop */ }
 
             @Override
             public void update(T task, int total, int done) { /* nop */ }
@@ -135,7 +135,7 @@ public interface ProgressTracker<T> {
      * @param task the task
      * @param s the status
      */
-    void finish(T task, Status s);
+    void finish(T task, State s);
 
     /**
      * Update task progress.

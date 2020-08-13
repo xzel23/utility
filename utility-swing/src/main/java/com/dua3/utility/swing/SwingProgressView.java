@@ -1,6 +1,6 @@
 package com.dua3.utility.swing;
 
-import com.dua3.utility.incubator.ProgressTracker;
+import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.lang.LangUtil;
 import net.miginfocom.swing.MigLayout;
 
@@ -14,7 +14,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     
     private static class TaskRecord {
         final JProgressBar progressBar;
-        Status status = Status.SCHEDLULED;
+        State state = State.SCHEDLULED;
 
         TaskRecord(JProgressBar progressBar) {
             this.progressBar = Objects.requireNonNull(progressBar);
@@ -54,8 +54,8 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     @Override
     public void start(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(r.status==Status.SCHEDLULED, "task not scheduled; %s (%s)", task, r.status);
-        r.status = Status.RUNNING;
+        LangUtil.check(r.state == State.SCHEDLULED, "task not scheduled; %s (%s)", task, r.state);
+        r.state = State.RUNNING;
         
         update(task, 0.0);
     }
@@ -63,23 +63,23 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     @Override
     public void pause(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(r.status==Status.SCHEDLULED, "task not scheduled: %s (%s)", task, r.status);
-        r.status = Status.PAUSED;
+        LangUtil.check(r.state == State.SCHEDLULED, "task not scheduled: %s (%s)", task, r.state);
+        r.state = State.PAUSED;
     }
 
     @Override
     public void abort(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(!r.status.isTerminal(), "task already completed: %s (%s)", task, r.status);
-        r.status = Status.ABORTED;
+        LangUtil.check(!r.state.isTerminal(), "task already completed: %s (%s)", task, r.state);
+        r.state = State.ABORTED;
     }
 
     @Override
-    public void finish(T task, Status s) {
+    public void finish(T task, State s) {
         LangUtil.check(s.isTerminal(), "not a terminal state: %s", s);
         
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(!r.status.isTerminal(), "task already terminated: %s (%s)", task, r.status);
+        LangUtil.check(!r.state.isTerminal(), "task already terminated: %s (%s)", task, r.state);
 
         JProgressBar pb = r.progressBar;
         if (pb.isIndeterminate()) {
@@ -96,7 +96,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
         SwingUtilities.invokeLater(() -> {
             TaskRecord r = getTaskRecord(task);
-            r.status = Status.RUNNING;
+            r.state = State.RUNNING;
             
             JProgressBar pb = r.progressBar;
 

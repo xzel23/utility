@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 module dua3_utility {
+    exports com.dua3.utility.concurrent;
     exports com.dua3.utility.data;
     exports com.dua3.utility.io;
     exports com.dua3.utility.lang;
@@ -11,7 +12,6 @@ module dua3_utility {
     exports com.dua3.utility.options;
     exports com.dua3.utility.text;
     exports com.dua3.utility.xml;
-//    exports com.dua3.utility.incubator;
 
     requires java.logging;
 
