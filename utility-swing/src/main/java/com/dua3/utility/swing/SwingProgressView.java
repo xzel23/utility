@@ -54,7 +54,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     @Override
     public void start(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(r.status==Status.SCHEDLULED, "task not scheduled");
+        LangUtil.check(r.status==Status.SCHEDLULED, "task not scheduled; %s (%s)", task, r.status);
         r.status = Status.RUNNING;
         
         update(task, 0.0);
@@ -63,14 +63,14 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     @Override
     public void pause(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(r.status==Status.SCHEDLULED, "task not scheduled");
+        LangUtil.check(r.status==Status.SCHEDLULED, "task not scheduled: %s (%s)", task, r.status);
         r.status = Status.PAUSED;
     }
 
     @Override
     public void abort(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(!r.status.isTerminal(), "task already complreted");
+        LangUtil.check(!r.status.isTerminal(), "task already completed: %s (%s)", task, r.status);
         r.status = Status.ABORTED;
     }
 
@@ -79,7 +79,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         LangUtil.check(s.isTerminal(), "not a terminal state: %s", s);
         
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(!r.status.isTerminal(), "task already terminated: %s", task);
+        LangUtil.check(!r.status.isTerminal(), "task already terminated: %s (%s)", task, r.status);
 
         JProgressBar pb = r.progressBar;
         if (pb.isIndeterminate()) {

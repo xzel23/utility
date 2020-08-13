@@ -34,6 +34,10 @@ Binaries are available on Jcenter and Maven Central Repository.
 
 ## Changes
 
+### Version 6.4.3
+
+ - SwingProcessView: more informative exception messages
+
 ### Version 6.4.2
 
  - Font: fix fontspec parsing
