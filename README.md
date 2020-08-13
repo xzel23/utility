@@ -1,6 +1,20 @@
 # com.dua3.utility
 
-A library with utility classes.
+Some libraries with utility classes.
+
+| library       | description               | exported module    | required modules                                         |
+|---------------|---------------------------|--------------------|----------------------------------------------------------|
+| utility       | general purpose utilities | dua3_utility       | java.logging                                             |
+| utility-db    | database utilities        | dua3_utility.db    | dua3_utility java.logging java.sql dua3_utility          |
+| utility-swing | swing utilities           | dua3_utility.swing | dua3_utility java.datatransfer java.desktop java.logging |
+
+## License
+
+This library is developed by Axel Howind and available under the MIT License. Refer to the accompanying file [LICENSE](LICENSE) for details.
+
+## Source
+
+Source code is available at https://gitlab.com/com.dua3/lib/utility.git.
 
 ## Requirements
 
@@ -37,10 +51,20 @@ Replace `${utility_version}` with the current version.
         ...        
     }
 
+## Logging
+
+Logging is done through JUL (java.util.logging).
+ 
+ - If you use a logging framework such as logback in your __application__, please use that framework's JUL bridge to reroute logging messages. 
+ - If your project is a library, don't try to reroute log messages - you cannot tell which framework the user of your library will prefer using, so please don't make his (and your own) life harder by forcing the user of your library to use the framework of *your* choice.
+ 
+IMHO, using a logging framework in *libraries* is in most cases not necessary anymore in Java 8+ since log messages can now be formatted using lambdas that are only called when logging on that level is enabled. I have had more than enough trouble with trying to put libraries using different versions of log4j, SLF4J, logback, commopns.logging, and more into a single project that I will not integrate any logging framework into my libraries, so please don't even ask for it. Most advanced logging framework now have some sort of JUL bridge, so that there shouldn't be any issues with this. 
+
 ## Changes
 
-### Version 6.4.3
+### Version 6.5
 
+ - promote ProgressTracker from incubator to concurrent package 
  - SwingProcessView: more informative exception messages
 
 ### Version 6.4.2
