@@ -1,0 +1,209 @@
+package com.dua3.utility.lang;
+
+import com.dua3.utility.data.Pair;
+
+import java.util.*;
+import java.util.function.Consumer;
+
+/**
+ * A simple commandline parser class.
+ */
+public class CommandLineParser {
+
+    /** Marker to pass on the command line indicating that all remaining args should be treated as positional parameters. */
+    public static final String POSITIONAL_MARKER = "--";
+    
+    /** The options understood by this CommandLineParser instance, stored in a map (command line arg: option). */
+    private final Map<String, Option> options = new LinkedHashMap<>();
+
+    /** 
+     * Constructor. 
+     */
+    public CommandLineParser() {
+    }
+
+    /** 
+     * Define a new option.
+     * @param processor the function to call for processing the arguments passed to this option
+     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     */
+    public Option option(Consumer<List<String>> processor, String... names) {
+        return addOption(new Option(processor, names));
+    }
+
+    /** 
+     * Add option to parser. 
+     * @param option the option to add
+     */
+    private Option addOption(Option option) {
+        LangUtil.check(option.names.length > 0, "option must have at least one name");
+        for (String name : option.names) {
+            LangUtil.check(options.putIfAbsent(name, option) == null, "duplicate option name: %s", name);
+        }
+        return option;
+    }
+
+    /**
+     * Parse command line arguments.
+     * @param args the command line arguments to parse.
+     */
+    public CommandLineArgs parse(String... args) {
+        List<String> argList = Arrays.asList(args);
+
+        Queue<Pair<Option, List<String>>> parsedOptions = new LinkedList<>();
+        List<String> positionalArgs = new LinkedList<>();
+        List<String> currentList = positionalArgs;
+
+        boolean remainingAllPositional = false;
+        
+        for (int idx = 0; idx < args.length; idx++) {
+            String arg = argList.get(idx);
+            if (remainingAllPositional) {
+                positionalArgs.add(arg); 
+                continue;
+            }
+            
+            if (arg.equals(POSITIONAL_MARKER)) {
+                remainingAllPositional = true;
+                continue;
+            }
+            
+            Option option = options.get(arg);
+            if (option != null) {
+                currentList = new LinkedList<>();
+                Pair<Option, List<String>> entry = Pair.of(option, currentList);
+                parsedOptions.add(entry);
+            } else {
+                currentList.add(arg);
+            }
+        }
+
+        validate(parsedOptions);
+        
+        return new CommandLineArgs(parsedOptions, positionalArgs);
+    }
+
+    /**
+     * Valisate the parsed option, i. e. check number of occurences and arity.
+     * @param parsedOptions
+     * @throws CommandLineException if an error is detected
+     */
+    private void validate(Queue<Pair<Option, List<String>>> parsedOptions) {
+        Map<CommandLineParser.Option, Integer> hist = new HashMap<>();
+        parsedOptions.forEach(p -> hist.compute(p.first, (k_,i_) -> i_==null ? 1 : i_+1));
+
+        Set<Option> allOptions = new HashSet<>(options.values());
+        allOptions.stream()
+                .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
+                .forEach(p -> {
+                    Option option = p.first;
+                    int count = p.second;
+                    LangUtil.check(option.minOccurences <= count,
+                            () -> new CommandLineException(
+                                "option '%s' must be specified at least %d time(s), but was only %d times",
+                                option.name(), option.minOccurences, count
+                            ));
+                    LangUtil.check(option.maxOccurences >= count,
+                            () -> new CommandLineException(
+                                "option '%s' must be specified at most %d time(s), but was %d times",
+                                option.name(), option.maxOccurences, count
+                            ));
+                });
+    }
+
+    /**
+     * Process command line arguments.
+     * The argument list is parsed and for each given option, the processor is executed. 
+     * @param args the command line arguments
+     * @return the positional arguments
+     */
+    public List<String> process(String... args) {
+        CommandLineArgs commandLineArgs = parse(args);
+        commandLineArgs.process();
+        return commandLineArgs.positionalArgs();
+    }
+
+    /**
+     * Command line option.
+     */
+    public static class Option {
+        final String[] names;
+        final Consumer<List<String>> processor;
+        String description = "";
+        int minArity = 0;
+        int maxArity = 0;
+        int minOccurences = 0;
+        int maxOccurences = 1;
+
+        private Option(Consumer<List<String>> Consumer, String... names) {
+            LangUtil.check(names.length > 0, "at least one name must be given");
+            this.names = names.clone();
+            this.processor = Objects.requireNonNull(Consumer, "Consumer must not be null");
+        }
+
+        public Option arity(int a) {
+            return arity(a,a);
+        }
+        
+        public Option arity(int min, int max) {
+            LangUtil.check(min >= 0, "min arity is negative");
+            LangUtil.check(min <= max, "min arity > max arity");
+            LangUtil.check(minArity == 0 && maxArity == 0, "arity already set");
+
+            this.minArity = min;
+            this.maxArity = max;
+
+            return this;
+        }
+
+        public Option occurence(int o) {
+            return occurence(o,o);
+        }
+        
+        public Option occurence(int min, int max) {
+            LangUtil.check(min >= 0, "minimum occurences is negative");
+            LangUtil.check(min <= max, "minimum occurrences > max occurrences");
+            LangUtil.check(minOccurences == 0 && maxOccurences == 1, "occurrences already set");
+
+            this.minOccurences = min;
+            this.maxOccurences = max;
+
+            return this;
+        }
+
+        public Option description(String description) {
+            LangUtil.check(this.description.isEmpty());
+
+            this.description = Objects.requireNonNull(description, "description must not be null");
+
+            return this;
+        }
+
+        public String name() {
+            return names[0];
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Option option = (Option) o;
+            return Arrays.equals(names, option.names);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(names);
+        }
+    }
+
+    /**
+     * Exception class to throw when command line arguments do not match the options defined by the command line parser.
+     */
+    public static class CommandLineException extends IllegalStateException {
+        CommandLineException(String fmt, Object... args) {
+            super(String.format(fmt, args));
+        }
+    }
+    
+}

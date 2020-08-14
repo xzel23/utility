@@ -62,6 +62,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 6.6
+
+ - added simple command line parser class
+ 
 ### Version 6.5
 
  - promote ProgressTracker from incubator to concurrent package 
