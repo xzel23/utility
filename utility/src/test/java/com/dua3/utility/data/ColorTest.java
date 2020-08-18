@@ -23,7 +23,7 @@ public class ColorTest {
             Color d = Color.valueOf(hex);
             assertEquals(c, d);
 
-            assertEquals((c.isOpaque()?9:7), c.toCss().length());
+            assertEquals((c.isOpaque()?7:9), c.toCss().length());
         }
         
         // illegal char in hax

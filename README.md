@@ -62,6 +62,11 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 6.6.1
+
+ - FIX: Color.isOpaque() returned wrong value
+ - Color.isTransparent()8
+ 
 ### Version 6.6
 
  - added simple command line parser class

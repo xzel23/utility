@@ -638,7 +638,7 @@ public final class Color {
      * @return this color as hex value (in rgb or rgba representation)
      */
     public String toCss() {
-        if (isOpaque()) {
+        if (!isOpaque()) {
             return toRgba();
         } else {
             return String.format(Locale.ROOT,"#%06x", argb&0x00ffffff);
@@ -646,11 +646,19 @@ public final class Color {
     }
 
     /**
-     * Test if color is Opaque. 
+     * Test if color is opaque. 
      * @return true, if the color uses the maximum alpha value
      */
     public boolean isOpaque() {
-        return (argb & 0xff000000) != 0xff000000;
+        return (argb & 0xff000000) == 0xff000000;
+    }
+
+    /**
+     * Test if color is transparent. 
+     * @return true, if the color uses an alpha value of 0
+     */
+    public boolean isTransparent() {
+        return (argb & 0xff000000) == 0x00000000;
     }
 
     /**
