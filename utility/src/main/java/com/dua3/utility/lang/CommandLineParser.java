@@ -1,6 +1,7 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
+import com.dua3.utility.text.TextUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -12,14 +13,31 @@ public class CommandLineParser {
 
     /** Marker to pass on the command line indicating that all remaining args should be treated as positional parameters. */
     public static final String POSITIONAL_MARKER = "--";
-    
+
+    /** The command name. */
+    private final String name;
+
+    /** The command description. */
+    private final String description;
+
     /** The options understood by this CommandLineParser instance, stored in a map (command line arg: option). */
     private final Map<String, Option> options = new LinkedHashMap<>();
 
-    /** 
+    /**
      * Constructor. 
      */
     public CommandLineParser() {
+        this("","");
+    }
+
+    /**
+     * Constructor. 
+     * @param name the command name to show in help text.
+     * @param description the command description to show in help text.
+     */
+    public CommandLineParser(String name, String description) {
+        this.name = Objects.requireNonNull(name);
+        this.description = Objects.requireNonNull(description);
     }
 
     /** 
@@ -206,4 +224,34 @@ public class CommandLineParser {
         }
     }
     
+    public String help() {
+        Formatter fmt = new Formatter();
+        help(fmt);
+        return fmt.toString();
+    }
+
+    public void help(Formatter fmt) {
+        if (!name.isEmpty()) {
+            fmt.format("%s%n", name);
+            fmt.format("%s%n", TextUtil.repeat("-", name.length()));
+            fmt.format("%n");
+        }
+        
+        if (!description.isEmpty()) {
+            fmt.format("%s%n", description);
+            fmt.format("%n");
+        }
+        
+        // determine required indentation
+        int indent = options.keySet().stream().mapToInt(String::length).max().orElse(0);
+        
+        // print options
+        String format = "%"+indent+"s%s%n";
+        options.values().stream().sorted((a,b) -> a.name().compareTo(b.name())).forEach(option -> {
+            fmt.format(format, option.names[0]+ " - ", option.description);
+            for (int i=1; i<option.names.length; i++) {
+                fmt.format(format, option.names[i], option.description);
+            }
+        });
+    }
 }
