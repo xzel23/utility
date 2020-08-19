@@ -521,26 +521,81 @@ public final class TextUtil {
         FONT_UTIL = fu;
     }
 
-    public static double getTextWidth(String text, Font font) {
-        return FONT_UTIL.getTextWidth(text, font);
-    }
-
+    /**
+     * Get text height.
+     *
+     * @param  text
+     *           the text
+     * @param  font
+     *           the font
+     * @return
+     *           the text height
+     */
     public static double getTextHeight(String text, Font font) {
         return FONT_UTIL.getTextWidth(text, font);
     }
 
+    /**
+     * Get text width.
+     *
+     * @param  text
+     *           the text
+     * @param  font
+     *           the font
+     * @return
+     *           the text width
+     */
+    public static double getTextWidth(String text, Font font) {
+        return FONT_UTIL.getTextWidth(text, font);
+    }
+
+    /**
+     * Get text bounds.
+     *
+     * @param  text
+     *           the text
+     * @param  font
+     *           the font
+     * @return
+     *           the text bounds
+     */
     public static Bounds getTextBounds(String text, Font font) {
         return FONT_UTIL.getTextBounds(text, font);
     }
 
+    /**
+     * Alignment.
+     */
     public enum Alignment {
-        LEFT, CENTER, RIGHT
+        /** align left. */
+        LEFT,
+        /** align centered. */
+        CENTER,
+        /** align right. */
+        RIGHT
     }
 
+    /**
+     * Pad String to width with alignment.
+     * @param s the string
+     * @param width the width
+     * @param align the alignment
+     * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string 
+     *         is returned
+     */
     public static String align(String s, int width, Alignment align) {
         return align(s, width, align, ' ');
     }
 
+    /**
+     * Pad String to width with alignment.
+     * @param s the string
+     * @param width the width
+     * @param align the alignment
+     * @param filler the fill character
+     * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string 
+     *         is returned
+     */
     public static String align(String s, int width, Alignment align, char filler) {
         String fill = Character.toString(filler);
         int len = s.length();
@@ -578,6 +633,12 @@ public final class TextUtil {
         return sb.toString();
     }
 
+    /**
+     * Generate mailto-link.
+     * @param email the email recipient
+     * @param subject the email subject
+     * @return email-link
+     */
     public static String generateMailToLink(String email, String subject) {
         // give some care to translate space to "%20"
         try {
