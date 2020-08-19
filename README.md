@@ -65,7 +65,8 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 ### Version 6.6.1
 
  - FIX: Color.isOpaque() returned wrong value
- - Color.isTransparent()8
+ - FIX: Font.getCssStyle(): returned invalid value "regular" instead of "normal" for font-style
+ - Color.isTransparent()
  
 ### Version 6.6
 

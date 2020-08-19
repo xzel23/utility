@@ -329,7 +329,7 @@ public class Font {
                    (size == null ? "" : "size: " + size + "pt;") +
                    (family == null ? "" : "font-family: " + family + ";") +
                    (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + ";") +
-                   (italic == null ? "" : "font-style: " + (italic ? "italic" : "regular") + ";") +
+                   (italic == null ? "" : "font-style: " + (italic ? "italic" : "normal") + ";") +
                    (isStrikeThrough || isUnderline
                            ? "text-decoration:" +
                              (isUnderline ? " underline" : "") +
