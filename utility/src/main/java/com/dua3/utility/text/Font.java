@@ -135,7 +135,7 @@ public class Font {
      * A mutable class holding font attributes to help creating immutable font
      * instances.
      */
-                public static final class FontDef {
+     public static final class FontDef {
         /**
          * Create FontDef instance with only the color attribute set.
          *
@@ -514,7 +514,7 @@ public class Font {
                size, // use "%s" for size to avoid unnecessary zeros after decimal point
                family,
                bold ? "bold" : "normal",
-               italic ? "italic" : "regular",
+               italic ? "italic" : "normal",
                strikeThrough || underline
                    ? "text-decoration:" +
                      (underline ? " underline" : "") +
