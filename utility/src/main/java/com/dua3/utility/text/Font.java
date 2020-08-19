@@ -453,7 +453,7 @@ public class Font {
                 sb.append('-').append("strikethrough");
             }
             sb.append('-');
-            sb.append(Float.toString(getSizeInPoints()));
+            sb.append(getSizeInPoints());
             sb.append('-');
             sb.append(getColor().toCss());
             
