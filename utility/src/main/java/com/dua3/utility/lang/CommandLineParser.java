@@ -44,6 +44,7 @@ public class CommandLineParser {
      * Define a new option.
      * @param processor the function to call for processing the arguments passed to this option
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     * @return the option
      */
     public Option option(Consumer<List<String>> processor, String... names) {
         return addOption(new Option(processor, names));
@@ -64,6 +65,7 @@ public class CommandLineParser {
     /**
      * Parse command line arguments.
      * @param args the command line arguments to parse.
+     * @return object holding the parsed command line arguments
      */
     public CommandLineArgs parse(String... args) {
         List<String> argList = Arrays.asList(args);
