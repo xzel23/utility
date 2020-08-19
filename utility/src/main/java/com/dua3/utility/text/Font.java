@@ -410,17 +410,6 @@ public class Font {
     }
 
     /**
-     * Get underlined property.
-     *
-     * @return true if font is underlined.
-     * @deprecated use {@link #isUnderline()} instead
-     */
-    @Deprecated(forRemoval = true)
-    public boolean isUnderlined() {
-        return underline;
-    }
-
-    /**
      * Get underline property.
      *
      * @return true if font is underline.

@@ -529,7 +529,7 @@ public final class TextUtil {
         return FONT_UTIL.getTextWidth(text, font);
     }
 
-    public static Bounds getTextHBounds(String text, Font font) {
+    public static Bounds getTextBounds(String text, Font font) {
         return FONT_UTIL.getTextBounds(text, font);
     }
 

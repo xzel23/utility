@@ -62,6 +62,11 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 6.6.2
+
+ - fix spelling of TextUtil.getTextBounds()
+ - remove deprecated Font.isUnderlined()
+ 
 ### Version 6.6.1
 
  - FIX: Color.isOpaque() returned wrong value
