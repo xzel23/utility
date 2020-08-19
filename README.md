@@ -67,7 +67,8 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
  - FIX: Color.isOpaque() returned wrong value
  - FIX: Font.getCssStyle(): returned invalid value "regular" instead of "normal" for font-style
  - Color.isTransparent()
- 
+ - more work on command line parser
+
 ### Version 6.6
 
  - added simple command line parser class
