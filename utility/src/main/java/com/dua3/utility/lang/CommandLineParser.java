@@ -105,7 +105,7 @@ public class CommandLineParser {
 
     /**
      * Valisate the parsed option, i. e. check number of occurences and arity.
-     * @param parsedOptions
+     * @param parsedOptions the parsed options to validate
      * @throws CommandLineException if an error is detected
      */
     private void validate(Queue<Pair<Option, List<String>>> parsedOptions) {
@@ -249,7 +249,7 @@ public class CommandLineParser {
         
         // print options
         String format = "%"+indent+"s%s%n";
-        options.values().stream().sorted((a,b) -> a.name().compareTo(b.name())).forEach(option -> {
+        options.values().stream().sorted(Comparator.comparing(Option::name)).forEach(option -> {
             fmt.format(format, option.names[0]+ " - ", option.description);
             for (int i=1; i<option.names.length; i++) {
                 fmt.format(format, option.names[i], option.description);
