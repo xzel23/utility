@@ -62,6 +62,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 6.6.3
+
+ - FIX: should be "font-size", not "size"
+
 ### Version 6.6.2
 
  - fix spelling of TextUtil.getTextBounds()

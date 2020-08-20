@@ -326,7 +326,7 @@ public class Font {
             boolean isUnderline = underline != null && underline;
             boolean isStrikeThrough = strikeThrough != null && strikeThrough;
             return (color == null ? "" : "color: " + color.toString() + ";") +
-                   (size == null ? "" : "size: " + size + "pt;") +
+                   (size == null ? "" : "font-size: " + size + "pt;") +
                    (family == null ? "" : "font-family: " + family + ";") +
                    (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + ";") +
                    (italic == null ? "" : "font-style: " + (italic ? "italic" : "normal") + ";") +
@@ -498,7 +498,7 @@ public class Font {
      * @return fontstyle definition
      */
     public String getCssStyle() {
-        return String.format(Locale.ROOT, "color: %s; size: %spt; font-family: %s; font-weight: %s; font-style: %s;%s",
+        return String.format(Locale.ROOT, "color: %s; font-size: %spt; font-family: %s; font-weight: %s; font-style: %s;%s",
                color,
                size, // use "%s" for size to avoid unnecessary zeros after decimal point
                family,
