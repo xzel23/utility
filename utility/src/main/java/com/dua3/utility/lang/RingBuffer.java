@@ -41,16 +41,24 @@ public class RingBuffer<T> {
     /**
      * Add item to end of collection.
      *
-     * @param item
-     *             the item to add
+     * @param items
+     *             the items to add
+     * @return
+     *             the number of <em>added</em> rows 
      */
-    public void add(T item) {
-        if (entries < capacity()) {
-            data[index(entries++)] = item;
-        } else {
-            start = (start + 1) % capacity();
-            data[index(entries - 1)] = item;
+    public int add(T... items) {
+        int oldSize = size();
+        
+        for (T item: items) {
+            if (entries<capacity()) {
+                data[index(entries++)] = item;
+            } else {
+                start = (start + 1) % capacity();
+                data[index(entries - 1)] = item;
+            }
         }
+        
+        return size()-oldSize;
     }
 
     /**
