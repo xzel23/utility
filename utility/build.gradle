@@ -2,3 +2,6 @@ jigsaw {
     module = 'dua3_utility'
 }
 
+dependencies {
+    compileOnly "ch.qos.logback:logback-classic:1.2.3"
+}

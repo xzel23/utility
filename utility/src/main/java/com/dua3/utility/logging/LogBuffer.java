@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class LogBuffer extends RingBuffer<LogEntry> {
 
-    public static final int DEFAULT_CAPACITY = 1000;
+    public static final int DEFAULT_CAPACITY = 10000;
 
     public interface LogBufferListener {
         void entries(LogEntry[] entries, int removed);

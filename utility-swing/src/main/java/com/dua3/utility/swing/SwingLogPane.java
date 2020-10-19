@@ -165,9 +165,9 @@ public class SwingLogPane extends JPanel {
     
     private static final LogEntry.Field[] COLUMNS = {
             LogEntry.Field.TIME,
+            LogEntry.Field.LOGGER,
             LogEntry.Field.LEVEL,
-            LogEntry.Field.CATEGORY,
-            LogEntry.Field.TEXT
+            LogEntry.Field.MESSAGE
     };
     
     public SwingLogPane(LogBuffer buffer) {

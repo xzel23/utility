@@ -1,26 +1,63 @@
 package com.dua3.utility.logging;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Locale;
+import java.time.ZoneId;
 
 public interface LogEntry {
     enum Field {
         CATEGORY,
-        LEVEL,
+        MILLIS,
         TIME,
-        TEXT,
+        LOGGER,
+        LEVEL,
+        MESSAGE,
         STACK_TRACE
     };
-    
+
+    /**
+     * Get the category of this entry. 
+     * @return the category
+     */
     Category category();
 
+    /**
+     * Get the millis of this entry.
+     * @return the millis
+     */
+    long millis();
+
+    /**
+     * Get the date and time of this entry.
+     * @return the date and time of this entry
+     */
+    default LocalDateTime time() {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis()), ZoneId.systemDefault());
+    }
+    
+    /**
+     * Get the logger name of this entry.
+     * @return the logger name as reported by the used logging framework
+     */
+    String logger();
+
+    /**
+     * Get the level of this entry.
+     * @return the logger level as reported by the used logging framework
+     */
     String level();
 
-    LocalDateTime time();
+    /**
+     * Get the message of this entry.
+     * @return the log message
+     */
+    String message();
 
-    String text();
-
-    String[] stacktrace();
+    /**
+     * Get the stack trace.
+     * @return the stack trace
+     */
+    StackTraceElement[] stacktrace();
     
     default Object get(Field f) {
         switch (f) {
@@ -28,10 +65,14 @@ public interface LogEntry {
                 return category();
             case LEVEL:
                 return level();
+            case LOGGER:
+                return logger();
+            case MILLIS:
+                return millis();
             case TIME:
                 return time();
-            case TEXT:
-                return text();
+            case MESSAGE:
+                return message();
             case STACK_TRACE:
                 return stacktrace();
             default:

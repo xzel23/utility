@@ -5,7 +5,6 @@ import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 
 import javax.swing.*;
-import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -53,7 +52,7 @@ public class TestSwingLogPane extends JFrame {
     private LogEntry createEntry() {
         int lvl = random.nextInt(Category.values().length);
         Category cat = Category.values()[lvl];
-        LocalDateTime time = LocalDateTime.now();
+        long millis = System.currentTimeMillis();
         String msg = String.format("Message %d.", n.incrementAndGet());
         
         return new LogEntry() {
@@ -68,18 +67,23 @@ public class TestSwingLogPane extends JFrame {
             }
 
             @Override
-            public LocalDateTime time() {
-                return time;
+            public String logger() {
+                return "logger.with.no.name";
             }
 
             @Override
-            public String text() {
+            public long millis() {
+                return millis;
+            }
+
+            @Override
+            public String message() {
                 return msg;
             }
 
             @Override
-            public String[] stacktrace() {
-                return new String[0];
+            public StackTraceElement[] stacktrace() {
+                return new StackTraceElement[0];
             }
         };
     }
