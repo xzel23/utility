@@ -1,6 +1,7 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.logging.Category;
+import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 
 import javax.swing.*;
@@ -23,7 +24,8 @@ public class TestSwingLogPane extends JFrame {
     }
 
     public TestSwingLogPane() {
-        SwingLogPane logPane = new SwingLogPane();
+        LogBuffer buffer = new LogBuffer();
+        SwingLogPane logPane = new SwingLogPane(buffer);
         setContentPane(logPane);
         setSize(800,600);
         thread = new Thread(() -> {
@@ -39,7 +41,7 @@ public class TestSwingLogPane extends JFrame {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                logPane.entry(createEntry());
+                buffer.add(createEntry());
             }
         });
         thread.start();

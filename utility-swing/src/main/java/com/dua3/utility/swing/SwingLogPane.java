@@ -1,9 +1,8 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.lang.RingBuffer;
+import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
-import com.dua3.utility.logging.LogListener;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -15,14 +14,17 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
 
-public class SwingLogPane extends JPanel implements LogListener {
+/**
+ * A Swing component that displays logging messages.
+ */
+public class SwingLogPane extends JPanel {
 
-    private static final int DEFAULT_CAPACITY = 1000;
-    
+    private final LogBuffer buffer;
     private final JTable table;
     private final AbstractTableModel model;
     private final JScrollPane scrollPane;
     private final Function<LogEntry, Color> colorize;
+    private final BufferListener bufferListener;
 
     private static Color defaultColorize(LogEntry entry) {
         switch (entry.category()) {
@@ -40,8 +42,87 @@ public class SwingLogPane extends JPanel implements LogListener {
                 return Color.BLACK;
         }
     }
+
+    private class LogTableModel extends AbstractTableModel {
+        public LogTableModel() {
+        }
+
+        @Override
+        public int getRowCount() {
+            return buffer.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return COLUMNS.length;
+        }
+
+        @Override
+        public LogEntry getValueAt(int rowIndex, int columnIndex) {
+            return buffer.get(rowIndex);
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return COLUMNS[column].toString();
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return LogEntry.Field.class;
+        }
+    }
+
+    private class BufferListener implements LogBuffer.LogBufferListener {
+        @Override
+        public void entries(LogEntry[] entries, int removed) {
+            onAddEntries(entries, removed);
+        }
+
+        @Override
+        public void clear() {
+            onClear();
+        }
+
+        @Override
+        public void capacity(int n) {
+            onSetCapacity(n);
+        }
+    }
     
-    class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
+    private void onAddEntries(LogEntry[] entries, int removed) {
+        synchronized (model) {
+            // inform the model
+            int rows = model.getRowCount();
+            if (removed!=0) {
+                model.fireTableRowsDeleted(0,removed-1);
+            }
+            model.fireTableRowsInserted(rows - entries.length, rows-1);
+
+            // handle scrolling
+            JScrollBar scroll = scrollPane.getVerticalScrollBar();
+            int row;
+            if (scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
+                // scroll to last row
+                row = rows;
+            } else {
+                // keep row with current entry visible => scroll up if first row is removed from buffer
+                int topRow = getTopRow();
+                row = topRow - removed;
+            }
+            SwingUtilities.invokeLater(() -> scrollRowIntoView(row));
+        }
+    }
+    
+    private void onClear() {
+        model.fireTableDataChanged();
+    }
+
+    private void onSetCapacity(int n) {
+        model.fireTableDataChanged();
+    }
+    
+    private class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
         private final LogEntry.Field f;
 
         public LogEntryFieldCellRenderer(LogEntry.Field f) {
@@ -73,43 +154,17 @@ public class SwingLogPane extends JPanel implements LogListener {
             LogEntry.Field.TEXT
     };
     
-    private final RingBuffer<LogEntry> buffer = new RingBuffer<>(DEFAULT_CAPACITY);
-
-    public SwingLogPane() {
-        this(SwingLogPane::defaultColorize);
+    public SwingLogPane(LogBuffer buffer) {
+        this(buffer, SwingLogPane::defaultColorize);
     }
     
-    public SwingLogPane(Function<LogEntry, Color> colorize) {
+    public SwingLogPane(LogBuffer buffer, Function<LogEntry, Color> colorize) {
         super(new BorderLayout());
         
+        this.buffer = Objects.requireNonNull(buffer);
         this.colorize = Objects.requireNonNull(colorize);
-        
-        model = new AbstractTableModel() {
-            @Override
-            public int getRowCount() {
-                return buffer.size();
-            }
-
-            @Override
-            public int getColumnCount() {
-                return COLUMNS.length;
-            }
-
-            @Override
-            public LogEntry getValueAt(int rowIndex, int columnIndex) {
-                return buffer.get(rowIndex);
-            }
-
-            @Override
-            public String getColumnName(int column) {
-                return COLUMNS[column].toString();
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return LogEntry.Field.class;
-            }
-        };
+        this.model = new LogTableModel();
+        this.bufferListener = new BufferListener();
         
         table = new JTable(model);
 
@@ -123,39 +178,38 @@ public class SwingLogPane extends JPanel implements LogListener {
         add(scrollPane);
     }
 
-    @Override
-    public void entry(LogEntry entry) {
-        synchronized (buffer) {
-            // determine the row to keep on screen
-            JScrollBar scroll = scrollPane.getVerticalScrollBar();
-            final IntConsumer updateScroll;
-            if (scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
-                // scroll to last row
-                updateScroll = added -> scrollRowIntoView(table.getRowCount());
-            } else {
-                // keep row with current entry visible => scroll up if first row is removed from buffer
-                int topRow = getTopRow();
-                updateScroll = added -> scrollRowIntoView(topRow - (added == 0?1:0));
-            }
-            
-            // add the new entry
-            final int added = buffer.add(Objects.requireNonNull(entry));
-            int idx = buffer.size() - 1;
-            if (added==0) {
-                this.model.fireTableRowsDeleted(0,0);
-            }
-            this.model.fireTableRowsInserted(idx, idx);
-
-            // handle scrolling
-            updateScroll.accept(added);
-        }
-    }
-
     private int getTopRow() {
         return table.rowAtPoint(scrollPane.getViewport().getViewPosition());
     }
 
     private void scrollRowIntoView(int row) {
         SwingUtilities.invokeLater(() -> table.scrollRectToVisible(new Rectangle(table.getCellRect(row, 0, true))));
+    }
+
+    private void setListeningState(boolean listen) {
+        if (listen) {
+            buffer.addLogBufferListener(bufferListener);
+            model.fireTableDataChanged();
+        } else {
+            buffer.removeLogBufferListener(bufferListener);            
+        }
+    }
+    
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        setListeningState(true);
+    }
+
+    @Override
+    public void removeNotify() {
+        setListeningState(false);
+        super.removeNotify();
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        setListeningState(visible);
+        super.setVisible(visible);
     }
 }
