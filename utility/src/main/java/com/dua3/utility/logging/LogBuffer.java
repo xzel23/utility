@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class LogBuffer extends RingBuffer<LogEntry> {
+public class LogBuffer extends RingBuffer<LogEntry> implements LogListener {
 
     public static final int DEFAULT_CAPACITY = 10000;
 
@@ -68,5 +68,10 @@ public class LogBuffer extends RingBuffer<LogEntry> {
     public void setCapacity(int n) {
         super.setCapacity(n);
         listeners.forEach(listener -> listener.capacity(n));
+    }
+
+    @Override
+    public void entry(LogEntry entry) {
+        add(entry);
     }
 }

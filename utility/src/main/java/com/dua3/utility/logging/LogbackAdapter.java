@@ -5,7 +5,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.AppenderBase;
-import ch.qos.logback.classic.Logger;
+import org.slf4j.Logger;
 
 import java.util.Objects;
 
@@ -95,7 +95,10 @@ public class LogbackAdapter {
     }
 
     public static void addListener(Logger logger, LogListener listener) {
-        LogbackLogAppender appender = new LogbackLogAppender(listener);
-        logger.addAppender(appender);
+        if (logger instanceof ch.qos.logback.classic.Logger) {
+            LogbackLogAppender appender = new LogbackLogAppender(listener);
+            appender.start();
+            ((ch.qos.logback.classic.Logger)logger).addAppender(appender);
+        }
     }
 }
