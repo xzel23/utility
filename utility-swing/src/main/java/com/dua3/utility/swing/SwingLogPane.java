@@ -12,7 +12,6 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.IntConsumer;
 
 /**
  * A Swing component that displays logging messages.
@@ -124,6 +123,7 @@ public class SwingLogPane extends JPanel {
     
     private class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
         private final LogEntry.Field f;
+        private boolean isSelected = false;
 
         public LogEntryFieldCellRenderer(LogEntry.Field f) {
             this.f = f;
@@ -141,9 +141,25 @@ public class SwingLogPane extends JPanel {
                 color = java.awt.Color.BLACK;
                 v = value;
             }
-            
+
             setForeground(color);
+            setBackground(table.getBackground());
+            
             super.setValue(v);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (isSelected) {
+                java.awt.Color fg = getForeground();
+                java.awt.Color bg = getBackground();
+                setForeground(bg);
+                setBackground(fg);
+            }
+            
+            return this;
         }
     }
     
