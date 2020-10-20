@@ -3,12 +3,10 @@ package com.dua3.utility.swing;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
+import com.dua3.utility.text.TextUtil;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.util.Objects;
 import java.util.function.Function;
@@ -63,7 +61,7 @@ public class SwingLogPane extends JPanel {
 
         @Override
         public String getColumnName(int column) {
-            return COLUMNS[column].toString();
+            return COLUMNS[column].field.toString();
         }
 
         @Override
@@ -163,11 +161,21 @@ public class SwingLogPane extends JPanel {
         }
     }
     
-    private static final LogEntry.Field[] COLUMNS = {
-            LogEntry.Field.TIME,
-            LogEntry.Field.LOGGER,
-            LogEntry.Field.LEVEL,
-            LogEntry.Field.MESSAGE
+    private static class Column {
+        final LogEntry.Field field;
+        final int preferredCharWidth;
+        
+        Column(LogEntry.Field field, int preferredCharWidth) {
+            this.field = field;
+            this.preferredCharWidth = preferredCharWidth;
+        }
+    }
+    
+    private static final Column[] COLUMNS = {
+            new Column(LogEntry.Field.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length()),
+            new Column(LogEntry.Field.LOGGER, "com.example.class".length()),
+            new Column(LogEntry.Field.LEVEL, -"WARNING".length()),
+            new Column(LogEntry.Field.MESSAGE, 80),
     };
     
     public SwingLogPane(LogBuffer buffer) {
@@ -184,11 +192,27 @@ public class SwingLogPane extends JPanel {
         
         table = new JTable(model);
 
+        SwingFontUtil fu = new SwingFontUtil();
+        
         TableColumnModel columnModel = table.getColumnModel();
         for (int i = 0; i < columnModel.getColumnCount(); i++) {
-            TableCellRenderer r = new LogEntryFieldCellRenderer(COLUMNS[i]);
-            columnModel.getColumn(i).setCellRenderer(r);
+            Column cd = COLUMNS[i];
+            TableColumn column = columnModel.getColumn(i);
+            TableCellRenderer r = new LogEntryFieldCellRenderer(cd.field);
+            column.setCellRenderer(r);
+            
+            java.awt.Font font = table.getFont();
+            int chars = cd.preferredCharWidth;
+            int width = (int) Math.ceil(fu.getTextWidth(TextUtil.repeat("M", Math.abs(chars)), font));
+            if (chars>=0) {
+                column.setPreferredWidth(width);
+            } else {
+                column.setMinWidth(width);
+                column.setMaxWidth(width);
+                column.setWidth(width);
+            }
         }
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         
         scrollPane = new JScrollPane(table);
         add(scrollPane);

@@ -9,10 +9,27 @@ import com.dua3.utility.text.FontUtil;
 
 public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
-    private Rectangle2D stringBounds(String text, Font font) {
+    public Rectangle2D stringBounds(String text, Font font) {
         java.awt.Font awtFont = convert(font);
+        return stringBounds(text, awtFont);
+    }
+
+    public Rectangle2D stringBounds(String text, java.awt.Font awtFont) {
         FontRenderContext frc = new FontRenderContext(awtFont.getTransform(), false, true);
         return awtFont.getStringBounds(text, frc);
+    }
+
+    public Bounds getTextBounds(String s, java.awt.Font f) {
+        Rectangle2D r = stringBounds(s, f);
+        return new Bounds(r.getWidth(), r.getHeight());
+    }
+
+    public double getTextHeight(String s, java.awt.Font f) {
+        return stringBounds(s, f).getHeight();
+    }
+
+    public double getTextWidth(String s, java.awt.Font f) {
+        return stringBounds(s, f).getWidth();
     }
 
     @Override
