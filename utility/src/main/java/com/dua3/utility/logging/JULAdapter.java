@@ -34,7 +34,7 @@ public class JULAdapter {
         }
     }
     
-    public static class JULLogEntry implements LogEntry {
+    public static class JULLogEntry extends AbstractLogEntry<LogRecord> {
         private final LogRecord r;
 
         JULLogEntry(LogRecord r) {
@@ -88,7 +88,8 @@ public class JULAdapter {
             return t.getStackTrace();
         }
 
-        public LogRecord getLogRecord() {
+        @Override
+        public LogRecord getNative() {
             return r;
         }
     }

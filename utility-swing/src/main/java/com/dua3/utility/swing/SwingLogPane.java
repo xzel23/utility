@@ -8,6 +8,8 @@ import com.dua3.utility.text.TextUtil;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -18,10 +20,12 @@ public class SwingLogPane extends JPanel {
 
     private final LogBuffer buffer;
     private final JTable table;
+    private final JTextArea details;
     private final AbstractTableModel model;
-    private final JScrollPane scrollPane;
+    private final JScrollPane scrollPaneTable;
     private final Function<LogEntry, Color> colorize;
     private final BufferListener bufferListener;
+    private final JScrollPane scrollPaneDetails;
 
     private static Color defaultColorize(LogEntry entry) {
         switch (entry.category()) {
@@ -97,7 +101,7 @@ public class SwingLogPane extends JPanel {
             model.fireTableRowsInserted(rows - entries.length, rows-1);
 
             // handle scrolling
-            JScrollBar scroll = scrollPane.getVerticalScrollBar();
+            JScrollBar scroll = scrollPaneTable.getVerticalScrollBar();
             int row;
             if (scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
                 // scroll to last row
@@ -173,8 +177,8 @@ public class SwingLogPane extends JPanel {
     
     private static final Column[] COLUMNS = {
             new Column(LogEntry.Field.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length()),
-            new Column(LogEntry.Field.LOGGER, "com.example.class".length()),
             new Column(LogEntry.Field.LEVEL, -"WARNING".length()),
+            new Column(LogEntry.Field.LOGGER, "com.example.class".length()),
             new Column(LogEntry.Field.MESSAGE, 80),
     };
     
@@ -190,8 +194,13 @@ public class SwingLogPane extends JPanel {
         this.model = new LogTableModel();
         this.bufferListener = new BufferListener();
         
+        // create the table
         table = new JTable(model);
+        
+        // create the detail pane
+        details = new JTextArea(5, 80);
 
+        // column settings
         SwingFontUtil fu = new SwingFontUtil();
         
         TableColumnModel columnModel = table.getColumnModel();
@@ -214,12 +223,40 @@ public class SwingLogPane extends JPanel {
         }
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         
-        scrollPane = new JScrollPane(table);
-        add(scrollPane);
+        //
+        table.getSelectionModel().addListSelectionListener(evt -> {
+            ListSelectionModel lsm = (ListSelectionModel)evt.getSource();
+            int firstIndex = evt.getFirstIndex();
+            int lastIndex = evt.getLastIndex();
+            
+            final String text;
+            if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
+                text = "";
+            } else {
+                List<LogEntry> selection;
+                synchronized (buffer) {
+                    selection = new ArrayList<>(buffer.subList(firstIndex, lastIndex+1));
+                }
+                StringBuilder sb = new StringBuilder(1024);
+                for (int idx=firstIndex; idx<=lastIndex; idx++) {
+                    if (lsm.isSelectedIndex(idx)) {
+                        sb.append(selection.get(idx-firstIndex)).append("\n");
+                    }
+                }
+                text = sb.toString();
+            }
+            SwingUtilities.invokeLater(() -> details.setText(text));
+        });
+        
+        // add the table
+        scrollPaneTable = new JScrollPane(table);
+        add(scrollPaneTable, BorderLayout.CENTER);
+        scrollPaneDetails = new JScrollPane(details);
+        add(scrollPaneDetails, BorderLayout.SOUTH);
     }
 
     private int getTopRow() {
-        return table.rowAtPoint(scrollPane.getViewport().getViewPosition());
+        return table.rowAtPoint(scrollPaneTable.getViewport().getViewPosition());
     }
 
     private void scrollRowIntoView(int row) {

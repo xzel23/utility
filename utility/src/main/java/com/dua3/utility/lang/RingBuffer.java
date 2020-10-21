@@ -5,7 +5,10 @@
 
 package com.dua3.utility.lang;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A ring buffer implementation.
@@ -150,5 +153,40 @@ public class RingBuffer<T> {
 
     private int index(int i) {
         return (start + i) % capacity();
+    }
+
+    /**
+     * Returns a view of the portion of this buffer between the specified
+     * {@code fromIndex}, inclusive, and {@code toIndex}, exclusive.  (If
+     * {@code fromIndex} and {@code toIndex} are equal, the returned list is
+     * empty.)  The returned list is backed by this buffer.
+     * 
+     * @param fromIndex low endpoint (inclusive) of the subList
+     * @param toIndex high endpoint (exclusive) of the subList
+     * @return a view of the specified range within this list
+     * @throws IndexOutOfBoundsException for an illegal endpoint index value
+     *         ({@code fromIndex < 0 || toIndex > size ||
+     *         fromIndex > toIndex})
+     */
+    public List<T> subList(int fromIndex, int toIndex) {
+        int s1 = size();
+        LangUtil.checkIndex(fromIndex, s1);
+        LangUtil.check(toIndex<=s1, "toIndex>size(): %d", toIndex);
+
+        final int s2 = toIndex-fromIndex;
+        LangUtil.check(s2>=0, "toIndex<fromIndex: fromIndex=%d, toIndex=%d", fromIndex, toIndex);
+
+        return new AbstractList<T>() {
+            @Override
+            public T get(int index) {
+                LangUtil.checkIndex(index, s2);
+                return RingBuffer.this.get(index+fromIndex);
+            }
+
+            @Override
+            public int size() {
+                return s2;
+            }
+        };
     }
 }

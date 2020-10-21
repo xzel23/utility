@@ -2,14 +2,14 @@ package com.dua3.utility.logging;
 
 import com.dua3.utility.lang.RingBuffer;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
 public class LogBuffer extends RingBuffer<LogEntry> implements LogListener {
 
     public static final int DEFAULT_CAPACITY = 10000;
 
+    private static final Object LOCK = new Object();
+    
     public interface LogBufferListener {
         void entries(LogEntry[] entries, int removed);
         void clear();
@@ -52,7 +52,10 @@ public class LogBuffer extends RingBuffer<LogEntry> implements LogListener {
     
     @Override
     public int add(LogEntry... entries) {
-        int added = super.add(entries);
+        int added;
+        synchronized(LOCK) {
+            added = super.add(entries);
+        }
         int removed = entries.length-added;
         listeners.forEach(listener -> listener.entries(entries, removed));
         return added;
@@ -60,18 +63,29 @@ public class LogBuffer extends RingBuffer<LogEntry> implements LogListener {
 
     @Override
     public void clear() {
-        super.clear();
+        synchronized(LOCK) {
+            super.clear();
+        }
         listeners.forEach(LogBufferListener::clear);
     }
 
     @Override
     public void setCapacity(int n) {
-        super.setCapacity(n);
+        synchronized(LOCK) {
+            super.setCapacity(n);
+        }
         listeners.forEach(listener -> listener.capacity(n));
     }
 
     @Override
     public void entry(LogEntry entry) {
         add(entry);
+    }
+
+    @Override
+    public List<LogEntry> subList(int fromIndex, int toIndex) {
+        synchronized(LOCK) {
+            return new ArrayList(super.subList(fromIndex, toIndex));
+        }
     }
 }

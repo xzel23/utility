@@ -25,7 +25,7 @@ public class LogbackAdapter {
         }
     }
 
-    public static class LogbackLogEntry implements LogEntry {
+    public static class LogbackLogEntry extends AbstractLogEntry<ILoggingEvent> {
         private final ILoggingEvent evt;
 
         LogbackLogEntry(ILoggingEvent evt) {
@@ -85,7 +85,8 @@ public class LogbackAdapter {
             return ste;
         }
 
-        public ILoggingEvent getEvt() {
+        @Override
+        public ILoggingEvent getNative() {
             return evt;
         }
     }

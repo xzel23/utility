@@ -10,7 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.sun.tools.javac.util.List;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
 
 public class RingBufferTest {
 
@@ -129,4 +132,40 @@ public class RingBufferTest {
         assertEquals("[Test1, Test2, Test3]", buffer.toString());
     }
 
+    @Test
+    public void testSubList() {
+        buffer.clear();
+
+        // test with a partially filled buffer
+        List.of(1,2,3,4,5).forEach(buffer::add);
+        assertEquals(Collections.emptyList(), buffer.subList(0,0));
+        assertEquals(Collections.emptyList(), buffer.subList(4,4));
+        assertEquals(List.of(1,2,3,4,5), buffer.subList(0,5));
+        assertEquals(List.of(1,2,3,4), buffer.subList(0,4));
+        assertEquals(List.of(2,3,4,5), buffer.subList(1,5));
+        assertEquals(List.of(2,3,4), buffer.subList(1,4));
+
+        // test with a fully filled buffer
+        List.of(6,7,8,9,10).forEach(buffer::add);
+        assertEquals(Collections.emptyList(), buffer.subList(0,0));
+        assertEquals(Collections.emptyList(), buffer.subList(9,9));
+        assertEquals(List.of(1,2,3,4,5), buffer.subList(0,5));
+        assertEquals(List.of(1,2,3,4), buffer.subList(0,4));
+        assertEquals(List.of(2,3,4,5), buffer.subList(1,5));
+        assertEquals(List.of(2,3,4), buffer.subList(1,4));
+
+        // test after elements are discarded (contiguous sublist)
+        List.of(11,12,13,14,15).forEach(buffer::add);
+        assertEquals(Collections.emptyList(), buffer.subList(0,0));
+        assertEquals(Collections.emptyList(), buffer.subList(9,9));
+        assertEquals(List.of(6,7,8,9,10), buffer.subList(0,5));
+        assertEquals(List.of(6,7,8,9), buffer.subList(0,4));
+        assertEquals(List.of(7,8,9,10), buffer.subList(1,5));
+        assertEquals(List.of(7,8,9), buffer.subList(1,4));
+        assertEquals(List.of(6,7,8,9,10,11,12,13,14,15), buffer.subList(0,10));
+        
+        // test after elements are discarded (non-contiguous sublist)
+        assertEquals(List.of(9,10,11,12), buffer.subList(3,7));
+        assertEquals(List.of(15), buffer.subList(9,10));
+    }
 }

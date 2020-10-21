@@ -1,8 +1,6 @@
 package com.dua3.utility.logging;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 public interface LogEntry {
     enum Field {
@@ -28,14 +26,6 @@ public interface LogEntry {
     long millis();
 
     /**
-     * Get the date and time of this entry.
-     * @return the date and time of this entry
-     */
-    default LocalDateTime time() {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis()), ZoneId.systemDefault());
-    }
-    
-    /**
      * Get the logger name of this entry.
      * @return the logger name as reported by the used logging framework
      */
@@ -58,25 +48,19 @@ public interface LogEntry {
      * @return the stack trace
      */
     StackTraceElement[] stacktrace();
+
+    /**
+     * Get the date and time of this entry.
+     * @return the date and time of this entry
+     */
+    LocalDateTime time();
+
+    /**
+     * Get specified field of this entry.
+     * 
+     * @param f the field
+     * @return the field's value
+     */
+    Object get(Field f);
     
-    default Object get(Field f) {
-        switch (f) {
-            case CATEGORY:
-                return category();
-            case LEVEL:
-                return level();
-            case LOGGER:
-                return logger();
-            case MILLIS:
-                return millis();
-            case TIME:
-                return time();
-            case MESSAGE:
-                return message();
-            case STACK_TRACE:
-                return stacktrace();
-            default:
-                throw new IllegalArgumentException("no such field: "+f);
-        }
-    }
 }
