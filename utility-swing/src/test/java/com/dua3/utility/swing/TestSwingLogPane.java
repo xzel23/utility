@@ -78,6 +78,8 @@ public class TestSwingLogPane extends JFrame {
                         case 4:
                             LGB_LOGGER.error(msg, generateThrowable());
                             break;
+                        default:
+                            throw new IllegalStateException();
                     }
                 }
             }

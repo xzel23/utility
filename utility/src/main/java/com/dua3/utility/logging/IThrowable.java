@@ -1,18 +1,18 @@
 package com.dua3.utility.logging;
 
-import java.util.Objects;
+import java.util.*;
 
 public interface IThrowable {
     IThrowable getCause();
 
-    IStackTraceElement[] getStackTrace();
+    List<IStackTraceElement> getStackTrace();
 
     interface IStackTraceElement {
     }
 
     class JavaThrowable implements IThrowable {
         private final Throwable t;
-        private IStackTraceElement[] ist = null;
+        private List<IStackTraceElement> ist = null;
         
         JavaThrowable(Throwable t) {
             this.t= Objects.requireNonNull(t);
@@ -25,14 +25,14 @@ public interface IThrowable {
         }
 
         @Override
-        public IStackTraceElement[] getStackTrace() {
+        public List<IStackTraceElement> getStackTrace() {
             if (ist==null) {
                 StackTraceElement[] st = t.getStackTrace();
-                IStackTraceElement[] ist_ = new IStackTraceElement[st.length];
-                for (int i = 0; i < st.length; i++) {
-                    ist_[i] = new JavaStackTraceElement(st[i]);
+                List<IStackTraceElement> ist_ = new ArrayList(st.length);
+                for (StackTraceElement ste: st) {
+                    ist_.add(new JavaStackTraceElement(ste));
                 }
-                ist = ist_;
+                ist = Collections.unmodifiableList(ist_);
             }
             return ist;
         }

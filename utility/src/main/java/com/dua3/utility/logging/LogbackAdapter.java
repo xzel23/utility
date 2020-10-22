@@ -8,9 +8,7 @@ import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class LogbackAdapter {
     
@@ -83,9 +81,9 @@ public final class LogbackAdapter {
             return evt;
         }
 
-        private class SLF4JThrowable implements IThrowable {
+        private static class SLF4JThrowable implements IThrowable {
             private final IThrowableProxy tp;
-            private IStackTraceElement[] ist=null;
+            private List<IStackTraceElement> ist=null;
 
             private SLF4JThrowable(IThrowableProxy tp) {
                 this.tp = Objects.requireNonNull(tp);
@@ -98,14 +96,14 @@ public final class LogbackAdapter {
             }
 
             @Override
-            public IStackTraceElement[] getStackTrace() {
+            public List<IStackTraceElement> getStackTrace() {
                 if (ist==null) {
                     StackTraceElementProxy[] st = tp.getStackTraceElementProxyArray();
-                    IStackTraceElement[] ist_ = new IStackTraceElement[st.length];
-                    for (int i = 0; i < st.length; i++) {
-                        ist_[i] = new SLF4JStackTraceElement(st[i]);
+                    List<IStackTraceElement> ist_ = new ArrayList(st.length);
+                    for (StackTraceElementProxy ste: st) {
+                        ist_.add(new SLF4JStackTraceElement(ste));
                     }
-                    ist = ist_;
+                    ist = Collections.unmodifiableList(ist_);
                 }
                 return ist;
             }
@@ -116,7 +114,7 @@ public final class LogbackAdapter {
             }
         }
 
-        private class SLF4JStackTraceElement implements IThrowable.IStackTraceElement {
+        private static class SLF4JStackTraceElement implements IThrowable.IStackTraceElement {
             private final StackTraceElementProxy step;
 
             private SLF4JStackTraceElement(StackTraceElementProxy step) {
