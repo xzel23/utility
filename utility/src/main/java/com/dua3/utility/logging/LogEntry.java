@@ -1,6 +1,7 @@
 package com.dua3.utility.logging;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface LogEntry {
     enum Field {
@@ -10,8 +11,8 @@ public interface LogEntry {
         LOGGER,
         LEVEL,
         MESSAGE,
-        STACK_TRACE
-    };
+        CAUSE
+    }
 
     /**
      * Get the category of this entry. 
@@ -44,11 +45,11 @@ public interface LogEntry {
     String message();
 
     /**
-     * Get the stack trace.
-     * @return the stack trace
+     * Get cause.
+     * @return the cause
      */
-    StackTraceElement[] stacktrace();
-
+    Optional<IThrowable> cause();
+    
     /**
      * Get the date and time of this entry.
      * @return the date and time of this entry

@@ -16,7 +16,6 @@ public class TestSwingLogPane extends JFrame {
 
     public static final int SLEEP_MILLIS = 100;
     private volatile boolean done = false;
-    private final Thread thread;
 
     public static void main(String[] args) {
         JUL_LOGGER.setLevel(Level.ALL);
@@ -39,7 +38,7 @@ public class TestSwingLogPane extends JFrame {
         setContentPane(logPane);
         setSize(800,600);
         Level[] levels = { Level.FINER, Level.FINE, Level.INFO, Level.WARNING, Level.SEVERE};
-        thread = new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -54,12 +53,16 @@ public class TestSwingLogPane extends JFrame {
                 }
 
                 String msg = String.format("Message %d.", n.incrementAndGet());
-                
+
                 if (random.nextBoolean()) {
                     Level level = levels[random.nextInt(levels.length)];
-                    JUL_LOGGER.log(level, msg);
+                    if (level==Level.SEVERE) {
+                        JUL_LOGGER.log(level, msg, generateThrowable());
+                    } else {
+                        JUL_LOGGER.log(level, msg);
+                    }
                 } else {
-                    switch(random.nextInt(5)) {
+                    switch (random.nextInt(5)) {
                         case 0:
                             LGB_LOGGER.trace(msg);
                             break;
@@ -73,13 +76,21 @@ public class TestSwingLogPane extends JFrame {
                             LGB_LOGGER.warn(msg);
                             break;
                         case 4:
-                            LGB_LOGGER.error(msg);
+                            LGB_LOGGER.error(msg, generateThrowable());
                             break;
                     }
                 }
             }
         });
         thread.start();
+    }
+
+    private IllegalStateException generateThrowable() {
+        if (random.nextBoolean()) {
+            return new IllegalStateException("Why?", new UnsupportedOperationException("Because of me!"));
+        } else {
+            return new IllegalStateException("What happened?");
+        }
     }
 
     private final Random random = new Random();

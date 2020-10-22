@@ -29,8 +29,8 @@ public abstract class AbstractLogEntry<T extends Object> implements LogEntry {
                 return time();
             case MESSAGE:
                 return message();
-            case STACK_TRACE:
-                return stacktrace();
+            case CAUSE:
+                return cause();
             default:
                 throw new IllegalArgumentException("no such field: "+f);
         }
@@ -39,8 +39,21 @@ public abstract class AbstractLogEntry<T extends Object> implements LogEntry {
     @Override
     public String toString() {
         Formatter fmt = new Formatter();
-        fmt.format("%s %s %s%n%s", time(), level(), logger(), message());
+        fmt.format("%s %s %s%n%s%n", time(), level(), logger(), message());
+        cause().ifPresent(t -> printCause(fmt, t));
         return fmt.toString();
     }
-    
+
+    private void printCause(Formatter fmt, IThrowable t) {
+        fmt.format("%s", t);
+        for (IThrowable.IStackTraceElement ste: t.getStackTrace()) {
+            fmt.format("%nat %s", ste.toString());
+        }
+        IThrowable cause = t.getCause();
+        if (cause!=null) {
+            fmt.format("%ncaused by ", t);
+            printCause(fmt, cause);
+        }
+    }
+
 }

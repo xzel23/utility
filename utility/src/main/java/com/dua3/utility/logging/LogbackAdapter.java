@@ -4,12 +4,15 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
+import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import org.slf4j.Logger;
 
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
-public class LogbackAdapter {
+public final class LogbackAdapter {
     
     public static class LogbackLogAppender extends AppenderBase<ILoggingEvent> {
         private final LogListener listener;
@@ -34,7 +37,7 @@ public class LogbackAdapter {
 
         @Override
         public Category category() {
-            int intLevel = evt.getLevel().levelInt;
+            int intLevel = evt.getLevel().toInt();
             if ( intLevel < Level.DEBUG_INT) {
                 return Category.TRACE;
             }
@@ -71,23 +74,59 @@ public class LogbackAdapter {
         }
 
         @Override
-        public StackTraceElement[] stacktrace() {
-            IThrowableProxy t = evt.getThrowableProxy();
-            if (t==null) {
-                return new StackTraceElement[0];
-            }
-
-            StackTraceElementProxy[] step = t.getStackTraceElementProxyArray();
-            StackTraceElement[] ste = new StackTraceElement[step.length];
-            for (int i=0; i<step.length; i++) {
-                ste[i] = step[i].getStackTraceElement();
-            }
-            return ste;
+        public Optional<IThrowable> cause() {
+            return Optional.ofNullable(evt.getThrowableProxy()).map(tp -> new SLF4JThrowable(tp));
         }
 
         @Override
         public ILoggingEvent getNative() {
             return evt;
+        }
+
+        private class SLF4JThrowable implements IThrowable {
+            private final IThrowableProxy tp;
+            private IStackTraceElement[] ist=null;
+
+            private SLF4JThrowable(IThrowableProxy tp) {
+                this.tp = Objects.requireNonNull(tp);
+            }
+
+            @Override
+            public IThrowable getCause() {
+                IThrowableProxy cause = tp.getCause();
+                return cause==null ? null : new SLF4JThrowable(cause);
+            }
+
+            @Override
+            public IStackTraceElement[] getStackTrace() {
+                if (ist==null) {
+                    StackTraceElementProxy[] st = tp.getStackTraceElementProxyArray();
+                    IStackTraceElement[] ist_ = new IStackTraceElement[st.length];
+                    for (int i = 0; i < st.length; i++) {
+                        ist_[i] = new SLF4JStackTraceElement(st[i]);
+                    }
+                    ist = ist_;
+                }
+                return ist;
+            }
+
+            @Override
+            public String toString() {
+                return tp.getClassName()+": "+tp.getMessage();
+            }
+        }
+
+        private class SLF4JStackTraceElement implements IThrowable.IStackTraceElement {
+            private final StackTraceElementProxy step;
+
+            private SLF4JStackTraceElement(StackTraceElementProxy step) {
+                this.step = step;
+            }
+
+            @Override
+            public String toString() {
+                return step.getStackTraceElement().toString();
+            }
         }
     }
 

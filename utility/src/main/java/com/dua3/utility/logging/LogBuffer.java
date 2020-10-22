@@ -85,7 +85,7 @@ public class LogBuffer extends RingBuffer<LogEntry> implements LogListener {
     @Override
     public List<LogEntry> subList(int fromIndex, int toIndex) {
         synchronized(LOCK) {
-            return new ArrayList(super.subList(fromIndex, toIndex));
+            return new ArrayList<>(super.subList(fromIndex, toIndex));
         }
     }
 }

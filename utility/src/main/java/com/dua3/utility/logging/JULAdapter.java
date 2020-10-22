@@ -1,12 +1,13 @@
 package com.dua3.utility.logging;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class JULAdapter {
+public final class JULAdapter {
     
     public static class JULHandler extends Handler {
 
@@ -80,12 +81,8 @@ public class JULAdapter {
         }
 
         @Override
-        public StackTraceElement[] stacktrace() {
-            Throwable t = r.getThrown();
-            if (t==null) {
-                return new StackTraceElement[0];
-            }
-            return t.getStackTrace();
+        public Optional<IThrowable> cause() {
+            return Optional.ofNullable(r.getThrown()).map(IThrowable.JavaThrowable::new);
         }
 
         @Override

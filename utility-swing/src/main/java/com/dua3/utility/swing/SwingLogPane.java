@@ -45,7 +45,7 @@ public class SwingLogPane extends JPanel {
     }
 
     private class LogTableModel extends AbstractTableModel {
-        public LogTableModel() {
+        private LogTableModel() {
         }
 
         @Override
@@ -127,7 +127,7 @@ public class SwingLogPane extends JPanel {
         private final LogEntry.Field f;
         private boolean isSelected = false;
 
-        public LogEntryFieldCellRenderer(LogEntry.Field f) {
+        private LogEntryFieldCellRenderer(LogEntry.Field f) {
             this.f = f;
         }
 
@@ -245,14 +245,18 @@ public class SwingLogPane extends JPanel {
                 }
                 text = sb.toString();
             }
-            SwingUtilities.invokeLater(() -> details.setText(text));
+            SwingUtilities.invokeLater(() -> {
+                details.setText(text);
+                details.setCaretPosition(0);
+            });
         });
         
-        // add the table
+        // prepare the ScrollPanes
         scrollPaneTable = new JScrollPane(table);
-        add(scrollPaneTable, BorderLayout.CENTER);
         scrollPaneDetails = new JScrollPane(details);
-        add(scrollPaneDetails, BorderLayout.SOUTH);
+        
+        // add
+        add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails), BorderLayout.CENTER);
     }
 
     private int getTopRow() {
