@@ -8,6 +8,7 @@ import com.dua3.utility.text.TextUtil;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -103,16 +104,13 @@ public class SwingLogPane extends JPanel {
 
             // handle scrolling
             JScrollBar scroll = scrollPaneTable.getVerticalScrollBar();
-            int row;
             if (scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
                 // scroll to last row
-                row = rows;
-            } else {
-                // keep row with current entry visible => scroll up if first row is removed from buffer
-                int topRow = getTopRow();
-                row = topRow - removed;
+                boolean selectionEmpty = table.getSelectedRow()<0;
+                if (selectionEmpty) {
+                    scrollRowIntoView(rows);
+                }
             }
-            SwingUtilities.invokeLater(() -> scrollRowIntoView(row));
         }
     }
     
@@ -249,6 +247,10 @@ public class SwingLogPane extends JPanel {
                 details.setCaretPosition(0);
             });
         });
+
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        table.getActionMap().put("escape", SwingUtil.createAction("escape", this::handleEscapeKey));
+        table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "escape");
         
         // prepare the ScrollPanes
         scrollPaneTable = new JScrollPane(table);
@@ -258,6 +260,19 @@ public class SwingLogPane extends JPanel {
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);
 
         add(splitPane, BorderLayout.CENTER);
+    }
+
+    private void handleEscapeKey() {
+        ListSelectionModel selectionModel = table.getSelectionModel();
+        int rows = model.getRowCount();
+        if (selectionModel.isSelectionEmpty()&&rows>0) {
+            // select last row
+            selectionModel.setSelectionInterval(rows-1, rows-1);
+        } else {
+            // clear selection and scroll to bottom
+            selectionModel.clearSelection();
+            scrollRowIntoView(rows);
+        }
     }
 
     private int getTopRow() {
