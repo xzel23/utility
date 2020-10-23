@@ -325,4 +325,8 @@ public class SwingLogPane extends JPanel {
     public void setDividerLocation(int location) {
         splitPane.setDividerLocation(location);
     }
+    
+    public void clearBuffer() {
+        buffer.clear();
+    }
 }
