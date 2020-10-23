@@ -5,15 +5,12 @@
 
 package com.dua3.utility.lang;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import com.sun.tools.javac.util.List;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RingBufferTest {
 
@@ -137,7 +134,7 @@ public class RingBufferTest {
         buffer.clear();
 
         // test with a partially filled buffer
-        List.of(1,2,3,4,5).forEach(buffer::add);
+        buffer.addAll(List.of(1, 2, 3, 4, 5));
         assertEquals(Collections.emptyList(), buffer.subList(0,0));
         assertEquals(Collections.emptyList(), buffer.subList(4,4));
         assertEquals(List.of(1,2,3,4,5), buffer.subList(0,5));
@@ -146,7 +143,7 @@ public class RingBufferTest {
         assertEquals(List.of(2,3,4), buffer.subList(1,4));
 
         // test with a fully filled buffer
-        List.of(6,7,8,9,10).forEach(buffer::add);
+        buffer.addAll(List.of(6, 7, 8, 9, 10));
         assertEquals(Collections.emptyList(), buffer.subList(0,0));
         assertEquals(Collections.emptyList(), buffer.subList(9,9));
         assertEquals(List.of(1,2,3,4,5), buffer.subList(0,5));
@@ -155,7 +152,7 @@ public class RingBufferTest {
         assertEquals(List.of(2,3,4), buffer.subList(1,4));
 
         // test after elements are discarded (contiguous sublist)
-        List.of(11,12,13,14,15).forEach(buffer::add);
+        buffer.addAll(List.of(11, 12, 13, 14, 15));
         assertEquals(Collections.emptyList(), buffer.subList(0,0));
         assertEquals(Collections.emptyList(), buffer.subList(9,9));
         assertEquals(List.of(6,7,8,9,10), buffer.subList(0,5));
@@ -167,5 +164,15 @@ public class RingBufferTest {
         // test after elements are discarded (non-contiguous sublist)
         assertEquals(List.of(9,10,11,12), buffer.subList(3,7));
         assertEquals(List.of(15), buffer.subList(9,10));
+    }
+    
+    @Test
+    void testAddAll() {
+        buffer.clear();
+        assertTrue(buffer.isEmpty());
+        buffer.addAll(List.of(1,2,3,4,5));
+        assertArrayEquals(List.of(1,2,3,4,5).toArray(), buffer.toArray());
+        buffer.addAll(List.of(6,7,8,9,10,11,12,13,14,15));
+        assertArrayEquals(List.of(6,7,8,9,10,11,12,13,14,15).toArray(), buffer.toArray());
     }
 }

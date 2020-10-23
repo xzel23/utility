@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class TestSwingLogPane extends JFrame {
 
     private static final Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL."+TestSwingLogPane.class.getName());
-    private static final org.slf4j.Logger LGB_LOGGER = LoggerFactory.getLogger("SLF4J."+TestSwingLogPane.class.getName());
+    private static final ch.qos.logback.classic.Logger LGB_LOGGER = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("SLF4J." + TestSwingLogPane.class.getName());
 
     public static final int SLEEP_MILLIS = 100;
     private volatile boolean done = false;
@@ -20,6 +20,9 @@ public class TestSwingLogPane extends JFrame {
     public static void main(String[] args) {
         JUL_LOGGER.setLevel(Level.ALL);
         JUL_LOGGER.info("starting up");
+        
+        LGB_LOGGER.setLevel(ch.qos.logback.classic.Level.ALL);
+        
         SwingUtilities.invokeLater(() -> {
             SwingUtil.setNativeLookAndFeel();
             TestSwingLogPane instance = new TestSwingLogPane();

@@ -5,9 +5,7 @@
 
 package com.dua3.utility.lang;
 
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * A ring buffer implementation.
@@ -19,10 +17,10 @@ import java.util.List;
  * the collection.
  * Adding is O(1).
  *
- * @param <T>
+ * @param <E>
  *        the element type
  */
-public class RingBuffer<T> {
+public class RingBuffer<E> implements Collection<E> {
 
     private Object[] data;
     private int entries;
@@ -43,15 +41,45 @@ public class RingBuffer<T> {
     /**
      * Add item to end of collection.
      *
-     * @param items
-     *             the items to add
+     * @param item
+     *             the item to add
      * @return
-     *             the number of <em>added</em> rows 
+     *             true 
      */
-    public int add(T... items) {
-        int oldSize = size();
+    public boolean add(E item) {
+        if (entries < capacity()) {
+            data[index(entries++)] = item;
+        } else {
+            start = (start + 1) % capacity();
+            data[index(entries - 1)] = item;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        throw new UnsupportedOperationException("remove() is not supported");
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return Arrays.asList(toArray()).containsAll(c);
+    }
+
+    /**
+     * Add item to end of collection.
+     *
+     * @param items
+     *             collection containing the items to add
+     * @return
+     *             true, if the buffer changed as a result of this operation
+     */
+    public boolean addAll(Collection<? extends E> items) {
+        if (items.isEmpty()) {
+            return false;
+        }
         
-        for (T item: items) {
+        for (E item: items) {
             if (entries<capacity()) {
                 data[index(entries++)] = item;
             } else {
@@ -60,7 +88,17 @@ public class RingBuffer<T> {
             }
         }
         
-        return size()-oldSize;
+        return true;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        throw new UnsupportedOperationException("removeAll() is not supported");
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        throw new UnsupportedOperationException("retainAll() is not supported");
     }
 
     /**
@@ -87,9 +125,9 @@ public class RingBuffer<T> {
      * @return   the i-th element
      */
     @SuppressWarnings("unchecked")
-    public T get(int i) {
+    public E get(int i) {
         checkIndex(i);
-        return (T) data[index(i)];
+        return (E) data[index(i)];
     }
 
     /**
@@ -99,6 +137,71 @@ public class RingBuffer<T> {
      */
     public boolean isEmpty() {
         return entries == 0;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        for (E item: this) {
+            if (Objects.equals(item, o)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        final int entries_ = entries;
+        final int start_ = start;
+        
+        return new Iterator<E>() {
+            int idx=0;
+
+            private void checkValid() {
+                LangUtil.check(start_==start && entries_==entries, ConcurrentModificationException::new);    
+            }
+            
+            @Override
+            public boolean hasNext() {
+                checkValid();
+                return idx<entries_;
+            }
+
+            @Override
+            public E next() {
+                checkValid();
+                return get(idx++);
+            }
+        };
+    }
+
+    @Override
+    public Object[] toArray() {
+        Object[] arr = new Object[entries];
+        int n1 = Math.min(entries, data.length-start);
+        int n2 = entries-n1;
+        System.arraycopy(data, start, arr, 0, n1);
+        System.arraycopy(data, 0, arr, n1, n2);
+        return arr;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T[] toArray(T[] a) {
+        if (a.length < entries) {
+            a = (T[])java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
+        }
+
+        // copy contents to array
+        int n1 = Math.min(entries, data.length-start);
+        int n2 = entries-n1;
+        System.arraycopy(data, start, a, 0, n1);
+        System.arraycopy(data, 0, a, n1, n2);
+
+        if (a.length > entries)
+            a[entries] = null;
+        
+        return a;
     }
 
     /**
@@ -167,7 +270,7 @@ public class RingBuffer<T> {
      *         ({@code fromIndex < 0 || toIndex > size ||
      *         fromIndex > toIndex})
      */
-    public List<T> subList(int fromIndex, int toIndex) {
+    public List<E> subList(int fromIndex, int toIndex) {
         int s1 = size();
         LangUtil.checkIndex(fromIndex, s1);
         LangUtil.check(toIndex<=s1, "toIndex>size(): %d", toIndex);
@@ -175,9 +278,9 @@ public class RingBuffer<T> {
         final int s2 = toIndex-fromIndex;
         LangUtil.check(s2>=0, "toIndex<fromIndex: fromIndex=%d, toIndex=%d", fromIndex, toIndex);
 
-        return new AbstractList<T>() {
+        return new AbstractList<E>() {
             @Override
-            public T get(int index) {
+            public E get(int index) {
                 LangUtil.checkIndex(index, s2);
                 return RingBuffer.this.get(index+fromIndex);
             }

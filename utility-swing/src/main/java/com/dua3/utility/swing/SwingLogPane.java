@@ -8,7 +8,7 @@ import com.dua3.utility.text.TextUtil;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -77,8 +77,8 @@ public class SwingLogPane extends JPanel {
 
     private class BufferListener implements LogBuffer.LogBufferListener {
         @Override
-        public void entries(LogEntry[] entries, int removed) {
-            onAddEntries(entries, removed);
+        public void entries(Collection<LogEntry> entries, int replaced) {
+            onAddEntries(entries, replaced);
         }
 
         @Override
@@ -92,14 +92,14 @@ public class SwingLogPane extends JPanel {
         }
     }
     
-    private void onAddEntries(LogEntry[] entries, int removed) {
+    private void onAddEntries(Collection<LogEntry> entries, int removed) {
         synchronized (model) {
             // inform the model
             int rows = model.getRowCount();
             if (removed!=0) {
                 model.fireTableRowsDeleted(0,removed-1);
             }
-            model.fireTableRowsInserted(rows - entries.length, rows-1);
+            model.fireTableRowsInserted(rows - entries.size(), rows-1);
 
             // handle scrolling
             JScrollBar scroll = scrollPaneTable.getVerticalScrollBar();
@@ -223,7 +223,7 @@ public class SwingLogPane extends JPanel {
         }
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         
-        //
+        // update detail pane when entry is selected
         table.getSelectionModel().addListSelectionListener(evt -> {
             ListSelectionModel lsm = (ListSelectionModel)evt.getSource();
             int firstIndex = evt.getFirstIndex();
@@ -233,14 +233,13 @@ public class SwingLogPane extends JPanel {
             if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
                 text = "";
             } else {
-                List<LogEntry> selection;
-                synchronized (buffer) {
-                    selection = new ArrayList<>(buffer.subList(firstIndex, lastIndex+1));
-                }
                 StringBuilder sb = new StringBuilder(1024);
-                for (int idx=firstIndex; idx<=lastIndex; idx++) {
-                    if (lsm.isSelectedIndex(idx)) {
-                        sb.append(selection.get(idx-firstIndex)).append("\n");
+                synchronized (buffer) {
+                    List<LogEntry> selection = buffer.subList(firstIndex, lastIndex + 1);
+                    for (int idx = firstIndex; idx <= lastIndex; idx++) {
+                        if (lsm.isSelectedIndex(idx)) {
+                            sb.append(selection.get(idx - firstIndex)).append("\n");
+                        }
                     }
                 }
                 text = sb.toString();

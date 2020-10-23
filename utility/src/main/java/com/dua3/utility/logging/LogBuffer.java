@@ -4,14 +4,17 @@ import com.dua3.utility.lang.RingBuffer;
 
 import java.util.*;
 
-public class LogBuffer extends RingBuffer<LogEntry> implements LogListener {
+public class LogBuffer implements LogListener {
 
     public static final int DEFAULT_CAPACITY = 10000;
 
-    private static final Object LOCK = new Object();
-    
+    private final RingBuffer<LogEntry> buffer;
+
     public interface LogBufferListener {
-        void entries(LogEntry[] entries, int removed);
+        default void entry(LogEntry entry, boolean replaced) {
+            entries(Collections.singleton(entry), replaced ? 1 : 0);    
+        }
+        void entries(Collection<LogEntry> entries, int replaced);
         void clear();
         void capacity(int n);
     }
@@ -31,7 +34,7 @@ public class LogBuffer extends RingBuffer<LogEntry> implements LogListener {
      * @param capacity the initial capacity
      */
     public LogBuffer(int capacity) {
-        super(capacity);
+        buffer = new RingBuffer<>(capacity);
     }
 
     /**
@@ -49,43 +52,39 @@ public class LogBuffer extends RingBuffer<LogEntry> implements LogListener {
     public void removeLogBufferListener(LogBufferListener listener) {
         listeners.remove(listener);
     }
-    
-    @Override
-    public int add(LogEntry... entries) {
-        int added;
-        synchronized(LOCK) {
-            added = super.add(entries);
+
+    public void entry(LogEntry entry) {
+        boolean replaced;
+        synchronized(buffer) {
+            int oldSize = buffer.size();
+            buffer.add(entry);
+            replaced = buffer.size()==oldSize;
         }
-        int removed = entries.length-added;
-        listeners.forEach(listener -> listener.entries(entries, removed));
-        return added;
+        listeners.forEach(listener -> listener.entry(entry, replaced));
     }
 
-    @Override
-    public void clear() {
-        synchronized(LOCK) {
-            super.clear();
+   public void clear() {
+        synchronized(buffer) {
+            buffer.clear();
         }
         listeners.forEach(LogBufferListener::clear);
     }
 
-    @Override
-    public void setCapacity(int n) {
-        synchronized(LOCK) {
-            super.setCapacity(n);
+    public List<LogEntry> entries() {
+        synchronized(buffer) {
+            return Arrays.asList(buffer.toArray(new LogEntry[0]));
         }
-        listeners.forEach(listener -> listener.capacity(n));
     }
 
-    @Override
-    public void entry(LogEntry entry) {
-        add(entry);
+    public LogEntry get(int i) {
+        return buffer.get(i);
     }
-
-    @Override
+    
+    public int size() {
+        return buffer.size();
+    }
+    
     public List<LogEntry> subList(int fromIndex, int toIndex) {
-        synchronized(LOCK) {
-            return new ArrayList<>(super.subList(fromIndex, toIndex));
-        }
+        return buffer.subList(fromIndex, toIndex);
     }
 }
