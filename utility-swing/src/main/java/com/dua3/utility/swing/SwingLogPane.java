@@ -104,7 +104,7 @@ public class SwingLogPane extends JPanel {
 
             // handle scrolling
             JScrollBar scroll = scrollPaneTable.getVerticalScrollBar();
-            if (scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
+            if (table.getSelectedRowCount()==0 && scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
                 // scroll to last row
                 boolean selectionEmpty = table.getSelectedRow()<0;
                 if (selectionEmpty) {
