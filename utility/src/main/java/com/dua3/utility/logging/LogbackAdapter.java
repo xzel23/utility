@@ -68,7 +68,7 @@ public final class LogbackAdapter {
 
         @Override
         public String message() {
-            return evt.getMessage();
+            return evt.getFormattedMessage();
         }
 
         @Override

@@ -52,9 +52,10 @@ public class TestSwingLogPane extends JFrame {
                     Thread.currentThread().interrupt();
                 }
 
-                String msg = String.format("Message %d.", n.incrementAndGet());
-
+                int nr = n.incrementAndGet();
+                
                 if (random.nextBoolean()) {
+                    String msg = String.format("Message %d.", nr);
                     Level level = levels[random.nextInt(levels.length)];
                     if (level==Level.SEVERE) {
                         JUL_LOGGER.log(level, msg, generateThrowable());
@@ -62,21 +63,23 @@ public class TestSwingLogPane extends JFrame {
                         JUL_LOGGER.log(level, msg);
                     }
                 } else {
+                    String msg = "Message {}.";
+                    Object[] args = { nr };
                     switch (random.nextInt(5)) {
                         case 0:
-                            LGB_LOGGER.trace(msg);
+                            LGB_LOGGER.trace(msg, args);
                             break;
                         case 1:
-                            LGB_LOGGER.debug(msg);
+                            LGB_LOGGER.debug(msg, args);
                             break;
                         case 2:
-                            LGB_LOGGER.info(msg);
+                            LGB_LOGGER.info(msg, args);
                             break;
                         case 3:
-                            LGB_LOGGER.warn(msg);
+                            LGB_LOGGER.warn(msg, args);
                             break;
                         case 4:
-                            LGB_LOGGER.error(msg, generateThrowable());
+                            LGB_LOGGER.error("Ouch! this is message "+nr+".", generateThrowable());
                             break;
                         default:
                             throw new IllegalStateException();
