@@ -26,6 +26,7 @@ public class SwingLogPane extends JPanel {
     private final Function<LogEntry, Color> colorize;
     private final BufferListener bufferListener;
     private final JScrollPane scrollPaneDetails;
+    private final JSplitPane splitPane;
 
     private static Color defaultColorize(LogEntry entry) {
         switch (entry.category()) {
@@ -125,7 +126,6 @@ public class SwingLogPane extends JPanel {
     
     private class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
         private final LogEntry.Field f;
-        private boolean isSelected = false;
 
         private LogEntryFieldCellRenderer(LogEntry.Field f) {
             this.f = f;
@@ -256,7 +256,9 @@ public class SwingLogPane extends JPanel {
         scrollPaneDetails = new JScrollPane(details);
         
         // add
-        add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails), BorderLayout.CENTER);
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);
+
+        add(splitPane, BorderLayout.CENTER);
     }
 
     private int getTopRow() {
@@ -292,5 +294,21 @@ public class SwingLogPane extends JPanel {
     public void setVisible(boolean visible) {
         setListeningState(visible);
         super.setVisible(visible);
+    }
+
+    /**
+     * Set the diivider location. Analog to {@link JSplitPane#setDividerLocation(double)}.
+     * @param propertionalLocation the proportional location 
+     */
+    public void setDividerLocation(double propertionalLocation) {
+        splitPane.setDividerLocation(propertionalLocation);
+    }
+
+    /**
+     * Set the diivider location. Analog to {@link JSplitPane#setDividerLocation(int)}.
+     * @param location the location 
+     */
+    public void setDividerLocation(int location) {
+        splitPane.setDividerLocation(location);
     }
 }
