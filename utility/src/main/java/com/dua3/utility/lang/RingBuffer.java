@@ -7,7 +7,6 @@ package com.dua3.utility.lang;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
