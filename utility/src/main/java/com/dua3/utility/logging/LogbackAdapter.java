@@ -73,7 +73,7 @@ public final class LogbackAdapter {
 
         @Override
         public Optional<IThrowable> cause() {
-            return Optional.ofNullable(evt.getThrowableProxy()).map(tp -> new SLF4JThrowable(tp));
+            return Optional.ofNullable(evt.getThrowableProxy()).map(SLF4JThrowable::new);
         }
 
         @Override
@@ -99,7 +99,7 @@ public final class LogbackAdapter {
             public List<IStackTraceElement> getStackTrace() {
                 if (ist==null) {
                     StackTraceElementProxy[] st = tp.getStackTraceElementProxyArray();
-                    List<IStackTraceElement> ist_ = new ArrayList(st.length);
+                    List<IStackTraceElement> ist_ = new ArrayList<>(st.length);
                     for (StackTraceElementProxy ste: st) {
                         ist_.add(new SLF4JStackTraceElement(ste));
                     }

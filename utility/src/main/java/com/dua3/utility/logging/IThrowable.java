@@ -28,7 +28,7 @@ public interface IThrowable {
         public List<IStackTraceElement> getStackTrace() {
             if (ist==null) {
                 StackTraceElement[] st = t.getStackTrace();
-                List<IStackTraceElement> ist_ = new ArrayList(st.length);
+                List<IStackTraceElement> ist_ = new ArrayList<>(st.length);
                 for (StackTraceElement ste: st) {
                     ist_.add(new JavaStackTraceElement(ste));
                 }
