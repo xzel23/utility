@@ -224,19 +224,18 @@ public class SwingLogPane extends JPanel {
         // update detail pane when entry is selected
         table.getSelectionModel().addListSelectionListener(evt -> {
             ListSelectionModel lsm = (ListSelectionModel)evt.getSource();
-            int firstIndex = evt.getFirstIndex();
-            int lastIndex = evt.getLastIndex();
-            
             final String text;
             if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
                 text = "";
             } else {
                 StringBuilder sb = new StringBuilder(1024);
                 synchronized (buffer) {
-                    List<LogEntry> selection = buffer.subList(firstIndex, lastIndex + 1);
-                    for (int idx = firstIndex; idx <= lastIndex; idx++) {
+                    int first = lsm.getMinSelectionIndex();
+                    int last = lsm.getMaxSelectionIndex();
+                    List<LogEntry> selection = buffer.subList(first, last + 1);
+                    for (int idx = first; idx <= last; idx++) {
                         if (lsm.isSelectedIndex(idx)) {
-                            sb.append(selection.get(idx - firstIndex)).append("\n");
+                            sb.append(selection.get(idx - first)).append("\n");
                         }
                     }
                 }
