@@ -62,6 +62,12 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 6.7 (not released)
+
+ - classes SwingLogPane and LogBuffer
+ - RingBuffer implements the Collection interface 
+ - RingBuffer.subList()
+ 
 ### Version 6.6.3.1
 
  - release to solve problems with build - no code changes
