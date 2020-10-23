@@ -85,6 +85,8 @@ public class LogBuffer implements LogListener {
     }
     
     public List<LogEntry> subList(int fromIndex, int toIndex) {
-        return buffer.subList(fromIndex, toIndex);
+        synchronized(buffer) {
+            return new ArrayList<>(buffer.subList(fromIndex, toIndex));
+        }
     }
 }
