@@ -9,9 +9,14 @@ import org.slf4j.Logger;
 
 import java.util.*;
 
+/**
+ * A utility class to connect Logback to {@link LogBuffer}.
+ * 
+ * @see <a>http://logback.qos.ch</a>
+ */
 public final class LogbackAdapter {
     
-    public static class LogbackLogAppender extends AppenderBase<ILoggingEvent> {
+    private static class LogbackLogAppender extends AppenderBase<ILoggingEvent> {
         private final LogListener listener;
         
         @Override
@@ -25,7 +30,7 @@ public final class LogbackAdapter {
         }
     }
 
-    public static class LogbackLogEntry extends AbstractLogEntry<ILoggingEvent> {
+    private static class LogbackLogEntry extends AbstractLogEntry<ILoggingEvent> {
         private final ILoggingEvent evt;
 
         LogbackLogEntry(ILoggingEvent evt) {

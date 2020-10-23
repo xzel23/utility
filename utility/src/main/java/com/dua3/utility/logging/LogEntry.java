@@ -3,7 +3,13 @@ package com.dua3.utility.logging;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * A wrapper interface for log messages of different frameworks.
+ */
 public interface LogEntry {
+    /**
+     * The fields provided by this interface.
+     */
     enum Field {
         CATEGORY,
         MILLIS,

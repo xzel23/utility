@@ -2,14 +2,31 @@ package com.dua3.utility.logging;
 
 import java.util.*;
 
+/**
+ * A wrapper interface to abstract handling of {@link Throwable} in different logging frameworks. 
+ */
 public interface IThrowable {
+    /**
+     * Get the cause.
+     * @return cause
+     */
     IThrowable getCause();
 
+    /**
+     * Get stack trace.
+     * @return list of {@link IStackTraceElement}
+     */
     List<IStackTraceElement> getStackTrace();
 
+    /**
+     * A wrapper interface to abstract handling of {@link StackTraceElement} in different logging frameworks. 
+     */
     interface IStackTraceElement {
     }
 
+    /**
+     * An implementation of {@link IThrowable} that encapsulates an instance of {@link Throwable}.
+     */
     class JavaThrowable implements IThrowable {
         private final Throwable t;
         private List<IStackTraceElement> ist = null;
@@ -43,6 +60,9 @@ public interface IThrowable {
         }
     }
 
+    /**
+     * An implementation of {@link IStackTraceElement} that encapsulates an instance of {@link StackTraceElement}.
+     */
     class JavaStackTraceElement implements IStackTraceElement {
         private final StackTraceElement ste;
         
