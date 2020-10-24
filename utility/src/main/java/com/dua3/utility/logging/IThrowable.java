@@ -1,5 +1,6 @@
 package com.dua3.utility.logging;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -24,6 +25,28 @@ public interface IThrowable {
     interface IStackTraceElement {
     }
 
+    default void appendTo(Appendable app) throws IOException {
+        app.append(this.toString());
+        for (IStackTraceElement ste: getStackTrace()) {
+            app.append("\nat ").append(ste.toString());
+        }
+        IThrowable cause = getCause();
+        if (cause!=null) {
+            app.append("\ncaused by ");
+            cause.appendTo(app);
+        }
+    }
+    
+    default String format() {
+        try {
+            StringBuilder sb = new StringBuilder(80);
+            appendTo(sb);
+            return sb.toString();
+        } catch (IOException e) {
+            return toString();
+        }
+    }
+    
     /**
      * An implementation of {@link IThrowable} that encapsulates an instance of {@link Throwable}.
      */
@@ -58,6 +81,7 @@ public interface IThrowable {
         public String toString() {
             return t.toString();
         }
+        
     }
 
     /**

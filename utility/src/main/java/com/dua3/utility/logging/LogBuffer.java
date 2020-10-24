@@ -16,7 +16,7 @@ public class LogBuffer implements LogListener {
             LogEntry::category,
             e -> "\n",
             LogEntry::message,
-            e -> (e.cause().map(cause -> "\n"+cause.toString()).orElse("")),
+            e -> (e.cause().map(cause -> "\n"+cause.format()).orElse("")),
             e -> "\n"
     );
 
@@ -116,7 +116,8 @@ public class LogBuffer implements LogListener {
         }
     }
 
-    public void appendTo(Appendable app, Function<LogEntry,Object>... parts) throws IOException {
+    @SafeVarargs
+    public final void appendTo(Appendable app, Function<LogEntry, Object>... parts) throws IOException {
         appendTo(app, Arrays.asList(parts));
     }
     
