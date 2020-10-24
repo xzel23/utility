@@ -1,6 +1,7 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.text.TextUtil;
@@ -8,7 +9,10 @@ import com.dua3.utility.text.TextUtil;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -255,9 +259,15 @@ public class SwingLogPane extends JPanel {
         scrollPaneTable = new JScrollPane(table);
         scrollPaneDetails = new JScrollPane(details);
         
-        // add
+        // create SplitPane for table and detail pane
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);
 
+        // create toolbar
+        JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
+        toolBar.add(SwingUtil.createAction("Clear", this::clearBuffer));
+        toolBar.add(SwingUtil.createAction("Copy", this::copyBuffer));
+        
+        add(toolBar, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
     }
 
@@ -324,8 +334,24 @@ public class SwingLogPane extends JPanel {
     public void setDividerLocation(int location) {
         splitPane.setDividerLocation(location);
     }
-    
+
+    /**
+     * Clear the log buffer.
+     */
     public void clearBuffer() {
         buffer.clear();
+    }
+
+    /**
+     * Copy contents of log buffer to clipboard.
+     */
+    public void copyBuffer() {
+        try {
+            StringBuilder sb = new StringBuilder(16*1024);
+            buffer.appendTo(sb);
+            SwingUtil.setClipboardText(sb.toString());
+        } catch (IOException e) {
+            /* nop */
+        }
     }
 }
