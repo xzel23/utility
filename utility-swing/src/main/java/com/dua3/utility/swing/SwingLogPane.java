@@ -2,6 +2,7 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.logging.Category;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.text.TextUtil;
@@ -32,6 +33,7 @@ public class SwingLogPane extends JPanel {
     private final BufferListener bufferListener;
     private final JScrollPane scrollPaneDetails;
     private final JSplitPane splitPane;
+    private TableRowSorter<AbstractTableModel> tableRowSorter;
 
     private static Color defaultColorize(LogEntry entry) {
         switch (entry.category()) {
@@ -236,10 +238,11 @@ public class SwingLogPane extends JPanel {
                 synchronized (buffer) {
                     int first = lsm.getMinSelectionIndex();
                     int last = lsm.getMaxSelectionIndex();
-                    List<LogEntry> selection = buffer.subList(first, last + 1);
                     for (int idx = first; idx <= last; idx++) {
                         if (lsm.isSelectedIndex(idx)) {
-                            sb.append(selection.get(idx - first)).append("\n");
+                            int idxModel = tableRowSorter.convertRowIndexToModel(idx);
+                            LogEntry entry = (LogEntry) model.getValueAt(idxModel, 0);
+                            sb.append(entry).append("\n");
                         }
                     }
                 }
@@ -251,6 +254,9 @@ public class SwingLogPane extends JPanel {
             });
         });
 
+        tableRowSorter = new TableRowSorter<>(model);
+        table.setRowSorter(tableRowSorter);
+        
         KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         table.getActionMap().put("escape", SwingUtil.createAction("escape", this::handleEscapeKey));
         table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "escape");
@@ -264,11 +270,30 @@ public class SwingLogPane extends JPanel {
 
         // create toolbar
         JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
+
+        // add filtering based on level
+        toolBar.add(new JLabel("Min Level:"));
+        JComboBox<Category> cbCategory = new JComboBox<>(Category.values());
+        toolBar.add(cbCategory);
+        cbCategory.addItemListener(a -> setFilter((Category) a.getItem()));
+        cbCategory.setSelectedItem(Category.INFO);
+
+        toolBar.add(new JSeparator(JSeparator.VERTICAL));
         toolBar.add(SwingUtil.createAction("Clear", this::clearBuffer));
         toolBar.add(SwingUtil.createAction("Copy", this::copyBuffer));
         
         add(toolBar, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
+    }
+
+    private void setFilter(Category c) {
+        tableRowSorter.setRowFilter(new RowFilter<AbstractTableModel, Integer>() {
+            @Override
+            public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
+                LogEntry value = (LogEntry) entry.getValue(0);
+                return value == null || value.category().compareTo(c) <= 0;
+            }
+        });
     }
 
     private void handleEscapeKey() {
