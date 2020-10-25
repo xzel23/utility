@@ -1,7 +1,6 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.logging.Category;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
@@ -10,12 +9,9 @@ import com.dua3.utility.text.TextUtil;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 

@@ -34,6 +34,7 @@ public class TestSwingLogPane extends JFrame {
     public TestSwingLogPane() {
         LogBuffer buffer = new LogBuffer();
         JULAdapter.addListener(JUL_LOGGER, buffer);
+        ((ch.qos.logback.classic.Logger)(LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME))).detachAndStopAllAppenders();
         LogbackAdapter.addListener(LGB_LOGGER, buffer);
         SystemAdapter.addSystemListener(buffer);
         
