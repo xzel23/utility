@@ -35,6 +35,7 @@ public class TestSwingLogPane extends JFrame {
         LogBuffer buffer = new LogBuffer();
         JULAdapter.addListener(JUL_LOGGER, buffer);
         LogbackAdapter.addListener(LGB_LOGGER, buffer);
+        SystemAdapter.addSystemListener(buffer);
         
         SwingLogPane logPane = new SwingLogPane(buffer);
         
@@ -87,6 +88,13 @@ public class TestSwingLogPane extends JFrame {
                         default:
                             throw new IllegalStateException();
                     }
+                }
+
+                int current = n.get();
+                if (current%100==0) {
+                    System.err.format("That was %d messages%n", current);
+                } else if (current%10==0) {
+                    System.out.format("That was %d messages%n", current);
                 }
             }
         });
