@@ -3,6 +3,8 @@ package com.dua3.utility.logging;
 import com.dua3.utility.io.LineOutputStream;
 
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -14,18 +16,25 @@ public final class SystemAdapter {
     }
 
     public static void addSystemOutListener(LogListener listener) {
-        PrintStream logOut = new PrintStream(
-                new LineOutputStream(txt -> listener.entry(new SystemOutLogEntry(txt)))
-        );
-        System.setOut(logOut);
+        try {
+            LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemOutLogEntry(txt)));
+            PrintStream logOut = new PrintStream(lineOut,true, StandardCharsets.UTF_8.name());
+            System.setOut(logOut);
+        } catch (UnsupportedEncodingException e) {
+            // this should not happen since we use UTF-8 which is one of the standard encodings
+            throw new IllegalStateException(e);
+        }
     }
 
     public static void addSystemErrListener(LogListener listener) {
-        Consumer<String> consumer = txt -> listener.entry(new SystemErrLogEntry(txt));
-        PrintStream logOut = new PrintStream(
-                new LineOutputStream(consumer)
-        );
-        System.setErr(logOut);
+        try {
+            LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemErrLogEntry(txt)));
+            PrintStream logOut = new PrintStream(lineOut,true, StandardCharsets.UTF_8.name());
+            System.setErr(logOut);
+        } catch (UnsupportedEncodingException e) {
+            // this should not happen since we use UTF-8 which is one of the standard encodings
+            throw new IllegalStateException(e);
+        }
     }
 
     static abstract class SystemLogEntry extends AbstractLogEntry<String> {

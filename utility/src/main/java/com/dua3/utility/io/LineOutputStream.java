@@ -1,11 +1,8 @@
 package com.dua3.utility.io;
 
-import jdk.internal.util.ArraysSupport;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -28,7 +25,7 @@ public class LineOutputStream extends OutputStream {
     }
     
     private synchronized  void flushToLog() {
-        String text = new String(buf, 0, count);
+        String text = new String(buf, 0, count, StandardCharsets.UTF_8);
         processor.accept(text);
 
         count = 0;
