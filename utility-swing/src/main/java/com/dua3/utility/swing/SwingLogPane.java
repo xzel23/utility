@@ -107,14 +107,16 @@ public class SwingLogPane extends JPanel {
             model.fireTableRowsInserted(rows - entries.size(), rows-1);
 
             // handle scrolling
-            JScrollBar scroll = scrollPaneTable.getVerticalScrollBar();
-            if (table.getSelectedRowCount()==0 && scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
-                // scroll to last row
-                boolean selectionEmpty = table.getSelectedRow()<0;
-                if (selectionEmpty) {
-                    scrollRowIntoView(rows);
+            SwingUtilities.invokeLater( () -> {
+                JScrollBar scroll = scrollPaneTable.getVerticalScrollBar();
+                if (table.getSelectedRowCount()==0 && scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
+                    // scroll to last row
+                    boolean selectionEmpty = table.getSelectedRow()<0;
+                    if (selectionEmpty) {
+                        scrollRowIntoView(rows);
+                    }
                 }
-            }
+            });
         }
     }
     
