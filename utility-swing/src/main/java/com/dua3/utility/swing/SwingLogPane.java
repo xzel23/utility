@@ -11,7 +11,9 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -168,18 +170,20 @@ public class SwingLogPane extends JPanel {
     private static class Column {
         final LogEntry.Field field;
         final int preferredCharWidth;
+        final boolean hideable;
         
-        Column(LogEntry.Field field, int preferredCharWidth) {
+        Column(LogEntry.Field field, int preferredCharWidth, boolean hideable) {
             this.field = field;
             this.preferredCharWidth = preferredCharWidth;
+            this.hideable = hideable;
         }
     }
     
     private static final Column[] COLUMNS = {
-            new Column(LogEntry.Field.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length()),
-            new Column(LogEntry.Field.LEVEL, -"WARNING".length()),
-            new Column(LogEntry.Field.LOGGER, "com.example.class".length()),
-            new Column(LogEntry.Field.MESSAGE, 80),
+            new Column(LogEntry.Field.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
+            new Column(LogEntry.Field.LEVEL, -"WARNING".length(), true),
+            new Column(LogEntry.Field.LOGGER, "com.example.class".length(), true),
+            new Column(LogEntry.Field.MESSAGE, 80, false)
     };
     
     public SwingLogPane(LogBuffer buffer) {
@@ -275,11 +279,44 @@ public class SwingLogPane extends JPanel {
         cbCategory.setSelectedItem(Category.INFO);
 
         toolBar.add(new JSeparator(JSeparator.VERTICAL));
+        JCheckBox cbTextOnly = new JCheckBox(SwingUtil.createAction("Show text only", evt -> setTextOnly(((JCheckBox) (evt.getSource())).isSelected())));
+        cbTextOnly.setSelected(true);
+        toolBar.add(cbTextOnly);
+        
+        toolBar.add(new JSeparator(JSeparator.VERTICAL));
         toolBar.add(SwingUtil.createAction("Clear", this::clearBuffer));
         toolBar.add(SwingUtil.createAction("Copy", this::copyBuffer));
         
         add(toolBar, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
+        
+        setTextOnly(cbTextOnly.isSelected());
+    }
+
+    private List<TableColumn> tableColumns = new ArrayList<>();
+    private void setTextOnly(boolean textOnly) {
+        synchronized (model) {
+            TableColumnModel columnModel = table.getColumnModel();
+    
+            // keep list of all columns
+            if (tableColumns.isEmpty()) {
+                for (int i=0; i<columnModel.getColumnCount(); i++) {
+                    tableColumns.add(columnModel.getColumn(i));
+                }         
+            }
+
+            // remove all columns crom model
+            while (columnModel.getColumnCount()>0) {
+                columnModel.removeColumn(columnModel.getColumn(0));
+            }
+
+            // add visible columns again
+            for (int i=0; i<table.getModel().getColumnCount(); i++) {
+                if (!textOnly || !COLUMNS[i].hideable) {
+                    table.getColumnModel().addColumn(tableColumns.get(i));
+                }
+            }
+        }
     }
 
     private void setFilter(Category c) {
