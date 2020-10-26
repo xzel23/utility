@@ -8,6 +8,7 @@ module dua3_utility {
     exports com.dua3.utility.data;
     exports com.dua3.utility.io;
     exports com.dua3.utility.lang;
+    exports com.dua3.utility.logging;
     exports com.dua3.utility.math;
     exports com.dua3.utility.options;
     exports com.dua3.utility.text;
