@@ -32,6 +32,7 @@ public class SwingLogPane extends JPanel {
     private final JScrollPane scrollPaneDetails;
     private final JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
+    private Function<LogEntry, String> format = LogEntry::format;
 
     private static Color defaultColorize(LogEntry entry) {
         switch (entry.category()) {
@@ -244,7 +245,7 @@ public class SwingLogPane extends JPanel {
                         if (lsm.isSelectedIndex(idx)) {
                             int idxModel = tableRowSorter.convertRowIndexToModel(idx);
                             LogEntry entry = (LogEntry) model.getValueAt(idxModel, 0);
-                            sb.append(entry).append("\n");
+                            sb.append(format.apply(entry)).append("\n");
                         }
                     }
                 }
@@ -379,6 +380,14 @@ public class SwingLogPane extends JPanel {
         super.setVisible(visible);
     }
 
+    /**
+     * Set the formatter used to convert log entries to text.
+     * @param format the formatting function
+     */
+    public void setLogFormatter(Function<LogEntry, String> format) {
+        this.format = Objects.requireNonNull(format);
+    }
+    
     /**
      * Set the diivider location. Analog to {@link JSplitPane#setDividerLocation(double)}.
      * @param propertionalLocation the proportional location 
