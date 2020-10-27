@@ -1,6 +1,9 @@
 package com.dua3.utility.logging;
 
+import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 /**
@@ -20,6 +23,32 @@ public interface LogEntry {
         CAUSE
     }
 
+    /**
+     * Get value of field by enum.
+     * @param f the field
+     * @return value of field
+     */
+    default Object get(Field f) {
+        switch (f) {
+            case CATEGORY:
+                return category();
+            case LEVEL:
+                return level();
+            case LOGGER:
+                return logger();
+            case MILLIS:
+                return millis();
+            case TIME:
+                return time();
+            case MESSAGE:
+                return message();
+            case CAUSE:
+                return cause();
+            default:
+                throw new IllegalArgumentException("no such field: " + f);
+        }
+    }
+    
     /**
      * Get the category of this entry. 
      * @return the category
@@ -55,19 +84,42 @@ public interface LogEntry {
      * @return the cause
      */
     Optional<IThrowable> cause();
-    
-    /**
-     * Get the date and time of this entry.
-     * @return the date and time of this entry
-     */
-    LocalDateTime time();
 
     /**
-     * Get specified field of this entry.
-     * 
-     * @param f the field
-     * @return the field's value
+     * Get the date and time of this log entry.
+     * @return date and time of the entry
      */
-    Object get(Field f);
-    
+    default LocalDateTime time() {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis()), ZoneId.systemDefault());
+    }
+
+    /**
+     * Format LogEntry to String.
+     * @param entry the log entry
+     * @return the string
+     */
+    static String format(LogEntry entry) {
+        try {
+            StringBuilder sb = new StringBuilder(80);
+
+            sb.append(entry.time())
+                    .append(" ")
+                    .append(entry.level())
+                    .append(" ")
+                    .append(entry.logger())
+                    .append("\n")
+                    .append(entry.message());
+
+            Optional<IThrowable> cause = entry.cause();
+            if (cause.isPresent()) {
+                sb.append("\ncaused by ");
+                cause.get().appendTo(sb);
+            }
+
+            return sb.toString();
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
 }
