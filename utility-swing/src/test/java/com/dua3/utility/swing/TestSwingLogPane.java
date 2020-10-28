@@ -14,7 +14,7 @@ public class TestSwingLogPane extends JFrame {
     private static final Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL."+TestSwingLogPane.class.getName());
     private static final ch.qos.logback.classic.Logger LGB_LOGGER = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("SLF4J." + TestSwingLogPane.class.getName());
 
-    public static final int SLEEP_MILLIS = 100;
+    public static final int SLEEP_MILLIS = 10;
     private volatile boolean done = false;
 
     public static void main(String[] args) {
