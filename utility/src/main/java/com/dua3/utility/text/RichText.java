@@ -91,7 +91,7 @@ public class RichText
      * @return true, if the text is empty.
      */
     public boolean isEmpty() {
-        return text.isEmpty();
+        return text.length()==0;
     }
 
     @Override
