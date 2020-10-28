@@ -103,7 +103,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public LogEntry getValueAt(int rowIndex, int columnIndex) {
+        public synchronized LogEntry getValueAt(int rowIndex, int columnIndex) {
             return data==null ? buffer.get(rowIndex) : data.get(rowIndex);
         }
 
