@@ -1,6 +1,7 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.logging.Category;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
@@ -13,8 +14,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -25,10 +26,9 @@ public class SwingLogPane extends JPanel {
     private final LogBuffer buffer;
     private final JTable table;
     private final JTextArea details;
-    private final AbstractTableModel model;
+    private final LogTableModel model;
     private final JScrollPane scrollPaneTable;
     private final Function<LogEntry, Color> colorize;
-    private final BufferListener bufferListener;
     private final JScrollPane scrollPaneDetails;
     private final JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
@@ -51,15 +51,52 @@ public class SwingLogPane extends JPanel {
         }
     }
 
-    private class LogTableModel extends AbstractTableModel {
-        private LogTableModel() {
-        }
+    private static class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
+        private final LogBuffer buffer;
 
+        private LogTableModel(LogBuffer buffer) {
+            this.buffer = Objects.requireNonNull(buffer);
+            buffer.addLogBufferListener(this);
+        }
+        
+        private List<LogEntry> data = null;
+        private int removed = 0;
+        private int added = 0;
+        
+        private boolean isLocked() {
+            return data!=null;
+        }
+        
+        public synchronized void lock() {
+            LangUtil.check(!isLocked(), "internal error: locked");
+
+            synchronized (buffer) {
+                data = new ArrayList<>(buffer.entries());
+                removed = 0;
+                added = 0;
+            }
+        }
+        
+        public synchronized void unlock() {
+            int sz = data.size();
+            data = null;
+            if (removed>0) {
+                fireTableRowsDeleted(0, removed);
+                sz-=removed;
+                removed=0;
+            }
+            if (added>0) {
+                fireTableRowsInserted(sz - added, sz - 1);
+                added=0;
+            }
+            
+        }
+        
         @Override
-        public int getRowCount() {
-            return buffer.size();
+        public synchronized int getRowCount() {
+            return data==null ? buffer.size() : data.size();
         }
-
+        
         @Override
         public int getColumnCount() {
             return COLUMNS.length;
@@ -67,7 +104,7 @@ public class SwingLogPane extends JPanel {
 
         @Override
         public LogEntry getValueAt(int rowIndex, int columnIndex) {
-            return buffer.get(rowIndex);
+            return data==null ? buffer.get(rowIndex) : data.get(rowIndex);
         }
 
         @Override
@@ -79,34 +116,61 @@ public class SwingLogPane extends JPanel {
         public Class<?> getColumnClass(int columnIndex) {
             return LogEntry.Field.class;
         }
+
+        @Override
+        public synchronized void entry(LogEntry entry, boolean replaced) {
+            if (isLocked()) {
+                if (replaced) {
+                    removed++;
+                }
+                added++;
+            } else {
+                synchronized (buffer) {
+                    if (replaced) {
+                        fireTableRowsDeleted(0, removed);
+                    }
+                    int sz = buffer.size();
+                    fireTableRowsInserted(sz-1, sz-1);
+                }
+            }
+        }
+
+        @Override
+        public synchronized void entries(Collection<LogEntry> entries, int replaced) {
+            if (isLocked()) {
+                if (replaced>0) {
+                    removed+=replaced;
+                }
+                added+=entries.size();
+            } else {
+                synchronized (buffer) {
+                    if (replaced > 0) {
+                        fireTableRowsDeleted(0, replaced);
+                    }
+                    int sz = buffer.size();
+                    fireTableRowsInserted(sz - entries.size(), sz - 1);
+                }
+            }
+        }
+
+        @Override
+        public synchronized void clear() {
+            if (isLocked()) {
+                removed=data.size();
+                added=0;
+            } else {
+                fireTableDataChanged();
+            }
+        }
+
+        @Override
+        public synchronized void capacity(int n) {
+            fireTableDataChanged();
+        }
     }
 
-    private class BufferListener implements LogBuffer.LogBufferListener {
-        @Override
-        public void entries(Collection<LogEntry> entries, int replaced) {
-            onAddEntries(entries, replaced);
-        }
-
-        @Override
-        public void clear() {
-            onClear();
-        }
-
-        @Override
-        public void capacity(int n) {
-            onSetCapacity(n);
-        }
-    }
-    
     private void onAddEntries(Collection<LogEntry> entries, int removed) {
         synchronized (model) {
-            // inform the model
-            int rows = model.getRowCount();
-            if (removed!=0) {
-                model.fireTableRowsDeleted(0,removed-1);
-            }
-            model.fireTableRowsInserted(rows - entries.size(), rows-1);
-
             // handle scrolling
             SwingUtilities.invokeLater( () -> {
                 JScrollBar scroll = scrollPaneTable.getVerticalScrollBar();
@@ -114,19 +178,11 @@ public class SwingLogPane extends JPanel {
                     // scroll to last row
                     boolean selectionEmpty = table.getSelectedRow()<0;
                     if (selectionEmpty) {
-                        scrollRowIntoView(rows);
+                        scrollRowIntoView(model.getRowCount());
                     }
                 }
             });
         }
-    }
-    
-    private void onClear() {
-        model.fireTableDataChanged();
-    }
-
-    private void onSetCapacity(int n) {
-        model.fireTableDataChanged();
     }
     
     private class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
@@ -198,11 +254,20 @@ public class SwingLogPane extends JPanel {
         
         this.buffer = Objects.requireNonNull(buffer);
         this.colorize = Objects.requireNonNull(colorize);
-        this.model = new LogTableModel();
-        this.bufferListener = new BufferListener();
+        this.model = new LogTableModel(buffer);
         
         // create the table
-        table = new JTable(model);
+        table = new JTable(model) {
+            @Override
+            public void paint(Graphics g) {
+                try {
+                    model.lock();
+                    super.paint(g);
+                } finally {
+                    model.unlock();
+                }
+            }
+        };
         
         // create the detail pane
         details = new JTextArea(5, 80);
@@ -251,6 +316,7 @@ public class SwingLogPane extends JPanel {
                 }
                 text = sb.toString();
             }
+            
             SwingUtilities.invokeLater(() -> {
                 details.setText(text);
                 details.setCaretPosition(0);
@@ -271,6 +337,20 @@ public class SwingLogPane extends JPanel {
         // create SplitPane for table and detail pane
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);
 
+        final JScrollBar tableScroller = scrollPaneTable.getVerticalScrollBar();
+        model.addTableModelListener(evt -> {
+            // handle scrolling
+            SwingUtilities.invokeLater( () -> {
+                if (table.getSelectedRowCount()==0 && tableScroller.getValue() >= tableScroller.getMaximum() - tableScroller.getVisibleAmount() - table.getRowHeight()) {
+                    // scroll to last row
+                    boolean selectionEmpty = table.getSelectedRow()<0;
+                    if (selectionEmpty) {
+                        scrollRowIntoView(model.getRowCount());
+                    }
+                }
+            });
+        });
+        
         // create toolbar
         JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
 
@@ -281,11 +361,13 @@ public class SwingLogPane extends JPanel {
         cbCategory.addItemListener(a -> setFilter((Category) a.getItem()));
         cbCategory.setSelectedItem(Category.INFO);
 
+        // checkbox for text only
         toolBar.add(new JSeparator(JSeparator.VERTICAL));
         JCheckBox cbTextOnly = new JCheckBox(SwingUtil.createAction("Show text only", evt -> setTextOnly(((JCheckBox) (evt.getSource())).isSelected())));
         cbTextOnly.setSelected(true);
         toolBar.add(cbTextOnly);
         
+        // buttons "clear" and "copy"
         toolBar.add(new JSeparator(JSeparator.VERTICAL));
         toolBar.add(SwingUtil.createAction("Clear", this::clearBuffer));
         toolBar.add(SwingUtil.createAction("Copy", this::copyBuffer));
@@ -296,7 +378,8 @@ public class SwingLogPane extends JPanel {
         setTextOnly(cbTextOnly.isSelected());
     }
 
-    private List<TableColumn> tableColumns = new ArrayList<>();
+    private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
+    
     private void setTextOnly(boolean textOnly) {
         synchronized (model) {
             TableColumnModel columnModel = table.getColumnModel();
@@ -351,33 +434,6 @@ public class SwingLogPane extends JPanel {
 
     private void scrollRowIntoView(int row) {
         SwingUtilities.invokeLater(() -> table.scrollRectToVisible(new Rectangle(table.getCellRect(row, 0, true))));
-    }
-
-    private void setListeningState(boolean listen) {
-        if (listen) {
-            buffer.addLogBufferListener(bufferListener);
-            model.fireTableDataChanged();
-        } else {
-            buffer.removeLogBufferListener(bufferListener);            
-        }
-    }
-    
-    @Override
-    public void addNotify() {
-        super.addNotify();
-        setListeningState(true);
-    }
-
-    @Override
-    public void removeNotify() {
-        setListeningState(false);
-        super.removeNotify();
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        setListeningState(visible);
-        super.setVisible(visible);
     }
 
     /**
