@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
+import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AppenderBase;
 import org.slf4j.Logger;
 
@@ -132,15 +133,47 @@ public final class LogbackAdapter {
         }
     }
 
+    /**
+     * Convert Logback logging event to log entry.
+     * @param evt the logback logging event
+     * @return log entry
+     */
     public static LogEntry toLogEntry(ILoggingEvent evt) {
         return new LogbackLogEntry(evt);
     }
 
+    /**
+     * Add a listener to a Logback Logger instance.
+     * @param logger the logger
+     * @param listener the listener
+     */
     public static void addListener(Logger logger, LogListener listener) {
         if (logger instanceof ch.qos.logback.classic.Logger) {
             LogbackLogAppender appender = new LogbackLogAppender(listener);
             appender.start();
             ((ch.qos.logback.classic.Logger)logger).addAppender(appender);
+        }
+    }
+
+    /**
+     * Remove a listener from a Logback Logger instance.
+     * @param logger the logger
+     * @param listener the listener
+     */
+    public static void removeListener(Logger logger, LogListener listener) {
+        if (logger instanceof ch.qos.logback.classic.Logger) {
+            ch.qos.logback.classic.Logger logbackLogger = ((ch.qos.logback.classic.Logger)logger);
+            Iterator<Appender<ILoggingEvent>> iter = logbackLogger.iteratorForAppenders();
+            while (iter.hasNext()) {
+                Appender<ILoggingEvent> appender = iter.next();
+                if (appender instanceof LogbackLogAppender) {
+                    LogbackLogAppender logbackAppender = (LogbackLogAppender) appender;
+                    if (logbackAppender.listener==listener) {
+                        logbackAppender.stop();
+                        logbackLogger.detachAppender(logbackAppender);
+                    }
+                }
+            }
         }
     }
 }

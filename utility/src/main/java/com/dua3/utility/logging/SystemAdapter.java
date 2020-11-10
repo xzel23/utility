@@ -9,30 +9,58 @@ import java.util.Optional;
 
 public final class SystemAdapter {
 
+    private static PrintStream stdOut = null;
+    private static PrintStream stdErr = null;
+    
     public static void addSystemListener(LogListener listener) {
         addSystemOutListener(listener);
         addSystemErrListener(listener);
     }
 
-    public static void addSystemOutListener(LogListener listener) {
+    public static synchronized void addSystemOutListener(LogListener listener) {
+        if (stdOut== null) {
+            try {
+                PrintStream origOut = System.out;
+                LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemOutLogEntry(txt)));
+                PrintStream logOut = new PrintStream(lineOut, true, StandardCharsets.UTF_8.name());
+                System.setOut(logOut);
+                stdOut = origOut;
+            } catch (UnsupportedEncodingException e) {
+                // this should not happen since we use UTF-8 which is one of the standard encodings
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
+    public static synchronized void addSystemErrListener(LogListener listener) {
         try {
-            LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemOutLogEntry(txt)));
+            PrintStream origErr = System.err;
+            LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemErrLogEntry(txt)));
             PrintStream logOut = new PrintStream(lineOut,true, StandardCharsets.UTF_8.name());
-            System.setOut(logOut);
+            System.setErr(logOut);
+            stdErr = origErr;
         } catch (UnsupportedEncodingException e) {
             // this should not happen since we use UTF-8 which is one of the standard encodings
             throw new IllegalStateException(e);
         }
     }
 
-    public static void addSystemErrListener(LogListener listener) {
-        try {
-            LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemErrLogEntry(txt)));
-            PrintStream logOut = new PrintStream(lineOut,true, StandardCharsets.UTF_8.name());
-            System.setErr(logOut);
-        } catch (UnsupportedEncodingException e) {
-            // this should not happen since we use UTF-8 which is one of the standard encodings
-            throw new IllegalStateException(e);
+    public static synchronized void removeSystemListener(LogListener listener) {
+        removeSystemOutListener(listener);
+        removeSystemErrListener(listener);
+    }
+
+    public static synchronized void removeSystemOutListener(LogListener listener) {
+        if (stdOut!=null) {
+            System.setOut(stdOut);
+            stdOut = null;
+        }
+    }
+
+    public static synchronized void removeSystemErrListener(LogListener listener) {
+        if (stdErr!=null) {
+            System.setErr(stdErr);
+            stdErr = null;
         }
     }
 
