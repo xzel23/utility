@@ -6,9 +6,11 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Pair;
 
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Interface describing fonts used in workbooks.
@@ -337,6 +339,39 @@ public class Font {
                              ";"
                            : "");
         }
+        
+        private static void textAttributesHelper(List<Pair<String, ?>> attributes, String key, Object value) {
+            if (value != null) {
+                attributes.add(Pair.of(key, value));
+            }
+        }
+        
+        private String textDecorationAttribute() {
+            if (underline==null && strikeThrough==null) {
+                return null;
+            }
+            
+            int idx = ( underline!=null && underline ? 1 : 0 ) + ( strikeThrough!=null && strikeThrough ? 2 : 0 );
+            return TEXT_DECORATION_VALUES[idx];
+        }
+        
+        public TextAttributes getTextAttributes() {
+            List<Pair<String,?>> attributes = new LinkedList<>();
+            textAttributesHelper(attributes, TextAttributes.COLOR, color);
+            textAttributesHelper(attributes, TextAttributes.FONT_SIZE, size);
+            textAttributesHelper(attributes, TextAttributes.FONT_FAMILY, family);
+
+            String weight = bold == null ? null : bold ? TextAttributes.FONT_WEIGHT_VALUE_BOLD : TextAttributes.FONT_WEIGHT_VALUE_NORMAL;
+            textAttributesHelper(attributes, TextAttributes.FONT_WEIGHT, weight);
+
+            String style = italic == null ? null : italic ? TextAttributes.FONT_STYLE_VALUE_ITALIC : TextAttributes.FONT_STYLE_VALUE_NORMAL;
+            textAttributesHelper(attributes, TextAttributes.FONT_STYLE, style);
+            
+            String decoration = textDecorationAttribute();
+            textAttributesHelper(attributes, TextAttributes.TEXT_DECORATION, decoration);
+            
+            return TextAttributes.of(attributes);
+        }
     }
 
     /**
@@ -510,6 +545,70 @@ public class Font {
                      (strikeThrough ? " line-through": "") +
                      ";"
                    : ""
+        );
+    }
+
+    /**
+     * Compare values and store changes.
+     * @param o1 first object
+     * @param o2 second object
+     * @param getter attribute getter
+     * @param setter attribute setter
+     * @param <T> object type
+     * @param <U> attribute type
+     */
+    private static <T,U> void deltaHelper(T o1, T o2, Function<T,U> getter, Consumer<U> setter) {
+        U v1 = getter.apply(o1);
+        U v2 = getter.apply(o2);
+        if (!Objects.equals(v1, v2)) {
+            setter.accept(v2);
+        }
+    }
+
+    /**
+     * Determine differences between two fonts.
+     * @param f1 the first font
+     * @param f2 the second font
+     * @return a {@link FontDef} instance that defines the changed values
+     */
+    public static FontDef delta(Font f1, Font f2) {
+        FontDef fd = new FontDef();
+
+        deltaHelper(f1, f2, Font::getFamily, fd::setFamily);
+        deltaHelper(f1, f2, Font::getSizeInPoints, fd::setSize);
+        deltaHelper(f1, f2, Font::isBold, fd::setBold);
+        deltaHelper(f1, f2, Font::isItalic, fd::setItalic);
+        deltaHelper(f1, f2, Font::isUnderline, fd::setUnderline);
+        deltaHelper(f1, f2, Font::isStrikeThrough, fd::setStrikeThrough);
+        deltaHelper(f1, f2, Font::getColor, fd::setColor);
+
+        return fd;
+    }
+
+    private static final String[] TEXT_DECORATION_VALUES = {
+            TextAttributes.TEXT_DECORATION_VALUE_NONE,      
+            TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE,      
+            TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH,      
+            TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH      
+    };
+    
+    private String textDecorationAttribute() {
+        int idx = ( isUnderline() ? 1 : 0 ) + ( isStrikeThrough() ? 2 : 0 );
+        return TEXT_DECORATION_VALUES[idx];
+    }
+
+    /**
+     * Get the {@link TextAttributes} that define this font.
+     * @return the {@link TextAttributes} of this font
+     */
+    public TextAttributes getTextAttributes() {
+        return TextAttributes.of(
+            Pair.of(TextAttributes.FONT_FAMILY, family),
+            Pair.of(TextAttributes.FONT_SIZE, size),
+            Pair.of(TextAttributes.FONT_WEIGHT, bold ? TextAttributes.FONT_WEIGHT_VALUE_BOLD : TextAttributes.FONT_WEIGHT_VALUE_NORMAL),
+            Pair.of(TextAttributes.FONT_STYLE, italic ? TextAttributes.FONT_STYLE_VALUE_ITALIC : TextAttributes.FONT_STYLE_VALUE_NORMAL),
+            Pair.of(TextAttributes.TEXT_DECORATION, textDecorationAttribute()),
+            Pair.of(TextAttributes.COLOR, color)
         );
     }
 }

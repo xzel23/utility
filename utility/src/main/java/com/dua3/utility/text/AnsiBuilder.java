@@ -77,10 +77,23 @@ public final class AnsiBuilder extends AbstractStringBasedBuilder {
                 }
                 break;
             case TextAttributes.TEXT_DECORATION:
-                if (TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE.equals(value)) {
-                    esc.add(AnsiCode.UNDERLINE_ON);
-                } else {
-                    esc.add(AnsiCode.UNDERLINE_OFF);
+                switch (String.valueOf(value)) {
+                    case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE:
+                        esc.add(AnsiCode.UNDERLINE_ON);
+                        esc.add(AnsiCode.STRIKE_THROUGH_OFF);
+                        break;
+                    case TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH:
+                        esc.add(AnsiCode.UNDERLINE_OFF);
+                        esc.add(AnsiCode.STRIKE_THROUGH_ON);
+                        break;
+                    case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH:
+                        esc.add(AnsiCode.UNDERLINE_ON);
+                        esc.add(AnsiCode.STRIKE_THROUGH_ON);
+                        break;
+                    default:
+                        esc.add(AnsiCode.UNDERLINE_OFF);
+                        esc.add(AnsiCode.STRIKE_THROUGH_OFF);
+                        break;
                 }
                 break;
             case TextAttributes.FONT_STYLE:

@@ -73,6 +73,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     public static final String TEXT_DECORATION_VALUE_NONE = "";
     public static final String TEXT_DECORATION_VALUE_LINE_THROUGH = "line-through";
     public static final String TEXT_DECORATION_VALUE_UNDERLINE = "underline";
+    public static final String TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH = "underline line-through";
 
     /** text indentation */
     public static final String TEXT_INDENT_LEFT = "indent-left";

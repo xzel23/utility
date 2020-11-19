@@ -5,11 +5,12 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Pair;
+import com.dua3.utility.lang.LangUtil;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.dua3.utility.data.Pair;
 
 public final class Style {
     private final String name;
@@ -27,17 +28,14 @@ public final class Style {
 
     @SafeVarargs
     public static Style create(String styleName, String styleClass, Pair<String, Object>... args) {
-        Map<String, Object> m = new HashMap<>();
-        m.put(TextAttributes.STYLE_NAME, styleName);
-        m.put(TextAttributes.STYLE_CLASS, styleClass);
-        for (Pair<String, Object> arg : args) {
-            m.put(arg.first, arg.second);
-        }
-        return new Style(styleName, m);
+        return create(styleName, styleClass, Pair.toMap(args));
     }
 
-    public static Style create(String name, Map<String, Object> args) {
-        return new Style(name, new HashMap<>(args));
+    public static Style create(String styleName, String styleClass, Map<String, Object> args) {
+        Map<String, Object> m = new HashMap<>(args);
+        LangUtil.check(m.put(TextAttributes.STYLE_NAME, styleName)==null, "STYLE_NAME must not be set in attribute map");
+        LangUtil.check(m.put(TextAttributes.STYLE_CLASS, styleClass)==null, "STYLE_CLASS must not be set in attribute map");
+        return new Style(styleName, m);
     }
 
     public String name() {

@@ -161,10 +161,15 @@ public final class StyledDocumentBuilder extends RichTextConverterBase<StyledDoc
                 switch (String.valueOf(value)) {
                 case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE:
                     StyleConstants.setUnderline(attributeSet, true);
+                    StyleConstants.setStrikeThrough(attributeSet, false);
                     break;
                 case TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH:
+                    StyleConstants.setUnderline(attributeSet, false);
                     StyleConstants.setStrikeThrough(attributeSet, true);
-                    break;
+                    break; 
+                case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH:
+                    StyleConstants.setUnderline(attributeSet, true);
+                    StyleConstants.setStrikeThrough(attributeSet, true);
                 case TextAttributes.TEXT_DECORATION_VALUE_NONE:
                 default:
                     StyleConstants.setUnderline(attributeSet, false);
