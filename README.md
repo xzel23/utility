@@ -65,6 +65,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 ### Version 6.7.2
 
  - RichTextBuilder: methods push(Style)/pop(Style)
+ - removed ToStringBuilder class as it was never really used and most IDEs can generate toString() automatically
 
 ### Version 6.7.1
 
