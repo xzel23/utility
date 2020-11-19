@@ -5,6 +5,8 @@
 
 package com.dua3.utility.text;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import com.dua3.utility.lang.LangUtil;
@@ -132,5 +134,23 @@ public class Run
      */
     public boolean isEmpty() {
         return length == 0;
+    }
+
+    /**
+     * Get the list of styles to apply at this run's start.
+     * @return list of styles to apply when this run starts.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Style> getRunStartStyles() {
+        return Collections.unmodifiableList((List<Style>) attributes.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList()));
+    }
+
+    /**
+     * Get the list of styles to discard at this run's end.
+     * @return list of styles to discard when this run ends.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Style> getRunEndStyles() {
+        return Collections.unmodifiableList((List<Style>) attributes.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList()));
     }
 }

@@ -41,15 +41,38 @@ public final class TextUtil {
         StringBuilder out = new StringBuilder(16 + length * 11 / 10);
         for (int i = 0; i < length; i++) {
             char c = s.charAt(i);
-            if (c >= 127 || c == '"' || c == '<' || c == '>' || c == '&' || c == '\0') {
-                out.append("&#");
-                out.append((int) c);
-                out.append(';');
-            } else {
-                out.append(c);
-            }
+            appendHtmlEscapedCharacter(out, c);
         }
         return out.toString();
+    }
+
+    /**
+     * Append HTML-escaped character to an Appendable.
+     *
+     * @param app the {@link Appendable}
+     */
+    public static void appendHtmlEscapedCharacter(Appendable app, char c) throws IOException {
+        if (c >= 127 || c == '"' || c == '<' || c == '>' || c == '&' || c == '\0') {
+            app.append("&#");
+            app.append(c);
+            app.append(';');
+        } else {
+            app.append(c);
+        }
+    }
+
+    /**
+     * Append HTML-escaped character to a {@link StringBuilder}.
+     *
+     * @param sb the {@link StringBuilder}
+     */
+    public static void appendHtmlEscapedCharacter(StringBuilder sb, char c) {
+        try {
+            appendHtmlEscapedCharacter((Appendable) sb, c);
+        } catch (IOException e) {
+            // this should never happen since StringBuilder.append() does not declare exceptions
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**

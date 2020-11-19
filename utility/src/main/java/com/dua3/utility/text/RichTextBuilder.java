@@ -196,7 +196,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private void push(String key, Style style) {
         @SuppressWarnings("unchecked")
-        Collection<Style> current = (Collection<Style>) get(key);
+        List<Style> current = (List<Style>) get(key);
         if (current == null) {
             current = new LinkedList<>();
             put(key, current);

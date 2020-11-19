@@ -177,9 +177,6 @@ public final class StyledDocumentBuilder extends RichTextConverterBase<StyledDoc
             case TextAttributes.TEXT_INDENT_LEFT:
                 // TODO
                 break;
-            case TextAttributes.STYLE_START_RUN:
-            case TextAttributes.STYLE_END_RUN:
-                break;
             default:
                 break;
             }
