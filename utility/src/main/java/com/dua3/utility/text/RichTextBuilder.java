@@ -5,11 +5,8 @@
 
 package com.dua3.utility.text;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.function.Supplier;
 
 /**
@@ -177,4 +174,33 @@ public class RichTextBuilder implements Appendable, ToRichText {
         append(run);
     }
 
+    /**
+     * Push a style, i. e. start using the style at the current position.
+     * Call {@link #pop(Style)} with the same argument to stop using the style.
+     * 
+     * @param style the Style
+     */
+    public void push(Style style) {
+        push(TextAttributes.STYLE_START_RUN, style);
+    }
+
+    /**
+     * Pop a style, i. e. stop using the style at the current position.
+     * Also see {@link #push(Style)}.
+     *
+     * @param style the Style
+     */
+    public void pop(Style style) {
+        push(TextAttributes.STYLE_END_RUN, style);
+    }
+
+    private void push(String key, Style style) {
+        @SuppressWarnings("unchecked")
+        Collection<Style> current = (Collection<Style>) get(key);
+        if (current == null) {
+            current = new LinkedList<>();
+            put(key, current);
+        }
+        current.add(style);
+    }   
 }

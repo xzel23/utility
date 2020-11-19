@@ -62,6 +62,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 6.7.2
+
+ - RichTextBuilder: methods push(Style)/pop(Style)
+
 ### Version 6.7.1
 
  - update SpotBugs and remove rule filter
