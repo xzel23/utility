@@ -114,7 +114,7 @@ public class Run
     }
 
     @Override
-    public CharSequence subSequence(int start, int end) {
+    public Run subSequence(int start, int end) {
         return new Run(text, this.start + start, end - start, attributes);
     }
 
@@ -153,4 +153,5 @@ public class Run
     public List<Style> getRunEndStyles() {
         return Collections.unmodifiableList((List<Style>) attributes.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList()));
     }
+
 }

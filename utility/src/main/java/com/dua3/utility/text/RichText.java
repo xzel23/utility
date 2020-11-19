@@ -5,11 +5,10 @@
 
 package com.dua3.utility.text;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A class for rich text, i.e. text together with attributes like color, font
@@ -47,14 +46,28 @@ public class RichText
         return new RichText(Collections.singletonList(new Run(s, 0, s.length(), TextAttributes.none())));
     }
 
+    /** The underlying CharSequence. */
     private final CharSequence text;
-    private final List<Run> runs;
+    
+    private final int start;
+    private final int length;
 
+    /** The a map of text runs for this text with the position of the first character of the Run as key. */
+    private final TreeMap<Integer,Run> runs = new TreeMap<>();
+    
     RichText(List<Run> runs) {
-        this.text = runs.isEmpty() ? "" : runs.get(0).base();
-        this.runs = runs;
+        if (runs.isEmpty()) {
+            this.text="";
+            this.start=0;
+            this.length=0;
+        } else {
+            this.text = runs.get(0).base();
+            assert checkAllRunsHaveTextAsBase(runs);
 
-        assert checkAllRunsHaveTextAsBase(runs);
+            runs.forEach(r -> this.runs.put(r.getStart(), r));
+            this.start = this.runs.firstKey();
+            this.length = this.runs.lastEntry().getValue().getEnd()-this.start;
+        }
     }
 
     private boolean checkAllRunsHaveTextAsBase(Iterable<Run> runs) {
@@ -91,12 +104,12 @@ public class RichText
      * @return true, if the text is empty.
      */
     public boolean isEmpty() {
-        return text.length()==0;
+        return length()==0;
     }
 
     @Override
     public Iterator<Run> iterator() {
-        return runs.iterator();
+        return runs.values().iterator();
     }
 
     /**
@@ -105,7 +118,7 @@ public class RichText
      * @return the text length
      */
     public int length() {
-        return text.length();
+        return length;
     }
 
     /**
@@ -114,12 +127,12 @@ public class RichText
      * @return stream of Runs
      */
     public Stream<Run> stream() {
-        return runs.stream();
+        return runs.values().stream();
     }
 
     @Override
     public String toString() {
-        return text.toString();
+        return text.subSequence(start, start+length).toString();
     }
 
     @Override
@@ -131,5 +144,75 @@ public class RichText
     @Override
     public RichText toRichText() {
         return this;
+    }
+
+    /**
+     * Get stream of lines contained in this instance.
+     * @return stream of lines of this text
+     */
+    public Stream<RichText> lines() {
+        return StreamSupport.stream(lineSpliterator(), false);
+    }
+
+    /**
+     * Get a {@link Spliterator<RichText>} over the lines of this instance.
+     * @return spliterator
+     */
+    private Spliterator<RichText> lineSpliterator() {
+        return new Spliterator<RichText>() {
+            private int idx=0;
+            
+            @Override
+            public boolean tryAdvance(Consumer<? super RichText> action) {
+                int split = TextUtil.indexOf(text, '\n', idx);
+                
+                if (split<0) {
+                    split = length;
+                }
+                
+                action.accept(subRange(idx, split));
+                idx = split+1;
+                return idx<length();
+            }
+
+            @Override
+            public Spliterator<RichText> trySplit() {
+                return null;
+            }
+
+            @Override
+            public long estimateSize() {
+                return 0;
+            }
+
+            @Override
+            public int characteristics() {
+                return 0;
+            }
+        };
+    }
+
+    /**
+     * Get a sub range of this instance.
+     * @param begin begin index (inclusive)
+     * @param end end index (exclusive)
+     * @return RichText instance of the sub range
+     */
+    public RichText subRange(int begin, int end) {
+        int floorKey = runs.floorKey(begin);
+        int ceilingKey = runs.floorKey(end);
+        List<Run> subRuns = new ArrayList<>(runs.subMap(floorKey, true, ceilingKey, true).values());
+        
+        Run firstRun = subRuns.get(0);
+        if (firstRun.getStart() < begin) {
+            subRuns.set(0, firstRun.subSequence(begin-firstRun.getStart(), firstRun.length()));
+        }
+        
+        Run lastRun = subRuns.get(subRuns.size()-1);
+        if (lastRun.getEnd() > end) {
+            subRuns.set(subRuns.size()-1, lastRun.subSequence(0, lastRun.length()-(lastRun.getEnd()-end)));
+        }
+        
+        return new RichText(subRuns);
     }
 }

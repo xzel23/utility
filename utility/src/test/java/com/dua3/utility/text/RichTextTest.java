@@ -27,10 +27,43 @@ public class RichTextTest {
         builder.append("world");
         builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
         builder.append("!");
-
         RichText rt = builder.toRichText();
+        
         assertEquals("Hello world!", rt.toString());
         assertEquals("Hello world!", rt.stream().collect(Collectors.joining()));
     }
 
+    @Test
+    public void testSubRange() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("world");
+        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
+        builder.append("!");
+        RichText rt = builder.toRichText();
+
+        assertEquals("Hello", rt.subRange(0,5).toString());
+        assertEquals("Hello ", rt.subRange(0,6).toString());
+        assertEquals("ello", rt.subRange(1,5).toString());
+        assertEquals("ello ", rt.subRange(1,6).toString());
+        assertEquals("ello w", rt.subRange(1,7).toString());
+        assertEquals("Hello world", rt.subRange(0,11).toString());
+        assertEquals("Hello world!", rt.subRange(0,12).toString());
+    }
+
+    @Test
+    public void testLines() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("w\nor\nld");
+        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
+        builder.append("!");
+        RichText rt = builder.toRichText();
+        
+        StringBuilder sb = new StringBuilder();
+        rt.lines().forEach(s -> sb.append(s.toString()).append(";"));
+        assertEquals("Hello w;or;ld!;", sb.toString());
+    }
 }
