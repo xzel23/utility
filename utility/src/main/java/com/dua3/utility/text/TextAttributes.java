@@ -25,8 +25,20 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     public static final String STYLE_START_RUN = "__style-start-run";
     public static final String STYLE_END_RUN = "__style-end-run";
 
-    // style name
+    /** 
+     * The style class.
+     * 
+     * Since RichText can contain Style information for different media at the same time,
+     * styles are distuingished by their 'class'. Think of it as a namespace for style.
+     * For example, you could define a called "h1" with class "HTML", and another style
+     * by the same name in the class "PDF" and chose the correct attributes when rendering.
+     */
     public static final String STYLE_CLASS = "style-class";
+    public static final String STYLE_CLASS_DEFAULT = "";
+    
+    /** 
+     * The Style name.
+     */
     public static final String STYLE_NAME = "style-name";
 
     /** property name for the font family */
