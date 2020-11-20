@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
  * {@link Run}.
  */
 public class RichText
-        implements Iterable<Run>, ToRichText {
+        implements Iterable<Run>, AttributedCharSequence, ToRichText {
 
     private static final RichText EMPTY_TEXT = RichText.valueOf("");
 
@@ -170,7 +170,7 @@ public class RichText
                     split = length;
                 }
                 
-                action.accept(subRange(idx, split));
+                action.accept(subSequence(idx, split));
                 idx = split+1;
                 return idx<length();
             }
@@ -198,7 +198,7 @@ public class RichText
      * @param end end index (exclusive)
      * @return RichText instance of the sub range
      */
-    public RichText subRange(int begin, int end) {
+    public RichText subSequence(int begin, int end) {
         int floorKey = runs.floorKey(begin);
         int ceilingKey = runs.floorKey(end);
         List<Run> subRuns = new ArrayList<>(runs.subMap(floorKey, true, ceilingKey, true).values());
@@ -215,4 +215,16 @@ public class RichText
         
         return new RichText(subRuns);
     }
+
+    @Override
+    public char charAt(int index) {
+        return text.charAt(index);
+    }
+
+    @Override
+    public AttributedCharacter attributedCharAt(int index) {
+        Run run = runs.floorEntry(index).getValue();
+        return run.attributedCharAt(run.convertIndex(index));
+    }
+
 }

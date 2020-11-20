@@ -34,7 +34,7 @@ public class RichTextTest {
     }
 
     @Test
-    public void testSubRange() {
+    public void testsubSequence() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
         builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
@@ -43,13 +43,13 @@ public class RichTextTest {
         builder.append("!");
         RichText rt = builder.toRichText();
 
-        assertEquals("Hello", rt.subRange(0,5).toString());
-        assertEquals("Hello ", rt.subRange(0,6).toString());
-        assertEquals("ello", rt.subRange(1,5).toString());
-        assertEquals("ello ", rt.subRange(1,6).toString());
-        assertEquals("ello w", rt.subRange(1,7).toString());
-        assertEquals("Hello world", rt.subRange(0,11).toString());
-        assertEquals("Hello world!", rt.subRange(0,12).toString());
+        assertEquals("Hello", rt.subSequence(0,5).toString());
+        assertEquals("Hello ", rt.subSequence(0,6).toString());
+        assertEquals("ello", rt.subSequence(1,5).toString());
+        assertEquals("ello ", rt.subSequence(1,6).toString());
+        assertEquals("ello w", rt.subSequence(1,7).toString());
+        assertEquals("Hello world", rt.subSequence(0,11).toString());
+        assertEquals("Hello world!", rt.subSequence(0,12).toString());
     }
 
     @Test
@@ -65,5 +65,29 @@ public class RichTextTest {
         StringBuilder sb = new StringBuilder();
         rt.lines().forEach(s -> sb.append(s.toString()).append(";"));
         assertEquals("Hello w;or;ld!;", sb.toString());
+    }
+
+    @Test
+    public void testAttributedChars() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("world");
+        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
+        builder.append("!");
+        RichText rt = builder.toRichText();
+
+        // test extracting the characters using attributedCharAt()
+        String s = rt.toString();
+        assertEquals("Hello world!", s);
+        for (int i=0; i<rt.length(); i++) {
+            assertEquals(s.charAt(i), rt.charAt(i));
+            assertEquals(s.charAt(i), rt.attributedCharAt(i).character());
+        }
+        
+        // test the attributed character iterator
+        StringBuilder sb = new StringBuilder();
+        rt.attributedChars().map(AttributedCharacter::character).forEach(sb::append);
+        assertEquals("Hello world!", sb.toString());
     }
 }

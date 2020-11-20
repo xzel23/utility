@@ -8,14 +8,14 @@ package com.dua3.utility.text;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import com.dua3.utility.lang.LangUtil;
 
 /**
  * A sequence of characters that share the same properties.
  */
-public class Run
-        implements CharSequence {
+public class Run implements AttributedCharSequence {
 
     private final CharSequence text;
     private final int start;
@@ -111,6 +111,15 @@ public class Run
     @Override
     public int length() {
         return length;
+    }
+
+    @Override
+    public AttributedCharacter attributedCharAt(int index) {
+        return AttributedCharacter.create(charAt(index), attributes);
+    }
+    
+    int convertIndex(int baseIndex){
+        return baseIndex-this.start;
     }
 
     @Override
