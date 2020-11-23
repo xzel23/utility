@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 module dua3_utility {
+    exports com.dua3.utility.cmd;
     exports com.dua3.utility.concurrent;
     exports com.dua3.utility.data;
     exports com.dua3.utility.io;
