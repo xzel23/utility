@@ -545,6 +545,24 @@ public final class TextUtil {
     }
 
     /**
+     * Convert mm to pt.
+     * @param mm value in millimeters
+     * @return value in points
+     */
+    public static double mm2pt(double mm) {
+        return mm*72/25.4;
+    }
+
+    /**
+     * Convert pt to mm.
+     * @param pt value in millimeters
+     * @return value in points
+     */
+    public static double pt2mm(double pt) {
+        return pt*25.4/72;
+    }
+
+    /**
      * Get text height.
      *
      * @param  text
