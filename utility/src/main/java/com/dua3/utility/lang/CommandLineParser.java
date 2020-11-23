@@ -23,6 +23,12 @@ public class CommandLineParser {
     /** The options understood by this CommandLineParser instance, stored in a map (command line arg: option). */
     private final Map<String, Option> options = new LinkedHashMap<>();
 
+    /** The minimum number of positional arguments. */
+    int minPositionalArgs;
+
+    /** The maximum number of positional arguments. */
+    int maxPositionalArgs;
+    
     /**
      * Constructor. 
      */
@@ -30,14 +36,27 @@ public class CommandLineParser {
         this("","");
     }
 
+    public CommandLineParser(String name, String description, int minArgs, int maxArgs) {
+        this.name = Objects.requireNonNull(name);
+        this.description = Objects.requireNonNull(description);
+
+        LangUtil.check(minArgs>=0);
+        LangUtil.check(maxArgs>=minArgs);
+        this.minPositionalArgs = minArgs;
+        this.maxPositionalArgs = maxArgs;
+    }
+
+    public CommandLineParser(String name, String description, int minArgs) {
+        this(name, description, minArgs, Integer.MAX_VALUE);        
+    }
+    
     /**
      * Constructor. 
      * @param name the command name to show in help text.
      * @param description the command description to show in help text.
      */
     public CommandLineParser(String name, String description) {
-        this.name = Objects.requireNonNull(name);
-        this.description = Objects.requireNonNull(description);
+        this(name, description, 0, Integer.MAX_VALUE);
     }
 
     /** 
@@ -99,12 +118,20 @@ public class CommandLineParser {
         }
 
         validate(parsedOptions);
-        
+
+        if (positionalArgs.size()<minPositionalArgs) {
+            throw new CommandLineException("missing argument (at least "+minPositionalArgs+" arguments must be given)");
+        }
+
+        if (positionalArgs.size()>maxPositionalArgs) {
+            throw new CommandLineException("too many arguments (at most "+minPositionalArgs+" arguments can be given)");
+        }
+
         return new CommandLineArgs(parsedOptions, positionalArgs);
     }
 
     /**
-     * Valisate the parsed option, i. e. check number of occurences and arity.
+     * Validate the parsed option, i. e. check number of occurences and arity.
      * @param parsedOptions the parsed options to validate
      * @throws CommandLineException if an error is detected
      */
