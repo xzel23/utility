@@ -62,12 +62,13 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
-### Version 6.8
+### Version 7
 
+ - moved CommandLineParser and related classes to their own package, many changes to those classes 
  - RichTextBuilder: methods push(Style)/pop(Style)
  - several changes in to the classes under util.text
  - removed ToStringBuilder class as it was never really used and most IDEs can generate toString() automatically
- - small additions to CommandLineParser
+ - overload IOUtil.replaceExtension for Path
 
 ### Version 6.7.1
 
