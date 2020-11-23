@@ -160,7 +160,7 @@ public final class IOUtil {
      * Replace file extension.
      * <p>
      * If the filename doesn't have an extension, it will be appended.
-     * 
+     *
      * @param  path
      *               the file path
      * @param extension
@@ -172,7 +172,7 @@ public final class IOUtil {
 
         // find dot
         int pos = path.lastIndexOf('.', fi.second);
-        
+
         if (pos < fi.first) {
             // filename has no extension => insert extension
             return path.substring(0, fi.second)+'.'+extension+path.substring(fi.second);
@@ -182,6 +182,30 @@ public final class IOUtil {
         }
     }
     
+    /**
+     * Replace file extension.
+     * <p>
+     * If the filename doesn't have an extension, it will be appended.
+     *
+     * @param  path
+     *               the file path
+     * @param extension
+     *              the new file extension
+     * @return       filename with replaced extension
+     */
+    public static Path replaceExtension(Path path, String extension) {
+        Path parent = path.getParent();
+        
+        Path filename = path.getFileName();
+        if (filename==null) {
+            return path;
+        }
+        
+        filename = Paths.get(replaceExtension(filename.toString(), extension));
+        
+        return parent == null ? filename : parent.resolve(filename);
+    }
+
     /**
      * Read content of path into String.
      *
