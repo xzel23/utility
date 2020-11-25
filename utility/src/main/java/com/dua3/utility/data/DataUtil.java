@@ -437,6 +437,18 @@ public final class DataUtil {
         return (T[]) collect(iterator).toArray();
     }
 
+    /**
+     * Convert {@link Map} to {@link Function}.
+     * @param map the map
+     * @param defaultValue the value to return if the lookup key is not present
+     * @param <K> type of key
+     * @param <V> type of value
+     * @return a Function instance returning the map entries
+     */
+    public static <K, V> Function<K, V> asFunction(Map<K, V> map, V defaultValue) {
+        return k -> map.getOrDefault(k, defaultValue);
+    }
+    
     // Utility class - private constructor
     private DataUtil() {}
 
