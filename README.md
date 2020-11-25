@@ -64,11 +64,14 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ### Version 7
 
- - moved CommandLineParser and related classes to their own package, many changes to those classes 
- - RichTextBuilder: methods push(Style)/pop(Style)
+ - moved/renamed command line argument parsing classes to their own package, many changes and additions 
+ - RichTextBuilder: methods push(Style)/pop(Style), implement Comparable; add textEquals()
+ - new class HtmlConverter to convert RichText to HTML
  - several changes in to the classes under util.text
  - removed ToStringBuilder class as it was never really used and most IDEs can generate toString() automatically
  - overload IOUtil.replaceExtension for Path
+ - DataUtil.asFunction() to use Map instances as Function
+ - TextUtil.appendHtmlEscapedCharacters(); mm2pt(); pt2mm()
 
 ### Version 6.7.1
 
