@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
  * {@link Run}.
  */
 public class RichText
-        implements Iterable<Run>, AttributedCharSequence, ToRichText {
+        implements Iterable<Run>, AttributedCharSequence, ToRichText, Comparable<CharSequence> {
 
     private static final RichText EMPTY_TEXT = RichText.valueOf("");
 
@@ -93,6 +93,42 @@ public class RichText
         return runs.equals(other.runs);
     }
 
+    /**
+     * Textual compare.
+     * @param other the {@link CharSequence} to compare to
+     * @return true, if the other
+     */
+    public boolean textEquals(CharSequence other) {
+        if (other==null || other.length()!=this.length) {
+            return false;
+        }
+
+        if (this.isEmpty() && other.isEmpty()) {
+            return true;
+        }
+
+        for (int idx=0; idx<length; idx++) {
+            if (other.charAt(idx)!=text.charAt(start+idx)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    @Override
+    public int compareTo(CharSequence other) {
+        for (int idx=0; idx<length; idx++) {
+            char a = text.charAt(start + idx);
+            char b = other.charAt(idx);
+            if (a != b) {
+                return a - b;
+            }
+        }
+
+        return length - other.length();
+    }
+    
     @Override
     public int hashCode() {
         return text.hashCode() + 17 * runs.size();
