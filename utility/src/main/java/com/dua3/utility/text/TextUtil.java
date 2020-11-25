@@ -76,6 +76,33 @@ public final class TextUtil {
     }
 
     /**
+     * Append HTML escaped characters to {@link Appendable}.
+     * @param app the {@link Appendable} instance
+     * @param cs the unescaped {@link CharSequence}
+     * @param <T> the type of the Appendable
+     * @throws IOException if an error occurs
+     */
+    public static <T extends Appendable> void appendHtmlEscapedCharacters(T app, CharSequence cs) throws IOException {
+        int length = cs.length();
+        for (int idx=0; idx<length; idx++) {
+            appendHtmlEscapedCharacter(app, cs.charAt(idx));
+        }
+    }
+
+    /**
+     * Append HTML escaped characters to {@link StringBuilder}.
+     * @param sb the {@link StringBuilder} instance
+     * @param cs the unescaped {@link CharSequence}
+     */
+    public static void appendHtmlEscapedCharacters(StringBuilder sb, CharSequence cs) {
+        int length = cs.length();
+        sb.ensureCapacity(sb.length()+length);
+        for (int idx=0; idx<length; idx++) {
+            appendHtmlEscapedCharacter(sb, cs.charAt(idx));
+        }
+    }
+
+    /**
      * Backslash-escape a string.
      *
      * @param s the string
