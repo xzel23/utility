@@ -76,7 +76,7 @@ public class Run implements AttributedCharSequence {
      *
      * @return end of Run
      */
-    public int getEnd() {
+    int getEnd() {
         return start + length;
     }
 
@@ -85,10 +85,26 @@ public class Run implements AttributedCharSequence {
      *
      * @return start of Run
      */
-    public int getStart() {
+    int getStart() {
         return start;
     }
 
+    /**
+     * Get the base sequence.
+     * @return base seqeunce
+     */
+    CharSequence base() {
+        return text;
+    }
+
+    /**
+     * Convert index into this {@link RichText} instance to index into base sequence.
+     * @return index into base seqeunce
+     */
+    int convertIndex(int baseIndex){
+        return baseIndex-this.start;
+    }
+    
     /**
      * Get style of this Run.
      *
@@ -117,10 +133,6 @@ public class Run implements AttributedCharSequence {
     public AttributedCharacter attributedCharAt(int index) {
         return AttributedCharacter.create(charAt(index), attributes);
     }
-    
-    int convertIndex(int baseIndex){
-        return baseIndex-this.start;
-    }
 
     @Override
     public Run subSequence(int start, int end) {
@@ -130,19 +142,6 @@ public class Run implements AttributedCharSequence {
     @Override
     public String toString() {
         return text.subSequence(start, start + length).toString();
-    }
-
-    CharSequence base() {
-        return text;
-    }
-
-    /**
-     * Check if run is empty.
-     *
-     * @return true, if this run does not contain text.
-     */
-    public boolean isEmpty() {
-        return length == 0;
     }
 
     /**
