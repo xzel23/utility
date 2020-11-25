@@ -103,7 +103,8 @@ public class RichText
             return false;
         }
 
-        if (this.isEmpty() && other.isEmpty()) {
+        if (this.isEmpty()) {
+            // we already know that both sequences have the same length
             return true;
         }
 

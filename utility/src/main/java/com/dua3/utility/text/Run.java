@@ -76,7 +76,7 @@ public class Run implements AttributedCharSequence {
      *
      * @return end of Run
      */
-    int getEnd() {
+    public int getEnd() {
         return start + length;
     }
 
@@ -85,7 +85,7 @@ public class Run implements AttributedCharSequence {
      *
      * @return start of Run
      */
-    int getStart() {
+    public int getStart() {
         return start;
     }
 
