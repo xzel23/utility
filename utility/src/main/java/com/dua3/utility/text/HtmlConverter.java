@@ -4,6 +4,7 @@ import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -106,22 +107,18 @@ public class HtmlConverter {
             TextUtil.appendHtmlEscapedCharacters(app, run);
 
             // add closing Tags for styles
-            app.append(closingTags.apply(run.getRunStartStyles()));
+            app.append(closingTags.apply(run.getRunEndStyles()));
         }
         return app;
     }
     
     public StringBuilder append(StringBuilder sb, RichText text) {
-        for (Run run: text) {
-            // add opening Tags for styles
-            sb.append(openingTags.apply(run.getRunStartStyles()));
-
-            // add text
-            TextUtil.appendHtmlEscapedCharacters(sb, run);
-
-            // add closing Tags for styles
-            sb.append(closingTags.apply(run.getRunStartStyles()));
+        try {
+            append((Appendable) sb, text);
+            return sb;
+        } catch (IOException e) {
+            // StringBuilder will not throw IOException
+            throw new UncheckedIOException(e);
         }
-        return sb;
     }
 }
