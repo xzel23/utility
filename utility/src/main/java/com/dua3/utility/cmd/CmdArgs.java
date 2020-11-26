@@ -3,6 +3,7 @@ package com.dua3.utility.cmd;
 import com.dua3.utility.data.Pair;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -72,6 +73,26 @@ public class CmdArgs implements Iterable<Pair<Option, List<String>>> {
         return stream().anyMatch(po -> po.first.equals(flag));
     }
 
+    /**
+     * Execute action if {@link Flag} is set.
+     * @param flag the flag
+     * @param action the action to execute
+     */
+    public void ifSet(Flag flag, Runnable action) {
+        if (isSet(flag)) {
+            action.run();
+        }
+    }
+
+    /**
+     * Run action with arguments of supplied option.
+     * @param option the option
+     * @param action action to call
+     */
+    public void forEach(Option option, Consumer<List<String>> action) {
+        parsedOptions.stream().filter(po -> po.first.equals(option)).forEach(po -> action.accept(po.second));
+    }
+    
     /**
      * Get {@link Iterator} of parsed Options and their arguments.
      * @return ietrator over {@link Pair}s consisting of Option and arguments passed to that option
