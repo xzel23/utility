@@ -54,7 +54,7 @@ public final class TextUtil {
     public static void appendHtmlEscapedCharacter(Appendable app, char c) throws IOException {
         if (c >= 127 || c == '"' || c == '<' || c == '>' || c == '&' || c == '\0') {
             app.append("&#");
-            app.append(c);
+            app.append(Integer.toString(c));
             app.append(';');
         } else {
             app.append(c);
