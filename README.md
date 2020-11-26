@@ -64,7 +64,8 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ### Version 7
 
- - moved/renamed command line argument parsing classes to their own package, many changes and additions 
+ - moved/renamed command line argument parsing classes to their own package, many changes and additions
+ - move Font.FontDef to upper level
  - RichTextBuilder: methods push(Style)/pop(Style), implement Comparable; add textEquals()
  - new class HtmlConverter to convert RichText to HTML
  - several changes in to the classes under util.text
