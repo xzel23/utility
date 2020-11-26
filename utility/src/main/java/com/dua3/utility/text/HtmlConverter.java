@@ -62,6 +62,11 @@ public class HtmlConverter {
                 Pair.of(TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH, Pair.of("<strike>", "</strike>")),
                 Pair.of(TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH, Pair.of("<u><strike>", "</strike></u>"))
         ), noTag));
+        m.put(TextAttributes.FONT_FAMILY, DataUtil.asFunction(Pair.toMap(
+                Pair.of(TextAttributes.FONT_FAMILY_VALUE_MONOSPACE, Pair.of("<span style=\"font-family: monospace;\">", "</span>")),
+                Pair.of(TextAttributes.FONT_FAMILY_VALUE_SANS_SERIF, Pair.of("<span style=\"font-family: sans-serif;\">", "</span>")),
+                Pair.of(TextAttributes.FONT_FAMILY_VALUE_SERIF, Pair.of("<span style=\"font-family: serif;\">", "</span>"))
+        ), noTag));
         
         return DataUtil.asFunction(m, attr -> noTag);
     }
