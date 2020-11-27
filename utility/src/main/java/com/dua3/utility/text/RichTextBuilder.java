@@ -22,13 +22,24 @@ import java.util.function.Supplier;
  */
 public class RichTextBuilder implements Appendable, ToRichText {
 
-    private final StringBuilder buffer = new StringBuilder();
-    private final SortedMap<Integer, Map<String, Object>> parts = new TreeMap<>();
+    private final StringBuilder buffer;
+    private final SortedMap<Integer, Map<String, Object>> parts;
 
     /**
      * Construct a new empty builder.
      */
     public RichTextBuilder() {
+        this(16);
+    }
+
+    /**
+     * Construct a new empty builder.
+     * @param capacity the initial capacity
+     */
+    public RichTextBuilder(int capacity) {
+        this.buffer = new StringBuilder(capacity);
+        this.parts = new TreeMap<>();
+        
         parts.put(0, new HashMap<>());
     }
 
