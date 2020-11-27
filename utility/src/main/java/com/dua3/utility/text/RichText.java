@@ -7,6 +7,7 @@ package com.dua3.utility.text;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -274,4 +275,29 @@ public class RichText
         return run.attributedCharAt(run.convertIndex(index));
     }
 
+    /**
+     * See {@link String#trim()}.
+     */
+    public RichText trim() {
+        int st = 0;
+        int len = length;
+        while ((st < len) && Character.isWhitespace(charAt(st))) {
+            st++;
+        }
+        while ((st < len) && Character.isWhitespace(charAt(len - 1))) {
+            len--;
+        }
+        return ((st > 0) || (len < length)) ? subSequence(st, len) : this;
+    }
+    
+    /**
+     * Create a {@link RichTextMatcher}.
+     * @param pattern the pattern
+     * @param text the text
+     * @return a matcher
+     */
+    public static RichTextMatcher matcher(Pattern pattern, RichText text) {
+        return new RichTextMatcher(pattern, text);
+    }
+    
 }
