@@ -235,6 +235,7 @@ public class RichText
      * @param end end index (exclusive)
      * @return RichText instance of the sub range
      */
+    @Override
     public RichText subSequence(int begin, int end) {
         int floorKey = runs.floorKey(begin);
         int ceilingKey = runs.floorKey(end);
@@ -253,6 +254,15 @@ public class RichText
         return new RichText(subRuns);
     }
 
+    /**
+     * Get a sub range of this instance.
+     * @param beginIndex begin index (inclusive)
+     * @return RichText instance of the sub range from beginIndex to the end
+     */
+    public RichText subSequence(int beginIndex) {
+        return subSequence(beginIndex, length());
+    }
+    
     @Override
     public char charAt(int index) {
         return text.charAt(index);
