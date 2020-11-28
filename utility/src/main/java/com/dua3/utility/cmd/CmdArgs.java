@@ -80,7 +80,7 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
      *    if neither is provided
      */
     public <T> Optional<T> get(SimpleOption<T> option) {
-        return stream(option).findFirst().map(list -> list.get(0));
+        return Optional.ofNullable(stream(option).findFirst().map(list -> list.get(0)).orElse(option.getDefault()));
     }
 
     /**

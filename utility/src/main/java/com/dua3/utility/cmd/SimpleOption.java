@@ -39,4 +39,7 @@ public class SimpleOption<T> extends Option<T> {
         return this;
     }
     
+    T getDefault() {
+        return defaultValue;
+    }
 }
