@@ -406,7 +406,7 @@ public class RichText
     }
 
     public RichText replaceAll(String regex, RichText replacement) {
-        RichTextMatcher m = matcher(Pattern.compile(regex), replacement);
+        RichTextMatcher m = matcher(Pattern.compile(regex), this);
         RichTextBuilder rtb = new RichTextBuilder(length);
         int off = 0;
         while (m.find()) {

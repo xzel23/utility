@@ -50,8 +50,15 @@ public class RichTextTest {
         assertEquals("ello w", rt.subSequence(1,7).toString());
         assertEquals("Hello world", rt.subSequence(0,11).toString());
         assertEquals("Hello world!", rt.subSequence(0,12).toString());
+        assertEquals("", rt.subSequence(0,0).toString());
     }
 
+    @Test
+    public void testReplaceAll() {
+        String s = "Hello world\n\nThis     is a\ttest!\r\n";
+        assertEquals(s.replaceAll("\\s+", " "), RichText.valueOf(s).replaceAll("\\s+", RichText.valueOf(" ")).toString());    
+    }
+    
     @Test
     public void testLines() {
         RichTextBuilder builder = new RichTextBuilder();
