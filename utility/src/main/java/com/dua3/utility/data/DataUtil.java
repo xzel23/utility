@@ -2,7 +2,11 @@ package com.dua3.utility.data;
 
 import com.dua3.utility.lang.LangUtil;
 
+import java.io.File;
 import java.lang.reflect.*;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -60,7 +64,7 @@ public final class DataUtil {
      * @return
      *  the object converted to the target class
      */
-    public static<T> T convert(Object value, Class<T> targetClass) {
+    public static <T> T convert(Object value, Class<T> targetClass) {
         return convert(value, targetClass, false);
     }
 
@@ -159,6 +163,26 @@ public final class DataUtil {
                     throw new IllegalArgumentException("invalid text for boolean conversion: "+value);
             }
         }
+        
+        // convert to Path
+        if (targetClass == Path.class) {
+            if (sourceClass == String.class) {
+                return (T) Paths.get(value.toString());
+            }
+            if (sourceClass == File.class) {
+                return (T) ((File)value).toPath();
+            }
+            if (sourceClass == URI.class) {
+                return (T) Paths.get((URI)value);
+            }
+        }
+        
+        // convert to File
+        if (targetClass==File.class) {
+            if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary 
+                return (T) ((Path) value).toFile();
+            }
+        }
 
         // target provides public static valueOf(U) where value is instance of U
         // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
@@ -239,6 +263,28 @@ public final class DataUtil {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
                 .toArray( n -> (U[]) Array.newInstance(targetClass, n));
+    }
+
+    /**
+     * Convert Collection to list.
+     * <p>
+     * Converts a {@code Collection<T>} to {@code List<U>} by using the supplied mapper function on
+     * the elements contained in the collection.
+     * <p>
+     *
+     * @param data
+     *  the collection to convert
+     * @param mapper
+     *  the mapping function
+     * @param <T>
+     *  the element source type
+     * @param <U>
+     *  the element target type
+     * @return
+     *  list containing the converted elements
+     */
+    public static <T,U> List<U> convert(Collection<T> data, Function<T,U> mapper) {
+        return data.stream().map(mapper).collect(Collectors.toList());
     }
 
     /**
