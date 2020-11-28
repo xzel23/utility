@@ -238,18 +238,18 @@ public class RichText
      */
     @Override
     public RichText subSequence(int begin, int end) {
-        int floorKey = runs.floorKey(begin);
-        int ceilingKey = runs.floorKey(end);
+        int floorKey = runs.floorKey(start+begin);
+        int ceilingKey = runs.floorKey(start+end);
         List<Run> subRuns = new ArrayList<>(runs.subMap(floorKey, true, ceilingKey, true).values());
         
         Run firstRun = subRuns.get(0);
-        if (firstRun.getStart() < begin) {
+        if (firstRun.getStart() < start+begin) {
             subRuns.set(0, firstRun.subSequence(begin-firstRun.getStart(), firstRun.length()));
         }
         
         Run lastRun = subRuns.get(subRuns.size()-1);
-        if (lastRun.getEnd() > end) {
-            subRuns.set(subRuns.size()-1, lastRun.subSequence(0, lastRun.length()-(lastRun.getEnd()-end)));
+        if (lastRun.getEnd() > start+end) {
+            subRuns.set(subRuns.size()-1, lastRun.subSequence(0, lastRun.length()-(lastRun.getEnd()-(start+end))));
         }
         
         return new RichText(subRuns);

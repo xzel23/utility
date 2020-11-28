@@ -51,6 +51,10 @@ public class RichTextTest {
         assertEquals("Hello world", rt.subSequence(0,11).toString());
         assertEquals("Hello world!", rt.subSequence(0,12).toString());
         assertEquals("", rt.subSequence(0,0).toString());
+        
+        RichText sub = rt.subSequence(5,10);
+        assertEquals(" worl", sub.toString());
+        assertEquals("wo", sub.subSequence(1,3).toString());
     }
 
     @Test
