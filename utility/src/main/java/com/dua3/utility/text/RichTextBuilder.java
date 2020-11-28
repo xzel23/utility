@@ -66,6 +66,11 @@ public class RichTextBuilder implements Appendable, ToRichText {
         return this;
     }
 
+    public RichTextBuilder append(RichText rt) {
+        rt.appendTo(this);
+        return this;
+    }
+
     /**
      * Get attribute of the current Run.
      *
