@@ -1,10 +1,12 @@
 package com.dua3.utility.cmd;
 
+import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * A simple commandline parser class.
@@ -21,7 +23,7 @@ public class CmdParser {
     private final String description;
 
     /** The options understood by this CommandLineParser instance, stored in a map (command line arg: option). */
-    private final Map<String, Option> options = new LinkedHashMap<>();
+    private final Map<String, Option<?>> options = new LinkedHashMap<>();
 
     /** The minimum number of positional arguments. */
     int minPositionalArgs;
@@ -69,12 +71,25 @@ public class CmdParser {
     }
 
     /**
-     * Define a new {@link Flag}.
+     * Define a new {@link SimpleOption}.
+     * @param type the class of the target type
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     * @param <T> the target type
      * @return the option
      */
-    public SimpleOption  simpleOption(String... names) {
-        return addOption(new SimpleOption(names));
+    public <T> SimpleOption<T> simpleOption(Class<T> type, String... names) {
+        return simpleOption(s -> DataUtil.convert(s, type, true), names);
+    }
+
+    /**
+     * Define a new {@link SimpleOption}.
+     * @param mapper the mapping to the target type
+     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     * @param <T> the target type
+     * @return the option
+     */
+    public <T> SimpleOption<T> simpleOption(Function<String,T> mapper, String... names) {
+        return addOption(new SimpleOption<>(mapper, names));
     }
 
     /**
@@ -82,15 +97,24 @@ public class CmdParser {
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the option
      */
-    public StandardOption option(String... names) {
-        return addOption(new StandardOption(names));
+    public <T> StandardOption<T> option(Class<T> type, String... names) {
+        return option(s -> DataUtil.convert(s, type, true), names);
+    }
+
+    /**
+     * Define a new option.
+     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     * @return the option
+     */
+    public <T> StandardOption<T> option(Function<String,T> mapper, String... names) {
+        return addOption(new StandardOption<>(mapper, names));
     }
 
     /** 
      * Add option to parser. 
      * @param option the option to add
      */
-    private <O extends Option> O addOption(O option) {
+    private <O extends Option<?>> O addOption(O option) {
         for (String name : option.names()) {
             LangUtil.check(options.putIfAbsent(name, option) == null, "duplicate option name: %s", name);
         }
@@ -105,9 +129,9 @@ public class CmdParser {
     public CmdArgs parse(String... args) {
         List<String> argList = Arrays.asList(args);
 
-        Queue<Pair<Option, List<String>>> parsedOptions = new LinkedList<>();
+        Queue<CmdArgs.Entry<?>> parsedOptions = new LinkedList<>();
         List<String> positionalArgs = new LinkedList<>();
-        List<String> currentList = positionalArgs;
+        CmdArgs.Entry<?> currentEntry = null;
 
         boolean remainingAllPositional = false;
         
@@ -123,13 +147,16 @@ public class CmdParser {
                 continue;
             }
             
-            Option option = options.get(arg);
+            Option<?> option = options.get(arg);
             if (option != null) {
-                currentList = new LinkedList<>();
-                Pair<Option, List<String>> entry = Pair.of(option, currentList);
-                parsedOptions.add(entry);
+                currentEntry = CmdArgs.Entry.create(option);
+                parsedOptions.add(currentEntry);
             } else {
-                currentList.add(arg);
+                if (currentEntry!=null) {
+                    currentEntry.addParameter(arg);
+                } else {
+                    positionalArgs.add(arg);
+                }
             }
         }
 
@@ -151,15 +178,15 @@ public class CmdParser {
      * @param parsedOptions the parsed options to validate
      * @throws CmdException if an error is detected
      */
-    private void validate(Queue<Pair<Option, List<String>>> parsedOptions) {
-        Map<Option, Integer> hist = new HashMap<>();
-        parsedOptions.forEach(p -> hist.compute(p.first, (k_,i_) -> i_==null ? 1 : i_+1));
+    private void validate(Queue<CmdArgs.Entry<?>> parsedOptions) {
+        Map<Option<?>, Integer> hist = new HashMap<>();
+        parsedOptions.forEach(entry -> hist.compute(entry.option, (k_,i_) -> i_==null ? 1 : i_+1));
 
-        Set<Option> allOptions = new HashSet<>(options.values());
+        Set<Option<?>> allOptions = new HashSet<>(options.values());
         allOptions.stream()
                 .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
                 .forEach(p -> {
-                    Option option = p.first;
+                    Option<?> option = p.first;
                     int count = p.second;
                     LangUtil.check(option.minOccurrences() <= count,
                             () -> new CmdException(
