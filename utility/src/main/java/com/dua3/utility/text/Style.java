@@ -11,6 +11,7 @@ import com.dua3.utility.lang.LangUtil;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public final class Style {
     private final String name;
@@ -52,5 +53,18 @@ public final class Style {
 
     public Map<String, Object> properties() {
         return properties;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Style style = (Style) o;
+        return Objects.equals(name, style.name) && Objects.equals(properties, style.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, properties);
     }
 }
