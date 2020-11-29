@@ -17,8 +17,8 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
         final Option<T> option;
         final List<T> parms;
 
+        @SuppressWarnings("unchecked")
         static Entry<?> create(Option<?> option) {
-            //noinspection rawtypes
             return new Entry(option);
         }
         
@@ -116,8 +116,8 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
      * @param option the option
      * @return stream of lists containing the arguments for each appearance of the given option 
      */
+    @SuppressWarnings("unchecked")
     public <T> Stream<List<T>> stream(Option<T> option) {
-        //noinspection unchecked
         return parsedOptions.stream()
                 .filter(entry -> entry.option.equals(option))
                 .map(entry -> ((Entry<T>) entry).getParms());
