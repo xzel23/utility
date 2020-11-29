@@ -427,6 +427,25 @@ public final class TextUtil {
     }
 
     /**
+     * Test whether a {@link CharSequence} starts with another {@link CharSequence}.
+     * @param a the sequence to search in
+     * @param b the sequence to search for
+     * @return true, if a starts with s
+     */
+    public static boolean startsWith(CharSequence a, CharSequence b) {
+        if (a.length()<b.length()) {
+            return false;
+        }
+        
+        for (int i=0; i< b.length(); i++) {
+            if (a.charAt(i)!=b.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
      * Get capturing group.
      *
      * @param matcher the matcher instance

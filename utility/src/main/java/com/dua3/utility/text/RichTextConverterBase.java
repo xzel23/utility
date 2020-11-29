@@ -75,17 +75,9 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      */
     public static class RunTraits {
         private final TextAttributes attributes;
-        private final String prefix;
-        private final String suffix;
 
         public RunTraits(TextAttributes attributes) {
-            this(attributes, "", "");
-        }
-
-        public RunTraits(TextAttributes attributes, String prefix, String suffix) {
             this.attributes = attributes;
-            this.prefix = extract(attributes, TextAttributes.STYLE_START_RUN, TextAttributes.TEXT_PREFIX) + prefix;
-            this.suffix = suffix + extract(attributes, TextAttributes.STYLE_END_RUN, TextAttributes.TEXT_SUFFIX);
         }
 
         private static String extract(TextAttributes attributes, String tagStartOrEnd, String tag) {
@@ -98,17 +90,9 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
             return attributes;
         }
 
-        public String prefix() {
-            return prefix;
-        }
-
-        public String suffix() {
-            return suffix;
-        }
-
         @Override
         public String toString() {
-            return attributes.toString() + ",\"" + prefix + "\",\"" + suffix + "\"";
+            return attributes.toString();
         }
     }
 
@@ -149,10 +133,6 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
      *            the {@link com.dua3.utility.text.Run} to append
      */
     protected void append(Run run) {
-        String suffix = handleRunEnds(run);
-        String prefix = handleRunStarts(run);
-        appendUnquoted(suffix);
-        appendUnquoted(prefix);
         appendChars(run);
     }
 
@@ -162,52 +142,12 @@ public abstract class RichTextConverterBase<T> implements RichTextConverter<T> {
         resetAttr.push(resetAttributes);
     }
 
-    private String handleRunEnds(Run run) {
-        StringBuilder suffix = new StringBuilder();
-
-        List<Style> styles = getStyleList(run, TextAttributes.STYLE_END_RUN);
-        styles.stream().map(this::getTraits)
-                .forEach(t -> {
-                    popRunAttributes();
-                    suffix.append(t.suffix());
-                });
-
-        return suffix.toString();
-    }
-
     private void popRunAttributes() {
         // restore the attributes
         TextAttributes attributes = TextAttributes.of(resetAttr.pop());
         applyAttributes(attributes);
         // update currentAttributes with the new values
         attributes.forEach(currentAttributes::put);
-    }
-
-    String handleRunStarts(Run run) {
-        StringBuilder prefix = new StringBuilder();
-
-        // process styles whose runs start at this position
-        List<Style> styles = getStyleList(run, TextAttributes.STYLE_START_RUN);
-
-        // collect traits for this run
-        RunTraits currentTraits = createTraits(run);
-        prefix.append(currentTraits.prefix());
-
-        Map<String, Object> attributes = new HashMap<>(currentTraits.attributes());
-        styles.stream().map(this::getTraits)
-                .forEach(t -> {
-                    // store current attributes for resetting at end of style
-                    Map<String, Object> m = t.attributes().keySet().stream()
-                            .filter(attr -> !attr.startsWith("__"))
-                            .collect(HashMap::new, (map, v) -> map.put(v, currentAttributes.get(v)), HashMap::putAll);
-                    pushRunAttributes(m);
-                    // also store for updating the actual style
-                    attributes.putAll(t.attributes());
-                    // merge traits
-                    prefix.append(t.prefix());
-                });
-        applyAttributes(TextAttributes.of(attributes));
-        return prefix.toString();
     }
 
     /**

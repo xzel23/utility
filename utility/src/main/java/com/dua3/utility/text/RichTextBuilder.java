@@ -5,18 +5,19 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.Supplier;
+
+import static com.dua3.utility.text.RichText.ATTRIBUTE_NAME_STYLE_LIST;
+import static javax.swing.UIManager.put;
 
 /**
  * A builder class for rich text data.
  * <p>
  * A rich text is created by appending strings to the builder using the
  * {@link #append(CharSequence)}
- * method or one of its overloads. Style properties are set using
- * {@link #put(String, Object)}.
- * </p>
  *
  * @author axel
  */
@@ -24,7 +25,29 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer;
     private final SortedMap<Integer, Map<String, Object>> parts;
+    private Deque<AttributeChange> openedAttributes = new LinkedList<>();
 
+    private static class AttributeChange {
+        String name;
+        Object previousValue;
+        Object value;
+        
+        AttributeChange(String name, Object previousValue, Object value) {
+            this.name = name;
+            this.previousValue = previousValue;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "AttributeChange{" +
+                   "name='" + name + '\'' +
+                   ", previousValue=" + previousValue +
+                   ", value=" + value +
+                   '}';
+        }
+    }
+    
     /**
      * Construct a new empty builder.
      */
@@ -79,36 +102,18 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @return          value of the property
      */
     public Object get(String property) {
-        return currentStyle().get(property);
+        return parts.get(parts.lastKey()).get(property);
     }
 
     /**
-     * Get attribute of the current Run, or compute and store a new one if not
-     * present.
+     * Get attribute of the current Run.
      *
      * @param  property
      *                  the property
-     * @param  supplier
-     *                  the supplier to create a new value if the property is not
-     *                  yet set
      * @return          value of the property
      */
-    public Object getOrSupply(String property, Supplier<?> supplier) {
-        return currentStyle().computeIfAbsent(property, key -> supplier.get());
-    }
-
-    /**
-     * Push a style property.
-     *
-     * @param  property
-     *                  the property to set
-     * @param  value
-     *                  the value to be set
-     * @return
-     *                  the old value for this attribute
-     */
-    public Object put(String property, Object value) {
-        return currentStyle().put(property, value);
+    public Object getOrDefault(String property, Object defaultValue) {
+        return parts.get(parts.lastKey()).getOrDefault(property, defaultValue);
     }
 
     /**
@@ -123,6 +128,8 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     private Run[] getRuns() {
+        normalize();
+        
         String text = buffer.toString();
         Run[] runs = new Run[parts.size()];
 
@@ -145,13 +152,36 @@ public class RichTextBuilder implements Appendable, ToRichText {
         return runs;
     }
 
+    @SuppressWarnings("unchecked")
+    private void normalize() {
+        // combine subsequent runs sharing the same attibutes
+        boolean first = true;
+        List<Integer> keysToRemove = new ArrayList<>();
+        Map<String, Object> lastAttributes = Collections.emptyMap();
+        for (Entry<Integer, Map<String, Object>> entry: parts.entrySet()) {
+            Integer pos = entry.getKey();
+            Map<String, Object> attributes = entry.getValue();
+            
+            if (!first && attributes.equals(lastAttributes)) {
+                keysToRemove.add(pos);
+            }
+
+            lastAttributes = attributes;
+            first = false;
+        }
+        
+        // remove splits
+        parts.keySet().removeAll(keysToRemove);
+
+        // always remove a trailing empty run if it exists
+        if (parts.size()>1) {
+            parts.remove(length());
+        }
+    }
+
     @Override
     public String toString() {
         return buffer.toString();
-    }
-
-    private Map<String, Object> currentStyle() {
-        return parts.computeIfAbsent(buffer.length(), key -> new HashMap<>());
     }
 
     @Override
@@ -181,23 +211,61 @@ public class RichTextBuilder implements Appendable, ToRichText {
         return buffer.length();
     }
 
+    @SuppressWarnings("unchecked")
     void appendRun(Run run) {
         // set attributes
+        Map<String, Object> attributes = split();
+        Map<String, Object> backup = new HashMap<>();
         for (Entry<String, Object> entry : run.getAttributes().entrySet()) {
-            put(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            
+            if (key.equals(ATTRIBUTE_NAME_STYLE_LIST)) {
+                value = new ArrayList<>((List<Style>)value);
+            }
+            
+            Object oldValue = attributes.put(key, value);
+            backup.put(key, oldValue);
         }
+
         // append CharSequence
         append(run);
+        
+        // restore attributes
+        attributes = split();
+        for (Entry<String, Object> entry: backup.entrySet()) {
+            if (entry.getValue()==null) {
+                attributes.remove(entry.getKey());
+            } else {
+                attributes.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
-    /**
-     * Push a style, i. e. start using the style at the current position.
-     * Call {@link #pop(Style)} with the same argument to stop using the style.
-     * 
-     * @param style the Style
-     */
+    public void push(String name, Object value) {
+        Objects.requireNonNull(value, "value must not be null");
+        Object previousValue = split().put(name, value);
+        openedAttributes.push(new AttributeChange(name, previousValue, value));
+    }
+
+    public void pop(String name) {
+        AttributeChange change = openedAttributes.pop();
+        LangUtil.check(name.equals(change.name));
+        Map<String, Object> attributes = split();
+        if (change.previousValue==null) {
+            attributes.remove(name);
+        } else {
+            attributes.put(name, change.previousValue);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     public void push(Style style) {
-        push(TextAttributes.STYLE_START_RUN, style);
+        List<Style> styles = (List<Style>) getOrDefault(ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
+        List<Style> newStyles = new ArrayList<>(styles.size()+1);
+        newStyles.addAll(styles);
+        newStyles.add(style);
+        push("__styles", newStyles);
     }
 
     /**
@@ -207,16 +275,19 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @param style the Style
      */
     public void pop(Style style) {
-        push(TextAttributes.STYLE_END_RUN, style);
+        pop("__styles");
     }
 
-    private void push(String key, Style style) {
-        @SuppressWarnings("unchecked")
-        List<Style> current = (List<Style>) get(key);
-        if (current == null) {
-            current = new LinkedList<>();
-            put(key, current);
+    private Map<String, Object> split() { 
+        return parts.computeIfAbsent(length(), pos -> new HashMap<>(parts.get(parts.lastKey())));
+    }
+
+    @SuppressWarnings("unchecked")
+    void apply(Style style) {
+        for (Map<String,Object> attributes: parts.values()) {
+            List<Style> styles = (List<Style>) attributes.computeIfAbsent(ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
+            styles.add(style);
         }
-        current.add(style);
-    }   
+    }
+
 }

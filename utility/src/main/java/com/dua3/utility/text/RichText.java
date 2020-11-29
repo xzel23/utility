@@ -21,7 +21,12 @@ import java.util.stream.StreamSupport;
 public class RichText
         implements Iterable<Run>, AttributedCharSequence, ToRichText, Comparable<CharSequence> {
 
+    static final String ATTRIBUTE_NAME_STYLE_LIST = "__styles";
+
     private static final RichText EMPTY_TEXT = RichText.valueOf("");
+    private static final RichText SPACE = RichText.valueOf(" ");
+    private static final RichText TAB = RichText.valueOf("\t");
+    private static final RichText NEWLINE = RichText.valueOf("\n");
 
     /**
      * Returns the empty String as RichText.
@@ -32,6 +37,38 @@ public class RichText
         return EMPTY_TEXT;
     }
 
+    /**
+     * Returns RichText containing a single space character.
+     *
+     * @return RichText.valueOf(" ")
+     */
+    public static RichText space() {
+        return SPACE;
+    }
+
+    /**
+     * Returns RichText containing a single tabulator.
+     *
+     * @return RichText.valueOf("\t")
+     */
+    public static RichText tab() {
+        return TAB;
+    }
+
+    /**
+     * Returns RichText containing a single newline character.
+     *
+     * @return RichText.valueOf("\n")
+     */
+    public static RichText newline() {
+        return NEWLINE;
+    }
+
+    /**
+     * Get {@link RichText} containing an objects string representation.
+     * @param o
+     * @return RichText.valueOf(String.valueOf(o))
+     */
     public static RichText valueOf(Object o) {
         return valueOf(String.valueOf(o));
     }
@@ -47,6 +84,16 @@ public class RichText
         return new RichText(Collections.singletonList(new Run(s, 0, s.length(), TextAttributes.none())));
     }
 
+    /**
+     * Convert char to {@link RichText}.
+     * 
+     * @param c the character
+     * @return RichText containing only the character c
+     */
+    public static RichText valueOf(char c) {
+        return RichText.valueOf(Character.toString(c));
+    }
+
     /** The underlying CharSequence. */
     private final CharSequence text;
     
@@ -56,6 +103,7 @@ public class RichText
     /** The a map of text runs for this text with the position of the first character of the Run as key. */
     private final TreeMap<Integer,Run> runs = new TreeMap<>();
     
+    @SuppressWarnings("unchecked")
     RichText(List<Run> runs) {
         if (runs.isEmpty()) {
             this.text="";
@@ -64,8 +112,11 @@ public class RichText
         } else {
             this.text = runs.get(0).base();
             assert checkAllRunsHaveTextAsBase(runs);
-
-            runs.forEach(r -> this.runs.put(r.getStart(), r));
+            
+            for (Run r: runs) {
+                this.runs.put(r.getStart(), r);
+            }
+            
             this.start = this.runs.firstKey();
             this.length = this.runs.lastEntry().getValue().getEnd()-this.start;
         }
@@ -91,7 +142,23 @@ public class RichText
         }
 
         RichText other = (RichText) obj;
-        return runs.equals(other.runs);
+        
+        // compare the text length
+        if (length!= other.length()) {
+            return false;
+        }
+        
+        // compare contents
+        return this.runs.equals(other.runs);
+    }
+    
+    /**
+     * Get the index of the run the character at a position belongs to.
+     * @param pos the character position
+     * @return the run index
+     */
+    private int runIndex(int pos) {
+        return runs.floorKey(start+pos);
     }
 
     /**
@@ -110,7 +177,7 @@ public class RichText
         }
 
         for (int idx=0; idx<length; idx++) {
-            if (other.charAt(idx)!=text.charAt(start+idx)) {
+            if (other.charAt(idx)!=charAt(idx)) {
                 return false;
             }
         }
@@ -121,7 +188,7 @@ public class RichText
     @Override
     public int compareTo(CharSequence other) {
         for (int idx=0; idx<length; idx++) {
-            char a = text.charAt(start + idx);
+            char a = charAt(idx);
             char b = other.charAt(idx);
             if (a != b) {
                 return a - b;
@@ -130,10 +197,20 @@ public class RichText
 
         return length - other.length();
     }
+
+    // calculate the hashCode on demand
+    private int hash = 0;
     
     @Override
     public int hashCode() {
-        return text.hashCode() + 17 * runs.size();
+        int h = hash;
+        if (h == 0 && length > 0) {
+            for (int i = start; i < start+length; i++) {
+                h = 31 * h + text.charAt(i);
+            }
+            hash = h;
+        }
+        return h;
     }
 
     /**
@@ -238,13 +315,17 @@ public class RichText
      */
     @Override
     public RichText subSequence(int begin, int end) {
+        if (begin==0 && end==length) {
+            return this;
+        }
+        
         int floorKey = runs.floorKey(start+begin);
         int ceilingKey = runs.floorKey(start+end);
         List<Run> subRuns = new ArrayList<>(runs.subMap(floorKey, true, ceilingKey, true).values());
         
         Run firstRun = subRuns.get(0);
         if (firstRun.getStart() < start+begin) {
-            subRuns.set(0, firstRun.subSequence(begin-firstRun.getStart(), firstRun.length()));
+            subRuns.set(0, firstRun.subSequence(begin+start-firstRun.getStart(), firstRun.length()));
         }
         
         Run lastRun = subRuns.get(subRuns.size()-1);
@@ -266,7 +347,7 @@ public class RichText
     
     @Override
     public char charAt(int index) {
-        return text.charAt(index);
+        return text.charAt(start+index);
     }
 
     @Override
@@ -287,7 +368,7 @@ public class RichText
         while ((st < len) && Character.isWhitespace(charAt(len - 1))) {
             len--;
         }
-        return ((st > 0) || (len < length)) ? subSequence(st, len) : this;
+        return subSequence(st, len);
     }
 
     /**
@@ -445,5 +526,53 @@ public class RichText
     public static RichTextMatcher matcher(Pattern pattern, RichText text) {
         return new RichTextMatcher(pattern, text);
     }
-    
+
+    /**
+     * Return the index of the needle in this RichText instance.
+     * @param s the text to find
+     * @return the first index, where s is found within this instance
+     */
+    public int indexOf(CharSequence s) {
+        return TextUtil.indexOf(this, s);
+    }
+
+    /**
+     * Return the index of the needle in this RichText instance.
+     * @param s the text to find
+     * @param fromIndex the starting position
+     * @return the first index, where s is found within this instance
+     */
+    public int indexOf(CharSequence s, int fromIndex) {
+        return TextUtil.indexOf(this, s, fromIndex);
+    }
+
+    /**
+     * Test whether this instance starts with the given {@link CharSequence}.
+     * @param s the sequence to test
+     * @return true, if this instance starts with s
+     */
+    public boolean startsWith(CharSequence s) {
+        return TextUtil.startsWith(this, s);
+    }
+
+    /**
+     * Test if CharSequence is contained.
+     * @param s the sequence to search for
+     * @return true, if s is contained
+     */
+    public boolean contains(CharSequence s) {
+        return indexOf(s) >= 0;
+    }
+
+    /**
+     * Gat styled copy of this instance.
+     * @param style the style
+     * @return styled copy
+     */
+    public RichText apply(Style style) {
+        RichTextBuilder rtb = new RichTextBuilder(length);
+        rtb.append(this);
+        rtb.apply(style);
+        return rtb.toRichText();
+    }
 }

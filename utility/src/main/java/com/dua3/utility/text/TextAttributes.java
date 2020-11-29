@@ -21,10 +21,6 @@ import com.dua3.utility.lang.LangUtil;
  */
 public final class TextAttributes extends AbstractMap<String, Object> {
 
-    // meta
-    static final String STYLE_START_RUN = "__style-start-run";
-    static final String STYLE_END_RUN = "__style-end-run";
-
     /** 
      * The style class.
      * 

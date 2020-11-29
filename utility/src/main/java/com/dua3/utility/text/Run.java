@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 import com.dua3.utility.lang.LangUtil;
 
+import static com.dua3.utility.text.RichText.ATTRIBUTE_NAME_STYLE_LIST;
+
 /**
  * A sequence of characters that share the same properties.
  */
@@ -56,9 +58,6 @@ public class Run implements AttributedCharSequence {
         }
 
         Run other = (Run) obj;
-        // it is not sufficient to compare text since even for different
-        // strings, the char sequences represented by two runs might be
-        // the same.
         if (length != other.length) {
             return false;
         }
@@ -67,7 +66,6 @@ public class Run implements AttributedCharSequence {
                 return false;
             }
         }
-
         return attributes.equals(other.attributes);
     }
 
@@ -144,22 +142,8 @@ public class Run implements AttributedCharSequence {
         return text.subSequence(start, start + length).toString();
     }
 
-    /**
-     * Get the list of styles to apply at this run's start.
-     * @return list of styles to apply when this run starts.
-     */
     @SuppressWarnings("unchecked")
-    public List<Style> getRunStartStyles() {
-        return Collections.unmodifiableList((List<Style>) attributes.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList()));
+    public List<Style> getStyles() {
+        return (List<Style>) attributes.getOrDefault(ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
-
-    /**
-     * Get the list of styles to discard at this run's end.
-     * @return list of styles to discard when this run ends.
-     */
-    @SuppressWarnings("unchecked")
-    public List<Style> getRunEndStyles() {
-        return Collections.unmodifiableList((List<Style>) attributes.getOrDefault(TextAttributes.STYLE_START_RUN, Collections.emptyList()));
-    }
-
 }

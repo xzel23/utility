@@ -11,22 +11,26 @@ import java.util.stream.Collectors;
 
 public class HtmlConverter {
 
-    private static final HtmlConverter DEFAULT_CONVERTER = new HtmlConverter(
-            styles -> defaultOpeningTags(TextAttributes.STYLE_CLASS_DEFAULT, styles),
-            styles -> defaultClosingTags(TextAttributes.STYLE_CLASS_DEFAULT, styles)
-    );
+    @FunctionalInterface
+    public interface TagMapper {
+        enum TagType {
+            OPEN,
+            CLOSE
+        }
+        
+        String getTags(TagType type, Collection<Style> styles);
+    }
     
+    private static final TagMapper DEFAULT_TAG_MAPPER = (type, styles) -> {
+        if (type == TagMapper.TagType.OPEN) {
+            return defaultOpeningTags(TextAttributes.STYLE_CLASS_DEFAULT, styles);
+        } else {
+            return defaultClosingTags(TextAttributes.STYLE_CLASS_DEFAULT, styles);
+        }
+    };
+
     private final Function<Collection<Style>, String> openingTags;
     private final Function<Collection<Style>, String> closingTags;
-
-    /**
-     * Convert {@link RichText} instance to String representation using the default converter.
-     * @param text the text
-     * @return String with the same text and HTML markup 
-     */
-    public static String asHtml(RichText text) {
-        return DEFAULT_CONVERTER.append(new StringBuilder(text.length()*3/2), text).toString();
-    }
 
     /**
      * Constructor.
@@ -39,6 +43,22 @@ public class HtmlConverter {
         this.closingTags = Objects.requireNonNull(closingTags);
     }
 
+    /**
+     * Create instance using the default tag mapper.
+     */
+    public HtmlConverter() {
+        this(DEFAULT_TAG_MAPPER);
+    }
+    
+    /**
+     * Constructor.
+     *
+     * @param mapper the generator function for tags
+     */
+    public HtmlConverter(TagMapper mapper) {
+        this(styles -> mapper.getTags(TagMapper.TagType.OPEN, styles), styles -> mapper.getTags(TagMapper.TagType.CLOSE, styles));
+    }
+    
     /*
      * Map holding the tags to use for TextAttributes.
      * 
@@ -72,10 +92,6 @@ public class HtmlConverter {
         return DataUtil.asFunction(m, attr -> noTag);
     }
     
-    private Pair<String, String> getTags(String attr, Object value) {
-        return tagMap.apply(attr).apply(value);
-    }
-
     private static List<Pair<String,String>> defaultTags(String styleClass, Collection<Style> styles) {
         List<Pair<String,String>> tags = new LinkedList<>();
         for (Style s: styles) {
@@ -98,27 +114,46 @@ public class HtmlConverter {
         return defaultTags(styleClass, styles).stream().map(p -> p.second).collect(Collectors.joining());
     }
 
-    public <T extends Appendable> T append(T app, RichText text) throws IOException {
+    public <T extends Appendable> T appendTo(T app, RichText text) throws IOException {
+        List<Style> openStyles = new LinkedList<>();
         for (Run run: text) {
+            List<Style> runStyles = run.getStyles();
+
+            // add closing Tags for styles
+            List<Style> closingStyles = new LinkedList<>(openStyles);
+            closingStyles.removeAll(runStyles);
+            app.append(closingTags.apply(closingStyles));
+            
             // add opening Tags for styles
-            app.append(openingTags.apply(run.getRunStartStyles()));
+            List<Style> openingStyles = new LinkedList<>(runStyles);
+            openingStyles.removeAll(openStyles);
+            app.append(openingTags.apply(openingStyles));
 
             // add text
             TextUtil.appendHtmlEscapedCharacters(app, run);
-
-            // add closing Tags for styles
-            app.append(closingTags.apply(run.getRunEndStyles()));
+            
+            // update open styles
+            openStyles.removeAll(closingStyles);
+            openStyles.addAll(openingStyles);
         }
+        // close all remeining styles
+        app.append(closingTags.apply(openStyles));
+        
         return app;
     }
     
-    public StringBuilder append(StringBuilder sb, RichText text) {
+    public StringBuilder appendTo(StringBuilder sb, RichText text) {
         try {
-            append((Appendable) sb, text);
+            appendTo((Appendable) sb, text);
             return sb;
         } catch (IOException e) {
             // StringBuilder will not throw IOException
             throw new UncheckedIOException(e);
         }
     }
+    
+    public String toHtml(RichText text) {
+        return appendTo(new StringBuilder(text.length()*12/10), text).toString();
+    }
+    
 }

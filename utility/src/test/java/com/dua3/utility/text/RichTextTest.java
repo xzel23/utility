@@ -20,26 +20,12 @@ public class RichTextTest {
     }
 
     @Test
-    public void testRichTextBuilding() {
-        RichTextBuilder builder = new RichTextBuilder();
-        builder.append("Hello ");
-        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
-        builder.append("world");
-        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
-        builder.append("!");
-        RichText rt = builder.toRichText();
-        
-        assertEquals("Hello world!", rt.toString());
-        assertEquals("Hello world!", rt.stream().collect(Collectors.joining()));
-    }
-
-    @Test
     public void testsubSequence() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.push(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
         builder.append("world");
-        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
+        builder.pop(TextAttributes.FONT_WEIGHT);
         builder.append("!");
         RichText rt = builder.toRichText();
 
@@ -60,16 +46,28 @@ public class RichTextTest {
     @Test
     public void testReplaceAll() {
         String s = "Hello world\n\nThis     is a\ttest!\r\n";
-        assertEquals(s.replaceAll("\\s+", " "), RichText.valueOf(s).replaceAll("\\s+", RichText.valueOf(" ")).toString());    
+        assertEquals(s.replaceAll("\\s+", " "), RichText.valueOf(s).replaceAll("\\s+", RichText.valueOf(" ")).toString());
+
+        String s1 = "As with many great things in life, Git began with a bit of creative destruction and fiery controversy.";
+        RichText r1 = RichText.valueOf(s1);
+
+        assertEquals(s1.replaceAll("\\s+", " "), r1.replaceAll("\\s+", RichText.valueOf(" ")).toString());
+        assertEquals(RichText.valueOf(s1.replaceAll("\\s+", " ")), r1.replaceAll("\\s+", RichText.valueOf(" ")));
+
+        RichText r2 = r1.subSequence(13, 33);
+        String s2 = r2.toString();
+
+        assertEquals(s2.replaceAll("\\s+", " "), r2.replaceAll("\\s+", RichText.valueOf(" ")).toString());
+        assertEquals(RichText.valueOf(s2.replaceAll("\\s+", " ")), r2.replaceAll("\\s+", RichText.valueOf(" ")));
     }
     
     @Test
     public void testLines() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.push(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
         builder.append("w\nor\nld");
-        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
+        builder.pop(TextAttributes.FONT_WEIGHT);
         builder.append("!");
         RichText rt = builder.toRichText();
         
@@ -82,9 +80,9 @@ public class RichTextTest {
     public void testAttributedChars() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.push(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
         builder.append("world");
-        builder.put(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL);
+        builder.pop(TextAttributes.FONT_WEIGHT);
         builder.append("!");
         RichText rt = builder.toRichText();
 
@@ -101,4 +99,5 @@ public class RichTextTest {
         rt.attributedChars().map(AttributedCharacter::character).forEach(sb::append);
         assertEquals("Hello world!", sb.toString());
     }
+    
 }
