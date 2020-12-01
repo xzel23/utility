@@ -123,6 +123,26 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
                 .map(entry -> ((Entry<T>) entry).getParms());
     }
 
+    /**
+     * Execute an action if {@link SimpleOption} is present.
+     * @param option the option
+     * @param action the action to execute
+     * @param <T> the parameter type
+     */
+    public <T> void ifPresent(SimpleOption<T> option, Consumer<T> action) {
+        stream(option).map(list -> list.get(0)).forEach(action);
+    }
+        
+    /**
+     * Execute an action for every instance of the given {@link Option}.
+     * @param option the option
+     * @param action the action to execute
+     * @param <T> the parameter type
+     */
+    public <T> void forEach(Option<T> option, Consumer<List<T>> action) {
+        stream(option).forEach(action);
+    }
+        
     @Override
     public Iterator<Entry<?>> iterator() {
         return parsedOptions.iterator();
