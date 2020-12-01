@@ -6,6 +6,7 @@
 package com.dua3.utility.text;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Collectors;
 
@@ -99,5 +100,16 @@ public class RichTextTest {
         rt.attributedChars().map(AttributedCharacter::character).forEach(sb::append);
         assertEquals("Hello world!", sb.toString());
     }
-    
+
+    // Test that Runs containing same text and attributes but with different offsets to the same base compare ewuals.
+    //
+    @Test
+    public void testRunEquals() {
+        RichText txt= RichText.valueOf("1 2 3");
+        RichText a = txt.subSequence(1,2);
+        RichText b = txt.subSequence(3,4);
+        assertEquals(" ", a.toString());
+        assertEquals(" ", b.toString());
+        assertTrue(a.equals(b));
+    }
 }

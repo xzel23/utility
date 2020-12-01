@@ -58,6 +58,15 @@ public class HtmlConverter {
     public HtmlConverter(TagMapper mapper) {
         this(styles -> mapper.getTags(TagMapper.TagType.OPEN, styles), styles -> mapper.getTags(TagMapper.TagType.CLOSE, styles));
     }
+
+    /** 
+     * Get the default tag mapper.
+     * 
+     * @return default tag mapper
+     */
+    public static TagMapper defaultTagMapper() {
+        return DEFAULT_TAG_MAPPER;
+    }
     
     /*
      * Map holding the tags to use for TextAttributes.

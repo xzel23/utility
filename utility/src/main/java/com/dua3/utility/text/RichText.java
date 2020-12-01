@@ -149,7 +149,14 @@ public class RichText
         }
         
         // compare contents
-        return this.runs.equals(other.runs);
+        Iterator<Run> iter1 = this.iterator();
+        Iterator<Run> iter2 = other.iterator();
+        while (iter1.hasNext()&&iter2.hasNext()) {
+            if (!Objects.equals(iter1.next(), iter2.next())) {
+                return false;
+            }
+        }
+        return iter1.hasNext()==iter2.hasNext();
     }
     
     /**
