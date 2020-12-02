@@ -66,13 +66,13 @@ public class Font {
      */
     public Font(String family, float size, Color color, boolean bold, boolean italic, boolean underline,
             boolean strikeThrough) {
-        this.color = color;
         this.size = size;
-        this.family = family;
         this.bold = bold;
         this.italic = italic;
         this.underline = underline;
         this.strikeThrough = strikeThrough;
+        this.family = family;
+        this.color = color;
     }
 
     protected Font(Font baseFont, FontDef fd) {
@@ -232,12 +232,12 @@ public class Font {
      * @return true, if a and b have the same attributes
      */
     public static boolean similar(Font a, Font b) {
-        return b.family.equals(a.family)
-                && b.size == a.size
+        return b.size == a.size
                 && b.bold == a.bold
                 && b.italic == a.italic
                 && b.underline == a.underline
                 && b.strikeThrough == a.strikeThrough
+                && b.family.equals(a.family)
                 && b.color.equals(a.color);
     }
 
