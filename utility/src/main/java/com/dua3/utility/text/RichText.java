@@ -582,4 +582,45 @@ public class RichText
         rtb.apply(style);
         return rtb.toRichText();
     }
+
+    /**
+     * Create a {@link RichTextJoiner}.
+     * @param delimiter the delimiter to use
+     * @return the joiner
+     */
+    public static RichTextJoiner joiner(RichText delimiter) {
+        return new RichTextJoiner(delimiter);
+    }
+
+    /**
+     * Create a {@link RichTextJoiner}.
+     * @param delimiter the delimiter to use
+     * @param prefix the prefix
+     * @param suffix the suffix
+     * @return the joiner
+     */
+    public static RichTextJoiner joiner(RichText delimiter, RichText prefix, RichText suffix) {
+        return new RichTextJoiner(delimiter, prefix, suffix);
+    }
+
+    /**
+     * Create a {@link RichTextJoiner}.
+     * @param delimiter the delimiter to use
+     * @return the joiner
+     */
+    public static RichTextJoiner joiner(String delimiter) {
+        return new RichTextJoiner(delimiter);
+    }
+
+    /**
+     * Create a {@link RichTextJoiner}.
+     * @param delimiter the delimiter to use
+     * @param prefix the prefix
+     * @param suffix the suffix
+     * @return the joiner
+     */
+    public static RichTextJoiner joiner(String delimiter, String prefix, String suffix) {
+        return new RichTextJoiner(delimiter, prefix, suffix);
+    }
+
 }

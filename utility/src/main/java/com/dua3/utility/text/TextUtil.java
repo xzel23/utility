@@ -794,4 +794,5 @@ public final class TextUtil {
         Pattern pattern = Pattern.compile("^", Pattern.MULTILINE);
         return pattern.matcher(s).replaceAll(indent.toString());
     }
+    
 }

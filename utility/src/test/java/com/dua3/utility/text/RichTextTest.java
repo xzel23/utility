@@ -5,12 +5,12 @@
 
 package com.dua3.utility.text;
 
+import org.junit.jupiter.api.Test;
+
+import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
 
 /**
  * @author Axel Howind
@@ -111,5 +111,12 @@ public class RichTextTest {
         assertEquals(" ", a.toString());
         assertEquals(" ", b.toString());
         assertTrue(a.equals(b));
+    }
+    
+    @Test
+    public void tesstJoiner() {
+        RichText actual = Stream.of("This","should","be","easy").map(RichText::valueOf).collect(RichText.joiner(" "));
+        RichText expected = RichText.valueOf("This should be easy");
+        assertEquals(expected, actual);
     }
 }
