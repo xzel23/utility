@@ -319,6 +319,16 @@ public final class TextUtil {
     }
 
     /**
+     * Test if {@link CharSequence} is contained-
+     * @param s1 the {@link CharSequence} to search in
+     * @param s2 the {@link CharSequence} to search for
+     * @return
+     */
+    public static boolean contains(CharSequence s1, CharSequence s2) {
+        return indexOf(s1, s2)>=0;
+    }
+
+    /**
      * Test if string contains none of the given characters.
      *
      * @param s the string to search
