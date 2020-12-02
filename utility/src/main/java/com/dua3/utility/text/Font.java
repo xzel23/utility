@@ -324,4 +324,16 @@ public class Font {
             Pair.of(TextAttributes.COLOR, color)
         );
     }
+
+    /**
+     * Get width of a space character in this font.
+     * @return width of a single space character in this font
+     */
+    public double getSpaceWidth() {
+        if (spaceWidth<0) {
+            spaceWidth = TextUtil.getTextWidth(" ", this);
+        }
+        return spaceWidth;
+    }
+    private double spaceWidth=-1;
 }
