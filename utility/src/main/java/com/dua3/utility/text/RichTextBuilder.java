@@ -286,7 +286,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     void apply(Style style) {
         for (Map<String,Object> attributes: parts.values()) {
             List<Style> styles = (List<Style>) attributes.computeIfAbsent(ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
-            styles.add(style);
+            styles.add(0, style); // add the style at the first position!
         }
     }
 
