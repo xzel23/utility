@@ -23,11 +23,7 @@ import javax.swing.text.StyledDocument;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextConverterBase;
-import com.dua3.utility.text.Style;
-import com.dua3.utility.text.TextAttributes;
-import com.dua3.utility.text.TextUtil;
+import com.dua3.utility.text.*;
 
 /**
  * A {@link RichTextConverterBase} implementation for translating
@@ -139,8 +135,19 @@ public final class StyledDocumentBuilder extends RichTextConverterBase<StyledDoc
                 break;
             case TextAttributes.BACKGROUND_COLOR:
                 StyleConstants.setBackground(attributeSet, SwingUtil.toAwtColor(getColor(value, getDefaultBgColor())));
+                break; 
+            case TextAttributes.FONT:
+            {
+                Font font = (Font) value;
+                StyleConstants.setFontFamily(attributeSet, font.getFamily());
+                StyleConstants.setFontSize(attributeSet, Math.round(scale*font.getSizeInPoints()));
+                StyleConstants.setItalic(attributeSet, font.isItalic());
+                StyleConstants.setBold(attributeSet, font.isBold());
+                StyleConstants.setUnderline(attributeSet, font.isUnderline());
+                StyleConstants.setStrikeThrough(attributeSet, font.isStrikeThrough());
                 break;
-            case TextAttributes.FONT_FAMILY:
+            }
+            case TextAttributes.FONT_TYPE:
                 StyleConstants.setFontFamily(attributeSet, String.valueOf(value));
                 break;
             case TextAttributes.FONT_STYLE:
@@ -157,26 +164,12 @@ public final class StyledDocumentBuilder extends RichTextConverterBase<StyledDoc
             case TextAttributes.FONT_WEIGHT:
                 StyleConstants.setBold(attributeSet, TextAttributes.FONT_WEIGHT_VALUE_BOLD.equals(value));
                 break;
-            case TextAttributes.TEXT_DECORATION:
-                switch (String.valueOf(value)) {
-                case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE:
-                    StyleConstants.setUnderline(attributeSet, true);
-                    StyleConstants.setStrikeThrough(attributeSet, false);
-                    break;
-                case TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH:
-                    StyleConstants.setUnderline(attributeSet, false);
-                    StyleConstants.setStrikeThrough(attributeSet, true);
-                    break; 
-                case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH:
-                    StyleConstants.setUnderline(attributeSet, true);
-                    StyleConstants.setStrikeThrough(attributeSet, true);
-                case TextAttributes.TEXT_DECORATION_VALUE_NONE:
-                default:
-                    StyleConstants.setUnderline(attributeSet, false);
-                    StyleConstants.setStrikeThrough(attributeSet, false);
-                    break;
-                }
-                break;
+            case TextAttributes.TEXT_DECORATION_UNDERLINE:
+                StyleConstants.setUnderline(attributeSet, TextAttributes.TEXT_DECORATION_UNDERLINE_VALUE_LINE.equals(value));
+                break;                
+            case TextAttributes.TEXT_DECORATION_LINE_THROUGH:
+                StyleConstants.setStrikeThrough(attributeSet, TextAttributes.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE.equals(value));
+                break;                
             case TextAttributes.FONT_VARIANT:
                 break;
             case TextAttributes.TEXT_INDENT_LEFT:

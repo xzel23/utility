@@ -298,33 +298,6 @@ public class Font {
         return fd;
     }
 
-    static final String[] TEXT_DECORATION_VALUES = {
-            TextAttributes.TEXT_DECORATION_VALUE_NONE,      
-            TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE,      
-            TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH,      
-            TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH      
-    };
-    
-    private String textDecorationAttribute() {
-        int idx = ( isUnderline() ? 1 : 0 ) + ( isStrikeThrough() ? 2 : 0 );
-        return TEXT_DECORATION_VALUES[idx];
-    }
-
-    /**
-     * Get the {@link TextAttributes} that define this font.
-     * @return the {@link TextAttributes} of this font
-     */
-    public TextAttributes getTextAttributes() {
-        return TextAttributes.of(
-            Pair.of(TextAttributes.FONT_FAMILY, family),
-            Pair.of(TextAttributes.FONT_SIZE, size),
-            Pair.of(TextAttributes.FONT_WEIGHT, bold ? TextAttributes.FONT_WEIGHT_VALUE_BOLD : TextAttributes.FONT_WEIGHT_VALUE_NORMAL),
-            Pair.of(TextAttributes.FONT_STYLE, italic ? TextAttributes.FONT_STYLE_VALUE_ITALIC : TextAttributes.FONT_STYLE_VALUE_NORMAL),
-            Pair.of(TextAttributes.TEXT_DECORATION, textDecorationAttribute()),
-            Pair.of(TextAttributes.COLOR, color)
-        );
-    }
-
     /**
      * Get width of a space character in this font.
      * @return width of a single space character in this font
@@ -336,4 +309,5 @@ public class Font {
         return spaceWidth;
     }
     private double spaceWidth=-1;
+    
 }

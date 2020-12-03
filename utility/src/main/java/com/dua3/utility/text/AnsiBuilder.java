@@ -75,25 +75,19 @@ public final class AnsiBuilder extends AbstractStringBasedBuilder {
                 } else {
                     esc.add(AnsiCode.BOLD_OFF);
                 }
-                break;
-            case TextAttributes.TEXT_DECORATION:
-                switch (String.valueOf(value)) {
-                    case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE:
-                        esc.add(AnsiCode.UNDERLINE_ON);
-                        esc.add(AnsiCode.STRIKE_THROUGH_OFF);
-                        break;
-                    case TextAttributes.TEXT_DECORATION_VALUE_LINE_THROUGH:
-                        esc.add(AnsiCode.UNDERLINE_OFF);
-                        esc.add(AnsiCode.STRIKE_THROUGH_ON);
-                        break;
-                    case TextAttributes.TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH:
-                        esc.add(AnsiCode.UNDERLINE_ON);
-                        esc.add(AnsiCode.STRIKE_THROUGH_ON);
-                        break;
-                    default:
-                        esc.add(AnsiCode.UNDERLINE_OFF);
-                        esc.add(AnsiCode.STRIKE_THROUGH_OFF);
-                        break;
+                break; 
+            case TextAttributes.TEXT_DECORATION_UNDERLINE:
+                if (TextAttributes.TEXT_DECORATION_UNDERLINE_VALUE_LINE.equals(value)) {
+                    esc.add(AnsiCode.UNDERLINE_ON);
+                } else {
+                    esc.add(AnsiCode.UNDERLINE_OFF);
+                }
+                break; 
+            case TextAttributes.TEXT_DECORATION_LINE_THROUGH:
+                if (TextAttributes.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE.equals(value)) {
+                    esc.add(AnsiCode.STRIKE_THROUGH_ON);
+                } else {
+                    esc.add(AnsiCode.STRIKE_THROUGH_OFF);
                 }
                 break;
             case TextAttributes.FONT_STYLE:

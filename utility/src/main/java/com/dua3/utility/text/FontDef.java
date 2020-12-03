@@ -12,6 +12,7 @@ import java.util.Objects;
  * instances.
  */
 public final class FontDef {
+
     /**
      * Create FontDef instance with only the color attribute set.
      *
@@ -270,36 +271,4 @@ public final class FontDef {
         return a==null || b==null || a.equals(b);
     }
 
-    private static void textAttributesHelper(List<Pair<String, ?>> attributes, String key, Object value) {
-        if (value != null) {
-            attributes.add(Pair.of(key, value));
-        }
-    }
-
-    private String textDecorationAttribute() {
-        if (underline == null && strikeThrough == null) {
-            return null;
-        }
-
-        int idx = (underline != null && underline ? 1 : 0) + (strikeThrough != null && strikeThrough ? 2 : 0);
-        return Font.TEXT_DECORATION_VALUES[idx];
-    }
-
-    public TextAttributes getTextAttributes() {
-        List<Pair<String, ?>> attributes = new LinkedList<>();
-        textAttributesHelper(attributes, TextAttributes.COLOR, color);
-        textAttributesHelper(attributes, TextAttributes.FONT_SIZE, size);
-        textAttributesHelper(attributes, TextAttributes.FONT_FAMILY, family);
-
-        String weight = bold == null ? null : bold ? TextAttributes.FONT_WEIGHT_VALUE_BOLD : TextAttributes.FONT_WEIGHT_VALUE_NORMAL;
-        textAttributesHelper(attributes, TextAttributes.FONT_WEIGHT, weight);
-
-        String style = italic == null ? null : italic ? TextAttributes.FONT_STYLE_VALUE_ITALIC : TextAttributes.FONT_STYLE_VALUE_NORMAL;
-        textAttributesHelper(attributes, TextAttributes.FONT_STYLE, style);
-
-        String decoration = textDecorationAttribute();
-        textAttributesHelper(attributes, TextAttributes.TEXT_DECORATION, decoration);
-
-        return TextAttributes.of(attributes);
-    }
 }

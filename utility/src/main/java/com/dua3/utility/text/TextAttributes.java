@@ -36,12 +36,15 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * The Style name.
      */
     public static final String STYLE_NAME = "style-name";
-
+    
+    /** property for the font. */
+    public static final String FONT = "font";
+    
     /** property name for the font family */
-    public static final String FONT_FAMILY = "font-family";
-    public static final String FONT_FAMILY_VALUE_SANS_SERIF = "sans-serif";
-    public static final String FONT_FAMILY_VALUE_SERIF = "serif";
-    public static final String FONT_FAMILY_VALUE_MONOSPACE = "monospace";
+    public static final String FONT_TYPE = "font-type";
+    public static final String FONT_TYPE_VALUE_SANS_SERIF = "sans-serif";
+    public static final String FONT_TYPE_VALUE_SERIF = "serif";
+    public static final String FONT_TYPE_VALUE_MONOSPACE = "monospace";
 
     /** property name for the font style */
     public static final String FONT_STYLE = "font-style";
@@ -64,12 +67,15 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     public static final String FONT_VARIANT = "font-variant";
     public static final String FONT_VARIANT_VALUE_NORMAL = "normal";
 
-    /** property name for the text decoration */
-    public static final String TEXT_DECORATION = "text-decoration";
-    public static final String TEXT_DECORATION_VALUE_NONE = "";
-    public static final String TEXT_DECORATION_VALUE_LINE_THROUGH = "line-through";
-    public static final String TEXT_DECORATION_VALUE_UNDERLINE = "underline";
-    public static final String TEXT_DECORATION_VALUE_UNDERLINE_LINE_THROUGH = "underline line-through";
+    /** property name for the underline text decoration */
+    public static final String TEXT_DECORATION_UNDERLINE = "text-decoration-line-under";
+    public static final Boolean TEXT_DECORATION_UNDERLINE_VALUE_LINE = Boolean.TRUE;
+    public static final Boolean TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE = Boolean.FALSE;
+
+    /** property name for the line-through text decoration */
+    public static final String TEXT_DECORATION_LINE_THROUGH = "text-decoration-line-through";
+    public static final Boolean TEXT_DECORATION_LINE_THROUGH_VALUE_LINE = Boolean.TRUE;
+    public static final Boolean TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE = Boolean.FALSE;
 
     /** text indentation */
     public static final String TEXT_INDENT_LEFT = "indent-left";
@@ -81,20 +87,40 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     /** suffix */
     public static final String TEXT_SUFFIX = "SUFFIX";
 
-    // colors
+    /** foreground color */
     public static final String COLOR = "color";
+    /** background color */
     public static final String BACKGROUND_COLOR = "background-color";
 
+    /** empty {@link TextAttributes} instance */
     private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
 
+    // -- define some default styles
+    public static final Style SANS_SERIF = Style.create("sans-serif", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_TYPE, TextAttributes.FONT_TYPE_VALUE_SANS_SERIF));
+    public static final Style SERIF = Style.create("serif", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_TYPE, TextAttributes.FONT_TYPE_VALUE_SERIF));
+    public static final Style MONOSPACE = Style.create("monospace", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_TYPE, TextAttributes.FONT_TYPE_VALUE_MONOSPACE));
+
+    public static final Style BOLD = Style.create("bold", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD));
+    public static final Style NORMAL = Style.create("normal", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_NORMAL));
+
+    public static final Style ITALIC = Style.create("italic", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_STYLE, TextAttributes.FONT_STYLE_VALUE_ITALIC));
+    public static final Style REGULAR = Style.create("regular", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_STYLE, TextAttributes.FONT_STYLE_VALUE_NORMAL));
+    
+    public static final Style UNDERLINE = Style.create("underline", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.TEXT_DECORATION_UNDERLINE, TextAttributes.TEXT_DECORATION_UNDERLINE_VALUE_LINE));
+    public static final Style NO_UNDERLINE = Style.create("no-underline", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.TEXT_DECORATION_UNDERLINE, TextAttributes.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
+    
+    public static final Style LINE_THROUGH = Style.create("line-through", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.TEXT_DECORATION_LINE_THROUGH, TextAttributes.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE));
+    public static final Style NO_LINE_THROUGH = Style.create("no-line-through", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.TEXT_DECORATION_LINE_THROUGH, TextAttributes.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
+    
     private static final Map<String, Object> DEFAULTS = LangUtil.map(
-            Pair.of(FONT_FAMILY, FONT_FAMILY_VALUE_SANS_SERIF),
+            Pair.of(FONT_TYPE, FONT_TYPE_VALUE_SANS_SERIF),
             Pair.of(FONT_STYLE, FONT_STYLE_VALUE_NORMAL),
             Pair.of(FONT_SIZE, "10pt"),
             Pair.of(FONT_SCALE, 1),
             Pair.of(FONT_WEIGHT, FONT_WEIGHT_VALUE_NORMAL),
             Pair.of(FONT_VARIANT, FONT_VARIANT_VALUE_NORMAL),
-            Pair.of(TEXT_DECORATION, TEXT_DECORATION_VALUE_NONE),
+            Pair.of(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE),
+            Pair.of(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE),
             Pair.of(TEXT_INDENT_LEFT, TEXT_INDENT_LEFT_VALUE_0),
             Pair.of(COLOR, Color.WHITE),
             Pair.of(BACKGROUND_COLOR, Color.BLACK));
