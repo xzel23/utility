@@ -1,63 +1,164 @@
 package com.dua3.utility.text;
 
-import com.dua3.utility.data.DataUtil;
-import com.dua3.utility.data.Pair;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class HtmlConverter {
 
-    @FunctionalInterface
-    public interface TagMapper {
-        enum TagType {
-            OPEN,
-            CLOSE
-        }
+    /**
+     * An empty tag that does not produce any output.
+     */
+    public static final HtmlTag EMPTY_TAG = HtmlTag.tag("", "");
+
+    private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
+        addMapping(attr, v -> Objects.equals(v,value) ? tag : EMPTY_TAG);
+    }
+    
+    void addDefaultMappings() {
+        addSimpleMapping(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
+        addSimpleMapping(TextAttributes.FONT_STYLE, TextAttributes.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
+        addSimpleMapping(TextAttributes.TEXT_DECORATION_UNDERLINE, TextAttributes.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
+        addSimpleMapping(TextAttributes.TEXT_DECORATION_LINE_THROUGH, TextAttributes.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
+
+        addMapping(TextAttributes.FONT_TYPE, value -> {
+            if (isUseCss()) {
+                switch (value.toString()) {
+                    case TextAttributes.FONT_TYPE_VALUE_MONOSPACE:
+                        return HtmlTag.tag("<span class=\"monospace\">", "</span>");
+                    case TextAttributes.FONT_TYPE_VALUE_SANS_SERIF:
+                        return HtmlTag.tag("<span class=\"sans-serif\">", "</span>");
+                    case TextAttributes.FONT_TYPE_VALUE_SERIF:
+                        return HtmlTag.tag("<span class=\"serif\">", "</span>");
+                    default:
+                        return EMPTY_TAG;
+                }
+            } else {
+                switch (value.toString()) {
+                    case TextAttributes.FONT_TYPE_VALUE_MONOSPACE:
+                        return HtmlTag.tag("<code>", "</code>");
+                    case TextAttributes.FONT_TYPE_VALUE_SANS_SERIF:
+                        return HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
+                    case TextAttributes.FONT_TYPE_VALUE_SERIF:
+                        return HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
+                    default:
+                        return EMPTY_TAG;
+                }
+            }
+        });
         
-        String getTags(TagType type, Collection<Style> styles);
+        addMapping(TextAttributes.FONT, value -> {
+            Font font = (Font) value;
+            if (isUseCss()) {
+                return HtmlTag.tag("<span class=\"" + font.toString() + "\">", "</span>");
+            } else {
+                return HtmlTag.tag("<span style=\"" + font.getCssStyle() + "\">", "</span>");
+            }
+        });
+    }
+
+    void setDefaultMapper(BiFunction<String, Object, HtmlTag> defaultMapper) {
+        this.defaultMapper = Objects.requireNonNull(defaultMapper);
+    }
+
+    /**
+     * The mappings of this converter.
+     * 
+     * Key: the attribute name
+     * Value: the function that maps values to tags
+     */
+    private final Map <String, Function<Object, HtmlTag>> mappings = new HashMap<>();
+
+    /**
+     * The default mapper used to generate tags for attributes without mapping.
+     */
+    private BiFunction<String, Object, HtmlTag> defaultMapper = (attribute, value) -> EMPTY_TAG;
+
+    /**
+     * Add mapper for an attribute.
+     * @param attribute the attribute
+     * @param mapper the mapper
+     */
+    void addMapping(String attribute, Function<Object, HtmlTag> mapper) {
+        Objects.requireNonNull(attribute);
+        Objects.requireNonNull(mapper);
+
+        mappings.merge(attribute, mapper, this::combineMappers);
+    }
+
+    /**
+     * Combine to mappers by creating a new mapper that simply concatenates tags.
+     * @param m1 the first mapper
+     * @param m2 the second mapper
+     * @return the new mapper
+     */
+    private Function<Object, HtmlTag> combineMappers(Function<Object, HtmlTag> m1, Function<Object, HtmlTag> m2) {
+        return new Function<Object, HtmlTag>() {
+            @Override
+            public HtmlTag apply(Object value) {
+                HtmlTag oldTag = m1.apply(value);
+                HtmlTag newTag = m2.apply(value);
+                return new HtmlTag() {
+                    @Override
+                    public String open() {
+                        return newTag.open()+oldTag.open();
+                    }
+                    @Override
+                    public String close() {
+                        return oldTag.open()+newTag.open();
+                    }
+                };
+            }
+        };
+    }
+
+    /**
+     * Replace mapper for an attribute.
+     * @param attribute the attribute
+     * @param mapper the mapper
+     */
+    void replaceMapping(String attribute, Function<Object, HtmlTag> mapper) {
+        Objects.requireNonNull(attribute);
+        Objects.requireNonNull(mapper);
+
+        mappings.put(attribute, mapper);
+    }
+
+    /**
+     * whether or not CSS output shoud be generated.
+     */
+    private boolean useCss = false;
+
+    /**
+     * En-/disable CSS in output.
+     * @param flag true to enable CSS output
+     */
+    void setUseCss(boolean flag) {
+        this.useCss = true;
+    }
+
+    /**
+     * Create a read to use converter with default mappings.
+     * @return converter with standard mappings
+     */
+    public static HtmlConverter createDefault() {
+        return new HtmlConverter(HtmlConversionOption.addDefaultMappings());
     }
     
-    private final boolean useCss;
-    private final Function<Collection<Style>, String> openingTags;
-    private final Function<Collection<Style>, String> closingTags;
+    /**
+     * Constructor.
+     */
+    public HtmlConverter(HtmlConversionOption... options) {
+        this(Arrays.asList(options));
+    }
 
     /**
      * Constructor.
-     *
-     * @param openingTags the generator function for opening tags
-     * @param closingTags the generator function for closing tags
      */
-    public HtmlConverter(boolean useCss, Function<Collection<Style>,String> openingTags, Function<Collection<Style>,String> closingTags) {
-        this.useCss = useCss;
-        this.openingTags = Objects.requireNonNull(openingTags);
-        this.closingTags = Objects.requireNonNull(closingTags);
-    }
-
-    /**
-     * Create instance using the default tag mapper.
-     */
-    public HtmlConverter(boolean useCss) {
-        this(useCss, defaultTagMapper(useCss));
-    }
-    
-    /**
-     * Constructor.
-     *
-     * @param mapper the generator function for tags
-     */
-    public HtmlConverter(boolean useCss, TagMapper mapper) {
-        this(useCss, styles -> mapper.getTags(TagMapper.TagType.OPEN, styles), styles -> mapper.getTags(TagMapper.TagType.CLOSE, styles));
-    }
-
-    /**
-     * Create instance using the default tag mapper.
-     */
-    public HtmlConverter() {
-        this(false);
+    public HtmlConverter(Collection<HtmlConversionOption> options) {
+        options.forEach(o -> o.apply(this));
     }
 
     /**
@@ -68,91 +169,39 @@ public class HtmlConverter {
         return useCss;
     }
 
-    /** 
-     * Get the default tag mapper.
-     * 
-     * @return default tag mapper
+    /**
+     * Get tag for attribute value.
+     * @param attribute the attribute
+     * @param value the attribute value
+     * @return the tag
      */
-    public static TagMapper defaultTagMapper(boolean useCss) {
-        return useCss ? DEFAULT_TAG_MAPPER_CSS : DEFAULT_TAG_MAPPER_NO_CSS;
+    public HtmlTag get(String attribute, Object value) {
+        Function<Object, HtmlTag> mapper = mappings.get(attribute);
+        return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);    
     }
 
-    private static final TagMapper DEFAULT_TAG_MAPPER_CSS = (type, styles) -> {
-        if (type == TagMapper.TagType.OPEN) {
-            return defaultOpeningTags(true, TextAttributes.STYLE_CLASS_DEFAULT, styles);
-        } else {
-            return defaultClosingTags(true, TextAttributes.STYLE_CLASS_DEFAULT, styles);
+    private void appendOpeningTags(Appendable app, List<Style> styles) throws IOException {
+        List<HtmlTag> tags = getTags(styles);
+        for (int i=0; i<tags.size(); i++) {
+            app.append(tags.get(i).open());
         }
-    };
-
-    private static final TagMapper DEFAULT_TAG_MAPPER_NO_CSS = (type, styles) -> {
-        if (type == TagMapper.TagType.OPEN) {
-            return defaultOpeningTags(false, TextAttributes.STYLE_CLASS_DEFAULT, styles);
-        } else {
-            return defaultClosingTags(false, TextAttributes.STYLE_CLASS_DEFAULT, styles);
-        }
-    };
-
-    private static Function<String, Function<Object, Pair<String, String>>> initTagMap(boolean useCss) {
-        final Pair<String,String> noTag = Pair.of("", "");
-        
-        Map<String, Function<Object, Pair<String, String>>> m = new HashMap<>();
-    
-        m.put(TextAttributes.FONT_WEIGHT, DataUtil.asFunction(Pair.toMap(
-                Pair.of(TextAttributes.FONT_WEIGHT_VALUE_BOLD, Pair.of("<b>", "</b>"))
-        ), noTag));
-        m.put(TextAttributes.FONT_STYLE, DataUtil.asFunction(Pair.toMap(
-                Pair.of(TextAttributes.FONT_STYLE_VALUE_ITALIC, Pair.of("<i>", "</i>"))
-        ), noTag));
-        m.put(TextAttributes.TEXT_DECORATION_UNDERLINE, DataUtil.asFunction(Pair.toMap(
-                Pair.of(TextAttributes.TEXT_DECORATION_UNDERLINE, Pair.of("<u>", "</u>"))
-        ), noTag));
-        m.put(TextAttributes.TEXT_DECORATION_LINE_THROUGH, DataUtil.asFunction(Pair.toMap(
-                Pair.of(TextAttributes.TEXT_DECORATION_UNDERLINE, Pair.of("<strike>", "</strike>"))
-        ), noTag));
-        
-        if (useCss) {
-            // CSS
-            m.put(TextAttributes.FONT_TYPE, DataUtil.asFunction(Pair.toMap(
-                    Pair.of(TextAttributes.FONT_TYPE_VALUE_MONOSPACE, Pair.of("<span class=\"monospace\">", "</span>")),
-                    Pair.of(TextAttributes.FONT_TYPE_VALUE_SANS_SERIF, Pair.of("<span class=\"sans-serif\">", "</span>")),
-                    Pair.of(TextAttributes.FONT_TYPE_VALUE_SERIF, Pair.of("<span class=\"serif\">", "</span>"))
-            ), noTag));
-            m.put(TextAttributes.FONT, font -> Pair.of("<span class=\""+((Font)font).fontspec()+"\">", "</span>"));
-        } else {
-            // no CSS
-            m.put(TextAttributes.FONT_TYPE, DataUtil.asFunction(Pair.toMap(
-                    Pair.of(TextAttributes.FONT_TYPE_VALUE_MONOSPACE, Pair.of("<code>", "</code>")),
-                    Pair.of(TextAttributes.FONT_TYPE_VALUE_SANS_SERIF, Pair.of("<span style=\"font-family: sans-serif\">", "</span>")),
-                    Pair.of(TextAttributes.FONT_TYPE_VALUE_SERIF, Pair.of("<span style=\"font-family: serif\">", "</span>"))
-            ), noTag));
-            m.put(TextAttributes.FONT, font -> Pair.of("<span style=\""+((Font)font).getCssStyle()+"\">", "</span>"));
-        }
-        
-        return DataUtil.asFunction(m, attr -> noTag);
     }
-    
-    private static List<Pair<String,String>> defaultTags(boolean useCss, String styleClass, Collection<Style> styles) {
-        Function<String, Function<Object, Pair<String, String>>> tagMap = initTagMap(useCss);
-        List<Pair<String,String>> tags = new LinkedList<>();
-        for (Style s: styles) {
-            if (Objects.equals(s.getOrDefault(TextAttributes.STYLE_CLASS, null), styleClass)) {
-                for (Map.Entry<String, Object> entry: s.properties().entrySet()) {
-                    String attr = entry.getKey();
-                    Object value = entry.getValue();
-                    tags.add(tagMap.apply(attr).apply(value));
-                }
-            }
+
+    private void appendClosingTags(Appendable app, List<Style> styles) throws IOException {
+        List<HtmlTag> tags = getTags(styles);
+        for (int i=tags.size()-1; i>=0; i--) {
+            app.append(tags.get(i).close());
+        }
+    }
+
+    private List<HtmlTag> getTags(List<Style> styles) {
+        List<HtmlTag> tags = new ArrayList<>();
+        for (Style style: styles) {
+            style.properties().entrySet().stream()
+                    .map(e -> get(e.getKey(), e.getValue()))
+                    .forEach(tags::add);
         }
         return tags;
-    }
-
-    public static String defaultOpeningTags(boolean useCss, String styleClass, Collection<Style> styles) {
-        return defaultTags(useCss, styleClass, styles).stream().map(p -> p.first).collect(Collectors.joining());
-    }
-
-    public static String defaultClosingTags(boolean useCss, String styleClass, Collection<Style> styles) {
-        return defaultTags(useCss, styleClass, styles).stream().map(p -> p.second).collect(Collectors.joining());
     }
 
     public <T extends Appendable> T appendTo(T app, RichText text) throws IOException {
@@ -163,12 +212,12 @@ public class HtmlConverter {
             // add closing Tags for styles
             List<Style> closingStyles = new LinkedList<>(openStyles);
             closingStyles.removeAll(runStyles);
-            app.append(closingTags.apply(closingStyles));
+            appendClosingTags(app, closingStyles);
             
             // add opening Tags for styles
             List<Style> openingStyles = new LinkedList<>(runStyles);
             openingStyles.removeAll(openStyles);
-            app.append(openingTags.apply(openingStyles));
+            appendOpeningTags(app, openingStyles);
 
             // add text
             TextUtil.appendHtmlEscapedCharacters(app, run);
@@ -178,7 +227,7 @@ public class HtmlConverter {
             openStyles.addAll(openingStyles);
         }
         // close all remeining styles
-        app.append(closingTags.apply(openStyles));
+        appendClosingTags(app, openStyles);
         
         return app;
     }
@@ -196,5 +245,5 @@ public class HtmlConverter {
     public String toHtml(RichText text) {
         return appendTo(new StringBuilder(text.length()*12/10), text).toString();
     }
-    
+
 }
