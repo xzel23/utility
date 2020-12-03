@@ -325,9 +325,12 @@ public class RichText
         if (begin==0 && end==length) {
             return this;
         }
+        if (end==begin) {
+            return emptyText();
+        }
         
         int floorKey = runs.floorKey(start+begin);
-        int ceilingKey = runs.floorKey(start+end);
+        int ceilingKey = runs.floorKey(start+end-1);
         List<Run> subRuns = new ArrayList<>(runs.subMap(floorKey, true, ceilingKey, true).values());
         
         Run firstRun = subRuns.get(0);

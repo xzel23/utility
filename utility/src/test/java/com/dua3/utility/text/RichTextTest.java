@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.Stream;
@@ -44,6 +45,31 @@ public class RichTextTest {
         assertEquals("wo", sub.subSequence(1,3).toString());
     }
 
+    @Test
+    public void testSubsequenceRegression() {
+        Style style1 = Style.create("style1", TextAttributes.STYLE_CLASS_DEFAULT, Pair.of("attr", "1"));
+        Style style2 = Style.create("style2", TextAttributes.STYLE_CLASS_DEFAULT, Pair.of("attr", "2"));
+        Style style3 = Style.create("style3", TextAttributes.STYLE_CLASS_DEFAULT, Pair.of("attr", "3"));
+        
+        RichTextBuilder rtb = new RichTextBuilder();
+        rtb.push(style1);
+        rtb.append("A Short History of Git");
+        rtb.pop(style1);
+        rtb.push(style2);
+        rtb.append(" ");
+        rtb.pop(style2);
+        rtb.push(style3);
+        rtb.append("\n");
+        rtb.pop(style3);
+        RichText s = rtb.toRichText();
+        assertEquals("A Short History of Git \n", s.toString());
+
+        RichText actual = s.subSequence(19, 22);
+        
+        RichText expected = RichText.valueOf("Git").apply(style1);
+        assertEquals(expected, actual);
+    }
+    
     @Test
     public void testReplaceAll() {
         String s = "Hello world\n\nThis     is a\ttest!\r\n";
