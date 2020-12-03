@@ -8,13 +8,8 @@ import java.util.function.Function;
 
 public class HtmlConverter {
 
-    /**
-     * An empty tag that does not produce any output.
-     */
-    public static final HtmlTag EMPTY_TAG = HtmlTag.tag("", "");
-
     private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
-        addMapping(attr, v -> Objects.equals(v,value) ? tag : EMPTY_TAG);
+        addMapping(attr, v -> Objects.equals(v,value) ? tag : HtmlTag.emptyTag());
     }
     
     void addDefaultMappings() {
@@ -33,7 +28,7 @@ public class HtmlConverter {
                     case TextAttributes.FONT_TYPE_VALUE_SERIF:
                         return HtmlTag.tag("<span class=\"serif\">", "</span>");
                     default:
-                        return EMPTY_TAG;
+                        return HtmlTag.emptyTag();
                 }
             } else {
                 switch (value.toString()) {
@@ -44,7 +39,7 @@ public class HtmlConverter {
                     case TextAttributes.FONT_TYPE_VALUE_SERIF:
                         return HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
                     default:
-                        return EMPTY_TAG;
+                        return HtmlTag.emptyTag();
                 }
             }
         });
@@ -74,7 +69,7 @@ public class HtmlConverter {
     /**
      * The default mapper used to generate tags for attributes without mapping.
      */
-    private BiFunction<String, Object, HtmlTag> defaultMapper = (attribute, value) -> EMPTY_TAG;
+    private BiFunction<String, Object, HtmlTag> defaultMapper = (attribute, value) -> HtmlTag.emptyTag();
 
     /**
      * Add mapper for an attribute.
@@ -107,7 +102,7 @@ public class HtmlConverter {
                     }
                     @Override
                     public String close() {
-                        return oldTag.open()+newTag.open();
+                        return oldTag.close()+newTag.close();
                     }
                 };
             }
@@ -143,22 +138,43 @@ public class HtmlConverter {
      * Create a read to use converter with default mappings.
      * @return converter with standard mappings
      */
-    public static HtmlConverter createDefault() {
-        return new HtmlConverter(HtmlConversionOption.addDefaultMappings());
+    public static HtmlConverter create(Collection<HtmlConversionOption> options) {
+        HtmlConverter instance = new HtmlConverter();
+        instance.addDefaultMappings();
+        options.forEach(o -> o.apply(instance));
+        return instance;
+    }
+
+    /**
+     * Create a read to use converter with default mappings.
+     * @return converter with standard mappings
+     */
+    public static HtmlConverter create(HtmlConversionOption... options) {
+        return create(Arrays.asList(options));    
+    }
+
+    /**
+     * Create a read to use converter without any mappings.
+     * @return converter
+     */
+    public static HtmlConverter createBlank(Collection<HtmlConversionOption> options) {
+        HtmlConverter instance = new HtmlConverter();
+        options.forEach(o -> o.apply(instance));
+        return instance;
+    }
+
+    /**
+     * Create a read to use converter without any mappings.
+     * @return converter
+     */
+    public static HtmlConverter createBlank(HtmlConversionOption... options) {
+        return create(Arrays.asList(options));    
     }
     
     /**
      * Constructor.
      */
-    public HtmlConverter(HtmlConversionOption... options) {
-        this(Arrays.asList(options));
-    }
-
-    /**
-     * Constructor.
-     */
-    public HtmlConverter(Collection<HtmlConversionOption> options) {
-        options.forEach(o -> o.apply(this));
+    private HtmlConverter() {
     }
 
     /**

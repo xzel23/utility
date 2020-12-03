@@ -18,6 +18,12 @@ public interface HtmlTag {
      */
     String close();
 
+    /**
+     * Create a new simple tag.
+     * @param open text of the opening tag
+     * @param close text of the closing tag
+     * @return the new tag
+     */
     static HtmlTag tag(String open, String close) {
         return new HtmlTag() {
             @Override
@@ -31,4 +37,16 @@ public interface HtmlTag {
             }
         };
     }
+
+    /**
+     * The empty tag. 
+     */
+    static HtmlTag emptyTag() {
+        return Empty.EMPTY_TAG;
+    }
+
+}
+
+class Empty {
+    static final HtmlTag EMPTY_TAG = HtmlTag.tag("","");
 }
