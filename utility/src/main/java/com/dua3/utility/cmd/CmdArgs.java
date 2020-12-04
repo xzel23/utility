@@ -66,6 +66,7 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
     /**
      * Get value of {@link SimpleOption}.
      * @param option the option
+     * @param <T> the generic type of the option 
      * @return the parameter passed to the option, or the option's default value (if set)
      * @throws CmdException if neither is set
      */
@@ -76,6 +77,7 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
     /**
      * Get value of {@link SimpleOption}.
      * @param option the option
+     * @param <T> the generic type of the option 
      * @return Optional holding the argument passed to this option, the option's default value, or an empty Optional
      *    if neither is provided
      */
@@ -114,6 +116,7 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
     /**
      * Get stream of values for an option.
      * @param option the option
+     * @param <T> the generic type of the option 
      * @return stream of lists containing the arguments for each appearance of the given option 
      */
     @SuppressWarnings("unchecked")

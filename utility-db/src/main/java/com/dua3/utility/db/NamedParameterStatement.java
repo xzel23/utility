@@ -67,6 +67,9 @@ public class NamedParameterStatement implements AutoCloseable {
     /** flag: has meta data been added to parameter info? */
     private boolean hasMeta = false;
 
+    /**
+     * A class holding parameter information.
+     */
     public static class ParameterInfo {
         final String name;
         final List<Integer> indexes = new LinkedList<>();

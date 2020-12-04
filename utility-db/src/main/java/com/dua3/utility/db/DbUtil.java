@@ -29,6 +29,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Database utility class.
+ */
 public final class DbUtil {
     private DbUtil() {
         // utility class

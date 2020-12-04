@@ -15,6 +15,9 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+/**
+ * DataSource implementation for JDBC.
+ */
 public class JdbcDataSource implements DataSource {
 
     private static final String USER = "user";
