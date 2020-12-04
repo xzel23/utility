@@ -299,6 +299,24 @@ public class Font {
     }
 
     /**
+     * Get a {@link FontDef} instance with all fields set according to this font.
+     * @return FontDef instance describing this font
+     */
+    public FontDef toFontDef() {
+        FontDef fd = new FontDef();
+
+        fd.setFamily(getFamily());
+        fd.setSize(getSizeInPoints());
+        fd.setBold(isBold());
+        fd.setItalic(isItalic());
+        fd.setUnderline(isUnderline());
+        fd.setStrikeThrough(isStrikeThrough());
+        fd.setColor(getColor());
+
+        return fd;
+    }
+    
+    /**
      * Get width of a space character in this font.
      * @return width of a single space character in this font
      */
