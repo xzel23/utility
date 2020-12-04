@@ -130,13 +130,13 @@ public final class StyledDocumentBuilder extends RichTextConverterBase<StyledDoc
             Object value = entry.getValue();
 
             switch (attribute) {
-            case TextAttributes.COLOR:
+            case Style.COLOR:
                 StyleConstants.setForeground(attributeSet, SwingUtil.toAwtColor(getColor(value, getDefaultFgColor())));
                 break;
-            case TextAttributes.BACKGROUND_COLOR:
+            case Style.BACKGROUND_COLOR:
                 StyleConstants.setBackground(attributeSet, SwingUtil.toAwtColor(getColor(value, getDefaultBgColor())));
                 break; 
-            case TextAttributes.FONT:
+            case Style.FONT:
             {
                 Font font = (Font) value;
                 StyleConstants.setFontFamily(attributeSet, font.getFamily());
@@ -147,32 +147,32 @@ public final class StyledDocumentBuilder extends RichTextConverterBase<StyledDoc
                 StyleConstants.setStrikeThrough(attributeSet, font.isStrikeThrough());
                 break;
             }
-            case TextAttributes.FONT_TYPE:
+            case Style.FONT_TYPE:
                 StyleConstants.setFontFamily(attributeSet, String.valueOf(value));
                 break;
-            case TextAttributes.FONT_STYLE:
-                StyleConstants.setItalic(attributeSet, TextAttributes.FONT_STYLE_VALUE_ITALIC.equals(value)
-                        || TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value));
+            case Style.FONT_STYLE:
+                StyleConstants.setItalic(attributeSet, Style.FONT_STYLE_VALUE_ITALIC.equals(value)
+                        || Style.FONT_STYLE_VALUE_OBLIQUE.equals(value));
                 break;
-            case TextAttributes.FONT_SIZE:
+            case Style.FONT_SIZE:
                 StyleConstants.setFontSize(attributeSet, Math.round(scale * (value == null ? defaultFontSize : TextUtil.decodeFontSize(String.valueOf(value)))));
                 break;
-            case TextAttributes.FONT_SCALE:
+            case Style.FONT_SCALE:
                 StyleConstants.setFontSize(attributeSet, value == null ? Math.round(scale * defaultFontSize)
                         : Math.round(scale * defaultFontSize * Float.parseFloat(String.valueOf(value))));
                 break;
-            case TextAttributes.FONT_WEIGHT:
-                StyleConstants.setBold(attributeSet, TextAttributes.FONT_WEIGHT_VALUE_BOLD.equals(value));
+            case Style.FONT_WEIGHT:
+                StyleConstants.setBold(attributeSet, Style.FONT_WEIGHT_VALUE_BOLD.equals(value));
                 break;
-            case TextAttributes.TEXT_DECORATION_UNDERLINE:
-                StyleConstants.setUnderline(attributeSet, TextAttributes.TEXT_DECORATION_UNDERLINE_VALUE_LINE.equals(value));
+            case Style.TEXT_DECORATION_UNDERLINE:
+                StyleConstants.setUnderline(attributeSet, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE.equals(value));
                 break;                
-            case TextAttributes.TEXT_DECORATION_LINE_THROUGH:
-                StyleConstants.setStrikeThrough(attributeSet, TextAttributes.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE.equals(value));
+            case Style.TEXT_DECORATION_LINE_THROUGH:
+                StyleConstants.setStrikeThrough(attributeSet, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE.equals(value));
                 break;                
-            case TextAttributes.FONT_VARIANT:
+            case Style.FONT_VARIANT:
                 break;
-            case TextAttributes.TEXT_INDENT_LEFT:
+            case Style.TEXT_INDENT_LEFT:
                 // TODO
                 break;
             default:

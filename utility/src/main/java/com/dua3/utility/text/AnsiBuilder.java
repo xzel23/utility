@@ -63,36 +63,36 @@ public final class AnsiBuilder extends AbstractStringBasedBuilder {
             Object value = entry.getValue();
 
             switch (attribute) {
-            case TextAttributes.COLOR:
+            case Style.COLOR:
                 addColor(esc, AnsiCode.COLOR, getColor(value, getDefaultFgColor()));
                 break;
-            case TextAttributes.BACKGROUND_COLOR:
+            case Style.BACKGROUND_COLOR:
                 addColor(esc, AnsiCode.BACKGROUND_COLOR, getColor(value, getDefaultBgColor()));
                 break;
-            case TextAttributes.FONT_WEIGHT:
-                if (TextAttributes.FONT_WEIGHT_VALUE_BOLD.equals(value)) {
+            case Style.FONT_WEIGHT:
+                if (Style.FONT_WEIGHT_VALUE_BOLD.equals(value)) {
                     esc.add(AnsiCode.BOLD_ON);
                 } else {
                     esc.add(AnsiCode.BOLD_OFF);
                 }
                 break; 
-            case TextAttributes.TEXT_DECORATION_UNDERLINE:
-                if (TextAttributes.TEXT_DECORATION_UNDERLINE_VALUE_LINE.equals(value)) {
+            case Style.TEXT_DECORATION_UNDERLINE:
+                if (Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE.equals(value)) {
                     esc.add(AnsiCode.UNDERLINE_ON);
                 } else {
                     esc.add(AnsiCode.UNDERLINE_OFF);
                 }
                 break; 
-            case TextAttributes.TEXT_DECORATION_LINE_THROUGH:
-                if (TextAttributes.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE.equals(value)) {
+            case Style.TEXT_DECORATION_LINE_THROUGH:
+                if (Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE.equals(value)) {
                     esc.add(AnsiCode.STRIKE_THROUGH_ON);
                 } else {
                     esc.add(AnsiCode.STRIKE_THROUGH_OFF);
                 }
                 break;
-            case TextAttributes.FONT_STYLE:
-                if (TextAttributes.FONT_STYLE_VALUE_ITALIC.equals(value)
-                        || TextAttributes.FONT_STYLE_VALUE_OBLIQUE.equals(value)) {
+            case Style.FONT_STYLE:
+                if (Style.FONT_STYLE_VALUE_ITALIC.equals(value)
+                        || Style.FONT_STYLE_VALUE_OBLIQUE.equals(value)) {
                     esc.add(AnsiCode.ITALIC_ON);
                 } else {
                     esc.add(AnsiCode.ITALIC_OFF);

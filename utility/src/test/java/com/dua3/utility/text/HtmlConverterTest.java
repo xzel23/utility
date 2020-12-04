@@ -8,7 +8,6 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
 
-import static com.dua3.utility.text.TextAttributes.STYLE_CLASS_DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -21,7 +20,7 @@ public class HtmlConverterTest {
 
     @Test
     public void testEmbeddedStyle() {
-        Style bold = Style.create("bold", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD));
+        Style bold = Style.create("bold", Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
         
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
@@ -42,10 +41,10 @@ public class HtmlConverterTest {
     public void testTrailingStyle() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.push(TextAttributes.BOLD);
+        builder.push(Style.BOLD);
         builder.append("world");
         builder.append("!");
-        builder.pop(TextAttributes.BOLD);
+        builder.pop(Style.BOLD);
 
         RichText rt = builder.toRichText();
 
@@ -57,9 +56,9 @@ public class HtmlConverterTest {
 
     @Test
     public void testSettingFontFamily() {
-        Style sans = Style.create("sans", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_TYPE, TextAttributes.FONT_TYPE_VALUE_SANS_SERIF));
-        Style serif = Style.create("serif", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_TYPE, TextAttributes.FONT_TYPE_VALUE_SERIF));
-        Style mono = Style.create("mono", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT_TYPE, TextAttributes.FONT_TYPE_VALUE_MONOSPACE));
+        Style sans = Style.create("sans", Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SANS_SERIF));
+        Style serif = Style.create("serif", Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SERIF));
+        Style mono = Style.create("mono", Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
         
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(sans);
@@ -85,8 +84,8 @@ public class HtmlConverterTest {
         Font arial = new Font("arial-16-bold");
         Font times = new Font("courier-12");
         
-        Style style1 = Style.create("style1", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT, arial));
-        Style style2 = Style.create("style2", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT, times));
+        Style style1 = Style.create("style1", Pair.of(Style.FONT, arial));
+        Style style2 = Style.create("style2", Pair.of(Style.FONT, times));
         
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
@@ -108,8 +107,8 @@ public class HtmlConverterTest {
         Font arial = new Font("arial-16-bold");
         Font times = new Font("courier-12");
         
-        Style style1 = Style.create("style1", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT, arial));
-        Style style2 = Style.create("style2", STYLE_CLASS_DEFAULT, Pair.of(TextAttributes.FONT, times));
+        Style style1 = Style.create("style1", Pair.of(Style.FONT, arial));
+        Style style2 = Style.create("style2", Pair.of(Style.FONT, times));
         
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);

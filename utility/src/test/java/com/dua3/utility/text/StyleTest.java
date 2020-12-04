@@ -11,15 +11,15 @@ public class StyleTest {
     
     @Test
     public void testEquals() {
-        Style s1 = Style.create("style", "class", 
-                Pair.of(TextAttributes.FONT_TYPE, TextAttributes.FONT_TYPE_VALUE_MONOSPACE),
-                Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD));
+        Style s1 = Style.create("style", 
+                Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE),
+                Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
         
         String s2Name = new StringBuilder("st").append("yle").toString();
         String s2Class = new StringBuilder("cla").append("ss").toString();
-        Style s2 = Style.create(s2Name, s2Class,
-                Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD),
-                Pair.of(TextAttributes.FONT_TYPE, TextAttributes.FONT_TYPE_VALUE_MONOSPACE));
+        Style s2 = Style.create(s2Name,
+                Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD),
+                Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
         
         // first make sure the names are equal but not identical 
         assertTrue(s1.name().equals(s2.name()));

@@ -24,9 +24,9 @@ public class RichTextBuilderTest {
     public void testWithAttributes() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.push(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
         builder.append("world");
-        builder.pop(TextAttributes.FONT_WEIGHT);
+        builder.pop(Style.FONT_WEIGHT);
         builder.append("!");
         RichText rt = builder.toRichText();
 
@@ -37,7 +37,7 @@ public class RichTextBuilderTest {
     @Test
     public void testNormalizing() {
         // make sure sebsequent runs possessing the same attributes are joind, but runs with differing attributes are retained
-        Style style = Style.create("bold", "test", Pair.of(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD));
+        Style style = Style.create("bold", Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style);
         builder.append("Hello ");

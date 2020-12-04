@@ -13,30 +13,30 @@ public class HtmlConverter {
     }
     
     void addDefaultMappings() {
-        addSimpleMapping(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
-        addSimpleMapping(TextAttributes.FONT_STYLE, TextAttributes.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
-        addSimpleMapping(TextAttributes.TEXT_DECORATION_UNDERLINE, TextAttributes.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
-        addSimpleMapping(TextAttributes.TEXT_DECORATION_LINE_THROUGH, TextAttributes.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
+        addSimpleMapping(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
+        addSimpleMapping(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
+        addSimpleMapping(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
+        addSimpleMapping(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
 
-        addMapping(TextAttributes.FONT_TYPE, value -> {
+        addMapping(Style.FONT_TYPE, value -> {
             if (isUseCss()) {
                 switch (value.toString()) {
-                    case TextAttributes.FONT_TYPE_VALUE_MONOSPACE:
+                    case Style.FONT_TYPE_VALUE_MONOSPACE:
                         return HtmlTag.tag("<span class=\"monospace\">", "</span>");
-                    case TextAttributes.FONT_TYPE_VALUE_SANS_SERIF:
+                    case Style.FONT_TYPE_VALUE_SANS_SERIF:
                         return HtmlTag.tag("<span class=\"sans-serif\">", "</span>");
-                    case TextAttributes.FONT_TYPE_VALUE_SERIF:
+                    case Style.FONT_TYPE_VALUE_SERIF:
                         return HtmlTag.tag("<span class=\"serif\">", "</span>");
                     default:
                         return HtmlTag.emptyTag();
                 }
             } else {
                 switch (value.toString()) {
-                    case TextAttributes.FONT_TYPE_VALUE_MONOSPACE:
+                    case Style.FONT_TYPE_VALUE_MONOSPACE:
                         return HtmlTag.tag("<code>", "</code>");
-                    case TextAttributes.FONT_TYPE_VALUE_SANS_SERIF:
+                    case Style.FONT_TYPE_VALUE_SANS_SERIF:
                         return HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
-                    case TextAttributes.FONT_TYPE_VALUE_SERIF:
+                    case Style.FONT_TYPE_VALUE_SERIF:
                         return HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
                     default:
                         return HtmlTag.emptyTag();
@@ -44,7 +44,7 @@ public class HtmlConverter {
             }
         });
         
-        addMapping(TextAttributes.FONT, value -> {
+        addMapping(Style.FONT, value -> {
             Font font = (Font) value;
             if (isUseCss()) {
                 return HtmlTag.tag("<span class=\"" + font.toString() + "\">", "</span>");
@@ -213,7 +213,7 @@ public class HtmlConverter {
     private List<HtmlTag> getTags(List<Style> styles) {
         List<HtmlTag> tags = new ArrayList<>();
         for (Style style: styles) {
-            style.properties().entrySet().stream()
+            style.stream()
                     .map(e -> get(e.getKey(), e.getValue()))
                     .forEach(tags::add);
         }

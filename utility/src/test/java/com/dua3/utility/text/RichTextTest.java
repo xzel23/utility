@@ -25,9 +25,9 @@ public class RichTextTest {
     public void testsubSequence() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.push(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
         builder.append("world");
-        builder.pop(TextAttributes.FONT_WEIGHT);
+        builder.pop(Style.FONT_WEIGHT);
         builder.append("!");
         RichText rt = builder.toRichText();
 
@@ -47,9 +47,9 @@ public class RichTextTest {
 
     @Test
     public void testSubsequenceRegression() {
-        Style style1 = Style.create("style1", TextAttributes.STYLE_CLASS_DEFAULT, Pair.of("attr", "1"));
-        Style style2 = Style.create("style2", TextAttributes.STYLE_CLASS_DEFAULT, Pair.of("attr", "2"));
-        Style style3 = Style.create("style3", TextAttributes.STYLE_CLASS_DEFAULT, Pair.of("attr", "3"));
+        Style style1 = Style.create("style1", Pair.of("attr", "1"));
+        Style style2 = Style.create("style2", Pair.of("attr", "2"));
+        Style style3 = Style.create("style3", Pair.of("attr", "3"));
         
         RichTextBuilder rtb = new RichTextBuilder();
         rtb.push(style1);
@@ -92,9 +92,9 @@ public class RichTextTest {
     public void testLines() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.push(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
         builder.append("w\nor\nld");
-        builder.pop(TextAttributes.FONT_WEIGHT);
+        builder.pop(Style.FONT_WEIGHT);
         builder.append("!");
         RichText rt = builder.toRichText();
         
@@ -107,9 +107,9 @@ public class RichTextTest {
     public void testAttributedChars() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
-        builder.push(TextAttributes.FONT_WEIGHT, TextAttributes.FONT_WEIGHT_VALUE_BOLD);
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
         builder.append("world");
-        builder.pop(TextAttributes.FONT_WEIGHT);
+        builder.pop(Style.FONT_WEIGHT);
         builder.append("!");
         RichText rt = builder.toRichText();
 
