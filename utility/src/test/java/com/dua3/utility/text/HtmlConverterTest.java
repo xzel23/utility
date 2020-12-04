@@ -32,7 +32,7 @@ public class HtmlConverterTest {
         RichText rt = builder.toRichText();
 
         String expected = "Hello <b>world</b>!";
-        String actual = HtmlConverter.create().toHtml(rt);
+        String actual = HtmlConverter.create().convert(rt);
         
         assertEquals(expected, actual);
     }
@@ -49,7 +49,7 @@ public class HtmlConverterTest {
         RichText rt = builder.toRichText();
 
         String expected = "Hello <b>world!</b>";
-        String actual = HtmlConverter.create().toHtml(rt);
+        String actual = HtmlConverter.create().convert(rt);
         
         assertEquals(expected, actual);
     }
@@ -74,7 +74,7 @@ public class HtmlConverterTest {
         builder.pop(sans);
         RichText rt = builder.toRichText();
         String expected = "<span style=\"font-family: sans-serif\">Keyboard input is shown in a <code>monospaced</code> typeface, direct speech is shown in a font with <span style=\"font-family: serif\">serifs</span>.</span>";
-        String actual = HtmlConverter.create().toHtml(rt);
+        String actual = HtmlConverter.create().convert(rt);
         
         assertEquals(expected, actual);
     }
@@ -97,7 +97,7 @@ public class HtmlConverterTest {
         builder.pop(style1);
         RichText rt = builder.toRichText();
         String expected = "<span style=\"color: #000000; font-size: 16.0pt; font-family: arial; font-weight: bold; font-style: normal;\">Don't <span style=\"color: #000000; font-size: 12.0pt; font-family: courier; font-weight: normal; font-style: normal;\">mix</span> too many fonts!</span>";
-        String actual = HtmlConverter.create().toHtml(rt);
+        String actual = HtmlConverter.create().convert(rt);
         
         assertEquals(expected, actual);
     }
@@ -120,7 +120,7 @@ public class HtmlConverterTest {
         builder.pop(style1);
         RichText rt = builder.toRichText();
         String expected = "<span class=\"arial-bold-16.0-#000000\">Don't <span class=\"courier-12.0-#000000\">mix</span> too many fonts!</span>";
-        String actual = HtmlConverter.create(HtmlConversionOption.useCss(true)).toHtml(rt);
+        String actual = HtmlConverter.create(HtmlConversionOption.useCss(true)).convert(rt);
         
         assertEquals(expected, actual);
     }

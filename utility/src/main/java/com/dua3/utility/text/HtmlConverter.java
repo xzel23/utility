@@ -1,17 +1,56 @@
 package com.dua3.utility.text;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class HtmlConverter {
+public class HtmlConverter extends TagBasedConverter<String> {
+    
+    @Override
+    protected TagBasedConverterImpl<String> createConverter(RichText text) {
+        return new HtmlConverterImpl(text);
+    }
+
+    private class HtmlConverterImpl extends TagBasedConverterImpl<String> {
+        
+        private final StringBuilder buffer;
+        
+        HtmlConverterImpl(RichText text) {
+            // create a buffer with 25% overhead for HTML
+            this.buffer = new StringBuilder(text.length()*125/100);    
+        }
+
+        @Override
+        protected void appendOpeningTags(List<Style> styles) {
+            List<HtmlTag> tags = getTags(styles);
+            for (int i=0; i<tags.size(); i++) {
+                buffer.append(tags.get(i).open());
+            }
+        }
+
+        @Override
+        protected void appendClosingTags(List<Style> styles) {
+            List<HtmlTag> tags = getTags(styles);
+            for (int i=tags.size()-1; i>=0; i--) {
+                buffer.append(tags.get(i).close());
+            }
+        }
+
+        @Override
+        protected void appendChars(CharSequence s) {
+            TextUtil.appendHtmlEscapedCharacters(buffer, s);
+        }
+
+        @Override
+        protected String get() {
+            return buffer.toString();
+        }
+    }
 
     private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
         addMapping(attr, v -> Objects.equals(v,value) ? tag : HtmlTag.emptyTag());
     }
-    
+
     void addDefaultMappings() {
         addSimpleMapping(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
         addSimpleMapping(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
@@ -43,7 +82,7 @@ public class HtmlConverter {
                 }
             }
         });
-        
+
         addMapping(Style.FONT, value -> {
             Font font = (Font) value;
             if (isUseCss()) {
@@ -60,11 +99,11 @@ public class HtmlConverter {
 
     /**
      * The mappings of this converter.
-     * 
+     *
      * Key: the attribute name
      * Value: the function that maps values to tags
      */
-    private final Map <String, Function<Object, HtmlTag>> mappings = new HashMap<>();
+    private final Map<String, Function<Object, HtmlTag>> mappings = new HashMap<>();
 
     /**
      * The default mapper used to generate tags for attributes without mapping.
@@ -150,7 +189,7 @@ public class HtmlConverter {
      * @return converter with standard mappings
      */
     public static HtmlConverter create(HtmlConversionOption... options) {
-        return create(Arrays.asList(options));    
+        return create(Arrays.asList(options));
     }
 
     /**
@@ -168,9 +207,9 @@ public class HtmlConverter {
      * @return converter
      */
     public static HtmlConverter createBlank(HtmlConversionOption... options) {
-        return create(Arrays.asList(options));    
+        return create(Arrays.asList(options));
     }
-    
+
     /**
      * Constructor.
      */
@@ -193,21 +232,7 @@ public class HtmlConverter {
      */
     public HtmlTag get(String attribute, Object value) {
         Function<Object, HtmlTag> mapper = mappings.get(attribute);
-        return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);    
-    }
-
-    private void appendOpeningTags(Appendable app, List<Style> styles) throws IOException {
-        List<HtmlTag> tags = getTags(styles);
-        for (int i=0; i<tags.size(); i++) {
-            app.append(tags.get(i).open());
-        }
-    }
-
-    private void appendClosingTags(Appendable app, List<Style> styles) throws IOException {
-        List<HtmlTag> tags = getTags(styles);
-        for (int i=tags.size()-1; i>=0; i--) {
-            app.append(tags.get(i).close());
-        }
+        return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);
     }
 
     private List<HtmlTag> getTags(List<Style> styles) {
@@ -219,47 +244,5 @@ public class HtmlConverter {
         }
         return tags;
     }
-
-    public <T extends Appendable> T appendTo(T app, RichText text) throws IOException {
-        List<Style> openStyles = new LinkedList<>();
-        for (Run run: text) {
-            List<Style> runStyles = run.getStyles();
-
-            // add closing Tags for styles
-            List<Style> closingStyles = new LinkedList<>(openStyles);
-            closingStyles.removeAll(runStyles);
-            appendClosingTags(app, closingStyles);
-            
-            // add opening Tags for styles
-            List<Style> openingStyles = new LinkedList<>(runStyles);
-            openingStyles.removeAll(openStyles);
-            appendOpeningTags(app, openingStyles);
-
-            // add text
-            TextUtil.appendHtmlEscapedCharacters(app, run);
-            
-            // update open styles
-            openStyles.removeAll(closingStyles);
-            openStyles.addAll(openingStyles);
-        }
-        // close all remeining styles
-        appendClosingTags(app, openStyles);
-        
-        return app;
-    }
     
-    public StringBuilder appendTo(StringBuilder sb, RichText text) {
-        try {
-            appendTo((Appendable) sb, text);
-            return sb;
-        } catch (IOException e) {
-            // StringBuilder will not throw IOException
-            throw new UncheckedIOException(e);
-        }
-    }
-    
-    public String toHtml(RichText text) {
-        return appendTo(new StringBuilder(text.length()*12/10), text).toString();
-    }
-
 }
