@@ -6,6 +6,7 @@ import com.dua3.utility.data.Pair;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * A mutable class holding font attributes to help creating immutable font
@@ -269,6 +270,92 @@ public final class FontDef {
 
     private static boolean nullOrEquals(Object a, Object b) {
         return a==null || b==null || a.equals(b);
+    }
+
+    /**
+     * Update this FontDef with the non-null values of another FontDef instance.
+     * @param delta the FontDef containing the values to apply
+     */
+    public void merge(FontDef delta) {
+        if (delta.color != null) this.color = delta.color;
+        if (delta.color != null) this.size = delta.size;
+        if (delta.color != null) this.family = delta.family;
+        if (delta.color != null) this.bold = delta.bold;
+        if (delta.color != null) this.italic = delta.italic;
+        if (delta.color != null) this.underline = delta.underline;
+        if (delta.color != null) this.strikeThrough = delta.strikeThrough;
+    }
+
+    // a little helper for the consumeIfDefined... methods
+    private static <T> boolean consumeIfDefined(T v, Consumer<T> c) {
+        boolean run = v != null;
+        if (run) {
+            c.accept(v);
+        }
+        return run;
+    }
+    
+    /**
+     * Run action if a value for the color property is defined.
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @return true, if the action was run
+     */
+    public boolean ifColorDefined(Consumer<Color> c) {
+        return consumeIfDefined(color, c);
+    }
+
+    /**
+     * Run action if a value for the size property is defined.
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @return true, if the action was run
+     */
+    public boolean ifSizeDefined(Consumer<Float> c) {
+        return consumeIfDefined(size, c);
+    }
+
+    /**
+     * Run action if a value for the family property is defined.
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @return true, if the action was run
+     */
+    public boolean ifFamilyDefined(Consumer<String> c) {
+        return consumeIfDefined(family, c);
+    }
+
+    /**
+     * Run action if a value for the bold property is defined.
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @return true, if the action was run
+     */
+    public boolean ifBoldDefined(Consumer<Boolean> c) {
+        return consumeIfDefined(bold, c);
+    }
+
+    /**
+     * Run action if a value for the italic property is defined.
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @return true, if the action was run
+     */
+    public boolean ifItalicDefined(Consumer<Boolean> c) {
+        return consumeIfDefined(italic, c);
+    }
+
+    /**
+     * Run action if a value for the underline property is defined.
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @return true, if the action was run
+     */
+    public boolean ifUnderlineDefined(Consumer<Boolean> c) {
+        return consumeIfDefined(underline, c);
+    }
+
+    /**
+     * Run action if a value for the strike-through property is defined.
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @return true, if the action was run
+     */
+    public boolean ifStrikeThroughDefined(Consumer<Boolean> c) {
+        return consumeIfDefined(strikeThrough, c);
     }
 
 }

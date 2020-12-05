@@ -27,9 +27,11 @@ public class Font {
     private final boolean underline;
     private final boolean strikeThrough;
 
+    // lazily populated fields
     private String fontspec = null;
     private int hash = 0;
-
+    private FontDef fd = null;
+    
     /**
      * Construct a new {@code Font}.
      */
@@ -303,16 +305,16 @@ public class Font {
      * @return FontDef instance describing this font
      */
     public FontDef toFontDef() {
-        FontDef fd = new FontDef();
-
-        fd.setFamily(getFamily());
-        fd.setSize(getSizeInPoints());
-        fd.setBold(isBold());
-        fd.setItalic(isItalic());
-        fd.setUnderline(isUnderline());
-        fd.setStrikeThrough(isStrikeThrough());
-        fd.setColor(getColor());
-
+        if (fd == null) {
+            fd = new FontDef();
+            fd.setFamily(getFamily());
+            fd.setSize(getSizeInPoints());
+            fd.setBold(isBold());
+            fd.setItalic(isItalic());
+            fd.setUnderline(isUnderline());
+            fd.setStrikeThrough(isStrikeThrough());
+            fd.setColor(getColor());
+        }
         return fd;
     }
     

@@ -205,6 +205,15 @@ public final class AnsiCode {
         return esc(on ? ITALIC_ON : ITALIC_OFF);
     }
 
+    /**
+     * Set bold output.
+     * @param on {@code true} enables, {@code false} disables
+     * @return the ESC string
+     */
+    public static String bold(boolean on) {
+        return esc(on ? BOLD_ON : BOLD_OFF);
+    }
+
     private AnsiCode() {
         // utility class
     }

@@ -7,10 +7,11 @@ import java.util.List;
  * Base class for tag based converters. 
  * @param <T> the conversion target type
  */
-public abstract class TagBasedConverter<T> {
+public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
     
     protected abstract TagBasedConverterImpl<T> createConverter(RichText text);
 
+    @Override
     public T convert(RichText text) {
         return createConverter(text).append(text).get();
     }
@@ -25,7 +26,7 @@ public abstract class TagBasedConverter<T> {
 
         protected abstract T get();
         
-        public TagBasedConverterImpl<T> append(RichText text) {
+        protected TagBasedConverterImpl<T> append(RichText text) {
             List<Style> openStyles = new LinkedList<>();
             for (Run run: text) {
                 List<Style> runStyles = run.getStyles();

@@ -8,7 +8,6 @@ package com.dua3.utility.text;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import com.dua3.utility.lang.LangUtil;
 
@@ -146,4 +145,16 @@ public class Run implements AttributedCharSequence {
     public List<Style> getStyles() {
         return (List<Style>) attributes.getOrDefault(ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
+
+    /**
+     * Get the FontDef for this style.
+     * @return the FontDef
+     */
+    public FontDef getFontDef() {
+        FontDef collected = new FontDef();
+        for (Style style: getStyles()) {
+            collected.merge(style.getFontDef());
+        }
+        return collected;
+    } 
 }

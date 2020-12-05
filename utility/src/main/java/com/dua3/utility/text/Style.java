@@ -201,17 +201,15 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     /**
-     * Get this style's font, or if the Style does only contain additional styloing information, derive the font
-     * to use from the given base font.
-     * @param baseFont the base font to derive a new font from
-     * @return the font
+     * Get FontDef for this style.
+     * @return the FontDef
      */
-    public Font getFont(Font baseFont) {
-        Object taFont = get(FONT);
-        if (taFont instanceof  Font) {
-            baseFont = (Font) taFont;
+    public FontDef getFontDef() {
+        Font font = (Font) get(FONT);
+        if (font != null) {
+            return font.toFontDef();
         }
-
+        
         FontDef fd = new FontDef();
         ifPresent(FONT_TYPE, fd::setFamily);
         ifPresent(FONT_SIZE, fd::setSize);
@@ -220,7 +218,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
         ifPresent(FONT_WEIGHT, v -> fd.setBold(Objects.equals(v, FONT_WEIGHT_VALUE_BOLD)));
         ifPresent(TEXT_DECORATION_UNDERLINE, v -> fd.setUnderline(Objects.equals(v, TEXT_DECORATION_UNDERLINE_VALUE_LINE)));
         ifPresent(TEXT_DECORATION_LINE_THROUGH, v -> fd.setStrikeThrough(Objects.equals(v, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)));
-        return baseFont.deriveFont(fd);
+        return fd;
     }
 
     @Override
