@@ -174,7 +174,8 @@ public class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * Create a read to use converter with default mappings.
+     * Create a converter with default mappings.
+     * @param options the options to use
      * @return converter with standard mappings
      */
     public static HtmlConverter create(Collection<HtmlConversionOption> options) {
@@ -185,7 +186,8 @@ public class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * Create a read to use converter with default mappings.
+     * Create a converter with default mappings.
+     * @param options the options to use
      * @return converter with standard mappings
      */
     public static HtmlConverter create(HtmlConversionOption... options) {
@@ -193,7 +195,8 @@ public class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * Create a read to use converter without any mappings.
+     * Create a converter without any mappings.
+     * @param options the options to use
      * @return converter
      */
     public static HtmlConverter createBlank(Collection<HtmlConversionOption> options) {
@@ -203,7 +206,8 @@ public class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * Create a read to use converter without any mappings.
+     * Create a converter without any mappings.
+     * @param options the options to use
      * @return converter
      */
     public static HtmlConverter createBlank(HtmlConversionOption... options) {
