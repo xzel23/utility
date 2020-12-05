@@ -66,8 +66,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
  - moved/renamed command line argument parsing classes to their own package, many changes and additions
  - move Font.FontDef to upper level
- - RichTextBuilder: methods push(Style)/pop(Style), implement Comparable; add textEquals()
- - new class HtmlConverter to convert RichText to HTML
+ - RichTextBuilder: methods push(Style)/pop(Style), implement Comparable; add textEquals(); bugfixes
+ - Many RichText/TextAttributes/Style related refactorings
+ - new classes HtmlConverter, StyledDocumentConverter, AnsiConverter to convert RichText to different formats
+ - removed old StyledDocumentBuilder class
  - several changes in to the classes under util.text
  - removed ToStringBuilder class as it was never really used and most IDEs can generate toString() automatically
  - overload IOUtil.replaceExtension for Path
