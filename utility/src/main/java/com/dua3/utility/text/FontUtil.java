@@ -31,7 +31,7 @@ public interface FontUtil<F> {
      * @return
      *           the text bounds
      */
-    Bounds getTextBounds(String s, Font f);
+    Bounds getTextBounds(CharSequence s, Font f);
 
     /**
      * Get text width.
@@ -43,7 +43,7 @@ public interface FontUtil<F> {
      * @return
      *           the text width
      */
-    default double getTextWidth(String s, Font f) {
+    default double getTextWidth(CharSequence s, Font f) {
         return getTextBounds(s, f).width;
     }
 
@@ -57,7 +57,7 @@ public interface FontUtil<F> {
      * @return
      *           the text height
      */
-    default double getTextHeight(String s, Font f) {
+    default double getTextHeight(CharSequence s, Font f) {
         return getTextBounds(s, f).height;
     }
 }

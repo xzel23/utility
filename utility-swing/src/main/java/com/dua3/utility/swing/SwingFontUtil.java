@@ -7,44 +7,80 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 
+/**
+ * Utility class for getting font properties through AWT. This class should normally not used directly by user code
+ * as the functionality should be available in the {@link com.dua3.utility.text.TextUtil} utility class which
+ * in turn uses this class via SPI (Java ServiceProvider interface). 
+ * See {@link com.dua3.utility.text.TextUtil#FONT_UTIL} for details.
+ */
 public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
-    public Rectangle2D stringBounds(String text, Font font) {
+    /**
+     * Calculate the string bounds of a text using the font passed as argument.
+     * @param text the text
+     * @param font the font
+     * @return the text's bounds (positioned at the origin)
+     */
+    public Rectangle2D stringBounds(CharSequence text, Font font) {
         java.awt.Font awtFont = convert(font);
         return stringBounds(text, awtFont);
     }
 
-    public Rectangle2D stringBounds(String text, java.awt.Font awtFont) {
+    /**
+     * Calculate the string bounds of a text using the font passed as argument.
+     * @param text the text
+     * @param awtFont the font
+     * @return the text's bounds (positioned at the origin)
+     */
+    public Rectangle2D stringBounds(CharSequence text, java.awt.Font awtFont) {
         FontRenderContext frc = new FontRenderContext(awtFont.getTransform(), false, true);
-        return awtFont.getStringBounds(text, frc);
+        return awtFont.getStringBounds(text.toString(), frc);
     }
 
-    public Bounds getTextBounds(String s, java.awt.Font f) {
+    /**
+     * Calculate the string bounds of a text using the font passed as argument.
+     * @param text the text
+     * @param  awtFont the font
+     * @return the text's bounds (positioned at the origin)
+     */
+    public Bounds getTextBounds(CharSequence text, java.awt.Font awtFont) {
+        Rectangle2D r = stringBounds(text, awtFont);
+        return new Bounds(r.getWidth(), r.getHeight());
+    }
+
+    /**
+     * Calculate the height of a text using the font passed as argument.
+     * @param text the text
+     * @param  awtFont the font
+     * @return the text's bounds (positioned at the origin)
+     */
+    public double getTextHeight(CharSequence text, java.awt.Font awtFont) {
+        return stringBounds(text, awtFont).getHeight();
+    }
+
+    /**
+     * Calculate the width of a text using the font passed as argument.
+     * @param text the text
+     * @param  awtFont the font
+     * @return the text's bounds (positioned at the origin)
+     */
+    public double getTextWidth(CharSequence text, java.awt.Font awtFont) {
+        return stringBounds(text, awtFont).getWidth();
+    }
+
+    @Override
+    public Bounds getTextBounds(CharSequence s, Font f) {
         Rectangle2D r = stringBounds(s, f);
         return new Bounds(r.getWidth(), r.getHeight());
     }
 
-    public double getTextHeight(String s, java.awt.Font f) {
-        return stringBounds(s, f).getHeight();
-    }
-
-    public double getTextWidth(String s, java.awt.Font f) {
-        return stringBounds(s, f).getWidth();
-    }
-
     @Override
-    public Bounds getTextBounds(String s, Font f) {
-        Rectangle2D r = stringBounds(s, f);
-        return new Bounds(r.getWidth(), r.getHeight());
-    }
-
-    @Override
-    public double getTextHeight(String s, Font f) {
+    public double getTextHeight(CharSequence s, Font f) {
         return stringBounds(s, f).getHeight();
     }
 
     @Override
-    public double getTextWidth(String s, Font f) {
+    public double getTextWidth(CharSequence s, Font f) {
         return stringBounds(s, f).getWidth();
     }
 

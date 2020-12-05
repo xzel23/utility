@@ -591,7 +591,7 @@ public final class TextUtil {
                 }
 
                 @Override
-                public Bounds getTextBounds(String s, Font f) {
+                public Bounds getTextBounds(CharSequence s, Font f) {
                     throw new UnsupportedOperationException("no FontUtil implementation present");
                 }
             };
@@ -628,7 +628,7 @@ public final class TextUtil {
      * @return
      *           the text height
      */
-    public static double getTextHeight(String text, Font font) {
+    public static double getTextHeight(CharSequence text, Font font) {
         return FONT_UTIL.getTextWidth(text, font);
     }
 
@@ -642,7 +642,7 @@ public final class TextUtil {
      * @return
      *           the text width
      */
-    public static double getTextWidth(String text, Font font) {
+    public static double getTextWidth(CharSequence text, Font font) {
         return FONT_UTIL.getTextWidth(text, font);
     }
 
@@ -656,7 +656,7 @@ public final class TextUtil {
      * @return
      *           the text bounds
      */
-    public static Bounds getTextBounds(String text, Font font) {
+    public static Bounds getTextBounds(CharSequence text, Font font) {
         return FONT_UTIL.getTextBounds(text, font);
     }
 
