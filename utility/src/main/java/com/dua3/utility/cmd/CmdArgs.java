@@ -13,6 +13,11 @@ import java.util.stream.Stream;
  */
 public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
 
+    /**
+     * An entry represents a single option given on the command line together with the parameters given in that option
+     * invocation, converted to the option's argument type.
+     * @param <T> the arguemnt type for the option
+     */
     public static final class Entry<T> {
         final Option<T> option;
         final List<T> parms;
@@ -26,15 +31,23 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
             this.option = Objects.requireNonNull(option);
             this.parms = new LinkedList<>();
         }
-        
+
         void addParameter(String s) {
             parms.add(option.map(s));
         }
 
+        /**
+         * Get the option that this entry belongs to
+         * @return the option
+         */
         public Option<T> getOption() {
             return option;
         }
 
+        /**
+         * Getz the parameters given for this invocation of the ooption.
+         * @return liest of option parameters, converted to the target type
+         */
         public List<T> getParms() {
             return Collections.unmodifiableList(parms);
         }

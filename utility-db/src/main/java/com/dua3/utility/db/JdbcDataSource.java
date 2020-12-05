@@ -28,6 +28,9 @@ public class JdbcDataSource implements DataSource {
     private Driver driver = null;
     private final Properties properties = new Properties();
 
+    /**
+     * Constructor.
+     */
     public JdbcDataSource() {
         // nop
     }
