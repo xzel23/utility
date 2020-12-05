@@ -58,6 +58,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         m.put(StyleConstants.Size, f -> Math.round(f.getSizeInPoints()));
         m.put(StyleConstants.Bold, Font::isBold);
         m.put(StyleConstants.Italic, Font::isItalic);
+        m.put(StyleConstants.Underline, Font::isUnderline);
         m.put(StyleConstants.StrikeThrough, Font::isStrikeThrough);
         m.put(StyleConstants.Foreground, f -> SwingUtil.toAwtColor(f.getColor()));
         return m;
