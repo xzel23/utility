@@ -39,6 +39,24 @@ public class Pair<T1, T2> {
     }
 
     /**
+     * Add pairs to a map.
+     * @param <K>
+     *                the key type
+     * @param <V>
+     *                the value type
+     *
+     * @param    m
+     *                the map to add the pairs to
+     * @param    args
+     *                the pairs to add
+     */
+    public static <K, V> void addToMap(Map<K, V> m, Iterable<Pair<K, V>> args) {
+        for (Pair<K, V> arg : args) {
+            m.put(arg.first, arg.second);
+        }
+    }
+
+    /**
      * Create a Pair.
      *
      * @param  first
