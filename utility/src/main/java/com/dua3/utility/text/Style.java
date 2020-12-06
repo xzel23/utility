@@ -9,6 +9,7 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -238,8 +239,20 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public Iterator<Map.Entry<String, Object>> iterator() {
         return properties.entrySet().iterator();
     }
-    
+
+    /**
+     * Get a stream of this style's entries.
+     * @return stream of entries
+     */
     public Stream<Map.Entry<String, Object>> stream() {
         return properties.entrySet().stream();
+    }
+
+    /**
+     * Perform action for each entry of this style.
+     * @param action the action to perform
+     */
+    public void forEach(BiConsumer<String, Object> action) {
+        forEach(entry -> action.accept(entry.getKey(), entry.getValue()));        
     }
 }

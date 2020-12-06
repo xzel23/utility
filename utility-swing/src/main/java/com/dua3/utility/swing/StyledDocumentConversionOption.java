@@ -18,42 +18,6 @@ import java.util.function.Function;
  */
 public class StyledDocumentConversionOption {
 
-    /**
-     * Set default attributes.
-     * @param attributes attributes for new StyledDocuments
-     * @return the option to use
-     */
-    public static StyledDocumentConversionOption addDefaultAttributes(List<Pair<Object,Object>> attributes) {
-        return new StyledDocumentConversionOption(c -> c.addAttributes(attributes));
-    }
-
-    /**
-     * Set default attributes.
-     * @param attributes attributes for new StyledDocuments
-     * @return the option to use
-     */
-    public static StyledDocumentConversionOption addDefaultAttributes(AttributeSet attributes) {
-        return new StyledDocumentConversionOption(c -> c.addAttributes(attributes));
-    }
-
-    /**
-     * Set default font.
-     * @param font the default font
-     * @return the option to use
-     */
-    public static StyledDocumentConversionOption defaultFont(Font font) {
-        return new StyledDocumentConversionOption(c -> c.setDefaultFont(font));
-    }
-
-    /**
-     * Set font scaling factor.
-     * @param scale the font scaling factor
-     * @return the option to use
-     */
-    public static StyledDocumentConversionOption scale(double scale) {
-        return new StyledDocumentConversionOption(c -> c.setScale(scale));
-    }
-
     private final Consumer<StyledDocumentConverter> action;
 
     protected StyledDocumentConversionOption(Consumer<StyledDocumentConverter> action) {

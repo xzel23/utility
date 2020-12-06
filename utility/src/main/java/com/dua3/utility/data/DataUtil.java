@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -493,6 +494,95 @@ public final class DataUtil {
      */
     public static <K, V> Function<K, V> asFunction(Map<K, V> map, V defaultValue) {
         return k -> map.getOrDefault(k, defaultValue);
+    }
+
+    /**
+     * Compute the change of mappings between two maps. The result is a map that maps keys to pairs (value a, value b) 
+     * of the changes. See also {@link #diff(Map, Map)}.
+     * 
+     * @param a the first map
+     * @param b the second map
+     * @param <U> the key type
+     * @param <V> the value type
+     * @return a new map that contains the changes as pairs (value in a, value in b) 
+     */
+    public static <U,V> Map<U,Pair<V,V>> changes(Map<U,V> a, Map<U,V> b) {
+        Set<U> keys = new HashSet<>(a.keySet());
+        keys.addAll(b.keySet());
+        
+        HashMap<U,Pair<V,V>> changes = new HashMap<>();
+        keys.forEach( k -> {
+            V va = a.get(k);
+            V vb = b.get(k);
+            if (!Objects.equals(va,vb)) {
+                changes.put(k, Pair.of(va, vb));
+            }
+        });
+        return changes;
+    }
+
+    /**
+     * Compute the differnce of mappings between two maps. The result is a map that maps keys to the new values 
+     * for all changed keys. See also {@link #changes(Map, Map)}.
+     *
+     * @param a the first map
+     * @param b the second map
+     * @param <U> the key type
+     * @param <V> the value type
+     * @return a new map that contains the changes as pairs (value in a, value in b) 
+     */
+    public static <U,V> Map<U,V> diff(Map<U,V> a, Map<U,V> b) {
+        Set<U> keys = new HashSet<>(a.keySet());
+        keys.addAll(b.keySet());
+        
+        HashMap<U,V> diff = new HashMap<>();
+        keys.forEach( k -> {
+            V va = a.get(k);
+            V vb = b.get(k);
+            if (!Objects.equals(va,vb)) {
+                diff.put(k, vb);
+            }
+        });
+        return diff;
+    }
+
+    /**
+     * Execute action if key is mapped. See also {@link #ifMapped(Map, Object, Consumer)}.
+     * @param map the map
+     * @param key the key
+     * @param action the action
+     * @param <T> the key type
+     * @param <U> the value type
+     * @return true, if action was called
+     */
+    public static <T,U> boolean ifPresent(Map<T,U> map, T key, Consumer<U> action) {
+        // we need to check using containsKey() since key may be mapped to null
+        if (!map.containsKey(key)) {
+            return false;
+        }
+        
+        action.accept(map.get(key));
+        return true;
+    }
+
+    /**
+     * Execute action if key is mapped to a non-null value. See also {@link #ifPresent(Map, Object, Consumer)}.
+     * @param map the map
+     * @param key the key
+     * @param action the action
+     * @param <T> the key type
+     * @param <U> the value type
+     * @return true, if action was called
+     */
+    public static <T,U> boolean ifMapped(Map<T,U> map, T key, Consumer<U> action) {
+        // we need to check using containsKey() since key may be mapped to null
+        U value = map.get(key);
+        if (value == null) {
+            return false;
+        }
+        
+        action.accept(value);
+        return true;
     }
     
     // Utility class - private constructor

@@ -6,22 +6,17 @@
 package com.dua3.utility.swing;
 
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.*;
 
 /**
@@ -54,26 +49,59 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
     private StyledDocumentConverter() {
     }
-    
+
     private static final Font DEFAULT_FONT = new Font();
     
     // some settings controlling the conversion
     private Font defaultFont = DEFAULT_FONT;
-    private SimpleAttributeSet defaultAttributes = new SimpleAttributeSet();
+    private Map<String, Object> defaultAttributes = new HashMap<>();
+    private SimpleAttributeSet defaultStyledAttributes = new SimpleAttributeSet();
     private double scale = 1.0;
-    
-    void setDefaultFont(Font font) {
-        this.defaultFont = Objects.requireNonNull(font);
-    }
-    
-    void addAttributes(List<Pair<Object, Object>> attributes) {
-        attributes.forEach(p -> defaultAttributes.addAttribute(p.first, p.second));
+
+    /**
+     * Set default attributes.
+     * @param attributes attributes for new StyledDocuments
+     * @return the option to use
+     */
+    public static StyledDocumentConversionOption addStyledAttributes(List<Pair<Object,Object>> attributes) {
+        return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.first, p.second)));
     }
 
-    void addAttributes(AttributeSet attributes) {
-       this.defaultAttributes.addAttributes(attributes); 
+    /**
+     * Set default attributes.
+     * @param attributes attributes for new StyledDocuments
+     * @return the option to use
+     */
+    public static StyledDocumentConversionOption addStyledAttributes(AttributeSet attributes) {
+        return new StyledDocumentConversionOption(c -> c.defaultStyledAttributes.addAttributes(attributes));
     }
 
+    /**
+     * Set default attributes.
+     * @param attributes the default Attributes
+     * @return the option to use
+     */
+    public static StyledDocumentConversionOption defaultAttributes(Map<String, Object> attributes) {
+        return new StyledDocumentConversionOption(c -> c.defaultAttributes = Objects.requireNonNull(attributes));
+    }
+
+    /**
+     * Set default font.
+     * @param font the default font
+     * @return the option to use
+     */
+    public static StyledDocumentConversionOption defaultFont(Font font) {
+        return new StyledDocumentConversionOption(c -> c.defaultFont = Objects.requireNonNull(font) );
+    }
+
+    /**
+     * Set font scaling factor.
+     * @param scale the font scaling factor
+     * @return the option to use
+     */
+    public static StyledDocumentConversionOption scale(double scale) {
+        return new StyledDocumentConversionOption(c -> c.setScale(scale));
+    }
 
     /**
      * Create AttributeSet for a Font instance
@@ -82,7 +110,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      */
     private AttributeSet createAttributeSet(Font font) {
         SimpleAttributeSet attrs = new SimpleAttributeSet();
-        attrs.addAttributes(defaultAttributes);
+        attrs.addAttributes(defaultStyledAttributes);
         dictionary.forEach( (key,getter) -> attrs.addAttribute(key,getter.apply(font)));
         return attrs;
     }
@@ -115,11 +143,13 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
         private final StyledDocument buffer;
         private AttributeSet currentAttributes;
+        private Font currentFont;
         
         StyledDocumentConverterImpl() {
-            super(defaultFont);
+            super(defaultAttributes);
             buffer = new DefaultStyledDocument();
-            currentAttributes = defaultAttributes;
+            currentAttributes = defaultStyledAttributes;
+            currentFont=defaultFont;
         }
         
         @Override
@@ -128,11 +158,17 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         }
 
         @Override
-        protected void apply(Font font, FontDef changes) {
-            currentAttributes = createAttributeSet(font);
+        protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
+            Map<String, Object> attributes = new HashMap<>();
+            changedAttributes.forEach( (attribute, values) -> {
+                attributes.put(attribute, values.second);
+            });
+            // apply the default font styles 
+            currentFont = currentFont.deriveFont(TextAttributes.getFontDef(attributes));
+            currentAttributes = createAttributeSet(currentFont);
         }
 
-    @Override
+        @Override
         protected void appendChars(CharSequence s) {
             try {
                 int pos = buffer.getLength();

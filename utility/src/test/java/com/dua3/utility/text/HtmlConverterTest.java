@@ -120,7 +120,7 @@ public class HtmlConverterTest {
         builder.pop(style1);
         RichText rt = builder.toRichText();
         String expected = "<span class=\"arial-bold-16.0-#000000\">Don't <span class=\"courier-12.0-#000000\">mix</span> too many fonts!</span>";
-        String actual = HtmlConverter.create(HtmlConversionOption.useCss(true)).convert(rt);
+        String actual = HtmlConverter.create(HtmlConverter.useCss(true)).convert(rt);
         
         assertEquals(expected, actual);
     }

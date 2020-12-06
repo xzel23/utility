@@ -5,7 +5,55 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class HtmlConverter extends TagBasedConverter<String> {
-    
+
+    /**
+     * Use CSS in output.
+     *
+     * @param flag set to true to enable CSS output
+     * @return the option to use
+     */
+    public static HtmlConversionOption useCss(boolean flag) {
+        return new HtmlConversionOption(c -> c.setUseCss(flag));
+    }
+
+    /**
+     * Add default mappings for the standard {@link TextAttributes}.
+     *
+     * @return the option tp use
+     */
+    public static HtmlConversionOption addDefaultMappings() {
+        return new HtmlConversionOption(HtmlConverter::doAddDefaultMappings);
+    }
+
+    /**
+     * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
+     *
+     * @param attribute the attibute
+     * @param mapper    the mapper
+     * @return the option tp use
+     */
+    public static HtmlConversionOption map(String attribute, Function<Object, HtmlTag> mapper) {
+        return new HtmlConversionOption(c -> c.addMapping(attribute, Objects.requireNonNull(mapper)));
+    }
+
+    /**
+     * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
+     *
+     * @param attribute the attibute
+     * @param mapper    the mapper
+     * @return the option tp use
+     */
+    public static HtmlConversionOption replaceMapping(String attribute, Function<Object, HtmlTag> mapper) {
+        return new HtmlConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
+    }
+
+    /**
+     * Set the default mapper which is called when no mapper is registered for the attribute.
+     */
+    public static HtmlConversionOption defaultMapper(BiFunction<String, Object, HtmlTag> setDefaultMapper) {
+        return new HtmlConversionOption(c -> c.setDefaultMapper(setDefaultMapper));
+    }
+
     @Override
     protected TagBasedConverterImpl<String> createConverter(RichText text) {
         return new HtmlConverterImpl(text);
@@ -51,7 +99,7 @@ public class HtmlConverter extends TagBasedConverter<String> {
         addMapping(attr, v -> Objects.equals(v,value) ? tag : HtmlTag.emptyTag());
     }
 
-    void addDefaultMappings() {
+    void doAddDefaultMappings() {
         addSimpleMapping(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
         addSimpleMapping(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
         addSimpleMapping(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
@@ -149,18 +197,6 @@ public class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * Replace mapper for an attribute.
-     * @param attribute the attribute
-     * @param mapper the mapper
-     */
-    void replaceMapping(String attribute, Function<Object, HtmlTag> mapper) {
-        Objects.requireNonNull(attribute);
-        Objects.requireNonNull(mapper);
-
-        mappings.put(attribute, mapper);
-    }
-
-    /**
      * whether or not CSS output shoud be generated.
      */
     private boolean useCss = false;
@@ -180,7 +216,7 @@ public class HtmlConverter extends TagBasedConverter<String> {
      */
     public static HtmlConverter create(Collection<HtmlConversionOption> options) {
         HtmlConverter instance = new HtmlConverter();
-        instance.addDefaultMappings();
+        instance.doAddDefaultMappings();
         options.forEach(o -> o.apply(instance));
         return instance;
     }

@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 
@@ -93,4 +94,27 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     public Set<Entry<String, Object>> entrySet() {
         return entries;
     }
+
+    /**
+     * Get {@link FontDef} from {@link TextAttributes}.
+     * @param attributes {@link Map} holding TextAttribute values
+     * @return FontDef instance
+     */
+    public static FontDef getFontDef(Map<String,Object> attributes) {
+        Font font = (Font) attributes.get(Style.FONT);
+        if (font != null) {
+            return font.toFontDef();
+        }
+
+        FontDef fd = new FontDef();
+        DataUtil.ifPresent(attributes, Style.FONT_TYPE, v -> fd.setFamily(String.valueOf(v)));
+        DataUtil.ifPresent(attributes, Style.COLOR, v -> fd.setColor((Color) v));
+        DataUtil.ifPresent(attributes, Style.FONT_WEIGHT, v -> fd.setBold(Objects.equals(v, Style.FONT_WEIGHT_VALUE_BOLD)));
+        DataUtil.ifPresent(attributes, Style.TEXT_DECORATION_UNDERLINE, v -> fd.setUnderline(Objects.equals(v, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE)));
+        DataUtil.ifPresent(attributes, Style.TEXT_DECORATION_LINE_THROUGH, v -> fd.setStrikeThrough(Objects.equals(v, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)));
+        DataUtil.ifPresent(attributes, Style.FONT_STYLE, v -> fd.setItalic(Objects.equals(v, Style.FONT_STYLE_VALUE_ITALIC) || Objects.equals(v, Style.FONT_STYLE_VALUE_OBLIQUE)));
+        return fd;
+    }
+
 }
+
