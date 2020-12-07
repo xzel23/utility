@@ -100,15 +100,18 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         @Override
         protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
             Map<String, Object> attributes = new HashMap<>();
+            Deque<String> tags = new LinkedList<>();
             changedAttributes.forEach( (attribute, values) -> {
                 attributes.put(attribute, values.second);
                 BiFunction<Object, Object, String> mapping = mappings.get(attribute);
                 if (mapping != null) {
-                    buffer.append(mapping.apply(values.first, values.second));
+                    tags.push(mapping.apply(values.first, values.second));
                 }
             });
             // apply the default font styles 
             applyFontChanges(TextAttributes.getFontDef(attributes));
+            // apply the additional styles
+            tags.forEach(buffer::append);
         }
 
         @Override
