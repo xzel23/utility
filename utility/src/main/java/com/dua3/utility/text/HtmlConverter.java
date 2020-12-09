@@ -180,22 +180,19 @@ public class HtmlConverter extends TagBasedConverter<String> {
      * @return the new mapper
      */
     private Function<Object, HtmlTag> combineMappers(Function<Object, HtmlTag> m1, Function<Object, HtmlTag> m2) {
-        return new Function<Object, HtmlTag>() {
-            @Override
-            public HtmlTag apply(Object value) {
-                HtmlTag oldTag = m1.apply(value);
-                HtmlTag newTag = m2.apply(value);
-                return new HtmlTag() {
-                    @Override
-                    public String open() {
-                        return newTag.open()+oldTag.open();
-                    }
-                    @Override
-                    public String close() {
-                        return oldTag.close()+newTag.close();
-                    }
-                };
-            }
+        return value -> {
+            HtmlTag oldTag = m1.apply(value);
+            HtmlTag newTag = m2.apply(value);
+            return new HtmlTag() {
+                @Override
+                public String open() {
+                    return newTag.open()+oldTag.open();
+                }
+                @Override
+                public String close() {
+                    return oldTag.close()+newTag.close();
+                }
+            };
         };
     }
 

@@ -20,7 +20,7 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
 
         @SuppressWarnings("unchecked")
         static Entry<?> create(Option<?> option) {
-            return new Entry(option);
+            return new Entry<>(option);
         }
         
         Entry(Option<T> option) {

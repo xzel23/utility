@@ -14,6 +14,7 @@ class FilterIteratorTest {
     public void testEmpty() {
         List<Integer> items = Arrays.asList();
 
+        @SuppressWarnings("RedundantOperationOnEmptyContainer") 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->true);
         assertFalse(fi.hasNext());
     }
