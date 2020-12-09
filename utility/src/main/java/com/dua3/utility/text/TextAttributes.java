@@ -96,7 +96,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     }
 
     /**
-     * Get {@link FontDef} from {@link TextAttributes}.
+     * Get {@link FontDef} from TextAttributes.
      * @param attributes {@link Map} holding TextAttribute values
      * @return FontDef instance
      */

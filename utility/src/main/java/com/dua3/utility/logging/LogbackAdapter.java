@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * A utility class to connect Logback to {@link LogBuffer}.
  * 
- * @see <a>http://logback.qos.ch</a>
+ * @see "http://logback.qos.ch"
  */
 public final class LogbackAdapter {
     

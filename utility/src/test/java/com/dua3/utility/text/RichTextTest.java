@@ -136,7 +136,7 @@ public class RichTextTest {
         RichText b = txt.subSequence(3,4);
         assertEquals(" ", a.toString());
         assertEquals(" ", b.toString());
-        assertTrue(a.equals(b));
+        assertEquals(b, a);
     }
     
     @Test

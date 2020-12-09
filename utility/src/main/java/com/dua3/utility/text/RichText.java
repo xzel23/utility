@@ -65,12 +65,12 @@ public class RichText
     }
 
     /**
-     * Get {@link RichText} containing an objects string representation.
-     * @param o
-     * @return RichText.valueOf(String.valueOf(o))
+     * Get RichText containing an objects string representation.
+     * @param obj the object to convert to RichText
+     * @return RichText.valueOf(String.valueOf(obj))
      */
-    public static RichText valueOf(Object o) {
-        return valueOf(String.valueOf(o));
+    public static RichText valueOf(Object obj) {
+        return valueOf(String.valueOf(obj));
     }
 
     /**
@@ -85,7 +85,7 @@ public class RichText
     }
 
     /**
-     * Convert char to {@link RichText}.
+     * Convert char to RichText.
      * 
      * @param c the character
      * @return RichText containing only the character c
@@ -382,7 +382,7 @@ public class RichText
     }
 
     /**
-     * Join {@link RichText} instances together.
+     * Join RichText instances together.
      * @param delimiter the delimiter
      * @param elements the elements to join
      * @return RichText containing the joined elements
@@ -392,7 +392,7 @@ public class RichText
     }
 
     /**
-     * Join {@link RichText} instances together.
+     * Join RichText instances together.
      * @param delimiter the delimiter
      * @param elements the elements to join
      * @return RichText containing the joined elements
@@ -410,7 +410,7 @@ public class RichText
     }
     
     /**
-     * Join {@link RichText} instances together.
+     * Join RichText instances together.
      * @param delimiter the delimiter
      * @param elements the elements to join
      * @return RichText containing the joined elements
@@ -420,7 +420,7 @@ public class RichText
     }
 
     /**
-     * Join {@link RichText} instances together.
+     * Join RichText instances together.
      * @param delimiter the delimiter
      * @param elements the elements to join
      * @return RichText containing the joined elements

@@ -11,7 +11,7 @@ import com.dua3.utility.text.FontUtil;
  * Utility class for getting font properties through AWT. This class should normally not used directly by user code
  * as the functionality should be available in the {@link com.dua3.utility.text.TextUtil} utility class which
  * in turn uses this class via SPI (Java ServiceProvider interface). 
- * See {@link com.dua3.utility.text.TextUtil#FONT_UTIL} for details.
+ * See usage of {@link FontUtil} in {@link com.dua3.utility.text.TextUtil} for details.
  */
 public class SwingFontUtil implements FontUtil<java.awt.Font> {
 

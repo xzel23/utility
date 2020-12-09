@@ -22,8 +22,8 @@ public class StyleTest {
                 Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
         
         // first make sure the names are equal but not identical 
-        assertTrue(s1.name().equals(s2.name()));
-        assertFalse(s1.name()==s2.name());
+        assertEquals(s2.name(), s1.name());
+        assertNotSame(s1.name(), s2.name());
 
         // s1 and s2 do not possess any properties
         assertEquals(s1, s2);

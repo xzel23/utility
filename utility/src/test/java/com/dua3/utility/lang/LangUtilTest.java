@@ -167,10 +167,12 @@ class LangUtilTest {
         Integer[] d = {};
 
         assertTrue(LangUtil.equals(Arrays.stream(a), Arrays.stream(a)));
+        //noinspection RedundantOperationOnEmptyContainer
         assertTrue(LangUtil.equals(Arrays.stream(d), Arrays.stream(d)));
-        
+
         assertFalse(LangUtil.equals(Arrays.stream(a), Arrays.stream(b)));
         assertFalse(LangUtil.equals(Arrays.stream(a), Arrays.stream(c)));
+        //noinspection RedundantOperationOnEmptyContainer
         assertFalse(LangUtil.equals(Arrays.stream(a), Arrays.stream(d)));
     }
 
