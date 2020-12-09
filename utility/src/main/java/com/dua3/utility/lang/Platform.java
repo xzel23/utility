@@ -2,10 +2,17 @@ package com.dua3.utility.lang;
 
 import java.util.Locale;
 
+/**
+ * Enumeration for the different Platforms/Operating systems.
+ */
 public enum Platform {
+    /** The Linux operating system. */
     LINUX,
+    /** The macOS operating system. */
     MACOS,
+    /** The Windows operating system. */
     WINDOWS,
+    /** Unknown operating system. */
     UNKNOWN;
 
     private static final Platform detected = determinePlatform();

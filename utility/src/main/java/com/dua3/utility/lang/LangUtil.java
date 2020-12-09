@@ -477,6 +477,10 @@ public final class LangUtil {
         return new CachingSupplier<>(supplier, cleaner);
     }
 
+    /**
+     * Interface AutoClosableSupplier, used in {@link #cache(Supplier, Consumer)}.
+     * @param <T> the base type
+     */
     public interface AutoCloseableSupplier<T> extends AutoCloseable, Supplier<T> {
         @Override
         void close();

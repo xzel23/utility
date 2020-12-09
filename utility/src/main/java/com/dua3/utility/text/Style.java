@@ -15,6 +15,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * A Style is a set of {@link TextAttributes} and corresponding values that controls the appearance of {@link RichText}.
+ */
 public final class Style implements Iterable<Map.Entry<String, Object>> {
 
     // -- static fields and methods

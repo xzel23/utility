@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * A {@link RichTextConverter} that converts {@link RichText} to HTML.
+ */
 public class HtmlConverter extends TagBasedConverter<String> {
 
     /**
