@@ -1,5 +1,10 @@
 package com.dua3.utility.text;
 
+/**
+ * Interface for Font handling utility classes. The concrete implementation is automatically chosen at runtime
+ * for use by the {@link TextUtil} class.
+ * @param <F> the implementation's underlying Font class
+ */
 public interface FontUtil<F> {
     class Bounds {
         public final double width;
