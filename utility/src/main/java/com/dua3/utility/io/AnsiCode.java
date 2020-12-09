@@ -12,6 +12,9 @@ import java.util.Collection;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 
+/**
+ * Support for ANSI escape codes for setting text attributes on ANSI-supporting consoles.
+ */
 public final class AnsiCode {
 
     /** Marker: start of ESC-sequence. */
@@ -46,78 +49,20 @@ public final class AnsiCode {
     /** ESC: start background color sequence. */
     public static final char BACKGROUND_COLOR = 48;
 
-    private static String byteStr(int b) {
-        LangUtil.check((b >= 0) && (b <= 255));
-        return Integer.toString(b);
-    }
-
-    public static <T extends Appendable> void esc(T out, Collection<Character> args) throws IOException {
-        if (args.isEmpty()) {
-            return;
-        }
-
-        out.append(ESC_START);
-        String delimiter = "";
-        for (int arg : args) {
-            out.append(delimiter).append(byteStr(arg));
-            delimiter = ";";
-        }
-        out.append(ESC_END);
-    }
-
-    public static <T extends Appendable> void esc(T out, int... args) throws IOException {
-        out.append(ESC_START);
-        String delimiter = "";
-        for (int arg : args) {
-            out.append(delimiter).append(byteStr(arg));
-            delimiter = ";";
-        }
-        out.append(ESC_END);
-    }
-
-    public static <T extends Appendable> void fg(T out, int r, int g, int b) throws IOException {
-        esc(out, COLOR, 2, r, g, b);
-    }
-
-    public static <T extends Appendable> void bg(T out, int r, int g, int b) throws IOException {
-        esc(out, BACKGROUND_COLOR, 2, r, g, b);
-    }
-
-    public static <T extends Appendable> void fg(T out, Color c) throws IOException {
-        fg(out, c.r(), c.g(), c.b());
-    }
-
-    public static <T extends Appendable> void bg(T out, Color c) throws IOException {
-        bg(out, c.r(), c.g(), c.b());
-    }
-
-    public static <T extends Appendable> void reset(T out) throws IOException {
-        esc(out, RESET);
-    }
-
-    public static <T extends Appendable> void underline(T out, boolean on) throws IOException {
-        esc(out, on ? UNDERLINE_ON : UNDERLINE_OFF);
-    }
-
-    public static <T extends Appendable> void reverse(T out, boolean on) throws IOException {
-        esc(out, on ? REVERSE_VIDEO_ON : REVERSE_VIDEO_OFF);
-    }
-
-    public static <T extends Appendable> void strikeThrough(T out, boolean on) throws IOException {
-        esc(out, on ? STRIKE_THROUGH_ON : STRIKE_THROUGH_OFF);
-    }
-
-    public static <T extends Appendable> void italic(T out, boolean on) throws IOException {
-        esc(out, on ? ITALIC_ON : ITALIC_OFF);
-    }
-
+    /**
+     * Create an escape sequence.
+     * @param args the sequence arguments
+     * @return escape sequence as a String
+     */
     public static String esc(int... args) {
         StringBuilder out = new StringBuilder();
-        try {
-            esc(out, args);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        out.append(ESC_START);
+        String delimiter = "";
+        for (int arg : args) {
+            out.append(delimiter).append(Integer.toString(arg));
+            delimiter = ";";
         }
+        out.append(ESC_END);
         return out.toString();
     }
 
