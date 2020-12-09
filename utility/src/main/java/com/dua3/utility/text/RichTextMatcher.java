@@ -5,6 +5,9 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A {@link RichText} version of the {@link Matcher} class.
+ */
 public class RichTextMatcher implements MatchResult {
 
     private final Pattern parentPattern;
