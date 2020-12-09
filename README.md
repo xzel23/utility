@@ -62,6 +62,15 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 7.0.2
+
+ - added missing javadoc in many places
+ - removed obsolete classes and methods (those should have been in use anyway and can in any case be easily replaced with the newer versions/replacements)
+
+### Version 7.0.1
+
+ - msall fixes and cleanups
+
 ### Version 7
 
  - moved/renamed command line argument parsing classes to their own package, many changes and additions
