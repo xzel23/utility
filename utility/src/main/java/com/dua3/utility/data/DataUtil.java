@@ -17,6 +17,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+
+/**
+ * Utility class for data handling and conversion.
+ */
 public final class DataUtil {
 
     /**

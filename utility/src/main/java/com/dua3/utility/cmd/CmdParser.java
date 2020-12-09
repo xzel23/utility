@@ -38,6 +38,13 @@ public class CmdParser {
         this("","");
     }
 
+    /**
+     * Constructor. 
+     * @param name program name
+     * @param description program description 
+     * @param minArgs minimum number of positional arguments
+     * @param maxArgs maximum number of positional arguments
+     */
     public CmdParser(String name, String description, int minArgs, int maxArgs) {
         this.name = Objects.requireNonNull(name);
         this.description = Objects.requireNonNull(description);
@@ -48,6 +55,12 @@ public class CmdParser {
         this.maxPositionalArgs = maxArgs;
     }
 
+    /**
+     * Constructor. 
+     * @param name program name
+     * @param description program description 
+     * @param minArgs minimum number of positional arguments
+     */
     public CmdParser(String name, String description, int minArgs) {
         this(name, description, minArgs, Integer.MAX_VALUE);        
     }

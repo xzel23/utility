@@ -41,6 +41,10 @@ public class JdbcDataSource implements DataSource {
         }
     }
 
+    /**
+     * Set the JDBC driver for this instance.
+     * @param driver  the driver
+     */
     public void setDriver(Driver driver) {
         this.driver = Objects.requireNonNull(driver);
     }

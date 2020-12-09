@@ -29,7 +29,14 @@ public class JdbcDriverInfo {
     /** This driver's options. */
     public final OptionSet options;
 
-    /** constructor. */
+    /** 
+     * Constructor.
+     * @param name driver name
+     * @param className driver's class name
+     * @param urlPrefix URL prefix used by this driver
+     * @param urlScheme URL scheme for JDBC connections
+     * @param link link to driver vendor webpage
+     */
     public JdbcDriverInfo(String name, String className, String urlPrefix, String urlScheme, String link) {
         this.name = name;
         this.className = className;

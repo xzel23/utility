@@ -24,6 +24,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+/**
+ * Text related utility class.
+ */
 public final class TextUtil {
 
     private static final String TRANSFORM_REF_START = "${";
