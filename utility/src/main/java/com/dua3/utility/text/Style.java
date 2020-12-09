@@ -7,7 +7,6 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.lang.LangUtil;
 
 import java.util.*;
 import java.util.function.BiConsumer;

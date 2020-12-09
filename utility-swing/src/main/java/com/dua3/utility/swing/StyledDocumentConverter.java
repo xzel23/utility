@@ -6,7 +6,6 @@
 package com.dua3.utility.swing;
 
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.swing.text.AttributeSet;

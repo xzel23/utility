@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
 
-import java.util.Properties;
-
 public class StyleTest {
     
     @Test

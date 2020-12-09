@@ -6,14 +6,11 @@
 package com.dua3.utility.text;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.lang.LangUtil;
 
 /**
  * A set of text attributes.

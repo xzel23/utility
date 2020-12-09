@@ -1,7 +1,5 @@
 package com.dua3.utility.cmd;
 
-import java.util.Optional;
-
 /**
  * Exception class to throw when command line arguments do not match the options defined by the command line parser.
  */

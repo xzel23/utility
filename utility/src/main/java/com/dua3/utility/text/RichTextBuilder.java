@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static com.dua3.utility.text.RichText.ATTRIBUTE_NAME_STYLE_LIST;
-import static javax.swing.UIManager.put;
 
 /**
  * A builder class for rich text data.

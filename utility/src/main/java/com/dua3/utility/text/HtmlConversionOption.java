@@ -1,9 +1,6 @@
 package com.dua3.utility.text;
 
-import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Options controling the conversion process.

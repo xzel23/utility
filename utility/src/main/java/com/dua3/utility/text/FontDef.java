@@ -1,10 +1,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.data.Pair;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
