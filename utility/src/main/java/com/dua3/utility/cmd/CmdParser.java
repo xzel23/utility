@@ -218,6 +218,10 @@ public class CmdParser {
                 });
     }
 
+    /**
+     * Get a help message listing all available options.
+     * @return help message
+     */
     public String help() {
         Formatter fmt = new Formatter();
         help(fmt);

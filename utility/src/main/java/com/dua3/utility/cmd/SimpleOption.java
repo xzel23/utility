@@ -32,7 +32,12 @@ public class SimpleOption<T> extends Option<T> {
         super.description(description);
         return this;
     }
-    
+
+    /**
+     * Set default value.
+     * @param defaultValue the default value
+     * @return this option
+     */
     public SimpleOption<T> defaultValue(T defaultValue) {
         LangUtil.check(this.defaultValue==null, "default value has already been set");
         this.defaultValue = Objects.requireNonNull(defaultValue);

@@ -135,6 +135,10 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         return new StyledDocumentConverterImpl();
     }
 
+    /**
+     * Set the scale to use in conversion. This scale will be applied to all font sizes during conversion.
+     * @param scale the scale
+     */
     public void setScale(double scale) {
         this.scale=scale;
     }

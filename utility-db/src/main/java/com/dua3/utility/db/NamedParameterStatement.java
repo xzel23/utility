@@ -450,6 +450,11 @@ public class NamedParameterStatement implements AutoCloseable {
         return statement.executeBatch();
     }
 
+    /**
+     * Set the fetch size for the statement (see {#link {@link Statement#setFetchSize(int)}}.
+     * @param rows the fetch size to set
+     * @throws SQLException if an error occurs
+     */
     public void setFetchSize(int rows) throws SQLException {
         statement.setFetchSize(rows);
     }

@@ -274,6 +274,14 @@ public final class SwingUtil {
         }
     }
 
+    /**
+     * Show open dialog.
+     * @param parent the parent component for the dialog
+     * @param current the current path selected when the dialohg opens
+     * @param selectionMode the selection mode as used in {@link JFileChooser#setFileSelectionMode(int)}
+     * @param types pairs(desription, list of extensions) used to create {@link FileNameExtensionFilter} instances
+     * @return an Optional holding the selected path or an empty Optional if nothing was selected
+     */
     @SafeVarargs
     public static Optional<Path> showOpenDialog(Component parent, Path current, int selectionMode,
             Pair<String, String[]>... types) {

@@ -6,6 +6,9 @@ package com.dua3.utility.text;
  * @param <F> the implementation's underlying Font class
  */
 public interface FontUtil<F> {
+    /**
+     * Dimensions.
+     */
     class Bounds {
         public final double width;
         public final double height;
