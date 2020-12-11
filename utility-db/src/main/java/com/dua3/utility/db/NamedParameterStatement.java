@@ -80,7 +80,7 @@ public class NamedParameterStatement implements AutoCloseable {
             this.type = null;
         }
 
-        public void addIndex(int index) {
+        void addIndex(int index) {
             indexes.add(index);
         }
 
