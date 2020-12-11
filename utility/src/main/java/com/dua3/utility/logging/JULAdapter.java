@@ -7,8 +7,14 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+/**
+ * Adapter class for java.util.logging.
+ */
 public final class JULAdapter {
-    
+
+    /**
+     * {@link Handler} implementation that exports {@link LogRecord} instances to {@link LogListener}s.
+     */
     public static class JULHandler extends Handler {
 
         private LogListener listener;
@@ -34,10 +40,17 @@ public final class JULAdapter {
             listener = null;
         }
     }
-    
+
+    /**
+     * Wrapper that wraps a {@link LogRecord} as a {@link LogEntry}.
+     */
     public static class JULLogEntry extends AbstractLogEntry<LogRecord> {
         private final LogRecord r;
 
+        /**
+         * Constructor.
+         * @param r the {@link LogRecord} to wrap.
+         */
         JULLogEntry(LogRecord r) {
             this.r = Objects.requireNonNull(r);
         }
@@ -91,14 +104,29 @@ public final class JULAdapter {
         }
     }
 
+    /**
+     * Convert {@link LogRecord} to {@link LogEntry}.
+     * @param r the {@link LogRecord} to convert
+     * @return LogEntry instance
+     */
     public static LogEntry toLogEntry(LogRecord r) {
         return new JULLogEntry(r);
     }
 
+    /**
+     * Add a {@link LogListener} to a {@link Logger} instance
+     * @param logger the logger
+     * @param listener the listener
+     */
     public static void addListener(Logger logger, LogListener listener) {
         logger.addHandler(new JULHandler(listener));
     }
-    
+
+    /**
+     * Remove a {@link LogListener} from a {@link Logger}.
+     * @param logger the logger
+     * @param listener the listener
+     */
     public static void removeListener(Logger logger, LogListener listener) {
         for (Handler handler: logger.getHandlers()) {
             if (handler instanceof JULHandler) {

@@ -68,6 +68,11 @@ public class JdbcDriverInfo {
                 options);
     }
 
+    /**
+     * Construct URL from URL-scheme and supplied options
+     * @param values the option values to set in the URL
+     * @return the connection URL
+     */
     public String getUrl(OptionValues values) {
         return TextUtil.transform(urlScheme, 
                 s -> Objects.toString(
