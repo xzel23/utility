@@ -6,8 +6,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * A log buffer class intended to provide a buffer for log messages to display in GUI applications.
+ */
 public class LogBuffer implements LogListener {
 
+    /** The default capacity. */
     public static final int DEFAULT_CAPACITY = 10000;
     
     private static final List<Function<LogEntry, Object>> DEFAULT_FORMAT_PARTS = Arrays.asList(
@@ -22,12 +26,36 @@ public class LogBuffer implements LogListener {
 
     private final RingBuffer<LogEntry> buffer;
 
+    /**
+     * Interface for Listeners on changes of a {@link LogBuffer} instance's contents.
+     */
     public interface LogBufferListener {
+        /**
+         * Called when an entry was added to the buffer.
+         * @param entry the added entry
+         * @param replaced true, if the buffer's capacity was reached and another entry was removed to make space for
+         *                the new one
+         */
         default void entry(LogEntry entry, boolean replaced) {
             entries(Collections.singleton(entry), replaced ? 1 : 0);    
         }
+
+        /**
+         * Called when multiple entries have been added in a batch. 
+         * @param entries the added entries
+         * @param replaced the number of replaced entries as described in {@link #entry(LogEntry, boolean)}
+         */
         void entries(Collection<LogEntry> entries, int replaced);
+
+        /**
+         * Called after the buffer has been cleared.
+         */
         void clear();
+
+        /**
+         * Called when the buffer capacity changes.
+         * @param n the new capacity
+         */
         void capacity(int n);
     }
     

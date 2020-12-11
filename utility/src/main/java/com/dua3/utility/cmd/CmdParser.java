@@ -228,6 +228,10 @@ public class CmdParser {
         return fmt.toString();
     }
 
+    /**
+     * Output option help.
+     * @param fmt the {@link Formatter} used for output
+     */
     public void help(Formatter fmt) {
         if (!name.isEmpty()) {
             fmt.format("%s%n", name);

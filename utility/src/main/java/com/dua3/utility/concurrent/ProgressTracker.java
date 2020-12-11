@@ -80,7 +80,12 @@ public interface ProgressTracker<T> {
          */
         public void update(double percentDone) { tracker.update(task, percentDone); }
     }
-    
+
+    /**
+     * A 'no-operation' {@link ProgressTracker} implementation to be used as a dummy.
+     * @param <T> the task type
+     * @return new dummy {@link ProgressTracker} instance
+     */
     static <T> ProgressTracker<T> nopTracker() {
         return new ProgressTracker<T>() {
             @Override

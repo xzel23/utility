@@ -7,6 +7,9 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+/**
+ * An adapter that listens on output to the standard output streams and passes it on as {@link LogEntry} instances.
+ */
 public final class SystemAdapter {
 
     private static PrintStream stdOut = null;
