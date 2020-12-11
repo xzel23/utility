@@ -62,6 +62,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 7.0.3
+ 
+ - FIX: do not generate interleaved tags in HtmlConverter
+
 ### Version 7.0.2
 
  - added missing javadoc in many places
@@ -69,7 +73,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ### Version 7.0.1
 
- - msall fixes and cleanups
+ - small fixes and cleanups
 
 ### Version 7
 
