@@ -24,6 +24,10 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         return createConverter(text).append(text).get();
     }
 
+    /**
+     * Abstract base class for the attribute based converter implementation classes.
+     * @param <T> the conversion target type
+     */
     protected static abstract class AttributeBasedConverterImpl<T> {
 
         /** The current font used when appending text. */
