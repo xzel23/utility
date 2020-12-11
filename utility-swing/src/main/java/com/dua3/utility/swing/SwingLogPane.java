@@ -80,16 +80,17 @@ public class SwingLogPane extends JPanel {
         public synchronized void unlock() {
             int sz = data.size();
             data = null;
+            removed = Math.min(removed, sz);
             if (removed>0) {
                 fireTableRowsDeleted(0, removed);
                 sz-=removed;
                 removed=0;
             }
+            added = Math.min(added, sz);
             if (added>0) {
                 fireTableRowsInserted(sz - added, sz - 1);
                 added=0;
             }
-            
         }
         
         @Override
