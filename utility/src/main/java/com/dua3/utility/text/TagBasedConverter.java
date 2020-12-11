@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +19,8 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
     }
     
     protected static abstract class TagBasedConverterImpl<T> {
+        
+        private List<Style> currentStyles = new ArrayList<>();
 
         protected abstract void appendOpeningTags(List<Style> openingStyles);
 
@@ -31,21 +35,37 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
             for (Run run: text) {
                 List<Style> runStyles = run.getStyles();
 
-                // add closing Tags for styles
-                List<Style> closingStyles = new LinkedList<>(openStyles);
-                closingStyles.removeAll(runStyles);
-                appendClosingTags(closingStyles);
+                // determine all styles to close
+                List<Style> stylesToclose = new LinkedList<>(openStyles);
+                stylesToclose.removeAll(runStyles);
+                
+                // to avoid interleaved styles, we have to close all tags that were openend after the first tag that is closed
+                int stylesToKeepOpen = stylesToclose.stream().mapToInt(currentStyles::indexOf).min().orElse(currentStyles.size());
+                List<Style> closingStyles = currentStyles.subList(stylesToKeepOpen, currentStyles.size());
+                
+                // the styles that were closed but not contained in stylesToClose must be reopened again 
+                List<Style> reopeningStyles = new LinkedList<>(closingStyles);
+                reopeningStyles.removeAll(stylesToclose);
 
-                // add opening Tags for styles
+                // close styles ...
+                appendClosingTags(closingStyles);
+                currentStyles=currentStyles.subList(0,stylesToKeepOpen);
+                        
+                // ... then reopen the styles to keep
+                appendOpeningTags(reopeningStyles);
+                currentStyles.addAll(reopeningStyles);
+
+                // add opening Tags for new styles
                 List<Style> openingStyles = new LinkedList<>(runStyles);
                 openingStyles.removeAll(openStyles);
                 appendOpeningTags(openingStyles);
+                currentStyles.addAll(openingStyles);
 
                 // add text
                 appendChars(run);
 
                 // update open styles
-                openStyles.removeAll(closingStyles);
+                openStyles.removeAll(stylesToclose);
                 openStyles.addAll(openingStyles);
             }
             // close all remeining styles
