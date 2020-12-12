@@ -21,6 +21,17 @@ public class RichTextTest {
     }
 
     @Test
+    public void testValueOf() {
+        String s = "hello world!";
+        RichText text = RichText.valueOf(s);
+        
+        String expected = s;
+        String actual = text.toString();
+        
+        assertEquals(expected, actual);
+    }
+    
+    @Test
     public void testsubSequence() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
