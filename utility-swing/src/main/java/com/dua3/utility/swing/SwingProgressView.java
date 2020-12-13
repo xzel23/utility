@@ -54,9 +54,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     @Override
     public void start(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(r.state == State.SCHEDLULED, "task not scheduled; %s (%s)", task, r.state);
         r.state = State.RUNNING;
-        
         update(task, 0.0);
     }
 
