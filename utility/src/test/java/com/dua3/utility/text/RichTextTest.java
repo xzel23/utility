@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * @author Axel Howind
@@ -29,6 +30,66 @@ public class RichTextTest {
         String actual = text.toString();
         
         assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testEqauls() {
+        // tests all sorts if equals comparisons
+        // the calls to hashCode() are there to test the hashCode-shortcut evaluation in RichText.equals()
+        String s = "hello world!";
+        RichText a = RichText.valueOf(s);
+        RichText b = RichText.valueOf(s);
+        
+        RichText c = RichText.valueOf(s);
+        c.hashCode();
+        RichText d = RichText.valueOf(s);
+        d.hashCode();
+                
+        RichText e = RichText.valueOf("Hello World!");
+        RichText f = RichText.valueOf("Hello World!");
+        f.hashCode();
+        
+        assertEquals(s, a.toString());
+        assertEquals(a, a);
+        assertEquals(b, b);
+        assertEquals(c, c);
+        assertEquals(d, c);
+        
+        assertEquals(a, b);
+        assertEquals(a, c);
+        assertEquals(a, d);
+        assertEquals(b, c);
+        assertEquals(b, d);
+        assertEquals(c, d);
+        assertEquals(b, a);
+        assertEquals(c, a);
+        assertEquals(d, a);
+        assertEquals(c, b);
+        assertEquals(d, b);
+        assertEquals(d, c);
+        
+        assertEquals(e, e);
+        assertEquals(f, f);
+        assertEquals(e, f);
+        assertEquals(f, e);
+        
+        assertNotEquals(a, e);
+        assertNotEquals(b, e);
+        assertNotEquals(c, e);
+        assertNotEquals(d, e);
+        assertNotEquals(a, f);
+        assertNotEquals(b, f);
+        assertNotEquals(c, f);
+        assertNotEquals(d, f);
+        
+        assertNotEquals(e, a);
+        assertNotEquals(e, b);
+        assertNotEquals(e, c);
+        assertNotEquals(e, d);
+        assertNotEquals(f, a);
+        assertNotEquals(f, b);
+        assertNotEquals(f, c);
+        assertNotEquals(f, d);
     }
     
     @Test

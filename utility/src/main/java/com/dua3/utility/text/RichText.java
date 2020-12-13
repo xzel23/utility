@@ -151,6 +151,11 @@ public class RichText
             return false;
         }
         
+        // shortcut if both hashcodes have already been computed
+        if (hash!=0 && other.hash!=0 && hash!=other.hash) {
+            return false;
+        }
+        
         // compare contents
         Iterator<Run> iter1 = this.iterator();
         Iterator<Run> iter2 = other.iterator();
