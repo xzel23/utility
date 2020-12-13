@@ -56,6 +56,23 @@ public class RichTextTest {
     }
 
     @Test
+    public void testsingleCharSubSequence() {
+        String s = "Hello world!";
+        
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("world");
+        builder.pop(Style.FONT_WEIGHT);
+        builder.append("!");
+        RichText r = builder.toRichText();
+        
+        for (int i=0;i<s.length()-1; i++) {
+            assertEquals(s.subSequence(i,i+1), r.subSequence(i,i+1).toString());
+        }
+    }
+    
+    @Test
     public void testSubsequenceRegression() {
         Style style1 = Style.create("style1", Pair.of("attr", "1"));
         Style style2 = Style.create("style2", Pair.of("attr", "2"));

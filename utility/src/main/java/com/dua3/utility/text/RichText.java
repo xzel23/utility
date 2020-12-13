@@ -100,39 +100,42 @@ public class RichText
     private final int start;
     private final int length;
 
-    /** The a map of text runs for this text with the position of the first character of the Run as key. */
-    private final TreeMap<Integer,Run> runs = new TreeMap<>();
+    private final int[] runStart;
+    private final Run[] run;
     
     @SuppressWarnings("unchecked")
-    RichText(List<Run> runs) {
-        if (runs.isEmpty()) {
+    RichText(Run... runs) {
+        this.run = Arrays.copyOf(runs, runs.length);
+        this.runStart = new int[runs.length];
+        
+        if (runs.length==0) {
             this.text="";
             this.start=0;
             this.length=0;
         } else {
-            this.text = runs.get(0).base();
-            assert checkAllRunsHaveTextAsBase(runs);
-            
-            for (Run r: runs) {
-                this.runs.put(r.getStart(), r);
+            this.text = run[0].base();
+            assert checkAllRunsHaveTextAsBase();
+
+            for (int idx=0; idx<run.length; idx++) {
+                runStart[idx] = run[idx].getStart();
             }
-            
-            this.start = this.runs.firstKey();
-            this.length = this.runs.lastEntry().getValue().getEnd()-this.start;
+
+            this.start = runStart[0];
+            this.length = run[run.length-1].getEnd()-this.start;
         }
     }
 
-    private boolean checkAllRunsHaveTextAsBase(Iterable<Run> runs) {
+    RichText(List<Run> runs) {
+        this(runs.toArray(new Run[0]));
+    }
+
+    private boolean checkAllRunsHaveTextAsBase() {
         boolean ok = true;
-        for (Run run : runs) {
+        for (Run run : run) {
             //noinspection ObjectEquality
             ok &= run.base() == text;
         }
         return ok;
-    }
-
-    RichText(Run[] runs) {
-        this(Arrays.asList(runs));
     }
 
     @Override
@@ -165,7 +168,29 @@ public class RichText
      * @return the run index
      */
     private int runIndex(int pos) {
-        return runs.floorKey(start+pos);
+        final int pos_ = start+pos;
+        switch (runStart.length) {
+            case 7:
+                if (pos_ >= runStart[6]) return 6;
+            case 6:
+                if (pos_ >= runStart[5]) return 5;
+            case 5:
+                if (pos_ >= runStart[4]) return 4;
+            case 4:
+                if (pos_ >= runStart[3]) return 3;
+            case 3:
+                if (pos_ >= runStart[2]) return 2;
+            case 2:
+                if (pos_ >= runStart[1]) return 1;
+            case 1:
+            case 0:
+                return 0;
+            default:
+                // if pos is not contained in the array, binarySearch will return -insert position -1,
+                // so -idx-1 will point at the next entry -> we have to subtract 2
+                int idx = Arrays.binarySearch(runStart, pos_);
+                return idx >=0 ? idx : -idx-2;
+        }
     }
 
     /**
@@ -231,7 +256,7 @@ public class RichText
 
     @Override
     public Iterator<Run> iterator() {
-        return runs.values().iterator();
+        return Arrays.stream(run).iterator();
     }
 
     /**
@@ -249,7 +274,7 @@ public class RichText
      * @return stream of Runs
      */
     public Stream<Run> stream() {
-        return runs.values().stream();
+        return Arrays.stream(run);
     }
 
     @Override
@@ -328,19 +353,24 @@ public class RichText
         if (end==begin) {
             return emptyText();
         }
-        
-        int floorKey = runs.floorKey(start+begin);
-        int ceilingKey = runs.floorKey(start+end-1);
-        List<Run> subRuns = new ArrayList<>(runs.subMap(floorKey, true, ceilingKey, true).values());
-        
-        Run firstRun = subRuns.get(0);
-        if (firstRun.getStart() < start+begin) {
-            subRuns.set(0, firstRun.subSequence(begin+start-firstRun.getStart(), firstRun.length()));
+        if (end==begin+1) {
+            Run r = run[runIndex(begin)];
+            int pos = begin + this.start - r.getStart();
+            return new RichText(r.subSequence(pos, pos+1));
         }
         
-        Run lastRun = subRuns.get(subRuns.size()-1);
+        int floorKey = runIndex(begin);
+        int ceilingKey = runIndex(end-1);
+        Run[] subRuns = Arrays.copyOfRange(run, floorKey, ceilingKey+1);
+        
+        Run firstRun = subRuns[0];
+        if (firstRun.getStart() < start+begin) {
+            subRuns[0] = firstRun.subSequence(begin+start-firstRun.getStart(), firstRun.length());
+        }
+        
+        Run lastRun = subRuns[subRuns.length-1];
         if (lastRun.getEnd() > start+end) {
-            subRuns.set(subRuns.size()-1, lastRun.subSequence(0, lastRun.length()-(lastRun.getEnd()-(start+end))));
+            subRuns[subRuns.length-1] = lastRun.subSequence(0, lastRun.length()-(lastRun.getEnd()-(start+end)));
         }
         
         return new RichText(subRuns);
@@ -361,9 +391,9 @@ public class RichText
     }
 
     @Override
-    public AttributedCharacter attributedCharAt(int index) {
-        Run run = runs.floorEntry(index).getValue();
-        return run.attributedCharAt(run.convertIndex(index));
+    public AttributedCharacter attributedCharAt(int pos) {
+        Run r = run[runIndex(pos)];
+        return r.attributedCharAt(r.convertIndex(pos));
     }
 
     /**
