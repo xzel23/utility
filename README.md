@@ -62,6 +62,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 7.0.5
+
+ - RichText performance improvements
+
 ### Version 7.0.4
 
  - FIX: possible negative index in SwingLogPane
