@@ -5,15 +5,8 @@
 
 package com.dua3.utility.db;
 
-import java.sql.Connection;
+import java.sql.*;
 import java.sql.Date;
-import java.sql.JDBCType;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -142,12 +135,14 @@ public class NamedParameterStatement implements AutoCloseable {
         indexMap = new HashMap<>();
         String parsedQuery = parse(query, indexMap);
         statement = connection.prepareStatement(parsedQuery);
-        addParameterMetInfo();
     }
 
     /**
-     * Query parameter meta data.
-     * This is done only once and the result is cached.
+     * Add parameter meta data to the statement.
+     * <em>Note:</em>This is done only once and the result is cached. You only need to call this method if you are 
+     * interested in the Exceptions thrown when the parameter info could not be determined. It has to be called
+     * directly after creating the NamedParameterStatement because results are cached and so exceptions will not be
+     * thrown the second time this method is called.
      * <strong>Warning:</strong> Not all databases support querying parameter meta data, and
      * some that do have serious bugs (like returning wrong data types), so check your database
      * manufacturer's documentation and test that you get the correct results when using this feature.
@@ -158,7 +153,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws SQLException
      *  if something else goes wrong
      */
-    public void addParameterMetInfo() throws SQLException {
+    public void addParameterInfo() throws SQLException, UnsupportedOperationException, IllegalStateException {
         if (hasMeta) {
             return;
         }
@@ -181,6 +176,18 @@ public class NamedParameterStatement implements AutoCloseable {
         hasMeta = true;
     }
 
+    private void initParameterInfo() {
+        try {
+            addParameterInfo();
+        } catch (SQLException e) {
+            LOG.log(Level.WARNING, "could not get parameter info for PreparedStatement", e);
+        } catch (UnsupportedOperationException e) {
+            LOG.log(Level.WARNING, "could not get parameter info for PreparedStatement (unsupported operation)", e);
+        } catch (IllegalStateException e) {
+            LOG.log(Level.WARNING, "could not get parameter info for PreparedStatement (conflicting types for the same parameter)", e);
+        }     
+    }
+    
     private static boolean showUnknownParameterTypeAsWarning = true;
 
     private static JDBCType getParameterType(ParameterMetaData meta, int index) {
@@ -286,8 +293,14 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  java.lang.Object)
      */
     public void setObject(String name, Object value) throws SQLException {
-        for (int idx : getIndexes(name)) {
-            statement.setObject(idx, value);
+        if (value!=null) {
+            for (int idx : getIndexes(name)) {
+                statement.setObject(idx, value);
+            }
+        } else {
+            for (int idx : getIndexes(name)) {
+                statement.setNull(idx, Types.JAVA_OBJECT);
+            }
         }
     }
 
@@ -306,8 +319,14 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  java.lang.String)
      */
     public void setString(String name, String value) throws SQLException {
-        for (int idx : getIndexes(name)) {
-            statement.setString(idx, value);
+        if (value!=null) {
+            for (int idx : getIndexes(name)) {
+                statement.setString(idx, value);
+            }
+        } else {
+            for (int idx : getIndexes(name)) {
+                statement.setNull(idx, Types.VARCHAR);
+            }
         }
     }
 
@@ -364,8 +383,14 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  java.sql.Timestamp)
      */
     public void setTimestamp(String name, Timestamp value) throws SQLException {
-        for (int idx : getIndexes(name)) {
-            statement.setTimestamp(idx, value);
+        if (value!=null) {
+            for (int idx : getIndexes(name)) {
+                statement.setTimestamp(idx, value);
+            }
+        } else {
+            for (int idx : getIndexes(name)) {
+                statement.setNull(idx, Types.TIMESTAMP);
+            }
         }
     }
 
@@ -474,9 +499,15 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  java.sql.Timestamp)
      */
     public void setLocalDate(String name, LocalDate value) throws SQLException {
-        Date date = Date.valueOf(value);
-        for (int idx : getIndexes(name)) {
-            statement.setDate(idx, date);
+        if (value!= null) {
+            Date date = Date.valueOf(value);
+            for (int idx : getIndexes(name)) {
+                statement.setDate(idx, date);
+            }
+        } else {
+            for (int idx : getIndexes(name)) {
+                statement.setNull(idx, Types.DATE);
+            }
         }
     }
 
@@ -495,9 +526,15 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  java.sql.Timestamp)
      */
     public void setLocalDateTime(String name, LocalDateTime value) throws SQLException {
-        Timestamp t = Timestamp.valueOf(value);
-        for (int idx : getIndexes(name)) {
-            statement.setTimestamp(idx, t);
+        if (value!= null) {
+            Timestamp t = Timestamp.valueOf(value);
+            for (int idx : getIndexes(name)) {
+                statement.setTimestamp(idx, t);
+            }
+        } else {
+            for (int idx : getIndexes(name)) {
+                statement.setNull(idx, Types.TIMESTAMP);
+            }
         }
     }
 
@@ -530,6 +567,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *         list with parameter meta data
      */
     public List<ParameterInfo> getParameterInfo() {
+        initParameterInfo();
         return Collections.unmodifiableList(new ArrayList<>(indexMap.values()));
     }
 
@@ -542,6 +580,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *              parameter meta data
      */
     public Optional<ParameterInfo> getParameterInfo(String name) {
+        initParameterInfo();
         return Optional.ofNullable(indexMap.get(name));
     }
 

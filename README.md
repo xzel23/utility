@@ -62,6 +62,14 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 7.0.7
+
+ - NamedParameterStatement: don't throw exception in constructor if parameter info can not be queried; fix typo in method name
+
+### Version 7.0.6
+
+ - NamedParameterStatement: support null values
+
 ### Version 7.0.5
 
  - RichText performance improvements
