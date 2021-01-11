@@ -62,6 +62,11 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 7.0.8
+
+ - IOUtil: added IOUtil.copyAllBytes()
+ - IOUtil: removed inaccessble Method StreamSupplier.lines()
+
 ### Version 7.0.7
 
  - NamedParameterStatement: don't throw exception in constructor if parameter info can not be queried; fix typo in method name

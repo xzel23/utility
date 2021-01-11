@@ -289,6 +289,21 @@ public final class IOUtil {
         return baos.toByteArray();
     }
 
+
+    /**
+     * Copy all Bytes from InputStream to OutputStream.
+     * @param in the InputStream to read from
+     * @param out the outputStream to write to
+     * @throws IOException if an error occurs
+     */
+    public static void copyAllBytes(InputStream in, OutputStream out) throws IOException {
+        byte[] buf = new byte[8192];
+        int length;
+        while ((length = in.read(buf)) > 0) {
+            out.write(buf, 0, length);
+        }
+    }
+
     /**
      * Get stream of lines from InputStream instance.
      * @param in the stream to read from
@@ -721,10 +736,6 @@ final class StreamSupplier<V> {
 
     public static OutputStream getOutputStream(Object o) throws IOException {
         return supplier(o).oss.getOutputStream(o);
-    }
-
-    public Stream<String> lines(Path path) throws IOException {
-        return Files.lines(path);
     }
 
 }
