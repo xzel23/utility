@@ -8,7 +8,8 @@ public class CmdException extends IllegalStateException {
      * Exception thrown when a parameter argument's String value could not be converted to the target type. 
      */
     public static class ConversionException extends CmdException {
-        Option<?> option;String parameter;
+        final Option<?> option;
+        final String parameter;
 
         /**
          * Constructor.

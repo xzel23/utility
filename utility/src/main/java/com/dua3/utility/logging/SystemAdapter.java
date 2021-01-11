@@ -14,7 +14,10 @@ public final class SystemAdapter {
 
     private static PrintStream stdOut = null;
     private static PrintStream stdErr = null;
-    
+
+    private SystemAdapter() {
+    }
+
     public static void addSystemListener(LogListener listener) {
         addSystemOutListener(listener);
         addSystemErrListener(listener);

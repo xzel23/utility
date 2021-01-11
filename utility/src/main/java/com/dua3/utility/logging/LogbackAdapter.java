@@ -16,7 +16,10 @@ import java.util.*;
  * @see "http://logback.qos.ch"
  */
 public final class LogbackAdapter {
-    
+
+    private LogbackAdapter() {
+    }
+
     private static class LogbackLogAppender extends AppenderBase<ILoggingEvent> {
         private final LogListener listener;
         
@@ -86,7 +89,7 @@ public final class LogbackAdapter {
             return evt;
         }
 
-        private static class SLF4JThrowable implements IThrowable {
+        private static final class SLF4JThrowable implements IThrowable {
             private final IThrowableProxy tp;
             private List<IStackTraceElement> ist=null;
 
@@ -119,7 +122,7 @@ public final class LogbackAdapter {
             }
         }
 
-        private static class SLF4JStackTraceElement implements IThrowable.IStackTraceElement {
+        private static final class SLF4JStackTraceElement implements IThrowable.IStackTraceElement {
             private final StackTraceElementProxy step;
 
             private SLF4JStackTraceElement(StackTraceElementProxy step) {

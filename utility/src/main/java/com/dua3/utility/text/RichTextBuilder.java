@@ -24,7 +24,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer;
     private final SortedMap<Integer, Map<String, Object>> parts;
-    private Deque<AttributeChange> openedAttributes = new LinkedList<>();
+    private final Deque<AttributeChange> openedAttributes = new LinkedList<>();
 
     private static class AttributeChange {
         String name;

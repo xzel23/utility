@@ -54,7 +54,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     // some settings controlling the conversion
     private Font defaultFont = DEFAULT_FONT;
     private Map<String, Object> defaultAttributes = new HashMap<>();
-    private SimpleAttributeSet defaultStyledAttributes = new SimpleAttributeSet();
+    private final SimpleAttributeSet defaultStyledAttributes = new SimpleAttributeSet();
     private double scale = 1.0;
 
     /**
@@ -117,7 +117,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
     private final Map<Object, Function<Font, Object>> dictionary = createDictionary();
 
-    private final Map<Object, Function<Font, Object>> createDictionary() {
+    private Map<Object, Function<Font, Object>> createDictionary() {
         Map<Object,Function<Font,Object>> m = new HashMap<>();
         m.put(StyleConstants.Family, Font::getFamily);
         m.put(StyleConstants.Size, f -> (int) Math.round(scale*f.getSizeInPoints()));

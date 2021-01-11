@@ -7,7 +7,7 @@ import java.util.function.Function;
 /**
  * A {@link RichTextConverter} that converts {@link RichText} to HTML.
  */
-public class HtmlConverter extends TagBasedConverter<String> {
+public final class HtmlConverter extends TagBasedConverter<String> {
 
     /**
      * Use CSS in output.

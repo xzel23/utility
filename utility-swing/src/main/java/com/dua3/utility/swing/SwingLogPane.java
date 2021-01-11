@@ -51,7 +51,7 @@ public class SwingLogPane extends JPanel {
         }
     }
 
-    private static class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
+    private static final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
         private final LogBuffer buffer;
 
         private LogTableModel(LogBuffer buffer) {
@@ -186,7 +186,7 @@ public class SwingLogPane extends JPanel {
         }
     }
     
-    private class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
+    private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
         private final LogEntry.Field f;
 
         private LogEntryFieldCellRenderer(LogEntry.Field f) {

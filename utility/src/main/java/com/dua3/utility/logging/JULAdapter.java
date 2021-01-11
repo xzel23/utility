@@ -12,6 +12,9 @@ import java.util.logging.Logger;
  */
 public final class JULAdapter {
 
+    private JULAdapter() {
+    }
+
     /**
      * {@link Handler} implementation that exports {@link LogRecord} instances to {@link LogListener}s.
      */

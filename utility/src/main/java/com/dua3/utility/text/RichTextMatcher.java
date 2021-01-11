@@ -10,12 +10,10 @@ import java.util.regex.Pattern;
  */
 public class RichTextMatcher implements MatchResult {
 
-    private final Pattern parentPattern;
     private final RichText text;
     private final Matcher matcher;
     
     RichTextMatcher(Pattern pattern, RichText text) {
-        this.parentPattern = Objects.requireNonNull(pattern);
         this.text = Objects.requireNonNull(text);
         this.matcher = pattern.matcher(text);
     }

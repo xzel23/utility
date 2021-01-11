@@ -4,6 +4,7 @@ package com.dua3.utility.text;
  * Interface for {@link RichText} converters.
  * @param <T> the conversion target type
  */
+@FunctionalInterface
 public interface RichTextConverter<T> {
 
     /**

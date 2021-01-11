@@ -47,6 +47,9 @@ public interface HtmlTag {
 
 }
 
-class Empty {
+final class Empty {
     static final HtmlTag EMPTY_TAG = HtmlTag.tag("","");
+
+    private Empty() {
+    }
 }

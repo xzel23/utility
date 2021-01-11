@@ -82,9 +82,9 @@ public interface ProgressTracker<T> {
     }
 
     /**
-     * A 'no-operation' {@link ProgressTracker} implementation to be used as a dummy.
+     * A 'no-operation' ProgressTracker implementation to be used as a dummy.
      * @param <T> the task type
-     * @return new dummy {@link ProgressTracker} instance
+     * @return new dummy ProgressTracker instance
      */
     static <T> ProgressTracker<T> nopTracker() {
         return new ProgressTracker<T>() {
