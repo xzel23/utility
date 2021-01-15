@@ -8,26 +8,27 @@ package com.dua3.utility.swing;
 import java.awt.Adjustable;
 import java.awt.Component;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFileChooser;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.dua3.utility.data.Color;
@@ -395,6 +396,66 @@ public final class SwingUtil {
         return jsp;
     }
 
+    /**
+     * Add support for dropping Files on a component.
+     * @param component the component to add drop support to
+     * @param action the action to perform when files are dropped
+     */
+    public static void addDropFilesSupport(JComponent component, Consumer<Collection<File>> action) {
+        addDropFilesSupport(component, action, files -> !files.isEmpty(), e -> {});
+    }
+
+    /**
+     * Add support for dropping Files on a component.
+     * @param component the component to add drop support to
+     * @param action the action to perform when files are dropped
+     * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
+     * @param exceptionHandler handler to call when an exception is caught
+     */
+    public static void addDropFilesSupport(JComponent component, Consumer<Collection<File>> action, Predicate<Collection<File>> test, Consumer<Exception> exceptionHandler) {
+        component.setDropTarget(new DropTarget() {
+            @Override
+            public synchronized void dragEnter(DropTargetDragEvent evt) {
+                if (test.test(getFiles(evt.getTransferable()))) {
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                } else {
+                    evt.rejectDrag();
+                }
+
+                super.dragEnter(evt);
+            }
+
+            @Override
+            public synchronized void dragOver(DropTargetDragEvent evt) {
+                if (test.test(getFiles(evt.getTransferable()))) {
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                } else {
+                    evt.rejectDrag();
+                }
+
+                super.dragOver(evt);
+            }
+
+            @Override
+            public synchronized void drop(DropTargetDropEvent evt) {
+                evt.acceptDrop(DnDConstants.ACTION_COPY);
+                Collection<File> files = getFiles(evt.getTransferable());
+                if (test.test(files)) {
+                    action.accept(files);
+                }
+            }
+
+            private Collection<File> getFiles(Transferable transferable) {
+                try {
+                    return (Collection<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                } catch (UnsupportedFlavorException | IOException e) {
+                    exceptionHandler.accept(e);
+                    return Collections.emptyList();
+                }
+            }
+        });
+    }
+    
     // Utility class, should not be instantiated
     private SwingUtil() {
         // nop
