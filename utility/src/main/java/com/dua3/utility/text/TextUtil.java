@@ -6,10 +6,8 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil.Bounds;
-import org.w3c.dom.Document;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -760,21 +758,6 @@ public final class TextUtil {
                     s);
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
-        }
-    }
-
-    /**
-     * Pretty print W3C Document.
-     * @param doc the document
-     * @return HTML for the document
-     */
-    public static String prettyPrint(Document doc) {
-        try (StringWriter writer = new StringWriter()) {
-            IOUtil.format(writer, doc, StandardCharsets.UTF_8);
-            return writer.toString();
-        } catch (IOException e) {
-            // should not happen when writing to a String
-            throw new UncheckedIOException(e);
         }
     }
 

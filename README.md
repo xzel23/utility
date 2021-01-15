@@ -62,6 +62,11 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 8
+
+ - DomUtil renamed to XmlUtil, methods are instance methods now so that instaneces using different DocumentBuilder and Transformer implementations can be used
+ - moved all XML related methods from IoUtil and TextUtil to XmlUtil
+
 ### Version 7.0.8
 
  - IOUtil: added IOUtil.copyAllBytes()
