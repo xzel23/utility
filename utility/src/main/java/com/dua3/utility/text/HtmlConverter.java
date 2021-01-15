@@ -74,6 +74,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         @Override
         protected void appendOpeningTags(List<Style> styles) {
             List<HtmlTag> tags = getTags(styles);
+            //noinspection ForLoopReplaceableByForEach because of symmetry with #appendClosingTags
             for (int i=0; i<tags.size(); i++) {
                 buffer.append(tags.get(i).open());
             }
