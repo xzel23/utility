@@ -56,8 +56,8 @@ public final class SwingUtil {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                onActionPerformed.accept(e);
+            public void actionPerformed(ActionEvent evt) {
+                onActionPerformed.accept(evt);
             }
         };
     }
