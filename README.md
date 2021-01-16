@@ -62,6 +62,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 8.0.1
+
+ - change argument of XmlUtil.format() from Document to its superclass Node
+
 ### Version 8
 
  - DomUtil renamed to XmlUtil, methods are instance methods now so that instaneces using different DocumentBuilder and Transformer implementations can be used
