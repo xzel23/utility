@@ -143,57 +143,57 @@ public class XmlUtil {
     }
 
     /**
-     * Pretty print W3C Document using UTF-8 encoding.
+     * Pretty print W3C Node using UTF-8 encoding.
      * @param <O> the type of the OutputStream
      * @param out the stream to write to
-     * @param doc the document
+     * @param node the node
      * @return {@code out}
      * @throws IOException when an I/O error occurs
      */
-    public <O extends OutputStream> O format(O out, Document doc) throws IOException {
-        format(out, doc, StandardCharsets.UTF_8);
+    public <O extends OutputStream> O format(O out, Node node) throws IOException {
+        format(out, node, StandardCharsets.UTF_8);
         return out;
     }
 
     /**
-     * Pretty print W3C Document using the provided charset for encoding.
+     * Pretty print W3C Node using the provided charset for encoding.
      * @param <O> the type of the OutputStream
      * @param out the stream to write to
-     * @param doc the document
+     * @param node the node
      * @param charset the {@link Charset} to use for encoding the output
      * @return {@code out}
      * @throws IOException when an I/O error occurs
      */
-    public <O extends OutputStream> O format(O out, Document doc, Charset charset) throws IOException {
-        format(new OutputStreamWriter(out, charset), doc, charset);
+    public <O extends OutputStream> O format(O out, Node node, Charset charset) throws IOException {
+        format(new OutputStreamWriter(out, charset), node, charset);
         return out;
     }
 
     /**
-     * Pretty print W3C Document. 
+     * Pretty print W3C Node. 
      * <br>
      * <strong>Note:</strong> the writer should be using the UTF-8 character encoding!
      *
      * @param <W> the type of the Writer
      * @param writer the writer to write to
-     * @param doc the document
+     * @param node the node
      * @return {@code writer}
      * @throws IOException when an I/O error occurs
      */
-    public <W extends Writer> W format(W writer, Document doc) throws IOException {
-        return format(writer, doc, StandardCharsets.UTF_8);
+    public <W extends Writer> W format(W writer, Node node) throws IOException {
+        return format(writer, node, StandardCharsets.UTF_8);
     }
 
     /**
      * Pretty print W3C Document. Note that the provided charset should match the one used by the writer!
      * @param <W> the type of the Writer
      * @param writer the writer to write to
-     * @param doc the document
+     * @param node the node
      * @param charset the {@link Charset} to use for encoding the output
      * @return {@code writer}
      * @throws IOException when an I/O error occurs
      */
-    public <W extends Writer> W format(W writer, Document doc, Charset charset) throws IOException {
+    public <W extends Writer> W format(W writer, Node node, Charset charset) throws IOException {
         try {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
@@ -201,7 +201,7 @@ public class XmlUtil {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.ENCODING, charset.name());
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            transformer.transform(new DOMSource(node), new StreamResult(writer));
         } catch (TransformerConfigurationException e) {
             // should not happen(tm)
             throw new IllegalStateException(e);
@@ -213,12 +213,12 @@ public class XmlUtil {
 
     /**
      * Pretty print W3C Document.
-     * @param doc the document
+     * @param node the document
      * @return HTML for the document
      */
-    public String prettyPrint(Document doc) {
+    public String prettyPrint(Node node) {
         try (StringWriter writer = new StringWriter()) {
-            format(writer, doc, StandardCharsets.UTF_8);
+            format(writer, node, StandardCharsets.UTF_8);
             return writer.toString();
         } catch (IOException e) {
             // should not happen when writing to a String
