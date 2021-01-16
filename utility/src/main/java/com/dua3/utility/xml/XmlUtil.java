@@ -102,7 +102,7 @@ public class XmlUtil {
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      * @throws ParserConfigurationException if the parser could not be created
      */
-    org.w3c.dom.Document parse(InputStream in) throws IOException, SAXException, ParserConfigurationException {
+    public org.w3c.dom.Document parse(InputStream in) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
         return builder.parse(in);
     }
@@ -115,7 +115,7 @@ public class XmlUtil {
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      * @throws ParserConfigurationException if the parser could not be created
      */
-    org.w3c.dom.Document parse(File file) throws IOException, SAXException, ParserConfigurationException {
+    public org.w3c.dom.Document parse(File file) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
         return builder.parse(file);
     }
@@ -128,7 +128,7 @@ public class XmlUtil {
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      * @throws ParserConfigurationException if the parser could not be created
      */
-    org.w3c.dom.Document parse(Path path) throws IOException, SAXException, ParserConfigurationException {
+    public org.w3c.dom.Document parse(Path path) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
         return builder.parse(path.toFile());
     }
