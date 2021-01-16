@@ -62,6 +62,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 8.0.2
+
+ - XmlUtil.xpath()
+
 ### Version 8.0.1
 
  - change argument of XmlUtil.format() from Document to its superclass Node

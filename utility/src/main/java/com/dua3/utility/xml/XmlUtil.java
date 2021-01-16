@@ -11,6 +11,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -28,21 +30,23 @@ public class XmlUtil {
 
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
+    private final XPathFactory xPathFactory;
 
     /**
      * Construct a new instance.
      */
     public XmlUtil() {
-        this(DocumentBuilderFactory.newInstance(), TransformerFactory.newInstance());
+        this(DocumentBuilderFactory.newInstance(), TransformerFactory.newInstance(), XPathFactory.newInstance());
     }
 
     /**
      * Construct a new instance.
      * @param documentBuilderFactory the {@link DocumentBuilderFactory} to use
      */
-    public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory) {
+    public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory, XPathFactory xPathFactory) {
         this.documentBuilderFactory = Objects.requireNonNull(documentBuilderFactory);
         this.transformerFactory = Objects.requireNonNull(transformerFactory);
+        this.xPathFactory = Objects.requireNonNull(xPathFactory);
     }
 
     /**
@@ -225,4 +229,13 @@ public class XmlUtil {
             throw new UncheckedIOException(e);
         }
     }
+
+    /**
+     * Create {@link XPath} instance.
+     * @return new {@link XPath} instance.
+     */
+    public XPath xpath() {
+        return xPathFactory.newXPath();
+    }
+    
 }
