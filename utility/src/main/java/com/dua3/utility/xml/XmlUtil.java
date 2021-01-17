@@ -31,11 +31,12 @@ public class XmlUtil {
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
-
+    private final DocumentBuilder documentBuilder;
+    
     /**
      * Construct a new instance.
      */
-    public XmlUtil() {
+    public XmlUtil() throws ParserConfigurationException {
         this(DocumentBuilderFactory.newInstance(), TransformerFactory.newInstance(), XPathFactory.newInstance());
     }
 
@@ -43,10 +44,11 @@ public class XmlUtil {
      * Construct a new instance.
      * @param documentBuilderFactory the {@link DocumentBuilderFactory} to use
      */
-    public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory, XPathFactory xPathFactory) {
+    public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory, XPathFactory xPathFactory) throws ParserConfigurationException {
         this.documentBuilderFactory = Objects.requireNonNull(documentBuilderFactory);
         this.transformerFactory = Objects.requireNonNull(transformerFactory);
         this.xPathFactory = Objects.requireNonNull(xPathFactory);
+        this.documentBuilder = this.documentBuilderFactory.newDocumentBuilder();
     }
 
     /**
@@ -100,11 +102,9 @@ public class XmlUtil {
      * @return the parsed {@link org.w3c.dom.Document}
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
-     * @throws ParserConfigurationException if the parser could not be created
      */
-    public org.w3c.dom.Document parse(InputStream in) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-        return builder.parse(in);
+    public org.w3c.dom.Document parse(InputStream in) throws IOException, SAXException {
+        return documentBuilder().parse(in);
     }
 
     /**
@@ -113,11 +113,9 @@ public class XmlUtil {
      * @return the parsed {@link org.w3c.dom.Document}
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
-     * @throws ParserConfigurationException if the parser could not be created
      */
-    public org.w3c.dom.Document parse(File file) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-        return builder.parse(file);
+    public org.w3c.dom.Document parse(File file) throws IOException, SAXException {
+        return documentBuilder().parse(file);
     }
 
     /**
@@ -126,11 +124,9 @@ public class XmlUtil {
      * @return the parsed {@link org.w3c.dom.Document}
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
-     * @throws ParserConfigurationException if the parser could not be created
      */
-    public org.w3c.dom.Document parse(Path path) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-        return builder.parse(path.toFile());
+    public org.w3c.dom.Document parse(Path path) throws IOException, SAXException {
+        return documentBuilder().parse(path.toFile());
     }
 
     /**
@@ -139,11 +135,9 @@ public class XmlUtil {
      * @return the parsed {@link org.w3c.dom.Document}
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
-     * @throws ParserConfigurationException if the parser could not be created
      */
-    public org.w3c.dom.Document parse(String text) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-        return builder.parse(text);
+    public org.w3c.dom.Document parse(String text) throws IOException, SAXException {
+        return documentBuilder.parse(text);
     }
 
     /**
@@ -237,5 +231,17 @@ public class XmlUtil {
     public XPath xpath() {
         return xPathFactory.newXPath();
     }
-    
+
+    /**
+     * Create new {@link DocumentBuilder}.
+     * @return new {@link DocumentBuilder} instance
+     */
+    public DocumentBuilder documentBuilder() {
+        try {
+            return documentBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            // this shouldn't happen since a DocumentBuilder has already been created in the constructor
+            throw new IllegalStateException("DocumentBuilderFactory configuration error", e); 
+        }
+    }
 }
