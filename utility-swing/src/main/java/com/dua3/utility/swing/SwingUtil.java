@@ -445,6 +445,7 @@ public final class SwingUtil {
                 }
             }
 
+            @SuppressWarnings("unchecked")
             private Collection<File> getFiles(Transferable transferable) {
                 try {
                     return (Collection<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
