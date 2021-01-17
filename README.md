@@ -62,6 +62,11 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 9
+ 
+ - remove the Text class
+ - some changes in XmlUtil
+
 ### Version 8.0.2
 
  - XmlUtil.xpath()
