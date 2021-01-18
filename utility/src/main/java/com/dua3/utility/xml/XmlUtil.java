@@ -26,12 +26,41 @@ import java.util.stream.StreamSupport;
 /**
  * A Utility class for handling {@link org.w3c.dom} documents and nodes.
  */
-public class XmlUtil {
+public final class XmlUtil {
 
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
     private final DocumentBuilder documentBuilder;
+    
+    /*
+     * Lazily construct the default instance since it might pull in a lot of dependencies which is not desirable
+     * in case only a specialized version is needed.
+     * 
+     * Note that double checked locking as of JDK 5 actually works when the helper is declared volatile. 
+     */
+    private static volatile XmlUtil DEFAULT_INSTANCE = null; // volatile is needed for double-checked locking
+
+    /**
+     * Get default instance with factories configured according to the description in the package javax.xml. 
+     * @return default instance
+     * @throws IllegalStateException if default instance could not be created
+     */
+    public static XmlUtil defaultInstance() {
+        if (DEFAULT_INSTANCE==null) {
+            synchronized (XmlUtil.class) {
+                if (DEFAULT_INSTANCE == null) {
+                    try {
+                        DEFAULT_INSTANCE = new XmlUtil();
+                    } catch (ParserConfigurationException e) {
+                        throw new RuntimeException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
+                    }
+                }
+            }
+        }
+    
+        return DEFAULT_INSTANCE;
+    }
     
     /**
      * Construct a new instance.
