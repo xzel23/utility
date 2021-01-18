@@ -62,6 +62,11 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 8.1.2
+ 
+ - fix XmlUtil.parse(String)
+ - add XmlUtil.parse(URI)
+
 ### Version 8.1.1
 
  - non-throwing (at least when correctly configured, otherwise RTE), reusable XmlUtil.defaultInstance()

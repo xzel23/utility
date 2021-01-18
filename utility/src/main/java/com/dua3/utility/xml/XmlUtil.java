@@ -3,6 +3,7 @@ package com.dua3.utility.xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -14,6 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -138,6 +140,17 @@ public final class XmlUtil {
 
     /**
      * Parse the content of {@code file} to {@link org.w3c.dom.Document}.
+     * @param uri the URI to read the XML from
+     * @return the parsed {@link org.w3c.dom.Document}
+     * @throws IOException in case of an I/O error
+     * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
+     */
+    public org.w3c.dom.Document parse(URI uri) throws IOException, SAXException {
+        return documentBuilder().parse(uri.toString());
+    }
+
+    /**
+     * Parse the content of {@code file} to {@link org.w3c.dom.Document}.
      * @param file the file to read the XML from
      * @return the parsed {@link org.w3c.dom.Document}
      * @throws IOException in case of an I/O error
@@ -166,7 +179,9 @@ public final class XmlUtil {
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      */
     public org.w3c.dom.Document parse(String text) throws IOException, SAXException {
-        return documentBuilder.parse(text);
+        try (Reader reader = new StringReader(text)) {
+            return documentBuilder.parse(new InputSource(reader));
+        }
     }
 
     /**
