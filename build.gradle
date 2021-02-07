@@ -12,7 +12,6 @@ plugins {
 
 subprojects {
 
-    apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'idea'
@@ -23,7 +22,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '8.1.2'
+    version = '8.2-SNAPSHOT'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
