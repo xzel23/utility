@@ -1,17 +1,3 @@
 <FindBugsFilter>
     
-    <!-- ignore all bugs in test classes, except for those bugs specifically
-        relating to JUnit tests -->
-    <!-- i.e. filter bug if ( classIsJUnitTest && ! bugIsRelatedToJUnit ) -->
-    <Match>
-        <!-- the Match filter is equivalent to a logical 'And' -->
-
-        <Class name="~.*\.*Test"/>
-        <!-- test classes are suffixed by 'Test' -->
-
-        <Not>
-            <Bug code="IJU"/> <!-- 'IJU' is the code for bugs related to JUnit test code -->
-        </Not>
-    </Match>
-
 </FindBugsFilter>
