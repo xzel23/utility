@@ -150,22 +150,35 @@ public class CmdParser {
         List<String> positionalArgs = new LinkedList<>();
         CmdArgs.Entry<?> currentEntry = null;
 
+        boolean parsingPositional = false;
         boolean remainingAllPositional = false;
         
         for (int idx = 0; idx < args.length; idx++) {
+            // get next arg
             String arg = argList.get(idx);
+            
+            // shortcut if positional marker has been encountered 
             if (remainingAllPositional) {
                 positionalArgs.add(arg); 
                 continue;
             }
-            
+
+            // check for positional marker
             if (arg.equals(POSITIONAL_MARKER)) {
+                LangUtil.check(positionalArgs.isEmpty(), () -> new CmdException("positional args found before positional marker '%s'", POSITIONAL_MARKER));
                 remainingAllPositional = true;
                 continue;
             }
-            
+
+            // if maximum number of args is consumed, reset the current entry
+            if (currentEntry!=null && currentEntry.getParms().size()==currentEntry.getOption().maxArity) {
+                currentEntry = null;
+            }
+
+            // is argument start of a new option?
             Option<?> option = options.get(arg);
             if (option != null) {
+                // start processing of next ooption
                 currentEntry = CmdArgs.Entry.create(option);
                 parsedOptions.add(currentEntry);
                 
@@ -173,9 +186,14 @@ public class CmdParser {
                     currentEntry=null;
                 }
             } else {
+                // add option to current entry or positional args
                 if (currentEntry!=null) {
                     currentEntry.addParameter(arg);
                 } else {
+                    if (!parsingPositional) {
+                        LangUtil.check(positionalArgs.isEmpty(), () -> new CmdException("positional args mixed in with option parameters"));
+                        parsingPositional = true;
+                    }
                     positionalArgs.add(arg);
                 }
             }
@@ -249,13 +267,50 @@ public class CmdParser {
         }
         
         // print options
-        String formatName = "%s%n"; 
-        String formatDescription = "    %s%n%n"; 
+        String formatName = "%s %s%n"; 
         options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
-            for (String name: option.names()) {
-                fmt.format(formatName, name);
+            String argText;
+            // handle min arity
+            switch (option.minArity) {
+                case 0:
+                    argText = "";
+                    break;
+                case 1:
+                    argText = "arg";
+                    break;
+                case 2:
+                    argText = "arg1 arg2";
+                    break;
+                case 3:
+                    argText = "arg1 arg2 arg3";
+                    break;
+                default:
+                    argText = "arg1 ... arg"+option.minArity;
             }
-            fmt.format(formatDescription, option.description);
+
+            // handle max arity
+            if (option.maxArity==Integer.MAX_VALUE) {
+                argText += " [arg" + option.maxArity + "] ...";
+            } else {
+                int optionalCount = option.maxArity-option.minArity;
+                if (optionalCount==1) {
+                    argText += " [arg" + option.maxArity + "]";
+                } else if (optionalCount >1) {
+                    argText += " [arg" + option.maxArity + "] ... (up to "+option.maxArity+" arguments)";
+                }
+            }
+
+            // print option names
+            for (String name: option.names()) {
+                fmt.format(formatName, name, argText);
+            }
+            
+            // print option description
+            if (!option.description.isEmpty()) {
+                fmt.format("%s%n", TextUtil.indent(option.description, 4));
+            }
+            
+            fmt.format("%n");
         });
     }
 }

@@ -26,9 +26,41 @@ public class CmdTest {
                                         "%n" +
                                         "Unit test for passing flags on the command line.%n" +
                                         "%n" +
-                                        "--print%n" +
-                                        "-p%n" +
+                                        "--print %n" +
+                                        "-p %n" +
                                         "    print result to terminal%n" +
+                                        "%n");
+        assertEquals(expected, cmd.help());
+    }
+
+    @Test
+    public void testSimpleOption() {
+        CmdParser cmd = new CmdParser("test simple option", "Unit test for passing simple options on the command line.");
+        
+        SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n").description("set name");
+        SimpleOption<Integer> optionAge = cmd.simpleOption(Integer.class, "--age", "-a");
+        
+        assertFalse(cmd.parse().get(optionName).isPresent());
+        assertFalse(cmd.parse().get(optionAge).isPresent());
+
+        assertEquals("Eve", cmd.parse("-n", "Eve").getOrThrow(optionName));
+        assertEquals(30, cmd.parse("--age", "30").getOrThrow(optionAge));
+        
+        assertThrows(CmdException.class, () -> {
+            cmd.parse("-n", "Eve", "--name", "Bob");
+        });
+        
+        String expected = String.format("test simple option%n" +
+                                        "------------------%n" +
+                                        "%n" +
+                                        "Unit test for passing simple options on the command line.%n" +
+                                        "%n" +
+                                        "--age arg%n" +
+                                        "-a arg%n" +
+                                        "%n" +
+                                        "--name arg%n" +
+                                        "-n arg%n" +
+                                        "    set name%n" +
                                         "%n");
         assertEquals(expected, cmd.help());
     }
