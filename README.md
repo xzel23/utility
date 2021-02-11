@@ -62,6 +62,14 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 8.1.4 (to be released)
+
+ - CmdParser.errorMessage()
+
+### Version 8.1.3
+
+ - command line parser improvements & bugfixes
+
 ### Version 8.1.2
  
  - fix XmlUtil.parse(String)

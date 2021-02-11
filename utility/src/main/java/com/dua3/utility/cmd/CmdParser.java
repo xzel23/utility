@@ -329,4 +329,28 @@ public class CmdParser {
         }
         return argText;
     }
+    
+    public void errorMessage(Formatter fmt, CmdException e) {
+        // print title
+        if (!name.isEmpty()) {
+            fmt.format("%s%n", name);
+            fmt.format("%s%n", TextUtil.repeat("-", name.length()));
+            fmt.format("%n");
+        }
+
+        // print description
+        if (!description.isEmpty()) {
+            fmt.format("%s%n", description);
+            fmt.format("%n");
+        }
+        
+        fmt.format("ERROR: "+e.getMessage());
+    }
+
+    public String errorMessage(CmdException e) {
+        Formatter fmt = new Formatter();
+        errorMessage(fmt, e);
+        return fmt.toString();
+    }
+    
 }
