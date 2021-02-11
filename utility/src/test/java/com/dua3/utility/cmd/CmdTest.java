@@ -22,6 +22,11 @@ public class CmdTest {
         assertTrue(cmd.parse("-p", "hello").isSet(oPrint));
         assertTrue(cmd.parse("--print", "hello").isSet(oPrint));
 
+        assertTrue(cmd.parse("-p", "hello", "Bob").isSet(oPrint));
+        assertTrue(cmd.parse("--print", "hello", "Bob").isSet(oPrint));
+
+        assertFalse(cmd.parse("hello", "Bob").isSet(oPrint));
+
         String expected = String.format("testFlag%n" +
                                         "--------%n" +
                                         "%n" +
