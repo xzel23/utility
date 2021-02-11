@@ -26,9 +26,9 @@ public class CmdTest {
                                         "%n" +
                                         "Unit test for passing flags on the command line.%n" +
                                         "%n" +
-                                        "--print %n" +
-                                        "-p %n" +
-                                        "    print result to terminal%n" +
+                                        "    --print %n" +
+                                        "    -p %n" +
+                                        "            print result to terminal%n" +
                                         "%n");
         assertEquals(expected, cmd.help());
     }
@@ -55,12 +55,12 @@ public class CmdTest {
                                         "%n" +
                                         "Unit test for passing simple options on the command line.%n" +
                                         "%n" +
-                                        "--age arg%n" +
-                                        "-a arg%n" +
+                                        "    --age arg%n" +
+                                        "    -a arg%n" +
                                         "%n" +
-                                        "--name arg%n" +
-                                        "-n arg%n" +
-                                        "    set name%n" +
+                                        "    --name arg%n" +
+                                        "    -n arg%n" +
+                                        "            set name%n" +
                                         "%n");
         assertEquals(expected, cmd.help());
     }

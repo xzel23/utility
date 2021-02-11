@@ -267,7 +267,7 @@ public class CmdParser {
         }
         
         // print options
-        String formatName = "%s %s%n"; 
+        String formatName = "    %s %s%n"; 
         options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
             String argText;
             // handle min arity
@@ -307,7 +307,7 @@ public class CmdParser {
             
             // print option description
             if (!option.description.isEmpty()) {
-                fmt.format("%s%n", TextUtil.indent(option.description, 4));
+                fmt.format("%s%n", TextUtil.indent(option.description, 12));
             }
             
             fmt.format("%n");
