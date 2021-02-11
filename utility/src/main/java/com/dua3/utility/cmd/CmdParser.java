@@ -255,50 +255,32 @@ public class CmdParser {
      * @param fmt the {@link Formatter} used for output
      */
     public void help(Formatter fmt) {
+        // print title
         if (!name.isEmpty()) {
             fmt.format("%s%n", name);
             fmt.format("%s%n", TextUtil.repeat("-", name.length()));
             fmt.format("%n");
         }
         
+        // print description
         if (!description.isEmpty()) {
             fmt.format("%s%n", description);
             fmt.format("%n");
         }
         
+        // print command line example
+        String cmdText = name.isEmpty() ? "<program>" : name;
+        if (!options.isEmpty()) {
+            cmdText += " <options>";
+        }
+        cmdText += getArgText(minPositionalArgs, maxPositionalArgs);
+        fmt.format("%s%n%n", cmdText);
+        
         // print options
         String formatName = "    %s %s%n"; 
         options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
-            String argText;
-            // handle min arity
-            switch (option.minArity) {
-                case 0:
-                    argText = "";
-                    break;
-                case 1:
-                    argText = "arg";
-                    break;
-                case 2:
-                    argText = "arg1 arg2";
-                    break;
-                case 3:
-                    argText = "arg1 arg2 arg3";
-                    break;
-                default:
-                    argText = "arg1 ... arg"+option.minArity;
-            }
-
-            // handle max arity
-            if (option.maxArity==Integer.MAX_VALUE) {
-                argText += " [arg" + option.maxArity + "] ...";
-            } else {
-                int optionalCount = option.maxArity-option.minArity;
-                if (optionalCount==1) {
-                    argText += " [arg" + option.maxArity + "]";
-                } else if (optionalCount >1) {
-                    argText += " [arg" + option.maxArity + "] ... (up to "+option.maxArity+" arguments)";
-                }
-            }
+            // get argument text
+            String argText = getArgText(option.minArity, option.maxArity);
 
             // print option names
             for (String name: option.names()) {
@@ -312,5 +294,40 @@ public class CmdParser {
             
             fmt.format("%n");
         });
+    }
+
+    private String getArgText(int min, int max) {
+        assert min<=max;
+        
+        String argText;
+        switch (min) {
+            case 0:
+                argText = "";
+                break;
+            case 1:
+                argText = "arg";
+                break;
+            case 2:
+                argText = "arg1 arg2";
+                break;
+            case 3:
+                argText = "arg1 arg2 arg3";
+                break;
+            default:
+                argText = "arg1 ... arg" + min;
+        }
+
+        // handle max arity
+        if (max == Integer.MAX_VALUE) {
+            argText += " [arg" + (min+1) + "] ...";
+        } else {
+            int optionalCount = max - min;
+            if (optionalCount==1) {
+                argText += " [arg" + (min+1) + "]";
+            } else if (optionalCount >1) {
+                argText += " [arg" + (min+1) + "] ... (up to " + max + " arguments)";
+            }
+        }
+        return argText;
     }
 }

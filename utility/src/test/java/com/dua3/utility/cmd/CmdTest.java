@@ -7,7 +7,7 @@ public class CmdTest {
 
     @Test
     public void testFlag() {
-        CmdParser cmd = new CmdParser("test flag", "Unit test for passing flags on the command line.");
+        CmdParser cmd = new CmdParser("testFlag", "Unit test for passing flags on the command line.");
         Flag oPrint = cmd.flag("--print", "-p").description("print result to terminal");
 
         assertFalse(cmd.parse().isSet(oPrint));
@@ -21,10 +21,12 @@ public class CmdTest {
         assertTrue(cmd.parse("-p", "hello").isSet(oPrint));
         assertTrue(cmd.parse("--print", "hello").isSet(oPrint));
         
-        String expected = String.format("test flag%n" +
-                                        "---------%n" +
+        String expected = String.format("testFlag%n" +
+                                        "--------%n" +
                                         "%n" +
                                         "Unit test for passing flags on the command line.%n" +
+                                        "%n" +
+                                        "testFlag <options> [arg1] ...%n" +
                                         "%n" +
                                         "    --print %n" +
                                         "    -p %n" +
@@ -35,7 +37,7 @@ public class CmdTest {
 
     @Test
     public void testSimpleOption() {
-        CmdParser cmd = new CmdParser("test simple option", "Unit test for passing simple options on the command line.");
+        CmdParser cmd = new CmdParser("testSimpleOption", "Unit test for passing simple options on the command line.");
         
         SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n").description("set name");
         SimpleOption<Integer> optionAge = cmd.simpleOption(Integer.class, "--age", "-a");
@@ -50,10 +52,12 @@ public class CmdTest {
             cmd.parse("-n", "Eve", "--name", "Bob");
         });
         
-        String expected = String.format("test simple option%n" +
-                                        "------------------%n" +
+        String expected = String.format("testSimpleOption%n" +
+                                        "----------------%n" +
                                         "%n" +
                                         "Unit test for passing simple options on the command line.%n" +
+                                        "%n" +
+                                        "testSimpleOption <options> [arg1] ...%n" +
                                         "%n" +
                                         "    --age arg%n" +
                                         "    -a arg%n" +
