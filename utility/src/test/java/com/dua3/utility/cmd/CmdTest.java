@@ -53,6 +53,10 @@ public class CmdTest {
             cmd.parse("-n", "Eve", "--name", "Bob");
         });
 
+        CmdArgs eve30 = cmd.parse("-n", "Eve", "--age", "30");
+        assertEquals("Eve", eve30.getOrThrow(optionName));
+        assertEquals(30, eve30.getOrThrow(optionAge));
+
         String expected = String.format("testSimpleOption%n" +
                                         "----------------%n" +
                                         "%n" +
@@ -115,5 +119,5 @@ public class CmdTest {
         assertEquals(List.of("abc", "def"), cmd.parse("abc", "def").positionalArgs());
         assertEquals(List.of("abc", "def", "ghi"), cmd.parse("abc", "def", "ghi").positionalArgs());
     }
-    
+
 }
