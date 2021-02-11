@@ -277,14 +277,13 @@ public class CmdParser {
         fmt.format("%s%n%n", cmdText);
         
         // print options
-        String formatName = "    %s %s%n"; 
         options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
             // get argument text
             String argText = getArgText(option.minArity, option.maxArity);
 
             // print option names
             for (String name: option.names()) {
-                fmt.format(formatName, name, argText);
+                fmt.format("    %s%s%n", name, argText);
             }
             
             // print option description
@@ -305,16 +304,16 @@ public class CmdParser {
                 argText = "";
                 break;
             case 1:
-                argText = "arg";
+                argText = (min==max) ? " arg" : " arg1";
                 break;
             case 2:
-                argText = "arg1 arg2";
+                argText = " arg1 arg2";
                 break;
             case 3:
-                argText = "arg1 arg2 arg3";
+                argText = " arg1 arg2 arg3";
                 break;
             default:
-                argText = "arg1 ... arg" + min;
+                argText = " arg1 ... arg" + min;
         }
 
         // handle max arity
