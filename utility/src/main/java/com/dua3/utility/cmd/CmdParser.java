@@ -168,6 +168,10 @@ public class CmdParser {
             if (option != null) {
                 currentEntry = CmdArgs.Entry.create(option);
                 parsedOptions.add(currentEntry);
+                
+                if (currentEntry.getOption().maxArity==0) {
+                    currentEntry=null;
+                }
             } else {
                 if (currentEntry!=null) {
                     currentEntry.addParameter(arg);
@@ -244,16 +248,14 @@ public class CmdParser {
             fmt.format("%n");
         }
         
-        // determine required indentation
-        int indent = options.keySet().stream().mapToInt(String::length).max().orElse(0);
-        
         // print options
-        String format = "%"+indent+"s%s%n";
-        options.values().stream().sorted(Comparator.comparing(Option::name)).forEach(option -> {
-            fmt.format(format, option.name()+ " - ", option.description());
+        String formatName = "%s%n"; 
+        String formatDescription = "    %s%n%n"; 
+        options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
             for (String name: option.names()) {
-                fmt.format(format, name, option.description());
+                fmt.format(formatName, name);
             }
+            fmt.format(formatDescription, option.description);
         });
     }
 }
