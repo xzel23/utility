@@ -14,7 +14,6 @@ public class StyleTest {
                 Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
         
         String s2Name = new StringBuilder("st").append("yle").toString();
-        String s2Class = new StringBuilder("cla").append("ss").toString();
         Style s2 = Style.create(s2Name,
                 Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD),
                 Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
@@ -25,7 +24,6 @@ public class StyleTest {
 
         // s1 and s2 do not possess any properties
         assertEquals(s1, s2);
-
     }
     
 }
