@@ -1,8 +1,17 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.Style;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -38,5 +47,5 @@ public final class StreamUtil {
         };
         return StreamSupport.stream(i.spliterator(), false);
     }
-    
+
 }

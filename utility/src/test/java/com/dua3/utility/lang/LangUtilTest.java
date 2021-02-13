@@ -257,4 +257,79 @@ class LangUtilTest {
         // Indonesian is a special case as the suffix differs from the language tag!
         assertEquals("_in", LangUtil.getLocaleSuffix(Locale.forLanguageTag("id")));
     }
+    
+    @Test
+    void testSurroundingItems() {
+        // assert correct items are present in output
+        assertEquals(
+                Arrays.asList(7,8,9,10,11,12,16,17,18,19,20,21), 
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26), 
+                n -> n%9==0, 2, 3, null));
+
+        // assert position is passed correctly
+        assertEquals(
+                Arrays.asList(0,7,8,9,10,11,12,-12,16,17,18,19,20,21,-21),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                        n -> n%9==0, 2, 3, (count,pos) -> -pos));
+
+        // assert item count is passed correctly
+        assertEquals(
+                Arrays.asList(-6,7,8,9,10,11,12,-3,16,17,18,19,20,21,-5),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                        n -> n%9==0, 2, 3, (count,pos) -> -count));
+
+        // assert correct items are present in output, first item matches
+        assertEquals(
+                Arrays.asList(1,2,3,4,8,9,10,11,12,13,17,18,19,20,21,22),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                        n -> (n+8)%9==0, 2, 3, null));
+
+        // assert position is passed correctly, first item matches
+        assertEquals(
+                Arrays.asList(1,2,3,4,-4,8,9,10,11,12,13,-13,17,18,19,20,21,22,-22),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                        n -> (n+8)%9==0, 2, 3, (count,pos) -> -pos));
+
+        // assert item count is passed correctly, first item matches
+        assertEquals(
+                Arrays.asList(1,2,3,4,-3,8,9,10,11,12,13,-3,17,18,19,20,21,22,-4),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                        n -> (n+8)%9==0, 2, 3, (count,pos) -> -count));
+
+        // assert correct items are present in output, last item matches
+        assertEquals(
+                Arrays.asList(7,8,9,10,11,12,16,17,18,19,20,21,25,26,27),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
+                        n -> n%9==0, 2, 3, null));
+
+        // assert position is passed correctly, last item matches
+        assertEquals(
+                Arrays.asList(0,7,8,9,10,11,12,-12,16,17,18,19,20,21,-21,25,26,27),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
+                        n -> n%9==0, 2, 3, (count,pos) -> -pos));
+
+        // assert item count is passed correctly, last item matches
+        assertEquals(
+                Arrays.asList(-6,7,8,9,10,11,12,-3,16,17,18,19,20,21,-3,25,26,27),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
+                        n -> n%9==0, 2, 3, (count,pos) -> -count));
+
+        // assert correct items are present in output, multiple subsequent matches
+        assertEquals(
+                Arrays.asList(3,4,5,6,7,8,9,10),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
+                        n -> n>=5&&n<=7, 2, 3, null));
+
+        // assert position is passed correctly, multiple subsequent matches
+        assertEquals(
+                Arrays.asList(0,3,4,5,6,7,8,9,10,-10),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
+                        n -> n>=5&&n<=7, 2, 3, (count,pos) -> -pos));
+
+        // assert item count is passed correctly, multiple subsequent matches
+        assertEquals(
+                Arrays.asList(-2,3,4,5,6,7,8,9,10,-2),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
+                        n -> n>=5&&n<=7, 2, 3, (count,pos) -> -count));
+    }
 }

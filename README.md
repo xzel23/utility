@@ -62,7 +62,11 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
-### Version 8.1.4 (to be released)
+### Version 8.1.5
+
+ - LangUtil.surroundingItems()
+
+### Version 8.1.4
 
  - CmdParser.errorMessage()
 

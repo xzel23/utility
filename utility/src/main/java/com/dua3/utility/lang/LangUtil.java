@@ -11,11 +11,7 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -24,6 +20,8 @@ import java.util.stream.Stream;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.Style;
 
 /**
  * A Utility class with general purpose methods.
@@ -712,5 +710,60 @@ public final class LangUtil {
         // nothing found
         LOG.warning("resource '"+name+"' not found. candidates: "+candidates.toString());
         throw new NullPointerException("Resource not found: "+name);
+    }
+
+    /**
+     * Filter surrounding items of a list.
+     * @param list The unfiltered list
+     * @param test the predicate to use
+     * @param before number of items to accept before each match
+     * @param after number of items to accept after each match
+     * @param placeHolder generator for placeholder items; first argument is number of items replaced, second one is current item index in original list
+     * @param <T> the element type
+     * @return a list that contains all items within a the given range before and after each match
+     */
+    public static <T> List<T> surroundingItems(List<T> list, Predicate<T> test, int before, int after, BiFunction<Integer,Integer, T> placeHolder) {
+        List<T> filtered = new ArrayList<>();
+        int lastIndex = -1;
+        for (int i=0; i<list.size(); i++) {
+            // find next difference
+            while (i<list.size() && !test.test(list.get(i))) {
+                i++;
+            }
+
+            // not found
+            if (i>=list.size()) {
+                break;
+            }
+
+            int startIndex = i;
+
+            // add a placeholder if lines are omitted
+            int count = startIndex-before-(lastIndex+1);
+            if (placeHolder!= null && count>0) {
+                filtered.add(placeHolder.apply(count, lastIndex+1));
+            }
+
+            // find end of difference
+            while (i<list.size() && test.test(list.get(i))) {
+                i++;
+            }
+            int endIndex = i;
+
+            // print changes
+            int changedLines = endIndex-startIndex;
+
+            int from = Math.max(startIndex-before, Math.max(0, lastIndex));
+            int to = Math.min(endIndex+after, list.size());
+            
+            filtered.addAll(list.subList(from,to));
+            lastIndex = to-1;
+        }
+        if (placeHolder!= null && lastIndex<list.size()-1) {
+            int count = list.size() - (lastIndex+1);
+            filtered.add(placeHolder.apply(count, lastIndex+1));
+        }
+        
+        return filtered;
     }
 }
