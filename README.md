@@ -62,6 +62,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### Version 8.1.6
+
+ - RichText.stylesAt()
+
 ### Version 8.1.5
 
  - LangUtil.surroundingItems()

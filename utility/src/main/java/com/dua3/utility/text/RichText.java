@@ -617,6 +617,16 @@ public class RichText
     }
 
     /**
+     * Get active styles at position.
+     * @param pos the position (character index)
+     * @return (unmodifiable) list of styles
+     */
+    public List<Style> stylesAt(int pos) {
+        Run r = run[runIndex(pos)];
+        return Collections.unmodifiableList(r.getStyles());
+    }
+
+    /**
      * Create a {@link RichTextJoiner}.
      * @param delimiter the delimiter to use
      * @return the joiner
