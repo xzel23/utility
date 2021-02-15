@@ -354,7 +354,7 @@ public class RichText
             return emptyText();
         }
         if (end==begin+1) {
-            Run r = run[runIndex(begin)];
+            Run r = runAt(begin);
             int pos = begin + this.start - r.getStart();
             return new RichText(r.subSequence(pos, pos+1));
         }
@@ -392,7 +392,7 @@ public class RichText
 
     @Override
     public AttributedCharacter attributedCharAt(int pos) {
-        Run r = run[runIndex(pos)];
+        Run r = runAt(pos);
         return r.attributedCharAt(r.convertIndex(pos));
     }
 
@@ -622,10 +622,18 @@ public class RichText
      * @return (unmodifiable) list of styles
      */
     public List<Style> stylesAt(int pos) {
-        Run r = run[runIndex(pos)];
-        return Collections.unmodifiableList(r.getStyles());
+        return Collections.unmodifiableList(runAt(pos).getStyles());
     }
 
+    /**
+     * Get run at position.
+     * @param pos the position (character index)
+     * @return the Run the character at the given position belongs to
+     */
+    public Run runAt(int pos) {
+        return run[runIndex(pos)];    
+    }
+    
     /**
      * Create a {@link RichTextJoiner}.
      * @param delimiter the delimiter to use
