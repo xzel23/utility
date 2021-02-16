@@ -633,6 +633,14 @@ public class RichText
     public Run runAt(int pos) {
         return run[runIndex(pos)];    
     }
+
+    /**
+     * Get the runs of this instance.
+     * @return unmodifiable list of runs
+     */
+    public List<Run> runs() {
+        return Collections.unmodifiableList(Arrays.asList(run));
+    }
     
     /**
      * Create a {@link RichTextJoiner}.
