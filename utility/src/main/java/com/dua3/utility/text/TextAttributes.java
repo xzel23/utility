@@ -16,11 +16,10 @@ import com.dua3.utility.data.Pair;
  * A set of text attributes.
  */
 public final class TextAttributes extends AbstractMap<String, Object> {
-
+    
     /** empty {@link TextAttributes} instance */
     private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
-
-
+    
     /** Styles. */
     private final Map<String,List<Style>> styles = new HashMap<>();
 

@@ -5,17 +5,18 @@
 
 package com.dua3.utility.data;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.dua3.utility.lang.LangUtil;
-
 /**
  * Color in ARGB format.
  */
 public final class Color {
+
     private static final Map<String, Color> COLORS = new LinkedHashMap<>();
 
     // predefined Color constants
@@ -421,6 +422,16 @@ public final class Color {
         return value << bits;
     }
 
+    /**
+     * Create color from ARGB value.
+     * @param argb the ARGB value
+     * @return the color instance
+     */
+    public static Color argb(int argb) {
+        return new Color(argb);
+    }
+    
+    /** This color's ARGB value. */
     private final int argb;
 
     /**
@@ -454,6 +465,10 @@ public final class Color {
                 + shiftComponentValue(b, SHIFT_B);
     }
 
+    /**
+     * Constructor.
+     * @param argb the ARGB value
+     */
     private Color(int argb) {
         this.argb = argb;
     }

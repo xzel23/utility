@@ -65,6 +65,9 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 ### Version 8.1.6
 
  - RichText.stylesAt()
+ - RichText.runAt()
+ - RichText.runs()
+ - RichText.valueOf() with styles parameter
 
 ### Version 8.1.5
 

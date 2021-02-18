@@ -76,8 +76,7 @@ public class RichText
     /**
      * Convert String to RichText.
      *
-     * @param  s
-     *           String to convert
+     * @param  s the String to convert
      * @return   RichText representation of s
      */
     public static RichText valueOf(String s) {
@@ -92,6 +91,42 @@ public class RichText
      */
     public static RichText valueOf(char c) {
         return RichText.valueOf(Character.toString(c));
+    }
+
+    /**
+     * Get RichText containing an objects string representation.
+     * @param obj the object to convert to RichText
+     * @param styles the styles to apply
+     * @return RichText.valueOf(String.valueOf(obj))
+     */
+    public static RichText valueOf(Object obj, List<Style> styles) {
+        return valueOf(String.valueOf(obj), styles);
+    }
+
+    /**
+     * Convert String to RichText.
+     *
+     * @param  s the String to convert
+     * @param styles the styles to apply
+     * @return   RichText representation of s
+     */
+    public static RichText valueOf(String s, List<Style> styles) {
+        RichTextBuilder rtb = new RichTextBuilder((s.length()));
+        styles.forEach(rtb::push);
+        rtb.append(s);
+        styles.forEach(rtb::pop);
+        return rtb.toRichText();
+    }
+
+    /**
+     * Convert char to RichText.
+     *
+     * @param styles the styles to apply
+     * @param c the character
+     * @return RichText containing only the character c
+     */
+    public static RichText valueOf(char c, List<Style> styles) {
+        return RichText.valueOf(Character.toString(c), styles);
     }
 
     /** The underlying CharSequence. */
