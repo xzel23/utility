@@ -165,7 +165,7 @@ public class CmdParser {
 
             // check for positional marker
             if (arg.equals(POSITIONAL_MARKER)) {
-                LangUtil.check(positionalArgs.isEmpty(), () -> new CmdException("positional args found before positional marker '%s'", POSITIONAL_MARKER));
+                LangUtil.check(positionalArgs.isEmpty(), () -> new CmdException("positional args found before positional marker '"+POSITIONAL_MARKER+"'"));
                 remainingAllPositional = true;
                 continue;
             }
@@ -228,15 +228,15 @@ public class CmdParser {
                     Option<?> option = p.first;
                     int count = p.second;
                     LangUtil.check(option.minOccurrences() <= count,
-                            () -> new CmdException(
+                            () -> new CmdException(String.format(
                                 "option '%s' must be specified at least %d time(s), but was only %d times",
                                 option.name(), option.minOccurrences(), count
-                            ));
+                            )));
                     LangUtil.check(option.maxOccurrences() >= count,
-                            () -> new CmdException(
+                            () -> new CmdException(String.format(
                                 "option '%s' must be specified at most %d time(s), but was %d times",
                                 option.name(), option.maxOccurrences(), count
-                            ));
+                            )));
                 });
     }
 

@@ -35,11 +35,11 @@ public class CmdException extends IllegalStateException {
         }
     }
     
-    CmdException(String fmt, Object... args) {
-        super(String.format(fmt, args));
+    public CmdException(String msg) {
+        super(msg);
     }
-    
-    CmdException(String msg, Exception e) {
+
+    public CmdException(String msg, Exception e) {
         super(msg, e);
     }
 }
