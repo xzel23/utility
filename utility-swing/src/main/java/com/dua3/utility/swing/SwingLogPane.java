@@ -5,6 +5,7 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.logging.Category;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.TextUtil;
 
 import javax.swing.*;
@@ -33,6 +34,7 @@ public class SwingLogPane extends JPanel {
     private final JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<LogEntry, String> format = LogEntry::format;
+    private double dividerLocation = 0.5;
 
     private static Color defaultColorize(LogEntry entry) {
         switch (entry.category()) {
@@ -337,6 +339,7 @@ public class SwingLogPane extends JPanel {
         
         // create SplitPane for table and detail pane
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);
+        splitPane.setDividerLocation(dividerLocation);
 
         final JScrollBar tableScroller = scrollPaneTable.getVerticalScrollBar();
         model.addTableModelListener(evt -> {
@@ -450,7 +453,8 @@ public class SwingLogPane extends JPanel {
      * @param propertionalLocation the proportional location 
      */
     public void setDividerLocation(double propertionalLocation) {
-        splitPane.setDividerLocation(propertionalLocation);
+        this.dividerLocation = MathUtil.clamp(0.0, 1.0, propertionalLocation);
+        splitPane.setDividerLocation(dividerLocation);
     }
 
     /**
@@ -458,7 +462,7 @@ public class SwingLogPane extends JPanel {
      * @param location the location 
      */
     public void setDividerLocation(int location) {
-        splitPane.setDividerLocation(location);
+        setDividerLocation((double) location / (splitPane.getHeight() - splitPane.getDividerSize()));
     }
 
     /**
@@ -479,5 +483,13 @@ public class SwingLogPane extends JPanel {
         } catch (IOException e) {
             /* nop */
         }
+    }
+
+    @Override
+    public void setBounds(int x, int y, int width, int height) {
+        super.setBounds(x, y, width, height);
+        SwingUtilities.invokeLater( () -> 
+            splitPane.setDividerLocation(dividerLocation) 
+        );
     }
 }
