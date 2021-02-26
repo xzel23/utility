@@ -40,7 +40,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
             pb.setMaximum(1);
             pb.setValue(0);
             add(new JLabel(Objects.toString(t)));
-            add(pb, "wrap, growx");
+            add(pb, "width 100%, wrap, growx");
             return new TaskRecord(pb);
         });
     }
