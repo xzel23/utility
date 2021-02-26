@@ -11,7 +11,7 @@ public interface ProgressTracker<T> {
      * Task status.
      */
     enum State {
-        SCHEDLULED(false),
+        SCHEDULED(false),
         PAUSED(false),
         RUNNING(false),
         COMPLETED_SUCCESS(true),
