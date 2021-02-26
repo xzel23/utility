@@ -1,6 +1,5 @@
 dependencies {
     implementation project(':utility')
-    implementation group: 'com.miglayout', name: 'miglayout-swing', version: '5.2'
     testCompile "ch.qos.logback:logback-classic:1.2.3"
 }
 

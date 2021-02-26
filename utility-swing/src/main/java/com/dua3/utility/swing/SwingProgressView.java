@@ -2,9 +2,9 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.lang.LangUtil;
-import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     
     private static class TaskRecord {
         final JProgressBar progressBar;
-        State state = State.SCHEDLULED;
+        State state = State.SCHEDULED;
 
         TaskRecord(JProgressBar progressBar) {
             this.progressBar = Objects.requireNonNull(progressBar);
@@ -26,7 +26,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     @SafeVarargs
     public SwingProgressView(T... tasks) {
         // create the layout
-        setLayout(new MigLayout());
+        setLayout(new GridBagLayout());
         
         // add progress bars for tasks
         for (T task: tasks) {
@@ -39,8 +39,19 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
             JProgressBar pb = new JProgressBar();
             pb.setMaximum(1);
             pb.setValue(0);
-            add(new JLabel(Objects.toString(t)));
-            add(pb, "width 100%, wrap, growx");
+
+            GridBagConstraints c = new GridBagConstraints();
+            c.anchor = GridBagConstraints.LINE_START;
+            c.gridx = 0;
+            c.gridy = tasks.size();
+            c.ipadx = 8;
+            add(new JLabel(Objects.toString(t)), c);
+            
+            c.gridx = 1;
+            c.weightx = 1;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            add(pb, c);
+
             return new TaskRecord(pb);
         });
     }
@@ -61,7 +72,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     @Override
     public void pause(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(r.state == State.SCHEDLULED, "task not scheduled: %s (%s)", task, r.state);
+        LangUtil.check(r.state == State.SCHEDULED, "task not scheduled: %s (%s)", task, r.state);
         r.state = State.PAUSED;
     }
 
