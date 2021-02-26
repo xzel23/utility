@@ -44,6 +44,32 @@ public final class MathUtil {
     }
 
     /**
+     * Clip argument to range.
+     *
+     * @param  min
+     *             minimal value
+     * @param  max
+     *             maximum value
+     * @param  arg
+     *             argument
+     * @return
+     *             <ul>
+     *             <li>min, if arg &lt; min
+     *             <li>max, if arg &gt; max
+     *             <li>else arg
+     *             </ul>
+     */
+    public static double clamp(double min, double max, double arg) {
+        assert min <= max;
+
+        if (arg < min) {
+            return min;
+        }
+
+        return Math.min(arg, max);
+    }
+
+    /**
      * Find root of function.
      * The root finding uses a modified secant algorithm. The values given as
      * staring points should
