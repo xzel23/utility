@@ -62,6 +62,14 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### 8.2
+
+ - add double overload to MathUtil.clamp()
+ - fix typo: ProgressTracker.State.SCHEDULED (low possibility of breaking client code)
+ - (Swing): remove MigLayout from runtime dependencies 
+ - (Swing): make SwingProgressView horizontally resizable
+ - (Swing): fix resize behaviour of SwingLogPane
+
 ### Version 8.1.6
 
  - RichText.stylesAt()
