@@ -62,7 +62,11 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
-### 8.2
+### 8.2.1
+
+ - fix: FontDef.merge() only worked if color was set
+
+### 8.2.0
 
  - add double overload to MathUtil.clamp()
  - fix typo: ProgressTracker.State.SCHEDULED (low possibility of breaking client code)

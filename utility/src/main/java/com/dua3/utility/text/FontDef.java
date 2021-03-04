@@ -275,12 +275,12 @@ public final class FontDef {
      */
     public void merge(FontDef delta) {
         if (delta.color != null) this.color = delta.color;
-        if (delta.color != null) this.size = delta.size;
-        if (delta.color != null) this.family = delta.family;
-        if (delta.color != null) this.bold = delta.bold;
-        if (delta.color != null) this.italic = delta.italic;
-        if (delta.color != null) this.underline = delta.underline;
-        if (delta.color != null) this.strikeThrough = delta.strikeThrough;
+        if (delta.size != null) this.size = delta.size;
+        if (delta.family != null) this.family = delta.family;
+        if (delta.bold != null) this.bold = delta.bold;
+        if (delta.italic != null) this.italic = delta.italic;
+        if (delta.underline != null) this.underline = delta.underline;
+        if (delta.strikeThrough != null) this.strikeThrough = delta.strikeThrough;
     }
 
     // a little helper for the consumeIfDefined... methods
