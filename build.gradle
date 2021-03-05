@@ -7,7 +7,6 @@ plugins {
     id 'com.dua3.gradle.jpms' version '1.1.3' apply false
     id 'com.adarshr.test-logger' version '2.1.0' apply false
     id 'com.github.spotbugs' version '4.6.0' apply false
-    id 'com.jfrog.bintray' version '1.8.5' apply false
 }
 
 subprojects {
@@ -18,11 +17,10 @@ subprojects {
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.dua3.gradle.jpms'
     apply plugin: 'com.adarshr.test-logger'
-    apply plugin: 'com.jfrog.bintray'
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '8.2.1'
+    version = '8.2.2-SNAPSHOT'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
@@ -43,8 +41,21 @@ subprojects {
     targetCompatibility = java_version
 
     repositories {
-        jcenter()
-        maven { url "https://dl.bintray.com/dua3/oss" }
+        // Maven Central Repository
+        mavenCentral()
+        
+        // GitLab Packages
+        maven {
+            url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
+            name "GitLab"
+            credentials(HttpHeaderCredentials) {
+                name = 'Private-Token'
+                value = gitLabPrivateToken
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
+        }
     }
 
     // dependencies
@@ -69,34 +80,6 @@ subprojects {
 
     javadoc {
         options.encoding = 'UTF-8'
-    }
-
-    // === BINTRAY === >
-
-    bintray {
-        user = findProperty('BINTRAY_USER') ?: 'NONE'
-        key = findProperty('BINTRAY_KEY') ?: 'NONE'
-
-        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-        publish = true //[Default: false] Whether version should be auto published after an upload
-        override = true //[Default: false] Whether to override version artifacts already published
-
-        publications = ['projectPublication']
-
-        pkg {
-            repo = project.repo
-            name = project.group
-            userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
-            licenses = ['MIT']
-            vcsUrl = project.scm
-
-            version {
-                name = project.version
-                desc = project.name + version
-                released = new Date()
-                vcsTag = project.version
-            }
-        }
     }
 
     // === ARTIFACTS === >
@@ -159,9 +142,18 @@ subprojects {
                 }
             }
         }
-        
+
         repositories {
-            maven { url "file://"+System.getProperty("user.home")+"/dua3/repository" }
+            maven {
+                url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
+                credentials(HttpHeaderCredentials) {
+                    name = "Private-Token"
+                    value = gitLabPrivateToken // the variable resides in ~/.gradle/gradle.properties
+                }
+                authentication {
+                    header(HttpHeaderAuthentication)
+                }
+            }
         }
     }
 
@@ -179,4 +171,4 @@ subprojects {
 }
 
 // === DEFAULT TASKS === >
-defaultTasks 'build', 'publishToMavenLocal', 'publish'
+defaultTasks 'build', 'publishToMavenLocal'

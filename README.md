@@ -62,6 +62,12 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### 8.2.2
+
+- remove bintray support
+- publish builds to GitLab Packages (private access)
+- TODO: publish to Mavencentral
+
 ### 8.2.1
 
  - fix: FontDef.merge() only worked if color was set
