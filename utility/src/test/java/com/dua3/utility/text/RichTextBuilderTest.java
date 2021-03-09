@@ -5,9 +5,9 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +37,7 @@ public class RichTextBuilderTest {
     @Test
     public void testNormalizing() {
         // make sure sebsequent runs possessing the same attributes are joind, but runs with differing attributes are retained
-        Style style = Style.create("bold", Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
+        Style style = Style.create("bold", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style);
         builder.append("Hello ");

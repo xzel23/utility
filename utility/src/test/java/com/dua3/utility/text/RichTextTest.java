@@ -5,9 +5,9 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -135,9 +135,9 @@ public class RichTextTest {
     
     @Test
     public void testSubsequenceRegression() {
-        Style style1 = Style.create("style1", Pair.of("attr", "1"));
-        Style style2 = Style.create("style2", Pair.of("attr", "2"));
-        Style style3 = Style.create("style3", Pair.of("attr", "3"));
+        Style style1 = Style.create("style1", Map.entry("attr", "1"));
+        Style style2 = Style.create("style2", Map.entry("attr", "2"));
+        Style style3 = Style.create("style3", Map.entry("attr", "3"));
         
         RichTextBuilder rtb = new RichTextBuilder();
         rtb.push(style1);

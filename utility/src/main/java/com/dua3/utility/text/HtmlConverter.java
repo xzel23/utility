@@ -3,6 +3,7 @@ package com.dua3.utility.text;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * A {@link RichTextConverter} that converts {@link RichText} to HTML.
@@ -57,6 +58,16 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         return new HtmlConversionOption(c -> c.setDefaultMapper(setDefaultMapper));
     }
 
+    public static HtmlConversionOption refineStyleProperties(UnaryOperator<Map<String,Object>> refineStyleProperties) {
+        return new HtmlConversionOption(c -> c.setRefineStyleProperties(refineStyleProperties));
+    }
+
+    private void setRefineStyleProperties(UnaryOperator<Map<String,Object>> refineStyleProperties) {
+        this.refineStyleProperties = Objects.requireNonNull(refineStyleProperties);    
+    }
+    
+    private UnaryOperator<Map<String,Object>> refineStyleProperties = m -> m;
+    
     @Override
     protected TagBasedConverterImpl<String> createConverter(RichText text) {
         return new HtmlConverterImpl(text);
@@ -278,11 +289,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
     private List<HtmlTag> getTags(List<Style> styles) {
         List<HtmlTag> tags = new ArrayList<>();
+        Map<String,Object> properties = new LinkedHashMap<>();
         for (Style style: styles) {
-            style.stream()
-                    .map(e -> get(e.getKey(), e.getValue()))
-                    .forEach(tags::add);
+            style.stream().forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
         }
+        refineStyleProperties.apply(properties).entrySet().stream().map(e -> get(e.getKey(), e.getValue())).forEach(tags::add);
         return tags;
     }
     

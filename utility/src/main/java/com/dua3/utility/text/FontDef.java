@@ -355,4 +355,17 @@ public final class FontDef {
         return consumeIfDefined(strikeThrough, c);
     }
 
+    /**
+     * Test if this instance holds no data.
+     * @return true, if none of the attributes is set
+     */
+    public boolean isEmpty() {
+        return    color==null 
+               && size==null 
+               && family==null 
+               && bold==null 
+               && italic==null 
+               && underline==null 
+               && strikeThrough==null;
+    }
 }

@@ -74,51 +74,51 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     // -- define some default styles
     
     /** Default Sansserif font. */
-    public static final Style SANS_SERIF = Style.create("sans-serif", Pair.of(FONT_TYPE, FONT_TYPE_VALUE_SANS_SERIF));
+    public static final Style SANS_SERIF = Style.create("sans-serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SANS_SERIF));
     /** Default Serif font. */
-    public static final Style SERIF = Style.create("serif", Pair.of(FONT_TYPE, FONT_TYPE_VALUE_SERIF));
+    public static final Style SERIF = Style.create("serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SERIF));
     /** Default Monospace font. */
-    public static final Style MONOSPACE = Style.create("monospace", Pair.of(FONT_TYPE, FONT_TYPE_VALUE_MONOSPACE));
+    public static final Style MONOSPACE = Style.create("monospace", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_MONOSPACE));
 
     /** Bold style. */
-    public static final Style BOLD = Style.create("bold", Pair.of(FONT_WEIGHT, FONT_WEIGHT_VALUE_BOLD));
+    public static final Style BOLD = Style.create("bold", Map.entry(FONT_WEIGHT, FONT_WEIGHT_VALUE_BOLD));
     /** Normal (=not bold) style. */
-    public static final Style NORMAL = Style.create("normal", Pair.of(FONT_WEIGHT, FONT_WEIGHT_VALUE_NORMAL));
+    public static final Style NORMAL = Style.create("normal", Map.entry(FONT_WEIGHT, FONT_WEIGHT_VALUE_NORMAL));
 
     /** Italics style. */
-    public static final Style ITALIC = Style.create("italic", Pair.of(FONT_STYLE, FONT_STYLE_VALUE_ITALIC));
+    public static final Style ITALIC = Style.create("italic", Map.entry(FONT_STYLE, FONT_STYLE_VALUE_ITALIC));
     /** Regular style. */
-    public static final Style REGULAR = Style.create("regular", Pair.of(FONT_STYLE, FONT_STYLE_VALUE_NORMAL));
+    public static final Style REGULAR = Style.create("regular", Map.entry(FONT_STYLE, FONT_STYLE_VALUE_NORMAL));
 
     /** Underline style. */
-    public static final Style UNDERLINE = Style.create("underline", Pair.of(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_LINE));
+    public static final Style UNDERLINE = Style.create("underline", Map.entry(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_LINE));
     /** No-Underline style. */
-    public static final Style NO_UNDERLINE = Style.create("no-underline", Pair.of(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
+    public static final Style NO_UNDERLINE = Style.create("no-underline", Map.entry(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
 
     /** Line-through (=strikethrough) style. */
-    public static final Style LINE_THROUGH = Style.create("line-through", Pair.of(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE));
+    public static final Style LINE_THROUGH = Style.create("line-through", Map.entry(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE));
     /** No-Line-through (=no-strikethrough) style. */
-    public static final Style NO_LINE_THROUGH = Style.create("no-line-through", Pair.of(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
+    public static final Style NO_LINE_THROUGH = Style.create("no-line-through", Map.entry(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
 
     // predefined styles for colors
     /** Black text. */
-    public static final Style BLACK = Style.create("black", Pair.of(COLOR, Color.BLACK));
+    public static final Style BLACK = Style.create("black", Map.entry(COLOR, Color.BLACK));
     /** White text. */
-    public static final Style WHITE = Style.create("white", Pair.of(COLOR, Color.WHITE));
+    public static final Style WHITE = Style.create("white", Map.entry(COLOR, Color.WHITE));
     /** Red text. */
-    public static final Style RED = Style.create("red", Pair.of(COLOR, Color.RED));
+    public static final Style RED = Style.create("red", Map.entry(COLOR, Color.RED));
     /** Green text. */
-    public static final Style GREEN = Style.create("green", Pair.of(COLOR, Color.GREEN));
+    public static final Style GREEN = Style.create("green", Map.entry(COLOR, Color.GREEN));
     /** Blue text. */
-    public static final Style BLUE = Style.create("blue", Pair.of(COLOR, Color.BLUE));
+    public static final Style BLUE = Style.create("blue", Map.entry(COLOR, Color.BLUE));
     /** Yellow text. */
-    public static final Style YELLOW = Style.create("yellow", Pair.of(COLOR, Color.YELLOW));
+    public static final Style YELLOW = Style.create("yellow", Map.entry(COLOR, Color.YELLOW));
     /** Gray text. */
-    public static final Style GRAY = Style.create("gray", Pair.of(COLOR, Color.GRAY));
+    public static final Style GRAY = Style.create("gray", Map.entry(COLOR, Color.GRAY));
     /** Darkgray text. */
-    public static final Style DARKGRAY = Style.create("darkgray", Pair.of(COLOR, Color.DARKGRAY));
+    public static final Style DARKGRAY = Style.create("darkgray", Map.entry(COLOR, Color.DARKGRAY));
     /** Lightgray text. */
-    public static final Style LIGHTGRAY = Style.create("lightgray", Pair.of(COLOR, Color.LIGHTGRAY));
+    public static final Style LIGHTGRAY = Style.create("lightgray", Map.entry(COLOR, Color.LIGHTGRAY));
 
     // -- instance fields and methods
     
@@ -138,12 +138,12 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     /**
      * Create a new Style.
      * @param styleName the style name
-     * @param args key-value pairs to set as properties of this style
+     * @param args Map.Entry to set as properties of this style
      * @return new instance
      */
     @SafeVarargs
-    public static Style create(String styleName, Pair<String, Object>... args) {
-        return create(styleName, Pair.toMap(args));
+    public static Style create(String styleName, Map.Entry<String, Object>... args) {
+        return create(styleName, Map.ofEntries(args));
     }
 
     /**
@@ -263,6 +263,14 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      */
     public Optional<Font> getFont() {
         return Optional.ofNullable((Font) get(FONT));
+    }
+    
+    /**
+     * Get Font for this style.
+     * @return if set, the font of this style, otherwise the resulting font of applying this style's {@link FontDef} to the supplied baseFont 
+     */
+    public Font getFont(Font baseFont) {
+        return getFont().orElseGet(() -> baseFont.deriveFont(getFontDef()));
     }
     
     @Override

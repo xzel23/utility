@@ -5,6 +5,7 @@
 
 package com.dua3.utility.data;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -123,6 +124,27 @@ public class Pair<T1, T2> {
      */
     @SafeVarargs
     public static <K, V> Map<K, V> toMap(Pair<K, V>... args) {
+        Map<K, V> m = new HashMap<>();
+        addToMap(m, args);
+        return m;
+    }
+
+    /**
+     * Convert a {@code Collection<Pair<K,V>>} to {@code Map<K,V>}.
+     * <p>
+     * The returned Map can be modified by adding or removing entries.
+     * </p>
+     * @param <K>
+     *                the key type
+     * @param <V>
+     *                the value type
+     *
+     * @param    args
+     *                the entries to add to the resulting map
+     * @return        a new {@code Map<K,V>} whose entries correspond to the pairs
+     *                given as arguments
+     */
+    public static <K, V> Map<K, V> toMap(Collection<Pair<K, V>> args) {
         Map<K, V> m = new HashMap<>();
         addToMap(m, args);
         return m;

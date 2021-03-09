@@ -5,8 +5,9 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,7 +21,7 @@ public class HtmlConverterTest {
 
     @Test
     public void testEmbeddedStyle() {
-        Style bold = Style.create("bold", Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
+        Style bold = Style.create("bold", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
         
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
@@ -56,9 +57,9 @@ public class HtmlConverterTest {
 
     @Test
     public void testSettingFontFamily() {
-        Style sans = Style.create("sans", Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SANS_SERIF));
-        Style serif = Style.create("serif", Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SERIF));
-        Style mono = Style.create("mono", Pair.of(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
+        Style sans = Style.create("sans", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SANS_SERIF));
+        Style serif = Style.create("serif", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SERIF));
+        Style mono = Style.create("mono", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
         
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(sans);
@@ -84,8 +85,8 @@ public class HtmlConverterTest {
         Font arial = new Font("arial-16-bold");
         Font times = new Font("courier-12");
         
-        Style style1 = Style.create("style1", Pair.of(Style.FONT, arial));
-        Style style2 = Style.create("style2", Pair.of(Style.FONT, times));
+        Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
+        Style style2 = Style.create("style2", Map.entry(Style.FONT, times));
         
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
@@ -107,8 +108,8 @@ public class HtmlConverterTest {
         Font arial = new Font("arial-16-bold");
         Font times = new Font("courier-12");
         
-        Style style1 = Style.create("style1", Pair.of(Style.FONT, arial));
-        Style style2 = Style.create("style2", Pair.of(Style.FONT, times));
+        Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
+        Style style2 = Style.create("style2", Map.entry(Style.FONT, times));
         
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
