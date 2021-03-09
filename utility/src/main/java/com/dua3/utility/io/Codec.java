@@ -1,13 +1,7 @@
 package com.dua3.utility.io;
 
-import com.dua3.utility.lang.LangUtil;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.*;
-import java.util.function.IntFunction;
 
 /**
  * Codec interface for reading/writing objects to/from {@link DataInputStream}/{@link DataOutputStream}.
