@@ -135,8 +135,6 @@ public final class Log4jAdapter {
     public static void removeListener(Logger logger, LogListener listener) {
         LoggerContext context = LoggerContext.getContext(false);
         Configuration config = context.getConfiguration();
-        Level level = Level.ALL;
-        Filter filter = null;
         for (LoggerConfig loggerConfig : config.getLoggers().values()) {
             loggerConfig.removeAppender(getAppenderName(logger));
         }

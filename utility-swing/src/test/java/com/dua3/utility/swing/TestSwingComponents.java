@@ -102,7 +102,7 @@ public class TestSwingComponents extends JFrame {
 
                 int nr = n.incrementAndGet();
                 
-                if (false &random.nextBoolean()) {
+                if (random.nextBoolean()) {
                     String msg = String.format("Message %d.", nr);
                     Level level = levels[random.nextInt(levels.length)];
                     if (level==Level.SEVERE) {
