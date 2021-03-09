@@ -234,7 +234,7 @@ public final class IOUtil {
      */
     public static String read(URL url, Charset cs) throws IOException {
         try (InputStream in = url.openStream()) {
-            return new String(readAllBytes(in), cs);
+            return new String(in.readAllBytes(), cs);
         }
     }
 
@@ -251,7 +251,7 @@ public final class IOUtil {
      */
     public static String read(URI uri, Charset cs) throws IOException {
         try (InputStream in = openInputStream(uri)) {
-            return new String(readAllBytes(in), cs);
+            return new String(in.readAllBytes(), cs);
         }
     }
 
@@ -268,23 +268,6 @@ public final class IOUtil {
             return Files.newInputStream(Paths.get(uri));
         }
     }
-
-    /**
-     * Replacement for InputStream.readAllBytes() which is not available in Java 8.
-     * @param in InputStream to read from
-     * @return the bytes
-     * @throws IOException on Error
-     */
-    public static byte[] readAllBytes(InputStream in) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[4096]; // Or whatever size you want to read in at a time.
-        int n;
-        while ( (n = in.read(buffer)) > 0 ) {
-            baos.write(buffer, 0, n);
-        }
-        return baos.toByteArray();
-    }
-
 
     /**
      * Copy all Bytes from InputStream to OutputStream.

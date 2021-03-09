@@ -27,7 +27,7 @@ public final class StreamUtil {
     public static <A, B> Stream<Pair<A, B>> zip(Stream<A> as, Stream<B> bs) {
         Iterator<A> i1 = as.iterator();
         Iterator<B> i2 = bs.iterator();
-        Iterable<Pair<A, B>> i = () -> new Iterator<Pair<A, B>>() {
+        Iterable<Pair<A, B>> i = () -> new Iterator<>() {
             public boolean hasNext() {
                 return i1.hasNext() && i2.hasNext();
             }

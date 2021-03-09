@@ -87,7 +87,7 @@ public interface ProgressTracker<T> {
      * @return new dummy ProgressTracker instance
      */
     static <T> ProgressTracker<T> nopTracker() {
-        return new ProgressTracker<T>() {
+        return new ProgressTracker<>() {
             @Override
             public void schedule(T task) { /* nop */ }
 

@@ -56,9 +56,7 @@ public class CmdTest {
         assertEquals("Eve", cmd.parse("-n", "Eve").getOrThrow(optionName));
         assertEquals(30, cmd.parse("--age", "30").getOrThrow(optionAge));
 
-        assertThrows(CmdException.class, () -> {
-            cmd.parse("-n", "Eve", "--name", "Bob");
-        });
+        assertThrows(CmdException.class, () -> cmd.parse("-n", "Eve", "--name", "Bob"));
 
         CmdArgs eve30 = cmd.parse("-n", "Eve", "--age", "30");
         assertEquals("Eve", eve30.getOrThrow(optionName));

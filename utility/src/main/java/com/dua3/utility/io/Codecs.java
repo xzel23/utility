@@ -51,7 +51,7 @@ public class Codecs {
      * @return the new codec
      */
     public static <T> Codec<T> createCodec(String name, Encoder<T> enc, Decoder<T> dec) {
-        return new Codec<T>() {
+        return new Codec<>() {
             @Override
             public String name() {
                 return name;
@@ -74,7 +74,7 @@ public class Codecs {
      * @return codec
      */
     public static <T, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<C> construct) {
-        return new Codec<C>() {
+        return new Codec<>() {
             @Override
             public String name() {
                 return name;
@@ -91,9 +91,9 @@ public class Codecs {
             @Override
             public C decode(DataInputStream is) throws IOException {
                 int n = is.readInt();
-                LangUtil.check(n>=0, "negative size for collection: %d", n);
+                LangUtil.check(n >= 0, "negative size for collection: %d", n);
                 C collection = construct.apply(n);
-                for (int i=0; i<n; i++) {
+                for (int i = 0; i < n; i++) {
                     collection.add(codec.decode(is));
                 }
                 return collection;
@@ -113,10 +113,12 @@ public class Codecs {
                         public K getKey() {
                             return k;
                         }
+
                         @Override
                         public V getValue() {
                             return v;
                         }
+
                         @Override
                         public V setValue(V value) {
                             throw new UnsupportedOperationException();
@@ -135,7 +137,7 @@ public class Codecs {
         final Codec<Map.Entry<K,V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
         final Codec<Collection<Map.Entry<K,V>>> ENTRIES_CODEC = Codecs.collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
         
-        return new Codec<M>() {
+        return new Codec<>() {
             @Override
             public String name() {
                 return name;

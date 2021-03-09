@@ -341,20 +341,20 @@ public class RichText
      * @return spliterator
      */
     private Spliterator<RichText> lineSpliterator() {
-        return new Spliterator<RichText>() {
-            private int idx=0;
-            
+        return new Spliterator<>() {
+            private int idx = 0;
+
             @Override
             public boolean tryAdvance(Consumer<? super RichText> action) {
                 int split = TextUtil.indexOf(text, '\n', idx);
-                
-                if (split<0) {
+
+                if (split < 0) {
                     split = length;
                 }
-                
+
                 action.accept(subSequence(idx, split));
-                idx = split+1;
-                return idx<length();
+                idx = split + 1;
+                return idx < length();
             }
 
             @Override
@@ -674,7 +674,7 @@ public class RichText
      * @return unmodifiable list of runs
      */
     public List<Run> runs() {
-        return Collections.unmodifiableList(Arrays.asList(run));
+        return List.of(run);
     }
     
     /**

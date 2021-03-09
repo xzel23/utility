@@ -289,7 +289,7 @@ public class SwingLogPane extends JPanel {
             
             java.awt.Font font = table.getFont();
             int chars = cd.preferredCharWidth;
-            int width = (int) Math.ceil(fu.getTextWidth(TextUtil.repeat("M", Math.abs(chars)), font));
+            int width = (int) Math.ceil(fu.getTextWidth("M".repeat(Math.abs(chars)), font));
             if (chars>=0) {
                 column.setPreferredWidth(width);
             } else {
@@ -412,7 +412,7 @@ public class SwingLogPane extends JPanel {
     }
 
     private void setFilter(Category c) {
-        tableRowSorter.setRowFilter(new RowFilter<AbstractTableModel, Integer>() {
+        tableRowSorter.setRowFilter(new RowFilter<>() {
             @Override
             public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
                 LogEntry value = (LogEntry) entry.getValue(0);

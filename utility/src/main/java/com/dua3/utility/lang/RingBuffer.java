@@ -154,17 +154,17 @@ public class RingBuffer<E> implements Collection<E> {
         final int entries_ = entries;
         final int start_ = start;
         
-        return new Iterator<E>() {
-            int idx=0;
+        return new Iterator<>() {
+            int idx = 0;
 
             private void checkValid() {
-                LangUtil.check(start_==start && entries_==entries, ConcurrentModificationException::new);    
+                LangUtil.check(start_ == start && entries_ == entries, ConcurrentModificationException::new);
             }
-            
+
             @Override
             public boolean hasNext() {
                 checkValid();
-                return idx<entries_;
+                return idx < entries_;
             }
 
             @Override
@@ -278,11 +278,11 @@ public class RingBuffer<E> implements Collection<E> {
         final int s2 = toIndex-fromIndex;
         LangUtil.check(s2>=0, "toIndex<fromIndex: fromIndex=%d, toIndex=%d", fromIndex, toIndex);
 
-        return new AbstractList<E>() {
+        return new AbstractList<>() {
             @Override
             public E get(int index) {
                 LangUtil.checkIndex(index, s2);
-                return RingBuffer.this.get(index+fromIndex);
+                return RingBuffer.this.get(index + fromIndex);
             }
 
             @Override

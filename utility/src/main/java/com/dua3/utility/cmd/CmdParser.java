@@ -258,7 +258,7 @@ public class CmdParser {
         // print title
         if (!name.isEmpty()) {
             fmt.format("%s%n", name);
-            fmt.format("%s%n", TextUtil.repeat("-", name.length()));
+            fmt.format("%s%n", "-".repeat(name.length()));
             fmt.format("%n");
         }
         
@@ -334,7 +334,7 @@ public class CmdParser {
         // print title
         if (!name.isEmpty()) {
             fmt.format("%s%n", name);
-            fmt.format("%s%n", TextUtil.repeat("-", name.length()));
+            fmt.format("%s%n", "-".repeat(name.length()));
             fmt.format("%n");
         }
 

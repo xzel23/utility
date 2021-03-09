@@ -568,7 +568,7 @@ public class NamedParameterStatement implements AutoCloseable {
      */
     public List<ParameterInfo> getParameterInfo() {
         initParameterInfo();
-        return Collections.unmodifiableList(new ArrayList<>(indexMap.values()));
+        return List.copyOf(indexMap.values());
     }
 
     /**

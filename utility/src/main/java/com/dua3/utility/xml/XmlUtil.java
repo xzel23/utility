@@ -96,12 +96,12 @@ public final class XmlUtil {
      * @return stream of nodes
      */
     public Stream<Node> nodeStream(NodeList nodes) {
-        Spliterator<Node> spliterator = new Spliterator<Node>() {
+        Spliterator<Node> spliterator = new Spliterator<>() {
             int idx = 0;
-            
+
             @Override
             public boolean tryAdvance(Consumer<? super Node> action) {
-                if (idx>=nodes.getLength()) {
+                if (idx >= nodes.getLength()) {
                     return false;
                 }
                 action.accept(nodes.item(idx++));

@@ -66,7 +66,7 @@ public abstract class Option<T> {
     }
     
     public Collection<String> names() {
-        return Collections.unmodifiableList(Arrays.asList(names));
+        return List.of(names);
     }
 
     public int minOccurrences() {

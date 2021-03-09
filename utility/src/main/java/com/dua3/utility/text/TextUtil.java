@@ -699,36 +699,14 @@ public final class TextUtil {
         int len = s.length();
         switch (align) {
             case LEFT:
-                return s + repeat(fill, Math.max(0, width - len));
+                return s + fill.repeat(Math.max(0, width - len));
             case RIGHT:
-                return repeat(fill, Math.max(0, width - len)) + s;
+                return fill.repeat(Math.max(0, width - len)) + s;
             case CENTER:
-                return repeat(fill, Math.max(0, width - len) / 2) + s + repeat(fill, Math.max(0, width - len - (width - len) / 2));
+                return fill.repeat(Math.max(0, width - len) / 2) + s + fill.repeat(Math.max(0, width - len - (width - len) / 2));
             default:
                 throw new IllegalArgumentException(align.toString());
         }
-    }
-
-    /**
-     * Repeat a string. Replacement for String.repeat(int) not present in Java 8.
-     * @param s the string to repeat
-     * @param n number of repetitions
-     * @return fill repeated n times
-     */
-    public static String repeat(String s, int n) {
-        LangUtil.check(n>=0);
-        
-        if (n==0 || s.isEmpty()) {
-            return "";
-        }
-
-        int capacity = n * s.length();
-        StringBuilder sb = new StringBuilder(capacity);
-        for (int i=0; i< n; i++) {
-            sb.append(s);
-        }
-        
-        return sb.toString();
     }
 
     /**
