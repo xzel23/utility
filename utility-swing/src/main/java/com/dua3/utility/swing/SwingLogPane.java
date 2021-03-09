@@ -38,6 +38,8 @@ public class SwingLogPane extends JPanel {
 
     private static Color defaultColorize(LogEntry entry) {
         switch (entry.category()) {
+            case FATAL:
+                return Color.DARKRED;
             case SEVERE:
                 return Color.RED;
             case WARNING:

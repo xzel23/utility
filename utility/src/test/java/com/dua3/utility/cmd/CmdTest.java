@@ -1,7 +1,9 @@
 package com.dua3.utility.cmd;
 
-import com.sun.tools.javac.util.List;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CmdTest {

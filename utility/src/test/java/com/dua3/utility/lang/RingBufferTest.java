@@ -5,10 +5,10 @@
 
 package com.dua3.utility.lang;
 
-import com.sun.tools.javac.util.List;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

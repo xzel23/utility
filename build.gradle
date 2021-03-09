@@ -4,7 +4,6 @@
 // https://opensource.org/licenses/MIT
 
 plugins {
-    id 'com.dua3.gradle.jpms' version '1.1.3' apply false
     id 'com.adarshr.test-logger' version '2.1.0' apply false
     id 'com.github.spotbugs' version '4.6.2' apply false
 }
@@ -15,12 +14,11 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
-    apply plugin: 'com.dua3.gradle.jpms'
     apply plugin: 'com.adarshr.test-logger'
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '8.2.2-SNAPSHOT'
+    version = '9-SNAPSHOT'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
@@ -33,7 +31,7 @@ subprojects {
     /////////////////////////////////////////////////////////////////////////////
 
     ext {
-        java_version = '8'
+        java_version = '11'
         junit_version = '5.5.1'
     }
 

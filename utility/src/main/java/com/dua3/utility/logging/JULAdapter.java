@@ -73,7 +73,10 @@ public final class JULAdapter {
             if ( intLevel < Level.SEVERE.intValue()) {
                 return Category.WARNING;
             }
-            return Category.SEVERE;
+            if ( intLevel == Level.SEVERE.intValue()) {
+                return Category.SEVERE;
+            }
+            return Category.FATAL;
         }
 
         @Override

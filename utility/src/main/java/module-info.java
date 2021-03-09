@@ -16,6 +16,11 @@ module dua3_utility {
     exports com.dua3.utility.xml;
 
     requires java.logging;
+    
+    requires static org.apache.logging.log4j;
+    requires static org.apache.logging.log4j.core;
+    
+    requires  java.xml;
 
     uses com.dua3.utility.text.FontUtil;
     uses com.dua3.utility.io.FileType;
