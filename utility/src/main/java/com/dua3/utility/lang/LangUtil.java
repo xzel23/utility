@@ -20,8 +20,6 @@ import java.util.stream.Stream;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IOUtil;
-import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.Style;
 
 /**
  * A Utility class with general purpose methods.

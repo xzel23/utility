@@ -237,7 +237,7 @@ public final class FontDef {
     public String getCssStyle() {
         boolean isUnderline = underline != null && underline;
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
-        return (color == null ? "" : "color: " + color.toString() + ";") +
+        return (color == null ? "" : "color: " + color + ";") +
                (size == null ? "" : "font-size: " + size + "pt;") +
                (family == null ? "" : "font-family: " + family + ";") +
                (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + ";") +

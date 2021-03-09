@@ -180,7 +180,7 @@ public final class FileSystemView implements AutoCloseable {
 
     private static FileSystemView createFileSystemView(FileSystem fs, String path) {
         Path root = fs.getPath(path);
-        return new FileSystemView(root, fs::close, "[" + fs.toString() + "]" + path);
+        return new FileSystemView(root, fs::close, "[" + fs + "]" + path);
     }
 
     private final Path root;
