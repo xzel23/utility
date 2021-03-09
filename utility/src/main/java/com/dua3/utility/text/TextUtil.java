@@ -751,9 +751,7 @@ public final class TextUtil {
      */
     public static String indent(String s, int n) {
         StringBuilder indent = new StringBuilder(n);
-        for (int i=0; i<n; i++) {
-            indent.append(' ');
-        }
+        indent.append(" ".repeat(Math.max(0, n)));
         
         Pattern pattern = Pattern.compile("^", Pattern.MULTILINE);
         return pattern.matcher(s).replaceAll(indent.toString());
