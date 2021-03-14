@@ -130,9 +130,19 @@ public class AffineTransformation {
      * @return the result of transformation
      */
     public Vec2d transform(Vec2d v) {
-        double x = a*v.x() + c*v.y() + e;
-        double y = b*v.x() + d*v.y() + f;
-        return Vec2d.of(x,y);
+        return transform(v.x(), v.y());
+    }
+    
+    /**
+     * Transform vector by applying this affine transformation to it.
+     * @param x the x-coordinate of the point to transform
+     * @param y the y-coordinate of the point to transform
+     * @return the result of transformation
+     */
+    public Vec2d transform(double x, double y) {
+        double xt = a*x + c*y + e;
+        double yt = b*x + d*y + f;
+        return Vec2d.of(xt,yt);
     }
     
     @Override
