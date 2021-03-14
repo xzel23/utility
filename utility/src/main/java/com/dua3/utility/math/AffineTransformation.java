@@ -13,6 +13,8 @@ import java.util.Objects;
  * </pre>.
  */
 public class AffineTransformation {
+
+    public static final AffineTransformation IDENTITY = new AffineTransformation(1, 0, 0, 1, 0, 0);
     
     private final double a;
     private final double b;
@@ -55,28 +57,39 @@ public class AffineTransformation {
     }
 
     /**
+     * Return the identity transformation.
+     * @return affine transformation (identity)
+     */
+    public static AffineTransformation identity() {
+        return IDENTITY;
+    }
+
+    /**
      * Create an affine transformation for a rotation around the origin.
-     * @param rotation the angle in radians
+     * {@code (x,y) -> (x cos(alpha) - y sin(alpha), x sin(alpha) + y cos(alpha))}.
+     * @param alpha the angle in radians
      * @return affine transformation (rotation)
      */
-    public static AffineTransformation rotation(double rotation) {
-        double sin = Math.sin(rotation);
-        double cos = Math.cos(rotation);
+    public static AffineTransformation rotate(double alpha) {
+        double sin = Math.sin(alpha);
+        double cos = Math.cos(alpha);
         return new AffineTransformation(cos, sin, -sin, cos, 0, 0);
     }
 
     /**
-     * Create an affine transformation for a translation.
-     * @param x the x-value
-     * @param y the y-value
+     * Create an affine transformation for a translation
+     * {@code (x,y) -> (x+u,y+v)}.
+     * @param u the x-value
+     * @param v the y-value
      * @return affine transformation (translation)
      */
-    public static AffineTransformation translate(double x, double y) {
-        return new AffineTransformation(1, 0, 0, 1, x, y);
+    public static AffineTransformation translate(double u, double v) {
+        return new AffineTransformation(1, 0, 0, 1, u, v);
     }
     
     /**
      * Create an affine transformation for a translation.
+     * See {@link #translate(double, double)}.
      * @param v the translation vector
      * @return affine transformation (translation)
      */
@@ -85,7 +98,8 @@ public class AffineTransformation {
     }
 
     /**
-     * Create an affine transformation for a scaling operation (using same factor for x and y coordinates).
+     * Create an affine transformation for a scaling operation (using same factor for x and y coordinates)
+     * {@code (x,y) -> (sx,sy)}.
      * @param s the scaling factor
      * @return affine transformation (scale)
      */
@@ -94,34 +108,36 @@ public class AffineTransformation {
     }
 
     /**
-     * Create an affine transformation for a scaling operation.
-     * @param sx the scaling factor for the x-coordinate
-     * @param sy the scaling factor for the y-coordinate
+     * Create an affine transformation for a scaling operation
+     * {@code (x,y) -> (sx,ty)}.
+     * @param s the scaling factor for the x-coordinate
+     * @param t the scaling factor for the y-coordinate
      * @return affine transformation (scale)
      */
-    public static AffineTransformation scale(double sx, double sy) {
-        return new AffineTransformation(sx, 0, 0, sy, 0, 0);
+    public static AffineTransformation scale(double s, double t) {
+        return new AffineTransformation(s, 0, 0, t, 0, 0);
     }
 
     /**
-     * Create an affine transformation for a shearing operation.
-     * @param cx the shearing factor for the x-coordinate
-     * @param cy the shearing factor for the y-coordinate
+     * Create an affine transformation for a shearing operation 
+     * {@code (x,y) -> (x+my,y)}.
+     * @param m the shearing factor
      * @return affine transformation (scale)
      */
-    public static AffineTransformation shear(double cx, double cy) {
-        return new AffineTransformation(1, cx, cy, 1, 0, 0);
+    public static AffineTransformation shear(double m) {
+        return new AffineTransformation(1, 0, m, 1, 0, 0);
     }
 
     /**
-     * Create an affine transformation for a shearing operation.
+     * Combine affine transformations.
      * @param A the affine transformation to append
      * @return affine transformation (combination of this and A)
      */
     public AffineTransformation append(AffineTransformation A) {
         return new AffineTransformation(
-                a*A.a+c*A.b,a*A.c+c*A.d,a*A.e+c*A.f+e, 
-                b*A.a+b*A.d,b*A.c+d*A.d,b*A.e+d*A.f+f);  
+                A.a*a+A.c*b,     A.b*a+A.d*b,
+                A.a*c+A.c*d,     A.b*c+A.d*d,
+                A.a*e+A.c*f+A.e, A.b*e+A.d*f+A.f);  
     }
 
     /**
@@ -162,4 +178,11 @@ public class AffineTransformation {
     public int hashCode() {
         return Objects.hash(a, b, c, d, e, f);
     }
+
+    public double a() { return a; }
+    public double b() { return b; }
+    public double c() { return c; }
+    public double d() { return d; }
+    public double e() { return e; }
+    public double f() { return f; }
 }
