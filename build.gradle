@@ -169,4 +169,8 @@ subprojects {
 }
 
 // === DEFAULT TASKS === >
+tasks.withType(PublishToMavenRepository) {
+    dependsOn publishToMavenLocal
+}
+
 defaultTasks 'build', 'publishToMavenLocal'
