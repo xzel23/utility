@@ -66,9 +66,36 @@ public final class MathUtil {
             return min;
         }
 
-        return Math.min(arg, max);
+        if (arg > max) {
+            return max;
+        }
+        
+        return arg;
     }
 
+    /**
+     * Clip argument to range.
+     *
+     * @param  min
+     *             minimal value
+     * @param  max
+     *             maximum value
+     * @param  arg
+     *             argument
+     * @param  valueIfNaN
+     *             value to return if arg is NaN
+     * @return
+     *             <ul>
+     *             <li>min, if arg &lt; min
+     *             <li>max, if arg &gt; max
+     *             <li>valueIfNaN, if arg is NaN
+     *             <li>else arg
+     *             </ul>
+     */
+    public static double clamp(double min, double max, double arg, double valueIfNaN) {
+        return Double.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
+    }
+    
     /**
      * Find root of function.
      * The root finding uses a modified secant algorithm. The values given as
