@@ -6,8 +6,8 @@ import java.util.Objects;
  * Defines an affine transformation in form of a matrix
  * <pre>
  * {@code
- *     a b c
- *     d e f
+ *     a c e
+ *     b d f
  *     0 0 1
  * }
  * </pre>.
@@ -26,8 +26,8 @@ public class AffineTransformation {
      * The affine transformation is defined by the matrix:
      * <pre>
      * {@code
-     *     a b c
-     *     d e f
+     *     a c e
+     *     b d f
      *     0 0 1
      * }
      * </pre>.
@@ -62,7 +62,7 @@ public class AffineTransformation {
     public static AffineTransformation rotation(double rotation) {
         double sin = Math.sin(rotation);
         double cos = Math.cos(rotation);
-        return new AffineTransformation(cos, -sin, 0, sin, cos, 0);
+        return new AffineTransformation(cos, sin, -sin, cos, 0, 0);
     }
 
     /**
@@ -72,7 +72,7 @@ public class AffineTransformation {
      * @return affine transformation (translation)
      */
     public static AffineTransformation translate(double x, double y) {
-        return new AffineTransformation(1, 0, x, 0, 1, y);
+        return new AffineTransformation(1, 0, 0, 1, x, y);
     }
     
     /**
@@ -81,7 +81,7 @@ public class AffineTransformation {
      * @return affine transformation (translation)
      */
     public static AffineTransformation translate(Vec2d v) {
-        return new AffineTransformation(1, 0, v.x(), 0, 1, v.y());
+        return new AffineTransformation(1, 0, 0, 1, v.x(), v.y());
     }
 
     /**
@@ -90,7 +90,7 @@ public class AffineTransformation {
      * @return affine transformation (scale)
      */
     public static AffineTransformation scale(double s) {
-        return new AffineTransformation(s, 0, 0, 0, s, 0);
+        return new AffineTransformation(s, 0, 0, s, 0, 0);
     }
 
     /**
@@ -100,7 +100,7 @@ public class AffineTransformation {
      * @return affine transformation (scale)
      */
     public static AffineTransformation scale(double sx, double sy) {
-        return new AffineTransformation(sx, 0, 0, 0, sy, 0);
+        return new AffineTransformation(sx, 0, 0, sy, 0, 0);
     }
 
     /**
@@ -110,7 +110,7 @@ public class AffineTransformation {
      * @return affine transformation (scale)
      */
     public static AffineTransformation shear(double cx, double cy) {
-        return new AffineTransformation(1, cx, 0, cy, 1, 0);
+        return new AffineTransformation(1, cx, cy, 1, 0, 0);
     }
 
     /**
@@ -120,8 +120,8 @@ public class AffineTransformation {
      */
     public AffineTransformation append(AffineTransformation A) {
         return new AffineTransformation(
-                a*A.a+b*A.b,a*A.b+b*A.e,a*A.c+b*A.f+c, 
-                d*A.a+e*A.d,d*A.b+e*A.e, d*A.c+e*A.f+f);  
+                a*A.a+c*A.b,a*A.c+c*A.d,a*A.e+c*A.f+e, 
+                b*A.a+b*A.d,b*A.c+d*A.d,b*A.e+d*A.f+f);  
     }
 
     /**
@@ -130,8 +130,8 @@ public class AffineTransformation {
      * @return the result of transformation
      */
     public Vec2d apply(Vec2d v) {
-        double x = a*v.x() + b*v.y() + c;
-        double y = d*v.x() + e*v.y() + f;
+        double x = a*v.x() + c*v.y() + e;
+        double y = b*v.x() + d*v.y() + f;
         return Vec2d.of(x,y);
     }
     
@@ -140,12 +140,12 @@ public class AffineTransformation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AffineTransformation that = (AffineTransformation) o;
-        return that.a == a &&
-        that.b == b &&    
-        that.c == c &&    
-        that.d == d &&    
-        that.e == e &&    
-        that.f == f;    
+        return  that.a == a &&
+                that.b == b &&    
+                that.c == c &&    
+                that.d == d &&    
+                that.e == e &&    
+                that.f == f;    
     }
 
     @Override
