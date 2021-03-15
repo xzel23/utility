@@ -14,6 +14,8 @@ public class Vec2d {
     private final double x;
     private final double y;
 
+    public static final Vec2d ORIGIN = new Vec2d(0,0);
+    
     private Vec2d(double x, double y) {
         this.x = x;
         this.y = y;
