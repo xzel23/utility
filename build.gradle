@@ -39,8 +39,8 @@ subprojects {
     targetCompatibility = java_version
 
     repositories {
-        // Maven Central Repository
-        mavenCentral()
+        // Maven local Repository
+        mavenLocal()
         
         // GitLab Packages
         if (properties.containsKey('gitLabPrivateToken')) {
@@ -68,6 +68,9 @@ subprojects {
                 }
             }
         }
+
+        // Maven Central Repository
+        mavenCentral()
     }
 
     // dependencies
