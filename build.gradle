@@ -43,19 +43,29 @@ subprojects {
         mavenCentral()
         
         // GitLab Packages
-        maven {
-            url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
-            name "GitLab"
-            credentials(HttpHeaderCredentials) {
-                name = 'Private-Token'
-                value = gitLabPrivateToken
+        if (properties.containsKey('gitLabPrivateToken')) {
+            maven {
+                url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
+                name "GitLab"
+                credentials(HttpHeaderCredentials) {
+                    name = 'Private-Token'
+                    value = gitLabPrivateToken
+                }
+                authentication {
+                    header(HttpHeaderAuthentication)
+                }
             }
-            credentials(HttpHeaderCredentials) {
-                name = 'Job-Token'
-                value = System.getenv("CI_JOB_TOKEN")
-            }
-            authentication {
-                header(HttpHeaderAuthentication)
+        } else if (System.getenv("CI_JOB_TOKEN")!=null) {
+            maven {
+                url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
+                name "GitLab"
+                credentials(HttpHeaderCredentials) {
+                    name = 'Job-Token'
+                    value = System.getenv("CI_JOB_TOKEN")
+                }
+                authentication {
+                    header(HttpHeaderAuthentication)
+                }
             }
         }
     }
