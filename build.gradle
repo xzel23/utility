@@ -50,6 +50,10 @@ subprojects {
                 name = 'Private-Token'
                 value = gitLabPrivateToken
             }
+            credentials(HttpHeaderCredentials) {
+                name = 'Job-Token'
+                value = System.getenv("CI_JOB_TOKEN")
+            }
             authentication {
                 header(HttpHeaderAuthentication)
             }
