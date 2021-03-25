@@ -27,13 +27,13 @@ subprojects {
 
     ext.developerId = 'axh'
     ext.developerName = 'Axel Howind'
-    ext.developerEmail = 'axel@dua3.com'
     /////////////////////////////////////////////////////////////////////////////
 
     ext {
         java_version = '11'
         junit_version = '5.5.1'
     }
+    ext.developerEmail = 'axel@dua3.com'
 
     sourceCompatibility = java_version
     targetCompatibility = java_version
