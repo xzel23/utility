@@ -114,7 +114,7 @@ public class CmdTest {
                 , cmd.help());
         
         // min arity is 1!
-        assertThrows(CmdException.class, () -> cmd.parse());
+        assertThrows(CmdException.class, cmd::parse);
 
         // max arity is 3!
         assertThrows(CmdException.class, () -> cmd.parse("abc", "def", "ghi", "jkl"));

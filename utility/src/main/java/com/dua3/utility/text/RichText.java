@@ -99,7 +99,7 @@ public class RichText
      * @param styles the styles to apply
      * @return RichText.valueOf(String.valueOf(obj))
      */
-    public static RichText valueOf(Object obj, List<Style> styles) {
+    public static RichText valueOf(Object obj, Collection<Style> styles) {
         return valueOf(String.valueOf(obj), styles);
     }
 
@@ -110,7 +110,7 @@ public class RichText
      * @param styles the styles to apply
      * @return   RichText representation of s
      */
-    public static RichText valueOf(String s, List<Style> styles) {
+    public static RichText valueOf(String s, Collection<Style> styles) {
         RichTextBuilder rtb = new RichTextBuilder((s.length()));
         styles.forEach(rtb::push);
         rtb.append(s);
@@ -519,7 +519,7 @@ public class RichText
             int off = 0;
             int next = 0;
             boolean limited = limit > 0;
-            ArrayList<RichText> list = new ArrayList<>();
+            List<RichText> list = new ArrayList<>();
             while ((next = indexOf(ch, off)) != -1) {
                 if (!limited || list.size() < limit - 1) {
                     list.add(subSequence(off, next));

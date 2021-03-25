@@ -217,11 +217,11 @@ public class CmdParser {
      * @param parsedOptions the parsed options to validate
      * @throws CmdException if an error is detected
      */
-    private void validate(Queue<CmdArgs.Entry<?>> parsedOptions) {
+    private void validate(Collection<CmdArgs.Entry<?>> parsedOptions) {
         Map<Option<?>, Integer> hist = new HashMap<>();
         parsedOptions.forEach(entry -> hist.compute(entry.option, (k_,i_) -> i_==null ? 1 : i_+1));
 
-        Set<Option<?>> allOptions = new HashSet<>(options.values());
+        Collection<Option<?>> allOptions = new HashSet<>(options.values());
         allOptions.stream()
                 .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
                 .forEach(p -> {

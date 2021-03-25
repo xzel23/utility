@@ -40,7 +40,7 @@ public interface Decoder<T> {
      * @param is the {@link DataInputStream}
      * @param codec the element {@link Codec}
      * @throws IOException if an error occurs
-     * @return
+     * @return the collection of decoded objects
      */
     static <T, C extends IntFunction<Collection<T>>> Collection<T> decode(DataInputStream is, Decoder<T> codec, C collectionConstructor) throws IOException {
         int size = is.readInt();

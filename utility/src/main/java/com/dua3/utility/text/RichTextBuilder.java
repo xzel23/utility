@@ -170,7 +170,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
         }
         
         // remove splits
-        parts.keySet().removeAll(keysToRemove);
+        keysToRemove.forEach(parts.keySet()::remove);
 
         // always remove a trailing empty run if it exists
         if (parts.size()>1) {

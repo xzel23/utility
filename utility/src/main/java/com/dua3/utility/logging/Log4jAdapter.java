@@ -99,7 +99,7 @@ public final class Log4jAdapter {
         LoggerContext context = LoggerContext.getContext(false);
         Configuration config = context.getConfiguration();
         PatternLayout layout = PatternLayout.createDefaultLayout(config);
-        AbstractAppender appender = new AbstractAppender(getAppenderName(logger), null, layout, false, null) {
+        Appender appender = new AbstractAppender(getAppenderName(logger), null, layout, false, null) {
             @Override
             public void append(LogEvent event) {
                 listener.entry(toLogEntry(event));

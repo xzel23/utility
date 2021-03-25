@@ -514,7 +514,7 @@ public final class DataUtil {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
         
-        HashMap<U,Pair<V,V>> changes = new HashMap<>();
+        Map<U,Pair<V,V>> changes = new HashMap<>();
         keys.forEach( k -> {
             V va = a.get(k);
             V vb = b.get(k);
@@ -539,7 +539,7 @@ public final class DataUtil {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
         
-        HashMap<U,V> diff = new HashMap<>();
+        Map<U,V> diff = new HashMap<>();
         keys.forEach( k -> {
             V va = a.get(k);
             V vb = b.get(k);
