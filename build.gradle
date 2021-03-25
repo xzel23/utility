@@ -18,7 +18,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '9-beta2'
+    version = '9-beta3-SNAPSHOT'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
@@ -43,13 +43,13 @@ subprojects {
         mavenLocal()
         
         // GitLab Packages
-        if (properties.containsKey('gitlabPrivateToken')) {
+        if (System.properties.containsKey('gitlabPrivateToken')) {
             maven {
                 url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
                 name "GitlabPrivate"
                 credentials(HttpHeaderCredentials) {
                     name = 'Private-Token'
-                    value = gitlabPrivateToken
+                    value = System.properties.get('gitlabPrivateToken')
                 }
                 authentication {
                     header(HttpHeaderAuthentication)
@@ -78,6 +78,14 @@ subprojects {
         // JUnit
         testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+    }
+
+    idea {
+        module {
+            inheritOutputDirs = false
+            outputDir = file("$buildDir/classes/java/main/")
+            testOutputDir = file("$buildDir/classes/java/test/")
+        }
     }
 
     test {
@@ -159,7 +167,7 @@ subprojects {
         }
 
         repositories {
-            if (gitlabPrivateToken!=null) {
+            if (System.properties.containsKey('gitlabPrivateToken')) {
                 System.out.println("!!using private token!!")
                 // Gitlab public packages
                 if (!version.contains("SNAPSHOT")) {
@@ -168,7 +176,7 @@ subprojects {
                         name "GitlabPublic"
                         credentials(HttpHeaderCredentials) {
                             name = 'Private-Token'
-                            value = gitlabPrivateToken
+                            value = System.properties.get('gitlabPrivateToken')
                         }
                         authentication {
                             header(HttpHeaderAuthentication)
@@ -182,7 +190,7 @@ subprojects {
                     name "GitlabPrivate"
                     credentials(HttpHeaderCredentials) {
                         name = 'Private-Token'
-                        value = gitlabPrivateToken
+                        value = System.properties.get('gitlabPrivateToken')
                     }
                     authentication {
                         header(HttpHeaderAuthentication)
@@ -209,7 +217,6 @@ subprojects {
 
     // === SPOTBUGS === >
     spotbugs.toolVersion = '4.2.2'
-    spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         reports {
