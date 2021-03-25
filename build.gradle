@@ -5,7 +5,7 @@
 
 plugins {
     id 'com.adarshr.test-logger' version '2.1.0' apply false
-    id 'com.github.spotbugs' version '4.6.2' apply false
+    id 'com.github.spotbugs' version '4.7.0' apply false
 }
 
 subprojects {
@@ -18,7 +18,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '9-beta2-SNAPSHOT'
+    version = '9-beta2'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
@@ -43,13 +43,13 @@ subprojects {
         mavenLocal()
         
         // GitLab Packages
-        if (properties.containsKey('gitLabPrivateToken')) {
+        if (properties.containsKey('gitlabPrivateToken')) {
             maven {
                 url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
-                name "GitLab"
+                name "GitlabPrivate"
                 credentials(HttpHeaderCredentials) {
                     name = 'Private-Token'
-                    value = gitLabPrivateToken
+                    value = gitlabPrivateToken
                 }
                 authentication {
                     header(HttpHeaderAuthentication)
@@ -58,7 +58,7 @@ subprojects {
         } else if (System.getenv("CI_JOB_TOKEN")!=null) {
             maven {
                 url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
-                name "GitLab"
+                name "GitlabPrivate"
                 credentials(HttpHeaderCredentials) {
                     name = 'Job-Token'
                     value = System.getenv("CI_JOB_TOKEN")
@@ -141,7 +141,7 @@ subprojects {
     // Create the publication with the pom configuration:
     publishing {
         publications {
-            projectPublication(MavenPublication) {
+            projectJars(MavenPublication) {
                 from components.java
                 artifact sourcesJar
                 artifact javadocJar
@@ -159,19 +159,37 @@ subprojects {
         }
 
         repositories {
-            if (properties.containsKey('gitLabPrivateToken')) {
+            if (gitlabPrivateToken!=null) {
+                System.out.println("!!using private token!!")
+                // Gitlab public packages
+                if (!version.contains("SNAPSHOT")) {
+                    maven {
+                        url "https://gitlab.com/api/v4/projects/25276458/packages/maven"
+                        name "GitlabPublic"
+                        credentials(HttpHeaderCredentials) {
+                            name = 'Private-Token'
+                            value = gitlabPrivateToken
+                        }
+                        authentication {
+                            header(HttpHeaderAuthentication)
+                        }
+                    }
+                }
+                
+                // Gitlab private packages
                 maven {
                     url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
-                    name "GitLab"
+                    name "GitlabPrivate"
                     credentials(HttpHeaderCredentials) {
                         name = 'Private-Token'
-                        value = gitLabPrivateToken
+                        value = gitlabPrivateToken
                     }
                     authentication {
                         header(HttpHeaderAuthentication)
                     }
                 }
             } else if (System.getenv("CI_JOB_TOKEN")!=null) {
+                System.out.println("!!using CI_JOB_TOKEN!!")
                 maven {
                     url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
                     name "GitLab"
@@ -183,6 +201,8 @@ subprojects {
                         header(HttpHeaderAuthentication)
                     }
                 }
+            } else {
+                System.out.println("!!neither gitlabPrivateToken nor CI_JOB_TOKEN is set -- cannot publish build!!")
             }
         }
     }
