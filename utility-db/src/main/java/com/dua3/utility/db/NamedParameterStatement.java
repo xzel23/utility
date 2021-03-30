@@ -5,11 +5,18 @@
 
 package com.dua3.utility.db;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -277,31 +284,385 @@ public class NamedParameterStatement implements AutoCloseable {
     private List<Integer> getIndexes(String name) {
         return Objects.requireNonNull(indexMap.get(name), () -> "unknown parameter '" + name + "'.").indexes;
     }
+    
+    /* Some helper methods to set parameter values. */
+    @FunctionalInterface
+    private interface SetParameter<T> {
+        void accept(int idx, T value) throws SQLException;
+    }
 
-    /**
-     * Sets a parameter.
-     *
-     * @param  name
-     *                                  parameter name
-     * @param  value
-     *                                  parameter value
-     * @throws SQLException
-     *                                  if an error occurred
-     * @throws IllegalArgumentException
-     *                                  if the parameter does not exist
-     * @see                             PreparedStatement#setObject(int,
-     *                                  java.lang.Object)
-     */
-    public void setObject(String name, Object value) throws SQLException {
-        if (value!=null) {
-            for (int idx : getIndexes(name)) {
-                statement.setObject(idx, value);
-            }
+    private <T> void set(SQLType type, String name, T value, SetParameter<T> setter) throws SQLException {
+        if (value==null) {
+            setNull(name, type);
+        } else {
+            setNonNull(name, value, setter);
+        }
+    }
+
+    private <T> void setNonNull(String name, T value, SetParameter<T> setter) throws SQLException {
+        Objects.requireNonNull(value);
+        for (int idx : getIndexes(name)) {
+            setter.accept(idx, value);
+        }
+    }
+
+    @FunctionalInterface
+    private interface SetParameterInt<T> {
+        void accept(int idx, T value, int arg) throws SQLException;
+    }
+    
+    private <T> void setWithIntArg(SQLType type, String name, T value, int arg, SetParameterInt<T> setter) throws SQLException {
+        if (value==null) {
+            setNull(name, type);
+        } else {
+            setNonNullWithIntArg(name, value, arg, setter);
+        }
+    }
+
+    private <T> void setNonNullWithIntArg(String name, T value, int arg, SetParameterInt<T> setter) throws SQLException {
+        Objects.requireNonNull(value);
+        for (int idx : getIndexes(name)) {
+            setter.accept(idx, value, arg);
+        }
+    }
+
+    @FunctionalInterface
+    private interface SetParameterLong<T> {
+        void accept(int idx, T value, long arg) throws SQLException;
+    }
+
+    private <T> void setWithLongArg(SQLType type, String name, T value, long arg, SetParameterLong<T> setter) throws SQLException {
+        if (value==null) {
+            setNull(name, type);
+        } else {
+            setNonNullWithLongArg(name, value, arg, setter);
+        }
+    }
+
+    private <T> void setNonNullWithLongArg(String name, T value, long arg, SetParameterLong<T> setter) throws SQLException {
+        Objects.requireNonNull(value);
+        for (int idx : getIndexes(name)) {
+            setter.accept(idx, value, arg);
+        }
+    }
+
+    @FunctionalInterface
+    private interface SetParameterObject<T,U> {
+        void accept(int idx, T value, U arg) throws SQLException;
+    }
+
+    private <T,U> void setWithObjectArg(SQLType type, String name, T value, U arg, SetParameterObject<T,U> setter) throws SQLException {
+        if (value==null) {
+            setNull(name, type);
         } else {
             for (int idx : getIndexes(name)) {
-                statement.setNull(idx, Types.JAVA_OBJECT);
+                setter.accept(idx, value, arg);
             }
         }
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setArray(int, Array)
+     * 
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setArray(String name, Array value) throws SQLException {
+        set(JDBCType.ARRAY, name, value, statement::setArray);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setAsciiStream(int, InputStream)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setAsciiStream(String name, InputStream value) throws SQLException {
+        setNonNull(name, value, statement::setAsciiStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setAsciiStream(int, InputStream, int)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setAsciiStream(String name, InputStream value, int length) throws SQLException {
+        setNonNullWithIntArg(name, value, length, statement::setAsciiStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setAsciiStream(int, InputStream, long)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setAsciiStream(String name, InputStream value, long length) throws SQLException {
+        setNonNullWithLongArg(name, value, length, statement::setAsciiStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBigDecimal(int, BigDecimal)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setBigDecimal(String name, BigDecimal value) throws SQLException {
+        set(JDBCType.DECIMAL, name, value, statement::setBigDecimal);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBinaryStream(int, InputStream) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setBinaryStream(String name, InputStream value) throws SQLException {
+        setNonNull(name, value, statement::setBinaryStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBinaryStream(int, InputStream, int)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setBinaryStream(String name, InputStream value, int length) throws SQLException {
+        setNonNullWithIntArg(name, value, length, statement::setBinaryStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBinaryStream(int, InputStream, long)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setBinaryStream(String name, InputStream value, long length) throws SQLException {
+        setNonNullWithLongArg(name, value, length, statement::setBinaryStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBlob(int, InputStream) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setBlob(String name, InputStream value) throws SQLException {
+        setNonNull(name, value, statement::setBlob);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBlob(int, InputStream, long) (int, Array)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setBlob(String name, InputStream value, long length) throws SQLException {
+        setNonNullWithLongArg(name, value, length, statement::setBlob);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBlob(int, Blob) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setBlob(String name, Blob value) throws SQLException {
+        set(JDBCType.BLOB, name, value, statement::setBlob);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBoolean(int, boolean) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setBoolean(String name, boolean value) throws SQLException {
+        setNonNull(name, value, statement::setBoolean);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setByte(int, byte) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setByte(String name, byte value) throws SQLException {
+        setNonNull(name, value, statement::setByte);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setBytes(int, byte[]) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setBytes(String name, byte[] value) throws SQLException {
+        set(JDBCType.BINARY, name, value, statement::setBytes);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setCharacterStream(int, Reader) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setCharacterStream(String name, Reader value) throws SQLException {
+        setNonNull(name, value, statement::setCharacterStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setCharacterStream(int, Reader, int) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setCharacterStream(String name, Reader value, int length) throws SQLException {
+        setNonNullWithIntArg(name, value, length, statement::setCharacterStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setCharacterStream(int, Reader, long) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setCharacterStream(String name, Reader value, long length) throws SQLException {
+        setNonNullWithLongArg(name, value, length, statement::setCharacterStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setClob(int, Reader) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setClob(String name, Reader value) throws SQLException {
+        setNonNull(name, value, statement::setClob);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setClob(int, Reader, long) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setClob(String name, Reader value, long length) throws SQLException {
+        setNonNullWithLongArg(name, value, length, statement::setClob);
     }
 
     /**
@@ -315,83 +676,518 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  if an error occurred
      * @throws IllegalArgumentException
      *                                  if the parameter does not exist
-     * @see                             PreparedStatement#setString(int,
-     *                                  java.lang.String)
+     * @see                             PreparedStatement#setClob(int, Clob)
      */
-    public void setString(String name, String value) throws SQLException {
-        if (value!=null) {
-            for (int idx : getIndexes(name)) {
-                statement.setString(idx, value);
-            }
-        } else {
-            for (int idx : getIndexes(name)) {
-                statement.setNull(idx, Types.VARCHAR);
-            }
-        }
+    public void setClob(String name, Clob value) throws SQLException {
+        set(JDBCType.CLOB, name, value, statement::setClob);
     }
 
     /**
-     * Sets a parameter.
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setDate(int, Date) 
      *
      * @param  name
-     *                                  parameter name
-     * @param  value
-     *                                  parameter value
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
      * @throws SQLException
-     *                                  if an error occurred
+     *     if an error occurred
      * @throws IllegalArgumentException
-     *                                  if the parameter does not exist
-     * @see                             PreparedStatement#setInt(int, int)
+     *     if the parameter does not exist
+     */
+    public void setDate(String name, Date value) throws SQLException {
+        set(JDBCType.DATE, name, value, statement::setDate);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setDate(int, Date, Calendar) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setDate(String name, Date value, Calendar arg) throws SQLException {
+        setWithObjectArg(JDBCType.DATE, name, value, arg, statement::setDate);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setDouble(int, double) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setDouble(String name, double value) throws SQLException {
+        setNonNull(name, value, statement::setDouble);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setFloat(int, float) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setFloat(String name, float value) throws SQLException {
+        setNonNull(name, value, statement::setFloat);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setInt(int, int) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
      */
     public void setInt(String name, int value) throws SQLException {
-        for (int idx : getIndexes(name)) {
-            statement.setInt(idx, value);
-        }
+        setNonNull(name, value, statement::setInt);
     }
 
     /**
-     * Sets a parameter.
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setLong(int, long) 
      *
      * @param  name
-     *                                  parameter name
-     * @param  value
-     *                                  parameter value
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
      * @throws SQLException
-     *                                  if an error occurred
+     *     if an error occurred
      * @throws IllegalArgumentException
-     *                                  if the parameter does not exist
-     * @see                             PreparedStatement#setInt(int, int)
+     *     if the parameter does not exist
      */
     public void setLong(String name, long value) throws SQLException {
+        setNonNull(name, value, statement::setLong);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setNCharacterStream(int, Reader) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setNCharacterStream(String name, Reader value) throws SQLException {
+        setNonNull(name, value, statement::setNCharacterStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setNCharacterStream(int, Reader, long) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setNCharacterStream(String name, Reader value, long length) throws SQLException {
+        setNonNullWithLongArg(name, value, length, statement::setNCharacterStream);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setNClob(int, Reader) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setNClob(String name, Reader value) throws SQLException {
+        setNonNull(name, value, statement::setNClob);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setNClob(int, Reader, long) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setNClob(String name, Reader value, long length) throws SQLException {
+        setNonNullWithLongArg(name, value, length, statement::setNClob);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setNClob(int, NClob) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setNClob(String name, NClob value) throws SQLException {
+        set(JDBCType.NCLOB, name, value, statement::setNClob);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setNString(int, String) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setNString(String name, String value) throws SQLException {
+        set(JDBCType.NCHAR, name, value, statement::setNString);
+    }
+
+    /**
+     * Set a parameter to {@code null}.
+     *
+     * @see PreparedStatement#setNull(int, int) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setNull(String name, SQLType type) throws SQLException {
         for (int idx : getIndexes(name)) {
-            statement.setLong(idx, value);
+            statement.setNull(idx, type.getVendorTypeNumber());
         }
     }
 
     /**
-     * Sets a parameter.
+     * Set a parameter to {@code null}.
+     *
+     * @see PreparedStatement#setNull(int, int) 
      *
      * @param  name
-     *                                  parameter name
-     * @param  value
-     *                                  parameter value
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
      * @throws SQLException
-     *                                  if an error occurred
+     *     if an error occurred
      * @throws IllegalArgumentException
-     *                                  if the parameter does not exist
-     * @see                             PreparedStatement#setTimestamp(int,
-     *                                  java.sql.Timestamp)
+     *     if the parameter does not exist
      */
-    public void setTimestamp(String name, Timestamp value) throws SQLException {
-        if (value!=null) {
-            for (int idx : getIndexes(name)) {
-                statement.setTimestamp(idx, value);
-            }
+    void setNull(String name, int sqlType) throws SQLException {
+        for (int idx : getIndexes(name)) {
+            statement.setNull(idx, sqlType);
+        }
+    }
+
+    /**
+     * Set a parameter to {@code null}.
+     *
+     * @see PreparedStatement#setNull(int, int, String) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setNull(String name, int sqlType, String typeName) throws SQLException {
+        for (int idx : getIndexes(name)) {
+            statement.setNull(idx, sqlType, typeName);
+        }
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setObject(int, Object) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setObject(String name, Object value) throws SQLException {
+        set(JDBCType.JAVA_OBJECT, name, value, statement::setObject);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setObject(int, Object, int)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setObject(String name, Object value, int targetSqlType) throws SQLException {
+        if (value==null) {
+            setNull(name, targetSqlType);
+        } else {
+            setNonNullWithIntArg(name, value, targetSqlType, statement::setObject);
+        }
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setObject(int, Object, int, int) (int, Array)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setObject(String name, Object value, int targetSqlType, int scaleOrLength) throws SQLException {
+        if (value==null) {
+            setNull(name, targetSqlType);
         } else {
             for (int idx : getIndexes(name)) {
-                statement.setNull(idx, Types.TIMESTAMP);
+                statement.setObject(idx, value, targetSqlType, scaleOrLength);
             }
         }
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setObject(int, Object, SQLType)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setObject(String name, Object value, SQLType targetSqlType) throws SQLException {
+        if (value==null) {
+            setNull(name, targetSqlType);
+        } else {
+            for (int idx : getIndexes(name)) {
+                statement.setObject(idx, value, targetSqlType);
+            }
+        }
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setObject(int, Object, SQLType, int)
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setObject(String name, Object value, SQLType targetSqlType, int scaleOrLength) throws SQLException {
+        if (value==null) {
+            setNull(name, targetSqlType);
+        } else {
+            for (int idx : getIndexes(name)) {
+                statement.setObject(idx, value, targetSqlType, scaleOrLength);
+            }
+        }
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setRef(int, Ref) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setRef(String name, Ref value) throws SQLException {
+        set(JDBCType.REF, name, value, statement::setRef);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setRowId(int, RowId) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setRowId(String name, RowId value) throws SQLException {
+        set(JDBCType.ROWID, name, value, statement::setRowId);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setShort(int, short) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setShort(String name, short value) throws SQLException {
+        set(JDBCType.SMALLINT, name, value, statement::setShort);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setSQLXML(int, SQLXML) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setSQLXML(String name, SQLXML value) throws SQLException {
+        set(JDBCType.SQLXML, name, value, statement::setSQLXML);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setString(int, String) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setString(String name, String value) throws SQLException {
+        set(JDBCType.CHAR, name, value, statement::setString);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setTime(int, Time) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setTime(String name, Time value) throws SQLException {
+        set(JDBCType.TIME, name, value, statement::setTime);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setTime(int, Time, Calendar) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setTime(String name, Time value, Calendar arg) throws SQLException {
+        setWithObjectArg(JDBCType.TIME, name, value, arg, statement::setTime);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setTimestamp(int, Timestamp) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setTimestamp(String name, Timestamp value) throws SQLException {
+        set(JDBCType.TIMESTAMP, name, value, statement::setTimestamp);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setTimestamp(int, Timestamp, Calendar) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    void setTimestamp(String name, Timestamp value, Calendar arg) throws SQLException {
+        setWithObjectArg(JDBCType.TIMESTAMP, name, value, arg, statement::setTimestamp);
+    }
+
+    /**
+     * Set a parameter.
+     *
+     * @see PreparedStatement#setURL(int, URL) 
+     *
+     * @param  name
+     *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @throws SQLException
+     *     if an error occurred
+     * @throws IllegalArgumentException
+     *     if the parameter does not exist
+     */
+    public void setURL(String name, URL value) throws SQLException {
+        set(JDBCType.DATALINK, name, value, statement::setURL);
     }
 
     /**
@@ -499,15 +1295,10 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  java.sql.Timestamp)
      */
     public void setLocalDate(String name, LocalDate value) throws SQLException {
-        if (value!= null) {
-            Date date = Date.valueOf(value);
-            for (int idx : getIndexes(name)) {
-                statement.setDate(idx, date);
-            }
+        if (value==null) {
+            setNull(name, JDBCType.DATE);
         } else {
-            for (int idx : getIndexes(name)) {
-                statement.setNull(idx, Types.DATE);
-            }
+            setNonNull(name, Date.valueOf(value), statement::setDate);
         }
     }
 
@@ -526,15 +1317,32 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  java.sql.Timestamp)
      */
     public void setLocalDateTime(String name, LocalDateTime value) throws SQLException {
-        if (value!= null) {
-            Timestamp t = Timestamp.valueOf(value);
-            for (int idx : getIndexes(name)) {
-                statement.setTimestamp(idx, t);
-            }
+        if (value==null) {
+            setNull(name, JDBCType.TIMESTAMP);
         } else {
-            for (int idx : getIndexes(name)) {
-                statement.setNull(idx, Types.TIMESTAMP);
-            }
+            setNonNull(name, Timestamp.valueOf(value), statement::setTimestamp);
+        }
+    }
+
+    /**
+     * Sets a parameter.
+     *
+     * @param  name
+     *                                  parameter name
+     * @param  value
+     *                                  parameter value
+     * @throws SQLException
+     *                                  if an error occurred
+     * @throws IllegalArgumentException
+     *                                  if the parameter does not exist
+     * @see                             PreparedStatement#setTimestamp(int,
+     *                                  java.sql.Timestamp)
+     */
+    public void setLocalTime(String name, LocalTime value) throws SQLException {
+        if (value==null) {
+            setNull(name, JDBCType.TIME);
+        } else {
+            setNonNull(name, Time.valueOf(value), statement::setTime);
         }
     }
 

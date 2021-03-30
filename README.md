@@ -68,6 +68,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 - build uses Gradle 7 to enable building on JDK 16
 - removed usae of the JPMS Gradle plugin as it is not compatible with Gradle 7 and not needed anymore after dropping JDK 8 support and Gradle 7 adding modularity support.
 - logback support has been replaced by log4j2 due to missing jigsaw suport in logback. This means if you have been using a Log4J to Logback bridge before, it's now time to do it the other way around.
+- NamedParameterStatement supports many more data types; fixes for inserting null values.
 
 ### 8.2.2
 
