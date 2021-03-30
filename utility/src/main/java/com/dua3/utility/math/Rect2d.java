@@ -7,9 +7,11 @@ package com.dua3.utility.math;
 
 import com.dua3.utility.lang.LangUtil;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
-public class Rect2d {
+public class Rect2d implements Polygon2d {
     private final double x;
     private final double y;
     private final double width;
@@ -94,5 +96,20 @@ public class Rect2d {
                ", width=" + width +
                ", height=" + height +
                '}';
+    }
+
+    @Override
+    public int vertexCount() {
+        return 4;
+    }
+
+    @Override
+    public List<Vec2d> vertices() {
+        return List.of(
+                Vec2d.of(x,y),
+                Vec2d.of(x+width,y),
+                Vec2d.of(x+width,y+height),
+                Vec2d.of(x,y+height)
+        );
     }
 }
