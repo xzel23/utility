@@ -33,6 +33,6 @@ class Poly2d implements Polygon2d {
 
     @Override
     public List<Vec2d> vertices() {
-        return Collections.unmodifiableList(Arrays.asList(vertices));
+        return List.of(vertices);
     }
 }

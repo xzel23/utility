@@ -202,6 +202,7 @@ public class RichText
      * @param pos the character position
      * @return the run index
      */
+    @SuppressWarnings("fallthrough")
     private int runIndex(int pos) {
         final int pos_ = start+pos;
         switch (runStart.length) {

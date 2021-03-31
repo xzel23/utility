@@ -27,9 +27,9 @@ public class RichTextBuilder implements Appendable, ToRichText {
     private final Deque<AttributeChange> openedAttributes = new LinkedList<>();
 
     private static class AttributeChange {
-        String name;
-        Object previousValue;
-        Object value;
+        final String name;
+        final Object previousValue;
+        final Object value;
         
         AttributeChange(String name, Object previousValue, Object value) {
             this.name = name;

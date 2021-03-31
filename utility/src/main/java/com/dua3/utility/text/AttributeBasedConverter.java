@@ -33,7 +33,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         /** The current font used when appending text. */
         private Map<String,Object> currentAttributes;
         /** Store the initial attributes so that they can be restored at the end. */
-        private Map<String,Object> initialAttributes;
+        private final Map<String,Object> initialAttributes;
 
         /**
          * Create a new instance.

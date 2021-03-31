@@ -450,7 +450,7 @@ public final class IOUtil {
                     .sorted(Comparator.reverseOrder())
                     .forEach(LangUtil.uncheckedConsumer(Files::deleteIfExists));
         } catch (UncheckedIOException e) {
-            throw new IOException(e.getCause());
+            throw new IOException(e);
         }
     }
 

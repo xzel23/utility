@@ -666,7 +666,7 @@ public final class LangUtil {
      *
      * @return the URL of the resource if found, or {@code null}
      * 
-     * @throws NullPointerException if no resource was found
+     * @throws MissingResourceException if no resource was found
      */
     public static URL getResourceURL(Class<?> cls, String name, Locale locale) {
         String basename = IOUtil.stripExtension(name);
@@ -706,8 +706,8 @@ public final class LangUtil {
         }
         
         // nothing found
-        LOG.warning("resource '"+name+"' not found. candidates: "+candidates.toString());
-        throw new NullPointerException("Resource not found: "+name);
+        LOG.warning(() ->"resource '" + name + "' not found. candidates: " + candidates);
+        throw new MissingResourceException("Resource not found: "+name, cls.getName(), name);
     }
 
     /**

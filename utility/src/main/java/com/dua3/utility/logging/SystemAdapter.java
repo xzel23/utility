@@ -26,6 +26,7 @@ public final class SystemAdapter {
     public static synchronized void addSystemOutListener(LogListener listener) {
         if (stdOut== null) {
             try {
+                @SuppressWarnings("UseOfSystemOutOrSystemErr")
                 PrintStream origOut = System.out;
                 LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemOutLogEntry(txt)));
                 PrintStream logOut = new PrintStream(lineOut, true, StandardCharsets.UTF_8.name());
@@ -40,6 +41,7 @@ public final class SystemAdapter {
 
     public static synchronized void addSystemErrListener(LogListener listener) {
         try {
+            @SuppressWarnings("UseOfSystemOutOrSystemErr")
             PrintStream origErr = System.err;
             LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemErrLogEntry(txt)));
             PrintStream logOut = new PrintStream(lineOut,true, StandardCharsets.UTF_8.name());

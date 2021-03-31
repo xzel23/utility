@@ -17,8 +17,6 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
     final Consumer<RichTextBuilder> appendSuffix;
     final IntUnaryOperator calculateSupplementaryLength;
 
-    RichText emptyValue = RichText.emptyText();
-    
     public RichTextJoiner(CharSequence delimiter,
                           CharSequence prefix,
                           CharSequence suffix) {
@@ -66,7 +64,7 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
             int length = accu.second.get();
 
             if (length==0) {
-                return emptyValue;
+                return RichText.emptyText();
             }
 
             // calculate needed text length and create builder wiith sufficient capacity

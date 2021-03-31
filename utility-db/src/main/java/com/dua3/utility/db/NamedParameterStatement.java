@@ -9,14 +9,13 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -693,7 +692,9 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if an error occurred
      * @throws IllegalArgumentException
      *     if the parameter does not exist
+     * @deprecated use {@link #setLocalDate(String, LocalDate)}
      */
+    @Deprecated
     public void setDate(String name, Date value) throws SQLException {
         set(JDBCType.DATE, name, value, statement::setDate);
     }
@@ -709,7 +710,9 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if an error occurred
      * @throws IllegalArgumentException
      *     if the parameter does not exist
+     * @deprecated use {@link #setLocalDate(String, LocalDate)}
      */
+    @Deprecated
     void setDate(String name, Date value, Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.DATE, name, value, arg, statement::setDate);
     }
@@ -1137,7 +1140,9 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if an error occurred
      * @throws IllegalArgumentException
      *     if the parameter does not exist
+     * @deprecated use {@link #setLocalTime(String, LocalTime)}
      */
+    @Deprecated
     void setTime(String name, Time value, Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.TIME, name, value, arg, statement::setTime);
     }
@@ -1153,7 +1158,9 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if an error occurred
      * @throws IllegalArgumentException
      *     if the parameter does not exist
+     * @deprecated use {@link #setLocalDateTime(String, LocalDateTime)}
      */
+    @Deprecated
     public void setTimestamp(String name, Timestamp value) throws SQLException {
         set(JDBCType.TIMESTAMP, name, value, statement::setTimestamp);
     }
@@ -1169,7 +1176,9 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if an error occurred
      * @throws IllegalArgumentException
      *     if the parameter does not exist
+     * @deprecated use {@link #setLocalDateTime(String, LocalDateTime)}
      */
+    @Deprecated
     void setTimestamp(String name, Timestamp value, Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.TIMESTAMP, name, value, arg, statement::setTimestamp);
     }
@@ -1343,6 +1352,32 @@ public class NamedParameterStatement implements AutoCloseable {
             setNull(name, JDBCType.TIME);
         } else {
             setNonNull(name, Time.valueOf(value), statement::setTime);
+        }
+    }
+
+    /**
+     * Sets a parameter.
+     *
+     * @param  name
+     *                                  parameter name
+     * @param  value
+     *                                  parameter value
+     * @throws SQLException
+     *                                  if an error occurred
+     * @throws IllegalArgumentException
+     *                                  if the parameter does not exist
+     * @see                             PreparedStatement#setTimestamp(int,
+     *                                  java.sql.Timestamp)
+     */
+    public void setZonedDateTime(String name, ZonedDateTime value) throws SQLException {
+        if (value==null) {
+            setNull(name, JDBCType.TIMESTAMP);
+        } else {
+            Calendar cal = GregorianCalendar.from(value);
+            Timestamp ts = Timestamp.valueOf(value.toLocalDateTime());
+            for (int idx : getIndexes(name)) {
+                statement.setTimestamp(idx, ts, cal);
+            }
         }
     }
 
