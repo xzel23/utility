@@ -16,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class HtmlConverterTest {
 
-    public HtmlConverterTest() {
-    }
-
     @Test
     public void testEmbeddedStyle() {
         Style bold = Style.create("bold", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));

@@ -16,10 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 /**
  * @author Axel Howind
  */
+@SuppressWarnings("UnnecessaryLocalVariable")
 public class RichTextTest {
-
-    public RichTextTest() {
-    }
 
     @Test
     public void testValueOf() {

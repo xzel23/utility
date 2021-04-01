@@ -17,9 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class RichTextBuilderTest {
 
-    public RichTextBuilderTest() {
-    }
-
     @Test
     public void testWithAttributes() {
         RichTextBuilder builder = new RichTextBuilder();

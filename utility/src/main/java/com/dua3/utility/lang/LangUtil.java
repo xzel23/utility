@@ -125,6 +125,7 @@ public final class LangUtil {
      * @param     <T> the parameter type
      * @param arg the variable to ignore
      */
+    @SuppressWarnings("EmptyMethod")
     public static <T> void ignore(T arg) {
         // nop
     }
@@ -194,6 +195,7 @@ public final class LangUtil {
      * @return   instance of Consumer that invokes f and converts IOException to
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      */
+    @SuppressWarnings("ProhibitedExceptionThrown")
     public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<T> c) {
         return arg -> {
             try {
@@ -217,6 +219,7 @@ public final class LangUtil {
      * @return   instance of Sipplier that invokes f and converts IOException to
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      */
+    @SuppressWarnings("ProhibitedExceptionThrown")
     public static <T> Supplier<T> uncheckedSupplier(SupplierThrows<T> s) {
         return () -> {
             try {
@@ -241,6 +244,7 @@ public final class LangUtil {
      * @return   instance of Function that invokes f and converts IOException to
      *           UncheckedIOException and other checked exceptions to {@link WrappedException}
      */
+    @SuppressWarnings("ProhibitedExceptionThrown")
     public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<T, R> f) {
         return arg -> {
             try {
@@ -263,6 +267,7 @@ public final class LangUtil {
      * @return   instance of Function that invokes f and converts IOException to
      *           UncheckedIOException
      */
+    @SuppressWarnings("ProhibitedExceptionThrown")
     public static Runnable uncheckedRunnable(RunnableThrows r) {
         return () -> {
             try {

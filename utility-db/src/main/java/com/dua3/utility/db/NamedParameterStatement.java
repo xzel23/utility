@@ -712,6 +712,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if the parameter does not exist
      * @deprecated use {@link #setLocalDate(String, LocalDate)}
      */
+    @SuppressWarnings("UseOfObsoleteDateTimeApi")
     @Deprecated
     void setDate(String name, Date value, Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.DATE, name, value, arg, statement::setDate);
@@ -1142,6 +1143,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if the parameter does not exist
      * @deprecated use {@link #setLocalTime(String, LocalTime)}
      */
+    @SuppressWarnings("UseOfObsoleteDateTimeApi")
     @Deprecated
     void setTime(String name, Time value, Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.TIME, name, value, arg, statement::setTime);
@@ -1178,6 +1180,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if the parameter does not exist
      * @deprecated use {@link #setLocalDateTime(String, LocalDateTime)}
      */
+    @SuppressWarnings("UseOfObsoleteDateTimeApi")
     @Deprecated
     void setTimestamp(String name, Timestamp value, Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.TIMESTAMP, name, value, arg, statement::setTimestamp);
@@ -1369,6 +1372,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @see                             PreparedStatement#setTimestamp(int,
      *                                  java.sql.Timestamp)
      */
+    @SuppressWarnings("UseOfObsoleteDateTimeApi")
     public void setZonedDateTime(String name, ZonedDateTime value) throws SQLException {
         if (value==null) {
             setNull(name, JDBCType.TIMESTAMP);

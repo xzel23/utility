@@ -10,7 +10,7 @@ import com.dua3.utility.lang.LangUtil;
 import java.util.List;
 import java.util.Objects;
 
-public class Rect2d implements Polygon2d {
+public final class Rect2d implements Polygon2d {
     private final double x;
     private final double y;
     private final double width;

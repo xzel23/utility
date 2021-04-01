@@ -34,9 +34,6 @@ public class MathUtilTest {
         // nop
     }
 
-    public MathUtilTest() {
-    }
-
     @BeforeEach
     public void setUp() {
         // nop

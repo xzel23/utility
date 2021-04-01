@@ -54,7 +54,7 @@ public final class AnsiCode {
         out.append(ESC_START);
         String delimiter = "";
         for (int arg : args) {
-            out.append(delimiter).append(Integer.toString(arg));
+            out.append(delimiter).append(arg);
             delimiter = ";";
         }
         out.append(ESC_END);

@@ -60,6 +60,7 @@ public class AffineTransformation {
      * Return the identity transformation.
      * @return affine transformation (identity)
      */
+    @SuppressWarnings("SameReturnValue")
     public static AffineTransformation identity() {
         return IDENTITY;
     }

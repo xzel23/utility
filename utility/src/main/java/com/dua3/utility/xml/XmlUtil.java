@@ -54,7 +54,7 @@ public final class XmlUtil {
                     try {
                         DEFAULT_INSTANCE = new XmlUtil();
                     } catch (ParserConfigurationException e) {
-                        throw new RuntimeException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
+                        throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
                     }
                 }
             }

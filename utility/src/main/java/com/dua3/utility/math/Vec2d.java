@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * An immutable 2-dimensional vector using double coordinates.
  */
-public class Vec2d {
+public final class Vec2d {
     private final double x;
     private final double y;
 
