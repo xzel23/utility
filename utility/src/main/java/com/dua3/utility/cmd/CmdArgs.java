@@ -141,7 +141,7 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
      * @param action the action to execute
      * @param <T> the parameter type
      */
-    public <T> void ifPresent(SimpleOption<T> option, Consumer<T> action) {
+    public <T> void ifPresent(SimpleOption<T> option, Consumer<? super T> action) {
         stream(option).map(list -> list.get(0)).forEach(action);
     }
         
@@ -151,7 +151,7 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
      * @param action the action to execute
      * @param <T> the parameter type
      */
-    public <T> void forEach(Option<T> option, Consumer<List<T>> action) {
+    public <T> void forEach(Option<T> option, Consumer<? super List<T>> action) {
         stream(option).forEach(action);
     }
         

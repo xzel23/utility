@@ -271,7 +271,7 @@ public class Font {
      * @param <T> object type
      * @param <U> attribute type
      */
-    private static <T,U> void deltaHelper(T o1, T o2, Function<T,U> getter, Consumer<U> setter) {
+    private static <T,U> void deltaHelper(T o1, T o2, Function<T,U> getter, Consumer<? super U> setter) {
         U v1 = getter.apply(o1);
         U v2 = getter.apply(o2);
         if (!Objects.equals(v1, v2)) {

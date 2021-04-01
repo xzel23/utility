@@ -474,7 +474,7 @@ public final class LangUtil {
      * @param  cleaner  the cleanup operation to be executed on `close()`
      * @return          caching Supplier
      */
-    public static <T> AutoCloseableSupplier<T> cache(Supplier<T> supplier, Consumer<T> cleaner) {
+    public static <T> AutoCloseableSupplier<T> cache(Supplier<T> supplier, Consumer<? super T> cleaner) {
         return new CachingSupplier<>(supplier, cleaner);
     }
 

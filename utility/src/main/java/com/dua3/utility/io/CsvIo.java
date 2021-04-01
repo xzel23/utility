@@ -82,9 +82,9 @@ public abstract class CsvIo implements AutoCloseable {
 
         private final String name;
 
-        private final Function<Locale, DateTimeFormatter> factory;
+        private final Function<? super Locale, DateTimeFormatter> factory;
 
-        PredefinedDateFormat(String name, Function<Locale, DateTimeFormatter> factory) {
+        PredefinedDateFormat(String name, Function<? super Locale, DateTimeFormatter> factory) {
             this.name = name;
             this.factory = factory;
         }
@@ -114,9 +114,9 @@ public abstract class CsvIo implements AutoCloseable {
 
         private final String name;
 
-        private final Function<Locale, DateTimeFormatter> factory;
+        private final Function<? super Locale, DateTimeFormatter> factory;
 
-        PredefinedDateTimeFormat(String name, Function<Locale, DateTimeFormatter> factory) {
+        PredefinedDateTimeFormat(String name, Function<? super Locale, DateTimeFormatter> factory) {
             this.name = name;
             this.factory = factory;
         }

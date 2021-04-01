@@ -528,7 +528,7 @@ public final class IOUtil {
      * @throws IOException
      *                           if an exception occurs during loading the data
      */
-    public static String loadText(Path path, Consumer<Charset> onCharsetDetected) throws IOException {
+    public static String loadText(Path path, Consumer<? super Charset> onCharsetDetected) throws IOException {
         return loadText(path, onCharsetDetected, CHARSETS);
     }
 

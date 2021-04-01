@@ -32,7 +32,7 @@ public class Codecs {
         registerCodec(Color.class, (DataOutputStream os, Color c) -> os.writeInt(c.argb()), (DataInputStream is) -> Color.argb(is.readInt()));
     }
 
-    public <T> void registerCodec(Class<T> cls, Encoder<T> enc, Decoder<T> dec) {
+    public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<T> dec) {
         Object prev = CODECS.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
         LangUtil.check(prev==null, "Codec already registered for class: "+cls);
     }
@@ -50,7 +50,7 @@ public class Codecs {
      * @param <T> the object type
      * @return the new codec
      */
-    public static <T> Codec<T> createCodec(String name, Encoder<T> enc, Decoder<T> dec) {
+    public static <T> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<T> dec) {
         return new Codec<>() {
             @Override
             public String name() {

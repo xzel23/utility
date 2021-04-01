@@ -401,7 +401,7 @@ public final class SwingUtil {
      * @param component the component to add drop support to
      * @param action the action to perform when files are dropped
      */
-    public static void addDropFilesSupport(JComponent component, Consumer<Collection<File>> action) {
+    public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action) {
         addDropFilesSupport(component, action, files -> !files.isEmpty(), e -> {});
     }
 
