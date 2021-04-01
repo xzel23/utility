@@ -96,7 +96,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @param attributes {@link Map} holding TextAttribute values
      * @return FontDef instance
      */
-    public static FontDef getFontDef(Map<String,Object> attributes) {
+    public static FontDef getFontDef(Map<? super String, Object> attributes) {
         Font font = (Font) attributes.get(Style.FONT);
         if (font != null) {
             return font.toFontDef();

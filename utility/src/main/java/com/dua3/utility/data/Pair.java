@@ -33,7 +33,7 @@ public class Pair<T1, T2> {
      *                the pairs to add
      */
     @SafeVarargs
-    public static <K, V> void addToMap(Map<K, V> m, Pair<K, V>... args) {
+    public static <K, V> void addToMap(Map<? super K, ? super V> m, Pair<K, V>... args) {
         for (Pair<K, V> arg : args) {
             m.put(arg.first, arg.second);
         }
@@ -51,7 +51,7 @@ public class Pair<T1, T2> {
      * @param    args
      *                the pairs to add
      */
-    public static <K, V> void addToMap(Map<K, V> m, Iterable<Pair<K, V>> args) {
+    public static <K, V> void addToMap(Map<? super K, ? super V> m, Iterable<Pair<K, V>> args) {
         for (Pair<K, V> arg : args) {
             m.put(arg.first, arg.second);
         }

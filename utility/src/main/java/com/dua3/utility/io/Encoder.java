@@ -38,7 +38,7 @@ public interface Encoder<T> {
      * @param <T> the object type
      * @throws IOException if an error occurs
      */
-    static <T> void encode(DataOutputStream os, Collection<T> coll, Encoder<T> codec) throws IOException {
+    static <T> void encode(DataOutputStream os, Collection<T> coll, Encoder<? super T> codec) throws IOException {
         os.writeInt(coll.size());
         for (T element : coll) {
             codec.encode(os, element);

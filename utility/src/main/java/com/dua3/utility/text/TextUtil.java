@@ -218,7 +218,7 @@ public final class TextUtil {
      * @param env      substitution environment
      * @param output   output
      */
-    public static void transform(String template, UnaryOperator<String> env, Consumer<CharSequence> output) {
+    public static void transform(String template, UnaryOperator<String> env, Consumer<? super CharSequence> output) {
         int pos = 0;
         while (pos < template.length()) {
             // find next ref

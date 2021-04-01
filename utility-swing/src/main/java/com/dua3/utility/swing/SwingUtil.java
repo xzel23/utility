@@ -52,7 +52,7 @@ public final class SwingUtil {
      * @return
      *                           new Action instance
      */
-    public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
+    public static Action createAction(String name, Consumer<? super ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             private static final long serialVersionUID = 1L;
 
@@ -412,7 +412,7 @@ public final class SwingUtil {
      * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
      * @param exceptionHandler handler to call when an exception is caught
      */
-    public static void addDropFilesSupport(JComponent component, Consumer<Collection<File>> action, Predicate<Collection<File>> test, Consumer<Exception> exceptionHandler) {
+    public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action, Predicate<? super Collection<File>> test, Consumer<? super Exception> exceptionHandler) {
         component.setDropTarget(new DropTarget() {
             @Override
             public synchronized void dragEnter(DropTargetDragEvent evt) {

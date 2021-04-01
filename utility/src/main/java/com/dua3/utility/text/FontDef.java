@@ -297,7 +297,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifColorDefined(Consumer<Color> c) {
+    public boolean ifColorDefined(Consumer<? super Color> c) {
         return consumeIfDefined(color, c);
     }
 
@@ -306,7 +306,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifSizeDefined(Consumer<Float> c) {
+    public boolean ifSizeDefined(Consumer<? super Float> c) {
         return consumeIfDefined(size, c);
     }
 
@@ -315,7 +315,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifFamilyDefined(Consumer<String> c) {
+    public boolean ifFamilyDefined(Consumer<? super String> c) {
         return consumeIfDefined(family, c);
     }
 
@@ -324,7 +324,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifBoldDefined(Consumer<Boolean> c) {
+    public boolean ifBoldDefined(Consumer<? super Boolean> c) {
         return consumeIfDefined(bold, c);
     }
 
@@ -333,7 +333,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifItalicDefined(Consumer<Boolean> c) {
+    public boolean ifItalicDefined(Consumer<? super Boolean> c) {
         return consumeIfDefined(italic, c);
     }
 
@@ -342,7 +342,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifUnderlineDefined(Consumer<Boolean> c) {
+    public boolean ifUnderlineDefined(Consumer<? super Boolean> c) {
         return consumeIfDefined(underline, c);
     }
 
@@ -351,7 +351,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifStrikeThroughDefined(Consumer<Boolean> c) {
+    public boolean ifStrikeThroughDefined(Consumer<? super Boolean> c) {
         return consumeIfDefined(strikeThrough, c);
     }
 

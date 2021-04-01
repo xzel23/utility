@@ -152,7 +152,7 @@ public final class LangUtil {
      * @param <E> the generic enum parameter
      * @return an Optional holding the enum constant or an empty Optional
      */
-    public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, Predicate<E> condition) {
+    public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, Predicate<? super E> condition) {
         for (E ec : clazz.getEnumConstants()) {
             if (condition.test(ec)) {
                 return Optional.of(ec);
@@ -196,7 +196,7 @@ public final class LangUtil {
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<T> c) {
+    public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T> c) {
         return arg -> {
             try {
                 c.apply(arg);
@@ -245,7 +245,7 @@ public final class LangUtil {
      *           UncheckedIOException and other checked exceptions to {@link WrappedException}
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<T, R> f) {
+    public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<? super T, R> f) {
         return arg -> {
             try {
                 return f.apply(arg);
@@ -309,7 +309,7 @@ public final class LangUtil {
      * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
-    public static <K, V> void putAllIfAbsent(Map<K, V> map, Pair<K, V>... items) {
+    public static <K, V> void putAllIfAbsent(Map<? super K, ? super V> map, Pair<K, V>... items) {
         Arrays.stream(items).forEach(item -> map.putIfAbsent(item.first, item.second));
     }
 
@@ -322,7 +322,7 @@ public final class LangUtil {
      * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
-    public static <K, V> void putAll(Map<K, V> map, Pair<K, V>... items) {
+    public static <K, V> void putAll(Map<? super K, ? super V> map, Pair<K, V>... items) {
         Arrays.stream(items).forEach(item -> map.put(item.first, item.second));
     }
 
@@ -369,7 +369,7 @@ public final class LangUtil {
      * @param k        the key to lookup
      * @param consumer the consumer to consume the mapped value
      */
-    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, Consumer<V> consumer) {
+    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, Consumer<? super V> consumer) {
         V v = map.get(k);
         if (v != null) {
             consumer.accept(v);
@@ -385,7 +385,7 @@ public final class LangUtil {
      * @param k        the key to lookup
      * @param consumer the consumer to consume the mapped value
      */
-    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, BiConsumer<K, V> consumer) {
+    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, BiConsumer<? super K, ? super V> consumer) {
         V v = map.get(k);
         if (v != null) {
             consumer.accept(k, v);
@@ -489,11 +489,11 @@ public final class LangUtil {
 
     private static class CachingSupplier<T> implements AutoCloseableSupplier<T> {
         private final Supplier<T> supplier;
-        private final Consumer<T> cleaner;
+        private final Consumer<? super T> cleaner;
         private T obj = null;
         private boolean initialized = false;
 
-        CachingSupplier(Supplier<T> supplier, Consumer<T> cleaner) {
+        CachingSupplier(Supplier<T> supplier, Consumer<? super T> cleaner) {
             this.supplier = supplier;
             this.cleaner = cleaner;
         }
@@ -725,7 +725,7 @@ public final class LangUtil {
      * @param <T> the element type
      * @return a list that contains all items within a the given range before and after each match
      */
-    public static <T> List<T> surroundingItems(List<T> list, Predicate<T> test, int before, int after, BiFunction<Integer,Integer, T> placeHolder) {
+    public static <T> List<T> surroundingItems(List<T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
         for (int i=0; i<list.size(); i++) {

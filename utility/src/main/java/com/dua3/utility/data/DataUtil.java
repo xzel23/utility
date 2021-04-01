@@ -288,7 +288,7 @@ public final class DataUtil {
      * @return
      *  list containing the converted elements
      */
-    public static <T,U> List<U> convert(Collection<T> data, Function<T,U> mapper) {
+    public static <T,U> List<U> convert(Collection<T> data, Function<? super T, U> mapper) {
         return data.stream().map(mapper).collect(Collectors.toList());
     }
 
@@ -559,7 +559,7 @@ public final class DataUtil {
      * @param <U> the value type
      * @return true, if action was called
      */
-    public static <T,U> boolean ifPresent(Map<T,U> map, T key, Consumer<U> action) {
+    public static <T,U> boolean ifPresent(Map<T,U> map, T key, Consumer<? super U> action) {
         // we need to check using containsKey() since key may be mapped to null
         if (!map.containsKey(key)) {
             return false;
@@ -578,7 +578,7 @@ public final class DataUtil {
      * @param <U> the value type
      * @return true, if action was called
      */
-    public static <T,U> boolean ifMapped(Map<T,U> map, T key, Consumer<U> action) {
+    public static <T,U> boolean ifMapped(Map<T,U> map, T key, Consumer<? super U> action) {
         // we need to check using containsKey() since key may be mapped to null
         U value = map.get(key);
         if (value == null) {

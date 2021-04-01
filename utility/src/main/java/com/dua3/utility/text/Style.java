@@ -206,7 +206,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresentOrElseGet(String key, Supplier<T> defaultSupplier, Consumer<T> action) {
+    public <T> void ifPresentOrElseGet(String key, Supplier<T> defaultSupplier, Consumer<? super T> action) {
         Object raw = get(key);
         try {
             T value = (T) raw;

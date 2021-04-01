@@ -14,7 +14,7 @@ public interface LogListener {
      * @param pass the predicate that determines if entries should be passed on
      * @return a LogListerner instance that passes all entries on that match the predicate
      */
-    static LogListener filter(LogListener listener, Predicate<LogEntry> pass) {
+    static LogListener filter(LogListener listener, Predicate<? super LogEntry> pass) {
         return entry -> {
             if (pass.test(entry)) {
                 listener.entry(entry);

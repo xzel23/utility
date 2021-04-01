@@ -491,7 +491,7 @@ public final class IOUtil {
      */
     public static String loadText(
             Path path,
-            Consumer<Charset> onCharsetDetected,
+            Consumer<? super Charset> onCharsetDetected,
             Charset... charsets)
             throws IOException {
         ByteBuffer data = ByteBuffer.wrap(Files.readAllBytes(path));

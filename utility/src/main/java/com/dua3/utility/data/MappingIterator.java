@@ -12,7 +12,7 @@ import java.util.function.Function;
  */
 class MappingIterator<T,U> implements Iterator<U> {
     private final Iterator<T> iterator;
-    private final Function<T, U> mapping;
+    private final Function<? super T, U> mapping;
 
     /**
      * Construct new instance.
@@ -21,7 +21,7 @@ class MappingIterator<T,U> implements Iterator<U> {
      * @param mapping
      *  the element mapping
      */
-    MappingIterator(Iterator<T> iterator, Function<T, U> mapping) {
+    MappingIterator(Iterator<T> iterator, Function<? super T, U> mapping) {
         this.iterator = iterator;
         this.mapping = mapping;
     }

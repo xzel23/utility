@@ -7,9 +7,9 @@ import java.util.function.Consumer;
  */
 public class StyledDocumentConversionOption {
 
-    private final Consumer<StyledDocumentConverter> action;
+    private final Consumer<? super StyledDocumentConverter> action;
 
-    protected StyledDocumentConversionOption(Consumer<StyledDocumentConverter> action) {
+    protected StyledDocumentConversionOption(Consumer<? super StyledDocumentConverter> action) {
         this.action = action;
     }
 
