@@ -35,4 +35,24 @@ class Poly2d implements Polygon2d {
     public List<Vec2d> vertices() {
         return List.of(vertices);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Poly2d poly2d = (Poly2d) o;
+        return Arrays.equals(vertices, poly2d.vertices);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(vertices);
+    }
+
+    @Override
+    public String toString() {
+        return "Poly2d{" +
+               "vertices=" + Arrays.toString(vertices) +
+               '}';
+    }
 }
