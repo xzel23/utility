@@ -431,6 +431,15 @@ public final class Color {
         return new Color(argb);
     }
     
+    /**
+     * Create color from RGB value.
+     * @param rgb the RGB value (the highest 16 bits are ignored)
+     * @return the color instance
+     */
+    public static Color rgb(int rgb) {
+        return new Color(0xff000000|rgb);
+    }
+    
     /** This color's ARGB value. */
     private final int argb;
 
