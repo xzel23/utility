@@ -1,11 +1,52 @@
 package com.dua3.utility.text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.ServiceLoader;
+
 /**
  * Interface for Font handling utility classes. The concrete implementation is automatically chosen at runtime
  * for use by the {@link TextUtil} class.
  * @param <F> the implementation's underlying Font class
  */
 public interface FontUtil<F> {
+    
+    static FontUtil getInstance() {
+        //noinspection rawtypes
+        Iterator<FontUtil> serviceIterator = ServiceLoader
+                .load(FontUtil.class)
+                .iterator();
+
+        FontUtil<?> fu;
+        if (serviceIterator.hasNext()) {
+            fu = serviceIterator.next();
+        } else {
+            fu = new FontUtil<Void>() {
+                @Override
+                public Void convert(Font f) {
+                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                }
+
+                @Override
+                public Bounds getTextBounds(CharSequence s, Font f) {
+                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                }
+
+                @Override
+                public Optional<Font> loadFont(String type, InputStream in) throws IOException {
+                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                }
+            };
+        }
+        
+        return fu;
+    }
+    
+    /** The font type string for TrueType fonts. */
+    public static String FONT_TYPE_TRUETYPE = "ttf";
+    
     /**
      * Dimensions.
      */
@@ -68,4 +109,14 @@ public interface FontUtil<F> {
     default double getTextHeight(CharSequence s, Font f) {
         return getTextBounds(s, f).height;
     }
+
+    /**
+     * Load font.
+     * @param type the font type as String.
+     * @param in the {@link InputStream} to read the font data from.
+     * @return the font loaded
+     * @throws java.io.IOException if an I/O error occurs
+     * @throws IllegalArgumentException if the type is not supported
+     */
+    Optional<Font> loadFont(String type, InputStream in) throws IOException;
 }

@@ -30,7 +30,8 @@ public class Font {
     private String fontspec = null;
     private int hash = 0;
     private FontDef fd = null;
-    
+    private double spaceWidth=-1;
+
     /**
      * Construct a new {@code Font}.
      */
@@ -327,6 +328,5 @@ public class Font {
         }
         return spaceWidth;
     }
-    private double spaceWidth=-1;
     
 }

@@ -573,33 +573,7 @@ public final class TextUtil {
         return Base64.getDecoder().decode(text);
     }
 
-    private static final FontUtil<?> FONT_UTIL;
-
-    static {
-        //noinspection rawtypes
-        Iterator<FontUtil> serviceIterator = ServiceLoader
-                .load(FontUtil.class)
-                .iterator();
-        
-        FontUtil<?> fu;
-        if (serviceIterator.hasNext()) {
-            fu = serviceIterator.next();
-        } else {
-            fu = new FontUtil<Void>() {
-                @Override
-                public Void convert(Font f) {
-                    throw new UnsupportedOperationException("no FontUtil implementation present");
-                }
-
-                @Override
-                public Bounds getTextBounds(CharSequence s, Font f) {
-                    throw new UnsupportedOperationException("no FontUtil implementation present");
-                }
-            };
-        }
-        
-        FONT_UTIL = fu;
-    }
+    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
 
     /**
      * Convert mm to pt.

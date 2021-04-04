@@ -1,9 +1,15 @@
 package com.dua3.utility.swing;
 
+import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
+import java.util.WeakHashMap;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 
@@ -79,6 +85,21 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
         return stringBounds(s, f).getHeight();
     }
 
+    private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
+    
+    @Override
+    public Optional<Font> loadFont(String type, InputStream in) throws IOException {
+        LangUtil.check(FONT_TYPE_TRUETYPE.equals(type), () -> new IllegalArgumentException("unsupported font type: "+type));
+        try (in) {
+            java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, in);
+            Font font = new Font(awtFont.getFamily(), awtFont.getSize(), Color.BLACK, awtFont.isBold(), awtFont.isItalic(), false, false);
+            fontMap.putIfAbsent(font, awtFont);
+            return Optional.of(font);
+        } catch (FontFormatException e) {
+            throw new IOException(e);
+        }
+    }
+
     @Override
     public double getTextWidth(CharSequence s, Font f) {
         return stringBounds(s, f).getWidth();
@@ -86,14 +107,17 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     @Override
     public java.awt.Font convert(Font font) {
-        return getAwtFont(
-                font.getFamily(),
-                font.getSizeInPoints(),
-                font.getColor(),
-                font.isBold(),
-                font.isItalic(),
-                font.isUnderline(),
-                font.isStrikeThrough());
+        return fontMap.computeIfAbsent(font, 
+                fnt -> getAwtFont(
+                    font.getFamily(),
+                    font.getSizeInPoints(),
+                    font.getColor(),
+                    font.isBold(),
+                    font.isItalic(),
+                    font.isUnderline(),
+                    font.isStrikeThrough()
+                )
+        );
     }
 
     private static java.awt.Font getAwtFont(String family, float size, Color color, boolean bold, boolean italic,
