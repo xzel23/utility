@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.logging.LogUtil;
 
 /**
  * Network related utility class.
@@ -40,7 +40,7 @@ public final class NetUtil {
      *                   A view to the local file's root.
      */
     public static void registerSandboxURLHandler(FileSystemView localFiles) {
-        LOG.fine(LangUtil.msgs("Setting SandBoxURLHandler with root %s", localFiles));
+        LOG.fine(LogUtil.format("Setting SandBoxURLHandler with root %s", localFiles));
         URL.setURLStreamHandlerFactory(new SandboxURLStreamHandlerFactory(localFiles));
     }
 

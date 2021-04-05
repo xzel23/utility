@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.logging.LogUtil;
 
 public class SandboxURLHandler extends URLStreamHandler {
 
@@ -26,7 +26,7 @@ public class SandboxURLHandler extends URLStreamHandler {
 
     @Override
     protected URLConnection openConnection(URL url) throws IOException {
-        LOG.info(LangUtil.msgs("opening connection to local version of: %s", url));
+        LOG.info(LogUtil.format("opening connection to local version of: %s", url));
         String stripped = url.toExternalForm().replaceFirst(".*://", "");
         Path path = localFiles.resolve(stripped);
         return path.toUri().toURL().openConnection();
