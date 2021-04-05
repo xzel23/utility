@@ -22,7 +22,7 @@ public class SwingImageUtil implements ImageUtil<BufferedImage> {
     }
 
     @Override
-    public com.dua3.utility.data.Image convert(BufferedImage img) {
+    public SwingImage convert(BufferedImage img) {
         return new SwingImage(img, "");
     }
 }

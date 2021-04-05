@@ -9,6 +9,9 @@ module dua3_utility.swing {
     provides com.dua3.utility.text.FontUtil
     with com.dua3.utility.swing.SwingFontUtil;
 
+    provides com.dua3.utility.data.ImageUtil
+    with com.dua3.utility.swing.SwingImageUtil;
+
     requires dua3_utility;
 
     requires java.datatransfer;
