@@ -12,7 +12,9 @@ import java.util.ServiceLoader;
  * @param <F> the implementation's underlying Font class
  */
 public interface FontUtil<F> {
-    
+
+    String NO_IMPLEMENTATION = "no FontUtil implementation present";
+
     static FontUtil getInstance() {
         //noinspection rawtypes
         Iterator<FontUtil> serviceIterator = ServiceLoader
@@ -26,17 +28,17 @@ public interface FontUtil<F> {
             fu = new FontUtil<Void>() {
                 @Override
                 public Void convert(Font f) {
-                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
                 public Bounds getTextBounds(CharSequence s, Font f) {
-                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
                 public Optional<Font> loadFont(String type, InputStream in) throws IOException {
-                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
             };
         }
