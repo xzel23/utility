@@ -149,7 +149,7 @@ public final class LangUtil {
      * @param <E> the generic enum parameter
      * @return an Optional holding the enum constant or an empty Optional
      */
-    public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, Predicate<? super E> condition) {
+    public static <E extends Enum<E>> Optional<E> enumConstant(Class<? extends E> clazz, Predicate<? super E> condition) {
         for (E ec : clazz.getEnumConstants()) {
             if (condition.test(ec)) {
                 return Optional.of(ec);
@@ -166,7 +166,7 @@ public final class LangUtil {
      * @param <E> the generic enum parameter
      * @return an Optional holding the enum constant or an empty Optional
      */
-    public static <E extends Enum<E>> Optional<E> enumConstant(Class<E> clazz, String value) {
+    public static <E extends Enum<E>> Optional<E> enumConstant(Class<? extends E> clazz, String value) {
         return enumConstant(clazz, ec -> ec.toString().equals(value));
     }
 
@@ -217,7 +217,7 @@ public final class LangUtil {
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T> Supplier<T> uncheckedSupplier(SupplierThrows<T> s) {
+    public static <T> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T> s) {
         return () -> {
             try {
                 return s.get();
@@ -242,7 +242,7 @@ public final class LangUtil {
      *           UncheckedIOException and other checked exceptions to {@link WrappedException}
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<? super T, R> f) {
+    public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<? super T, ? extends R> f) {
         return arg -> {
             try {
                 return f.apply(arg);
@@ -441,7 +441,7 @@ public final class LangUtil {
      * @param  supplier the Supplier
      * @return          caching Supplier
      */
-    public static <T> Supplier<T> cache(Supplier<T> supplier) {
+    public static <T> Supplier<T> cache(Supplier<? extends T> supplier) {
         return new CachingSupplier<>(supplier, t -> {
         });
     }
@@ -458,7 +458,7 @@ public final class LangUtil {
      * @param  cleaner  the cleanup operation to be executed on `close()`
      * @return          caching Supplier
      */
-    public static <T> AutoCloseableSupplier<T> cache(Supplier<T> supplier, Consumer<? super T> cleaner) {
+    public static <T> AutoCloseableSupplier<T> cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
         return new CachingSupplier<>(supplier, cleaner);
     }
 
@@ -472,12 +472,12 @@ public final class LangUtil {
     }
 
     private static class CachingSupplier<T> implements AutoCloseableSupplier<T> {
-        private final Supplier<T> supplier;
+        private final Supplier<? extends T> supplier;
         private final Consumer<? super T> cleaner;
         private T obj = null;
         private boolean initialized = false;
 
-        CachingSupplier(Supplier<T> supplier, Consumer<? super T> cleaner) {
+        CachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
             this.supplier = supplier;
             this.cleaner = cleaner;
         }
@@ -670,7 +670,7 @@ public final class LangUtil {
      * @param <T> the element type
      * @return a list that contains all items within a the given range before and after each match
      */
-    public static <T> List<T> surroundingItems(List<T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, T> placeHolder) {
+    public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
         for (int i=0; i<list.size(); i++) {

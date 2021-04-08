@@ -428,7 +428,7 @@ public final class DataUtil {
      * @return
      *  iterator instance that converts items of type {@code T} to {@code U}
      */
-    public static <T,U> Iterator<U> map(Iterator<T> iterator, Function<? super T, U> mapping) {
+    public static <T,U> Iterator<U> map(Iterator<T> iterator, Function<? super T, ? extends U> mapping) {
         return new MappingIterator<>(iterator, mapping);
     }
 
@@ -441,7 +441,7 @@ public final class DataUtil {
      * @return
      *  list of elements
      */
-    public static <T>  List<T> collect(Iterable<T> iterable) {
+    public static <T>  List<T> collect(Iterable<? extends T> iterable) {
         return collect(iterable.iterator());
     }
 

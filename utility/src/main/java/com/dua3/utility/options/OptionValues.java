@@ -31,7 +31,7 @@ public class OptionValues extends HashMap<Option<?>, Value<?>> {
      *
      * @param options mapping of options and corresponding values
      */
-    public OptionValues(Map<Option<?>, ? extends Value<?>> options) {
+    public OptionValues(Map<? extends Option<?>, ? extends Value<?>> options) {
         super(options);
     }
 
