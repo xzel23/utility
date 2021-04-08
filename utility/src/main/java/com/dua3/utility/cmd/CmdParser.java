@@ -90,7 +90,7 @@ public class CmdParser {
      * @param <T> the target type
      * @return the option
      */
-    public <T> SimpleOption<T> simpleOption(Class<T> type, String... names) {
+    public <T> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
         return simpleOption(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -112,7 +112,7 @@ public class CmdParser {
      * @param <T> the generic type of the option 
      * @return the option
      */
-    public <T> StandardOption<T> option(Class<T> type, String... names) {
+    public <T> StandardOption<T> option(Class<? extends T> type, String... names) {
         return option(s -> DataUtil.convert(s, type, true), names);
     }
 

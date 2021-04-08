@@ -11,10 +11,10 @@ import java.util.function.Supplier;
 
 public final class SoftResource<T> {
 
-    private Supplier<T> supplier;
+    private Supplier<? extends T> supplier;
     private SoftReference<T> ref;
 
-    private SoftResource(Supplier<T> supplier) {
+    private SoftResource(Supplier<? extends T> supplier) {
         this.supplier = supplier;
         this.ref = new SoftReference<>(null);
     }

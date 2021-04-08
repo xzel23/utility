@@ -85,7 +85,7 @@ public class Pair<T1, T2> {
      *                type of second member
      * @return        a new Pair
      */
-    public static <T1, T2> Pair<T1, T2> of(Map.Entry<T1,T2> entry) {
+    public static <T1, T2> Pair<T1, T2> of(Map.Entry<? extends T1, ? extends T2> entry) {
         return new Pair<>(entry.getKey(), entry.getValue());
     }
     

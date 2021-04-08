@@ -24,4 +24,5 @@ module dua3_utility {
 
     uses com.dua3.utility.text.FontUtil;
     uses com.dua3.utility.io.FileType;
+    uses com.dua3.utility.data.ImageUtil;
 }

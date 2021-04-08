@@ -15,7 +15,7 @@ import java.util.stream.Collector;
  * @param <K> the key type
  */
 public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
-    private final Function<? super T, K> keyMapper;
+    private final Function<? super T, ? extends K> keyMapper;
     private final K defaultKey;
 
     public BatchCollector(Function<? super T, K> keyMapper) {
@@ -32,7 +32,7 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
      * @param keyMapper the key mapper
      * @param defaultKey the default key
      */
-    public BatchCollector(Function<? super T, K> keyMapper, K defaultKey) {
+    public BatchCollector(Function<? super T, ? extends K> keyMapper, K defaultKey) {
         this.keyMapper = keyMapper;
         this.defaultKey = defaultKey;
     }

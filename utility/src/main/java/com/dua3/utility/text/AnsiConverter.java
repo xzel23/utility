@@ -49,7 +49,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * Create a ready to use converter with default mappings.
      * @return converter with standard mappings
      */
-    public static AnsiConverter create(Collection<AnsiConversionOption> options) {
+    public static AnsiConverter create(Collection<? extends AnsiConversionOption> options) {
         AnsiConverter instance = new AnsiConverter();
         options.forEach(o -> o.apply(instance));
         return instance;

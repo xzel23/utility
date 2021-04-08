@@ -40,7 +40,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param options the options to use
      * @return new converter instance
      */
-    public static StyledDocumentConverter create(Collection<StyledDocumentConversionOption> options) {
+    public static StyledDocumentConverter create(Collection<? extends StyledDocumentConversionOption> options) {
         StyledDocumentConverter instance = new StyledDocumentConverter();
         options.forEach(o -> o.apply(instance));
         return instance;
@@ -62,7 +62,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param attributes attributes for new StyledDocuments
      * @return the option to use
      */
-    public static StyledDocumentConversionOption addStyledAttributes(Collection<Pair<Object,Object>> attributes) {
+    public static StyledDocumentConversionOption addStyledAttributes(Collection<? extends Pair<Object, Object>> attributes) {
         return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.first, p.second)));
     }
 

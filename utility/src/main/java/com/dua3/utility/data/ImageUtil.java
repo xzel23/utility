@@ -9,30 +9,25 @@ import java.util.ServiceLoader;
 public interface ImageUtil<I> {
 
     String NO_IMPLEMENTATION = "no ImageUtil implementation present";
-    
-    static ImageUtil getInstance() {
-        //noinspection rawtypes
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    static ImageUtil<? extends Image> getInstance() {
         Iterator<ImageUtil> serviceIterator = ServiceLoader
                 .load(ImageUtil.class)
                 .iterator();
 
-        ImageUtil<?> iu;
+        ImageUtil<? extends Image> iu;
         if (serviceIterator.hasNext()) {
             iu = serviceIterator.next();
         } else {
-            iu = new ImageUtil<Void>() {
+            iu = new ImageUtil<Image>() {
                 @Override
                 public Optional<? extends Image> load(InputStream in) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public Void convert(Image img) {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
-                }
-
-                @Override
-                public Image convert(Void img) {
+                public Image convert(Image img) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
             };

@@ -47,7 +47,7 @@ public interface FontUtil<F> {
     }
     
     /** The font type string for TrueType fonts. */
-    public static String FONT_TYPE_TRUETYPE = "ttf";
+    String FONT_TYPE_TRUETYPE = "ttf";
     
     /**
      * Dimensions.

@@ -42,7 +42,7 @@ public interface Decoder<T> {
      * @throws IOException if an error occurs
      * @return the collection of decoded objects
      */
-    static <T, C extends IntFunction<Collection<T>>> Collection<T> decode(DataInputStream is, Decoder<T> codec, C collectionConstructor) throws IOException {
+    static <T, C extends IntFunction<Collection<T>>> Collection<T> decode(DataInputStream is, Decoder<? extends T> codec, C collectionConstructor) throws IOException {
         int size = is.readInt();
         LangUtil.check(size >= 0, "invalid collection size: %d", size);
 

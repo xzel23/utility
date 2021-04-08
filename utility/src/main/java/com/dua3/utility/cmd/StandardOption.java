@@ -10,7 +10,7 @@ import java.util.function.Function;
  */
 public class StandardOption<T> extends Option<T> {
     
-    StandardOption(Class<T> type, String... names) {
+    StandardOption(Class<? extends T> type, String... names) {
         this(s -> DataUtil.convert(s, type), names);
     }
 

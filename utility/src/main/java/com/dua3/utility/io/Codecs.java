@@ -32,13 +32,13 @@ public class Codecs {
         registerCodec(Color.class, (DataOutputStream os, Color c) -> os.writeInt(c.argb()), (DataInputStream is) -> Color.argb(is.readInt()));
     }
 
-    public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<T> dec) {
+    public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
         Object prev = CODECS.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
         LangUtil.check(prev==null, "Codec already registered for class: "+cls);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Optional<Codec<T>> get(Class<T> cls) {
-        //noinspection unchecked - type is checked when inserting
         return Optional.ofNullable((Codec<T>) CODECS.get(cls.getCanonicalName()));
     }
 
@@ -50,7 +50,7 @@ public class Codecs {
      * @param <T> the object type
      * @return the new codec
      */
-    public static <T> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<T> dec) {
+    public static <T> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<? extends T> dec) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -73,7 +73,7 @@ public class Codecs {
      * Get {@link Codec} for a {@link java.util.Collection}.
      * @return codec
      */
-    public static <T, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<C> construct) {
+    public static <T, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -101,7 +101,7 @@ public class Codecs {
         };
     }
 
-    public static <K,V> Codec<Map.Entry<K,V>> mapEntryCodec(Codec<K> codecK, Codec<V> codecV) {
+    public static <K,V> Codec<Map.Entry<K,V>> mapEntryCodec(Codec<K> codecK, Codec<? extends V> codecV) {
         return createCodec(
                 Map.Entry.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">", 
                 (DataOutputStream os, Map.Entry<K,V> entry) -> codecK.encode(os, entry.getKey()),
@@ -132,7 +132,7 @@ public class Codecs {
      * Get {@link Codec} for a {@link java.util.Map}.
      * @return codec
      */
-    public static <K,V,M extends Map<K,V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<M> construct) {
+    public static <K,V,M extends Map<K,V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
         final String name = Map.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">";
         final Codec<Map.Entry<K,V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
         final Codec<Collection<Map.Entry<K,V>>> ENTRIES_CODEC = Codecs.collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
