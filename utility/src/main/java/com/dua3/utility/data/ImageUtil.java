@@ -20,7 +20,7 @@ public interface ImageUtil<I> {
         if (serviceIterator.hasNext()) {
             iu = serviceIterator.next();
         } else {
-            iu = new ImageUtil<Image>() {
+            iu = new ImageUtil<>() {
                 @Override
                 public Optional<? extends Image> load(InputStream in) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);

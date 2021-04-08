@@ -15,8 +15,8 @@ public interface FontUtil<F> {
 
     String NO_IMPLEMENTATION = "no FontUtil implementation present";
 
-    static FontUtil getInstance() {
-        //noinspection rawtypes
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    static FontUtil<?> getInstance() {
         Iterator<FontUtil> serviceIterator = ServiceLoader
                 .load(FontUtil.class)
                 .iterator();
@@ -25,7 +25,7 @@ public interface FontUtil<F> {
         if (serviceIterator.hasNext()) {
             fu = serviceIterator.next();
         } else {
-            fu = new FontUtil<Void>() {
+            fu = new FontUtil<>() {
                 @Override
                 public Void convert(Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
