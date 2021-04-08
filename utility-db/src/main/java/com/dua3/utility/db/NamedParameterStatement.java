@@ -367,6 +367,8 @@ public class NamedParameterStatement implements AutoCloseable {
      * 
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value 
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -375,7 +377,7 @@ public class NamedParameterStatement implements AutoCloseable {
     public void setArray(String name, Array value) throws SQLException {
         set(JDBCType.ARRAY, name, value, statement::setArray);
     }
-
+    
     /**
      * Set a parameter.
      *
@@ -383,6 +385,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -399,6 +403,10 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
+     * @param length 
+     *     the number of bytes
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -415,6 +423,10 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
+     * @param length
+     *     the number of bytes
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -431,6 +443,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -447,6 +461,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -463,6 +479,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -479,6 +497,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -495,6 +515,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -511,6 +533,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -527,6 +551,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -543,6 +569,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -559,6 +587,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -575,6 +605,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -591,6 +623,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -607,6 +641,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -623,6 +659,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -639,6 +677,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -655,6 +695,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -688,6 +730,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -706,6 +750,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -725,6 +771,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -741,6 +789,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -757,6 +807,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -773,6 +825,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -789,6 +843,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -805,6 +861,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -821,6 +879,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -837,6 +897,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -853,6 +915,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -869,6 +933,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -939,6 +1005,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -975,6 +1043,14 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
+     * @param targetSqlType
+     *     the SQL type (as defined in {@link java.sql.Types})
+     * @param scaleOrLength 
+     *     for {@link java.sql.Types#DECIMAL} or {@link java.sql.Types#NUMERIC} types, this is the number of digits
+     *     after the decimal point. For Java Object types {@link InputStream} and {@link Reader}, this is the length 
+     *     of the data in the stream or reader. For all other types, this value will be ignored.
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -997,6 +1073,10 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
+     * @param targetSqlType
+     *     the SQL type (as defined in {@link java.sql.Types})
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1019,6 +1099,14 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
+     * @param targetSqlType
+     *     the SQL type (as defined in {@link java.sql.Types})
+     * @param scaleOrLength
+     *     for {@link java.sql.Types#DECIMAL} or {@link java.sql.Types#NUMERIC} types, this is the number of digits
+     *     after the decimal point. For Java Object types {@link InputStream} and {@link Reader}, this is the length 
+     *     of the data in the stream or reader. For all other types, this value will be ignored.
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1041,6 +1129,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1057,6 +1147,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1073,6 +1165,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1105,6 +1199,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1121,6 +1217,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1156,6 +1254,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1174,6 +1274,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
@@ -1193,6 +1295,8 @@ public class NamedParameterStatement implements AutoCloseable {
      *
      * @param  name
      *     parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}.
+     * @param value
+     *     parameter value 
      * @throws SQLException
      *     if an error occurred
      * @throws IllegalArgumentException
