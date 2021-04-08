@@ -18,7 +18,7 @@ import java.util.Objects;
  * @param <T2>
  *        type of second member
  */
-public class Pair<T1, T2> {
+public final class Pair<T1, T2> {
 
     /**
      * Add pairs to a map.

@@ -27,7 +27,7 @@ public final class SoftResource<T> {
      *                  invocation return equal instances
      * @return          soft resource
      */
-    public static <T> SoftResource<T> of(Supplier<T> supplier) {
+    public static <T> SoftResource<T> of(Supplier<? extends T> supplier) {
         return new SoftResource<>(Objects.requireNonNull(supplier));
     }
 

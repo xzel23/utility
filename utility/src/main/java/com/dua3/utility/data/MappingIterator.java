@@ -11,8 +11,8 @@ import java.util.function.Function;
  *  the target iterator element type
  */
 class MappingIterator<T,U> implements Iterator<U> {
-    private final Iterator<T> iterator;
-    private final Function<? super T, U> mapping;
+    private final Iterator<? extends T> iterator;
+    private final Function<? super T, ? extends U> mapping;
 
     /**
      * Construct new instance.
@@ -21,7 +21,7 @@ class MappingIterator<T,U> implements Iterator<U> {
      * @param mapping
      *  the element mapping
      */
-    MappingIterator(Iterator<T> iterator, Function<? super T, U> mapping) {
+    MappingIterator(Iterator<? extends T> iterator, Function<? super T, ? extends U> mapping) {
         this.iterator = iterator;
         this.mapping = mapping;
     }

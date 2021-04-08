@@ -136,7 +136,7 @@ public class LogBuffer implements LogListener {
         }
     }
     
-    public void appendTo(Appendable app, Iterable<Function<LogEntry,Object>> parts) throws IOException {
+    public void appendTo(Appendable app, Iterable<? extends Function<LogEntry, Object>> parts) throws IOException {
         for (LogEntry entry: getLogEntries()) {
             for (Function<LogEntry, Object> p: parts) {
                 app.append(String.valueOf(p.apply(entry)));

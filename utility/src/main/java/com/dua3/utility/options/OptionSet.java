@@ -29,7 +29,7 @@ public class OptionSet implements Iterable<Option<?>> {
      *
      * @param options the options
      */
-    public OptionSet(Iterable<Option<?>> options) {
+    public OptionSet(Iterable<? extends Option<?>> options) {
         options.forEach(this.options::add);
     }
 

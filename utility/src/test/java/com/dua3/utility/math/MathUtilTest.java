@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author axel
  */
+@SuppressWarnings("BoundedWildcard")
 public class MathUtilTest {
 
     @BeforeAll

@@ -240,7 +240,7 @@ public final class DataUtil {
      * @return
      *  array containing the converted elements
      */
-    public static <T,U> U[] convertToArray(Collection<T> data, Class<U> targetClass) {
+    public static <T,U> U[] convertToArray(Collection<T> data, Class<? extends U> targetClass) {
         return convertToArray(data, targetClass, false);
     }
 
@@ -288,7 +288,7 @@ public final class DataUtil {
      * @return
      *  list containing the converted elements
      */
-    public static <T,U> List<U> convert(Collection<T> data, Function<? super T, U> mapper) {
+    public static <T,U> List<U> convert(Collection<T> data, Function<? super T, ? extends U> mapper) {
         return data.stream().map(mapper).collect(Collectors.toList());
     }
 
@@ -454,7 +454,7 @@ public final class DataUtil {
      * @return
      *  list of elements
      */
-    public static <T>  List<T> collect(Iterator<T> iterator) {
+    public static <T>  List<T> collect(Iterator<? extends T> iterator) {
         List<T> result = new ArrayList<>();
         iterator.forEachRemaining(result::add);
         return result;
@@ -510,7 +510,7 @@ public final class DataUtil {
      * @param <V> the value type
      * @return a new map that contains the changes as pairs (value in a, value in b) 
      */
-    public static <U,V> Map<U,Pair<V,V>> changes(Map<U,V> a, Map<U,V> b) {
+    public static <U,V> Map<U,Pair<V,V>> changes(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
         
@@ -535,7 +535,7 @@ public final class DataUtil {
      * @param <V> the value type
      * @return a new map that contains the changes as pairs (value in a, value in b) 
      */
-    public static <U,V> Map<U,V> diff(Map<U,V> a, Map<U,V> b) {
+    public static <U,V> Map<U,V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
         
