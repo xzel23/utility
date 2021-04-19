@@ -24,6 +24,9 @@ public class TestSwingComponents extends JFrame {
     public static final int SLEEP_MILLIS = 10;
     private volatile boolean done = false;
 
+    private final Random random = new Random();
+    private final AtomicInteger n = new AtomicInteger();
+
     public static void main(String[] args) {
         JUL_LOGGER.setLevel(Level.ALL);
         JUL_LOGGER.info("starting up");
@@ -154,9 +157,6 @@ public class TestSwingComponents extends JFrame {
             return new IllegalStateException("What happened?");
         }
     }
-
-    private final Random random = new Random();
-    private final AtomicInteger n = new AtomicInteger();
     
     @Override
     public void dispose() {
