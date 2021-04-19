@@ -26,6 +26,8 @@ import com.dua3.utility.text.TextUtil;
  */
 public final class CryptUtil {
 
+    private static final SecureRandom RANDOM = new SecureRandom();
+
     private CryptUtil() {
     }
 
@@ -34,8 +36,7 @@ public final class CryptUtil {
         LangUtil.check(nBytes * 8 == bits, "bit length of key must be a multiple of 8");
 
         byte[] key = new byte[nBytes];
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(key);
+        RANDOM.nextBytes(key);
 
         return key;
     }
@@ -105,8 +106,7 @@ public final class CryptUtil {
         Key secretKey = new SecretKeySpec(key, "AES");
 
         byte[] iv = new byte[12];
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(iv);
+        RANDOM.nextBytes(iv);
 
         final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         AlgorithmParameterSpec parameterSpec = new GCMParameterSpec(128, iv); // 128 bit auth tag length
