@@ -14,7 +14,15 @@ public interface Polygon2d {
     int vertexCount();
     
     List<Vec2d> vertices();
-    
+
+    default Polygon2d transform(AffineTransformation at) {
+        List<Vec2d> vs = vertices();
+        Vec2d[] vt = new Vec2d[vs.size()];
+        for (int i = 0; i < vs.size(); i++) {
+            vt[i] = at.transform(vs.get(i));
+        }
+        return new Poly2d(vt);
+    }
 }
 
 class Poly2d implements Polygon2d {
@@ -35,6 +43,14 @@ class Poly2d implements Polygon2d {
         return List.of(vertices);
     }
 
+    public Polygon2d transform(AffineTransformation at) {
+        Vec2d[] vt = new Vec2d[vertices.length];
+        for (int i=0; i<vertices.length; i++) {
+            vt[i] = at.transform(vertices[i]);
+        }
+        return new Poly2d(vt);
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
