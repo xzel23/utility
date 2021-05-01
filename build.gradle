@@ -31,7 +31,7 @@ subprojects {
 
     ext {
         java_version = '11'
-        junit_version = '5.5.1'
+        junit_version = '5.7.1'
     }
     ext.developerEmail = 'axel@dua3.com'
 
