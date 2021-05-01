@@ -62,13 +62,14 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
-### 9 ( to be released)
+### 9 (to be released)
 
 - JDK 11+ required! It's finally time to dump Java 8 support. I won't put any more effort into supporting a Java version that has long reached EOL and is a maintenance burden because of its missing modularity support.
 - build uses Gradle 7 to enable building on JDK 16
 - removed usae of the JPMS Gradle plugin as it is not compatible with Gradle 7 and not needed anymore after dropping JDK 8 support and Gradle 7 adding modularity support.
 - logback support has been replaced by log4j2 due to missing jigsaw suport in logback. This means if you have been using a Log4J to Logback bridge before, it's now time to do it the other way around.
 - NamedParameterStatement supports many more data types; fixes for inserting null values.
+- source parameter of CsvReader changed from String to URI
 
 ### 8.2.2
 

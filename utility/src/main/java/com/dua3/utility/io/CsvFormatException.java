@@ -13,6 +13,7 @@
 package com.dua3.utility.io;
 
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * Exception class for reporting CSV format violations.
@@ -22,7 +23,7 @@ import java.io.IOException;
 public class CsvFormatException extends IOException {
     private static final long serialVersionUID = 1L;
 
-    private final String source;
+    private final URI source;
     private final int line;
 
     /**
@@ -32,7 +33,7 @@ public class CsvFormatException extends IOException {
      * @param source  a text describing the source (preferably the filename)
      * @param line    the line number of the CSV file where the error occurred
      */
-    public CsvFormatException(String message, String source, int line) {
+    public CsvFormatException(String message, URI source, int line) {
         super(message);
         this.source = source;
         this.line = line;
@@ -45,7 +46,7 @@ public class CsvFormatException extends IOException {
      */
     @Override
     public String getMessage() {
-        if (source != null && !source.isEmpty()) {
+        if (source != null) {
             return "[" + source + ":" + line + "] " + super.getMessage();
         } else {
             return "[" + line + "] " + super.getMessage();

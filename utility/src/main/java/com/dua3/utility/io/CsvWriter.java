@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import com.dua3.utility.options.OptionValues;
 
@@ -53,7 +54,7 @@ public class CsvWriter extends CsvIo implements Flushable {
 
     public CsvWriter(BufferedWriter out, OptionValues options) {
         super(options);
-        this.out = out;
+        this.out = Objects.requireNonNull(out);
     }
 
     public void addField(Object obj) throws IOException {

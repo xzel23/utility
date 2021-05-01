@@ -17,14 +17,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,7 +83,7 @@ public class CsvReader extends CsvIo implements AutoCloseable {
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
     public static CsvReader create(RowBuilder builder, BufferedReader reader, OptionValues options) throws IOException {
-        return new CsvReader(builder, reader, "[stream]", options);
+        return new CsvReader(builder, reader, null, options);
     }
 
     public static CsvReader create(RowBuilder builder, File file, OptionValues options) throws IOException {
@@ -125,14 +123,14 @@ public class CsvReader extends CsvIo implements AutoCloseable {
     private List<String> columnNames;
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
-    private final String source;
+    private final URI source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, OptionValues options)
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, URI source, OptionValues options)
             throws IOException {
         super(options);
 
-        this.rowBuilder = rowBuilder;
-        this.reader = reader;
+        this.rowBuilder = Objects.requireNonNull(rowBuilder);
+        this.reader = Objects.requireNonNull(reader);
         this.columnNames = null;
         this.ignoreExcessFields = false;
         this.ignoreMissingFields = false;
@@ -230,7 +228,7 @@ public class CsvReader extends CsvIo implements AutoCloseable {
         return rowsRead;
     }
 
-    private String getSource() {
+    private URI getSource() {
         return source;
     }
 
