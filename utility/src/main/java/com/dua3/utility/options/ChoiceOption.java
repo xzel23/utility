@@ -15,6 +15,25 @@ import java.util.stream.Collectors;
  */
 public final class ChoiceOption<T> extends Option<T> {
 
+    public static class Choice<T> {
+        private final T value;
+        private final String text;
+
+        Choice(T value, String text) {
+            this.value=value;
+            this.text=text;
+        }
+
+        T value() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
+
     private final Supplier<? extends T> defaultValue;
     private final Function<? super T,String> formatter;
     private Supplier<? extends Collection<? extends T>> values;
@@ -58,14 +77,14 @@ public final class ChoiceOption<T> extends Option<T> {
         this.values = Objects.requireNonNull(values);
     }
 
-    Collection<T> values() {
+    public Collection<T> values() {
         return Collections.unmodifiableCollection(values.get());
     }
-    
-    Collection<String> choices() {
-        return values().stream().map(formatter).collect(Collectors.toUnmodifiableList());
-    }
 
+    public Collection<Choice<T>> choices() {
+        return values().stream().map(v -> new Choice<>(v, formatter.apply(v))).collect(Collectors.toUnmodifiableList());
+    }
+    
     @Override
     public ChoiceOption<T> description(String description) {
         super.description(description);

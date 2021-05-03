@@ -12,6 +12,7 @@ public abstract class Option<T> {
     private final Function<String, ? extends T> mapper;
     private final String[] names;
     
+    String displayName = "";
     String description = "";
     int minArity = 0;
     int maxArity = 0;
@@ -19,10 +20,10 @@ public abstract class Option<T> {
     int maxOccurrences = Integer.MAX_VALUE;
 
     protected Option(Function<String, ? extends T> mapper, String... names) {
+        LangUtil.check(names.length > 0, "at least one name must be given");
+
         this.mapper = Objects.requireNonNull(mapper);
         this.names = names.clone();
-
-        LangUtil.check(names.length > 0, "at least one name must be given");
     }
 
     protected Option<T> arity(int minArity, int maxArity) {
@@ -50,6 +51,12 @@ public abstract class Option<T> {
     protected Option<T> description(String description) {
         LangUtil.check(this.description.isEmpty(), "description already set");
         this.description = Objects.requireNonNull(description, "description must not be null");
+        return this;
+    }
+
+    protected Option<T> displayName(String displayName) {
+        LangUtil.check(this.displayName.isEmpty(), "displayName already set");
+        this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");
         return this;
     }
 
@@ -89,6 +96,10 @@ public abstract class Option<T> {
         return description;
     }
 
+    public String displayName() {
+        return displayName.isEmpty() ? names[0] : displayName;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
