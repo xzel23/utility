@@ -13,12 +13,15 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.Option;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -26,6 +29,15 @@ import java.util.Objects;
  * @author axel
  */
 public abstract class CsvIo implements AutoCloseable {
+
+    public static Collection<Option<?>> getOptions() {
+        return List.of(
+                IoOptions.textDelimiter(),
+                IoOptions.fieldSeparator(),
+                IoOptions.locale(),
+                IoOptions.dateTimeFormat()
+        );
+    }
 
     private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
@@ -42,7 +54,7 @@ public abstract class CsvIo implements AutoCloseable {
         this.delimiter = IoOptions.getTextDelimiter(options);
         this.lineDelimiter = "\r\n";
         this.locale = IoOptions.getLocale(options);
-        this.dateTimeFormatter = IoOptions.getDateTimeFormat(options).getFormatter(locale);
+        this.dateTimeFormatter = IoOptions.getDateTimeFormat(options).getDateTimeFormatter(locale);
         this.dateFormatter = IoOptions.getDateFormat(options).getFormatter(locale);
         this.numberFormat = DecimalFormat.getInstance(locale);
         this.numberFormat.setGroupingUsed(false);

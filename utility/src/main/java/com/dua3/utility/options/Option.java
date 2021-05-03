@@ -10,6 +10,8 @@ import java.util.function.Function;
  */
 public abstract class Option<T> {
     private final Function<String, ? extends T> mapper;
+    private final Function<?super T, String> formatter;
+    
     private final String[] names;
     
     String displayName = "";
@@ -19,10 +21,11 @@ public abstract class Option<T> {
     int minOccurrences = 0;
     int maxOccurrences = Integer.MAX_VALUE;
 
-    protected Option(Function<String, ? extends T> mapper, String... names) {
+    protected Option(Function<String, ? extends T> mapper, Function<?super T, String> formatter, String... names) {
         LangUtil.check(names.length > 0, "at least one name must be given");
 
         this.mapper = Objects.requireNonNull(mapper);
+        this.formatter = Objects.requireNonNull(formatter);
         this.names = names.clone();
     }
 
@@ -60,7 +63,7 @@ public abstract class Option<T> {
         return this;
     }
 
-    protected T map(String s) {
+    public T map(String s) {
         try {
             return mapper.apply(s);
         } catch (Exception e) {
@@ -98,6 +101,10 @@ public abstract class Option<T> {
 
     public String displayName() {
         return displayName.isEmpty() ? names[0] : displayName;
+    }
+    
+    public String format(T v) {
+        return formatter.apply(v);
     }
     
     @Override

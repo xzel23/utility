@@ -112,7 +112,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      *    if neither is provided
      */
     public <T> Optional<T> get(SimpleOption<T> option) {
-        return Optional.ofNullable(stream(option).findFirst().map(list -> list.get(0)).orElse(option.getDefault()));
+        return stream(option).findFirst().map(list -> list.get(0)).or(option::getDefault);
     }
 
     /**

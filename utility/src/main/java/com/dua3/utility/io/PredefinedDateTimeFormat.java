@@ -6,13 +6,10 @@ import java.util.Locale;
 import java.util.function.Function;
 
 public enum PredefinedDateTimeFormat {
-    LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.SHORT)),
-    LOCALE_LONG("long (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.LONG)),
-    ISO_DATE_TIME("ISO 8601 (2000-12-31T10:15:30)", locale -> DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-
-    private static DateTimeFormatter formatFromLocale(Locale locale, FormatStyle style) {
-        return DateTimeFormatter.ofLocalizedDateTime(style).withLocale(locale);
-    }
+    LOCALE_SHORT("short (locale dependent)", FormatStyle.SHORT),
+    LOCALE_MEDIUM("short (locale dependent)", FormatStyle.MEDIUM),
+    LOCALE_LONG("long (locale dependent)", FormatStyle.LONG),
+    ISO_DATE_TIME("ISO 8601 (2000-12-31T10:15:30)", DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
     private static DateTimeFormatter formatFromPattern(String pattern) {
         return DateTimeFormatter.ofPattern(pattern);
@@ -20,15 +17,34 @@ public enum PredefinedDateTimeFormat {
 
     private final String name;
 
-    private final Function<? super Locale, DateTimeFormatter> factory;
+    private final Function<? super Locale, DateTimeFormatter> dateTimeFormatterFactory;
+    private final Function<? super Locale, DateTimeFormatter> dateFormatterFactory;
+    private final Function<? super Locale, DateTimeFormatter> timeFormatterFactory;
 
-    PredefinedDateTimeFormat(String name, Function<? super Locale, DateTimeFormatter> factory) {
+    PredefinedDateTimeFormat(String name, DateTimeFormatter formatter) {
         this.name = name;
-        this.factory = factory;
+        this.dateTimeFormatterFactory = locale -> formatter;
+        this.dateFormatterFactory = locale -> formatter;
+        this.timeFormatterFactory = locale -> formatter;
     }
 
-    public DateTimeFormatter getFormatter(Locale locale) {
-        return factory.apply(locale);
+    PredefinedDateTimeFormat(String name, FormatStyle style) {
+        this.name = name;
+        this.dateTimeFormatterFactory = locale -> DateTimeFormatter.ofLocalizedDateTime(style).withLocale(locale);
+        this.dateFormatterFactory = locale -> DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
+        this.timeFormatterFactory = locale -> DateTimeFormatter.ofLocalizedTime(style).withLocale(locale);
+    }
+
+    public DateTimeFormatter getDateTimeFormatter(Locale locale) {
+        return dateTimeFormatterFactory.apply(locale);
+    }
+    
+    public DateTimeFormatter getDateFormatter(Locale locale) {
+        return dateFormatterFactory.apply(locale);
+    }
+
+    public DateTimeFormatter getTimeFormatter(Locale locale) {
+        return timeFormatterFactory.apply(locale);
     }
 
     @Override

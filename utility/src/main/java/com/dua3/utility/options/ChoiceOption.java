@@ -19,12 +19,12 @@ public final class ChoiceOption<T> extends Option<T> {
         private final T value;
         private final String text;
 
-        Choice(T value, String text) {
+        private Choice(T value, String text) {
             this.value=value;
             this.text=text;
         }
 
-        T value() {
+        public T value() {
             return value;
         }
 
@@ -32,10 +32,22 @@ public final class ChoiceOption<T> extends Option<T> {
         public String toString() {
             return text;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Choice<?> choice = (Choice<?>) o;
+            return Objects.equals(value, choice.value) && Objects.equals(text, choice.text);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value, text);
+        }
     }
 
     private final Supplier<? extends T> defaultValue;
-    private final Function<? super T,String> formatter;
     private Supplier<? extends Collection<? extends T>> values;
     
     @SuppressWarnings("unchecked")
@@ -68,12 +80,11 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     private ChoiceOption(Function<String,? extends T> parser, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, Supplier<? extends T> defaultValue,  String... names) {
-        super(parser, names);
+        super(parser, formatter, names);
         occurence(0,1);
         arity(1,1);
         this.values = Objects.requireNonNull(values);
         this.defaultValue = Objects.requireNonNull(defaultValue);
-        this.formatter = Objects.requireNonNull(formatter);
         this.values = Objects.requireNonNull(values);
     }
 
@@ -82,7 +93,11 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     public Collection<Choice<T>> choices() {
-        return values().stream().map(v -> new Choice<>(v, formatter.apply(v))).collect(Collectors.toUnmodifiableList());
+        return values().stream().map(this::choice).collect(Collectors.toUnmodifiableList());
+    }
+    
+    public Choice<T> choice(T v) {
+        return new Choice<>(v, format(v));
     }
     
     @Override
@@ -94,4 +109,5 @@ public final class ChoiceOption<T> extends Option<T> {
     public T getDefault() {
         return defaultValue.get();
     }
+    
 }

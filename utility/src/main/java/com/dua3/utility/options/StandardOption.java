@@ -11,11 +11,15 @@ import java.util.function.Function;
 public class StandardOption<T> extends Option<T> {
     
     public static <T> StandardOption<T> create(Class<T> type, String... names) {
-        return create(s -> DataUtil.convert(s, type), names);
+        return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
     public static <T> StandardOption<T> create(Function<String,T> mapper, String[] names) {
-        return new StandardOption<>(mapper, names);
+        return new StandardOption<>(mapper, Object::toString, names);
+    }
+
+    public static <T> StandardOption<T> create(Function<String,T> mapper, Function<? super T, String> formatter, String[] names) {
+        return new StandardOption<>(mapper, formatter, names);
     }
 
     /**
@@ -23,8 +27,8 @@ public class StandardOption<T> extends Option<T> {
      * @param mapper the mapper used to convert the string values of arguments to the target type
      * @param names the names to be used on the command line for this option
      */
-    private StandardOption(Function<String,T> mapper, String... names) {
-        super(mapper, names);
+    private StandardOption(Function<String,T> mapper, Function<? super T, String> formatter, String... names) {
+        super(mapper, formatter, names);
     }
 
     @Override
