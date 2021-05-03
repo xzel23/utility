@@ -1,13 +1,14 @@
-package com.dua3.utility.cmd;
+package com.dua3.utility.options;
 
 /**
- * Exception class to throw when command line arguments do not match the options defined by the command line parser.
+ * Exception class to throw when command line arguments and/or values for configuration options do not match the 
+ * allowed values defined by the option/parser.
  */
-public class CmdException extends IllegalStateException {
+public class OptionException extends IllegalStateException {
     /**
      * Exception thrown when a parameter argument's String value could not be converted to the target type. 
      */
-    public static class ConversionException extends CmdException {
+    public static class ConversionException extends OptionException {
         final Option<?> option;
         final String parameter;
 
@@ -35,11 +36,11 @@ public class CmdException extends IllegalStateException {
         }
     }
     
-    public CmdException(String msg) {
+    public OptionException(String msg) {
         super(msg);
     }
 
-    public CmdException(String msg, Exception e) {
+    public OptionException(String msg, Exception e) {
         super(msg, e);
     }
 }

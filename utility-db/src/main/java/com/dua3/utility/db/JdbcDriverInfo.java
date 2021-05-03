@@ -1,20 +1,57 @@
 package com.dua3.utility.db;
 
+import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.SimpleOption;
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.options.Option;
-import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.text.TextUtil;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * JDBC driver information.
  */
 public class JdbcDriverInfo {
+
+    private static final Logger LOG = Logger.getLogger(JdbcDriverInfo.class.getName());
+
+    /**
+     * Identifier String for the option type.
+     */
+    public static final String OPTION_TYPE = "type";
+    /**
+     * Type identifier String for file options.
+     */
+    public static final String OPTION_TYPE_PATH = "file";
+    /**
+     * Type identifier String for string options.
+     */
+    public static final String OPTION_TYPE_STRING = "string";
+    /**
+     * Type identifier String for integer options.
+     */
+    public static final String OPTION_TYPE_INTEGER = "integer";
+    /**
+     * Type identifier String for double options.
+     */
+    public static final String OPTION_TYPE_DOUBLE = "double";
+
+    private static final String PATTERN_VAR_START = "\\$\\{";
+    private static final String PATTERN_VAR_NAME = "(?<name>\\p{Alpha}(\\p{Alnum}|_)*)";
+    private static final String PATTERN_VAR_ARG_1 = "(:((?<arg1>\\p{Alpha}(\\p{Alnum}|_)*)=(?<value1>[^,}]*)))";
+    private static final String PATTERN_VAR_ARG_N = "(,((?<argn>\\p{Alpha}(\\p{Alnum}|_)*)=(?<valuen>[^,}]*)))";
+    private static final String PATTERN_VAR_REMAINING_ARGS = "(?<remainingargs>" + PATTERN_VAR_ARG_N + "*)";
+    private static final String PATTERN_VAR_END = "\\}";
+    private static final Pattern PATTERN_VAR = Pattern.compile(
+            PATTERN_VAR_START
+            + PATTERN_VAR_NAME
+            + "(" + PATTERN_VAR_ARG_1 + PATTERN_VAR_REMAINING_ARGS + ")?"
+            + PATTERN_VAR_END);
+    private static final Pattern PATTERN_ARGN = Pattern.compile(PATTERN_VAR_ARG_N);
 
     /** The driver name. */
     public final String name;
@@ -27,7 +64,7 @@ public class JdbcDriverInfo {
     /** Linke to the vendor's driver webpage. */
     public final String link;
     /** This driver's options. */
-    public final OptionSet options;
+    public final Collection<SimpleOption<?>> options;
 
     /** 
      * Constructor.
@@ -43,9 +80,114 @@ public class JdbcDriverInfo {
         this.urlPrefix = urlPrefix;
         this.link = link;
 
-        Pair<String, List<Option<?>>> parsed = Option.parseScheme(urlScheme);
+        Pair<String, List<SimpleOption<?>>> parsed = parseScheme(urlScheme);
         this.urlScheme = parsed.first;
-        this.options = new OptionSet(parsed.second);
+        this.options = parsed.second;
+    }
+
+    /**
+     * Parse a configuration schema string.
+     * <p>
+     * Example: https://${SERVER}:${PORT}
+     *
+     * @param s the scheme to parse
+     * @return {@link Pair} consisting of
+     * <ul>
+     *     <li>list of options
+     *     <li>scheme with var arguments removed
+     * </ul>
+     */
+    private static Pair<String, List<SimpleOption<?>>> parseScheme(CharSequence s) {
+        // extract options
+        List<SimpleOption<?>> list = new ArrayList<>();
+        Matcher matcher = PATTERN_VAR.matcher(s);
+        while (matcher.find()) {
+            String name = matcher.group("name");
+            Map<String, String> arguments = extractArgs(matcher);
+            SimpleOption<?> option = createOption(name, arguments);
+            list.add(option);
+        }
+
+        // remove arguments from scheme
+        String r = PATTERN_VAR.matcher(s).replaceAll("\\$\\{${name}\\}");
+
+        return Pair.of(r, list);
+    }
+
+    /**
+     * Extract arguments (used by {@link #parseScheme(CharSequence)}).
+     *
+     * @param matcher the current matcher instance that matches a single option declaration
+     * @return map of arguments for the option matched by matcher
+     */
+    private static Map<String, String> extractArgs(Matcher matcher) {
+        Map<String, String> arguments = new HashMap<>();
+        String arg = matcher.group("arg1");
+        if (arg != null) {
+            String val = matcher.group("value1");
+            addArgument(arguments, arg, val);
+            String remainingArgs = matcher.group("remainingargs");
+            if (!remainingArgs.isEmpty()) {
+                Matcher matcherArgs = PATTERN_ARGN.matcher(remainingArgs);
+                while (matcherArgs.find()) {
+                    arg = matcherArgs.group("argn");
+                    val = matcherArgs.group("valuen");
+                    addArgument(arguments, arg, val);
+                }
+            }
+        }
+        return arguments;
+    }
+
+    private static void addArgument(Map<? super String, String> arguments, String arg, String val) {
+        String old = arguments.put(arg, val);
+        if (old != null) {
+            LOG.log(Level.WARNING, () -> String.format(Locale.ROOT,"while parsing option string: multiple values for argument '%s'", arg));
+        }
+    }
+
+    /**
+     * Create Option instance (used by {@link #parseScheme(CharSequence)}).
+     *
+     * @param name      the option's name
+     * @param arguments the option's arguments
+     * @return new option instance
+     */
+    private static SimpleOption<?> createOption(String name, Map<String, String> arguments) {
+        String type = arguments.getOrDefault(OPTION_TYPE, OPTION_TYPE_STRING);
+        String dflt = arguments.get("default");
+        switch (type) {
+            case OPTION_TYPE_STRING: {
+                var option = SimpleOption.create(s -> s, name).description(name);
+                if (dflt != null) {
+                    option.defaultValue(dflt);
+                }
+                return option;
+            }
+            case OPTION_TYPE_PATH: {
+                var option = SimpleOption.create(Paths::get, name).description(name);
+                if (dflt != null) {
+                    option.defaultValue(Paths.get(dflt));
+                }
+                return option;
+            }
+            case OPTION_TYPE_INTEGER: {
+                var option = SimpleOption.create(Integer::valueOf, name).description(name);
+                if (dflt != null) {
+                    option.defaultValue(Integer.valueOf(dflt));
+                }
+                return option;
+            }
+            case OPTION_TYPE_DOUBLE: {
+                var option = SimpleOption.create(Double::valueOf, name).description(name);
+                if (dflt != null) {
+                    option.defaultValue(Double.valueOf(dflt));
+                }
+                return option;
+            }
+            default:
+                throw new IllegalStateException("unsupported type: " + type);
+        }
     }
 
     @Override
@@ -73,9 +215,13 @@ public class JdbcDriverInfo {
      * @param values the option values to set in the URL
      * @return the connection URL
      */
-    public String getUrl(OptionValues values) {
+    public String getUrl(Arguments values) {
         return TextUtil.transform(urlScheme, 
                 s -> Objects.toString(
-                        values.get(options.getOption(s).orElseThrow(() -> new NoSuchElementException("No value present"))).get(), ""));
+                        values.get(getOption(s).orElseThrow(() -> new NoSuchElementException("No value present"))).get(), ""));
+    }
+
+    private Optional<SimpleOption<?>> getOption(String s) {
+        return options.stream().filter(opt -> opt.names().contains(s)).findFirst();
     }
 }

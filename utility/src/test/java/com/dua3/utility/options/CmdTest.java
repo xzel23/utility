@@ -1,4 +1,4 @@
-package com.dua3.utility.cmd;
+package com.dua3.utility.options;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ public class CmdTest {
 
     @Test
     public void testFlag() {
-        CmdParser cmd = new CmdParser("testFlag", "Unit test for passing flags on the command line.");
+        ArgumentsParser cmd = new ArgumentsParser("testFlag", "Unit test for passing flags on the command line.");
         Flag oPrint = cmd.flag("--print", "-p").description("print result to terminal");
 
         assertFalse(cmd.parse().isSet(oPrint));
@@ -45,7 +45,7 @@ public class CmdTest {
 
     @Test
     public void testSimpleOption() {
-        CmdParser cmd = new CmdParser("testSimpleOption", "Unit test for passing simple options on the command line.");
+        ArgumentsParser cmd = new ArgumentsParser("testSimpleOption", "Unit test for passing simple options on the command line.");
 
         SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n").description("set name");
         SimpleOption<Integer> optionAge = cmd.simpleOption(Integer.class, "--age", "-a");
@@ -56,9 +56,9 @@ public class CmdTest {
         assertEquals("Eve", cmd.parse("-n", "Eve").getOrThrow(optionName));
         assertEquals(30, cmd.parse("--age", "30").getOrThrow(optionAge));
 
-        assertThrows(CmdException.class, () -> cmd.parse("-n", "Eve", "--name", "Bob"));
+        assertThrows(OptionException.class, () -> cmd.parse("-n", "Eve", "--name", "Bob"));
 
-        CmdArgs eve30 = cmd.parse("-n", "Eve", "--age", "30");
+        Arguments eve30 = cmd.parse("-n", "Eve", "--age", "30");
         assertEquals("Eve", eve30.getOrThrow(optionName));
         assertEquals(30, eve30.getOrThrow(optionAge));
 
@@ -81,7 +81,7 @@ public class CmdTest {
 
     @Test
     public void testPositionalArgs1() {
-        CmdParser cmd = new CmdParser("testPositionalArgs1", "Unit test for passing positional arguments on the command line.");
+        ArgumentsParser cmd = new ArgumentsParser("testPositionalArgs1", "Unit test for passing positional arguments on the command line.");
 
         assertEquals(
                 String.format("testPositionalArgs1%n" +
@@ -93,16 +93,16 @@ public class CmdTest {
                               "%n")
                 , cmd.help());
 
-        CmdArgs args1 = cmd.parse();
+        Arguments args1 = cmd.parse();
         assertTrue(args1.positionalArgs().isEmpty());
         
-        CmdArgs args2 = cmd.parse("abc", "def");
+        Arguments args2 = cmd.parse("abc", "def");
         assertEquals(List.of("abc", "def"), args2.positionalArgs());
     }
 
     @Test
     public void testPositionalArgs2() {
-        CmdParser cmd = new CmdParser("testPositionalArgs2", "Unit test for passing positional arguments on the command line.", 1, 3);
+        ArgumentsParser cmd = new ArgumentsParser("testPositionalArgs2", "Unit test for passing positional arguments on the command line.", 1, 3);
         assertEquals(
                 String.format("testPositionalArgs2%n" +
                      "-------------------%n" +
@@ -114,10 +114,10 @@ public class CmdTest {
                 , cmd.help());
         
         // min arity is 1!
-        assertThrows(CmdException.class, cmd::parse);
+        assertThrows(OptionException.class, cmd::parse);
 
         // max arity is 3!
-        assertThrows(CmdException.class, () -> cmd.parse("abc", "def", "ghi", "jkl"));
+        assertThrows(OptionException.class, () -> cmd.parse("abc", "def", "ghi", "jkl"));
 
         // these are all valid
         assertEquals(List.of("abc"), cmd.parse("abc").positionalArgs());

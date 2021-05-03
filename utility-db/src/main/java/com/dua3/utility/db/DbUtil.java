@@ -5,10 +5,11 @@
 
 package com.dua3.utility.db;
 
-import com.dua3.utility.io.CsvIo;
+import com.dua3.utility.options.Arguments;
 import com.dua3.utility.io.CsvReader;
 import com.dua3.utility.io.CsvReader.ListRowBuilder;
 import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoOptions;
 import com.dua3.utility.lang.LangUtil;
 
 import javax.sql.DataSource;
@@ -59,7 +60,7 @@ public final class DbUtil {
                 CsvReader reader = CsvReader.create(
                         rb,
                         new BufferedReader(new StringReader(Objects.toString(value))),
-                        CsvIo.getOptionValues(CsvIo.OPTION_SEPARATOR, ';'));
+                        Arguments.of(Arguments.createEntry(IoOptions.fieldSeparator(), ';')));
                 int n = reader.readSome(1);
                 assert n == 1;
                 List<String> data = rb.getRow();

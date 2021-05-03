@@ -23,27 +23,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 /**
  * @author axel@dua3.com
  */
 public class CsvWriter extends CsvIo implements Flushable {
-    public static CsvWriter create(BufferedWriter writer, OptionValues options) {
+    public static CsvWriter create(BufferedWriter writer, Arguments options) {
         return new CsvWriter(writer, options);
     }
 
-    public static CsvWriter create(File file, OptionValues options) throws IOException {
+    public static CsvWriter create(File file, Arguments options) throws IOException {
         return create(file.toPath(), options);
     }
 
-    public static CsvWriter create(Path path, OptionValues options) throws IOException {
-        Charset cs = getCharset(options);
+    public static CsvWriter create(Path path, Arguments options) throws IOException {
+        Charset cs = IoOptions.getCharset(options);
         return create(Files.newBufferedWriter(path, cs), options);
     }
 
-    public static CsvWriter create(OutputStream out, OptionValues options) {
-        Charset cs = getCharset(options);
+    public static CsvWriter create(OutputStream out, Arguments options) {
+        Charset cs = IoOptions.getCharset(options);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
         return create(writer, options);
     }
@@ -52,7 +52,7 @@ public class CsvWriter extends CsvIo implements Flushable {
 
     private int fieldsInRow = 0;
 
-    public CsvWriter(BufferedWriter out, OptionValues options) {
+    public CsvWriter(BufferedWriter out, Arguments options) {
         super(options);
         this.out = Objects.requireNonNull(out);
     }

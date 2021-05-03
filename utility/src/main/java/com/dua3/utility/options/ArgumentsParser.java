@@ -1,4 +1,4 @@
-package com.dua3.utility.cmd;
+package com.dua3.utility.options;
 
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
@@ -9,9 +9,9 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * A simple commandline parser class.
+ * A parser that parses command line args into an {@link Arguments} instance.
  */
-public class CmdParser {
+public class ArgumentsParser {
 
     /** Marker to pass on the command line indicating that all remaining args should be treated as positional parameters. */
     public static final String POSITIONAL_MARKER = "--";
@@ -34,7 +34,7 @@ public class CmdParser {
     /**
      * Constructor. 
      */
-    public CmdParser() {
+    public ArgumentsParser() {
         this("","");
     }
 
@@ -45,7 +45,7 @@ public class CmdParser {
      * @param minArgs minimum number of positional arguments
      * @param maxArgs maximum number of positional arguments
      */
-    public CmdParser(String name, String description, int minArgs, int maxArgs) {
+    public ArgumentsParser(String name, String description, int minArgs, int maxArgs) {
         this.name = Objects.requireNonNull(name);
         this.description = Objects.requireNonNull(description);
 
@@ -61,7 +61,7 @@ public class CmdParser {
      * @param description program description 
      * @param minArgs minimum number of positional arguments
      */
-    public CmdParser(String name, String description, int minArgs) {
+    public ArgumentsParser(String name, String description, int minArgs) {
         this(name, description, minArgs, Integer.MAX_VALUE);        
     }
     
@@ -70,7 +70,7 @@ public class CmdParser {
      * @param name the command name to show in help text.
      * @param description the command description to show in help text.
      */
-    public CmdParser(String name, String description) {
+    public ArgumentsParser(String name, String description) {
         this(name, description, 0, Integer.MAX_VALUE);
     }
 
@@ -80,7 +80,7 @@ public class CmdParser {
      * @return the flag
      */
     public Flag  flag(String... names) {
-        return addOption(new Flag(names));
+        return addOption(Flag.create(names));
     }
 
     /**
@@ -102,7 +102,7 @@ public class CmdParser {
      * @return the option
      */
     public <T> SimpleOption<T> simpleOption(Function<String,T> mapper, String... names) {
-        return addOption(new SimpleOption<>(mapper, names));
+        return addOption(SimpleOption.create(mapper, names));
     }
 
     /**
@@ -124,7 +124,7 @@ public class CmdParser {
      * @return the option
      */
     public <T> StandardOption<T> option(Function<String,T> mapper, String... names) {
-        return addOption(new StandardOption<>(mapper, names));
+        return addOption(StandardOption.create(mapper, names));
     }
 
     /** 
@@ -143,12 +143,12 @@ public class CmdParser {
      * @param args the command line arguments to parse.
      * @return object holding the parsed command line arguments
      */
-    public CmdArgs parse(String... args) {
+    public Arguments parse(String... args) {
         List<String> argList = Arrays.asList(args);
 
-        Queue<CmdArgs.Entry<?>> parsedOptions = new LinkedList<>();
+        Queue<Arguments.Entry<?>> parsedOptions = new LinkedList<>();
         List<String> positionalArgs = new LinkedList<>();
-        CmdArgs.Entry<?> currentEntry = null;
+        Arguments.Entry<?> currentEntry = null;
 
         boolean parsingPositional = false;
         boolean remainingAllPositional = false;
@@ -165,7 +165,7 @@ public class CmdParser {
 
             // check for positional marker
             if (arg.equals(POSITIONAL_MARKER)) {
-                LangUtil.check(positionalArgs.isEmpty(), () -> new CmdException("positional args found before positional marker '"+POSITIONAL_MARKER+"'"));
+                LangUtil.check(positionalArgs.isEmpty(), () -> new OptionException("positional args found before positional marker '" + POSITIONAL_MARKER + "'"));
                 remainingAllPositional = true;
                 continue;
             }
@@ -179,7 +179,7 @@ public class CmdParser {
             Option<?> option = options.get(arg);
             if (option != null) {
                 // start processing of next ooption
-                currentEntry = CmdArgs.Entry.create(option);
+                currentEntry = Arguments.Entry.create(option);
                 parsedOptions.add(currentEntry);
                 
                 if (currentEntry.getOption().maxArity==0) {
@@ -191,7 +191,7 @@ public class CmdParser {
                     currentEntry.addParameter(arg);
                 } else {
                     if (!parsingPositional) {
-                        LangUtil.check(positionalArgs.isEmpty(), () -> new CmdException("positional args mixed in with option parameters"));
+                        LangUtil.check(positionalArgs.isEmpty(), () -> new OptionException("positional args mixed in with option parameters"));
                         parsingPositional = true;
                     }
                     positionalArgs.add(arg);
@@ -202,22 +202,22 @@ public class CmdParser {
         validate(parsedOptions);
 
         if (positionalArgs.size()<minPositionalArgs) {
-            throw new CmdException("missing argument (at least " + minPositionalArgs + " arguments must be given)");
+            throw new OptionException("missing argument (at least " + minPositionalArgs + " arguments must be given)");
         }
 
         if (positionalArgs.size()>maxPositionalArgs) {
-            throw new CmdException("too many arguments (at most " + minPositionalArgs + " arguments can be given)");
+            throw new OptionException("too many arguments (at most " + minPositionalArgs + " arguments can be given)");
         }
 
-        return new CmdArgs(parsedOptions, positionalArgs);
+        return new Arguments(parsedOptions, positionalArgs);
     }
 
     /**
      * Validate the parsed option, i. e. check number of occurences and arity.
      * @param parsedOptions the parsed options to validate
-     * @throws CmdException if an error is detected
+     * @throws OptionException if an error is detected
      */
-    private void validate(Collection<CmdArgs.Entry<?>> parsedOptions) {
+    private void validate(Collection<Arguments.Entry<?>> parsedOptions) {
         Map<Option<?>, Integer> hist = new HashMap<>();
         parsedOptions.forEach(entry -> hist.compute(entry.option, (k_,i_) -> i_==null ? 1 : i_+1));
 
@@ -228,12 +228,12 @@ public class CmdParser {
                     Option<?> option = p.first;
                     int count = p.second;
                     LangUtil.check(option.minOccurrences() <= count,
-                            () -> new CmdException(String.format(
+                            () -> new OptionException(String.format(
                                 "option '%s' must be specified at least %d time(s), but was only %d times",
                                 option.name(), option.minOccurrences(), count
                             )));
                     LangUtil.check(option.maxOccurrences() >= count,
-                            () -> new CmdException(String.format(
+                            () -> new OptionException(String.format(
                                 "option '%s' must be specified at most %d time(s), but was %d times",
                                 option.name(), option.maxOccurrences(), count
                             )));
@@ -330,7 +330,7 @@ public class CmdParser {
         return argText;
     }
     
-    public void errorMessage(Formatter fmt, CmdException e) {
+    public void errorMessage(Formatter fmt, OptionException e) {
         // print title
         if (!name.isEmpty()) {
             fmt.format("%s%n", name);
@@ -347,7 +347,7 @@ public class CmdParser {
         fmt.format("ERROR: "+e.getMessage());
     }
 
-    public String errorMessage(CmdException e) {
+    public String errorMessage(OptionException e) {
         Formatter fmt = new Formatter();
         errorMessage(fmt, e);
         return fmt.toString();

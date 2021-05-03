@@ -1,4 +1,4 @@
-package com.dua3.utility.cmd;
+package com.dua3.utility.options;
 
 import com.dua3.utility.data.DataUtil;
 
@@ -10,8 +10,12 @@ import java.util.function.Function;
  */
 public class StandardOption<T> extends Option<T> {
     
-    StandardOption(Class<? extends T> type, String... names) {
-        this(s -> DataUtil.convert(s, type), names);
+    public static <T> StandardOption<T> create(Class<T> type, String... names) {
+        return create(s -> DataUtil.convert(s, type), names);
+    }
+
+    public static <T> StandardOption<T> create(Function<String,T> mapper, String[] names) {
+        return new StandardOption<>(mapper, names);
     }
 
     /**
@@ -19,7 +23,7 @@ public class StandardOption<T> extends Option<T> {
      * @param mapper the mapper used to convert the string values of arguments to the target type
      * @param names the names to be used on the command line for this option
      */
-    StandardOption(Function<String,T> mapper, String... names) {
+    private StandardOption(Function<String,T> mapper, String... names) {
         super(mapper, names);
     }
 

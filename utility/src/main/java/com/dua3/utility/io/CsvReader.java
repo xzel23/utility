@@ -26,8 +26,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.dua3.utility.options.Arguments;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.OptionValues;
 
 public class CsvReader extends CsvIo implements AutoCloseable {
 
@@ -82,23 +82,23 @@ public class CsvReader extends CsvIo implements AutoCloseable {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
-    public static CsvReader create(RowBuilder builder, BufferedReader reader, OptionValues options) throws IOException {
+    public static CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
         return new CsvReader(builder, reader, null, options);
     }
 
-    public static CsvReader create(RowBuilder builder, File file, OptionValues options) throws IOException {
+    public static CsvReader create(RowBuilder builder, File file, Arguments options) throws IOException {
         return create(builder, file.toPath(), options);
     }
 
-    public static CsvReader create(RowBuilder builder, Path path, OptionValues options) throws IOException {
-        Charset cs = getCharset(options);
+    public static CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
+        Charset cs = IoOptions.getCharset(options);
         return create(builder, Files.newBufferedReader(path, cs), options);
     }
 
-    public static CsvReader create(RowBuilder builder, InputStream in, OptionValues options) throws IOException {
+    public static CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
         // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
         // selection in options)
-        Charset charset = getCharset(options);
+        Charset charset = IoOptions.getCharset(options);
         if (in.markSupported()) {
             int bomLength = UTF8_BOM_BYTES.length;
             byte[] buffer = new byte[bomLength];
@@ -125,7 +125,7 @@ public class CsvReader extends CsvIo implements AutoCloseable {
     private boolean ignoreMissingFields;
     private final URI source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, URI source, OptionValues options)
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, URI source, Arguments options)
             throws IOException {
         super(options);
 

@@ -15,8 +15,8 @@
  */
 package com.dua3.utility.io;
 
-import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.Option;
 
 import java.io.IOException;
 import java.net.URI;
@@ -201,7 +201,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     public T read(URI uri) throws IOException {
-        return read(uri, t -> OptionValues.empty());
+        return read(uri, t -> Arguments.empty());
     }
 
     /**
@@ -212,7 +212,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public abstract T read(URI uri, Function<FileType<? extends T>, OptionValues> options) throws IOException;
+    public abstract T read(URI uri, Function<FileType<? extends T>, Arguments> options) throws IOException;
 
     /**
      * Read document from file.
@@ -222,7 +222,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     public T read(Path path) throws IOException {
-        return read(path, t -> OptionValues.empty());
+        return read(path, t -> Arguments.empty());
     }
 
     /**
@@ -233,7 +233,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public T read(Path path, Function<FileType<? extends T>, OptionValues> options) throws IOException {
+    public T read(Path path, Function<FileType<? extends T>, Arguments> options) throws IOException {
         return read(path.toUri());
     }
 
@@ -245,7 +245,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     public void write(URI uri, T document) throws IOException {
-        write(uri, document, t -> OptionValues.empty());
+        write(uri, document, t -> Arguments.empty());
     }
 
     /**
@@ -256,7 +256,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param options  the options to use
      * @throws IOException if an error occurs
      */
-    public abstract void write(URI uri, T document, Function<FileType<? super T>, OptionValues> options) throws IOException;
+    public abstract void write(URI uri, T document, Function<FileType<? super T>, Arguments> options) throws IOException;
 
     /**
      * Write document to file.
@@ -266,7 +266,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     public void write(Path path, T document) throws IOException {
-        write(path, document, t -> OptionValues.empty());
+        write(path, document, t -> Arguments.empty());
     }
 
     /**
@@ -277,7 +277,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param options  the options to use
      * @throws IOException if an error occurs
      */
-    public void write(Path path, T document, Function<FileType<? super T>, OptionValues> options) throws IOException {
+    public void write(Path path, T document, Function<FileType<? super T>, Arguments> options) throws IOException {
         write(path.toUri(), document, options);
     }
 
@@ -301,8 +301,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return optional settings for file type
      */
-    public OptionSet getSettings() {
-        return new OptionSet(Collections.emptyList());
+    public Collection<Option<?>> getSettings() {
+        return Collections.emptyList();
     }
 
     // all instances of the same class are considered equal

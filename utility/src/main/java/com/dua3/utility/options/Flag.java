@@ -1,17 +1,21 @@
-package com.dua3.utility.cmd;
+package com.dua3.utility.options;
 
 /**
- * A flag class. 
+ * A flag class, which is in principle a boolean option. 
  * 
- * A flag can be given at most once on a command line. It can be queried by calling {@link CmdArgs#isSet(Flag)}.
+ * A flag can be given at most once on a command line. It can be queried by calling {@link Arguments#isSet(Flag)}.
  */
 public class Flag extends Option<Boolean> {
 
+    public static Flag create(String... names) {
+        return new Flag(names);
+    }
+    
     /**
      * Construct a new flag with the given name(s).
      * @param names names for the flag, at least one.
      */
-    public Flag(String[] names) {
+    private Flag(String[] names) {
         super(Flag::mapToBoolean, names);
         occurence(0,1);
         arity(0,0);

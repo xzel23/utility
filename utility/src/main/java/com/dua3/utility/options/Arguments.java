@@ -1,13 +1,30 @@
-package com.dua3.utility.cmd;
+package com.dua3.utility.options;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * Command line arguments class.
+ * Class holding options and arguments; use for parsing and passing command line arguments and configuration options.
  */
-public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
+public class Arguments implements Iterable<Arguments.Entry<?>> {
+
+    public static Arguments empty() {
+        return new Arguments(new ArrayDeque<>(), Collections.emptyList());
+    }
+
+    public static Arguments of(Entry<?>... args) {
+        return new Arguments(new LinkedList<>(Arrays.asList(args)), Collections.emptyList());
+    }
+
+    @SafeVarargs
+    public static <T> Entry<T> createEntry(Option<T> option, T... args) {
+        Entry<T> entry = new Entry<>(option);
+        for (var arg: args) {
+            entry.addArg(arg);
+        }
+        return entry;
+    }
 
     /**
      * An entry represents a single option given on the command line together with the parameters given in that option
@@ -22,14 +39,18 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
         static Entry<?> create(Option<?> option) {
             return new Entry<>(option);
         }
-        
+
         Entry(Option<T> option) {
             this.option = Objects.requireNonNull(option);
             this.parms = new LinkedList<>();
         }
 
         void addParameter(String s) {
-            parms.add(option.map(s));
+            addArg(option.map(s));
+        }
+
+        void addArg(T v) {
+            parms.add(v);
         }
 
         /**
@@ -59,7 +80,7 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
      * @param parsedOptions the options detected by the command line parser
      * @param positionalArgs the positional arguments
      */
-    CmdArgs(Queue<Entry<?>> parsedOptions, List<String> positionalArgs) {
+    Arguments(Queue<Entry<?>> parsedOptions, List<String> positionalArgs) {
         this.parsedOptions = parsedOptions;
         this.positionalArgs = new ArrayList<>(positionalArgs);
     }
@@ -77,10 +98,10 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
      * @param option the option
      * @param <T> the generic type of the option 
      * @return the parameter passed to the option, or the option's default value (if set)
-     * @throws CmdException if neither is set
+     * @throws OptionException if neither is set
      */
     public <T> T getOrThrow(SimpleOption<T> option) {
-        return get(option).orElseThrow(() -> new CmdException("missing required option: "+option.name()));
+        return get(option).orElseThrow(() -> new OptionException("missing required option: " + option.name()));
     }
 
     /**
@@ -92,6 +113,16 @@ public class CmdArgs implements Iterable<CmdArgs.Entry<?>> {
      */
     public <T> Optional<T> get(SimpleOption<T> option) {
         return Optional.ofNullable(stream(option).findFirst().map(list -> list.get(0)).orElse(option.getDefault()));
+    }
+
+    /**
+     * Get value of {@link ChoiceOption}.
+     * @param option the option
+     * @param <T> the generic type of the option 
+     * @return the option's value
+     */
+    public <T> T get(ChoiceOption<T> option) {
+        return stream(option).findFirst().map(list -> list.get(0)).orElse(option.getDefault());
     }
 
     /**

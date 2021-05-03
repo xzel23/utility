@@ -1,4 +1,4 @@
-package com.dua3.utility.cmd;
+package com.dua3.utility.options;
 
 import com.dua3.utility.lang.LangUtil;
 
@@ -8,19 +8,23 @@ import java.util.function.Function;
 /**
  * A simple option class. 
  *
- * A simple option can be given at most once on a command line and takes exactly one parameter.
- * Its value can be queried by calling {@link CmdArgs#get(SimpleOption)}.
+ * A simple option can be present at most once in an {@link Arguments} instance and takes exactly one parameter.
+ * Its value can be queried by calling {@link Arguments#get(SimpleOption)}.
  */
 public class SimpleOption<T> extends Option<T> {
 
     private T defaultValue = null;
+
+    public static <T> SimpleOption<T>  create(Function<String,T> mapper, String... names) {
+        return new SimpleOption<>(mapper, names);
+    }
     
     /**
      * Construct a new simple option with the given name(s).
      * @param mapper the mapping function to the target type
      * @param names names for the flag, at least one.
      */
-    SimpleOption(Function<String,T> mapper, String[] names) {
+    private SimpleOption(Function<String,T> mapper, String... names) {
         super(mapper, names);
         occurence(0,1);
         arity(1,1);
@@ -39,7 +43,7 @@ public class SimpleOption<T> extends Option<T> {
      */
     public SimpleOption<T> defaultValue(T defaultValue) {
         LangUtil.check(this.defaultValue==null, "default value has already been set");
-        this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.defaultValue = Objects.requireNonNull(defaultValue, "default value cannot be set to null");
         return this;
     }
     

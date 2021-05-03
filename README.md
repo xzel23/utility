@@ -70,6 +70,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 - logback support has been replaced by log4j2 due to missing jigsaw suport in logback. This means if you have been using a Log4J to Logback bridge before, it's now time to do it the other way around.
 - NamedParameterStatement supports many more data types; fixes for inserting null values.
 - source parameter of CsvReader changed from String to URI
+- `com.dua3.utility.cmd` and `com.dua3.utility.options` have been merged; there had been a lot of duplicated functionality, and the implementation in the `cmd` package was much cleaner; the result is again located in `com.dua3.utility.options` but the code is mostly based on what had been in the `cmd` package. Classes have been renamed because they are no more intended to be used only for command line arguments.
 
 ### 8.2.2
 
