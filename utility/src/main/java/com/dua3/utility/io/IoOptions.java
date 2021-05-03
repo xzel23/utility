@@ -64,7 +64,7 @@ public class IoOptions {
                 (String s) -> Character.valueOf(s.charAt(0)),
                 Object::toString,
                 () -> List.of(',', ';'),
-                () -> Character.valueOf('"'),
+                () -> Character.valueOf(','),
                 "-s", "--field-separator"
         ).description("set field separator");
     }
