@@ -23,8 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -196,6 +195,25 @@ public final class SwingUtil {
     }
 
     /**
+     * Show file save dialog.
+     *
+     * @param  parent
+     *                 the parent component for the dialog
+     * @param  current
+     *                 the current file, it determines the folder shown when the
+     *                 dialog opens
+     * @param  types
+     *                 the selectable file name filters, given as pairs of
+     *                 description and one or more extensions
+     * @return
+     *                 Optional containing the path to the selected file.
+     */
+    @SafeVarargs
+    public static Optional<Path> showFileSaveDialog(Component parent, Path current, Pair<String, String[]>... types) {
+        return showFileDialog(parent, current, JFileChooser.FILES_ONLY, JFileChooser::showSaveDialog, types);
+    }
+
+    /**
      * Convert java.awt.Color to Color.
      *
      * @param  color
@@ -286,6 +304,11 @@ public final class SwingUtil {
     @SafeVarargs
     public static Optional<Path> showOpenDialog(Component parent, Path current, int selectionMode,
             Pair<String, String[]>... types) {
+        return showFileDialog(parent, current, selectionMode, JFileChooser::showOpenDialog, types);
+    }
+
+    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<JFileChooser,Component,Integer> showDialog,
+                                                Pair<String, String[]>... types) {
         File file = null;
         if (current != null) {
             try {
@@ -304,7 +327,7 @@ public final class SwingUtil {
         jfc.setSelectedFile(file);
         jfc.setFileSelectionMode(selectionMode);
 
-        int rc = jfc.showOpenDialog(parent);
+        int rc = showDialog.apply(jfc, parent);
 
         if (rc != JFileChooser.APPROVE_OPTION) {
             return Optional.empty();
