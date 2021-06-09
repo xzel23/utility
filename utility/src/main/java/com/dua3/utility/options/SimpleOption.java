@@ -29,7 +29,7 @@ public class SimpleOption<T> extends Option<T> {
      * @param mapper the mapping function to the target type
      * @param names names for the flag, at least one.
      */
-    private SimpleOption(Function<String,T> mapper, Function<? super T, String> formatter, String... names) {
+    private SimpleOption(Function<String, ? extends T> mapper, Function<? super T, String> formatter, String... names) {
         super(mapper, formatter, names);
         occurence(0,1);
         arity(1,1);

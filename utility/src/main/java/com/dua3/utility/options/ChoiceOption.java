@@ -57,7 +57,7 @@ public final class ChoiceOption<T> extends Option<T> {
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
-    };
+    }
 
     @SuppressWarnings("unchecked")
     private static <E extends Enum<E>> Collection<E> enumValues(Class<E> cls) {
@@ -66,7 +66,7 @@ public final class ChoiceOption<T> extends Option<T> {
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
-    };
+    }
 
     public static <E extends Enum<E>> ChoiceOption<E> create(Class<E> cls, Supplier<? extends E> defaultValue, String... names) {
         Function<String,E> parser = s -> ChoiceOption.valueOf(cls, s);

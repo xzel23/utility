@@ -13,7 +13,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public class IoOptions {
+public final class IoOptions {
+
+    private IoOptions() {
+    }
 
     public static ChoiceOption<Charset> charset() {
         return ChoiceOption.create(
