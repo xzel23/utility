@@ -19,7 +19,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '9-beta7'
+    version = '9-beta7-SNAPSHOT'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
@@ -35,6 +35,7 @@ subprojects {
     /////////////////////////////////////////////////////////////////////////////
 
     ext {
+        isReleaseVersion = !version.endsWith("SNAPSHOT")
         java_version = '11'
         junit_version = '5.7.1'
     }
@@ -186,6 +187,17 @@ subprojects {
                     }
                     authentication {
                         header(HttpHeaderAuthentication)
+                    }
+                }
+                
+                // Sonatype OSSRH
+                maven {
+                    def releaseRepo = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    def snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                    url = isReleaseVersion ? releaseRepo : snapshotRepo
+                    credentials {
+                        username = System.properties.get('ossrhUsername')
+                        password = System.properties.get('ossrhPassword')
                     }
                 }
             } else if (System.getenv("CI_JOB_TOKEN")!=null) {
