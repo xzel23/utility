@@ -143,6 +143,7 @@ subprojects {
                 groupId project.group
                 artifactId project.name
                 version version
+                from components.java
                 pom.withXml {
                     def root = asNode()
                     root.appendNode('description', project.description)
