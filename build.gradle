@@ -29,6 +29,8 @@ subprojects {
     ext.developerId = 'axh'
     ext.developerName = 'Axel Howind'
     ext.developerEmail = 'axh@dua3.com'
+    ext.organization = 'dua3'
+    ext.organizationUrl = 'https://www.dua3.com'
 
     /////////////////////////////////////////////////////////////////////////////
 
@@ -128,6 +130,8 @@ subprojects {
                 id project.developerId
                 name project.developerName
                 email project.developerEmail
+                organization project.organization
+                organizationUrl project.organizationUrl
             }
         }
 
