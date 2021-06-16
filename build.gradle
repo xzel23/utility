@@ -19,30 +19,22 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '9-beta7'
+    version = '9-beta8'
 
-    ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
-    ext.description = 'Java utilities'
 
     ext.developerId = 'axh'
     ext.developerName = 'Axel Howind'
     ext.developerEmail = 'axh@dua3.com'
     ext.organization = 'dua3'
     ext.organizationUrl = 'https://www.dua3.com'
-
     /////////////////////////////////////////////////////////////////////////////
 
     ext {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         java_version = '11'
         junit_version = '5.7.1'
-    }
-
-    java {
-        withJavadocJar()
-        withSourcesJar()
     }
 
     sourceCompatibility = java_version
@@ -88,6 +80,11 @@ subprojects {
         // JUnit
         testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+    }
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
     }
 
     idea {
@@ -152,7 +149,7 @@ subprojects {
                 pom.withXml {
                     def root = asNode()
                     root.appendNode('description', project.description)
-                    root.appendNode('name', project.group)
+                    root.appendNode('name', project.name)
                     root.appendNode('url', project.scm)
                     root.children().last() + pomConfig
                 }
