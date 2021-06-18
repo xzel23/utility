@@ -18,18 +18,18 @@ public class SwingImage extends Image {
     private final String format;
     private final BufferedImage bufferedImage;
     
-    public static Optional<SwingImage> load(InputStream in) throws IOException {
+    public static SwingImage load(InputStream in) throws IOException {
         try (ImageInputStream iis = ImageIO.createImageInputStream(in)) {
             Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
 
             if (!iter.hasNext()) {
-                return Optional.empty();
+                throw new IOException("no matching ImageReader found");
             }
-                
+            
             ImageReader reader = iter.next();
             String format = reader.getFormatName();
             BufferedImage bufferedImage = reader.read(0);
-            return Optional.of(new SwingImage(bufferedImage, format));
+            return new SwingImage(bufferedImage, format);
         }
     }
     

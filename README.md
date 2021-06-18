@@ -72,6 +72,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 - source parameter of CsvReader changed from String to URI
 - `com.dua3.utility.cmd` and `com.dua3.utility.options` have been merged; there had been a lot of duplicated functionality, and the implementation in the `cmd` package was much cleaner; the result is again located in `com.dua3.utility.options` but the code is mostly based on what had been in the `cmd` package. Classes have been renamed because they are no more intended to be used only for command line arguments.
 - move from JFrog Bintray to Sonatype OSSRH
+- ImageUtil.load() does not return Optional
 
 ### 8.2.2
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class SwingImageUtil implements ImageUtil<BufferedImage> {
     @Override
-    public Optional<SwingImage> load(InputStream in) throws IOException {
+    public SwingImage load(InputStream in) throws IOException {
         return SwingImage.load(in);
     }
 

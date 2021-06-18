@@ -22,7 +22,7 @@ public interface ImageUtil<I> {
         } else {
             iu = new ImageUtil<>() {
                 @Override
-                public Optional<? extends Image> load(InputStream in) {
+                public Image load(InputStream in) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
@@ -36,7 +36,7 @@ public interface ImageUtil<I> {
         return iu;
     }
 
-    Optional<? extends Image> load(InputStream in) throws IOException;
+    Image load(InputStream in) throws IOException;
 
     I convert(Image img);
     
