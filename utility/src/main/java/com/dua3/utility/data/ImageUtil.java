@@ -6,6 +6,10 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
+/**
+ * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
+ * @param <I> the implementation's underlying Image class
+ */
 public interface ImageUtil<I> {
 
     String NO_IMPLEMENTATION = "no ImageUtil implementation present";
@@ -27,6 +31,11 @@ public interface ImageUtil<I> {
                 }
 
                 @Override
+                public Image create(int w, int h, int[] data) {
+                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                }
+
+                @Override
                 public Image convert(Image img) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
@@ -36,10 +45,35 @@ public interface ImageUtil<I> {
         return iu;
     }
 
+    /**
+     * Load image.
+     * @param in the stream to load the image from
+     * @return the image
+     * @throws IOException if loading fails
+     */
     Image load(InputStream in) throws IOException;
 
+    /**
+     * Create image from pixel data.
+     * @param w the image width
+     * @param h the image height
+     * @param data the pixeal data as int values containing ARGB values
+     * @return the image
+     */
+    Image create(int w, int h, int[] data);
+
+    /**
+     * Convert image to underlying implementation.
+     * @param img the image
+     * @return implementation dependent image class
+     */
     I convert(Image img);
-    
+
+    /**
+     * Convert image underlying implementation. to image.
+     * @param img the implementation dependent image
+     * @return image
+     */
     Image convert(I img);
     
 }

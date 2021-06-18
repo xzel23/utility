@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.data.Image;
 import com.dua3.utility.data.ImageUtil;
 
 import java.awt.image.BufferedImage;
@@ -11,6 +12,11 @@ public class SwingImageUtil implements ImageUtil<BufferedImage> {
     @Override
     public SwingImage load(InputStream in) throws IOException {
         return SwingImage.load(in);
+    }
+
+    @Override
+    public Image create(int w, int h, int[] data) {
+        return SwingImage.create(w, h, data);
     }
 
     @Override

@@ -17,7 +17,13 @@ public class SwingImage extends Image {
     
     private final String format;
     private final BufferedImage bufferedImage;
-    
+
+    public static SwingImage create(int w, int h, int[] data) {
+        BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        image.setRGB(0, 0, w, h, data, 0, w);
+        return new SwingImage(image, "");
+    }
+
     public static SwingImage load(InputStream in) throws IOException {
         try (ImageInputStream iis = ImageIO.createImageInputStream(in)) {
             Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
