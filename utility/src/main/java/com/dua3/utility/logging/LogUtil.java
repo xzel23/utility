@@ -1,9 +1,6 @@
 package com.dua3.utility.logging;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -18,6 +15,42 @@ public final class LogUtil {
         //nop
     }
 
+    /**
+     * Helper class to create lazy 'toString()' evaluators for logging.
+     */
+    private static final class LazyToString implements Supplier<String> {
+        private final Supplier<String> base;
+        private String msg = null;
+
+        LazyToString(Supplier<String> s) {
+            this.base = Objects.requireNonNull(s);
+        }
+
+        @Override
+        public String get() {
+            if (msg==null) {
+                msg = base.get();
+            }
+            return msg;
+        }
+
+        @Override
+        public String toString() {
+            return get();
+        }
+    }
+
+    /**
+     * Create a wrapper around a {@link Supplier<String>} that delegates {@code #toString()} to {@link Supplier#get()}.
+     * {@link Supplier#get()} is only evaluated in case {@link #toString()} is called and the result is cached for
+     * further invocations (provided {@link Supplier#get()} does not return {@code null}).
+     * @param s the supplier
+     * @return an Object that acts as a proxy for calls to toString()
+     */
+    public static Supplier<String> formatLazy(Supplier<String> s) {
+        return new LazyToString(s);
+    }
+    
     /**
      * option to parse on the command line to set the global log level.
      */

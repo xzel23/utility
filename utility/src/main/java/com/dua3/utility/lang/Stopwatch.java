@@ -5,18 +5,112 @@
 
 package com.dua3.utility.lang;
 
+import com.dua3.utility.logging.LogUtil;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 /**
  * A simple stopwatch class.
  */
 public class Stopwatch {
 
+    public enum Format {
+        STANDARD {
+            public String format(Duration d) {
+                boolean negative = d.isNegative();
+
+                long seconds = d.getSeconds();
+                long absSeconds = Math.abs(seconds);
+                int nano = Math.abs(d.getNano());
+
+                long hr = absSeconds / 3600;
+                long min = (absSeconds % 3600) / 60;
+                double sec = (absSeconds%60) + nano / 1_000_000_000.0;
+
+                String positive = String.format(
+                        Locale.ROOT,
+                        "%d:%02d:%06.3f",
+                        hr,
+                        min,
+                        sec);
+
+                return negative ? "-" + positive : positive;
+            }
+        },
+        HOURS_MINUTES_SECONDS_MILLIS {
+            @Override
+            public String format(Duration d) {
+                return STANDARD.format(d);
+            }
+        },
+        MINUTES_SECONDS_MILLIS {
+            public String format(Duration d) {
+                boolean negative = d.isNegative();
+
+                long seconds = d.getSeconds();
+                long absSeconds = Math.abs(seconds);
+                int nano = Math.abs(d.getNano());
+
+                long min = absSeconds / 60;
+                double sec = (absSeconds%60) + nano / 1_000_000_000.0;
+
+                String positive = String.format(
+                        Locale.ROOT,
+                        "%dm:%06.3fs",
+                        min,
+                        sec);
+
+                return negative ? "-" + positive : positive;
+            }
+        },
+        SECONDS_MILLIS {
+            public String format(Duration d) {
+                boolean negative = d.isNegative();
+
+                long seconds = d.getSeconds();
+                long absSeconds = Math.abs(seconds);
+                int nano = Math.abs(d.getNano());
+
+                double sec = absSeconds + nano / 1_000_000_000.0;
+
+                String positive = String.format(
+                        Locale.ROOT,
+                        "%fs",
+                        sec);
+
+                return negative ? "-" + positive : positive;
+            }
+        },
+        MILLIS {
+            public String format(Duration d) {
+                boolean negative = d.isNegative();
+
+                long seconds = d.getSeconds();
+                long absSeconds = Math.abs(seconds);
+                int nano = Math.abs(d.getNano());
+
+                double millis = (absSeconds + nano / 1_000_000_000.0)/1000.0;
+
+                String positive = String.format(
+                        Locale.ROOT,
+                        "%fms",
+                        millis);
+
+                return negative ? "-" + positive : positive;
+            }
+        };
+        
+        public abstract String format(Duration d);
+    }
+    
     private final String name;
     private final Instant start;
     private Instant startSplit;
+
+    private final Format format = Format.STANDARD;
 
     /**
      * Construct instance.
@@ -76,34 +170,13 @@ public class Stopwatch {
         return "[" + name + "] current split: " + elapsedStringSplit(false) + " total: "+ elapsedString();
     }
 
-    private static String formatDuration(Duration duration) {
-        boolean negative = duration.isNegative();
-
-        long seconds = duration.getSeconds();
-        long absSeconds = Math.abs(seconds);
-        int nano = Math.abs(duration.getNano());
-
-        long hr = absSeconds / 3600;
-        long min = (absSeconds % 3600) / 60;
-        double sec = absSeconds + nano / 1_000_000_000.0;
-
-        String positive = String.format(
-                Locale.ROOT,
-                "%d:%02d:%06.3f",
-                hr,
-                min,
-                sec);
-
-        return negative ? "-" + positive : positive;
-    }
-
     /**
      * Get elapsed time as a string.
      *
      * @return string with elapsed time
      */
     public String elapsedString() {
-        return formatDuration(elapsed());
+        return format.format(elapsed());
     }
 
     /**
@@ -113,6 +186,27 @@ public class Stopwatch {
      * @return string with elapsed time
      */
     public String elapsedStringSplit(boolean newSplit) {
-        return formatDuration(elapsedSplit(newSplit));
+        return format.format(elapsedSplit(newSplit));
+    }
+
+    /**
+     * Create a Supplier for use in log messages (formatting is only done when {@link Supplier#get()} is called).
+     * @param fmt the format to use
+     * @return Supplier that returns the state of the stopwatch at time of invocation
+     */
+    public Supplier<String> logElapsed(Format fmt) {
+        Duration d = elapsed(); // DO NOT INLINE (important to capture invocation time)
+        return LogUtil.formatLazy(() -> fmt.format(d));
+    }
+
+    /**
+     * Create a Supplier for use in log messages (formatting is only done when {@link Supplier#get()} is called).
+     * @param fmt the format to use
+     * @param newSplit if true, start a new split
+     * @return Supplier that returns the state of the stopwatch at time of invocation
+     */
+    public Supplier<String> logElapsedSplit(Format fmt, boolean newSplit) {
+        Duration d = elapsedSplit(newSplit); // DO NOT INLINE (important to capture invocation time)
+        return LogUtil.formatLazy(() -> fmt.format(d));
     }
 }
