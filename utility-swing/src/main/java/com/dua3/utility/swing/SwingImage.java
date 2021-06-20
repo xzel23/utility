@@ -8,20 +8,17 @@ import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Optional;
 
-public class SwingImage extends Image {
+public class SwingImage implements Image {
     
-    private final String format;
     private final BufferedImage bufferedImage;
 
     public static SwingImage create(int w, int h, int[] data) {
         BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         image.setRGB(0, 0, w, h, data, 0, w);
-        return new SwingImage(image, "");
+        return new SwingImage(image);
     }
 
     public static SwingImage load(InputStream in) throws IOException {
@@ -33,22 +30,15 @@ public class SwingImage extends Image {
             }
             
             ImageReader reader = iter.next();
-            String format = reader.getFormatName();
             BufferedImage bufferedImage = reader.read(0);
-            return new SwingImage(bufferedImage, format);
+            return new SwingImage(bufferedImage);
         }
     }
     
-    SwingImage(BufferedImage bufferedImage, String format) {
+    SwingImage(BufferedImage bufferedImage) {
         this.bufferedImage = Objects.requireNonNull(bufferedImage);
-        this.format = Objects.requireNonNull(format);
     }
     
-    @Override
-    public void write(OutputStream out) throws IOException {
-        ImageIO.write(bufferedImage, format, out);
-    }
-
     @Override
     public int width() {
         return bufferedImage.getWidth();
@@ -58,7 +48,12 @@ public class SwingImage extends Image {
     public int height() {
         return bufferedImage.getHeight();
     }
-    
+
+    @Override
+    public int[] getArgb() {
+        return bufferedImage.getRaster().getPixels( 0, 0, width(), height(), (int[]) null);
+    }
+
     BufferedImage bufferedImage() {
         return bufferedImage;
     }

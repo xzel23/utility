@@ -1,13 +1,29 @@
 package com.dua3.utility.data;
 
-import java.io.IOException;
-import java.io.OutputStream;
+/**
+ * Raster image interface.
+ */
+public interface Image {
 
-public abstract class Image {
-    
-    public abstract void write(OutputStream out) throws IOException;
-    
+    /**
+     * Get image width.
+     * @return the image width in pixels
+     */
     public abstract int width();
-    public abstract int height();
-    
+
+    /**
+     * Get image height.
+     * @return the image height in pixels
+     */
+     int height();
+
+    /**
+     * Get image data.
+     * The returned array consists of width*height integers each storing a single pixels color encoded in ARGB byte 
+     * order.
+     * 
+     * @return the image width in pixels
+     */
+     int[] getArgb();
+
 }

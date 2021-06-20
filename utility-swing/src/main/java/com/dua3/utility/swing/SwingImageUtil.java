@@ -6,7 +6,6 @@ import com.dua3.utility.data.ImageUtil;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 
 public class SwingImageUtil implements ImageUtil<BufferedImage> {
     @Override
@@ -29,6 +28,6 @@ public class SwingImageUtil implements ImageUtil<BufferedImage> {
 
     @Override
     public SwingImage convert(BufferedImage img) {
-        return new SwingImage(img, "");
+        return new SwingImage(img);
     }
 }
