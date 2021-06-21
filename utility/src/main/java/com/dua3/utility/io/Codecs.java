@@ -121,7 +121,7 @@ public class Codecs {
 
                         @Override
                         public V setValue(V value) {
-                            throw new UnsupportedOperationException();
+                            throw new UnsupportedOperationException("setValue() is unsupported");
                         }
                     };
                 }

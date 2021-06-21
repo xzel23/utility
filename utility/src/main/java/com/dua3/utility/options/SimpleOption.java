@@ -12,7 +12,7 @@ import java.util.function.Function;
  * A simple option can be present at most once in an {@link Arguments} instance and takes exactly one parameter.
  * Its value can be queried by calling {@link Arguments#get(SimpleOption)}.
  */
-public class SimpleOption<T> extends Option<T> {
+public final class SimpleOption<T> extends Option<T> {
 
     private T defaultValue = null;
 

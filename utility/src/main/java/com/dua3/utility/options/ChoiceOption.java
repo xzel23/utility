@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 public final class ChoiceOption<T> extends Option<T> {
 
-    public static class Choice<T> {
+    public static final class Choice<T> {
         private final T value;
         private final String text;
 

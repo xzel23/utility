@@ -8,7 +8,7 @@ import java.util.function.Function;
  * Standard option class.
  * @param <T> the option's argument type.
  */
-public class StandardOption<T> extends Option<T> {
+public final class StandardOption<T> extends Option<T> {
     
     public static <T> StandardOption<T> create(Class<T> type, String... names) {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);

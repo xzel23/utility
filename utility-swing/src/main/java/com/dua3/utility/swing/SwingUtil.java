@@ -307,8 +307,9 @@ public final class SwingUtil {
         return showFileDialog(parent, current, selectionMode, JFileChooser::showOpenDialog, types);
     }
 
+    @SafeVarargs
     private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<JFileChooser,Component,Integer> showDialog,
-                                                Pair<String, String[]>... types) {
+                                                 Pair<String, String[]>... types) {
         File file = null;
         if (current != null) {
             try {

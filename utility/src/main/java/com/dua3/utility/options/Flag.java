@@ -5,7 +5,7 @@ package com.dua3.utility.options;
  * 
  * A flag can be given at most once on a command line. It can be queried by calling {@link Arguments#isSet(Flag)}.
  */
-public class Flag extends Option<Boolean> {
+public final class Flag extends Option<Boolean> {
 
     public static Flag create(String... names) {
         return new Flag(names);

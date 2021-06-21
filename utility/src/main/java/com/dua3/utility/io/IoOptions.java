@@ -30,7 +30,7 @@ public final class IoOptions {
 
     public static ChoiceOption<Locale> locale() {
         return ChoiceOption.create(
-                localeName -> Locale.forLanguageTag(localeName), 
+                Locale::forLanguageTag, 
                 Object::toString, 
                 () -> Arrays.asList(Locale.getAvailableLocales()),
                 Locale::getDefault, 

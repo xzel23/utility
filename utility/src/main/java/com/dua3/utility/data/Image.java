@@ -9,7 +9,7 @@ public interface Image {
      * Get image width.
      * @return the image width in pixels
      */
-    public abstract int width();
+    int width();
 
     /**
      * Get image height.
