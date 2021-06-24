@@ -18,6 +18,9 @@ import java.util.function.Supplier;
 public class Stopwatch {
 
     public enum Format {
+        /**
+         * standard format, same as {@link #HOURS_MINUTES_SECONDS_MILLIS}.
+         */
         STANDARD {
             public String format(Duration d) {
                 boolean negative = d.isNegative();
@@ -40,12 +43,18 @@ public class Stopwatch {
                 return negative ? "-" + positive : positive;
             }
         },
+        /**
+         * h:mm:ss.sss.
+         */
         HOURS_MINUTES_SECONDS_MILLIS {
             @Override
             public String format(Duration d) {
                 return STANDARD.format(d);
             }
         },
+        /**
+         * m:ss.sss.
+         */
         MINUTES_SECONDS_MILLIS {
             public String format(Duration d) {
                 boolean negative = d.isNegative();
@@ -66,6 +75,9 @@ public class Stopwatch {
                 return negative ? "-" + positive : positive;
             }
         },
+        /**
+         * Seconds formatted as floating point value.
+         */
         SECONDS_MILLIS {
             public String format(Duration d) {
                 boolean negative = d.isNegative();
@@ -84,6 +96,9 @@ public class Stopwatch {
                 return negative ? "-" + positive : positive;
             }
         },
+        /**
+         * Milliseconds formatted as floating point value.
+         */
         MILLIS {
             public String format(Duration d) {
                 boolean negative = d.isNegative();
@@ -92,7 +107,7 @@ public class Stopwatch {
                 long absSeconds = Math.abs(seconds);
                 int nano = Math.abs(d.getNano());
 
-                double millis = (absSeconds + nano / 1_000_000_000.0)/1000.0;
+                double millis = (absSeconds + nano / 1_000_000_000.0)*1000.0;
 
                 String positive = String.format(
                         Locale.ROOT,
@@ -106,7 +121,7 @@ public class Stopwatch {
         public abstract String format(Duration d);
     }
     
-    private final String name;
+    private final Object name;
     private final Instant start;
     private Instant startSplit;
 
@@ -118,6 +133,16 @@ public class Stopwatch {
      * @param name the name for this instance; it is included in {@code toString()}
      */
     public Stopwatch(String name) {
+        this.name = name;
+        this.start = this.startSplit = Instant.now();
+    }
+
+    /**
+     * Construct instance.
+     *
+     * @param name the name for this instance; it is included in {@code toString()}
+     */
+    public Stopwatch(Supplier<String> name) {
         this.name = name;
         this.start = this.startSplit = Instant.now();
     }
