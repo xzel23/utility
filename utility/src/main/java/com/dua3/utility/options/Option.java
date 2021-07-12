@@ -67,7 +67,7 @@ public abstract class Option<T> {
         try {
             return mapper.apply(s);
         } catch (Exception e) {
-            throw new OptionException.ConversionException(this, s, e);
+            throw new OptionException.ParameterConversionException(this, s, e);
         }
     }
     

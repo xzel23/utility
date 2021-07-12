@@ -8,7 +8,7 @@ public class OptionException extends IllegalStateException {
     /**
      * Exception thrown when a parameter argument's String value could not be converted to the target type. 
      */
-    public static class ConversionException extends OptionException {
+    public static class ParameterConversionException extends OptionException {
         final Option<?> option;
         final String parameter;
 
@@ -18,7 +18,7 @@ public class OptionException extends IllegalStateException {
          * @param parameter the parameter value as String
          * @param e the parent exception
          */
-        public ConversionException(Option<?> option, String parameter, Exception e) {
+        public ParameterConversionException(Option<?> option, String parameter, Exception e) {
             super("invalid value passed to "+option.name()+": "+parameter, e);
             this.option = option;
             this.parameter = parameter;
@@ -29,17 +29,26 @@ public class OptionException extends IllegalStateException {
          * @param option the option the argument belongds to
          * @param parameter the parameter value as String
          */
-        public ConversionException(Option<?> option, String parameter) {
+        public ParameterConversionException(Option<?> option, String parameter) {
             super("invalid value passed to "+option.name()+": "+parameter);
             this.option = option;
             this.parameter = parameter;
         }
     }
-    
+
+    /**
+     * Constructor.
+     * @param msg exception message
+     */
     public OptionException(String msg) {
         super(msg);
     }
 
+    /**
+     * Constructor.
+     * @param msg exception message
+     * @param e cause
+     */
     public OptionException(String msg, Exception e) {
         super(msg, e);
     }
