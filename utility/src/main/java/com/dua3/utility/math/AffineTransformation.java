@@ -6,15 +6,15 @@ import java.util.Objects;
  * Defines an affine transformation in form of a matrix
  * <pre>
  * {@code
- *     a c e
- *     b d f
+ *     a b c
+ *     d e f
  *     0 0 1
  * }
  * </pre>.
  */
 public class AffineTransformation {
 
-    public static final AffineTransformation IDENTITY = new AffineTransformation(1, 0, 0, 1, 0, 0);
+    public static final AffineTransformation IDENTITY = new AffineTransformation(1, 0, 0, 0, 1, 0);
     
     private final double a;
     private final double b;
@@ -28,8 +28,8 @@ public class AffineTransformation {
      * The affine transformation is defined by the matrix:
      * <pre>
      * {@code
-     *     a c e
-     *     b d f
+     *     a b c
+     *     d e f
      *     0 0 1
      * }
      * </pre>.
@@ -74,18 +74,18 @@ public class AffineTransformation {
     public static AffineTransformation rotate(double alpha) {
         double sin = Math.sin(alpha);
         double cos = Math.cos(alpha);
-        return new AffineTransformation(cos, sin, -sin, cos, 0, 0);
+        return new AffineTransformation(cos, -sin, 0, sin, cos, 0);
     }
 
     /**
      * Create an affine transformation for a translation
      * {@code (x,y) -> (x+u,y+v)}.
-     * @param u the x-value
-     * @param v the y-value
+     * @param tx the x-value
+     * @param ty the y-value
      * @return affine transformation (translation)
      */
-    public static AffineTransformation translate(double u, double v) {
-        return new AffineTransformation(1, 0, 0, 1, u, v);
+    public static AffineTransformation translate(double tx, double ty) {
+        return new AffineTransformation(1, 0, tx, 0, 1, ty);
     }
     
     /**
@@ -95,7 +95,7 @@ public class AffineTransformation {
      * @return affine transformation (translation)
      */
     public static AffineTransformation translate(Vec2d v) {
-        return new AffineTransformation(1, 0, 0, 1, v.x(), v.y());
+        return translate(v.x(), v.y());
     }
 
     /**
@@ -105,18 +105,18 @@ public class AffineTransformation {
      * @return affine transformation (scale)
      */
     public static AffineTransformation scale(double s) {
-        return new AffineTransformation(s, 0, 0, s, 0, 0);
+        return scale(s,s);
     }
 
     /**
      * Create an affine transformation for a scaling operation
      * {@code (x,y) -> (sx,ty)}.
-     * @param s the scaling factor for the x-coordinate
-     * @param t the scaling factor for the y-coordinate
+     * @param sx the scaling factor for the x-coordinate
+     * @param sy the scaling factor for the y-coordinate
      * @return affine transformation (scale)
      */
-    public static AffineTransformation scale(double s, double t) {
-        return new AffineTransformation(s, 0, 0, t, 0, 0);
+    public static AffineTransformation scale(double sx, double sy) {
+        return new AffineTransformation(sx, 0, 0, 0, sy, 0);
     }
 
     /**
@@ -126,7 +126,7 @@ public class AffineTransformation {
      * @return affine transformation (scale)
      */
     public static AffineTransformation shear(double m) {
-        return new AffineTransformation(1, 0, m, 1, 0, 0);
+        return new AffineTransformation(1, m, 0, 0, 1, 0);
     }
 
     /**
@@ -136,9 +136,9 @@ public class AffineTransformation {
      */
     public AffineTransformation append(AffineTransformation A) {
         return new AffineTransformation(
-                A.a*a+A.c*b,     A.b*a+A.d*b,
-                A.a*c+A.c*d,     A.b*c+A.d*d,
-                A.a*e+A.c*f+A.e, A.b*e+A.d*f+A.f);  
+                A.a*a+A.b*d, A.a*b+A.b*e, A.a*c+A.b*f+A.c,
+                A.d*a+A.e*d, A.d*b+A.e*e, A.d*c+A.e*f+A.f
+        );  
     }
 
     /**
@@ -157,8 +157,8 @@ public class AffineTransformation {
      * @return the result of transformation
      */
     public Vec2d transform(double x, double y) {
-        double xt = a*x + c*y + e;
-        double yt = b*x + d*y + f;
+        double xt = a*x + b*y + c;
+        double yt = d*x + e*y + f;
         return Vec2d.of(xt,yt);
     }
     
@@ -186,4 +186,21 @@ public class AffineTransformation {
     public double d() { return d; }
     public double e() { return e; }
     public double f() { return f; }
+
+    @Override
+    public String toString() {
+        return "AffineTransformation{ { { " +
+               a + ", " +
+               b + ", " +
+               c +
+               " }, { " +
+               d + ", " +
+               e + ", " +
+               f +
+               " }, { " +
+               "0, " +
+               "0, " +
+               "1" +
+               " } }";
+    }
 }

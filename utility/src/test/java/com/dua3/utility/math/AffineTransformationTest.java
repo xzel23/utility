@@ -48,23 +48,39 @@ class AffineTransformationTest {
     
     @Test
     void append() {
+        /*
+         * Perform three different transformations separately and check results. Then use a combined
+         * affine transformation that should give the same result.
+         */
         Vec2d v = Vec2d.of(7,-1);
-        AffineTransformation at = AffineTransformation.translate(Vec2d.of(-2,1));
-        Vec2d expected = Vec2d.of(5, 0);
-        Vec2d actual = at.transform(v);
-        assertEquals(expected.x(), actual.x(), 1e-6);
-        assertEquals(expected.y(), actual.y(), 1e-6);
         
-        at = at.append(AffineTransformation.rotate(Math.PI/6));
-        expected = Vec2d.of(4.330127, 2.5);
-        actual = at.transform(v);
-        assertEquals(expected.x(), actual.x(), 1e-6);
-        assertEquals(expected.y(), actual.y(), 1e-6);
+        AffineTransformation translate = AffineTransformation.translate(Vec2d.of(-2,1));
+        Vec2d expected1 = Vec2d.of(5, 0);
+        Vec2d actual1 = translate.transform(v);
+        assertEquals(expected1.x(), actual1.x(), 1e-6);
+        assertEquals(expected1.y(), actual1.y(), 1e-6);
 
-        at = at.append(AffineTransformation.translate(2,3));
-        expected = Vec2d.of(6.330127, 5.5);
-        actual = at.transform(v);
-        assertEquals(expected.x(), actual.x(), 1e-6);
-        assertEquals(expected.y(), actual.y(), 1e-6);
-    }
+        AffineTransformation rotate = AffineTransformation.rotate(Math.PI / 6);
+        Vec2d expected2 = Vec2d.of(5*Math.cos(Math.PI/6), 2.5);
+        Vec2d actual2 = rotate.transform(actual1);
+        assertEquals(expected2.x(), actual2.x(), 1e-6);
+        assertEquals(expected2.y(), actual2.y(), 1e-6);
+
+        Vec2d actual2combined = translate.append(rotate).transform(v);
+        assertEquals(expected2.x(), actual2combined.x(), 1e-6);
+        assertEquals(expected2.y(), actual2combined.y(), 1e-6);
+
+        AffineTransformation translate2 = AffineTransformation.translate(2,3);
+        Vec2d expected3 = Vec2d.of(expected2.x()+2, expected2.y()+3);
+        Vec2d actual3 = translate2.transform(actual2);
+        assertEquals(expected3.x(), actual3.x(), 1e-6);
+        assertEquals(expected3.y(), actual3.y(), 1e-6);
+        
+        // create a combined affine transformation
+        AffineTransformation combined = translate.append(rotate).append(translate2);
+        Vec2d expected4 = expected3;
+        Vec2d actual4 = combined.transform(v);
+        assertEquals(expected4.x(), actual4.x(), 1e-6);
+        assertEquals(expected4.y(), actual4.y(), 1e-6);
+     }
 }
