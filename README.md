@@ -76,6 +76,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 - made Image an interface
 - removed the Image.write() method
 - added Image.getArgb()
+- some changes and fixes to AffineTransformation
 
 ### 8.2.2
 
