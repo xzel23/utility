@@ -7,6 +7,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class AffineTransformationTest {
 
     @Test
+    void constructorAndAccessors() {
+        AffineTransformation at = new AffineTransformation(1,2,3,4,5,6);
+        
+        assertEquals(1, at.getScaleX());
+        assertEquals(2, at.getShearX());
+        assertEquals(3, at.getTranslateX());
+        assertEquals(4, at.getShearY());
+        assertEquals(5, at.getScaleY());
+        assertEquals(6, at.getTranslateY());
+    }
+    
+    @Test
     void identity() {
         AffineTransformation at = AffineTransformation.identity();
         assertEquals(Vec2d.of(1,0), at.transform(Vec2d.of(1,0)));

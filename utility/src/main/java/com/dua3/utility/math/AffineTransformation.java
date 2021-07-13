@@ -190,10 +190,10 @@ public class AffineTransformation {
     public double getTranslateX() { return c; }
 
     /** Get shearing factor for y-axis. */
-    public double getShearY() { return e; }
+    public double getShearY() { return d; }
 
     /** Get scaling factor for y-axis. */
-    public double getScaleY() { return d; }
+    public double getScaleY() { return e; }
 
     /** Get y-value of translation. */
     public double getTranslateY() { return f; }
