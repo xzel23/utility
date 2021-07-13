@@ -180,12 +180,26 @@ public class AffineTransformation {
         return Objects.hash(a, b, c, d, e, f);
     }
 
-    public double a() { return a; }
-    public double b() { return b; }
-    public double c() { return c; }
-    public double d() { return d; }
-    public double e() { return e; }
-    public double f() { return f; }
+    /** Get scaling factor for x-axis. */
+    public double getScaleX() { return a; }
+
+    /** Get shearing factor for x-axis. */
+    public double getShearX() { return b; }
+
+    /** Get x-value of translation. */
+    public double getTranslateX() { return c; }
+
+    /** Get shearing factor for y-axis. */
+    public double getShearY() { return e; }
+
+    /** Get scaling factor for y-axis. */
+    public double getScaleY() { return d; }
+
+    /** Get y-value of translation. */
+    public double getTranslateY() { return f; }
+
+    /** Get translation vector. */
+    public Vec2d getTranslate() { return Vec2d.of(e,f); }
 
     @Override
     public String toString() {
