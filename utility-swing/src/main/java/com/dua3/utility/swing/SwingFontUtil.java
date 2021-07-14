@@ -5,14 +5,16 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
-import java.util.WeakHashMap;
+import java.util.*;
+import java.util.List;
+import java.util.function.Predicate;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.Dimension2d;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+import org.w3c.dom.Text;
 
 /**
  * Utility class for getting font properties through AWT. This class should normally not used directly by user code
@@ -99,6 +101,40 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
         } catch (FontFormatException e) {
             throw new IOException(e);
         }
+    }
+
+    @Override
+    public List<String> getFamilies(FontTypes types) {
+        List<String> fonts = List.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+
+        boolean mono;
+        switch (types) {
+            case ALL:
+                return fonts;
+            case MONOSPACED:
+                mono = true;
+                break;
+            case PROPORTIONAL:
+                mono = false;
+                break;
+            default:
+                throw new IllegalArgumentException("unknown value: "+types);
+        }
+
+        List<String> list = new ArrayList<>();
+        
+        String thin = "1 l";
+        String thick = "M_W";
+        for (String family: fonts) {
+            java.awt.Font font = new java.awt.Font(family, 0, 14);
+            FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
+            boolean monospaced = Objects.equals(font.getStringBounds(thin, frc), font.getStringBounds(thick, frc));
+            if (mono == monospaced) {
+                list.add(family);
+            }
+        }
+        
+        return list;
     }
 
     @Override

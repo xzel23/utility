@@ -5,6 +5,7 @@ import com.dua3.utility.math.Dimension2d;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
@@ -42,6 +43,11 @@ public interface FontUtil<F> {
                 public Optional<Font> loadFont(String type, InputStream in) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
+
+                @Override
+                public List<String> getFamilies(FontTypes types) {
+                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                }
             };
         }
         
@@ -50,7 +56,7 @@ public interface FontUtil<F> {
     
     /** The font type string for TrueType fonts. */
     String FONT_TYPE_TRUETYPE = "ttf";
-    
+
     /**
      * Convert font.
      *
@@ -110,4 +116,28 @@ public interface FontUtil<F> {
      * @throws IllegalArgumentException if the type is not supported
      */
     Optional<Font> loadFont(String type, InputStream in) throws IOException;
+
+    /**
+     * Font type enumeration.
+     */
+    enum FontTypes {
+        PROPORTIONAL,
+        MONOSPACED,
+        ALL;
+    }
+
+    /**
+     * Get a list of the available font families.
+     * @param types the font types to return
+     * @return list of font families
+     */
+    List<String> getFamilies(FontTypes types);
+
+    /**
+     * Get a list of the available font families.
+     * @return list of font families
+     */
+    default List<String> getFamilies() {
+        return getFamilies(FontTypes.ALL);
+    }
 }
