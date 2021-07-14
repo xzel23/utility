@@ -1,3 +1,24 @@
 <FindBugsFilter>
     
+    <!-- DataSource.getLogWriter() is mandated by the API. -->
+    <Match>
+        <Class name="com.dua3.utility.db.JdbcDataSource" />
+        <Method name="getLogWriter" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    
+    <!-- DataSource.setLogWriter() is mandated by the API. -->
+    <Match>
+        <Class name="com.dua3.utility.db.JdbcDataSource" />
+        <Method name="setLogWriter" />
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    
+    <!-- Deprecate before removal to see if it's used somewhere. -->
+    <Match>
+        <Class name="com.dua3.utility.db.NamedParameterStatement" />
+        <Method name="getStatement" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    
 </FindBugsFilter>
