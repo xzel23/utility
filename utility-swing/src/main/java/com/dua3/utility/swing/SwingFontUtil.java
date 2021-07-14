@@ -10,6 +10,7 @@ import java.util.WeakHashMap;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.Dimension2d;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 
@@ -49,9 +50,9 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
      * @param  awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
-    public Bounds getTextBounds(CharSequence text, java.awt.Font awtFont) {
+    public Dimension2d getTextDimension(CharSequence text, java.awt.Font awtFont) {
         Rectangle2D r = stringBounds(text, awtFont);
-        return new Bounds(r.getWidth(), r.getHeight());
+        return Dimension2d.of(r.getWidth(), r.getHeight());
     }
 
     /**
@@ -75,9 +76,9 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     }
 
     @Override
-    public Bounds getTextBounds(CharSequence s, Font f) {
+    public Dimension2d getTextDimension(CharSequence s, Font f) {
         Rectangle2D r = stringBounds(s, f);
-        return new Bounds(r.getWidth(), r.getHeight());
+        return Dimension2d.of(r.getWidth(), r.getHeight());
     }
 
     @Override

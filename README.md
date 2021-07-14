@@ -64,6 +64,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ### 9 (to be released)
 
+- migrate from bintray to sonatype 
 - JDK 11+ required! It's finally time to dump Java 8 support. I won't put any more effort into supporting a Java version that has long reached EOL and is a maintenance burden because of its missing modularity support.
 - build uses Gradle 7 to enable building on JDK 16
 - removed usae of the JPMS Gradle plugin as it is not compatible with Gradle 7 and not needed anymore after dropping JDK 8 support and Gradle 7 adding modularity support.
@@ -77,6 +78,8 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 - removed the Image.write() method
 - added Image.getArgb()
 - some changes and fixes to AffineTransformation
+- introduce class Dimension2d
+- changes to FontUtil interface; rename FontUtil.getTextBounds() to getTextDimension()
 
 ### 8.2.2
 

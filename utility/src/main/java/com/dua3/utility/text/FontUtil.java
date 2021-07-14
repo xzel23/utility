@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import com.dua3.utility.math.Dimension2d;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -32,7 +34,7 @@ public interface FontUtil<F> {
                 }
 
                 @Override
-                public Bounds getTextBounds(CharSequence s, Font f) {
+                public Dimension2d getTextDimension(CharSequence s, Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
@@ -49,19 +51,6 @@ public interface FontUtil<F> {
     /** The font type string for TrueType fonts. */
     String FONT_TYPE_TRUETYPE = "ttf";
     
-    /**
-     * Dimensions.
-     */
-    class Bounds {
-        public final double width;
-        public final double height;
-
-        public Bounds(double w, double h) {
-            this.width = w;
-            this.height = h;
-        }
-    }
-
     /**
      * Convert font.
      *
@@ -82,7 +71,7 @@ public interface FontUtil<F> {
      * @return
      *           the text bounds
      */
-    Bounds getTextBounds(CharSequence s, Font f);
+    Dimension2d getTextDimension(CharSequence s, Font f);
 
     /**
      * Get text width.
@@ -95,7 +84,7 @@ public interface FontUtil<F> {
      *           the text width
      */
     default double getTextWidth(CharSequence s, Font f) {
-        return getTextBounds(s, f).width;
+        return getTextDimension(s, f).width();
     }
 
     /**
@@ -109,7 +98,7 @@ public interface FontUtil<F> {
      *           the text height
      */
     default double getTextHeight(CharSequence s, Font f) {
-        return getTextBounds(s, f).height;
+        return getTextDimension(s, f).height();
     }
 
     /**

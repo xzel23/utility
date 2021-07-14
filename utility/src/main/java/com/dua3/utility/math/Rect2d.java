@@ -50,6 +50,10 @@ public final class Rect2d implements Polygon2d {
         return new Rect2d(x, y, w, h);
     }
 
+    public static Rect2d of(Vec2d p, Dimension2d d) {
+        return Rect2d.of(p.x(), p.y(), d.width(), d.height());    
+    } 
+    
     public double xMin() {
         return x;
     }
