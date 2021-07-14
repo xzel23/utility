@@ -46,7 +46,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         this.name = name;
         this.mode = mode;
         this.cls = cls;
-        this.extensions = Arrays.asList(extensions);
+        this.extensions = List.of(extensions);
     }
 
     /**
@@ -169,7 +169,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the list of file extensions for this file type
      */
     public List<String> getExtensions() {
-        return extensions;
+        return Collections.unmodifiableList(extensions);
     }
 
     /**
