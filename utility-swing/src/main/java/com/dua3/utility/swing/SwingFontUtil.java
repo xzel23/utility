@@ -7,14 +7,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.List;
-import java.util.function.Predicate;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.Dimension2d;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
-import org.w3c.dom.Text;
 
 /**
  * Utility class for getting font properties through AWT. This class should normally not used directly by user code
@@ -91,13 +88,16 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
     
     @Override
-    public Optional<Font> loadFont(String type, InputStream in) throws IOException {
-        LangUtil.check(FONT_TYPE_TRUETYPE.equals(type), () -> new IllegalArgumentException("unsupported font type: "+type));
+    public List<Font> loadFonts(InputStream in) throws IOException {
         try (in) {
-            java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, in);
-            Font font = new Font(awtFont.getFamily(), awtFont.getSize(), Color.BLACK, awtFont.isBold(), awtFont.isItalic(), false, false);
-            fontMap.putIfAbsent(font, awtFont);
-            return Optional.of(font);
+            java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
+            List<Font> fonts =new ArrayList<>(awtFonts.length);
+            for (var awtFont: awtFonts) {
+                Font font = new Font(awtFont.getFamily(), awtFont.getSize(), Color.BLACK, awtFont.isBold(), awtFont.isItalic(), false, false);
+                fontMap.putIfAbsent(font, awtFont);       
+                fonts.add(font);
+            }
+            return Collections.unmodifiableList(fonts);
         } catch (FontFormatException e) {
             throw new IOException(e);
         }

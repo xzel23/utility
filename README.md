@@ -79,7 +79,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 - added Image.getArgb()
 - some changes and fixes to AffineTransformation
 - introduce class Dimension2d
-- changes to FontUtil interface; rename FontUtil.getTextBounds() to getTextDimension()
+- changes to FontUtil interface; rename FontUtil.getTextBounds() to getTextDimension(); loadFont replaced by loadFonts()
 
 ### 8.2.2
 

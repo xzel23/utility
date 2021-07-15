@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.ServiceLoader;
 
 /**
@@ -40,7 +39,7 @@ public interface FontUtil<F> {
                 }
 
                 @Override
-                public Optional<Font> loadFont(String type, InputStream in) throws IOException {
+                public List<Font> loadFonts(InputStream in) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
@@ -54,9 +53,6 @@ public interface FontUtil<F> {
         return fu;
     }
     
-    /** The font type string for TrueType fonts. */
-    String FONT_TYPE_TRUETYPE = "ttf";
-
     /**
      * Convert font.
      *
@@ -109,13 +105,12 @@ public interface FontUtil<F> {
 
     /**
      * Load font.
-     * @param type the font type as String.
      * @param in the {@link InputStream} to read the font data from.
      * @return the font loaded
      * @throws java.io.IOException if an I/O error occurs
      * @throws IllegalArgumentException if the type is not supported
      */
-    Optional<Font> loadFont(String type, InputStream in) throws IOException;
+    List<Font> loadFonts(InputStream in) throws IOException;
 
     /**
      * Font type enumeration.
