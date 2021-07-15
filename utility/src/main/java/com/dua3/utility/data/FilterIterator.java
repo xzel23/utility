@@ -58,7 +58,7 @@ public class FilterIterator<T> implements Iterator<T> {
     @Override
     public T next() {
         if (done) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("there are no elements left");
         }
 
         T item = current;

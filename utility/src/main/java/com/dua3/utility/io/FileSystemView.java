@@ -136,7 +136,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the view cannot be created
      */
-    public static FileSystemView forClass(Class<?> clazz) throws IOException {
+    public static FileSystemView forClass(Class<?> clazz) throws IOException, java.io.UnsupportedEncodingException {
         try {
             String classFile = clazz.getSimpleName() + ".class";
             URI uri = clazz.getResource(classFile).toURI();

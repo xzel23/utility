@@ -169,7 +169,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the list of file extensions for this file type
      */
     public List<String> getExtensions() {
-        return Collections.unmodifiableList(extensions);
+        return extensions;
     }
 
     /**

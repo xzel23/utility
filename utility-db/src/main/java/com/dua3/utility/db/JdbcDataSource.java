@@ -51,14 +51,14 @@ public class JdbcDataSource implements DataSource {
 
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException();
+        throw new SQLFeatureNotSupportedException("getParentLogger() is not supported");
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
         if (!iface.isAssignableFrom(this.getClass())) {
-            throw new SQLException();
+            throw new SQLException(iface.getName()+" is not assignable from "+this.getClass().getName());
         }
         return (T) this;
     }

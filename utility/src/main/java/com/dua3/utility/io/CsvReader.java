@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.lang.LangUtil;
 
-public class CsvReader extends CsvIo implements AutoCloseable {
+public class CsvReader extends CsvIo {
 
     public interface RowBuilder {
 

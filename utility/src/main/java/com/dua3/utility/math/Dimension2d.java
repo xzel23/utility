@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * An immutable 2-dimensional dimension using double coordinates.
  */
-public class Dimension2d {
+public final class Dimension2d {
     
     public static Dimension2d of(double w, double h) {
         assert w >= 0 && h >= 0 : "width and height must not be negative";

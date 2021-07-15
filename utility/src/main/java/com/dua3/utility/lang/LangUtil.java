@@ -63,7 +63,7 @@ public final class LangUtil {
      */
     public static void check(boolean condition) {
         if (!condition) {
-            throw new FailedCheckException();
+            throw new FailedCheckException("condition failed");
         }
     }
 

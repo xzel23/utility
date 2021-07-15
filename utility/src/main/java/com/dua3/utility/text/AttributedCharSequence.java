@@ -43,7 +43,7 @@ public interface AttributedCharSequence extends CharSequence {
                 if (hasNext()) {
                     return attributedCharAt(cur++);
                 } else {
-                    throw new NoSuchElementException();
+                    throw new NoSuchElementException("there are no characters left");
                 }
             }
         }
