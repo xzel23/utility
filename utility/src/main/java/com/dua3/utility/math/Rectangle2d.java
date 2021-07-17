@@ -6,17 +6,17 @@
 package com.dua3.utility.math;
 
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.geometry.Dimension2d;
 
-import java.util.List;
 import java.util.Objects;
 
-public final class Rect2d implements Polygon2d {
+public final class Rectangle2d {
     private final double x;
     private final double y;
     private final double width;
     private final double height;
 
-    private Rect2d(double x, double y, double w, double h) {
+    private Rectangle2d(double x, double y, double w, double h) {
         assert w>=0;
         assert h>=0;
         
@@ -26,7 +26,7 @@ public final class Rect2d implements Polygon2d {
         this.height = h;
     }
     
-    public static Rect2d withCorners(Vec2d p, Vec2d q) {
+    public static Rectangle2d withCorners(Vector2d p, Vector2d q) {
         double x,y,w,h;
         if (p.x()<=q.x()) {
             x = p.x();
@@ -42,16 +42,16 @@ public final class Rect2d implements Polygon2d {
             y = q.y();
             h = p.y()-q.y();
         }
-        return new Rect2d(x,y,w,h);
+        return new Rectangle2d(x,y,w,h);
     }
 
-    public static Rect2d of(double x, double y, double w, double h) {
+    public static Rectangle2d of(double x, double y, double w, double h) {
         LangUtil.check(w>=0 && h>=0, "w and h must not be negative: w=%f, h=%f", w, h);
-        return new Rect2d(x, y, w, h);
+        return new Rectangle2d(x, y, w, h);
     }
 
-    public static Rect2d of(Vec2d p, Dimension2d d) {
-        return Rect2d.of(p.x(), p.y(), d.width(), d.height());    
+    public static Rectangle2d of(Vector2d p, Dimension2d d) {
+        return Rectangle2d.of(p.x(), p.y(), d.width(), d.height());    
     } 
     
     public double xMin() {
@@ -82,7 +82,7 @@ public final class Rect2d implements Polygon2d {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Rect2d rectangle = (Rect2d) o;
+        Rectangle2d rectangle = (Rectangle2d) o;
         return Double.compare(rectangle.x, x) == 0 && Double.compare(rectangle.y, y) == 0 && Double.compare(rectangle.width, width) == 0 && Double.compare(rectangle.height, height) == 0;
     }
 
@@ -93,7 +93,7 @@ public final class Rect2d implements Polygon2d {
 
     @Override
     public String toString() {
-        return "Rect2d{" +
+        return "Rectangle2d{" +
                "x=" + x +
                ", y=" + y +
                ", width=" + width +
@@ -101,18 +101,4 @@ public final class Rect2d implements Polygon2d {
                '}';
     }
 
-    @Override
-    public int vertexCount() {
-        return 4;
-    }
-
-    @Override
-    public List<Vec2d> vertices() {
-        return List.of(
-                Vec2d.of(x,y),
-                Vec2d.of(x+width,y),
-                Vec2d.of(x+width,y+height),
-                Vec2d.of(x,y+height)
-        );
-    }
 }

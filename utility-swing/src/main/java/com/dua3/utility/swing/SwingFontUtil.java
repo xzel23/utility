@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.math.Dimension2d;
+import com.dua3.utility.math.geometry.Dimension2d;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 

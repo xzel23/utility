@@ -7,7 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.Dimension2d;
+import com.dua3.utility.math.geometry.Dimension2d;
 
 import java.io.*;
 import java.net.URLEncoder;

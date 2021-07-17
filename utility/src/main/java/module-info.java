@@ -13,6 +13,7 @@ module dua3_utility {
     exports com.dua3.utility.math;
     exports com.dua3.utility.text;
     exports com.dua3.utility.xml;
+    exports com.dua3.utility.math.geometry;
 
     requires java.logging;
     

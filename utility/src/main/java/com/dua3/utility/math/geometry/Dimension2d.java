@@ -1,4 +1,4 @@
-package com.dua3.utility.math;
+package com.dua3.utility.math.geometry;
 
 import java.util.Objects;
 

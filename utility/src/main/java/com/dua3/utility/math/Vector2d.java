@@ -10,15 +10,15 @@ import java.util.Objects;
 /**
  * An immutable 2-dimensional vector using double coordinates.
  */
-public final class Vec2d {
+public final class Vector2d {
     private final double x;
     private final double y;
 
-    public static final Vec2d ORIGIN = new Vec2d(0,0);
-    public static final Vec2d POSITIVE_INFINITY = new Vec2d(Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY);
-    public static final Vec2d NEGATIVE_INFINITY = new Vec2d(Double.NEGATIVE_INFINITY,Double.NEGATIVE_INFINITY);
+    public static final Vector2d ORIGIN = new Vector2d(0,0);
+    public static final Vector2d POSITIVE_INFINITY = new Vector2d(Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY);
+    public static final Vector2d NEGATIVE_INFINITY = new Vector2d(Double.NEGATIVE_INFINITY,Double.NEGATIVE_INFINITY);
     
-    private Vec2d(double x, double y) {
+    private Vector2d(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -28,8 +28,8 @@ public final class Vec2d {
      * @param x the x-coordinate
      * @param y the y-coordinate
      */
-    public static Vec2d of(double x, double y) {
-        return new Vec2d(x,y);
+    public static Vector2d of(double x, double y) {
+        return new Vector2d(x,y);
     }
 
     /**
@@ -38,8 +38,8 @@ public final class Vec2d {
      * @param b second vector
      * @return Vector with the the componentwise maxima of a and b as components. 
      */
-    public static Vec2d max(Vec2d a, Vec2d b) {
-        return Vec2d.of(Math.max(a.x, b.x), Math.max(a.y, b.y));
+    public static Vector2d max(Vector2d a, Vector2d b) {
+        return Vector2d.of(Math.max(a.x, b.x), Math.max(a.y, b.y));
     }
 
     /**
@@ -48,8 +48,8 @@ public final class Vec2d {
      * @param b second vector
      * @return Vector with the the componentwise minima of a and b as components. 
      */
-    public static Vec2d min(Vec2d a, Vec2d b) {
-        return Vec2d.of(Math.min(a.x, b.x), Math.min(a.y, b.y));
+    public static Vector2d min(Vector2d a, Vector2d b) {
+        return Vector2d.of(Math.min(a.x, b.x), Math.min(a.y, b.y));
     }
 
     /**
@@ -58,7 +58,7 @@ public final class Vec2d {
      * @param b second vector
      * @return this * v
      */
-    public static double scalarProduct(Vec2d a, Vec2d b) {
+    public static double scalarProduct(Vector2d a, Vector2d b) {
         return a.x*b.x+a.y*b.y;
     }
 
@@ -66,9 +66,9 @@ public final class Vec2d {
      * Return angle in radians between two vectors.
      * @param a first vector
      * @param b second vector
-     * @return the agle in radians 
+     * @return the angle in radians 
      */
-    public static double angle(Vec2d a, Vec2d b) {
+    public static double angle(Vector2d a, Vector2d b) {
         double nominator = scalarProduct(a, b);
         
         if (nominator==0) {
@@ -77,8 +77,8 @@ public final class Vec2d {
         
         double denominator = a.length() * b.length();
 
-        // denominator==0 implies nominator==0, so this should only happen if scalarProdut(9 or length() is broken
-        assert denominator!= 0;  
+        // denominator==0 implies nominator==0, so this should only happen if scalarProdut() or length() is broken
+        assert denominator != 0;  
         
         return Math.acos(nominator/denominator);
     }
@@ -102,8 +102,8 @@ public final class Vec2d {
      * @param v the argument
      * @return this + v
      */
-    public Vec2d add(Vec2d v) {
-        return new Vec2d(x+v.x, y+v.y);    
+    public Vector2d add(Vector2d v) {
+        return new Vector2d(x + v.x, y + v.y);    
     }
     
     /**
@@ -111,8 +111,8 @@ public final class Vec2d {
      * @param v the argument
      * @return this - v
      */
-    public Vec2d subtract(Vec2d v) {
-        return new Vec2d(x-v.x, y-v.y);    
+    public Vector2d subtract(Vector2d v) {
+        return new Vector2d(x - v.x, y - v.y);    
     }
     
     /**
@@ -120,14 +120,22 @@ public final class Vec2d {
      * @return the length
      */
     public double length() {
-        return Math.sqrt(scalarProduct(this, this));
+        return Math.sqrt(x * x + y * y);
     }
 
+    /**
+     * Compute the avector's angle in radians.
+     * @return angle in radians in the range [-π,π]
+     */
+    public double angle() {
+        return Math.atan2(y(), x());
+    }
+            
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Vec2d vec2d = (Vec2d) o;
+        Vector2d vec2d = (Vector2d) o;
         return vec2d.x==x && vec2d.y==y;
     }
 
@@ -138,7 +146,7 @@ public final class Vec2d {
 
     @Override
     public String toString() {
-        return "Vec2d{" +
+        return "Vector2d{" +
                "x=" + x +
                ", y=" + y +
                '}';

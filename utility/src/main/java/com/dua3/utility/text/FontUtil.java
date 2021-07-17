@@ -1,6 +1,6 @@
 package com.dua3.utility.text;
 
-import com.dua3.utility.math.Dimension2d;
+import com.dua3.utility.math.geometry.Dimension2d;
 
 import java.io.IOException;
 import java.io.InputStream;
