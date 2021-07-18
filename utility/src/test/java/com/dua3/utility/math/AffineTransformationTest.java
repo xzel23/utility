@@ -32,7 +32,7 @@ class AffineTransformationTest {
 
         at = AffineTransformation2d.rotate(Math.PI / 6);
         Vector2d v = Vector2d.of(5,0);
-        Vector2d expected = Vector2d.of(4.330127, 2.5);
+        Vector2d expected = Vector2d.of(4.330127f, 2.5f);
         Vector2d actual = at.transform(v);
         assertEquals(expected.x(), actual.x(), 1e-6);
         assertEquals(expected.y(), actual.y(), 1e-6);
@@ -55,7 +55,7 @@ class AffineTransformationTest {
 
     @Test
     void shear() {
-        AffineTransformation2d at = AffineTransformation2d.shear(0.5);
+        AffineTransformation2d at = AffineTransformation2d.shear(0.5f);
         assertEquals(Vector2d.of(12, 10), at.transform(Vector2d.of(7,10)));
     }
     
@@ -74,7 +74,7 @@ class AffineTransformationTest {
         assertEquals(expected1.y(), actual1.y(), 1e-6);
 
         AffineTransformation2d rotate = AffineTransformation2d.rotate(Math.PI / 6);
-        Vector2d expected2 = Vector2d.of(5 * Math.cos(Math.PI / 6), 2.5);
+        Vector2d expected2 = Vector2d.of((float) (5 * Math.cos(Math.PI / 6)), 2.5f);
         Vector2d actual2 = rotate.transform(actual1);
         assertEquals(expected2.x(), actual2.x(), 1e-6);
         assertEquals(expected2.y(), actual2.y(), 1e-6);

@@ -3,28 +3,28 @@ package com.dua3.utility.math.geometry;
 import java.util.Objects;
 
 /**
- * An immutable 2-dimensional dimension using double coordinates.
+ * An immutable 2-dimensional dimension using float coordinates.
  */
 public final class Dimension2d {
     
-    public static Dimension2d of(double w, double h) {
+    public static Dimension2d of(float w, float h) {
         assert w >= 0 && h >= 0 : "width and height must not be negative";
         return new Dimension2d(w,h);    
     }
     
-    private final double width;
-    private final double height;
+    private final float width;
+    private final float height;
 
-    private Dimension2d(double w, double h) { 
+    private Dimension2d(float w, float h) { 
         this.width = w;
         this.height = h;
     }
 
-    public double width() {
+    public float width() {
         return width;
     }
 
-    public double height() {
+    public float height() {
         return height;
     }
 
@@ -33,7 +33,7 @@ public final class Dimension2d {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Dimension2d that = (Dimension2d) o;
-        return Double.compare(that.width, width) == 0 && Double.compare(that.height, height) == 0;
+        return Float.compare(that.width, width) == 0 && Float.compare(that.height, height) == 0;
     }
 
     @Override

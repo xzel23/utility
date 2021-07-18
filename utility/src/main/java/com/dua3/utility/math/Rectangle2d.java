@@ -11,12 +11,12 @@ import com.dua3.utility.math.geometry.Dimension2d;
 import java.util.Objects;
 
 public final class Rectangle2d {
-    private final double x;
-    private final double y;
-    private final double width;
-    private final double height;
+    private final float x;
+    private final float y;
+    private final float width;
+    private final float height;
 
-    private Rectangle2d(double x, double y, double w, double h) {
+    private Rectangle2d(float x, float y, float w, float h) {
         assert w>=0;
         assert h>=0;
         
@@ -27,7 +27,7 @@ public final class Rectangle2d {
     }
     
     public static Rectangle2d withCorners(Vector2d p, Vector2d q) {
-        double x,y,w,h;
+        float x,y,w,h;
         if (p.x()<=q.x()) {
             x = p.x();
             w = q.x()-p.x();
@@ -45,7 +45,7 @@ public final class Rectangle2d {
         return new Rectangle2d(x,y,w,h);
     }
 
-    public static Rectangle2d of(double x, double y, double w, double h) {
+    public static Rectangle2d of(float x, float y, float w, float h) {
         LangUtil.check(w>=0 && h>=0, "w and h must not be negative: w=%f, h=%f", w, h);
         return new Rectangle2d(x, y, w, h);
     }
@@ -54,27 +54,27 @@ public final class Rectangle2d {
         return Rectangle2d.of(p.x(), p.y(), d.width(), d.height());    
     } 
     
-    public double xMin() {
+    public float xMin() {
         return x;
     }
 
-    public double yMin() {
+    public float yMin() {
         return y;
     }
 
-    public double xMax() {
+    public float xMax() {
         return x+width;
     }
 
-    public double yMax() {
+    public float yMax() {
         return y+height;
     }
 
-    public double width() {
+    public float width() {
         return width;
     }
 
-    public double height() {
+    public float height() {
         return height;
     }
 
@@ -83,7 +83,7 @@ public final class Rectangle2d {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rectangle2d rectangle = (Rectangle2d) o;
-        return Double.compare(rectangle.x, x) == 0 && Double.compare(rectangle.y, y) == 0 && Double.compare(rectangle.width, width) == 0 && Double.compare(rectangle.height, height) == 0;
+        return Float.compare(rectangle.x, x) == 0 && Float.compare(rectangle.y, y) == 0 && Float.compare(rectangle.width, width) == 0 && Float.compare(rectangle.height, height) == 0;
     }
 
     @Override

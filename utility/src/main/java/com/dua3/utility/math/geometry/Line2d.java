@@ -28,4 +28,25 @@ public final class Line2d extends Segment2d {
     public Vector2d end() {
         return path.vertex(b);
     }
+    
+    public boolean isHorizontal() {
+        return start().y() == end().y();
+    }
+    
+    public boolean isVertical() {
+        return start().x() == end().x();
+    }
+    
+    public double inclination() {
+        return Math.atan2(deltaY(), deltaX());
+    }
+
+    public float deltaX() {
+        return end().x() - start().x();
+    }
+
+    public float deltaY() {
+        return end().y() - start().y();
+    }
+    
 }

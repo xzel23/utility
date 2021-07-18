@@ -82,6 +82,36 @@ public final class MathUtil {
      *             maximum value
      * @param  arg
      *             argument
+     * @return
+     *             <ul>
+     *             <li>min, if arg &lt; min
+     *             <li>max, if arg &gt; max
+     *             <li>else arg
+     *             </ul>
+     */
+    public static float clamp(float min, float max, float arg) {
+        assert min <= max;
+
+        if (arg < min) {
+            return min;
+        }
+
+        if (arg > max) {
+            return max;
+        }
+        
+        return arg;
+    }
+
+    /**
+     * Clip argument to range.
+     *
+     * @param  min
+     *             minimal value
+     * @param  max
+     *             maximum value
+     * @param  arg
+     *             argument
      * @param  valueIfNaN
      *             value to return if arg is NaN
      * @return
@@ -94,6 +124,29 @@ public final class MathUtil {
      */
     public static double clamp(double min, double max, double arg, double valueIfNaN) {
         return Double.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
+    }
+    
+    /**
+     * Clip argument to range.
+     *
+     * @param  min
+     *             minimal value
+     * @param  max
+     *             maximum value
+     * @param  arg
+     *             argument
+     * @param  valueIfNaN
+     *             value to return if arg is NaN
+     * @return
+     *             <ul>
+     *             <li>min, if arg &lt; min
+     *             <li>max, if arg &gt; max
+     *             <li>valueIfNaN, if arg is NaN
+     *             <li>else arg
+     *             </ul>
+     */
+    public static float clamp(float min, float max, float arg, float valueIfNaN) {
+        return Float.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
     }
     
     /**

@@ -8,17 +8,17 @@ package com.dua3.utility.math;
 import java.util.Objects;
 
 /**
- * An immutable 2-dimensional vector using double coordinates.
+ * An immutable 2-dimensional vector using float coordinates.
  */
 public final class Vector2d {
-    private final double x;
-    private final double y;
+    private final float x;
+    private final float y;
 
     public static final Vector2d ORIGIN = new Vector2d(0,0);
-    public static final Vector2d POSITIVE_INFINITY = new Vector2d(Double.POSITIVE_INFINITY,Double.POSITIVE_INFINITY);
-    public static final Vector2d NEGATIVE_INFINITY = new Vector2d(Double.NEGATIVE_INFINITY,Double.NEGATIVE_INFINITY);
+    public static final Vector2d POSITIVE_INFINITY = new Vector2d(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+    public static final Vector2d NEGATIVE_INFINITY = new Vector2d(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
     
-    private Vector2d(double x, double y) {
+    private Vector2d(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -28,7 +28,7 @@ public final class Vector2d {
      * @param x the x-coordinate
      * @param y the y-coordinate
      */
-    public static Vector2d of(double x, double y) {
+    public static Vector2d of(float x, float y) {
         return new Vector2d(x,y);
     }
 
@@ -58,7 +58,7 @@ public final class Vector2d {
      * @param b second vector
      * @return this * v
      */
-    public static double scalarProduct(Vector2d a, Vector2d b) {
+    public static float scalarProduct(Vector2d a, Vector2d b) {
         return a.x*b.x+a.y*b.y;
     }
 
@@ -69,10 +69,10 @@ public final class Vector2d {
      * @return the angle in radians 
      */
     public static double angle(Vector2d a, Vector2d b) {
-        double nominator = scalarProduct(a, b);
+        float nominator = scalarProduct(a, b);
         
         if (nominator==0) {
-            return Double.NaN;
+            return Float.NaN;
         }
         
         double denominator = a.length() * b.length();
@@ -86,14 +86,14 @@ public final class Vector2d {
     /**
      * @return the x-coordinate.
      */
-    public double x() {
+    public float x() {
         return x;
     }
 
     /**
      *@return the y-coordinate.
      */
-    public double y() {
+    public float y() {
         return y;
     }
 

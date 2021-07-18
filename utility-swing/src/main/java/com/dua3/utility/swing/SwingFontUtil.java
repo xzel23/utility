@@ -51,7 +51,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
      */
     public Dimension2d getTextDimension(CharSequence text, java.awt.Font awtFont) {
         Rectangle2D r = stringBounds(text, awtFont);
-        return Dimension2d.of(r.getWidth(), r.getHeight());
+        return Dimension2d.of((float) r.getWidth(), (float) r.getHeight());
     }
 
     /**
@@ -77,7 +77,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     @Override
     public Dimension2d getTextDimension(CharSequence s, Font f) {
         Rectangle2D r = stringBounds(s, f);
-        return Dimension2d.of(r.getWidth(), r.getHeight());
+        return Dimension2d.of((float) r.getWidth(), (float) r.getHeight());
     }
 
     @Override

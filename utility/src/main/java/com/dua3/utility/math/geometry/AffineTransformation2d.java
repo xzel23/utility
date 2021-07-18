@@ -18,12 +18,12 @@ public class AffineTransformation2d {
 
     public static final AffineTransformation2d IDENTITY = new AffineTransformation2d(1, 0, 0, 0, 1, 0);
     
-    private final double a;
-    private final double b;
-    private final double c;
-    private final double d;
-    private final double e;
-    private final double f;
+    private final float a;
+    private final float b;
+    private final float c;
+    private final float d;
+    private final float e;
+    private final float f;
 
     /**
      * Create affine transformation from the given matrix elements.
@@ -43,12 +43,12 @@ public class AffineTransformation2d {
      * @param f matrix element f
      */
     public AffineTransformation2d(
-            double a,
-            double b,
-            double c,
-            double d,
-            double e,
-            double f
+            float a,
+            float b,
+            float c,
+            float d,
+            float e,
+            float f
     ) {
         this.a = a;
         this.b = b;
@@ -74,8 +74,8 @@ public class AffineTransformation2d {
      * @return affine transformation (rotation)
      */
     public static AffineTransformation2d rotate(double alpha) {
-        double sin = Math.sin(alpha);
-        double cos = Math.cos(alpha);
+        float sin = (float) Math.sin(alpha);
+        float cos = (float) Math.cos(alpha);
         return new AffineTransformation2d(cos, -sin, 0, sin, cos, 0);
     }
 
@@ -86,13 +86,13 @@ public class AffineTransformation2d {
      * @param ty the y-value
      * @return affine transformation (translation)
      */
-    public static AffineTransformation2d translate(double tx, double ty) {
+    public static AffineTransformation2d translate(float tx, float ty) {
         return new AffineTransformation2d(1, 0, tx, 0, 1, ty);
     }
     
     /**
      * Create an affine transformation for a translation.
-     * See {@link #translate(double, double)}.
+     * See {@link #translate(float, float)}.
      * @param v the translation vector
      * @return affine transformation (translation)
      */
@@ -106,7 +106,7 @@ public class AffineTransformation2d {
      * @param s the scaling factor
      * @return affine transformation (scale)
      */
-    public static AffineTransformation2d scale(double s) {
+    public static AffineTransformation2d scale(float s) {
         return scale(s,s);
     }
 
@@ -117,7 +117,7 @@ public class AffineTransformation2d {
      * @param sy the scaling factor for the y-coordinate
      * @return affine transformation (scale)
      */
-    public static AffineTransformation2d scale(double sx, double sy) {
+    public static AffineTransformation2d scale(float sx, float sy) {
         return new AffineTransformation2d(sx, 0, 0, 0, sy, 0);
     }
 
@@ -127,7 +127,7 @@ public class AffineTransformation2d {
      * @param m the shearing factor
      * @return affine transformation (scale)
      */
-    public static AffineTransformation2d shear(double m) {
+    public static AffineTransformation2d shear(float m) {
         return new AffineTransformation2d(1, m, 0, 0, 1, 0);
     }
 
@@ -158,9 +158,9 @@ public class AffineTransformation2d {
      * @param y the y-coordinate of the point to transform
      * @return the result of transformation
      */
-    public Vector2d transform(double x, double y) {
-        double xt = a*x + b*y + c;
-        double yt = d*x + e*y + f;
+    public Vector2d transform(float x, float y) {
+        float xt = a*x + b*y + c;
+        float yt = d*x + e*y + f;
         return Vector2d.of(xt,yt);
     }
     
@@ -183,22 +183,22 @@ public class AffineTransformation2d {
     }
 
     /** Get scaling factor for x-axis. */
-    public double getScaleX() { return a; }
+    public float getScaleX() { return a; }
 
     /** Get shearing factor for x-axis. */
-    public double getShearX() { return b; }
+    public float getShearX() { return b; }
 
     /** Get x-value of translation. */
-    public double getTranslateX() { return c; }
+    public float getTranslateX() { return c; }
 
     /** Get shearing factor for y-axis. */
-    public double getShearY() { return d; }
+    public float getShearY() { return d; }
 
     /** Get scaling factor for y-axis. */
-    public double getScaleY() { return e; }
+    public float getScaleY() { return e; }
 
     /** Get y-value of translation. */
-    public double getTranslateY() { return f; }
+    public float getTranslateY() { return f; }
 
     /** Get translation vector. */
     public Vector2d getTranslate() { return Vector2d.of(e,f); }
