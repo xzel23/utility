@@ -14,4 +14,14 @@ public abstract class Segment2d {
     
     public abstract Vector2d start();
     public abstract Vector2d end();
+    
+    protected String vertexToString(int idx) {
+        Vector2d v = path.vertex(idx);
+        return String.format("[%d](%f,%f)", idx, v.x(), v.y());
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

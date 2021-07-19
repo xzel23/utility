@@ -25,4 +25,11 @@ public class MoveTo2d extends Segment2d {
     public Vector2d end() {
         return path.vertex(idx);
     }
+
+    @Override
+    public String toString() {
+        return "MoveTo2d{" +
+               vertexToString(idx) +
+               '}';
+    }
 }

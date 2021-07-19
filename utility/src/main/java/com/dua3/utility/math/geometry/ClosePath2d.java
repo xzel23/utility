@@ -30,4 +30,11 @@ public class ClosePath2d extends Segment2d {
         return path.vertex(q);
     }
 
+    @Override
+    public String toString() {
+        return "ClosePath2d{" +
+               vertexToString(p) + "," +
+               vertexToString(q) +
+               '}';
+    }
 }

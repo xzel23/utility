@@ -48,5 +48,13 @@ public final class Line2d extends Segment2d {
     public float deltaY() {
         return end().y() - start().y();
     }
+
+    @Override
+    public String toString() {
+        return "LineTo2d{" +
+               vertexToString(a) + "," +
+               vertexToString(b) +
+               '}';
+    }
     
 }

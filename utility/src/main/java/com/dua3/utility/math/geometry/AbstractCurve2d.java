@@ -28,4 +28,21 @@ public abstract class AbstractCurve2d extends Segment2d {
     public Vector2d end() {
         return control(3);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append(getClass().getSimpleName()+"{");
+        String sep = "";
+        for (int i=0; i<controls.length; i++) {
+            sb.append(sep);
+            sb.append(vertexToString(controls[i]));
+            sb.append("\n");
+            sep = ", ";
+        }
+        sb.append("}");
+        
+        return sb.toString();
+    }
 }
