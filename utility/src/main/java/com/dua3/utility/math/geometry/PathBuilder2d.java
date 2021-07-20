@@ -83,16 +83,21 @@ public class PathBuilder2d {
         return new Path2d(impl);
     }
     
-    public Path2d fillPath() {
-        impl.addSegment(new FillPath2d(impl, currentIndex()));
+    public Path2d fillPath(FillRule fillRule) {
+        impl.addSegment(new FillPath2d(impl, currentIndex(), fillRule));
         return new Path2d(impl);
     }
     
-    public Path2d fillAndStrokePath() {
-        impl.addSegment(new FillAndStrokePath2d(impl, currentIndex()));
+    public Path2d fillAndStrokePath(FillRule fillRule) {
+        impl.addSegment(new FillAndStrokePath2d(impl, currentIndex(), fillRule));
         return new Path2d(impl);
     }
-    
+
+    public Path2d clipPath(FillRule fillRule) {
+        impl.addSegment(new ClipPath2d(impl, currentIndex(), fillRule));
+        return new Path2d(impl);
+    }
+
     private void close() {
         open = false;
     }

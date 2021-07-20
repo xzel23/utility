@@ -2,14 +2,14 @@ package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2d;
 
-public class FillAndStrokePath2d extends Segment2d {
+public class ClipPath2d extends Segment2d {
 
-    public static final String NAME = "FILL_AND_STROKE_PATH";
+    public static final String NAME = "CLIP_PATH";
 
     private final int idx;
     private final FillRule fillRule;
 
-    FillAndStrokePath2d(Path2dImpl path, int idx, FillRule fillRule) {
+    ClipPath2d(Path2dImpl path, int idx, FillRule fillRule) {
         super(path);
         this.idx = idx;
         this.fillRule = fillRule;
@@ -33,4 +33,5 @@ public class FillAndStrokePath2d extends Segment2d {
     public FillRule fillRule() {
         return fillRule;
     }
+
 }

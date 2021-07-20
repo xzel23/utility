@@ -7,10 +7,12 @@ public class FillPath2d extends Segment2d {
     public static final String NAME = "FILL_PATH";
 
     private final int idx;
-    
-    FillPath2d(Path2dImpl path, int idx) {
+    private final FillRule fillRule;
+
+    FillPath2d(Path2dImpl path, int idx, FillRule fillRule) {
         super(path);
         this.idx = idx;
+        this.fillRule = fillRule;
     }
 
     @Override
@@ -26,6 +28,10 @@ public class FillPath2d extends Segment2d {
     @Override
     public Vector2d end() {
         return path.vertex(idx);
+    }
+
+    public FillRule fillRule() {
+        return fillRule;
     }
 
 }
