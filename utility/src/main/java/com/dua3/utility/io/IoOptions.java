@@ -13,6 +13,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Helper class defining some common {@link com.dua3.utility.options.Option} instances
+ * that can be used for command line parsing.
+ */
 public final class IoOptions {
 
     private IoOptions() {

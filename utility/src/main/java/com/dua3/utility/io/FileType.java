@@ -212,6 +212,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
+    @SuppressWarnings("RedundantThrows")
     public abstract T read(URI uri, Function<FileType<? extends T>, Arguments> options) throws IOException;
 
     /**
@@ -256,6 +257,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param options  the options to use
      * @throws IOException if an error occurs
      */
+    @SuppressWarnings("RedundantThrows")
     public abstract void write(URI uri, T document, Function<FileType<? super T>, Arguments> options) throws IOException;
 
     /**

@@ -6,18 +6,29 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public final class Path2d extends Path2dImpl {
+/**
+ * A path in 2-dimensional space that is defined by joining together different segments.
+ */
+public final class Path2d {
     
     private final Path2dImpl impl;
     
     Path2d(Path2dImpl impl) {
         this.impl = impl;
     }
-    
-    public List<Vector2d> verctices() {
+
+    /**
+     * Get list of vertices of this path.
+     * @return list of vertices
+     */
+    public List<Vector2d> vertices() {
         return impl.vertices();
     }
 
+    /**
+     * Get list of segments of this path.
+     * @return list of segments
+     */
     public List<Segment2d> segments() {
         return impl.segments();
     }

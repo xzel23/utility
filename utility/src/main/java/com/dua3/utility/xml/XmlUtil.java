@@ -202,12 +202,10 @@ public final class XmlUtil {
      * @param out the stream to write to
      * @param node the node
      * @param charset the {@link Charset} to use for encoding the output
-     * @return {@code out}
      * @throws IOException when an I/O error occurs
      */
-    public <O extends OutputStream> O format(O out, Node node, Charset charset) throws IOException {
+    public <O extends OutputStream> void format(O out, Node node, Charset charset) throws IOException {
         format(new OutputStreamWriter(out, charset), node, charset);
-        return out;
     }
 
     /**
@@ -218,11 +216,10 @@ public final class XmlUtil {
      * @param <W> the type of the Writer
      * @param writer the writer to write to
      * @param node the node
-     * @return {@code writer}
      * @throws IOException when an I/O error occurs
      */
-    public <W extends Writer> W format(W writer, Node node) throws IOException {
-        return format(writer, node, StandardCharsets.UTF_8);
+    public <W extends Writer> void format(W writer, Node node) throws IOException {
+        format(writer, node, StandardCharsets.UTF_8);
     }
 
     /**

@@ -119,7 +119,7 @@ public interface FontUtil<F> {
     enum FontTypes {
         PROPORTIONAL,
         MONOSPACED,
-        ALL;
+        ALL
     }
 
     /**

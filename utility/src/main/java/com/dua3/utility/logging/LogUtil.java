@@ -76,6 +76,7 @@ public final class LogUtil {
                 level = Level.parse(value);
 
                 // remove from list of arguments
+                //noinspection AssignmentToForLoopParameter
                 argList.remove(i--);
             }
         }

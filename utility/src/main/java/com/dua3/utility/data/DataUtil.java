@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 /**
  * Utility class for data handling and conversion.
  */
+@SuppressWarnings("BoundedWildcard")
 public final class DataUtil {
 
     /**

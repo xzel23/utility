@@ -4,19 +4,42 @@ import com.dua3.utility.math.Vector2d;
 
 import java.util.Objects;
 
+/**
+ * Abstract Base class for 2-dimensional curves.
+ */
 public abstract class AbstractCurve2d extends Segment2d {
 
+    /**
+     * the control points
+     */
     final int[] controls;
 
+    /**
+     * Constructor.
+     * <p>
+     * <strong>NOTE:</strong> The array of control points is used as is. It is the caller's
+     * responsibility that the array is not modified after constrcution of the curve.
+     * @param path the path this curve belongs to
+     * @param controls the control points
+     */
     AbstractCurve2d(Path2dImpl path, int... controls) {
         super(path);
         this.controls = Objects.requireNonNull(controls);
     }
 
+    /**
+     * Get number of control points.
+     * @return number of control points
+     */
     public int numberOfControls() {
         return controls.length;
-    } 
-    
+    }
+
+    /**
+     * Get control point by index
+     * @param idx index of control point
+     * @return the control point
+     */
     public Vector2d control(int idx) {
         return path.vertex(controls[idx]);
     }
