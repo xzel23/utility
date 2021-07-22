@@ -11,34 +11,33 @@ class Path2dImpl {
     private final List<Vector2d> vertices;
     private final List<Segment2d> segments;
     
-    public Path2dImpl() {
+    Path2dImpl() {
         vertices = new ArrayList<>();
         segments = new ArrayList<>();
     }
     
-    public int addVertex(Vector2d v) {
+    void addVertex(Vector2d v) {
         assert v != null;
         vertices.add(v);
-        return vertices.size()-1;
     }
 
-    public int vertexCount() {
+    int vertexCount() {
         return vertices.size();
     }
     
-    public List<Vector2d> vertices() {
+    List<Vector2d> vertices() {
         return Collections.unmodifiableList(vertices);
     }
 
-    public List<Segment2d> segments() {
+    List<Segment2d> segments() {
         return Collections.unmodifiableList(segments);
     }
     
-    public Vector2d vertex(int idx) {
+    Vector2d vertex(int idx) {
         return vertices.get(idx);
     }
 
-    public void addSegment(Segment2d segment) {
+    void addSegment(Segment2d segment) {
         assert segment != null;
         segments.add(segment);
     }

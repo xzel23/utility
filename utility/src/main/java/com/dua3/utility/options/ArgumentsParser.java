@@ -26,10 +26,10 @@ public class ArgumentsParser {
     private final Map<String, Option<?>> options = new LinkedHashMap<>();
 
     /** The minimum number of positional arguments. */
-    int minPositionalArgs;
+    final int minPositionalArgs;
 
     /** The maximum number of positional arguments. */
-    int maxPositionalArgs;
+    final int maxPositionalArgs;
     
     /**
      * Constructor. 

@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 /**
  * DataSource implementation for JDBC.
  */
+@SuppressWarnings("RedundantThrows")
 public class JdbcDataSource implements DataSource {
 
     private static final String USER = "user";

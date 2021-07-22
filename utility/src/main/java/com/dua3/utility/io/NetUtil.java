@@ -94,7 +94,7 @@ public final class NetUtil {
         try {
             URLStreamHandler handler = new URLStreamHandler() {
                 @Override
-                protected URLConnection openConnection(URL u) throws IOException {
+                protected URLConnection openConnection(URL u) {
                     throw new UnsupportedOperationException("openConnection() is not supported");
                 }
             };

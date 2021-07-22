@@ -35,7 +35,7 @@ public class LineOutputStream extends OutputStream {
     }
 
     @Override
-    public synchronized void write(int b) throws IOException {
+    public synchronized void write(int b) {
         ensureCapacity(count+1);
         buf[count++] = (byte) b;
         

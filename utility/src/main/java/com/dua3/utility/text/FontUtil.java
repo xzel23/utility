@@ -38,6 +38,7 @@ public interface FontUtil<F> {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
+                @SuppressWarnings("RedundantThrows")
                 @Override
                 public List<Font> loadFonts(InputStream in) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);

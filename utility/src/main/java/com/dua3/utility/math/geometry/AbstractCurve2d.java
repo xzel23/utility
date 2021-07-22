@@ -2,13 +2,15 @@ package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2d;
 
+import java.util.Objects;
+
 public abstract class AbstractCurve2d extends Segment2d {
 
-    int[] controls;
+    final int[] controls;
 
     AbstractCurve2d(Path2dImpl path, int... controls) {
         super(path);
-        this.controls = controls;
+        this.controls = Objects.requireNonNull(controls);
     }
 
     public int numberOfControls() {
