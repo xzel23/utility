@@ -1,5 +1,5 @@
 description = 'Java utilities (core)' 
 
 dependencies {
-    compileOnly "org.apache.logging.log4j:log4j-core:2.14.0"
+    compileOnly "org.apache.logging.log4j:log4j-core:2.14.1"
 }
