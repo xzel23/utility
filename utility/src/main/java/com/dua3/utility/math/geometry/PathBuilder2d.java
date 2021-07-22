@@ -37,7 +37,7 @@ public class PathBuilder2d {
 
     /**
      * Get vertex by index.
-     * @param idx
+     * @param idx index
      * @return the vertex at the given index
      */
     public Vector2d vertex(int idx) {

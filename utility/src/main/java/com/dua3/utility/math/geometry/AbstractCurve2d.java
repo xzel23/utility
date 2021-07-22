@@ -60,9 +60,9 @@ public abstract class AbstractCurve2d extends Segment2d {
         
         sb.append(getClass().getSimpleName()+"{");
         String sep = "";
-        for (int i=0; i<controls.length; i++) {
+        for (int control: controls) {
             sb.append(sep);
-            sb.append(vertexToString(controls[i]));
+            sb.append(vertexToString(control));
             sb.append("\n");
             sep = ", ";
         }
