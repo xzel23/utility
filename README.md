@@ -80,7 +80,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 - some changes and fixes to AffineTransformation
 - introduce class Dimension2d
 - changes to FontUtil interface; rename FontUtil.getTextBounds() to getTextDimension(); loadFont replaced by loadFonts()
-- introduce math.geometry package
+- introduce math.geometry package and contained classes
 
 ### 8.2.2
 
