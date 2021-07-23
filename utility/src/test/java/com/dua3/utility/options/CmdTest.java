@@ -3,6 +3,7 @@ package com.dua3.utility.options;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,6 +42,28 @@ public class CmdTest {
                                         "            print result to terminal%n" +
                                         "%n");
         assertEquals(expected, cmd.help());
+    }
+
+    enum E {
+        TALL, GRANDE, VENTI, TRENTA;
+    }
+    
+    @Test
+    public void testChoiceOption() {
+        ArgumentsParser cmd = new ArgumentsParser("testChoiceOption", "Unit test for passing choices on the command line.");
+
+        ChoiceOption<E> oSize = cmd.choiceOption(E.class, "--size").defaultValue(E.GRANDE);
+        ChoiceOption<E> oSizeRequired = cmd.choiceOption(E.class, "--SIZE");
+
+        assertEquals(Optional.of(E.VENTI), cmd.parse("--product MACCHIATO --size VENTI".split(" ")).get(oSize));
+        assertEquals(E.VENTI, cmd.parse("--product MACCHIATO --size VENTI".split(" ")).getOrThrow(oSize));
+        assertEquals(Optional.of(E.GRANDE), cmd.parse("--product MACCHIATO".split(" ")).get(oSize));
+        assertEquals(E.GRANDE, cmd.parse("--product MACCHIATO".split(" ")).getOrThrow(oSize));
+
+        assertEquals(Optional.of(E.VENTI), cmd.parse("--product MACCHIATO --SIZE VENTI".split(" ")).get(oSizeRequired));
+        assertEquals(E.VENTI, cmd.parse("--product MACCHIATO --SIZE VENTI".split(" ")).getOrThrow(oSizeRequired));
+        assertEquals(Optional.empty(), cmd.parse("--product MACCHIATO".split(" ")).get(oSizeRequired));
+        assertThrows(OptionException.class, () -> cmd.parse("--product MACCHIATO".split(" ")).getOrThrow(oSizeRequired));
     }
 
     @Test
@@ -124,5 +147,5 @@ public class CmdTest {
         assertEquals(List.of("abc", "def"), cmd.parse("abc", "def").positionalArgs());
         assertEquals(List.of("abc", "def", "ghi"), cmd.parse("abc", "def", "ghi").positionalArgs());
     }
-
+    
 }

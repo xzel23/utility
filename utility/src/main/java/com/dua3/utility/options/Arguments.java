@@ -119,10 +119,21 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * Get value of {@link ChoiceOption}.
      * @param option the option
      * @param <T> the generic type of the option 
+     * @return the parameter passed to the option, or the option's default value (if set)
+     * @throws OptionException if neither is set
+     */
+    public <T> T getOrThrow(ChoiceOption<T> option) {
+        return get(option).orElseThrow(() -> new OptionException("missing required option: " + option.name()));
+    }
+
+    /**
+     * Get value of {@link ChoiceOption}.
+     * @param option the option
+     * @param <T> the generic type of the option 
      * @return the option's value
      */
-    public <T> T get(ChoiceOption<T> option) {
-        return stream(option).findFirst().map(list -> list.get(0)).orElse(option.getDefault());
+    public <T> Optional<T> get(ChoiceOption<T> option) {
+        return stream(option).findFirst().map(list -> list.get(0)).or(option::getDefault);
     }
 
     /**

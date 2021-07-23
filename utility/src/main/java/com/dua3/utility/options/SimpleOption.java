@@ -5,6 +5,7 @@ import com.dua3.utility.lang.LangUtil;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A simple option class. 
@@ -14,7 +15,7 @@ import java.util.function.Function;
  */
 public final class SimpleOption<T> extends Option<T> {
 
-    private T defaultValue = null;
+    private Supplier<T> defaultValue = () -> null;
 
     public static <T> SimpleOption<T>  create(Function<String,T> mapper, String... names) {
         return new SimpleOption<>(mapper, Object::toString, names);
@@ -47,8 +48,16 @@ public final class SimpleOption<T> extends Option<T> {
      * @return this option
      */
     public SimpleOption<T> defaultValue(T defaultValue) {
-        LangUtil.check(this.defaultValue==null, "default value has already been set");
-        this.defaultValue = Objects.requireNonNull(defaultValue, "default value cannot be set to null");
+        return defaultValue(() -> defaultValue);
+    }
+
+    /**
+     * Set default value.
+     * @param defaultValue the default value
+     * @return this option
+     */
+    public SimpleOption<T> defaultValue(Supplier<T> defaultValue) {
+        this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
         return this;
     }
 
@@ -57,6 +66,6 @@ public final class SimpleOption<T> extends Option<T> {
      * @return Optional holding the default value.
      */
     public Optional<T> getDefault() {
-        return Optional.ofNullable(defaultValue);
+        return Optional.ofNullable(defaultValue.get());
     }
 }

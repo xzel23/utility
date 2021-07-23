@@ -1,20 +1,22 @@
 package com.dua3.utility.options;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * An {@link Option} implementation that only allows a single argument that out of a limited set of possible values.
+ * An {@link Option} implementation that only allows a single argument out of a limited set of possible values.
  * @param <T>
  */
 public final class ChoiceOption<T> extends Option<T> {
 
+    /**
+     * A Choice is for a {@link ChoiceOption}, basically an object holding a combination of a value and its
+     * string representation for a selectable value in a choice option.
+     * @param <T> the value type
+     */
     public static final class Choice<T> {
         private final T value;
         private final String text;
@@ -24,6 +26,10 @@ public final class ChoiceOption<T> extends Option<T> {
             this.text=text;
         }
 
+        /**
+         * Get value.
+         * @return the value
+         */
         public T value() {
             return value;
         }
@@ -47,20 +53,20 @@ public final class ChoiceOption<T> extends Option<T> {
         }
     }
 
-    private final Supplier<? extends T> defaultValue;
+    private Supplier<? extends T> defaultValue = () -> null;
     private Supplier<? extends Collection<? extends T>> values;
     
     @SuppressWarnings("unchecked")
-    private static <E extends Enum<E>> E valueOf(Class<E> cls, String s) {
+    private static <E extends Enum<E>> E valueOf(Class<? extends E> cls, String s) {
         try {
-            return (E) cls.getMethod("valueOf", String.class).invoke(s);
+            return (E) cls.getMethod("valueOf", String.class).invoke(null, s);
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends Enum<E>> Collection<E> enumValues(Class<E> cls) {
+    private static <E extends Enum<E>> Collection<E> enumValues(Class<? extends E> cls) {
         try {
             return Arrays.asList((E[]) cls.getMethod("values").invoke(null));
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
@@ -68,26 +74,51 @@ public final class ChoiceOption<T> extends Option<T> {
         }
     }
 
-    public static <E extends Enum<E>> ChoiceOption<E> create(Class<E> cls, Supplier<? extends E> defaultValue, String... names) {
+    /**
+     * Create a choice option of enum type with the enum valueas as possible option values. 
+     * @param <E> the enum type
+     * @param cls the enum class
+     * @param names the option names
+     * @return choice option
+     */
+    public static <E extends Enum<E>> ChoiceOption<E> create(Class<? extends E> cls, String... names) {
         Function<String,E> parser = s -> ChoiceOption.valueOf(cls, s);
         Function<E,String> formatter = Object::toString;
         Supplier<Collection<E>> values = () -> enumValues(cls);
-        return new ChoiceOption<E>(parser, formatter, values, defaultValue, names);
+        return new ChoiceOption<E>(parser, formatter, values, names);
     }
 
-    public static <T> ChoiceOption<T> create(Function<String, ? extends T> parser, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, Supplier<? extends T> defaultValue, String... names) {
-        return new ChoiceOption<>(parser, formatter, values, defaultValue, names);
+    /**
+     * Create a choice option where strings in a list are mapped to values. 
+     * @param valueMapper the mapper that maps strings to values
+     * @param formatter the formatter that creates strings from values
+     * @param values list of valid strings
+     * @param names the option names
+     * @return choice option
+     */
+    public static <T> ChoiceOption<T> create(Function<String, ? extends T> valueMapper, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, String... names) {
+        return new ChoiceOption<>(valueMapper, formatter, values, names);
     }
 
-    private ChoiceOption(Function<String,? extends T> parser, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, Supplier<? extends T> defaultValue,  String... names) {
-        super(parser, formatter, names);
+    /**
+     * Constructor.
+     * @param valueMapper the mapper that maps strings to values
+     * @param formatter the formatter that creates strings from values
+     * @param values list of valid strings
+     * @param names the option names
+     */
+    private ChoiceOption(Function<String,? extends T> valueMapper, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, String... names) {
+        super(valueMapper, formatter, names);
         occurence(0,1);
         arity(1,1);
         this.values = Objects.requireNonNull(values);
-        this.defaultValue = Objects.requireNonNull(defaultValue);
         this.values = Objects.requireNonNull(values);
     }
 
+    /**
+     * Get possible values.
+     * @return collection holding the possible values
+     */
     public Collection<T> values() {
         return Collections.unmodifiableCollection(values.get());
     }
@@ -95,7 +126,11 @@ public final class ChoiceOption<T> extends Option<T> {
     public Collection<Choice<T>> choices() {
         return values().stream().map(this::choice).collect(Collectors.toUnmodifiableList());
     }
-    
+
+    /**
+     * Get choices.
+     * @return collection holding the possible choices
+     */
     public Choice<T> choice(T v) {
         return new Choice<>(v, format(v));
     }
@@ -106,8 +141,31 @@ public final class ChoiceOption<T> extends Option<T> {
         return this;
     }
 
-    public T getDefault() {
-        return defaultValue.get();
+    /**
+     * Set default value.
+     * @param defaultValue the default value
+     * @return this option
+     */
+    public ChoiceOption<T> defaultValue(T defaultValue) {
+        return defaultValue(() -> defaultValue);
+    }
+
+    /**
+     * Set default value.
+     * @param defaultValue the default value
+     * @return this option
+     */
+    public ChoiceOption<T> defaultValue(Supplier<T> defaultValue) {
+        this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
+        return this;
+    }
+
+    /**
+     * Get the default value.
+     * @return Optional holding the default value.
+     */
+    public Optional<T> getDefault() {
+        return Optional.ofNullable(defaultValue.get());
     }
     
 }

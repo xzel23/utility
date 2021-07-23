@@ -27,9 +27,9 @@ public final class IoOptions {
                 Charset::forName, 
                 Object::toString, 
                 () -> Collections.unmodifiableCollection(Charset.availableCharsets().values()),
-                () -> StandardCharsets.UTF_8, 
-                "--charset"
-        ).description("set character encoding");
+                "--charset")
+                .description("set character encoding")
+                .defaultValue(StandardCharsets.UTF_8);
     }
 
     public static ChoiceOption<Locale> locale() {
@@ -37,9 +37,9 @@ public final class IoOptions {
                 Locale::forLanguageTag, 
                 Object::toString, 
                 () -> Arrays.asList(Locale.getAvailableLocales()),
-                Locale::getDefault, 
-                "--locale"
-        ).description("set locale");
+                        "--locale")
+                .description("set locale")
+                .defaultValue(Locale::getDefault);
     }
 
     public static SimpleOption<Path> input() {
@@ -61,9 +61,9 @@ public final class IoOptions {
                 (String s) -> Character.valueOf(s.charAt(0)),
                 Object::toString,
                 () -> List.of('"', '\''),
-                () -> '"',
-                "-t", "--text-delimiter"
-        ).description("set text delimiter");
+                "-t", "--text-delimiter")
+                .description("set text delimiter")
+                .defaultValue('"');
     }
 
     public static ChoiceOption<Character> fieldSeparator() {
@@ -71,43 +71,49 @@ public final class IoOptions {
                 (String s) -> Character.valueOf(s.charAt(0)),
                 Object::toString,
                 () -> List.of(',', ';'),
-                () -> Character.valueOf(','),
-                "-s", "--field-separator"
-        ).description("set field separator");
+                "-s", "--field-separator")
+                .description("set field separator")
+                .defaultValue(',');
     }
 
     public static ChoiceOption<PredefinedDateFormat> dateFormat() {
-        return ChoiceOption.create(PredefinedDateFormat.class, () -> PredefinedDateFormat.ISO_DATE, "--date-format");
+        return ChoiceOption.create(
+                PredefinedDateFormat.class, 
+                "--date-format")
+                .defaultValue(PredefinedDateFormat.ISO_DATE);
     }
 
     public static ChoiceOption<PredefinedDateTimeFormat> dateTimeFormat() {
-        return ChoiceOption.create(PredefinedDateTimeFormat.class, () -> PredefinedDateTimeFormat.ISO_DATE_TIME, "--date-time-format");
+        return ChoiceOption.create(
+                PredefinedDateTimeFormat.class, 
+                "--date-time-format")
+                .defaultValue(PredefinedDateTimeFormat.ISO_DATE_TIME);
     }
 
     // get values from arguments
     
     public static Charset getCharset(Arguments cmd) {
-        return cmd.get(charset());
+        return cmd.getOrThrow(charset());
     }
     
     public static Locale getLocale(Arguments cmd) {
-        return cmd.get(locale());
+        return cmd.getOrThrow(locale());
     }
     
     public static PredefinedDateFormat getDateFormat(Arguments cmd) {
-        return cmd.get(dateFormat());
+        return cmd.getOrThrow(dateFormat());
     }
 
     public static PredefinedDateTimeFormat getDateTimeFormat(Arguments cmd) {
-        return cmd.get(dateTimeFormat());
+        return cmd.getOrThrow(dateTimeFormat());
     }
     
     public static Character getTextDelimiter(Arguments cmd) {
-        return cmd.get(textDelimiter());
+        return cmd.getOrThrow(textDelimiter());
     }
 
     public static Character getFieldSeparator(Arguments cmd) {
-        return cmd.get(fieldSeparator());
+        return cmd.getOrThrow(fieldSeparator());
     }
 
 }
