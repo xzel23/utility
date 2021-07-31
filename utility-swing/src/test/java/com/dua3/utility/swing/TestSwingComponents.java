@@ -135,7 +135,7 @@ public class TestSwingComponents extends JFrame {
                             LOG4J_LOGGER.error("Ouch! this is message " + nr + ".", generateThrowable());
                             break;
                         default:
-                            throw new IllegalStateException();
+                            throw new IllegalStateException("integer out of range");
                     }
                 }
 

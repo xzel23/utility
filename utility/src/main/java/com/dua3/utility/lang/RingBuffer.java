@@ -158,7 +158,10 @@ public class RingBuffer<E> implements Collection<E> {
             int idx = 0;
 
             private void checkValid() {
-                LangUtil.check(start_ == start && entries_ == entries, ConcurrentModificationException::new);
+                LangUtil.check(
+                        start_ == start && entries_ == entries, 
+                        () -> new ConcurrentModificationException("RingBuffer was modified")
+                );
             }
 
             @Override

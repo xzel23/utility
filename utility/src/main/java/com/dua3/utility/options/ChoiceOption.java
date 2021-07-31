@@ -85,7 +85,7 @@ public final class ChoiceOption<T> extends Option<T> {
         Function<String,E> parser = s -> ChoiceOption.valueOf(cls, s);
         Function<E,String> formatter = Object::toString;
         Supplier<Collection<E>> values = () -> enumValues(cls);
-        return new ChoiceOption<E>(parser, formatter, values, names);
+        return new ChoiceOption<>(parser, formatter, values, names);
     }
 
     /**

@@ -1,7 +1,5 @@
 package com.dua3.utility.options;
 
-import com.dua3.utility.lang.LangUtil;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;

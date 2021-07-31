@@ -45,7 +45,7 @@ public class CmdTest {
     }
 
     enum E {
-        TALL, GRANDE, VENTI, TRENTA;
+        TALL, GRANDE, VENTI, TRENTA
     }
     
     @Test

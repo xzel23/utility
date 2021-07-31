@@ -108,7 +108,7 @@ public class Codecs {
                 (DataInputStream is) -> {
                     K k = codecK.decode(is);
                     V v = codecV.decode(is); 
-                    return new Map.Entry<K,V>(){
+                    return new Map.Entry<K,V>() {
                         @Override
                         public K getKey() {
                             return k;
