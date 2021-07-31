@@ -18,12 +18,11 @@ Source code is available at https://gitlab.com/com.dua3/lib/utility.git.
 
 ## Requirements
 
- - building: JDK 11 or later 
- - using: JDK 8 or later
+ - JDK 11 or later 
 
 ## Including the library
 
-Binaries are available on Jcenter and Maven Central Repository.
+Binaries are available on Maven Central Repository.
 
 ### Maven
 
@@ -62,7 +61,7 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
-### 9 (to be released)
+### 9.0
 
 - migrate from bintray to sonatype 
 - JDK 11+ required! It's finally time to dump Java 8 support. I won't put any more effort into supporting a Java version that has long reached EOL and is a maintenance burden because of its missing modularity support.
