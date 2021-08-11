@@ -67,7 +67,37 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
     
     private UnaryOperator<Map<String,Object>> refineStyleProperties = m -> m;
-    
+
+    /**
+     * Replace font declarations with declarations for single properties. Use this as argument to 
+     * {@link #setRefineStyleProperties(UnaryOperator)} to generate style tags like <pre><b>...</b></pre>
+     * instead of <pre><span>...</span></pre>.
+     * @param styleProperties map with style properties
+     * @return style properties with font declarations replaced
+     */
+    public static Map<String,Object> inlineTextDecorations(Map<String,Object> styleProperties) {
+        Map<String,Object> props = new LinkedHashMap<>();
+        styleProperties.forEach((key, value) -> {
+            switch (key) {
+                case Style.FONT: {
+                    Font font = (Font) value;
+                    props.put(Style.FONT_TYPE, font.getFamily());
+                    props.put(Style.FONT_SIZE, font.getSizeInPoints());
+                    props.put(Style.FONT_STYLE, font.isItalic() ? Style.FONT_STYLE_VALUE_ITALIC : Style.FONT_STYLE_VALUE_NORMAL);
+                    props.put(Style.FONT_WEIGHT, font.isBold() ? Style.FONT_WEIGHT_VALUE_BOLD : Style.FONT_WEIGHT_VALUE_NORMAL);
+                    props.put(Style.TEXT_DECORATION_UNDERLINE, font.isUnderline() ? Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE : Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE);
+                    props.put(Style.TEXT_DECORATION_LINE_THROUGH, font.isStrikeThrough() ? Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE : Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE);
+                    props.put(Style.COLOR, font.getColor());
+                    break;
+                }
+                default:
+                    props.put(key, value);
+                    break;
+            }
+        });
+        return props;
+    }
+
     @Override
     protected TagBasedConverterImpl<String> createConverter(RichText text) {
         return new HtmlConverterImpl(text);
