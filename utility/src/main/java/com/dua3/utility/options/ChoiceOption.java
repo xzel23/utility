@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 /**
  * An {@link Option} implementation that only allows a single argument out of a limited set of possible values.
- * @param <T>
+ * @param <T> the value type
  */
 public final class ChoiceOption<T> extends Option<T> {
 

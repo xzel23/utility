@@ -182,25 +182,46 @@ public class AffineTransformation2d {
         return Objects.hash(a, b, c, d, e, f);
     }
 
-    /** Get scaling factor for x-axis. */
+    /** 
+     * Get scaling factor for x-axis. 
+     * @return the x-axis scaling factor
+     */
     public float getScaleX() { return a; }
 
-    /** Get shearing factor for x-axis. */
+    /**
+     * Get shearing factor for x-axis. 
+     * @return the x-axis shearing factor
+     */
     public float getShearX() { return b; }
 
-    /** Get x-value of translation. */
+    /**
+     * Get translation for x-axis. 
+     * @return the x-axis translation value
+     */
     public float getTranslateX() { return c; }
 
-    /** Get shearing factor for y-axis. */
+    /**
+     * Get shearing factor for y-axis. 
+     * @return the y-axis shearing factor
+     */
     public float getShearY() { return d; }
 
-    /** Get scaling factor for y-axis. */
+    /**
+     * Get scaling factor for y-axis. 
+     * @return the y-axis scaling factor
+     */
     public float getScaleY() { return e; }
 
-    /** Get y-value of translation. */
+    /**
+     * Get translation for y-axis. 
+     * @return the y-axis translation value
+     */
     public float getTranslateY() { return f; }
 
-    /** Get translation vector. */
+    /** 
+     * Get translation vector. 
+     * @return the translation vector
+     */
     public Vector2d getTranslate() { return Vector2d.of(e,f); }
 
     @Override

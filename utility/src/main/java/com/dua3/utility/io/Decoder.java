@@ -39,10 +39,11 @@ public interface Decoder<T> {
      * @param <T> the object type
      * @param is the {@link DataInputStream}
      * @param codec the element {@link Codec}
+     * @param collectionConstructor the collection constructor / factory method
      * @throws IOException if an error occurs
      * @return the collection of decoded objects
      */
-    static <T, C extends IntFunction<Collection<T>>> Collection<T> decode(DataInputStream is, Decoder<? extends T> codec, C collectionConstructor) throws IOException {
+    static <T> Collection<T> decode(DataInputStream is, Decoder<? extends T> codec, IntFunction<Collection<T>> collectionConstructor) throws IOException {
         int size = is.readInt();
         LangUtil.check(size >= 0, "invalid collection size: %d", size);
 
@@ -58,6 +59,7 @@ public interface Decoder<T> {
      * Decode an optional object.
      * @param is the {@link DataInputStream}
      * @throws IOException if an error occurs
+     * @return an optional holding the decoded object or an empty optional if object is notr present
      */
     default Optional<T> decodeOptional(DataInputStream is) throws IOException {
         return Optional.ofNullable(is.readBoolean() ? decode(is) : null);

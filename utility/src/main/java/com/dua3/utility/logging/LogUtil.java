@@ -41,7 +41,7 @@ public final class LogUtil {
     }
 
     /**
-     * Create a wrapper around a {@link Supplier<String>} that delegates {@code #toString()} to {@link Supplier#get()}.
+     * Create a wrapper around a {@link Supplier} that delegates {@code #toString()} to {@link Supplier#get()}.
      * {@link Supplier#get()} is only evaluated in case {@link #toString()} is called and the result is cached for
      * further invocations (provided {@link Supplier#get()} does not return {@code null}).
      * @param s the supplier

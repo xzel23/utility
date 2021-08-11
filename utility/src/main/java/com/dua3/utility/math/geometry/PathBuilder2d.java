@@ -126,7 +126,7 @@ public class PathBuilder2d {
     }
 
     /**
-     * >End the current path without appending a new segment.
+     * End the current path without appending a new segment.
      * <p>
      * <strong>Notes</strong>
      * <ul>

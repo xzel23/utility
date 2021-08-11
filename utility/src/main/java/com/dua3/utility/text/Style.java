@@ -35,10 +35,10 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public static final String FONT_STYLE_VALUE_ITALIC = "italic";
     public static final String FONT_STYLE_VALUE_OBLIQUE = "oblique";
 
-    /** property name for the font weight */
+    /** property name for the font size */
     public static final String FONT_SIZE = "font-size";
 
-    /** property name for the font weight */
+    /** property name for the font scale */
     public static final String FONT_SCALE = "font-scale";
 
     /** property name for the font weight */

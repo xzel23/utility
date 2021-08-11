@@ -73,6 +73,8 @@ public final class XmlUtil {
     /**
      * Construct a new instance.
      * @param documentBuilderFactory the {@link DocumentBuilderFactory} to use
+     * @param transformerFactory the {@link TransformerFactory} to use
+     * @param xPathFactory the {@link XPathFactory} to use
      */
     public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory, XPathFactory xPathFactory) throws ParserConfigurationException {
         this.documentBuilderFactory = Objects.requireNonNull(documentBuilderFactory);
