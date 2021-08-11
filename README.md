@@ -61,6 +61,12 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### 9.0.1
+
+- add HtmlConverter.inlineTextDecorations()
+- some JavaDoc corrections and completions
+- update Gradle to 7.2-rc2 for JDK 17 compatibility (during compilation)
+
 ### 9.0
 
 - migrate from bintray to sonatype 
