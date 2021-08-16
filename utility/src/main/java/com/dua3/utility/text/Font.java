@@ -12,9 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Interface describing fonts used in workbooks.
- *
- * @author axel
+ * Generic font class.
  */
 public class Font {
 

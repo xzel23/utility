@@ -210,11 +210,6 @@ class LangUtilTest {
         assertEquals("b", ref2.get());
     }
 
-    @Test
-    void msgs() {
-        // TODO
-    }
-
     static class Foo implements Supplier<Integer> {
         private static int n = 0;
         private final int value;
