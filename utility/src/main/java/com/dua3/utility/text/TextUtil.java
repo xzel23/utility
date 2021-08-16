@@ -157,8 +157,8 @@ public final class TextUtil {
     public static String transform(String template, Pair<String,String>... substitutions) {
         UnaryOperator<String> env = s -> {
             for (Pair<String, String> r: substitutions) {
-                if (Objects.equals(s, r.first)) {
-                    return r.second;
+                if (Objects.equals(s, r.first())) {
+                    return r.second();
                 }
             }
             return s;

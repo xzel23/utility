@@ -48,11 +48,11 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
             K key = keyMapper.apply(item);
 
             List<T> bucket;
-            if (accu.isEmpty() || (key!=null && !Objects.equals(key, accu.peekLast().first)) ) {
+            if (accu.isEmpty() || (key!=null && !Objects.equals(key, accu.peekLast().first())) ) {
                 bucket = new ArrayList<>();
                 accu.addLast(Pair.of(key == null ? defaultKey : key, bucket));
             } else {
-                bucket = accu.peekLast().second;
+                bucket = accu.peekLast().second();
             }
             
             bucket.add(item);

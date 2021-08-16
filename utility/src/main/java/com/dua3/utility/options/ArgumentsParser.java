@@ -234,8 +234,8 @@ public class ArgumentsParser {
         allOptions.stream()
                 .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
                 .forEach(p -> {
-                    Option<?> option = p.first;
-                    int count = p.second;
+                    Option<?> option = p.first();
+                    int count = p.second();
                     LangUtil.check(option.minOccurrences() <= count,
                             () -> new OptionException(String.format(
                                 "option '%s' must be specified at least %d time(s), but was only %d times",

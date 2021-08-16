@@ -39,7 +39,7 @@ public final class IOUtil {
      */
     public static String getFilename(String path) {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
-        return path.substring(fi.first, fi.second);
+        return path.substring(fi.first(), fi.second());
     }
 
     /**
@@ -147,9 +147,9 @@ public final class IOUtil {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
-        int pos = path.lastIndexOf('.', fi.second);
+        int pos = path.lastIndexOf('.', fi.second());
 
-        return pos < fi.first ? path : path.substring(0, pos);
+        return pos < fi.first() ? path : path.substring(0, pos);
     }
 
     /**
@@ -167,14 +167,14 @@ public final class IOUtil {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
-        int pos = path.lastIndexOf('.', fi.second);
+        int pos = path.lastIndexOf('.', fi.second());
 
-        if (pos < fi.first) {
+        if (pos < fi.first()) {
             // filename has no extension => insert extension
-            return path.substring(0, fi.second)+'.'+extension+path.substring(fi.second);
+            return path.substring(0, fi.second())+'.'+extension+path.substring(fi.second());
         } else {
             // filename has extension => replace extension
-            return path.substring(0, pos) + '.' + extension + path.substring(fi.second);
+            return path.substring(0, pos) + '.' + extension + path.substring(fi.second());
         }
     }
     

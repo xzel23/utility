@@ -63,7 +63,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @return the option to use
      */
     public static StyledDocumentConversionOption addStyledAttributes(Collection<? extends Pair<Object, Object>> attributes) {
-        return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.first, p.second)));
+        return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.first(), p.second())));
     }
 
     /**
@@ -163,7 +163,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         @Override
         protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
             Map<String, Object> attributes = new HashMap<>();
-            changedAttributes.forEach( (attribute, values) -> attributes.put(attribute, values.second));
+            changedAttributes.forEach( (attribute, values) -> attributes.put(attribute, values.second()));
             // apply the default font styles 
             currentFont = currentFont.deriveFont(TextAttributes.getFontDef(attributes));
             currentAttributes = createAttributeSet(currentFont);

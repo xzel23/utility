@@ -18,7 +18,7 @@ import java.util.Objects;
  * @param <T2>
  *        type of second member
  */
-public final class Pair<T1, T2> {
+public record Pair<T1, T2>(T1 first, T2 second) {
 
     /**
      * Add pairs to a map.
@@ -150,47 +150,4 @@ public final class Pair<T1, T2> {
         return m;
     }
 
-    /** first member */
-    public final T1 first;
-
-    /** second member */
-    public final T2 second;
-
-    /**
-     * Construct a new Pair.
-     *
-     * @param first
-     *               the first member
-     * @param second
-     *               the second member
-     */
-    public Pair(T1 first, T2 second) {
-        this.first = first;
-        this.second = second;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Pair<?, ?> other = (Pair<?, ?>) obj;
-        return Objects.equals(first, other.first) && Objects.equals(second, other.second);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(first, second);
-    }
-
-    @Override
-    public String toString() {
-        return "[" + first + ',' + second + ']';
-    }
 }

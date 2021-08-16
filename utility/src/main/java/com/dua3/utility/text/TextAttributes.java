@@ -71,7 +71,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
         Set<Entry<String, Object>> entrySet = new HashSet<>();
         for (Pair<String, ?> entry : entries) {
-            entrySet.add(new SimpleEntry<>(entry.first, entry.second));
+            entrySet.add(new SimpleEntry<>(entry.first(), entry.second()));
         }
         return new TextAttributes(entrySet);
     }

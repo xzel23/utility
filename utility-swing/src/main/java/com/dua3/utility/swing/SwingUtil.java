@@ -322,7 +322,7 @@ public final class SwingUtil {
 
         JFileChooser jfc = new JFileChooser();
         for (Pair<String, String[]> entry : types) {
-            jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first, entry.second));
+            jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first(), entry.second()));
         }
 
         jfc.setSelectedFile(file);

@@ -1,24 +1,61 @@
 <FindBugsFilter>
-    
-    <!-- DataSource.getLogWriter() is mandated by the API. -->
+    <!-- this bug pattern is currently completely broken / https://github.com/spotbugs/spotbugs/issues/1601 -->
     <Match>
-        <Class name="com.dua3.utility.db.JdbcDataSource" />
-        <Method name="getLogWriter" />
         <Bug pattern="EI_EXPOSE_REP" />
     </Match>
-    
-    <!-- DataSource.setLogWriter() is mandated by the API. -->
     <Match>
-        <Class name="com.dua3.utility.db.JdbcDataSource" />
-        <Method name="setLogWriter" />
         <Bug pattern="EI_EXPOSE_REP2" />
     </Match>
     
-    <!-- Deprecate before removal to see if it's used somewhere. -->
+    <!-- by design -->
     <Match>
         <Class name="com.dua3.utility.db.NamedParameterStatement" />
-        <Method name="getStatement" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.dua3.utility.db.JdbcDataSource" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.dua3.utility.db.JdbcDataSource" />
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    
+    <!-- by design; implementing classes should be immutable -->
+    <Match>
+        <Class name="com.dua3.utility.swing.SwingFileFilter" />
         <Bug pattern="EI_EXPOSE_REP" />
     </Match>
     
+    <!-- by design; the components is used to display changes to the buffer  -->
+    <Match>
+        <Class name="com.dua3.utility.swing.SwingLogPane" />
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    
+    <!-- False positive in test code. -->
+    <Match>
+        <Class name="com.dua3.utility.swing.TestSwingComponents" />
+        <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
+    </Match>
+
+    <!-- RichText is immutable. -->
+    <Match>
+        <Class name="com.dua3.utility.text.RichText" />
+        <Bug pattern="MS_EXPOSE_REP" />
+    </Match>
+
+    <!-- URL is immutable in practice -->
+    <Match>
+        <Class name="com.dua3.utility.io.NetUtil" />
+        <Bug pattern="MS_EXPOSE_REP" />
+        <Method name="voidURL" />"
+    </Match>
+
+    <!-- TextAttributes.NONE is immutable (because the set passed to the instance is) -->
+    <Match>
+        <Class name="com.dua3.utility.text.TextAttributes" />
+        <Bug pattern="MS_EXPOSE_REP" />
+        <Method name="none" />"
+    </Match>
 </FindBugsFilter>

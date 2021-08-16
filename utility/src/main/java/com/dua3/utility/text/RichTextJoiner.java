@@ -50,35 +50,35 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
 
     @Override
     public BiConsumer<Pair<List<RichText>, AtomicInteger>, RichText> accumulator() {
-        return (accu, text) -> { accu.first.add(text); accu.second.addAndGet(text.length()); };
+        return (accu, text) -> { accu.first().add(text); accu.second().addAndGet(text.length()); };
     }
 
     @Override
     public BinaryOperator<Pair<List<RichText>, AtomicInteger>> combiner() {
-        return (a, b) -> { a.first.addAll(b.first); a.second.addAndGet(b.second.get()); return a; };
+        return (a, b) -> { a.first().addAll(b.first()); a.second().addAndGet(b.second().get()); return a; };
     }
 
     @Override
     public Function<Pair<List<RichText>, AtomicInteger>, RichText> finisher() {
         return accu -> {
-            int length = accu.second.get();
+            int length = accu.second().get();
 
             if (length==0) {
                 return RichText.emptyText();
             }
 
             // calculate needed text length and create builder wiith sufficient capacity
-            int n = accu.first.size();
+            int n = accu.first().size();
             int supplementaryLength = calculateSupplementaryLength.applyAsInt(n);
             int totalLength = length + supplementaryLength;
             RichTextBuilder rtb = new RichTextBuilder(totalLength);
             
             // append prefix and first item
             appendPrefix.accept(rtb);
-            rtb.append(accu.first.get(0));
+            rtb.append(accu.first().get(0));
             
             // append remaining items separated by delimiter
-            List<RichText> first = accu.first;
+            List<RichText> first = accu.first();
             for (int i = 1, firstSize = first.size(); i < firstSize; i++) {
                 appendDelimiter.accept(rtb);
                 rtb.append(first.get(i));

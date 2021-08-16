@@ -307,7 +307,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <K, V> void putAllIfAbsent(Map<? super K, ? super V> map, Pair<K, V>... items) {
-        Arrays.stream(items).forEach(item -> map.putIfAbsent(item.first, item.second));
+        Arrays.stream(items).forEach(item -> map.putIfAbsent(item.first(), item.second()));
     }
 
     /**
@@ -320,7 +320,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <K, V> void putAll(Map<? super K, ? super V> map, Pair<K, V>... items) {
-        Arrays.stream(items).forEach(item -> map.put(item.first, item.second));
+        Arrays.stream(items).forEach(item -> map.put(item.first(), item.second()));
     }
 
     /**
