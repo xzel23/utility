@@ -255,8 +255,14 @@ class LangUtilTest {
     @Test
     void getLocaleSuffix() {
         assertEquals("_de_DE", LangUtil.getLocaleSuffix(Locale.GERMANY));
-        // Indonesian is a special case as the suffix differs from the language tag!
-        assertEquals("_in", LangUtil.getLocaleSuffix(Locale.forLanguageTag("id")));
+        // Indonesian is a special case as until Java 16, the suffix differed from the language tag! 
+        // changed with JDK-8267552
+        int javaVersion = Integer.parseInt(System.getProperty("java.version"));
+        if (javaVersion<17) {
+            assertEquals("_in", LangUtil.getLocaleSuffix(Locale.forLanguageTag("id")));
+        } else {
+            assertEquals("_id", LangUtil.getLocaleSuffix(Locale.forLanguageTag("id")));
+        }
     }
     
     @Test
