@@ -61,6 +61,12 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### 10 (to be released)
+
+- Java 17 needed!
+- geometry classes taking float parameters have been renamed to ...2f
+- some classes (Pair, Vector2f, ...) have been converted to records
+
 ### 9.0.1
 
 - add HtmlConverter.inlineTextDecorations()
