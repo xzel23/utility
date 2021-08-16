@@ -5,7 +5,7 @@
 
 plugins {
     id 'com.adarshr.test-logger' version '2.1.0' apply false
-    id 'com.github.spotbugs' version '4.7.0' apply false
+    id 'com.github.spotbugs' version '4.7.2' apply false
 }
 
 subprojects {
@@ -19,7 +19,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '9.0.1'
+    version = '10-SNAPSHOT'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
@@ -33,7 +33,7 @@ subprojects {
 
     ext {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
-        java_version = '11'
+        java_version = '17'
         junit_version = '5.7.1'
     }
 
@@ -222,6 +222,8 @@ subprojects {
     }
 
     // === SPOTBUGS === >
+    spotbugs.toolVersion = '4.2.2'
+
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
