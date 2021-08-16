@@ -5,31 +5,20 @@
 
 package com.dua3.utility.math;
 
-import java.util.Objects;
-
 /**
  * An immutable 2-dimensional vector using float coordinates.
  */
-public final class Vector2d {
-    private final float x;
-    private final float y;
+public record Vector2f(float x, float y) {
 
-    public static final Vector2d ORIGIN = new Vector2d(0,0);
-    public static final Vector2d POSITIVE_INFINITY = new Vector2d(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-    public static final Vector2d NEGATIVE_INFINITY = new Vector2d(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
-    
-    private Vector2d(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
+    public static final Vector2f ORIGIN = new Vector2f(0,0);
 
     /**
      * Create instance from coordinate values.
      * @param x the x-coordinate
      * @param y the y-coordinate
      */
-    public static Vector2d of(float x, float y) {
-        return new Vector2d(x,y);
+    public static Vector2f of(float x, float y) {
+        return new Vector2f(x,y);
     }
 
     /**
@@ -38,8 +27,8 @@ public final class Vector2d {
      * @param b second vector
      * @return Vector with the the componentwise maxima of a and b as components. 
      */
-    public static Vector2d max(Vector2d a, Vector2d b) {
-        return Vector2d.of(Math.max(a.x, b.x), Math.max(a.y, b.y));
+    public static Vector2f max(Vector2f a, Vector2f b) {
+        return Vector2f.of(Math.max(a.x, b.x), Math.max(a.y, b.y));
     }
 
     /**
@@ -48,8 +37,8 @@ public final class Vector2d {
      * @param b second vector
      * @return Vector with the the componentwise minima of a and b as components. 
      */
-    public static Vector2d min(Vector2d a, Vector2d b) {
-        return Vector2d.of(Math.min(a.x, b.x), Math.min(a.y, b.y));
+    public static Vector2f min(Vector2f a, Vector2f b) {
+        return Vector2f.of(Math.min(a.x, b.x), Math.min(a.y, b.y));
     }
 
     /**
@@ -58,7 +47,7 @@ public final class Vector2d {
      * @param b second vector
      * @return this * v
      */
-    public static float scalarProduct(Vector2d a, Vector2d b) {
+    public static float scalarProduct(Vector2f a, Vector2f b) {
         return a.x*b.x+a.y*b.y;
     }
 
@@ -68,7 +57,7 @@ public final class Vector2d {
      * @param b second vector
      * @return the angle in radians 
      */
-    public static double angle(Vector2d a, Vector2d b) {
+    public static double angle(Vector2f a, Vector2f b) {
         float nominator = scalarProduct(a, b);
         
         if (nominator==0) {
@@ -84,26 +73,12 @@ public final class Vector2d {
     }
 
     /**
-     * @return the x-coordinate.
-     */
-    public float x() {
-        return x;
-    }
-
-    /**
-     *@return the y-coordinate.
-     */
-    public float y() {
-        return y;
-    }
-
-    /**
      * Vector addition.
      * @param v the argument
      * @return this + v
      */
-    public Vector2d add(Vector2d v) {
-        return new Vector2d(x + v.x, y + v.y);    
+    public Vector2f add(Vector2f v) {
+        return new Vector2f(x + v.x, y + v.y);    
     }
     
     /**
@@ -111,8 +86,8 @@ public final class Vector2d {
      * @param v the argument
      * @return this - v
      */
-    public Vector2d subtract(Vector2d v) {
-        return new Vector2d(x - v.x, y - v.y);    
+    public Vector2f subtract(Vector2f v) {
+        return new Vector2f(x - v.x, y - v.y);    
     }
     
     /**
@@ -131,24 +106,4 @@ public final class Vector2d {
         return Math.atan2(y(), x());
     }
             
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vector2d vec2d = (Vector2d) o;
-        return vec2d.x==x && vec2d.y==y;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
-    }
-
-    @Override
-    public String toString() {
-        return "Vector2d{" +
-               "x=" + x +
-               ", y=" + y +
-               '}';
-    }
 }

@@ -1,8 +1,6 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
-
-import java.util.Objects;
+import com.dua3.utility.math.Vector2f;
 
 /**
  * Defines an affine transformation in form of a matrix
@@ -14,56 +12,16 @@ import java.util.Objects;
  * }
  * </pre>.
  */
-public class AffineTransformation2d {
+public record AffineTransformation2f(float a, float b, float c, float d, float e, float f) {
 
-    public static final AffineTransformation2d IDENTITY = new AffineTransformation2d(1, 0, 0, 0, 1, 0);
+    public static final AffineTransformation2f IDENTITY = new AffineTransformation2f(1, 0, 0, 0, 1, 0);
     
-    private final float a;
-    private final float b;
-    private final float c;
-    private final float d;
-    private final float e;
-    private final float f;
-
-    /**
-     * Create affine transformation from the given matrix elements.
-     * The affine transformation is defined by the matrix:
-     * <pre>
-     * {@code
-     *     a b c
-     *     d e f
-     *     0 0 1
-     * }
-     * </pre>.
-     * @param a matrix element a
-     * @param b matrix element b
-     * @param c matrix element c
-     * @param d matrix element d
-     * @param e matrix element e
-     * @param f matrix element f
-     */
-    public AffineTransformation2d(
-            float a,
-            float b,
-            float c,
-            float d,
-            float e,
-            float f
-    ) {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-        this.e = e;
-        this.f = f;
-    }
-
     /**
      * Return the identity transformation.
      * @return affine transformation (identity)
      */
     @SuppressWarnings("SameReturnValue")
-    public static AffineTransformation2d identity() {
+    public static AffineTransformation2f identity() {
         return IDENTITY;
     }
 
@@ -73,10 +31,10 @@ public class AffineTransformation2d {
      * @param alpha the angle in radians
      * @return affine transformation (rotation)
      */
-    public static AffineTransformation2d rotate(double alpha) {
+    public static AffineTransformation2f rotate(double alpha) {
         float sin = (float) Math.sin(alpha);
         float cos = (float) Math.cos(alpha);
-        return new AffineTransformation2d(cos, -sin, 0, sin, cos, 0);
+        return new AffineTransformation2f(cos, -sin, 0, sin, cos, 0);
     }
 
     /**
@@ -86,8 +44,8 @@ public class AffineTransformation2d {
      * @param ty the y-value
      * @return affine transformation (translation)
      */
-    public static AffineTransformation2d translate(float tx, float ty) {
-        return new AffineTransformation2d(1, 0, tx, 0, 1, ty);
+    public static AffineTransformation2f translate(float tx, float ty) {
+        return new AffineTransformation2f(1, 0, tx, 0, 1, ty);
     }
     
     /**
@@ -96,7 +54,7 @@ public class AffineTransformation2d {
      * @param v the translation vector
      * @return affine transformation (translation)
      */
-    public static AffineTransformation2d translate(Vector2d v) {
+    public static AffineTransformation2f translate(Vector2f v) {
         return translate(v.x(), v.y());
     }
 
@@ -106,7 +64,7 @@ public class AffineTransformation2d {
      * @param s the scaling factor
      * @return affine transformation (scale)
      */
-    public static AffineTransformation2d scale(float s) {
+    public static AffineTransformation2f scale(float s) {
         return scale(s,s);
     }
 
@@ -117,8 +75,8 @@ public class AffineTransformation2d {
      * @param sy the scaling factor for the y-coordinate
      * @return affine transformation (scale)
      */
-    public static AffineTransformation2d scale(float sx, float sy) {
-        return new AffineTransformation2d(sx, 0, 0, 0, sy, 0);
+    public static AffineTransformation2f scale(float sx, float sy) {
+        return new AffineTransformation2f(sx, 0, 0, 0, sy, 0);
     }
 
     /**
@@ -127,8 +85,8 @@ public class AffineTransformation2d {
      * @param m the shearing factor
      * @return affine transformation (scale)
      */
-    public static AffineTransformation2d shear(float m) {
-        return new AffineTransformation2d(1, m, 0, 0, 1, 0);
+    public static AffineTransformation2f shear(float m) {
+        return new AffineTransformation2f(1, m, 0, 0, 1, 0);
     }
 
     /**
@@ -136,8 +94,8 @@ public class AffineTransformation2d {
      * @param A the affine transformation to append
      * @return affine transformation (combination of this and A)
      */
-    public AffineTransformation2d append(AffineTransformation2d A) {
-        return new AffineTransformation2d(
+    public AffineTransformation2f append(AffineTransformation2f A) {
+        return new AffineTransformation2f(
                 A.a*a+A.b*d, A.a*b+A.b*e, A.a*c+A.b*f+A.c,
                 A.d*a+A.e*d, A.d*b+A.e*e, A.d*c+A.e*f+A.f
         );  
@@ -148,7 +106,7 @@ public class AffineTransformation2d {
      * @param v the vector to transform
      * @return the result of transformation
      */
-    public Vector2d transform(Vector2d v) {
+    public Vector2f transform(Vector2f v) {
         return transform(v.x(), v.y());
     }
     
@@ -158,30 +116,12 @@ public class AffineTransformation2d {
      * @param y the y-coordinate of the point to transform
      * @return the result of transformation
      */
-    public Vector2d transform(float x, float y) {
+    public Vector2f transform(float x, float y) {
         float xt = a*x + b*y + c;
         float yt = d*x + e*y + f;
-        return Vector2d.of(xt,yt);
+        return Vector2f.of(xt,yt);
     }
     
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AffineTransformation2d that = (AffineTransformation2d) o;
-        return  that.a == a &&
-                that.b == b &&    
-                that.c == c &&    
-                that.d == d &&    
-                that.e == e &&    
-                that.f == f;    
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(a, b, c, d, e, f);
-    }
-
     /** 
      * Get scaling factor for x-axis. 
      * @return the x-axis scaling factor
@@ -222,22 +162,6 @@ public class AffineTransformation2d {
      * Get translation vector. 
      * @return the translation vector
      */
-    public Vector2d getTranslate() { return Vector2d.of(e,f); }
+    public Vector2f getTranslate() { return Vector2f.of(e,f); }
 
-    @Override
-    public String toString() {
-        return "AffineTransformation2d{ { { " +
-               a + ", " +
-               b + ", " +
-               c +
-               " }, { " +
-               d + ", " +
-               e + ", " +
-               f +
-               " }, { " +
-               "0, " +
-               "0, " +
-               "1" +
-               " } }";
-    }
 }

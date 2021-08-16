@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.math.geometry.Dimension2d;
+import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 
@@ -49,9 +49,9 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
      * @param  awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
-    public Dimension2d getTextDimension(CharSequence text, java.awt.Font awtFont) {
+    public Dimension2f getTextDimension(CharSequence text, java.awt.Font awtFont) {
         Rectangle2D r = stringBounds(text, awtFont);
-        return Dimension2d.of((float) r.getWidth(), (float) r.getHeight());
+        return Dimension2f.of((float) r.getWidth(), (float) r.getHeight());
     }
 
     /**
@@ -75,9 +75,9 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     }
 
     @Override
-    public Dimension2d getTextDimension(CharSequence s, Font f) {
+    public Dimension2f getTextDimension(CharSequence s, Font f) {
         Rectangle2D r = stringBounds(s, f);
-        return Dimension2d.of((float) r.getWidth(), (float) r.getHeight());
+        return Dimension2f.of((float) r.getWidth(), (float) r.getHeight());
     }
 
     @Override

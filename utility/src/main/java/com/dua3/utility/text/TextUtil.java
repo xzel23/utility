@@ -7,7 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.geometry.Dimension2d;
+import com.dua3.utility.math.geometry.Dimension2f;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -606,7 +606,7 @@ public final class TextUtil {
      * @return
      *           the text bounds
      */
-    public static Dimension2d getTextDimension(CharSequence text, Font font) {
+    public static Dimension2f getTextDimension(CharSequence text, Font font) {
         return FONT_UTIL.getTextDimension(text, font);
     }
 

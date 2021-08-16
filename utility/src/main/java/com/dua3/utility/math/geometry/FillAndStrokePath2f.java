@@ -1,11 +1,11 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
+import com.dua3.utility.math.Vector2f;
 
 /**
  * Fill and stroke path.
  */
-public class FillAndStrokePath2d extends Segment2d {
+public class FillAndStrokePath2f extends Segment2f {
 
     /**
      * Segment type name.
@@ -28,7 +28,7 @@ public class FillAndStrokePath2d extends Segment2d {
      * @param idx index of current vertex
      * @param fillRule the fill rule to use
      */
-    FillAndStrokePath2d(Path2dImpl path, int idx, FillRule fillRule) {
+    FillAndStrokePath2f(Path2fImpl path, int idx, FillRule fillRule) {
         super(path);
         this.idx = idx;
         this.fillRule = fillRule;
@@ -40,12 +40,12 @@ public class FillAndStrokePath2d extends Segment2d {
     }
 
     @Override
-    public Vector2d start() {
+    public Vector2f start() {
         return path.vertex(idx);
     }
 
     @Override
-    public Vector2d end() {
+    public Vector2f end() {
         return path.vertex(idx);
     }
 

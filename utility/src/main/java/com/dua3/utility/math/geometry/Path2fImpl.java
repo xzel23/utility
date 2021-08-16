@@ -1,22 +1,22 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
+import com.dua3.utility.math.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class Path2dImpl {
+class Path2fImpl {
     
-    private final List<Vector2d> vertices;
-    private final List<Segment2d> segments;
+    private final List<Vector2f> vertices;
+    private final List<Segment2f> segments;
     
-    Path2dImpl() {
+    Path2fImpl() {
         vertices = new ArrayList<>();
         segments = new ArrayList<>();
     }
     
-    void addVertex(Vector2d v) {
+    void addVertex(Vector2f v) {
         assert v != null;
         vertices.add(v);
     }
@@ -25,19 +25,19 @@ class Path2dImpl {
         return vertices.size();
     }
     
-    List<Vector2d> vertices() {
+    List<Vector2f> vertices() {
         return Collections.unmodifiableList(vertices);
     }
 
-    List<Segment2d> segments() {
+    List<Segment2f> segments() {
         return Collections.unmodifiableList(segments);
     }
     
-    Vector2d vertex(int idx) {
+    Vector2f vertex(int idx) {
         return vertices.get(idx);
     }
 
-    void addSegment(Segment2d segment) {
+    void addSegment(Segment2f segment) {
         assert segment != null;
         segments.add(segment);
     }

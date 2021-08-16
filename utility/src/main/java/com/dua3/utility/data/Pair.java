@@ -8,7 +8,6 @@ package com.dua3.utility.data;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * A pair helper class.

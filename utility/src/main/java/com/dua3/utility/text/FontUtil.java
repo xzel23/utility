@@ -1,6 +1,6 @@
 package com.dua3.utility.text;
 
-import com.dua3.utility.math.geometry.Dimension2d;
+import com.dua3.utility.math.geometry.Dimension2f;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +34,7 @@ public interface FontUtil<F> {
                 }
 
                 @Override
-                public Dimension2d getTextDimension(CharSequence s, Font f) {
+                public Dimension2f getTextDimension(CharSequence s, Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
@@ -74,7 +74,7 @@ public interface FontUtil<F> {
      * @return
      *           the text bounds
      */
-    Dimension2d getTextDimension(CharSequence s, Font f);
+    Dimension2f getTextDimension(CharSequence s, Font f);
 
     /**
      * Get text width.

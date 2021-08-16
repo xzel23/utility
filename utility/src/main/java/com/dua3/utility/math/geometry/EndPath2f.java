@@ -1,11 +1,11 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
+import com.dua3.utility.math.Vector2f;
 
 /**
  * End of path.
  */
-public class EndPath2d extends Segment2d {
+public class EndPath2f extends Segment2f {
 
     /**
      * Segment type name.
@@ -22,7 +22,7 @@ public class EndPath2d extends Segment2d {
      * @param path the path
      * @param v index of vertex in path
      */
-    EndPath2d(Path2dImpl path, int v) {
+    EndPath2f(Path2fImpl path, int v) {
         super(path);
         this.v = v;
     }
@@ -33,12 +33,12 @@ public class EndPath2d extends Segment2d {
     }
 
     @Override
-    public Vector2d start() {
+    public Vector2f start() {
         return path.vertex(v);
     }
 
     @Override
-    public Vector2d end() {
+    public Vector2f end() {
         return start();
     }
     

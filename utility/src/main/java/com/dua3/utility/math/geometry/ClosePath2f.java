@@ -1,11 +1,11 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
+import com.dua3.utility.math.Vector2f;
 
 /**
  * Close path with line segment.
  */
-public class ClosePath2d extends Segment2d {
+public class ClosePath2f extends Segment2f {
 
     /**
      * Segment type name.
@@ -23,7 +23,7 @@ public class ClosePath2d extends Segment2d {
      * @param p index of the start point of this segment
      * @param q index of the end point of this segment
      */
-    ClosePath2d(Path2dImpl path, int p, int q) {
+    ClosePath2f(Path2fImpl path, int p, int q) {
         super(path);
         this.p = p;
         this.q = q;
@@ -35,18 +35,18 @@ public class ClosePath2d extends Segment2d {
     }
 
     @Override
-    public Vector2d start() {
+    public Vector2f start() {
         return path.vertex(p);
     }
 
     @Override
-    public Vector2d end() {
+    public Vector2f end() {
         return path.vertex(q);
     }
 
     @Override
     public String toString() {
-        return "ClosePath2d{" +
+        return "ClosePath2f{" +
                vertexToString(p) + "," +
                vertexToString(q) +
                '}';

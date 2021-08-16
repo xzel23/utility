@@ -1,6 +1,6 @@
 package com.dua3.utility.math;
 
-import com.dua3.utility.math.geometry.AffineTransformation2d;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +10,7 @@ class AffineTransformationTest {
 
     @Test
     void constructorAndAccessors() {
-        AffineTransformation2d at = new AffineTransformation2d(1,2,3,4,5,6);
+        AffineTransformation2f at = new AffineTransformation2f(1,2,3,4,5,6);
         
         assertEquals(1, at.getScaleX());
         assertEquals(2, at.getShearX());
@@ -22,42 +22,42 @@ class AffineTransformationTest {
     
     @Test
     void identity() {
-        AffineTransformation2d at = AffineTransformation2d.identity();
-        assertEquals(Vector2d.of(1,0), at.transform(Vector2d.of(1,0)));
+        AffineTransformation2f at = AffineTransformation2f.identity();
+        assertEquals(Vector2f.of(1,0), at.transform(Vector2f.of(1,0)));
     }
 
     @Test
     void rotate() {
-        AffineTransformation2d at = AffineTransformation2d.rotate(Math.PI / 2);
-        assertTrue(at.transform(Vector2d.of(1,0)).subtract(Vector2d.of(0,1)).length() < 1e-10);
+        AffineTransformation2f at = AffineTransformation2f.rotate(Math.PI / 2);
+        assertTrue(at.transform(Vector2f.of(1,0)).subtract(Vector2f.of(0,1)).length() < 1e-10);
 
-        at = AffineTransformation2d.rotate(Math.PI / 6);
-        Vector2d v = Vector2d.of(5,0);
-        Vector2d expected = Vector2d.of(4.330127f, 2.5f);
-        Vector2d actual = at.transform(v);
+        at = AffineTransformation2f.rotate(Math.PI / 6);
+        Vector2f v = Vector2f.of(5,0);
+        Vector2f expected = Vector2f.of(4.330127f, 2.5f);
+        Vector2f actual = at.transform(v);
         assertEquals(expected.x(), actual.x(), 1e-6);
         assertEquals(expected.y(), actual.y(), 1e-6);
     }
 
     @Test
     void translate() {
-        AffineTransformation2d at = AffineTransformation2d.translate(1, 5);
-        assertEquals(Vector2d.of(3, 4), at.transform(Vector2d.of(2,-1)));
+        AffineTransformation2f at = AffineTransformation2f.translate(1, 5);
+        assertEquals(Vector2f.of(3, 4), at.transform(Vector2f.of(2,-1)));
     }
 
     @Test
     void scale() {
-        AffineTransformation2d at = AffineTransformation2d.scale(7);
-        assertEquals(Vector2d.of(7, 14), at.transform(Vector2d.of(1,2)));
+        AffineTransformation2f at = AffineTransformation2f.scale(7);
+        assertEquals(Vector2f.of(7, 14), at.transform(Vector2f.of(1,2)));
 
-        at = AffineTransformation2d.scale(3,4);
-        assertEquals(Vector2d.of(3, 8), at.transform(Vector2d.of(1,2)));
+        at = AffineTransformation2f.scale(3,4);
+        assertEquals(Vector2f.of(3, 8), at.transform(Vector2f.of(1,2)));
     }
 
     @Test
     void shear() {
-        AffineTransformation2d at = AffineTransformation2d.shear(0.5f);
-        assertEquals(Vector2d.of(12, 10), at.transform(Vector2d.of(7,10)));
+        AffineTransformation2f at = AffineTransformation2f.shear(0.5f);
+        assertEquals(Vector2f.of(12, 10), at.transform(Vector2f.of(7,10)));
     }
     
     @Test
@@ -66,34 +66,34 @@ class AffineTransformationTest {
          * Perform three different transformations separately and check results. Then use a combined
          * affine transformation that should give the same result.
          */
-        Vector2d v = Vector2d.of(7,-1);
+        Vector2f v = Vector2f.of(7,-1);
         
-        AffineTransformation2d translate = AffineTransformation2d.translate(Vector2d.of(-2,1));
-        Vector2d expected1 = Vector2d.of(5, 0);
-        Vector2d actual1 = translate.transform(v);
+        AffineTransformation2f translate = AffineTransformation2f.translate(Vector2f.of(-2,1));
+        Vector2f expected1 = Vector2f.of(5, 0);
+        Vector2f actual1 = translate.transform(v);
         assertEquals(expected1.x(), actual1.x(), 1e-6);
         assertEquals(expected1.y(), actual1.y(), 1e-6);
 
-        AffineTransformation2d rotate = AffineTransformation2d.rotate(Math.PI / 6);
-        Vector2d expected2 = Vector2d.of((float) (5 * Math.cos(Math.PI / 6)), 2.5f);
-        Vector2d actual2 = rotate.transform(actual1);
+        AffineTransformation2f rotate = AffineTransformation2f.rotate(Math.PI / 6);
+        Vector2f expected2 = Vector2f.of((float) (5 * Math.cos(Math.PI / 6)), 2.5f);
+        Vector2f actual2 = rotate.transform(actual1);
         assertEquals(expected2.x(), actual2.x(), 1e-6);
         assertEquals(expected2.y(), actual2.y(), 1e-6);
 
-        Vector2d actual2combined = translate.append(rotate).transform(v);
+        Vector2f actual2combined = translate.append(rotate).transform(v);
         assertEquals(expected2.x(), actual2combined.x(), 1e-6);
         assertEquals(expected2.y(), actual2combined.y(), 1e-6);
 
-        AffineTransformation2d translate2 = AffineTransformation2d.translate(2,3);
-        Vector2d expected3 = Vector2d.of(expected2.x() + 2, expected2.y() + 3);
-        Vector2d actual3 = translate2.transform(actual2);
+        AffineTransformation2f translate2 = AffineTransformation2f.translate(2,3);
+        Vector2f expected3 = Vector2f.of(expected2.x() + 2, expected2.y() + 3);
+        Vector2f actual3 = translate2.transform(actual2);
         assertEquals(expected3.x(), actual3.x(), 1e-6);
         assertEquals(expected3.y(), actual3.y(), 1e-6);
         
         // create a combined affine transformation
-        AffineTransformation2d combined = translate.append(rotate).append(translate2);
-        Vector2d expected4 = expected3;
-        Vector2d actual4 = combined.transform(v);
+        AffineTransformation2f combined = translate.append(rotate).append(translate2);
+        Vector2f expected4 = expected3;
+        Vector2f actual4 = combined.transform(v);
         assertEquals(expected4.x(), actual4.x(), 1e-6);
         assertEquals(expected4.y(), actual4.y(), 1e-6);
      }

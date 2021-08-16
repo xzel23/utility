@@ -1,6 +1,6 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
+import com.dua3.utility.math.Vector2f;
 
 /**
  * Set Clip path.
@@ -8,7 +8,7 @@ import com.dua3.utility.math.Vector2d;
  * This segment does not add any vertices to the path. It is a command that indicates that the current
  * path should be used as the clipping region for subsequent drawing calls.
  */
-public class ClipPath2d extends Segment2d {
+public class ClipPath2f extends Segment2f {
 
     /**
      * Name of segment type.
@@ -24,7 +24,7 @@ public class ClipPath2d extends Segment2d {
      * @param idx index of the current node
      * @param fillRule the {@link FillRule} to use
      */
-    ClipPath2d(Path2dImpl path, int idx, FillRule fillRule) {
+    ClipPath2f(Path2fImpl path, int idx, FillRule fillRule) {
         super(path);
         this.idx = idx;
         this.fillRule = fillRule;
@@ -36,12 +36,12 @@ public class ClipPath2d extends Segment2d {
     }
 
     @Override
-    public Vector2d start() {
+    public Vector2f start() {
         return path.vertex(idx);
     }
 
     @Override
-    public Vector2d end() {
+    public Vector2f end() {
         return path.vertex(idx);
     }
 

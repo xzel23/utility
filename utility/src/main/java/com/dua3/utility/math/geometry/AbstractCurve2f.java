@@ -1,13 +1,13 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
+import com.dua3.utility.math.Vector2f;
 
 import java.util.Objects;
 
 /**
  * Abstract Base class for 2-dimensional curves.
  */
-public abstract class AbstractCurve2d extends Segment2d {
+public abstract class AbstractCurve2f extends Segment2f {
 
     /**
      * the control points
@@ -22,7 +22,7 @@ public abstract class AbstractCurve2d extends Segment2d {
      * @param path the path this curve belongs to
      * @param controls the control points
      */
-    AbstractCurve2d(Path2dImpl path, int... controls) {
+    AbstractCurve2f(Path2fImpl path, int... controls) {
         super(path);
         this.controls = Objects.requireNonNull(controls);
     }
@@ -40,17 +40,17 @@ public abstract class AbstractCurve2d extends Segment2d {
      * @param idx index of control point
      * @return the control point
      */
-    public Vector2d control(int idx) {
+    public Vector2f control(int idx) {
         return path.vertex(controls[idx]);
     }
     
     @Override
-    public Vector2d start() {
+    public Vector2f start() {
         return control(0);
     }
 
     @Override
-    public Vector2d end() {
+    public Vector2f end() {
         return control(3);
     }
 

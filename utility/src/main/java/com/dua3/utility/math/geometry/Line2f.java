@@ -1,11 +1,11 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
+import com.dua3.utility.math.Vector2f;
 
 /**
  * Straight line segment.
  */
-public final class Line2d extends Segment2d {
+public final class Line2f extends Segment2f {
 
     /**
      * Segment type name.
@@ -28,7 +28,7 @@ public final class Line2d extends Segment2d {
      * @param a index of starting point
      * @param b index of end point
      */
-    Line2d(Path2dImpl path, int a, int b) {
+    Line2f(Path2fImpl path, int a, int b) {
         super(path);
         this.a = a;
         this.b = b;
@@ -40,12 +40,12 @@ public final class Line2d extends Segment2d {
     }
 
     @Override
-    public Vector2d start() {
+    public Vector2f start() {
         return path.vertex(a);
     }
 
     @Override
-    public Vector2d end() {
+    public Vector2f end() {
         return path.vertex(b);
     }
 

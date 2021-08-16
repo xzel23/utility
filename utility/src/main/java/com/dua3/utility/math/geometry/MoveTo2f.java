@@ -1,16 +1,18 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2d;
+import com.dua3.utility.math.Vector2f;
 
 /**
- * Stroke path.
+ * Move current position.
+ * <p>
+ * <strong>NOTE: </strong> Only valid at start of path.
  */
-public class StrokePath2d extends Segment2d {
+public class MoveTo2f extends Segment2f {
 
     /**
      * Segment type name.
      */
-    public static final String NAME = "STROKE_PATH";
+    public static final String NAME = "MOVE_TO";
 
     /**
      * Index of current point.
@@ -18,11 +20,11 @@ public class StrokePath2d extends Segment2d {
     private final int idx;
 
     /**
-     * Constructor
+     * Constructor.
      * @param path the path
      * @param idx index of current point
      */
-    StrokePath2d(Path2dImpl path, int idx) {
+    public MoveTo2f(Path2fImpl path, int idx) {
         super(path);
         this.idx = idx;
     }
@@ -33,13 +35,19 @@ public class StrokePath2d extends Segment2d {
     }
 
     @Override
-    public Vector2d start() {
+    public Vector2f start() {
         return path.vertex(idx);
     }
 
     @Override
-    public Vector2d end() {
+    public Vector2f end() {
         return path.vertex(idx);
     }
 
+    @Override
+    public String toString() {
+        return "MoveTo2f{" +
+               vertexToString(idx) +
+               '}';
+    }
 }
