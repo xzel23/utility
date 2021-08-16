@@ -29,24 +29,16 @@ public interface LogEntry {
      * @return value of field
      */
     default Object get(Field f) {
-        switch (f) {
-            case CATEGORY:
-                return category();
-            case LEVEL:
-                return level();
-            case LOGGER:
-                return logger();
-            case MILLIS:
-                return millis();
-            case TIME:
-                return time();
-            case MESSAGE:
-                return message();
-            case CAUSE:
-                return cause();
-            default:
-                throw new IllegalArgumentException("no such field: " + f);
-        }
+        return switch (f) {
+            case CATEGORY -> category();
+            case LEVEL -> level();
+            case LOGGER -> logger();
+            case MILLIS -> millis();
+            case TIME -> time();
+            case MESSAGE -> message();
+            case CAUSE -> cause();
+            default -> throw new IllegalArgumentException("no such field: " + f);
+        };
     }
     
     /**

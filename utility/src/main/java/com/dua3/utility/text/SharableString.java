@@ -45,8 +45,7 @@ public class SharableString implements CharSequence {
         if (this == anObject) {
             return true;
         }
-        if (anObject instanceof SharableString) {
-            SharableString anotherString = (SharableString) anObject;
+        if (anObject instanceof SharableString anotherString) {
             return base.equals(anotherString.base);
         }
         return false;

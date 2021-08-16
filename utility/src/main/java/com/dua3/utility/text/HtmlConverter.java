@@ -79,7 +79,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         Map<String,Object> props = new LinkedHashMap<>();
         styleProperties.forEach((key, value) -> {
             switch (key) {
-                case Style.FONT: {
+                case Style.FONT -> {
                     Font font = (Font) value;
                     props.put(Style.FONT_TYPE, font.getFamily());
                     props.put(Style.FONT_SIZE, font.getSizeInPoints());
@@ -88,11 +88,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                     props.put(Style.TEXT_DECORATION_UNDERLINE, font.isUnderline() ? Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE : Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE);
                     props.put(Style.TEXT_DECORATION_LINE_THROUGH, font.isStrikeThrough() ? Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE : Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE);
                     props.put(Style.COLOR, font.getColor());
-                    break;
                 }
-                default:
-                    props.put(key, value);
-                    break;
+                default -> props.put(key, value);
             }
         });
         return props;
@@ -152,27 +149,19 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         addMapping(Style.FONT_TYPE, value -> {
             if (isUseCss()) {
-                switch (value.toString()) {
-                    case Style.FONT_TYPE_VALUE_MONOSPACE:
-                        return HtmlTag.tag("<span class=\"monospace\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SANS_SERIF:
-                        return HtmlTag.tag("<span class=\"sans-serif\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SERIF:
-                        return HtmlTag.tag("<span class=\"serif\">", "</span>");
-                    default:
-                        return HtmlTag.emptyTag();
-                }
+                return switch (value.toString()) {
+                    case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<span class=\"monospace\">", "</span>");
+                    case Style.FONT_TYPE_VALUE_SANS_SERIF -> HtmlTag.tag("<span class=\"sans-serif\">", "</span>");
+                    case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span class=\"serif\">", "</span>");
+                    default -> HtmlTag.emptyTag();
+                };
             } else {
-                switch (value.toString()) {
-                    case Style.FONT_TYPE_VALUE_MONOSPACE:
-                        return HtmlTag.tag("<code>", "</code>");
-                    case Style.FONT_TYPE_VALUE_SANS_SERIF:
-                        return HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SERIF:
-                        return HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
-                    default:
-                        return HtmlTag.emptyTag();
-                }
+                return switch (value.toString()) {
+                    case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<code>", "</code>");
+                    case Style.FONT_TYPE_VALUE_SANS_SERIF -> HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
+                    case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
+                    default -> HtmlTag.emptyTag();
+                };
             }
         });
 

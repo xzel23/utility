@@ -66,8 +66,7 @@ public class SharedString implements CharSequence {
         if (this == anObject) {
             return true;
         }
-        if (anObject instanceof SharedString) {
-            SharedString anotherString = (SharedString) anObject;
+        if (anObject instanceof SharedString anotherString) {
             int n = length();
             if (n == anotherString.length()) {
                 return IntStream.range(0, n).noneMatch(i -> anotherString.charAt(i) != charAt(i));

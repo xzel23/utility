@@ -124,7 +124,7 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     public Collection<Choice<T>> choices() {
-        return values().stream().map(this::choice).collect(Collectors.toUnmodifiableList());
+        return values().stream().map(this::choice).toList();
     }
 
     /**

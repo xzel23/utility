@@ -466,17 +466,17 @@ public final class MathUtil {
     }
 
     public static DoubleUnaryOperator getRoundingOperation(RoundingMode mode) {
-        switch (mode) {
-            case HALF_UP: return x -> x >= 0 ? Math.floor(x+0.5) : Math.ceil(x-0.5);
-            case HALF_DOWN: return x -> x >= 0 ? Math.ceil(x-0.5) : Math.floor(x+0.5);
-            case HALF_EVEN: return Math::rint;
-            case UP: return x -> x>=0 ? Math.ceil(x) : Math.floor(x);
-            case DOWN: return x -> x>=0 ? Math.floor(x) : Math.ceil(x);
-            case FLOOR: return Math::floor;
-            case CEILING: return Math::ceil;
-            case UNNECESSARY: return x -> x;
-            default: throw new IllegalArgumentException("unsupported rounding mode: "+mode);
-        }
+        return switch (mode) {
+            case HALF_UP -> x -> x >= 0 ? Math.floor(x + 0.5) : Math.ceil(x - 0.5);
+            case HALF_DOWN -> x -> x >= 0 ? Math.ceil(x - 0.5) : Math.floor(x + 0.5);
+            case HALF_EVEN -> Math::rint;
+            case UP -> x -> x >= 0 ? Math.ceil(x) : Math.floor(x);
+            case DOWN -> x -> x >= 0 ? Math.floor(x) : Math.ceil(x);
+            case FLOOR -> Math::floor;
+            case CEILING -> Math::ceil;
+            case UNNECESSARY -> x -> x;
+            default -> throw new IllegalArgumentException("unsupported rounding mode: " + mode);
+        };
     }
 
     public static String toDecimalString(double xm, int digits) {

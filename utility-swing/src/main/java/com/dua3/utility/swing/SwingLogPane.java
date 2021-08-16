@@ -36,22 +36,15 @@ public class SwingLogPane extends JPanel {
     private double dividerLocation = 0.5;
 
     private static Color defaultColorize(LogEntry entry) {
-        switch (entry.category()) {
-            case FATAL:
-                return Color.DARKRED;
-            case SEVERE:
-                return Color.RED;
-            case WARNING:
-                return Color.DARKORANGE;
-            case INFO:
-                return Color.DARKBLUE;
-            case DEBUG:
-                return Color.BLACK;
-            case TRACE:
-                return  Color.DARKGRAY;
-            default:
-                return Color.BLACK;
-        }
+        return switch (entry.category()) {
+            case FATAL -> Color.DARKRED;
+            case SEVERE -> Color.RED;
+            case WARNING -> Color.DARKORANGE;
+            case INFO -> Color.DARKBLUE;
+            case DEBUG -> Color.BLACK;
+            case TRACE -> Color.DARKGRAY;
+            default -> Color.BLACK;
+        };
     }
 
     private static final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
@@ -200,8 +193,7 @@ public class SwingLogPane extends JPanel {
             java.awt.Color color; 
             
             Object v;
-            if (value instanceof LogEntry) {
-                LogEntry entry = (LogEntry) value;
+            if (value instanceof LogEntry entry) {
                 color = SwingUtil.toAwtColor(colorize.apply(entry));
                 v = entry.get(f);
             } else {

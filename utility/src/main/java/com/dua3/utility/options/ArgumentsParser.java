@@ -307,23 +307,13 @@ public class ArgumentsParser {
     private String getArgText(int min, int max) {
         assert min<=max;
         
-        String argText;
-        switch (min) {
-            case 0:
-                argText = "";
-                break;
-            case 1:
-                argText = (min==max) ? " arg" : " arg1";
-                break;
-            case 2:
-                argText = " arg1 arg2";
-                break;
-            case 3:
-                argText = " arg1 arg2 arg3";
-                break;
-            default:
-                argText = " arg1 ... arg" + min;
-        }
+        String argText = switch (min) {
+            case 0 -> "";
+            case 1 -> (min == max) ? " arg" : " arg1";
+            case 2 -> " arg1 arg2";
+            case 3 -> " arg1 arg2 arg3";
+            default -> " arg1 ... arg" + min;
+        };
 
         // handle max arity
         if (max == Integer.MAX_VALUE) {

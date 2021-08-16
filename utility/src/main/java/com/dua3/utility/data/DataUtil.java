@@ -160,14 +160,11 @@ public final class DataUtil {
         // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw IllegalArgumentException instead.
         if (targetClass == Boolean.class && sourceClass == String.class) {
             //noinspection ConstantConditions
-            switch (((String) value).toLowerCase(Locale.ROOT)) {
-                case "true":
-                    return (T) Boolean.TRUE;
-                case "false":
-                    return (T) Boolean.FALSE;
-                default:
-                    throw new IllegalArgumentException("invalid text for boolean conversion: "+value);
-            }
+            return switch (((String) value).toLowerCase(Locale.ROOT)) {
+                case "true" -> (T) Boolean.TRUE;
+                case "false" -> (T) Boolean.FALSE;
+                default -> throw new IllegalArgumentException("invalid text for boolean conversion: " + value);
+            };
         }
         
         // convert to Path

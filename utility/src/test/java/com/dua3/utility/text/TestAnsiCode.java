@@ -17,10 +17,12 @@ public class TestAnsiCode {
 
         System.out.println(actual);
 
-        String expected = "This is \u001B[1mbold\u001B[22m text\n" +
-                          "This is \u001B[4munderlined\u001B[24m text\n" +
-                          "This is \u001B[9mstrikethrough\u001B[29m text\n" +
-                          "This is \u001B[3mitalic\u001B[23m text\n";
+        String expected = """
+                This is \u001B[1mbold\u001B[22m text
+                This is \u001B[4munderlined\u001B[24m text
+                This is \u001B[9mstrikethrough\u001B[29m text
+                This is \u001B[3mitalic\u001B[23m text
+                """;
         
         assertEquals(expected, actual);
     }

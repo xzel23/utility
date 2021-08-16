@@ -119,23 +119,12 @@ public class TestSwingComponents extends JFrame {
                     String msg = "Message {}.";
                     Object[] args = { nr };
                     switch (random.nextInt(5)) {
-                        case 0:
-                            LOG4J_LOGGER.trace(msg, args);
-                            break;
-                        case 1:
-                            LOG4J_LOGGER.debug(msg, args);
-                            break;
-                        case 2:
-                            LOG4J_LOGGER.info(msg, args);
-                            break;
-                        case 3:
-                            LOG4J_LOGGER.warn(msg, args);
-                            break;
-                        case 4:
-                            LOG4J_LOGGER.error("Ouch! this is message " + nr + ".", generateThrowable());
-                            break;
-                        default:
-                            throw new IllegalStateException("integer out of range");
+                        case 0 -> LOG4J_LOGGER.trace(msg, args);
+                        case 1 -> LOG4J_LOGGER.debug(msg, args);
+                        case 2 -> LOG4J_LOGGER.info(msg, args);
+                        case 3 -> LOG4J_LOGGER.warn(msg, args);
+                        case 4 -> LOG4J_LOGGER.error("Ouch! this is message " + nr + ".", generateThrowable());
+                        default -> throw new IllegalStateException("integer out of range");
                     }
                 }
 

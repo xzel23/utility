@@ -116,54 +116,29 @@ public final class TextUtil {
             if (c < 127) {
                 // ASCII characters
                 switch (c) {
-                    case '\0':
-                        out.append("\\u0000"); // "\0" might be ambiguous if followed by digits
-                        break;
-                    case '\\':
-                        out.append("\\\\");
-                        break;
-                    case '\t':
-                        out.append("\\t");
-                        break;
-                    case '\b':
-                        out.append("\\b");
-                        break;
-                    case '\n':
-                        out.append("\\n");
-                        break;
-                    case '\r':
-                        out.append("\\r");
-                        break;
-                    case '\f':
-                        out.append("\\f");
-                        break;
-                    case '\'':
-                        out.append("\\'");
-                        break;
-                    case '\"':
-                        out.append("\\\"");
-                        break;
-                    default:
-                        out.append(c);
-                        break;
+                    case '\0' -> out.append("\\u0000"); // "\0" might be ambiguous if followed by digits
+                    case '\\' -> out.append("\\\\");
+                    case '\t' -> out.append("\\t");
+                    case '\b' -> out.append("\\b");
+                    case '\n' -> out.append("\\n");
+                    case '\r' -> out.append("\\r");
+                    case '\f' -> out.append("\\f");
+                    case '\'' -> out.append("\\'");
+                    case '\"' -> out.append("\\\"");
+                    default -> out.append(c);
                 }
             } else {
                 // non-ASCII characters
                 switch (Character.getType(c)) {
                     // numbers: pass through
-                    case Character.DECIMAL_DIGIT_NUMBER:
-                    case Character.LETTER_NUMBER:
-                    case Character.OTHER_NUMBER:
                     // letters: pass all non-modifying letters through
-                    case Character.UPPERCASE_LETTER:
-                    case Character.LOWERCASE_LETTER:
-                    case Character.OTHER_LETTER:
-                    case Character.TITLECASE_LETTER:
-                        out.append(c);
-                        break;
+                    case Character.DECIMAL_DIGIT_NUMBER, Character.LETTER_NUMBER, Character.OTHER_NUMBER, 
+                            Character.UPPERCASE_LETTER, Character.LOWERCASE_LETTER, Character.OTHER_LETTER, 
+                            Character.TITLECASE_LETTER 
+                            -> out.append(c);
+
                     // escape all remaining characters
-                    default:
-                        out.append("\\u").append(String.format(Locale.ROOT,"%04X", (int) c));
+                    default -> out.append("\\u").append(String.format(Locale.ROOT, "%04X", (int) c));
                 }
             }
         }
@@ -671,16 +646,12 @@ public final class TextUtil {
     public static String align(String s, int width, Alignment align, char filler) {
         String fill = Character.toString(filler);
         int len = s.length();
-        switch (align) {
-            case LEFT:
-                return s + fill.repeat(Math.max(0, width - len));
-            case RIGHT:
-                return fill.repeat(Math.max(0, width - len)) + s;
-            case CENTER:
-                return fill.repeat(Math.max(0, width - len) / 2) + s + fill.repeat(Math.max(0, width - len - (width - len) / 2));
-            default:
-                throw new IllegalArgumentException(align.toString());
-        }
+        return switch (align) {
+            case LEFT -> s + fill.repeat(Math.max(0, width - len));
+            case RIGHT -> fill.repeat(Math.max(0, width - len)) + s;
+            case CENTER -> fill.repeat(Math.max(0, width - len) / 2) + s + fill.repeat(Math.max(0, width - len - (width - len) / 2));
+            default -> throw new IllegalArgumentException(align.toString());
+        };
     }
 
     /**

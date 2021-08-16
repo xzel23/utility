@@ -77,28 +77,20 @@ public final class FontDef {
             String s = parts[i];
             // check for text-decoration
             switch (s) {
-                case "bold":
-                    fd.setBold(true);
-                    break;
-                case "italic":
-                    fd.setItalic(true);
-                    break;
-                case "underline":
-                    fd.setUnderline(true);
-                    break;
-                case "strikethrough":
-                    fd.setStrikeThrough(true);
-                    break;
-                default:
+                case "bold" -> fd.setBold(true);
+                case "italic" -> fd.setItalic(true);
+                case "underline" -> fd.setUnderline(true);
+                case "strikethrough" -> fd.setStrikeThrough(true);
+                default -> {
                     // check for font size
                     if (s.matches("\\d+(\\.\\d*)?")) {
                         fd.setSize(Float.parseFloat(s));
                         break;
                     }
-        
+
                     // check for color
                     fd.setColor(Color.valueOf(s));
-                    break;
+                }
             }
         }
 

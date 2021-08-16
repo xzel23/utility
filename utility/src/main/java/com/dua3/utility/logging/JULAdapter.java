@@ -135,8 +135,7 @@ public final class JULAdapter {
      */
     public static void removeListener(Logger logger, LogListener listener) {
         for (Handler handler: logger.getHandlers()) {
-            if (handler instanceof JULHandler) {
-                JULHandler julHandler = (JULHandler) handler;
+            if (handler instanceof JULHandler julHandler) {
                 if (listener==julHandler.listener) {
                     logger.removeHandler(julHandler);
                 }

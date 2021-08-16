@@ -19,13 +19,10 @@ public class SandboxURLStreamHandlerFactory implements URLStreamHandlerFactory {
 
     @Override
     public URLStreamHandler createURLStreamHandler(String protocol) {
-        switch (protocol) {
-        case "file":
-        case "jar":
-            return null;
-        default:
-            return new SandboxURLHandler(localFiles);
-        }
+        return switch (protocol) {
+            case "file", "jar" -> null;
+            default -> new SandboxURLHandler(localFiles);
+        };
     }
 
 }
