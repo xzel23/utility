@@ -59,6 +59,12 @@ public final class SwingUtil {
             public void actionPerformed(ActionEvent evt) {
                 onActionPerformed.accept(evt);
             }
+
+            @SuppressWarnings("UseOfClone")
+            @Override
+            public AbstractAction clone() throws CloneNotSupportedException {
+                return (AbstractAction) super.clone();
+            }
         };
     }
 
@@ -80,6 +86,13 @@ public final class SwingUtil {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onActionPerformed.run();
+            }
+
+            @SuppressWarnings("UseOfClone")
+            @Override
+            public AbstractAction clone() throws CloneNotSupportedException {
+                //noinspection UseOfClone
+                return (AbstractAction) super.clone();
             }
         };
     }
