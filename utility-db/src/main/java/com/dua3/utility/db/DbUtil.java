@@ -18,9 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -197,25 +194,10 @@ public final class DbUtil {
      *                                if a driver class was found and loaded but
      *                                could not be instantiated
      */
-    @SuppressWarnings("ThrowInsideCatchBlockWhichIgnoresCaughtException")
     public static Optional<? extends java.sql.Driver> loadDriver(URL... urls)
             throws ClassNotFoundException, SQLException {
         LOG.fine(() -> "loadDriver() - URLs: " + Arrays.toString(urls));
-        try {
-            PrivilegedExceptionAction<Optional<? extends java.sql.Driver>> action = () -> loadDriver(
-                    new URLClassLoader(urls));
-            return AccessController.doPrivileged(action);
-        } catch (PrivilegedActionException e) {
-            Exception ee = e.getException();
-            if (ee instanceof ClassNotFoundException) {
-                throw (ClassNotFoundException) ee;
-            }
-            if (ee instanceof SQLException) {
-                throw (SQLException) ee;
-            }
-            LOG.log(Level.WARNING, "unexpected exception thrown in doPrivileged block", e);
-            throw new IllegalStateException(ee);
-        }
+        return loadDriver(new URLClassLoader(urls));
     }
 
     /**

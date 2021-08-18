@@ -7,6 +7,11 @@
         <Bug pattern="EI_EXPOSE_REP2" />
     </Match>
     
+    <!-- SecurityManager will soon be gone, so will be doPrivileged() -->
+    <Match>
+        <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED" />
+    </Match>
+    
     <!-- by design -->
     <Match>
         <Class name="com.dua3.utility.db.NamedParameterStatement" />
