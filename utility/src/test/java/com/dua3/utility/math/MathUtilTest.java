@@ -25,26 +25,6 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("BoundedWildcard")
 public class MathUtilTest {
 
-    @BeforeAll
-    public static void setUpClass() {
-        // nop
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-        // nop
-    }
-
-    @BeforeEach
-    public void setUp() {
-        // nop
-    }
-
-    @AfterEach
-    public void tearDown() {
-        // nop
-    }
-
     /**
      * Test of findRoot method, of class MathUtil.
      */

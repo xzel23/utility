@@ -156,38 +156,13 @@ public class JdbcDriverInfo {
     private static SimpleOption<?> createOption(String name, Map<String, String> arguments) {
         String type = arguments.getOrDefault(OPTION_TYPE, OPTION_TYPE_STRING);
         String dflt = arguments.get("default");
-        switch (type) {
-            case OPTION_TYPE_STRING: {
-                var option = SimpleOption.create(s -> s, name).description(name);
-                if (dflt != null) {
-                    option.defaultValue(dflt);
-                }
-                return option;
-            }
-            case OPTION_TYPE_PATH: {
-                var option = SimpleOption.create(Paths::get, name).description(name);
-                if (dflt != null) {
-                    option.defaultValue(Paths.get(dflt));
-                }
-                return option;
-            }
-            case OPTION_TYPE_INTEGER: {
-                var option = SimpleOption.create(Integer::valueOf, name).description(name);
-                if (dflt != null) {
-                    option.defaultValue(Integer.valueOf(dflt));
-                }
-                return option;
-            }
-            case OPTION_TYPE_DOUBLE: {
-                var option = SimpleOption.create(Double::valueOf, name).description(name);
-                if (dflt != null) {
-                    option.defaultValue(Double.valueOf(dflt));
-                }
-                return option;
-            }
-            default:
-                throw new IllegalStateException("unsupported type: " + type);
-        }
+        return switch (type) {
+            case OPTION_TYPE_STRING -> SimpleOption.create(s -> s, name).description(name).defaultValue(dflt);
+            case OPTION_TYPE_PATH -> SimpleOption.create(Paths::get, name).description(name).defaultValue(dflt == null ? null : Paths.get(dflt));
+            case OPTION_TYPE_INTEGER -> SimpleOption.create(Integer::valueOf, name).description(name).defaultValue(dflt == null ? null : Integer.valueOf(dflt));
+            case OPTION_TYPE_DOUBLE -> SimpleOption.create(Double::valueOf, name).description(name).defaultValue(dflt == null ? null : Double.valueOf(dflt));
+            default -> throw new IllegalStateException("unsupported type: " + type);
+        };
     }
 
     @Override
