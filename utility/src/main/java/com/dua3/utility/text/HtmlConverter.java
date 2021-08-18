@@ -125,7 +125,17 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 buffer.append(tags.get(i).close());
             }
         }
-
+        
+        private List<HtmlTag> getTags(List<Style> styles) {
+            List<HtmlTag> tags = new ArrayList<>();
+            Map<String,Object> properties = new LinkedHashMap<>();
+            for (Style style: styles) {
+                style.stream().forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
+            }
+            refineStyleProperties.apply(properties).entrySet().stream().map(e -> HtmlConverter.this.get(e.getKey(), e.getValue())).forEach(tags::add);
+            return tags;
+        }
+        
         @Override
         protected void appendChars(CharSequence s) {
             TextUtil.appendHtmlEscapedCharacters(buffer, s);
@@ -304,16 +314,6 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     public HtmlTag get(String attribute, Object value) {
         Function<Object, HtmlTag> mapper = mappings.get(attribute);
         return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);
-    }
-
-    private List<HtmlTag> getTags(List<Style> styles) {
-        List<HtmlTag> tags = new ArrayList<>();
-        Map<String,Object> properties = new LinkedHashMap<>();
-        for (Style style: styles) {
-            style.stream().forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
-        }
-        refineStyleProperties.apply(properties).entrySet().stream().map(e -> get(e.getKey(), e.getValue())).forEach(tags::add);
-        return tags;
     }
     
 }

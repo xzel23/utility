@@ -201,7 +201,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
             Object value = entry.getValue();
             
             if (key.equals(ATTRIBUTE_NAME_STYLE_LIST)) {
-                value = new ArrayList<>((List<Style>)value);
+                value = new ArrayList<>((Collection<Style>) value);
             }
             
             Object oldValue = attributes.put(key, value);

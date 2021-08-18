@@ -102,18 +102,6 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         return new StyledDocumentConversionOption(c -> c.setScale(scale));
     }
 
-    /**
-     * Create AttributeSet for a Font instance
-     * @param font the font
-     * @return the AttributeSet
-     */
-    private AttributeSet createAttributeSet(Font font) {
-        SimpleAttributeSet attrs = new SimpleAttributeSet();
-        attrs.addAttributes(defaultStyledAttributes);
-        dictionary.forEach( (key,getter) -> attrs.addAttribute(key,getter.apply(font)));
-        return attrs;
-    }
-
     // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
     private final Map<Object, Function<Font, Object>> dictionary = createDictionary();
 
@@ -182,5 +170,18 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
                 throw new IllegalStateException(e);
             }
         }
+        
+        /**
+         * Create AttributeSet for a Font instance
+         * @param font the font
+         * @return the AttributeSet
+         */
+        private AttributeSet createAttributeSet(Font font) {
+            SimpleAttributeSet attrs = new SimpleAttributeSet();
+            attrs.addAttributes(defaultStyledAttributes);
+            dictionary.forEach( (key,getter) -> attrs.addAttribute(key,getter.apply(font)));
+            return attrs;
+        }
+        
     }
 }
