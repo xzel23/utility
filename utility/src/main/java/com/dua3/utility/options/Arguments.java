@@ -9,14 +9,29 @@ import java.util.stream.Stream;
  */
 public class Arguments implements Iterable<Arguments.Entry<?>> {
 
+    /**
+     * Create an empty instance.
+     * @return empty Arguments instance
+     */
     public static Arguments empty() {
         return new Arguments(new ArrayDeque<>(), Collections.emptyList());
     }
 
+    /**
+     * Create an instance.
+     * @param args the arguments to pass to the instance.
+     * @return new instance
+     */
     public static Arguments of(Entry<?>... args) {
         return new Arguments(new LinkedList<>(Arrays.asList(args)), Collections.emptyList());
     }
 
+    /**
+     * Create an argument entry intended to be passed to {@link #of(Entry[])}.
+     * @param option the option for the entry
+     * @param args the arguments belonging to the option
+     * @return new {@link Entry}
+     */
     @SafeVarargs
     public static <T> Entry<T> createEntry(Option<T> option, T... args) {
         Entry<T> entry = new Entry<>(option);
