@@ -11,9 +11,11 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Objects;
 
-public class SwingImage implements Image {
-    
-    private final BufferedImage bufferedImage;
+public record SwingImage(BufferedImage bufferedImage) implements Image {
+
+    public SwingImage {
+        Objects.requireNonNull(bufferedImage);
+    }
 
     public static SwingImage create(int w, int h, int[] data) {
         BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -35,26 +37,19 @@ public class SwingImage implements Image {
         }
     }
     
-    SwingImage(BufferedImage bufferedImage) {
-        this.bufferedImage = Objects.requireNonNull(bufferedImage);
-    }
-    
     @Override
     public int width() {
-        return bufferedImage.getWidth();
+        return bufferedImage().getWidth();
     }
 
     @Override
     public int height() {
-        return bufferedImage.getHeight();
+        return bufferedImage().getHeight();
     }
 
     @Override
     public int[] getArgb() {
-        return bufferedImage.getRaster().getPixels( 0, 0, width(), height(), (int[]) null);
+        return bufferedImage().getRaster().getPixels( 0, 0, width(), height(), (int[]) null);
     }
 
-    BufferedImage bufferedImage() {
-        return bufferedImage;
-    }
 }

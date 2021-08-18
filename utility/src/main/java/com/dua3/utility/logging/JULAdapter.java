@@ -42,6 +42,10 @@ public final class JULAdapter {
         public void close() throws SecurityException {
             listener = null;
         }
+
+        LogListener getListener() {
+            return listener;
+        }
     }
 
     /**
@@ -136,7 +140,7 @@ public final class JULAdapter {
     public static void removeListener(Logger logger, LogListener listener) {
         for (Handler handler: logger.getHandlers()) {
             if (handler instanceof JULHandler julHandler) {
-                if (listener==julHandler.listener) {
+                if (listener==julHandler.getListener()) {
                     logger.removeHandler(julHandler);
                 }
             }
