@@ -281,7 +281,7 @@ public final class LangUtil {
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static Runnable uncheckedRunnable(RunnableThrows r) {
+    public static <E extends Exception> Runnable uncheckedRunnable(RunnableThrows<E> r) {
         return () -> {
             try {
                 r.run();
@@ -408,6 +408,7 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface RunnableThrows<E extends Exception> {
+        @SuppressWarnings("ProhibitedExceptionDeclared")
         void run() throws E;
     }
 
@@ -421,6 +422,7 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface FunctionThrows<T, R, E extends Exception> {
+        @SuppressWarnings("ProhibitedExceptionDeclared")
         R apply(T arg) throws E;
     }
 
@@ -433,6 +435,7 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface ConsumerThrows<T, E extends Exception> {
+        @SuppressWarnings("ProhibitedExceptionDeclared")
         void apply(T arg) throws E;
     }
 
@@ -445,6 +448,7 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface SupplierThrows<T, E extends Exception> {
+        @SuppressWarnings("ProhibitedExceptionDeclared")
         T get() throws E;
     }
 
