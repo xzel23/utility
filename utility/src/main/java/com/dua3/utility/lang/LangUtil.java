@@ -184,25 +184,39 @@ public final class LangUtil {
     }
 
     /**
+     * Re-throw checked exception as unchecked.
+     * @param e the exception
+     * @return RuntimeException, UncheckedIOException, or WrappedException depending on the type of e
+     */
+    private static RuntimeException wrapException(Exception e) {
+        if (e instanceof RuntimeException re) {
+            return re;
+        }
+        if (e instanceof IOException ioe) {
+            return new UncheckedIOException(ioe);
+        }
+        return new WrappedException(e);
+    }
+
+    /**
      * Helper method that converts checked {@link java.io.IOException} to
      * {@link java.io.UncheckedIOException} and other checked exceptions to {@link WrappedException}.
      *
-     * @param    <T> the argument type
+     * @param  <T> the argument type
+     * @param  <E> the exception type
      * @param  c the consumer to call (instance of {@link ConsumerThrows})
      * @return   instance of Consumer that invokes f and converts IOException to
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
+     * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
+     * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
+     * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
-    @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T> c) {
+    public static <T,E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<T,E> c) {
         return arg -> {
             try {
                 c.apply(arg);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
             } catch (Exception e) {
-                throw new WrappedException(e);
+                throw wrapException(e);
             }
         };
     }
@@ -211,22 +225,21 @@ public final class LangUtil {
      * Helper method that converts checked {@link java.io.IOException} to
      * {@link java.io.UncheckedIOException} and other checked exceptions to {@link WrappedException}.
      *
-     * @param    <T> the argument type
+     * @param  <T> the argument type
+     * @param  <E> the exception type
      * @param  s the supplier to call (instance of {@link SupplierThrows})
      * @return   instance of Sipplier that invokes f and converts IOException to
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
+     * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
+     * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
+     * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
-    @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T> s) {
+    public static <T,E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<T,E> s) {
         return () -> {
             try {
                 return s.get();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
             } catch (Exception e) {
-                throw new WrappedException(e);
+                throw wrapException(e);
             }
         };
     }
@@ -237,21 +250,21 @@ public final class LangUtil {
      *
      * @param    <T> the argument type
      * @param    <R> the result type
+     * @param  <E> the exception type
      * @param  f the function to call (instance of {@link FunctionThrows})
      * @return   instance of Function that invokes f and converts IOException to
      *           UncheckedIOException and other checked exceptions to {@link WrappedException}
+     * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
+     * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
+     * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T, R> Function<T, R> uncheckedFunction(FunctionThrows<? super T, ? extends R> f) {
+    public static <T,R,E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T,R,E> f) {
         return arg -> {
             try {
                 return f.apply(arg);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
             } catch (Exception e) {
-                throw new WrappedException(e);
+                throw wrapException(e);
             }
         };
     }
@@ -263,18 +276,17 @@ public final class LangUtil {
      * @param  r the Runnable to call (instance of {@link RunnableThrows})
      * @return   instance of Function that invokes f and converts IOException to
      *           UncheckedIOException
+     * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
+     * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
+     * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
     public static Runnable uncheckedRunnable(RunnableThrows r) {
         return () -> {
             try {
                 r.run();
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
             } catch (Exception e) {
-                throw new WrappedException(e);
+                throw wrapException(e);
             }
         };
     }
@@ -392,10 +404,11 @@ public final class LangUtil {
     /**
      * Interface similar to {@link java.lang.Runnable} that declares thrown
      * exceptions on its {@code run()} method.
+     * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface RunnableThrows {
-        void run() throws Exception;
+    public interface RunnableThrows<E extends Exception> {
+        void run() throws E;
     }
 
     /**
@@ -404,10 +417,11 @@ public final class LangUtil {
      *
      * @param <T> the argument type
      * @param <R> the result type
+     * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface FunctionThrows<T, R> {
-        R apply(T arg) throws Exception;
+    public interface FunctionThrows<T, R, E extends Exception> {
+        R apply(T arg) throws E;
     }
 
     /**
@@ -415,10 +429,11 @@ public final class LangUtil {
      * exceptions on its {@code apply()} method.
      *
      * @param <T> the argument type
+     * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface ConsumerThrows<T> {
-        void apply(T arg) throws Exception;
+    public interface ConsumerThrows<T, E extends Exception> {
+        void apply(T arg) throws E;
     }
 
     /**
@@ -426,10 +441,11 @@ public final class LangUtil {
      * exceptions on its {@code apply()} method.
      *
      * @param <T> the argument type
+     * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface SupplierThrows<T> {
-        T get() throws Exception;
+    public interface SupplierThrows<T, E extends Exception> {
+        T get() throws E;
     }
 
     /**
