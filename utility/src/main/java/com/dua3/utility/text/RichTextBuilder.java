@@ -230,12 +230,12 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     public void pop(String name) {
         AttributeChange change = openedAttributes.pop();
-        LangUtil.check(name.equals(change.name));
+        LangUtil.check(name.equals(change.name()));
         Map<String, Object> attributes = split();
-        if (change.previousValue==null) {
+        if (change.previousValue()==null) {
             attributes.remove(name);
         } else {
-            attributes.put(name, change.previousValue);
+            attributes.put(name, change.previousValue());
         }
     }
 
