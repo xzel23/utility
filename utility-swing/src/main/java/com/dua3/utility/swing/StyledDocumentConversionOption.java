@@ -1,19 +1,19 @@
 package com.dua3.utility.swing;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
  * Options controling the conversion process.
  */
-public class StyledDocumentConversionOption {
+public record StyledDocumentConversionOption (Consumer<? super StyledDocumentConverter> action) {
 
-    private final Consumer<? super StyledDocumentConverter> action;
-
-    protected StyledDocumentConversionOption(Consumer<? super StyledDocumentConverter> action) {
-        this.action = action;
+    public StyledDocumentConversionOption {
+        Objects.requireNonNull(action);
     }
 
     void apply(StyledDocumentConverter converter) {
         action.accept(converter);
     }
+    
 }

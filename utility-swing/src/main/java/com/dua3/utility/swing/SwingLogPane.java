@@ -222,17 +222,7 @@ public class SwingLogPane extends JPanel {
         }
     }
     
-    private static class Column {
-        final LogEntry.Field field;
-        final int preferredCharWidth;
-        final boolean hideable;
-        
-        Column(LogEntry.Field field, int preferredCharWidth, boolean hideable) {
-            this.field = field;
-            this.preferredCharWidth = preferredCharWidth;
-            this.hideable = hideable;
-        }
-    }
+    private record Column(LogEntry.Field field, int preferredCharWidth, boolean hideable) {}
     
     private static final Column[] COLUMNS = {
             new Column(LogEntry.Field.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
