@@ -12,7 +12,6 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
-import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 
 /**
@@ -150,18 +149,13 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
                 fnt -> getAwtFont(
                     font.getFamily(),
                     font.getSizeInPoints(),
-                    font.getColor(),
-                    font.isBold(),
-                    font.isItalic(),
-                    font.isUnderline(),
-                    font.isStrikeThrough()
+                        font.isBold(),
+                    font.isItalic()
                 )
         );
     }
 
-    private static java.awt.Font getAwtFont(String family, float size, Color color, boolean bold, boolean italic,
-            boolean underlined,
-            boolean strikeThrough) {
+    private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
         int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
         return new java.awt.Font(family, style, Math.round(size));
     }
