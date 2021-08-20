@@ -9,8 +9,10 @@ import java.util.*;
 import java.util.List;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 
 /**
@@ -164,4 +166,17 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
         return new java.awt.Font(family, style, Math.round(size));
     }
 
+    public Font loadFontAs(InputStream in, Font font) throws IOException {
+        try (in) {
+            java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
+            LangUtil.check(awtFonts.length>0, () -> new IOException("no font loaded"));
+            java.awt.Font awtFont = awtFonts[0].deriveFont(font.getSizeInPoints());
+            Font loadedFont = new Font(font.getFamily(), font.getSizeInPoints(), font.getColor(), font.isBold(), font.isItalic(), font.isUnderline(), font.isStrikeThrough());
+            fontMap.putIfAbsent(loadedFont, awtFont);
+            return font;
+        } catch (FontFormatException e) {
+            throw new IOException(e);
+        }
+    }
+    
 }

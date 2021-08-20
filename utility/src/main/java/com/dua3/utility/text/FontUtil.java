@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 /**
@@ -46,6 +47,11 @@ public interface FontUtil<F> {
 
                 @Override
                 public List<String> getFamilies(FontTypes types) {
+                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                }
+
+                @Override
+                public Font loadFontAs(InputStream in, Font font) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
             };
@@ -136,4 +142,14 @@ public interface FontUtil<F> {
     default List<String> getFamilies() {
         return getFamilies(FontTypes.ALL);
     }
+
+    /**
+     * Load an embedded font.
+     * @param in the stream to read font data from
+     * @param font the font that is loaded
+     * @return font instance
+     * @throws IOException if an error occurs
+     */
+    Font loadFontAs(InputStream in, Font font) throws IOException;
+
 }
