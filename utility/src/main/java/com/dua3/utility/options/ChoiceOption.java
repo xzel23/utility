@@ -14,41 +14,13 @@ public final class ChoiceOption<T> extends Option<T> {
     /**
      * A Choice is for a {@link ChoiceOption}, basically an object holding a combination of a value and its
      * string representation for a selectable value in a choice option.
+     *
      * @param <T> the value type
      */
-    public static final class Choice<T> {
-        private final T value;
-        private final String text;
-
-        private Choice(T value, String text) {
-            this.value=value;
-            this.text=text;
-        }
-
-        /**
-         * Get value.
-         * @return the value
-         */
-        public T value() {
-            return value;
-        }
-
+    public record Choice<T>(T value, String text) {
         @Override
         public String toString() {
             return text;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Choice<?> choice = (Choice<?>) o;
-            return Objects.equals(value, choice.value) && Objects.equals(text, choice.text);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value, text);
         }
     }
 
