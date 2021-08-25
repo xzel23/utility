@@ -64,8 +64,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 ### 10 (to be released)
 
 - Java 17 needed!
+- upgraded gradle to 7.2 for Java 17 support
 - geometry classes taking float parameters have been renamed to ...2f
 - some classes (Pair, Vector2f, ...) have been converted to records
+- many fixes and smaller improvements
 
 ### 9.0.1
 
