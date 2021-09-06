@@ -4,29 +4,26 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileTreeNode implements TreeNode<FileTreeNode> {
+public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
-    public static FileTreeNode tree(Path root) {
-        return new FileTreeNode(null, root, true);
+    public static <T extends FileTreeNode<T>> T tree(Path root) {
+        return (T) new FileTreeNode<T>(null, root, true);
     }
 
-    private final FileTreeNode parent;
+    private final T parent;
     private final Path path;
-    private List<FileTreeNode> children = null;
+    private List<T> children = null;
     private final boolean lazy;
 
-    protected FileTreeNode(FileTreeNode parent, Path path) {
+    protected FileTreeNode(T parent, Path path) {
         this(parent, path, false);
     }
 
-    protected FileTreeNode(FileTreeNode parent, Path path, boolean lazy) {
+    protected FileTreeNode(T parent, Path path, boolean lazy) {
         this.parent = parent;
         this.path = Objects.requireNonNull(path);
         this.lazy = lazy;
@@ -36,7 +33,7 @@ public class FileTreeNode implements TreeNode<FileTreeNode> {
     }
 
     @Override
-    public Collection<FileTreeNode> children() {
+    public Collection<T> children() {
         if (children == null) {
             refresh();
         }
@@ -45,22 +42,26 @@ public class FileTreeNode implements TreeNode<FileTreeNode> {
 
     public void refresh() {
         try {
-            this.children = Files.walk(path, 1)
-                    .filter(p -> !p.equals(path))
-                    .map(p -> new FileTreeNode(this, p, lazy))
-                    .collect(Collectors.toList());
+            this.children = new ArrayList<>(collectChildren());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
+    protected Collection<T> collectChildren() throws IOException {
+        return Files.walk(path, 1)
+                .filter(p -> !p.equals(path))
+                .map(p -> (T) new FileTreeNode<T>((T) this, p, lazy))
+                .collect(Collectors.toList());
+    }
+
     @Override
-    public Stream<FileTreeNode> stream() {
+    public Stream<T> stream() {
         return children().stream();
     }
 
     @Override
-    public FileTreeNode parent() {
+    public T parent() {
         return parent;
     }
 
@@ -75,11 +76,19 @@ public class FileTreeNode implements TreeNode<FileTreeNode> {
 
     @Override
     public boolean equals(Object other) {
-        return other != null && getClass() == other.getClass() && path.equals(((FileTreeNode) other).path);
+        return other != null && getClass() == other.getClass() && path.equals(((FileTreeNode<T>) other).path);
     }
 
     @Override
     public int hashCode() {
         return path.hashCode();
+    }
+
+    public boolean isLazy() {
+        return lazy;
+    }
+    
+    public boolean isLeaf() {
+        return children().isEmpty();
     }
 }
