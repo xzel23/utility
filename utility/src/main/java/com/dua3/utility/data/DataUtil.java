@@ -524,14 +524,14 @@ public final class DataUtil {
     }
 
     /**
-     * Compute the differnce of mappings between two maps. The result is a map that maps keys to the new values 
+     * Compute the difference of mappings between two maps. The result is a map that maps keys to the new values 
      * for all changed keys. See also {@link #changes(Map, Map)}.
      *
      * @param a the first map
      * @param b the second map
      * @param <U> the key type
      * @param <V> the value type
-     * @return a new map that contains the changes as pairs (value in a, value in b) 
+     * @return a new map that contains the changed mappings (k -> mapped value in b) 
      */
     public static <U,V> Map<U,V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
