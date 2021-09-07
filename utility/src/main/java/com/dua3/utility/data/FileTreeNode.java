@@ -5,11 +5,13 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@SuppressWarnings("unchecked")
 public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
-
+    
     /**
      * Create a lazily populated FileTree with the given path as its root. 
      * @param root the tree root
@@ -37,12 +39,10 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
     private final T parent;
     private final Path path;
-    private List<T> children = null;
     private final boolean lazy;
+    private List<T> children = null;
 
-    protected FileTreeNode(T parent, Path path) {
-        this(parent, path, false);
-    }
+    private final List<Consumer<T>> listeners = new ArrayList<>();
 
     protected FileTreeNode(T parent, Path path, boolean lazy) {
         this.parent = parent;
@@ -61,6 +61,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     public void refresh() {
         try {
             this.children = new ArrayList<>(collectChildren());
+            listeners.forEach(lst -> lst.accept((T) this));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -115,4 +116,13 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     public boolean isLeaf() {
         return children().isEmpty();
     }
+
+    public void addRefreshListener(Consumer<T> listener) {
+        this.listeners.add(Objects.requireNonNull(listener));
+    }
+
+    public void removeRefreshListener(Consumer<T> listener) {
+        this.listeners.remove(listener);
+    }
+
 }
