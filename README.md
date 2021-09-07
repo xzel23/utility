@@ -59,6 +59,32 @@ Logging is done through JUL (java.util.logging).
  
 IMHO, using a logging framework in *libraries* is in most cases not necessary anymore in Java 8+ since log messages can now be formatted using lambdas that are only called when logging on that level is enabled. I have had more than enough trouble with trying to put libraries using different versions of log4j, SLF4J, logback, commopns.logging, and more into a single project that I will not integrate any logging framework into my libraries, so please don't even ask for it. Most advanced logging framework now have some sort of JUL bridge, so that there shouldn't be any issues with this. 
 
+## Using the BuildInfo class in Gradle builds
+
+Add this to your `build.gradle` to include a `build.properties` file in your JAR:
+
+    // === generate BuildInfo ===
+    def generateBuildInfo = tasks.register('generateBuildInfo') {
+        // do not cache the buildinfo
+        outputs.upToDateWhen { false }
+    
+        // create build.properties
+        doLast {
+            def resourcesDir = sourceSets.main.output.resourcesDir
+            resourcesDir.mkdirs()
+    
+            def buildTime = OffsetDateTime.now().atZoneSameInstant(ZoneId.of("UTC"))
+            def contents = "build.time=${buildTime}\nbuild.version=${version}\n"
+    
+            def file = new File(resourcesDir, "build.properties")
+            file.text = contents
+        }
+    }
+
+Add this in your code to read the `build.properties` file and create a `BuildInfo` instance containinng version and build time information:
+
+    public static final BuildInfo BUILD_INFO = BuildInfo.create(Main.class, "/build.properties");
+
 ## Changes
 
 ### 10 (to be released)
@@ -67,6 +93,8 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 - upgraded gradle to 7.2 for Java 17 support
 - geometry classes taking float parameters have been renamed to ...2f
 - some classes (Pair, Vector2f, ...) have been converted to records
+- updates to FileTreeNode to allow use as a base class
+- added BuildInfo class
 - many fixes and smaller improvements
 
 ### 9.0.1
