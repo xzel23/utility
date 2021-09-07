@@ -10,8 +10,29 @@ import java.util.stream.Stream;
 
 public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
+    /**
+     * Create a lazily populated FileTree with the given path as its root. 
+     * @param root the tree root
+     * @param <T> the node type
+     * @return the tree
+     */
     public static <T extends FileTreeNode<T>> T tree(Path root) {
-        return (T) new FileTreeNode<T>(null, root, true);
+        return tree(root, true);
+    }
+
+    /**
+     * Create FileTree with the given path as its root. 
+     * @param root the tree root
+     * @param lazy if true, nodes are not populated before refresh is called
+     * @param <T> the node type
+     * @return the tree
+     */
+    public static <T extends FileTreeNode<T>> T tree(Path root, boolean lazy) {
+        T t = (T) new FileTreeNode<T>(null, root, lazy);
+        if (!lazy) {
+            t.refresh();
+        }
+        return t;
     }
 
     private final T parent;
@@ -27,9 +48,6 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         this.parent = parent;
         this.path = Objects.requireNonNull(path);
         this.lazy = lazy;
-        if (!lazy) {
-            refresh();
-        }
     }
 
     @Override
@@ -51,10 +69,16 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     protected Collection<T> collectChildren() throws IOException {
         return Files.walk(path, 1)
                 .filter(p -> !p.equals(path))
-                .map(p -> (T) new FileTreeNode<T>((T) this, p, lazy))
+                .map(p -> { 
+                    T child = (T) new FileTreeNode<T>((T) this, p, lazy); 
+                    if (!lazy) { 
+                        child.refresh(); 
+                    } 
+                    return child; 
+                })
                 .collect(Collectors.toList());
     }
-
+    
     @Override
     public Stream<T> stream() {
         return children().stream();
