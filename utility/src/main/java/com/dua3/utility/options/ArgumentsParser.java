@@ -266,7 +266,7 @@ public class ArgumentsParser {
     public void help(Formatter fmt) {
         // print title
         if (!name.isEmpty()) {
-            fmt.format("%s%n", name);
+            fmt.format("%n%s%n", name);
             fmt.format("%s%n", "-".repeat(name.length()));
             fmt.format("%n");
         }
