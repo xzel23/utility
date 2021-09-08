@@ -30,17 +30,21 @@ public class CmdTest {
 
         assertFalse(cmd.parse("hello", "Bob").isSet(oPrint));
 
-        String expected = String.format("testFlag%n" +
-                                        "--------%n" +
-                                        "%n" +
-                                        "Unit test for passing flags on the command line.%n" +
-                                        "%n" +
-                                        "testFlag <options> [arg1] ...%n" +
-                                        "%n" +
-                                        "    --print%n" +
-                                        "    -p%n" +
-                                        "            print result to terminal%n" +
-                                        "%n");
+        String expected = """
+                          
+                          testFlag
+                          --------
+                          
+                          Unit test for passing flags on the command line.
+                          
+                          testFlag <options> [arg1] ...
+                          
+                              --print
+                              -p
+                                      print result to terminal
+                          
+                          """;
+
         assertEquals(expected, cmd.help());
     }
 
@@ -85,20 +89,23 @@ public class CmdTest {
         assertEquals("Eve", eve30.getOrThrow(optionName));
         assertEquals(30, eve30.getOrThrow(optionAge));
 
-        String expected = String.format("testSimpleOption%n" +
-                                        "----------------%n" +
-                                        "%n" +
-                                        "Unit test for passing simple options on the command line.%n" +
-                                        "%n" +
-                                        "testSimpleOption <options> [arg1] ...%n" +
-                                        "%n" +
-                                        "    --age arg%n" +
-                                        "    -a arg%n" +
-                                        "%n" +
-                                        "    --name arg%n" +
-                                        "    -n arg%n" +
-                                        "            set name%n" +
-                                        "%n");
+        String expected = """
+                          
+                          testSimpleOption
+                          ----------------
+                          
+                          Unit test for passing simple options on the command line.
+                          
+                          testSimpleOption <options> [arg1] ...
+                          
+                              --age arg
+                              -a arg
+                          
+                              --name arg
+                              -n arg
+                                      set name
+                                      
+                          """;
         assertEquals(expected, cmd.help());
     }
 
@@ -106,15 +113,17 @@ public class CmdTest {
     public void testPositionalArgs1() {
         ArgumentsParser cmd = new ArgumentsParser("testPositionalArgs1", "Unit test for passing positional arguments on the command line.");
 
-        assertEquals(
-                String.format("testPositionalArgs1%n" +
-                              "-------------------%n" +
-                              "%n" +
-                              "Unit test for passing positional arguments on the command line.%n" +
-                              "%n" +
-                              "testPositionalArgs1 [arg1] ...%n" +
-                              "%n")
-                , cmd.help());
+        String expected = """
+                                                        
+                          testPositionalArgs1
+                          -------------------
+                                                        
+                          Unit test for passing positional arguments on the command line.
+                                                        
+                          testPositionalArgs1 [arg1] ...
+                          
+                          """;
+        assertEquals(expected, cmd.help());
 
         Arguments args1 = cmd.parse();
         assertTrue(args1.positionalArgs().isEmpty());
@@ -126,15 +135,18 @@ public class CmdTest {
     @Test
     public void testPositionalArgs2() {
         ArgumentsParser cmd = new ArgumentsParser("testPositionalArgs2", "Unit test for passing positional arguments on the command line.", 1, 3);
-        assertEquals(
-                String.format("testPositionalArgs2%n" +
-                     "-------------------%n" +
-                     "%n" +
-                     "Unit test for passing positional arguments on the command line.%n" +
-                     "%n" +
-                     "testPositionalArgs2 arg1 [arg2] ... (up to 3 arguments)%n" +
-                     "%n")
-                , cmd.help());
+
+        String expected = """
+                          
+                          testPositionalArgs2
+                          -------------------
+                          
+                          Unit test for passing positional arguments on the command line.
+                          
+                          testPositionalArgs2 arg1 [arg2] ... (up to 3 arguments)
+                          
+                          """;
+        assertEquals(expected, cmd.help());
         
         // min arity is 1!
         assertThrows(OptionException.class, cmd::parse);
