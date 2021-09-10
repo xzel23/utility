@@ -187,8 +187,14 @@ public class RichText
         }
         
         // compare contents
-        Iterator<Run> iter1 = this.iterator();
-        Iterator<Run> iter2 = other.iterator();
+        List<Run> runs1 = this.runs();
+        List<Run> runs2 = this.runs();
+        if (runs1.size()!=runs2.size()) {
+            return false;
+        }
+        
+        Iterator<Run> iter1 = runs1.iterator();
+        Iterator<Run> iter2 = runs2.iterator();
         while (iter1.hasNext()&&iter2.hasNext()) {
             if (!Objects.equals(iter1.next(), iter2.next())) {
                 return false;
