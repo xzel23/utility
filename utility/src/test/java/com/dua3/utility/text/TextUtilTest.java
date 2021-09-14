@@ -89,26 +89,4 @@ public class TextUtilTest {
         assertEquals("_abcd", TextUtil.align("abcd",5, TextUtil.Alignment.RIGHT, '_'));
     }
     
-    @Test
-    public void testIndent() {
-        assertEquals("", TextUtil.indent("",0));
-        assertEquals("", TextUtil.indent("",1));
-        assertEquals("", TextUtil.indent("",2));
-
-        assertEquals("test", TextUtil.indent("test",0));
-        assertEquals(" test", TextUtil.indent("test",1));
-        assertEquals("  test", TextUtil.indent("test",2));
-
-        assertEquals("test\ntest", TextUtil.indent("test\ntest",0));
-        assertEquals(" test\n test", TextUtil.indent("test\ntest",1));
-        assertEquals("  test\n  test", TextUtil.indent("test\ntest",2));
-
-        assertEquals("test\r\ntest", TextUtil.indent("test\r\ntest",0));
-        assertEquals(" test\r\n test", TextUtil.indent("test\r\ntest",1));
-        assertEquals("  test\r\n  test", TextUtil.indent("test\r\ntest",2));
-
-        assertEquals("test\r\ntest\ntest\r\n test", TextUtil.indent("test\r\ntest\ntest\r\n test",0));
-        assertEquals(" test\r\n test\n test\r\n  test", TextUtil.indent("test\r\ntest\ntest\r\n test",1));
-        assertEquals("  test\r\n  test\n  test\r\n   test", TextUtil.indent("test\r\ntest\ntest\r\n test",2));
-    }
 }

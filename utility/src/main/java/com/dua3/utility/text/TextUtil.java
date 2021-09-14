@@ -684,22 +684,4 @@ public final class TextUtil {
         }
     }
 
-    /**
-     * Indent text.
-     * <p>
-     * Each line is indent the given amount of spaces. Line endings are not altered.
-     * <br>
-     * NOTE:  If you are targetting JDK 12+ exclusively, use String.indent() introduced in JDK 12 instead.
-     * @param s the text
-     * @param n the number of characters to indent
-     * @return the indented text
-     */
-    public static String indent(String s, int n) {
-        StringBuilder indent = new StringBuilder(n);
-        indent.append(" ".repeat(Math.max(0, n)));
-        
-        Pattern pattern = Pattern.compile("^", Pattern.MULTILINE);
-        return pattern.matcher(s).replaceAll(indent.toString());
-    }
-    
 }

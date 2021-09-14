@@ -297,7 +297,7 @@ public class ArgumentsParser {
             
             // print option description
             if (!option.description.isEmpty()) {
-                fmt.format("%s%n", TextUtil.indent(option.description, 12));
+                fmt.format("%s", option.description.indent(12));
             }
             
             fmt.format("%n");
