@@ -8,6 +8,7 @@ package com.dua3.utility.data;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * A pair helper class.
@@ -149,4 +150,25 @@ public record Pair<T1, T2>(T1 first, T2 second) {
         return m;
     }
 
+    /**
+     * Map pair to another pair.
+     * @param <U1> the result's first component type
+     * @param <U2> the result's second component type
+     * @param f1 mapper for first component
+     * @param f2 mapper for second component
+     * @return  a {@link Pair} consisting of the mapped values of this pair
+     */
+    public <U1,U2> Pair<U1,U2> map(Function<T1,U1> f1, Function<T2,U2> f2) {
+        return Pair.of(f1.apply(first()), f2.apply(second()));
+    }
+
+    /**
+     * Map pair to another pair.
+     * @param <U> the result's component type*
+     * @param f mapper for components
+     * @return  a {@link Pair} consisting of the mapped values of this pair
+     */
+    public <U> Pair<U,U> map(Function<Object,? extends U> f) {
+        return Pair.of(f.apply(first()), f.apply(second()));
+    }
 }
