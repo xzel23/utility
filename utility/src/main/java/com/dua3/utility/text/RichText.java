@@ -563,17 +563,13 @@ public class RichText
     }
 
     public RichText replaceAll(String regex, RichText replacement) {
-        RichTextMatcher m = matcher(Pattern.compile(regex), this);
-        RichTextBuilder rtb = new RichTextBuilder(length);
-        int off = 0;
-        while (m.find()) {
-            rtb.append(subSequence(off, m.start())).append(replacement);
-            off = m.end();
-        }
-        rtb.append(subSequence(off, length));
-        return rtb.toRichText();
+        return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }
-    
+
+    public RichText replaceAll(String regex, String replacement) {
+        return matcher(Pattern.compile(regex), this).replaceAll(replacement);
+    }
+
     /**
      * Find character.
      * @param ch the character

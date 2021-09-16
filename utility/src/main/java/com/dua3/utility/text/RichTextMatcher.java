@@ -86,5 +86,34 @@ public class RichTextMatcher implements MatchResult {
     public boolean find(int start) {
         return matcher.find(start);
     }
-    
+
+    /**
+     * See {@link Matcher#replaceAll(String)}.
+     */
+    public RichText replaceAll(String replacement) {
+        RichTextBuilder rtb = new RichTextBuilder(text.length());
+
+        int off;
+        for(off = 0; find(); off = end()) {
+            rtb.append(text.subSequence(off, start())).append(replacement);
+        }
+
+        rtb.append(text.subSequence(off, text.length()));
+        return rtb.toRichText();
+    }
+
+    /**
+     * See {@link Matcher#replaceAll(String)}.
+     */
+    public RichText replaceAll(RichText replacement) {
+        RichTextBuilder rtb = new RichTextBuilder(text.length());
+
+        int off;
+        for(off = 0; find(); off = end()) {
+            rtb.append(text.subSequence(off, start())).append(replacement);
+        }
+
+        rtb.append(text.subSequence(off, text.length()));
+        return rtb.toRichText();
+    }
 }
