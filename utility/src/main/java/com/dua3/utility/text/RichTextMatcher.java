@@ -88,32 +88,55 @@ public class RichTextMatcher implements MatchResult {
     }
 
     /**
+     * See {@link Matcher#replaceFirst(String)}.
+     */
+    public RichText replaceFirst(String replacement) {
+        return replace(replacement, 1);
+    }
+
+    /**
+     * See {@link Matcher#replaceAll(String)}.
+     */
+    public RichText replaceFirst(RichText replacement) {
+        return replace(replacement, 1);
+    }
+
+    /**
      * See {@link Matcher#replaceAll(String)}.
      */
     public RichText replaceAll(String replacement) {
-        RichTextBuilder rtb = new RichTextBuilder(text.length());
-
-        int off;
-        for(off = 0; find(); off = end()) {
-            rtb.append(text.subSequence(off, start())).append(replacement);
-        }
-
-        rtb.append(text.subSequence(off, text.length()));
-        return rtb.toRichText();
+        return replace(replacement, Integer.MAX_VALUE);
     }
 
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
     public RichText replaceAll(RichText replacement) {
+        return replace(replacement, Integer.MAX_VALUE);
+    }
+
+    private RichText replace(RichText replacement, int maxOccurences) {
         RichTextBuilder rtb = new RichTextBuilder(text.length());
 
-        int off;
-        for(off = 0; find(); off = end()) {
+        int off, i;
+        for(off = 0, i= 0; i++<maxOccurences && find(); off = end()) {
             rtb.append(text.subSequence(off, start())).append(replacement);
         }
 
         rtb.append(text.subSequence(off, text.length()));
         return rtb.toRichText();
     }
+
+    private RichText replace(String replacement, int maxOccurences) {
+        RichTextBuilder rtb = new RichTextBuilder(text.length());
+
+        int off, i;
+        for(off = 0, i= 0; i++<maxOccurences && find(); off = end()) {
+            rtb.append(text.subSequence(off, start())).append(replacement);
+        }
+
+        rtb.append(text.subSequence(off, text.length()));
+        return rtb.toRichText();
+    }
+
 }

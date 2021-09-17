@@ -562,10 +562,42 @@ public class RichText
         return result.toArray(new RichText[0]);
     }
 
+    /**
+     * Replace the first occurence of a regular expresseion.
+     * @param regex the regular expression
+     * @return this text with the first instances of regex replaced by the replacement
+     * @see String#replaceFirst(String, String) 
+     */
+    public RichText replaceFirst(String regex, RichText replacement) {
+        return matcher(Pattern.compile(regex), this).replaceFirst(replacement);
+    }
+
+    /**
+     * Replace the first occurence of a regular expresseion.
+     * @param regex the regular expression
+     * @return this text with the first instances of regex replaced by the replacement
+     * @see String#replaceFirst(String, String)
+     */
+    public RichText replaceFirst(String regex, String replacement) {
+        return matcher(Pattern.compile(regex), this).replaceFirst(replacement);
+    }
+
+    /**
+     * Replace all occurences a regular expresseion.
+     * @param regex the regular expression
+     * @return this text with all instances of regex replaced by the replacement
+     * @see String#replaceAll(String, String) 
+     */
     public RichText replaceAll(String regex, RichText replacement) {
         return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }
 
+    /**
+     * Replace all occurences a regular expresseion.
+     * @param regex the regular expression
+     * @return this text with all instances of regex replaced by the replacement
+     * @see String#replaceAll(String, String)
+     */
     public RichText replaceAll(String regex, String replacement) {
         return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }
