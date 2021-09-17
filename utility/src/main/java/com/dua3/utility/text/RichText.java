@@ -181,8 +181,8 @@ public class RichText
 
         RichText other = (RichText) obj;
         
-        // compare the text length
-        if (length!= other.length()) {
+        // compare the text length and hashcode
+        if (length!=other.length() || hashCode()!=other.hashCode()) {
             return false;
         }
         
