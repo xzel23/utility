@@ -46,8 +46,9 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
     private final HashMap<String, BiFunction<Object,Object, String>> mappings = new HashMap<>();
 
     /**
-     * Create a ready to use converter with default mappings.
-     * @return converter with standard mappings
+     * Create a converter.
+     * @param options the options to apply
+     * @return new converter instance
      */
     public static AnsiConverter create(Collection<? extends AnsiConversionOption> options) {
         AnsiConverter instance = new AnsiConverter();
@@ -56,8 +57,9 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
     }
 
     /**
-     * Create a ready to use converter with default mappings.
-     * @return converter with standard mappings
+     * Create a converter.
+     * @param options the options to apply
+     * @return new converter instance
      */
     public static AnsiConverter create(AnsiConversionOption... options) {
         return create(Arrays.asList(options));

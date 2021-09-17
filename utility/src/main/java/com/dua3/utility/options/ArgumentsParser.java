@@ -108,7 +108,9 @@ public class ArgumentsParser {
     /**
      * Add choice option to parser.
      * @param <E> enum class
+     * @param enumClass the enum class instance
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     * @return the option
      */
     public <E extends Enum<E>> ChoiceOption<E> choiceOption(Class<? extends E> enumClass, String... names) {
         return addOption(ChoiceOption.create(enumClass, names));

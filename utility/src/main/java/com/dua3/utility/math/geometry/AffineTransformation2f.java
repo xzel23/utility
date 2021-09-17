@@ -14,6 +14,9 @@ import com.dua3.utility.math.Vector2f;
  */
 public record AffineTransformation2f(float a, float b, float c, float d, float e, float f) {
 
+    /**
+     * The identity transformation.
+     */
     public static final AffineTransformation2f IDENTITY = new AffineTransformation2f(1, 0, 0, 0, 1, 0);
     
     /**

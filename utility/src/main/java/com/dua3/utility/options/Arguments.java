@@ -28,6 +28,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
 
     /**
      * Create an argument entry intended to be passed to {@link #of(Entry[])}.
+     * @param <T> the option type
      * @param option the option for the entry
      * @param args the arguments belonging to the option
      * @return new {@link Entry}
