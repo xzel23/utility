@@ -71,7 +71,12 @@ public class Codecs {
 
     /**
      * Get {@link Codec} for a {@link java.util.Collection}.
-     * @return codec
+     * @param <T> the type of collection elements
+     * @param <C> the collection type
+     * @param name the codec name
+     * @param codec the element codec
+     * @param construct collection factory method
+     * @return collection codec
      */
     public static <T, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
         return new Codec<>() {

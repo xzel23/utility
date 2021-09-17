@@ -61,6 +61,7 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Create a choice option where strings in a list are mapped to values. 
+     * @param <T> the option type
      * @param valueMapper the mapper that maps strings to values
      * @param formatter the formatter that creates strings from values
      * @param values list of valid strings
@@ -94,12 +95,17 @@ public final class ChoiceOption<T> extends Option<T> {
         return Collections.unmodifiableCollection(values.get());
     }
 
+    /**
+     * Get collection of choices.
+     * @return collection holding the possible choices
+     */
     public Collection<Choice<T>> choices() {
         return values().stream().map(this::choice).toList();
     }
 
     /**
      * Get choices.
+     * @param v the choice to use in a {@link ChoiceOption}
      * @return collection holding the possible choices
      */
     public Choice<T> choice(T v) {
