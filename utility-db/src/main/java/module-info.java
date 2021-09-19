@@ -3,6 +3,9 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+/**
+ * Module containing database utilities.
+ */
 module dua3_utility.db {
     exports com.dua3.utility.db;
 

@@ -15,11 +15,11 @@ public final class SimpleOption<T> extends Option<T> {
 
     private Supplier<T> defaultValue = () -> null;
 
-    public static <T> SimpleOption<T>  create(Function<String,T> mapper, String... names) {
+    public static <T> SimpleOption<T>  create(Function<String, ? extends T> mapper, String... names) {
         return new SimpleOption<>(mapper, Object::toString, names);
     }
     
-    public static <T> SimpleOption<T>  create(Function<String,T> mapper, Function<? super T, String> formatter, String... names) {
+    public static <T> SimpleOption<T>  create(Function<String, ? extends T> mapper, Function<? super T, String> formatter, String... names) {
         return new SimpleOption<>(mapper, formatter, names);
     }
     

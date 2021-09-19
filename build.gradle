@@ -19,7 +19,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '10.0.0-BETA5.1'
+    version = '10.0.0-BETA6'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'

@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
  * Sequences of characters that share the same formatting attributes form a
  * {@link Run}.
  */
-public class RichText
+public final class RichText
         implements Iterable<Run>, AttributedCharSequence, ToRichText, Comparable<CharSequence> {
 
     static final String ATTRIBUTE_NAME_STYLE_LIST = "__styles";

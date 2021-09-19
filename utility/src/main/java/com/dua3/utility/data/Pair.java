@@ -158,7 +158,7 @@ public record Pair<T1, T2>(T1 first, T2 second) {
      * @param f2 mapper for second component
      * @return Pair consisting of the mapped values of this pair
      */
-    public <U1,U2> Pair<U1,U2> map(Function<T1,U1> f1, Function<T2,U2> f2) {
+    public <U1,U2> Pair<U1,U2> map(Function<? super T1, ? extends U1> f1, Function<? super T2, ? extends U2> f2) {
         return Pair.of(f1.apply(first()), f2.apply(second()));
     }
 

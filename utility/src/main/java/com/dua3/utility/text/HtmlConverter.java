@@ -220,7 +220,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param m2 the second mapper
      * @return the new mapper
      */
-    private Function<Object, HtmlTag> combineMappers(Function<Object, HtmlTag> m1, Function<Object, HtmlTag> m2) {
+    private Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1, Function<Object, ? extends HtmlTag> m2) {
         return value -> {
             HtmlTag oldTag = m1.apply(value);
             HtmlTag newTag = m2.apply(value);

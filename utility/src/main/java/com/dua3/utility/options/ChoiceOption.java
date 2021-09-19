@@ -105,7 +105,7 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Get choices.
-     * @param v the choice to use in a {@link ChoiceOption}
+     * @param v the choice to use in a ChoiceOption
      * @return collection holding the possible choices
      */
     public Choice<T> choice(T v) {

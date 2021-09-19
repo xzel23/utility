@@ -71,7 +71,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         return Files.walk(path, 1)
                 .filter(p -> !p.equals(path))
                 .map(p -> { 
-                    T child = (T) new FileTreeNode<T>((T) this, p, lazy); 
+                    T child = (T) new FileTreeNode<>((T) this, p, lazy); 
                     if (!lazy) { 
                         child.refresh(); 
                     } 

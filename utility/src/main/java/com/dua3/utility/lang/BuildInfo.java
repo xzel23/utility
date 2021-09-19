@@ -67,7 +67,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     }
 
     /**
-     * Load properties from stream and return {@link BuildInfo}.
+     * Load properties from stream and return BuildInfo.
      * @param in {@link InputStream} to read the build info properties from
      * @return BuildInfo instance
      */
@@ -82,7 +82,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     }
 
     /**
-     * Load properties from resource and return {@link BuildInfo}.
+     * Load properties from resource and return BuildInfo.
      * @param cls the class used to load the properties
      * @param resource name of the resource file
      * @return BuildInfo instance

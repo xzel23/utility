@@ -10,7 +10,7 @@ import java.util.function.Function;
  */
 public final class StandardOption<T> extends Option<T> {
     
-    public static <T> StandardOption<T> create(Class<T> type, String... names) {
+    public static <T> StandardOption<T> create(Class<? extends T> type, String... names) {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
@@ -27,7 +27,7 @@ public final class StandardOption<T> extends Option<T> {
      * @param mapper the mapper used to convert the string values of arguments to the target type
      * @param names the names to be used on the command line for this option
      */
-    private StandardOption(Function<String,T> mapper, Function<? super T, String> formatter, String... names) {
+    private StandardOption(Function<String, ? extends T> mapper, Function<? super T, String> formatter, String... names) {
         super(mapper, formatter, names);
     }
 
