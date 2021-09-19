@@ -5,7 +5,6 @@
 
 package com.dua3.utility.lang;
 
-import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 
 import java.security.GeneralSecurityException;

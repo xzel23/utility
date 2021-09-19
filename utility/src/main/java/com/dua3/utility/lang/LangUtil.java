@@ -7,6 +7,7 @@ package com.dua3.utility.lang;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +37,7 @@ public final class LangUtil {
      * distinguish failed checks from other IllegalStateExceptions in try-blocks.
      */
     public static class FailedCheckException extends IllegalStateException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         public FailedCheckException() {

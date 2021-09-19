@@ -3,7 +3,6 @@ package com.dua3.utility.options;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.TextUtil;
 
 import java.util.*;
 import java.util.function.Function;

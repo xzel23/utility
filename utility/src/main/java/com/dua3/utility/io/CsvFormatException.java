@@ -13,6 +13,7 @@
 package com.dua3.utility.io;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.net.URI;
 
 /**
@@ -21,6 +22,7 @@ import java.net.URI;
  * @author Axel Howind (axel@dua3.com)
  */
 public class CsvFormatException extends IOException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final URI source;

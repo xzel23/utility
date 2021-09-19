@@ -18,6 +18,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,6 +54,7 @@ public final class SwingUtil {
      */
     public static Action createAction(String name, Consumer<? super ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
+            @Serial
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -81,6 +83,7 @@ public final class SwingUtil {
      */
     public static Action createAction(String name, Runnable onActionPerformed) {
         return new AbstractAction(name) {
+            @Serial
             private static final long serialVersionUID = 1L;
 
             @Override

@@ -5,10 +5,13 @@
 
 package com.dua3.utility.lang;
 
+import java.io.Serial;
+
 /**
  * RuntimeException that wraps an unchecked exception.
  */
 public class WrappedException extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public WrappedException(Exception cause) {

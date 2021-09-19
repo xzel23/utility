@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -211,7 +212,7 @@ class LangUtilTest {
     }
 
     static class Foo implements Supplier<Integer> {
-        private static int n = 0;
+        private static final AtomicInteger n = new AtomicInteger(0);
         private final int value;
 
         Foo(int value) {
@@ -220,7 +221,7 @@ class LangUtilTest {
         
         @Override
         public Integer get() {
-            n++;
+            n.incrementAndGet();
             return value;
         }
     }
@@ -232,7 +233,7 @@ class LangUtilTest {
         for (int i=1; i<100; i++) {
             assertEquals(5, giveMe5.get());
         }
-        assertTrue(Foo.n < 50); // ideally n==1, but GC might kick in
+        assertTrue(Foo.n.get() < 50); // ideally n==1, but GC might kick in
     }
 
     @Test
