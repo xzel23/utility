@@ -97,6 +97,10 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - added BuildInfo class
 - many fixes and smaller improvements
 
+**The following functionality has been removed because it is available obsolete in JDK 17**:
+ - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
+ - TextUtil.hexStringToByteArray(): use HexFormat.of().parseHex()
+
 ### 9.0.1
 
 - add HtmlConverter.inlineTextDecorations()

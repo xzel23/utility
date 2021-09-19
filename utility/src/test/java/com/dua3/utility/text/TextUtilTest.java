@@ -33,20 +33,6 @@ public class TextUtilTest {
             Pair.of("a0cafe", new byte[] { (byte) 0xa0, (byte) 0xca, (byte) 0xfe }));
 
     @Test
-    public void testByteArrayToHexString() {
-        for (Pair<String, byte[]> entry : byteArrayHexStringTestData) {
-            assertEquals(entry.first(), TextUtil.byteArrayToHexString(entry.second()));
-        }
-    }
-
-    @Test
-    public void testHexStringToByteArray() {
-        for (Pair<String, byte[]> entry : byteArrayHexStringTestData) {
-            assertArrayEquals(entry.second(), TextUtil.hexStringToByteArray(entry.first()));
-        }
-    }
-
-    @Test
     public void testAlign() {
         assertEquals("", TextUtil.align("",0, TextUtil.Alignment.LEFT));
         assertEquals("", TextUtil.align("",0, TextUtil.Alignment.CENTER));

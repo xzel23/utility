@@ -9,6 +9,7 @@ import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 
 import java.security.GeneralSecurityException;
+import java.util.HexFormat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,7 +29,7 @@ public class CryptUtilTest {
             System.out.format("Testing encryption with keylength %d bits%n", keyLength);
 
             byte[] key = CryptUtil.generateKey(keyLength);
-            System.out.format("key = %s%n", TextUtil.byteArrayToHexString(key));
+            System.out.format("key = %s%n", HexFormat.of().formatHex(key));
 
             for (String message : MESSAGES) {
                 System.out.format("message length = %d%n", message.length());
