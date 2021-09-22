@@ -334,5 +334,11 @@ class LangUtilTest {
                 Arrays.asList(-2,3,4,5,6,7,8,9,10,-2),
                 LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
                         n -> n>=5&&n<=7, 2, 3, (count,pos) -> -count));
+
+        // assert item count is passed correctly, after/before overlap
+        assertEquals(
+                Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,-1),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
+                        n -> n==3 || n==8, 3, 3, (count,pos) -> -count));
     }
 }

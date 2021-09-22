@@ -723,7 +723,7 @@ public final class LangUtil {
             // print changes
             int changedLines = endIndex-startIndex;
 
-            int from = Math.max(startIndex-before, Math.max(0, lastIndex));
+            int from = Math.max(startIndex-before, Math.max(0, lastIndex+1));
             int to = Math.min(endIndex+after, list.size());
             
             filtered.addAll(list.subList(from,to));
