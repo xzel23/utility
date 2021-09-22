@@ -95,6 +95,8 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - some classes (Pair, Vector2f, ...) have been converted to records
 - updates to FileTreeNode to allow use as a base class
 - added BuildInfo class
+- add constants for different line ending sequences in TextUtil
+- fix duplicate item output in LangUtil.surroundingItems() when regions overlap
 - many fixes and smaller improvements
 
 **The following functionality has been removed because it is available obsolete in JDK 17**:
