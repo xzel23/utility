@@ -38,12 +38,12 @@ public final class TextUtil {
     /**
      * UNIX end-of-line sequence.
      */
-    public static final String LINE_END_UNIX = String.format("\n");
+    public static final String LINE_END_UNIX = "\n";
 
     /**
      * Windows end-of-line sequence.
      */
-    public static final String LINE_END_WINDOWS = String.format("\r\n");
+    public static final String LINE_END_WINDOWS = "\r\n";
 
     /**
      * HTML-escape a string.
