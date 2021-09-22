@@ -31,6 +31,21 @@ public final class TextUtil {
     private static final String TRANSFORM_REF_END = "}";
 
     /**
+     * The current system's end-of-line sequence.
+     */
+    public static final String LINE_END_SYSTEM = String.format("%n");
+
+    /**
+     * UNIX end-of-line sequence.
+     */
+    public static final String LINE_END_UNIX = String.format("\n");
+
+    /**
+     * Windows end-of-line sequence.
+     */
+    public static final String LINE_END_WINDOWS = String.format("\r\n");
+
+    /**
      * HTML-escape a string.
      *
      * @param s the string
