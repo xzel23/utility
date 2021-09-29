@@ -1,6 +1,7 @@
 package com.dua3.utility.lang;
 
 import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
  * Enumeration for the different Platforms/Operating systems.
@@ -15,20 +16,26 @@ public enum Platform {
     /** Unknown operating system. */
     UNKNOWN;
 
-    private static final Platform detected = determinePlatform();
+    private static final Logger LOG = Logger.getLogger(Platform.class.getName());
+    private static final Platform DETECTED = determinePlatform();
     
     private static Platform determinePlatform() {
+        final Platform platform;
+        
         String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ROOT);
         if ((os.contains("mac")) || (os.contains("darwin"))) {
-            return Platform.MACOS;
+            platform = Platform.MACOS;
+        } else if (os.contains("windows")) {
+            platform = Platform.WINDOWS;
+        } else if (os.contains("linux")) {
+            platform = Platform.LINUX;
+        } else {
+            platform = Platform.UNKNOWN;
         }
-        if (os.contains("windows")) {
-            return Platform.WINDOWS;
-        }
-        if (os.contains("linux")) {
-            return Platform.LINUX;
-        }
-        return Platform.UNKNOWN;
+        
+        LOG.info(() -> "platform identified as: "+platform);
+        
+        return platform;
     }
 
     /**
@@ -36,7 +43,7 @@ public enum Platform {
      * @return the detected platform
      */
     public static Platform getCurrentPlatform() {
-        return detected;
+        return DETECTED;
     }
 
     /**
@@ -44,7 +51,7 @@ public enum Platform {
      * @return true if currently running under a Windows operating system
      */
     public static boolean isWindows() {
-        return detected==WINDOWS;
+        return DETECTED == WINDOWS;
     }
 
     /**
@@ -52,7 +59,7 @@ public enum Platform {
      * @return true if currently running under a Linux operating system
      */
     public static boolean isLinux() {
-        return detected==LINUX;
+        return DETECTED == LINUX;
     }
 
     /**
@@ -60,7 +67,7 @@ public enum Platform {
      * @return true if currently running under a MacOS operating system
      */
     public static boolean isMacOS() {
-        return detected==MACOS;
+        return DETECTED == MACOS;
     }
 
     /**
@@ -68,6 +75,6 @@ public enum Platform {
      * @return true if currently running under an unknown operating system
      */
     public static boolean isUnknown() {
-        return detected==UNKNOWN;
+        return DETECTED == UNKNOWN;
     }
 }
