@@ -1,14 +1,12 @@
 package com.dua3.utility.logging;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public final class LogUtil {
-    
+
     private static final Logger LOG = Logger.getLogger(LogUtil.class.getName());
     
     private LogUtil() {
@@ -50,11 +48,19 @@ public final class LogUtil {
     public static Supplier<String> formatLazy(Supplier<String> s) {
         return new LazyToString(s);
     }
-    
+
+    public static final String DEFAULT_FORMAT = "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s %2$s %5$s%6$s%n";
+
     /**
-     * option to parse on the command line to set the global log level.
+     * Command line option to set the global log level.
      */
     public static final String ARG_LOG_LEVEL = "--log-level=";
+
+    /**
+     * Command line option to set the global log path pattern.
+     * See {@link FileHandler#FileHandler(String)} for pattern syntax.
+     */
+    public static final String ARG_LOG_PATH_PATTERN = "--log-path-pattern=";
 
     /**
      * Utility method to set global log level at program starttup. The argument list is scanned for arguments
@@ -66,7 +72,32 @@ public final class LogUtil {
      */
     public static String[] handleLoggingCmdArgs(Level defaultLevel, String... args) {
         List<String> argList = new ArrayList<>(Arrays.asList(args));
+
+        // set log format
+        if (System.getProperty("java.util.logging.SimpleFormatter.format")==null) {
+            System.setProperty("java.util.logging.SimpleFormatter.format", DEFAULT_FORMAT);
+            LOG.info("default log format changed to 1-line output");
+        }
         
+        // set log handlers first (because it should be done before setting levels)
+        for (int i=0; i<argList.size(); i++) {
+            String arg = argList.get(i);
+            if (arg.startsWith(ARG_LOG_PATH_PATTERN)) {
+                // set log level
+                String value = arg.substring(ARG_LOG_PATH_PATTERN.length());
+                try {
+                    LogUtil.setLogPath(value);
+                } catch (IOException e) {
+                    LOG.log(Level.WARNING, "could not set log pattern", e);
+                }
+
+                // remove from list of arguments
+                //noinspection AssignmentToForLoopParameter
+                argList.remove(i--);
+            }
+        }
+        
+        // now set level
         Level level = defaultLevel;
         for (int i=0; i<argList.size(); i++) {
             String arg = argList.get(i);
@@ -74,25 +105,40 @@ public final class LogUtil {
                 // set log level
                 String value = arg.substring(ARG_LOG_LEVEL.length());
                 level = Level.parse(value);
+                LogUtil.setLogLevel(level);
 
                 // remove from list of arguments
                 //noinspection AssignmentToForLoopParameter
                 argList.remove(i--);
             }
         }
-        LogUtil.setLogLevel(level);
-        LOG.info(format("global log level set to '%s'", level));
 
         return argList.toArray(String[]::new);
     }
-    
+
+    private static Logger getRootLogger() {
+        return LogManager.getLogManager().getLogger("");
+    }
+
+    /**
+     * Set log path pattern.
+     * See {@link FileHandler#FileHandler(String)} for pattern syntax.
+     * @param pattern the pattern to use
+     */
+    private static void setLogPath(String pattern) throws IOException {
+        Handler fh = new FileHandler(pattern);
+        fh.setFormatter(new SimpleFormatter());
+        getRootLogger().addHandler (fh);
+        LOG.info("log path set to "+pattern);
+    }
+
     /**
      * Set java.util.logging log level for the root logger.
      *
      * @param level the log level to set
      */
     public static void setLogLevel(Level level) {
-        Logger rootLogger = LogManager.getLogManager().getLogger("");
+        Logger rootLogger = getRootLogger();
         setLogLevel(level, rootLogger);
     }
 
@@ -109,6 +155,7 @@ public final class LogUtil {
         for (Handler h : logger.getHandlers()) {
             h.setLevel(level);
         }
+        LOG.info(() -> "logger '%s': log level set to '%s'".formatted(logger.getName(), level));
     }
 
     /**

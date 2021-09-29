@@ -96,10 +96,11 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - updates to FileTreeNode to allow use as a base class
 - added BuildInfo class
 - add constants for different line ending sequences in TextUtil
+- add command line option "--log-path-pattern" to LogUtil
 - fix duplicate item output in LangUtil.surroundingItems() when regions overlap
 - many fixes and smaller improvements
 
-**The following functionality has been removed because it is available obsolete in JDK 17**:
+**The following functionality has been removed because it is available in JDK 17**:
  - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
  - TextUtil.hexStringToByteArray(): use HexFormat.of().parseHex()
 
