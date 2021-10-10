@@ -326,5 +326,68 @@ public class Font {
         }
         return spaceWidth;
     }
-    
+
+    /**
+     * Return a font derived from this font by applying the given size.
+     * @param size the new font size
+     * @return a copy of this font with the requested size, or this font, if the size matches
+     */
+    public Font withSize(float size) {
+        return size==this.size ? this : deriveFont(FontDef.size(size));
+    }
+
+    /**
+     * Return a font derived from this font by applying the given value for the bold attribute.
+     * @param flag the value to use
+     * @return a copy of this font with the bold attribute set to the requested value, or this font if values match
+     */
+    public Font withBold(boolean flag) {
+        return flag==this.bold ? this : deriveFont(FontDef.bold(flag));
+    }
+
+    /**
+     * Return a font derived from this font by applying the given value for the italic attribute.
+     * @param flag the value to use
+     * @return a copy of this font with the italic attribute set to the requested value, or this font if values match
+     */
+    public Font withItalic(boolean flag) {
+        return flag==this.italic ? this : deriveFont(FontDef.italic(flag));
+    }
+
+    /**
+     * Return a font derived from this font by applying the given value for the underline attribute.
+     * @param flag the value to use
+     * @return a copy of this font with the underline attribute set to the requested value, or this font if values match
+     */
+    public Font withUnderline(boolean flag) {
+        return flag==this.underline ? this : deriveFont(FontDef.underline(flag));
+    }
+
+    /**
+     * Return a font derived from this font by applying the given value for the strike-through attribute.
+     * @param flag the value to use
+     * @return a copy of this font with the strike-through attribute set to the requested value, or this font if values match
+     */
+    public Font withStrikeThrough(boolean flag) {
+        return flag==this.strikeThrough ? this : deriveFont(FontDef.strikeThrough(flag));
+    }
+
+    /**
+     * Return a font derived from this font by replacing the family with the given value.
+     * @param family the value to use
+     * @return a copy of this font with the family set to the requested value, or this font if values match
+     */
+    public Font withFamily(String family) {
+        return family.equals(this.family) ? this : deriveFont(FontDef.family(family));
+    }
+
+    /**
+     * Return a font derived from this font by replacing the color with the given value.
+     * @param color the value to use
+     * @return a copy of this font with the color set to the requested value, or this font if values match
+     */
+    public Font withColor(Color color) {
+        return color.equals(this.color) ? this : deriveFont(FontDef.color(color));
+    }
+
 }

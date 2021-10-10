@@ -47,6 +47,54 @@ public final class FontDef {
         return fd;
     }
 
+    /**
+     * Create FontDef instance with only the bold field set.
+     *
+     * @param flag the value to set
+     * @return new FontDef instance
+     */
+    public static FontDef bold(boolean flag) {
+        FontDef fd = new FontDef();
+        fd.setBold(flag);
+        return fd;
+    }
+
+    /**
+     * Create FontDef instance with only the italic field set.
+     *
+     * @param flag the value to set
+     * @return new FontDef instance
+     */
+    public static FontDef italic(boolean flag) {
+        FontDef fd = new FontDef();
+        fd.setItalic(flag);
+        return fd;
+    }
+
+    /**
+     * Create FontDef instance with only the underline field set.
+     *
+     * @param flag the value to set
+     * @return new FontDef instance
+     */
+    public static FontDef underline(boolean flag) {
+        FontDef fd = new FontDef();
+        fd.setUnderline(flag);
+        return fd;
+    }
+
+    /**
+     * Create FontDef instance with only the strikethrough field set.
+     *
+     * @param flag the value to set
+     * @return new FontDef instance
+     */
+    public static FontDef strikeThrough(boolean flag) {
+        FontDef fd = new FontDef();
+        fd.setStrikeThrough(flag);
+        return fd;
+    }
+
     private Color color;
     private Float size;
     private String family;

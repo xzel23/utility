@@ -99,6 +99,7 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - add command line option "--log-path-pattern" to LogUtil
 - fix duplicate item output in LangUtil.surroundingItems() when regions overlap
 - many fixes and smaller improvements
+- added several Font.withXXX()-methods to help quickly deriving fonts that differ only in one attribute 
 
 **The following functionality has been removed because it is available in JDK 17**:
  - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
