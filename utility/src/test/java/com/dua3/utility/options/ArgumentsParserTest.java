@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CmdTest {
+public class ArgumentsParserTest {
 
     @Test
     public void testFlag() {
