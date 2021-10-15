@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Axel Howind
  */
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class RichTextBuilderTest {
 
     @Test

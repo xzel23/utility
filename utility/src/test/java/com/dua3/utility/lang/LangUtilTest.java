@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("ProhibitedExceptionThrown")
+@SuppressWarnings({"ProhibitedExceptionThrown", "OptionalGetWithoutIsPresent"})
 class LangUtilTest {
 
     @Test
