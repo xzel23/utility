@@ -344,7 +344,7 @@ public class ArgumentsParser {
             fmt.format("%n");
         }
         
-        fmt.format("ERROR: "+e.getMessage());
+        fmt.format("ERROR: %s", e.getMessage());
     }
 
     public String errorMessage(OptionException e) {

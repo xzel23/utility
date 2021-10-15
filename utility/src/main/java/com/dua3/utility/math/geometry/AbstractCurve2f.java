@@ -58,7 +58,7 @@ public abstract class AbstractCurve2f extends Segment2f {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         
-        sb.append(getClass().getSimpleName()+"{");
+        sb.append(getClass().getSimpleName()).append("{");
         String sep = "";
         for (int control: controls) {
             sb.append(sep);

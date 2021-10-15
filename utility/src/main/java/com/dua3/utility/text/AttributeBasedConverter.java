@@ -28,7 +28,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
      * Abstract base class for the attribute based converter implementation classes.
      * @param <T> the conversion target type
      */
-    protected static abstract class AttributeBasedConverterImpl<T> {
+    protected abstract static class AttributeBasedConverterImpl<T> {
 
         /** The current font used when appending text. */
         private Map<String,Object> currentAttributes;

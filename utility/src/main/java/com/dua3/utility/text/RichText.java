@@ -161,7 +161,7 @@ public final class RichText
     }
 
     RichText(List<Run> runs) {
-        this(runs.toArray(new Run[0]));
+        this(runs.toArray(Run[]::new));
     }
 
     private boolean checkAllRunsHaveTextAsBase() {
@@ -548,7 +548,7 @@ public final class RichText
                     resultSize--;
                 }
             }
-            return list.subList(0, resultSize).toArray(new RichText[0]);
+            return list.subList(0, resultSize).toArray(RichText[]::new);
         }
 
         RichTextMatcher m = matcher(Pattern.compile(regex), this);
@@ -559,7 +559,7 @@ public final class RichText
             off = m.end();
         }
         result.add(subSequence(off));
-        return result.toArray(new RichText[0]);
+        return result.toArray(RichText[]::new);
     }
 
     /**

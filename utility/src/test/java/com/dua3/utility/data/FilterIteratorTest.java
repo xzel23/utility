@@ -12,7 +12,7 @@ class FilterIteratorTest {
 
     @Test
     public void testEmpty() {
-        List<Integer> items = Arrays.asList();
+        List<Integer> items = List.of();
 
         @SuppressWarnings("RedundantOperationOnEmptyContainer") 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->true);

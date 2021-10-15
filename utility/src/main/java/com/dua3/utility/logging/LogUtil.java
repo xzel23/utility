@@ -105,13 +105,13 @@ public final class LogUtil {
                 // set log level
                 String value = arg.substring(ARG_LOG_LEVEL.length());
                 level = Level.parse(value);
-                LogUtil.setLogLevel(level);
 
                 // remove from list of arguments
                 //noinspection AssignmentToForLoopParameter
                 argList.remove(i--);
             }
         }
+        LogUtil.setLogLevel(level);
 
         return argList.toArray(String[]::new);
     }

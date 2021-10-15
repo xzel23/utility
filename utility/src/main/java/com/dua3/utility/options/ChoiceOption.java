@@ -84,7 +84,6 @@ public final class ChoiceOption<T> extends Option<T> {
         occurence(0,1);
         arity(1,1);
         this.values = Objects.requireNonNull(values);
-        this.values = Objects.requireNonNull(values);
     }
 
     /**

@@ -112,7 +112,7 @@ public class LogBuffer implements LogListener {
 
     public List<LogEntry> entries() {
         synchronized(buffer) {
-            return Arrays.asList(buffer.toArray(new LogEntry[0]));
+            return Arrays.asList(buffer.toArray(LogEntry[]::new));
         }
     }
 

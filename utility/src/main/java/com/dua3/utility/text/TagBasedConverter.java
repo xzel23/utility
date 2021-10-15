@@ -21,7 +21,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
      * Abstract base class for the tag based converter implementation classes.
      * @param <T> the conversion target type
      */
-    protected static abstract class TagBasedConverterImpl<T> {
+    protected abstract static class TagBasedConverterImpl<T> {
         
         private List<Style> currentStyles = new ArrayList<>();
 

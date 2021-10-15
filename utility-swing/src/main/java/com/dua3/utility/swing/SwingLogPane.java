@@ -295,7 +295,7 @@ public class SwingLogPane extends JPanel {
                     for (int idx = first; idx <= last; idx++) {
                         if (lsm.isSelectedIndex(idx)) {
                             int idxModel = tableRowSorter.convertRowIndexToModel(idx);
-                            LogEntry entry = (LogEntry) model.getValueAt(idxModel, 0);
+                            LogEntry entry = model.getValueAt(idxModel, 0);
                             sb.append(format.apply(entry)).append("\n");
                         }
                     }
@@ -359,7 +359,7 @@ public class SwingLogPane extends JPanel {
         toolBar.add(SwingUtil.createAction("Clear", this::clearBuffer));
         toolBar.add(SwingUtil.createAction("Copy", this::copyBuffer));
         
-        add(toolBar, BorderLayout.NORTH);
+        add(toolBar, BorderLayout.PAGE_START);
         add(splitPane, BorderLayout.CENTER);
         
         setTextOnly(cbTextOnly.isSelected());

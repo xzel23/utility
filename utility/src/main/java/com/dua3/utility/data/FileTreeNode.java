@@ -68,16 +68,18 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     }
 
     protected Collection<T> collectChildren() throws IOException {
-        return Files.walk(path, 1)
-                .filter(p -> !p.equals(path))
-                .map(p -> { 
-                    T child = (T) new FileTreeNode<>((T) this, p, lazy); 
-                    if (!lazy) { 
-                        child.refresh(); 
-                    } 
-                    return child; 
-                })
-                .collect(Collectors.toList());
+        try (Stream<Path> stream = Files.walk(path, 1)) {
+            return stream
+                    .filter(p -> !p.equals(path))
+                    .map(p -> {
+                        T child = (T) new FileTreeNode<>((T) this, p, lazy);
+                        if (!lazy) {
+                            child.refresh();
+                        }
+                        return child;
+                    })
+                    .collect(Collectors.toList());
+        }
     }
     
     @Override

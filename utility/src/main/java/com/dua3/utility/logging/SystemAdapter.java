@@ -72,7 +72,7 @@ public final class SystemAdapter {
         }
     }
 
-    static abstract class SystemLogEntry extends AbstractLogEntry<String> {
+    abstract static class SystemLogEntry extends AbstractLogEntry<String> {
         private final String text;
         private final long millis;
 
