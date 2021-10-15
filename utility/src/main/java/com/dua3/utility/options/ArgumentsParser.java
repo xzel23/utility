@@ -305,7 +305,7 @@ public class ArgumentsParser {
         });
     }
 
-    private String getArgText(int min, int max) {
+    private static String getArgText(int min, int max) {
         assert min<=max;
         
         String argText = switch (min) {

@@ -5,12 +5,11 @@
 
 package com.dua3.utility.text;
 
-import java.util.*;
-import java.util.stream.Stream;
-
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
+
+import java.util.*;
 
 /**
  * A set of text attributes.
