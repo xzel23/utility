@@ -18,7 +18,7 @@ Source code is available at https://gitlab.com/com.dua3/lib/utility.git.
 
 ## Requirements
 
- - JDK 11 or later 
+ - JDK 17 or later 
 
 ## Including the library
 
