@@ -171,8 +171,9 @@ public class RingBuffer<E> implements Collection<E> {
             }
 
             @Override
-            public E next() {
+            public E next() throws NoSuchElementException{
                 checkValid();
+                LangUtil.check(idx<entries_, NoSuchElementException::new);
                 return get(idx++);
             }
         };

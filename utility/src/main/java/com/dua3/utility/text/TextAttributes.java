@@ -20,26 +20,6 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     /** empty {@link TextAttributes} instance */
     private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
     
-    /** Styles. */
-    private final Map<String,List<Style>> styles = new HashMap<>();
-
-    /** 
-     * Stream Styles.
-     * @return stream of pairs consisting of style class name and list of styles for that style class
-     */
-    Stream<Pair<String,List<Style>>> styles() {
-        return styles.entrySet().stream().map(Pair::of);
-    }
-
-    /**
-     * Stream Styles.
-     * @param styleClass the style class
-     * @return stream of styles
-     */
-    Stream<Style> styles(String styleClass) {
-        return styles.getOrDefault(styleClass, Collections.emptyList()).stream();
-    }
-
     /**
      * The empty style instance.
      *
