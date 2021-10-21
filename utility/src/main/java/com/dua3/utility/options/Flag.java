@@ -1,5 +1,8 @@
 package com.dua3.utility.options;
 
+import java.util.Collection;
+import java.util.function.Consumer;
+
 /**
  * A flag class, which is in principle a boolean option. 
  * 
@@ -27,6 +30,12 @@ public final class Flag extends Option<Boolean> {
         return this;
     }
 
+    @Override
+    public Flag handler(Consumer<Collection<Boolean>> handler) {
+        super.handler(handler);
+        return this;
+    }
+
     private static Boolean mapToBoolean(String s) {
         if (s.equalsIgnoreCase("true")) {
             return true;
@@ -36,5 +45,5 @@ public final class Flag extends Option<Boolean> {
         }
         throw new IllegalArgumentException("invalid boolean value: "+s);
     }
-
+    
 }

@@ -2,6 +2,7 @@ package com.dua3.utility.options;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -159,5 +160,20 @@ public class ArgumentsParserTest {
         assertEquals(List.of("abc", "def"), cmd.parse("abc", "def").positionalArgs());
         assertEquals(List.of("abc", "def", "ghi"), cmd.parse("abc", "def", "ghi").positionalArgs());
     }
-    
+
+    @Test
+    public void testOptionHandler() {
+        ArgumentsParser cmd = new ArgumentsParser("testOptionHandler", "Unit test for option handling.");
+
+        List<String> yeaSayer = new ArrayList<>();
+        List<String> naySayer = new ArrayList<>();
+        
+        cmd.option(String.class, "-y").arity(1).handler(yeaSayer::addAll);
+        cmd.option(String.class, "-n").arity(1).handler(naySayer::addAll);
+
+        cmd.parse("-y a -n b -n c -n d -y e -n f".split(" ")).handle();
+
+        assertEquals(List.of("a", "e"), yeaSayer);
+        assertEquals(List.of("b", "c", "d", "f"), naySayer);
+    }
 }

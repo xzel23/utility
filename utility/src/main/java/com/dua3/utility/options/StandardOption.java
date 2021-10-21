@@ -2,6 +2,8 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.data.DataUtil;
 
+import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -34,6 +36,12 @@ public final class StandardOption<T> extends Option<T> {
     @Override
     public StandardOption<T> description(String description) {
         super.description(description);
+        return this;
+    }
+
+    @Override
+    public StandardOption<T> handler(Consumer<Collection<T>> handler) {
+        super.handler(handler);
         return this;
     }
 

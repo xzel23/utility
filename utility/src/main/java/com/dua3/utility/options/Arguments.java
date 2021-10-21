@@ -78,11 +78,18 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         }
 
         /**
-         * Getz the parameters given for this invocation of the ooption.
+         * Get the parameters given for this invocation of the ooption.
          * @return liest of option parameters, converted to the target type
          */
         public List<T> getParms() {
             return Collections.unmodifiableList(parms);
+        }
+
+        /**
+         * Call the handler registered with the option and pass the parameters.
+         */
+        public void handle() {
+            option.handle(parms);
         }
     }
 
@@ -212,10 +219,17 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     public <T> void forEach(Option<T> option, Consumer<? super List<T>> action) {
         stream(option).forEach(action);
     }
-        
+
+    /**
+     * Call the handlers for all passed options.
+     */
+    public void handle() {
+        parsedOptions.forEach(Entry::handle);
+    }
+    
     @Override
     public Iterator<Entry<?>> iterator() {
         return parsedOptions.iterator();
     }
-
+    
 }

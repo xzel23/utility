@@ -2,6 +2,7 @@ package com.dua3.utility.options;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -114,6 +115,12 @@ public final class ChoiceOption<T> extends Option<T> {
     @Override
     public ChoiceOption<T> description(String description) {
         super.description(description);
+        return this;
+    }
+
+    @Override
+    public ChoiceOption<T> handler(Consumer<Collection<T>> handler) {
+        super.handler(handler);
         return this;
     }
 

@@ -3,6 +3,7 @@ package com.dua3.utility.options;
 import com.dua3.utility.lang.LangUtil;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -20,6 +21,7 @@ public abstract class Option<T> {
     int maxArity = 0;
     int minOccurrences = 0;
     int maxOccurrences = Integer.MAX_VALUE;
+    Consumer<Collection<T>> handler = values -> {};
 
     protected Option(Function<String, ? extends T> mapper, Function<?super T, String> formatter, String... names) {
         LangUtil.check(names.length > 0, "at least one name must be given");
@@ -63,6 +65,19 @@ public abstract class Option<T> {
         return this;
     }
 
+    public Option<T> handler(Consumer<Collection<T>> handler) {
+        this.handler = Objects.requireNonNull(handler);
+        return this;
+    }
+    
+    public Consumer<Collection<T>> handler() {
+        return handler;
+    }
+
+    void handle(Collection<T> values) {
+        handler.accept(values);
+    }
+    
     public T map(String s) {
         try {
             return mapper.apply(s);

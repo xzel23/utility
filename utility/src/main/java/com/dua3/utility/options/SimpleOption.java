@@ -1,7 +1,9 @@
 package com.dua3.utility.options;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -37,6 +39,12 @@ public final class SimpleOption<T> extends Option<T> {
     @Override
     public SimpleOption<T> description(String description) {
         super.description(description);
+        return this;
+    }
+
+    @Override
+    public SimpleOption<T> handler(Consumer<Collection<T>> handler) {
+        super.handler(handler);
         return this;
     }
 
