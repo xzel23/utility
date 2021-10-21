@@ -89,7 +89,7 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 
 ### 10 (to be released)
 
-- Java 17 needed!
+- **Java 17 is now required!**
 - upgraded gradle to 7.2 for Java 17 support
 - geometry classes taking float parameters have been renamed to ...2f
 - some classes (Pair, Vector2f, ...) have been converted to records
@@ -98,12 +98,14 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - add constants for different line ending sequences in TextUtil
 - add command line option "--log-path-pattern" to LogUtil
 - fix duplicate item output in LangUtil.surroundingItems() when regions overlap
-- many fixes and smaller improvements
 - added several Font.withXXX()-methods to help quickly deriving fonts that differ only in one attribute 
+- LangUtil.enumValues()
+- options can be parsed a handler that is executed when arguments.handle() is called
+- many fixes and smaller improvements
 
 **The following functionality has been removed because it is available in JDK 17**:
- - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
- - TextUtil.hexStringToByteArray(): use HexFormat.of().parseHex()
+- TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
+- TextUtil.hexStringToByteArray(): use HexFormat.of().parseHex()
 
 ### 9.0.1
 
