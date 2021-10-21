@@ -249,6 +249,13 @@ class LangUtilTest {
     }
 
     @Test
+    void enumValues() {
+        StandardOpenOption[] expected = StandardOpenOption.values();
+        StandardOpenOption[] actual = LangUtil.enumValues(StandardOpenOption.class);
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
     void getLocaleSuffix() {
         assertEquals("_de_DE", LangUtil.getLocaleSuffix(Locale.GERMANY));
         // Indonesian is a special case as until Java 16, the suffix differed from the language tag! 

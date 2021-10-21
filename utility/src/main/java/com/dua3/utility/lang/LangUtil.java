@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
 import java.io.UncheckedIOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -172,6 +173,21 @@ public final class LangUtil {
         return enumConstant(clazz, ec -> ec.toString().equals(value));
     }
 
+    /**
+     * Get the values for an enum class.
+     * @param clazz the enum class
+     * @param <E> the enum type
+     * @return result of invoking enum class' values() method
+     */
+    public static <E extends Enum<E>> E[] enumValues(Class<? extends E> clazz) {
+        try {
+            //noinspection unchecked
+            return (E[]) clazz.getMethod("values").invoke(null);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalStateException("calling Enum.values() failed", e);
+        }
+    }
+    
     /** The byte order mark in UTF files */
     public static final char UTF_BYTE_ORDER_MARK = 0xfeff;
 
