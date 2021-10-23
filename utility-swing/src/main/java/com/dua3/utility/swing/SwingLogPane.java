@@ -106,7 +106,7 @@ public class SwingLogPane extends JPanel {
 
         @Override
         public String getColumnName(int column) {
-            return COLUMNS[column].field.toString();
+            return COLUMNS[column].field().toString();
         }
 
         @Override
@@ -265,11 +265,11 @@ public class SwingLogPane extends JPanel {
         for (int i = 0; i < columnModel.getColumnCount(); i++) {
             Column cd = COLUMNS[i];
             TableColumn column = columnModel.getColumn(i);
-            TableCellRenderer r = new LogEntryFieldCellRenderer(cd.field);
+            TableCellRenderer r = new LogEntryFieldCellRenderer(cd.field());
             column.setCellRenderer(r);
             
             java.awt.Font font = table.getFont();
-            int chars = cd.preferredCharWidth;
+            int chars = cd.preferredCharWidth();
             int width = (int) Math.ceil(fu.getTextWidth("M".repeat(Math.abs(chars)), font));
             if (chars>=0) {
                 column.setPreferredWidth(width);
@@ -385,7 +385,7 @@ public class SwingLogPane extends JPanel {
 
             // add visible columns again
             for (int i=0; i<table.getModel().getColumnCount(); i++) {
-                if (!textOnly || !COLUMNS[i].hideable) {
+                if (!textOnly || !COLUMNS[i].hideable()) {
                     table.getColumnModel().addColumn(tableColumns.get(i));
                 }
             }

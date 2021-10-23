@@ -50,7 +50,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param options the options to apply
      * @return new converter instance
      */
-    public static AnsiConverter create(Collection<? extends AnsiConversionOption> options) {
+    public static AnsiConverter create(Collection<AnsiConversionOption> options) {
         AnsiConverter instance = new AnsiConverter();
         options.forEach(o -> o.apply(instance));
         return instance;

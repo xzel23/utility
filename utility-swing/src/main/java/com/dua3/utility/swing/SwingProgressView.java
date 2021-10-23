@@ -14,7 +14,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
     private static class ProgressBarIndicator implements ProgressView.ProgressIndicator {
 
-        private final JProgressBar pb;
+        final JProgressBar pb;
 
         ProgressBarIndicator() {
             this.pb = new JProgressBar();    

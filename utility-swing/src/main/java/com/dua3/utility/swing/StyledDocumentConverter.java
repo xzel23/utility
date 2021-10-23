@@ -5,18 +5,15 @@
 
 package com.dua3.utility.swing;
 
+import com.dua3.utility.data.Pair;
+import com.dua3.utility.text.AttributeBasedConverter;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.TextAttributes;
+
+import javax.swing.text.*;
 import java.util.*;
 import java.util.function.Function;
-
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
-import com.dua3.utility.data.Pair;
-import com.dua3.utility.text.*;
 
 /**
  * A {@link AttributeBasedConverter} implementation for translating
@@ -40,7 +37,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param options the options to use
      * @return new converter instance
      */
-    public static StyledDocumentConverter create(Collection<? extends StyledDocumentConversionOption> options) {
+    public static StyledDocumentConverter create(Collection<StyledDocumentConversionOption> options) {
         StyledDocumentConverter instance = new StyledDocumentConverter();
         options.forEach(o -> o.apply(instance));
         return instance;

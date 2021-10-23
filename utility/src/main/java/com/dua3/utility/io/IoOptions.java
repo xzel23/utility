@@ -58,7 +58,7 @@ public final class IoOptions {
 
     public static ChoiceOption<Character> textDelimiter() {
         return ChoiceOption.create(
-                (String s) -> Character.valueOf(s.charAt(0)),
+                (String s) -> s.charAt(0),
                 Object::toString,
                 () -> List.of('"', '\''),
                 "-t", "--text-delimiter")
@@ -68,7 +68,7 @@ public final class IoOptions {
 
     public static ChoiceOption<Character> fieldSeparator() {
         return ChoiceOption.create(
-                (String s) -> Character.valueOf(s.charAt(0)),
+                (String s) -> s.charAt(0),
                 Object::toString,
                 () -> List.of(',', ';'),
                 "-s", "--field-separator")

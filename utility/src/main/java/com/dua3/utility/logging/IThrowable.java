@@ -87,13 +87,7 @@ public interface IThrowable {
     /**
      * An implementation of {@link IStackTraceElement} that encapsulates an instance of {@link StackTraceElement}.
      */
-    class JavaStackTraceElement implements IStackTraceElement {
-        private final StackTraceElement ste;
-        
-        JavaStackTraceElement(StackTraceElement ste) {
-            this.ste = ste;
-        }
-
+    record JavaStackTraceElement(StackTraceElement ste) implements IStackTraceElement {
         @Override
         public String toString() {
             return ste.toString();

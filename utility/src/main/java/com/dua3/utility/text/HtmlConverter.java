@@ -53,9 +53,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
     /**
      * Set the default mapper which is called when no mapper is registered for the attribute.
+     * @param mapper the mapper to set as the default mapper
+     * @return HtmlConversionOption tat sets the default mapper
      */
-    public static HtmlConversionOption defaultMapper(BiFunction<String, Object, HtmlTag> setDefaultMapper) {
-        return new HtmlConversionOption(c -> c.setDefaultMapper(setDefaultMapper));
+    public static HtmlConversionOption defaultMapper(BiFunction<String, Object, HtmlTag> mapper) {
+        return new HtmlConversionOption(c -> c.setDefaultMapper(mapper));
     }
 
     public static HtmlConversionOption refineStyleProperties(UnaryOperator<Map<String,Object>> refineStyleProperties) {
