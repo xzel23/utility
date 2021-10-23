@@ -5,13 +5,13 @@
 
 package com.dua3.utility.lang;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serial;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.Logger;
@@ -179,9 +179,9 @@ public final class LangUtil {
      * @param <E> the enum type
      * @return result of invoking enum class' values() method
      */
+    @SuppressWarnings("unchecked")
     public static <E extends Enum<E>> E[] enumValues(Class<? extends E> clazz) {
         try {
-            //noinspection unchecked
             return (E[]) clazz.getMethod("values").invoke(null);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException("calling Enum.values() failed", e);
@@ -578,6 +578,57 @@ public final class LangUtil {
         }
     }
 
+    /**
+     * Load a properties file in UTF-8 encoding.
+     * @param url URL to read from
+     * @return the properties
+     * @throws IOException on error
+     */
+    public static Properties loadProperties(URL url) throws IOException {
+        try (InputStream in = url.openStream()) {
+            return loadProperties(in);
+        }
+    }
+
+    /**
+     * Load a properties file in UTF-8 encoding.
+     * @param uri URI to read from
+     * @return the properties
+     * @throws IOException on error
+     */
+    public static Properties loadProperties(URI uri) throws IOException {
+        try (InputStream in = IOUtil.openInputStream(uri)) {
+            return loadProperties(in);
+        }
+    }
+
+    /**
+     * Load a properties file in UTF-8 encoding.
+     * @param path path to read from
+     * @return the properties
+     * @throws IOException on error
+     */
+    public static Properties loadProperties(Path path) throws IOException {
+        try (InputStream in = Files.newInputStream(path)) {
+            return loadProperties(in);
+        }
+    }
+
+    /**
+     * Load a properties file in UTF-8 encoding.
+     * @param in stream to read from
+     * @return the properties
+     * @throws IOException on error
+     */
+    public static Properties loadProperties(InputStream in) throws IOException {
+        Properties p = new Properties();
+        // make sure UTF-8 is used by explicitly instantiating the reader
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+            p.load(reader);
+        }
+        return p;
+    }
+    
     /**
      * Create an EnumSet. This method also works if values is empty.
      * @param clss

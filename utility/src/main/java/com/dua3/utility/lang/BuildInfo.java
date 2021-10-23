@@ -70,15 +70,15 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * Load properties from stream and return BuildInfo.
      * @param in {@link InputStream} to read the build info properties from
      * @return BuildInfo instance
+     * @throws IllegalStateException if buildinfo could not be loaded
      */
     public static BuildInfo create(InputStream in) {
-        Properties properties = new Properties();
         try (in) {
-            properties.load(in);
+            return create(LangUtil.loadProperties(in));
         } catch (NullPointerException|IOException e) {
             LOG.log(Level.WARNING, "could not load build properties", e);
+            throw new IllegalStateException("could not load build properties", e);
         }
-        return create(properties);
     }
 
     /**
@@ -86,6 +86,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @param cls the class used to load the properties
      * @param resource name of the resource file
      * @return BuildInfo instance
+     * @throws IllegalStateException if buildinfo could not be loaded
      */
     public static BuildInfo create(Class<?> cls, String resource) {
         return create(cls.getResourceAsStream(resource));

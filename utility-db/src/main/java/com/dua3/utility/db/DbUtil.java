@@ -42,47 +42,47 @@ public final class DbUtil {
     private static final SortedMap<String, JdbcDriverInfo> drivers = new TreeMap<>();
 
     static {
-        // load properties
-        Properties p = new Properties();
-        try (InputStream in = DbUtil.class.getResourceAsStream("jdbc_drivers.properties")) {
-            p.load(in);
+        try {
+            // load properties
+            Properties p = LangUtil.loadProperties(DbUtil.class.getResourceAsStream("jdbc_drivers.properties"));
+            
+            // parse entries
+            p.forEach((key1, value) -> {
+                try {
+                    ListRowBuilder rb = new ListRowBuilder();
+                    CsvReader reader = CsvReader.create(
+                            rb,
+                            new BufferedReader(new StringReader(Objects.toString(value))),
+                            Arguments.of(Arguments.createEntry(IoOptions.fieldSeparator(), ';')));
+                    int n = reader.readSome(1);
+                    assert n == 1;
+                    List<String> data = rb.getRow();
+
+                    String key = String.valueOf(key1);
+
+                    final int expectedFields = 5;
+                    LangUtil.check(
+                            data.size() == expectedFields,
+                            "invalid driver data for %s: expected %d fields, found %d", key, expectedFields, data.size());
+
+                    String name = data.get(0).trim();
+                    String className = data.get(1).trim();
+                    String urlPrefix = data.get(2).trim();
+                    String urlScheme = data.get(3).trim();
+                    String link = data.get(4).trim();
+
+                    JdbcDriverInfo di = new JdbcDriverInfo(name, className, urlPrefix, urlScheme, link);
+                    JdbcDriverInfo rc = drivers.put(name, di);
+
+                    LangUtil.check(rc == null, "duplicate entry for URL prefix %s", urlPrefix);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
         } catch (IOException e) {
             LOG.log(Level.WARNING, "could not load JDBC driver data", e);
         }
 
-        // parse entries
-        p.forEach((key1, value) -> {
-            try {
-                ListRowBuilder rb = new ListRowBuilder();
-                CsvReader reader = CsvReader.create(
-                        rb,
-                        new BufferedReader(new StringReader(Objects.toString(value))),
-                        Arguments.of(Arguments.createEntry(IoOptions.fieldSeparator(), ';')));
-                int n = reader.readSome(1);
-                assert n == 1;
-                List<String> data = rb.getRow();
-
-                String key = String.valueOf(key1);
-
-                final int expectedFields = 5;
-                LangUtil.check(
-                        data.size() == expectedFields,
-                        "invalid driver data for %s: expected %d fields, found %d", key, expectedFields, data.size());
-
-                String name = data.get(0).trim();
-                String className = data.get(1).trim();
-                String urlPrefix = data.get(2).trim();
-                String urlScheme = data.get(3).trim();
-                String link = data.get(4).trim();
-
-                JdbcDriverInfo di = new JdbcDriverInfo(name, className, urlPrefix, urlScheme, link);
-                JdbcDriverInfo rc = drivers.put(name, di);
-
-                LangUtil.check(rc == null, "duplicate entry for URL prefix %s", urlPrefix);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        });
     }
 
     /**
