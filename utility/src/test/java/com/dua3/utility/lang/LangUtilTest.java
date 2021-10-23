@@ -161,6 +161,7 @@ class LangUtilTest {
         assertEquals(expected, map);
     }
 
+    @SuppressWarnings("ZeroLengthArrayAllocation")
     @Test
     void testEquals() {
         Integer[] a = {1,2,3,4,5};

@@ -506,7 +506,7 @@ public final class RichText
          * (2) two-char String and the first char is the backslash and
          *     the second is not the ascii digit or ascii letter.
          */
-        char ch = 0;
+        char ch;
         if (((regex.length() == 1 &&
               ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
              (regex.length() == 2 &&
@@ -518,7 +518,7 @@ public final class RichText
              ch > Character.MAX_LOW_SURROGATE))
         {
             int off = 0;
-            int next = 0;
+            int next;
             boolean limited = limit > 0;
             List<RichText> list = new ArrayList<>();
             while ((next = indexOf(ch, off)) != -1) {

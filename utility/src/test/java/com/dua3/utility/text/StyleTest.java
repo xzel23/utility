@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class StyleTest {
     
+    @SuppressWarnings("StringBufferReplaceableByString")
     @Test
     public void testEquals() {
         Style s1 = Style.create("style", 
