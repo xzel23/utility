@@ -54,14 +54,16 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     }
     
     public SwingProgressView() {
-        this.imp = new ProgressView<>(SwingProgressView::createProgressIndicator);
+        this.imp = new ProgressView<>(this::createProgressIndicator);
 
         // create the layout
         setLayout(new GridBagLayout());
     }
 
-    private static <T> ProgressView.ProgressIndicator createProgressIndicator(T t) {
-        return new ProgressBarIndicator();
+    private <T> ProgressView.ProgressIndicator createProgressIndicator(T t) {
+        ProgressBarIndicator pi = new ProgressBarIndicator();
+        add(pi.pb);
+        return pi;
     }
 
     @Override
