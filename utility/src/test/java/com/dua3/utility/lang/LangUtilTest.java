@@ -260,7 +260,8 @@ class LangUtilTest {
         assertEquals("_de_DE", LangUtil.getLocaleSuffix(Locale.GERMANY));
         // Indonesian is a special case as until Java 16, the suffix differed from the language tag! 
         // changed with JDK-8267552
-        int javaVersion = Integer.parseInt(System.getProperty("java.version"));
+        // NOTE: GraalVM 21.3 reports a Java version of 17.0.1 so remove everything following the dot
+        int javaVersion = Integer.parseInt(System.getProperty("java.version").replaceFirst("\\..*", ""));
         if (javaVersion<17) {
             assertEquals("_in", LangUtil.getLocaleSuffix(Locale.forLanguageTag("id")));
         } else {
