@@ -26,7 +26,7 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     private Supplier<? extends T> defaultValue = () -> null;
-    private Supplier<? extends Collection<? extends T>> values;
+    private final Supplier<? extends Collection<? extends T>> values;
     
     @SuppressWarnings("unchecked")
     private static <E extends Enum<E>> E valueOf(Class<? extends E> cls, String s) {

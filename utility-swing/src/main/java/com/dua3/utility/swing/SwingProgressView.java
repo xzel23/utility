@@ -2,15 +2,11 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.concurrent.ProgressView;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.MathUtil;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import java.awt.GridBagLayout;
 
 public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     
