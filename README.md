@@ -91,6 +91,7 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 
 - **Java 17 is now required!**
 - upgraded gradle to 7.2 for Java 17 support
+- publish snapshots to snoatype snapshot repository
 - geometry classes taking float parameters have been renamed to ...2f
 - some classes (Pair, Vector2f, ...) have been converted to records
 - updates to FileTreeNode to allow use as a base class
@@ -100,7 +101,7 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - fix duplicate item output in LangUtil.surroundingItems() when regions overlap
 - added several Font.withXXX()-methods to help quickly deriving fonts that differ only in one attribute 
 - LangUtil.enumValues()
-- options can be parsed a handler that is executed when arguments.handle() is called
+- options can be passed a handler that is executed when arguments.handle() is called
 - many fixes and smaller improvements
 
 **The following functionality has been removed because it is available in JDK 17**:

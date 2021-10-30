@@ -19,7 +19,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '10-BETA12-SNAPSHOT'
+    version = '10-BETA12'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
@@ -157,61 +157,15 @@ subprojects {
         }
 
         repositories {
-            if (System.properties.containsKey('gitlabPrivateToken')) {
-                System.out.println("!!using private token!!")
-                // Gitlab public packages
-                if (!version.contains("SNAPSHOT")) {
-                    maven {
-                        url "https://gitlab.com/api/v4/projects/25276458/packages/maven"
-                        name "GitlabPublic"
-                        credentials(HttpHeaderCredentials) {
-                            name = 'Private-Token'
-                            value = System.properties.get('gitlabPrivateToken')
-                        }
-                        authentication {
-                            header(HttpHeaderAuthentication)
-                        }
-                    }
+            // Sonatype OSSRH
+            maven {
+                def releaseRepo = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = isReleaseVersion ? releaseRepo : snapshotRepo
+                credentials {
+                    username = System.properties.get('ossrhUsername')
+                    password = System.properties.get('ossrhPassword')
                 }
-                
-                // Gitlab private packages
-                maven {
-                    url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
-                    name "GitlabPrivate"
-                    credentials(HttpHeaderCredentials) {
-                        name = 'Private-Token'
-                        value = System.properties.get('gitlabPrivateToken')
-                    }
-                    authentication {
-                        header(HttpHeaderAuthentication)
-                    }
-                }
-                
-                // Sonatype OSSRH
-                maven {
-                    def releaseRepo = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                    def snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                    url = isReleaseVersion ? releaseRepo : snapshotRepo
-                    credentials {
-                        username = System.properties.get('ossrhUsername')
-                        password = System.properties.get('ossrhPassword')
-                    }
-                }
-            } else if (System.getenv("CI_JOB_TOKEN")!=null) {
-                System.out.println("!!using CI_JOB_TOKEN!!")
-                maven {
-                    url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
-                    name "GitLab"
-                    credentials(HttpHeaderCredentials) {
-                        name = 'Job-Token'
-                        value = System.getenv("CI_JOB_TOKEN")
-                    }
-                    authentication {
-                        header(HttpHeaderAuthentication)
-                    }
-                }
-            } else {
-                System.out.println("!!neither gitlabPrivateToken nor CI_JOB_TOKEN is set -- cannot publish build!!")
             }
         }
     }
