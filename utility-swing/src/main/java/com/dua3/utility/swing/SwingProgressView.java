@@ -6,11 +6,14 @@ import com.dua3.utility.math.MathUtil;
 
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Label;
 
 public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     
     private final ProgressView<T> imp;
+    private int rowCount = 0;
 
     private static class ProgressBarIndicator implements ProgressView.ProgressIndicator {
 
@@ -58,7 +61,16 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
     private <T> ProgressView.ProgressIndicator createProgressIndicator(T t) {
         ProgressBarIndicator pi = new ProgressBarIndicator();
-        add(pi.pb);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.ipadx = 8;
+        constraints.gridx = 0;
+        constraints.gridy = rowCount;
+        add(new Label(t.toString()), constraints);
+        constraints.gridx = 1;
+        constraints.gridy = rowCount;
+        add(pi.pb, constraints);
+        rowCount++;
         return pi;
     }
 
