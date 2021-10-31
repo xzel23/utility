@@ -340,7 +340,12 @@ public class ArgumentsParser {
         }
         return argText;
     }
-    
+
+    /**
+     * Output error message for the given {@link OptionException} to {@link Formatter} instance.
+     * @param fmt formatter
+     * @param e exception
+     */
     public void errorMessage(Formatter fmt, OptionException e) {
         // print title
         if (!name.isEmpty()) {
@@ -358,10 +363,16 @@ public class ArgumentsParser {
         fmt.format("ERROR: %s", e.getMessage());
     }
 
+    /**
+     * Format error message for the given {@link OptionException} to {@link String}.
+     * @param e exception
+     * @return error message
+     */
     public String errorMessage(OptionException e) {
-        Formatter fmt = new Formatter();
-        errorMessage(fmt, e);
-        return fmt.toString();
+        try (Formatter fmt = new Formatter()) {
+            errorMessage(fmt, e);
+            return fmt.toString();
+        }
     }
     
 }

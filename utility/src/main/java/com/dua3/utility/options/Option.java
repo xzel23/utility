@@ -68,11 +68,20 @@ public abstract class Option<T> {
         return this;
     }
 
+    /**
+     * Set handler for this option.
+     * @param handler the handler to call in {@link Arguments#handle()} for each invocation of this option
+     * @return this option
+     */
     public Option<T> handler(Consumer<Collection<T>> handler) {
         this.handler = Objects.requireNonNull(handler);
         return this;
     }
-    
+
+    /**
+     * Get this option's handler.
+     * @return the handler for this option (always non-null, options are initialised with a no-op handler)
+     */
     public Consumer<Collection<T>> handler() {
         return handler;
     }
@@ -80,7 +89,12 @@ public abstract class Option<T> {
     void handle(Collection<T> values) {
         handler.accept(values);
     }
-    
+
+    /**
+     * Map String to option type.
+     * @param s the String
+     * @return {@code s} mapped to the option type
+     */
     public T map(String s) {
         try {
             return mapper.apply(s);
@@ -88,39 +102,76 @@ public abstract class Option<T> {
             throw new OptionException.ParameterConversionException(this, s, e);
         }
     }
-    
+
+    /**
+     * Get option name.
+     * @return the name of this option
+     */
     public String name() {
         return names[0];
     }
-    
+
+    /**
+     * Get all names for this option
+     * @return collection containing all names for this option
+     */
     public Collection<String> names() {
         return List.of(names);
     }
 
+    /**
+     * Get minimum number of occurences of this option.
+     * @return minimum occurences
+     */
     public int minOccurrences() {
         return minOccurrences;
     }
 
+    /**
+     * Get maximum number of occurences of this option.
+     * @return maximum occurences
+     */
     public int maxOccurrences() {
         return maxOccurrences;
     }
 
+    /**
+     * Get minimum arity of this option.
+     * @return minimum arity
+     */
     public int minArity() {
         return minArity;
     }
 
+    /**
+     * Get maximum arity of this option.
+     * @return maximum arity
+     */
     public int maxArity() {
         return maxArity;
     }
 
+    /**
+     * Get description for this option.
+     * @return description
+     */
     public String description() {
         return description;
     }
 
+    /**
+     * Get display name of this option.
+     * @return display name
+     */
     public String displayName() {
         return displayName.isEmpty() ? names[0] : displayName;
     }
-    
+
+    /**
+     * Format option value to {@link String}.
+     * @param v the value
+     * @return String representation of value
+     */
     public String format(T v) {
         return formatter.apply(v);
     }

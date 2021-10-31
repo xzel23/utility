@@ -24,6 +24,10 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
     private final Function<? super T, ? extends K> keyMapper;
     private final K defaultKey;
 
+    /**
+     * Constructor.
+     * @param keyMapper mapping that maps each item to the grouping key
+     */
     public BatchCollector(Function<? super T, ? extends K> keyMapper) {
         this(keyMapper, null);
     }

@@ -143,7 +143,10 @@ public class Codecs {
     
     /**
      * Get {@link Codec} for a {@link java.util.Map}.
-     * @return codec
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param <M> the map type
+     * @return map codec
      */
     public static <K,V,M extends Map<K,V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
         final String name = Map.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">";

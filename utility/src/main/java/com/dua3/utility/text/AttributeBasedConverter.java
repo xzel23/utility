@@ -18,8 +18,18 @@ import java.util.Objects;
  */
 public abstract class AttributeBasedConverter<T> implements RichTextConverter<T> {
 
+    /**
+     * Factory method to create a compatible converter implementation instance for this converter.
+     * @param text the text to be converted
+     * @return instance of the implementation class
+     */
     protected abstract AttributeBasedConverter.AttributeBasedConverterImpl<T> createConverter(RichText text);
 
+    /**
+     * Convert {@link RichText} instance to the target class.
+     * @param text the text to convert
+     * @return the conversion result
+     */
     public T convert(RichText text) {
         return createConverter(text).append(text).get();
     }
@@ -108,6 +118,10 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
             handleAttributeChanges(newAttributes);
         }
 
+        /**
+         * Handle changes in attributes.
+         * @param newAttributes map containing the changed attributes and their new values
+         */
         protected void handleAttributeChanges(Map<String, Object> newAttributes) {
             // determine attribute changes
             Map<String, Pair<Object, Object>> changedAttributes = DataUtil.changes(currentAttributes, newAttributes);
@@ -134,7 +148,11 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
             
             return this;
         }
-        
+
+        /**
+         * Append chars to conversion result.
+         * @param s chars to append
+         */
         protected abstract void appendChars(CharSequence s);
     }
 }

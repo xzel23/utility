@@ -4,6 +4,12 @@ package com.dua3.utility.text;
  * A styled caracter interface.
  */
 public interface AttributedCharacter {
+    /**
+     * Create instance.
+     * @param c char
+     * @param a attributes to apply to character
+     * @return attributed character
+     */
     static AttributedCharacter create(char c, TextAttributes a) {
         return new AttributedCharacter() {
             @Override
