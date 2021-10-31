@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 plugins {
-    id 'com.adarshr.test-logger' version '2.1.0' apply false
+    id 'com.adarshr.test-logger' version '3.0.0' apply false
     id 'com.github.spotbugs' version '4.7.2' apply false
 }
 
@@ -19,7 +19,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '10-BETA13'
+    version = '10-BETA14-SNAPSHOT'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
