@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * @author axel
+ * Base class for CSV-input/output classes.
  */
 public abstract class CsvIo implements AutoCloseable {
 

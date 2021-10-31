@@ -56,12 +56,22 @@ public abstract class Option<T> {
         return this;
     }
 
+    /**
+     * Set description.
+     * @param description the description
+     * @return this option
+     */
     protected Option<T> description(String description) {
         LangUtil.check(this.description.isEmpty(), "description already set");
         this.description = Objects.requireNonNull(description, "description must not be null");
         return this;
     }
 
+    /**
+     * Set display name
+     * @param displayName display name
+     * @return this option
+     */
     protected Option<T> displayName(String displayName) {
         LangUtil.check(this.displayName.isEmpty(), "displayName already set");
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");

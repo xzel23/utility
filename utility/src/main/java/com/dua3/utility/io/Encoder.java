@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Collection;
 
+/**
+ * Encoder interface for writing objects to {@link DataOutputStream}.
+ * @param <T> the object type
+ */
 @FunctionalInterface
 public interface Encoder<T> {
 

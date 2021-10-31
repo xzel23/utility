@@ -9,6 +9,10 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.function.IntFunction;
 
+/**
+ * Decoder interface for reading objects from {@link DataInputStream}.
+ * @param <T> the object type
+ */
 @FunctionalInterface
 public interface Decoder<T> {
 

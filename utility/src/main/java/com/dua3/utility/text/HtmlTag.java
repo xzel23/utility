@@ -40,6 +40,7 @@ public interface HtmlTag {
 
     /**
      * The empty tag. 
+     * @return the empty tag
      */
     static HtmlTag emptyTag() {
         return Empty.EMPTY_TAG;

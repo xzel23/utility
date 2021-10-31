@@ -286,7 +286,6 @@ public final class DataUtil {
      * <p>
      * Converts a {@code Collection<T>} to {@code List<U>} by using the supplied mapper function on
      * the elements contained in the collection.
-     * <p>
      *
      * @param data
      *  the collection to convert

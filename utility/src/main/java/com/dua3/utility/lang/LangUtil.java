@@ -64,18 +64,34 @@ public final class LangUtil {
         @Serial
         private static final long serialVersionUID = 1L;
 
+        /**
+         * Default constructor.
+         */
         public FailedCheckException() {
             super();
         }
 
+        /**
+         * Constructor.
+         * @param msg exception message
+         */
         public FailedCheckException(String msg) {
             super(msg);
         }
 
+        /**
+         * Constructor.
+         * @param cause causing exception
+         */
         public FailedCheckException(Throwable cause) {
             super(cause);
         }
 
+        /**
+         * Constructor.
+         * @param msg exception message
+         * @param cause causing exception
+         */
         public FailedCheckException(String msg, Throwable cause) {
             super(msg, cause);
         }
@@ -314,6 +330,7 @@ public final class LangUtil {
      * Helper method that converts checked {@link java.io.IOException} to
      * {@link java.io.UncheckedIOException}.
      *
+     * @param <E> exception type as declared by {@link RunnableThrows}
      * @param  r the Runnable to call (instance of {@link RunnableThrows})
      * @return   instance of Function that invokes f and converts IOException to
      *           UncheckedIOException
@@ -449,6 +466,10 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface RunnableThrows<E extends Exception> {
+        /**
+         * Equivalent to {@link Runnable#run()}, but may throw checked exc eptions.
+         * @throws E dpending on ovverride
+         */
         @SuppressWarnings("ProhibitedExceptionDeclared")
         void run() throws E;
     }

@@ -10,6 +10,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Label;
 
+/**
+ * A {@link ProgressTracker} implementation for use in Swing applications.
+ * @param <T> the task type
+ */
 public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     
     private final ProgressView<T> imp;

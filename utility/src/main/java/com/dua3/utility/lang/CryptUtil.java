@@ -5,18 +5,17 @@
 
 package com.dua3.utility.lang;
 
+import com.dua3.utility.text.TextUtil;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
-import com.dua3.utility.text.TextUtil;
 
 /**
  * Cryptographic utilities.
@@ -31,6 +30,11 @@ public final class CryptUtil {
     private CryptUtil() {
     }
 
+    /**
+     * Generate key.
+     * @param bits number of bits, must be a multiple of 8
+     * @return the generated key
+     */
     public static byte[] generateKey(int bits) {
         int nBytes = bits / 8;
         LangUtil.check(nBytes * 8 == bits, "bit length of key must be a multiple of 8");
