@@ -149,6 +149,7 @@ public class JdbcDriverInfo {
 
     private static void addArgument(Map<? super String, String> arguments, String arg, String val) {
         String old = arguments.put(arg, val);
+        //noinspection VariableNotUsedInsideIf
         if (old != null) {
             LOG.log(Level.WARNING, () -> String.format(Locale.ROOT,"while parsing option string: multiple values for argument '%s'", arg));
         }
@@ -201,7 +202,11 @@ public class JdbcDriverInfo {
     public String getUrl(Arguments values) {
         return TextUtil.transform(urlScheme, 
                 s -> Objects.toString(
-                        values.get(getOption(s).orElseThrow(() -> new NoSuchElementException("No value present"))).get(), ""));
+                        values.get(
+                                getOption(s).orElseThrow(() -> new NoSuchElementException("No value present"))
+                        ).orElseThrow(), 
+                        "")
+        );
     }
 
     private Optional<SimpleOption<?>> getOption(String s) {

@@ -64,7 +64,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param run the {@link Run}
          * @return Map containing all attributes set by this run's styles
          */
-        protected Map<String, Object> collectAttributes(Run run) {
+        protected static Map<String, Object> collectAttributes(Run run) {
             Map<String,Object> styleAttributes = new HashMap<>();
             run.getStyles().forEach(style -> copyAttributes(style, styleAttributes));
             return styleAttributes;

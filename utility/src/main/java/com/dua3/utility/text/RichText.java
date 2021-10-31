@@ -270,12 +270,13 @@ public final class RichText
             }
         }
 
-        return length - other.length();
+        return Integer.compare(length, other.length());
     }
 
     // calculate the hashCode on demand
     private int hash = 0;
     
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         int h = hash;

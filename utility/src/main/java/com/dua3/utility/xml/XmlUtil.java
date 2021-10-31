@@ -110,6 +110,7 @@ public final class XmlUtil {
      * @param nodes the NodeList
      * @return stream of nodes
      */
+    @SuppressWarnings("MethodMayBeStatic")
     public Stream<Node> nodeStream(NodeList nodes) {
         Spliterator<Node> spliterator = new Spliterator<>() {
             int idx = 0;

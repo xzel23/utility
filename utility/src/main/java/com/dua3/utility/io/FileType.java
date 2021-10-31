@@ -301,6 +301,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * which refers to both XLS and XLSX files).
      * @return if this file type is a compund file type
      */
+    @SuppressWarnings("MethodMayBeStatic")
     public boolean isCompound() {
         return false;
     }
@@ -310,6 +311,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return optional settings for file type
      */
+    @SuppressWarnings("MethodMayBeStatic")
     public Collection<Option<?>> getSettings() {
         return Collections.emptyList();
     }

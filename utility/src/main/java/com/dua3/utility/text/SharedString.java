@@ -5,10 +5,10 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.util.Objects;
 import java.util.stream.IntStream;
-
-import com.dua3.utility.lang.LangUtil;
 
 public class SharedString implements CharSequence {
 
@@ -47,6 +47,7 @@ public class SharedString implements CharSequence {
         return base.substring(start, end);
     }
 
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         int h = hash;

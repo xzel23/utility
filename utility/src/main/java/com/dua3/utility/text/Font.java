@@ -206,7 +206,7 @@ public class Font {
         return fontspec();
     }
 
-    @SuppressWarnings("boxing")
+    @SuppressWarnings({"boxing", "NonFinalFieldReferencedInHashCode"})
     @Override
     public int hashCode() {
         int h = hash;

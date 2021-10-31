@@ -9,6 +9,7 @@ import java.util.function.Consumer;
  * A mutable class holding font attributes to help creating immutable font
  * instances.
  */
+@SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode"})
 public final class FontDef {
 
     /**

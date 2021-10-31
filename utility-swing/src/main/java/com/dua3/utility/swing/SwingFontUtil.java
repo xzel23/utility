@@ -43,6 +43,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
      * @param awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
+    @SuppressWarnings("MethodMayBeStatic")
     public Rectangle2D stringBounds(CharSequence text, java.awt.Font awtFont) {
         FontRenderContext frc = new FontRenderContext(awtFont.getTransform(), false, true);
         return awtFont.getStringBounds(text.toString(), frc);
