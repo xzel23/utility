@@ -1,6 +1,13 @@
 package com.dua3.utility.text;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -213,7 +220,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         Objects.requireNonNull(attribute);
         Objects.requireNonNull(mapper);
 
-        mappings.merge(attribute, mapper, this::combineMappers);
+        mappings.merge(attribute, mapper, HtmlConverter::combineMappers);
     }
 
     /**
@@ -222,7 +229,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param m2 the second mapper
      * @return the new mapper
      */
-    private Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1, Function<Object, ? extends HtmlTag> m2) {
+    private static Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1, Function<Object, ? extends HtmlTag> m2) {
         return value -> {
             HtmlTag oldTag = m1.apply(value);
             HtmlTag newTag = m2.apply(value);

@@ -2,7 +2,13 @@ package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;

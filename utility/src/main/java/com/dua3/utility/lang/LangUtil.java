@@ -5,20 +5,43 @@
 
 package com.dua3.utility.lang;
 
-import java.io.*;
+import com.dua3.utility.data.Pair;
+import com.dua3.utility.io.IOUtil;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serial;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-
-import com.dua3.utility.data.Pair;
-import com.dua3.utility.io.IOUtil;
 
 /**
  * A Utility class with general purpose methods.
@@ -746,7 +769,7 @@ public final class LangUtil {
         
         // nothing found
         LOG.warning(() ->"resource '" + name + "' not found. candidates: " + candidates);
-        throw new MissingResourceException("Resource not found: "+name, cls.getName(), name);
+        throw new MissingResourceException("Resource not found: " + name, cls.getName(), name);
     }
 
     /**

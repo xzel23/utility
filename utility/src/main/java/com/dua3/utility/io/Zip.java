@@ -2,7 +2,10 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
 
-import java.io.*;
+import java.io.Flushable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 

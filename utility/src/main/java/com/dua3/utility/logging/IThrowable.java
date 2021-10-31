@@ -1,7 +1,10 @@
 package com.dua3.utility.logging;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A wrapper interface to abstract handling of {@link Throwable} in different logging frameworks. 

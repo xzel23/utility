@@ -12,6 +12,9 @@
  */
 package com.dua3.utility.io;
 
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.options.Arguments;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -22,12 +25,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.dua3.utility.options.Arguments;
-import com.dua3.utility.lang.LangUtil;
 
 public class CsvReader extends CsvIo {
 

@@ -3,8 +3,16 @@ package com.dua3.utility.io;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 
-import java.io.*;
-import java.util.*;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 

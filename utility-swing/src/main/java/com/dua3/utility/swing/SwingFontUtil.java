@@ -1,18 +1,22 @@
 package com.dua3.utility.swing;
 
-import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.List;
-
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.WeakHashMap;
 
 /**
  * Utility class for getting font properties through AWT. This class should normally not used directly by user code

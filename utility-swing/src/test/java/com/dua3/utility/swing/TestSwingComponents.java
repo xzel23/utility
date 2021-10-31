@@ -6,8 +6,14 @@ import com.dua3.utility.logging.Log4jAdapter;
 import com.dua3.utility.logging.SystemAdapter;
 import org.apache.logging.log4j.LogManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;

@@ -3,7 +3,13 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 /**

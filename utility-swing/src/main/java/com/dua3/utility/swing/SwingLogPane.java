@@ -7,9 +7,32 @@ import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.math.MathUtil;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +52,6 @@ public class SwingLogPane extends JPanel {
     private final LogTableModel model;
     private final JScrollPane scrollPaneTable;
     private final Function<LogEntry, Color> colorize;
-    private final JScrollPane scrollPaneDetails;
     private final JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<LogEntry, String> format = LogEntry::format;
@@ -318,7 +340,7 @@ public class SwingLogPane extends JPanel {
         
         // prepare the ScrollPanes
         scrollPaneTable = new JScrollPane(table);
-        scrollPaneDetails = new JScrollPane(details);
+        JScrollPane scrollPaneDetails = new JScrollPane(details);
         
         // create SplitPane for table and detail pane
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);

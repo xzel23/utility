@@ -7,8 +7,18 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.lang.LangUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static com.dua3.utility.text.RichText.ATTRIBUTE_NAME_STYLE_LIST;
 
