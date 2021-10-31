@@ -26,6 +26,10 @@ public class Codecs {
 
     private final Map<String,Codec<?>> CODECS = new HashMap<>();
 
+    /**
+     * Constructor.
+     * Default codecs for the Java primitive types are automatically registered.
+     */
     public Codecs() {
         // JDK standard classes
         registerCodec(String.class, DataOutput::writeUTF, DataInput::readUTF);
@@ -146,6 +150,9 @@ public class Codecs {
      * @param <K> the key type
      * @param <V> the value type
      * @param <M> the map type
+     * @param codecK the key codec
+     * @param codecV the value codec
+     * @param construct the map construction method
      * @return map codec
      */
     public static <K,V,M extends Map<K,V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
