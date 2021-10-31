@@ -29,8 +29,8 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
@@ -55,7 +55,7 @@ public final class DbUtil {
     static {
         try {
             // load properties
-            Hashtable p = LangUtil.loadProperties(DbUtil.class.getResourceAsStream("jdbc_drivers.properties"));
+            Map<Object,Object> p = LangUtil.loadProperties(DbUtil.class.getResourceAsStream("jdbc_drivers.properties"));
             
             // parse entries
             p.forEach((key1, value) -> {

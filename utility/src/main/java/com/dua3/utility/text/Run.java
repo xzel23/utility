@@ -5,13 +5,11 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import com.dua3.utility.lang.LangUtil;
-
-import static com.dua3.utility.text.RichText.ATTRIBUTE_NAME_STYLE_LIST;
 
 /**
  * A sequence of characters that share the same properties.
@@ -143,7 +141,7 @@ public class Run implements AttributedCharSequence {
 
     @SuppressWarnings("unchecked")
     public List<Style> getStyles() {
-        return (List<Style>) attributes.getOrDefault(ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
+        return (List<Style>) attributes.getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 
     /**
