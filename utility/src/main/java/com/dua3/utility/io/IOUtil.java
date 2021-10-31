@@ -598,6 +598,7 @@ public final class IOUtil {
 
 }
 
+@SuppressWarnings("ClassNameDiffersFromFileName")
 final class StreamSupplier<V> {
 
     @FunctionalInterface

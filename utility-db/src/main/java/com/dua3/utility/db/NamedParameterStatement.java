@@ -250,6 +250,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *                  map to hold parameter-index mappings
      * @return          the parsed query
      */
+    @SuppressWarnings("AssignmentToForLoopParameter")
     static String parse(String query, Map<String, ParameterInfo> paramMap) {
         // I was originally using regular expressions, but they didn't work well for
         // ignoring parameter-like strings inside quotes.

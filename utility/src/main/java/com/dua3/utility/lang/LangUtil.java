@@ -782,6 +782,7 @@ public final class LangUtil {
      * @param <T> the element type
      * @return a list that contains all items within a the given range before and after each match
      */
+    @SuppressWarnings("AssignmentToForLoopParameter")
     public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;

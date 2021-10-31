@@ -5,12 +5,12 @@
 
 package com.dua3.utility.db;
 
-import com.dua3.utility.options.Arguments;
 import com.dua3.utility.io.CsvReader;
 import com.dua3.utility.io.CsvReader.ListRowBuilder;
 import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.io.IoOptions;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.options.Arguments;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -29,10 +29,10 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -55,7 +55,7 @@ public final class DbUtil {
     static {
         try {
             // load properties
-            Properties p = LangUtil.loadProperties(DbUtil.class.getResourceAsStream("jdbc_drivers.properties"));
+            Hashtable p = LangUtil.loadProperties(DbUtil.class.getResourceAsStream("jdbc_drivers.properties"));
             
             // parse entries
             p.forEach((key1, value) -> {
