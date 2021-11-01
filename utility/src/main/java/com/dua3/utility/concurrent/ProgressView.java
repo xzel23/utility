@@ -69,7 +69,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
     public void start(T task) {
         TaskRecord r = getTaskRecord(task);
         r.state = State.RUNNING;
-        update(task, 0.0);
+        update(task, 0, 0);
     }
 
     @Override

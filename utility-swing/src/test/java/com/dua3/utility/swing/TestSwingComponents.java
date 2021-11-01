@@ -1,8 +1,9 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.JULAdapter;
-import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.Log4jAdapter;
+import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.SystemAdapter;
 import org.apache.logging.log4j.LogManager;
 
@@ -33,12 +34,13 @@ public class TestSwingComponents extends JFrame {
     private final Random random = new Random();
     private final AtomicInteger n = new AtomicInteger();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         JUL_LOGGER.setLevel(Level.ALL);
         JUL_LOGGER.info("starting up");
+
+        SwingUtil.setNativeLookAndFeel();
         
         SwingUtilities.invokeLater(() -> {
-            SwingUtil.setNativeLookAndFeel();
             TestSwingComponents instance = new TestSwingComponents();
             instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             instance.setVisible(true);
@@ -65,6 +67,7 @@ public class TestSwingComponents extends JFrame {
         
         HashMap<Level,Integer> counter = new HashMap<>();
         Arrays.stream(levels).forEach(lvl -> { counter.put(lvl, 0); progress.start(lvl); });
+        progress.start(Level.OFF);
 
         // -- Spacer
         constraints = new GridBagConstraints();
@@ -143,6 +146,15 @@ public class TestSwingComponents extends JFrame {
             }
         });
         thread.start();
+
+        new Thread( () -> {
+            try {
+                Thread.sleep(10_000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            progress.finish(Level.OFF, ProgressTracker.State.COMPLETED_SUCCESS);
+        }).start();
     }
 
     private IllegalStateException generateThrowable() {

@@ -68,7 +68,7 @@ public interface ProgressTracker<T> {
         public void finish(State s) { tracker.finish(task, s); }
 
         /**
-         * Update progress of task.
+         * Update progress of task. Use update(0,0) for indeterminate progress.
          * @param total the total amount of work
          * @param done the work done
          */

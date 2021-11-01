@@ -6,6 +6,7 @@ import com.dua3.utility.math.MathUtil;
 
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Label;
@@ -29,30 +30,43 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
         @Override
         public void finish(State s) {
-            pb.setValue(pb.getMaximum());            
+            SwingUtilities.invokeLater( () -> {
+                if (pb.isIndeterminate()) {
+                    pb.setIndeterminate(false);
+                    pb.setMaximum(1);
+                }
+                
+                pb.setValue(pb.getMaximum());
+            });
         }
 
         @Override
         public void update(int done, int total) {
-            if (total==0) {
-                pb.setIndeterminate(true);
-            } else {
-                pb.setIndeterminate(false);
-                pb.setMaximum(total);
-                pb.setValue(done);
-            }
+            SwingUtilities.invokeLater( () -> {
+                if (total==0) {
+                    pb.setIndeterminate(true);
+                    pb.setMaximum(1);
+                    pb.setValue(0);
+                } else {
+                    pb.setIndeterminate(false);
+                    pb.setMaximum(total);
+                    pb.setValue(done);
+                }
+            });
         }
-
+        
         /**
          * The integer value that corresponds to 100% in percentage mode. 
          */
-        private static final int MAX = 10000;
+        private static final int MAX = 1000;
         
         @Override
         public void update(double percentDone) {
-            pb.setIndeterminate(true);
-            pb.setMaximum(MAX);
-            pb.setValue((int) (MathUtil.clamp(0, MAX, percentDone * MAX)+0.5));
+            SwingUtilities.invokeLater( () -> {
+                pb.setIndeterminate(false);
+                pb.setMaximum(MAX);
+                pb.setValue((int) (MathUtil.clamp(0, MAX, percentDone * MAX) + 0.5));
+            });
         }
     }
     
