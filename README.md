@@ -102,6 +102,7 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - added several Font.withXXX()-methods to help quickly deriving fonts that differ only in one attribute 
 - LangUtil.enumValues()
 - options can be passed a handler that is executed when arguments.handle() is called
+- LangUtil.formatStackTrace(Exception)
 - many fixes and smaller improvements, added many Javadoc comments
 
 **The following functionality has been removed because it is available in JDK 17**:

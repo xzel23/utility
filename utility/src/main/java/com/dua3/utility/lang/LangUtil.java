@@ -9,9 +9,11 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IOUtil;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.Serial;
 import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
@@ -847,5 +849,21 @@ public final class LangUtil {
         }
         
         return filtered;
+    }
+
+    /**
+     * Get stack trace as text
+     * @param e exception
+     * @return the exception stack trace as text
+     */
+    public static String formatStackTrace(Exception e) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1024); 
+             PrintStream s = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
+            e.printStackTrace(s);
+            s.flush();
+            return baos.toString(StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            return "[error while formatting exception stack trace]";
+        }
     }
 }
