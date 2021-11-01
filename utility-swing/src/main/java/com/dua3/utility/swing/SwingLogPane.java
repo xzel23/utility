@@ -182,10 +182,6 @@ public class SwingLogPane extends JPanel {
             }
         }
 
-        @Override
-        public synchronized void capacity(int n) {
-            fireTableDataChanged();
-        }
     }
 
     private void onAddEntries(Collection<LogEntry> entries, int removed) {

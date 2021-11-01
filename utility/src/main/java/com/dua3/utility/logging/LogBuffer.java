@@ -57,12 +57,6 @@ public class LogBuffer implements LogListener {
          * Called after the buffer has been cleared.
          */
         void clear();
-
-        /**
-         * Called when the buffer capacity changes.
-         * @param n the new capacity
-         */
-        void capacity(int n);
     }
     
     private final Collection<LogBufferListener> listeners = new LinkedList<>();
