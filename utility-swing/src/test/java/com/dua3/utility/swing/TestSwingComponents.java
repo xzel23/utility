@@ -51,12 +51,16 @@ public class TestSwingComponents extends JFrame {
         setLayout(new GridBagLayout());
         setSize(800,600);
 
+        init();
+    }
+
+    private void init() {
         final Level[] levels = { Level.FINER, Level.FINE, Level.INFO, Level.WARNING, Level.SEVERE};
 
         // -- SwingProcessView
         SwingProgressView<Level> progress = new SwingProgressView<>();
         int max = 200;
-        
+
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(8,8,8,8);
         constraints.gridx = 0;
@@ -64,7 +68,7 @@ public class TestSwingComponents extends JFrame {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1;
         add(progress, constraints);
-        
+
         HashMap<Level,Integer> counter = new HashMap<>();
         Arrays.stream(levels).forEach(lvl -> { counter.put(lvl, 0); progress.start(lvl); });
         progress.start(Level.OFF);
@@ -80,13 +84,13 @@ public class TestSwingComponents extends JFrame {
         add(separator, constraints);
 
         // -- SwingLogPane
-        
+
         // setup logging
         LogBuffer buffer = new LogBuffer();
         JULAdapter.addListener(JUL_LOGGER, buffer);
         Log4jAdapter.addListener(LOG4J_LOGGER, buffer);
         SystemAdapter.addSystemListener(buffer);
-        
+
         // create the log pane
         SwingLogPane logPane = new SwingLogPane(buffer);
 
@@ -147,14 +151,15 @@ public class TestSwingComponents extends JFrame {
         });
         thread.start();
 
-        new Thread( () -> {
+        Thread thread2 = new Thread(() -> {
             try {
                 Thread.sleep(10_000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
             progress.finish(Level.OFF, ProgressTracker.State.COMPLETED_SUCCESS);
-        }).start();
+        });
+        thread2.start();
     }
 
     private IllegalStateException generateThrowable() {
