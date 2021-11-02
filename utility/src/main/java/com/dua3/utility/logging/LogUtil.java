@@ -1,9 +1,13 @@
 package com.dua3.utility.logging;
 
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.ArgumentsParser;
+import com.dua3.utility.options.Flag;
+import com.dua3.utility.options.SimpleOption;
+import com.dua3.utility.options.StandardOption;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -61,17 +65,6 @@ public final class LogUtil {
     public static final String DEFAULT_FORMAT = "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s %2$s %5$s%6$s%n";
 
     /**
-     * Command line option to set the global log level.
-     */
-    public static final String ARG_LOG_LEVEL = "--log-level=";
-
-    /**
-     * Command line option to set the global log path pattern.
-     * See {@link FileHandler#FileHandler(String)} for pattern syntax.
-     */
-    public static final String ARG_LOG_PATH_PATTERN = "--log-path-pattern=";
-
-    /**
      * Utility method to set global log level at program starttup. The argument list is scanned for arguments
      * in the form of {@code --log-level=<level>}. The global log level is then set to the last found value, or
      * to the default, if no matching argument was found.
@@ -80,49 +73,63 @@ public final class LogUtil {
      * @return              the command line args with arguments for setting the log level filtered out
      */
     public static String[] handleLoggingCmdArgs(Level defaultLevel, String... args) {
-        List<String> argList = new ArrayList<>(Arrays.asList(args));
+        // create parser
+        ArgumentsParser parser = new ArgumentsParser("log parser", "parser for command line log options");
 
+        // --log-help
+        Flag flagHelp = parser.flag("--log-help");
+        
+        // --log-level-root
+        SimpleOption<Level> optRootLevel = parser.simpleOption(Level.class, "--log-level-root")
+                .description("set root logger level")
+                .defaultValue(Level.INFO);
+
+        // --log-level
+        StandardOption<String> optLevel = parser.option(String.class, "--log-level").arity(2)
+                .description("set log level for logger");
+
+        // --log-path
+        SimpleOption<String> optLogPath = parser.simpleOption(String.class, "--log-path")
+                .description("set log path pattern");
+        
+        // --log-format
+        SimpleOption<String> optLogFormat = parser.simpleOption(String.class, "--log-format")
+                .description("set log format")
+                .defaultValue(System.getProperty("java.util.logging.SimpleFormatter.format", DEFAULT_FORMAT));
+        
+        // parse
+        Arguments arguments = parser.parse(args);
+        
+        // show help
+        arguments.ifSet(flagHelp, parser::help);
+        
         // set log format
-        if (System.getProperty("java.util.logging.SimpleFormatter.format")==null) {
-            System.setProperty("java.util.logging.SimpleFormatter.format", DEFAULT_FORMAT);
-            LOG.info("default log format changed to 1-line output");
-        }
+        String logFormat = arguments.getOrThrow(optLogFormat);
+        System.setProperty("java.util.logging.SimpleFormatter.format", logFormat);
         
-        // set log handlers first (because it should be done before setting levels)
-        for (int i=0; i<argList.size(); i++) {
-            String arg = argList.get(i);
-            if (arg.startsWith(ARG_LOG_PATH_PATTERN)) {
-                // set log level
-                String value = arg.substring(ARG_LOG_PATH_PATTERN.length());
-                try {
-                    LogUtil.setLogPath(value);
-                } catch (IOException e) {
-                    LOG.log(Level.WARNING, "could not set log pattern", e);
-                }
-
-                // remove from list of arguments
-                //noinspection AssignmentToForLoopParameter
-                argList.remove(i--);
+        // set log path
+        arguments.ifPresent(optLogPath, logPath -> {
+            try {
+                LogUtil.setLogPath(logPath);
+            } catch (IOException e) {
+                LOG.log(Level.WARNING, "could not set log path to "+logPath, e);
             }
-        }
+        });
+
+        // set root level
+        Level rootLevel = arguments.getOrThrow(optRootLevel);
+        LogUtil.setLogLevel(rootLevel);
         
-        // now set level
-        Level level = defaultLevel;
-        for (int i=0; i<argList.size(); i++) {
-            String arg = argList.get(i);
-            if (arg.startsWith(ARG_LOG_LEVEL)) {
-                // set log level
-                String value = arg.substring(ARG_LOG_LEVEL.length());
-                level = Level.parse(value);
+        // set log level
+        arguments.forEach(optLevel, params -> {
+            LangUtil.check(params.size()==2, "wrong number of arguments for option "+optLevel.name());
+            String loggerName = params.get(0);
+            Level level = Level.parse(params.get(1));
+            setLogLevel(level, Logger.getLogger(loggerName));
+        });
 
-                // remove from list of arguments
-                //noinspection AssignmentToForLoopParameter
-                argList.remove(i--);
-            }
-        }
-        LogUtil.setLogLevel(level);
-
-        return argList.toArray(String[]::new);
+        // return all unprocessed arguments
+        return arguments.positionalArgs().toArray(String[]::new);
     }
 
     private static Logger getRootLogger() {
