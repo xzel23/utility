@@ -96,13 +96,13 @@ public final class FontDef {
         return fd;
     }
 
-    private Color color;
-    private Float size;
-    private String family;
-    private Boolean bold;
-    private Boolean italic;
-    private Boolean underline;
-    private Boolean strikeThrough;
+    private Color color = null;
+    private Float size = null;
+    private String family = null;
+    private Boolean bold = null;
+    private Boolean italic = null;
+    private Boolean underline = null;
+    private Boolean strikeThrough = null;
 
     public FontDef() {
         // nop - everything being initialized to null is just fine
