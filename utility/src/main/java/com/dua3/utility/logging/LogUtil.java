@@ -62,17 +62,15 @@ public final class LogUtil {
         return new LazyToString(s);
     }
 
-    public static final String DEFAULT_FORMAT = "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s %2$s %5$s%6$s%n";
+    private static final String DEFAULT_FORMAT = "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s [%2$s] %5$s%6$s%n";
 
     /**
      * Utility method to set global log level at program starttup. The argument list is scanned for arguments
-     * in the form of {@code --log-level=<level>}. The global log level is then set to the last found value, or
-     * to the default, if no matching argument was found.
-     * @param defaultLevel  the default level to use when no explicit level is set on the command line
+     * that control logging and the log system is set up accordingly.
      * @param args          the command line args
-     * @return              the command line args with arguments for setting the log level filtered out
+     * @return              the command line args with arguments for setting up logging removed
      */
-    public static String[] handleLoggingCmdArgs(Level defaultLevel, String... args) {
+    public static String[] handleLoggingCmdArgs(String... args) {
         // create parser
         ArgumentsParser parser = new ArgumentsParser("log parser", "parser for command line log options");
 
@@ -80,7 +78,7 @@ public final class LogUtil {
         Flag flagHelp = parser.flag("--log-help");
         
         // --log-level-root
-        SimpleOption<Level> optRootLevel = parser.simpleOption(Level.class, "--log-level-root")
+        SimpleOption<Level> optRootLevel = parser.simpleOption(Level::parse, "--log-level-root")
                 .description("set root logger level")
                 .defaultValue(Level.INFO);
 
@@ -171,7 +169,13 @@ public final class LogUtil {
         for (Handler h : logger.getHandlers()) {
             h.setLevel(level);
         }
-        LOG.info(() -> "logger '%s': log level set to '%s'".formatted(logger.getName(), level));
+        
+        String loggerName = logger.getName();
+        if (loggerName.isEmpty()) {
+            LOG.info(() -> "root logger: log level set to '%s'".formatted(level));
+        } else {
+            LOG.info(() -> "logger '%s': log level set to '%s'".formatted(loggerName, level));
+        }
     }
 
     /**
