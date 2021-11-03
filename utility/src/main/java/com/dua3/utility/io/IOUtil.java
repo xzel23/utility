@@ -10,6 +10,7 @@ import com.dua3.utility.lang.LangUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -596,6 +597,25 @@ public final class IOUtil {
         return StreamSupplier.getOutputStream(o);
     }
 
+    /**
+     * Get {@link InputStream} instance that reads from a string. Characters are encoded using UTF-8.
+     * @param s the string to read from
+     * @return InputStream instance
+     */
+    public static InputStream stringInputStream(String s) {
+        return stringInputStream(s, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Get {@link InputStream} instance that reads from a string.
+     * @param s the string to read from
+     * @param cs the charset to use
+     * @return InputStream instance
+     */
+    public static InputStream stringInputStream(String s, Charset cs) {
+        return new ByteArrayInputStream(s.getBytes(cs));
+    }
+
 }
 
 @SuppressWarnings("ClassNameDiffersFromFileName")
@@ -664,5 +684,4 @@ final class StreamSupplier<V> {
     public static OutputStream getOutputStream(Object o) throws IOException {
         return supplier(o).oss.getOutputStream(o);
     }
-
 }
