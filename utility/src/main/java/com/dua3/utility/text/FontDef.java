@@ -278,6 +278,7 @@ public final class FontDef {
     public String getCssStyle() {
         boolean isUnderline = underline != null && underline;
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
+        //noinspection StringConcatenationMissingWhitespace
         return (color == null ? "" : "color: " + color + ";") +
                (size == null ? "" : "font-size: " + size + "pt;") +
                (family == null ? "" : "font-family: " + family + ";") +
