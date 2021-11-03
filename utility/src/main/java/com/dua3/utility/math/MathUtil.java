@@ -5,12 +5,12 @@
 
 package com.dua3.utility.math;
 
+import com.dua3.utility.lang.LangUtil;
+
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
-
-import com.dua3.utility.lang.LangUtil;
 
 /**
  * @author axel
@@ -61,16 +61,7 @@ public final class MathUtil {
      */
     public static double clamp(double min, double max, double arg) {
         assert min <= max;
-
-        if (arg < min) {
-            return min;
-        }
-
-        if (arg > max) {
-            return max;
-        }
-        
-        return arg;
+        return arg < min ? min : Math.min(arg, max);
     }
 
     /**
@@ -91,16 +82,7 @@ public final class MathUtil {
      */
     public static float clamp(float min, float max, float arg) {
         assert min <= max;
-
-        if (arg < min) {
-            return min;
-        }
-
-        if (arg > max) {
-            return max;
-        }
-        
-        return arg;
+        return arg < min ? min : Math.min(arg, max);
     }
 
     /**

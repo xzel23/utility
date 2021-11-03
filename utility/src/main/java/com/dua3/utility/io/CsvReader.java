@@ -57,7 +57,7 @@ public class CsvReader extends CsvIo {
 
     public static class ListRowBuilder implements RowBuilder {
 
-        private List<String> row;
+        private List<String> row = null;
 
         @Override
         public void add(String value) {
@@ -119,9 +119,9 @@ public class CsvReader extends CsvIo {
     }
 
     private final RowBuilder rowBuilder;
-    private int rowNumber;
-    private int rowsRead;
-    private int lineNumber;
+    private int rowNumber = 0;
+    private int rowsRead = 0;
+    private int lineNumber = 0;
     private final Pattern patternField;
     private final BufferedReader reader;
     private List<String> columnNames;
