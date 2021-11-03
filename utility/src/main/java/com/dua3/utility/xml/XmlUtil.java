@@ -1,5 +1,7 @@
 package com.dua3.utility.xml;
 
+import com.dua3.utility.io.IOUtil;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -9,12 +11,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
@@ -34,6 +38,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -41,11 +47,28 @@ import java.util.stream.StreamSupport;
  * A Utility class for handling {@link org.w3c.dom} documents and nodes.
  */
 public final class XmlUtil {
-
+    private static final Logger LOG = Logger.getLogger(XmlUtil.class.getName());
+    
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
     private final DocumentBuilder documentBuilder;
+    private final Transformer utf8Transformer;
+    
+    private static final String PRETTY_PRINT_XSLT = """
+                            <?xml version="1.0" encoding="UTF-8"?>
+                            <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                              <xsl:output indent="yes"/>
+                              <xsl:strip-space elements="*"/>
+                                            
+                              <xsl:template match="@*|node()">
+                                <xsl:copy>
+                                  <xsl:apply-templates select="@*|node()"/>
+                                </xsl:copy>
+                              </xsl:template>
+                                            
+                            </xsl:stylesheet>
+                            """;
     
     /*
      * Lazily construct the default instance since it might pull in a lot of dependencies which is not desirable
@@ -94,6 +117,7 @@ public final class XmlUtil {
         this.transformerFactory = Objects.requireNonNull(transformerFactory);
         this.xPathFactory = Objects.requireNonNull(xPathFactory);
         this.documentBuilder = this.documentBuilderFactory.newDocumentBuilder();
+        this.utf8Transformer = getTransformer(StandardCharsets.UTF_8);
     }
 
     /**
@@ -242,12 +266,7 @@ public final class XmlUtil {
      */
     public void format(Writer writer, Node node, Charset charset) throws IOException {
         try {
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, charset.name());
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            Transformer transformer = charset.equals(StandardCharsets.UTF_8) ? utf8Transformer : getTransformer(charset);
             transformer.transform(new DOMSource(node), new StreamResult(writer));
         } catch (TransformerConfigurationException e) {
             // should not happen(tm)
@@ -257,13 +276,42 @@ public final class XmlUtil {
         }
     }
 
+    private Transformer getTransformer(Charset charset) {
+        try {
+            Source source = new StreamSource(IOUtil.stringInputStream(PRETTY_PRINT_XSLT));
+            Transformer transformer = transformerFactory.newTransformer(source);
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, charset.name());
+            return transformer;
+        } catch (TransformerConfigurationException e) {
+            LOG.log(Level.SEVERE, "unexpected error creating transformer", e);
+            throw new IllegalStateException("error creating transformer", e);
+        }
+    }
+
+    /**
+     * Format node to XML.
+     * @param node the node
+     * @return XML for the node
+     */
+    public String format(Node node) {
+        return formatNode(node, "");
+    }
+
     /**
      * Pretty print W3C Document.
-     * @param node the document
-     * @return HTML for the document
+     * @param document the document
+     * @return XML for the document
      */
-    public String prettyPrint(Node node) {
+    public String prettyPrint(Document document) {
+        return formatNode(document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    }
+
+    private String formatNode(Node node, String prefix) {
         try (StringWriter writer = new StringWriter()) {
+            writer.write(prefix);
             format(writer, node, StandardCharsets.UTF_8);
             return writer.toString();
         } catch (IOException e) {
