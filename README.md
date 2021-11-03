@@ -103,7 +103,10 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - LangUtil.enumValues()
 - options can be passed a handler that is executed when arguments.handle() is called
 - LangUtil.formatStackTrace(Exception)
-- many fixes and smaller improvements, added many Javadoc comments
+- IOUtil.stringStream(String)
+- improve output and performance of XmlUtil.prettyPrint()
+- fix MathUtil.gcd for negative arguments
+- many fixes and smaller improvements, added many Javadoc comments, improve test coverage
 
 **The following functionality has been removed because it is available in JDK 17**:
 - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
