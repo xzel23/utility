@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -270,5 +271,40 @@ public class MathUtilTest {
         
         assertTrue(!Double.isNaN(MathUtil.clamp(0.5f, 1.5f,  Float.NaN, pi)));
         assertEquals(pi, MathUtil.clamp(0.5f, 1.5f,  Float.NaN, pi));
+    }
+    
+    @Test
+    public void testIsIntegral() {
+        assertTrue(MathUtil.isIntegral(0.0));
+        assertTrue(MathUtil.isIntegral(1.0));
+        assertTrue(MathUtil.isIntegral(-10.0));
+        assertTrue(MathUtil.isIntegral(1265456.0));
+        assertTrue(MathUtil.isIntegral(-1265456.0));
+        
+        assertFalse(MathUtil.isIntegral(0.1));
+        assertFalse(MathUtil.isIntegral(1.1));
+        assertFalse(MathUtil.isIntegral(-10.1));
+        assertFalse(MathUtil.isIntegral(1265456.1));
+        assertFalse(MathUtil.isIntegral(-1265456.1));
+
+        assertFalse(MathUtil.isIntegral(0.9999999999999));
+        assertFalse(MathUtil.isIntegral(1.9999999999999));
+        assertFalse(MathUtil.isIntegral(-10.9999999999999));
+        assertFalse(MathUtil.isIntegral(1265456.9999999));
+        assertFalse(MathUtil.isIntegral(-1265456.9999999));
+
+        assertFalse(MathUtil.isIntegral(0.0000000000001));
+        assertFalse(MathUtil.isIntegral(1.0000000000001));
+        assertFalse(MathUtil.isIntegral(-10.0000000000001));
+        assertFalse(MathUtil.isIntegral(1265456.0000001));
+        assertFalse(MathUtil.isIntegral(-1265456.0000001));
+    }
+    
+    @Test
+    public void testGcd() {
+        assertEquals(6l, MathUtil.gcd(48l, 18l));
+        assertEquals(6l, MathUtil.gcd(-48l, 18l));
+        assertEquals(6l, MathUtil.gcd(48l, -18l));
+        assertEquals(6l, MathUtil.gcd(-48l, -18l));
     }
 }

@@ -294,7 +294,7 @@ public final class MathUtil {
             a = b;
             b = h;
         }
-        return a;
+        return Math.abs(a);
     }
 
     /**
