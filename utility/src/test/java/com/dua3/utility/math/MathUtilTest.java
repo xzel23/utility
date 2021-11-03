@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author axel
@@ -210,4 +211,64 @@ public class MathUtilTest {
         assertEquals("1.0", MathUtil.toDecimalString(1.0, 1));
     }
 
+    @Test
+    public void testClamp_int() {
+        assertEquals(-2, MathUtil.clamp(-2, 5, -5));
+        assertEquals(5, MathUtil.clamp(-2, 5,  7));
+        assertEquals(1, MathUtil.clamp(-2, 5,  1));
+    }
+
+    @Test
+    public void testClamp_long() {
+        assertEquals(-2l, MathUtil.clamp(-2l, 5l, -5l));
+        assertEquals(5l, MathUtil.clamp(-2l, 5l,  7l));
+        assertEquals(1l, MathUtil.clamp(-2l, 5l,  1l));
+    }
+
+    @Test
+    public void testClamp_double() {
+        assertEquals(0.5, MathUtil.clamp(0.5, 1.5, -5.0));
+        assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  5.0));
+        assertEquals(1.0, MathUtil.clamp(0.5, 1.5,  1.0));
+        assertEquals(0.5, MathUtil.clamp(0.5, 1.5,  Double.NEGATIVE_INFINITY));
+        assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  Double.POSITIVE_INFINITY));
+        
+        assertTrue(Double.isNaN(MathUtil.clamp(0.5, 1.5,  Double.NaN)));
+    }
+
+    @Test
+    public void testClamp_doubleWithDefaultForNaN() {
+        assertEquals(0.5, MathUtil.clamp(0.5, 1.5, -5.0, Math.PI));
+        assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  5.0, Math.PI));
+        assertEquals(1.0, MathUtil.clamp(0.5, 1.5,  1.0, Math.PI));
+        assertEquals(0.5, MathUtil.clamp(0.5, 1.5,  Double.NEGATIVE_INFINITY, Math.PI));
+        assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  Double.POSITIVE_INFINITY, Math.PI));
+        
+        assertTrue(!Double.isNaN(MathUtil.clamp(0.5, 1.5,  Double.NaN, Math.PI)));
+        assertEquals(Math.PI, MathUtil.clamp(0.5, 1.5,  Double.NaN, Math.PI));
+    }
+
+    @Test
+    public void testClamp_float() {
+        assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f, -5.0f));
+        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  5.0f));
+        assertEquals(1.0f, MathUtil.clamp(0.5f, 1.5f,  1.0f));
+        assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f,  Float.NEGATIVE_INFINITY));
+        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  Float.POSITIVE_INFINITY));
+        
+        assertTrue(Double.isNaN(MathUtil.clamp(0.5, 1.5,  Double.NaN)));
+    }
+
+    @Test
+    public void testClamp_floatWithDefaultForNaN() {
+        float pi = (float) Math.PI;
+        assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f, -5.0f, pi));
+        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  5.0f, pi));
+        assertEquals(1.0f, MathUtil.clamp(0.5f, 1.5f,  1.0f, pi));
+        assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f,  Float.NEGATIVE_INFINITY, pi));
+        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  Float.POSITIVE_INFINITY, pi));
+        
+        assertTrue(!Double.isNaN(MathUtil.clamp(0.5f, 1.5f,  Float.NaN, pi)));
+        assertEquals(pi, MathUtil.clamp(0.5f, 1.5f,  Float.NaN, pi));
+    }
 }

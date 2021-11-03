@@ -35,12 +35,28 @@ public final class MathUtil {
      */
     public static int clamp(int min, int max, int arg) {
         assert min <= max;
+        return arg < min ? min : Math.min(arg, max);
+    }
 
-        if (arg < min) {
-            return min;
-        }
-
-        return Math.min(arg, max);
+    /**
+     * Clip argument to range.
+     *
+     * @param  min
+     *             minimal value
+     * @param  max
+     *             maximum value
+     * @param  arg
+     *             argument
+     * @return
+     *             <ul>
+     *             <li>min, if arg &lt; min
+     *             <li>max, if arg &gt; max
+     *             <li>else arg
+     *             </ul>
+     */
+    public static long clamp(long min, long max, long arg) {
+        assert min <= max;
+        return arg < min ? min : Math.min(arg, max);
     }
 
     /**
