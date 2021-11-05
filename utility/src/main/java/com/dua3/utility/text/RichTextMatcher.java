@@ -92,7 +92,7 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#replaceFirst(String)}.
      */
-    public @NotNull RichText replaceFirst(String replacement) {
+    public @NotNull RichText replaceFirst(@NotNull String replacement) {
         return replace(replacement, 1);
     }
 
@@ -106,7 +106,7 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
-    public @NotNull RichText replaceAll(String replacement) {
+    public @NotNull RichText replaceAll(@NotNull String replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }
 
@@ -129,7 +129,7 @@ public class RichTextMatcher implements MatchResult {
         return rtb.toRichText();
     }
 
-    private @NotNull RichText replace(String replacement, int maxOccurences) {
+    private @NotNull RichText replace(@NotNull String replacement, int maxOccurences) {
         RichTextBuilder rtb = new RichTextBuilder(text.length());
 
         int off, i;

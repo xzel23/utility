@@ -19,7 +19,7 @@ public interface FontUtil<F> {
     String NO_IMPLEMENTATION = "no FontUtil implementation present";
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    static FontUtil<?> getInstance() {
+    static @NotNull FontUtil<?> getInstance() {
         Iterator<FontUtil> serviceIterator = ServiceLoader
                 .load(FontUtil.class)
                 .iterator();
@@ -30,28 +30,28 @@ public interface FontUtil<F> {
         } else {
             fu = new FontUtil<>() {
                 @Override
-                public @NotNull Void convert(Font f) {
+                public @NotNull Void convert(@NotNull Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public @NotNull Dimension2f getTextDimension(CharSequence s, Font f) {
+                public @NotNull Dimension2f getTextDimension(@NotNull CharSequence s, @NotNull Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @SuppressWarnings("RedundantThrows")
                 @Override
-                public @NotNull List<Font> loadFonts(InputStream in) throws IOException {
+                public @NotNull List<Font> loadFonts(@NotNull InputStream in) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public @NotNull List<String> getFamilies(FontTypes types) {
+                public @NotNull List<String> getFamilies(@NotNull FontTypes types) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public @NotNull Font loadFontAs(InputStream in, Font font) throws IOException {
+                public @NotNull Font loadFontAs(@NotNull InputStream in, @NotNull Font font) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
             };
@@ -68,7 +68,7 @@ public interface FontUtil<F> {
      * @return
      *           the font implementation
      */
-    F convert(Font f);
+    F convert(@NotNull Font f);
 
     /**
      * Get text bounds.
@@ -80,7 +80,7 @@ public interface FontUtil<F> {
      * @return
      *           the text bounds
      */
-    Dimension2f getTextDimension(CharSequence s, Font f);
+    @NotNull Dimension2f getTextDimension(@NotNull CharSequence s, @NotNull Font f);
 
     /**
      * Get text width.
@@ -92,7 +92,7 @@ public interface FontUtil<F> {
      * @return
      *           the text width
      */
-    default double getTextWidth(CharSequence s, Font f) {
+    default double getTextWidth(@NotNull CharSequence s, @NotNull Font f) {
         return getTextDimension(s, f).width();
     }
 
@@ -106,7 +106,7 @@ public interface FontUtil<F> {
      * @return
      *           the text height
      */
-    default double getTextHeight(CharSequence s, Font f) {
+    default double getTextHeight(@NotNull CharSequence s, @NotNull Font f) {
         return getTextDimension(s, f).height();
     }
 
@@ -117,7 +117,7 @@ public interface FontUtil<F> {
      * @throws java.io.IOException if an I/O error occurs
      * @throws IllegalArgumentException if the type is not supported
      */
-    List<Font> loadFonts(InputStream in) throws IOException;
+    @NotNull List<Font> loadFonts(@NotNull InputStream in) throws IOException;
 
     /**
      * Font type enumeration.
@@ -133,13 +133,13 @@ public interface FontUtil<F> {
      * @param types the font types to return
      * @return list of font families
      */
-    List<String> getFamilies(FontTypes types);
+    @NotNull List<String> getFamilies(@NotNull FontTypes types);
 
     /**
      * Get a list of the available font families.
      * @return list of font families
      */
-    default List<String> getFamilies() {
+    default @NotNull List<String> getFamilies() {
         return getFamilies(FontTypes.ALL);
     }
 
@@ -150,6 +150,6 @@ public interface FontUtil<F> {
      * @return font instance
      * @throws IOException if an error occurs
      */
-    Font loadFontAs(InputStream in, Font font) throws IOException;
+    @NotNull Font loadFontAs(@NotNull InputStream in, @NotNull Font font) throws IOException;
 
 }

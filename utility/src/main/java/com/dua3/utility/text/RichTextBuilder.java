@@ -35,7 +35,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     private final @NotNull SortedMap<Integer, Map<String, Object>> parts;
     private final Deque<AttributeChange> openedAttributes = new LinkedList<>();
 
-    private record AttributeChange(String name, Object previousValue, Object value) {}
+    private record AttributeChange(@NotNull String name, Object previousValue, Object value) {}
     
     /**
      * Construct a new empty builder.
@@ -62,13 +62,13 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public @NotNull RichTextBuilder append(CharSequence csq) {
+    public @NotNull RichTextBuilder append(@NotNull CharSequence csq) {
         buffer.append(csq);
         return this;
     }
 
     @Override
-    public @NotNull Appendable append(CharSequence csq, int start, int end) {
+    public @NotNull Appendable append(@NotNull CharSequence csq, int start, int end) {
         buffer.append(csq, start, end);
         return this;
     }
@@ -90,7 +90,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *                  the property
      * @return          value of the property
      */
-    public Object get(String property) {
+    public Object get(@NotNull String property) {
         return parts.get(parts.lastKey()).get(property);
     }
 
@@ -101,7 +101,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *                  the property
      * @return          value of the property
      */
-    public Object getOrDefault(String property, Object defaultValue) {
+    public Object getOrDefault(@NotNull String property, Object defaultValue) {
         return parts.get(parts.lastKey()).getOrDefault(property, defaultValue);
     }
 
@@ -231,7 +231,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
         }
     }
 
-    public void push(String name, Object value) {
+    public void push(@NotNull String name, Object value) {
         Objects.requireNonNull(value, "value must not be null");
         Object previousValue = split().put(name, value);
         openedAttributes.push(new AttributeChange(name, previousValue, value));
@@ -249,7 +249,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @SuppressWarnings("unchecked")
-    public void push(Style style) {
+    public void push(@NotNull Style style) {
         List<Style> styles = (List<Style>) getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
         List<Style> newStyles = new ArrayList<>(styles.size()+1);
         newStyles.addAll(styles);
@@ -263,7 +263,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *
      * @param style the Style
      */
-    public void pop(Style style) {
+    public void pop(@NotNull Style style) {
         pop("__styles");
     }
 
@@ -272,7 +272,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @SuppressWarnings("unchecked")
-    void apply(Style style) {
+    void apply(@NotNull Style style) {
         for (Map<String,Object> attributes: parts.values()) {
             List<Style> styles = (List<Style>) attributes.computeIfAbsent(RichText.ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
             styles.add(0, style); // add the style at the first position!

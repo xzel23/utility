@@ -125,7 +125,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     }
 
     @Override
-    protected @NotNull AttributeBasedConverterImpl<StyledDocument> createConverter(RichText text) {
+    protected @NotNull AttributeBasedConverterImpl<StyledDocument> createConverter(@NotNull RichText text) {
         return new StyledDocumentConverterImpl();
     }
 

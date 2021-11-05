@@ -24,7 +24,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
      * @param text the text to be converted
      * @return instance of the implementation class
      */
-    protected abstract AttributeBasedConverter.@NotNull AttributeBasedConverterImpl<T> createConverter(RichText text);
+    protected abstract @NotNull AttributeBasedConverterImpl<T> createConverter(@NotNull RichText text);
 
     /**
      * Convert {@link RichText} instance to the target class.
@@ -68,7 +68,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * convenient and the implementation is free to choose whichever is suitable and ignore the other. 
          * @param changedAttributes map of the changed attribute values  
          */
-        protected abstract void apply(Map<String, Pair<Object, Object>> changedAttributes);
+        protected abstract void apply(@NotNull Map<String, Pair<Object, Object>> changedAttributes);
 
         /**
          * Collect all style attributes into a single map.
@@ -87,7 +87,8 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param sourceAttributes the source entries
          * @param destinationAttributes the destination map
          */
-        private static void copyAttributes(@NotNull Iterable<? extends Map.Entry<String, Object>> sourceAttributes, @NotNull Map<? super String, Object> destinationAttributes) {
+        private static void copyAttributes(@NotNull Iterable<? extends Map.Entry<String, Object>> sourceAttributes, 
+                                           @NotNull Map<? super String, Object> destinationAttributes) {
             sourceAttributes.forEach( entry -> {
                 String attribute = entry.getKey();
                 Object value = entry.getValue();
@@ -154,6 +155,6 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * Append chars to conversion result.
          * @param s chars to append
          */
-        protected abstract void appendChars(CharSequence s);
+        protected abstract void appendChars(@NotNull CharSequence s);
     }
 }

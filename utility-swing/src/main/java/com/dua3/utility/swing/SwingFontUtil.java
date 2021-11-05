@@ -111,7 +111,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     }
 
     @Override
-    public List<String> getFamilies(@NotNull FontTypes types) {
+    public @NotNull List<String> getFamilies(@NotNull FontTypes types) {
         List<String> fonts = List.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
 
         boolean mono;

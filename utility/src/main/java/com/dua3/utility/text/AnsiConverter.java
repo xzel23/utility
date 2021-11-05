@@ -44,7 +44,8 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      *                  ESC sequences
      * @return the option tp use
      */
-    public static @NotNull AnsiConversionOption map(String attribute, BiFunction<Object,Object, String> mapper) {
+    public static @NotNull AnsiConversionOption map(@NotNull String attribute,
+                                                    @NotNull BiFunction<Object,Object, String> mapper) {
         return new AnsiConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
     }
 
@@ -68,7 +69,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param options the options to apply
      * @return new converter instance
      */
-    public static @NotNull AnsiConverter create(AnsiConversionOption... options) {
+    public static @NotNull AnsiConverter create(@NotNull AnsiConversionOption @NotNull ... options) {
         return create(Arrays.asList(options));
     }
 
@@ -124,7 +125,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         }
 
         @Override
-        protected void appendChars(CharSequence s) {
+        protected void appendChars(@NotNull CharSequence s) {
             buffer.append(s);
         }
 

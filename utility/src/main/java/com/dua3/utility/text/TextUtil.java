@@ -88,7 +88,7 @@ public final class TextUtil {
      *
      * @param sb the {@link StringBuilder}
      */
-    public static void appendHtmlEscapedCharacter(StringBuilder sb, char c) {
+    public static void appendHtmlEscapedCharacter(@NotNull StringBuilder sb, char c) {
         try {
             appendHtmlEscapedCharacter((Appendable) sb, c);
         } catch (IOException e) {
@@ -175,7 +175,8 @@ public final class TextUtil {
      * @see #transform(String, UnaryOperator)
      */
     @SafeVarargs
-    public static @NotNull String transform(@NotNull String template, Pair<String,String> @NotNull ... substitutions) {
+    public static @NotNull String transform(@NotNull String template, 
+                                            @NotNull Pair<String,String> @NotNull ... substitutions) {
         UnaryOperator<String> env = s -> {
             for (Pair<String, String> r: substitutions) {
                 if (Objects.equals(s, r.first())) {
@@ -214,7 +215,9 @@ public final class TextUtil {
      * @param env      substitution environment
      * @param output   output
      */
-    public static void transform(@NotNull String template, @NotNull UnaryOperator<String> env, @NotNull Consumer<? super CharSequence> output) {
+    public static void transform(@NotNull String template, 
+                                 @NotNull UnaryOperator<String> env, 
+                                 @NotNull Consumer<? super CharSequence> output) {
         int pos = 0;
         while (pos < template.length()) {
             // find next ref
@@ -343,7 +346,7 @@ public final class TextUtil {
      * @param chars the chars to search for
      * @return true if {@code s} contains none of the characters in {@code chars}
      */
-    public static boolean containsNoneOf(@NotNull CharSequence s, char... chars) {
+    public static boolean containsNoneOf(@NotNull CharSequence s, char @NotNull ... chars) {
         return indexOfFirst(s, chars) < 0;
     }
 
@@ -365,7 +368,7 @@ public final class TextUtil {
      * @param chars the chars to search for
      * @return true if {@code s} contains one or more of the characters in {@code chars}
      */
-    public static boolean containsAnyOf(@NotNull CharSequence s, char... chars) {
+    public static boolean containsAnyOf(@NotNull CharSequence s, char @NotNull ... chars) {
         return indexOfFirst(s, chars) >= 0;
     }
 
@@ -461,7 +464,9 @@ public final class TextUtil {
      * @return the sequence matched or {@code Optional.empty()}, if not
      * matched
      */
-    public static @NotNull Optional<CharSequence> group(@NotNull Matcher matcher, @NotNull CharSequence input, @NotNull String name) {
+    public static @NotNull Optional<CharSequence> group(@NotNull Matcher matcher, 
+                                                        @NotNull CharSequence input, 
+                                                        @NotNull String name) {
         int start = matcher.start(name);
         return start < 0 ? Optional.empty() : Optional.of(input.subSequence(start, matcher.end(name)));
     }
@@ -507,7 +512,7 @@ public final class TextUtil {
      * @param data the data to be encoded
      * @return the Base64-encoded data
      */
-    public static String base64Encode(byte[] data) {
+    public static @NotNull String base64Encode(byte @NotNull [] data) {
         return Base64.getEncoder().encodeToString(data);
     }
 
@@ -517,7 +522,7 @@ public final class TextUtil {
      * @param text the Base64-encoded data
      * @return the decoded data
      */
-    public static byte[] base64Decode(String text) {
+    public static byte @NotNull [] base64Decode(@NotNull String text) {
         return Base64.getDecoder().decode(text);
     }
 
@@ -551,7 +556,7 @@ public final class TextUtil {
      * @return
      *           the text height
      */
-    public static double getTextHeight(CharSequence text, Font font) {
+    public static double getTextHeight(@NotNull CharSequence text, @NotNull Font font) {
         return FONT_UTIL.getTextWidth(text, font);
     }
 
@@ -565,7 +570,7 @@ public final class TextUtil {
      * @return
      *           the text width
      */
-    public static double getTextWidth(CharSequence text, Font font) {
+    public static double getTextWidth(@NotNull CharSequence text, @NotNull Font font) {
         return FONT_UTIL.getTextWidth(text, font);
     }
 
@@ -579,7 +584,7 @@ public final class TextUtil {
      * @return
      *           the text bounds
      */
-    public static Dimension2f getTextDimension(CharSequence text, Font font) {
+    public static @NotNull Dimension2f getTextDimension(@NotNull CharSequence text, @NotNull Font font) {
         return FONT_UTIL.getTextDimension(text, font);
     }
 
@@ -633,7 +638,7 @@ public final class TextUtil {
      * @param subject the email subject
      * @return email-link
      */
-    public static @NotNull String generateMailToLink(String email, @NotNull String subject) {
+    public static @NotNull String generateMailToLink(@NotNull String email, @NotNull String subject) {
         // give some care to translate space to "%20"
         try {
             String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8.name());

@@ -28,8 +28,7 @@ public interface AttributedCharSequence extends CharSequence {
     @NotNull AttributedCharacter attributedCharAt(int index);
 
     @Override
-    @NotNull
-    AttributedCharSequence subSequence(int start, int end);
+    @NotNull AttributedCharSequence subSequence(int start, int end);
 
     /**
      * Returns a stream of {@code AttributedCharacter} values from this sequence.

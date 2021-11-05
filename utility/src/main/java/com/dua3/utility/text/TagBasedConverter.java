@@ -12,7 +12,7 @@ import java.util.List;
  */
 public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
     
-    protected abstract @NotNull TagBasedConverterImpl<T> createConverter(RichText text);
+    protected abstract @NotNull TagBasedConverterImpl<T> createConverter(@NotNull RichText text);
 
     @Override
     public @NotNull T convert(@NotNull RichText text) {
@@ -27,11 +27,11 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
         
         private @NotNull List<Style> currentStyles = new ArrayList<>();
 
-        protected abstract void appendOpeningTags(List<Style> openingStyles);
+        protected abstract void appendOpeningTags(@NotNull List<Style> openingStyles);
 
-        protected abstract void appendClosingTags(List<Style> closingStyles);
+        protected abstract void appendClosingTags(@NotNull List<Style> closingStyles);
 
-        protected abstract void appendChars(CharSequence s);
+        protected abstract void appendChars(@NotNull CharSequence s);
 
         protected abstract @NotNull T get();
         

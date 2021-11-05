@@ -43,7 +43,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @return         the new style
      */
     @SafeVarargs
-    public static @NotNull TextAttributes of(Pair<String, ?>... entries) {
+    public static @NotNull TextAttributes of(@NotNull Pair<String, ?> @NotNull ... entries) {
         return of(Arrays.asList(entries));
     }
 
@@ -66,7 +66,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         return new TextAttributes(map.entrySet());
     }
 
-    private TextAttributes(Set<Entry<String, Object>> entries) {
+    private TextAttributes(@NotNull Set<Entry<String, Object>> entries) {
         this.entries = entries;
     }
 

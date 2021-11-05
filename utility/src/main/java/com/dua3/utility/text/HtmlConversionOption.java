@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -12,7 +14,7 @@ public record HtmlConversionOption(Consumer<? super HtmlConverter> action) {
         Objects.requireNonNull(action);
     }
 
-    void apply(HtmlConverter converter) {
+    void apply(@NotNull HtmlConverter converter) {
         action.accept(converter);
     }
     

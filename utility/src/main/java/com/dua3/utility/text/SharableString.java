@@ -13,7 +13,7 @@ public class SharableString implements CharSequence {
 
     private final String base;
 
-    public SharableString(String s) {
+    public SharableString(@NotNull String s) {
         this.base = Objects.requireNonNull(s);
     }
 

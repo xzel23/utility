@@ -5,6 +5,8 @@
 
 package com.dua3.utility.text;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An interface for classes that can be represented as RichText.
  */
@@ -16,7 +18,7 @@ public interface ToRichText {
      *
      * @return RichText presentation of the object
      */
-    default RichText toRichText() {
+    default @NotNull RichText toRichText() {
         RichTextBuilder builder = new RichTextBuilder();
         appendTo(builder);
         return builder.toRichText();
@@ -27,5 +29,5 @@ public interface ToRichText {
      *
      * @param builder the builder
      */
-    void appendTo(RichTextBuilder builder);
+    void appendTo(@NotNull RichTextBuilder builder);
 }
