@@ -221,9 +221,9 @@ public class MathUtilTest {
 
     @Test
     public void testClamp_long() {
-        assertEquals(-2l, MathUtil.clamp(-2l, 5l, -5l));
-        assertEquals(5l, MathUtil.clamp(-2l, 5l,  7l));
-        assertEquals(1l, MathUtil.clamp(-2l, 5l,  1l));
+        assertEquals(-2L, MathUtil.clamp(-2L, 5L, -5L));
+        assertEquals(5L, MathUtil.clamp(-2L, 5L, 7L));
+        assertEquals(1L, MathUtil.clamp(-2L, 5L, 1L));
     }
 
     @Test
@@ -244,8 +244,8 @@ public class MathUtilTest {
         assertEquals(1.0, MathUtil.clamp(0.5, 1.5,  1.0, Math.PI));
         assertEquals(0.5, MathUtil.clamp(0.5, 1.5,  Double.NEGATIVE_INFINITY, Math.PI));
         assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  Double.POSITIVE_INFINITY, Math.PI));
-        
-        assertTrue(!Double.isNaN(MathUtil.clamp(0.5, 1.5,  Double.NaN, Math.PI)));
+
+        assertFalse(Double.isNaN(MathUtil.clamp(0.5, 1.5, Double.NaN, Math.PI)));
         assertEquals(Math.PI, MathUtil.clamp(0.5, 1.5,  Double.NaN, Math.PI));
     }
 
@@ -268,8 +268,8 @@ public class MathUtilTest {
         assertEquals(1.0f, MathUtil.clamp(0.5f, 1.5f,  1.0f, pi));
         assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f,  Float.NEGATIVE_INFINITY, pi));
         assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  Float.POSITIVE_INFINITY, pi));
-        
-        assertTrue(!Double.isNaN(MathUtil.clamp(0.5f, 1.5f,  Float.NaN, pi)));
+
+        assertFalse(Double.isNaN(MathUtil.clamp(0.5f, 1.5f, Float.NaN, pi)));
         assertEquals(pi, MathUtil.clamp(0.5f, 1.5f,  Float.NaN, pi));
     }
     
@@ -302,9 +302,9 @@ public class MathUtilTest {
     
     @Test
     public void testGcd() {
-        assertEquals(6l, MathUtil.gcd(48l, 18l));
-        assertEquals(6l, MathUtil.gcd(-48l, 18l));
-        assertEquals(6l, MathUtil.gcd(48l, -18l));
-        assertEquals(6l, MathUtil.gcd(-48l, -18l));
+        assertEquals(6L, MathUtil.gcd(48L, 18L));
+        assertEquals(6L, MathUtil.gcd(-48L, 18L));
+        assertEquals(6L, MathUtil.gcd(48L, -18L));
+        assertEquals(6L, MathUtil.gcd(-48L, -18L));
     }
 }

@@ -25,15 +25,33 @@ public final class SystemAdapter {
         addSystemErrListener(listener);
     }
 
-    public static synchronized void addSystemOutListener(@NotNull LogListener listener) {
-        if (stdOut== null) {
+    public static void addSystemOutListener(@NotNull LogListener listener) {
+        synchronized (SystemAdapter.class) {
+            if (stdOut == null) {
+                try {
+                    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+                    PrintStream origOut = System.out;
+                    LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemOutLogEntry(txt)));
+                    PrintStream logOut = new PrintStream(lineOut, true, StandardCharsets.UTF_8.name());
+                    System.setOut(logOut);
+                    stdOut = origOut;
+                } catch (UnsupportedEncodingException e) {
+                    // this should not happen since we use UTF-8 which is one of the standard encodings
+                    throw new IllegalStateException(e);
+                }
+            }
+        }
+    }
+
+    public static void addSystemErrListener(@NotNull LogListener listener) {
+        synchronized (SystemAdapter.class) {
             try {
                 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-                PrintStream origOut = System.out;
-                LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemOutLogEntry(txt)));
+                PrintStream origErr = System.err;
+                LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemErrLogEntry(txt)));
                 PrintStream logOut = new PrintStream(lineOut, true, StandardCharsets.UTF_8.name());
-                System.setOut(logOut);
-                stdOut = origOut;
+                System.setErr(logOut);
+                stdErr = origErr;
             } catch (UnsupportedEncodingException e) {
                 // this should not happen since we use UTF-8 which is one of the standard encodings
                 throw new IllegalStateException(e);
@@ -41,36 +59,28 @@ public final class SystemAdapter {
         }
     }
 
-    public static synchronized void addSystemErrListener(@NotNull LogListener listener) {
-        try {
-            @SuppressWarnings("UseOfSystemOutOrSystemErr")
-            PrintStream origErr = System.err;
-            LineOutputStream lineOut = new LineOutputStream(txt -> listener.entry(new SystemErrLogEntry(txt)));
-            PrintStream logOut = new PrintStream(lineOut,true, StandardCharsets.UTF_8.name());
-            System.setErr(logOut);
-            stdErr = origErr;
-        } catch (UnsupportedEncodingException e) {
-            // this should not happen since we use UTF-8 which is one of the standard encodings
-            throw new IllegalStateException(e);
+    public static void removeSystemListener(LogListener listener) {
+        synchronized (SystemAdapter.class) {
+            removeSystemOutListener(listener);
+            removeSystemErrListener(listener);
         }
     }
 
-    public static synchronized void removeSystemListener(LogListener listener) {
-        removeSystemOutListener(listener);
-        removeSystemErrListener(listener);
-    }
-
-    public static synchronized void removeSystemOutListener(LogListener listener) {
-        if (stdOut!=null) {
-            System.setOut(stdOut);
-            stdOut = null;
+    public static void removeSystemOutListener(LogListener listener) {
+        synchronized (SystemAdapter.class) {
+            if (stdOut != null) {
+                System.setOut(stdOut);
+                stdOut = null;
+            }
         }
     }
 
-    public static synchronized void removeSystemErrListener(LogListener listener) {
-        if (stdErr!=null) {
-            System.setErr(stdErr);
-            stdErr = null;
+    public static void removeSystemErrListener(LogListener listener) {
+        synchronized (SystemAdapter.class) {
+            if (stdErr != null) {
+                System.setErr(stdErr);
+                stdErr = null;
+            }
         }
     }
 

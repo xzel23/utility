@@ -85,42 +85,48 @@ public class SwingLogPane extends JPanel {
         private boolean isLocked() {
             return data!=null;
         }
-        
-        public synchronized void lock() {
-            assert !isLocked() : "internal error: locked";
 
-            synchronized (buffer) {
-                data = new ArrayList<>(buffer.entries());
-                removed = 0;
-                added = 0;
+        public void lock() {
+            synchronized (this) {
+                assert !isLocked() : "internal error: locked";
+
+                synchronized (buffer) {
+                    data = new ArrayList<>(buffer.entries());
+                    removed = 0;
+                    added = 0;
+                }
             }
         }
-        
-        public synchronized void unlock() {
-            assert isLocked() : "internal error: should be locked";
-            assert data != null : "internal error, data should have been set in lock()";
-            
-            int sz = data.size();
-            data = null;
-            removed = Math.min(removed, sz);
-            
-            if (removed>0) {
-                fireTableRowsDeleted(0, removed);
-                sz-=removed;
-                removed=0;
-            }
-            
-            added = Math.min(added, sz);
-            
-            if (added>0) {
-                fireTableRowsInserted(sz - added, sz - 1);
-                added=0;
+
+        public void unlock() {
+            synchronized (this) {
+                assert isLocked() : "internal error: should be locked";
+                assert data != null : "internal error, data should have been set in lock()";
+
+                int sz = data.size();
+                data = null;
+                removed = Math.min(removed, sz);
+
+                if (removed > 0) {
+                    fireTableRowsDeleted(0, removed);
+                    sz -= removed;
+                    removed = 0;
+                }
+
+                added = Math.min(added, sz);
+
+                if (added > 0) {
+                    fireTableRowsInserted(sz - added, sz - 1);
+                    added = 0;
+                }
             }
         }
-        
+
         @Override
-        public synchronized int getRowCount() {
-            return data==null ? buffer.size() : data.size();
+        public int getRowCount() {
+            synchronized (this) {
+                return data == null ? buffer.size() : data.size();
+            }
         }
         
         @Override
@@ -129,8 +135,10 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public synchronized @NotNull LogEntry getValueAt(int rowIndex, int columnIndex) {
-            return data==null ? buffer.get(rowIndex) : data.get(rowIndex);
+        public @NotNull LogEntry getValueAt(int rowIndex, int columnIndex) {
+            synchronized (this) {
+                return data == null ? buffer.get(rowIndex) : data.get(rowIndex);
+            }
         }
 
         @Override
@@ -144,49 +152,55 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public synchronized void entry(LogEntry entry, boolean replaced) {
-            if (isLocked()) {
-                if (replaced) {
-                    removed++;
-                }
-                added++;
-            } else {
-                synchronized (buffer) {
+        public void entry(LogEntry entry, boolean replaced) {
+            synchronized (this) {
+                if (isLocked()) {
                     if (replaced) {
-                        fireTableRowsDeleted(0, removed);
+                        removed++;
                     }
-                    int sz = buffer.size();
-                    fireTableRowsInserted(sz-1, sz-1);
+                    added++;
+                } else {
+                    synchronized (buffer) {
+                        if (replaced) {
+                            fireTableRowsDeleted(0, removed);
+                        }
+                        int sz = buffer.size();
+                        fireTableRowsInserted(sz - 1, sz - 1);
+                    }
                 }
             }
         }
 
         @Override
-        public synchronized void entries(@NotNull Collection<LogEntry> entries, int replaced) {
-            if (isLocked()) {
-                if (replaced>0) {
-                    removed+=replaced;
-                }
-                added+=entries.size();
-            } else {
-                synchronized (buffer) {
+        public void entries(@NotNull Collection<LogEntry> entries, int replaced) {
+            synchronized (this) {
+                if (isLocked()) {
                     if (replaced > 0) {
-                        fireTableRowsDeleted(0, replaced);
+                        removed += replaced;
                     }
-                    int sz = buffer.size();
-                    fireTableRowsInserted(sz - entries.size(), sz - 1);
+                    added += entries.size();
+                } else {
+                    synchronized (buffer) {
+                        if (replaced > 0) {
+                            fireTableRowsDeleted(0, replaced);
+                        }
+                        int sz = buffer.size();
+                        fireTableRowsInserted(sz - entries.size(), sz - 1);
+                    }
                 }
             }
         }
 
         @Override
-        public synchronized void clear() {
-            if (isLocked()) {
-                assert data != null : "internal error, data should have been set in lock()";
-                removed=data.size();
-                added=0;
-            } else {
-                fireTableDataChanged();
+        public void clear() {
+            synchronized (this) {
+                if (isLocked()) {
+                    assert data != null : "internal error, data should have been set in lock()";
+                    removed = data.size();
+                    added = 0;
+                } else {
+                    fireTableDataChanged();
+                }
             }
         }
 

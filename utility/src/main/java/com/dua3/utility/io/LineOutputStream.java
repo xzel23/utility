@@ -25,14 +25,16 @@ public class LineOutputStream extends OutputStream {
         this.count = 0;
         this.processor = Objects.requireNonNull(processor);
     }
-    
-    private synchronized  void flushLine() {
-        String text = new String(buf, 0, count, StandardCharsets.UTF_8);
-        processor.accept(text);
 
-        count = 0;
-        if (buf.length > MAX_BUFFER_SIZE) {
-            buf = new byte[INITIAL_BUFFER_SIZE];
+    private void flushLine() {
+        synchronized (this) {
+            String text = new String(buf, 0, count, StandardCharsets.UTF_8);
+            processor.accept(text);
+
+            count = 0;
+            if (buf.length > MAX_BUFFER_SIZE) {
+                buf = new byte[INITIAL_BUFFER_SIZE];
+            }
         }
     }
 
