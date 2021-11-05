@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public abstract class CsvIo implements AutoCloseable {
 
-    public static Collection<Option<?>> getOptions() {
+    public static @NotNull Collection<Option<?>> getOptions() {
         return List.of(
                 IoOptions.textDelimiter(),
                 IoOptions.fieldSeparator(),

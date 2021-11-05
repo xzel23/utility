@@ -18,7 +18,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     /**
      * The identity transformation.
      */
-    public static final AffineTransformation2f IDENTITY = new AffineTransformation2f(1, 0, 0, 0, 1, 0);
+    public static final @NotNull AffineTransformation2f IDENTITY = new AffineTransformation2f(1, 0, 0, 0, 1, 0);
     
     /**
      * Return the identity transformation.

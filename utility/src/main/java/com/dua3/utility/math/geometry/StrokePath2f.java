@@ -34,12 +34,12 @@ public class StrokePath2f extends Segment2f {
     }
 
     @Override
-    public Vector2f start() {
+    public @NotNull Vector2f start() {
         return path.vertex(idx);
     }
 
     @Override
-    public Vector2f end() {
+    public @NotNull Vector2f end() {
         return path.vertex(idx);
     }
 

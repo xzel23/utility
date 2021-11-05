@@ -25,7 +25,7 @@ public class ClipPath2f extends Segment2f {
      * @param idx index of the current node
      * @param fillRule the {@link FillRule} to use
      */
-    ClipPath2f(@NotNull Path2fImpl path, int idx, FillRule fillRule) {
+    ClipPath2f(@NotNull Path2fImpl path, int idx, @NotNull FillRule fillRule) {
         super(path);
         this.idx = idx;
         this.fillRule = fillRule;
@@ -37,12 +37,12 @@ public class ClipPath2f extends Segment2f {
     }
 
     @Override
-    public Vector2f start() {
+    public @NotNull Vector2f start() {
         return path.vertex(idx);
     }
 
     @Override
-    public Vector2f end() {
+    public @NotNull Vector2f end() {
         return path.vertex(idx);
     }
 
@@ -50,7 +50,7 @@ public class ClipPath2f extends Segment2f {
      * Get the {@link FillRule}.
      * @return the fill rule
      */
-    public FillRule fillRule() {
+    public @NotNull FillRule fillRule() {
         return fillRule;
     }
 

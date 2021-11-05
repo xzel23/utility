@@ -24,7 +24,7 @@ public final class ChoiceOption<T> extends Option<T> {
      *
      * @param <T> the value type
      */
-    public record Choice<T>(T value, String text) {
+    public record Choice<T>(T value, @NotNull String text) {
         @Override
         public String toString() {
             return text;
@@ -59,7 +59,8 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param names the option names
      * @return choice option
      */
-    public static <E extends Enum<E>> @NotNull ChoiceOption<E> create(@NotNull Class<? extends E> cls, String... names) {
+    public static <E extends Enum<E>> @NotNull ChoiceOption<E> create(@NotNull Class<? extends E> cls, 
+                                                                      @NotNull String @NotNull ... names) {
         Function<String,E> parser = s -> ChoiceOption.valueOf(cls, s);
         Function<E,String> formatter = Object::toString;
         Supplier<Collection<E>> values = () -> enumValues(cls);
@@ -75,7 +76,10 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param names the option names
      * @return choice option
      */
-    public static <T> @NotNull ChoiceOption<T> create(Function<String, ? extends T> valueMapper, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, String... names) {
+    public static <T> @NotNull ChoiceOption<T> create(@NotNull Function<String, ? extends T> valueMapper, 
+                                                      @NotNull Function<? super T,String> formatter, 
+                                                      @NotNull Supplier<? extends Collection<? extends T>> values, 
+                                                      @NotNull String @NotNull ... names) {
         return new ChoiceOption<>(valueMapper, formatter, values, names);
     }
 
@@ -86,7 +90,10 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param values list of valid strings
      * @param names the option names
      */
-    private ChoiceOption(Function<String,? extends T> valueMapper, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, String... names) {
+    private ChoiceOption(@NotNull Function<String,? extends T> valueMapper,
+                         @NotNull Function<? super T,String> formatter,
+                         @NotNull Supplier<? extends Collection<? extends T>> values,
+                         @NotNull String @NotNull ... names) {
         super(valueMapper, formatter, names);
         occurence(0,1);
         arity(1,1);
@@ -105,7 +112,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * Get collection of choices.
      * @return collection holding the possible choices
      */
-    public Collection<Choice<T>> choices() {
+    public @NotNull Collection<Choice<T>> choices() {
         return values().stream().map(this::choice).toList();
     }
 
@@ -119,13 +126,13 @@ public final class ChoiceOption<T> extends Option<T> {
     }
     
     @Override
-    public @NotNull ChoiceOption<T> description(String description) {
+    public @NotNull ChoiceOption<T> description(@NotNull String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public @NotNull ChoiceOption<T> handler(Consumer<Collection<T>> handler) {
+    public @NotNull ChoiceOption<T> handler(@NotNull Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }
@@ -144,7 +151,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public @NotNull ChoiceOption<T> defaultValue(Supplier<T> defaultValue) {
+    public @NotNull ChoiceOption<T> defaultValue(@NotNull Supplier<T> defaultValue) {
         this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
         return this;
     }

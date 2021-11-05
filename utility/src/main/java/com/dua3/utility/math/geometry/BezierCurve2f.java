@@ -22,7 +22,7 @@ public final class BezierCurve2f extends AbstractCurve2f {
      * @param b2 third control point
      * @param b3 fourth control point
      */
-    BezierCurve2f(Path2fImpl path, int b0, int b1, int b2, int b3) {
+    BezierCurve2f(@NotNull Path2fImpl path, int b0, int b1, int b2, int b3) {
         super(path, b0, b1, b2, b3);
     }
 

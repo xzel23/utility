@@ -29,7 +29,7 @@ public class FillAndStrokePath2f extends Segment2f {
      * @param idx index of current vertex
      * @param fillRule the fill rule to use
      */
-    FillAndStrokePath2f(@NotNull Path2fImpl path, int idx, FillRule fillRule) {
+    FillAndStrokePath2f(@NotNull Path2fImpl path, int idx, @NotNull FillRule fillRule) {
         super(path);
         this.idx = idx;
         this.fillRule = fillRule;
@@ -41,12 +41,12 @@ public class FillAndStrokePath2f extends Segment2f {
     }
 
     @Override
-    public Vector2f start() {
+    public @NotNull Vector2f start() {
         return path.vertex(idx);
     }
 
     @Override
-    public Vector2f end() {
+    public @NotNull Vector2f end() {
         return path.vertex(idx);
     }
 
@@ -54,7 +54,7 @@ public class FillAndStrokePath2f extends Segment2f {
      * Get fill rule.
      * @return the fill rule
      */
-    public FillRule fillRule() {
+    public @NotNull FillRule fillRule() {
         return fillRule;
     }
 }

@@ -71,12 +71,12 @@ public class Codecs {
             }
 
             @Override
-            public void encode(DataOutputStream os, T t) throws IOException {
+            public void encode(@NotNull DataOutputStream os, T t) throws IOException {
                 enc.encode(os, t);
             }
 
             @Override
-            public T decode(DataInputStream is) throws IOException {
+            public T decode(@NotNull DataInputStream is) throws IOException {
                 return dec.decode(is);
             }
         };
@@ -168,12 +168,12 @@ public class Codecs {
             }
 
             @Override
-            public void encode(DataOutputStream os, @NotNull M map) throws IOException {
+            public void encode(@NotNull DataOutputStream os, @NotNull M map) throws IOException {
                 ENTRIES_CODEC.encode(os, map.entrySet());
             }
 
             @Override
-            public M decode(DataInputStream is) throws IOException {
+            public M decode(@NotNull DataInputStream is) throws IOException {
                 M map = construct.get();
                 ENTRIES_CODEC.decode(is).forEach(entry -> map.put(entry.getKey(), entry.getValue()));
                 return map;

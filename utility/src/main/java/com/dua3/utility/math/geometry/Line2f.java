@@ -29,7 +29,7 @@ public final class Line2f extends Segment2f {
      * @param a index of starting point
      * @param b index of end point
      */
-    Line2f(Path2fImpl path, int a, int b) {
+    Line2f(@NotNull Path2fImpl path, int a, int b) {
         super(path);
         this.a = a;
         this.b = b;
@@ -41,12 +41,12 @@ public final class Line2f extends Segment2f {
     }
 
     @Override
-    public Vector2f start() {
+    public @NotNull Vector2f start() {
         return path.vertex(a);
     }
 
     @Override
-    public Vector2f end() {
+    public @NotNull Vector2f end() {
         return path.vertex(b);
     }
 

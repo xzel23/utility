@@ -1,5 +1,7 @@
 package com.dua3.utility.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -18,13 +20,13 @@ public class LineOutputStream extends OutputStream {
     private int count;
     private final Consumer<String> processor;
 
-    public LineOutputStream(Consumer<String> processor) {
+    public LineOutputStream(@NotNull Consumer<String> processor) {
         this.buf = new byte[INITIAL_BUFFER_SIZE];
         this.count = 0;
         this.processor = Objects.requireNonNull(processor);
     }
     
-    private synchronized  void flushToLog() {
+    private synchronized  void flushLine() {
         String text = new String(buf, 0, count, StandardCharsets.UTF_8);
         processor.accept(text);
 
@@ -35,12 +37,14 @@ public class LineOutputStream extends OutputStream {
     }
 
     @Override
-    public synchronized void write(int b) {
-        ensureCapacity(count+1);
-        buf[count++] = (byte) b;
-        
-        if (b=='\n') {
-            flushToLog();
+    public void write(int b) {
+        synchronized (this) {
+            ensureCapacity(count + 1);
+            buf[count++] = (byte) b;
+
+            if (b == '\n') {
+                flushLine();
+            }
         }
     }
 
@@ -57,7 +61,7 @@ public class LineOutputStream extends OutputStream {
 
     @Override
     public void close() throws IOException {
-        flushToLog();
+        flushLine();
         super.close();
     }
 }

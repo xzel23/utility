@@ -22,7 +22,7 @@ public enum PredefinedDateFormat {
      * @param style  the {@link FormatStyle} to use
      * @return the DateFormatter
      */
-    private static @NotNull DateTimeFormatter formatFromLocale(Locale locale, @NotNull FormatStyle style) {
+    private static @NotNull DateTimeFormatter formatFromLocale(@NotNull Locale locale, @NotNull FormatStyle style) {
         return DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
     }
 
@@ -47,17 +47,17 @@ public enum PredefinedDateFormat {
 
     private final Function<? super Locale, DateTimeFormatter> factory;
 
-    PredefinedDateFormat(String name, Function<? super Locale, DateTimeFormatter> factory) {
+    PredefinedDateFormat(@NotNull String name, @NotNull Function<? super Locale, DateTimeFormatter> factory) {
         this.name = name;
         this.factory = factory;
     }
 
-    public DateTimeFormatter getFormatter(Locale locale) {
+    public DateTimeFormatter getFormatter(@NotNull Locale locale) {
         return factory.apply(locale);
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return name;
     }
 }

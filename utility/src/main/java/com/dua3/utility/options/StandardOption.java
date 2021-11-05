@@ -13,15 +13,19 @@ import java.util.function.Function;
  */
 public final class StandardOption<T> extends Option<T> {
     
-    public static <T> @NotNull StandardOption<T> create(@NotNull Class<? extends T> type, String... names) {
+    public static <T> @NotNull StandardOption<T> create(@NotNull Class<? extends T> type,
+                                                        @NotNull String @NotNull ... names) {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
-    public static <T> @NotNull StandardOption<T> create(Function<String,T> mapper, String[] names) {
+    public static <T> @NotNull StandardOption<T> create(@NotNull Function<String,T> mapper,
+                                                        @NotNull String @NotNull [] names) {
         return new StandardOption<>(mapper, Object::toString, names);
     }
 
-    public static <T> @NotNull StandardOption<T> create(Function<String,T> mapper, Function<? super T, String> formatter, String[] names) {
+    public static <T> @NotNull StandardOption<T> create(@NotNull Function<String,T> mapper,
+                                                        @NotNull Function<? super T, String> formatter,
+                                                        @NotNull String @NotNull [] names) {
         return new StandardOption<>(mapper, formatter, names);
     }
 
@@ -30,18 +34,20 @@ public final class StandardOption<T> extends Option<T> {
      * @param mapper the mapper used to convert the string values of arguments to the target type
      * @param names the names to be used on the command line for this option
      */
-    private StandardOption(Function<String, ? extends T> mapper, Function<? super T, String> formatter, String... names) {
+    private StandardOption(@NotNull Function<String, ? extends T> mapper,
+                           @NotNull Function<? super T, String> formatter,
+                           @NotNull String @NotNull ... names) {
         super(mapper, formatter, names);
     }
 
     @Override
-    public @NotNull StandardOption<T> description(String description) {
+    public @NotNull StandardOption<T> description(@NotNull String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public @NotNull StandardOption<T> handler(Consumer<Collection<T>> handler) {
+    public @NotNull StandardOption<T> handler(@NotNull Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }

@@ -21,7 +21,7 @@ public interface Encoder<T> {
      * @param t the instance to write
      * @throws IOException if an error occurs
      */
-    void encode(DataOutputStream os, T t) throws IOException;
+    void encode(@NotNull DataOutputStream os, T t) throws IOException;
 
     /**
      * Write instance to stream, not throwing checked exceptions.
@@ -29,7 +29,7 @@ public interface Encoder<T> {
      * @param t the instance to write (or {@code null})
      * @throws UncheckedIOException if an error occurs
      */
-    default void encodeUnchecked(DataOutputStream os, T t) throws UncheckedIOException {
+    default void encodeUnchecked(@NotNull DataOutputStream os, T t) throws UncheckedIOException {
         try {
             encode(os, t);
         } catch (IOException e) {

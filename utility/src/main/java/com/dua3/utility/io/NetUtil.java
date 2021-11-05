@@ -41,7 +41,7 @@ public final class NetUtil {
      * @param localFiles
      *                   A view to the local file's root.
      */
-    public static void registerSandboxURLHandler(FileSystemView localFiles) {
+    public static void registerSandboxURLHandler(@NotNull FileSystemView localFiles) {
         LOG.fine(LogUtil.format("Setting SandBoxURLHandler with root %s", localFiles));
         URL.setURLStreamHandlerFactory(new SandboxURLStreamHandlerFactory(localFiles));
     }
@@ -58,7 +58,7 @@ public final class NetUtil {
      * @throws IOException
      *                     if an I/O error occurs
      */
-    public static String readContent(@NotNull URL url, @NotNull Charset cs) throws IOException {
+    public static @NotNull String readContent(@NotNull URL url, @NotNull Charset cs) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), cs))) {
             return reader.lines().collect(Collectors.joining("\n"));
         }

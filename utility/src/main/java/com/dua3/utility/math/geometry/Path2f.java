@@ -1,6 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,7 @@ public final class Path2f {
     
     private final Path2fImpl impl;
     
-    Path2f(Path2fImpl impl) {
+    Path2f(@NotNull Path2fImpl impl) {
         this.impl = impl;
     }
 
@@ -21,7 +22,7 @@ public final class Path2f {
      * Get list of vertices of this path.
      * @return list of vertices
      */
-    public List<Vector2f> vertices() {
+    public @NotNull List<Vector2f> vertices() {
         return impl.vertices();
     }
 
@@ -29,12 +30,12 @@ public final class Path2f {
      * Get list of segments of this path.
      * @return list of segments
      */
-    public List<Segment2f> segments() {
+    public @NotNull List<Segment2f> segments() {
         return impl.segments();
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return segments().stream()
                 .map(Objects::toString)
                 .collect(Collectors.joining("\n        ", "Path2f{ ", " }"));

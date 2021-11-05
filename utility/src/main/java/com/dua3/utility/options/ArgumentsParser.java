@@ -56,7 +56,7 @@ public class ArgumentsParser {
      * @param minArgs minimum number of positional arguments
      * @param maxArgs maximum number of positional arguments
      */
-    public ArgumentsParser(String name, String description, int minArgs, int maxArgs) {
+    public ArgumentsParser(@NotNull String name, @NotNull String description, int minArgs, int maxArgs) {
         this.name = Objects.requireNonNull(name);
         this.description = Objects.requireNonNull(description);
 
@@ -72,7 +72,7 @@ public class ArgumentsParser {
      * @param description program description 
      * @param minArgs minimum number of positional arguments
      */
-    public ArgumentsParser(String name, String description, int minArgs) {
+    public ArgumentsParser(@NotNull String name, @NotNull String description, int minArgs) {
         this(name, description, minArgs, Integer.MAX_VALUE);        
     }
     
@@ -81,7 +81,7 @@ public class ArgumentsParser {
      * @param name the command name to show in help text.
      * @param description the command description to show in help text.
      */
-    public ArgumentsParser(String name, String description) {
+    public ArgumentsParser(@NotNull String name, @NotNull String description) {
         this(name, description, 0, Integer.MAX_VALUE);
     }
 
@@ -90,7 +90,7 @@ public class ArgumentsParser {
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the flag
      */
-    public @NotNull Flag  flag(String... names) {
+    public @NotNull Flag  flag(@NotNull String @NotNull ... names) {
         return addOption(Flag.create(names));
     }
 
@@ -101,7 +101,7 @@ public class ArgumentsParser {
      * @param <T> the target type
      * @return the option
      */
-    public <T> @NotNull SimpleOption<T> simpleOption(@NotNull Class<? extends T> type, String... names) {
+    public <T> @NotNull SimpleOption<T> simpleOption(@NotNull Class<? extends T> type, @NotNull String @NotNull ... names) {
         return simpleOption(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -112,7 +112,7 @@ public class ArgumentsParser {
      * @param <T> the target type
      * @return the option
      */
-    public <T> @NotNull SimpleOption<T> simpleOption(Function<String,T> mapper, String... names) {
+    public <T> @NotNull SimpleOption<T> simpleOption(@NotNull Function<String,T> mapper, @NotNull String @NotNull ... names) {
         return addOption(SimpleOption.create(mapper, names));
     }
 
@@ -123,7 +123,7 @@ public class ArgumentsParser {
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the option
      */
-    public <E extends Enum<E>> @NotNull ChoiceOption<E> choiceOption(@NotNull Class<? extends E> enumClass, String... names) {
+    public <E extends Enum<E>> @NotNull ChoiceOption<E> choiceOption(@NotNull Class<? extends E> enumClass, @NotNull String @NotNull ... names) {
         return addOption(ChoiceOption.create(enumClass, names));
     }
 
@@ -134,7 +134,7 @@ public class ArgumentsParser {
      * @param <T> the generic type of the option 
      * @return the option
      */
-    public <T> @NotNull StandardOption<T> option(@NotNull Class<? extends T> type, String... names) {
+    public <T> @NotNull StandardOption<T> option(@NotNull Class<? extends T> type, @NotNull String @NotNull ... names) {
         return option(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -145,7 +145,7 @@ public class ArgumentsParser {
      * @param <T> the generic type of the option 
      * @return the option
      */
-    public <T> @NotNull StandardOption<T> option(Function<String,T> mapper, String... names) {
+    public <T> @NotNull StandardOption<T> option(Function<String,T> mapper, @NotNull String @NotNull ... names) {
         return addOption(StandardOption.create(mapper, names));
     }
 
@@ -165,7 +165,7 @@ public class ArgumentsParser {
      * @param args the command line arguments to parse.
      * @return object holding the parsed command line arguments
      */
-    public @NotNull Arguments parse(String @NotNull ... args) {
+    public @NotNull Arguments parse(@NotNull String @NotNull ... args) {
         List<String> argList = Arrays.asList(args);
 
         Queue<Arguments.Entry<?>> parsedOptions = new LinkedList<>();

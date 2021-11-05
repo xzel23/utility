@@ -23,7 +23,7 @@ public class EndPath2f extends Segment2f {
      * @param path the path
      * @param v index of vertex in path
      */
-    EndPath2f(Path2fImpl path, int v) {
+    EndPath2f(@NotNull Path2fImpl path, int v) {
         super(path);
         this.v = v;
     }
@@ -34,12 +34,12 @@ public class EndPath2f extends Segment2f {
     }
 
     @Override
-    public Vector2f start() {
+    public @NotNull Vector2f start() {
         return path.vertex(v);
     }
 
     @Override
-    public Vector2f end() {
+    public @NotNull Vector2f end() {
         return start();
     }
     

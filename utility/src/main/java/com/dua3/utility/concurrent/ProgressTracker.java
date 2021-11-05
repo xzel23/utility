@@ -39,11 +39,11 @@ public interface ProgressTracker<T> {
         private final ProgressTracker tracker;
         private final Object task;
 
-        static <T> @NotNull TaskUpdater create(ProgressTracker<T> tracker, T task) {
+        static <T> @NotNull TaskUpdater create(@NotNull ProgressTracker<T> tracker, @NotNull T task) {
             return new TaskUpdater(tracker, task);
         }
         
-        TaskUpdater(ProgressTracker tracker, Object task) {
+        TaskUpdater(@NotNull ProgressTracker tracker, @NotNull Object task) {
             this.tracker = Objects.requireNonNull(tracker);
             this.task = Objects.requireNonNull(task);
         }
@@ -67,7 +67,7 @@ public interface ProgressTracker<T> {
          * Mark task as completed.
          * @param s terminal status of task
          */
-        public void finish(State s) { tracker.finish(task, s); }
+        public void finish(@NotNull State s) { tracker.finish(task, s); }
 
         /**
          * Update progress of task. Use update(0,0) for indeterminate progress.
@@ -91,25 +91,25 @@ public interface ProgressTracker<T> {
     static <T> @NotNull ProgressTracker<T> nopTracker() {
         return new ProgressTracker<>() {
             @Override
-            public void schedule(T task) { /* nop */ }
+            public void schedule(@NotNull T task) { /* nop */ }
 
             @Override
-            public void start(T task) { /* nop */ }
+            public void start(@NotNull T task) { /* nop */ }
 
             @Override
-            public void pause(T task) { /* nop */ }
+            public void pause(@NotNull T task) { /* nop */ }
 
             @Override
-            public void abort(T task) { /* nop */ }
+            public void abort(@NotNull T task) { /* nop */ }
 
             @Override
-            public void finish(T task, State s) { /* nop */ }
+            public void finish(@NotNull T task, State s) { /* nop */ }
 
             @Override
-            public void update(T task, int total, int done) { /* nop */ }
+            public void update(@NotNull T task, int total, int done) { /* nop */ }
 
             @Override
-            public void update(T task, double percentDone) { /* nop */ }
+            public void update(@NotNull T task, double percentDone) { /* nop */ }
         };
     }
 
@@ -117,32 +117,32 @@ public interface ProgressTracker<T> {
      * Schedule task. If this task already exists, this is a no-op.
      * @param task the task
      */
-    void schedule(T task);
+    void schedule(@NotNull T task);
 
     /**
      * Start a task.
      * @param task the task
      */
-    void start(T task);
+    void start(@NotNull T task);
 
     /**
      * Pause task.
      * @param task the task
      */
-    void pause(T task);
+    void pause(@NotNull T task);
 
     /**
      * Abort task.
      * @param task the task
      */
-    void abort(T task);
+    void abort(@NotNull T task);
 
     /**
      * Mark task as completed.
      * @param task the task
      * @param s the status
      */
-    void finish(T task, State s);
+    void finish(@NotNull T task, State s);
 
     /**
      * Update task progress.
@@ -150,21 +150,21 @@ public interface ProgressTracker<T> {
      * @param total the total amount of work
      * @param done the work done
      */
-    void update(T task, int total, int done);
+    void update(@NotNull T task, int total, int done);
 
     /**
      * Update task progress.
      * @param task the task
      * @param percentDone percentage of the work done (floating point value between 0 and 1)
      */
-    void update(T task, double percentDone);
+    void update(@NotNull T task, double percentDone);
 
     /**
      * Create taskupdater.
      * @param task the task
      * @return the task updater
      */
-    default @NotNull TaskUpdater taskUpdater(T task) {
+    default @NotNull TaskUpdater taskUpdater(@NotNull T task) {
         return TaskUpdater.create(this, task);
     }
 

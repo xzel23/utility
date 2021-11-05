@@ -23,7 +23,7 @@ public abstract class AbstractCurve2f extends Segment2f {
      * @param path the path this curve belongs to
      * @param controls the control points
      */
-    AbstractCurve2f(@NotNull Path2fImpl path, int... controls) {
+    AbstractCurve2f(@NotNull Path2fImpl path, int @NotNull ... controls) {
         super(path);
         this.controls = Objects.requireNonNull(controls);
     }
@@ -46,12 +46,12 @@ public abstract class AbstractCurve2f extends Segment2f {
     }
     
     @Override
-    public Vector2f start() {
+    public @NotNull Vector2f start() {
         return control(0);
     }
 
     @Override
-    public Vector2f end() {
+    public @NotNull Vector2f end() {
         return control(3);
     }
 

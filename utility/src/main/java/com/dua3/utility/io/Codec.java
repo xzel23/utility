@@ -1,5 +1,7 @@
 package com.dua3.utility.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
@@ -13,6 +15,6 @@ public interface Codec<T> extends Encoder<T>, Decoder<T> {
      * The encoder name, usually a corresponding to the object type.
      * @return name
      */
-    String name();
+    @NotNull String name();
 
 }

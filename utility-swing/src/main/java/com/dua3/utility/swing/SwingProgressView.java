@@ -30,7 +30,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         }
 
         @Override
-        public void finish(State s) {
+        public void finish(@NotNull State s) {
             SwingUtilities.invokeLater( () -> {
                 if (pb.isIndeterminate()) {
                     pb.setIndeterminate(false);
@@ -94,37 +94,37 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     }
 
     @Override
-    public void schedule(T task) {
+    public void schedule(@NotNull T task) {
         imp.schedule(task);
     }
 
     @Override
-    public void start(T task) {
+    public void start(@NotNull T task) {
         imp.start(task);
     }
 
     @Override
-    public void pause(T task) {
+    public void pause(@NotNull T task) {
         imp.pause(task);
     }
 
     @Override
-    public void abort(T task) {
+    public void abort(@NotNull T task) {
         imp.abort(task);
     }
 
     @Override
-    public void finish(T task, @NotNull State s) {
+    public void finish(@NotNull T task, @NotNull State s) {
         imp.finish(task, s);
     }
 
     @Override
-    public void update(T task, int total, int done) {
+    public void update(@NotNull T task, int total, int done) {
         imp.update(task, total, done);
     }
 
     @Override
-    public void update(T task, double percentDone) {
+    public void update(@NotNull T task, double percentDone) {
         imp.update(task, percentDone);
     }
 

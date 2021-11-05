@@ -33,8 +33,8 @@ class Path2fImpl {
     @NotNull List<Segment2f> segments() {
         return Collections.unmodifiableList(segments);
     }
-    
-    Vector2f vertex(int idx) {
+
+    @NotNull Vector2f vertex(int idx) {
         return vertices.get(idx);
     }
 

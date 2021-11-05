@@ -28,7 +28,9 @@ public abstract class Option<T> {
     int maxOccurrences = Integer.MAX_VALUE;
     Consumer<Collection<T>> handler = values -> {};
 
-    protected Option(Function<String, ? extends T> mapper, Function<?super T, String> formatter, String @NotNull ... names) {
+    protected Option(@NotNull Function<String, ? extends T> mapper,
+                     @NotNull Function<?super T, String> formatter,
+                     @NotNull String @NotNull ... names) {
         LangUtil.check(names.length > 0, "at least one name must be given");
 
         this.mapper = Objects.requireNonNull(mapper);
@@ -36,7 +38,7 @@ public abstract class Option<T> {
         this.names = names.clone();
     }
 
-    protected Option<T> arity(int minArity, int maxArity) {
+    protected @NotNull Option<T> arity(int minArity, int maxArity) {
         LangUtil.check(minArity >= 0, "min arity is negative");
         LangUtil.check(minArity <= maxArity, "min arity > max arity");
         LangUtil.check(this.minArity == 0 && this.maxArity == 0, "arity already set");
@@ -47,7 +49,7 @@ public abstract class Option<T> {
         return this;
     }
 
-    protected Option<T> occurence(int min, int max) {
+    protected @NotNull Option<T> occurence(int min, int max) {
         LangUtil.check(min >= 0, "minimum occurences is negative");
         LangUtil.check(min <= max, "minimum occurrences > max occurrences");
         LangUtil.check(minOccurrences == 0 && maxOccurrences == Integer.MAX_VALUE, "occurrences already set");
@@ -63,7 +65,7 @@ public abstract class Option<T> {
      * @param description the description
      * @return this option
      */
-    protected Option<T> description(String description) {
+    protected @NotNull Option<T> description(@NotNull String description) {
         LangUtil.check(this.description.isEmpty(), "description already set");
         this.description = Objects.requireNonNull(description, "description must not be null");
         return this;
@@ -74,7 +76,7 @@ public abstract class Option<T> {
      * @param displayName display name
      * @return this option
      */
-    protected @NotNull Option<T> displayName(String displayName) {
+    protected @NotNull Option<T> displayName(@NotNull String displayName) {
         LangUtil.check(this.displayName.isEmpty(), "displayName already set");
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");
         return this;
@@ -85,7 +87,7 @@ public abstract class Option<T> {
      * @param handler the handler to call in {@link Arguments#handle()} for each invocation of this option
      * @return this option
      */
-    public Option<T> handler(Consumer<Collection<T>> handler) {
+    public @NotNull Option<T> handler(@NotNull Consumer<Collection<T>> handler) {
         this.handler = Objects.requireNonNull(handler);
         return this;
     }
@@ -94,11 +96,11 @@ public abstract class Option<T> {
      * Get this option's handler.
      * @return the handler for this option (always non-null, options are initialised with a no-op handler)
      */
-    public Consumer<Collection<T>> handler() {
+    public @NotNull Consumer<Collection<T>> handler() {
         return handler;
     }
 
-    void handle(Collection<T> values) {
+    void handle(@NotNull Collection<T> values) {
         handler.accept(values);
     }
 
@@ -119,7 +121,7 @@ public abstract class Option<T> {
      * Get option name.
      * @return the name of this option
      */
-    public String name() {
+    public @NotNull String name() {
         return names[0];
     }
 
@@ -127,7 +129,7 @@ public abstract class Option<T> {
      * Get all names for this option
      * @return collection containing all names for this option
      */
-    public Collection<String> names() {
+    public @NotNull Collection<String> names() {
         return List.of(names);
     }
 
@@ -167,7 +169,7 @@ public abstract class Option<T> {
      * Get description for this option.
      * @return description
      */
-    public String description() {
+    public @NotNull String description() {
         return description;
     }
 
@@ -175,7 +177,7 @@ public abstract class Option<T> {
      * Get display name of this option.
      * @return display name
      */
-    public String displayName() {
+    public @NotNull String displayName() {
         return displayName.isEmpty() ? names[0] : displayName;
     }
 
@@ -184,7 +186,7 @@ public abstract class Option<T> {
      * @param v the value
      * @return String representation of value
      */
-    public String format(T v) {
+    public @NotNull String format(T v) {
         return formatter.apply(v);
     }
     

@@ -19,11 +19,14 @@ public final class SimpleOption<T> extends Option<T> {
 
     private Supplier<T> defaultValue = () -> null;
 
-    public static <T> @NotNull SimpleOption<T>  create(Function<String, ? extends T> mapper, String... names) {
+    public static <T> @NotNull SimpleOption<T>  create(@NotNull Function<String, ? extends T> mapper,
+                                                       @NotNull String @NotNull ... names) {
         return new SimpleOption<>(mapper, Object::toString, names);
     }
     
-    public static <T> @NotNull SimpleOption<T>  create(Function<String, ? extends T> mapper, Function<? super T, String> formatter, String... names) {
+    public static <T> @NotNull SimpleOption<T>  create(@NotNull Function<String, ? extends T> mapper,
+                                                       @NotNull Function<? super T, String> formatter,
+                                                       @NotNull String @NotNull ... names) {
         return new SimpleOption<>(mapper, formatter, names);
     }
     
@@ -32,20 +35,22 @@ public final class SimpleOption<T> extends Option<T> {
      * @param mapper the mapping function to the target type
      * @param names names for the flag, at least one.
      */
-    private SimpleOption(Function<String, ? extends T> mapper, Function<? super T, String> formatter, String... names) {
+    private SimpleOption(@NotNull Function<String, ? extends T> mapper,
+                         @NotNull Function<? super T, String> formatter,
+                         @NotNull String @NotNull ... names) {
         super(mapper, formatter, names);
         occurence(0,1);
         arity(1,1);
     }
     
     @Override
-    public @NotNull SimpleOption<T> description(String description) {
+    public @NotNull SimpleOption<T> description(@NotNull String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public @NotNull SimpleOption<T> handler(Consumer<Collection<T>> handler) {
+    public @NotNull SimpleOption<T> handler(@NotNull Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }
@@ -64,7 +69,7 @@ public final class SimpleOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public @NotNull SimpleOption<T> defaultValue(Supplier<T> defaultValue) {
+    public @NotNull SimpleOption<T> defaultValue(@NotNull Supplier<T> defaultValue) {
         this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
         return this;
     }
@@ -73,7 +78,7 @@ public final class SimpleOption<T> extends Option<T> {
      * Get the default value.
      * @return Optional holding the default value.
      */
-    public Optional<T> getDefault() {
+    public @NotNull Optional<T> getDefault() {
         return Optional.ofNullable(defaultValue.get());
     }
 }

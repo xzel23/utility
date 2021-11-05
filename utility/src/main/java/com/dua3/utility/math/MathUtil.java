@@ -445,7 +445,7 @@ public final class MathUtil {
      * @return
      *           operation that performs the requested rounding
      */
-    public static @NotNull DoubleUnaryOperator roundingOperation(int n, RoundingMode mode) {
+    public static @NotNull DoubleUnaryOperator roundingOperation(int n, @NotNull RoundingMode mode) {
         // special case: no rounding
         if (mode==RoundingMode.UNNECESSARY) {
             return x -> x;
@@ -464,7 +464,7 @@ public final class MathUtil {
         return x-> roundingOperation.applyAsDouble(x*scale)/scale;
     }
 
-    public static @NotNull DoubleUnaryOperator getRoundingOperation(RoundingMode mode) {
+    public static @NotNull DoubleUnaryOperator getRoundingOperation(@NotNull RoundingMode mode) {
         return switch (mode) {
             case HALF_UP -> x -> x >= 0 ? Math.floor(x + 0.5) : Math.ceil(x - 0.5);
             case HALF_DOWN -> x -> x >= 0 ? Math.ceil(x - 0.5) : Math.floor(x + 0.5);

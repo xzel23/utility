@@ -23,34 +23,34 @@ public enum PredefinedDateTimeFormat {
     private final @NotNull Function<? super Locale, DateTimeFormatter> dateFormatterFactory;
     private final @NotNull Function<? super Locale, DateTimeFormatter> timeFormatterFactory;
 
-    PredefinedDateTimeFormat(String name, DateTimeFormatter formatter) {
+    PredefinedDateTimeFormat(@NotNull String name, @NotNull DateTimeFormatter formatter) {
         this.name = name;
         this.dateTimeFormatterFactory = locale -> formatter;
         this.dateFormatterFactory = locale -> formatter;
         this.timeFormatterFactory = locale -> formatter;
     }
 
-    PredefinedDateTimeFormat(String name, @NotNull FormatStyle style) {
+    PredefinedDateTimeFormat(@NotNull String name, @NotNull FormatStyle style) {
         this.name = name;
         this.dateTimeFormatterFactory = locale -> DateTimeFormatter.ofLocalizedDateTime(style).withLocale(locale);
         this.dateFormatterFactory = locale -> DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
         this.timeFormatterFactory = locale -> DateTimeFormatter.ofLocalizedTime(style).withLocale(locale);
     }
 
-    public DateTimeFormatter getDateTimeFormatter(Locale locale) {
+    public @NotNull DateTimeFormatter getDateTimeFormatter(@NotNull Locale locale) {
         return dateTimeFormatterFactory.apply(locale);
     }
     
-    public DateTimeFormatter getDateFormatter(Locale locale) {
+    public @NotNull DateTimeFormatter getDateFormatter(@NotNull Locale locale) {
         return dateFormatterFactory.apply(locale);
     }
 
-    public DateTimeFormatter getTimeFormatter(Locale locale) {
+    public @NotNull DateTimeFormatter getTimeFormatter(@NotNull Locale locale) {
         return timeFormatterFactory.apply(locale);
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return name;
     }
 }

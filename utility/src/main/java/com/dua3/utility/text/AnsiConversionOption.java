@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -17,7 +19,7 @@ public record AnsiConversionOption(Consumer<? super AnsiConverter> action) {
         Objects.requireNonNull(action);
     }
 
-    void apply(AnsiConverter converter) {
+    void apply(@NotNull AnsiConverter converter) {
         action.accept(converter);
     }
     

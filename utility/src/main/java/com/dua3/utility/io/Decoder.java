@@ -23,7 +23,7 @@ public interface Decoder<T> {
      * @return the object read
      * @throws IOException if an error occurs
      */
-    T decode(DataInputStream is) throws IOException;
+    T decode(@NotNull DataInputStream is) throws IOException;
 
     /**
      * Read an object from the {@link DataInputStream}.
@@ -31,7 +31,7 @@ public interface Decoder<T> {
      * @return the object read
      * @throws UncheckedIOException if an error occurs
      */
-    default T decodeUnchecked(DataInputStream is) throws UncheckedIOException {
+    default T decodeUnchecked(@NotNull DataInputStream is) throws UncheckedIOException {
         try {
             return decode(is);
         } catch (IOException e) {

@@ -5,6 +5,9 @@
 
 package com.dua3.utility.io;
 
+import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,9 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstraction for accessing files stored in different location.
@@ -76,7 +76,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the view cannot be created
      */
-    public static @NotNull FileSystemView create(@NotNull Path root, Flags... flags) throws IOException {
+    public static @NotNull FileSystemView create(@NotNull Path root, @NotNull Flags... flags) throws IOException {
         Objects.requireNonNull(root);
 
         List<Flags> flagList = Arrays.asList(flags);
@@ -115,7 +115,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the file does not exist or an I/O error occurs
      */
-    public static @NotNull FileSystemView forArchive(@NotNull Path root, Flags... flags) throws IOException {
+    public static @NotNull FileSystemView forArchive(@NotNull Path root, @NotNull Flags... flags) throws IOException {
         List<Flags> flagList = Arrays.asList(flags);
 
         Map<String, String> env = new HashMap<>();
@@ -188,7 +188,7 @@ public final class FileSystemView implements AutoCloseable {
     private final String name;
     private final CleanUp cleanup;
 
-    private FileSystemView(@NotNull Path root, CleanUp cleanup, String name) {
+    private FileSystemView(@NotNull Path root, @NotNull CleanUp cleanup, @NotNull String name) {
         this.cleanup = cleanup;
         this.root = root.toAbsolutePath();
         this.name = name;
@@ -200,7 +200,7 @@ public final class FileSystemView implements AutoCloseable {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return name;
     }
 
@@ -227,7 +227,7 @@ public final class FileSystemView implements AutoCloseable {
         return resolvedPath;
     }
 
-    private void assertThatResolvedPathIsValid(@NotNull Path resolvedPath, Object originalPath) {
+    private void assertThatResolvedPathIsValid(@NotNull Path resolvedPath, @NotNull Object originalPath) {
         LangUtil.check(resolvedPath.toAbsolutePath().startsWith(root),
                 "Path is not in this FileSystemViews subtree: %s", originalPath);
     }

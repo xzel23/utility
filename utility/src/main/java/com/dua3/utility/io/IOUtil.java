@@ -181,7 +181,7 @@ public final class IOUtil {
      *              the new file extension
      * @return       filename with replaced extension
      */
-    public static @NotNull String replaceExtension(@NotNull String path, String extension) {
+    public static @NotNull String replaceExtension(@NotNull String path, @NotNull String extension) {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
@@ -207,7 +207,7 @@ public final class IOUtil {
      *              the new file extension
      * @return       filename with replaced extension
      */
-    public static @NotNull Path replaceExtension(@NotNull Path path, String extension) {
+    public static @NotNull Path replaceExtension(@NotNull Path path, @NotNull String extension) {
         Path parent = path.getParent();
         
         Path filename = path.getFileName();
@@ -279,7 +279,7 @@ public final class IOUtil {
      * @return InputStream
      * @throws IOException on error
      */
-    public static InputStream openInputStream(@NotNull URI uri) throws IOException {
+    public static @NotNull InputStream openInputStream(@NotNull URI uri) throws IOException {
         if (uri.isAbsolute()) {
             return uri.toURL().openStream();
         } else {
@@ -307,7 +307,7 @@ public final class IOUtil {
      * @param cs the Charset to use
      * @return stream of lines
      */
-    public static Stream<String> lines(@NotNull InputStream in, @NotNull Charset cs) {
+    public static @NotNull Stream<String> lines(@NotNull InputStream in, @NotNull Charset cs) {
         return new BufferedReader(new InputStreamReader(in, cs)).lines();
     }
 
@@ -323,7 +323,7 @@ public final class IOUtil {
      * @throws IOException
      *                     if something goes wrong
      */
-    public static void write(@NotNull Path path, CharSequence text, OpenOption... options) throws IOException {
+    public static void write(@NotNull Path path, @NotNull CharSequence text, @NotNull OpenOption... options) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, options)) {
             writer.append(text);
         }
@@ -462,7 +462,7 @@ public final class IOUtil {
      * @param  path        the file or directory to delete
      * @throws IOException if a file or directory could not be deleted
      */
-    public static void deleteRecursive(Path path) throws IOException {
+    public static void deleteRecursive(@NotNull Path path) throws IOException {
         try (Stream<Path> files = Files.walk(path, FileVisitOption.FOLLOW_LINKS)) {
             files
                     .sorted(Comparator.reverseOrder())
@@ -570,7 +570,7 @@ public final class IOUtil {
      * @throws IOException
      *  if the type is supported but an IOException occurs during stream creation
      */
-    public static @NotNull InputStream getInputStream(Object o) throws IOException {
+    public static @NotNull InputStream getInputStream(@NotNull Object o) throws IOException {
         return StreamSupplier.getInputStream(o);
     }
 
@@ -594,7 +594,7 @@ public final class IOUtil {
      * @throws IOException
      *  if the type is supported but an IOException occurs during stream creation
      */
-    public static @NotNull OutputStream getOutputStream(Object o) throws IOException {
+    public static @NotNull OutputStream getOutputStream(@NotNull Object o) throws IOException {
         return StreamSupplier.getOutputStream(o);
     }
 
@@ -624,12 +624,12 @@ final class StreamSupplier<V> {
 
     @FunctionalInterface
     interface InputStreamSupplier<C> {
-        @NotNull InputStream getInputStream(C connection) throws IOException;
+        @NotNull InputStream getInputStream(@NotNull C connection) throws IOException;
     }
 
     @FunctionalInterface
     interface OutputStreamSupplier<C> {
-        @NotNull OutputStream getOutputStream(C connection) throws IOException;
+        @NotNull OutputStream getOutputStream(@NotNull C connection) throws IOException;
     }
 
     private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
@@ -662,29 +662,29 @@ final class StreamSupplier<V> {
     private final InputStreamSupplier<V> iss;
     private final OutputStreamSupplier<V> oss;
 
-    private StreamSupplier(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
+    private StreamSupplier(@NotNull Class<V> clazz, @NotNull InputStreamSupplier<V> iss, @NotNull OutputStreamSupplier<V> oss) {
         this.clazz = clazz;
         this.iss = iss;
         this.oss = oss;
     }
 
-    private static <V> @NotNull StreamSupplier<V> def(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
+    private static <V> @NotNull StreamSupplier<V> def(@NotNull Class<V> clazz, @NotNull InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
         return new StreamSupplier<>(clazz, iss, oss);
     }
 
     @SuppressWarnings("unchecked")
-    private static <C> StreamSupplier<? super C> supplier(C o) {
+    private static <C> StreamSupplier<? super C> supplier(@NotNull C o) {
         return streamSuppliers.stream()
                 .filter(s -> s.clazz.isInstance(o))
                 .findFirst().<StreamSupplier<? super C>>map(s -> (StreamSupplier<? super C>) s)
                 .orElse(UNSUPPORTED);
     }
 
-    public static <C> @NotNull InputStream getInputStream(C o) throws IOException {
+    public static <C> @NotNull InputStream getInputStream(@NotNull C o) throws IOException {
         return supplier(o).iss.getInputStream(o);
     }
 
-    public static @NotNull OutputStream getOutputStream(Object o) throws IOException {
+    public static @NotNull OutputStream getOutputStream(@NotNull Object o) throws IOException {
         return supplier(o).oss.getOutputStream(o);
     }
 }

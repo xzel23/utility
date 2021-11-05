@@ -41,7 +41,7 @@ public class PathBuilder2f {
      * @param idx index
      * @return the vertex at the given index
      */
-    public Vector2f vertex(int idx) {
+    public @NotNull Vector2f vertex(int idx) {
         return impl.vertex(idx);
     }
 
@@ -57,7 +57,7 @@ public class PathBuilder2f {
      * Get the current (last added) vertex.
      * @return the current vertex
      */
-    public Vector2f current() {
+    public @NotNull Vector2f current() {
         return impl.vertex(currentIndex());
     }
 
@@ -156,7 +156,7 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return Path2f instance holding the constructed path
      */
-    public @NotNull Path2f fillPath(FillRule fillRule) {
+    public @NotNull Path2f fillPath(@NotNull FillRule fillRule) {
         impl.addSegment(new FillPath2f(impl, currentIndex(), fillRule));
         return new Path2f(impl);
     }
@@ -166,7 +166,7 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return Path2f instance holding the constructed path
      */
-    public @NotNull Path2f fillAndStrokePath(FillRule fillRule) {
+    public @NotNull Path2f fillAndStrokePath(@NotNull FillRule fillRule) {
         impl.addSegment(new FillAndStrokePath2f(impl, currentIndex(), fillRule));
         return new Path2f(impl);
     }
@@ -176,7 +176,7 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return Path2f instance holding the constructed path
      */
-    public @NotNull Path2f clipPath(FillRule fillRule) {
+    public @NotNull Path2f clipPath(@NotNull FillRule fillRule) {
         impl.addSegment(new ClipPath2f(impl, currentIndex(), fillRule));
         return new Path2f(impl);
     }

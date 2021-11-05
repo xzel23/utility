@@ -12,6 +12,9 @@
  */
 package com.dua3.utility.io;
 
+import com.dua3.utility.options.Arguments;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.Flushable;
@@ -23,14 +26,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import com.dua3.utility.options.Arguments;
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author axel@dua3.com
  */
 public class CsvWriter extends CsvIo implements Flushable {
-    public static @NotNull CsvWriter create(BufferedWriter writer, @NotNull Arguments options) {
+    public static @NotNull CsvWriter create(@NotNull BufferedWriter writer, @NotNull Arguments options) {
         return new CsvWriter(writer, options);
     }
 
@@ -53,7 +53,7 @@ public class CsvWriter extends CsvIo implements Flushable {
 
     private int fieldsInRow = 0;
 
-    public CsvWriter(BufferedWriter out, @NotNull Arguments options) {
+    public CsvWriter(@NotNull BufferedWriter out, @NotNull Arguments options) {
         super(options);
         this.out = Objects.requireNonNull(out);
     }

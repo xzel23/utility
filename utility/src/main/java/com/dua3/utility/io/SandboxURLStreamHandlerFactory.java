@@ -5,6 +5,7 @@
 
 package com.dua3.utility.io;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URLStreamHandler;
@@ -15,12 +16,12 @@ public class SandboxURLStreamHandlerFactory implements URLStreamHandlerFactory {
 
     private final FileSystemView localFiles;
 
-    public SandboxURLStreamHandlerFactory(FileSystemView localFiles) {
+    public SandboxURLStreamHandlerFactory(@NotNull FileSystemView localFiles) {
         this.localFiles = Objects.requireNonNull(localFiles);
     }
 
     @Override
-    public @Nullable URLStreamHandler createURLStreamHandler(String protocol) {
+    public @Nullable URLStreamHandler createURLStreamHandler(@NotNull String protocol) {
         return switch (protocol) {
             case "file", "jar" -> null;
             default -> new SandboxURLHandler(localFiles);

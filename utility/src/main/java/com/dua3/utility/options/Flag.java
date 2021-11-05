@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  */
 public final class Flag extends Option<Boolean> {
 
-    public static @NotNull Flag create(String... names) {
+    public static @NotNull Flag create(@NotNull String @NotNull ... names) {
         return new Flag(names);
     }
     
@@ -20,20 +20,20 @@ public final class Flag extends Option<Boolean> {
      * Construct a new flag with the given name(s).
      * @param names names for the flag, at least one.
      */
-    private Flag(String[] names) {
+    private Flag(@NotNull String @NotNull [] names) {
         super(Flag::mapToBoolean, b -> Boolean.toString(b), names);
         occurence(0,1);
         arity(0,0);
     }
 
     @Override
-    public @NotNull Flag description(String description) {
+    public @NotNull Flag description(@NotNull String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public @NotNull Flag handler(Consumer<Collection<Boolean>> handler) {
+    public @NotNull Flag handler(@NotNull Consumer<Collection<Boolean>> handler) {
         super.handler(handler);
         return this;
     }

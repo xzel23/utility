@@ -33,7 +33,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param args the arguments to pass to the instance.
      * @return new instance
      */
-    public static @NotNull Arguments of(Entry<?>... args) {
+    public static @NotNull Arguments of(@NotNull Entry<?>... args) {
         return new Arguments(new LinkedList<>(Arrays.asList(args)), Collections.emptyList());
     }
 
@@ -45,7 +45,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return new {@link Entry}
      */
     @SafeVarargs
-    public static <T> @NotNull Entry<T> createEntry(Option<T> option, T @NotNull ... args) {
+    public static <T> @NotNull Entry<T> createEntry(@NotNull Option<T> option, @NotNull T @NotNull ... args) {
         Entry<T> entry = new Entry<>(option);
         for (var arg: args) {
             entry.addArg(arg);
@@ -63,16 +63,16 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         final @NotNull List<T> parms;
 
         @SuppressWarnings("unchecked")
-        static @NotNull Entry<?> create(Option<?> option) {
+        static @NotNull Entry<?> create(@NotNull Option<?> option) {
             return new Entry<>(option);
         }
 
-        Entry(Option<T> option) {
+        Entry(@NotNull Option<T> option) {
             this.option = Objects.requireNonNull(option);
             this.parms = new LinkedList<>();
         }
 
-        void addParameter(String s) {
+        void addParameter(@NotNull String s) {
             addArg(option.map(s));
         }
 
@@ -84,7 +84,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
          * Get the option that this entry belongs to
          * @return the option
          */
-        public Option<T> getOption() {
+        public @NotNull Option<T> getOption() {
             return option;
         }
 
@@ -114,7 +114,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param parsedOptions the options detected by the command line parser
      * @param positionalArgs the positional arguments
      */
-    Arguments(Queue<Entry<?>> parsedOptions, @NotNull List<String> positionalArgs) {
+    Arguments(@NotNull Queue<Entry<?>> parsedOptions, @NotNull List<String> positionalArgs) {
         this.parsedOptions = parsedOptions;
         this.positionalArgs = new ArrayList<>(positionalArgs);
     }
@@ -134,7 +134,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return the parameter passed to the option, or the option's default value (if set)
      * @throws OptionException if neither is set
      */
-    public <T> T getOrThrow(@NotNull SimpleOption<T> option) {
+    public <T> @NotNull T getOrThrow(@NotNull SimpleOption<T> option) {
         return get(option).orElseThrow(() -> new OptionException("missing required option: " + option.name()));
     }
 
@@ -145,7 +145,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return Optional holding the argument passed to this option, the option's default value, or an empty Optional
      *    if neither is provided
      */
-    public <T> Optional<T> get(@NotNull SimpleOption<T> option) {
+    public <T> @NotNull Optional<T> get(@NotNull SimpleOption<T> option) {
         return stream(option).findFirst().map(list -> list.get(0)).or(option::getDefault);
     }
 
@@ -156,7 +156,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return the parameter passed to the option, or the option's default value (if set)
      * @throws OptionException if neither is set
      */
-    public <T> T getOrThrow(@NotNull ChoiceOption<T> option) {
+    public <T> @NotNull T getOrThrow(@NotNull ChoiceOption<T> option) {
         return get(option).orElseThrow(() -> new OptionException("missing required option: " + option.name()));
     }
 
@@ -166,7 +166,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param <T> the generic type of the option 
      * @return the option's value
      */
-    public <T> Optional<T> get(@NotNull ChoiceOption<T> option) {
+    public <T> @NotNull Optional<T> get(@NotNull ChoiceOption<T> option) {
         return stream(option).findFirst().map(list -> list.get(0)).or(option::getDefault);
     }
 
@@ -175,7 +175,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param flag the flag
      * @return true, if the flag is set
      */
-    public boolean isSet(Flag flag) {
+    public boolean isSet(@NotNull Flag flag) {
         return stream().anyMatch(entry -> entry.option.equals(flag));
     }
 
@@ -184,7 +184,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param flag the flag
      * @param action the action to execute
      */
-    public void ifSet(Flag flag, @NotNull Runnable action) {
+    public void ifSet(@NotNull Flag flag, @NotNull Runnable action) {
         if (isSet(flag)) {
             action.run();
         }
@@ -194,7 +194,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * Get stream of parsed options.
      * @return stream of parsed options and respective arguments
      */
-    public Stream<Entry<?>> stream() {
+    public @NotNull Stream<Entry<?>> stream() {
         return parsedOptions.stream();
     }
 
@@ -205,7 +205,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return stream of lists containing the arguments for each appearance of the given option 
      */
     @SuppressWarnings("unchecked")
-    public <T> Stream<List<T>> stream(Option<T> option) {
+    public <T> @NotNull Stream<List<T>> stream(@NotNull Option<T> option) {
         return parsedOptions.stream()
                 .filter(entry -> entry.option.equals(option))
                 .map(entry -> ((Entry<T>) entry).getParms());
@@ -217,7 +217,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param action the action to execute
      * @param <T> the parameter type
      */
-    public <T> void ifPresent(SimpleOption<T> option, Consumer<? super T> action) {
+    public <T> void ifPresent(@NotNull SimpleOption<T> option, @NotNull Consumer<? super T> action) {
         stream(option).map(list -> list.get(0)).forEach(action);
     }
         
@@ -227,7 +227,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param action the action to execute
      * @param <T> the parameter type
      */
-    public <T> void forEach(Option<T> option, Consumer<? super List<T>> action) {
+    public <T> void forEach(@NotNull Option<T> option, @NotNull Consumer<? super List<T>> action) {
         stream(option).forEach(action);
     }
 

@@ -25,7 +25,7 @@ public class MoveTo2f extends Segment2f {
      * @param path the path
      * @param idx index of current point
      */
-    public MoveTo2f(Path2fImpl path, int idx) {
+    public MoveTo2f(@NotNull Path2fImpl path, int idx) {
         super(path);
         this.idx = idx;
     }
@@ -36,12 +36,12 @@ public class MoveTo2f extends Segment2f {
     }
 
     @Override
-    public Vector2f start() {
+    public @NotNull Vector2f start() {
         return path.vertex(idx);
     }
 
     @Override
-    public Vector2f end() {
+    public @NotNull Vector2f end() {
         return path.vertex(idx);
     }
 
