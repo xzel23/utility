@@ -13,4 +13,5 @@ module dua3_utility.db {
     
     requires java.logging;
     requires dua3_utility;
+    requires org.jetbrains.annotations;
 }

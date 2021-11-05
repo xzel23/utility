@@ -77,6 +77,9 @@ subprojects {
 
     // dependencies
     dependencies {
+        // JetBrains annotations
+        compileOnly 'org.jetbrains:annotations:22.0.0'
+        
         // JUnit
         testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
