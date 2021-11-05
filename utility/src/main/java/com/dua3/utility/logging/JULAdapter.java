@@ -1,5 +1,8 @@
 package com.dua3.utility.logging;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Handler;
@@ -20,7 +23,7 @@ public final class JULAdapter {
      */
     public static class JULHandler extends Handler {
 
-        private LogListener listener;
+        private @Nullable LogListener listener;
 
         public JULHandler(LogListener listener) {
             this.listener = Objects.requireNonNull(listener);    
@@ -43,7 +46,7 @@ public final class JULAdapter {
             listener = null;
         }
 
-        LogListener getListener() {
+        @Nullable LogListener getListener() {
             return listener;
         }
     }
@@ -63,7 +66,7 @@ public final class JULAdapter {
         }
 
         @Override
-        public Category category() {
+        public @NotNull Category category() {
             int intLevel = r.getLevel().intValue();
             if (intLevel < Level.FINE.intValue()) {
                 return Category.TRACE;
@@ -119,7 +122,7 @@ public final class JULAdapter {
      * @param r the {@link LogRecord} to convert
      * @return LogEntry instance
      */
-    public static LogEntry toLogEntry(LogRecord r) {
+    public static @NotNull LogEntry toLogEntry(LogRecord r) {
         return new JULLogEntry(r);
     }
 
@@ -128,7 +131,7 @@ public final class JULAdapter {
      * @param logger the logger
      * @param listener the listener
      */
-    public static void addListener(Logger logger, LogListener listener) {
+    public static void addListener(@NotNull Logger logger, LogListener listener) {
         logger.addHandler(new JULHandler(listener));
     }
 
@@ -137,7 +140,7 @@ public final class JULAdapter {
      * @param logger the logger
      * @param listener the listener
      */
-    public static void removeListener(Logger logger, LogListener listener) {
+    public static void removeListener(@NotNull Logger logger, LogListener listener) {
         for (Handler handler: logger.getHandlers()) {
             if (handler instanceof JULHandler julHandler) {
                 if (listener==julHandler.getListener()) {

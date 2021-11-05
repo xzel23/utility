@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -25,17 +27,17 @@ public interface ImageUtil<I> {
         } else {
             iu = new ImageUtil<>() {
                 @Override
-                public Image load(InputStream in) {
+                public @NotNull Image load(@NotNull InputStream in) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public Image create(int w, int h, int[] data) {
+                public @NotNull Image create(int w, int h, int[] data) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public Image convert(Image img) {
+                public @NotNull Image convert(@NotNull Image img) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
             };
@@ -50,7 +52,7 @@ public interface ImageUtil<I> {
      * @return the image
      * @throws IOException if loading fails
      */
-    Image load(InputStream in) throws IOException;
+    @NotNull Image load(@NotNull InputStream in) throws IOException;
 
     /**
      * Create image from pixel data.
@@ -59,20 +61,20 @@ public interface ImageUtil<I> {
      * @param data the pixeal data as int values containing ARGB values
      * @return the image
      */
-    Image create(int w, int h, int[] data);
+    @NotNull Image create(int w, int h, int[] data);
 
     /**
      * Convert image to underlying implementation.
      * @param img the image
      * @return implementation dependent image class
      */
-    I convert(Image img);
+    @NotNull I convert(@NotNull Image img);
 
     /**
      * Convert image underlying implementation. to image.
      * @param img the implementation dependent image
      * @return image
      */
-    Image convert(I img);
+    @NotNull Image convert(@NotNull I img);
     
 }

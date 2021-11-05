@@ -3,6 +3,7 @@ package com.dua3.utility.options;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -89,7 +90,7 @@ public class ArgumentsParser {
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the flag
      */
-    public Flag  flag(String... names) {
+    public @NotNull Flag  flag(String... names) {
         return addOption(Flag.create(names));
     }
 
@@ -100,7 +101,7 @@ public class ArgumentsParser {
      * @param <T> the target type
      * @return the option
      */
-    public <T> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
+    public <T> @NotNull SimpleOption<T> simpleOption(@NotNull Class<? extends T> type, String... names) {
         return simpleOption(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -111,7 +112,7 @@ public class ArgumentsParser {
      * @param <T> the target type
      * @return the option
      */
-    public <T> SimpleOption<T> simpleOption(Function<String,T> mapper, String... names) {
+    public <T> @NotNull SimpleOption<T> simpleOption(Function<String,T> mapper, String... names) {
         return addOption(SimpleOption.create(mapper, names));
     }
 
@@ -122,7 +123,7 @@ public class ArgumentsParser {
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the option
      */
-    public <E extends Enum<E>> ChoiceOption<E> choiceOption(Class<? extends E> enumClass, String... names) {
+    public <E extends Enum<E>> @NotNull ChoiceOption<E> choiceOption(@NotNull Class<? extends E> enumClass, String... names) {
         return addOption(ChoiceOption.create(enumClass, names));
     }
 
@@ -133,7 +134,7 @@ public class ArgumentsParser {
      * @param <T> the generic type of the option 
      * @return the option
      */
-    public <T> StandardOption<T> option(Class<? extends T> type, String... names) {
+    public <T> @NotNull StandardOption<T> option(@NotNull Class<? extends T> type, String... names) {
         return option(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -144,7 +145,7 @@ public class ArgumentsParser {
      * @param <T> the generic type of the option 
      * @return the option
      */
-    public <T> StandardOption<T> option(Function<String,T> mapper, String... names) {
+    public <T> @NotNull StandardOption<T> option(Function<String,T> mapper, String... names) {
         return addOption(StandardOption.create(mapper, names));
     }
 
@@ -152,7 +153,7 @@ public class ArgumentsParser {
      * Add option to parser. 
      * @param option the option to add
      */
-    private <O extends Option<?>> O addOption(O option) {
+    private <O extends Option<?>> @NotNull O addOption(@NotNull O option) {
         for (String name : option.names()) {
             LangUtil.check(options.putIfAbsent(name, option) == null, "duplicate option name: %s", name);
         }
@@ -164,7 +165,7 @@ public class ArgumentsParser {
      * @param args the command line arguments to parse.
      * @return object holding the parsed command line arguments
      */
-    public Arguments parse(String... args) {
+    public @NotNull Arguments parse(String @NotNull ... args) {
         List<String> argList = Arrays.asList(args);
 
         Queue<Arguments.Entry<?>> parsedOptions = new LinkedList<>();
@@ -238,7 +239,7 @@ public class ArgumentsParser {
      * @param parsedOptions the parsed options to validate
      * @throws OptionException if an error is detected
      */
-    private void validate(Collection<Arguments.Entry<?>> parsedOptions) {
+    private void validate(@NotNull Collection<Arguments.Entry<?>> parsedOptions) {
         Map<Option<?>, Integer> hist = new HashMap<>();
         parsedOptions.forEach(entry -> hist.compute(entry.option, (k_,i_) -> i_==null ? 1 : i_+1));
 
@@ -265,7 +266,7 @@ public class ArgumentsParser {
      * Get a help message listing all available options.
      * @return help message
      */
-    public String help() {
+    public @NotNull String help() {
         Formatter fmt = new Formatter();
         help(fmt);
         return fmt.toString();
@@ -275,7 +276,7 @@ public class ArgumentsParser {
      * Output option help.
      * @param fmt the {@link Formatter} used for output
      */
-    public void help(Formatter fmt) {
+    public void help(@NotNull Formatter fmt) {
         // print title
         if (!name.isEmpty()) {
             fmt.format("%n%s%n", name);
@@ -316,7 +317,7 @@ public class ArgumentsParser {
         });
     }
 
-    private static String getArgText(int min, int max) {
+    private static @NotNull String getArgText(int min, int max) {
         assert min<=max;
         
         String argText = switch (min) {
@@ -350,7 +351,7 @@ public class ArgumentsParser {
      * @param fmt formatter
      * @param e exception
      */
-    public void errorMessage(Formatter fmt, OptionException e) {
+    public void errorMessage(@NotNull Formatter fmt, @NotNull OptionException e) {
         // print title
         if (!name.isEmpty()) {
             fmt.format("%s%n", name);
@@ -372,7 +373,7 @@ public class ArgumentsParser {
      * @param e exception
      * @return error message
      */
-    public String errorMessage(OptionException e) {
+    public @NotNull String errorMessage(@NotNull OptionException e) {
         try (Formatter fmt = new Formatter()) {
             errorMessage(fmt, e);
             return fmt.toString();

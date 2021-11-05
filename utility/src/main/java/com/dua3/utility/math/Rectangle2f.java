@@ -7,6 +7,7 @@ package com.dua3.utility.math;
 
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Immutable rectangle with float coordinates.
@@ -24,7 +25,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @param q the second corner
      * @return rectangle
      */
-    public static Rectangle2f withCorners(Vector2f p, Vector2f q) {
+    public static @NotNull Rectangle2f withCorners(@NotNull Vector2f p, @NotNull Vector2f q) {
         float x,y,w,h;
         if (p.x()<=q.x()) {
             x = p.x();
@@ -51,7 +52,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @param h the height
      * @return rectangle
      */
-    public static Rectangle2f of(float x, float y, float w, float h) {
+    public static @NotNull Rectangle2f of(float x, float y, float w, float h) {
         LangUtil.check(w>=0 && h>=0, "w and h must not be negative: w=%f, h=%f", w, h);
         return new Rectangle2f(x, y, w, h);
     }
@@ -62,7 +63,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @param d the rectangle dimension
      * @return rectangle
      */
-    public static Rectangle2f of(Vector2f p, Dimension2f d) {
+    public static @NotNull Rectangle2f of(@NotNull Vector2f p, @NotNull Dimension2f d) {
         return Rectangle2f.of(p.x(), p.y(), d.width(), d.height());    
     }
 

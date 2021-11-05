@@ -1,5 +1,7 @@
 package com.dua3.utility.math.geometry;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An immutable 2-dimensional dimension using float coordinates.
  */
@@ -16,7 +18,7 @@ public record Dimension2f(float width, float height) {
      * @param h the height
      * @return instance with given width and height
      */
-    public static Dimension2f of(float w, float h) {
+    public static @NotNull Dimension2f of(float w, float h) {
         return new Dimension2f(w,h);    
     }
     

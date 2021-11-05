@@ -2,6 +2,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,7 +24,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param flag set to true to enable RESET before output
      * @return the option to use
      */
-    public static AnsiConversionOption reset(boolean flag) {
+    public static @NotNull AnsiConversionOption reset(boolean flag) {
         return new AnsiConversionOption(c -> c.setReset(flag));
     }
 
@@ -32,7 +33,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param flag set to true to enable reverse video output
      * @return the option to use
      */
-    public static AnsiConversionOption reverseVideo(boolean flag) {
+    public static @NotNull AnsiConversionOption reverseVideo(boolean flag) {
         return new AnsiConversionOption(c -> c.setReverseVideo(flag));
     }
 
@@ -43,7 +44,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      *                  ESC sequences
      * @return the option tp use
      */
-    public static AnsiConversionOption map(String attribute, BiFunction<Object,Object, String> mapper) {
+    public static @NotNull AnsiConversionOption map(String attribute, BiFunction<Object,Object, String> mapper) {
         return new AnsiConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
     }
 
@@ -56,7 +57,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param options the options to apply
      * @return new converter instance
      */
-    public static AnsiConverter create(Collection<AnsiConversionOption> options) {
+    public static @NotNull AnsiConverter create(@NotNull Collection<AnsiConversionOption> options) {
         AnsiConverter instance = new AnsiConverter();
         options.forEach(o -> o.apply(instance));
         return instance;
@@ -67,7 +68,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param options the options to apply
      * @return new converter instance
      */
-    public static AnsiConverter create(AnsiConversionOption... options) {
+    public static @NotNull AnsiConverter create(AnsiConversionOption... options) {
         return create(Arrays.asList(options));
     }
 
@@ -85,15 +86,15 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
     private static final Map<String,Object> DEFAULT_ATTRIBUTES = new HashMap<>();
     
     @Override
-    protected AnsiConverterImpl createConverter(RichText text) {
+    protected @NotNull AnsiConverterImpl createConverter(@NotNull RichText text) {
         return new AnsiConverterImpl(text);
     }
     
     class AnsiConverterImpl extends AttributeBasedConverterImpl<String> {
 
-        private final StringBuilder buffer;
+        private final @NotNull StringBuilder buffer;
 
-        AnsiConverterImpl(RichText text) {
+        AnsiConverterImpl(@NotNull RichText text) {
             super(DEFAULT_ATTRIBUTES);
             this.buffer = new StringBuilder(text.length()*11/10);
             if (reset) buffer.append(AnsiCode.reset());
@@ -101,12 +102,12 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         }
 
         @Override
-        protected String get() {
+        protected @NotNull String get() {
             return buffer.toString();
         }
 
         @Override
-        protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
+        protected void apply(@NotNull Map<String, Pair<Object, Object>> changedAttributes) {
             Map<String, Object> attributes = new HashMap<>();
             Deque<String> tags = new LinkedList<>();
             changedAttributes.forEach( (attribute, values) -> {
@@ -127,7 +128,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
             buffer.append(s);
         }
 
-        protected void applyFontChanges(FontDef changes) {
+        protected void applyFontChanges(@NotNull FontDef changes) {
             changes.ifColorDefined(c -> buffer.append(AnsiCode.fg(c)));
             changes.ifBoldDefined(c -> buffer.append(AnsiCode.bold(c)));
             changes.ifUnderlineDefined(c -> buffer.append(AnsiCode.underline(c)));

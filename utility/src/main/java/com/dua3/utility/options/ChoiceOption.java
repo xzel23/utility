@@ -1,5 +1,7 @@
 package com.dua3.utility.options;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +35,7 @@ public final class ChoiceOption<T> extends Option<T> {
     private final Supplier<? extends Collection<? extends T>> values;
     
     @SuppressWarnings("unchecked")
-    private static <E extends Enum<E>> E valueOf(Class<? extends E> cls, String s) {
+    private static <E extends Enum<E>> @NotNull E valueOf(@NotNull Class<? extends E> cls, String s) {
         try {
             return (E) cls.getMethod("valueOf", String.class).invoke(null, s);
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
@@ -42,7 +44,7 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends Enum<E>> Collection<E> enumValues(Class<? extends E> cls) {
+    private static <E extends Enum<E>> @NotNull Collection<E> enumValues(@NotNull Class<? extends E> cls) {
         try {
             return Arrays.asList((E[]) cls.getMethod("values").invoke(null));
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
@@ -57,7 +59,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param names the option names
      * @return choice option
      */
-    public static <E extends Enum<E>> ChoiceOption<E> create(Class<? extends E> cls, String... names) {
+    public static <E extends Enum<E>> @NotNull ChoiceOption<E> create(@NotNull Class<? extends E> cls, String... names) {
         Function<String,E> parser = s -> ChoiceOption.valueOf(cls, s);
         Function<E,String> formatter = Object::toString;
         Supplier<Collection<E>> values = () -> enumValues(cls);
@@ -73,7 +75,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param names the option names
      * @return choice option
      */
-    public static <T> ChoiceOption<T> create(Function<String, ? extends T> valueMapper, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, String... names) {
+    public static <T> @NotNull ChoiceOption<T> create(Function<String, ? extends T> valueMapper, Function<? super T,String> formatter, Supplier<? extends Collection<? extends T>> values, String... names) {
         return new ChoiceOption<>(valueMapper, formatter, values, names);
     }
 
@@ -95,7 +97,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * Get possible values.
      * @return collection holding the possible values
      */
-    public Collection<T> values() {
+    public @NotNull Collection<T> values() {
         return Collections.unmodifiableCollection(values.get());
     }
 
@@ -112,18 +114,18 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param v the choice to use in a ChoiceOption
      * @return collection holding the possible choices
      */
-    public Choice<T> choice(T v) {
+    public @NotNull Choice<T> choice(T v) {
         return new Choice<>(v, format(v));
     }
     
     @Override
-    public ChoiceOption<T> description(String description) {
+    public @NotNull ChoiceOption<T> description(String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public ChoiceOption<T> handler(Consumer<Collection<T>> handler) {
+    public @NotNull ChoiceOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }
@@ -133,7 +135,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public ChoiceOption<T> defaultValue(T defaultValue) {
+    public @NotNull ChoiceOption<T> defaultValue(T defaultValue) {
         return defaultValue(() -> defaultValue);
     }
 
@@ -142,7 +144,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public ChoiceOption<T> defaultValue(Supplier<T> defaultValue) {
+    public @NotNull ChoiceOption<T> defaultValue(Supplier<T> defaultValue) {
         this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
         return this;
     }

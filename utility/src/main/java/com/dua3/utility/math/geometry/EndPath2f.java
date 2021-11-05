@@ -1,6 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * End of path.
@@ -28,7 +29,7 @@ public class EndPath2f extends Segment2f {
     }
 
     @Override
-    public String name() {
+    public @NotNull String name() {
         return NAME;
     }
 

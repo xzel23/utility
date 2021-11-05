@@ -1,6 +1,8 @@
 package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IOUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -53,7 +55,7 @@ public final class XmlUtil {
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
     private final DocumentBuilder documentBuilder;
-    private final Transformer utf8Transformer;
+    private final @NotNull Transformer utf8Transformer;
     
     private static final String PRETTY_PRINT_XSLT = """
                             <?xml version="1.0" encoding="UTF-8"?>
@@ -73,30 +75,26 @@ public final class XmlUtil {
     /*
      * Lazily construct the default instance since it might pull in a lot of dependencies which is not desirable
      * in case only a specialized version is needed.
-     * 
-     * Note that double checked locking as of JDK 5 actually works when the helper is declared volatile. 
      */
-    private static volatile XmlUtil DEFAULT_INSTANCE = null; // volatile is needed for double-checked locking
+    private static class LazySingleton {
+        private static final XmlUtil INSTANCE;
 
+        static {
+            try {
+                INSTANCE = new XmlUtil();
+            } catch (ParserConfigurationException e) {
+                throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
+            }
+        }
+    }
+    
     /**
      * Get default instance with factories configured according to the description in the package javax.xml. 
      * @return default instance
      * @throws IllegalStateException if default instance could not be created
      */
-    public static XmlUtil defaultInstance() {
-        if (DEFAULT_INSTANCE==null) {
-            synchronized (XmlUtil.class) {
-                if (DEFAULT_INSTANCE == null) {
-                    try {
-                        DEFAULT_INSTANCE = new XmlUtil();
-                    } catch (ParserConfigurationException e) {
-                        throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
-                    }
-                }
-            }
-        }
-    
-        return DEFAULT_INSTANCE;
+    public static @NotNull XmlUtil defaultInstance() {
+        return LazySingleton.INSTANCE;
     }
     
     /**
@@ -125,7 +123,7 @@ public final class XmlUtil {
      * @param node the node
      * @return stream of the child nodes
      */
-    public Stream<Node> children(Node node) {
+    public @NotNull Stream<Node> children(@NotNull Node node) {
         return nodeStream(node.getChildNodes());
     }
 
@@ -135,12 +133,12 @@ public final class XmlUtil {
      * @return stream of nodes
      */
     @SuppressWarnings("MethodMayBeStatic")
-    public Stream<Node> nodeStream(NodeList nodes) {
+    public @NotNull Stream<Node> nodeStream(@NotNull NodeList nodes) {
         Spliterator<Node> spliterator = new Spliterator<>() {
             int idx = 0;
 
             @Override
-            public boolean tryAdvance(Consumer<? super Node> action) {
+            public boolean tryAdvance(@NotNull Consumer<? super Node> action) {
                 if (idx >= nodes.getLength()) {
                     return false;
                 }
@@ -149,7 +147,7 @@ public final class XmlUtil {
             }
 
             @Override
-            public Spliterator<Node> trySplit() {
+            public @Nullable Spliterator<Node> trySplit() {
                 return null;
             }
 
@@ -184,7 +182,7 @@ public final class XmlUtil {
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      */
-    public org.w3c.dom.Document parse(URI uri) throws IOException, SAXException {
+    public org.w3c.dom.Document parse(@NotNull URI uri) throws IOException, SAXException {
         return documentBuilder().parse(uri.toString());
     }
 
@@ -206,7 +204,7 @@ public final class XmlUtil {
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      */
-    public org.w3c.dom.Document parse(Path path) throws IOException, SAXException {
+    public org.w3c.dom.Document parse(@NotNull Path path) throws IOException, SAXException {
         return documentBuilder().parse(path.toFile());
     }
 
@@ -217,7 +215,7 @@ public final class XmlUtil {
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      */
-    public org.w3c.dom.Document parse(String text) throws IOException, SAXException {
+    public org.w3c.dom.Document parse(@NotNull String text) throws IOException, SAXException {
         try (Reader reader = new StringReader(text)) {
             return documentBuilder.parse(new InputSource(reader));
         }
@@ -229,7 +227,7 @@ public final class XmlUtil {
      * @param node the node
      * @throws IOException when an I/O error occurs
      */
-    public void format(OutputStream out, Node node) throws IOException {
+    public void format(@NotNull OutputStream out, Node node) throws IOException {
         format(out, node, StandardCharsets.UTF_8);
     }
 
@@ -240,7 +238,7 @@ public final class XmlUtil {
      * @param charset the {@link Charset} to use for encoding the output
      * @throws IOException when an I/O error occurs
      */
-    public void format(OutputStream out, Node node, Charset charset) throws IOException {
+    public void format(@NotNull OutputStream out, Node node, @NotNull Charset charset) throws IOException {
         format(new OutputStreamWriter(out, charset), node, charset);
     }
 
@@ -264,7 +262,7 @@ public final class XmlUtil {
      * @param charset the {@link Charset} to use for encoding the output
      * @throws IOException when an I/O error occurs
      */
-    public void format(Writer writer, Node node, Charset charset) throws IOException {
+    public void format(Writer writer, Node node, @NotNull Charset charset) throws IOException {
         try {
             Transformer transformer = charset.equals(StandardCharsets.UTF_8) ? utf8Transformer : getTransformer(charset);
             transformer.transform(new DOMSource(node), new StreamResult(writer));
@@ -276,7 +274,7 @@ public final class XmlUtil {
         }
     }
 
-    private Transformer getTransformer(Charset charset) {
+    private Transformer getTransformer(@NotNull Charset charset) {
         try {
             Source source = new StreamSource(IOUtil.stringInputStream(PRETTY_PRINT_XSLT));
             Transformer transformer = transformerFactory.newTransformer(source);
@@ -309,7 +307,7 @@ public final class XmlUtil {
         return formatNode(document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     }
 
-    private String formatNode(Node node, String prefix) {
+    private String formatNode(Node node, @NotNull String prefix) {
         try (StringWriter writer = new StringWriter()) {
             writer.write(prefix);
             format(writer, node, StandardCharsets.UTF_8);

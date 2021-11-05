@@ -1,5 +1,7 @@
 package com.dua3.utility.options;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +24,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * Create an empty instance.
      * @return empty Arguments instance
      */
-    public static Arguments empty() {
+    public static @NotNull Arguments empty() {
         return new Arguments(new ArrayDeque<>(), Collections.emptyList());
     }
 
@@ -31,7 +33,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param args the arguments to pass to the instance.
      * @return new instance
      */
-    public static Arguments of(Entry<?>... args) {
+    public static @NotNull Arguments of(Entry<?>... args) {
         return new Arguments(new LinkedList<>(Arrays.asList(args)), Collections.emptyList());
     }
 
@@ -43,7 +45,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return new {@link Entry}
      */
     @SafeVarargs
-    public static <T> Entry<T> createEntry(Option<T> option, T... args) {
+    public static <T> @NotNull Entry<T> createEntry(Option<T> option, T @NotNull ... args) {
         Entry<T> entry = new Entry<>(option);
         for (var arg: args) {
             entry.addArg(arg);
@@ -58,10 +60,10 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      */
     public static final class Entry<T> {
         final Option<T> option;
-        final List<T> parms;
+        final @NotNull List<T> parms;
 
         @SuppressWarnings("unchecked")
-        static Entry<?> create(Option<?> option) {
+        static @NotNull Entry<?> create(Option<?> option) {
             return new Entry<>(option);
         }
 
@@ -90,7 +92,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
          * Get the parameters given for this invocation of the ooption.
          * @return liest of option parameters, converted to the target type
          */
-        public List<T> getParms() {
+        public @NotNull List<T> getParms() {
             return Collections.unmodifiableList(parms);
         }
 
@@ -105,14 +107,14 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     /** The options passed on the command line with their respective arguments. */
     private final Queue<Entry<?>> parsedOptions;
     /** The positional arguments. */
-    private final List<String> positionalArgs;
+    private final @NotNull List<String> positionalArgs;
 
     /**
      * Constructor.
      * @param parsedOptions the options detected by the command line parser
      * @param positionalArgs the positional arguments
      */
-    Arguments(Queue<Entry<?>> parsedOptions, List<String> positionalArgs) {
+    Arguments(Queue<Entry<?>> parsedOptions, @NotNull List<String> positionalArgs) {
         this.parsedOptions = parsedOptions;
         this.positionalArgs = new ArrayList<>(positionalArgs);
     }
@@ -121,7 +123,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * Get positional arguments.
      * @return the positional arguments
      */
-    public List<String> positionalArgs() {
+    public @NotNull List<String> positionalArgs() {
         return Collections.unmodifiableList(positionalArgs);
     }
 
@@ -132,7 +134,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return the parameter passed to the option, or the option's default value (if set)
      * @throws OptionException if neither is set
      */
-    public <T> T getOrThrow(SimpleOption<T> option) {
+    public <T> T getOrThrow(@NotNull SimpleOption<T> option) {
         return get(option).orElseThrow(() -> new OptionException("missing required option: " + option.name()));
     }
 
@@ -143,7 +145,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return Optional holding the argument passed to this option, the option's default value, or an empty Optional
      *    if neither is provided
      */
-    public <T> Optional<T> get(SimpleOption<T> option) {
+    public <T> Optional<T> get(@NotNull SimpleOption<T> option) {
         return stream(option).findFirst().map(list -> list.get(0)).or(option::getDefault);
     }
 
@@ -154,7 +156,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return the parameter passed to the option, or the option's default value (if set)
      * @throws OptionException if neither is set
      */
-    public <T> T getOrThrow(ChoiceOption<T> option) {
+    public <T> T getOrThrow(@NotNull ChoiceOption<T> option) {
         return get(option).orElseThrow(() -> new OptionException("missing required option: " + option.name()));
     }
 
@@ -164,7 +166,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param <T> the generic type of the option 
      * @return the option's value
      */
-    public <T> Optional<T> get(ChoiceOption<T> option) {
+    public <T> Optional<T> get(@NotNull ChoiceOption<T> option) {
         return stream(option).findFirst().map(list -> list.get(0)).or(option::getDefault);
     }
 
@@ -182,7 +184,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param flag the flag
      * @param action the action to execute
      */
-    public void ifSet(Flag flag, Runnable action) {
+    public void ifSet(Flag flag, @NotNull Runnable action) {
         if (isSet(flag)) {
             action.run();
         }
@@ -237,7 +239,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     }
     
     @Override
-    public Iterator<Entry<?>> iterator() {
+    public @NotNull Iterator<Entry<?>> iterator() {
         return parsedOptions.iterator();
     }
     

@@ -6,6 +6,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +31,8 @@ import java.util.TreeMap;
  */
 public class RichTextBuilder implements Appendable, ToRichText {
 
-    private final StringBuilder buffer;
-    private final SortedMap<Integer, Map<String, Object>> parts;
+    private final @NotNull StringBuilder buffer;
+    private final @NotNull SortedMap<Integer, Map<String, Object>> parts;
     private final Deque<AttributeChange> openedAttributes = new LinkedList<>();
 
     private record AttributeChange(String name, Object previousValue, Object value) {}
@@ -55,29 +56,29 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public RichTextBuilder append(char c) {
+    public @NotNull RichTextBuilder append(char c) {
         buffer.append(c);
         return this;
     }
 
     @Override
-    public RichTextBuilder append(CharSequence csq) {
+    public @NotNull RichTextBuilder append(CharSequence csq) {
         buffer.append(csq);
         return this;
     }
 
     @Override
-    public Appendable append(CharSequence csq, int start, int end) {
+    public @NotNull Appendable append(CharSequence csq, int start, int end) {
         buffer.append(csq, start, end);
         return this;
     }
 
-    public RichTextBuilder append(ToRichText trt) {
+    public @NotNull RichTextBuilder append(@NotNull ToRichText trt) {
         trt.appendTo(this);
         return this;
     }
 
-    public RichTextBuilder append(RichText rt) {
+    public @NotNull RichTextBuilder append(@NotNull RichText rt) {
         rt.appendTo(this);
         return this;
     }
@@ -110,12 +111,12 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @return RichText representation of this builder's content
      */
     @Override
-    public RichText toRichText() {
+    public @NotNull RichText toRichText() {
         Run[] runs = getRuns();
         return new RichText(runs);
     }
 
-    private Run[] getRuns() {
+    private Run @NotNull [] getRuns() {
         normalize();
         
         String text = buffer.toString();
@@ -168,12 +169,12 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return buffer.toString();
     }
 
     @Override
-    public void appendTo(RichTextBuilder builder) {
+    public void appendTo(@NotNull RichTextBuilder builder) {
         builder.ensureCapacity(builder.length() + this.length());
         for (Run run : getRuns()) {
             builder.appendRun(run);
@@ -200,7 +201,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @SuppressWarnings("unchecked")
-    void appendRun(Run run) {
+    void appendRun(@NotNull Run run) {
         // set attributes
         Map<String, Object> attributes = split();
         Map<String, Object> backup = new HashMap<>();
@@ -236,7 +237,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
         openedAttributes.push(new AttributeChange(name, previousValue, value));
     }
 
-    public void pop(String name) {
+    public void pop(@NotNull String name) {
         AttributeChange change = openedAttributes.pop();
         LangUtil.check(name.equals(change.name()));
         Map<String, Object> attributes = split();

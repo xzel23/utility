@@ -6,6 +6,8 @@ import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.Flag;
 import com.dua3.utility.options.SimpleOption;
 import com.dua3.utility.options.StandardOption;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -30,23 +32,23 @@ public final class LogUtil {
      * Helper class to create lazy 'toString()' evaluators for logging.
      */
     private static final class LazyToString implements Supplier<String> {
-        private final Supplier<String> base;
-        private String msg = null;
+        private final @NotNull Supplier<String> base;
+        private @Nullable String msg = null;
 
-        LazyToString(Supplier<String> s) {
+        LazyToString(@NotNull Supplier<String> s) {
             this.base = Objects.requireNonNull(s);
         }
 
         @Override
-        public String get() {
+        public @NotNull String get() {
             if (msg==null) {
-                msg = base.get();
+                msg = Objects.requireNonNull(base.get());
             }
             return msg;
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return get();
         }
     }
@@ -58,7 +60,7 @@ public final class LogUtil {
      * @param s the supplier
      * @return an Object that acts as a proxy for calls to toString()
      */
-    public static Supplier<String> formatLazy(Supplier<String> s) {
+    public static @NotNull Supplier<String> formatLazy(@NotNull Supplier<String> s) {
         return new LazyToString(s);
     }
 
@@ -70,7 +72,7 @@ public final class LogUtil {
      * @param args          the command line args
      * @return              the command line args with arguments for setting up logging removed
      */
-    public static String[] handleLoggingCmdArgs(String... args) {
+    public static String[] handleLoggingCmdArgs(@NotNull String... args) {
         // create parser
         ArgumentsParser parser = new ArgumentsParser("log parser", "parser for command line log options");
 
@@ -139,7 +141,7 @@ public final class LogUtil {
      * See {@link FileHandler#FileHandler(String)} for pattern syntax.
      * @param pattern the pattern to use
      */
-    private static void setLogPath(String pattern) throws IOException {
+    private static void setLogPath(@NotNull String pattern) throws IOException {
         Handler fh = new FileHandler(pattern);
         fh.setFormatter(new SimpleFormatter());
         getRootLogger().addHandler (fh);
@@ -151,7 +153,7 @@ public final class LogUtil {
      *
      * @param level the log level to set
      */
-    public static void setLogLevel(Level level) {
+    public static void setLogLevel(@NotNull Level level) {
         Logger rootLogger = getRootLogger();
         setLogLevel(level, rootLogger);
     }
@@ -164,7 +166,7 @@ public final class LogUtil {
      * @param logger
      *               the logger for which to set the level
      */
-    public static void setLogLevel(Level level, Logger logger) {
+    public static void setLogLevel(@NotNull Level level, @NotNull Logger logger) {
         logger.setLevel(level);
         for (Handler h : logger.getHandlers()) {
             h.setLevel(level);
@@ -186,7 +188,7 @@ public final class LogUtil {
      * @param loggers
      *                the loggers to set the level for
      */
-    public static void setLogLevel(Level level, Logger... loggers) {
+    public static void setLogLevel(@NotNull Level level, Logger @NotNull ... loggers) {
         for (Logger logger : loggers) {
             setLogLevel(level, logger);
         }
@@ -201,7 +203,7 @@ public final class LogUtil {
      * @param  args arguments
      * @return      a supplier that returns the formatted message
      */
-    public static Supplier<String> format(String fmt, Object... args) {
+    public static @NotNull Supplier<String> format(@NotNull String fmt, Object... args) {
         return () -> String.format(Locale.ROOT, fmt, args);
     }
 }

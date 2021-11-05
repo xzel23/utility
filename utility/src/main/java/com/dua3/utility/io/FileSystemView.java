@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstraction for accessing files stored in different location.
@@ -75,7 +76,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the view cannot be created
      */
-    public static FileSystemView create(Path root, Flags... flags) throws IOException {
+    public static @NotNull FileSystemView create(@NotNull Path root, Flags... flags) throws IOException {
         Objects.requireNonNull(root);
 
         List<Flags> flagList = Arrays.asList(flags);
@@ -114,7 +115,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the file does not exist or an I/O error occurs
      */
-    public static FileSystemView forArchive(Path root, Flags... flags) throws IOException {
+    public static @NotNull FileSystemView forArchive(@NotNull Path root, Flags... flags) throws IOException {
         List<Flags> flagList = Arrays.asList(flags);
 
         Map<String, String> env = new HashMap<>();
@@ -136,7 +137,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the view cannot be created
      */
-    public static FileSystemView forClass(Class<?> clazz) throws IOException {
+    public static @NotNull FileSystemView forClass(@NotNull Class<?> clazz) throws IOException {
         try {
             String classFile = clazz.getSimpleName() + ".class";
             URI uri = clazz.getResource(classFile).toURI();
@@ -173,21 +174,21 @@ public final class FileSystemView implements AutoCloseable {
      *                     if the directory denoted by {@code path} does not exist
      *                     or an I/O error occurs
      */
-    public static FileSystemView forDirectory(Path root) throws IOException {
+    public static @NotNull FileSystemView forDirectory(@NotNull Path root) throws IOException {
         return new FileSystemView(root, () -> {
             /* NOOP */ }, root.toString());
     }
 
-    private static FileSystemView createFileSystemView(FileSystem fs, String path) {
+    private static @NotNull FileSystemView createFileSystemView(@NotNull FileSystem fs, @NotNull String path) {
         Path root = fs.getPath(path);
         return new FileSystemView(root, fs::close, "[" + fs + "]" + path);
     }
 
-    private final Path root;
+    private final @NotNull Path root;
     private final String name;
     private final CleanUp cleanup;
 
-    private FileSystemView(Path root, CleanUp cleanup, String name) {
+    private FileSystemView(@NotNull Path root, CleanUp cleanup, String name) {
         this.cleanup = cleanup;
         this.root = root.toAbsolutePath();
         this.name = name;
@@ -208,7 +209,7 @@ public final class FileSystemView implements AutoCloseable {
      *
      * @return the root path
      */
-    public Path getRoot() {
+    public @NotNull Path getRoot() {
         return root;
     }
 
@@ -220,13 +221,13 @@ public final class FileSystemView implements AutoCloseable {
      * @return      the resolved path
      * @see         java.nio.file.Path#resolve(String)
      */
-    public Path resolve(String path) {
+    public @NotNull Path resolve(@NotNull String path) {
         Path resolvedPath = root.resolve(path).normalize();
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;
     }
 
-    private void assertThatResolvedPathIsValid(Path resolvedPath, Object originalPath) {
+    private void assertThatResolvedPathIsValid(@NotNull Path resolvedPath, Object originalPath) {
         LangUtil.check(resolvedPath.toAbsolutePath().startsWith(root),
                 "Path is not in this FileSystemViews subtree: %s", originalPath);
     }
@@ -239,7 +240,7 @@ public final class FileSystemView implements AutoCloseable {
      * @return      the resolved path
      * @see         java.nio.file.Path#resolve(Path)
      */
-    Path resolve(Path path) {
+    @NotNull Path resolve(@NotNull Path path) {
         Path resolvedPath = root.resolve(path).normalize();
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;

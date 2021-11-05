@@ -1,5 +1,7 @@
 package com.dua3.utility.options;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Exception class to throw when command line arguments and/or values for configuration options do not match the 
  * allowed values defined by the option/parser.
@@ -9,7 +11,7 @@ public class OptionException extends IllegalStateException {
      * Exception thrown when a parameter argument's String value could not be converted to the target type. 
      */
     public static class ParameterConversionException extends OptionException {
-        final Option<?> option;
+        final @NotNull Option<?> option;
         final String parameter;
 
         /**
@@ -18,7 +20,7 @@ public class OptionException extends IllegalStateException {
          * @param parameter the parameter value as String
          * @param e the parent exception
          */
-        public ParameterConversionException(Option<?> option, String parameter, Exception e) {
+        public ParameterConversionException(@NotNull Option<?> option, String parameter, Exception e) {
             super("invalid value passed to "+option.name()+": "+parameter, e);
             this.option = option;
             this.parameter = parameter;
@@ -29,7 +31,7 @@ public class OptionException extends IllegalStateException {
          * @param option the option the argument belongds to
          * @param parameter the parameter value as String
          */
-        public ParameterConversionException(Option<?> option, String parameter) {
+        public ParameterConversionException(@NotNull Option<?> option, String parameter) {
             super("invalid value passed to "+option.name()+": "+parameter);
             this.option = option;
             this.parameter = parameter;

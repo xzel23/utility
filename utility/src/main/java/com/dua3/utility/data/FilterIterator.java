@@ -1,5 +1,8 @@
 package com.dua3.utility.data;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -19,7 +22,7 @@ public class FilterIterator<T> implements Iterator<T> {
     private final Iterator<T> iterator;
     private final Predicate<T> predicate;
     private boolean done = false;
-    private T current = null;
+    private @Nullable T current = null;
 
     /**
      * Construct a new FilterIterator.
@@ -28,7 +31,7 @@ public class FilterIterator<T> implements Iterator<T> {
      * @param predicate
      * the predicate
      */
-    public FilterIterator(Iterator<T> iterator, Predicate<T> predicate) {
+    public FilterIterator(@NotNull Iterator<T> iterator, @NotNull Predicate<T> predicate) {
         this.iterator = Objects.requireNonNull(iterator);
         this.predicate = Objects.requireNonNull(predicate);
         findNext();
@@ -56,7 +59,7 @@ public class FilterIterator<T> implements Iterator<T> {
     }
 
     @Override
-    public T next() {
+    public @Nullable T next() {
         if (done) {
             throw new NoSuchElementException("there are no elements left");
         }

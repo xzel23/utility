@@ -1,6 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Fill and stroke path.
@@ -28,14 +29,14 @@ public class FillPath2f extends Segment2f {
      * @param idx index of current vertex
      * @param fillRule the fill rule to use
      */
-    FillPath2f(Path2fImpl path, int idx, FillRule fillRule) {
+    FillPath2f(@NotNull Path2fImpl path, int idx, FillRule fillRule) {
         super(path);
         this.idx = idx;
         this.fillRule = fillRule;
     }
 
     @Override
-    public String name() {
+    public @NotNull String name() {
         return NAME;
     }
 

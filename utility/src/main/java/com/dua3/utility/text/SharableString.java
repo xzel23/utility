@@ -5,6 +5,8 @@
 
 package com.dua3.utility.text;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 public class SharableString implements CharSequence {
@@ -26,12 +28,12 @@ public class SharableString implements CharSequence {
     }
 
     @Override
-    public SharedString subSequence(int s, int e) {
+    public @NotNull SharedString subSequence(int s, int e) {
         return new SharedString(base, s, e);
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return base;
     }
 

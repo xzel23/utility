@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -286,7 +287,7 @@ class LangUtilTest {
         assertEquals(
                 Arrays.asList(7,8,9,10,11,12,16,17,18,19,20,21), 
                 LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26), 
-                n -> n%9==0, 2, 3, null));
+                n -> n%9==0, 2, 3));
 
         // assert position is passed correctly
         assertEquals(
@@ -304,7 +305,7 @@ class LangUtilTest {
         assertEquals(
                 Arrays.asList(1,2,3,4,8,9,10,11,12,13,17,18,19,20,21,22),
                 LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
-                        n -> (n+8)%9==0, 2, 3, null));
+                        n -> (n+8)%9==0, 2, 3));
 
         // assert position is passed correctly, first item matches
         assertEquals(
@@ -322,7 +323,7 @@ class LangUtilTest {
         assertEquals(
                 Arrays.asList(7,8,9,10,11,12,16,17,18,19,20,21,25,26,27),
                 LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
-                        n -> n%9==0, 2, 3, null));
+                        n -> n%9==0, 2, 3));
 
         // assert position is passed correctly, last item matches
         assertEquals(
@@ -340,7 +341,7 @@ class LangUtilTest {
         assertEquals(
                 Arrays.asList(3,4,5,6,7,8,9,10),
                 LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
-                        n -> n>=5&&n<=7, 2, 3, null));
+                        n -> n>=5&&n<=7, 2, 3));
 
         // assert position is passed correctly, multiple subsequent matches
         assertEquals(
@@ -360,4 +361,23 @@ class LangUtilTest {
                 LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
                         n -> n==3 || n==8, 3, 3, (count,pos) -> -count));
     }
+    
+    @Test
+    void testOrElse() {
+        Object a = "a";
+        Object b = "b";
+        assertSame(null, LangUtil.orElse(null, null));
+        assertSame(b, LangUtil.orElse(null, b));
+        assertSame(a, LangUtil.orElse(a, null));
+        assertSame(a, LangUtil.orElse(a, b));    
+    }
+    
+    @Test
+    void testOrElseGet() {
+        Object a = "a";
+        assertSame(null, LangUtil.orElse(null, null));
+        assertEquals("b", LangUtil.orElseGet(null, () -> "b"));
+        assertEquals("a", LangUtil.orElseGet("a", () -> "b"));    
+    }
+    
 }

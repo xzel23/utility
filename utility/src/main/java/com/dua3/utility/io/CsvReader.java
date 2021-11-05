@@ -14,6 +14,8 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,7 +59,7 @@ public class CsvReader extends CsvIo {
 
     public static class ListRowBuilder implements RowBuilder {
 
-        private List<String> row = null;
+        private final List<String> row = new ArrayList<>();
 
         @Override
         public void add(String value) {
@@ -69,13 +71,13 @@ public class CsvReader extends CsvIo {
             // nop
         }
 
-        public List<String> getRow() {
+        public @NotNull List<String> getRow() {
             return Collections.unmodifiableList(row);
         }
 
         @Override
         public void startRow() {
-            row = new ArrayList<>();
+            assert row.isEmpty();
         }
     }
 
@@ -86,20 +88,20 @@ public class CsvReader extends CsvIo {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
-    public static CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
+    public static @NotNull  CsvReader create(@NotNull RowBuilder builder, @NotNull BufferedReader reader, @NotNull Arguments options) throws IOException {
         return new CsvReader(builder, reader, null, options);
     }
 
-    public static CsvReader create(RowBuilder builder, File file, Arguments options) throws IOException {
+    public static @NotNull  CsvReader create(RowBuilder builder, @NotNull File file, @NotNull Arguments options) throws IOException {
         return create(builder, file.toPath(), options);
     }
 
-    public static CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
+    public static @NotNull  CsvReader create(RowBuilder builder, @NotNull Path path, @NotNull Arguments options) throws IOException {
         Charset cs = IoOptions.getCharset(options);
         return create(builder, Files.newBufferedReader(path, cs), options);
     }
 
-    public static CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
+    public static @NotNull  CsvReader create(RowBuilder builder, @NotNull InputStream in, @NotNull Arguments options) throws IOException {
         // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
         // selection in options)
         Charset charset = IoOptions.getCharset(options);
@@ -122,14 +124,14 @@ public class CsvReader extends CsvIo {
     private int rowNumber = 0;
     private int rowsRead = 0;
     private int lineNumber = 0;
-    private final Pattern patternField;
+    private final @NotNull Pattern patternField;
     private final BufferedReader reader;
-    private List<String> columnNames;
+    private @Nullable List<String> columnNames;
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
     private final URI source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, URI source, Arguments options)
+    public CsvReader(@NotNull RowBuilder rowBuilder, @NotNull BufferedReader reader, @Nullable URI source, @NotNull Arguments options)
             throws IOException {
         super(options);
 
@@ -186,21 +188,12 @@ public class CsvReader extends CsvIo {
      * @param  columnNr the column number
      * @return          name of column or columnNr as String if no name was set
      */
-    public String getColumnName(int columnNr) {
-        if (columnNames == null) {
-            return Integer.toString(columnNr);
-        } else if (columnNr < columnNames.size()) {
+    public @NotNull String getColumnName(int columnNr) {
+        if (columnNames != null && columnNr < columnNames.size()) {
             return columnNames.get(columnNr);
         } else {
-            return null;
+            return Integer.toString(columnNr);
         }
-    }
-
-    /**
-     * @return the columnNames
-     */
-    public List<String> getColumnNames() {
-        return Collections.unmodifiableList(columnNames);
     }
 
     /**
@@ -232,7 +225,7 @@ public class CsvReader extends CsvIo {
         return rowsRead;
     }
 
-    private URI getSource() {
+    private @Nullable URI getSource() {
         return source;
     }
 
@@ -264,7 +257,7 @@ public class CsvReader extends CsvIo {
      * @throws IOException
      *  if an error occurs during reading
      */
-    private int readRow(RowBuilder rb) throws IOException {
+    private int readRow(@NotNull RowBuilder rb) throws IOException {
         String line = reader.readLine();
 
         if (line == null) {
@@ -360,7 +353,7 @@ public class CsvReader extends CsvIo {
     /**
      * @param columnNames the columnNames to set
      */
-    public void setColumnNames(List<String> columnNames) {
+    public void setColumnNames(@NotNull List<String> columnNames) {
         this.columnNames = columnNames;
     }
 

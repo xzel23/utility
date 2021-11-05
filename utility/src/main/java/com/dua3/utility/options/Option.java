@@ -1,6 +1,8 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +28,7 @@ public abstract class Option<T> {
     int maxOccurrences = Integer.MAX_VALUE;
     Consumer<Collection<T>> handler = values -> {};
 
-    protected Option(Function<String, ? extends T> mapper, Function<?super T, String> formatter, String... names) {
+    protected Option(Function<String, ? extends T> mapper, Function<?super T, String> formatter, String @NotNull ... names) {
         LangUtil.check(names.length > 0, "at least one name must be given");
 
         this.mapper = Objects.requireNonNull(mapper);
@@ -72,7 +74,7 @@ public abstract class Option<T> {
      * @param displayName display name
      * @return this option
      */
-    protected Option<T> displayName(String displayName) {
+    protected @NotNull Option<T> displayName(String displayName) {
         LangUtil.check(this.displayName.isEmpty(), "displayName already set");
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");
         return this;
@@ -187,7 +189,7 @@ public abstract class Option<T> {
     }
     
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Option<?> option = (Option<?>) o;

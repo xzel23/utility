@@ -1,5 +1,7 @@
 package com.dua3.utility.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
@@ -11,15 +13,15 @@ public enum PredefinedDateTimeFormat {
     LOCALE_LONG("long (locale dependent)", FormatStyle.LONG),
     ISO_DATE_TIME("ISO 8601 (2000-12-31T10:15:30)", DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-    private static DateTimeFormatter formatFromPattern(String pattern) {
+    private static @NotNull DateTimeFormatter formatFromPattern(@NotNull String pattern) {
         return DateTimeFormatter.ofPattern(pattern);
     }
 
     private final String name;
 
-    private final Function<? super Locale, DateTimeFormatter> dateTimeFormatterFactory;
-    private final Function<? super Locale, DateTimeFormatter> dateFormatterFactory;
-    private final Function<? super Locale, DateTimeFormatter> timeFormatterFactory;
+    private final @NotNull Function<? super Locale, DateTimeFormatter> dateTimeFormatterFactory;
+    private final @NotNull Function<? super Locale, DateTimeFormatter> dateFormatterFactory;
+    private final @NotNull Function<? super Locale, DateTimeFormatter> timeFormatterFactory;
 
     PredefinedDateTimeFormat(String name, DateTimeFormatter formatter) {
         this.name = name;
@@ -28,7 +30,7 @@ public enum PredefinedDateTimeFormat {
         this.timeFormatterFactory = locale -> formatter;
     }
 
-    PredefinedDateTimeFormat(String name, FormatStyle style) {
+    PredefinedDateTimeFormat(String name, @NotNull FormatStyle style) {
         this.name = name;
         this.dateTimeFormatterFactory = locale -> DateTimeFormatter.ofLocalizedDateTime(style).withLocale(locale);
         this.dateFormatterFactory = locale -> DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);

@@ -1,6 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Move current position.
@@ -30,7 +31,7 @@ public class MoveTo2f extends Segment2f {
     }
 
     @Override
-    public String name() {
+    public @NotNull String name() {
         return NAME;
     }
 
@@ -45,7 +46,7 @@ public class MoveTo2f extends Segment2f {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "MoveTo2f{" +
                vertexToString(idx) +
                '}';

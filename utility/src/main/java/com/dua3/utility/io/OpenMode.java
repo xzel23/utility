@@ -1,5 +1,7 @@
 package com.dua3.utility.io;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Mode for opening files.
  */
@@ -39,7 +41,7 @@ public enum OpenMode {
      * @return
      *  true, if all of other mode's functionality is included in this mode
      */
-    public boolean includes(OpenMode other) {
+    public boolean includes(@NotNull OpenMode other) {
         return (n & other.n) == other.n;
     }
 }

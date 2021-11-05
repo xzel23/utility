@@ -1,6 +1,8 @@
 package com.dua3.utility.logging;
 
 import com.dua3.utility.io.LineOutputStream;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -12,18 +14,18 @@ import java.util.Optional;
  */
 public final class SystemAdapter {
 
-    private static PrintStream stdOut = null;
-    private static PrintStream stdErr = null;
+    private static @Nullable PrintStream stdOut = null;
+    private static @Nullable PrintStream stdErr = null;
 
     private SystemAdapter() {
     }
 
-    public static void addSystemListener(LogListener listener) {
+    public static void addSystemListener(@NotNull LogListener listener) {
         addSystemOutListener(listener);
         addSystemErrListener(listener);
     }
 
-    public static synchronized void addSystemOutListener(LogListener listener) {
+    public static synchronized void addSystemOutListener(@NotNull LogListener listener) {
         if (stdOut== null) {
             try {
                 @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -39,7 +41,7 @@ public final class SystemAdapter {
         }
     }
 
-    public static synchronized void addSystemErrListener(LogListener listener) {
+    public static synchronized void addSystemErrListener(@NotNull LogListener listener) {
         try {
             @SuppressWarnings("UseOfSystemOutOrSystemErr")
             PrintStream origErr = System.err;
@@ -97,7 +99,7 @@ public final class SystemAdapter {
         }
 
         @Override
-        public String level() {
+        public @NotNull String level() {
             return category().name();
         }
 
@@ -113,12 +115,12 @@ public final class SystemAdapter {
         }
 
         @Override
-        public Category category() {
+        public @NotNull Category category() {
             return Category.INFO;
         }
 
         @Override
-        public String logger() {
+        public @NotNull String logger() {
             return "System.out";
         }
     }
@@ -129,12 +131,12 @@ public final class SystemAdapter {
         }
 
         @Override
-        public String logger() {
+        public @NotNull String logger() {
             return "System.err";
         }
 
         @Override
-        public Category category() {
+        public @NotNull Category category() {
             return Category.WARNING;
         }
     }

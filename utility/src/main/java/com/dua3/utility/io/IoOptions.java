@@ -3,6 +3,7 @@ package com.dua3.utility.io;
 import com.dua3.utility.options.ChoiceOption;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.SimpleOption;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -92,27 +93,27 @@ public final class IoOptions {
 
     // get values from arguments
     
-    public static Charset getCharset(Arguments cmd) {
+    public static Charset getCharset(@NotNull Arguments cmd) {
         return cmd.getOrThrow(charset());
     }
     
-    public static Locale getLocale(Arguments cmd) {
+    public static Locale getLocale(@NotNull Arguments cmd) {
         return cmd.getOrThrow(locale());
     }
     
-    public static PredefinedDateFormat getDateFormat(Arguments cmd) {
+    public static PredefinedDateFormat getDateFormat(@NotNull Arguments cmd) {
         return cmd.getOrThrow(dateFormat());
     }
 
-    public static PredefinedDateTimeFormat getDateTimeFormat(Arguments cmd) {
+    public static PredefinedDateTimeFormat getDateTimeFormat(@NotNull Arguments cmd) {
         return cmd.getOrThrow(dateTimeFormat());
     }
     
-    public static Character getTextDelimiter(Arguments cmd) {
+    public static Character getTextDelimiter(@NotNull Arguments cmd) {
         return cmd.getOrThrow(textDelimiter());
     }
 
-    public static Character getFieldSeparator(Arguments cmd) {
+    public static Character getFieldSeparator(@NotNull Arguments cmd) {
         return cmd.getOrThrow(fieldSeparator());
     }
 

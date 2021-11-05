@@ -1,6 +1,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public interface Decoder<T> {
      * @throws IOException if an error occurs
      * @return the collection of decoded objects
      */
-    static <T> Collection<T> decode(DataInputStream is, Decoder<? extends T> codec, IntFunction<? extends Collection<T>> collectionConstructor) throws IOException {
+    static <T> Collection<T> decode(@NotNull DataInputStream is, @NotNull Decoder<? extends T> codec, @NotNull IntFunction<? extends Collection<T>> collectionConstructor) throws IOException {
         int size = is.readInt();
         LangUtil.check(size >= 0, "invalid collection size: %d", size);
 
@@ -65,7 +66,7 @@ public interface Decoder<T> {
      * @throws IOException if an error occurs
      * @return an optional holding the decoded object or an empty optional if object is notr present
      */
-    default Optional<T> decodeOptional(DataInputStream is) throws IOException {
+    default Optional<T> decodeOptional(@NotNull DataInputStream is) throws IOException {
         return Optional.ofNullable(is.readBoolean() ? decode(is) : null);
     }
 

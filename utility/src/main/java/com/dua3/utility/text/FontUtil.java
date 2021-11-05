@@ -1,6 +1,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.math.geometry.Dimension2f;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,28 +30,28 @@ public interface FontUtil<F> {
         } else {
             fu = new FontUtil<>() {
                 @Override
-                public Void convert(Font f) {
+                public @NotNull Void convert(Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public Dimension2f getTextDimension(CharSequence s, Font f) {
+                public @NotNull Dimension2f getTextDimension(CharSequence s, Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @SuppressWarnings("RedundantThrows")
                 @Override
-                public List<Font> loadFonts(InputStream in) throws IOException {
+                public @NotNull List<Font> loadFonts(InputStream in) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public List<String> getFamilies(FontTypes types) {
+                public @NotNull List<String> getFamilies(FontTypes types) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public Font loadFontAs(InputStream in, Font font) throws IOException {
+                public @NotNull Font loadFontAs(InputStream in, Font font) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
             };

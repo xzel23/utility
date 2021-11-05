@@ -1,5 +1,7 @@
 package com.dua3.utility.logging;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A base class for wrappers around log records of different logging frameworks.
  * @param <T> underlying type of log records  
@@ -13,7 +15,7 @@ public abstract class AbstractLogEntry<T extends Object> implements LogEntry {
     public abstract T getNative();
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return LogEntry.format(this);
     }
 

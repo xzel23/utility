@@ -6,6 +6,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -17,7 +18,7 @@ public class SharedString implements CharSequence {
     private final int end;
     private int hash = 0;
 
-    SharedString(String base, int start, int end) {
+    SharedString(@NotNull String base, int start, int end) {
         this.base = Objects.requireNonNull(base);
         LangUtil.checkIndex(start, base.length());
         this.start = start;
@@ -37,13 +38,13 @@ public class SharedString implements CharSequence {
     }
 
     @Override
-    public SharedString subSequence(int s, int e) {
+    public @NotNull SharedString subSequence(int s, int e) {
         LangUtil.check(e >= s && this.start + e <= this.end);
         return new SharedString(base, this.start + s, this.start + e);
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return base.substring(start, end);
     }
 

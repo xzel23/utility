@@ -1,5 +1,7 @@
 package com.dua3.utility.concurrent;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -37,7 +39,7 @@ public interface ProgressTracker<T> {
         private final ProgressTracker tracker;
         private final Object task;
 
-        static <T> TaskUpdater create(ProgressTracker<T> tracker, T task) {
+        static <T> @NotNull TaskUpdater create(ProgressTracker<T> tracker, T task) {
             return new TaskUpdater(tracker, task);
         }
         
@@ -86,7 +88,7 @@ public interface ProgressTracker<T> {
      * @param <T> the task type
      * @return new dummy ProgressTracker instance
      */
-    static <T> ProgressTracker<T> nopTracker() {
+    static <T> @NotNull ProgressTracker<T> nopTracker() {
         return new ProgressTracker<>() {
             @Override
             public void schedule(T task) { /* nop */ }
@@ -162,7 +164,7 @@ public interface ProgressTracker<T> {
      * @param task the task
      * @return the task updater
      */
-    default TaskUpdater taskUpdater(T task) {
+    default @NotNull TaskUpdater taskUpdater(T task) {
         return TaskUpdater.create(this, task);
     }
 
@@ -170,7 +172,7 @@ public interface ProgressTracker<T> {
      * Create a no-op taskupdater.
      * @return no-op task updater
      */
-    static TaskUpdater nopTaskUpdater() {
+    static @NotNull TaskUpdater nopTaskUpdater() {
         return new TaskUpdater(nopTracker(), "none");
     }
 }

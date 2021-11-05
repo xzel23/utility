@@ -1,11 +1,12 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.logging.Category;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.math.MathUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -47,17 +48,17 @@ import java.util.function.Function;
 public class SwingLogPane extends JPanel {
 
     private final LogBuffer buffer;
-    private final JTable table;
-    private final JTextArea details;
-    private final LogTableModel model;
-    private final JScrollPane scrollPaneTable;
+    private final @NotNull JTable table;
+    private final @NotNull JTextArea details;
+    private final @NotNull LogTableModel model;
+    private final @NotNull JScrollPane scrollPaneTable;
     private final Function<LogEntry, Color> colorize;
-    private final JSplitPane splitPane;
+    private final @NotNull JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<LogEntry, String> format = LogEntry::format;
     private double dividerLocation = 0.5;
 
-    private static Color defaultColorize(LogEntry entry) {
+    private static @NotNull Color defaultColorize(@NotNull LogEntry entry) {
         return switch (entry.category()) {
             case FATAL -> Color.DARKRED;
             case SEVERE -> Color.RED;
@@ -72,12 +73,12 @@ public class SwingLogPane extends JPanel {
     private static final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
         private final LogBuffer buffer;
 
-        private LogTableModel(LogBuffer buffer) {
+        private LogTableModel(@NotNull LogBuffer buffer) {
             this.buffer = Objects.requireNonNull(buffer);
             buffer.addLogBufferListener(this);
         }
         
-        private List<LogEntry> data = null;
+        private @Nullable List<LogEntry> data = null;
         private int removed = 0;
         private int added = 0;
         
@@ -86,7 +87,7 @@ public class SwingLogPane extends JPanel {
         }
         
         public synchronized void lock() {
-            LangUtil.check(!isLocked(), "internal error: locked");
+            assert !isLocked() : "internal error: locked";
 
             synchronized (buffer) {
                 data = new ArrayList<>(buffer.entries());
@@ -96,15 +97,21 @@ public class SwingLogPane extends JPanel {
         }
         
         public synchronized void unlock() {
+            assert isLocked() : "internal error: should be locked";
+            assert data != null : "internal error, data should have been set in lock()";
+            
             int sz = data.size();
             data = null;
             removed = Math.min(removed, sz);
+            
             if (removed>0) {
                 fireTableRowsDeleted(0, removed);
                 sz-=removed;
                 removed=0;
             }
+            
             added = Math.min(added, sz);
+            
             if (added>0) {
                 fireTableRowsInserted(sz - added, sz - 1);
                 added=0;
@@ -122,7 +129,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public synchronized LogEntry getValueAt(int rowIndex, int columnIndex) {
+        public synchronized @NotNull LogEntry getValueAt(int rowIndex, int columnIndex) {
             return data==null ? buffer.get(rowIndex) : data.get(rowIndex);
         }
 
@@ -132,7 +139,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public Class<?> getColumnClass(int columnIndex) {
+        public @NotNull Class<?> getColumnClass(int columnIndex) {
             return LogEntry.Field.class;
         }
 
@@ -155,7 +162,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public synchronized void entries(Collection<LogEntry> entries, int replaced) {
+        public synchronized void entries(@NotNull Collection<LogEntry> entries, int replaced) {
             if (isLocked()) {
                 if (replaced>0) {
                     removed+=replaced;
@@ -175,6 +182,7 @@ public class SwingLogPane extends JPanel {
         @Override
         public synchronized void clear() {
             if (isLocked()) {
+                assert data != null : "internal error, data should have been set in lock()";
                 removed=data.size();
                 added=0;
             } else {
@@ -226,7 +234,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public @NotNull Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             if (isSelected) {
@@ -249,11 +257,11 @@ public class SwingLogPane extends JPanel {
             new Column(LogEntry.Field.MESSAGE, 80, false)
     };
     
-    public SwingLogPane(LogBuffer buffer) {
+    public SwingLogPane(@NotNull LogBuffer buffer) {
         this(buffer, SwingLogPane::defaultColorize);
     }
     
-    public SwingLogPane(LogBuffer buffer, Function<LogEntry, Color> colorize) {
+    public SwingLogPane(@NotNull LogBuffer buffer, Function<LogEntry, Color> colorize) {
         super(new BorderLayout());
         
         this.buffer = Objects.requireNonNull(buffer);
@@ -410,10 +418,10 @@ public class SwingLogPane extends JPanel {
         }
     }
 
-    private void setFilter(Category c) {
+    private void setFilter(@NotNull Category c) {
         tableRowSorter.setRowFilter(new RowFilter<>() {
             @Override
-            public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
+            public boolean include(@NotNull Entry<? extends AbstractTableModel, ? extends Integer> entry) {
                 LogEntry value = (LogEntry) entry.getValue(0);
                 return value == null || value.category().compareTo(c) <= 0;
             }

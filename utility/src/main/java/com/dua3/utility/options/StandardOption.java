@@ -1,6 +1,7 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.data.DataUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -12,15 +13,15 @@ import java.util.function.Function;
  */
 public final class StandardOption<T> extends Option<T> {
     
-    public static <T> StandardOption<T> create(Class<? extends T> type, String... names) {
+    public static <T> @NotNull StandardOption<T> create(@NotNull Class<? extends T> type, String... names) {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
-    public static <T> StandardOption<T> create(Function<String,T> mapper, String[] names) {
+    public static <T> @NotNull StandardOption<T> create(Function<String,T> mapper, String[] names) {
         return new StandardOption<>(mapper, Object::toString, names);
     }
 
-    public static <T> StandardOption<T> create(Function<String,T> mapper, Function<? super T, String> formatter, String[] names) {
+    public static <T> @NotNull StandardOption<T> create(Function<String,T> mapper, Function<? super T, String> formatter, String[] names) {
         return new StandardOption<>(mapper, formatter, names);
     }
 
@@ -34,13 +35,13 @@ public final class StandardOption<T> extends Option<T> {
     }
 
     @Override
-    public StandardOption<T> description(String description) {
+    public @NotNull StandardOption<T> description(String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public StandardOption<T> handler(Consumer<Collection<T>> handler) {
+    public @NotNull StandardOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }
@@ -51,7 +52,7 @@ public final class StandardOption<T> extends Option<T> {
      * @param n the number of occurrences to set
      * @return the option
      */
-    public StandardOption<T> occurence(int n) {
+    public @NotNull StandardOption<T> occurence(int n) {
         return occurence(n, n);
     }
 
@@ -62,7 +63,7 @@ public final class StandardOption<T> extends Option<T> {
      * @return the option
      */
     @Override
-    public StandardOption<T> occurence(int min, int max) {
+    public @NotNull StandardOption<T> occurence(int min, int max) {
         super.occurence(min, max);
         return this;
     }
@@ -73,7 +74,7 @@ public final class StandardOption<T> extends Option<T> {
      * @param n the arity to set
      * @return the option
      */
-    public StandardOption<T> arity(int n) {
+    public @NotNull StandardOption<T> arity(int n) {
         return arity(n,n);
     }
 
@@ -83,7 +84,7 @@ public final class StandardOption<T> extends Option<T> {
      * @param max the maximum arity
      * @return the option
      */
-    public StandardOption<T> arity(int min, int max) {
+    public @NotNull StandardOption<T> arity(int min, int max) {
         super.arity(min, max);
         return this;
     }

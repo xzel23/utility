@@ -6,6 +6,8 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +35,7 @@ public class Run implements AttributedCharSequence {
      * @param style
      *               style for the Run
      */
-    Run(CharSequence text, int start, int length, TextAttributes style) {
+    Run(@NotNull CharSequence text, int start, int length, @NotNull TextAttributes style) {
         LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
 
         this.text = Objects.requireNonNull(text);
@@ -49,7 +51,7 @@ public class Run implements AttributedCharSequence {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
@@ -105,7 +107,7 @@ public class Run implements AttributedCharSequence {
      *
      * @return style of this Run
      */
-    public TextAttributes getAttributes() {
+    public @NotNull TextAttributes getAttributes() {
         return attributes;
     }
 
@@ -125,22 +127,22 @@ public class Run implements AttributedCharSequence {
     }
 
     @Override
-    public AttributedCharacter attributedCharAt(int index) {
+    public @NotNull AttributedCharacter attributedCharAt(int index) {
         return AttributedCharacter.create(charAt(index), attributes);
     }
 
     @Override
-    public Run subSequence(int start, int end) {
+    public @NotNull Run subSequence(int start, int end) {
         return new Run(text, this.start + start, end - start, attributes);
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return text.subSequence(start, start + length).toString();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Style> getStyles() {
+    public @NotNull List<Style> getStyles() {
         return (List<Style>) attributes.getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 
@@ -148,7 +150,7 @@ public class Run implements AttributedCharSequence {
      * Get the FontDef for this style.
      * @return the FontDef
      */
-    public FontDef getFontDef() {
+    public @NotNull FontDef getFontDef() {
         FontDef collected = new FontDef();
         for (Style style: getStyles()) {
             collected.merge(style.getFontDef());

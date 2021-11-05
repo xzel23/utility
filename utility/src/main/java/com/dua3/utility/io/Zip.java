@@ -1,6 +1,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Flushable;
 import java.io.IOException;
@@ -15,14 +16,14 @@ import java.util.zip.ZipOutputStream;
 public class Zip implements AutoCloseable, Flushable {
     
     private static final int BUFFER_SIZE = 8*1024;
-    private final ZipOutputStream zout;
-    private String path = "";
+    private final @NotNull ZipOutputStream zout;
+    private @NotNull String path = "";
 
     /**
      * Create new Zip instance.
      * @param out the {@link OutputStream} to write the zip data to
      */
-    public Zip(OutputStream out) {
+    public Zip(@NotNull OutputStream out) {
         this.zout = new ZipOutputStream(out);
     }
 
@@ -34,7 +35,7 @@ public class Zip implements AutoCloseable, Flushable {
      * @param data  the data
      * @throws IOException on error
      */
-    public void add(String filename, byte[] data) throws IOException {
+    public void add(@NotNull String filename, byte @NotNull [] data) throws IOException {
         addFileEntry(filename);
         zout.write(data);
     }
@@ -47,7 +48,7 @@ public class Zip implements AutoCloseable, Flushable {
      * @param in  the {@link InputStream} to read the data from
      * @throws IOException on error
      */
-    public void add(String filename, InputStream in) throws IOException {
+    public void add(@NotNull String filename, @NotNull InputStream in) throws IOException {
         addFileEntry(filename);
         byte[] buffer = new byte[BUFFER_SIZE];
         
@@ -57,7 +58,7 @@ public class Zip implements AutoCloseable, Flushable {
         }
     }
     
-    private void addFileEntry(String filename) throws IOException {
+    private void addFileEntry(@NotNull String filename) throws IOException {
         LangUtil.check(!filename.isEmpty(), "the filename must not be empty");
         LangUtil.check(filename.indexOf('/')==-1, "the filename must not contain any '/'");
         ZipEntry entry = new ZipEntry(path + filename);
@@ -71,7 +72,7 @@ public class Zip implements AutoCloseable, Flushable {
      * @param dirname  the directoryname
      * @throws IOException on error
      */
-    public void directory(String dirname) throws IOException {
+    public void directory(@NotNull String dirname) throws IOException {
         LangUtil.check(!dirname.isEmpty(), "directory name must not be empty");
         
         // append '/' if needed

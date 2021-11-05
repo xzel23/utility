@@ -7,6 +7,8 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -64,7 +66,7 @@ public final class SwingUtil {
      * @return
      *                           new Action instance
      */
-    public static Action createAction(String name, Consumer<? super ActionEvent> onActionPerformed) {
+    public static @NotNull Action createAction(String name, @NotNull Consumer<? super ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             @Serial
             private static final long serialVersionUID = 1L;
@@ -76,7 +78,7 @@ public final class SwingUtil {
 
             @SuppressWarnings("UseOfClone")
             @Override
-            public AbstractAction clone() throws CloneNotSupportedException {
+            public @NotNull AbstractAction clone() throws CloneNotSupportedException {
                 return (AbstractAction) super.clone();
             }
         };
@@ -93,7 +95,7 @@ public final class SwingUtil {
      * @return
      *                           new Action instance
      */
-    public static Action createAction(String name, Runnable onActionPerformed) {
+    public static @NotNull Action createAction(String name, @NotNull Runnable onActionPerformed) {
         return new AbstractAction(name) {
             @Serial
             private static final long serialVersionUID = 1L;
@@ -105,7 +107,7 @@ public final class SwingUtil {
 
             @SuppressWarnings("UseOfClone")
             @Override
-            public AbstractAction clone() throws CloneNotSupportedException {
+            public @NotNull AbstractAction clone() throws CloneNotSupportedException {
                 //noinspection UseOfClone
                 return (AbstractAction) super.clone();
             }
@@ -118,7 +120,7 @@ public final class SwingUtil {
      * @param sp
      *           a scroll pane
      */
-    public static void scrollToBottom(JScrollPane sp) {
+    public static void scrollToBottom(@NotNull JScrollPane sp) {
         scrollToEnd(sp.getVerticalScrollBar());
     }
 
@@ -128,10 +130,10 @@ public final class SwingUtil {
      * @param sb
      *           a scroll bar
      */
-    public static void scrollToEnd(JScrollBar sb) {
+    public static void scrollToEnd(@NotNull JScrollBar sb) {
         AdjustmentListener autoScroller = new AdjustmentListener() {
             @Override
-            public void adjustmentValueChanged(AdjustmentEvent e) {
+            public void adjustmentValueChanged(@NotNull AdjustmentEvent e) {
                 Adjustable adjustable = e.getAdjustable();
                 adjustable.setValue(adjustable.getMaximum());
                 sb.removeAdjustmentListener(this);
@@ -157,7 +159,7 @@ public final class SwingUtil {
      * On Mac OS, the global menubar is also enabled.
      */
     public static void setNativeLookAndFeel() {
-        setNativeLookAndFeel(null);
+        setNativeLookAndFeel_(null);
     }
 
     /**
@@ -167,7 +169,11 @@ public final class SwingUtil {
      * @param applicationName
      *                        the application name to set
      */
-    public static void setNativeLookAndFeel(String applicationName) {
+    public static void setNativeLookAndFeel(@NotNull String applicationName) {
+        setNativeLookAndFeel_(applicationName);
+    }
+    
+    private static void setNativeLookAndFeel_(@Nullable String applicationName) {
         if (System.getProperty("os.name").toUpperCase(Locale.ROOT).startsWith("MAC")) {
             if (applicationName != null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
@@ -249,7 +255,7 @@ public final class SwingUtil {
      * @return
      *               Color
      */
-    public static Color toColor(java.awt.Color color) {
+    public static @NotNull Color toColor(java.awt.@NotNull Color color) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
@@ -261,7 +267,7 @@ public final class SwingUtil {
      * @return
      *               java.awt.Color
      */
-    public static java.awt.Color toAwtColor(Color color) {
+    public static java.awt.@NotNull Color toAwtColor(@NotNull Color color) {
         return new java.awt.Color(color.argb(), color.a() != 0xff);
     }
 
@@ -275,7 +281,7 @@ public final class SwingUtil {
      * @see      Color#valueOf(String)
      * @see      #toAwtColor(Color)
      */
-    public static java.awt.Color toAwtColor(String s) {
+    public static java.awt.@NotNull Color toAwtColor(@NotNull String s) {
         return toAwtColor(Color.valueOf(s));
     }
 
@@ -293,7 +299,7 @@ public final class SwingUtil {
      * @param update
      *               Runnable to do the update
      */
-    public static void updateAndScrollToBottom(JScrollPane sp, Runnable update) {
+    public static void updateAndScrollToBottom(@NotNull JScrollPane sp, @NotNull Runnable update) {
         updateAndScrollToEnd(sp.getVerticalScrollBar(), update);
     }
 
@@ -311,7 +317,7 @@ public final class SwingUtil {
      * @param update
      *               Runnable to do the update
      */
-    public static void updateAndScrollToEnd(JScrollBar sb, Runnable update) {
+    public static void updateAndScrollToEnd(@NotNull JScrollBar sb, @NotNull Runnable update) {
         boolean atEnd = sb.getMaximum() == sb.getValue() + sb.getVisibleAmount();
 
         update.run();
@@ -336,8 +342,8 @@ public final class SwingUtil {
     }
 
     @SafeVarargs
-    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<JFileChooser,Component,Integer> showDialog,
-                                                 Pair<String, String[]>... types) {
+    private static Optional<Path> showFileDialog(Component parent, @Nullable Path current, int selectionMode, @NotNull BiFunction<JFileChooser,Component,Integer> showDialog,
+                                                 Pair<String, String[]> @NotNull ... types) {
         File file = null;
         if (current != null) {
             try {
@@ -373,7 +379,7 @@ public final class SwingUtil {
      * @param sb            the scroll bar, {@code null} is allowed
      * @param unitIncrement the unit increment
      */
-    public static void setUnitIncrement(JScrollBar sb, int unitIncrement) {
+    public static void setUnitIncrement(@Nullable JScrollBar sb, int unitIncrement) {
         if (sb != null) {
             sb.setUnitIncrement(unitIncrement);
         }
@@ -385,7 +391,7 @@ public final class SwingUtil {
      * @param jsp           the scroll pane
      * @param unitIncrement the unit increment
      */
-    public static void setUnitIncrement(JScrollPane jsp, int unitIncrement) {
+    public static void setUnitIncrement(@Nullable JScrollPane jsp, int unitIncrement) {
         if (jsp == null) {
             return;
         }
@@ -400,7 +406,7 @@ public final class SwingUtil {
      * @param  unitIncrement the unit increment
      * @return               new JScrollPane
      */
-    public static JScrollPane createJScrollPane(int unitIncrement) {
+    public static @NotNull JScrollPane createJScrollPane(int unitIncrement) {
         JScrollPane jsp = new JScrollPane();
         setUnitIncrement(jsp, unitIncrement);
         return jsp;
@@ -413,7 +419,7 @@ public final class SwingUtil {
      * @param  view          the view
      * @return               new JScrollPane
      */
-    public static JScrollPane createJScrollPane(int unitIncrement, Component view) {
+    public static @NotNull JScrollPane createJScrollPane(int unitIncrement, Component view) {
         JScrollPane jsp = new JScrollPane(view);
         setUnitIncrement(jsp, unitIncrement);
         return jsp;
@@ -427,7 +433,7 @@ public final class SwingUtil {
      * @param  hsbPolicy     horizontal scroll bar policy
      * @return               new JScrollPane
      */
-    public static JScrollPane createJScrollPane(int unitIncrement, int vsbPolicy, int hsbPolicy) {
+    public static @NotNull JScrollPane createJScrollPane(int unitIncrement, int vsbPolicy, int hsbPolicy) {
         JScrollPane jsp = new JScrollPane(vsbPolicy, hsbPolicy);
         setUnitIncrement(jsp, unitIncrement);
         return jsp;
@@ -442,7 +448,7 @@ public final class SwingUtil {
      * @param  hsbPolicy     horizontal scroll bar policy
      * @return               new JScrollPane
      */
-    public static JScrollPane createJScrollPane(int unitIncrement, Component view, int vsbPolicy, int hsbPolicy) {
+    public static @NotNull JScrollPane createJScrollPane(int unitIncrement, Component view, int vsbPolicy, int hsbPolicy) {
         JScrollPane jsp = new JScrollPane(view, vsbPolicy, hsbPolicy);
         setUnitIncrement(jsp, unitIncrement);
         return jsp;
@@ -453,7 +459,7 @@ public final class SwingUtil {
      * @param component the component to add drop support to
      * @param action the action to perform when files are dropped
      */
-    public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action) {
+    public static void addDropFilesSupport(@NotNull JComponent component, @NotNull Consumer<? super Collection<File>> action) {
         addDropFilesSupport(component, action, files -> !files.isEmpty(), e -> {});
     }
 
@@ -464,10 +470,10 @@ public final class SwingUtil {
      * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
      * @param exceptionHandler handler to call when an exception is caught
      */
-    public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action, Predicate<? super Collection<File>> test, Consumer<? super Exception> exceptionHandler) {
+    public static void addDropFilesSupport(@NotNull JComponent component, @NotNull Consumer<? super Collection<File>> action, @NotNull Predicate<? super Collection<File>> test, @NotNull Consumer<? super Exception> exceptionHandler) {
         component.setDropTarget(new DropTarget() {
             @Override
-            public synchronized void dragEnter(DropTargetDragEvent evt) {
+            public synchronized void dragEnter(@NotNull DropTargetDragEvent evt) {
                 if (test.test(getFiles(evt.getTransferable()))) {
                     evt.acceptDrag(DnDConstants.ACTION_COPY);
                 } else {
@@ -478,7 +484,7 @@ public final class SwingUtil {
             }
 
             @Override
-            public synchronized void dragOver(DropTargetDragEvent evt) {
+            public synchronized void dragOver(@NotNull DropTargetDragEvent evt) {
                 if (test.test(getFiles(evt.getTransferable()))) {
                     evt.acceptDrag(DnDConstants.ACTION_COPY);
                 } else {
@@ -489,7 +495,7 @@ public final class SwingUtil {
             }
 
             @Override
-            public synchronized void drop(DropTargetDropEvent evt) {
+            public synchronized void drop(@NotNull DropTargetDropEvent evt) {
                 evt.acceptDrop(DnDConstants.ACTION_COPY);
                 Collection<File> files = getFiles(evt.getTransferable());
                 if (test.test(files)) {
@@ -498,7 +504,7 @@ public final class SwingUtil {
             }
 
             @SuppressWarnings("unchecked")
-            private Collection<File> getFiles(Transferable transferable) {
+            private @NotNull Collection<File> getFiles(@NotNull Transferable transferable) {
                 try {
                     return (Collection<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                 } catch (UnsupportedFlavorException | IOException e) {

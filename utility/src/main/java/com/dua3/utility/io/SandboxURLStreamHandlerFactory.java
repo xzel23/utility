@@ -5,6 +5,8 @@
 
 package com.dua3.utility.io;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
 import java.util.Objects;
@@ -18,7 +20,7 @@ public class SandboxURLStreamHandlerFactory implements URLStreamHandlerFactory {
     }
 
     @Override
-    public URLStreamHandler createURLStreamHandler(String protocol) {
+    public @Nullable URLStreamHandler createURLStreamHandler(String protocol) {
         return switch (protocol) {
             case "file", "jar" -> null;
             default -> new SandboxURLHandler(localFiles);

@@ -1,5 +1,8 @@
 package com.dua3.utility.logging;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,13 +17,13 @@ public interface IThrowable {
      * Get the cause.
      * @return cause
      */
-    IThrowable getCause();
+    @Nullable IThrowable getCause();
 
     /**
      * Get stack trace.
      * @return list of {@link IStackTraceElement}
      */
-    List<IStackTraceElement> getStackTrace();
+    @NotNull List<IStackTraceElement> getStackTrace();
 
     /**
      * A wrapper interface to abstract handling of {@link StackTraceElement} in different logging frameworks. 
@@ -28,7 +31,7 @@ public interface IThrowable {
     interface IStackTraceElement {
     }
 
-    default void appendTo(Appendable app) throws IOException {
+    default void appendTo(@NotNull Appendable app) throws IOException {
         app.append(this.toString());
         for (IStackTraceElement ste: getStackTrace()) {
             app.append("\nat ").append(ste.toString());
@@ -55,20 +58,20 @@ public interface IThrowable {
      */
     class JavaThrowable implements IThrowable {
         private final Throwable t;
-        private List<IStackTraceElement> ist = null;
+        private @Nullable List<IStackTraceElement> ist = null;
         
         JavaThrowable(Throwable t) {
             this.t= Objects.requireNonNull(t);
         }
 
         @Override
-        public IThrowable getCause() {
+        public @Nullable IThrowable getCause() {
             Throwable cause = t.getCause();
             return cause == null ? null : new JavaThrowable(cause);
         }
 
         @Override
-        public List<IStackTraceElement> getStackTrace() {
+        public @NotNull List<IStackTraceElement> getStackTrace() {
             if (ist==null) {
                 StackTraceElement[] st = t.getStackTrace();
                 List<IStackTraceElement> ist_ = new ArrayList<>(st.length);
@@ -92,7 +95,7 @@ public interface IThrowable {
      */
     record JavaStackTraceElement(StackTraceElement ste) implements IStackTraceElement {
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return ste.toString();
         }
     }

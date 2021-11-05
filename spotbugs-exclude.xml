@@ -37,12 +37,6 @@
         <Class name="com.dua3.utility.swing.SwingLogPane" />
         <Bug pattern="EI_EXPOSE_REP2" />
     </Match>
-    
-    <!-- False positive in test code. -->
-    <Match>
-        <Class name="com.dua3.utility.swing.TestSwingComponents" />
-        <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
-    </Match>
 
     <!-- RichText is immutable. -->
     <Match>
@@ -63,4 +57,26 @@
         <Bug pattern="MS_EXPOSE_REP" />
         <Method name="none" />"
     </Match>
+
+    <!-- False positives. -->
+    <Match>
+        <Class name="com.dua3.utility.data.FileTreeNode" />
+        <Bug pattern="NP_NULL_PARAM_DEREF" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.data.FileTreeNode" />
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.data.FileTreeNode" />
+        <Bug pattern="NP_NULL_PARAM_DEREF" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.io.IOUtil" />
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+    </Match>
+
 </FindBugsFilter>

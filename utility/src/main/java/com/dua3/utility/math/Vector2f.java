@@ -5,6 +5,8 @@
 
 package com.dua3.utility.math;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An immutable 2-dimensional vector using float coordinates.
  */
@@ -17,7 +19,7 @@ public record Vector2f(float x, float y) {
      * @param x the x-coordinate
      * @param y the y-coordinate
      */
-    public static Vector2f of(float x, float y) {
+    public static @NotNull Vector2f of(float x, float y) {
         return new Vector2f(x,y);
     }
 
@@ -27,7 +29,7 @@ public record Vector2f(float x, float y) {
      * @param b second vector
      * @return Vector with the the componentwise maxima of a and b as components. 
      */
-    public static Vector2f max(Vector2f a, Vector2f b) {
+    public static @NotNull Vector2f max(@NotNull Vector2f a, @NotNull Vector2f b) {
         return Vector2f.of(Math.max(a.x, b.x), Math.max(a.y, b.y));
     }
 
@@ -37,7 +39,7 @@ public record Vector2f(float x, float y) {
      * @param b second vector
      * @return Vector with the the componentwise minima of a and b as components. 
      */
-    public static Vector2f min(Vector2f a, Vector2f b) {
+    public static @NotNull Vector2f min(@NotNull Vector2f a, @NotNull Vector2f b) {
         return Vector2f.of(Math.min(a.x, b.x), Math.min(a.y, b.y));
     }
 
@@ -47,7 +49,7 @@ public record Vector2f(float x, float y) {
      * @param b second vector
      * @return this * v
      */
-    public static float scalarProduct(Vector2f a, Vector2f b) {
+    public static float scalarProduct(@NotNull Vector2f a, @NotNull Vector2f b) {
         return a.x*b.x+a.y*b.y;
     }
 
@@ -57,7 +59,7 @@ public record Vector2f(float x, float y) {
      * @param b second vector
      * @return the angle in radians 
      */
-    public static double angle(Vector2f a, Vector2f b) {
+    public static double angle(@NotNull Vector2f a, @NotNull Vector2f b) {
         float nominator = scalarProduct(a, b);
         
         if (nominator==0) {
@@ -77,7 +79,7 @@ public record Vector2f(float x, float y) {
      * @param v the argument
      * @return this + v
      */
-    public Vector2f add(Vector2f v) {
+    public @NotNull Vector2f add(@NotNull Vector2f v) {
         return new Vector2f(x + v.x, y + v.y);    
     }
     
@@ -86,7 +88,7 @@ public record Vector2f(float x, float y) {
      * @param v the argument
      * @return this - v
      */
-    public Vector2f subtract(Vector2f v) {
+    public @NotNull Vector2f subtract(@NotNull Vector2f v) {
         return new Vector2f(x - v.x, y - v.y);    
     }
     

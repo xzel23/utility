@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,10 +12,10 @@ import java.util.List;
  */
 public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
     
-    protected abstract TagBasedConverterImpl<T> createConverter(RichText text);
+    protected abstract @NotNull TagBasedConverterImpl<T> createConverter(RichText text);
 
     @Override
-    public T convert(RichText text) {
+    public @NotNull T convert(@NotNull RichText text) {
         return createConverter(text).append(text).get();
     }
 
@@ -23,7 +25,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
      */
     protected abstract static class TagBasedConverterImpl<T> {
         
-        private List<Style> currentStyles = new ArrayList<>();
+        private @NotNull List<Style> currentStyles = new ArrayList<>();
 
         protected abstract void appendOpeningTags(List<Style> openingStyles);
 
@@ -31,9 +33,9 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
         protected abstract void appendChars(CharSequence s);
 
-        protected abstract T get();
+        protected abstract @NotNull T get();
         
-        protected TagBasedConverterImpl<T> append(RichText text) {
+        protected @NotNull TagBasedConverterImpl<T> append(@NotNull RichText text) {
             List<Style> openStyles = new LinkedList<>();
             for (Run run: text) {
                 List<Style> runStyles = run.getStyles();

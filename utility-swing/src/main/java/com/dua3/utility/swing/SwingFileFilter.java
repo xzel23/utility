@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A FileFilter class to be used as a drop-in file filter for dialogs.
@@ -24,7 +25,7 @@ import com.dua3.utility.io.OpenMode;
  */
 public final class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
         implements java.io.FileFilter, java.io.FilenameFilter {
-    public static <T> List<SwingFileFilter<T>> getFilters(OpenMode mode, Class<T> cls) {
+    public static <T> @NotNull List<SwingFileFilter<T>> getFilters(@NotNull OpenMode mode, @NotNull Class<T> cls) {
         List<FileType<T>> fileTypes = FileType.getFileTypes(mode, cls);
         List<SwingFileFilter<T>> filters = new ArrayList<>(fileTypes.size());
         for (FileType<T> ft : fileTypes) {
@@ -40,12 +41,12 @@ public final class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
     }
 
     @Override
-    public boolean accept(File pathname) {
+    public boolean accept(@NotNull File pathname) {
         return fileType.matches(pathname.getName());
     }
 
     @Override
-    public boolean accept(File dir, String name) {
+    public boolean accept(File dir, @NotNull String name) {
         return fileType.matches(name);
     }
 

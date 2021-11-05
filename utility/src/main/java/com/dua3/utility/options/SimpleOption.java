@@ -1,5 +1,7 @@
 package com.dua3.utility.options;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,11 +19,11 @@ public final class SimpleOption<T> extends Option<T> {
 
     private Supplier<T> defaultValue = () -> null;
 
-    public static <T> SimpleOption<T>  create(Function<String, ? extends T> mapper, String... names) {
+    public static <T> @NotNull SimpleOption<T>  create(Function<String, ? extends T> mapper, String... names) {
         return new SimpleOption<>(mapper, Object::toString, names);
     }
     
-    public static <T> SimpleOption<T>  create(Function<String, ? extends T> mapper, Function<? super T, String> formatter, String... names) {
+    public static <T> @NotNull SimpleOption<T>  create(Function<String, ? extends T> mapper, Function<? super T, String> formatter, String... names) {
         return new SimpleOption<>(mapper, formatter, names);
     }
     
@@ -37,13 +39,13 @@ public final class SimpleOption<T> extends Option<T> {
     }
     
     @Override
-    public SimpleOption<T> description(String description) {
+    public @NotNull SimpleOption<T> description(String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public SimpleOption<T> handler(Consumer<Collection<T>> handler) {
+    public @NotNull SimpleOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }
@@ -53,7 +55,7 @@ public final class SimpleOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public SimpleOption<T> defaultValue(T defaultValue) {
+    public @NotNull SimpleOption<T> defaultValue(T defaultValue) {
         return defaultValue(() -> defaultValue);
     }
 
@@ -62,7 +64,7 @@ public final class SimpleOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public SimpleOption<T> defaultValue(Supplier<T> defaultValue) {
+    public @NotNull SimpleOption<T> defaultValue(Supplier<T> defaultValue) {
         this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
         return this;
     }

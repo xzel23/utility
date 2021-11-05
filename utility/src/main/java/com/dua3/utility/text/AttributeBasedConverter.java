@@ -7,6 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +24,14 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
      * @param text the text to be converted
      * @return instance of the implementation class
      */
-    protected abstract AttributeBasedConverter.AttributeBasedConverterImpl<T> createConverter(RichText text);
+    protected abstract AttributeBasedConverter.@NotNull AttributeBasedConverterImpl<T> createConverter(RichText text);
 
     /**
      * Convert {@link RichText} instance to the target class.
      * @param text the text to convert
      * @return the conversion result
      */
-    public T convert(RichText text) {
+    public T convert(@NotNull RichText text) {
         return createConverter(text).append(text).get();
     }
 
@@ -43,13 +44,13 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         /** The current font used when appending text. */
         private Map<String,Object> currentAttributes;
         /** Store the initial attributes so that they can be restored at the end. */
-        private final Map<String,Object> initialAttributes;
+        private final @NotNull Map<String,Object> initialAttributes;
 
         /**
          * Create a new instance.
          * @param defaultAttributes the default attributes to be used
          */
-        protected AttributeBasedConverterImpl(Map<String,Object> defaultAttributes) {
+        protected AttributeBasedConverterImpl(@NotNull Map<String,Object> defaultAttributes) {
             this.initialAttributes = defaultAttributes;
             // copy currentAttributes
             this.currentAttributes = new HashMap<>();
@@ -74,7 +75,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param run the {@link Run}
          * @return Map containing all attributes set by this run's styles
          */
-        protected static Map<String, Object> collectAttributes(Run run) {
+        protected static @NotNull Map<String, Object> collectAttributes(@NotNull Run run) {
             Map<String,Object> styleAttributes = new HashMap<>();
             run.getStyles().forEach(style -> copyAttributes(style, styleAttributes));
             return styleAttributes;
@@ -86,7 +87,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param sourceAttributes the source entries
          * @param destinationAttributes the destination map
          */
-        private static void copyAttributes(Iterable<? extends Map.Entry<String, Object>> sourceAttributes, Map<? super String, Object> destinationAttributes) {
+        private static void copyAttributes(@NotNull Iterable<? extends Map.Entry<String, Object>> sourceAttributes, @NotNull Map<? super String, Object> destinationAttributes) {
             sourceAttributes.forEach( entry -> {
                 String attribute = entry.getKey();
                 Object value = entry.getValue();
@@ -112,7 +113,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * Update style. There should be no need to override this method in implementations.
          * @param run the run for which the style should be updated
          */
-        protected void setStyle(Run run) {
+        protected void setStyle(@NotNull Run run) {
             // collect this run's attribute
             Map<String,Object> newAttributes = collectAttributes(run);
             handleAttributeChanges(newAttributes);
@@ -122,7 +123,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * Handle changes in attributes.
          * @param newAttributes map containing the changed attributes and their new values
          */
-        protected void handleAttributeChanges(Map<String, Object> newAttributes) {
+        protected void handleAttributeChanges(@NotNull Map<String, Object> newAttributes) {
             // determine attribute changes
             Map<String, Pair<Object, Object>> changedAttributes = DataUtil.changes(currentAttributes, newAttributes);
             // apply attribute changes
@@ -136,7 +137,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param text the text to append
          * @return this instance
          */
-        protected AttributeBasedConverterImpl<T> append(RichText text) {
+        protected @NotNull AttributeBasedConverterImpl<T> append(@NotNull RichText text) {
             // apply all runs of the text
             for (Run run : text) {
                 setStyle(run);

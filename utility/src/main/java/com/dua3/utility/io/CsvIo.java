@@ -14,6 +14,7 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -41,7 +42,7 @@ public abstract class CsvIo implements AutoCloseable {
 
     private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
-    protected final String lineDelimiter;
+    protected final @NotNull String lineDelimiter;
     protected final char separator;
     protected final char delimiter;
     protected final Locale locale;
@@ -49,7 +50,7 @@ public abstract class CsvIo implements AutoCloseable {
     protected final DateTimeFormatter dateFormatter;
     protected final NumberFormat numberFormat;
 
-    protected CsvIo(Arguments options) {
+    protected CsvIo(@NotNull Arguments options) {
         this.separator = IoOptions.getFieldSeparator(options);
         this.delimiter = IoOptions.getTextDelimiter(options);
         this.lineDelimiter = "\r\n";
@@ -62,7 +63,7 @@ public abstract class CsvIo implements AutoCloseable {
         this.numberFormat.setMaximumFractionDigits(15);
     }
 
-    protected String format(Object obj) {
+    protected @NotNull String format(Object obj) {
         final String text;
         if (obj instanceof Number) {
             text = numberFormat.format(obj);
@@ -76,7 +77,7 @@ public abstract class CsvIo implements AutoCloseable {
         return quoteIfNeeded(text);
     }
 
-    protected boolean isQuoteNeeded(String text) {
+    protected boolean isQuoteNeeded(@NotNull String text) {
         // also quote if unusual characters are present
         for (char c : text.toCharArray()) {
             if (c==separator || c == delimiter || !Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
@@ -86,11 +87,11 @@ public abstract class CsvIo implements AutoCloseable {
         return false;
     }
 
-    protected String quote(String text) {
+    protected @NotNull String quote(@NotNull String text) {
         return delimiter + text.replace("\"", "\"\"") + delimiter;
     }
 
-    protected String quoteIfNeeded(String text) {
+    protected @NotNull String quoteIfNeeded(@NotNull String text) {
         return isQuoteNeeded(text) ? quote(text) : text;
     }
 }
