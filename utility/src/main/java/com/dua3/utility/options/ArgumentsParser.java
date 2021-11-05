@@ -213,7 +213,6 @@ public class ArgumentsParser {
                     currentEntry.addParameter(arg);
                 } else {
                     if (!parsingPositional) {
-                        LangUtil.check(positionalArgs.isEmpty(), () -> new OptionException("positional args mixed in with option parameters"));
                         parsingPositional = true;
                     }
                     positionalArgs.add(arg);

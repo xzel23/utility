@@ -50,8 +50,7 @@ class XmlUtilTest {
     void prettyPrint() throws IOException, SAXException {
         Document document = XML_UTIL.parse(XML_UNFORMATTED);
         String text = XML_UTIL.prettyPrint(document);
-        String expected = XML;
-        assertEquals(expected, text);
+        assertEquals(XML, text);
     }
 
 }
