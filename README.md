@@ -104,6 +104,7 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - options can be passed a handler that is executed when arguments.handle() is called
 - LangUtil.formatStackTrace(Exception)
 - IOUtil.stringStream(String)
+- LangUtil.map(OptionalXXX, XXXFunction) for mapping primitive Optionals
 - improve output and performance of XmlUtil.prettyPrint()
 - fix MathUtil.gcd for negative arguments
 - many fixes and smaller improvements, added many Javadoc comments, improve test coverage

@@ -39,11 +39,17 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.LongFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -438,6 +444,39 @@ public final class LangUtil {
         return Collections.unmodifiableMap(map);
     }
 
+    /**
+     * Map {@link OptionalInt} to an {@link Optional}.
+     * @param opt the {@link OptionalInt}
+     * @param f the mapping function
+     * @param <T> the result type
+     * @return Optional holding the mapped value or Optional.empt()
+     */
+    public static <T> @NotNull Optional<T> map(@NotNull OptionalInt opt, @NotNull IntFunction<T> f) {
+        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));    
+    }
+
+    /**
+     * Map {@link OptionalLong} to an {@link Optional}.
+     * @param opt the {@link OptionalLong}
+     * @param f the mapping function
+     * @param <T> the result type
+     * @return Optional holding the mapped value or Optional.empt()
+     */
+    public static <T> @NotNull Optional<T> map(@NotNull OptionalLong opt, @NotNull LongFunction<T> f) {
+        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));    
+    }
+
+    /**
+     * Map {@link OptionalDouble} to an {@link Optional}.
+     * @param opt the {@link OptionalDouble}
+     * @param f the mapping function
+     * @param <T> the result type
+     * @return Optional holding the mapped value or Optional.empt()
+     */
+    public static <T> @NotNull Optional<T> map(@NotNull OptionalDouble opt, @NotNull DoubleFunction<T> f) {
+        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));    
+    }
+    
     /**
      * Test streams for equality.
      *
