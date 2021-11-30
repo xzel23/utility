@@ -9,7 +9,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.1-SNAPSHOT'
+        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.2-SNAPSHOT'
     }
 }
 
@@ -45,7 +45,7 @@ subprojects {
     ext {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         java_version = '17'
-        junit_version = '5.7.1'
+        junit_version = '5.8.2'
     }
 
     sourceCompatibility = java_version
