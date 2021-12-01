@@ -105,7 +105,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     }
 
     /** The options passed on the command line with their respective arguments. */
-    private final Queue<Entry<?>> parsedOptions;
+    private final @NotNull Queue<Entry<?>> parsedOptions;
     /** The positional arguments. */
     private final @NotNull List<String> positionalArgs;
 
@@ -239,7 +239,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     }
     
     @Override
-    public @NotNull Iterator<Entry<?>> iterator() {
+    public @NotNull Iterator<Arguments.Entry<?>> iterator() {
         return parsedOptions.iterator();
     }
     
