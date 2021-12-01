@@ -2,7 +2,6 @@ package com.dua3.utility.lang;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -77,7 +76,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     public static @NotNull BuildInfo create(@NotNull InputStream in) {
         try (in) {
             return create(LangUtil.loadProperties(in));
-        } catch (NullPointerException|IOException e) {
+        } catch (Exception e) {
             LOG.log(Level.WARNING, "could not load build properties", e);
             throw new IllegalStateException("could not load build properties", e);
         }
