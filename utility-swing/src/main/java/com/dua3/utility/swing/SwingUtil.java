@@ -515,6 +515,67 @@ public final class SwingUtil {
         });
     }
     
+    /**
+    * Add support for dropping text on a component.
+    * @param component the component to add drop support to
+    * @param action the action to perform when text is dropped
+    */
+    public static void addDropTextSupport(@NotNull JComponent component, @NotNull Consumer<String> action) {
+        addDropTextSupport(component, action, text -> !text.isEmpty(), e -> {});
+    }
+
+    /**
+    * Add support for dropping text on a component.
+    * @param component the component to add drop support to
+    * @param action the action to perform when files are dropped
+    * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
+    * @param exceptionHandler handler to call when an exception is caught
+    */
+    public static void addDropTextSupport(@NotNull JComponent component, @NotNull Consumer<String> action, @NotNull Predicate<String> test, @NotNull Consumer<Exception> exceptionHandler) {
+        component.setDropTarget(new DropTarget() {
+            @Override
+            public synchronized void dragEnter(DropTargetDragEvent evt) {
+                if (test.test(getText(evt.getTransferable()))) {
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                } else {
+                    evt.rejectDrag();
+                }
+
+                super.dragEnter(evt);
+            }
+
+            @Override
+            public synchronized void dragOver(DropTargetDragEvent evt) {
+                if (test.test(getText(evt.getTransferable()))) {
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                } else {
+                    evt.rejectDrag();
+                }
+
+                super.dragOver(evt);
+            }
+
+            @Override
+            public synchronized void drop(DropTargetDropEvent evt) {
+                evt.acceptDrop(DnDConstants.ACTION_COPY);
+                String text = getText(evt.getTransferable());
+                if (test.test(text)) {
+                    action.accept(text);
+                }
+            }
+
+            @SuppressWarnings("unchecked")
+            private String getText(Transferable transferable) {
+                try {
+                    return (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                } catch (UnsupportedFlavorException | IOException e) {
+                    exceptionHandler.accept(e);
+                    return "";
+                }
+            }
+        });
+    }
+
     // Utility class, should not be instantiated
     private SwingUtil() {
         // nop
