@@ -26,7 +26,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.adarshr.test-logger'
-    //apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
+    apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
@@ -46,6 +46,7 @@ subprojects {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         java_version = '17'
         junit_version = '5.8.2'
+        cabe_version = '0.2-SNAPSHOT'
     }
 
     sourceCompatibility = java_version
@@ -90,7 +91,8 @@ subprojects {
     dependencies {
         // JetBrains annotations
         compileOnly 'org.jetbrains:annotations:22.0.0'
-        
+        compileOnly "com.dua3.cabe:cabe-annotations:${cabe_version}"
+
         // JUnit
         testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"

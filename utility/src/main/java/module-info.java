@@ -20,7 +20,7 @@ module dua3_utility {
     requires static org.apache.logging.log4j;
     requires static org.apache.logging.log4j.core;
     
-    requires  java.xml;
+    requires java.xml;
     requires org.jetbrains.annotations;
 
     uses com.dua3.utility.text.FontUtil;
