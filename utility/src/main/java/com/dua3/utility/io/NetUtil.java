@@ -6,8 +6,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.logging.LogUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,7 +57,7 @@ public final class NetUtil {
      * @throws IOException
      *                     if an I/O error occurs
      */
-    public static @NotNull String readContent(@NotNull URL url, @NotNull Charset cs) throws IOException {
+    public static String readContent(@NotNull URL url, @NotNull Charset cs) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), cs))) {
             return reader.lines().collect(Collectors.joining("\n"));
         }
@@ -72,7 +71,7 @@ public final class NetUtil {
      * @return    true, if both are {@code null}, or if the decoded String
      *            representations of u1 and u2 are equal
      */
-    public static boolean sameURL(@Nullable URL u1, @Nullable URL u2) {
+    public static boolean sameURL(URL u1, URL u2) {
         if (u1 == u2) {
             return true;
         }
@@ -90,13 +89,13 @@ public final class NetUtil {
     }
 
     /** The void URL. */
-    static final @NotNull URL VOID_URL;
+    static final URL VOID_URL;
 
     static {
         try {
             URLStreamHandler handler = new URLStreamHandler() {
                 @Override
-                protected @NotNull URLConnection openConnection(URL u) {
+                protected URLConnection openConnection(URL u) {
                     throw new UnsupportedOperationException("openConnection() is not supported");
                 }
             };
@@ -113,7 +112,7 @@ public final class NetUtil {
      *
      * @return the void URL
      */
-    public static @NotNull URL voidURL() {
+    public static URL voidURL() {
         return VOID_URL;
     }
 }

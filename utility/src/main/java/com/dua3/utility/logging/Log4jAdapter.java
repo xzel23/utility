@@ -10,7 +10,7 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -31,7 +31,7 @@ public final class Log4jAdapter {
         }
 
         @Override
-        public @NotNull Category category() {
+        public Category category() {
             int intLevel = evt.getLevel().intLevel();
             if (intLevel >= Level.TRACE.intLevel()) {
                 return Category.TRACE;
@@ -87,7 +87,7 @@ public final class Log4jAdapter {
      * @param evt the logback logging event
      * @return log entry
      */
-    public static @NotNull LogEntry toLogEntry(@NotNull LogEvent evt) {
+    public static LogEntry toLogEntry(@NotNull LogEvent evt) {
         return new Log4jLogEntry(evt);
     }
 
@@ -112,11 +112,11 @@ public final class Log4jAdapter {
         updateLoggers(appender, config);
     }
 
-    private static @NotNull String getAppenderName(@NotNull Logger logger) {
+    private static String getAppenderName(@NotNull Logger logger) {
         return logger.getName() + "[Log4j]";
     }
 
-    private static void updateLoggers(final Appender appender, final @NotNull Configuration config) {
+    private static void updateLoggers(final Appender appender, final Configuration config) {
         Level level = null;
         Filter filter = null;
         for (LoggerConfig loggerConfig : config.getLoggers().values()) {

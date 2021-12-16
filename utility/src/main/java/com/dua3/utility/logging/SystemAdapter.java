@@ -1,8 +1,7 @@
 package com.dua3.utility.logging;
 
 import com.dua3.utility.io.LineOutputStream;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -14,8 +13,8 @@ import java.util.Optional;
  */
 public final class SystemAdapter {
 
-    private static @Nullable PrintStream stdOut = null;
-    private static @Nullable PrintStream stdErr = null;
+    private static PrintStream stdOut = null;
+    private static PrintStream stdErr = null;
 
     private SystemAdapter() {
     }
@@ -109,7 +108,7 @@ public final class SystemAdapter {
         }
 
         @Override
-        public @NotNull String level() {
+        public String level() {
             return category().name();
         }
 
@@ -125,12 +124,12 @@ public final class SystemAdapter {
         }
 
         @Override
-        public @NotNull Category category() {
+        public Category category() {
             return Category.INFO;
         }
 
         @Override
-        public @NotNull String logger() {
+        public String logger() {
             return "System.out";
         }
     }
@@ -141,12 +140,12 @@ public final class SystemAdapter {
         }
 
         @Override
-        public @NotNull String logger() {
+        public String logger() {
             return "System.err";
         }
 
         @Override
-        public @NotNull Category category() {
+        public Category category() {
             return Category.WARNING;
         }
     }

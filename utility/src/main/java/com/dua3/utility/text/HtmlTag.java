@@ -1,6 +1,6 @@
 package com.dua3.utility.text;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Represents an HTML tag.
@@ -26,15 +26,15 @@ public interface HtmlTag {
      * @param close text of the closing tag
      * @return the new tag
      */
-    static @NotNull HtmlTag tag(@NotNull String open, @NotNull String close) {
+    static HtmlTag tag(@NotNull String open, @NotNull String close) {
         return new HtmlTag() {
             @Override
-            public @NotNull String open() {
+            public String open() {
                 return open;
             }
 
             @Override
-            public @NotNull String close() {
+            public String close() {
                 return close;
             }
         };
@@ -44,7 +44,7 @@ public interface HtmlTag {
      * The empty tag. 
      * @return the empty tag
      */
-    static @NotNull HtmlTag emptyTag() {
+    static HtmlTag emptyTag() {
         return Empty.EMPTY_TAG;
     }
 

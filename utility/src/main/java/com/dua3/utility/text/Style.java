@@ -6,8 +6,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -129,7 +128,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     // -- instance fields and methods
     
     private final String name;
-    private final @NotNull Map<String, Object> properties;
+    private final Map<String, Object> properties;
 
     private Style(@NotNull String name, @NotNull Map<String, Object> args) {
         this.name = name;
@@ -137,7 +136,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return name + properties;
     }
 
@@ -148,8 +147,8 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @return new instance
      */
     @SafeVarargs
-    public static @NotNull Style create(@NotNull String styleName, 
-                                        @NotNull Map.Entry<String, Object> @NotNull ... args) {
+    public static Style create(@NotNull String styleName, 
+                                        @NotNull Map.Entry<String, Object>... args) {
         return create(styleName, Map.ofEntries(args));
     }
 
@@ -159,7 +158,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param args list of key-value pairs to set as properties of this style
      * @return new instance
      */
-    public static @NotNull Style create(@NotNull String styleName, 
+    public static Style create(@NotNull String styleName, 
                                         @NotNull Map<String, Object> args) {
         return new Style(styleName, new HashMap<>(args));
     }
@@ -252,7 +251,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * Get FontDef for this style.
      * @return the FontDef
      */
-    public @NotNull  FontDef getFontDef() {
+    public  FontDef getFontDef() {
         Font font = (Font) get(FONT);
         if (font != null) {
             return font.toFontDef();
@@ -273,7 +272,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * Get Font for this style.
      * @return Optional holding the Font if this Style's Font has been set (not if just part if the FontDef is set)
      */
-    public @NotNull Optional<Font> getFont() {
+    public Optional<Font> getFont() {
         return Optional.ofNullable((Font) get(FONT));
     }
     
@@ -281,12 +280,12 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * Get Font for this style.
      * @return if set, the font of this style, otherwise the resulting font of applying this style's {@link FontDef} to the supplied baseFont 
      */
-    public @NotNull Font getFont(@NotNull Font baseFont) {
+    public Font getFont(@NotNull Font baseFont) {
         return getFont().orElseGet(() -> baseFont.deriveFont(getFontDef()));
     }
     
     @Override
-    public boolean equals(@Nullable Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Style style = (Style) o;
@@ -299,7 +298,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     @Override
-    public @NotNull Iterator<Map.Entry<String, Object>> iterator() {
+    public Iterator<Map.Entry<String, Object>> iterator() {
         return properties.entrySet().iterator();
     }
 

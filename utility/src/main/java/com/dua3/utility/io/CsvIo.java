@@ -14,7 +14,7 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public abstract class CsvIo implements AutoCloseable {
 
-    public static @NotNull Collection<Option<?>> getOptions() {
+    public static Collection<Option<?>> getOptions() {
         return List.of(
                 IoOptions.textDelimiter(),
                 IoOptions.fieldSeparator(),
@@ -42,7 +42,7 @@ public abstract class CsvIo implements AutoCloseable {
 
     private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
-    protected final @NotNull String lineDelimiter;
+    protected final String lineDelimiter;
     protected final char separator;
     protected final char delimiter;
     protected final Locale locale;
@@ -63,7 +63,7 @@ public abstract class CsvIo implements AutoCloseable {
         this.numberFormat.setMaximumFractionDigits(15);
     }
 
-    protected @NotNull String format(Object obj) {
+    protected String format(Object obj) {
         final String text;
         if (obj instanceof Number) {
             text = numberFormat.format(obj);
@@ -87,11 +87,11 @@ public abstract class CsvIo implements AutoCloseable {
         return false;
     }
 
-    protected @NotNull String quote(@NotNull String text) {
+    protected String quote(@NotNull String text) {
         return delimiter + text.replace("\"", "\"\"") + delimiter;
     }
 
-    protected @NotNull String quoteIfNeeded(@NotNull String text) {
+    protected String quoteIfNeeded(@NotNull String text) {
         return isQuoteNeeded(text) ? quote(text) : text;
     }
 }

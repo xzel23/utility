@@ -1,7 +1,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.Flushable;
 import java.io.IOException;
@@ -16,8 +16,8 @@ import java.util.zip.ZipOutputStream;
 public class Zip implements AutoCloseable, Flushable {
     
     private static final int BUFFER_SIZE = 8*1024;
-    private final @NotNull ZipOutputStream zout;
-    private @NotNull String path = "";
+    private final ZipOutputStream zout;
+    private String path = "";
 
     /**
      * Create new Zip instance.
@@ -35,7 +35,7 @@ public class Zip implements AutoCloseable, Flushable {
      * @param data  the data
      * @throws IOException on error
      */
-    public void add(@NotNull String filename, byte @NotNull [] data) throws IOException {
+    public void add(@NotNull String filename, @NotNull byte[] data) throws IOException {
         addFileEntry(filename);
         zout.write(data);
     }

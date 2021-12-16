@@ -1,7 +1,7 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.data.DataUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -13,19 +13,19 @@ import java.util.function.Function;
  */
 public final class StandardOption<T> extends Option<T> {
     
-    public static <T> @NotNull StandardOption<T> create(@NotNull Class<? extends T> type,
-                                                        @NotNull String @NotNull ... names) {
+    public static <T> StandardOption<T> create(@NotNull Class<? extends T> type,
+                                                        @NotNull String... names) {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
-    public static <T> @NotNull StandardOption<T> create(@NotNull Function<String,T> mapper,
-                                                        @NotNull String @NotNull [] names) {
+    public static <T> StandardOption<T> create(@NotNull Function<String,T> mapper,
+                                                        @NotNull String [] names) {
         return new StandardOption<>(mapper, Object::toString, names);
     }
 
-    public static <T> @NotNull StandardOption<T> create(@NotNull Function<String,T> mapper,
+    public static <T> StandardOption<T> create(@NotNull Function<String,T> mapper,
                                                         @NotNull Function<? super T, String> formatter,
-                                                        @NotNull String @NotNull [] names) {
+                                                        @NotNull String [] names) {
         return new StandardOption<>(mapper, formatter, names);
     }
 
@@ -36,18 +36,18 @@ public final class StandardOption<T> extends Option<T> {
      */
     private StandardOption(@NotNull Function<String, ? extends T> mapper,
                            @NotNull Function<? super T, String> formatter,
-                           @NotNull String @NotNull ... names) {
+                           @NotNull String... names) {
         super(mapper, formatter, names);
     }
 
     @Override
-    public @NotNull StandardOption<T> description(@NotNull String description) {
+    public StandardOption<T> description(@NotNull String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public @NotNull StandardOption<T> handler(@NotNull Consumer<Collection<T>> handler) {
+    public StandardOption<T> handler(@NotNull Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }
@@ -58,7 +58,7 @@ public final class StandardOption<T> extends Option<T> {
      * @param n the number of occurrences to set
      * @return the option
      */
-    public @NotNull StandardOption<T> occurence(int n) {
+    public StandardOption<T> occurence(int n) {
         return occurence(n, n);
     }
 
@@ -69,7 +69,7 @@ public final class StandardOption<T> extends Option<T> {
      * @return the option
      */
     @Override
-    public @NotNull StandardOption<T> occurence(int min, int max) {
+    public StandardOption<T> occurence(int min, int max) {
         super.occurence(min, max);
         return this;
     }
@@ -80,7 +80,7 @@ public final class StandardOption<T> extends Option<T> {
      * @param n the arity to set
      * @return the option
      */
-    public @NotNull StandardOption<T> arity(int n) {
+    public StandardOption<T> arity(int n) {
         return arity(n,n);
     }
 
@@ -90,7 +90,7 @@ public final class StandardOption<T> extends Option<T> {
      * @param max the maximum arity
      * @return the option
      */
-    public @NotNull StandardOption<T> arity(int min, int max) {
+    public StandardOption<T> arity(int min, int max) {
         super.arity(min, max);
         return this;
     }

@@ -1,7 +1,5 @@
 package com.dua3.utility.text;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Spliterator;
@@ -25,17 +23,17 @@ public interface AttributedCharSequence extends CharSequence {
      *          if the {@code index} argument is negative or not less than
      *          {@code length()}
      */
-    @NotNull AttributedCharacter attributedCharAt(int index);
+    AttributedCharacter attributedCharAt(int index);
 
     @Override
-    @NotNull AttributedCharSequence subSequence(int start, int end);
+    AttributedCharSequence subSequence(int start, int end);
 
     /**
      * Returns a stream of {@code AttributedCharacter} values from this sequence.
      * 
      * @return a stream of {@link AttributedCharacter} values from this sequence
      */
-    default @NotNull Stream<AttributedCharacter> attributedChars() {
+    default Stream<AttributedCharacter> attributedChars() {
         class AttributedCharIterator implements Iterator<AttributedCharacter> {
             int cur = 0;
 
@@ -44,7 +42,7 @@ public interface AttributedCharSequence extends CharSequence {
             }
 
             @Override
-            public @NotNull AttributedCharacter next() {
+            public AttributedCharacter next() {
                 if (hasNext()) {
                     return attributedCharAt(cur++);
                 } else {

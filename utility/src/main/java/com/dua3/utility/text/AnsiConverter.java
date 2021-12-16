@@ -2,7 +2,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +24,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param flag set to true to enable RESET before output
      * @return the option to use
      */
-    public static @NotNull AnsiConversionOption reset(boolean flag) {
+    public static AnsiConversionOption reset(boolean flag) {
         return new AnsiConversionOption(c -> c.setReset(flag));
     }
 
@@ -33,7 +33,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param flag set to true to enable reverse video output
      * @return the option to use
      */
-    public static @NotNull AnsiConversionOption reverseVideo(boolean flag) {
+    public static AnsiConversionOption reverseVideo(boolean flag) {
         return new AnsiConversionOption(c -> c.setReverseVideo(flag));
     }
 
@@ -44,7 +44,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      *                  ESC sequences
      * @return the option tp use
      */
-    public static @NotNull AnsiConversionOption map(@NotNull String attribute,
+    public static AnsiConversionOption map(@NotNull String attribute,
                                                     @NotNull BiFunction<Object,Object, String> mapper) {
         return new AnsiConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
     }
@@ -58,7 +58,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param options the options to apply
      * @return new converter instance
      */
-    public static @NotNull AnsiConverter create(@NotNull Collection<AnsiConversionOption> options) {
+    public static AnsiConverter create(@NotNull Collection<AnsiConversionOption> options) {
         AnsiConverter instance = new AnsiConverter();
         options.forEach(o -> o.apply(instance));
         return instance;
@@ -69,7 +69,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @param options the options to apply
      * @return new converter instance
      */
-    public static @NotNull AnsiConverter create(@NotNull AnsiConversionOption @NotNull ... options) {
+    public static AnsiConverter create(@NotNull AnsiConversionOption... options) {
         return create(Arrays.asList(options));
     }
 
@@ -87,13 +87,13 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
     private static final Map<String,Object> DEFAULT_ATTRIBUTES = new HashMap<>();
     
     @Override
-    protected @NotNull AnsiConverterImpl createConverter(@NotNull RichText text) {
+    protected AnsiConverterImpl createConverter(@NotNull RichText text) {
         return new AnsiConverterImpl(text);
     }
     
     class AnsiConverterImpl extends AttributeBasedConverterImpl<String> {
 
-        private final @NotNull StringBuilder buffer;
+        private final StringBuilder buffer;
 
         AnsiConverterImpl(@NotNull RichText text) {
             super(DEFAULT_ATTRIBUTES);
@@ -103,7 +103,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         }
 
         @Override
-        protected @NotNull String get() {
+        protected String get() {
             return buffer.toString();
         }
 

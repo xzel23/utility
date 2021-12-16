@@ -1,6 +1,6 @@
 package com.dua3.utility.data;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.function.Function;

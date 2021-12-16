@@ -17,5 +17,6 @@ module dua3_utility.swing {
     requires java.datatransfer;
     requires java.desktop;
     requires java.logging;
-    requires org.jetbrains.annotations;
+    
+    requires static com.dua3.cabe.annotations;
 }

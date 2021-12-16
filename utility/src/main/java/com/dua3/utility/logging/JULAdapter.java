@@ -1,7 +1,6 @@
 package com.dua3.utility.logging;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,7 +22,7 @@ public final class JULAdapter {
      */
     public static class JULHandler extends Handler {
 
-        private @Nullable LogListener listener;
+        private LogListener listener;
 
         public JULHandler(LogListener listener) {
             this.listener = Objects.requireNonNull(listener);    
@@ -46,7 +45,7 @@ public final class JULAdapter {
             listener = null;
         }
 
-        @Nullable LogListener getListener() {
+        LogListener getListener() {
             return listener;
         }
     }
@@ -66,7 +65,7 @@ public final class JULAdapter {
         }
 
         @Override
-        public @NotNull Category category() {
+        public Category category() {
             int intLevel = r.getLevel().intValue();
             if (intLevel < Level.FINE.intValue()) {
                 return Category.TRACE;
@@ -122,7 +121,7 @@ public final class JULAdapter {
      * @param r the {@link LogRecord} to convert
      * @return LogEntry instance
      */
-    public static @NotNull LogEntry toLogEntry(LogRecord r) {
+    public static LogEntry toLogEntry(LogRecord r) {
         return new JULLogEntry(r);
     }
 

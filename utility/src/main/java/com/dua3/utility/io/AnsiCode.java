@@ -6,7 +6,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.data.Color;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Support for ANSI escape codes for setting text attributes on ANSI-supporting consoles.
@@ -50,7 +50,7 @@ public final class AnsiCode {
      * @param args the sequence arguments
      * @return escape sequence as a String
      */
-    public static @NotNull String esc(int @NotNull ... args) {
+    public static String esc(@NotNull int ... args) {
         StringBuilder out = new StringBuilder();
         out.append(ESC_START);
         String delimiter = "";
@@ -69,7 +69,7 @@ public final class AnsiCode {
      * @param b the blue component value
      * @return the ESC string
      */
-    public static @NotNull String fg(int r, int g, int b) {
+    public static String fg(int r, int g, int b) {
         return esc(COLOR, 2, r, g, b);
     }
 
@@ -80,7 +80,7 @@ public final class AnsiCode {
      * @param b the blue component value
      * @return the ESC string
      */
-    public static @NotNull String bg(int r, int g, int b) {
+    public static String bg(int r, int g, int b) {
         return esc(BACKGROUND_COLOR, 2, r, g, b);
     }
 
@@ -89,7 +89,7 @@ public final class AnsiCode {
      * @param c the color
      * @return the ESC string
      */
-    public static @NotNull String fg(@NotNull Color c) {
+    public static String fg(@NotNull Color c) {
         return fg(c.r(), c.g(), c.b());
     }
 
@@ -98,7 +98,7 @@ public final class AnsiCode {
      * @param c the color
      * @return the ESC string
      */
-    public static @NotNull String bg(@NotNull Color c) {
+    public static String bg(@NotNull Color c) {
         return bg(c.r(), c.g(), c.b());
     }
 
@@ -106,7 +106,7 @@ public final class AnsiCode {
      * Reset.
      * @return the ESC string
      */
-    public static @NotNull String reset() {
+    public static String reset() {
         return esc(RESET);
     }
 
@@ -115,7 +115,7 @@ public final class AnsiCode {
      * @param on {@code true} enables, {@code false} disables
      * @return the ESC string
      */
-    public static @NotNull String underline(boolean on) {
+    public static String underline(boolean on) {
         return esc(on ? UNDERLINE_ON : UNDERLINE_OFF);
     }
 
@@ -124,7 +124,7 @@ public final class AnsiCode {
      * @param on {@code true} enables, {@code false} disables
      * @return the ESC string
      */
-    public static @NotNull String reverse(boolean on) {
+    public static String reverse(boolean on) {
         return esc(on ? REVERSE_VIDEO_ON : REVERSE_VIDEO_OFF);
     }
 
@@ -133,7 +133,7 @@ public final class AnsiCode {
      * @param on {@code true} enables, {@code false} disables
      * @return the ESC string
      */
-    public static @NotNull String strikeThrough(boolean on) {
+    public static String strikeThrough(boolean on) {
         return esc(on ? STRIKE_THROUGH_ON : STRIKE_THROUGH_OFF);
     }
 
@@ -142,7 +142,7 @@ public final class AnsiCode {
      * @param on {@code true} enables, {@code false} disables
      * @return the ESC string
      */
-    public static @NotNull String italic(boolean on) {
+    public static String italic(boolean on) {
         return esc(on ? ITALIC_ON : ITALIC_OFF);
     }
 
@@ -151,7 +151,7 @@ public final class AnsiCode {
      * @param on {@code true} enables, {@code false} disables
      * @return the ESC string
      */
-    public static @NotNull String bold(boolean on) {
+    public static String bold(boolean on) {
         return esc(on ? BOLD_ON : BOLD_OFF);
     }
 

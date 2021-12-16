@@ -6,8 +6,7 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -334,7 +333,7 @@ public final class Color {
      *
      * @return map containing the predefined colors
      */
-    public static @NotNull Map<String, Color> palette() {
+    public static Map<String, Color> palette() {
         return Collections.unmodifiableMap(COLORS);
     }
 
@@ -352,7 +351,7 @@ public final class Color {
      *           the text
      * @return   result of conversion
      */
-    public static @NotNull Color valueOf(@NotNull String s) {
+    public static Color valueOf(@NotNull String s) {
         // try named colors first
         Color color = COLORS.get(s);
         if (color != null) {
@@ -409,11 +408,11 @@ public final class Color {
      *
      * @return Iterable
      */
-    public static @NotNull Iterable<Color> values() {
+    public static Iterable<Color> values() {
         return COLORS.values();
     }
 
-    private static @NotNull Color register(@NotNull String name, int code) {
+    private static Color register(@NotNull String name, int code) {
         Color c = new Color(code);
         COLORS.put(name, c);
         return c;
@@ -429,7 +428,7 @@ public final class Color {
      * @param argb the ARGB value
      * @return the color instance
      */
-    public static @NotNull Color argb(int argb) {
+    public static Color argb(int argb) {
         return new Color(argb);
     }
     
@@ -438,7 +437,7 @@ public final class Color {
      * @param rgb the RGB value (the highest 16 bits are ignored)
      * @return the color instance
      */
-    public static @NotNull Color rgb(int rgb) {
+    public static Color rgb(int rgb) {
         return new Color(0xff000000|rgb);
     }
     
@@ -551,7 +550,7 @@ public final class Color {
      *
      * @return a brighter version of this color
      */
-    public @NotNull Color brighter() {
+    public Color brighter() {
         int r = r();
         int g = g();
         int b = b();
@@ -582,14 +581,14 @@ public final class Color {
      *
      * @return a darker version of this color
      */
-    public @NotNull Color darker() {
+    public Color darker() {
         //noinspection NumericCastThatLosesPrecision
         return new Color(Math.max((int) (r() * F_BRIGHTEN), 0), Math.max((int) (g() * F_BRIGHTEN), 0),
                 Math.max((int) (b() * F_BRIGHTEN), 0), a());
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         return obj != null && obj.getClass() == getClass() && ((Color) obj).argb == argb;
     }
 
@@ -640,7 +639,7 @@ public final class Color {
      * @return byte array of size 4 containing this color's components in argb
      *         order
      */
-    public byte @NotNull [] toByteArray() {
+    public byte[] toByteArray() {
         //noinspection NumericCastThatLosesPrecision
         return new byte[] { (byte) a(), (byte) r(), (byte) g(), (byte) b() };
     }
@@ -651,7 +650,7 @@ public final class Color {
      * @return this color as hex value (format #aarrggbb)
      */
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return toCss();
     }
 
@@ -663,7 +662,7 @@ public final class Color {
      * 
      * @return this color as hex value (in rgb or rgba representation)
      */
-    public @NotNull String toCss() {
+    public String toCss() {
         if (!isOpaque()) {
             return toRgba();
         } else {
@@ -691,7 +690,7 @@ public final class Color {
      * Get hex-string in ARGB form for color.
      * @return hex-string
      */
-    public @NotNull String toArgb() {
+    public String toArgb() {
         return String.format(Locale.ROOT,"#%08x", argb);
     }
 
@@ -699,7 +698,7 @@ public final class Color {
      * Get hex-string in RGBA form for color.
      * @return hex-string
      */
-    public @NotNull String toRgba() {
+    public String toRgba() {
         return String.format(Locale.ROOT,"#%08x", rgba());
     }
 

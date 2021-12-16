@@ -1,6 +1,6 @@
 package com.dua3.utility.lang;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -21,7 +21,7 @@ public enum Platform {
     private static final Logger LOG = Logger.getLogger(Platform.class.getName());
     private static final Platform DETECTED = determinePlatform();
     
-    private static @NotNull Platform determinePlatform() {
+    private static Platform determinePlatform() {
         final Platform platform;
         
         String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ROOT);
@@ -44,7 +44,7 @@ public enum Platform {
      * Get the detected platform that the program runs on.
      * @return the detected platform
      */
-    public static @NotNull Platform getCurrentPlatform() {
+    public static Platform getCurrentPlatform() {
         return DETECTED;
     }
 

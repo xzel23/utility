@@ -4,7 +4,7 @@ import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.SimpleOption;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.text.TextUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class JdbcDriverInfo {
      *     <li>scheme with var arguments removed
      * </ul>
      */
-    private static @NotNull Pair<String, List<SimpleOption<?>>> parseScheme(@NotNull CharSequence s) {
+    private static Pair<String, List<SimpleOption<?>>> parseScheme(@NotNull CharSequence s) {
         // extract options
         List<SimpleOption<?>> list = new ArrayList<>();
         Matcher matcher = PATTERN_VAR.matcher(s);
@@ -129,7 +129,7 @@ public class JdbcDriverInfo {
      * @param matcher the current matcher instance that matches a single option declaration
      * @return map of arguments for the option matched by matcher
      */
-    private static @NotNull Map<String, String> extractArgs(@NotNull Matcher matcher) {
+    private static Map<String, String> extractArgs(@NotNull Matcher matcher) {
         Map<String, String> arguments = new HashMap<>();
         String arg = matcher.group("arg1");
         if (arg != null) {
@@ -163,7 +163,7 @@ public class JdbcDriverInfo {
      * @param arguments the option's arguments
      * @return new option instance
      */
-    private static @NotNull SimpleOption<?> createOption(String name, @NotNull Map<String, String> arguments) {
+    private static SimpleOption<?> createOption(String name, @NotNull Map<String, String> arguments) {
         String type = arguments.getOrDefault(OPTION_TYPE, OPTION_TYPE_STRING);
         String dflt = arguments.get("default");
         return switch (type) {
@@ -184,7 +184,7 @@ public class JdbcDriverInfo {
      * Get driver description text.
      * @return the driver description
      */
-    public @NotNull String description() {
+    public String description() {
         return String.format(Locale.ROOT,
                 "%s%n  driver class : %s%n  URL prefix   : %s%n  URL scheme   : %s%n  vendor link  : %s%n%s%n",
                 name,
@@ -200,7 +200,7 @@ public class JdbcDriverInfo {
      * @param values the option values to set in the URL
      * @return the connection URL
      */
-    public @NotNull String getUrl(@NotNull Arguments values) {
+    public String getUrl(@NotNull Arguments values) {
         return TextUtil.transform(urlScheme, 
                 s -> Objects.toString(
                         values.get(
@@ -210,7 +210,7 @@ public class JdbcDriverInfo {
         );
     }
 
-    private @NotNull Optional<SimpleOption<?>> getOption(String s) {
+    private Optional<SimpleOption<?>> getOption(String s) {
         return options.stream().filter(opt -> opt.names().contains(s)).findFirst();
     }
 }

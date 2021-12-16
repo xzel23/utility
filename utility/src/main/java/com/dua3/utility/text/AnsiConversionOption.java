@@ -1,6 +1,6 @@
 package com.dua3.utility.text;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.Consumer;

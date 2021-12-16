@@ -1,7 +1,7 @@
 package com.dua3.utility.logging;
 
 import com.dua3.utility.lang.RingBuffer;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class LogBuffer implements LogListener {
             e -> "\n"
     );
 
-    private final @NotNull RingBuffer<LogEntry> buffer;
+    private final RingBuffer<LogEntry> buffer;
 
     /**
      * Interface for Listeners on changes of a {@link LogBuffer} instance's contents.
@@ -111,13 +111,13 @@ public class LogBuffer implements LogListener {
         listeners.forEach(LogBufferListener::clear);
     }
 
-    public @NotNull List<LogEntry> entries() {
+    public List<LogEntry> entries() {
         synchronized(buffer) {
             return Arrays.asList(buffer.toArray(LogEntry[]::new));
         }
     }
 
-    public @NotNull LogEntry get(int i) {
+    public LogEntry get(int i) {
         return buffer.get(i);
     }
     
@@ -125,13 +125,13 @@ public class LogBuffer implements LogListener {
         return buffer.size();
     }
     
-    public @NotNull List<LogEntry> subList(int fromIndex, int toIndex) {
+    public List<LogEntry> subList(int fromIndex, int toIndex) {
         synchronized(buffer) {
             return new ArrayList<>(buffer.subList(fromIndex, toIndex));
         }
     }
     
-    public @NotNull List<LogEntry> getLogEntries() {
+    public List<LogEntry> getLogEntries() {
         synchronized (buffer) {
             return new ArrayList<>(buffer);
         }

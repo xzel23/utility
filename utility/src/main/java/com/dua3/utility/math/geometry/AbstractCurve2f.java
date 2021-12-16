@@ -1,7 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -23,7 +23,7 @@ public abstract class AbstractCurve2f extends Segment2f {
      * @param path the path this curve belongs to
      * @param controls the control points
      */
-    AbstractCurve2f(@NotNull Path2fImpl path, int @NotNull ... controls) {
+    AbstractCurve2f(@NotNull Path2fImpl path, @NotNull int... controls) {
         super(path);
         this.controls = Objects.requireNonNull(controls);
     }
@@ -46,17 +46,17 @@ public abstract class AbstractCurve2f extends Segment2f {
     }
     
     @Override
-    public @NotNull Vector2f start() {
+    public Vector2f start() {
         return control(0);
     }
 
     @Override
-    public @NotNull Vector2f end() {
+    public Vector2f end() {
         return control(3);
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         
         sb.append(getClass().getSimpleName()).append("{");

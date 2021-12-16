@@ -5,7 +5,7 @@
 
 package com.dua3.utility.math;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * An immutable 2-dimensional vector using float coordinates.
@@ -19,7 +19,7 @@ public record Vector2f(float x, float y) {
      * @param x the x-coordinate
      * @param y the y-coordinate
      */
-    public static @NotNull Vector2f of(float x, float y) {
+    public static Vector2f of(float x, float y) {
         return new Vector2f(x,y);
     }
 
@@ -29,7 +29,7 @@ public record Vector2f(float x, float y) {
      * @param b second vector
      * @return Vector with the the componentwise maxima of a and b as components. 
      */
-    public static @NotNull Vector2f max(@NotNull Vector2f a, @NotNull Vector2f b) {
+    public static Vector2f max(@NotNull Vector2f a, @NotNull Vector2f b) {
         return Vector2f.of(Math.max(a.x, b.x), Math.max(a.y, b.y));
     }
 
@@ -39,7 +39,7 @@ public record Vector2f(float x, float y) {
      * @param b second vector
      * @return Vector with the the componentwise minima of a and b as components. 
      */
-    public static @NotNull Vector2f min(@NotNull Vector2f a, @NotNull Vector2f b) {
+    public static Vector2f min(@NotNull Vector2f a, @NotNull Vector2f b) {
         return Vector2f.of(Math.min(a.x, b.x), Math.min(a.y, b.y));
     }
 
@@ -79,7 +79,7 @@ public record Vector2f(float x, float y) {
      * @param v the argument
      * @return this + v
      */
-    public @NotNull Vector2f add(@NotNull Vector2f v) {
+    public Vector2f add(@NotNull Vector2f v) {
         return new Vector2f(x + v.x, y + v.y);    
     }
     
@@ -88,7 +88,7 @@ public record Vector2f(float x, float y) {
      * @param v the argument
      * @return this - v
      */
-    public @NotNull Vector2f subtract(@NotNull Vector2f v) {
+    public Vector2f subtract(@NotNull Vector2f v) {
         return new Vector2f(x - v.x, y - v.y);    
     }
     

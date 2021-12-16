@@ -1,8 +1,7 @@
 package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IOUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -55,7 +54,7 @@ public final class XmlUtil {
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
     private final DocumentBuilder documentBuilder;
-    private final @NotNull Transformer utf8Transformer;
+    private final Transformer utf8Transformer;
     
     private static final String PRETTY_PRINT_XSLT = """
                             <?xml version="1.0" encoding="UTF-8"?>
@@ -93,7 +92,7 @@ public final class XmlUtil {
      * @return default instance
      * @throws IllegalStateException if default instance could not be created
      */
-    public static @NotNull XmlUtil defaultInstance() {
+    public static XmlUtil defaultInstance() {
         return LazySingleton.INSTANCE;
     }
     
@@ -123,7 +122,7 @@ public final class XmlUtil {
      * @param node the node
      * @return stream of the child nodes
      */
-    public @NotNull Stream<Node> children(@NotNull Node node) {
+    public Stream<Node> children(@NotNull Node node) {
         return nodeStream(node.getChildNodes());
     }
 
@@ -133,7 +132,7 @@ public final class XmlUtil {
      * @return stream of nodes
      */
     @SuppressWarnings("MethodMayBeStatic")
-    public @NotNull Stream<Node> nodeStream(@NotNull NodeList nodes) {
+    public Stream<Node> nodeStream(@NotNull NodeList nodes) {
         Spliterator<Node> spliterator = new Spliterator<>() {
             int idx = 0;
 
@@ -147,7 +146,7 @@ public final class XmlUtil {
             }
 
             @Override
-            public @Nullable Spliterator<Node> trySplit() {
+            public Spliterator<Node> trySplit() {
                 return null;
             }
 

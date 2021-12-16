@@ -1,6 +1,6 @@
 package com.dua3.utility.options;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  */
 public final class Flag extends Option<Boolean> {
 
-    public static @NotNull Flag create(@NotNull String @NotNull ... names) {
+    public static Flag create(@NotNull String... names) {
         return new Flag(names);
     }
     
@@ -20,25 +20,25 @@ public final class Flag extends Option<Boolean> {
      * Construct a new flag with the given name(s).
      * @param names names for the flag, at least one.
      */
-    private Flag(@NotNull String @NotNull [] names) {
+    private Flag(@NotNull String [] names) {
         super(Flag::mapToBoolean, b -> Boolean.toString(b), names);
         occurence(0,1);
         arity(0,0);
     }
 
     @Override
-    public @NotNull Flag description(@NotNull String description) {
+    public Flag description(@NotNull String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public @NotNull Flag handler(@NotNull Consumer<Collection<Boolean>> handler) {
+    public Flag handler(@NotNull Consumer<Collection<Boolean>> handler) {
         super.handler(handler);
         return this;
     }
 
-    private static @NotNull Boolean mapToBoolean(@NotNull String s) {
+    private static Boolean mapToBoolean(@NotNull String s) {
         if (s.equalsIgnoreCase("true")) {
             return true;
         }

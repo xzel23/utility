@@ -108,7 +108,7 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - improve output and performance of XmlUtil.prettyPrint()
 - fix MathUtil.gcd for negative arguments
 - many fixes and smaller improvements, added many Javadoc comments, improve test coverage
-- added JetBrains @NontNull/@Nullable annotations
+- added JetBrains @NontNull/annotations
 - XmlUtil defaultInstance() is now unsynchronised and should be faster
 - added LangUtil.orElse() and LangUtil.orElseGet() for Optional-like functionality without creating an Optional instance first
 

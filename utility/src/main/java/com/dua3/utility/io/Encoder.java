@@ -1,7 +1,6 @@
 package com.dua3.utility.io;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -58,7 +57,7 @@ public interface Encoder<T> {
      * @param t the object, might be {@code null}
      * @throws IOException if an error occurs
      */
-    default void encodeOptional(@NotNull DataOutputStream os, @Nullable T t) throws IOException {
+    default void encodeOptional(@NotNull DataOutputStream os, T t) throws IOException {
         if (t==null) {
             os.writeBoolean(false);
         } else {

@@ -1,7 +1,7 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Image;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -18,13 +18,13 @@ public record SwingImage(BufferedImage bufferedImage) implements Image {
         Objects.requireNonNull(bufferedImage);
     }
 
-    public static @NotNull SwingImage create(int w, int h, int[] data) {
+    public static SwingImage create(int w, int h, int[] data) {
         BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         image.setRGB(0, 0, w, h, data, 0, w);
         return new SwingImage(image);
     }
 
-    public static @NotNull SwingImage load(@NotNull InputStream in) throws IOException {
+    public static SwingImage load(@NotNull InputStream in) throws IOException {
         try (ImageInputStream iis = ImageIO.createImageInputStream(in)) {
             Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
 

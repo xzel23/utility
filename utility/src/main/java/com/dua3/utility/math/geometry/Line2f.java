@@ -1,7 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Straight line segment.
@@ -36,17 +36,17 @@ public final class Line2f extends Segment2f {
     }
 
     @Override
-    public @NotNull String name() {
+    public String name() {
         return NAME;
     }
 
     @Override
-    public @NotNull Vector2f start() {
+    public Vector2f start() {
         return path.vertex(a);
     }
 
     @Override
-    public @NotNull Vector2f end() {
+    public Vector2f end() {
         return path.vertex(b);
     }
 
@@ -91,7 +91,7 @@ public final class Line2f extends Segment2f {
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return "LineTo2d{" +
                vertexToString(a) + "," +
                vertexToString(b) +

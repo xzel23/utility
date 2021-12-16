@@ -1,6 +1,6 @@
 package com.dua3.utility.options;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Exception class to throw when command line arguments and/or values for configuration options do not match the 
@@ -11,7 +11,7 @@ public class OptionException extends IllegalStateException {
      * Exception thrown when a parameter argument's String value could not be converted to the target type. 
      */
     public static class ParameterConversionException extends OptionException {
-        final @NotNull Option<?> option;
+        final Option<?> option;
         final String parameter;
 
         /**

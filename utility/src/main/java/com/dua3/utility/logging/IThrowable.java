@@ -1,7 +1,6 @@
 package com.dua3.utility.logging;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,13 +16,13 @@ public interface IThrowable {
      * Get the cause.
      * @return cause
      */
-    @Nullable IThrowable getCause();
+    IThrowable getCause();
 
     /**
      * Get stack trace.
      * @return list of {@link IStackTraceElement}
      */
-    @NotNull List<IStackTraceElement> getStackTrace();
+    List<IStackTraceElement> getStackTrace();
 
     /**
      * A wrapper interface to abstract handling of {@link StackTraceElement} in different logging frameworks. 
@@ -58,20 +57,20 @@ public interface IThrowable {
      */
     class JavaThrowable implements IThrowable {
         private final Throwable t;
-        private @Nullable List<IStackTraceElement> ist = null;
+        private List<IStackTraceElement> ist = null;
         
         JavaThrowable(Throwable t) {
             this.t= Objects.requireNonNull(t);
         }
 
         @Override
-        public @Nullable IThrowable getCause() {
+        public IThrowable getCause() {
             Throwable cause = t.getCause();
             return cause == null ? null : new JavaThrowable(cause);
         }
 
         @Override
-        public @NotNull List<IStackTraceElement> getStackTrace() {
+        public List<IStackTraceElement> getStackTrace() {
             if (ist==null) {
                 StackTraceElement[] st = t.getStackTrace();
                 List<IStackTraceElement> ist_ = new ArrayList<>(st.length);
@@ -95,7 +94,7 @@ public interface IThrowable {
      */
     record JavaStackTraceElement(StackTraceElement ste) implements IStackTraceElement {
         @Override
-        public @NotNull String toString() {
+        public String toString() {
             return ste.toString();
         }
     }

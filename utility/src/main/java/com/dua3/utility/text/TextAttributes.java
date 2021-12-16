@@ -8,7 +8,7 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      *
      * @return the empty style
      */
-    public static @NotNull TextAttributes none() {
+    public static TextAttributes none() {
         return NONE;
     }
 
@@ -43,7 +43,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @return         the new style
      */
     @SafeVarargs
-    public static @NotNull TextAttributes of(@NotNull Pair<String, ?> @NotNull ... entries) {
+    public static TextAttributes of(@NotNull Pair<String, ?>... entries) {
         return of(Arrays.asList(entries));
     }
 
@@ -54,7 +54,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      *                 the attribute/value pairs to add
      * @return         the new style
      */
-    public static @NotNull TextAttributes of(@NotNull Iterable<Pair<String, ?>> entries) {
+    public static TextAttributes of(@NotNull Iterable<Pair<String, ?>> entries) {
         Set<Entry<String, Object>> entrySet = new HashSet<>();
         for (Pair<String, ?> entry : entries) {
             entrySet.add(new SimpleEntry<>(entry.first(), entry.second()));
@@ -62,7 +62,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         return new TextAttributes(entrySet);
     }
 
-    public static @NotNull TextAttributes of(@NotNull Map<String, Object> map) {
+    public static TextAttributes of(@NotNull Map<String, Object> map) {
         return new TextAttributes(map.entrySet());
     }
 
@@ -73,7 +73,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     private final Set<Entry<String, Object>> entries;
 
     @Override
-    public @NotNull Set<Entry<String, Object>> entrySet() {
+    public Set<Entry<String, Object>> entrySet() {
         return entries;
     }
 
@@ -82,7 +82,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @param attributes {@link Map} holding TextAttribute values
      * @return FontDef instance
      */
-    public static @NotNull FontDef getFontDef(@NotNull Map<? super String, Object> attributes) {
+    public static FontDef getFontDef(@NotNull Map<? super String, Object> attributes) {
         Font font = (Font) attributes.get(Style.FONT);
         if (font != null) {
             return font.toFontDef();

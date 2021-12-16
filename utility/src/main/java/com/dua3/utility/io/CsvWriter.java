@@ -13,7 +13,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.options.Arguments;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,20 +30,20 @@ import java.util.Objects;
  * @author axel@dua3.com
  */
 public class CsvWriter extends CsvIo implements Flushable {
-    public static @NotNull CsvWriter create(@NotNull BufferedWriter writer, @NotNull Arguments options) {
+    public static CsvWriter create(@NotNull BufferedWriter writer, @NotNull Arguments options) {
         return new CsvWriter(writer, options);
     }
 
-    public static @NotNull CsvWriter create(@NotNull File file, @NotNull Arguments options) throws IOException {
+    public static CsvWriter create(@NotNull File file, @NotNull Arguments options) throws IOException {
         return create(file.toPath(), options);
     }
 
-    public static @NotNull CsvWriter create(@NotNull Path path, @NotNull Arguments options) throws IOException {
+    public static CsvWriter create(@NotNull Path path, @NotNull Arguments options) throws IOException {
         Charset cs = IoOptions.getCharset(options);
         return create(Files.newBufferedWriter(path, cs), options);
     }
 
-    public static @NotNull CsvWriter create(@NotNull OutputStream out, @NotNull Arguments options) {
+    public static CsvWriter create(@NotNull OutputStream out, @NotNull Arguments options) {
         Charset cs = IoOptions.getCharset(options);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
         return create(writer, options);

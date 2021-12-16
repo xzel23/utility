@@ -5,7 +5,7 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -45,7 +45,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
      * @return the text's bounds (positioned at the origin)
      */
     @SuppressWarnings("MethodMayBeStatic")
-    public Rectangle2D stringBounds(@NotNull CharSequence text, java.awt.@NotNull Font awtFont) {
+    public Rectangle2D stringBounds(@NotNull CharSequence text, @NotNull java.awt.Font awtFont) {
         FontRenderContext frc = new FontRenderContext(awtFont.getTransform(), false, true);
         return awtFont.getStringBounds(text.toString(), frc);
     }
@@ -56,7 +56,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
      * @param  awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
-    public @NotNull Dimension2f getTextDimension(@NotNull CharSequence text, java.awt.@NotNull Font awtFont) {
+    public Dimension2f getTextDimension(@NotNull CharSequence text, @NotNull java.awt.Font awtFont) {
         Rectangle2D r = stringBounds(text, awtFont);
         return Dimension2f.of((float) r.getWidth(), (float) r.getHeight());
     }
@@ -67,7 +67,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
      * @param  awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
-    public double getTextHeight(@NotNull CharSequence text, java.awt.@NotNull Font awtFont) {
+    public double getTextHeight(@NotNull CharSequence text, @NotNull java.awt.Font awtFont) {
         return stringBounds(text, awtFont).getHeight();
     }
 
@@ -77,12 +77,12 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
      * @param  awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
-    public double getTextWidth(@NotNull CharSequence text, java.awt.@NotNull Font awtFont) {
+    public double getTextWidth(@NotNull CharSequence text, @NotNull java.awt.Font awtFont) {
         return stringBounds(text, awtFont).getWidth();
     }
 
     @Override
-    public @NotNull Dimension2f getTextDimension(@NotNull CharSequence s, @NotNull Font f) {
+    public Dimension2f getTextDimension(@NotNull CharSequence s, @NotNull Font f) {
         Rectangle2D r = stringBounds(s, f);
         return Dimension2f.of((float) r.getWidth(), (float) r.getHeight());
     }
@@ -95,7 +95,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
     
     @Override
-    public @NotNull List<Font> loadFonts(@NotNull InputStream in) throws IOException {
+    public List<Font> loadFonts(@NotNull InputStream in) throws IOException {
         try (in) {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
             List<Font> fonts =new ArrayList<>(awtFonts.length);
@@ -111,7 +111,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     }
 
     @Override
-    public @NotNull List<String> getFamilies(@NotNull FontTypes types) {
+    public List<String> getFamilies(@NotNull FontTypes types) {
         List<String> fonts = List.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
 
         boolean mono;
@@ -161,12 +161,12 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
         );
     }
 
-    private static java.awt.@NotNull Font getAwtFont(String family, float size, boolean bold, boolean italic) {
+    private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
         int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
         return new java.awt.Font(family, style, Math.round(size));
     }
 
-    public @NotNull Font loadFontAs(@NotNull InputStream in, @NotNull Font font) throws IOException {
+    public Font loadFontAs(@NotNull InputStream in, @NotNull Font font) throws IOException {
         try (in) {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
             LangUtil.check(awtFonts.length>0, () -> new IOException("no font loaded"));

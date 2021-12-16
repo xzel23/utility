@@ -6,7 +6,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,8 +31,8 @@ import java.util.TreeMap;
  */
 public class RichTextBuilder implements Appendable, ToRichText {
 
-    private final @NotNull StringBuilder buffer;
-    private final @NotNull SortedMap<Integer, Map<String, Object>> parts;
+    private final StringBuilder buffer;
+    private final SortedMap<Integer, Map<String, Object>> parts;
     private final Deque<AttributeChange> openedAttributes = new LinkedList<>();
 
     private record AttributeChange(@NotNull String name, Object previousValue, Object value) {}
@@ -56,29 +56,29 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public @NotNull RichTextBuilder append(char c) {
+    public RichTextBuilder append(char c) {
         buffer.append(c);
         return this;
     }
 
     @Override
-    public @NotNull RichTextBuilder append(@NotNull CharSequence csq) {
+    public RichTextBuilder append(@NotNull CharSequence csq) {
         buffer.append(csq);
         return this;
     }
 
     @Override
-    public @NotNull Appendable append(@NotNull CharSequence csq, int start, int end) {
+    public Appendable append(@NotNull CharSequence csq, int start, int end) {
         buffer.append(csq, start, end);
         return this;
     }
 
-    public @NotNull RichTextBuilder append(@NotNull ToRichText trt) {
+    public RichTextBuilder append(@NotNull ToRichText trt) {
         trt.appendTo(this);
         return this;
     }
 
-    public @NotNull RichTextBuilder append(@NotNull RichText rt) {
+    public RichTextBuilder append(@NotNull RichText rt) {
         rt.appendTo(this);
         return this;
     }
@@ -111,12 +111,12 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @return RichText representation of this builder's content
      */
     @Override
-    public @NotNull RichText toRichText() {
+    public RichText toRichText() {
         Run[] runs = getRuns();
         return new RichText(runs);
     }
 
-    private Run @NotNull [] getRuns() {
+    private Run[] getRuns() {
         normalize();
         
         String text = buffer.toString();
@@ -169,7 +169,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return buffer.toString();
     }
 

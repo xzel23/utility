@@ -1,7 +1,6 @@
 package com.dua3.utility.data;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -25,7 +24,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
      * @param <T> the node type
      * @return the tree
      */
-    public static <T extends FileTreeNode<T>> @NotNull T tree(@NotNull Path root) {
+    public static <T extends FileTreeNode<T>> T tree(@NotNull Path root) {
         return tree(root, true);
     }
 
@@ -36,7 +35,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
      * @param <T> the node type
      * @return the tree
      */
-    public static <T extends FileTreeNode<T>> @NotNull  T tree(@NotNull Path root, boolean lazy) {
+    public static <T extends FileTreeNode<T>> T tree(@NotNull Path root, boolean lazy) {
         T t = (T) new FileTreeNode<T>(null, root, lazy);
         if (!lazy) {
             t.refresh();
@@ -47,7 +46,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     private final T parent;
     private final Path path;
     private final boolean lazy;
-    private @Nullable List<T> children = null;
+    private List<T> children = null;
 
     private final List<Consumer<T>> listeners = new ArrayList<>();
 
@@ -58,7 +57,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     }
 
     @Override
-    public @NotNull Collection<T> children() {
+    public Collection<T> children() {
         if (children == null) {
             refresh();
         }
@@ -74,7 +73,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         }
     }
 
-    protected @NotNull Collection<T> collectChildren() throws IOException {
+    protected Collection<T> collectChildren() throws IOException {
         try (Stream<Path> stream = Files.walk(path, 1)) {
             return stream
                     .filter(p -> !p.equals(path))
@@ -90,7 +89,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     }
     
     @Override
-    public @NotNull Stream<T> stream() {
+    public Stream<T> stream() {
         return children().stream();
     }
 
@@ -99,17 +98,17 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         return parent;
     }
 
-    public @NotNull Path getFilePath() {
+    public Path getFilePath() {
         return path;
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return Objects.toString(path.getFileName(), "");
     }
 
     @Override
-    public boolean equals(@Nullable Object other) {
+    public boolean equals(Object other) {
         return other != null && getClass() == other.getClass() && path.equals(((FileTreeNode<T>) other).path);
     }
 

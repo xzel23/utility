@@ -1,6 +1,6 @@
 package com.dua3.utility.text;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * A styled caracter interface.
@@ -12,7 +12,7 @@ public interface AttributedCharacter {
      * @param a attributes to apply to character
      * @return attributed character
      */
-    static @NotNull AttributedCharacter create(char c, @NotNull TextAttributes a) {
+    static AttributedCharacter create(char c, @NotNull TextAttributes a) {
         return new AttributedCharacter() {
             @Override
             public char character() {
@@ -20,7 +20,7 @@ public interface AttributedCharacter {
             }
 
             @Override
-            public @NotNull TextAttributes attributes() {
+            public TextAttributes attributes() {
                 return a;
             }
         };
@@ -36,5 +36,5 @@ public interface AttributedCharacter {
      * Get style.
      * @return the style
      */
-    @NotNull TextAttributes attributes();
+    TextAttributes attributes();
 }

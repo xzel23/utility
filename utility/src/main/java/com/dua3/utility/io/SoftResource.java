@@ -5,8 +5,7 @@
 
 package com.dua3.utility.io;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.lang.ref.SoftReference;
 import java.util.Objects;
@@ -14,10 +13,10 @@ import java.util.function.Supplier;
 
 public final class SoftResource<T> {
 
-    private @Nullable Supplier<? extends T> supplier;
-    private @NotNull SoftReference<T> ref;
+    private Supplier<? extends T> supplier;
+    private SoftReference<T> ref;
 
-    private SoftResource(@Nullable Supplier<? extends T> supplier) {
+    private SoftResource(Supplier<? extends T> supplier) {
         this.supplier = supplier;
         this.ref = new SoftReference<>(null);
     }
@@ -30,7 +29,7 @@ public final class SoftResource<T> {
      *                  invocation return equal instances
      * @return          soft resource
      */
-    public static <T> @NotNull SoftResource<T> of(@NotNull Supplier<? extends T> supplier) {
+    public static <T> SoftResource<T> of(@NotNull Supplier<? extends T> supplier) {
         return new SoftResource<>(Objects.requireNonNull(supplier));
     }
 
@@ -40,7 +39,7 @@ public final class SoftResource<T> {
      * @param  <T> the type of the resource
      * @return empty soft resource
      */
-    public static <T> @NotNull SoftResource<T> emptyReference() {
+    public static <T> SoftResource<T> emptyReference() {
         return new SoftResource<>(null);
     }
 
@@ -51,7 +50,7 @@ public final class SoftResource<T> {
      *         if it has not yet been set or has been garbage collected, it will be
      *         restored by invoking the supplier
      */
-    public @Nullable T get() {
+    public T get() {
         T obj = ref.get();
         if (obj == null && supplier != null) {
             obj = supplier.get();
@@ -81,7 +80,7 @@ public final class SoftResource<T> {
      *
      * @return ResourceHolder for this Resource
      */
-    public @NotNull ResourceHolder<T> hold() {
+    public ResourceHolder<T> hold() {
         return new ResourceHolder<>(this);
     }
 
@@ -89,8 +88,8 @@ public final class SoftResource<T> {
      * Helper class to prevent the resource from being garbage collected.
      */
     public static final class ResourceHolder<T> implements AutoCloseable {
-        private @Nullable T strong;
-        private final @NotNull SoftResource<T> soft;
+        private T strong;
+        private final SoftResource<T> soft;
 
         private ResourceHolder(@NotNull SoftResource<T> sr) {
             this.strong = sr.get();
@@ -102,7 +101,7 @@ public final class SoftResource<T> {
          *
          * @return the resource
          */
-        public @Nullable T get() {
+        public T get() {
             return strong;
         }
 
@@ -111,7 +110,7 @@ public final class SoftResource<T> {
          *
          * @return the soft resource
          */
-        public @NotNull SoftResource<T> getSoftResource() {
+        public SoftResource<T> getSoftResource() {
             return soft;
         }
 
@@ -121,7 +120,7 @@ public final class SoftResource<T> {
         }
 
         @Override
-        public @NotNull String toString() {
+        public String toString() {
             return "ResourceHolder(" + soft + ")";
         }
     }

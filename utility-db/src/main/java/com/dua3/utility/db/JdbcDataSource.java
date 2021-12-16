@@ -5,8 +5,7 @@
 
 package com.dua3.utility.db;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -26,8 +25,8 @@ public class JdbcDataSource implements DataSource {
 
     private static final String USER = "user";
     private static final String PASSWORD = "password";
-    private @Nullable String url = null;
-    private @Nullable PrintWriter logWriter = null;
+    private String url = null;
+    private PrintWriter logWriter = null;
     private int loginTimeout = 0;
     private Driver driver = null;
     private final Properties properties = new Properties();
@@ -54,13 +53,13 @@ public class JdbcDataSource implements DataSource {
     }
 
     @Override
-    public @NotNull Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException("getParentLogger() is not supported");
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> @NotNull T unwrap(@NotNull Class<T> iface) throws SQLException {
+    public <T> T unwrap(@NotNull Class<T> iface) throws SQLException {
         if (!iface.isAssignableFrom(this.getClass())) {
             throw new SQLException(iface.getName()+" is not assignable from "+this.getClass().getName());
         }
@@ -88,12 +87,12 @@ public class JdbcDataSource implements DataSource {
     }
 
     @Override
-    public @Nullable PrintWriter getLogWriter() throws SQLException {
+    public PrintWriter getLogWriter() throws SQLException {
         return logWriter;
     }
 
     @Override
-    public void setLogWriter(@Nullable PrintWriter out) throws SQLException {
+    public void setLogWriter(PrintWriter out) throws SQLException {
         logWriter = out;
     }
 
@@ -120,7 +119,7 @@ public class JdbcDataSource implements DataSource {
      * @param user
      *  the database user or `null` to unset
      */
-    public void setUser(@Nullable String user) {
+    public void setUser(String user) {
         if (user==null) {
             // Properties class does not support storing null values!
             properties.remove(USER);
@@ -134,7 +133,7 @@ public class JdbcDataSource implements DataSource {
      * @param password
      *  the database password or `null` to unset
      */
-    public void setPassword(@Nullable String password) {
+    public void setPassword(String password) {
         if (password==null) {
             // Properties class does not support storing null values!
             properties.remove(PASSWORD);

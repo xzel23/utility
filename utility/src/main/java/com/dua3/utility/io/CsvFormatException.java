@@ -12,7 +12,7 @@
  */
 package com.dua3.utility.io;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -49,7 +49,7 @@ public class CsvFormatException extends IOException {
      * @return the exception message
      */
     @Override
-    public @NotNull String getMessage() {
+    public String getMessage() {
         if (source != null) {
             return "[" + source + ":" + line + "] " + super.getMessage();
         } else {

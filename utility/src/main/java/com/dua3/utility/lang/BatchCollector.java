@@ -1,8 +1,7 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -23,8 +22,8 @@ import java.util.stream.Collector;
  * @param <K> the key type
  */
 public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
-    private final @NotNull Function<? super T, ? extends K> keyMapper;
-    private final @Nullable K defaultKey;
+    private final Function<? super T, ? extends K> keyMapper;
+    private final K defaultKey;
 
     /**
      * Constructor.
@@ -44,18 +43,18 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
      * @param keyMapper the key mapper
      * @param defaultKey the default key
      */
-    public BatchCollector(@NotNull Function<? super T, ? extends K> keyMapper, @Nullable K defaultKey) {
+    public BatchCollector(@NotNull Function<? super T, ? extends K> keyMapper, K defaultKey) {
         this.keyMapper = Objects.requireNonNull(keyMapper);
         this.defaultKey = defaultKey;
     }
 
     @Override
-    public @NotNull Supplier<Deque<Pair<K, List<T>>>> supplier() {
+    public Supplier<Deque<Pair<K, List<T>>>> supplier() {
         return LinkedList::new;
     }
 
     @Override
-    public @NotNull BiConsumer<Deque<Pair<K, List<T>>>, T> accumulator() {
+    public BiConsumer<Deque<Pair<K, List<T>>>, T> accumulator() {
         return (accu, item) -> {
             K key = keyMapper.apply(item);
 
@@ -72,7 +71,7 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
     }
 
     @Override
-    public @NotNull BinaryOperator<Deque<Pair<K, List<T>>>> combiner() {
+    public BinaryOperator<Deque<Pair<K, List<T>>>> combiner() {
         return (left, right) -> { 
             left.addAll(right); 
             return left; 
@@ -80,12 +79,12 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
     }
 
     @Override
-    public @NotNull Function<Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> finisher() {
+    public Function<Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> finisher() {
         return ArrayList::new;
     }
 
     @Override 
-    public @NotNull Set<Characteristics> characteristics() {
+    public Set<Characteristics> characteristics() {
         return EnumSet.of(Characteristics.IDENTITY_FINISH);
     }
 }

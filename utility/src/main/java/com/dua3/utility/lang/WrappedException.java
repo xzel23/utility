@@ -5,7 +5,7 @@
 
 package com.dua3.utility.lang;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.Serial;
 
@@ -21,12 +21,12 @@ public class WrappedException extends RuntimeException {
     }
 
     @Override
-    public synchronized @NotNull Exception getCause() {
+    public synchronized Exception getCause() {
         return (Exception) super.getCause();
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return "WrappedException(" + super.getCause().toString() + ")";
     }
 }

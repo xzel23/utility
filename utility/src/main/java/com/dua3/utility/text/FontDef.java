@@ -1,8 +1,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -20,7 +19,7 @@ public final class FontDef {
      * @param col the color
      * @return new FontDef instance
      */
-    public static @NotNull FontDef color(Color col) {
+    public static FontDef color(Color col) {
         FontDef fd = new FontDef();
         fd.setColor(col);
         return fd;
@@ -32,7 +31,7 @@ public final class FontDef {
      * @param family the font family
      * @return new FontDef instance
      */
-    public static @NotNull FontDef family(String family) {
+    public static FontDef family(String family) {
         FontDef fd = new FontDef();
         fd.setFamily(family);
         return fd;
@@ -44,7 +43,7 @@ public final class FontDef {
      * @param size the font size in points
      * @return new FontDef instance
      */
-    public static @NotNull FontDef size(Float size) {
+    public static FontDef size(Float size) {
         FontDef fd = new FontDef();
         fd.setSize(size);
         return fd;
@@ -56,7 +55,7 @@ public final class FontDef {
      * @param flag the value to set
      * @return new FontDef instance
      */
-    public static @NotNull FontDef bold(boolean flag) {
+    public static FontDef bold(boolean flag) {
         FontDef fd = new FontDef();
         fd.setBold(flag);
         return fd;
@@ -68,7 +67,7 @@ public final class FontDef {
      * @param flag the value to set
      * @return new FontDef instance
      */
-    public static @NotNull FontDef italic(boolean flag) {
+    public static FontDef italic(boolean flag) {
         FontDef fd = new FontDef();
         fd.setItalic(flag);
         return fd;
@@ -80,7 +79,7 @@ public final class FontDef {
      * @param flag the value to set
      * @return new FontDef instance
      */
-    public static @NotNull FontDef underline(boolean flag) {
+    public static FontDef underline(boolean flag) {
         FontDef fd = new FontDef();
         fd.setUnderline(flag);
         return fd;
@@ -92,19 +91,19 @@ public final class FontDef {
      * @param flag the value to set
      * @return new FontDef instance
      */
-    public static @NotNull FontDef strikeThrough(boolean flag) {
+    public static FontDef strikeThrough(boolean flag) {
         FontDef fd = new FontDef();
         fd.setStrikeThrough(flag);
         return fd;
     }
 
-    private @Nullable Color color = null;
-    private @Nullable Float size = null;
-    private @Nullable String family = null;
-    private @Nullable Boolean bold = null;
-    private @Nullable Boolean italic = null;
-    private @Nullable Boolean underline = null;
-    private @Nullable Boolean strikeThrough = null;
+    private Color color = null;
+    private Float size = null;
+    private String family = null;
+    private Boolean bold = null;
+    private Boolean italic = null;
+    private Boolean underline = null;
+    private Boolean strikeThrough = null;
 
     public FontDef() {
         // nop - everything being initialized to null is just fine
@@ -115,7 +114,7 @@ public final class FontDef {
      * @param fontspec the fontspec
      * @return FonrDef instance matching fontspec 
      */
-    public static @NotNull FontDef parseFontspec(@NotNull String fontspec) {
+    public static FontDef parseFontspec(@NotNull String fontspec) {
         String[] parts = fontspec.split("-");
 
         FontDef fd = new FontDef();
@@ -151,103 +150,103 @@ public final class FontDef {
     /**
      * @return the bold
      */
-    public @Nullable Boolean getBold() {
+    public Boolean getBold() {
         return bold;
     }
 
     /**
      * @return the color
      */
-    public @Nullable Color getColor() {
+    public Color getColor() {
         return color;
     }
 
     /**
      * @return the family
      */
-    public @Nullable String getFamily() {
+    public String getFamily() {
         return family;
     }
 
     /**
      * @return the italic
      */
-    public @Nullable Boolean getItalic() {
+    public Boolean getItalic() {
         return italic;
     }
 
     /**
      * @return the size in points
      */
-    public @Nullable Float getSize() {
+    public Float getSize() {
         return size;
     }
 
     /**
      * @return the strikeThrough
      */
-    public @Nullable Boolean getStrikeThrough() {
+    public Boolean getStrikeThrough() {
         return strikeThrough;
     }
 
     /**
      * @return the underline
      */
-    public @Nullable Boolean getUnderline() {
+    public Boolean getUnderline() {
         return underline;
     }
 
     /**
      * @param bold the bold to set
      */
-    public void setBold(@Nullable Boolean bold) {
+    public void setBold(Boolean bold) {
         this.bold = bold;
     }
 
     /**
      * @param color the color to set
      */
-    public void setColor(@Nullable Color color) {
+    public void setColor(Color color) {
         this.color = color;
     }
 
     /**
      * @param family the family to set
      */
-    public void setFamily(@Nullable String family) {
+    public void setFamily(String family) {
         this.family = family;
     }
 
     /**
      * @param italic the italic to set
      */
-    public void setItalic(@Nullable Boolean italic) {
+    public void setItalic(Boolean italic) {
         this.italic = italic;
     }
 
     /**
      * @param size the size in points to set
      */
-    public void setSize(@Nullable Float size) {
+    public void setSize(Float size) {
         this.size = size;
     }
 
     /**
      * @param strikeThrough the strikeThrough to set
      */
-    public void setStrikeThrough(@Nullable Boolean strikeThrough) {
+    public void setStrikeThrough(Boolean strikeThrough) {
         this.strikeThrough = strikeThrough;
     }
 
     /**
      * @param underline the underline to set
      */
-    public void setUnderline(@Nullable Boolean underline) {
+    public void setUnderline(Boolean underline) {
         this.underline = underline;
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FontDef fontDef = (FontDef) o;
@@ -266,7 +265,7 @@ public final class FontDef {
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return "FontDef{" +
                getCssStyle() +
                "}";
@@ -277,7 +276,7 @@ public final class FontDef {
      *
      * @return fontstyle definition
      */
-    public @NotNull String getCssStyle() {
+    public String getCssStyle() {
         boolean isUnderline = underline != null && underline;
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
         //noinspection StringConcatenationMissingWhitespace
@@ -309,7 +308,7 @@ public final class FontDef {
                && nullOrEquals(strikeThrough, font.isStrikeThrough());
     }
 
-    private static boolean nullOrEquals(@Nullable Object a, @Nullable Object b) {
+    private static boolean nullOrEquals(Object a, Object b) {
         return a==null || b==null || a.equals(b);
     }
 
@@ -328,7 +327,7 @@ public final class FontDef {
     }
 
     // a little helper for the consumeIfDefined... methods
-    private static <T> boolean consumeIfDefined(@Nullable T v, @NotNull Consumer<T> c) {
+    private static <T> boolean consumeIfDefined(T v, @NotNull Consumer<T> c) {
         boolean run = v != null;
         if (run) {
             c.accept(v);

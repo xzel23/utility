@@ -17,8 +17,7 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -68,11 +67,11 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         types.add(ft);
     }
 
-    public static @NotNull Collection<FileType<?>> fileTypes() {
+    public static Collection<FileType<?>> fileTypes() {
         return Collections.unmodifiableSet(types);
     }
 
-    public static @NotNull Optional<FileType<?>> forExtension(@NotNull String ext) {
+    public static Optional<FileType<?>> forExtension(@NotNull String ext) {
         for (FileType<?> t : types) {
             if (!t.isCompound() && t.extensions.contains(ext)) {
                 return Optional.of(t);
@@ -81,20 +80,20 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return Optional.empty();
     }
 
-    public static @NotNull Optional<FileType<?>> forUri(@NotNull URI uri) {
+    public static Optional<FileType<?>> forUri(@NotNull URI uri) {
         return forExtension(IOUtil.getExtension(uri));
     }
 
-    public static <T> @NotNull Optional<FileType<T>> forUri(@NotNull URI uri, @NotNull Class<T> cls) {
+    public static <T> Optional<FileType<T>> forUri(@NotNull URI uri, @NotNull Class<T> cls) {
         return forFileName(cls, uri.getSchemeSpecificPart());
     }
 
-    public static <T> @NotNull Optional<FileType<T>> forPath(@NotNull Path path, @NotNull Class<T> cls) {
+    public static <T> Optional<FileType<T>> forPath(@NotNull Path path, @NotNull Class<T> cls) {
         return forFileName(cls, String.valueOf(path.getFileName()));
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> @NotNull Optional<FileType<T>> forFileName(@NotNull Class<T> cls, @NotNull String fileName) {
+    private static <T> Optional<FileType<T>> forFileName(@NotNull Class<T> cls, @NotNull String fileName) {
         for (FileType<?> t : types) {
             if (t.matches(fileName) && cls.isAssignableFrom(t.getDocumentClass())) {
                 return Optional.of((FileType<T>) t);
@@ -103,12 +102,12 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return Optional.empty();
     }
 
-    public static <T> @NotNull Optional<T> read(@NotNull URI uri, @NotNull Class<T> cls) throws IOException {
+    public static <T> Optional<T> read(@NotNull URI uri, @NotNull Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forUri(uri, cls);
         return type.isPresent() ? Optional.of(type.get().read(uri)) : Optional.empty();
     }
 
-    public static <T> @NotNull Optional<T> read(@NotNull Path path, @NotNull Class<T> cls) throws IOException {
+    public static <T> Optional<T> read(@NotNull Path path, @NotNull Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forPath(path, cls);
         return type.isPresent() ? Optional.of(type.get().read(path)) : Optional.empty();
     }
@@ -119,7 +118,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param mode the mode
      * @return the list of file types supporting the requested mode
      */
-    public static @NotNull List<FileType<?>> getFileTypes(@NotNull OpenMode mode) {
+    public static List<FileType<?>> getFileTypes(@NotNull OpenMode mode) {
         List<FileType<?>> list = new LinkedList<>(types);
         list.removeIf(t -> (t.mode.n & mode.n) != mode.n);
         return list;
@@ -134,16 +133,16 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return list of file types that support reading/writing objects of the given class type
      */
     @SuppressWarnings("unchecked")
-    public static <T> @NotNull List<FileType<T>> getFileTypes(@NotNull OpenMode mode, @NotNull Class<T> cls) {
+    public static <T> List<FileType<T>> getFileTypes(@NotNull OpenMode mode, @NotNull Class<T> cls) {
         return types.stream()
                 .filter(t -> t.isSupported(mode))
-                // either reading is not requested or files of this type must be assignable to cls
+                /* either reading is not requested or files of this type must be assignable to cls */
                 .filter(t -> !mode.includes(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))
-                // either writing is not requested or the document must be assignable to this type's document type
+                /* either writing is not requested or the document must be assignable to this type's document type */
                 .filter(t -> !mode.includes(OpenMode.WRITE) || t.getDocumentClass().isAssignableFrom(cls))
-                // add the generic parameter
+                /* add the generic parameter */
                 .map(t -> (FileType<T>) t)
-                // make it a list
+                /* make it a list */
                 .collect(Collectors.toList());
     }
 
@@ -159,7 +158,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return the name
      */
-    public @NotNull String getName() {
+    public String getName() {
         return name;
     }
 
@@ -168,7 +167,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return the document type
      */
-    public @NotNull Class<? extends T> getDocumentClass() {
+    public Class<? extends T> getDocumentClass() {
         return cls;
     }
 
@@ -177,7 +176,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @return the list of file extensions for this file type
      */
-    public @NotNull List<String> getExtensions() {
+    public List<String> getExtensions() {
         return extensions;
     }
 
@@ -209,7 +208,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public @NotNull T read(@NotNull URI uri) throws IOException {
+    public T read(@NotNull URI uri) throws IOException {
         return read(uri, t -> Arguments.empty());
     }
 
@@ -222,7 +221,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     @SuppressWarnings("RedundantThrows")
-    public abstract @NotNull T read(@NotNull URI uri, @NotNull Function<FileType<? extends T>, Arguments> options) throws IOException;
+    public abstract T read(@NotNull URI uri, @NotNull Function<FileType<? extends T>, Arguments> options) throws IOException;
 
     /**
      * Read document from file.
@@ -231,7 +230,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public @NotNull T read(@NotNull Path path) throws IOException {
+    public T read(@NotNull Path path) throws IOException {
         return read(path, t -> Arguments.empty());
     }
 
@@ -243,7 +242,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public @NotNull T read(@NotNull Path path, @NotNull Function<FileType<? extends T>, Arguments> options) throws IOException {
+    public T read(@NotNull Path path, @NotNull Function<FileType<? extends T>, Arguments> options) throws IOException {
         return read(path.toUri());
     }
 
@@ -314,13 +313,13 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return optional settings for file type
      */
     @SuppressWarnings("MethodMayBeStatic")
-    public @NotNull Collection<Option<?>> getSettings() {
+    public Collection<Option<?>> getSettings() {
         return Collections.emptyList();
     }
 
     // all instances of the same class are considered equal
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         return obj != null && obj.getClass() == getClass();
     }
 

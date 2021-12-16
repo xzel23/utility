@@ -5,7 +5,7 @@
 
 package com.dua3.utility.lang;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -135,7 +135,7 @@ public class RingBuffer<E> implements Collection<E> {
      * @return   the i-th element
      */
     @SuppressWarnings("unchecked")
-    public @NotNull E get(int i) {
+    public E get(int i) {
         checkIndex(i);
         return (E) data[index(i)];
     }
@@ -160,7 +160,7 @@ public class RingBuffer<E> implements Collection<E> {
     }
 
     @Override
-    public @NotNull Iterator<E> iterator() {
+    public Iterator<E> iterator() {
         final int entries_ = entries;
         final int start_ = start;
         
@@ -181,7 +181,7 @@ public class RingBuffer<E> implements Collection<E> {
             }
 
             @Override
-            public @NotNull E next() throws NoSuchElementException{
+            public E next() throws NoSuchElementException{
                 checkValid();
                 LangUtil.check(idx<entries_, NoSuchElementException::new);
                 return get(idx++);
@@ -190,7 +190,7 @@ public class RingBuffer<E> implements Collection<E> {
     }
 
     @Override
-    public Object @NotNull [] toArray() {
+    public Object[] toArray() {
         Object[] arr = new Object[entries];
         int n1 = Math.min(entries, data.length-start);
         int n2 = entries-n1;
@@ -201,7 +201,7 @@ public class RingBuffer<E> implements Collection<E> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T @NotNull [] toArray(T @NotNull [] a) {
+    public <T> T[] toArray(@NotNull T[] a) {
         if (a.length < entries) {
             a = (T[])java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
         }
@@ -248,7 +248,7 @@ public class RingBuffer<E> implements Collection<E> {
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         StringBuilder sb = new StringBuilder(16 * (1 + size()));
         sb.append("[");
         String d = "";
@@ -284,7 +284,7 @@ public class RingBuffer<E> implements Collection<E> {
      *         ({@code fromIndex < 0 || toIndex > size ||
      *         fromIndex > toIndex})
      */
-    public @NotNull List<E> subList(int fromIndex, int toIndex) {
+    public List<E> subList(int fromIndex, int toIndex) {
         int s1 = size();
         LangUtil.checkIndex(fromIndex, s1);
         LangUtil.check(toIndex<=s1, "toIndex>size(): %d", toIndex);
@@ -294,7 +294,7 @@ public class RingBuffer<E> implements Collection<E> {
 
         return new AbstractList<>() {
             @Override
-            public @NotNull E get(int index) {
+            public E get(int index) {
                 LangUtil.checkIndex(index, s2);
                 return RingBuffer.this.get(index + fromIndex);
             }

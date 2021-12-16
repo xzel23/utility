@@ -7,8 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -20,18 +19,18 @@ import java.util.function.Function;
  */
 public class Font {
 
-    private final @NotNull Color color;
+    private final Color color;
     private final float size;
-    private final @NotNull String family;
+    private final String family;
     private final boolean bold;
     private final boolean italic;
     private final boolean underline;
     private final boolean strikeThrough;
 
     // lazily populated fields
-    private @Nullable String fontspec = null;
+    private String fontspec = null;
     private int hash = 0;
-    private @Nullable FontDef fd = null;
+    private FontDef fd = null;
     private double spaceWidth=-1;
 
     /**
@@ -103,7 +102,7 @@ public class Font {
      *            the {@link FontDef} describing the attributes to set
      * @return    new Font instance
      */
-    public @NotNull Font deriveFont(@NotNull FontDef fd) {
+    public Font deriveFont(@NotNull FontDef fd) {
         return new Font(this, fd);
     }
 
@@ -112,7 +111,7 @@ public class Font {
      *
      * @return the text color.
      */
-    public @NotNull Color getColor() {
+    public Color getColor() {
         return color;
     }
 
@@ -121,7 +120,7 @@ public class Font {
      *
      * @return the font family as {@code String}.
      */
-    public @NotNull String getFamily() {
+    public String getFamily() {
         return family;
     }
 
@@ -175,7 +174,7 @@ public class Font {
      *
      * @return font description
      */
-    public @NotNull String fontspec() {
+    public String fontspec() {
         if (fontspec==null) {
             StringBuilder sb = new StringBuilder(32);
 
@@ -205,7 +204,7 @@ public class Font {
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return fontspec();
     }
 
@@ -220,7 +219,7 @@ public class Font {
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null || obj.getClass() != this.getClass() || obj.hashCode() != this.hashCode()) {
             return false;
         }
@@ -249,10 +248,10 @@ public class Font {
      * Get CSS compatible fontstyle definition.
      * @return fontstyle definition
      */
-    public @NotNull String getCssStyle() {
+    public String getCssStyle() {
         return String.format(Locale.ROOT, "color: %s; font-size: %spt; font-family: %s; font-weight: %s; font-style: %s;%s",
                color,
-               size, // use "%s" for size to avoid unnecessary zeros after decimal point
+               size, /* use "%s" for size to avoid unnecessary zeros after decimal point */
                family,
                bold ? "bold" : "normal",
                italic ? "italic" : "normal",
@@ -288,7 +287,7 @@ public class Font {
      * @param f2 the second font
      * @return a {@link FontDef} instance that defines the changed values
      */
-    public static @NotNull FontDef delta(@NotNull Font f1, @NotNull Font f2) {
+    public static FontDef delta(@NotNull Font f1, @NotNull Font f2) {
         FontDef fd = new FontDef();
 
         deltaHelper(f1, f2, Font::getFamily, fd::setFamily);
@@ -306,7 +305,7 @@ public class Font {
      * Get a {@link FontDef} instance with all fields set according to this font.
      * @return FontDef instance describing this font
      */
-    public @NotNull FontDef toFontDef() {
+    public FontDef toFontDef() {
         if (fd == null) {
             fd = new FontDef();
             fd.setFamily(getFamily());
@@ -336,7 +335,7 @@ public class Font {
      * @param size the new font size
      * @return a copy of this font with the requested size, or this font, if the size matches
      */
-    public @NotNull Font withSize(float size) {
+    public Font withSize(float size) {
         return size==this.size ? this : deriveFont(FontDef.size(size));
     }
 
@@ -345,7 +344,7 @@ public class Font {
      * @param flag the value to use
      * @return a copy of this font with the bold attribute set to the requested value, or this font if values match
      */
-    public @NotNull Font withBold(boolean flag) {
+    public Font withBold(boolean flag) {
         return flag==this.bold ? this : deriveFont(FontDef.bold(flag));
     }
 
@@ -354,7 +353,7 @@ public class Font {
      * @param flag the value to use
      * @return a copy of this font with the italic attribute set to the requested value, or this font if values match
      */
-    public @NotNull Font withItalic(boolean flag) {
+    public Font withItalic(boolean flag) {
         return flag==this.italic ? this : deriveFont(FontDef.italic(flag));
     }
 
@@ -363,7 +362,7 @@ public class Font {
      * @param flag the value to use
      * @return a copy of this font with the underline attribute set to the requested value, or this font if values match
      */
-    public @NotNull Font withUnderline(boolean flag) {
+    public Font withUnderline(boolean flag) {
         return flag==this.underline ? this : deriveFont(FontDef.underline(flag));
     }
 
@@ -372,7 +371,7 @@ public class Font {
      * @param flag the value to use
      * @return a copy of this font with the strike-through attribute set to the requested value, or this font if values match
      */
-    public @NotNull Font withStrikeThrough(boolean flag) {
+    public Font withStrikeThrough(boolean flag) {
         return flag==this.strikeThrough ? this : deriveFont(FontDef.strikeThrough(flag));
     }
 
@@ -381,7 +380,7 @@ public class Font {
      * @param family the value to use
      * @return a copy of this font with the family set to the requested value, or this font if values match
      */
-    public @NotNull Font withFamily(@NotNull String family) {
+    public Font withFamily(@NotNull String family) {
         return family.equals(this.family) ? this : deriveFont(FontDef.family(family));
     }
 
@@ -390,7 +389,7 @@ public class Font {
      * @param color the value to use
      * @return a copy of this font with the color set to the requested value, or this font if values match
      */
-    public @NotNull Font withColor(@NotNull Color color) {
+    public Font withColor(@NotNull Color color) {
         return color.equals(this.color) ? this : deriveFont(FontDef.color(color));
     }
 

@@ -6,8 +6,7 @@ import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.Flag;
 import com.dua3.utility.options.SimpleOption;
 import com.dua3.utility.options.StandardOption;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -32,15 +31,15 @@ public final class LogUtil {
      * Helper class to create lazy 'toString()' evaluators for logging.
      */
     private static final class LazyToString implements Supplier<String> {
-        private final @NotNull Supplier<String> base;
-        private @Nullable String msg = null;
+        private final Supplier<String> base;
+        private String msg = null;
 
         LazyToString(@NotNull Supplier<String> s) {
             this.base = Objects.requireNonNull(s);
         }
 
         @Override
-        public @NotNull String get() {
+        public String get() {
             if (msg==null) {
                 msg = Objects.requireNonNull(base.get());
             }
@@ -48,7 +47,7 @@ public final class LogUtil {
         }
 
         @Override
-        public @NotNull String toString() {
+        public String toString() {
             return get();
         }
     }
@@ -60,7 +59,7 @@ public final class LogUtil {
      * @param s the supplier
      * @return an Object that acts as a proxy for calls to toString()
      */
-    public static @NotNull Supplier<String> formatLazy(@NotNull Supplier<String> s) {
+    public static Supplier<String> formatLazy(@NotNull Supplier<String> s) {
         return new LazyToString(s);
     }
 
@@ -188,7 +187,7 @@ public final class LogUtil {
      * @param loggers
      *                the loggers to set the level for
      */
-    public static void setLogLevel(@NotNull Level level, Logger @NotNull ... loggers) {
+    public static void setLogLevel(@NotNull Level level, @NotNull Logger... loggers) {
         for (Logger logger : loggers) {
             setLogLevel(level, logger);
         }
@@ -203,7 +202,7 @@ public final class LogUtil {
      * @param  args arguments
      * @return      a supplier that returns the formatted message
      */
-    public static @NotNull Supplier<String> format(@NotNull String fmt, Object... args) {
+    public static Supplier<String> format(@NotNull String fmt, Object... args) {
         return () -> String.format(Locale.ROOT, fmt, args);
     }
 }

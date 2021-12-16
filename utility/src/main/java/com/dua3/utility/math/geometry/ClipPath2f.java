@@ -1,7 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Set Clip path.
@@ -32,17 +32,17 @@ public class ClipPath2f extends Segment2f {
     }
 
     @Override
-    public @NotNull String name() {
+    public String name() {
         return NAME;
     }
 
     @Override
-    public @NotNull Vector2f start() {
+    public Vector2f start() {
         return path.vertex(idx);
     }
 
     @Override
-    public @NotNull Vector2f end() {
+    public Vector2f end() {
         return path.vertex(idx);
     }
 
@@ -50,7 +50,7 @@ public class ClipPath2f extends Segment2f {
      * Get the {@link FillRule}.
      * @return the fill rule
      */
-    public @NotNull FillRule fillRule() {
+    public FillRule fillRule() {
         return fillRule;
     }
 

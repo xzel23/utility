@@ -2,7 +2,7 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -63,10 +63,10 @@ public class Codecs {
      * @param <T> the object type
      * @return the new codec
      */
-    public static <T> @NotNull Codec<T> createCodec(@NotNull String name, @NotNull Encoder<? super T> enc, @NotNull Decoder<? extends T> dec) {
+    public static <T> Codec<T> createCodec(@NotNull String name, @NotNull Encoder<? super T> enc, @NotNull Decoder<? extends T> dec) {
         return new Codec<>() {
             @Override
-            public @NotNull String name() {
+            public String name() {
                 return name;
             }
 
@@ -91,10 +91,10 @@ public class Codecs {
      * @param construct collection factory method
      * @return collection codec
      */
-    public static <T, C extends Collection<T>> @NotNull Codec<C> collectionCodec(@NotNull String name, @NotNull Codec<T> codec, @NotNull IntFunction<? extends C> construct) {
+    public static <T, C extends Collection<T>> Codec<C> collectionCodec(@NotNull String name, @NotNull Codec<T> codec, @NotNull IntFunction<? extends C> construct) {
         return new Codec<>() {
             @Override
-            public @NotNull String name() {
+            public String name() {
                 return name;
             }
 
@@ -119,7 +119,7 @@ public class Codecs {
         };
     }
 
-    public static <K,V> @NotNull Codec<Map.Entry<K,V>> mapEntryCodec(@NotNull Codec<K> codecK, @NotNull Codec<? extends V> codecV) {
+    public static <K,V> Codec<Map.Entry<K,V>> mapEntryCodec(@NotNull Codec<K> codecK, @NotNull Codec<? extends V> codecV) {
         return createCodec(
                 Map.Entry.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">", 
                 (DataOutputStream os, Map.Entry<K,V> entry) -> codecK.encode(os, entry.getKey()),
@@ -138,7 +138,7 @@ public class Codecs {
                         }
 
                         @Override
-                        public @NotNull V setValue(V value) {
+                        public V setValue(V value) {
                             throw new UnsupportedOperationException("setValue() is unsupported");
                         }
                     };
@@ -156,14 +156,14 @@ public class Codecs {
      * @param construct the map construction method
      * @return map codec
      */
-    public static <K,V,M extends Map<K,V>> @NotNull Codec<M> mapCodec(@NotNull Codec<K> codecK, @NotNull Codec<V> codecV, @NotNull Supplier<? extends M> construct) {
+    public static <K,V,M extends Map<K,V>> Codec<M> mapCodec(@NotNull Codec<K> codecK, @NotNull Codec<V> codecV, @NotNull Supplier<? extends M> construct) {
         final String name = Map.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">";
         final Codec<Map.Entry<K,V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
         final Codec<Collection<Map.Entry<K,V>>> ENTRIES_CODEC = Codecs.collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
         
         return new Codec<>() {
             @Override
-            public @NotNull String name() {
+            public String name() {
                 return name;
             }
 

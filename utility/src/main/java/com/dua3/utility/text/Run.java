@@ -6,8 +6,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +50,7 @@ public class Run implements AttributedCharSequence {
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
@@ -107,7 +106,7 @@ public class Run implements AttributedCharSequence {
      *
      * @return style of this Run
      */
-    public @NotNull TextAttributes getAttributes() {
+    public TextAttributes getAttributes() {
         return attributes;
     }
 
@@ -127,22 +126,22 @@ public class Run implements AttributedCharSequence {
     }
 
     @Override
-    public @NotNull AttributedCharacter attributedCharAt(int index) {
+    public AttributedCharacter attributedCharAt(int index) {
         return AttributedCharacter.create(charAt(index), attributes);
     }
 
     @Override
-    public @NotNull Run subSequence(int start, int end) {
+    public Run subSequence(int start, int end) {
         return new Run(text, this.start + start, end - start, attributes);
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return text.subSequence(start, start + length).toString();
     }
 
     @SuppressWarnings("unchecked")
-    public @NotNull List<Style> getStyles() {
+    public List<Style> getStyles() {
         return (List<Style>) attributes.getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 
@@ -150,7 +149,7 @@ public class Run implements AttributedCharSequence {
      * Get the FontDef for this style.
      * @return the FontDef
      */
-    public @NotNull FontDef getFontDef() {
+    public FontDef getFontDef() {
         FontDef collected = new FontDef();
         for (Style style: getStyles()) {
             collected.merge(style.getFontDef());

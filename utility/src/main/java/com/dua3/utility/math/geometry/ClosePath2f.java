@@ -1,7 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Close path with line segment.
@@ -31,22 +31,22 @@ public class ClosePath2f extends Segment2f {
     }
 
     @Override
-    public @NotNull String name() {
+    public String name() {
         return NAME;
     }
 
     @Override
-    public @NotNull Vector2f start() {
+    public Vector2f start() {
         return path.vertex(p);
     }
 
     @Override
-    public @NotNull Vector2f end() {
+    public Vector2f end() {
         return path.vertex(q);
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return "ClosePath2f{" +
                vertexToString(p) + "," +
                vertexToString(q) +

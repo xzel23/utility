@@ -1,6 +1,6 @@
 package com.dua3.utility.text;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.regex.MatchResult;
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class RichTextMatcher implements MatchResult {
 
     private final RichText text;
-    private final @NotNull Matcher matcher;
+    private final Matcher matcher;
     
     RichTextMatcher(@NotNull Pattern pattern, @NotNull RichText text) {
         this.text = Objects.requireNonNull(text);
@@ -50,7 +50,7 @@ public class RichTextMatcher implements MatchResult {
      * @return the (possibly empty) subsequence matched by the previous match, in {@link RichText} form
      * @throws IllegalStateException if no match has yet been attempted, or if the previous match operation failed     
      */
-    public @NotNull RichText rgroup() {
+    public RichText rgroup() {
         return text.subSequence(start(), end());
     }
     
@@ -66,7 +66,7 @@ public class RichTextMatcher implements MatchResult {
      * @throws IllegalStateException if no match has yet been attempted, or if the previous match operation failed
      * @throws IndexOutOfBoundsException if there is no capturing group in the pattern with the given index
      */
-    public @NotNull RichText rgroup(int group) {
+    public RichText rgroup(int group) {
         return text.subSequence(start(group), end(group));
     }
     
@@ -92,32 +92,32 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#replaceFirst(String)}.
      */
-    public @NotNull RichText replaceFirst(@NotNull String replacement) {
+    public RichText replaceFirst(@NotNull String replacement) {
         return replace(replacement, 1);
     }
 
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
-    public @NotNull RichText replaceFirst(@NotNull RichText replacement) {
+    public RichText replaceFirst(@NotNull RichText replacement) {
         return replace(replacement, 1);
     }
 
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
-    public @NotNull RichText replaceAll(@NotNull String replacement) {
+    public RichText replaceAll(@NotNull String replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }
 
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
-    public @NotNull RichText replaceAll(@NotNull RichText replacement) {
+    public RichText replaceAll(@NotNull RichText replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }
 
-    private @NotNull RichText replace(@NotNull RichText replacement, int maxOccurences) {
+    private RichText replace(@NotNull RichText replacement, int maxOccurences) {
         RichTextBuilder rtb = new RichTextBuilder(text.length());
 
         int off, i;
@@ -129,7 +129,7 @@ public class RichTextMatcher implements MatchResult {
         return rtb.toRichText();
     }
 
-    private @NotNull RichText replace(@NotNull String replacement, int maxOccurences) {
+    private RichText replace(@NotNull String replacement, int maxOccurences) {
         RichTextBuilder rtb = new RichTextBuilder(text.length());
 
         int off, i;

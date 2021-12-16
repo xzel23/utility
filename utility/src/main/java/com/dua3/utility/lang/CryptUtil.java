@@ -6,7 +6,7 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.text.TextUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -36,7 +36,7 @@ public final class CryptUtil {
      * @param bits number of bits, must be a multiple of 8
      * @return the generated key
      */
-    public static byte @NotNull [] generateKey(int bits) {
+    public static byte[] generateKey(int bits) {
         int nBytes = bits / 8;
         LangUtil.check(nBytes * 8 == bits, "bit length of key must be a multiple of 8");
 
@@ -63,7 +63,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException
      *                                  if encryption fails
      */
-    public static @NotNull String encrypt(@NotNull String text, byte @NotNull [] key) throws GeneralSecurityException {
+    public static String encrypt(@NotNull String text, @NotNull byte[] key) throws GeneralSecurityException {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
         byte[] cipherMessage = encrypt(key, data);
         return TextUtil.base64Encode(cipherMessage);
@@ -85,7 +85,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException
      *                                  if decryption fails
      */
-    public static @NotNull String decrypt(@NotNull String cipherText, byte @NotNull [] key) throws GeneralSecurityException {
+    public static String decrypt(@NotNull String cipherText, @NotNull byte[] key) throws GeneralSecurityException {
         byte[] cipherMessage = TextUtil.base64Decode(cipherText);
         byte[] data = decrypt(key, cipherMessage);
         return new String(data, StandardCharsets.UTF_8);
@@ -106,7 +106,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException
      *                                  if encryption fails
      */
-    public static byte @NotNull [] encrypt(byte @NotNull [] key, byte @NotNull [] data) throws GeneralSecurityException {
+    public static byte[] encrypt(@NotNull byte[] key, @NotNull byte[] data) throws GeneralSecurityException {
         // use AES encryption
         Key secretKey = new SecretKeySpec(key, "AES");
 
@@ -142,7 +142,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException
      *                                  if encryption fails
      */
-    public static byte @NotNull [] decrypt(byte @NotNull [] key, byte @NotNull [] cipherMessage) throws GeneralSecurityException {
+    public static byte[] decrypt(@NotNull byte[] key, @NotNull byte[] cipherMessage) throws GeneralSecurityException {
         ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);
         int ivLength = byteBuffer.getInt();
         LangUtil.check(ivLength >= 12 && ivLength < 16, "invalid iv length");

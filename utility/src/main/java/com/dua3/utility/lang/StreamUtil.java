@@ -1,7 +1,7 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -26,7 +26,7 @@ public final class StreamUtil {
      * @param <B> second stream generic item type
      * @return stream cosisting of pairs od items created from items of either stream 
      */
-    public static <A, B> @NotNull Stream<Pair<A, B>> zip(@NotNull Stream<A> as, @NotNull Stream<B> bs) {
+    public static <A, B> Stream<Pair<A, B>> zip(@NotNull Stream<A> as, @NotNull Stream<B> bs) {
         Iterator<A> i1 = as.iterator();
         Iterator<B> i2 = bs.iterator();
         Iterable<Pair<A, B>> i = () -> new Iterator<>() {
@@ -34,7 +34,7 @@ public final class StreamUtil {
                 return i1.hasNext() && i2.hasNext();
             }
 
-            public @NotNull Pair<A, B> next() {
+            public Pair<A, B> next() {
                 return new Pair<>(i1.next(), i2.next());
             }
         };

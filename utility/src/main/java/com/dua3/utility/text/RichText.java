@@ -5,8 +5,7 @@
 
 package com.dua3.utility.text;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +42,7 @@ public final class RichText
      *
      * @return the empty text
      */
-    public static @NotNull RichText emptyText() {
+    public static RichText emptyText() {
         return EMPTY_TEXT;
     }
 
@@ -52,7 +51,7 @@ public final class RichText
      *
      * @return RichText.valueOf(" ")
      */
-    public static @NotNull RichText space() {
+    public static RichText space() {
         return SPACE;
     }
 
@@ -61,7 +60,7 @@ public final class RichText
      *
      * @return RichText.valueOf("\t")
      */
-    public static @NotNull RichText tab() {
+    public static RichText tab() {
         return TAB;
     }
 
@@ -70,7 +69,7 @@ public final class RichText
      *
      * @return RichText.valueOf("\n")
      */
-    public static @NotNull RichText newline() {
+    public static RichText newline() {
         return NEWLINE;
     }
 
@@ -79,7 +78,7 @@ public final class RichText
      * @param obj the object to convert to RichText
      * @return RichText.valueOf(String.valueOf(obj))
      */
-    public static @NotNull RichText valueOf(Object obj) {
+    public static RichText valueOf(Object obj) {
         return valueOf(String.valueOf(obj));
     }
 
@@ -89,7 +88,7 @@ public final class RichText
      * @param  s the String to convert
      * @return   RichText representation of s
      */
-    public static @NotNull RichText valueOf(@NotNull String s) {
+    public static RichText valueOf(@NotNull String s) {
         return new RichText(Collections.singletonList(new Run(s, 0, s.length(), TextAttributes.none())));
     }
 
@@ -99,7 +98,7 @@ public final class RichText
      * @param c the character
      * @return RichText containing only the character c
      */
-    public static @NotNull RichText valueOf(char c) {
+    public static RichText valueOf(char c) {
         return RichText.valueOf(Character.toString(c));
     }
 
@@ -109,7 +108,7 @@ public final class RichText
      * @param styles the styles to apply
      * @return RichText.valueOf(String.valueOf(obj))
      */
-    public static @NotNull RichText valueOf(Object obj, @NotNull Collection<Style> styles) {
+    public static RichText valueOf(Object obj, @NotNull Collection<Style> styles) {
         return valueOf(String.valueOf(obj), styles);
     }
 
@@ -135,7 +134,7 @@ public final class RichText
      * @param c the character
      * @return RichText containing only the character c
      */
-    public static @NotNull RichText valueOf(char c, @NotNull List<Style> styles) {
+    public static RichText valueOf(char c, @NotNull List<Style> styles) {
         return RichText.valueOf(Character.toString(c), styles);
     }
 
@@ -145,11 +144,11 @@ public final class RichText
     private final int start;
     private final int length;
 
-    private final int @NotNull [] runStart;
-    private final Run @NotNull [] run;
+    private final int[] runStart;
+    private final Run[] run;
     
     @SuppressWarnings("unchecked")
-    RichText(@NotNull Run @NotNull ... runs) {
+    RichText(@NotNull Run... runs) {
         this.run = Arrays.copyOf(runs, runs.length);
         this.runStart = new int[runs.length];
         
@@ -184,7 +183,7 @@ public final class RichText
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
@@ -244,7 +243,7 @@ public final class RichText
      * @param other the {@link CharSequence} to compare to
      * @return true, if the other
      */
-    public boolean textEquals(@Nullable CharSequence other) {
+    public boolean textEquals(CharSequence other) {
         if (other==null || other.length()!=this.length) {
             return false;
         }
@@ -302,7 +301,7 @@ public final class RichText
     }
 
     @Override
-    public @NotNull Iterator<Run> iterator() {
+    public Iterator<Run> iterator() {
         return Arrays.stream(run).iterator();
     }
 
@@ -320,12 +319,12 @@ public final class RichText
      *
      * @return stream of Runs
      */
-    public @NotNull Stream<Run> stream() {
+    public Stream<Run> stream() {
         return Arrays.stream(run);
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return text.subSequence(start, start+length).toString();
     }
 
@@ -336,7 +335,7 @@ public final class RichText
     }
 
     @Override
-    public @NotNull RichText toRichText() {
+    public RichText toRichText() {
         return this;
     }
 
@@ -344,7 +343,7 @@ public final class RichText
      * Get stream of lines contained in this instance.
      * @return stream of lines of this text
      */
-    public @NotNull Stream<RichText> lines() {
+    public Stream<RichText> lines() {
         return StreamSupport.stream(lineSpliterator(), false);
     }
 
@@ -352,7 +351,7 @@ public final class RichText
      * Get a {@link Spliterator<RichText>} over the lines of this instance.
      * @return spliterator
      */
-    private @NotNull Spliterator<RichText> lineSpliterator() {
+    private Spliterator<RichText> lineSpliterator() {
         return new Spliterator<>() {
             private int idx = 0;
 
@@ -370,7 +369,7 @@ public final class RichText
             }
 
             @Override
-            public @Nullable Spliterator<RichText> trySplit() {
+            public Spliterator<RichText> trySplit() {
                 return null;
             }
 
@@ -393,7 +392,7 @@ public final class RichText
      * @return RichText instance of the sub range
      */
     @Override
-    public @NotNull RichText subSequence(int begin, int end) {
+    public RichText subSequence(int begin, int end) {
         if (begin==0 && end==length) {
             return this;
         }
@@ -428,7 +427,7 @@ public final class RichText
      * @param beginIndex begin index (inclusive)
      * @return RichText instance of the sub range from beginIndex to the end
      */
-    public @NotNull RichText subSequence(int beginIndex) {
+    public RichText subSequence(int beginIndex) {
         return subSequence(beginIndex, length());
     }
     
@@ -438,7 +437,7 @@ public final class RichText
     }
 
     @Override
-    public @NotNull AttributedCharacter attributedCharAt(int pos) {
+    public AttributedCharacter attributedCharAt(int pos) {
         Run r = runAt(pos);
         return r.attributedCharAt(r.convertIndex(pos));
     }
@@ -446,7 +445,7 @@ public final class RichText
     /**
      * See {@link String#trim()}.
      */
-    public @NotNull RichText trim() {
+    public RichText trim() {
         int st = 0;
         int len = length;
         while ((st < len) && Character.isWhitespace(charAt(st))) {
@@ -464,7 +463,7 @@ public final class RichText
      * @param elements the elements to join
      * @return RichText containing the joined elements
      */
-    public static @NotNull RichText join(@NotNull RichText delimiter, @NotNull RichText @NotNull ... elements) {
+    public static RichText join(@NotNull RichText delimiter, @NotNull RichText... elements) {
         return join(delimiter, Arrays.asList(elements));
     }
 
@@ -474,7 +473,7 @@ public final class RichText
      * @param elements the elements to join
      * @return RichText containing the joined elements
      */
-    public static @NotNull RichText join(@NotNull RichText delimiter, @NotNull Iterable<RichText> elements) {
+    public static RichText join(@NotNull RichText delimiter, @NotNull Iterable<RichText> elements) {
         RichTextBuilder rtb = new RichTextBuilder();
 
         RichText d = RichText.emptyText();
@@ -492,7 +491,7 @@ public final class RichText
      * @param elements the elements to join
      * @return RichText containing the joined elements
      */
-    public static @NotNull RichText join(@NotNull CharSequence delimiter, @NotNull RichText @NotNull ... elements) {
+    public static RichText join(@NotNull CharSequence delimiter, @NotNull RichText... elements) {
         return join(RichText.valueOf(Objects.requireNonNull(delimiter)), elements);
     }
 
@@ -502,15 +501,15 @@ public final class RichText
      * @param elements the elements to join
      * @return RichText containing the joined elements
      */
-    public static @NotNull RichText join(@NotNull CharSequence delimiter, @NotNull Iterable<RichText> elements) {
+    public static RichText join(@NotNull CharSequence delimiter, @NotNull Iterable<RichText> elements) {
         return join(RichText.valueOf(Objects.requireNonNull(delimiter)), elements);
     }
 
-    public @NotNull RichText @NotNull [] split(@NotNull String regex) {
+    public RichText[] split(@NotNull String regex) {
         return split(regex, 0);
     }
 
-    public @NotNull RichText @NotNull [] split(@NotNull String regex, int limit) {
+    public RichText[] split(@NotNull String regex, int limit) {
         /* fastpath if the regex is a
          * (1) one-char String and this character is not one of the
          *     RegEx's meta characters ".$|()[{^?*+\\", or
@@ -579,7 +578,7 @@ public final class RichText
      * @return this text with the first instances of regex replaced by the replacement
      * @see String#replaceFirst(String, String) 
      */
-    public @NotNull RichText replaceFirst(@NotNull String regex, @NotNull RichText replacement) {
+    public RichText replaceFirst(@NotNull String regex, @NotNull RichText replacement) {
         return matcher(Pattern.compile(regex), this).replaceFirst(replacement);
     }
 
@@ -589,7 +588,7 @@ public final class RichText
      * @return this text with the first instances of regex replaced by the replacement
      * @see String#replaceFirst(String, String)
      */
-    public @NotNull RichText replaceFirst(@NotNull String regex, @NotNull String replacement) {
+    public RichText replaceFirst(@NotNull String regex, @NotNull String replacement) {
         return matcher(Pattern.compile(regex), this).replaceFirst(replacement);
     }
 
@@ -599,7 +598,7 @@ public final class RichText
      * @return this text with all instances of regex replaced by the replacement
      * @see String#replaceAll(String, String) 
      */
-    public @NotNull RichText replaceAll(@NotNull String regex, @NotNull RichText replacement) {
+    public RichText replaceAll(@NotNull String regex, @NotNull RichText replacement) {
         return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }
 
@@ -609,7 +608,7 @@ public final class RichText
      * @return this text with all instances of regex replaced by the replacement
      * @see String#replaceAll(String, String)
      */
-    public @NotNull RichText replaceAll(@NotNull String regex, @NotNull String replacement) {
+    public RichText replaceAll(@NotNull String regex, @NotNull String replacement) {
         return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }
 
@@ -638,7 +637,7 @@ public final class RichText
      * @param text the text
      * @return a matcher
      */
-    public static @NotNull RichTextMatcher matcher(@NotNull Pattern pattern, @NotNull RichText text) {
+    public static RichTextMatcher matcher(@NotNull Pattern pattern, @NotNull RichText text) {
         return new RichTextMatcher(pattern, text);
     }
 
@@ -684,7 +683,7 @@ public final class RichText
      * @param style the style
      * @return styled copy
      */
-    public @NotNull RichText apply(@NotNull Style style) {
+    public RichText apply(@NotNull Style style) {
         RichTextBuilder rtb = new RichTextBuilder(length);
         rtb.append(this);
         rtb.apply(style);
@@ -696,7 +695,7 @@ public final class RichText
      * @param pos the position (character index)
      * @return (unmodifiable) list of styles
      */
-    public @NotNull List<Style> stylesAt(int pos) {
+    public List<Style> stylesAt(int pos) {
         return Collections.unmodifiableList(runAt(pos).getStyles());
     }
 
@@ -705,7 +704,7 @@ public final class RichText
      * @param pos the position (character index)
      * @return the Run the character at the given position belongs to
      */
-    public @NotNull Run runAt(int pos) {
+    public Run runAt(int pos) {
         return run[runIndex(pos)];    
     }
 
@@ -713,7 +712,7 @@ public final class RichText
      * Get the runs of this instance.
      * @return unmodifiable list of runs
      */
-    public @NotNull List<Run> runs() {
+    public List<Run> runs() {
         return List.of(run);
     }
     
@@ -722,7 +721,7 @@ public final class RichText
      * @param delimiter the delimiter to use
      * @return the joiner
      */
-    public static @NotNull RichTextJoiner joiner(@NotNull RichText delimiter) {
+    public static RichTextJoiner joiner(@NotNull RichText delimiter) {
         return new RichTextJoiner(delimiter);
     }
 
@@ -733,7 +732,7 @@ public final class RichText
      * @param suffix the suffix
      * @return the joiner
      */
-    public static @NotNull RichTextJoiner joiner(@NotNull RichText delimiter,
+    public static RichTextJoiner joiner(@NotNull RichText delimiter,
                                                  @NotNull RichText prefix,
                                                  @NotNull RichText suffix) {
         return new RichTextJoiner(delimiter, prefix, suffix);
@@ -744,7 +743,7 @@ public final class RichText
      * @param delimiter the delimiter to use
      * @return the joiner
      */
-    public static @NotNull RichTextJoiner joiner(@NotNull String delimiter) {
+    public static RichTextJoiner joiner(@NotNull String delimiter) {
         return new RichTextJoiner(delimiter);
     }
 
@@ -755,7 +754,7 @@ public final class RichText
      * @param suffix the suffix
      * @return the joiner
      */
-    public static @NotNull RichTextJoiner joiner(@NotNull String delimiter,
+    public static RichTextJoiner joiner(@NotNull String delimiter,
                                                  @NotNull String prefix,
                                                  @NotNull String suffix) {
         return new RichTextJoiner(delimiter, prefix, suffix);

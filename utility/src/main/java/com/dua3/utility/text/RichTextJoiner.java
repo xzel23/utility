@@ -1,7 +1,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,10 +21,10 @@ import java.util.stream.Collector;
  */
 public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, AtomicInteger>, RichText> {
     
-    final @NotNull Consumer<RichTextBuilder> appendDelimiter;
-    final @NotNull Consumer<RichTextBuilder> appendPrefix;
-    final @NotNull Consumer<RichTextBuilder> appendSuffix;
-    final @NotNull IntUnaryOperator calculateSupplementaryLength;
+    final Consumer<RichTextBuilder> appendDelimiter;
+    final Consumer<RichTextBuilder> appendPrefix;
+    final Consumer<RichTextBuilder> appendSuffix;
+    final IntUnaryOperator calculateSupplementaryLength;
 
     public RichTextJoiner(@NotNull CharSequence delimiter,
                           @NotNull CharSequence prefix,
@@ -53,22 +53,22 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
     }
 
     @Override
-    public @NotNull Supplier<Pair<List<RichText>, AtomicInteger>> supplier() {
+    public Supplier<Pair<List<RichText>, AtomicInteger>> supplier() {
         return () -> Pair.of(new ArrayList<>(), new AtomicInteger());
     }
 
     @Override
-    public @NotNull BiConsumer<Pair<List<RichText>, AtomicInteger>, RichText> accumulator() {
+    public BiConsumer<Pair<List<RichText>, AtomicInteger>, RichText> accumulator() {
         return (accu, text) -> { accu.first().add(text); accu.second().addAndGet(text.length()); };
     }
 
     @Override
-    public @NotNull BinaryOperator<Pair<List<RichText>, AtomicInteger>> combiner() {
+    public BinaryOperator<Pair<List<RichText>, AtomicInteger>> combiner() {
         return (a, b) -> { a.first().addAll(b.first()); a.second().addAndGet(b.second().get()); return a; };
     }
 
     @Override
-    public @NotNull Function<Pair<List<RichText>, AtomicInteger>, RichText> finisher() {
+    public Function<Pair<List<RichText>, AtomicInteger>, RichText> finisher() {
         return accu -> {
             int length = accu.second().get();
 
@@ -101,7 +101,7 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
     }
 
     @Override
-    public @NotNull Set<Characteristics> characteristics() {
+    public Set<Characteristics> characteristics() {
         return Collections.emptySet();
     }
 }

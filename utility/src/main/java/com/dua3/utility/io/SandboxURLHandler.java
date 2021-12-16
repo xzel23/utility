@@ -6,7 +6,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.logging.LogUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,7 +26,7 @@ public class SandboxURLHandler extends URLStreamHandler {
     }
 
     @Override
-    protected @NotNull URLConnection openConnection(@NotNull URL url) throws IOException {
+    protected URLConnection openConnection(@NotNull URL url) throws IOException {
         LOG.info(LogUtil.format("opening connection to local version of: %s", url));
         String stripped = url.toExternalForm().replaceFirst(".*://", "");
         Path path = localFiles.resolve(stripped);

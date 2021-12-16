@@ -5,8 +5,7 @@ import com.dua3.utility.logging.Category;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.math.MathUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -48,17 +47,17 @@ import java.util.function.Function;
 public class SwingLogPane extends JPanel {
 
     private final LogBuffer buffer;
-    private final @NotNull JTable table;
-    private final @NotNull JTextArea details;
-    private final @NotNull LogTableModel model;
-    private final @NotNull JScrollPane scrollPaneTable;
+    private final JTable table;
+    private final JTextArea details;
+    private final LogTableModel model;
+    private final JScrollPane scrollPaneTable;
     private final Function<LogEntry, Color> colorize;
-    private final @NotNull JSplitPane splitPane;
+    private final JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<LogEntry, String> format = LogEntry::format;
     private double dividerLocation = 0.5;
 
-    private static @NotNull Color defaultColorize(@NotNull LogEntry entry) {
+    private static Color defaultColorize(@NotNull LogEntry entry) {
         return switch (entry.category()) {
             case FATAL -> Color.DARKRED;
             case SEVERE -> Color.RED;
@@ -78,7 +77,7 @@ public class SwingLogPane extends JPanel {
             buffer.addLogBufferListener(this);
         }
         
-        private @Nullable List<LogEntry> data = null;
+        private List<LogEntry> data = null;
         private int removed = 0;
         private int added = 0;
         
@@ -135,7 +134,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public @NotNull LogEntry getValueAt(int rowIndex, int columnIndex) {
+        public LogEntry getValueAt(int rowIndex, int columnIndex) {
             synchronized (this) {
                 return data == null ? buffer.get(rowIndex) : data.get(rowIndex);
             }
@@ -147,7 +146,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public @NotNull Class<?> getColumnClass(int columnIndex) {
+        public Class<?> getColumnClass(int columnIndex) {
             return LogEntry.Field.class;
         }
 
@@ -248,7 +247,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public @NotNull Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             if (isSelected) {

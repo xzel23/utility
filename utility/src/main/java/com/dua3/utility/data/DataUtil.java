@@ -1,8 +1,7 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -43,8 +42,8 @@ public final class DataUtil {
      * Exception thrown when data conversion fails.
      */
     public static class ConversionException extends IllegalArgumentException {
-        private final @NotNull String sourceClassName;
-        private final @NotNull String targetClassName;
+        private final String sourceClassName;
+        private final String targetClassName;
 
         ConversionException(@NotNull Class<?> sourceClass, @NotNull Class<?> targetClass, String message) {
             super(message);
@@ -59,7 +58,7 @@ public final class DataUtil {
         }
 
         @Override
-        public @NotNull String getMessage() {
+        public String getMessage() {
             return String.format(Locale.ROOT,"%s%n[trying to convert %s -> %s]", super.getMessage(), sourceClassName, targetClassName);
         }
     }
@@ -85,7 +84,7 @@ public final class DataUtil {
      * @return
      *  the object converted to the target class
      */
-    public static <T> @Nullable T convert(@Nullable Object value, @NotNull Class<T> targetClass) {
+    public static <T> T convert(Object value, @NotNull Class<T> targetClass) {
         return convert(value, targetClass, false);
     }
 
@@ -116,7 +115,7 @@ public final class DataUtil {
      *  the object converted to the target class
      */
     @SuppressWarnings("unchecked") // types are checked with isAssignable()
-    public static<T> @Nullable T convert(@Nullable Object value, @NotNull Class<T> targetClass, boolean useConstructor) {
+    public static<T> T convert(Object value, @NotNull Class<T> targetClass, boolean useConstructor) {
         // null -> null
         if (value==null) {
             return null;
@@ -253,7 +252,7 @@ public final class DataUtil {
      * @return
      *  array containing the converted elements
      */
-    public static <T,U> U @NotNull [] convertToArray(@NotNull Collection<T> data, @NotNull Class<? extends U> targetClass) {
+    public static <T,U> U [] convertToArray(@NotNull Collection<T> data, @NotNull Class<? extends U> targetClass) {
         return convertToArray(data, targetClass, false);
     }
 
@@ -277,7 +276,7 @@ public final class DataUtil {
      *  array containing the converted elements
      */
     @SuppressWarnings("unchecked")
-    public static <T,U> U @NotNull [] convertToArray(@NotNull Collection<T> data, @NotNull Class<U> targetClass, boolean useConstructor) {
+    public static <T,U> U [] convertToArray(@NotNull Collection<T> data, @NotNull Class<U> targetClass, boolean useConstructor) {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
                 .toArray( n -> (U[]) Array.newInstance(targetClass, n));
@@ -300,7 +299,7 @@ public final class DataUtil {
      * @return
      *  list containing the converted elements
      */
-    public static <T,U> @NotNull List<U> convert(@NotNull Collection<T> data, Function<? super T, ? extends U> mapper) {
+    public static <T,U> List<U> convert(@NotNull Collection<T> data, Function<? super T, ? extends U> mapper) {
         return data.stream().map(mapper).collect(Collectors.toList());
     }
 
@@ -325,7 +324,7 @@ public final class DataUtil {
      * @return
      *  list containing the converted elements
      */
-    public static <T,U> @NotNull List<U> convert(@NotNull Collection<T> data, @NotNull Class<U> targetClass) {
+    public static <T,U> List<U> convert(@NotNull Collection<T> data, @NotNull Class<U> targetClass) {
         return convert(data, targetClass, false);
     }
 
@@ -379,7 +378,7 @@ public final class DataUtil {
      * @return
      *  collection containing the converted elements
      */
-    public static <T,U,C extends Collection<U>> @NotNull C convertCollection(@NotNull Collection<T> data, @NotNull Class<U> targetClass, @NotNull Supplier<C> supplier) {
+    public static <T,U,C extends Collection<U>> C convertCollection(@NotNull Collection<T> data, @NotNull Class<U> targetClass, @NotNull Supplier<C> supplier) {
         return convertCollection(data, targetClass, supplier, false);
     }
 
@@ -406,7 +405,7 @@ public final class DataUtil {
      * @return
      *  collection containing the converted elements
      */
-    public static <T,U,C extends Collection<U>> @NotNull C convertCollection(@NotNull Collection<T> data, @NotNull Class<U> targetClass, @NotNull Supplier<C> supplier, boolean useConstructor) {
+    public static <T,U,C extends Collection<U>> C convertCollection(@NotNull Collection<T> data, @NotNull Class<U> targetClass, @NotNull Supplier<C> supplier, boolean useConstructor) {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toCollection(supplier));
@@ -423,7 +422,7 @@ public final class DataUtil {
      * @return
      *  iterator instance that skips items not matching the predicate
      */
-    public static <T> @NotNull Iterator<T> filter(@NotNull Iterator<T> iterator, @NotNull Predicate<T> predicate) {
+    public static <T> Iterator<T> filter(@NotNull Iterator<T> iterator, @NotNull Predicate<T> predicate) {
         return new FilterIterator<>(iterator, predicate);
     }
 
@@ -440,7 +439,7 @@ public final class DataUtil {
      * @return
      *  iterator instance that converts items of type {@code T} to {@code U}
      */
-    public static <T,U> @NotNull Iterator<U> map(@NotNull Iterator<T> iterator, @NotNull Function<? super T, ? extends U> mapping) {
+    public static <T,U> Iterator<U> map(@NotNull Iterator<T> iterator, @NotNull Function<? super T, ? extends U> mapping) {
         return new MappingIterator<>(iterator, mapping);
     }
 
@@ -453,7 +452,7 @@ public final class DataUtil {
      * @return
      *  list of elements
      */
-    public static <T>  @NotNull List<T> collect(@NotNull Iterable<? extends T> iterable) {
+    public static <T> List<T> collect(@NotNull Iterable<? extends T> iterable) {
         return collect(iterable.iterator());
     }
 
@@ -466,7 +465,7 @@ public final class DataUtil {
      * @return
      *  list of elements
      */
-    public static <T>  @NotNull List<T> collect(@NotNull Iterator<? extends T> iterator) {
+    public static <T> List<T> collect(@NotNull Iterator<? extends T> iterator) {
         List<T> result = new ArrayList<>();
         iterator.forEachRemaining(result::add);
         return result;
@@ -482,7 +481,7 @@ public final class DataUtil {
      *  array of elements
      */
     @SuppressWarnings("unchecked")
-    public static <T>  T @NotNull [] collectArray(@NotNull Iterable<T> iterable) {
+    public static <T> T[] collectArray(@NotNull Iterable<T> iterable) {
         return (T[]) collect(iterable.iterator()).toArray();
     }
 
@@ -496,7 +495,7 @@ public final class DataUtil {
      *  array of elements
      */
     @SuppressWarnings("unchecked")
-    public static <T> T @NotNull [] collectArray(@NotNull Iterator<T> iterator) {
+    public static <T> T[] collectArray(@NotNull Iterator<T> iterator) {
         return (T[]) collect(iterator).toArray();
     }
 
@@ -508,7 +507,7 @@ public final class DataUtil {
      * @param <V> type of value
      * @return a Function instance returning the map entries
      */
-    public static <K, V> @NotNull Function<K, V> asFunction(@NotNull Map<K, V> map, @Nullable V defaultValue) {
+    public static <K, V> Function<K, V> asFunction(@NotNull Map<K, V> map, V defaultValue) {
         return k -> map.getOrDefault(k, defaultValue);
     }
 
@@ -522,7 +521,7 @@ public final class DataUtil {
      * @param <V> the value type
      * @return a new map that contains the changes as pairs (value in a, value in b) 
      */
-    public static <U,V> @NotNull Map<U,Pair<V,V>> changes(@NotNull Map<? extends U, ? extends V> a, @NotNull Map<? extends U, ? extends V> b) {
+    public static <U,V> Map<U,Pair<V,V>> changes(@NotNull Map<? extends U, ? extends V> a, @NotNull Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
         
@@ -547,7 +546,7 @@ public final class DataUtil {
      * @param <V> the value type
      * @return a new map that contains the changed mappings (k -> mapped value in b) 
      */
-    public static <U,V> @NotNull Map<U,V> diff(@NotNull Map<? extends U, ? extends V> a, @NotNull Map<? extends U, ? extends V> b) {
+    public static <U,V> Map<U,V> diff(@NotNull Map<? extends U, ? extends V> a, @NotNull Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
         

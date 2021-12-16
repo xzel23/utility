@@ -1,6 +1,6 @@
 package com.dua3.utility.math.geometry;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Beziér curve Path segment.
@@ -27,7 +27,7 @@ public final class BezierCurve2f extends AbstractCurve2f {
     }
 
     @Override
-    public @NotNull String name() {
+    public String name() {
         return NAME;
     }
 }

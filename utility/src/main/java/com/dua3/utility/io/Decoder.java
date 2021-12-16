@@ -1,7 +1,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.DataInputStream;
 import java.io.IOException;

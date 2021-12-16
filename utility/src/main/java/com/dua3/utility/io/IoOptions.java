@@ -3,7 +3,7 @@ package com.dua3.utility.io;
 import com.dua3.utility.options.ChoiceOption;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.SimpleOption;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +23,7 @@ public final class IoOptions {
     private IoOptions() {
     }
 
-    public static @NotNull ChoiceOption<Charset> charset() {
+    public static ChoiceOption<Charset> charset() {
         return ChoiceOption.create(
                 Charset::forName, 
                 Object::toString, 
@@ -33,7 +33,7 @@ public final class IoOptions {
                 .defaultValue(StandardCharsets.UTF_8);
     }
 
-    public static @NotNull ChoiceOption<Locale> locale() {
+    public static ChoiceOption<Locale> locale() {
         return ChoiceOption.create(
                 Locale::forLanguageTag, 
                 Object::toString, 
@@ -43,21 +43,21 @@ public final class IoOptions {
                 .defaultValue(Locale::getDefault);
     }
 
-    public static @NotNull SimpleOption<Path> input() {
+    public static SimpleOption<Path> input() {
         return SimpleOption.create(
                 Paths::get,
                 "-i", "--input"
         ).description("set input");
     }
 
-    public static @NotNull SimpleOption<Path> output() {
+    public static SimpleOption<Path> output() {
         return SimpleOption.create(
                 Paths::get,
                 "-o", "--output"
         ).description("set output");
     }
 
-    public static @NotNull ChoiceOption<Character> textDelimiter() {
+    public static ChoiceOption<Character> textDelimiter() {
         return ChoiceOption.create(
                 (String s) -> s.charAt(0),
                 Object::toString,
@@ -67,7 +67,7 @@ public final class IoOptions {
                 .defaultValue('"');
     }
 
-    public static @NotNull ChoiceOption<Character> fieldSeparator() {
+    public static ChoiceOption<Character> fieldSeparator() {
         return ChoiceOption.create(
                 (String s) -> s.charAt(0),
                 Object::toString,
@@ -77,14 +77,14 @@ public final class IoOptions {
                 .defaultValue(',');
     }
 
-    public static @NotNull ChoiceOption<PredefinedDateFormat> dateFormat() {
+    public static ChoiceOption<PredefinedDateFormat> dateFormat() {
         return ChoiceOption.create(
                 PredefinedDateFormat.class, 
                 "--date-format")
                 .defaultValue(PredefinedDateFormat.ISO_DATE);
     }
 
-    public static @NotNull ChoiceOption<PredefinedDateTimeFormat> dateTimeFormat() {
+    public static ChoiceOption<PredefinedDateTimeFormat> dateTimeFormat() {
         return ChoiceOption.create(
                 PredefinedDateTimeFormat.class, 
                 "--date-time-format")
@@ -93,27 +93,27 @@ public final class IoOptions {
 
     // get values from arguments
     
-    public static @NotNull Charset getCharset(@NotNull Arguments cmd) {
+    public static Charset getCharset(@NotNull Arguments cmd) {
         return cmd.getOrThrow(charset());
     }
     
-    public static @NotNull Locale getLocale(@NotNull Arguments cmd) {
+    public static Locale getLocale(@NotNull Arguments cmd) {
         return cmd.getOrThrow(locale());
     }
     
-    public static @NotNull PredefinedDateFormat getDateFormat(@NotNull Arguments cmd) {
+    public static PredefinedDateFormat getDateFormat(@NotNull Arguments cmd) {
         return cmd.getOrThrow(dateFormat());
     }
 
-    public static @NotNull PredefinedDateTimeFormat getDateTimeFormat(@NotNull Arguments cmd) {
+    public static PredefinedDateTimeFormat getDateTimeFormat(@NotNull Arguments cmd) {
         return cmd.getOrThrow(dateTimeFormat());
     }
     
-    public static @NotNull Character getTextDelimiter(@NotNull Arguments cmd) {
+    public static Character getTextDelimiter(@NotNull Arguments cmd) {
         return cmd.getOrThrow(textDelimiter());
     }
 
-    public static @NotNull Character getFieldSeparator(@NotNull Arguments cmd) {
+    public static Character getFieldSeparator(@NotNull Arguments cmd) {
         return cmd.getOrThrow(fieldSeparator());
     }
 

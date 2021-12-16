@@ -1,6 +1,6 @@
 package com.dua3.utility.lang;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -28,7 +28,7 @@ public record NamedFunction<T, R>(@NotNull String name, @NotNull Function<T, R> 
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return name;
     }
 }

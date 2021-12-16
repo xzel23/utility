@@ -1,6 +1,6 @@
 package com.dua3.utility.logging;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -30,7 +30,7 @@ public interface LogEntry {
      * @param f the field
      * @return value of field
      */
-    default @NotNull Object get(Field f) {
+    default Object get(Field f) {
         return switch (f) {
             case CATEGORY -> category();
             case LEVEL -> level();
@@ -83,7 +83,7 @@ public interface LogEntry {
      * Get the date and time of this log entry.
      * @return date and time of the entry
      */
-    default @NotNull LocalDateTime time() {
+    default LocalDateTime time() {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis()), ZoneId.systemDefault());
     }
 
@@ -92,7 +92,7 @@ public interface LogEntry {
      * @param entry the log entry
      * @return the string
      */
-    static @NotNull String format(@NotNull LogEntry entry) {
+    static String format(@NotNull LogEntry entry) {
         try {
             StringBuilder sb = new StringBuilder(80);
 

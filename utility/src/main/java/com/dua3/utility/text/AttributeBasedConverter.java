@@ -7,7 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
      * @param text the text to be converted
      * @return instance of the implementation class
      */
-    protected abstract @NotNull AttributeBasedConverterImpl<T> createConverter(@NotNull RichText text);
+    protected abstract AttributeBasedConverterImpl<T> createConverter(@NotNull RichText text);
 
     /**
      * Convert {@link RichText} instance to the target class.
@@ -44,7 +44,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         /** The current font used when appending text. */
         private Map<String,Object> currentAttributes;
         /** Store the initial attributes so that they can be restored at the end. */
-        private final @NotNull Map<String,Object> initialAttributes;
+        private final Map<String,Object> initialAttributes;
 
         /**
          * Create a new instance.
@@ -75,7 +75,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param run the {@link Run}
          * @return Map containing all attributes set by this run's styles
          */
-        protected static @NotNull Map<String, Object> collectAttributes(@NotNull Run run) {
+        protected static Map<String, Object> collectAttributes(@NotNull Run run) {
             Map<String,Object> styleAttributes = new HashMap<>();
             run.getStyles().forEach(style -> copyAttributes(style, styleAttributes));
             return styleAttributes;
@@ -138,7 +138,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param text the text to append
          * @return this instance
          */
-        protected @NotNull AttributeBasedConverterImpl<T> append(@NotNull RichText text) {
+        protected AttributeBasedConverterImpl<T> append(@NotNull RichText text) {
             // apply all runs of the text
             for (Run run : text) {
                 setStyle(run);

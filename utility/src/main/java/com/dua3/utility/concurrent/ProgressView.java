@@ -1,7 +1,7 @@
 package com.dua3.utility.concurrent;
 
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -18,8 +18,8 @@ public class ProgressView<T> implements ProgressTracker<T> {
     }
     
     private static class TaskRecord {
-        private final @NotNull ProgressIndicator progressIndicator;
-        @NotNull State state = State.SCHEDULED;
+        private final ProgressIndicator progressIndicator;
+        State state = State.SCHEDULED;
 
         TaskRecord(@NotNull ProgressIndicator progressIndicator) {
             this.progressIndicator = Objects.requireNonNull(progressIndicator);
@@ -47,13 +47,13 @@ public class ProgressView<T> implements ProgressTracker<T> {
     }
     
     @SafeVarargs
-    public final void addTasks(T @NotNull ... tasks) {
+    public final void addTasks(@NotNull T ... tasks) {
         for (T task: tasks) {
             getTaskRecord(task);
         }
     }
 
-    private @NotNull TaskRecord getTaskRecord(@NotNull T task) {
+    private TaskRecord getTaskRecord(@NotNull T task) {
         return tasks.computeIfAbsent(task, t -> {
             ProgressIndicator pi = createProgessIndicator.apply(t);
             return new TaskRecord(pi);

@@ -1,7 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,8 +9,8 @@ import java.util.List;
 
 class Path2fImpl {
     
-    private final @NotNull List<Vector2f> vertices;
-    private final @NotNull List<Segment2f> segments;
+    private final List<Vector2f> vertices;
+    private final List<Segment2f> segments;
     
     Path2fImpl() {
         vertices = new ArrayList<>();
@@ -26,15 +26,15 @@ class Path2fImpl {
         return vertices.size();
     }
     
-    @NotNull List<Vector2f> vertices() {
+    List<Vector2f> vertices() {
         return Collections.unmodifiableList(vertices);
     }
 
-    @NotNull List<Segment2f> segments() {
+    List<Segment2f> segments() {
         return Collections.unmodifiableList(segments);
     }
 
-    @NotNull Vector2f vertex(int idx) {
+    Vector2f vertex(int idx) {
         return vertices.get(idx);
     }
 

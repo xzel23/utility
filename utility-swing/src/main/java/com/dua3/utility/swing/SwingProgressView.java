@@ -3,7 +3,7 @@ package com.dua3.utility.swing;
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.concurrent.ProgressView;
 import com.dua3.utility.math.MathUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -18,12 +18,12 @@ import java.awt.Label;
  */
 public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     
-    private final @NotNull ProgressView<T> imp;
+    private final ProgressView<T> imp;
     private int rowCount = 0;
 
     private static class ProgressBarIndicator implements ProgressView.ProgressIndicator {
 
-        final @NotNull JProgressBar pb;
+        final JProgressBar pb;
 
         ProgressBarIndicator() {
             this.pb = new JProgressBar();    
@@ -78,7 +78,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         setLayout(new GridBagLayout());
     }
 
-    private <T> ProgressView.@NotNull ProgressIndicator createProgressIndicator(@NotNull T t) {
+    private <T> ProgressView.ProgressIndicator createProgressIndicator(@NotNull T t) {
         ProgressBarIndicator pi = new ProgressBarIndicator();
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_END;

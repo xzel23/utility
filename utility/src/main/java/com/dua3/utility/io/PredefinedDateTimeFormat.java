@@ -1,6 +1,6 @@
 package com.dua3.utility.io;
 
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -13,15 +13,15 @@ public enum PredefinedDateTimeFormat {
     LOCALE_LONG("long (locale dependent)", FormatStyle.LONG),
     ISO_DATE_TIME("ISO 8601 (2000-12-31T10:15:30)", DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-    private static @NotNull DateTimeFormatter formatFromPattern(@NotNull String pattern) {
+    private static DateTimeFormatter formatFromPattern(@NotNull String pattern) {
         return DateTimeFormatter.ofPattern(pattern);
     }
 
     private final String name;
 
-    private final @NotNull Function<? super Locale, DateTimeFormatter> dateTimeFormatterFactory;
-    private final @NotNull Function<? super Locale, DateTimeFormatter> dateFormatterFactory;
-    private final @NotNull Function<? super Locale, DateTimeFormatter> timeFormatterFactory;
+    private final Function<? super Locale, DateTimeFormatter> dateTimeFormatterFactory;
+    private final Function<? super Locale, DateTimeFormatter> dateFormatterFactory;
+    private final Function<? super Locale, DateTimeFormatter> timeFormatterFactory;
 
     PredefinedDateTimeFormat(@NotNull String name, @NotNull DateTimeFormatter formatter) {
         this.name = name;
@@ -37,20 +37,20 @@ public enum PredefinedDateTimeFormat {
         this.timeFormatterFactory = locale -> DateTimeFormatter.ofLocalizedTime(style).withLocale(locale);
     }
 
-    public @NotNull DateTimeFormatter getDateTimeFormatter(@NotNull Locale locale) {
+    public DateTimeFormatter getDateTimeFormatter(@NotNull Locale locale) {
         return dateTimeFormatterFactory.apply(locale);
     }
     
-    public @NotNull DateTimeFormatter getDateFormatter(@NotNull Locale locale) {
+    public DateTimeFormatter getDateFormatter(@NotNull Locale locale) {
         return dateFormatterFactory.apply(locale);
     }
 
-    public @NotNull DateTimeFormatter getTimeFormatter(@NotNull Locale locale) {
+    public DateTimeFormatter getTimeFormatter(@NotNull Locale locale) {
         return timeFormatterFactory.apply(locale);
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return name;
     }
 }

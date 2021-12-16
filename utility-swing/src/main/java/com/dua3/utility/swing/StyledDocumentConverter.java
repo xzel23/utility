@@ -10,7 +10,7 @@ import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.TextAttributes;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -38,7 +38,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param options the options to use
      * @return new converter instance
      */
-    public static @NotNull StyledDocumentConverter create(StyledDocumentConversionOption... options)  {
+    public static StyledDocumentConverter create(StyledDocumentConversionOption... options)  {
         return create(Arrays.asList(options));
     }
 
@@ -47,7 +47,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param options the options to use
      * @return new converter instance
      */
-    public static @NotNull StyledDocumentConverter create(@NotNull Collection<StyledDocumentConversionOption> options) {
+    public static StyledDocumentConverter create(@NotNull Collection<StyledDocumentConversionOption> options) {
         StyledDocumentConverter instance = new StyledDocumentConverter();
         options.forEach(o -> o.apply(instance));
         return instance;
@@ -69,7 +69,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param attributes attributes for new StyledDocuments
      * @return the option to use
      */
-    public static @NotNull StyledDocumentConversionOption addStyledAttributes(@NotNull Collection<Pair<Object, Object>> attributes) {
+    public static StyledDocumentConversionOption addStyledAttributes(@NotNull Collection<Pair<Object, Object>> attributes) {
         return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.first(), p.second())));
     }
 
@@ -78,7 +78,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param attributes attributes for new StyledDocuments
      * @return the option to use
      */
-    public static @NotNull StyledDocumentConversionOption addStyledAttributes(AttributeSet attributes) {
+    public static StyledDocumentConversionOption addStyledAttributes(AttributeSet attributes) {
         return new StyledDocumentConversionOption(c -> c.defaultStyledAttributes.addAttributes(attributes));
     }
 
@@ -87,7 +87,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param attributes the default Attributes
      * @return the option to use
      */
-    public static @NotNull StyledDocumentConversionOption defaultAttributes(Map<String, Object> attributes) {
+    public static StyledDocumentConversionOption defaultAttributes(Map<String, Object> attributes) {
         return new StyledDocumentConversionOption(c -> c.defaultAttributes = Objects.requireNonNull(attributes));
     }
 
@@ -96,7 +96,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param font the default font
      * @return the option to use
      */
-    public static @NotNull StyledDocumentConversionOption defaultFont(Font font) {
+    public static StyledDocumentConversionOption defaultFont(Font font) {
         return new StyledDocumentConversionOption(c -> c.defaultFont = Objects.requireNonNull(font) );
     }
 
@@ -105,14 +105,14 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param scale the font scaling factor
      * @return the option to use
      */
-    public static @NotNull StyledDocumentConversionOption scale(double scale) {
+    public static StyledDocumentConversionOption scale(double scale) {
         return new StyledDocumentConversionOption(c -> c.setScale(scale));
     }
 
     // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
     private final Map<Object, Function<Font, Object>> dictionary = createDictionary();
 
-    private @NotNull Map<Object, Function<Font, Object>> createDictionary() {
+    private Map<Object, Function<Font, Object>> createDictionary() {
         Map<Object,Function<Font,Object>> m = new HashMap<>();
         m.put(StyleConstants.Family, Font::getFamily);
         m.put(StyleConstants.Size, f -> (int) Math.round(scale*f.getSizeInPoints()));
@@ -125,7 +125,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     }
 
     @Override
-    protected @NotNull AttributeBasedConverterImpl<StyledDocument> createConverter(@NotNull RichText text) {
+    protected AttributeBasedConverterImpl<StyledDocument> createConverter(@NotNull RichText text) {
         return new StyledDocumentConverterImpl();
     }
 
@@ -139,7 +139,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
     class StyledDocumentConverterImpl extends AttributeBasedConverterImpl<StyledDocument> {
 
-        private final @NotNull StyledDocument buffer;
+        private final StyledDocument buffer;
         private AttributeSet currentAttributes;
         private Font currentFont;
         
@@ -151,7 +151,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         }
         
         @Override
-        protected @NotNull StyledDocument get() {
+        protected StyledDocument get() {
             return buffer;
         }
 
@@ -183,7 +183,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
          * @param font the font
          * @return the AttributeSet
          */
-        private @NotNull AttributeSet createAttributeSet(Font font) {
+        private AttributeSet createAttributeSet(Font font) {
             SimpleAttributeSet attrs = new SimpleAttributeSet();
             attrs.addAttributes(defaultStyledAttributes);
             dictionary.forEach( (key,getter) -> attrs.addAttribute(key,getter.apply(font)));

@@ -6,7 +6,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
-import org.jetbrains.annotations.NotNull;
+import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -76,7 +76,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the view cannot be created
      */
-    public static @NotNull FileSystemView create(@NotNull Path root, @NotNull Flags... flags) throws IOException {
+    public static FileSystemView create(@NotNull Path root, @NotNull Flags... flags) throws IOException {
         Objects.requireNonNull(root);
 
         List<Flags> flagList = Arrays.asList(flags);
@@ -115,7 +115,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the file does not exist or an I/O error occurs
      */
-    public static @NotNull FileSystemView forArchive(@NotNull Path root, @NotNull Flags... flags) throws IOException {
+    public static FileSystemView forArchive(@NotNull Path root, @NotNull Flags... flags) throws IOException {
         List<Flags> flagList = Arrays.asList(flags);
 
         Map<String, String> env = new HashMap<>();
@@ -137,7 +137,7 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IOException
      *                     if the view cannot be created
      */
-    public static @NotNull FileSystemView forClass(@NotNull Class<?> clazz) throws IOException {
+    public static FileSystemView forClass(@NotNull Class<?> clazz) throws IOException {
         try {
             String classFile = clazz.getSimpleName() + ".class";
             URI uri = clazz.getResource(classFile).toURI();
@@ -174,17 +174,17 @@ public final class FileSystemView implements AutoCloseable {
      *                     if the directory denoted by {@code path} does not exist
      *                     or an I/O error occurs
      */
-    public static @NotNull FileSystemView forDirectory(@NotNull Path root) throws IOException {
+    public static FileSystemView forDirectory(@NotNull Path root) throws IOException {
         return new FileSystemView(root, () -> {
             /* NOOP */ }, root.toString());
     }
 
-    private static @NotNull FileSystemView createFileSystemView(@NotNull FileSystem fs, @NotNull String path) {
+    private static FileSystemView createFileSystemView(@NotNull FileSystem fs, @NotNull String path) {
         Path root = fs.getPath(path);
         return new FileSystemView(root, fs::close, "[" + fs + "]" + path);
     }
 
-    private final @NotNull Path root;
+    private final Path root;
     private final String name;
     private final CleanUp cleanup;
 
@@ -200,7 +200,7 @@ public final class FileSystemView implements AutoCloseable {
     }
 
     @Override
-    public @NotNull String toString() {
+    public String toString() {
         return name;
     }
 
@@ -209,7 +209,7 @@ public final class FileSystemView implements AutoCloseable {
      *
      * @return the root path
      */
-    public @NotNull Path getRoot() {
+    public Path getRoot() {
         return root;
     }
 
@@ -221,7 +221,7 @@ public final class FileSystemView implements AutoCloseable {
      * @return      the resolved path
      * @see         java.nio.file.Path#resolve(String)
      */
-    public @NotNull Path resolve(@NotNull String path) {
+    public Path resolve(@NotNull String path) {
         Path resolvedPath = root.resolve(path).normalize();
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;
@@ -240,7 +240,7 @@ public final class FileSystemView implements AutoCloseable {
      * @return      the resolved path
      * @see         java.nio.file.Path#resolve(Path)
      */
-    @NotNull Path resolve(@NotNull Path path) {
+    Path resolve(@NotNull Path path) {
         Path resolvedPath = root.resolve(path).normalize();
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;
