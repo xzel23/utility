@@ -85,6 +85,14 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 
     public static final BuildInfo BUILD_INFO = BuildInfo.create(Main.class, "/build.properties");
 
+## cabe
+
+Starting with version 10, utility uses [cabe](https://github.com/xzel23/cabe). Cabe is a library that is used only at compile time and does not introduce any dependencies for downstream projects. It contains source-only anntotations that are not present in the compiled class files of the processed sources.
+
+When you run your code with assertions disabled, virtually no overhead is introduced, as assertions are removed on the JVM level. 
+
+When running your code with exceptions enabled, parameters are checked for invalid null values and an AssertionError will be generated when null is passed for a `@NotNull` annotated parameter. The assertion message contains the name of the parameter. 
+
 ## Changes
 
 ### 10 (to be released)
@@ -108,9 +116,9 @@ Add this in your code to read the `build.properties` file and create a `BuildInf
 - improve output and performance of XmlUtil.prettyPrint()
 - fix MathUtil.gcd for negative arguments
 - many fixes and smaller improvements, added many Javadoc comments, improve test coverage
-- added JetBrains @NontNull/annotations
 - XmlUtil defaultInstance() is now unsynchronised and should be faster
 - added LangUtil.orElse() and LangUtil.orElseGet() for Optional-like functionality without creating an Optional instance first
+- added [cabe](https://github.com/xzel23/cabe) @NotNull annotations to parameters
 
 **The following functionality has been removed because it is available in JDK 17**:
 - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()

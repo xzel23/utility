@@ -79,4 +79,19 @@
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
     </Match>
 
+    <Match>
+        <Class name="com.dua3.utility.options.OptionException$ParameterConversionException" />
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.text.Font" />
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.text.RichText" />
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+    </Match>
+
 </FindBugsFilter>

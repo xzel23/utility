@@ -26,11 +26,11 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.adarshr.test-logger'
-//    apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
+    apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '10-BETA16-SNAPSHOT'
+    version = '10-BETA16'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
