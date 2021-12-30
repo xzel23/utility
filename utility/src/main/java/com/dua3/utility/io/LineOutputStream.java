@@ -16,6 +16,7 @@ public class LineOutputStream extends OutputStream {
     public static final int INITIAL_BUFFER_SIZE = 128;
     public static final int MAX_BUFFER_SIZE = 1024;
     
+    private final Object lock = new Object();
     private byte[] buf;
     private int count;
     private final Consumer<String> processor;
@@ -27,7 +28,7 @@ public class LineOutputStream extends OutputStream {
     }
 
     private void flushLine() {
-        synchronized (this) {
+        synchronized (lock) {
             String text = new String(buf, 0, count, StandardCharsets.UTF_8);
             processor.accept(text);
 
@@ -40,7 +41,7 @@ public class LineOutputStream extends OutputStream {
 
     @Override
     public void write(int b) {
-        synchronized (this) {
+        synchronized (lock) {
             ensureCapacity(count + 1);
             buf[count++] = (byte) b;
 

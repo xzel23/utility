@@ -12,8 +12,6 @@
  */
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.Serial;
 import java.net.URI;

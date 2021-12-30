@@ -9,6 +9,7 @@ class LogUtilTest {
         return s.split(" ");    
     }
     
+    @SuppressWarnings("ZeroLengthArrayAllocation")
     @Test
     void testHandleLoggingCmdArgs() {
         // passing no arguments

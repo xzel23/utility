@@ -1,7 +1,5 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.cabe.annotations.NotNull;
-
 /**
  * An immutable 2-dimensional dimension using float coordinates.
  */

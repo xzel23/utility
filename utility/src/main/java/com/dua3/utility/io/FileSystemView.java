@@ -175,8 +175,7 @@ public final class FileSystemView implements AutoCloseable {
      *                     or an I/O error occurs
      */
     public static FileSystemView forDirectory(@NotNull Path root) throws IOException {
-        return new FileSystemView(root, () -> {
-            /* NOOP */ }, root.toString());
+        return new FileSystemView(root, () -> { /* NOOP */ }, root.toString());
     }
 
     private static FileSystemView createFileSystemView(@NotNull FileSystem fs, @NotNull String path) {

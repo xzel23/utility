@@ -85,47 +85,41 @@ public class SwingLogPane extends JPanel {
             return data!=null;
         }
 
-        public void lock() {
-            synchronized (this) {
-                assert !isLocked() : "internal error: locked";
+        public synchronized void lock() {
+            assert !isLocked() : "internal error: locked";
 
-                synchronized (buffer) {
-                    data = new ArrayList<>(buffer.entries());
-                    removed = 0;
-                    added = 0;
-                }
+            synchronized (buffer) {
+                data = new ArrayList<>(buffer.entries());
+                removed = 0;
+                added = 0;
             }
         }
 
-        public void unlock() {
-            synchronized (this) {
-                assert isLocked() : "internal error: should be locked";
-                assert data != null : "internal error, data should have been set in lock()";
+        public synchronized void unlock() {
+            assert isLocked() : "internal error: should be locked";
+            assert data != null : "internal error, data should have been set in lock()";
 
-                int sz = data.size();
-                data = null;
-                removed = Math.min(removed, sz);
+            int sz = data.size();
+            data = null;
+            removed = Math.min(removed, sz);
 
-                if (removed > 0) {
-                    fireTableRowsDeleted(0, removed);
-                    sz -= removed;
-                    removed = 0;
-                }
+            if (removed > 0) {
+                fireTableRowsDeleted(0, removed);
+                sz -= removed;
+                removed = 0;
+            }
 
-                added = Math.min(added, sz);
+            added = Math.min(added, sz);
 
-                if (added > 0) {
-                    fireTableRowsInserted(sz - added, sz - 1);
-                    added = 0;
-                }
+            if (added > 0) {
+                fireTableRowsInserted(sz - added, sz - 1);
+                added = 0;
             }
         }
 
         @Override
-        public int getRowCount() {
-            synchronized (this) {
-                return data == null ? buffer.size() : data.size();
-            }
+        public synchronized int getRowCount() {
+            return data == null ? buffer.size() : data.size();
         }
         
         @Override
@@ -134,10 +128,8 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public LogEntry getValueAt(int rowIndex, int columnIndex) {
-            synchronized (this) {
-                return data == null ? buffer.get(rowIndex) : data.get(rowIndex);
-            }
+        public synchronized LogEntry getValueAt(int rowIndex, int columnIndex) {
+            return data == null ? buffer.get(rowIndex) : data.get(rowIndex);
         }
 
         @Override
@@ -151,55 +143,49 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public void entry(LogEntry entry, boolean replaced) {
-            synchronized (this) {
-                if (isLocked()) {
+        public synchronized void entry(LogEntry entry, boolean replaced) {
+            if (isLocked()) {
+                if (replaced) {
+                    removed++;
+                }
+                added++;
+            } else {
+                synchronized (buffer) {
                     if (replaced) {
-                        removed++;
+                        fireTableRowsDeleted(0, removed);
                     }
-                    added++;
-                } else {
-                    synchronized (buffer) {
-                        if (replaced) {
-                            fireTableRowsDeleted(0, removed);
-                        }
-                        int sz = buffer.size();
-                        fireTableRowsInserted(sz - 1, sz - 1);
-                    }
+                    int sz = buffer.size();
+                    fireTableRowsInserted(sz - 1, sz - 1);
                 }
             }
         }
 
         @Override
-        public void entries(@NotNull Collection<LogEntry> entries, int replaced) {
-            synchronized (this) {
-                if (isLocked()) {
+        public synchronized void entries(@NotNull Collection<LogEntry> entries, int replaced) {
+            if (isLocked()) {
+                if (replaced > 0) {
+                    removed += replaced;
+                }
+                added += entries.size();
+            } else {
+                synchronized (buffer) {
                     if (replaced > 0) {
-                        removed += replaced;
+                        fireTableRowsDeleted(0, replaced);
                     }
-                    added += entries.size();
-                } else {
-                    synchronized (buffer) {
-                        if (replaced > 0) {
-                            fireTableRowsDeleted(0, replaced);
-                        }
-                        int sz = buffer.size();
-                        fireTableRowsInserted(sz - entries.size(), sz - 1);
-                    }
+                    int sz = buffer.size();
+                    fireTableRowsInserted(sz - entries.size(), sz - 1);
                 }
             }
         }
 
         @Override
-        public void clear() {
-            synchronized (this) {
-                if (isLocked()) {
-                    assert data != null : "internal error, data should have been set in lock()";
-                    removed = data.size();
-                    added = 0;
-                } else {
-                    fireTableDataChanged();
-                }
+        public synchronized void clear() {
+            if (isLocked()) {
+                assert data != null : "internal error, data should have been set in lock()";
+                removed = data.size();
+                added = 0;
+            } else {
+                fireTableDataChanged();
             }
         }
 
@@ -329,9 +315,7 @@ public class SwingLogPane extends JPanel {
             } else {
                 StringBuilder sb = new StringBuilder(1024);
                 synchronized (buffer) {
-                    int first = lsm.getMinSelectionIndex();
-                    int last = lsm.getMaxSelectionIndex();
-                    for (int idx = first; idx <= last; idx++) {
+                    for (int idx:lsm.getSelectedIndices()) {
                         if (lsm.isSelectedIndex(idx)) {
                             int idxModel = tableRowSorter.convertRowIndexToModel(idx);
                             LogEntry entry = model.getValueAt(idxModel, 0);
@@ -467,7 +451,9 @@ public class SwingLogPane extends JPanel {
      * @param format the formatting function
      */
     public void setLogFormatter(Function<LogEntry, String> format) {
-        this.format = Objects.requireNonNull(format);
+        synchronized (buffer) {
+            this.format = Objects.requireNonNull(format);
+        }
     }
     
     /**

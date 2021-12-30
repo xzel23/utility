@@ -1,7 +1,5 @@
 package com.dua3.utility.logging;
 
-import com.dua3.cabe.annotations.NotNull;
-
 /**
  * A base class for wrappers around log records of different logging frameworks.
  * @param <T> underlying type of log records  

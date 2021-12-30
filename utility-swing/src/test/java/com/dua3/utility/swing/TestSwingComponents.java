@@ -31,10 +31,11 @@ public class TestSwingComponents extends JFrame {
     public static final int SLEEP_MILLIS = 10;
     private volatile boolean done = false;
 
+    @SuppressWarnings("UnsecureRandomNumberGeneration") // used only to create a random sequence of log levels in tests
     private final Random random = new Random();
     private final AtomicInteger n = new AtomicInteger();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         JUL_LOGGER.setLevel(Level.ALL);
         JUL_LOGGER.info("starting up");
 

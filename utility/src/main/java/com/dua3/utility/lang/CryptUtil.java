@@ -24,6 +24,7 @@ import java.security.spec.AlgorithmParameterSpec;
  * Code is based on an article by Patrick Favre-Bulle.
  * https://proandroiddev.com/security-best-practices-symmetric-encryption-with-aes-in-java-7616beaaade9
  */
+@SuppressWarnings("HardcodedFileSeparator")
 public final class CryptUtil {
 
     private static final SecureRandom RANDOM = new SecureRandom();

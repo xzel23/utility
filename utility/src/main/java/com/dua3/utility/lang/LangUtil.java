@@ -446,6 +446,7 @@ public final class LangUtil {
      * @param <T> the result type
      * @return Optional holding the mapped value or Optional.empt()
      */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(@NotNull OptionalInt opt, @NotNull IntFunction<T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));    
     }
@@ -457,6 +458,7 @@ public final class LangUtil {
      * @param <T> the result type
      * @return Optional holding the mapped value or Optional.empt()
      */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(@NotNull OptionalLong opt, @NotNull LongFunction<T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));    
     }
@@ -468,6 +470,7 @@ public final class LangUtil {
      * @param <T> the result type
      * @return Optional holding the mapped value or Optional.empt()
      */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(@NotNull OptionalDouble opt, @NotNull DoubleFunction<T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));    
     }

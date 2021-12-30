@@ -254,13 +254,15 @@ public final class TextUtil {
      * @return font size in pt
      */
     public static float decodeFontSize(@NotNull String s) {
-        float factor = 1.0f;
+        final float factor;
         if (s.endsWith("pt")) {
             s = s.substring(0, s.length() - 2);
             factor = 1.0f;
         } else if (s.endsWith("px")) {
             s = s.substring(0, s.length() - 2);
             factor = 96.0f / 72.0f;
+        } else {
+            factor = 1.0f;
         }
         return factor * Float.parseFloat(s);
     }

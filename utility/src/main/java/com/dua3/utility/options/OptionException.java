@@ -22,6 +22,7 @@ public class OptionException extends IllegalStateException {
          */
         public ParameterConversionException(@NotNull Option<?> option, String parameter, Exception e) {
             super("invalid value passed to "+option.name()+": "+parameter, e);
+            assert option != null;
             this.option = option;
             this.parameter = parameter;
         }
