@@ -56,6 +56,7 @@ public class RingBuffer<E> implements Collection<E> {
      * @return
      *             true 
      */
+    @Override
     public boolean add(E item) {
         if (entries < capacity()) {
             data[index(entries++)] = item;
@@ -84,6 +85,7 @@ public class RingBuffer<E> implements Collection<E> {
      * @return
      *             true, if the buffer changed as a result of this operation
      */
+    @Override
     public boolean addAll(@NotNull Collection<? extends E> items) {
         if (items.isEmpty()) {
             return false;
@@ -123,6 +125,7 @@ public class RingBuffer<E> implements Collection<E> {
     /**
      * Remove all elements.
      */
+    @Override
     public void clear() {
         start = entries = 0;
     }
@@ -145,6 +148,7 @@ public class RingBuffer<E> implements Collection<E> {
      *
      * @return true if this buffer is empty
      */
+    @Override
     public boolean isEmpty() {
         return entries == 0;
     }
@@ -243,6 +247,7 @@ public class RingBuffer<E> implements Collection<E> {
      *
      * @return number of elements
      */
+    @Override
     public int size() {
         return entries;
     }

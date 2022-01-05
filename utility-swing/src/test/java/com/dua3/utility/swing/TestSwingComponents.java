@@ -123,7 +123,7 @@ public class TestSwingComponents extends JFrame {
                 if (random.nextBoolean()) {
                     String msg = String.format("Message %d.", nr);
                     Level level = levels[random.nextInt(levels.length)];
-                    if (level==Level.SEVERE) {
+                    if (level.equals(Level.SEVERE)) {
                         JUL_LOGGER.log(level, msg, generateThrowable());
                     } else {
                         JUL_LOGGER.log(level, msg);

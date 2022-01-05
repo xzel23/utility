@@ -9,13 +9,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.3-SNAPSHOT'
+        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.3'
     }
 }
 
 plugins {
     id 'com.adarshr.test-logger' version '3.0.0' apply false
     id 'com.github.spotbugs' version '4.7.9' apply false
+    id 'org.kordamp.gradle.errorprone' version '0.47.0'
 }
 
 subprojects {
@@ -26,11 +27,12 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.adarshr.test-logger'
+    apply plugin: 'org.kordamp.gradle.errorprone'
     apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '10-BETA17-SNAPSHOT'
+    version = '10-BETA16b'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
@@ -46,7 +48,7 @@ subprojects {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         java_version = '17'
         junit_version = '5.8.2'
-        cabe_version = '0.2-SNAPSHOT'
+        cabe_version = '0.3'
     }
 
     sourceCompatibility = java_version
@@ -197,6 +199,13 @@ subprojects {
         reports {
             xml.enabled false
             html.enabled true
+        }
+    }
+
+    config {
+        quality {
+            errorprone.setEnabled(true)
+            errorprone.setErrorProneVersion('2.10.0')
         }
     }
 

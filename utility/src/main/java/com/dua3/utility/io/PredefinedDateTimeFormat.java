@@ -13,10 +13,6 @@ public enum PredefinedDateTimeFormat {
     LOCALE_LONG("long (locale dependent)", FormatStyle.LONG),
     ISO_DATE_TIME("ISO 8601 (2000-12-31T10:15:30)", DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-    private static DateTimeFormatter formatFromPattern(@NotNull String pattern) {
-        return DateTimeFormatter.ofPattern(pattern);
-    }
-
     private final String name;
 
     private final Function<? super Locale, DateTimeFormatter> dateTimeFormatterFactory;

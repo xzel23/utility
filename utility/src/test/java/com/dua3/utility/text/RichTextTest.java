@@ -33,19 +33,15 @@ public class RichTextTest {
     @Test
     public void testEqauls() {
         // tests all sorts if equals comparisons
-        // the calls to hashCode() are there to test the hashCode-shortcut evaluation in RichText.equals()
         String s = "hello world!";
         RichText a = RichText.valueOf(s);
         RichText b = RichText.valueOf(s);
         
         RichText c = RichText.valueOf(s);
-        c.hashCode();
         RichText d = RichText.valueOf(s);
-        d.hashCode();
                 
         RichText e = RichText.valueOf("Hello World!");
         RichText f = RichText.valueOf("Hello World!");
-        f.hashCode();
         
         assertEquals(s, a.toString());
         assertEquals(a, a);

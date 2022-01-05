@@ -166,6 +166,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
         return new java.awt.Font(family, style, Math.round(size));
     }
 
+    @Override
     public Font loadFontAs(@NotNull InputStream in, @NotNull Font font) throws IOException {
         try (in) {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);

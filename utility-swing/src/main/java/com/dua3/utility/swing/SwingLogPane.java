@@ -191,22 +191,6 @@ public class SwingLogPane extends JPanel {
 
     }
 
-    private void onAddEntries(Collection<LogEntry> entries, int removed) {
-        synchronized (model) {
-            // handle scrolling
-            SwingUtilities.invokeLater( () -> {
-                JScrollBar scroll = scrollPaneTable.getVerticalScrollBar();
-                if (table.getSelectedRowCount()==0 && scroll.getValue() >= scroll.getMaximum() - scroll.getVisibleAmount() - table.getRowHeight()) {
-                    // scroll to last row
-                    boolean selectionEmpty = table.getSelectedRow()<0;
-                    if (selectionEmpty) {
-                        scrollRowIntoView(model.getRowCount());
-                    }
-                }
-            });
-        }
-    }
-    
     private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
         private final LogEntry.Field f;
 
@@ -214,6 +198,7 @@ public class SwingLogPane extends JPanel {
             this.f = f;
         }
 
+        @Override
         public void setValue(Object value) {
             java.awt.Color color; 
             
@@ -436,10 +421,6 @@ public class SwingLogPane extends JPanel {
             selectionModel.clearSelection();
             scrollRowIntoView(rows);
         }
-    }
-
-    private int getTopRow() {
-        return table.rowAtPoint(scrollPaneTable.getViewport().getViewPosition());
     }
 
     private void scrollRowIntoView(int row) {

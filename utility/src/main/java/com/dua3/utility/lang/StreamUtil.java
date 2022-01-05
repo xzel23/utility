@@ -30,10 +30,12 @@ public final class StreamUtil {
         Iterator<A> i1 = as.iterator();
         Iterator<B> i2 = bs.iterator();
         Iterable<Pair<A, B>> i = () -> new Iterator<>() {
+            @Override
             public boolean hasNext() {
                 return i1.hasNext() && i2.hasNext();
             }
 
+            @Override
             public Pair<A, B> next() {
                 return new Pair<>(i1.next(), i2.next());
             }

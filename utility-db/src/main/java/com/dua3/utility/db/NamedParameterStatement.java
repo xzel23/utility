@@ -33,11 +33,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -98,7 +98,7 @@ public class NamedParameterStatement implements AutoCloseable {
      */
     public static class ParameterInfo {
         final String name;
-        final List<Integer> indexes = new LinkedList<>();
+        final List<Integer> indexes = new ArrayList<>();
         JDBCType type;
 
         ParameterInfo(String name) {
@@ -338,14 +338,6 @@ public class NamedParameterStatement implements AutoCloseable {
         void accept(int idx, T value, int arg) throws SQLException;
     }
     
-    private <T> void setWithIntArg(@NotNull SQLType type, String name, T value, int arg, @NotNull SetParameterInt<T> setter) throws SQLException {
-        if (value==null) {
-            setNull(name, type);
-        } else {
-            setNonNullWithIntArg(name, value, arg, setter);
-        }
-    }
-
     private <T> void setNonNullWithIntArg(String name, T value, int arg, @NotNull SetParameterInt<T> setter) throws SQLException {
         Objects.requireNonNull(value);
         for (int idx : getIndexes(name)) {
@@ -356,14 +348,6 @@ public class NamedParameterStatement implements AutoCloseable {
     @FunctionalInterface
     private interface SetParameterLong<T> {
         void accept(int idx, T value, long arg) throws SQLException;
-    }
-
-    private <T> void setWithLongArg(@NotNull SQLType type, String name, T value, long arg, @NotNull SetParameterLong<T> setter) throws SQLException {
-        if (value==null) {
-            setNull(name, type);
-        } else {
-            setNonNullWithLongArg(name, value, arg, setter);
-        }
     }
 
     private <T> void setNonNullWithLongArg(String name, T value, long arg, @NotNull SetParameterLong<T> setter) throws SQLException {

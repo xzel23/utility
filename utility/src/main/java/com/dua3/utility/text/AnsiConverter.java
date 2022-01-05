@@ -1,14 +1,14 @@
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.NotNull;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
-import com.dua3.cabe.annotations.NotNull;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -110,7 +110,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         @Override
         protected void apply(@NotNull Map<String, Pair<Object, Object>> changedAttributes) {
             Map<String, Object> attributes = new HashMap<>();
-            Deque<String> tags = new LinkedList<>();
+            Deque<String> tags = new ArrayDeque<>();
             changedAttributes.forEach( (attribute, values) -> {
                 attributes.put(attribute, values.second());
                 BiFunction<Object, Object, String> mapping = mappings.get(attribute);

@@ -5,15 +5,15 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.cabe.annotations.NotNull;
+import com.dua3.utility.lang.LangUtil;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,7 +33,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer;
     private final SortedMap<Integer, Map<String, Object>> parts;
-    private final Deque<AttributeChange> openedAttributes = new LinkedList<>();
+    private final Deque<AttributeChange> openedAttributes = new ArrayDeque<>();
 
     private record AttributeChange(@NotNull String name, Object previousValue, Object value) {}
     

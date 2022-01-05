@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,7 +33,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return new instance
      */
     public static Arguments of(@NotNull Entry<?>... args) {
-        return new Arguments(new LinkedList<>(Arrays.asList(args)), Collections.emptyList());
+        return new Arguments(new ArrayDeque<>(Arrays.asList(args)), Collections.emptyList());
     }
 
     /**
@@ -69,7 +68,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
 
         Entry(@NotNull Option<T> option) {
             this.option = Objects.requireNonNull(option);
-            this.parms = new LinkedList<>();
+            this.parms = new ArrayList<>();
         }
 
         void addParameter(@NotNull String s) {

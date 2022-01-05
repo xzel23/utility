@@ -28,7 +28,7 @@ import java.util.stream.StreamSupport;
  * {@link Run}.
  */
 public final class RichText
-        implements Iterable<Run>, AttributedCharSequence, ToRichText, Comparable<CharSequence> {
+        implements Iterable<Run>, AttributedCharSequence, ToRichText {
 
     static final String ATTRIBUTE_NAME_STYLE_LIST = "__styles";
 
@@ -262,16 +262,16 @@ public final class RichText
         return true;
     }
 
-    @Override
-    public int compareTo(@NotNull CharSequence other) {
+    public int textCompare(@NotNull CharSequence other) {
         for (int idx=0; idx<length; idx++) {
             char a = charAt(idx);
             char b = other.charAt(idx);
+            attributedCharAt(idx);
             if (a != b) {
                 return a - b;
             }
         }
-
+        
         return Integer.compare(length, other.length());
     }
 
@@ -296,6 +296,7 @@ public final class RichText
      *
      * @return true, if the text is empty.
      */
+    @Override
     public boolean isEmpty() {
         return length()==0;
     }
@@ -310,6 +311,7 @@ public final class RichText
      *
      * @return the text length
      */
+    @Override
     public int length() {
         return length;
     }

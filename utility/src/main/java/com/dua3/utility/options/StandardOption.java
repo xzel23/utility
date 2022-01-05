@@ -90,6 +90,7 @@ public final class StandardOption<T> extends Option<T> {
      * @param max the maximum arity
      * @return the option
      */
+    @Override
     public StandardOption<T> arity(int min, int max) {
         super.arity(min, max);
         return this;

@@ -35,7 +35,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @return BuildInfo instance
      */
     public static BuildInfo create(@NotNull String version, @NotNull String zonedDateTimeBuild) {
-        Pattern pattern = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?(-(?<suffix>\\w+))?");
+        Pattern pattern = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?(?<suffix>\\w+)?");
         Matcher m = pattern.matcher(version);
         
         if (!m.matches()) {

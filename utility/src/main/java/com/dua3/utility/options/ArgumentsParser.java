@@ -1,10 +1,12 @@
 package com.dua3.utility.options;
 
+import com.dua3.cabe.annotations.NotNull;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -12,7 +14,6 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -168,8 +169,8 @@ public class ArgumentsParser {
     public Arguments parse(@NotNull String... args) {
         List<String> argList = Arrays.asList(args);
 
-        Queue<Arguments.Entry<?>> parsedOptions = new LinkedList<>();
-        List<String> positionalArgs = new LinkedList<>();
+        Queue<Arguments.Entry<?>> parsedOptions = new ArrayDeque<>();
+        List<String> positionalArgs = new ArrayList<>();
         Arguments.Entry<?> currentEntry = null;
 
         boolean parsingPositional = false;

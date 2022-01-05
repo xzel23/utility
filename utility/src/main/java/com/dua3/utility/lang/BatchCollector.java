@@ -1,12 +1,12 @@
 package com.dua3.utility.lang;
 
-import com.dua3.utility.data.Pair;
 import com.dua3.cabe.annotations.NotNull;
+import com.dua3.utility.data.Pair;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -50,7 +50,7 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
 
     @Override
     public Supplier<Deque<Pair<K, List<T>>>> supplier() {
-        return LinkedList::new;
+        return ArrayDeque::new;
     }
 
     @Override

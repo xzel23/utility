@@ -37,6 +37,7 @@ public interface AttributedCharSequence extends CharSequence {
         class AttributedCharIterator implements Iterator<AttributedCharacter> {
             int cur = 0;
 
+            @Override
             public boolean hasNext() {
                 return cur < length();
             }

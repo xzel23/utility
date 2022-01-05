@@ -24,6 +24,7 @@ public class Stopwatch {
          * standard format, same as {@link #HOURS_MINUTES_SECONDS_MILLIS}.
          */
         STANDARD {
+            @Override
             public String format(@NotNull Duration d) {
                 boolean negative = d.isNegative();
 
@@ -58,6 +59,7 @@ public class Stopwatch {
          * m:ss.sss.
          */
         MINUTES_SECONDS_MILLIS {
+            @Override
             public String format(@NotNull Duration d) {
                 boolean negative = d.isNegative();
 
@@ -81,6 +83,7 @@ public class Stopwatch {
          * Seconds formatted as floating point value.
          */
         SECONDS_MILLIS {
+            @Override
             public String format(@NotNull Duration d) {
                 boolean negative = d.isNegative();
 
@@ -102,6 +105,7 @@ public class Stopwatch {
          * Milliseconds formatted as floating point value.
          */
         MILLIS {
+            @Override
             public String format(@NotNull Duration d) {
                 boolean negative = d.isNegative();
 

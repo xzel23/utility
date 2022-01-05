@@ -79,7 +79,8 @@ public abstract class CsvIo implements AutoCloseable {
 
     protected boolean isQuoteNeeded(@NotNull String text) {
         // also quote if unusual characters are present
-        for (char c : text.toCharArray()) {
+        for (int i=0; i<text.length(); i++) {
+            char c = text.charAt(i);
             if (c==separator || c == delimiter || !Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
                 return true;
             }

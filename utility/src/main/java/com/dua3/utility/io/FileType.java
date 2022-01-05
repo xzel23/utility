@@ -15,17 +15,17 @@
  */
 package com.dua3.utility.io;
 
+import com.dua3.cabe.annotations.NotNull;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -119,7 +119,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the list of file types supporting the requested mode
      */
     public static List<FileType<?>> getFileTypes(@NotNull OpenMode mode) {
-        List<FileType<?>> list = new LinkedList<>(types);
+        List<FileType<?>> list = new ArrayList<>(types);
         list.removeIf(t -> (t.mode.n & mode.n) != mode.n);
         return list;
     }
