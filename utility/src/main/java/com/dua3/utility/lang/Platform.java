@@ -33,7 +33,7 @@ public enum Platform {
             platform = Platform.UNKNOWN;
         }
         
-        LOG.info(() -> "platform identified as: "+platform);
+        LOG.fine(() -> "platform identified as: "+platform);
         
         return platform;
     }

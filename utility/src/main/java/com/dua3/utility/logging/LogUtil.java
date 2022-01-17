@@ -144,7 +144,7 @@ public final class LogUtil {
         Handler fh = new FileHandler(pattern);
         fh.setFormatter(new SimpleFormatter());
         getRootLogger().addHandler (fh);
-        LOG.info("log path set to "+pattern);
+        LOG.fine("log path set to "+pattern);
     }
 
     /**
@@ -173,9 +173,9 @@ public final class LogUtil {
         
         String loggerName = logger.getName();
         if (loggerName.isEmpty()) {
-            LOG.info(() -> "root logger: log level set to '%s'".formatted(level));
+            LOG.fine(() -> "root logger: log level set to '%s'".formatted(level));
         } else {
-            LOG.info(() -> "logger '%s': log level set to '%s'".formatted(loggerName, level));
+            LOG.fine(() -> "logger '%s': log level set to '%s'".formatted(loggerName, level));
         }
     }
 
