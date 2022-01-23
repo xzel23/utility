@@ -150,12 +150,6 @@ When running your code with exceptions enabled, parameters are checked for inval
 - changes to FontUtil interface; rename FontUtil.getTextBounds() to getTextDimension(); loadFont replaced by loadFonts()
 - introduce math.geometry package and contained classes
 
-### 8.2.2
-
-- remove bintray support
-- publish builds to GitLab Packages (private access)
-- TODO: publish to Mavencentral
-
 ### 8.2.1
 
  - fix: FontDef.merge() only worked if color was set
