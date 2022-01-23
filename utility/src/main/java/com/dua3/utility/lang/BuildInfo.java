@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 /**
  * Build information record.
  */
-public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patchLevel, String suffix) {
+public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patchLevel, String separator, String suffix) {
 
     private static final Logger LOG = Logger.getLogger(BuildInfo.class.getName());
     
@@ -35,7 +35,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @return BuildInfo instance
      */
     public static BuildInfo create(@NotNull String version, @NotNull String zonedDateTimeBuild) {
-        Pattern pattern = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?((?<suffix>-?\\w+))?");
+        Pattern pattern = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?((?<separator>[-_\\.]))?((?<suffix>\\w+))?");
         Matcher m = pattern.matcher(version);
         
         if (!m.matches()) {
@@ -45,11 +45,12 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
         int major = Integer.parseInt(m.group("major"));
         int minor = group(m, "minor").map(Integer::parseInt).orElse(0);
         int patch = group(m, "patch").map(Integer::parseInt).orElse(0);
+        String separator = group(m, "separator").orElse("");
         String suffix = group(m, "suffix").orElse("");
 
         ZonedDateTime buildTime = ZonedDateTime.parse(zonedDateTimeBuild);
 
-        BuildInfo buildInfo = new BuildInfo(buildTime, major, minor, patch, suffix);
+        BuildInfo buildInfo = new BuildInfo(buildTime, major, minor, patch, separator, suffix);
         
         LOG.fine(() -> "BuildInfo: "+buildInfo);
         
@@ -98,7 +99,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @return the version string
      */
     public String version() {
-        return "%d.%d.%d%s".formatted(major, minor, patchLevel, !suffix.isEmpty() ? "-"+suffix : "");
+        return "%d.%d.%d%s%s".formatted(major, minor, patchLevel, separator, suffix);
     }
 
     @Override

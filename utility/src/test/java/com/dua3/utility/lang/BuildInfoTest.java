@@ -54,7 +54,8 @@ class BuildInfoTest {
         assertEquals(1, bi.major());
         assertEquals(2, bi.minor());
         assertEquals(3, bi.patchLevel());
-        assertEquals("a", bi.suffix());
+        assertEquals("-", bi.separator());
+        assertEquals("SNAPSHOT", bi.suffix());
         assertEquals("1.2.3-SNAPSHOT", bi.version());
     }
     
