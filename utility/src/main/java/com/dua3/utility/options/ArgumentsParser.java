@@ -154,7 +154,7 @@ public class ArgumentsParser {
      * Add option to parser. 
      * @param option the option to add
      */
-    private <O extends Option<?>> O addOption(@NotNull O option) {
+    public <O extends Option<?>> O addOption(@NotNull O option) {
         for (String name : option.names()) {
             LangUtil.check(options.putIfAbsent(name, option) == null, "duplicate option name: %s", name);
         }
