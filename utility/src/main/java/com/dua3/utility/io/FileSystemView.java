@@ -86,7 +86,7 @@ public final class FileSystemView implements AutoCloseable {
         boolean exists = Files.exists(root);
         LangUtil.check(exists || createIfMissing, "Path does not exist: %s", root);
 
-        boolean hasZipExtension = IOUtil.getExtension(root).equalsIgnoreCase("zip");
+        boolean hasZipExtension = IoUtil.getExtension(root).equalsIgnoreCase("zip");
         boolean isDirectory = Files.isDirectory(root) || !exists && !hasZipExtension;
         boolean isZip = !isDirectory && hasZipExtension;
 

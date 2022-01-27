@@ -81,7 +81,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     public static Optional<FileType<?>> forUri(@NotNull URI uri) {
-        return forExtension(IOUtil.getExtension(uri));
+        return forExtension(IoUtil.getExtension(uri));
     }
 
     public static <T> Optional<FileType<T>> forUri(@NotNull URI uri, @NotNull Class<T> cls) {
@@ -197,7 +197,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return true, if the filename matches this type's file extension
      */
     public boolean matches(@NotNull String filename) {
-        String ext1 = IOUtil.getExtension(filename);
+        String ext1 = IoUtil.getExtension(filename);
         return extensions.stream().anyMatch(ext2 -> ext2.equals(ext1));
     }
 

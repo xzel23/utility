@@ -6,7 +6,7 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.cabe.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -709,7 +709,7 @@ public final class LangUtil {
      * @throws IOException on error
      */
     public static Properties loadProperties(@NotNull URI uri) throws IOException {
-        try (InputStream in = IOUtil.openInputStream(uri)) {
+        try (InputStream in = IoUtil.openInputStream(uri)) {
             return loadProperties(in);
         }
     }
@@ -820,8 +820,8 @@ public final class LangUtil {
      * @throws MissingResourceException if no resource was found
      */
     public static URL getResourceURL(@NotNull Class<?> cls, @NotNull String name, @NotNull Locale locale) {
-        String basename = IOUtil.stripExtension(name);
-        String extension = IOUtil.getExtension(name);
+        String basename = IoUtil.stripExtension(name);
+        String extension = IoUtil.getExtension(name);
 
         // build the candidate list
         List<String> candidates = new ArrayList<>();

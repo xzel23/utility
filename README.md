@@ -119,6 +119,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 - XmlUtil defaultInstance() is now unsynchronised and should be faster
 - added LangUtil.orElse() and LangUtil.orElseGet() for Optional-like functionality without creating an Optional instance first
 - added [cabe](https://github.com/xzel23/cabe) @NotNull annotations to parameters
+- rename `IOUtil`, `IOOptions` to `IoUtil`, `IoOptions`
 
 **The following functionality has been removed because it is available in JDK 17**:
 - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()

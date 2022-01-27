@@ -75,7 +75,7 @@
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.io.IOUtil" />
+        <Class name="com.dua3.utility.io.IoUtil" />
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
     </Match>
 

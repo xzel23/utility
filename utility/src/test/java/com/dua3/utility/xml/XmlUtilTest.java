@@ -1,6 +1,6 @@
 package com.dua3.utility.xml;
 
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -39,7 +39,7 @@ class XmlUtilTest {
 
     @Test
     void testParse() throws Exception {
-        Document document = XML_UTIL.parse(IOUtil.stringInputStream(XML));
+        Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML));
         assertNotNull(document);
     }
     

@@ -7,7 +7,7 @@ package com.dua3.utility.db;
 
 import com.dua3.utility.io.CsvReader;
 import com.dua3.utility.io.CsvReader.ListRowBuilder;
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.IoOptions;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
@@ -251,7 +251,7 @@ public final class DbUtil {
                 LOG.warning(() -> "more than one entries found, which one gets loaded is undefined: "
                         + RESOURCE_PATH_TO_DRIVER_INFO);
             }
-            String driverClassName = IOUtil.read(driverInfo, StandardCharsets.UTF_8).trim();
+            String driverClassName = IoUtil.read(driverInfo, StandardCharsets.UTF_8).trim();
 
             // load the driver class
             Class<?> cls = loader.loadClass(driverClassName);

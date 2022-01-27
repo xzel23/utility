@@ -1,6 +1,6 @@
 package com.dua3.utility.xml;
 
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.cabe.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -275,7 +275,7 @@ public final class XmlUtil {
 
     private Transformer getTransformer(@NotNull Charset charset) {
         try {
-            Source source = new StreamSource(IOUtil.stringInputStream(PRETTY_PRINT_XSLT));
+            Source source = new StreamSource(IoUtil.stringInputStream(PRETTY_PRINT_XSLT));
             Transformer transformer = transformerFactory.newTransformer(source);
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
