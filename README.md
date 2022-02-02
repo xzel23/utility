@@ -52,12 +52,14 @@ Replace `${utility_version}` with the current version.
 
 ## Logging
 
-Logging is done through JUL (java.util.logging).
+All logging is done through JUL (java.util.logging).
  
  - If you use a logging framework such as logback in your __application__, please use that framework's JUL bridge to reroute logging messages. 
  - If your project is a library, don't try to reroute log messages - you cannot tell which framework the user of your library will prefer using, so please don't make his (and your own) life harder by forcing the user of your library to use the framework of *your* choice.
  
 IMHO, using a logging framework in *libraries* is in most cases not necessary anymore in Java 8+ since log messages can now be formatted using lambdas that are only called when logging on that level is enabled. I have had more than enough trouble with trying to put libraries using different versions of log4j, SLF4J, logback, commopns.logging, and more into a single project that I will not integrate any logging framework into my libraries, so please don't even ask for it. Most advanced logging framework now have some sort of JUL bridge, so that there shouldn't be any issues with this. 
+
+If you develop a Swing application, the SwingLogPane might come in handy. Have a look at the TestSwingComponents sample to see how to display log messages from the different logging frameworks in your application. If you use SLF4J, add SLF4J's [JUL backend](https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14) to your classpathto reroute SLF4J log messages to JUL.
 
 ## Using the BuildInfo class in Gradle builds
 
@@ -120,6 +122,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 - added LangUtil.orElse() and LangUtil.orElseGet() for Optional-like functionality without creating an Optional instance first
 - added [cabe](https://github.com/xzel23/cabe) @NotNull annotations to parameters
 - rename `IOUtil`, `IOOptions` to `IoUtil`, `IoOptions`
+- reorder parameters to the different LogAdapter `addListener()` and `removeListener()` methods and add overloads for these methods that add/remove listeners to /from the framework's root logger. 
 
 **The following functionality has been removed because it is available in JDK 17**:
 - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()

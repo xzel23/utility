@@ -1,6 +1,7 @@
 package com.dua3.utility.logging;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Filter;
@@ -84,7 +85,7 @@ public final class Log4jAdapter {
 
     /**
      * Convert Logback logging event to log entry.
-     * @param evt the logback logging event
+     * @param evt the log4j2 logging event
      * @return log entry
      */
     public static LogEntry toLogEntry(@NotNull LogEvent evt) {
@@ -92,11 +93,19 @@ public final class Log4jAdapter {
     }
 
     /**
-     * Add a listener to a Logback Logger instance.
-     * @param logger the logger
+     * Add a listener to the root Logger instance.
      * @param listener the listener
      */
-    public static void addListener(@NotNull Logger logger, @NotNull LogListener listener) {
+    public static void addListener(@NotNull LogListener listener) {
+        addListener(listener, LogManager.getRootLogger());
+    }
+    
+    /**
+     * Add a listener to a log4j2 Logger instance.
+     * @param listener the listener
+     * @param logger the logger
+     */
+    public static void addListener(@NotNull LogListener listener, @NotNull Logger logger) {
         LoggerContext context = LoggerContext.getContext(false);
         Configuration config = context.getConfiguration();
         PatternLayout layout = PatternLayout.createDefaultLayout(config);
@@ -116,7 +125,7 @@ public final class Log4jAdapter {
         return logger.getName() + "[Log4j]";
     }
 
-    private static void updateLoggers(final Appender appender, final Configuration config) {
+    private static void updateLoggers(@NotNull final Appender appender, @NotNull final Configuration config) {
         Level level = null;
         Filter filter = null;
         for (LoggerConfig loggerConfig : config.getLoggers().values()) {
@@ -128,11 +137,19 @@ public final class Log4jAdapter {
     }
     
     /**
-     * Remove a listener from a Logback Logger instance.
-     * @param logger the logger
+     * Remove a listener from the root instance.
      * @param listener the listener
      */
-    public static void removeListener(@NotNull Logger logger, LogListener listener) {
+    public static void removeListener(@NotNull LogListener listener) {
+        removeListener(listener, LogManager.getRootLogger());
+    }
+    
+    /**
+     * Remove a listener from a log4j2 Logger instance.
+     * @param listener the listener
+     * @param logger the logger
+     */
+    public static void removeListener(@NotNull LogListener listener, @NotNull Logger logger) {
         LoggerContext context = LoggerContext.getContext(false);
         Configuration config = context.getConfiguration();
         for (LoggerConfig loggerConfig : config.getLoggers().values()) {

@@ -88,8 +88,8 @@ public class TestSwingComponents extends JFrame {
 
         // setup logging
         LogBuffer buffer = new LogBuffer();
-        JULAdapter.addListener(JUL_LOGGER, buffer);
-        Log4jAdapter.addListener(LOG4J_LOGGER, buffer);
+        JULAdapter.addListener(buffer);
+        Log4jAdapter.addListener(buffer);
         SystemAdapter.addSystemListener(buffer);
 
         // create the log pane
