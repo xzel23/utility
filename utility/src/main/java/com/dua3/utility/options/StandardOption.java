@@ -1,7 +1,6 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.data.DataUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -13,19 +12,19 @@ import java.util.function.Function;
  */
 public final class StandardOption<T> extends Option<T> {
     
-    public static <T> StandardOption<T> create(@NotNull Class<? extends T> type,
-                                                        @NotNull String... names) {
+    public static <T> StandardOption<T> create(Class<? extends T> type,
+                                                        String... names) {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
-    public static <T> StandardOption<T> create(@NotNull Function<String,T> mapper,
-                                                        @NotNull String [] names) {
+    public static <T> StandardOption<T> create(Function<String,T> mapper,
+                                                        String [] names) {
         return new StandardOption<>(mapper, Object::toString, names);
     }
 
-    public static <T> StandardOption<T> create(@NotNull Function<String,T> mapper,
-                                                        @NotNull Function<? super T, String> formatter,
-                                                        @NotNull String [] names) {
+    public static <T> StandardOption<T> create(Function<String,T> mapper,
+                                                        Function<? super T, String> formatter,
+                                                        String [] names) {
         return new StandardOption<>(mapper, formatter, names);
     }
 
@@ -34,20 +33,20 @@ public final class StandardOption<T> extends Option<T> {
      * @param mapper the mapper used to convert the string values of arguments to the target type
      * @param names the names to be used on the command line for this option
      */
-    private StandardOption(@NotNull Function<String, ? extends T> mapper,
-                           @NotNull Function<? super T, String> formatter,
-                           @NotNull String... names) {
+    private StandardOption(Function<String, ? extends T> mapper,
+                           Function<? super T, String> formatter,
+                           String... names) {
         super(mapper, formatter, names);
     }
 
     @Override
-    public StandardOption<T> description(@NotNull String description) {
+    public StandardOption<T> description(String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public StandardOption<T> handler(@NotNull Consumer<Collection<T>> handler) {
+    public StandardOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }

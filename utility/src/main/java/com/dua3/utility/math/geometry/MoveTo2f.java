@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Move current position.
@@ -25,7 +24,7 @@ public class MoveTo2f extends Segment2f {
      * @param path the path
      * @param idx index of current point
      */
-    public MoveTo2f(@NotNull Path2fImpl path, int idx) {
+    public MoveTo2f(Path2fImpl path, int idx) {
         super(path);
         this.idx = idx;
     }

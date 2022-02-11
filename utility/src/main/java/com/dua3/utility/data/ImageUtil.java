@@ -1,7 +1,5 @@
 package com.dua3.utility.data;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -27,7 +25,7 @@ public interface ImageUtil<I> {
         } else {
             iu = new ImageUtil<>() {
                 @Override
-                public Image load(@NotNull InputStream in) {
+                public Image load(InputStream in) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
@@ -37,7 +35,7 @@ public interface ImageUtil<I> {
                 }
 
                 @Override
-                public Image convert(@NotNull Image img) {
+                public Image convert(Image img) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
             };
@@ -52,7 +50,7 @@ public interface ImageUtil<I> {
      * @return the image
      * @throws IOException if loading fails
      */
-    Image load(@NotNull InputStream in) throws IOException;
+    Image load(InputStream in) throws IOException;
 
     /**
      * Create image from pixel data.
@@ -68,13 +66,13 @@ public interface ImageUtil<I> {
      * @param img the image
      * @return implementation dependent image class
      */
-    I convert(@NotNull Image img);
+    I convert(Image img);
 
     /**
      * Convert image underlying implementation. to image.
      * @param img the implementation dependent image
      * @return image
      */
-    Image convert(@NotNull I img);
+    Image convert(I img);
     
 }

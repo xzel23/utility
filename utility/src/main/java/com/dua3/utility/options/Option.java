@@ -1,7 +1,7 @@
 package com.dua3.utility.options;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,9 +27,9 @@ public abstract class Option<T> {
     int maxOccurrences = Integer.MAX_VALUE;
     Consumer<Collection<T>> handler = values -> {};
 
-    protected Option(@NotNull Function<String, ? extends T> mapper,
-                     @NotNull Function<?super T, String> formatter,
-                     @NotNull String... names) {
+    protected Option(Function<String, ? extends T> mapper,
+                     Function<?super T, String> formatter,
+                     String... names) {
         LangUtil.check(names.length > 0, "at least one name must be given");
 
         this.mapper = Objects.requireNonNull(mapper);
@@ -64,7 +64,7 @@ public abstract class Option<T> {
      * @param description the description
      * @return this option
      */
-    protected Option<T> description(@NotNull String description) {
+    protected Option<T> description(String description) {
         LangUtil.check(this.description.isEmpty(), "description already set");
         this.description = Objects.requireNonNull(description, "description must not be null");
         return this;
@@ -75,7 +75,7 @@ public abstract class Option<T> {
      * @param displayName display name
      * @return this option
      */
-    protected Option<T> displayName(@NotNull String displayName) {
+    protected Option<T> displayName(String displayName) {
         LangUtil.check(this.displayName.isEmpty(), "displayName already set");
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");
         return this;
@@ -86,7 +86,7 @@ public abstract class Option<T> {
      * @param handler the handler to call in {@link Arguments#handle()} for each invocation of this option
      * @return this option
      */
-    public Option<T> handler(@NotNull Consumer<Collection<T>> handler) {
+    public Option<T> handler(Consumer<Collection<T>> handler) {
         this.handler = Objects.requireNonNull(handler);
         return this;
     }
@@ -99,7 +99,7 @@ public abstract class Option<T> {
         return handler;
     }
 
-    void handle(@NotNull Collection<T> values) {
+    void handle(Collection<T> values) {
         handler.accept(values);
     }
 
@@ -190,7 +190,7 @@ public abstract class Option<T> {
     }
     
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Option<?> option = (Option<?>) o;

@@ -4,7 +4,6 @@ import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.SimpleOption;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.text.TextUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -83,7 +82,7 @@ public class JdbcDriverInfo {
      * @param urlScheme URL scheme for JDBC connections
      * @param link link to driver vendor webpage
      */
-    public JdbcDriverInfo(String name, String className, String urlPrefix, @NotNull String urlScheme, String link) {
+    public JdbcDriverInfo(String name, String className, String urlPrefix, String urlScheme, String link) {
         this.name = name;
         this.className = className;
         this.urlPrefix = urlPrefix;
@@ -106,7 +105,7 @@ public class JdbcDriverInfo {
      *     <li>scheme with var arguments removed
      * </ul>
      */
-    private static Pair<String, List<SimpleOption<?>>> parseScheme(@NotNull CharSequence s) {
+    private static Pair<String, List<SimpleOption<?>>> parseScheme(CharSequence s) {
         // extract options
         List<SimpleOption<?>> list = new ArrayList<>();
         Matcher matcher = PATTERN_VAR.matcher(s);
@@ -129,7 +128,7 @@ public class JdbcDriverInfo {
      * @param matcher the current matcher instance that matches a single option declaration
      * @return map of arguments for the option matched by matcher
      */
-    private static Map<String, String> extractArgs(@NotNull Matcher matcher) {
+    private static Map<String, String> extractArgs(Matcher matcher) {
         Map<String, String> arguments = new HashMap<>();
         String arg = matcher.group("arg1");
         if (arg != null) {
@@ -148,7 +147,7 @@ public class JdbcDriverInfo {
         return arguments;
     }
 
-    private static void addArgument(@NotNull Map<? super String, String> arguments, String arg, String val) {
+    private static void addArgument(Map<? super String, String> arguments, String arg, String val) {
         String old = arguments.put(arg, val);
         //noinspection VariableNotUsedInsideIf
         if (old != null) {
@@ -163,7 +162,7 @@ public class JdbcDriverInfo {
      * @param arguments the option's arguments
      * @return new option instance
      */
-    private static SimpleOption<?> createOption(String name, @NotNull Map<String, String> arguments) {
+    private static SimpleOption<?> createOption(String name, Map<String, String> arguments) {
         String type = arguments.getOrDefault(OPTION_TYPE, OPTION_TYPE_STRING);
         String dflt = arguments.get("default");
         return switch (type) {
@@ -200,7 +199,7 @@ public class JdbcDriverInfo {
      * @param values the option values to set in the URL
      * @return the connection URL
      */
-    public String getUrl(@NotNull Arguments values) {
+    public String getUrl(Arguments values) {
         return TextUtil.transform(urlScheme, 
                 s -> Objects.toString(
                         values.get(

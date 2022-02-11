@@ -5,13 +5,13 @@
 
 package com.dua3.utility.db;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.io.CsvReader;
 import com.dua3.utility.io.CsvReader.ListRowBuilder;
-import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.IoOptions;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
-import com.dua3.cabe.annotations.NotNull;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -121,7 +121,7 @@ public final class DbUtil {
      *                               if {@code item} is neither {@code null} nor of
      *                               any of the supported types
      */
-    public static LocalDate toLocalDate(Object item) {
+    public static LocalDate toLocalDate(@Nullable Object item) {
         if (item == null) {
             return null;
         }
@@ -149,7 +149,7 @@ public final class DbUtil {
      *                               if {@code item} is neither {@code null} nor of
      *                               any of the supported types
      */
-    public static LocalDateTime toLocalDateTime(Object item) {
+    public static LocalDateTime toLocalDateTime(@Nullable Object item) {
         if (item == null) {
             return null;
         }
@@ -177,7 +177,7 @@ public final class DbUtil {
      *                               if {@code item} is neither {@code null} nor of
      *                               any of the supported types
      */
-    public static LocalTime toLocalTime(Object item) {
+    public static LocalTime toLocalTime(@Nullable Object item) {
         if (item == null) {
             return null;
         }
@@ -206,7 +206,7 @@ public final class DbUtil {
      *                                if a driver class was found and loaded but
      *                                could not be instantiated
      */
-    public static Optional<? extends java.sql.Driver> loadDriver(@NotNull URL... urls)
+    public static Optional<? extends java.sql.Driver> loadDriver(URL... urls)
             throws ClassNotFoundException, SQLException {
         LOG.fine(() -> "loadDriver() - URLs: " + Arrays.toString(urls));
         return loadDriver(new URLClassLoader(urls));
@@ -235,7 +235,7 @@ public final class DbUtil {
      *                                if a driver class was found and loaded but
      *                                could not be instantiated
      */
-    public static Optional<? extends java.sql.Driver> loadDriver(@NotNull ClassLoader loader)
+    public static Optional<? extends java.sql.Driver> loadDriver(ClassLoader loader)
             throws ClassNotFoundException, SQLException {
         final String RESOURCE_PATH_TO_DRIVER_INFO = "META-INF/services/java.sql.Driver";
 
@@ -295,7 +295,7 @@ public final class DbUtil {
      *                      if the driver dies not accept the URL or connecting
      *                      fails
      */
-    public static DataSource createDataSource(@NotNull Driver driver, String url, String user, String password)
+    public static DataSource createDataSource(Driver driver, String url, String user, String password)
             throws SQLException {
         LangUtil.check(driver.acceptsURL(url), () -> new SQLException("URL not accepted by driver"));
 

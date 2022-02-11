@@ -5,9 +5,9 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -45,7 +45,7 @@ public class Font {
      * 
      * @param fontspec the fontspec
      */
-    public Font(@NotNull String fontspec) {
+    public Font(String fontspec) {
         this(new Font(), FontDef.parseFontspec(fontspec));
     }
 
@@ -67,7 +67,7 @@ public class Font {
      * @param strikeThrough
      *                      if text should be displayed strike-through
      */
-    public Font(@NotNull String family, float size, @NotNull Color color, boolean bold, boolean italic, boolean underline,
+    public Font(String family, float size, Color color, boolean bold, boolean italic, boolean underline,
             boolean strikeThrough) {
         this.size = size;
         this.bold = bold;
@@ -78,7 +78,7 @@ public class Font {
         this.color = color;
     }
 
-    protected Font(@NotNull Font baseFont, @NotNull FontDef fd) {
+    protected Font(Font baseFont, FontDef fd) {
         this(
                 LangUtil.orElse(fd.getFamily(), baseFont.getFamily()),
                 LangUtil.orElse(fd.getSize(), baseFont.getSizeInPoints()),
@@ -102,7 +102,7 @@ public class Font {
      *            the {@link FontDef} describing the attributes to set
      * @return    new Font instance
      */
-    public Font deriveFont(@NotNull FontDef fd) {
+    public Font deriveFont(FontDef fd) {
         return new Font(this, fd);
     }
 
@@ -219,7 +219,7 @@ public class Font {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == null || obj.getClass() != this.getClass() || obj.hashCode() != this.hashCode()) {
             return false;
         }
@@ -234,7 +234,7 @@ public class Font {
      * @param b the second font
      * @return true, if a and b have the same attributes
      */
-    public static boolean similar(@NotNull Font a, @NotNull Font b) {
+    public static boolean similar(Font a, Font b) {
         return b.size == a.size
                 && b.bold == a.bold
                 && b.italic == a.italic
@@ -273,7 +273,7 @@ public class Font {
      * @param <T> object type
      * @param <U> attribute type
      */
-    private static <T,U> void deltaHelper(T o1, T o2, @NotNull Function<T,U> getter, @NotNull Consumer<? super U> setter) {
+    private static <T,U> void deltaHelper(T o1, T o2, Function<T,U> getter, Consumer<? super U> setter) {
         U v1 = getter.apply(o1);
         U v2 = getter.apply(o2);
         if (!Objects.equals(v1, v2)) {
@@ -287,7 +287,7 @@ public class Font {
      * @param f2 the second font
      * @return a {@link FontDef} instance that defines the changed values
      */
-    public static FontDef delta(@NotNull Font f1, @NotNull Font f2) {
+    public static FontDef delta(Font f1, Font f2) {
         FontDef fd = new FontDef();
 
         deltaHelper(f1, f2, Font::getFamily, fd::setFamily);
@@ -380,7 +380,7 @@ public class Font {
      * @param family the value to use
      * @return a copy of this font with the family set to the requested value, or this font if values match
      */
-    public Font withFamily(@NotNull String family) {
+    public Font withFamily(String family) {
         return family.equals(this.family) ? this : deriveFont(FontDef.family(family));
     }
 
@@ -389,7 +389,7 @@ public class Font {
      * @param color the value to use
      * @return a copy of this font with the color set to the requested value, or this font if values match
      */
-    public Font withColor(@NotNull Color color) {
+    public Font withColor(Color color) {
         return color.equals(this.color) ? this : deriveFont(FontDef.color(color));
     }
 

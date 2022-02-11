@@ -1,7 +1,5 @@
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +19,7 @@ public class LineOutputStream extends OutputStream {
     private int count;
     private final Consumer<String> processor;
 
-    public LineOutputStream(@NotNull Consumer<String> processor) {
+    public LineOutputStream(Consumer<String> processor) {
         this.buf = new byte[INITIAL_BUFFER_SIZE];
         this.count = 0;
         this.processor = Objects.requireNonNull(processor);

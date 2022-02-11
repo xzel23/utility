@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Straight line segment.
@@ -29,7 +28,7 @@ public final class Line2f extends Segment2f {
      * @param a index of starting point
      * @param b index of end point
      */
-    Line2f(@NotNull Path2fImpl path, int a, int b) {
+    Line2f(Path2fImpl path, int a, int b) {
         super(path);
         this.a = a;
         this.b = b;

@@ -1,7 +1,5 @@
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -22,7 +20,7 @@ public enum PredefinedDateFormat {
      * @param style  the {@link FormatStyle} to use
      * @return the DateFormatter
      */
-    private static DateTimeFormatter formatFromLocale(@NotNull Locale locale, @NotNull FormatStyle style) {
+    private static DateTimeFormatter formatFromLocale(Locale locale, FormatStyle style) {
         return DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
     }
 
@@ -32,7 +30,7 @@ public enum PredefinedDateFormat {
      * @param locale the locale
      * @return the DateFormatter
      */
-    private static DateTimeFormatter formatFromLocale(@NotNull Locale locale) {
+    private static DateTimeFormatter formatFromLocale(Locale locale) {
         String formatPattern =
                 DateTimeFormatterBuilder.getLocalizedDateTimePattern(
                         FormatStyle.SHORT,
@@ -47,12 +45,12 @@ public enum PredefinedDateFormat {
 
     private final Function<? super Locale, DateTimeFormatter> factory;
 
-    PredefinedDateFormat(@NotNull String name, @NotNull Function<? super Locale, DateTimeFormatter> factory) {
+    PredefinedDateFormat(String name, Function<? super Locale, DateTimeFormatter> factory) {
         this.name = name;
         this.factory = factory;
     }
 
-    public DateTimeFormatter getFormatter(@NotNull Locale locale) {
+    public DateTimeFormatter getFormatter(Locale locale) {
         return factory.apply(locale);
     }
 

@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +13,7 @@ public final class Path2f {
     
     private final Path2fImpl impl;
     
-    Path2f(@NotNull Path2fImpl impl) {
+    Path2f(Path2fImpl impl) {
         this.impl = impl;
     }
 

@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Fill and stroke path.
@@ -29,7 +28,7 @@ public class FillAndStrokePath2f extends Segment2f {
      * @param idx index of current vertex
      * @param fillRule the fill rule to use
      */
-    FillAndStrokePath2f(@NotNull Path2fImpl path, int idx, @NotNull FillRule fillRule) {
+    FillAndStrokePath2f(Path2fImpl path, int idx, FillRule fillRule) {
         super(path);
         this.idx = idx;
         this.fillRule = fillRule;

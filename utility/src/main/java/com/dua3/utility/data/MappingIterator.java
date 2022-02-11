@@ -1,7 +1,5 @@
 package com.dua3.utility.data;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -23,7 +21,7 @@ class MappingIterator<T,U> implements Iterator<U> {
      * @param mapping
      *  the element mapping
      */
-    MappingIterator(@NotNull Iterator<? extends T> iterator, @NotNull Function<? super T, ? extends U> mapping) {
+    MappingIterator(Iterator<? extends T> iterator, Function<? super T, ? extends U> mapping) {
         this.iterator = iterator;
         this.mapping = mapping;
     }

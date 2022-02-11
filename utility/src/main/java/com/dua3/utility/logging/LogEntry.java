@@ -1,7 +1,5 @@
 package com.dua3.utility.logging;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -92,7 +90,7 @@ public interface LogEntry {
      * @param entry the log entry
      * @return the string
      */
-    static String format(@NotNull LogEntry entry) {
+    static String format(LogEntry entry) {
         try {
             StringBuilder sb = new StringBuilder(80);
 

@@ -5,7 +5,7 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.NotNull;
+import com.dua3.cabe.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ public class SharableString implements CharSequence {
 
     private final String base;
 
-    public SharableString(@NotNull String s) {
+    public SharableString(String s) {
         this.base = Objects.requireNonNull(s);
     }
 
@@ -43,7 +43,7 @@ public class SharableString implements CharSequence {
     }
 
     @Override
-    public boolean equals(Object anObject) {
+    public boolean equals(@Nullable Object anObject) {
         if (this == anObject) {
             return true;
         }

@@ -5,8 +5,6 @@
 
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.lang.ref.SoftReference;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -29,7 +27,7 @@ public final class SoftResource<T> {
      *                  invocation return equal instances
      * @return          soft resource
      */
-    public static <T> SoftResource<T> of(@NotNull Supplier<? extends T> supplier) {
+    public static <T> SoftResource<T> of(Supplier<? extends T> supplier) {
         return new SoftResource<>(Objects.requireNonNull(supplier));
     }
 
@@ -91,7 +89,7 @@ public final class SoftResource<T> {
         private T strong;
         private final SoftResource<T> soft;
 
-        private ResourceHolder(@NotNull SoftResource<T> sr) {
+        private ResourceHolder(SoftResource<T> sr) {
             this.strong = sr.get();
             this.soft = sr;
         }

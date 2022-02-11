@@ -1,7 +1,6 @@
 package com.dua3.utility.logging;
 
 import com.dua3.utility.io.LineOutputStream;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -19,12 +18,12 @@ public final class SystemAdapter {
     private SystemAdapter() {
     }
 
-    public static void addSystemListener(@NotNull LogListener listener) {
+    public static void addSystemListener(LogListener listener) {
         addSystemOutListener(listener);
         addSystemErrListener(listener);
     }
 
-    public static synchronized void addSystemOutListener(@NotNull LogListener listener) {
+    public static synchronized void addSystemOutListener(LogListener listener) {
         if (stdOut == null) {
             try {
                 @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -40,7 +39,7 @@ public final class SystemAdapter {
         }
     }
 
-    public static synchronized void addSystemErrListener(@NotNull LogListener listener) {
+    public static synchronized void addSystemErrListener(LogListener listener) {
         try {
             @SuppressWarnings("UseOfSystemOutOrSystemErr")
             PrintStream origErr = System.err;

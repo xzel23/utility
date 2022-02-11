@@ -1,7 +1,5 @@
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.util.Objects;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -15,7 +13,7 @@ public class RichTextMatcher implements MatchResult {
     private final RichText text;
     private final Matcher matcher;
     
-    RichTextMatcher(@NotNull Pattern pattern, @NotNull RichText text) {
+    RichTextMatcher(Pattern pattern, RichText text) {
         this.text = Objects.requireNonNull(text);
         this.matcher = pattern.matcher(text);
     }
@@ -92,32 +90,32 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#replaceFirst(String)}.
      */
-    public RichText replaceFirst(@NotNull String replacement) {
+    public RichText replaceFirst(String replacement) {
         return replace(replacement, 1);
     }
 
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
-    public RichText replaceFirst(@NotNull RichText replacement) {
+    public RichText replaceFirst(RichText replacement) {
         return replace(replacement, 1);
     }
 
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
-    public RichText replaceAll(@NotNull String replacement) {
+    public RichText replaceAll(String replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }
 
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
-    public RichText replaceAll(@NotNull RichText replacement) {
+    public RichText replaceAll(RichText replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }
 
-    private RichText replace(@NotNull RichText replacement, int maxOccurences) {
+    private RichText replace(RichText replacement, int maxOccurences) {
         RichTextBuilder rtb = new RichTextBuilder(text.length());
 
         int off, i;
@@ -129,7 +127,7 @@ public class RichTextMatcher implements MatchResult {
         return rtb.toRichText();
     }
 
-    private RichText replace(@NotNull String replacement, int maxOccurences) {
+    private RichText replace(String replacement, int maxOccurences) {
         RichTextBuilder rtb = new RichTextBuilder(text.length());
 
         int off, i;

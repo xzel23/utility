@@ -5,7 +5,6 @@ import com.dua3.utility.logging.Category;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.math.MathUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -57,7 +56,7 @@ public class SwingLogPane extends JPanel {
     private Function<LogEntry, String> format = LogEntry::format;
     private double dividerLocation = 0.5;
 
-    private static Color defaultColorize(@NotNull LogEntry entry) {
+    private static Color defaultColorize(LogEntry entry) {
         return switch (entry.category()) {
             case FATAL -> Color.DARKRED;
             case SEVERE -> Color.RED;
@@ -72,7 +71,7 @@ public class SwingLogPane extends JPanel {
     private static final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
         private final LogBuffer buffer;
 
-        private LogTableModel(@NotNull LogBuffer buffer) {
+        private LogTableModel(LogBuffer buffer) {
             this.buffer = Objects.requireNonNull(buffer);
             buffer.addLogBufferListener(this);
         }
@@ -161,7 +160,7 @@ public class SwingLogPane extends JPanel {
         }
 
         @Override
-        public synchronized void entries(@NotNull Collection<LogEntry> entries, int replaced) {
+        public synchronized void entries(Collection<LogEntry> entries, int replaced) {
             if (isLocked()) {
                 if (replaced > 0) {
                     removed += replaced;
@@ -241,11 +240,11 @@ public class SwingLogPane extends JPanel {
             new Column(LogEntry.Field.MESSAGE, 80, false)
     };
     
-    public SwingLogPane(@NotNull LogBuffer buffer) {
+    public SwingLogPane(LogBuffer buffer) {
         this(buffer, SwingLogPane::defaultColorize);
     }
     
-    public SwingLogPane(@NotNull LogBuffer buffer, Function<LogEntry, Color> colorize) {
+    public SwingLogPane(LogBuffer buffer, Function<LogEntry, Color> colorize) {
         super(new BorderLayout());
         
         this.buffer = Objects.requireNonNull(buffer);
@@ -400,10 +399,10 @@ public class SwingLogPane extends JPanel {
         }
     }
 
-    private void setFilter(@NotNull Category c) {
+    private void setFilter(Category c) {
         tableRowSorter.setRowFilter(new RowFilter<>() {
             @Override
-            public boolean include(@NotNull Entry<? extends AbstractTableModel, ? extends Integer> entry) {
+            public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
                 LogEntry value = (LogEntry) entry.getValue(0);
                 return value == null || value.category().compareTo(c) <= 0;
             }

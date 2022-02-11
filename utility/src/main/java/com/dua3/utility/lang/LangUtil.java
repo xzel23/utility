@@ -5,9 +5,9 @@
 
 package com.dua3.utility.lang;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IoUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -126,7 +126,7 @@ public final class LangUtil {
      * @param <E>                   the exception type
      * @throws E                    if condition does not evaluate to {@code true}
      */
-    public static <E extends Exception> void check(boolean condition, @NotNull Supplier<E> exceptionSupplier) throws E {
+    public static <E extends Exception> void check(boolean condition, Supplier<E> exceptionSupplier) throws E {
         if (!condition) {
             throw exceptionSupplier.get();
         }
@@ -141,7 +141,7 @@ public final class LangUtil {
      * @param  args                 format arguments
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
-    public static void check(boolean condition, @NotNull String fmt, Object... args) {
+    public static void check(boolean condition, String fmt, Object... args) {
         if (!condition) {
             String message = String.format(Locale.ROOT, fmt, args);
             throw new FailedCheckException(message);
@@ -189,7 +189,7 @@ public final class LangUtil {
      *              {@code arg}
      */
     @SafeVarargs
-    public static <T> boolean isOneOf(T arg, T... rest) {
+    public static <T> boolean isOneOf(@Nullable T arg, T... rest) {
         return Arrays.asList(rest).contains(arg);
     }
 
@@ -200,7 +200,7 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b
      */
-    public static <T>  T orElse(T a, T b) {
+    public static <T>  T orElse(@Nullable T a, @Nullable T b) {
         return a != null ? a : b;
     }
     
@@ -211,7 +211,7 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b.get()
      */
-    public static <T> T orElseGet(T a, @NotNull Supplier<? extends T> b) {
+    public static <T> T orElseGet(@Nullable T a, Supplier<? extends T> b) {
         return a != null ? a : b.get();
     }
     
@@ -222,7 +222,7 @@ public final class LangUtil {
      * @param <E> the generic enum parameter
      * @return an Optional holding the enum constant or an empty Optional
      */
-    public static <E extends Enum<E>> Optional<E> enumConstant(@NotNull Class<? extends E> clazz, @NotNull Predicate<? super E> condition) {
+    public static <E extends Enum<E>> Optional<E> enumConstant(Class<? extends E> clazz, Predicate<? super E> condition) {
         for (E ec : clazz.getEnumConstants()) {
             if (condition.test(ec)) {
                 return Optional.of(ec);
@@ -239,7 +239,7 @@ public final class LangUtil {
      * @param <E> the generic enum parameter
      * @return an Optional holding the enum constant or an empty Optional
      */
-    public static <E extends Enum<E>> Optional<E> enumConstant(@NotNull Class<? extends E> clazz, String value) {
+    public static <E extends Enum<E>> Optional<E> enumConstant(Class<? extends E> clazz, String value) {
         return enumConstant(clazz, ec -> ec.toString().equals(value));
     }
 
@@ -250,7 +250,7 @@ public final class LangUtil {
      * @return result of invoking enum class' values() method
      */
     @SuppressWarnings("unchecked")
-    public static <E extends Enum<E>> E[] enumValues(@NotNull Class<? extends E> clazz) {
+    public static <E extends Enum<E>> E[] enumValues(Class<? extends E> clazz) {
         try {
             return (E[]) clazz.getMethod("values").invoke(null);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -276,7 +276,7 @@ public final class LangUtil {
      * @param e the exception
      * @return RuntimeException, UncheckedIOException, or WrappedException depending on the type of e
      */
-    private static RuntimeException wrapException(@NotNull Exception e) {
+    private static RuntimeException wrapException(Exception e) {
         if (e instanceof RuntimeException re) {
             return re;
         }
@@ -299,7 +299,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T,E extends Exception> Consumer<T> uncheckedConsumer(@NotNull ConsumerThrows<T,E> c) {
+    public static <T,E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<T,E> c) {
         return arg -> {
             try {
                 c.apply(arg);
@@ -322,7 +322,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T,E extends Exception> Supplier<T> uncheckedSupplier(@NotNull SupplierThrows<T,E> s) {
+    public static <T,E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<T,E> s) {
         return () -> {
             try {
                 return s.get();
@@ -347,7 +347,7 @@ public final class LangUtil {
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T,R,E extends Exception> Function<T, R> uncheckedFunction(@NotNull FunctionThrows<T,R,E> f) {
+    public static <T,R,E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T,R,E> f) {
         return arg -> {
             try {
                 return f.apply(arg);
@@ -370,7 +370,7 @@ public final class LangUtil {
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <E extends Exception> Runnable uncheckedRunnable(@NotNull RunnableThrows<E> r) {
+    public static <E extends Exception> Runnable uncheckedRunnable(RunnableThrows<E> r) {
         return () -> {
             try {
                 r.run();
@@ -386,7 +386,7 @@ public final class LangUtil {
      * @param  s the string to trim
      * @return   the trimmed string
      */
-    public static String trimWithByteOrderMark(@NotNull String s) {
+    public static String trimWithByteOrderMark(String s) {
         if (s.isEmpty()) {
             return s;
         }
@@ -407,7 +407,7 @@ public final class LangUtil {
      * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
-    public static <K, V> void putAllIfAbsent(@NotNull Map<? super K, ? super V> map, @NotNull Pair<K, V>... items) {
+    public static <K, V> void putAllIfAbsent(Map<? super K, ? super V> map, Pair<K, V>... items) {
         Arrays.stream(items).forEach(item -> map.putIfAbsent(item.first(), item.second()));
     }
 
@@ -420,7 +420,7 @@ public final class LangUtil {
      * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
-    public static <K, V> void putAll(@NotNull Map<? super K, ? super V> map, @NotNull Pair<K, V>... items) {
+    public static <K, V> void putAll(Map<? super K, ? super V> map, Pair<K, V>... items) {
         Arrays.stream(items).forEach(item -> map.put(item.first(), item.second()));
     }
 
@@ -433,7 +433,7 @@ public final class LangUtil {
      * @return       unmodifiable map
      */
     @SafeVarargs
-    public static <K, V> Map<K, V> map(@NotNull Pair<K, V>... items) {
+    public static <K, V> Map<K, V> map(Pair<K, V>... items) {
         Map<K, V> map = new HashMap<>();
         putAllIfAbsent(map, items);
         return Collections.unmodifiableMap(map);
@@ -447,7 +447,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empt()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(@NotNull OptionalInt opt, @NotNull IntFunction<T> f) {
+    public static <T> Optional<T> map(OptionalInt opt, IntFunction<T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));    
     }
 
@@ -459,7 +459,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empt()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(@NotNull OptionalLong opt, @NotNull LongFunction<T> f) {
+    public static <T> Optional<T> map(OptionalLong opt, LongFunction<T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));    
     }
 
@@ -471,7 +471,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empt()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(@NotNull OptionalDouble opt, @NotNull DoubleFunction<T> f) {
+    public static <T> Optional<T> map(OptionalDouble opt, DoubleFunction<T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));    
     }
     
@@ -483,7 +483,7 @@ public final class LangUtil {
      * @param  s2 second stream
      * @return    true, if and only if both streams are equal elementwise
      */
-    public static <T> boolean equals(@NotNull Stream<T> s1, @NotNull Stream<T> s2) {
+    public static <T> boolean equals(Stream<T> s1, Stream<T> s2) {
         Iterator<T> iter1 = s1.iterator();
         Iterator<T> iter2 = s2.iterator();
         while (iter1.hasNext() && iter2.hasNext()) {
@@ -503,7 +503,7 @@ public final class LangUtil {
      * @param k        the key to lookup
      * @param consumer the consumer to consume the mapped value
      */
-    public static <K, V> void consumeIfPresent(@NotNull Map<K, V> map, K k, @NotNull Consumer<? super V> consumer) {
+    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, Consumer<? super V> consumer) {
         V v = map.get(k);
         if (v != null) {
             consumer.accept(v);
@@ -519,7 +519,7 @@ public final class LangUtil {
      * @param k        the key to lookup
      * @param consumer the consumer to consume the mapped value
      */
-    public static <K, V> void consumeIfPresent(@NotNull Map<K, V> map, K k, @NotNull BiConsumer<? super K, ? super V> consumer) {
+    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, BiConsumer<? super K, ? super V> consumer) {
         V v = map.get(k);
         if (v != null) {
             consumer.accept(k, v);
@@ -590,7 +590,7 @@ public final class LangUtil {
      * @param  supplier the Supplier
      * @return          caching Supplier
      */
-    public static <T> Supplier<T> cache(@NotNull Supplier<? extends T> supplier) {
+    public static <T> Supplier<T> cache(Supplier<? extends T> supplier) {
         return new CachingSupplier<>(supplier, t -> {
         });
     }
@@ -607,7 +607,7 @@ public final class LangUtil {
      * @param  cleaner  the cleanup operation to be executed on `close()`
      * @return          caching Supplier
      */
-    public static <T> AutoCloseableSupplier<T> cache(@NotNull Supplier<? extends T> supplier, @NotNull Consumer<? super T> cleaner) {
+    public static <T> AutoCloseableSupplier<T> cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
         return new CachingSupplier<>(supplier, cleaner);
     }
 
@@ -626,7 +626,7 @@ public final class LangUtil {
         private T obj = null;
         private boolean initialized = false;
 
-        CachingSupplier(@NotNull Supplier<? extends T> supplier, @NotNull Consumer<? super T> cleaner) {
+        CachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
             this.supplier = Objects.requireNonNull(supplier);
             this.cleaner = Objects.requireNonNull(cleaner);
         }
@@ -659,7 +659,7 @@ public final class LangUtil {
      * @return          URL for the given resource
      * @throws NullPointerException if the resource could not be found
      */
-    public static URL getResourceURL(@NotNull Class<?> clazz, @NotNull String resource) {
+    public static URL getResourceURL(Class<?> clazz, String resource) {
         return Objects.requireNonNull(clazz.getResource(resource), () -> "Resource not found: " + resource);
     }
 
@@ -671,7 +671,7 @@ public final class LangUtil {
      * @return             A String containing the resource's content
      * @throws IOException if the resource could not be loaded
      */
-    public static String getResourceAsString(@NotNull Class<?> clazz, @NotNull String resource) throws IOException {
+    public static String getResourceAsString(Class<?> clazz, String resource) throws IOException {
         return new String(getResource(clazz, resource), StandardCharsets.UTF_8);
     }
 
@@ -683,7 +683,7 @@ public final class LangUtil {
      * @return             A byte array containing the resource's content
      * @throws IOException if the resource could not be loaded
      */
-    public static byte[] getResource(@NotNull Class<?> clazz, @NotNull String resource) throws IOException {
+    public static byte[] getResource(Class<?> clazz, String resource) throws IOException {
         URL url = getResourceURL(clazz, resource);
         try (InputStream in = url.openStream()) {
             return in.readAllBytes();
@@ -696,7 +696,7 @@ public final class LangUtil {
      * @return the properties
      * @throws IOException on error
      */
-    public static Properties loadProperties(@NotNull URL url) throws IOException {
+    public static Properties loadProperties(URL url) throws IOException {
         try (InputStream in = url.openStream()) {
             return loadProperties(in);
         }
@@ -708,7 +708,7 @@ public final class LangUtil {
      * @return the properties
      * @throws IOException on error
      */
-    public static Properties loadProperties(@NotNull URI uri) throws IOException {
+    public static Properties loadProperties(URI uri) throws IOException {
         try (InputStream in = IoUtil.openInputStream(uri)) {
             return loadProperties(in);
         }
@@ -720,7 +720,7 @@ public final class LangUtil {
      * @return the properties
      * @throws IOException on error
      */
-    public static Properties loadProperties(@NotNull Path path) throws IOException {
+    public static Properties loadProperties(Path path) throws IOException {
         try (InputStream in = Files.newInputStream(path)) {
             return loadProperties(in);
         }
@@ -732,7 +732,7 @@ public final class LangUtil {
      * @return the properties
      * @throws IOException on error
      */
-    public static Properties loadProperties(@NotNull InputStream in) throws IOException {
+    public static Properties loadProperties(InputStream in) throws IOException {
         Properties p = new Properties();
         // make sure UTF-8 is used by explicitly instantiating the reader
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
@@ -753,7 +753,7 @@ public final class LangUtil {
      *  the EnumSet
      */
     @SafeVarargs
-    public static <E extends Enum<E>> EnumSet<E> enumSet(@NotNull Class<E> clss, E... values) {
+    public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, E... values) {
         return enumSet(clss, Arrays.asList(values));
     }
 
@@ -768,7 +768,7 @@ public final class LangUtil {
      * @return
      *  the EnumSet
      */
-    public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, @NotNull Collection<E> values) {
+    public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, Collection<E> values) {
         return values.isEmpty() ? EnumSet.noneOf(clss) : EnumSet.copyOf(values);
     }
 
@@ -782,7 +782,7 @@ public final class LangUtil {
      *                  
      * @return the language suffix as used by the resource bundle
      */
-    public static String getLocaleSuffix(@NotNull Locale locale) {
+    public static String getLocaleSuffix(Locale locale) {
         String language = locale.getLanguage();
         if (language.isEmpty()) {
             return "";
@@ -819,7 +819,7 @@ public final class LangUtil {
      * 
      * @throws MissingResourceException if no resource was found
      */
-    public static URL getResourceURL(@NotNull Class<?> cls, @NotNull String name, @NotNull Locale locale) {
+    public static URL getResourceURL(Class<?> cls, String name, Locale locale) {
         String basename = IoUtil.stripExtension(name);
         String extension = IoUtil.getExtension(name);
 
@@ -851,7 +851,7 @@ public final class LangUtil {
         for (int i=candidates.size()-1; i>=0; i--) {
             URL url = cls.getResource(candidates.get(i));
             if (url!=null) {
-                LOG.fine("requested resource '"+name+"', localised rescource found: "+url);
+                LOG.fine(() -> "requested resource '"+name+"', localised rescource found: "+url);
                 return url;
             }
         }
@@ -870,7 +870,7 @@ public final class LangUtil {
      * @param <T> the element type
      * @return a list that contains all items within a the given range before and after each match
      */
-    public static <T> List<T> surroundingItems(@NotNull List<? extends T> list, @NotNull Predicate<? super T> test, int before, int after) {
+    public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after) {
         return surroundingItems_(list, test, before, after, null);
     }
     
@@ -885,11 +885,11 @@ public final class LangUtil {
      * @return a list that contains all items within a the given range before and after each match
      */
     @SuppressWarnings("AssignmentToForLoopParameter")
-    public static <T> List<T> surroundingItems(@NotNull List<? extends T> list, @NotNull Predicate<? super T> test, int before, int after, @NotNull BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
+    public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         return surroundingItems_(list, test, before, after, placeHolder);
     }
     
-    private static <T> List<T> surroundingItems_(@NotNull List<? extends T> list, @NotNull Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
+    private static <T> List<T> surroundingItems_(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
         for (int i=0; i<list.size(); i++) {
@@ -937,7 +937,7 @@ public final class LangUtil {
      * @param e exception
      * @return the exception stack trace as text
      */
-    public static String formatStackTrace(@NotNull Exception e) {
+    public static String formatStackTrace(Exception e) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1024); 
              PrintStream s = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
             e.printStackTrace(s);

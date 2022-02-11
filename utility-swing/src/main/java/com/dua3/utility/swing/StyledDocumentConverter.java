@@ -10,7 +10,6 @@ import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.TextAttributes;
-import com.dua3.cabe.annotations.NotNull;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -47,7 +46,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param options the options to use
      * @return new converter instance
      */
-    public static StyledDocumentConverter create(@NotNull Collection<StyledDocumentConversionOption> options) {
+    public static StyledDocumentConverter create(Collection<StyledDocumentConversionOption> options) {
         StyledDocumentConverter instance = new StyledDocumentConverter();
         options.forEach(o -> o.apply(instance));
         return instance;
@@ -69,7 +68,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param attributes attributes for new StyledDocuments
      * @return the option to use
      */
-    public static StyledDocumentConversionOption addStyledAttributes(@NotNull Collection<Pair<Object, Object>> attributes) {
+    public static StyledDocumentConversionOption addStyledAttributes(Collection<Pair<Object, Object>> attributes) {
         return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.first(), p.second())));
     }
 
@@ -125,7 +124,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     }
 
     @Override
-    protected AttributeBasedConverterImpl<StyledDocument> createConverter(@NotNull RichText text) {
+    protected AttributeBasedConverterImpl<StyledDocument> createConverter(RichText text) {
         return new StyledDocumentConverterImpl();
     }
 
@@ -156,7 +155,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         }
 
         @Override
-        protected void apply(@NotNull Map<String, Pair<Object, Object>> changedAttributes) {
+        protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
             Map<String, Object> attributes = new HashMap<>();
             changedAttributes.forEach( (attribute, values) -> attributes.put(attribute, values.second()));
             // apply the default font styles 
@@ -165,7 +164,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         }
 
         @Override
-        protected void appendChars(@NotNull CharSequence s) {
+        protected void appendChars(CharSequence s) {
             try {
                 int pos = buffer.getLength();
                 int length = s.length();

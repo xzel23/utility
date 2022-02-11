@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * A builder class for {@link Path2f} instances.
@@ -30,7 +29,7 @@ public class PathBuilder2f {
     /**
      * Add a new vertex.
      */
-    private int addVertex(@NotNull Vector2f v) {
+    private int addVertex(Vector2f v) {
         pos = v;
         impl.addVertex(v);
         return currentIndex();
@@ -67,7 +66,7 @@ public class PathBuilder2f {
      * <strong>NOTE:</strong> This implicitly starts a new path.
      * @param v the vertex that marks the start of the new path
      */
-    public void moveTo(@NotNull Vector2f v) {
+    public void moveTo(Vector2f v) {
         init();
         impl.addSegment(new MoveTo2f(impl, addVertex(v)));
         open = true;
@@ -77,7 +76,7 @@ public class PathBuilder2f {
      * Add a line from the current position to a new position.
      * @param v the new position
      */
-    public void lineTo(@NotNull Vector2f v) {
+    public void lineTo(Vector2f v) {
         if (!open) {
             moveTo(pos);
         }
@@ -96,7 +95,7 @@ public class PathBuilder2f {
      * @param p2 third control point
      * @param p3 fourth control point
      */
-    public void curveTo(@NotNull Vector2f p1, @NotNull Vector2f p2, @NotNull Vector2f p3) {
+    public void curveTo(Vector2f p1, Vector2f p2, Vector2f p3) {
         if (!open) {
             moveTo(pos);
         }
@@ -156,7 +155,7 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return Path2f instance holding the constructed path
      */
-    public Path2f fillPath(@NotNull FillRule fillRule) {
+    public Path2f fillPath(FillRule fillRule) {
         impl.addSegment(new FillPath2f(impl, currentIndex(), fillRule));
         return new Path2f(impl);
     }
@@ -166,7 +165,7 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return Path2f instance holding the constructed path
      */
-    public Path2f fillAndStrokePath(@NotNull FillRule fillRule) {
+    public Path2f fillAndStrokePath(FillRule fillRule) {
         impl.addSegment(new FillAndStrokePath2f(impl, currentIndex(), fillRule));
         return new Path2f(impl);
     }
@@ -176,7 +175,7 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return Path2f instance holding the constructed path
      */
-    public Path2f clipPath(@NotNull FillRule fillRule) {
+    public Path2f clipPath(FillRule fillRule) {
         impl.addSegment(new ClipPath2f(impl, currentIndex(), fillRule));
         return new Path2f(impl);
     }

@@ -1,6 +1,5 @@
 package com.dua3.utility.lang;
 
-import com.dua3.cabe.annotations.NotNull;
 import com.dua3.utility.data.Pair;
 
 import java.util.ArrayDeque;
@@ -29,7 +28,7 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
      * Constructor.
      * @param keyMapper mapping that maps each item to the grouping key
      */
-    public BatchCollector(@NotNull Function<? super T, ? extends K> keyMapper) {
+    public BatchCollector(Function<? super T, ? extends K> keyMapper) {
         this(keyMapper, null);
     }
 
@@ -43,7 +42,7 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
      * @param keyMapper the key mapper
      * @param defaultKey the default key
      */
-    public BatchCollector(@NotNull Function<? super T, ? extends K> keyMapper, K defaultKey) {
+    public BatchCollector(Function<? super T, ? extends K> keyMapper, K defaultKey) {
         this.keyMapper = Objects.requireNonNull(keyMapper);
         this.defaultKey = defaultKey;
     }

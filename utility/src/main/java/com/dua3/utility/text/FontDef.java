@@ -1,7 +1,7 @@
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -114,7 +114,7 @@ public final class FontDef {
      * @param fontspec the fontspec
      * @return FonrDef instance matching fontspec 
      */
-    public static FontDef parseFontspec(@NotNull String fontspec) {
+    public static FontDef parseFontspec(String fontspec) {
         String[] parts = fontspec.split("-");
 
         FontDef fd = new FontDef();
@@ -199,54 +199,54 @@ public final class FontDef {
     /**
      * @param bold the bold to set
      */
-    public void setBold(Boolean bold) {
+    public void setBold(@Nullable Boolean bold) {
         this.bold = bold;
     }
 
     /**
      * @param color the color to set
      */
-    public void setColor(Color color) {
+    public void setColor(@Nullable Color color) {
         this.color = color;
     }
 
     /**
      * @param family the family to set
      */
-    public void setFamily(String family) {
+    public void setFamily(@Nullable String family) {
         this.family = family;
     }
 
     /**
      * @param italic the italic to set
      */
-    public void setItalic(Boolean italic) {
+    public void setItalic(@Nullable Boolean italic) {
         this.italic = italic;
     }
 
     /**
      * @param size the size in points to set
      */
-    public void setSize(Float size) {
+    public void setSize(@Nullable Float size) {
         this.size = size;
     }
 
     /**
      * @param strikeThrough the strikeThrough to set
      */
-    public void setStrikeThrough(Boolean strikeThrough) {
+    public void setStrikeThrough(@Nullable Boolean strikeThrough) {
         this.strikeThrough = strikeThrough;
     }
 
     /**
      * @param underline the underline to set
      */
-    public void setUnderline(Boolean underline) {
+    public void setUnderline(@Nullable Boolean underline) {
         this.underline = underline;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FontDef fontDef = (FontDef) o;
@@ -298,7 +298,7 @@ public final class FontDef {
      * @param font the {@link Font} to test
      * @return true, if the font's attributes match all attributes defined by this instance
      */
-    public boolean matches(@NotNull Font font) {
+    public boolean matches(Font font) {
         return nullOrEquals(color, font.getColor())
                && nullOrEquals(size, font.getSizeInPoints())
                && nullOrEquals(family, font.getFamily())
@@ -308,7 +308,7 @@ public final class FontDef {
                && nullOrEquals(strikeThrough, font.isStrikeThrough());
     }
 
-    private static boolean nullOrEquals(Object a, Object b) {
+    private static boolean nullOrEquals(@Nullable Object a, @Nullable Object b) {
         return a==null || b==null || a.equals(b);
     }
 
@@ -316,7 +316,7 @@ public final class FontDef {
      * Update this FontDef with the non-null values of another FontDef instance.
      * @param delta the FontDef containing the values to apply
      */
-    public void merge(@NotNull FontDef delta) {
+    public void merge(FontDef delta) {
         if (delta.color != null) this.color = delta.color;
         if (delta.size != null) this.size = delta.size;
         if (delta.family != null) this.family = delta.family;
@@ -327,7 +327,7 @@ public final class FontDef {
     }
 
     // a little helper for the consumeIfDefined... methods
-    private static <T> boolean consumeIfDefined(T v, @NotNull Consumer<T> c) {
+    private static <T> boolean consumeIfDefined(T v, Consumer<T> c) {
         boolean run = v != null;
         if (run) {
             c.accept(v);
@@ -340,7 +340,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifColorDefined(@NotNull Consumer<? super Color> c) {
+    public boolean ifColorDefined(Consumer<? super Color> c) {
         return consumeIfDefined(color, c);
     }
 
@@ -349,7 +349,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifSizeDefined(@NotNull Consumer<? super Float> c) {
+    public boolean ifSizeDefined(Consumer<? super Float> c) {
         return consumeIfDefined(size, c);
     }
 
@@ -358,7 +358,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifFamilyDefined(@NotNull Consumer<? super String> c) {
+    public boolean ifFamilyDefined(Consumer<? super String> c) {
         return consumeIfDefined(family, c);
     }
 
@@ -367,7 +367,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifBoldDefined(@NotNull Consumer<? super Boolean> c) {
+    public boolean ifBoldDefined(Consumer<? super Boolean> c) {
         return consumeIfDefined(bold, c);
     }
 
@@ -376,7 +376,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifItalicDefined(@NotNull Consumer<? super Boolean> c) {
+    public boolean ifItalicDefined(Consumer<? super Boolean> c) {
         return consumeIfDefined(italic, c);
     }
 
@@ -385,7 +385,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifUnderlineDefined(@NotNull Consumer<? super Boolean> c) {
+    public boolean ifUnderlineDefined(Consumer<? super Boolean> c) {
         return consumeIfDefined(underline, c);
     }
 
@@ -394,7 +394,7 @@ public final class FontDef {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifStrikeThroughDefined(@NotNull Consumer<? super Boolean> c) {
+    public boolean ifStrikeThroughDefined(Consumer<? super Boolean> c) {
         return consumeIfDefined(strikeThrough, c);
     }
 

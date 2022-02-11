@@ -1,7 +1,5 @@
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.NotNull;
-
 /**
  * Represents an HTML tag.
  */
@@ -26,7 +24,7 @@ public interface HtmlTag {
      * @param close text of the closing tag
      * @return the new tag
      */
-    static HtmlTag tag(@NotNull String open, @NotNull String close) {
+    static HtmlTag tag(String open, String close) {
         return new HtmlTag() {
             @Override
             public String open() {

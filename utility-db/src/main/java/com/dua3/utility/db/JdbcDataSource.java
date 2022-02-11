@@ -5,7 +5,7 @@
 
 package com.dua3.utility.db;
 
-import com.dua3.cabe.annotations.NotNull;
+import com.dua3.cabe.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -48,7 +48,7 @@ public class JdbcDataSource implements DataSource {
      * Set the JDBC driver for this instance.
      * @param driver  the driver
      */
-    public void setDriver(@NotNull Driver driver) {
+    public void setDriver(Driver driver) {
         this.driver = Objects.requireNonNull(driver);
     }
 
@@ -59,7 +59,7 @@ public class JdbcDataSource implements DataSource {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T unwrap(@NotNull Class<T> iface) throws SQLException {
+    public <T> T unwrap(Class<T> iface) throws SQLException {
         if (!iface.isAssignableFrom(this.getClass())) {
             throw new SQLException(iface.getName()+" is not assignable from "+this.getClass().getName());
         }
@@ -119,7 +119,7 @@ public class JdbcDataSource implements DataSource {
      * @param user
      *  the database user or `null` to unset
      */
-    public void setUser(String user) {
+    public void setUser(@Nullable String user) {
         if (user==null) {
             // Properties class does not support storing null values!
             properties.remove(USER);
@@ -133,7 +133,7 @@ public class JdbcDataSource implements DataSource {
      * @param password
      *  the database password or `null` to unset
      */
-    public void setPassword(String password) {
+    public void setPassword(@Nullable String password) {
         if (password==null) {
             // Properties class does not support storing null values!
             properties.remove(PASSWORD);

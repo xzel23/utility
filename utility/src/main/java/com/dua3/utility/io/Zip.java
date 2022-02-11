@@ -1,7 +1,6 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.Flushable;
 import java.io.IOException;
@@ -23,7 +22,7 @@ public class Zip implements AutoCloseable, Flushable {
      * Create new Zip instance.
      * @param out the {@link OutputStream} to write the zip data to
      */
-    public Zip(@NotNull OutputStream out) {
+    public Zip(OutputStream out) {
         this.zout = new ZipOutputStream(out);
     }
 
@@ -35,7 +34,7 @@ public class Zip implements AutoCloseable, Flushable {
      * @param data  the data
      * @throws IOException on error
      */
-    public void add(@NotNull String filename, @NotNull byte[] data) throws IOException {
+    public void add(String filename, byte[] data) throws IOException {
         addFileEntry(filename);
         zout.write(data);
     }
@@ -48,7 +47,7 @@ public class Zip implements AutoCloseable, Flushable {
      * @param in  the {@link InputStream} to read the data from
      * @throws IOException on error
      */
-    public void add(@NotNull String filename, @NotNull InputStream in) throws IOException {
+    public void add(String filename, InputStream in) throws IOException {
         addFileEntry(filename);
         byte[] buffer = new byte[BUFFER_SIZE];
         
@@ -58,7 +57,7 @@ public class Zip implements AutoCloseable, Flushable {
         }
     }
     
-    private void addFileEntry(@NotNull String filename) throws IOException {
+    private void addFileEntry(String filename) throws IOException {
         LangUtil.check(!filename.isEmpty(), "the filename must not be empty");
         LangUtil.check(filename.indexOf('/')==-1, "the filename must not contain any '/'");
         ZipEntry entry = new ZipEntry(path + filename);
@@ -72,7 +71,7 @@ public class Zip implements AutoCloseable, Flushable {
      * @param dirname  the directoryname
      * @throws IOException on error
      */
-    public void directory(@NotNull String dirname) throws IOException {
+    public void directory(String dirname) throws IOException {
         LangUtil.check(!dirname.isEmpty(), "directory name must not be empty");
         
         // append '/' if needed

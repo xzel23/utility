@@ -2,11 +2,11 @@
 
 Some libraries with utility classes.
 
-| library       | description               | exported module    | required modules                                         |
-|---------------|---------------------------|--------------------|----------------------------------------------------------|
-| utility       | general purpose utilities | dua3_utility       | java.logging                                             |
-| utility-db    | database utilities        | dua3_utility.db    | dua3_utility java.logging java.sql dua3_utility          |
-| utility-swing | swing utilities           | dua3_utility.swing | dua3_utility java.datatransfer java.desktop java.logging |
+| library       | description               | exported module        |
+|---------------|---------------------------|------------------------|
+| utility       | general purpose utilities | com.dua3.utility       |
+| utility-db    | database utilities        | com.dua3.utility.db    |
+| utility-swing | swing utilities           | com.dua3.utility.swing |
 
 ## License
 
@@ -99,7 +99,8 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ### 10 (to be released)
 
-- **Java 17 is now required!**
+- **Java 17 required!**
+- changed module names to com.dua3.utility again
 - upgraded gradle to 7.2 for Java 17 support
 - publish snapshots to snoatype snapshot repository
 - geometry classes taking float parameters have been renamed to ...2f
@@ -120,9 +121,10 @@ When running your code with exceptions enabled, parameters are checked for inval
 - many fixes and smaller improvements, added many Javadoc comments, improve test coverage
 - XmlUtil defaultInstance() is now unsynchronised and should be faster
 - added LangUtil.orElse() and LangUtil.orElseGet() for Optional-like functionality without creating an Optional instance first
-- added [cabe](https://github.com/xzel23/cabe) @NotNull annotations to parameters
+- added [cabe](https://github.com/xzel23/cabe) annotations to parameters
 - rename `IOUtil`, `IOOptions` to `IoUtil`, `IoOptions`
 - reorder parameters to the different LogAdapter `addListener()` and `removeListener()` methods and add overloads for these methods that add/remove listeners to /from the framework's root logger. 
+- remove LogUtil.format() as it is not shorter than the equivalent lambda (i.e. `LogUtil.format("message %s", arg)` can be replaced by `() -> "message %s".formatted(arg)`)
 
 **The following functionality has been removed because it is available in JDK 17**:
 - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
@@ -138,8 +140,8 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 - migrate from bintray to sonatype 
 - JDK 11+ required! It's finally time to dump Java 8 support. I won't put any more effort into supporting a Java version that has long reached EOL and is a maintenance burden because of its missing modularity support.
-- build uses Gradle 7 to enable building on JDK 16
-- removed usae of the JPMS Gradle plugin as it is not compatible with Gradle 7 and not needed anymore after dropping JDK 8 support and Gradle 7 adding modularity support.
+- build uses Gradle 7 to enable building on JDK 17
+- removed usae of the JPMS Gradle plugin as it is not compatible with Gradle 7 and not needed anymore after dropping JDK 8 support and Gradle 7 added modularity support.
 - logback support has been replaced by log4j2 due to missing jigsaw suport in logback. This means if you have been using a Log4J to Logback bridge before, it's now time to do it the other way around.
 - NamedParameterStatement supports many more data types; fixes for inserting null values.
 - source parameter of CsvReader changed from String to URI

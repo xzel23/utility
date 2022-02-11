@@ -6,7 +6,6 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.logging.LogUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,7 +24,7 @@ public class Stopwatch {
          */
         STANDARD {
             @Override
-            public String format(@NotNull Duration d) {
+            public String format(Duration d) {
                 boolean negative = d.isNegative();
 
                 long seconds = d.getSeconds();
@@ -51,7 +50,7 @@ public class Stopwatch {
          */
         HOURS_MINUTES_SECONDS_MILLIS {
             @Override
-            public String format(@NotNull Duration d) {
+            public String format(Duration d) {
                 return STANDARD.format(d);
             }
         },
@@ -60,7 +59,7 @@ public class Stopwatch {
          */
         MINUTES_SECONDS_MILLIS {
             @Override
-            public String format(@NotNull Duration d) {
+            public String format(Duration d) {
                 boolean negative = d.isNegative();
 
                 long seconds = d.getSeconds();
@@ -84,7 +83,7 @@ public class Stopwatch {
          */
         SECONDS_MILLIS {
             @Override
-            public String format(@NotNull Duration d) {
+            public String format(Duration d) {
                 boolean negative = d.isNegative();
 
                 long seconds = d.getSeconds();
@@ -106,7 +105,7 @@ public class Stopwatch {
          */
         MILLIS {
             @Override
-            public String format(@NotNull Duration d) {
+            public String format(Duration d) {
                 boolean negative = d.isNegative();
 
                 long seconds = d.getSeconds();
@@ -138,7 +137,7 @@ public class Stopwatch {
      *
      * @param name the name for this instance; it is included in {@code toString()}
      */
-    public Stopwatch(@NotNull String name) {
+    public Stopwatch(String name) {
         this.name = Objects.requireNonNull(name);
         this.start = this.startSplit = Instant.now();
     }
@@ -148,7 +147,7 @@ public class Stopwatch {
      *
      * @param name the name for this instance; it is included in {@code toString()}
      */
-    public Stopwatch(@NotNull Supplier<String> name) {
+    public Stopwatch(Supplier<String> name) {
         this.name = Objects.requireNonNull(name);
         this.start = this.startSplit = Instant.now();
     }
@@ -225,9 +224,9 @@ public class Stopwatch {
      * @param fmt the format to use
      * @return Supplier that returns the state of the stopwatch at time of invocation
      */
-    public Supplier<String> logElapsed(@NotNull Format fmt) {
-        Duration d = elapsed(); // DO NOT INLINE (important to capture invocation time)
-        return LogUtil.formatLazy(() -> fmt.format(d));
+    public Supplier<String> logElapsed(Format fmt) {
+        Instant instant = Instant.now();
+        return LogUtil.formatLazy(() -> fmt.format(Duration.between(start, instant)));
     }
 
     /**
@@ -236,8 +235,9 @@ public class Stopwatch {
      * @param newSplit if true, start a new split
      * @return Supplier that returns the state of the stopwatch at time of invocation
      */
-    public Supplier<String> logElapsedSplit(@NotNull Format fmt, boolean newSplit) {
-        Duration d = elapsedSplit(newSplit); // DO NOT INLINE (important to capture invocation time)
-        return LogUtil.formatLazy(() -> fmt.format(d));
+    public Supplier<String> logElapsedSplit(Format fmt, boolean newSplit) {
+        Instant startOfSplit = startSplit;
+        Instant instant = Instant.now();
+        return LogUtil.formatLazy(() -> fmt.format(Duration.between(startOfSplit, instant)));
     }
 }

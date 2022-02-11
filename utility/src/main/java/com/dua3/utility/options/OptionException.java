@@ -1,7 +1,5 @@
 package com.dua3.utility.options;
 
-import com.dua3.cabe.annotations.NotNull;
-
 /**
  * Exception class to throw when command line arguments and/or values for configuration options do not match the 
  * allowed values defined by the option/parser.
@@ -20,9 +18,8 @@ public class OptionException extends IllegalStateException {
          * @param parameter the parameter value as String
          * @param e the parent exception
          */
-        public ParameterConversionException(@NotNull Option<?> option, String parameter, Exception e) {
+        public ParameterConversionException(Option<?> option, String parameter, Exception e) {
             super("invalid value passed to "+option.name()+": "+parameter, e);
-            assert option != null;
             this.option = option;
             this.parameter = parameter;
         }
@@ -32,7 +29,7 @@ public class OptionException extends IllegalStateException {
          * @param option the option the argument belongds to
          * @param parameter the parameter value as String
          */
-        public ParameterConversionException(@NotNull Option<?> option, String parameter) {
+        public ParameterConversionException(Option<?> option, String parameter) {
             super("invalid value passed to "+option.name()+": "+parameter);
             this.option = option;
             this.parameter = parameter;

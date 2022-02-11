@@ -1,7 +1,6 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,29 +25,29 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
     final Consumer<RichTextBuilder> appendSuffix;
     final IntUnaryOperator calculateSupplementaryLength;
 
-    public RichTextJoiner(@NotNull CharSequence delimiter,
-                          @NotNull CharSequence prefix,
-                          @NotNull CharSequence suffix) {
+    public RichTextJoiner(CharSequence delimiter,
+                          CharSequence prefix,
+                          CharSequence suffix) {
         this.appendDelimiter = rtb -> rtb.append(delimiter);
         this.appendPrefix = rtb -> rtb.append(prefix);
         this.appendSuffix = rtb -> rtb.append(suffix);
         this.calculateSupplementaryLength = n -> prefix.length() + n * delimiter.length() + suffix.length(); 
     }
 
-    public RichTextJoiner(@NotNull CharSequence delimiter) {
+    public RichTextJoiner(CharSequence delimiter) {
         this(delimiter,"","");
     }
 
-    public RichTextJoiner(@NotNull RichText delimiter,
-                          @NotNull RichText prefix,
-                          @NotNull RichText suffix) {
+    public RichTextJoiner(RichText delimiter,
+                          RichText prefix,
+                          RichText suffix) {
         this.appendDelimiter = rtb -> rtb.append(delimiter);
         this.appendPrefix = rtb -> rtb.append(prefix);
         this.appendSuffix = rtb -> rtb.append(suffix);
         this.calculateSupplementaryLength = n -> prefix.length() + n * delimiter.length() + suffix.length();
     }
 
-    public RichTextJoiner(@NotNull RichText delimiter) {
+    public RichTextJoiner(RichText delimiter) {
         this(delimiter,RichText.emptyText(), RichText.emptyText());
     }
 

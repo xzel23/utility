@@ -1,6 +1,6 @@
 package com.dua3.utility.data;
 
-import com.dua3.cabe.annotations.NotNull;
+import com.dua3.cabe.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -24,7 +24,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
      * @param <T> the node type
      * @return the tree
      */
-    public static <T extends FileTreeNode<T>> T tree(@NotNull Path root) {
+    public static <T extends FileTreeNode<T>> T tree(Path root) {
         return tree(root, true);
     }
 
@@ -35,7 +35,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
      * @param <T> the node type
      * @return the tree
      */
-    public static <T extends FileTreeNode<T>> T tree(@NotNull Path root, boolean lazy) {
+    public static <T extends FileTreeNode<T>> T tree(Path root, boolean lazy) {
         T t = (T) new FileTreeNode<T>(null, root, lazy);
         if (!lazy) {
             t.refresh();
@@ -50,9 +50,9 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
     private final List<Consumer<T>> listeners = new ArrayList<>();
 
-    protected FileTreeNode(T parent, Path path, boolean lazy) {
+    protected FileTreeNode(@Nullable T parent, Path path, boolean lazy) {
         this.parent = parent;
-        this.path = Objects.requireNonNull(path);
+        this.path = path;
         this.lazy = lazy;
     }
 
@@ -108,7 +108,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         return other != null && getClass() == other.getClass() && path.equals(((FileTreeNode<T>) other).path);
     }
 
@@ -125,7 +125,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         return children().isEmpty();
     }
 
-    public void addRefreshListener(@NotNull Consumer<T> listener) {
+    public void addRefreshListener(Consumer<T> listener) {
         this.listeners.add(Objects.requireNonNull(listener));
     }
 

@@ -11,7 +11,6 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +26,7 @@ public final class Log4jAdapter {
     private static class Log4jLogEntry extends AbstractLogEntry<LogEvent> {
         private final LogEvent evt;
 
-        Log4jLogEntry(@NotNull LogEvent evt) {
+        Log4jLogEntry(LogEvent evt) {
             this.evt = Objects.requireNonNull(evt.toImmutable());
         }
 
@@ -88,7 +87,7 @@ public final class Log4jAdapter {
      * @param evt the log4j2 logging event
      * @return log entry
      */
-    public static LogEntry toLogEntry(@NotNull LogEvent evt) {
+    public static LogEntry toLogEntry(LogEvent evt) {
         return new Log4jLogEntry(evt);
     }
 
@@ -96,7 +95,7 @@ public final class Log4jAdapter {
      * Add a listener to the root Logger instance.
      * @param listener the listener
      */
-    public static void addListener(@NotNull LogListener listener) {
+    public static void addListener(LogListener listener) {
         addListener(listener, LogManager.getRootLogger());
     }
     
@@ -105,13 +104,13 @@ public final class Log4jAdapter {
      * @param listener the listener
      * @param logger the logger
      */
-    public static void addListener(@NotNull LogListener listener, @NotNull Logger logger) {
+    public static void addListener(LogListener listener, Logger logger) {
         LoggerContext context = LoggerContext.getContext(false);
         Configuration config = context.getConfiguration();
         PatternLayout layout = PatternLayout.createDefaultLayout(config);
         Appender appender = new AbstractAppender(getAppenderName(logger), null, layout, false, null) {
             @Override
-            public void append(@NotNull LogEvent event) {
+            public void append(LogEvent event) {
                 listener.entry(toLogEntry(event));
             }
         };
@@ -121,11 +120,11 @@ public final class Log4jAdapter {
         updateLoggers(appender, config);
     }
 
-    private static String getAppenderName(@NotNull Logger logger) {
+    private static String getAppenderName(Logger logger) {
         return logger.getName() + "[Log4j]";
     }
 
-    private static void updateLoggers(@NotNull final Appender appender, @NotNull final Configuration config) {
+    private static void updateLoggers(final Appender appender, final Configuration config) {
         Level level = null;
         Filter filter = null;
         for (LoggerConfig loggerConfig : config.getLoggers().values()) {
@@ -140,7 +139,7 @@ public final class Log4jAdapter {
      * Remove a listener from the root instance.
      * @param listener the listener
      */
-    public static void removeListener(@NotNull LogListener listener) {
+    public static void removeListener(LogListener listener) {
         removeListener(listener, LogManager.getRootLogger());
     }
     
@@ -149,7 +148,7 @@ public final class Log4jAdapter {
      * @param listener the listener
      * @param logger the logger
      */
-    public static void removeListener(@NotNull LogListener listener, @NotNull Logger logger) {
+    public static void removeListener(LogListener listener, Logger logger) {
         LoggerContext context = LoggerContext.getContext(false);
         Configuration config = context.getConfiguration();
         for (LoggerConfig loggerConfig : config.getLoggers().values()) {

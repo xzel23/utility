@@ -5,8 +5,6 @@
 
 package com.dua3.utility.lang;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.io.Serial;
 
 /**
@@ -16,7 +14,7 @@ public class WrappedException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public WrappedException(@NotNull Exception cause) {
+    public WrappedException(Exception cause) {
         super(cause);
     }
 

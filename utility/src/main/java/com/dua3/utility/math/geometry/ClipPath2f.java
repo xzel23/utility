@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Set Clip path.
@@ -25,7 +24,7 @@ public class ClipPath2f extends Segment2f {
      * @param idx index of the current node
      * @param fillRule the {@link FillRule} to use
      */
-    ClipPath2f(@NotNull Path2fImpl path, int idx, @NotNull FillRule fillRule) {
+    ClipPath2f(Path2fImpl path, int idx, FillRule fillRule) {
         super(path);
         this.idx = idx;
         this.fillRule = fillRule;

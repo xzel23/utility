@@ -6,13 +6,13 @@
 /**
  * Module containing database utilities.
  */
-module dua3_utility.db {
+module com.dua3.utility.db {
     exports com.dua3.utility.db;
 
     requires transitive java.sql;
     
     requires java.logging;
-    requires dua3_utility;
+    requires com.dua3.utility;
 
     requires static com.dua3.cabe.annotations;
 }

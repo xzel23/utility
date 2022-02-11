@@ -1,7 +1,5 @@
 package com.dua3.utility.logging;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.util.Optional;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -23,7 +21,7 @@ public final class JULAdapter {
 
         private LogListener listener;
 
-        public JULHandler(@NotNull LogListener listener) {
+        public JULHandler(LogListener listener) {
             this.listener = listener;    
         }
         
@@ -59,7 +57,7 @@ public final class JULAdapter {
          * Constructor.
          * @param r the {@link LogRecord} to wrap.
          */
-        JULLogEntry(@NotNull LogRecord r) {
+        JULLogEntry(LogRecord r) {
             this.r = r;
         }
 
@@ -120,7 +118,7 @@ public final class JULAdapter {
      * @param r the {@link LogRecord} to convert
      * @return LogEntry instance
      */
-    public static LogEntry toLogEntry(@NotNull LogRecord r) {
+    public static LogEntry toLogEntry(LogRecord r) {
         return new JULLogEntry(r);
     }
 
@@ -129,7 +127,7 @@ public final class JULAdapter {
      * This is a convenience method that simply calls {@link #addListener(LogListener, Logger)} with the root logger.
      * @param listener the listener
      */
-    public static void addListener(@NotNull LogListener listener) {
+    public static void addListener(LogListener listener) {
         addListener(listener, Logger.getLogger(""));
     }
     
@@ -138,7 +136,7 @@ public final class JULAdapter {
      * @param listener the listener
      * @param logger the logger
      */
-    public static void addListener(@NotNull LogListener listener, @NotNull Logger logger) {
+    public static void addListener(LogListener listener, Logger logger) {
         logger.addHandler(new JULHandler(listener));
     }
 
@@ -146,7 +144,7 @@ public final class JULAdapter {
      * Remove a {@link LogListener} from the root {@link Logger}.
      * @param listener the listener
      */
-    public static void removeListener(@NotNull LogListener listener) {
+    public static void removeListener(LogListener listener) {
         removeListener(listener, Logger.getLogger(""));
     }
     
@@ -155,7 +153,7 @@ public final class JULAdapter {
      * @param listener the listener
      * @param logger the logger
      */
-    public static void removeListener(@NotNull LogListener listener, @NotNull Logger logger) {
+    public static void removeListener(LogListener listener, Logger logger) {
         for (Handler handler: logger.getHandlers()) {
             if (handler instanceof JULHandler julHandler) {
                 if (listener==julHandler.getListener()) {

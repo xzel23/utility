@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Stroke path.
@@ -23,7 +22,7 @@ public class StrokePath2f extends Segment2f {
      * @param path the path
      * @param idx index of current point
      */
-    StrokePath2f(@NotNull Path2fImpl path, int idx) {
+    StrokePath2f(Path2fImpl path, int idx) {
         super(path);
         this.idx = idx;
     }

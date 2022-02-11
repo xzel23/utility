@@ -9,7 +9,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.4'
+        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.4.1'
     }
 }
 

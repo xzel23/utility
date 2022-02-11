@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Defines an affine transformation in form of a matrix
@@ -58,7 +57,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * @param v the translation vector
      * @return affine transformation (translation)
      */
-    public static AffineTransformation2f translate(@NotNull Vector2f v) {
+    public static AffineTransformation2f translate(Vector2f v) {
         return translate(v.x(), v.y());
     }
 
@@ -98,7 +97,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * @param A the affine transformation to append
      * @return affine transformation (combination of this and A)
      */
-    public AffineTransformation2f append(@NotNull AffineTransformation2f A) {
+    public AffineTransformation2f append(AffineTransformation2f A) {
         return new AffineTransformation2f(
                 A.a*a+A.b*d, A.a*b+A.b*e, A.a*c+A.b*f+A.c,
                 A.d*a+A.e*d, A.d*b+A.e*e, A.d*c+A.e*f+A.f
@@ -110,7 +109,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * @param v the vector to transform
      * @return the result of transformation
      */
-    public Vector2f transform(@NotNull Vector2f v) {
+    public Vector2f transform(Vector2f v) {
         return transform(v.x(), v.y());
     }
     

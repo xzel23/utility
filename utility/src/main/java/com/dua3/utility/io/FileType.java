@@ -15,7 +15,7 @@
  */
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.NotNull;
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 
@@ -50,7 +50,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     private final OpenMode mode;
     private final List<String> extensions; // unmodifiable!
 
-    protected FileType(@NotNull String name, @NotNull OpenMode mode, @NotNull Class<? extends T> cls, @NotNull String... extensions) {
+    protected FileType(String name, OpenMode mode, Class<? extends T> cls, String... extensions) {
         this.name = name;
         this.mode = mode;
         this.cls = cls;
@@ -63,7 +63,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param ft  the type to add
      * @param <T> the file type's document type
      */
-    protected static <T> void addType(@NotNull FileType<T> ft) {
+    protected static <T> void addType(FileType<T> ft) {
         types.add(ft);
     }
 
@@ -71,7 +71,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return Collections.unmodifiableSet(types);
     }
 
-    public static Optional<FileType<?>> forExtension(@NotNull String ext) {
+    public static Optional<FileType<?>> forExtension(String ext) {
         for (FileType<?> t : types) {
             if (!t.isCompound() && t.extensions.contains(ext)) {
                 return Optional.of(t);
@@ -80,20 +80,20 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return Optional.empty();
     }
 
-    public static Optional<FileType<?>> forUri(@NotNull URI uri) {
+    public static Optional<FileType<?>> forUri(URI uri) {
         return forExtension(IoUtil.getExtension(uri));
     }
 
-    public static <T> Optional<FileType<T>> forUri(@NotNull URI uri, @NotNull Class<T> cls) {
+    public static <T> Optional<FileType<T>> forUri(URI uri, Class<T> cls) {
         return forFileName(cls, uri.getSchemeSpecificPart());
     }
 
-    public static <T> Optional<FileType<T>> forPath(@NotNull Path path, @NotNull Class<T> cls) {
+    public static <T> Optional<FileType<T>> forPath(Path path, Class<T> cls) {
         return forFileName(cls, String.valueOf(path.getFileName()));
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> Optional<FileType<T>> forFileName(@NotNull Class<T> cls, @NotNull String fileName) {
+    private static <T> Optional<FileType<T>> forFileName(Class<T> cls, String fileName) {
         for (FileType<?> t : types) {
             if (t.matches(fileName) && cls.isAssignableFrom(t.getDocumentClass())) {
                 return Optional.of((FileType<T>) t);
@@ -102,12 +102,12 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return Optional.empty();
     }
 
-    public static <T> Optional<T> read(@NotNull URI uri, @NotNull Class<T> cls) throws IOException {
+    public static <T> Optional<T> read(URI uri, Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forUri(uri, cls);
         return type.isPresent() ? Optional.of(type.get().read(uri)) : Optional.empty();
     }
 
-    public static <T> Optional<T> read(@NotNull Path path, @NotNull Class<T> cls) throws IOException {
+    public static <T> Optional<T> read(Path path, Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forPath(path, cls);
         return type.isPresent() ? Optional.of(type.get().read(path)) : Optional.empty();
     }
@@ -118,7 +118,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param mode the mode
      * @return the list of file types supporting the requested mode
      */
-    public static List<FileType<?>> getFileTypes(@NotNull OpenMode mode) {
+    public static List<FileType<?>> getFileTypes(OpenMode mode) {
         List<FileType<?>> list = new ArrayList<>(types);
         list.removeIf(t -> (t.mode.n & mode.n) != mode.n);
         return list;
@@ -133,7 +133,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return list of file types that support reading/writing objects of the given class type
      */
     @SuppressWarnings("unchecked")
-    public static <T> List<FileType<T>> getFileTypes(@NotNull OpenMode mode, @NotNull Class<T> cls) {
+    public static <T> List<FileType<T>> getFileTypes(OpenMode mode, Class<T> cls) {
         return types.stream()
                 .filter(t -> t.isSupported(mode))
                 /* either reading is not requested or files of this type must be assignable to cls */
@@ -186,7 +186,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param mode the mode to test
      * @return true, if mode is supported by this file type
      */
-    public boolean isSupported(@NotNull OpenMode mode) {
+    public boolean isSupported(OpenMode mode) {
         return (this.mode.n & mode.n) == mode.n;
     }
 
@@ -196,7 +196,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param filename the filename
      * @return true, if the filename matches this type's file extension
      */
-    public boolean matches(@NotNull String filename) {
+    public boolean matches(String filename) {
         String ext1 = IoUtil.getExtension(filename);
         return extensions.stream().anyMatch(ext2 -> ext2.equals(ext1));
     }
@@ -208,7 +208,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public T read(@NotNull URI uri) throws IOException {
+    public T read(URI uri) throws IOException {
         return read(uri, t -> Arguments.empty());
     }
 
@@ -221,7 +221,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     @SuppressWarnings("RedundantThrows")
-    public abstract T read(@NotNull URI uri, @NotNull Function<FileType<? extends T>, Arguments> options) throws IOException;
+    public abstract T read(URI uri, Function<FileType<? extends T>, Arguments> options) throws IOException;
 
     /**
      * Read document from file.
@@ -230,7 +230,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public T read(@NotNull Path path) throws IOException {
+    public T read(Path path) throws IOException {
         return read(path, t -> Arguments.empty());
     }
 
@@ -242,7 +242,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the document
      * @throws IOException if an error occurs
      */
-    public T read(@NotNull Path path, @NotNull Function<FileType<? extends T>, Arguments> options) throws IOException {
+    public T read(Path path, Function<FileType<? extends T>, Arguments> options) throws IOException {
         return read(path.toUri());
     }
 
@@ -253,7 +253,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param document the document to write
      * @throws IOException if an error occurs
      */
-    public void write(@NotNull URI uri, @NotNull T document) throws IOException {
+    public void write(URI uri, T document) throws IOException {
         write(uri, document, t -> Arguments.empty());
     }
 
@@ -266,7 +266,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     @SuppressWarnings("RedundantThrows")
-    public abstract void write(@NotNull URI uri, @NotNull T document, @NotNull Function<FileType<? super T>, Arguments> options) throws IOException;
+    public abstract void write(URI uri, T document, Function<FileType<? super T>, Arguments> options) throws IOException;
 
     /**
      * Write document to file.
@@ -275,7 +275,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param document the document to write
      * @throws IOException if an error occurs
      */
-    public void write(@NotNull Path path, @NotNull T document) throws IOException {
+    public void write(Path path, T document) throws IOException {
         write(path, document, t -> Arguments.empty());
     }
 
@@ -287,7 +287,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param options  the options to use
      * @throws IOException if an error occurs
      */
-    public void write(@NotNull Path path, @NotNull T document, @NotNull Function<FileType<? super T>, Arguments> options) throws IOException {
+    public void write(Path path, T document, Function<FileType<? super T>, Arguments> options) throws IOException {
         write(path.toUri(), document, options);
     }
 
@@ -319,7 +319,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     // all instances of the same class are considered equal
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj != null && obj.getClass() == getClass();
     }
 
@@ -330,7 +330,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     @Override
-    public int compareTo(@NotNull FileType o) {
+    public int compareTo(FileType o) {
         if (o == this) {
             return 0;
         }

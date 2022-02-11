@@ -5,8 +5,6 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.NotNull;
-
 /**
  * An interface for classes that can be represented as RichText.
  */
@@ -29,5 +27,5 @@ public interface ToRichText {
      *
      * @param builder the builder
      */
-    void appendTo(@NotNull RichTextBuilder builder);
+    void appendTo(RichTextBuilder builder);
 }

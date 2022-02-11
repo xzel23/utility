@@ -5,8 +5,8 @@
 
 package com.dua3.utility.data;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -351,7 +351,7 @@ public final class Color {
      *           the text
      * @return   result of conversion
      */
-    public static Color valueOf(@NotNull String s) {
+    public static Color valueOf(String s) {
         // try named colors first
         Color color = COLORS.get(s);
         if (color != null) {
@@ -412,7 +412,7 @@ public final class Color {
         return COLORS.values();
     }
 
-    private static Color register(@NotNull String name, int code) {
+    private static Color register(String name, int code) {
         Color c = new Color(code);
         COLORS.put(name, c);
         return c;
@@ -588,7 +588,7 @@ public final class Color {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj != null && obj.getClass() == getClass() && ((Color) obj).argb == argb;
     }
 

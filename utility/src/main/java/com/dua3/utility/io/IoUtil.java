@@ -5,9 +5,9 @@
 
 package com.dua3.utility.io;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -55,7 +55,7 @@ public final class IoUtil {
      * @param path the path of the file
      * @return the filename of the last element of the path
      */
-    public static String getFilename(@NotNull String path) {
+    public static String getFilename(String path) {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
         return path.substring(fi.first(), fi.second());
     }
@@ -65,7 +65,7 @@ public final class IoUtil {
      * @param path the path to get the filename for
      * @return pair with start, end indices
      */
-    private static Pair<Integer, Integer> getFilenameInfo(@NotNull CharSequence path) {
+    private static Pair<Integer, Integer> getFilenameInfo(CharSequence path) {
         // trim trailing separators
         int end = path.length();
         while (end>0 && isSeparatorChar(path.charAt(end-1))) {
@@ -100,7 +100,7 @@ public final class IoUtil {
      *              the path
      * @return      the extension
      */
-    public static String getExtension(@NotNull Path path) {
+    public static String getExtension(Path path) {
         Path fnamePath = path.getFileName();
 
         if (fnamePath == null) {
@@ -118,7 +118,7 @@ public final class IoUtil {
      *             the URL
      * @return     the extension
      */
-    public static String getExtension(@NotNull URL url) {
+    public static String getExtension(URL url) {
         return getExtension(url.getFile());
     }
 
@@ -128,7 +128,7 @@ public final class IoUtil {
      * @param  uri the URI
      * @return     the extension
      */
-    public static String getExtension(@NotNull URI uri) {
+    public static String getExtension(URI uri) {
         return getExtension(uri.getSchemeSpecificPart());
     }
 
@@ -138,7 +138,7 @@ public final class IoUtil {
      * @param  path  the path
      * @return       the extension
      */
-    public static String getExtension(@NotNull String path) {
+    public static String getExtension(String path) {
         return getExtensionUnsafe(getFilename(path));
     }
 
@@ -149,7 +149,7 @@ public final class IoUtil {
      * @param  fname the filename
      * @return       the extension
      */
-    private static String getExtensionUnsafe(@NotNull String fname) {
+    private static String getExtensionUnsafe(String fname) {
         int pos = fname.lastIndexOf('.');
         return pos < 0 ? "" : fname.substring(pos + 1);
     }
@@ -161,7 +161,7 @@ public final class IoUtil {
      *               the file path
      * @return       filename without extension
      */
-    public static String stripExtension(@NotNull String path) {
+    public static String stripExtension(String path) {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
@@ -181,7 +181,7 @@ public final class IoUtil {
      *              the new file extension
      * @return       filename with replaced extension
      */
-    public static String replaceExtension(@NotNull String path, @NotNull String extension) {
+    public static String replaceExtension(String path, String extension) {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
@@ -207,7 +207,7 @@ public final class IoUtil {
      *              the new file extension
      * @return       filename with replaced extension
      */
-    public static Path replaceExtension(@NotNull Path path, @NotNull String extension) {
+    public static Path replaceExtension(Path path, String extension) {
         Path parent = path.getParent();
         
         Path filename = path.getFileName();
@@ -231,7 +231,7 @@ public final class IoUtil {
      * @throws IOException
      *                     if content could not be read
      */
-    public static String read(@NotNull Path path, @NotNull Charset cs) throws IOException {
+    public static String read(Path path, Charset cs) throws IOException {
         Objects.requireNonNull(path);
         Objects.requireNonNull(cs);
 
@@ -250,7 +250,7 @@ public final class IoUtil {
      * @throws IOException
      *                     if content could not be read
      */
-    public static String read(@NotNull URL url, @NotNull Charset cs) throws IOException {
+    public static String read(URL url, Charset cs) throws IOException {
         try (InputStream in = url.openStream()) {
             return new String(in.readAllBytes(), cs);
         }
@@ -267,7 +267,7 @@ public final class IoUtil {
      * @throws IOException
      *                     if content could not be read
      */
-    public static String read(@NotNull URI uri, @NotNull Charset cs) throws IOException {
+    public static String read(URI uri, Charset cs) throws IOException {
         try (InputStream in = openInputStream(uri)) {
             return new String(in.readAllBytes(), cs);
         }
@@ -279,7 +279,7 @@ public final class IoUtil {
      * @return InputStream
      * @throws IOException on error
      */
-    public static InputStream openInputStream(@NotNull URI uri) throws IOException {
+    public static InputStream openInputStream(URI uri) throws IOException {
         if (uri.isAbsolute()) {
             return uri.toURL().openStream();
         } else {
@@ -293,7 +293,7 @@ public final class IoUtil {
      * @param out the outputStream to write to
      * @throws IOException if an error occurs
      */
-    public static void copyAllBytes(@NotNull InputStream in, @NotNull OutputStream out) throws IOException {
+    public static void copyAllBytes(InputStream in, OutputStream out) throws IOException {
         byte[] buf = new byte[8192];
         int length;
         while ((length = in.read(buf)) > 0) {
@@ -307,7 +307,7 @@ public final class IoUtil {
      * @param cs the Charset to use
      * @return stream of lines
      */
-    public static Stream<String> lines(@NotNull InputStream in, @NotNull Charset cs) {
+    public static Stream<String> lines(InputStream in, Charset cs) {
         return new BufferedReader(new InputStreamReader(in, cs)).lines();
     }
 
@@ -323,7 +323,7 @@ public final class IoUtil {
      * @throws IOException
      *                     if something goes wrong
      */
-    public static void write(@NotNull Path path, @NotNull CharSequence text, @NotNull OpenOption... options) throws IOException {
+    public static void write(Path path, CharSequence text, OpenOption... options) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, options)) {
             writer.append(text);
         }
@@ -336,7 +336,7 @@ public final class IoUtil {
      * @return                       the URL
      * @throws IllegalArgumentException if conversion fails
      */
-    public static URL toURL(@NotNull Path path) {
+    public static URL toURL(Path path) {
         return toURL(toURI(path));
     }
 
@@ -346,7 +346,7 @@ public final class IoUtil {
      * @param  path                  the path
      * @return                       the URI
      */
-    public static URI toURI(@NotNull Path path) {
+    public static URI toURI(Path path) {
         return path.toUri();
     }
 
@@ -357,7 +357,7 @@ public final class IoUtil {
      * @return                       the URL
      * @throws IllegalArgumentException if conversion fails
      */
-    public static URL toURL(@NotNull URI uri) {
+    public static URL toURL(URI uri) {
         try {
             return uri.toURL();
         } catch (MalformedURLException e) {
@@ -371,7 +371,7 @@ public final class IoUtil {
      * @param  uri                   the URI
      * @return                       the Path
      */
-    public static Path toPath(@NotNull URI uri) {
+    public static Path toPath(URI uri) {
         return Paths.get(uri);
     }
 
@@ -382,7 +382,7 @@ public final class IoUtil {
      * @return                       the URI
      * @throws IllegalArgumentException if conversion fails
      */
-    public static URI toURI(@NotNull URL url) {
+    public static URI toURI(URL url) {
         try {
             return url.toURI();
         } catch (URISyntaxException e) {
@@ -397,7 +397,7 @@ public final class IoUtil {
      * @return                       the URI
      * @throws IllegalArgumentException if conversion fails
      */
-    public static Path toPath(@NotNull URL url) {
+    public static Path toPath(URL url) {
         return Paths.get(toURI(url));
     }
 
@@ -406,7 +406,7 @@ public final class IoUtil {
      * @param path the path
      * @return the path as a string with path components separated by forward slashes
      */
-    public static String toUnixPath(@NotNull Path path) {
+    public static String toUnixPath(Path path) {
         String sep = "";
         StringBuilder sb = new StringBuilder();
         Path root = path.getRoot();
@@ -426,7 +426,7 @@ public final class IoUtil {
      * @param s the string
      * @return true if string denotes a URI
      */
-    private static boolean isURI(@NotNull String s) {
+    private static boolean isURI(String s) {
         return s.matches("^[a-z][a-z0-9]+:.*");
     }
 
@@ -435,7 +435,7 @@ public final class IoUtil {
      * @param s the string
      * @return the URI
      */
-    public static URI toURI(@NotNull String s) {
+    public static URI toURI(String s) {
         if (isURI(s)) {
             return URI.create(s);
         } else {
@@ -448,7 +448,7 @@ public final class IoUtil {
      * @param s the string
      * @return the Path
      */
-    public static Path toPath(@NotNull String s) {
+    public static Path toPath(String s) {
         if (isURI(s)) {
             return Paths.get(URI.create(s));
         } else {
@@ -462,7 +462,7 @@ public final class IoUtil {
      * @param  path        the file or directory to delete
      * @throws IOException if a file or directory could not be deleted
      */
-    public static void deleteRecursive(@NotNull Path path) throws IOException {
+    public static void deleteRecursive(Path path) throws IOException {
         try (Stream<Path> files = Files.walk(path, FileVisitOption.FOLLOW_LINKS)) {
             files
                     .sorted(Comparator.reverseOrder())
@@ -508,9 +508,9 @@ public final class IoUtil {
      *                           if an exception occurs during loading the data
      */
     public static String loadText(
-            @NotNull Path path,
-            @NotNull Consumer<? super Charset> onCharsetDetected,
-            @NotNull Charset ... charsets)
+            Path path,
+            Consumer<? super Charset> onCharsetDetected,
+            Charset ... charsets)
             throws IOException {
         ByteBuffer data = ByteBuffer.wrap(Files.readAllBytes(path));
         data.mark();
@@ -546,7 +546,7 @@ public final class IoUtil {
      * @throws IOException
      *                           if an exception occurs during loading the data
      */
-    public static String loadText(@NotNull Path path, @NotNull Consumer<? super Charset> onCharsetDetected) throws IOException {
+    public static String loadText(Path path, Consumer<? super Charset> onCharsetDetected) throws IOException {
         return loadText(path, onCharsetDetected, CHARSETS);
     }
 
@@ -570,8 +570,8 @@ public final class IoUtil {
      * @throws IOException
      *  if the type is supported but an IOException occurs during stream creation
      */
-    public static InputStream getInputStream(@NotNull Object o) throws IOException {
-        return StreamSupplier.getInputStream(o);
+    public static InputStream getInputStream(@Nullable Object o) throws IOException {
+        return o==null ? InputStream.nullInputStream() : StreamSupplier.getInputStream(o);
     }
 
     /**
@@ -594,8 +594,8 @@ public final class IoUtil {
      * @throws IOException
      *  if the type is supported but an IOException occurs during stream creation
      */
-    public static OutputStream getOutputStream(@NotNull Object o) throws IOException {
-        return StreamSupplier.getOutputStream(o);
+    public static OutputStream getOutputStream(@Nullable Object o) throws IOException {
+        return o==null ? OutputStream.nullOutputStream() : StreamSupplier.getOutputStream(o);
     }
 
     /**
@@ -603,7 +603,7 @@ public final class IoUtil {
      * @param s the string to read from
      * @return InputStream instance
      */
-    public static InputStream stringInputStream(@NotNull String s) {
+    public static InputStream stringInputStream(String s) {
         return stringInputStream(s, StandardCharsets.UTF_8);
     }
 
@@ -613,7 +613,7 @@ public final class IoUtil {
      * @param cs the charset to use
      * @return InputStream instance
      */
-    public static InputStream stringInputStream(@NotNull String s, @NotNull Charset cs) {
+    public static InputStream stringInputStream(String s, Charset cs) {
         return new ByteArrayInputStream(s.getBytes(cs));
     }
 
@@ -624,12 +624,12 @@ final class StreamSupplier<V> {
 
     @FunctionalInterface
     interface InputStreamSupplier<C> {
-        InputStream getInputStream(@NotNull C connection) throws IOException;
+        InputStream getInputStream(C connection) throws IOException;
     }
 
     @FunctionalInterface
     interface OutputStreamSupplier<C> {
-        OutputStream getOutputStream(@NotNull C connection) throws IOException;
+        OutputStream getOutputStream(C connection) throws IOException;
     }
 
     private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
@@ -650,11 +650,11 @@ final class StreamSupplier<V> {
         streamSuppliers = list;
     }
 
-    private static InputStream inputUnsupported(@NotNull Object o) {
+    private static InputStream inputUnsupported(Object o) {
         throw new UnsupportedOperationException("InputStream creation not supported: "+o.getClass().getName());
     }
 
-    private static OutputStream outputUnsupported(@NotNull Object o) {
+    private static OutputStream outputUnsupported(Object o) {
         throw new UnsupportedOperationException("OutputStream creation not supported: "+o.getClass().getName());
     }
 
@@ -662,29 +662,29 @@ final class StreamSupplier<V> {
     private final InputStreamSupplier<V> iss;
     private final OutputStreamSupplier<V> oss;
 
-    private StreamSupplier(@NotNull Class<V> clazz, @NotNull InputStreamSupplier<V> iss, @NotNull OutputStreamSupplier<V> oss) {
+    private StreamSupplier(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
         this.clazz = clazz;
         this.iss = iss;
         this.oss = oss;
     }
 
-    private static <V> StreamSupplier<V> def(@NotNull Class<V> clazz, @NotNull InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
+    private static <V> StreamSupplier<V> def(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
         return new StreamSupplier<>(clazz, iss, oss);
     }
 
     @SuppressWarnings("unchecked")
-    private static <C> StreamSupplier<? super C> supplier(@NotNull C o) {
+    private static <C> StreamSupplier<? super C> supplier(C o) {
         return streamSuppliers.stream()
                 .filter(s -> s.clazz.isInstance(o))
                 .findFirst().<StreamSupplier<? super C>>map(s -> (StreamSupplier<? super C>) s)
                 .orElse(UNSUPPORTED);
     }
 
-    public static <C> InputStream getInputStream(@NotNull C o) throws IOException {
+    public static <C> InputStream getInputStream(C o) throws IOException {
         return supplier(o).iss.getInputStream(o);
     }
 
-    public static OutputStream getOutputStream(@NotNull Object o) throws IOException {
+    public static OutputStream getOutputStream(Object o) throws IOException {
         return supplier(o).oss.getOutputStream(o);
     }
 }

@@ -1,6 +1,6 @@
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.NotNull;
+import com.dua3.cabe.annotations.Nullable;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public interface Encoder<T> {
      * @param t the instance to write
      * @throws IOException if an error occurs
      */
-    void encode(@NotNull DataOutputStream os, T t) throws IOException;
+    void encode(DataOutputStream os, T t) throws IOException;
 
     /**
      * Write instance to stream, not throwing checked exceptions.
@@ -28,7 +28,7 @@ public interface Encoder<T> {
      * @param t the instance to write (or {@code null})
      * @throws UncheckedIOException if an error occurs
      */
-    default void encodeUnchecked(@NotNull DataOutputStream os, T t) throws UncheckedIOException {
+    default void encodeUnchecked(DataOutputStream os, T t) throws UncheckedIOException {
         try {
             encode(os, t);
         } catch (IOException e) {
@@ -44,7 +44,7 @@ public interface Encoder<T> {
      * @param <T> the object type
      * @throws IOException if an error occurs
      */
-    static <T> void encode(@NotNull DataOutputStream os, @NotNull Collection<T> coll, @NotNull Encoder<? super T> codec) throws IOException {
+    static <T> void encode(DataOutputStream os, Collection<T> coll, Encoder<? super T> codec) throws IOException {
         os.writeInt(coll.size());
         for (T element : coll) {
             codec.encode(os, element);
@@ -57,7 +57,7 @@ public interface Encoder<T> {
      * @param t the object, might be {@code null}
      * @throws IOException if an error occurs
      */
-    default void encodeOptional(@NotNull DataOutputStream os, T t) throws IOException {
+    default void encodeOptional(DataOutputStream os, @Nullable T t) throws IOException {
         if (t==null) {
             os.writeBoolean(false);
         } else {

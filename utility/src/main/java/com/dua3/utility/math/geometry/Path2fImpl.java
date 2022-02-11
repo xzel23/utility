@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +16,7 @@ class Path2fImpl {
         segments = new ArrayList<>();
     }
     
-    void addVertex(@NotNull Vector2f v) {
+    void addVertex(Vector2f v) {
         assert v != null;
         vertices.add(v);
     }
@@ -38,7 +37,7 @@ class Path2fImpl {
         return vertices.get(idx);
     }
 
-    void addSegment(@NotNull Segment2f segment) {
+    void addSegment(Segment2f segment) {
         assert segment != null;
         segments.add(segment);
     }

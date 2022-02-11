@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Base class for segments that form a {@link Path2f}.
@@ -9,7 +8,7 @@ import com.dua3.cabe.annotations.NotNull;
 public abstract class Segment2f {
     protected final Path2fImpl path;
     
-    protected Segment2f(@NotNull Path2fImpl path) {
+    protected Segment2f(Path2fImpl path) {
         assert path != null;
         this.path = path;
     }

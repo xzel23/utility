@@ -1,7 +1,5 @@
 package com.dua3.utility.logging;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.util.function.Predicate;
 
 /**
@@ -16,7 +14,7 @@ public interface LogListener {
      * @param pass the predicate that determines if entries should be passed on
      * @return a LogListerner instance that passes all entries on that match the predicate
      */
-    static LogListener filter(@NotNull LogListener listener, @NotNull Predicate<? super LogEntry> pass) {
+    static LogListener filter(LogListener listener, Predicate<? super LogEntry> pass) {
         return entry -> {
             if (pass.test(entry)) {
                 listener.entry(entry);

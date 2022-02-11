@@ -1,7 +1,5 @@
 package com.dua3.utility.logging;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +28,7 @@ public interface IThrowable {
     interface IStackTraceElement {
     }
 
-    default void appendTo(@NotNull Appendable app) throws IOException {
+    default void appendTo(Appendable app) throws IOException {
         app.append(this.toString());
         for (IStackTraceElement ste: getStackTrace()) {
             app.append("\nat ").append(ste.toString());

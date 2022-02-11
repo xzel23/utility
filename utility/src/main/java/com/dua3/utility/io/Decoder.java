@@ -1,7 +1,6 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -23,7 +22,7 @@ public interface Decoder<T> {
      * @return the object read
      * @throws IOException if an error occurs
      */
-    T decode(@NotNull DataInputStream is) throws IOException;
+    T decode(DataInputStream is) throws IOException;
 
     /**
      * Read an object from the {@link DataInputStream}.
@@ -31,7 +30,7 @@ public interface Decoder<T> {
      * @return the object read
      * @throws UncheckedIOException if an error occurs
      */
-    default T decodeUnchecked(@NotNull DataInputStream is) throws UncheckedIOException {
+    default T decodeUnchecked(DataInputStream is) throws UncheckedIOException {
         try {
             return decode(is);
         } catch (IOException e) {
@@ -48,7 +47,7 @@ public interface Decoder<T> {
      * @throws IOException if an error occurs
      * @return the collection of decoded objects
      */
-    static <T> Collection<T> decode(@NotNull DataInputStream is, @NotNull Decoder<? extends T> codec, @NotNull IntFunction<? extends Collection<T>> collectionConstructor) throws IOException {
+    static <T> Collection<T> decode(DataInputStream is, Decoder<? extends T> codec, IntFunction<? extends Collection<T>> collectionConstructor) throws IOException {
         int size = is.readInt();
         LangUtil.check(size >= 0, "invalid collection size: %d", size);
 
@@ -66,7 +65,7 @@ public interface Decoder<T> {
      * @throws IOException if an error occurs
      * @return an optional holding the decoded object or an empty optional if object is notr present
      */
-    default Optional<T> decodeOptional(@NotNull DataInputStream is) throws IOException {
+    default Optional<T> decodeOptional(DataInputStream is) throws IOException {
         return Optional.ofNullable(is.readBoolean() ? decode(is) : null);
     }
 

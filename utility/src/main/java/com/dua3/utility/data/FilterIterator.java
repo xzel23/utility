@@ -1,7 +1,5 @@
 package com.dua3.utility.data;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -30,7 +28,7 @@ public class FilterIterator<T> implements Iterator<T> {
      * @param predicate
      * the predicate
      */
-    public FilterIterator(@NotNull Iterator<T> iterator, @NotNull Predicate<T> predicate) {
+    public FilterIterator(Iterator<T> iterator, Predicate<T> predicate) {
         this.iterator = Objects.requireNonNull(iterator);
         this.predicate = Objects.requireNonNull(predicate);
         findNext();

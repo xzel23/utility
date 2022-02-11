@@ -5,8 +5,8 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +34,7 @@ public class Run implements AttributedCharSequence {
      * @param style
      *               style for the Run
      */
-    Run(@NotNull CharSequence text, int start, int length, @NotNull TextAttributes style) {
+    Run(CharSequence text, int start, int length, TextAttributes style) {
         LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
 
         this.text = Objects.requireNonNull(text);
@@ -50,7 +50,7 @@ public class Run implements AttributedCharSequence {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }

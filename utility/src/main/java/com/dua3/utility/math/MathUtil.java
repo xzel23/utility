@@ -6,7 +6,6 @@
 package com.dua3.utility.math;
 
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -166,7 +165,7 @@ public final class MathUtil {
      *             desired accuracy
      * @return     the calculated root or Double.NaN if none is found
      */
-    public static double findRoot(@NotNull DoubleUnaryOperator f, double xa, double xb, double eps) {
+    public static double findRoot(DoubleUnaryOperator f, double xa, double xb, double eps) {
 
         final int maxIterations = 50;
 
@@ -238,7 +237,7 @@ public final class MathUtil {
      * @return       list of all calculated roots
      */
     @SuppressWarnings("FloatingPointEquality")
-    public static List<Double> findRootsInInterval(@NotNull DoubleUnaryOperator f, double x0, double x1, int steps, double eps) {
+    public static List<Double> findRootsInInterval(DoubleUnaryOperator f, double x0, double x1, int steps, double eps) {
         LangUtil.check(x0 != x1, "Empty interval.");
 
         if (x0 > x1) {
@@ -306,7 +305,7 @@ public final class MathUtil {
      * @return   ceil(log10(x))
      */
     public static int ilog10(double x) {
-        LangUtil.check(x > 0 && !Double.isNaN(x) && !Double.isInfinite(x), "Illegal argument: %f", x);
+        LangUtil.check(x > 0 && !Double.isInfinite(x), "Illegal argument: %f", x);
 
         if (x >= 1.0) {
             int i = 0;
@@ -445,7 +444,7 @@ public final class MathUtil {
      * @return
      *           operation that performs the requested rounding
      */
-    public static DoubleUnaryOperator roundingOperation(int n, @NotNull RoundingMode mode) {
+    public static DoubleUnaryOperator roundingOperation(int n, RoundingMode mode) {
         // special case: no rounding
         if (mode==RoundingMode.UNNECESSARY) {
             return x -> x;
@@ -464,7 +463,7 @@ public final class MathUtil {
         return x-> roundingOperation.applyAsDouble(x*scale)/scale;
     }
 
-    public static DoubleUnaryOperator getRoundingOperation(@NotNull RoundingMode mode) {
+    public static DoubleUnaryOperator getRoundingOperation(RoundingMode mode) {
         return switch (mode) {
             case HALF_UP -> x -> x >= 0 ? Math.floor(x + 0.5) : Math.ceil(x - 0.5);
             case HALF_DOWN -> x -> x >= 0 ? Math.ceil(x - 0.5) : Math.floor(x + 0.5);

@@ -3,7 +3,6 @@ package com.dua3.utility.swing;
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.concurrent.ProgressView;
 import com.dua3.utility.math.MathUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -30,7 +29,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         }
 
         @Override
-        public void finish(@NotNull State s) {
+        public void finish(State s) {
             SwingUtilities.invokeLater( () -> {
                 if (pb.isIndeterminate()) {
                     pb.setIndeterminate(false);
@@ -78,7 +77,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         setLayout(new GridBagLayout());
     }
 
-    private <T> ProgressView.ProgressIndicator createProgressIndicator(@NotNull T t) {
+    private <T> ProgressView.ProgressIndicator createProgressIndicator(T t) {
         ProgressBarIndicator pi = new ProgressBarIndicator();
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_END;
@@ -94,37 +93,37 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     }
 
     @Override
-    public void schedule(@NotNull T task) {
+    public void schedule(T task) {
         imp.schedule(task);
     }
 
     @Override
-    public void start(@NotNull T task) {
+    public void start(T task) {
         imp.start(task);
     }
 
     @Override
-    public void pause(@NotNull T task) {
+    public void pause(T task) {
         imp.pause(task);
     }
 
     @Override
-    public void abort(@NotNull T task) {
+    public void abort(T task) {
         imp.abort(task);
     }
 
     @Override
-    public void finish(@NotNull T task, @NotNull State s) {
+    public void finish(T task, State s) {
         imp.finish(task, s);
     }
 
     @Override
-    public void update(@NotNull T task, int total, int done) {
+    public void update(T task, int total, int done) {
         imp.update(task, total, done);
     }
 
     @Override
-    public void update(@NotNull T task, double percentDone) {
+    public void update(T task, double percentDone) {
         imp.update(task, percentDone);
     }
 

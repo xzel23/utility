@@ -12,9 +12,9 @@
  */
 package com.dua3.utility.io;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -87,20 +87,20 @@ public class CsvReader extends CsvIo {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
-    public static  CsvReader create(@NotNull RowBuilder builder, @NotNull BufferedReader reader, @NotNull Arguments options) throws IOException {
+    public static  CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
         return new CsvReader(builder, reader, null, options);
     }
 
-    public static  CsvReader create(RowBuilder builder, @NotNull File file, @NotNull Arguments options) throws IOException {
+    public static  CsvReader create(RowBuilder builder, File file, Arguments options) throws IOException {
         return create(builder, file.toPath(), options);
     }
 
-    public static  CsvReader create(RowBuilder builder, @NotNull Path path, @NotNull Arguments options) throws IOException {
+    public static  CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
         Charset cs = IoOptions.getCharset(options);
         return create(builder, Files.newBufferedReader(path, cs), options);
     }
 
-    public static  CsvReader create(RowBuilder builder, @NotNull InputStream in, @NotNull Arguments options) throws IOException {
+    public static  CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
         // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
         // selection in options)
         Charset charset = IoOptions.getCharset(options);
@@ -130,7 +130,7 @@ public class CsvReader extends CsvIo {
     private boolean ignoreMissingFields;
     private final URI source;
 
-    public CsvReader(@NotNull RowBuilder rowBuilder, @NotNull BufferedReader reader, URI source, @NotNull Arguments options)
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, @Nullable URI source, Arguments options)
             throws IOException {
         super(options);
 
@@ -256,7 +256,7 @@ public class CsvReader extends CsvIo {
      * @throws IOException
      *  if an error occurs during reading
      */
-    private int readRow(@NotNull RowBuilder rb) throws IOException {
+    private int readRow(RowBuilder rb) throws IOException {
         String line = reader.readLine();
 
         if (line == null) {
@@ -352,7 +352,7 @@ public class CsvReader extends CsvIo {
     /**
      * @param columnNames the columnNames to set
      */
-    public void setColumnNames(@NotNull List<String> columnNames) {
+    public void setColumnNames(List<String> columnNames) {
         this.columnNames = columnNames;
     }
 

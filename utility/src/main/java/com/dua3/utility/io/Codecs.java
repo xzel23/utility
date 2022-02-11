@@ -2,7 +2,6 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -45,13 +44,13 @@ public class Codecs {
         registerCodec(Color.class, (DataOutputStream os, Color c) -> os.writeInt(c.argb()), (DataInputStream is) -> Color.argb(is.readInt()));
     }
 
-    public <T> void registerCodec(@NotNull Class<T> cls, @NotNull Encoder<? super T> enc, @NotNull Decoder<? extends T> dec) {
+    public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
         Object prev = CODECS.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
         LangUtil.check(prev==null, "Codec already registered for class: "+cls);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Optional<Codec<T>> get(@NotNull Class<T> cls) {
+    public <T> Optional<Codec<T>> get(Class<T> cls) {
         return Optional.ofNullable((Codec<T>) CODECS.get(cls.getCanonicalName()));
     }
 
@@ -63,7 +62,7 @@ public class Codecs {
      * @param <T> the object type
      * @return the new codec
      */
-    public static <T> Codec<T> createCodec(@NotNull String name, @NotNull Encoder<? super T> enc, @NotNull Decoder<? extends T> dec) {
+    public static <T> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<? extends T> dec) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -71,12 +70,12 @@ public class Codecs {
             }
 
             @Override
-            public void encode(@NotNull DataOutputStream os, T t) throws IOException {
+            public void encode(DataOutputStream os, T t) throws IOException {
                 enc.encode(os, t);
             }
 
             @Override
-            public T decode(@NotNull DataInputStream is) throws IOException {
+            public T decode(DataInputStream is) throws IOException {
                 return dec.decode(is);
             }
         };
@@ -91,7 +90,7 @@ public class Codecs {
      * @param construct collection factory method
      * @return collection codec
      */
-    public static <T, C extends Collection<T>> Codec<C> collectionCodec(@NotNull String name, @NotNull Codec<T> codec, @NotNull IntFunction<? extends C> construct) {
+    public static <T, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -99,7 +98,7 @@ public class Codecs {
             }
 
             @Override
-            public void encode(@NotNull DataOutputStream os, @NotNull C collection) throws IOException {
+            public void encode(DataOutputStream os, C collection) throws IOException {
                 os.writeInt(collection.size());
                 for (T item : collection) {
                     codec.encode(os, item);
@@ -107,7 +106,7 @@ public class Codecs {
             }
 
             @Override
-            public C decode(@NotNull DataInputStream is) throws IOException {
+            public C decode(DataInputStream is) throws IOException {
                 int n = is.readInt();
                 LangUtil.check(n >= 0, "negative size for collection: %d", n);
                 C collection = construct.apply(n);
@@ -119,7 +118,7 @@ public class Codecs {
         };
     }
 
-    public static <K,V> Codec<Map.Entry<K,V>> mapEntryCodec(@NotNull Codec<K> codecK, @NotNull Codec<? extends V> codecV) {
+    public static <K,V> Codec<Map.Entry<K,V>> mapEntryCodec(Codec<K> codecK, Codec<? extends V> codecV) {
         return createCodec(
                 Map.Entry.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">", 
                 (DataOutputStream os, Map.Entry<K,V> entry) -> codecK.encode(os, entry.getKey()),
@@ -156,7 +155,7 @@ public class Codecs {
      * @param construct the map construction method
      * @return map codec
      */
-    public static <K,V,M extends Map<K,V>> Codec<M> mapCodec(@NotNull Codec<K> codecK, @NotNull Codec<V> codecV, @NotNull Supplier<? extends M> construct) {
+    public static <K,V,M extends Map<K,V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
         final String name = Map.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">";
         final Codec<Map.Entry<K,V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
         final Codec<Collection<Map.Entry<K,V>>> ENTRIES_CODEC = Codecs.collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
@@ -168,12 +167,12 @@ public class Codecs {
             }
 
             @Override
-            public void encode(@NotNull DataOutputStream os, @NotNull M map) throws IOException {
+            public void encode(DataOutputStream os, M map) throws IOException {
                 ENTRIES_CODEC.encode(os, map.entrySet());
             }
 
             @Override
-            public M decode(@NotNull DataInputStream is) throws IOException {
+            public M decode(DataInputStream is) throws IOException {
                 M map = construct.get();
                 ENTRIES_CODEC.decode(is).forEach(entry -> map.put(entry.getKey(), entry.getValue()));
                 return map;

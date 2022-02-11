@@ -14,7 +14,6 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -50,7 +49,7 @@ public abstract class CsvIo implements AutoCloseable {
     protected final DateTimeFormatter dateFormatter;
     protected final NumberFormat numberFormat;
 
-    protected CsvIo(@NotNull Arguments options) {
+    protected CsvIo(Arguments options) {
         this.separator = IoOptions.getFieldSeparator(options);
         this.delimiter = IoOptions.getTextDelimiter(options);
         this.lineDelimiter = "\r\n";
@@ -77,7 +76,7 @@ public abstract class CsvIo implements AutoCloseable {
         return quoteIfNeeded(text);
     }
 
-    protected boolean isQuoteNeeded(@NotNull String text) {
+    protected boolean isQuoteNeeded(String text) {
         // also quote if unusual characters are present
         for (int i=0; i<text.length(); i++) {
             char c = text.charAt(i);
@@ -88,11 +87,11 @@ public abstract class CsvIo implements AutoCloseable {
         return false;
     }
 
-    protected String quote(@NotNull String text) {
+    protected String quote(String text) {
         return delimiter + text.replace("\"", "\"\"") + delimiter;
     }
 
-    protected String quoteIfNeeded(@NotNull String text) {
+    protected String quoteIfNeeded(String text) {
         return isQuoteNeeded(text) ? quote(text) : text;
     }
 }

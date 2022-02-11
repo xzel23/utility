@@ -8,7 +8,6 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -58,7 +57,7 @@ public final class TextUtil {
      * @param s the string
      * @return the HTML-escaped string
      */
-    public static String escapeHTML(@NotNull CharSequence s) {
+    public static String escapeHTML(CharSequence s) {
         int length = s.length();
         StringBuilder out = new StringBuilder(16 + length * 11 / 10);
         for (int i = 0; i < length; i++) {
@@ -73,7 +72,7 @@ public final class TextUtil {
      *
      * @param app the {@link Appendable}
      */
-    public static void appendHtmlEscapedCharacter(@NotNull Appendable app, char c) throws IOException {
+    public static void appendHtmlEscapedCharacter(Appendable app, char c) throws IOException {
         if (c >= 127 || c == '"' || c == '<' || c == '>' || c == '&' || c == '\0') {
             app.append("&#");
             app.append(Integer.toString(c));
@@ -88,7 +87,7 @@ public final class TextUtil {
      *
      * @param sb the {@link StringBuilder}
      */
-    public static void appendHtmlEscapedCharacter(@NotNull StringBuilder sb, char c) {
+    public static void appendHtmlEscapedCharacter(StringBuilder sb, char c) {
         try {
             appendHtmlEscapedCharacter((Appendable) sb, c);
         } catch (IOException e) {
@@ -104,7 +103,7 @@ public final class TextUtil {
      * @param <T> the type of the Appendable
      * @throws IOException if an error occurs
      */
-    public static <T extends Appendable> void appendHtmlEscapedCharacters(@NotNull T app, @NotNull CharSequence cs) throws IOException {
+    public static <T extends Appendable> void appendHtmlEscapedCharacters(T app, CharSequence cs) throws IOException {
         int length = cs.length();
         for (int idx=0; idx<length; idx++) {
             appendHtmlEscapedCharacter(app, cs.charAt(idx));
@@ -116,7 +115,7 @@ public final class TextUtil {
      * @param sb the {@link StringBuilder} instance
      * @param cs the unescaped {@link CharSequence}
      */
-    public static void appendHtmlEscapedCharacters(@NotNull StringBuilder sb, @NotNull CharSequence cs) {
+    public static void appendHtmlEscapedCharacters(StringBuilder sb, CharSequence cs) {
         int length = cs.length();
         sb.ensureCapacity(sb.length()+length);
         for (int idx=0; idx<length; idx++) {
@@ -130,7 +129,7 @@ public final class TextUtil {
      * @param s the string
      * @return the escaped string
      */
-    public static String escape(@NotNull CharSequence s) {
+    public static String escape(CharSequence s) {
         StringBuilder out = new StringBuilder(16 + s.length() * 11 / 10);
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -175,8 +174,8 @@ public final class TextUtil {
      * @see #transform(String, UnaryOperator)
      */
     @SafeVarargs
-    public static String transform(@NotNull String template, 
-                                   @NotNull Pair<String,String>... substitutions) {
+    public static String transform(String template, 
+                                   Pair<String,String>... substitutions) {
         UnaryOperator<String> env = s -> {
             for (Pair<String, String> r: substitutions) {
                 if (Objects.equals(s, r.first())) {
@@ -197,7 +196,7 @@ public final class TextUtil {
      * @return result of transformation
      * @see #transform(String, UnaryOperator, Consumer)
      */
-    public static String transform(@NotNull String template, @NotNull UnaryOperator<String> env) {
+    public static String transform(String template, UnaryOperator<String> env) {
         StringBuilder sb = new StringBuilder(Math.max(16, template.length()));
         transform(template, env, sb::append);
         return sb.toString();
@@ -215,9 +214,9 @@ public final class TextUtil {
      * @param env      substitution environment
      * @param output   output
      */
-    public static void transform(@NotNull String template, 
-                                 @NotNull UnaryOperator<String> env, 
-                                 @NotNull Consumer<? super CharSequence> output) {
+    public static void transform(String template, 
+                                 UnaryOperator<String> env, 
+                                 Consumer<? super CharSequence> output) {
         int pos = 0;
         while (pos < template.length()) {
             // find next ref
@@ -253,7 +252,7 @@ public final class TextUtil {
      * @param s the string
      * @return font size in pt
      */
-    public static float decodeFontSize(@NotNull String s) {
+    public static float decodeFontSize(String s) {
         final float factor;
         if (s.endsWith("pt")) {
             s = s.substring(0, s.length() - 2);
@@ -274,7 +273,7 @@ public final class TextUtil {
      * @param b second character sequence
      * @return true, if a and b contain the same characters
      */
-    public static boolean contentEquals(@NotNull CharSequence a, @NotNull CharSequence b) {
+    public static boolean contentEquals(CharSequence a, CharSequence b) {
         if (a.length() != b.length()) {
             return false;
         }
@@ -296,7 +295,7 @@ public final class TextUtil {
      * @param chars the chars to search for
      * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
      */
-    public static int indexOfFirst(@NotNull CharSequence s, @NotNull char... chars) {
+    public static int indexOfFirst(CharSequence s, char... chars) {
         for (int i=0;i<s.length(); i++) {
             char c1 = s.charAt(i);
             for (char c2: chars) {
@@ -316,7 +315,7 @@ public final class TextUtil {
      * @param chars the chars to search for
      * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
      */
-    public static int indexOfFirst(@NotNull CharSequence s, @NotNull String chars) {
+    public static int indexOfFirst(CharSequence s, String chars) {
         return indexOfFirst(s, chars.toCharArray());
     }
 
@@ -326,7 +325,7 @@ public final class TextUtil {
      * @param s2 the {@link CharSequence} to search for
      * @return true, if {@code s2} is contained in {@code s1}
      */
-    public static boolean contains(@NotNull CharSequence s1, @NotNull CharSequence s2) {
+    public static boolean contains(CharSequence s1, CharSequence s2) {
         return indexOf(s1, s2)>=0;
     }
 
@@ -337,7 +336,7 @@ public final class TextUtil {
      * @param chars the chars to search for
      * @return true if {@code s} contains none of the characters in {@code chars}
      */
-    public static boolean containsNoneOf(@NotNull CharSequence s, @NotNull String chars) {
+    public static boolean containsNoneOf(CharSequence s, String chars) {
         return indexOfFirst(s, chars) < 0;
     }
 
@@ -348,7 +347,7 @@ public final class TextUtil {
      * @param chars the chars to search for
      * @return true if {@code s} contains none of the characters in {@code chars}
      */
-    public static boolean containsNoneOf(@NotNull CharSequence s, @NotNull char... chars) {
+    public static boolean containsNoneOf(CharSequence s, char... chars) {
         return indexOfFirst(s, chars) < 0;
     }
 
@@ -359,7 +358,7 @@ public final class TextUtil {
      * @param chars the chars to search for
      * @return true if {@code s} contains one or more of the characters in {@code chars}
      */
-    public static boolean containsAnyOf(@NotNull CharSequence s, @NotNull String chars) {
+    public static boolean containsAnyOf(CharSequence s, String chars) {
         return indexOfFirst(s, chars) >= 0;
     }
 
@@ -370,7 +369,7 @@ public final class TextUtil {
      * @param chars the chars to search for
      * @return true if {@code s} contains one or more of the characters in {@code chars}
      */
-    public static boolean containsAnyOf(@NotNull CharSequence s, @NotNull char... chars) {
+    public static boolean containsAnyOf(CharSequence s, char... chars) {
         return indexOfFirst(s, chars) >= 0;
     }
 
@@ -381,7 +380,7 @@ public final class TextUtil {
      * @param needle   the char to find
      * @return the position where the char was found or -1 if not found
      */
-    public static int indexOf(@NotNull CharSequence haystack, char needle) {
+    public static int indexOf(CharSequence haystack, char needle) {
         return indexOf(haystack, needle, 0);
     }
 
@@ -392,7 +391,7 @@ public final class TextUtil {
      * @param needle   the sequence to find
      * @return the position where the sequence was found or -1 if not found
      */
-    public static int indexOf(@NotNull CharSequence haystack, @NotNull CharSequence needle) {
+    public static int indexOf(CharSequence haystack, CharSequence needle) {
         return indexOf(haystack, needle, 0);
     }
 
@@ -404,7 +403,7 @@ public final class TextUtil {
      * @param fromIndex the index to start from
      * @return the position where the char was found or -1 if not found
      */
-    public static int indexOf(@NotNull CharSequence haystack, char needle, int fromIndex) {
+    public static int indexOf(CharSequence haystack, char needle, int fromIndex) {
         final int haystackLength = haystack.length();
         return IntStream.range(fromIndex, haystackLength)
                 .filter(pos -> haystack.charAt(pos) == needle)
@@ -421,7 +420,7 @@ public final class TextUtil {
      * @return the position where the sequence was found or -1 if not
      * found
      */
-    public static int indexOf(@NotNull CharSequence haystack, @NotNull CharSequence needle, int fromIndex) {
+    public static int indexOf(CharSequence haystack, CharSequence needle, int fromIndex) {
         final int haystackLength = haystack.length();
         final int needleLength = needle.length();
 
@@ -444,7 +443,7 @@ public final class TextUtil {
      * @param b the sequence to search for
      * @return true, if a starts with s
      */
-    public static boolean startsWith(@NotNull CharSequence a, @NotNull CharSequence b) {
+    public static boolean startsWith(CharSequence a, CharSequence b) {
         if (a.length()<b.length()) {
             return false;
         }
@@ -466,9 +465,9 @@ public final class TextUtil {
      * @return the sequence matched or {@code Optional.empty()}, if not
      * matched
      */
-    public static Optional<CharSequence> group(@NotNull Matcher matcher, 
-                                                        @NotNull CharSequence input, 
-                                                        @NotNull String name) {
+    public static Optional<CharSequence> group(Matcher matcher, 
+                                                        CharSequence input, 
+                                                        String name) {
         int start = matcher.start(name);
         return start < 0 ? Optional.empty() : Optional.of(input.subSequence(start, matcher.end(name)));
     }
@@ -479,7 +478,7 @@ public final class TextUtil {
      * @param text the text for which to calculate the digest
      * @return the MD5 digest as hex string
      */
-    public static String getMD5String(@NotNull String text) {
+    public static String getMD5String(String text) {
         return HexFormat.of().formatHex(getMD5(text));
     }
 
@@ -489,7 +488,7 @@ public final class TextUtil {
      * @param text the text for which to calculate the digest
      * @return the MD5 digest as byte array
      */
-    public static byte[] getMD5(@NotNull String text) {
+    public static byte[] getMD5(String text) {
         return getMD5(text.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -514,7 +513,7 @@ public final class TextUtil {
      * @param data the data to be encoded
      * @return the Base64-encoded data
      */
-    public static String base64Encode(@NotNull byte[] data) {
+    public static String base64Encode(byte[] data) {
         return Base64.getEncoder().encodeToString(data);
     }
 
@@ -524,7 +523,7 @@ public final class TextUtil {
      * @param text the Base64-encoded data
      * @return the decoded data
      */
-    public static byte[] base64Decode(@NotNull String text) {
+    public static byte[] base64Decode(String text) {
         return Base64.getDecoder().decode(text);
     }
 
@@ -558,7 +557,7 @@ public final class TextUtil {
      * @return
      *           the text height
      */
-    public static double getTextHeight(@NotNull CharSequence text, @NotNull Font font) {
+    public static double getTextHeight(CharSequence text, Font font) {
         return FONT_UTIL.getTextWidth(text, font);
     }
 
@@ -572,7 +571,7 @@ public final class TextUtil {
      * @return
      *           the text width
      */
-    public static double getTextWidth(@NotNull CharSequence text, @NotNull Font font) {
+    public static double getTextWidth(CharSequence text, Font font) {
         return FONT_UTIL.getTextWidth(text, font);
     }
 
@@ -586,7 +585,7 @@ public final class TextUtil {
      * @return
      *           the text bounds
      */
-    public static Dimension2f getTextDimension(@NotNull CharSequence text, @NotNull Font font) {
+    public static Dimension2f getTextDimension(CharSequence text, Font font) {
         return FONT_UTIL.getTextDimension(text, font);
     }
 
@@ -610,7 +609,7 @@ public final class TextUtil {
      * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string 
      *         is returned
      */
-    public static String align(@NotNull String s, int width, @NotNull Alignment align) {
+    public static String align(String s, int width, Alignment align) {
         return align(s, width, align, ' ');
     }
 
@@ -623,7 +622,7 @@ public final class TextUtil {
      * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string 
      *         is returned
      */
-    public static String align(@NotNull String s, int width, @NotNull Alignment align, char filler) {
+    public static String align(String s, int width, Alignment align, char filler) {
         String fill = Character.toString(filler);
         int len = s.length();
         return switch (align) {
@@ -640,7 +639,7 @@ public final class TextUtil {
      * @param subject the email subject
      * @return email-link
      */
-    public static String generateMailToLink(@NotNull String email, @NotNull String subject) {
+    public static String generateMailToLink(String email, String subject) {
         // give some care to translate space to "%20"
         try {
             String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8.name());

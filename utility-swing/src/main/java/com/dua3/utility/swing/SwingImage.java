@@ -1,7 +1,6 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Image;
-import com.dua3.cabe.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -24,7 +23,7 @@ public record SwingImage(BufferedImage bufferedImage) implements Image {
         return new SwingImage(image);
     }
 
-    public static SwingImage load(@NotNull InputStream in) throws IOException {
+    public static SwingImage load(InputStream in) throws IOException {
         try (ImageInputStream iis = ImageIO.createImageInputStream(in)) {
             Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
 

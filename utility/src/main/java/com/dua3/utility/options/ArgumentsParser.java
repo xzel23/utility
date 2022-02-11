@@ -1,6 +1,5 @@
 package com.dua3.utility.options;
 
-import com.dua3.cabe.annotations.NotNull;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
@@ -57,7 +56,7 @@ public class ArgumentsParser {
      * @param minArgs minimum number of positional arguments
      * @param maxArgs maximum number of positional arguments
      */
-    public ArgumentsParser(@NotNull String name, @NotNull String description, int minArgs, int maxArgs) {
+    public ArgumentsParser(String name, String description, int minArgs, int maxArgs) {
         this.name = Objects.requireNonNull(name);
         this.description = Objects.requireNonNull(description);
 
@@ -73,7 +72,7 @@ public class ArgumentsParser {
      * @param description program description 
      * @param minArgs minimum number of positional arguments
      */
-    public ArgumentsParser(@NotNull String name, @NotNull String description, int minArgs) {
+    public ArgumentsParser(String name, String description, int minArgs) {
         this(name, description, minArgs, Integer.MAX_VALUE);        
     }
     
@@ -82,7 +81,7 @@ public class ArgumentsParser {
      * @param name the command name to show in help text.
      * @param description the command description to show in help text.
      */
-    public ArgumentsParser(@NotNull String name, @NotNull String description) {
+    public ArgumentsParser(String name, String description) {
         this(name, description, 0, Integer.MAX_VALUE);
     }
 
@@ -91,7 +90,7 @@ public class ArgumentsParser {
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the flag
      */
-    public Flag  flag(@NotNull String... names) {
+    public Flag  flag(String... names) {
         return addOption(Flag.create(names));
     }
 
@@ -102,7 +101,7 @@ public class ArgumentsParser {
      * @param <T> the target type
      * @return the option
      */
-    public <T> SimpleOption<T> simpleOption(@NotNull Class<? extends T> type, @NotNull String... names) {
+    public <T> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
         return simpleOption(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -113,7 +112,7 @@ public class ArgumentsParser {
      * @param <T> the target type
      * @return the option
      */
-    public <T> SimpleOption<T> simpleOption(@NotNull Function<String,T> mapper, @NotNull String... names) {
+    public <T> SimpleOption<T> simpleOption(Function<String,T> mapper, String... names) {
         return addOption(SimpleOption.create(mapper, names));
     }
 
@@ -124,7 +123,7 @@ public class ArgumentsParser {
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the option
      */
-    public <E extends Enum<E>> ChoiceOption<E> choiceOption(@NotNull Class<? extends E> enumClass, @NotNull String... names) {
+    public <E extends Enum<E>> ChoiceOption<E> choiceOption(Class<? extends E> enumClass, String... names) {
         return addOption(ChoiceOption.create(enumClass, names));
     }
 
@@ -135,7 +134,7 @@ public class ArgumentsParser {
      * @param <T> the generic type of the option 
      * @return the option
      */
-    public <T> StandardOption<T> option(@NotNull Class<? extends T> type, @NotNull String... names) {
+    public <T> StandardOption<T> option(Class<? extends T> type, String... names) {
         return option(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -146,7 +145,7 @@ public class ArgumentsParser {
      * @param <T> the generic type of the option 
      * @return the option
      */
-    public <T> StandardOption<T> option(Function<String,T> mapper, @NotNull String... names) {
+    public <T> StandardOption<T> option(Function<String,T> mapper, String... names) {
         return addOption(StandardOption.create(mapper, names));
     }
 
@@ -154,7 +153,7 @@ public class ArgumentsParser {
      * Add option to parser. 
      * @param option the option to add
      */
-    public <O extends Option<?>> O addOption(@NotNull O option) {
+    public <O extends Option<?>> O addOption(O option) {
         for (String name : option.names()) {
             LangUtil.check(options.putIfAbsent(name, option) == null, "duplicate option name: %s", name);
         }
@@ -166,7 +165,7 @@ public class ArgumentsParser {
      * @param args the command line arguments to parse.
      * @return object holding the parsed command line arguments
      */
-    public Arguments parse(@NotNull String... args) {
+    public Arguments parse(String... args) {
         List<String> argList = Arrays.asList(args);
 
         Queue<Arguments.Entry<?>> parsedOptions = new ArrayDeque<>();
@@ -239,7 +238,7 @@ public class ArgumentsParser {
      * @param parsedOptions the parsed options to validate
      * @throws OptionException if an error is detected
      */
-    private void validate(@NotNull Collection<Arguments.Entry<?>> parsedOptions) {
+    private void validate(Collection<Arguments.Entry<?>> parsedOptions) {
         Map<Option<?>, Integer> hist = new HashMap<>();
         parsedOptions.forEach(entry -> hist.compute(entry.option, (k_,i_) -> i_==null ? 1 : i_+1));
 
@@ -276,7 +275,7 @@ public class ArgumentsParser {
      * Output option help.
      * @param fmt the {@link Formatter} used for output
      */
-    public void help(@NotNull Formatter fmt) {
+    public void help(Formatter fmt) {
         // print title
         if (!name.isEmpty()) {
             fmt.format("%n%s%n", name);
@@ -350,7 +349,7 @@ public class ArgumentsParser {
      * @param fmt formatter
      * @param e exception
      */
-    public void errorMessage(@NotNull Formatter fmt, @NotNull OptionException e) {
+    public void errorMessage(Formatter fmt, OptionException e) {
         // print title
         if (!name.isEmpty()) {
             fmt.format("%s%n", name);
@@ -372,7 +371,7 @@ public class ArgumentsParser {
      * @param e exception
      * @return error message
      */
-    public String errorMessage(@NotNull OptionException e) {
+    public String errorMessage(OptionException e) {
         try (Formatter fmt = new Formatter()) {
             errorMessage(fmt, e);
             return fmt.toString();

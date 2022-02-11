@@ -5,8 +5,8 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -18,7 +18,7 @@ public class SharedString implements CharSequence {
     private final int end;
     private int hash = 0;
 
-    SharedString(@NotNull String base, int start, int end) {
+    SharedString(String base, int start, int end) {
         this.base = Objects.requireNonNull(base);
         LangUtil.checkIndex(start, base.length());
         this.start = start;
@@ -64,7 +64,7 @@ public class SharedString implements CharSequence {
     }
 
     @Override
-    public boolean equals(Object anObject) {
+    public boolean equals(@Nullable Object anObject) {
         if (this == anObject) {
             return true;
         }

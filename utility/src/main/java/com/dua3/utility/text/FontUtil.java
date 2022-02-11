@@ -1,7 +1,6 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.math.geometry.Dimension2f;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,28 +29,28 @@ public interface FontUtil<F> {
         } else {
             fu = new FontUtil<>() {
                 @Override
-                public Void convert(@NotNull Font f) {
+                public Void convert(Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public Dimension2f getTextDimension(@NotNull CharSequence s, @NotNull Font f) {
+                public Dimension2f getTextDimension(CharSequence s, Font f) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @SuppressWarnings("RedundantThrows")
                 @Override
-                public List<Font> loadFonts(@NotNull InputStream in) throws IOException {
+                public List<Font> loadFonts(InputStream in) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public List<String> getFamilies(@NotNull FontTypes types) {
+                public List<String> getFamilies(FontTypes types) {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
 
                 @Override
-                public Font loadFontAs(@NotNull InputStream in, @NotNull Font font) throws IOException {
+                public Font loadFontAs(InputStream in, Font font) throws IOException {
                     throw new UnsupportedOperationException(NO_IMPLEMENTATION);
                 }
             };
@@ -68,7 +67,7 @@ public interface FontUtil<F> {
      * @return
      *           the font implementation
      */
-    F convert(@NotNull Font f);
+    F convert(Font f);
 
     /**
      * Get text bounds.
@@ -80,7 +79,7 @@ public interface FontUtil<F> {
      * @return
      *           the text bounds
      */
-    Dimension2f getTextDimension(@NotNull CharSequence s, @NotNull Font f);
+    Dimension2f getTextDimension(CharSequence s, Font f);
 
     /**
      * Get text width.
@@ -92,7 +91,7 @@ public interface FontUtil<F> {
      * @return
      *           the text width
      */
-    default double getTextWidth(@NotNull CharSequence s, @NotNull Font f) {
+    default double getTextWidth(CharSequence s, Font f) {
         return getTextDimension(s, f).width();
     }
 
@@ -106,7 +105,7 @@ public interface FontUtil<F> {
      * @return
      *           the text height
      */
-    default double getTextHeight(@NotNull CharSequence s, @NotNull Font f) {
+    default double getTextHeight(CharSequence s, Font f) {
         return getTextDimension(s, f).height();
     }
 
@@ -117,7 +116,7 @@ public interface FontUtil<F> {
      * @throws java.io.IOException if an I/O error occurs
      * @throws IllegalArgumentException if the type is not supported
      */
-    List<Font> loadFonts(@NotNull InputStream in) throws IOException;
+    List<Font> loadFonts(InputStream in) throws IOException;
 
     /**
      * Font type enumeration.
@@ -133,7 +132,7 @@ public interface FontUtil<F> {
      * @param types the font types to return
      * @return list of font families
      */
-    List<String> getFamilies(@NotNull FontTypes types);
+    List<String> getFamilies(FontTypes types);
 
     /**
      * Get a list of the available font families.
@@ -150,6 +149,6 @@ public interface FontUtil<F> {
      * @return font instance
      * @throws IOException if an error occurs
      */
-    Font loadFontAs(@NotNull InputStream in, @NotNull Font font) throws IOException;
+    Font loadFontAs(InputStream in, Font font) throws IOException;
 
 }

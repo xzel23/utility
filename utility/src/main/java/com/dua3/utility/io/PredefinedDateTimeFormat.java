@@ -1,7 +1,5 @@
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
@@ -19,29 +17,29 @@ public enum PredefinedDateTimeFormat {
     private final Function<? super Locale, DateTimeFormatter> dateFormatterFactory;
     private final Function<? super Locale, DateTimeFormatter> timeFormatterFactory;
 
-    PredefinedDateTimeFormat(@NotNull String name, @NotNull DateTimeFormatter formatter) {
+    PredefinedDateTimeFormat(String name, DateTimeFormatter formatter) {
         this.name = name;
         this.dateTimeFormatterFactory = locale -> formatter;
         this.dateFormatterFactory = locale -> formatter;
         this.timeFormatterFactory = locale -> formatter;
     }
 
-    PredefinedDateTimeFormat(@NotNull String name, @NotNull FormatStyle style) {
+    PredefinedDateTimeFormat(String name, FormatStyle style) {
         this.name = name;
         this.dateTimeFormatterFactory = locale -> DateTimeFormatter.ofLocalizedDateTime(style).withLocale(locale);
         this.dateFormatterFactory = locale -> DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
         this.timeFormatterFactory = locale -> DateTimeFormatter.ofLocalizedTime(style).withLocale(locale);
     }
 
-    public DateTimeFormatter getDateTimeFormatter(@NotNull Locale locale) {
+    public DateTimeFormatter getDateTimeFormatter(Locale locale) {
         return dateTimeFormatterFactory.apply(locale);
     }
     
-    public DateTimeFormatter getDateFormatter(@NotNull Locale locale) {
+    public DateTimeFormatter getDateFormatter(Locale locale) {
         return dateFormatterFactory.apply(locale);
     }
 
-    public DateTimeFormatter getTimeFormatter(@NotNull Locale locale) {
+    public DateTimeFormatter getTimeFormatter(Locale locale) {
         return timeFormatterFactory.apply(locale);
     }
 

@@ -5,8 +5,8 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -130,7 +130,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     private final String name;
     private final Map<String, Object> properties;
 
-    private Style(@NotNull String name, @NotNull Map<String, Object> args) {
+    private Style(String name, Map<String, Object> args) {
         this.name = name;
         this.properties = Collections.unmodifiableMap(args);
     }
@@ -147,8 +147,8 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @return new instance
      */
     @SafeVarargs
-    public static Style create(@NotNull String styleName, 
-                                        @NotNull Map.Entry<String, Object>... args) {
+    public static Style create(String styleName, 
+                                        Map.Entry<String, Object>... args) {
         return create(styleName, Map.ofEntries(args));
     }
 
@@ -158,8 +158,8 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param args list of key-value pairs to set as properties of this style
      * @return new instance
      */
-    public static Style create(@NotNull String styleName, 
-                                        @NotNull Map<String, Object> args) {
+    public static Style create(String styleName, 
+                                        Map<String, Object> args) {
         return new Style(styleName, new HashMap<>(args));
     }
 
@@ -176,7 +176,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param property the property name
      * @return the value of the property or {@code null} if no value was set
      */
-    public Object get(@NotNull String property) {
+    public Object get(String property) {
         return properties.get(property);
     }
 
@@ -186,7 +186,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param dflt the default value
      * @return the value of the property or dflt if no value was set
      */
-    public Object getOrDefault(@NotNull String property, Object dflt) {
+    public Object getOrDefault(String property, Object dflt) {
         return properties.getOrDefault(property, dflt);
     }
 
@@ -198,7 +198,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresent(@NotNull String key, @NotNull Consumer<T> action) throws ClassCastException {
+    public <T> void ifPresent(String key, Consumer<T> action) throws ClassCastException {
         T value = (T) get(key);
         if (value!=null) {
             action.accept(value);
@@ -214,9 +214,9 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresentOrElseGet(@NotNull String key, 
-                                       @NotNull Supplier<T> defaultSupplier, 
-                                       @NotNull Consumer<? super T> action) {
+    public <T> void ifPresentOrElseGet(String key, 
+                                       Supplier<T> defaultSupplier, 
+                                       Consumer<? super T> action) {
         Object raw = get(key);
         try {
             T value = (T) raw;
@@ -235,9 +235,9 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresentOrElse(@NotNull String key, 
+    public <T> void ifPresentOrElse(String key, 
                                     T defaultValue, 
-                                    @NotNull Consumer<T> action) {
+                                    Consumer<T> action) {
         Object raw = get(key);
         try {
             T value = (T) raw;
@@ -280,12 +280,12 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * Get Font for this style.
      * @return if set, the font of this style, otherwise the resulting font of applying this style's {@link FontDef} to the supplied baseFont 
      */
-    public Font getFont(@NotNull Font baseFont) {
+    public Font getFont(Font baseFont) {
         return getFont().orElseGet(() -> baseFont.deriveFont(getFontDef()));
     }
     
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Style style = (Style) o;
@@ -314,7 +314,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * Perform action for each entry of this style.
      * @param action the action to perform
      */
-    public void forEach(@NotNull BiConsumer<String, Object> action) {
+    public void forEach(BiConsumer<String, Object> action) {
         forEach(entry -> action.accept(entry.getKey(), entry.getValue()));        
     }
 }

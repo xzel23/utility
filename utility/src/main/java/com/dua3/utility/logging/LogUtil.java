@@ -6,11 +6,10 @@ import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.Flag;
 import com.dua3.utility.options.SimpleOption;
 import com.dua3.utility.options.StandardOption;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -24,7 +23,7 @@ public final class LogUtil {
     private static final Logger LOG = Logger.getLogger(LogUtil.class.getName());
     
     private LogUtil() {
-        //nop
+        // nop
     }
 
     /**
@@ -34,7 +33,7 @@ public final class LogUtil {
         private final Supplier<String> base;
         private String msg = null;
 
-        LazyToString(@NotNull Supplier<String> s) {
+        LazyToString(Supplier<String> s) {
             this.base = Objects.requireNonNull(s);
         }
 
@@ -59,7 +58,7 @@ public final class LogUtil {
      * @param s the supplier
      * @return an Object that acts as a proxy for calls to toString()
      */
-    public static Supplier<String> formatLazy(@NotNull Supplier<String> s) {
+    public static Supplier<String> formatLazy(Supplier<String> s) {
         return new LazyToString(s);
     }
 
@@ -71,7 +70,18 @@ public final class LogUtil {
      * @param args          the command line args
      * @return              the command line args with arguments for setting up logging removed
      */
-    public static String[] handleLoggingCmdArgs(@NotNull String... args) {
+    public static String[] handleLoggingCmdArgs(String... args) {
+        return handleLoggingCmdArgs(System.err::println, args);    
+    }
+
+    /**
+     * Utility method to set global log level at program starttup. The argument list is scanned for arguments
+     * that control logging and the log system is set up accordingly.
+     * @param msgPrinter    print method for displaying usage messages concerning the "-log..." options
+     * @param args          the command line args
+     * @return              the command line args with arguments for setting up logging removed
+     */
+    public static String[] handleLoggingCmdArgs(Consumer<String> msgPrinter, String... args) {
         // create parser
         ArgumentsParser parser = new ArgumentsParser("log parser", "parser for command line log options");
 
@@ -100,7 +110,7 @@ public final class LogUtil {
         Arguments arguments = parser.parse(args);
         
         // show help
-        arguments.ifSet(flagHelp, parser::help);
+        arguments.ifSet(flagHelp, () -> LOG.info(parser.help()));
         
         // set log format
         String logFormat = arguments.getOrThrow(optLogFormat);
@@ -140,11 +150,12 @@ public final class LogUtil {
      * See {@link FileHandler#FileHandler(String)} for pattern syntax.
      * @param pattern the pattern to use
      */
-    private static void setLogPath(@NotNull String pattern) throws IOException {
+    private static void setLogPath(String pattern) throws IOException {
         Handler fh = new FileHandler(pattern);
         fh.setFormatter(new SimpleFormatter());
+        fh.setLevel(Level.ALL);
         getRootLogger().addHandler (fh);
-        LOG.fine("log path set to "+pattern);
+        LOG.fine(() -> "log path set to "+pattern);
     }
 
     /**
@@ -152,7 +163,7 @@ public final class LogUtil {
      *
      * @param level the log level to set
      */
-    public static void setLogLevel(@NotNull Level level) {
+    public static void setLogLevel(Level level) {
         Logger rootLogger = getRootLogger();
         setLogLevel(level, rootLogger);
     }
@@ -165,7 +176,7 @@ public final class LogUtil {
      * @param logger
      *               the logger for which to set the level
      */
-    public static void setLogLevel(@NotNull Level level, @NotNull Logger logger) {
+    public static void setLogLevel(Level level, Logger logger) {
         logger.setLevel(level);
         for (Handler h : logger.getHandlers()) {
             h.setLevel(level);
@@ -187,22 +198,10 @@ public final class LogUtil {
      * @param loggers
      *                the loggers to set the level for
      */
-    public static void setLogLevel(@NotNull Level level, @NotNull Logger... loggers) {
+    public static void setLogLevel(Level level, Logger... loggers) {
         for (Logger logger : loggers) {
             setLogLevel(level, logger);
         }
     }
 
-    /**
-     * Create a log message supplier.
-     *
-     * @param  fmt  format, {@link String#format(Locale, String, Object...)} with
-     *              the
-     *              root locale
-     * @param  args arguments
-     * @return      a supplier that returns the formatted message
-     */
-    public static Supplier<String> format(@NotNull String fmt, Object... args) {
-        return () -> String.format(Locale.ROOT, fmt, args);
-    }
 }

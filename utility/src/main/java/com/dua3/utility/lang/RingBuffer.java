@@ -5,8 +5,6 @@
 
 package com.dua3.utility.lang;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,7 +71,8 @@ public class RingBuffer<E> implements Collection<E> {
     }
 
     @Override
-    public boolean containsAll(@NotNull Collection<?> c) {
+    public boolean containsAll(Collection<?> c) {
+        //noinspection SlowListContainsAll
         return Arrays.asList(toArray()).containsAll(c);
     }
 
@@ -86,7 +85,7 @@ public class RingBuffer<E> implements Collection<E> {
      *             true, if the buffer changed as a result of this operation
      */
     @Override
-    public boolean addAll(@NotNull Collection<? extends E> items) {
+    public boolean addAll(Collection<? extends E> items) {
         if (items.isEmpty()) {
             return false;
         }
@@ -104,12 +103,12 @@ public class RingBuffer<E> implements Collection<E> {
     }
 
     @Override
-    public boolean removeAll(@NotNull Collection<?> c) {
+    public boolean removeAll(Collection<?> c) {
         throw new UnsupportedOperationException("removeAll() is not supported");
     }
 
     @Override
-    public boolean retainAll(@NotNull Collection<?> c) {
+    public boolean retainAll(Collection<?> c) {
         throw new UnsupportedOperationException("retainAll() is not supported");
     }
 
@@ -205,7 +204,7 @@ public class RingBuffer<E> implements Collection<E> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T[] toArray(@NotNull T[] a) {
+    public <T> T[] toArray(T[] a) {
         if (a.length < entries) {
             a = (T[])java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
         }

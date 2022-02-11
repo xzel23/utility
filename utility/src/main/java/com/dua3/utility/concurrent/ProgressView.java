@@ -1,7 +1,6 @@
 package com.dua3.utility.concurrent;
 
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -12,7 +11,7 @@ import java.util.function.Function;
 public class ProgressView<T> implements ProgressTracker<T> {
 
     public interface ProgressIndicator {
-        void finish(@NotNull State s);
+        void finish(State s);
         void update(int done, int total);
         void update(double percentDone);
     }
@@ -21,7 +20,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
         private final ProgressIndicator progressIndicator;
         State state = State.SCHEDULED;
 
-        TaskRecord(@NotNull ProgressIndicator progressIndicator) {
+        TaskRecord(ProgressIndicator progressIndicator) {
             this.progressIndicator = Objects.requireNonNull(progressIndicator);
         }
 
@@ -29,7 +28,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
             progressIndicator.update(done, total);
         }
 
-        public void finish(@NotNull State s) {
+        public void finish(State s) {
             progressIndicator.finish(s);
         }
 
@@ -42,18 +41,18 @@ public class ProgressView<T> implements ProgressTracker<T> {
     
     private final Map<T, TaskRecord> tasks = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    public ProgressView(@NotNull Function<T,ProgressIndicator> createProgessIndicator) {
+    public ProgressView(Function<T,ProgressIndicator> createProgessIndicator) {
         this.createProgessIndicator = Objects.requireNonNull(createProgessIndicator);
     }
     
     @SafeVarargs
-    public final void addTasks(@NotNull T ... tasks) {
+    public final void addTasks(T ... tasks) {
         for (T task: tasks) {
             getTaskRecord(task);
         }
     }
 
-    private TaskRecord getTaskRecord(@NotNull T task) {
+    private TaskRecord getTaskRecord(T task) {
         return tasks.computeIfAbsent(task, t -> {
             ProgressIndicator pi = createProgessIndicator.apply(t);
             return new TaskRecord(pi);
@@ -61,34 +60,34 @@ public class ProgressView<T> implements ProgressTracker<T> {
     }
 
     @Override
-    public void schedule(@NotNull T task) {
+    public void schedule(T task) {
         // getTaskRecord() will enter an entry for the task if it is not yet present
         getTaskRecord(task);
     }
 
     @Override
-    public void start(@NotNull T task) {
+    public void start(T task) {
         TaskRecord r = getTaskRecord(task);
         r.state = State.RUNNING;
         update(task, 0, 0);
     }
 
     @Override
-    public void pause(@NotNull T task) {
+    public void pause(T task) {
         TaskRecord r = getTaskRecord(task);
         LangUtil.check(r.state == State.SCHEDULED, "task not scheduled: %s (%s)", task, r.state);
         r.state = State.PAUSED;
     }
 
     @Override
-    public void abort(@NotNull T task) {
+    public void abort(T task) {
         TaskRecord r = getTaskRecord(task);
         LangUtil.check(!r.state.isTerminal(), "task already completed: %s (%s)", task, r.state);
         r.state = State.ABORTED;
     }
 
     @Override
-    public void finish(@NotNull T task, @NotNull State s) {
+    public void finish(T task, State s) {
         LangUtil.check(s.isTerminal(), "not a terminal state: %s", s);
 
         TaskRecord r = getTaskRecord(task);
@@ -98,13 +97,13 @@ public class ProgressView<T> implements ProgressTracker<T> {
     }
 
     @Override
-    public void update(@NotNull T task, int total, int done) {
+    public void update(T task, int total, int done) {
         assert 0 <= done && done<=total;
         getTaskRecord(task).update(done, total);
     }
 
     @Override
-    public void update(@NotNull T task, double percentDone) {
+    public void update(T task, double percentDone) {
         assert 0 <= percentDone && percentDone<=1.0;
         getTaskRecord(task).update(percentDone);
     }

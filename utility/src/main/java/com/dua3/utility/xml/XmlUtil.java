@@ -1,7 +1,6 @@
 package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IoUtil;
-import com.dua3.cabe.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -122,7 +121,7 @@ public final class XmlUtil {
      * @param node the node
      * @return stream of the child nodes
      */
-    public Stream<Node> children(@NotNull Node node) {
+    public Stream<Node> children(Node node) {
         return nodeStream(node.getChildNodes());
     }
 
@@ -132,12 +131,12 @@ public final class XmlUtil {
      * @return stream of nodes
      */
     @SuppressWarnings("MethodMayBeStatic")
-    public Stream<Node> nodeStream(@NotNull NodeList nodes) {
+    public Stream<Node> nodeStream(NodeList nodes) {
         Spliterator<Node> spliterator = new Spliterator<>() {
             int idx = 0;
 
             @Override
-            public boolean tryAdvance(@NotNull Consumer<? super Node> action) {
+            public boolean tryAdvance(Consumer<? super Node> action) {
                 if (idx >= nodes.getLength()) {
                     return false;
                 }
@@ -181,7 +180,7 @@ public final class XmlUtil {
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      */
-    public org.w3c.dom.Document parse(@NotNull URI uri) throws IOException, SAXException {
+    public org.w3c.dom.Document parse(URI uri) throws IOException, SAXException {
         return documentBuilder().parse(uri.toString());
     }
 
@@ -203,7 +202,7 @@ public final class XmlUtil {
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      */
-    public org.w3c.dom.Document parse(@NotNull Path path) throws IOException, SAXException {
+    public org.w3c.dom.Document parse(Path path) throws IOException, SAXException {
         return documentBuilder().parse(path.toFile());
     }
 
@@ -214,7 +213,7 @@ public final class XmlUtil {
      * @throws IOException in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i. e. the input is not valid
      */
-    public org.w3c.dom.Document parse(@NotNull String text) throws IOException, SAXException {
+    public org.w3c.dom.Document parse(String text) throws IOException, SAXException {
         try (Reader reader = new StringReader(text)) {
             return documentBuilder.parse(new InputSource(reader));
         }
@@ -226,7 +225,7 @@ public final class XmlUtil {
      * @param node the node
      * @throws IOException when an I/O error occurs
      */
-    public void format(@NotNull OutputStream out, Node node) throws IOException {
+    public void format(OutputStream out, Node node) throws IOException {
         format(out, node, StandardCharsets.UTF_8);
     }
 
@@ -237,7 +236,7 @@ public final class XmlUtil {
      * @param charset the {@link Charset} to use for encoding the output
      * @throws IOException when an I/O error occurs
      */
-    public void format(@NotNull OutputStream out, Node node, @NotNull Charset charset) throws IOException {
+    public void format(OutputStream out, Node node, Charset charset) throws IOException {
         format(new OutputStreamWriter(out, charset), node, charset);
     }
 
@@ -261,7 +260,7 @@ public final class XmlUtil {
      * @param charset the {@link Charset} to use for encoding the output
      * @throws IOException when an I/O error occurs
      */
-    public void format(Writer writer, Node node, @NotNull Charset charset) throws IOException {
+    public void format(Writer writer, Node node, Charset charset) throws IOException {
         try {
             Transformer transformer = charset.equals(StandardCharsets.UTF_8) ? utf8Transformer : getTransformer(charset);
             transformer.transform(new DOMSource(node), new StreamResult(writer));
@@ -273,7 +272,7 @@ public final class XmlUtil {
         }
     }
 
-    private Transformer getTransformer(@NotNull Charset charset) {
+    private Transformer getTransformer(Charset charset) {
         try {
             Source source = new StreamSource(IoUtil.stringInputStream(PRETTY_PRINT_XSLT));
             Transformer transformer = transformerFactory.newTransformer(source);
@@ -306,7 +305,7 @@ public final class XmlUtil {
         return formatNode(document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     }
 
-    private String formatNode(Node node, @NotNull String prefix) {
+    private String formatNode(Node node, String prefix) {
         try (StringWriter writer = new StringWriter()) {
             writer.write(prefix);
             format(writer, node, StandardCharsets.UTF_8);

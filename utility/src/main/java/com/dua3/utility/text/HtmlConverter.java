@@ -1,7 +1,5 @@
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,8 +43,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param mapper    the mapper
      * @return the option tp use
      */
-    public static HtmlConversionOption map(@NotNull String attribute,
-                                                    @NotNull Function<Object, HtmlTag> mapper) {
+    public static HtmlConversionOption map(String attribute,
+                                                    Function<Object, HtmlTag> mapper) {
         return new HtmlConversionOption(c -> c.addMapping(attribute, Objects.requireNonNull(mapper)));
     }
 
@@ -57,8 +55,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param mapper    the mapper
      * @return the option tp use
      */
-    public static HtmlConversionOption replaceMapping(@NotNull String attribute,
-                                                               @NotNull Function<Object, HtmlTag> mapper) {
+    public static HtmlConversionOption replaceMapping(String attribute,
+                                                               Function<Object, HtmlTag> mapper) {
         return new HtmlConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
     }
 
@@ -67,15 +65,15 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param mapper the mapper to set as the default mapper
      * @return HtmlConversionOption tat sets the default mapper
      */
-    public static HtmlConversionOption defaultMapper(@NotNull BiFunction<String, Object, HtmlTag> mapper) {
+    public static HtmlConversionOption defaultMapper(BiFunction<String, Object, HtmlTag> mapper) {
         return new HtmlConversionOption(c -> c.setDefaultMapper(mapper));
     }
 
-    public static HtmlConversionOption refineStyleProperties(@NotNull UnaryOperator<Map<String,Object>> refineStyleProperties) {
+    public static HtmlConversionOption refineStyleProperties(UnaryOperator<Map<String,Object>> refineStyleProperties) {
         return new HtmlConversionOption(c -> c.setRefineStyleProperties(refineStyleProperties));
     }
 
-    private void setRefineStyleProperties(@NotNull UnaryOperator<Map<String,Object>> refineStyleProperties) {
+    private void setRefineStyleProperties(UnaryOperator<Map<String,Object>> refineStyleProperties) {
         this.refineStyleProperties = Objects.requireNonNull(refineStyleProperties);    
     }
     
@@ -88,7 +86,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param styleProperties map with style properties
      * @return style properties with font declarations replaced
      */
-    public static Map<String,Object> inlineTextDecorations(@NotNull Map<String,Object> styleProperties) {
+    public static Map<String,Object> inlineTextDecorations(Map<String,Object> styleProperties) {
         Map<String,Object> props = new LinkedHashMap<>();
         styleProperties.forEach((key, value) -> {
             switch (key) {
@@ -109,7 +107,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     @Override
-    protected TagBasedConverterImpl<String> createConverter(@NotNull RichText text) {
+    protected TagBasedConverterImpl<String> createConverter(RichText text) {
         return new HtmlConverterImpl(text);
     }
 
@@ -117,13 +115,13 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         
         private final StringBuilder buffer;
         
-        HtmlConverterImpl(@NotNull RichText text) {
+        HtmlConverterImpl(RichText text) {
             // create a buffer with 25% overhead for HTML
             this.buffer = new StringBuilder(text.length()*125/100);    
         }
 
         @Override
-        protected void appendOpeningTags(@NotNull List<Style> styles) {
+        protected void appendOpeningTags(List<Style> styles) {
             List<HtmlTag> tags = getTags(styles);
             //noinspection ForLoopReplaceableByForEach because of symmetry with #appendClosingTags
             for (int i=0; i<tags.size(); i++) {
@@ -132,14 +130,14 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         }
 
         @Override
-        protected void appendClosingTags(@NotNull List<Style> styles) {
+        protected void appendClosingTags(List<Style> styles) {
             List<HtmlTag> tags = getTags(styles);
             for (int i=tags.size()-1; i>=0; i--) {
                 buffer.append(tags.get(i).close());
             }
         }
         
-        private List<HtmlTag> getTags(@NotNull List<Style> styles) {
+        private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String,Object> properties = new LinkedHashMap<>();
             for (Style style: styles) {
@@ -150,7 +148,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         }
         
         @Override
-        protected void appendChars(@NotNull CharSequence s) {
+        protected void appendChars(CharSequence s) {
             TextUtil.appendHtmlEscapedCharacters(buffer, s);
         }
 
@@ -160,7 +158,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         }
     }
 
-    private void addSimpleMapping(@NotNull String attr, @NotNull Object value, @NotNull HtmlTag tag) {
+    private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
         addMapping(attr, v -> Objects.equals(v,value) ? tag : HtmlTag.emptyTag());
     }
 
@@ -198,7 +196,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         });
     }
 
-    void setDefaultMapper(@NotNull BiFunction<String, Object, HtmlTag> defaultMapper) {
+    void setDefaultMapper(BiFunction<String, Object, HtmlTag> defaultMapper) {
         this.defaultMapper = Objects.requireNonNull(defaultMapper);
     }
 
@@ -220,7 +218,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param attribute the attribute
      * @param mapper the mapper
      */
-    void addMapping(@NotNull String attribute, @NotNull Function<Object, HtmlTag> mapper) {
+    void addMapping(String attribute, Function<Object, HtmlTag> mapper) {
         Objects.requireNonNull(attribute);
         Objects.requireNonNull(mapper);
 
@@ -233,8 +231,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param m2 the second mapper
      * @return the new mapper
      */
-    private static Function<Object, HtmlTag> combineMappers(@NotNull Function<Object, ? extends HtmlTag> m1, 
-                                                                     @NotNull Function<Object, ? extends HtmlTag> m2) {
+    private static Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1, 
+                                                                     Function<Object, ? extends HtmlTag> m2) {
         return value -> {
             HtmlTag oldTag = m1.apply(value);
             HtmlTag newTag = m2.apply(value);
@@ -269,7 +267,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param options the options to use
      * @return converter with standard mappings
      */
-    public static HtmlConverter create(@NotNull Collection<HtmlConversionOption> options) {
+    public static HtmlConverter create(Collection<HtmlConversionOption> options) {
         HtmlConverter instance = new HtmlConverter();
         instance.doAddDefaultMappings();
         options.forEach(o -> o.apply(instance));
@@ -281,7 +279,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param options the options to use
      * @return converter with standard mappings
      */
-    public static HtmlConverter create(@NotNull HtmlConversionOption... options) {
+    public static HtmlConverter create(HtmlConversionOption... options) {
         return create(Arrays.asList(options));
     }
 
@@ -290,7 +288,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param options the options to use
      * @return converter
      */
-    public static HtmlConverter createBlank(@NotNull Collection<HtmlConversionOption> options) {
+    public static HtmlConverter createBlank(Collection<HtmlConversionOption> options) {
         HtmlConverter instance = new HtmlConverter();
         options.forEach(o -> o.apply(instance));
         return instance;
@@ -301,7 +299,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param options the options to use
      * @return converter
      */
-    public static HtmlConverter createBlank(@NotNull HtmlConversionOption... options) {
+    public static HtmlConverter createBlank(HtmlConversionOption... options) {
         return create(Arrays.asList(options));
     }
 
@@ -325,7 +323,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param value the attribute value
      * @return the tag
      */
-    public HtmlTag get(@NotNull String attribute, Object value) {
+    public HtmlTag get(String attribute, Object value) {
         Function<Object, HtmlTag> mapper = mappings.get(attribute);
         return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);
     }

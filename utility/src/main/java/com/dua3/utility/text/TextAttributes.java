@@ -8,7 +8,6 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -43,7 +42,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @return         the new style
      */
     @SafeVarargs
-    public static TextAttributes of(@NotNull Pair<String, ?>... entries) {
+    public static TextAttributes of(Pair<String, ?>... entries) {
         return of(Arrays.asList(entries));
     }
 
@@ -54,7 +53,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      *                 the attribute/value pairs to add
      * @return         the new style
      */
-    public static TextAttributes of(@NotNull Iterable<Pair<String, ?>> entries) {
+    public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
         Set<Entry<String, Object>> entrySet = new HashSet<>();
         for (Pair<String, ?> entry : entries) {
             entrySet.add(new SimpleEntry<>(entry.first(), entry.second()));
@@ -62,11 +61,11 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         return new TextAttributes(entrySet);
     }
 
-    public static TextAttributes of(@NotNull Map<String, Object> map) {
+    public static TextAttributes of(Map<String, Object> map) {
         return new TextAttributes(map.entrySet());
     }
 
-    private TextAttributes(@NotNull Set<Entry<String, Object>> entries) {
+    private TextAttributes(Set<Entry<String, Object>> entries) {
         this.entries = entries;
     }
 
@@ -82,7 +81,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @param attributes {@link Map} holding TextAttribute values
      * @return FontDef instance
      */
-    public static FontDef getFontDef(@NotNull Map<? super String, Object> attributes) {
+    public static FontDef getFontDef(Map<? super String, Object> attributes) {
         Font font = (Font) attributes.get(Style.FONT);
         if (font != null) {
             return font.toFontDef();

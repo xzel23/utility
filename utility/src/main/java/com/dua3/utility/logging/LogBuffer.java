@@ -1,7 +1,6 @@
 package com.dua3.utility.logging;
 
 import com.dua3.utility.lang.RingBuffer;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -137,7 +136,7 @@ public class LogBuffer implements LogListener {
         }
     }
     
-    public void appendTo(@NotNull Appendable app, @NotNull Iterable<? extends Function<LogEntry, Object>> parts) throws IOException {
+    public void appendTo(Appendable app, Iterable<? extends Function<LogEntry, Object>> parts) throws IOException {
         for (LogEntry entry: getLogEntries()) {
             for (Function<LogEntry, Object> p: parts) {
                 app.append(String.valueOf(p.apply(entry)));
@@ -146,11 +145,11 @@ public class LogBuffer implements LogListener {
     }
 
     @SafeVarargs
-    public final void appendTo(@NotNull Appendable app, Function<LogEntry, Object>... parts) throws IOException {
+    public final void appendTo(Appendable app, Function<LogEntry, Object>... parts) throws IOException {
         appendTo(app, Arrays.asList(parts));
     }
     
-    public void appendTo(@NotNull Appendable app) throws IOException {
+    public void appendTo(Appendable app) throws IOException {
         appendTo(app, DEFAULT_FORMAT_PARTS);
     }
 }

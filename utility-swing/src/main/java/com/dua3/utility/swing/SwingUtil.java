@@ -5,9 +5,9 @@
 
 package com.dua3.utility.swing;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
-import com.dua3.cabe.annotations.NotNull;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -65,7 +65,7 @@ public final class SwingUtil {
      * @return
      *                           new Action instance
      */
-    public static Action createAction(String name, @NotNull Consumer<? super ActionEvent> onActionPerformed) {
+    public static Action createAction(String name, Consumer<? super ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             @Serial
             private static final long serialVersionUID = 1L;
@@ -94,7 +94,7 @@ public final class SwingUtil {
      * @return
      *                           new Action instance
      */
-    public static Action createAction(String name, @NotNull Runnable onActionPerformed) {
+    public static Action createAction(String name, Runnable onActionPerformed) {
         return new AbstractAction(name) {
             @Serial
             private static final long serialVersionUID = 1L;
@@ -119,7 +119,7 @@ public final class SwingUtil {
      * @param sp
      *           a scroll pane
      */
-    public static void scrollToBottom(@NotNull JScrollPane sp) {
+    public static void scrollToBottom(JScrollPane sp) {
         scrollToEnd(sp.getVerticalScrollBar());
     }
 
@@ -129,10 +129,10 @@ public final class SwingUtil {
      * @param sb
      *           a scroll bar
      */
-    public static void scrollToEnd(@NotNull JScrollBar sb) {
+    public static void scrollToEnd(JScrollBar sb) {
         AdjustmentListener autoScroller = new AdjustmentListener() {
             @Override
-            public void adjustmentValueChanged(@NotNull AdjustmentEvent e) {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
                 Adjustable adjustable = e.getAdjustable();
                 adjustable.setValue(adjustable.getMaximum());
                 sb.removeAdjustmentListener(this);
@@ -168,11 +168,11 @@ public final class SwingUtil {
      * @param applicationName
      *                        the application name to set
      */
-    public static void setNativeLookAndFeel(@NotNull String applicationName) {
+    public static void setNativeLookAndFeel(String applicationName) {
         setNativeLookAndFeel_(applicationName);
     }
     
-    private static void setNativeLookAndFeel_(String applicationName) {
+    private static void setNativeLookAndFeel_(@Nullable String applicationName) {
         if (System.getProperty("os.name").toUpperCase(Locale.ROOT).startsWith("MAC")) {
             if (applicationName != null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
@@ -254,7 +254,7 @@ public final class SwingUtil {
      * @return
      *               Color
      */
-    public static Color toColor(@NotNull java.awt.Color color) {
+    public static Color toColor(java.awt.Color color) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
@@ -266,7 +266,7 @@ public final class SwingUtil {
      * @return
      *               java.awt.Color
      */
-    public static java.awt.Color toAwtColor(@NotNull Color color) {
+    public static java.awt.Color toAwtColor(Color color) {
         return new java.awt.Color(color.argb(), color.a() != 0xff);
     }
 
@@ -280,7 +280,7 @@ public final class SwingUtil {
      * @see      Color#valueOf(String)
      * @see      #toAwtColor(Color)
      */
-    public static java.awt.Color toAwtColor(@NotNull String s) {
+    public static java.awt.Color toAwtColor(String s) {
         return toAwtColor(Color.valueOf(s));
     }
 
@@ -298,7 +298,7 @@ public final class SwingUtil {
      * @param update
      *               Runnable to do the update
      */
-    public static void updateAndScrollToBottom(@NotNull JScrollPane sp, @NotNull Runnable update) {
+    public static void updateAndScrollToBottom(JScrollPane sp, Runnable update) {
         updateAndScrollToEnd(sp.getVerticalScrollBar(), update);
     }
 
@@ -316,7 +316,7 @@ public final class SwingUtil {
      * @param update
      *               Runnable to do the update
      */
-    public static void updateAndScrollToEnd(@NotNull JScrollBar sb, @NotNull Runnable update) {
+    public static void updateAndScrollToEnd(JScrollBar sb, Runnable update) {
         boolean atEnd = sb.getMaximum() == sb.getValue() + sb.getVisibleAmount();
 
         update.run();
@@ -341,16 +341,14 @@ public final class SwingUtil {
     }
 
     @SafeVarargs
-    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, @NotNull BiFunction<JFileChooser,Component,Integer> showDialog,
-                                                 @NotNull Pair<String, String[]>... types) {
-        File file = null;
-        if (current != null) {
-            try {
-                file = current.toFile().getAbsoluteFile();
-            } catch (UnsupportedOperationException e) {
-                LOG.log(Level.WARNING, "path cannot be converted to file: " + current, e);
-                file = new File(".").getAbsoluteFile();
-            }
+    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<JFileChooser,Component,Integer> showDialog,
+                                                 Pair<String, String[]>... types) {
+        File file;
+        try {
+            file = current.toFile().getAbsoluteFile();
+        } catch (UnsupportedOperationException|SecurityException e) {
+            LOG.log(Level.WARNING, "path cannot be converted to file: " + current, e);
+            file = new File(".").getAbsoluteFile();
         }
 
         JFileChooser jfc = new JFileChooser();
@@ -379,9 +377,7 @@ public final class SwingUtil {
      * @param unitIncrement the unit increment
      */
     public static void setUnitIncrement(JScrollBar sb, int unitIncrement) {
-        if (sb != null) {
-            sb.setUnitIncrement(unitIncrement);
-        }
+        sb.setUnitIncrement(unitIncrement);
     }
 
     /**
@@ -391,10 +387,6 @@ public final class SwingUtil {
      * @param unitIncrement the unit increment
      */
     public static void setUnitIncrement(JScrollPane jsp, int unitIncrement) {
-        if (jsp == null) {
-            return;
-        }
-
         setUnitIncrement(jsp.getHorizontalScrollBar(), unitIncrement);
         setUnitIncrement(jsp.getVerticalScrollBar(), unitIncrement);
     }
@@ -458,7 +450,7 @@ public final class SwingUtil {
      * @param component the component to add drop support to
      * @param action the action to perform when files are dropped
      */
-    public static void addDropFilesSupport(@NotNull JComponent component, @NotNull Consumer<? super Collection<File>> action) {
+    public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action) {
         addDropFilesSupport(component, action, files -> !files.isEmpty(), e -> {});
     }
 
@@ -469,10 +461,10 @@ public final class SwingUtil {
      * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
      * @param exceptionHandler handler to call when an exception is caught
      */
-    public static void addDropFilesSupport(@NotNull JComponent component, @NotNull Consumer<? super Collection<File>> action, @NotNull Predicate<? super Collection<File>> test, @NotNull Consumer<? super Exception> exceptionHandler) {
+    public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action, Predicate<? super Collection<File>> test, Consumer<? super Exception> exceptionHandler) {
         component.setDropTarget(new DropTarget() {
             @Override
-            public synchronized void dragEnter(@NotNull DropTargetDragEvent evt) {
+            public synchronized void dragEnter(DropTargetDragEvent evt) {
                 if (test.test(getFiles(evt.getTransferable()))) {
                     evt.acceptDrag(DnDConstants.ACTION_COPY);
                 } else {
@@ -483,7 +475,7 @@ public final class SwingUtil {
             }
 
             @Override
-            public synchronized void dragOver(@NotNull DropTargetDragEvent evt) {
+            public synchronized void dragOver(DropTargetDragEvent evt) {
                 if (test.test(getFiles(evt.getTransferable()))) {
                     evt.acceptDrag(DnDConstants.ACTION_COPY);
                 } else {
@@ -494,7 +486,7 @@ public final class SwingUtil {
             }
 
             @Override
-            public synchronized void drop(@NotNull DropTargetDropEvent evt) {
+            public synchronized void drop(DropTargetDropEvent evt) {
                 evt.acceptDrop(DnDConstants.ACTION_COPY);
                 Collection<File> files = getFiles(evt.getTransferable());
                 if (test.test(files)) {
@@ -503,7 +495,7 @@ public final class SwingUtil {
             }
 
             @SuppressWarnings("unchecked")
-            private Collection<File> getFiles(@NotNull Transferable transferable) {
+            private Collection<File> getFiles(Transferable transferable) {
                 try {
                     return (Collection<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                 } catch (UnsupportedFlavorException | IOException e) {
@@ -519,7 +511,7 @@ public final class SwingUtil {
     * @param component the component to add drop support to
     * @param action the action to perform when text is dropped
     */
-    public static void addDropTextSupport(@NotNull JComponent component, @NotNull Consumer<String> action) {
+    public static void addDropTextSupport(JComponent component, Consumer<String> action) {
         addDropTextSupport(component, action, text -> !text.isEmpty(), e -> {});
     }
 
@@ -530,7 +522,7 @@ public final class SwingUtil {
     * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
     * @param exceptionHandler handler to call when an exception is caught
     */
-    public static void addDropTextSupport(@NotNull JComponent component, @NotNull Consumer<String> action, @NotNull Predicate<String> test, @NotNull Consumer<Exception> exceptionHandler) {
+    public static void addDropTextSupport(JComponent component, Consumer<String> action, Predicate<String> test, Consumer<Exception> exceptionHandler) {
         component.setDropTarget(new DropTarget() {
             @Override
             public synchronized void dragEnter(DropTargetDragEvent evt) {

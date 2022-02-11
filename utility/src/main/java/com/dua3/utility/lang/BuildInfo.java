@@ -1,7 +1,5 @@
 package com.dua3.utility.lang;
 
-import com.dua3.cabe.annotations.NotNull;
-
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -34,7 +32,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @param zonedDateTimeBuild the timestamp, compatible with {@link ZonedDateTime#parse(CharSequence)}
      * @return BuildInfo instance
      */
-    public static BuildInfo create(@NotNull String version, @NotNull String zonedDateTimeBuild) {
+    public static BuildInfo create(String version, String zonedDateTimeBuild) {
         Pattern pattern = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?((?<separator>[-_\\.]))?((?<suffix>\\w+))?");
         Matcher m = pattern.matcher(version);
         
@@ -62,7 +60,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @param properties the properties instance; use keys as described above
      * @return BuildInfo instance
      */
-    public static BuildInfo create(@NotNull Properties properties) {
+    public static BuildInfo create(Properties properties) {
         String version = properties.getProperty(KEY_BUILD_VERSION, "0.0.1-SNAPSHOT");
         String buildTime = properties.getProperty(KEY_BUILD_TIME, "2000-01-01T00:00Z[UTC]");
         return create(version, buildTime);        
@@ -74,7 +72,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @return BuildInfo instance
      * @throws IllegalStateException if buildinfo could not be loaded
      */
-    public static BuildInfo create(@NotNull InputStream in) {
+    public static BuildInfo create(InputStream in) {
         try (in) {
             return create(LangUtil.loadProperties(in));
         } catch (Exception e) {
@@ -90,7 +88,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @return BuildInfo instance
      * @throws IllegalStateException if buildinfo could not be loaded
      */
-    public static BuildInfo create(@NotNull Class<?> cls, @NotNull String resource) {
+    public static BuildInfo create(Class<?> cls, String resource) {
         return create(cls.getResourceAsStream(resource));
     }
     
@@ -107,7 +105,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
         return "%s (%s)".formatted(version(), buildTime());
     }
 
-    private static Optional<String> group(@NotNull Matcher m, @NotNull String group) {
+    private static Optional<String> group(Matcher m, String group) {
         return Optional.ofNullable(m.group(group));
     }
 

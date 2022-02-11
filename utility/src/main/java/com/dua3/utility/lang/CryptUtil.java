@@ -6,7 +6,6 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.text.TextUtil;
-import com.dua3.cabe.annotations.NotNull;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -64,7 +63,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException
      *                                  if encryption fails
      */
-    public static String encrypt(@NotNull String text, @NotNull byte[] key) throws GeneralSecurityException {
+    public static String encrypt(String text, byte[] key) throws GeneralSecurityException {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
         byte[] cipherMessage = encrypt(key, data);
         return TextUtil.base64Encode(cipherMessage);
@@ -86,7 +85,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException
      *                                  if decryption fails
      */
-    public static String decrypt(@NotNull String cipherText, @NotNull byte[] key) throws GeneralSecurityException {
+    public static String decrypt(String cipherText, byte[] key) throws GeneralSecurityException {
         byte[] cipherMessage = TextUtil.base64Decode(cipherText);
         byte[] data = decrypt(key, cipherMessage);
         return new String(data, StandardCharsets.UTF_8);
@@ -107,7 +106,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException
      *                                  if encryption fails
      */
-    public static byte[] encrypt(@NotNull byte[] key, @NotNull byte[] data) throws GeneralSecurityException {
+    public static byte[] encrypt(byte[] key, byte[] data) throws GeneralSecurityException {
         // use AES encryption
         Key secretKey = new SecretKeySpec(key, "AES");
 
@@ -143,7 +142,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException
      *                                  if encryption fails
      */
-    public static byte[] decrypt(@NotNull byte[] key, @NotNull byte[] cipherMessage) throws GeneralSecurityException {
+    public static byte[] decrypt(byte[] key, byte[] cipherMessage) throws GeneralSecurityException {
         ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);
         int ivLength = byteBuffer.getInt();
         LangUtil.check(ivLength >= 12 && ivLength < 16, "invalid iv length");

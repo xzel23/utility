@@ -5,7 +5,6 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.NotNull;
 import com.dua3.utility.lang.LangUtil;
 
 import java.util.ArrayDeque;
@@ -35,7 +34,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     private final SortedMap<Integer, Map<String, Object>> parts;
     private final Deque<AttributeChange> openedAttributes = new ArrayDeque<>();
 
-    private record AttributeChange(@NotNull String name, Object previousValue, Object value) {}
+    private record AttributeChange(String name, Object previousValue, Object value) {}
     
     /**
      * Construct a new empty builder.
@@ -62,23 +61,23 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public RichTextBuilder append(@NotNull CharSequence csq) {
+    public RichTextBuilder append(CharSequence csq) {
         buffer.append(csq);
         return this;
     }
 
     @Override
-    public Appendable append(@NotNull CharSequence csq, int start, int end) {
+    public Appendable append(CharSequence csq, int start, int end) {
         buffer.append(csq, start, end);
         return this;
     }
 
-    public RichTextBuilder append(@NotNull ToRichText trt) {
+    public RichTextBuilder append(ToRichText trt) {
         trt.appendTo(this);
         return this;
     }
 
-    public RichTextBuilder append(@NotNull RichText rt) {
+    public RichTextBuilder append(RichText rt) {
         rt.appendTo(this);
         return this;
     }
@@ -90,7 +89,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *                  the property
      * @return          value of the property
      */
-    public Object get(@NotNull String property) {
+    public Object get(String property) {
         return parts.get(parts.lastKey()).get(property);
     }
 
@@ -101,7 +100,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *                  the property
      * @return          value of the property
      */
-    public Object getOrDefault(@NotNull String property, Object defaultValue) {
+    public Object getOrDefault(String property, Object defaultValue) {
         return parts.get(parts.lastKey()).getOrDefault(property, defaultValue);
     }
 
@@ -174,7 +173,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public void appendTo(@NotNull RichTextBuilder builder) {
+    public void appendTo(RichTextBuilder builder) {
         builder.ensureCapacity(builder.length() + this.length());
         for (Run run : getRuns()) {
             builder.appendRun(run);
@@ -201,7 +200,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @SuppressWarnings("unchecked")
-    void appendRun(@NotNull Run run) {
+    void appendRun(Run run) {
         // set attributes
         Map<String, Object> attributes = split();
         Map<String, Object> backup = new HashMap<>();
@@ -231,13 +230,13 @@ public class RichTextBuilder implements Appendable, ToRichText {
         }
     }
 
-    public void push(@NotNull String name, Object value) {
+    public void push(String name, Object value) {
         Objects.requireNonNull(value, "value must not be null");
         Object previousValue = split().put(name, value);
         openedAttributes.push(new AttributeChange(name, previousValue, value));
     }
 
-    public void pop(@NotNull String name) {
+    public void pop(String name) {
         AttributeChange change = openedAttributes.pop();
         LangUtil.check(name.equals(change.name()));
         Map<String, Object> attributes = split();
@@ -249,7 +248,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @SuppressWarnings("unchecked")
-    public void push(@NotNull Style style) {
+    public void push(Style style) {
         List<Style> styles = (List<Style>) getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
         List<Style> newStyles = new ArrayList<>(styles.size()+1);
         newStyles.addAll(styles);
@@ -263,7 +262,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *
      * @param style the Style
      */
-    public void pop(@NotNull Style style) {
+    public void pop(Style style) {
         pop("__styles");
     }
 
@@ -272,7 +271,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @SuppressWarnings("unchecked")
-    void apply(@NotNull Style style) {
+    void apply(Style style) {
         for (Map<String,Object> attributes: parts.values()) {
             List<Style> styles = (List<Style>) attributes.computeIfAbsent(RichText.ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
             styles.add(0, style); // add the style at the first position!

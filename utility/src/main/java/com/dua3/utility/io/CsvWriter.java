@@ -12,8 +12,8 @@
  */
 package com.dua3.utility.io;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
-import com.dua3.cabe.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,20 +30,20 @@ import java.util.Objects;
  * @author axel@dua3.com
  */
 public class CsvWriter extends CsvIo implements Flushable {
-    public static CsvWriter create(@NotNull BufferedWriter writer, @NotNull Arguments options) {
+    public static CsvWriter create(BufferedWriter writer, Arguments options) {
         return new CsvWriter(writer, options);
     }
 
-    public static CsvWriter create(@NotNull File file, @NotNull Arguments options) throws IOException {
+    public static CsvWriter create(File file, Arguments options) throws IOException {
         return create(file.toPath(), options);
     }
 
-    public static CsvWriter create(@NotNull Path path, @NotNull Arguments options) throws IOException {
+    public static CsvWriter create(Path path, Arguments options) throws IOException {
         Charset cs = IoOptions.getCharset(options);
         return create(Files.newBufferedWriter(path, cs), options);
     }
 
-    public static CsvWriter create(@NotNull OutputStream out, @NotNull Arguments options) {
+    public static CsvWriter create(OutputStream out, Arguments options) {
         Charset cs = IoOptions.getCharset(options);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
         return create(writer, options);
@@ -53,12 +53,12 @@ public class CsvWriter extends CsvIo implements Flushable {
 
     private int fieldsInRow = 0;
 
-    public CsvWriter(@NotNull BufferedWriter out, @NotNull Arguments options) {
+    public CsvWriter(BufferedWriter out, Arguments options) {
         super(options);
         this.out = Objects.requireNonNull(out);
     }
 
-    public void addField(Object obj) throws IOException {
+    public void addField(@Nullable Object obj) throws IOException {
         if (fieldsInRow > 0) {
             out.write(separator);
         }

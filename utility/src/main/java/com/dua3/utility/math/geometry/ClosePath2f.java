@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Close path with line segment.
@@ -24,7 +23,7 @@ public class ClosePath2f extends Segment2f {
      * @param p index of the start point of this segment
      * @param q index of the end point of this segment
      */
-    ClosePath2f(@NotNull Path2fImpl path, int p, int q) {
+    ClosePath2f(Path2fImpl path, int p, int q) {
         super(path);
         this.p = p;
         this.q = q;

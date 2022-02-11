@@ -1,7 +1,6 @@
 package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * End of path.
@@ -23,7 +22,7 @@ public class EndPath2f extends Segment2f {
      * @param path the path
      * @param v index of vertex in path
      */
-    EndPath2f(@NotNull Path2fImpl path, int v) {
+    EndPath2f(Path2fImpl path, int v) {
         super(path);
         this.v = v;
     }

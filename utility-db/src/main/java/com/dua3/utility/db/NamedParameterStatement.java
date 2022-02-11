@@ -5,7 +5,7 @@
 
 package com.dua3.utility.db;
 
-import com.dua3.cabe.annotations.NotNull;
+import com.dua3.cabe.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -164,7 +164,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalStateException
      *                      if the same parameter is used for different types
      */
-    public NamedParameterStatement(@NotNull Connection connection, @NotNull String query) throws SQLException {
+    public NamedParameterStatement(Connection connection, String query) throws SQLException {
         indexMap = new HashMap<>();
         String parsedQuery = parse(query, indexMap);
         statement = connection.prepareStatement(parsedQuery);
@@ -223,7 +223,7 @@ public class NamedParameterStatement implements AutoCloseable {
     
     private static boolean showUnknownParameterTypeAsWarning = true;
 
-    private static JDBCType getParameterType(@NotNull ParameterMetaData meta, int index) {
+    private static JDBCType getParameterType(ParameterMetaData meta, int index) {
         try {
             return JDBCType.valueOf(meta.getParameterType(index));
         } catch (SQLException e) {
@@ -253,7 +253,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @return          the parsed query
      */
     @SuppressWarnings("AssignmentToForLoopParameter")
-    static String parse(@NotNull String query, @NotNull Map<String, ParameterInfo> paramMap) {
+    static String parse(String query, Map<String, ParameterInfo> paramMap) {
         // I was originally using regular expressions, but they didn't work well for
         // ignoring parameter-like strings inside quotes.
         int length = query.length();
@@ -318,7 +318,7 @@ public class NamedParameterStatement implements AutoCloseable {
         void accept(int idx, T value) throws SQLException;
     }
 
-    private <T> void set(@NotNull SQLType type, String name, T value, @NotNull SetParameter<T> setter) throws SQLException {
+    private <T> void set(SQLType type, String name, @Nullable T value, SetParameter<T> setter) throws SQLException {
         if (value==null) {
             setNull(name, type);
         } else {
@@ -326,8 +326,8 @@ public class NamedParameterStatement implements AutoCloseable {
         }
     }
 
-    private <T> void setNonNull(String name, T value, @NotNull SetParameter<T> setter) throws SQLException {
-        Objects.requireNonNull(value);
+    private <T> void setNonNull(String name, T value, SetParameter<T> setter) throws SQLException {
+        Objects.requireNonNull(value, () -> "parameter '"+name+"' must not be null");
         for (int idx : getIndexes(name)) {
             setter.accept(idx, value);
         }
@@ -335,11 +335,11 @@ public class NamedParameterStatement implements AutoCloseable {
 
     @FunctionalInterface
     private interface SetParameterInt<T> {
-        void accept(int idx, T value, int arg) throws SQLException;
+        void accept(int idx, @Nullable T value, int arg) throws SQLException;
     }
     
-    private <T> void setNonNullWithIntArg(String name, T value, int arg, @NotNull SetParameterInt<T> setter) throws SQLException {
-        Objects.requireNonNull(value);
+    private <T> void setNonNullWithIntArg(String name, T value, int arg, SetParameterInt<T> setter) throws SQLException {
+        Objects.requireNonNull(value, () -> "parameter '"+name+"' must not be null");
         for (int idx : getIndexes(name)) {
             setter.accept(idx, value, arg);
         }
@@ -347,11 +347,11 @@ public class NamedParameterStatement implements AutoCloseable {
 
     @FunctionalInterface
     private interface SetParameterLong<T> {
-        void accept(int idx, T value, long arg) throws SQLException;
+        void accept(int idx, @Nullable T value, long arg) throws SQLException;
     }
 
-    private <T> void setNonNullWithLongArg(String name, T value, long arg, @NotNull SetParameterLong<T> setter) throws SQLException {
-        Objects.requireNonNull(value);
+    private <T> void setNonNullWithLongArg(String name, T value, long arg, SetParameterLong<T> setter) throws SQLException {
+        Objects.requireNonNull(value, () -> "parameter '"+name+"' must not be null");
         for (int idx : getIndexes(name)) {
             setter.accept(idx, value, arg);
         }
@@ -359,10 +359,10 @@ public class NamedParameterStatement implements AutoCloseable {
 
     @FunctionalInterface
     private interface SetParameterObject<T,U> {
-        void accept(int idx, T value, U arg) throws SQLException;
+        void accept(int idx, @Nullable T value, U arg) throws SQLException;
     }
 
-    private <T,U> void setWithObjectArg(@NotNull SQLType type, String name, T value, U arg, @NotNull SetParameterObject<T,U> setter) throws SQLException {
+    private <T,U> void setWithObjectArg(SQLType type, String name, @Nullable T value, @Nullable U arg, SetParameterObject<T,U> setter) throws SQLException {
         if (value==null) {
             setNull(name, type);
         } else {
@@ -386,7 +386,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setArray(String name, Array value) throws SQLException {
+    public void setArray(String name, @Nullable Array value) throws SQLException {
         set(JDBCType.ARRAY, name, value, statement::setArray);
     }
     
@@ -462,7 +462,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setBigDecimal(String name, BigDecimal value) throws SQLException {
+    public void setBigDecimal(String name, @Nullable BigDecimal value) throws SQLException {
         set(JDBCType.DECIMAL, name, value, statement::setBigDecimal);
     }
 
@@ -570,7 +570,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setBlob(String name, Blob value) throws SQLException {
+    public void setBlob(String name, @Nullable Blob value) throws SQLException {
         set(JDBCType.BLOB, name, value, statement::setBlob);
     }
 
@@ -731,7 +731,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  if the parameter does not exist
      * @see                             PreparedStatement#setClob(int, Clob)
      */
-    public void setClob(String name, Clob value) throws SQLException {
+    public void setClob(String name, @Nullable Clob value) throws SQLException {
         set(JDBCType.CLOB, name, value, statement::setClob);
     }
 
@@ -751,7 +751,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @deprecated use {@link #setLocalDate(String, LocalDate)}
      */
     @Deprecated
-    public void setDate(String name, Date value) throws SQLException {
+    public void setDate(String name, @Nullable Date value) throws SQLException {
         set(JDBCType.DATE, name, value, statement::setDate);
     }
 
@@ -772,7 +772,7 @@ public class NamedParameterStatement implements AutoCloseable {
      */
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
     @Deprecated
-    void setDate(String name, Date value, Calendar arg) throws SQLException {
+    void setDate(String name, @Nullable Date value, @Nullable Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.DATE, name, value, arg, statement::setDate);
     }
 
@@ -934,7 +934,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    void setNClob(String name, NClob value) throws SQLException {
+    void setNClob(String name, @Nullable NClob value) throws SQLException {
         set(JDBCType.NCLOB, name, value, statement::setNClob);
     }
 
@@ -952,7 +952,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    void setNString(String name, String value) throws SQLException {
+    void setNString(String name, @Nullable String value) throws SQLException {
         set(JDBCType.NCHAR, name, value, statement::setNString);
     }
 
@@ -968,7 +968,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    void setNull(String name, @NotNull SQLType type) throws SQLException {
+    void setNull(String name, SQLType type) throws SQLException {
         for (int idx : getIndexes(name)) {
             statement.setNull(idx, type.getVendorTypeNumber());
         }
@@ -1024,7 +1024,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setObject(String name, Object value) throws SQLException {
+    public void setObject(String name, @Nullable Object value) throws SQLException {
         set(JDBCType.JAVA_OBJECT, name, value, statement::setObject);
     }
 
@@ -1040,7 +1040,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    void setObject(String name, Object value, int targetSqlType) throws SQLException {
+    void setObject(String name, @Nullable Object value, int targetSqlType) throws SQLException {
         if (value==null) {
             setNull(name, targetSqlType);
         } else {
@@ -1068,7 +1068,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setObject(String name, Object value, int targetSqlType, int scaleOrLength) throws SQLException {
+    public void setObject(String name, @Nullable Object value, int targetSqlType, int scaleOrLength) throws SQLException {
         if (value==null) {
             setNull(name, targetSqlType);
         } else {
@@ -1094,7 +1094,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setObject(String name, Object value, @NotNull SQLType targetSqlType) throws SQLException {
+    public void setObject(String name, @Nullable Object value, SQLType targetSqlType) throws SQLException {
         if (value==null) {
             setNull(name, targetSqlType);
         } else {
@@ -1124,7 +1124,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setObject(String name, Object value, @NotNull SQLType targetSqlType, int scaleOrLength) throws SQLException {
+    public void setObject(String name, @Nullable Object value, SQLType targetSqlType, int scaleOrLength) throws SQLException {
         if (value==null) {
             setNull(name, targetSqlType);
         } else {
@@ -1148,7 +1148,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setRef(String name, Ref value) throws SQLException {
+    public void setRef(String name, @Nullable Ref value) throws SQLException {
         set(JDBCType.REF, name, value, statement::setRef);
     }
 
@@ -1166,7 +1166,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setRowId(String name, RowId value) throws SQLException {
+    public void setRowId(String name, @Nullable RowId value) throws SQLException {
         set(JDBCType.ROWID, name, value, statement::setRowId);
     }
 
@@ -1200,7 +1200,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    void setSQLXML(String name, SQLXML value) throws SQLException {
+    void setSQLXML(String name, @Nullable SQLXML value) throws SQLException {
         set(JDBCType.SQLXML, name, value, statement::setSQLXML);
     }
 
@@ -1218,7 +1218,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setString(String name, String value) throws SQLException {
+    public void setString(String name, @Nullable String value) throws SQLException {
         set(JDBCType.CHAR, name, value, statement::setString);
     }
 
@@ -1235,8 +1235,10 @@ public class NamedParameterStatement implements AutoCloseable {
      *     if an error occurred
      * @throws IllegalArgumentException
      *     if the parameter does not exist
+     * @deprecated use {@link #setLocalTime(String, LocalTime)}
      */
-    public void setTime(String name, Time value) throws SQLException {
+    @Deprecated
+    public void setTime(String name, @Nullable Time value) throws SQLException {
         set(JDBCType.TIME, name, value, statement::setTime);
     }
 
@@ -1255,7 +1257,7 @@ public class NamedParameterStatement implements AutoCloseable {
      */
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
     @Deprecated
-    void setTime(String name, Time value, Calendar arg) throws SQLException {
+    void setTime(String name, @Nullable Time value, @Nullable Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.TIME, name, value, arg, statement::setTime);
     }
 
@@ -1275,7 +1277,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @deprecated use {@link #setLocalDateTime(String, LocalDateTime)}
      */
     @Deprecated
-    public void setTimestamp(String name, Timestamp value) throws SQLException {
+    public void setTimestamp(String name, @Nullable Timestamp value) throws SQLException {
         set(JDBCType.TIMESTAMP, name, value, statement::setTimestamp);
     }
 
@@ -1296,7 +1298,7 @@ public class NamedParameterStatement implements AutoCloseable {
      */
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
     @Deprecated
-    void setTimestamp(String name, Timestamp value, Calendar arg) throws SQLException {
+    void setTimestamp(String name, @Nullable Timestamp value, Calendar arg) throws SQLException {
         setWithObjectArg(JDBCType.TIMESTAMP, name, value, arg, statement::setTimestamp);
     }
 
@@ -1314,7 +1316,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException
      *     if the parameter does not exist
      */
-    public void setURL(String name, URL value) throws SQLException {
+    public void setURL(String name, @Nullable URL value) throws SQLException {
         set(JDBCType.DATALINK, name, value, statement::setURL);
     }
 
@@ -1422,7 +1424,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @see                             PreparedStatement#setTimestamp(int,
      *                                  java.sql.Timestamp)
      */
-    public void setLocalDate(String name, LocalDate value) throws SQLException {
+    public void setLocalDate(String name, @Nullable LocalDate value) throws SQLException {
         if (value==null) {
             setNull(name, JDBCType.DATE);
         } else {
@@ -1444,7 +1446,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @see                             PreparedStatement#setTimestamp(int,
      *                                  java.sql.Timestamp)
      */
-    public void setLocalDateTime(String name, LocalDateTime value) throws SQLException {
+    public void setLocalDateTime(String name, @Nullable LocalDateTime value) throws SQLException {
         if (value==null) {
             setNull(name, JDBCType.TIMESTAMP);
         } else {
@@ -1466,7 +1468,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @see                             PreparedStatement#setTimestamp(int,
      *                                  java.sql.Timestamp)
      */
-    public void setLocalTime(String name, LocalTime value) throws SQLException {
+    public void setLocalTime(String name, @Nullable LocalTime value) throws SQLException {
         if (value==null) {
             setNull(name, JDBCType.TIME);
         } else {
@@ -1489,7 +1491,7 @@ public class NamedParameterStatement implements AutoCloseable {
      *                                  java.sql.Timestamp)
      */
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
-    public void setZonedDateTime(String name, ZonedDateTime value) throws SQLException {
+    public void setZonedDateTime(String name, @Nullable ZonedDateTime value) throws SQLException {
         if (value==null) {
             setNull(name, JDBCType.TIMESTAMP);
         } else {

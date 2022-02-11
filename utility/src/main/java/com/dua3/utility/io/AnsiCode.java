@@ -6,7 +6,6 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.data.Color;
-import com.dua3.cabe.annotations.NotNull;
 
 /**
  * Support for ANSI escape codes for setting text attributes on ANSI-supporting consoles.
@@ -50,7 +49,7 @@ public final class AnsiCode {
      * @param args the sequence arguments
      * @return escape sequence as a String
      */
-    public static String esc(@NotNull int ... args) {
+    public static String esc(int ... args) {
         StringBuilder out = new StringBuilder();
         out.append(ESC_START);
         String delimiter = "";
@@ -89,7 +88,7 @@ public final class AnsiCode {
      * @param c the color
      * @return the ESC string
      */
-    public static String fg(@NotNull Color c) {
+    public static String fg(Color c) {
         return fg(c.r(), c.g(), c.b());
     }
 
@@ -98,7 +97,7 @@ public final class AnsiCode {
      * @param c the color
      * @return the ESC string
      */
-    public static String bg(@NotNull Color c) {
+    public static String bg(Color c) {
         return bg(c.r(), c.g(), c.b());
     }
 

@@ -1,6 +1,6 @@
 package com.dua3.utility.options;
 
-import com.dua3.cabe.annotations.NotNull;
+import com.dua3.cabe.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -19,14 +19,14 @@ public final class SimpleOption<T> extends Option<T> {
 
     private Supplier<T> defaultValue = () -> null;
 
-    public static <T> SimpleOption<T>  create(@NotNull Function<String, ? extends T> mapper,
-                                                       @NotNull String... names) {
+    public static <T> SimpleOption<T>  create(Function<String, ? extends T> mapper,
+                                                       String... names) {
         return new SimpleOption<>(mapper, Object::toString, names);
     }
     
-    public static <T> SimpleOption<T>  create(@NotNull Function<String, ? extends T> mapper,
-                                                       @NotNull Function<? super T, String> formatter,
-                                                       @NotNull String... names) {
+    public static <T> SimpleOption<T>  create(Function<String, ? extends T> mapper,
+                                                       Function<? super T, String> formatter,
+                                                       String... names) {
         return new SimpleOption<>(mapper, formatter, names);
     }
     
@@ -35,22 +35,22 @@ public final class SimpleOption<T> extends Option<T> {
      * @param mapper the mapping function to the target type
      * @param names names for the flag, at least one.
      */
-    private SimpleOption(@NotNull Function<String, ? extends T> mapper,
-                         @NotNull Function<? super T, String> formatter,
-                         @NotNull String... names) {
+    private SimpleOption(Function<String, ? extends T> mapper,
+                         Function<? super T, String> formatter,
+                         String... names) {
         super(mapper, formatter, names);
         occurence(0,1);
         arity(1,1);
     }
     
     @Override
-    public SimpleOption<T> description(@NotNull String description) {
+    public SimpleOption<T> description(String description) {
         super.description(description);
         return this;
     }
 
     @Override
-    public SimpleOption<T> handler(@NotNull Consumer<Collection<T>> handler) {
+    public SimpleOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
     }
@@ -60,7 +60,7 @@ public final class SimpleOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public SimpleOption<T> defaultValue(T defaultValue) {
+    public SimpleOption<T> defaultValue(@Nullable T defaultValue) {
         return defaultValue(() -> defaultValue);
     }
 
@@ -69,7 +69,7 @@ public final class SimpleOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public SimpleOption<T> defaultValue(@NotNull Supplier<T> defaultValue) {
+    public SimpleOption<T> defaultValue(Supplier<T> defaultValue) {
         this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
         return this;
     }
