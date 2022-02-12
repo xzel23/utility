@@ -24,7 +24,12 @@ public class WrappedException extends RuntimeException {
     }
 
     @Override
+    public String getMessage() {
+        return "[WrappedException] " + super.getMessage();
+    }
+
+    @Override
     public String toString() {
-        return "WrappedException(" + super.getCause().toString() + ")";
+        return "[WrappedException] " + super.getCause().toString();
     }
 }
