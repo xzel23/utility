@@ -209,7 +209,15 @@ subprojects {
             errorprone.setErrorProneVersion('2.11.0')
         }
     }
-
+    
+    tasks.withType(JavaCompile).configureEach {
+        options.errorprone {
+            disable("UnnecessaryParentheses")
+            disable("EqualsGetClass")
+            disable("StringSplitter")
+        }
+    }
+    
     tasks.withType(PublishToMavenRepository) {
         dependsOn publishToMavenLocal
     }
