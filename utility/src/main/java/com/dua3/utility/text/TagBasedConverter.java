@@ -1,7 +1,6 @@
 package com.dua3.utility.text;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -34,12 +33,12 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
         protected abstract T get();
         
         protected TagBasedConverterImpl<T> append(RichText text) {
-            List<Style> openStyles = new LinkedList<>();
+            List<Style> openStyles = new ArrayList<>();
             for (Run run: text) {
                 List<Style> runStyles = run.getStyles();
 
                 // determine all styles to close
-                List<Style> stylesToClose = new LinkedList<>(openStyles);
+                List<Style> stylesToClose = new ArrayList<>(openStyles);
                 stylesToClose.removeAll(runStyles);
                 
                 // to avoid interleaved styles, we have to close all tags that were opened after the first tag that is closed
@@ -47,7 +46,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 List<Style> closingStyles = currentStyles.subList(stylesToKeepOpen, currentStyles.size());
                 
                 // the styles that were closed but not contained in stylesToClose must be reopened again 
-                List<Style> reopeningStyles = new LinkedList<>(closingStyles);
+                List<Style> reopeningStyles = new ArrayList<>(closingStyles);
                 reopeningStyles.removeAll(stylesToClose);
 
                 // close styles ...
@@ -59,7 +58,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 currentStyles.addAll(reopeningStyles);
 
                 // add opening Tags for new styles
-                List<Style> openingStyles = new LinkedList<>(runStyles);
+                List<Style> openingStyles = new ArrayList<>(runStyles);
                 openingStyles.removeAll(openStyles);
                 appendOpeningTags(openingStyles);
                 currentStyles.addAll(openingStyles);

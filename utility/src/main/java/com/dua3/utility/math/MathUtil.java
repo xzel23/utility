@@ -11,11 +11,14 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
+import java.util.logging.Logger;
 
 /**
  * @author axel
  */
 public final class MathUtil {
+    
+    private static final Logger LOG = Logger.getLogger(MathUtil.class.getName());
 
     /**
      * Clip argument to range.
@@ -267,7 +270,7 @@ public final class MathUtil {
                         // keep value of dy
                     }
                 } catch (@SuppressWarnings("unused") Exception e) {
-                    // nop
+                    LOG.finer(() -> "no root");
                 }
             }
             xa = x;

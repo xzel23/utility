@@ -30,6 +30,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
      * @param text the text to convert
      * @return the conversion result
      */
+    @Override
     public T convert(RichText text) {
         return createConverter(text).append(text).get();
     }

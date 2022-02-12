@@ -151,7 +151,9 @@ public class ArgumentsParser {
 
     /** 
      * Add option to parser. 
+     * @param <O> the option type
      * @param option the option to add
+     * @return the option
      */
     public <O extends Option<?>> O addOption(O option) {
         for (String name : option.names()) {

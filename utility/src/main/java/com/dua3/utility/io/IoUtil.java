@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -46,6 +47,8 @@ import java.util.stream.Stream;
  */
 public final class IoUtil {
 
+    private static final Logger LOG = Logger.getLogger(IoUtil.class.getName());
+    
     private static final Pattern PATTERN_URI = Pattern.compile("^[a-z][a-z0-9]+:.*");
 
     private IoUtil() {
@@ -527,6 +530,7 @@ public final class IoUtil {
                 return text;
             } catch (@SuppressWarnings("unused") CharacterCodingException e) {
                 // ignore exception and try the next encoding
+                LOG.finer(() -> "unsuccessfully tried encoding "+cs.name());
             }
         }
 

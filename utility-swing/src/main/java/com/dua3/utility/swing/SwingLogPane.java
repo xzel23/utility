@@ -34,6 +34,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -469,7 +470,8 @@ public class SwingLogPane extends JPanel {
             buffer.appendTo(sb);
             SwingUtil.setClipboardText(sb.toString());
         } catch (IOException e) {
-            /* nop */
+            // StringBuilder shouldn't throw IOException
+            throw new UncheckedIOException(e);
         }
     }
 

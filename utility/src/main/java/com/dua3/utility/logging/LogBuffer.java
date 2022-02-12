@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -59,7 +58,7 @@ public class LogBuffer implements LogListener {
         void clear();
     }
     
-    private final Collection<LogBufferListener> listeners = new LinkedList<>();
+    private final Collection<LogBufferListener> listeners = new ArrayList<>();
 
     /**
      * Construct a new LogBuffer instance with default capacity.
@@ -93,6 +92,7 @@ public class LogBuffer implements LogListener {
         listeners.remove(listener);
     }
 
+    @Override
     public void entry(LogEntry entry) {
         boolean replaced;
         synchronized(buffer) {
