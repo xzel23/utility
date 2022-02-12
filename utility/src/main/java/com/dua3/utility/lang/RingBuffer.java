@@ -215,8 +215,9 @@ public class RingBuffer<E> implements Collection<E> {
         System.arraycopy(data, start, a, 0, n1);
         System.arraycopy(data, 0, a, n1, n2);
 
-        if (a.length > entries)
+        if (a.length > entries) {
             a[entries] = null;
+        }
         
         return a;
     }

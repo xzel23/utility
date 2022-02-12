@@ -43,7 +43,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 stylesToClose.removeAll(runStyles);
                 
                 // to avoid interleaved styles, we have to close all tags that were opened after the first tag that is closed
-                int stylesToKeepOpen = stylesToClose.stream().mapToInt(currentStyles::indexOf).min().orElse(currentStyles.size());
+                int stylesToKeepOpen = stylesToClose.stream().mapToInt(currentStyles::indexOf).min().orElseGet(() -> currentStyles.size());
                 List<Style> closingStyles = currentStyles.subList(stylesToKeepOpen, currentStyles.size());
                 
                 // the styles that were closed but not contained in stylesToClose must be reopened again 

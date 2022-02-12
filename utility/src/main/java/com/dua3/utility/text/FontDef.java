@@ -5,6 +5,7 @@ import com.dua3.utility.data.Color;
 
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 /**
  * A mutable class holding font attributes to help creating immutable font
@@ -12,6 +13,8 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode"})
 public final class FontDef {
+
+    private static final Pattern PATTERN_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?");
 
     /**
      * Create FontDef instance with only the color attribute set.
@@ -133,7 +136,7 @@ public final class FontDef {
                 case "strikethrough" -> fd.setStrikeThrough(true);
                 default -> {
                     // check for font size
-                    if (s.matches("\\d+(\\.\\d*)?")) {
+                    if (PATTERN_FONT_SIZE.matcher(s).matches()) {
                         fd.setSize(Float.parseFloat(s));
                         break;
                     }

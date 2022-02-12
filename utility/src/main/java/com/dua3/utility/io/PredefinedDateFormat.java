@@ -6,12 +6,15 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 public enum PredefinedDateFormat {
     LOCALE_DEFAULT("locale dependent", PredefinedDateFormat::formatFromLocale),
     LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.MEDIUM)),
     LOCALE_LONG("long (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.LONG)),
     ISO_DATE("ISO 8601 (2000-12-31)", locale -> DateTimeFormatter.ISO_LOCAL_DATE);
+
+    private static final Pattern PATTERN_YEAR_PATTERN = Pattern.compile("\\byy\\b");
 
     /**
      * Create a date locale dependent date format.
@@ -37,7 +40,7 @@ public enum PredefinedDateFormat {
                         null,
                         IsoChronology.INSTANCE,
                         locale);
-        formatPattern = formatPattern.replaceAll("\\byy\\b", "yyyy");
+        formatPattern = PATTERN_YEAR_PATTERN.matcher(formatPattern).replaceAll("yyyy");
         return DateTimeFormatter.ofPattern(formatPattern, locale);
     }
 

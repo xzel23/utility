@@ -38,12 +38,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
  * Utility class for Input/Output.
  */
 public final class IoUtil {
+
+    private static final Pattern PATTERN_URI = Pattern.compile("^[a-z][a-z0-9]+:.*");
 
     private IoUtil() {
         // utility class
@@ -427,7 +430,7 @@ public final class IoUtil {
      * @return true if string denotes a URI
      */
     private static boolean isURI(String s) {
-        return s.matches("^[a-z][a-z0-9]+:.*");
+        return PATTERN_URI.matcher(s).matches();
     }
 
     /**
