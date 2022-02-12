@@ -17,8 +17,8 @@ public final class StandardOption<T> extends Option<T> {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
-    public static <T> StandardOption<T> create(Function<String,T> mapper,
-                                                        String [] names) {
+    public static <T> StandardOption<T> create(Function<String, ? extends T> mapper,
+                                               String [] names) {
         return new StandardOption<>(mapper, Object::toString, names);
     }
 

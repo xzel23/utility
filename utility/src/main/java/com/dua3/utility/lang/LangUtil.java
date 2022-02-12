@@ -299,7 +299,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T,E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<T,E> c) {
+    public static <T,E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T, E> c) {
         return arg -> {
             try {
                 c.apply(arg);
@@ -322,7 +322,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T,E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<T,E> s) {
+    public static <T,E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
         return () -> {
             try {
                 return s.get();
@@ -347,7 +347,7 @@ public final class LangUtil {
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T,R,E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T,R,E> f) {
+    public static <T,R,E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, ? extends R, E> f) {
         return arg -> {
             try {
                 return f.apply(arg);
@@ -447,7 +447,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalInt opt, IntFunction<T> f) {
+    public static <T> Optional<T> map(OptionalInt opt, IntFunction<? extends T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));    
     }
 
@@ -459,7 +459,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalLong opt, LongFunction<T> f) {
+    public static <T> Optional<T> map(OptionalLong opt, LongFunction<? extends T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));    
     }
 
@@ -471,7 +471,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalDouble opt, DoubleFunction<T> f) {
+    public static <T> Optional<T> map(OptionalDouble opt, DoubleFunction<? extends T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));    
     }
     

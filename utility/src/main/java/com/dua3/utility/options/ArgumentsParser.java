@@ -112,7 +112,7 @@ public class ArgumentsParser {
      * @param <T> the target type
      * @return the option
      */
-    public <T> SimpleOption<T> simpleOption(Function<String,T> mapper, String... names) {
+    public <T> SimpleOption<T> simpleOption(Function<String, ? extends T> mapper, String... names) {
         return addOption(SimpleOption.create(mapper, names));
     }
 
