@@ -324,7 +324,8 @@ public class ArgumentsParser {
             case 1 -> (min == max) ? " arg" : " arg1";
             case 2 -> " arg1 arg2";
             case 3 -> " arg1 arg2 arg3";
-            default -> " arg1 ... arg" + min;
+            default -> //noinspection StringConcatenationMissingWhitespace
+                    " arg1 ... arg" + min;
         };
 
         // handle max arity

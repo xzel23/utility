@@ -139,7 +139,7 @@ public final class FileSystemView implements AutoCloseable {
     public static FileSystemView forClass(Class<?> clazz) throws IOException {
         try {
             String classFile = clazz.getSimpleName() + ".class";
-            URI uri = clazz.getResource(classFile).toURI();
+            URI uri = Objects.requireNonNull(clazz.getResource(classFile), () -> "class file not found: "+classFile).toURI();
             switch (uri.getScheme()) {
             case "file":
                 return create(Paths.get(uri.resolve(".")));
