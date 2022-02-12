@@ -56,7 +56,7 @@ public interface ImageUtil<I> {
      * Create image from pixel data.
      * @param w the image width
      * @param h the image height
-     * @param data the pixeal data as int values containing ARGB values
+     * @param data the pixel data as int values containing ARGB values
      * @return the image
      */
     Image create(int w, int h, int[] data);

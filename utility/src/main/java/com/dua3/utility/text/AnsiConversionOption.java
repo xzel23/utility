@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Options controling the conversion process.
+ * Options controlling the conversion process.
  * @param action the action to execute when applying the option (must not be null)
  */
 public record AnsiConversionOption(Consumer<? super AnsiConverter> action) {

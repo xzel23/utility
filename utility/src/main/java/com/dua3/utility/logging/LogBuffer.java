@@ -62,7 +62,7 @@ public class LogBuffer implements LogListener {
     private final Collection<LogBufferListener> listeners = new LinkedList<>();
 
     /**
-     * Construct a new LogBuffer instance eith default capacity.
+     * Construct a new LogBuffer instance with default capacity.
      */
     public LogBuffer() {
         this(DEFAULT_CAPACITY);    

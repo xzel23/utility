@@ -66,7 +66,7 @@ public record Vector2f(float x, float y) {
         
         double denominator = a.length() * b.length();
 
-        // denominator==0 implies nominator==0, so this should only happen if scalarProdut() or length() is broken
+        // denominator==0 implies nominator==0, so this should only happen if scalarProduct() or length() is broken
         assert denominator != 0;  
         
         return Math.acos(nominator/denominator);
@@ -99,7 +99,7 @@ public record Vector2f(float x, float y) {
     }
 
     /**
-     * Compute the avector's angle in radians.
+     * Compute the vector's angle in radians.
      * @return angle in radians in the range [-π,π]
      */
     public double angle() {

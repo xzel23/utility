@@ -142,7 +142,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     @SuppressWarnings("unchecked")
     private void normalize() {
-        // combine subsequent runs sharing the same attibutes
+        // combine subsequent runs sharing the same attributes
         boolean first = true;
         List<Integer> keysToRemove = new ArrayList<>();
         Map<String, Object> lastAttributes = Collections.emptyMap();

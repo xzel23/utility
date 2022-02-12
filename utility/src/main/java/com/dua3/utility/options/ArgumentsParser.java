@@ -193,14 +193,14 @@ public class ArgumentsParser {
             }
 
             // if maximum number of args is consumed, reset the current entry
-            if (currentEntry!=null && currentEntry.getParms().size()==currentEntry.getOption().maxArity) {
+            if (currentEntry!=null && currentEntry.getParams().size() == currentEntry.getOption().maxArity) {
                 currentEntry = null;
             }
 
             // is argument start of a new option?
             Option<?> option = options.get(arg);
             if (option != null) {
-                // start processing of next ooption
+                // start processing of next option
                 currentEntry = Arguments.Entry.create(option);
                 parsedOptions.add(currentEntry);
                 
@@ -234,7 +234,7 @@ public class ArgumentsParser {
     }
 
     /**
-     * Validate the parsed option, i. e. check number of occurences and arity.
+     * Validate the parsed option, i. e. check number of occurrences and arity.
      * @param parsedOptions the parsed options to validate
      * @throws OptionException if an error is detected
      */

@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  * A registry for {@link Codec} instances.
  * 
  * Codecs are registered by calling {@link #registerCodec(Class, Encoder, Decoder)}.
- * Registered codecs for a class can be obtaained by using {@link #get(Class)}.
+ * Registered codecs for a class can be obtained by using {@link #get(Class)}.
  */
 public class Codecs {
 

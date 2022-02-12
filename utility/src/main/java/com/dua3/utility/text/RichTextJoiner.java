@@ -75,7 +75,7 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
                 return RichText.emptyText();
             }
 
-            // calculate needed text length and create builder wiith sufficient capacity
+            // calculate needed text length and create builder with sufficient capacity
             int n = accu.first().size();
             int supplementaryLength = calculateSupplementaryLength.applyAsInt(n);
             int totalLength = length + supplementaryLength;

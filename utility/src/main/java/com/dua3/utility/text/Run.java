@@ -87,7 +87,7 @@ public class Run implements AttributedCharSequence {
 
     /**
      * Get the base sequence.
-     * @return base seqeunce
+     * @return base sequence
      */
     CharSequence base() {
         return text;
@@ -95,7 +95,7 @@ public class Run implements AttributedCharSequence {
 
     /**
      * Convert index into this {@link RichText} instance to index into base sequence.
-     * @return index into base seqeunce
+     * @return index into base sequence
      */
     int convertIndex(int baseIndex){
         return baseIndex-this.start;

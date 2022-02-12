@@ -316,7 +316,7 @@ public final class LangUtil {
      * @param  <T> the argument type
      * @param  <E> the exception type
      * @param  s the supplier to call (instance of {@link SupplierThrows})
-     * @return   instance of Sipplier that invokes f and converts IOException to
+     * @return   instance of {@link Supplier} that invokes f and converts IOException to
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
@@ -444,7 +444,7 @@ public final class LangUtil {
      * @param opt the {@link OptionalInt}
      * @param f the mapping function
      * @param <T> the result type
-     * @return Optional holding the mapped value or Optional.empt()
+     * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(OptionalInt opt, IntFunction<T> f) {
@@ -456,7 +456,7 @@ public final class LangUtil {
      * @param opt the {@link OptionalLong}
      * @param f the mapping function
      * @param <T> the result type
-     * @return Optional holding the mapped value or Optional.empt()
+     * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(OptionalLong opt, LongFunction<T> f) {
@@ -468,7 +468,7 @@ public final class LangUtil {
      * @param opt the {@link OptionalDouble}
      * @param f the mapping function
      * @param <T> the result type
-     * @return Optional holding the mapped value or Optional.empt()
+     * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(OptionalDouble opt, DoubleFunction<T> f) {
@@ -534,8 +534,8 @@ public final class LangUtil {
     @FunctionalInterface
     public interface RunnableThrows<E extends Exception> {
         /**
-         * Equivalent to {@link Runnable#run()}, but may throw checked exc eptions.
-         * @throws E dpending on ovverride
+         * Equivalent to {@link Runnable#run()}, but may throw checked exceptions.
+         * @throws E depending on override
          */
         @SuppressWarnings("ProhibitedExceptionDeclared")
         void run() throws E;
@@ -851,7 +851,7 @@ public final class LangUtil {
         for (int i=candidates.size()-1; i>=0; i--) {
             URL url = cls.getResource(candidates.get(i));
             if (url!=null) {
-                LOG.fine(() -> "requested resource '"+name+"', localised rescource found: "+url);
+                LOG.fine(() -> "requested resource '"+name+"', localised resource found: "+url);
                 return url;
             }
         }

@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Options controling the conversion process.
+ * Options controlling the conversion process.
  */
 public record HtmlConversionOption(Consumer<? super HtmlConverter> action) {
 

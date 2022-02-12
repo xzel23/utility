@@ -158,7 +158,7 @@ public interface ProgressTracker<T> {
     void update(T task, double percentDone);
 
     /**
-     * Create taskupdater.
+     * Create task updater.
      * @param task the task
      * @return the task updater
      */
@@ -167,7 +167,7 @@ public interface ProgressTracker<T> {
     }
 
     /**
-     * Create a no-op taskupdater.
+     * Create a no-op task updater.
      * @return no-op task updater
      */
     static TaskUpdater nopTaskUpdater() {

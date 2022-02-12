@@ -1,7 +1,7 @@
 package com.dua3.utility.math.geometry;
 
 /**
- * Beziér curve Path segment.
+ * Bézier curve Path segment.
  */
 public final class BezierCurve2f extends AbstractCurve2f {
     /**

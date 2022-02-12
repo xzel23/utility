@@ -14,7 +14,7 @@ public class OptionException extends IllegalStateException {
 
         /**
          * Constructor.
-         * @param option the option the argument belongds to
+         * @param option the option the argument belongs to
          * @param parameter the parameter value as String
          * @param e the parent exception
          */
@@ -26,7 +26,7 @@ public class OptionException extends IllegalStateException {
 
         /**
          * Constructor.
-         * @param option the option the argument belongds to
+         * @param option the option the argument belongs to
          * @param parameter the parameter value as String
          */
         public ParameterConversionException(Option<?> option, String parameter) {

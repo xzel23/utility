@@ -57,9 +57,9 @@ All logging is done through JUL (java.util.logging).
  - If you use a logging framework such as logback in your __application__, please use that framework's JUL bridge to reroute logging messages. 
  - If your project is a library, don't try to reroute log messages - you cannot tell which framework the user of your library will prefer using, so please don't make his (and your own) life harder by forcing the user of your library to use the framework of *your* choice.
  
-IMHO, using a logging framework in *libraries* is in most cases not necessary anymore in Java 8+ since log messages can now be formatted using lambdas that are only called when logging on that level is enabled. I have had more than enough trouble with trying to put libraries using different versions of log4j, SLF4J, logback, commopns.logging, and more into a single project that I will not integrate any logging framework into my libraries, so please don't even ask for it. Most advanced logging framework now have some sort of JUL bridge, so that there shouldn't be any issues with this. 
+IMHO, using a logging framework in *libraries* is in most cases not necessary anymore in Java 8+ since log messages can now be formatted using lambdas that are only called when logging on that level is enabled. I have had more than enough trouble with trying to put libraries using different versions of log4j, SLF4J, logback, commons.logging, and more into a single project that I will not integrate any logging framework into my libraries, so please don't even ask for it. Most advanced logging framework now have some sort of JUL bridge, so that there shouldn't be any issues with this. 
 
-If you develop a Swing application, the SwingLogPane might come in handy. Have a look at the TestSwingComponents sample to see how to display log messages from the different logging frameworks in your application. If you use SLF4J, add SLF4J's [JUL backend](https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14) to your classpathto reroute SLF4J log messages to JUL.
+If you develop a Swing application, the SwingLogPane might come in handy. Have a look at the TestSwingComponents sample to see how to display log messages from the different logging frameworks in your application. If you use SLF4J, add SLF4J's [JUL backend](https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14) to your classpath to reroute SLF4J log messages to JUL.
 
 ## Using the BuildInfo class in Gradle builds
 
@@ -83,13 +83,13 @@ Add this to your `build.gradle` to include a `build.properties` file in your JAR
         }
     }
 
-Add this in your code to read the `build.properties` file and create a `BuildInfo` instance containinng version and build time information:
+Add this in your code to read the `build.properties` file and create a `BuildInfo` instance containing version and build time information:
 
     public static final BuildInfo BUILD_INFO = BuildInfo.create(Main.class, "/build.properties");
 
-## cabe
+## Cabe
 
-Starting with version 10, utility uses [cabe](https://github.com/xzel23/cabe). Cabe is a library that is used only at compile time and does not introduce any dependencies for downstream projects. It contains source-only anntotations that are not present in the compiled class files of the processed sources.
+Starting with version 10, utility uses [cabe](https://github.com/xzel23/cabe). Cabe is a library that is used only at compile time and does not introduce any dependencies for downstream projects. It contains source-only annotations that are not present in the compiled class files of the processed sources.
 
 When you run your code with assertions disabled, virtually no overhead is introduced, as assertions are removed on the JVM level. 
 
@@ -102,7 +102,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 - **Java 17 required!**
 - changed module names to com.dua3.utility again
 - upgraded gradle to 7.2 for Java 17 support
-- publish snapshots to snoatype snapshot repository
+- publish snapshots to sonatype snapshot repository
 - geometry classes taking float parameters have been renamed to ...2f
 - some classes (Pair, Vector2f, ...) have been converted to records
 - updates to FileTreeNode to allow use as a base class
@@ -141,8 +141,8 @@ When running your code with exceptions enabled, parameters are checked for inval
 - migrate from bintray to sonatype 
 - JDK 11+ required! It's finally time to dump Java 8 support. I won't put any more effort into supporting a Java version that has long reached EOL and is a maintenance burden because of its missing modularity support.
 - build uses Gradle 7 to enable building on JDK 17
-- removed usae of the JPMS Gradle plugin as it is not compatible with Gradle 7 and not needed anymore after dropping JDK 8 support and Gradle 7 added modularity support.
-- logback support has been replaced by log4j2 due to missing jigsaw suport in logback. This means if you have been using a Log4J to Logback bridge before, it's now time to do it the other way around.
+- removed use of the JPMS Gradle plugin as it is not compatible with Gradle 7 and not needed anymore after dropping JDK 8 support and Gradle 7 added modularity support.
+- logback support has been replaced by log4j2 due to missing jigsaw support in logback. This means if you have been using a Log4J to Logback bridge before, it's now time to do it the other way around.
 - NamedParameterStatement supports many more data types; fixes for inserting null values.
 - source parameter of CsvReader changed from String to URI
 - `com.dua3.utility.cmd` and `com.dua3.utility.options` have been merged; there had been a lot of duplicated functionality, and the implementation in the `cmd` package was much cleaner; the result is again located in `com.dua3.utility.options` but the code is mostly based on what had been in the `cmd` package. Classes have been renamed because they are no more intended to be used only for command line arguments.
@@ -211,14 +211,14 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ### Version 8
 
- - DomUtil renamed to XmlUtil, methods are instance methods now so that instaneces using different DocumentBuilder and Transformer implementations can be used
+ - DomUtil renamed to XmlUtil, methods are instance methods now so that instances using different DocumentBuilder and Transformer implementations can be used
  - moved all XML related methods from IoUtil and TextUtil to XmlUtil
  - SwingUtil: added helper methods for adding basic drag and drop support
 
 ### Version 7.0.8
 
  - IOUtil: added IOUtil.copyAllBytes()
- - IOUtil: removed inaccessble Method StreamSupplier.lines()
+ - IOUtil: removed inaccessible Method StreamSupplier.lines()
 
 ### Version 7.0.7
 
@@ -385,7 +385,7 @@ When running your code with exceptions enabled, parameters are checked for inval
  
 ### Version 6.0.1
 
- - new method FileType.isCompound() is used to excldue file types from lookup by extension (default implementation returns false; see javadoc for details)
+ - new method FileType.isCompound() is used to exclude file types from lookup by extension (default implementation returns false; see javadoc for details)
  
 ### Version 6.0
 
@@ -402,7 +402,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 
  - restore Java 8 compatibility (needed for my customer's project)
  - update gradle to 6.3 (for JDK 14 support)
- - updatze SpotBugs and SpotBugs plugin
+ - update SpotBugs and SpotBugs plugin
  
 ### Version 5.3.3
 

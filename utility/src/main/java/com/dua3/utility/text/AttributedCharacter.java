@@ -1,7 +1,7 @@
 package com.dua3.utility.text;
 
 /**
- * A styled caracter interface.
+ * A styled character interface.
  */
 public interface AttributedCharacter {
     /**
@@ -26,7 +26,7 @@ public interface AttributedCharacter {
     
     /**
      * Get character.
-     * @return the unstyled char value
+     * @return the char value
      */
     char character();
 

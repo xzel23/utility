@@ -20,7 +20,7 @@ public final class Flag extends Option<Boolean> {
      */
     private Flag(String [] names) {
         super(Flag::mapToBoolean, b -> Boolean.toString(b), names);
-        occurence(0,1);
+        occurrence(0,1);
         arity(0,0);
     }
 

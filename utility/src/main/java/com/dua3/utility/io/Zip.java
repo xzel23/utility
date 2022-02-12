@@ -68,7 +68,7 @@ public class Zip implements AutoCloseable, Flushable {
      * Add directory to zip.
      * <p>
      * The directory will be placed under the last created directory unless it starts with '/' (denotes the zip's root).
-     * @param dirname  the directoryname
+     * @param dirname  the directory name
      * @throws IOException on error
      */
     public void directory(String dirname) throws IOException {

@@ -115,11 +115,11 @@ public class RichTextMatcher implements MatchResult {
         return replace(replacement, Integer.MAX_VALUE);
     }
 
-    private RichText replace(RichText replacement, int maxOccurences) {
+    private RichText replace(RichText replacement, int maxOccurrences) {
         RichTextBuilder rtb = new RichTextBuilder(text.length());
 
         int off, i;
-        for(off = 0, i= 0; i++<maxOccurences && find(); off = end()) {
+        for(off = 0, i= 0; i++<maxOccurrences && find(); off = end()) {
             rtb.append(text.subSequence(off, start())).append(replacement);
         }
 
@@ -127,11 +127,11 @@ public class RichTextMatcher implements MatchResult {
         return rtb.toRichText();
     }
 
-    private RichText replace(String replacement, int maxOccurences) {
+    private RichText replace(String replacement, int maxOccurrences) {
         RichTextBuilder rtb = new RichTextBuilder(text.length());
 
         int off, i;
-        for(off = 0, i= 0; i++<maxOccurences && find(); off = end()) {
+        for(off = 0, i= 0; i++<maxOccurrences && find(); off = end()) {
             rtb.append(text.subSequence(off, start())).append(replacement);
         }
 

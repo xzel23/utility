@@ -385,7 +385,7 @@ public class SwingLogPane extends JPanel {
                 }         
             }
 
-            // remove all columns crom model
+            // remove all columns from model
             while (columnModel.getColumnCount()>0) {
                 columnModel.removeColumn(columnModel.getColumn(0));
             }
@@ -437,16 +437,16 @@ public class SwingLogPane extends JPanel {
     }
     
     /**
-     * Set the diivider location. Analog to {@link JSplitPane#setDividerLocation(double)}.
-     * @param propertionalLocation the proportional location 
+     * Set the divider location. Analog to {@link JSplitPane#setDividerLocation(double)}.
+     * @param proportionalLocation the proportional location 
      */
-    public void setDividerLocation(double propertionalLocation) {
-        this.dividerLocation = MathUtil.clamp(0.0, 1.0, propertionalLocation);
+    public void setDividerLocation(double proportionalLocation) {
+        this.dividerLocation = MathUtil.clamp(0.0, 1.0, proportionalLocation);
         splitPane.setDividerLocation(dividerLocation);
     }
 
     /**
-     * Set the diivider location. Analog to {@link JSplitPane#setDividerLocation(int)}.
+     * Set the divider location. Analog to {@link JSplitPane#setDividerLocation(int)}.
      * @param location the location 
      */
     public void setDividerLocation(int location) {

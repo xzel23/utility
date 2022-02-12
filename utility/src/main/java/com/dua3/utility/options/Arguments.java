@@ -53,11 +53,11 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     /**
      * An entry represents a single option given on the command line together with the parameters given in that option
      * invocation, converted to the option's argument type.
-     * @param <T> the arguemnt type for the option
+     * @param <T> the argument type for the option
      */
     public static final class Entry<T> {
         final Option<T> option;
-        final List<T> parms;
+        final List<T> params;
 
         @SuppressWarnings("unchecked")
         static Entry<?> create(Option<?> option) {
@@ -66,7 +66,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
 
         Entry(Option<T> option) {
             this.option = Objects.requireNonNull(option);
-            this.parms = new ArrayList<>();
+            this.params = new ArrayList<>();
         }
 
         void addParameter(String s) {
@@ -74,7 +74,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         }
 
         void addArg(T v) {
-            parms.add(v);
+            params.add(v);
         }
 
         /**
@@ -86,18 +86,18 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         }
 
         /**
-         * Get the parameters given for this invocation of the ooption.
+         * Get the parameters given for this invocation of the option.
          * @return liest of option parameters, converted to the target type
          */
-        public List<T> getParms() {
-            return Collections.unmodifiableList(parms);
+        public List<T> getParams() {
+            return Collections.unmodifiableList(params);
         }
 
         /**
          * Call the handler registered with the option and pass the parameters.
          */
         public void handle() {
-            option.handle(parms);
+            option.handle(params);
         }
     }
 
@@ -205,7 +205,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     public <T> Stream<List<T>> stream(Option<T> option) {
         return parsedOptions.stream()
                 .filter(entry -> entry.option.equals(option))
-                .map(entry -> ((Entry<T>) entry).getParms());
+                .map(entry -> ((Entry<T>) entry).getParams());
     }
 
     /**

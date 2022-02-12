@@ -112,7 +112,7 @@ public final class FontDef {
     /**
      * Parse fontspec.
      * @param fontspec the fontspec
-     * @return FonrDef instance matching fontspec 
+     * @return FontDef instance matching fontspec 
      */
     public static FontDef parseFontspec(String fontspec) {
         String[] parts = fontspec.split("-");

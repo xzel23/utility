@@ -39,16 +39,16 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 List<Style> runStyles = run.getStyles();
 
                 // determine all styles to close
-                List<Style> stylesToclose = new LinkedList<>(openStyles);
-                stylesToclose.removeAll(runStyles);
+                List<Style> stylesToClose = new LinkedList<>(openStyles);
+                stylesToClose.removeAll(runStyles);
                 
-                // to avoid interleaved styles, we have to close all tags that were openend after the first tag that is closed
-                int stylesToKeepOpen = stylesToclose.stream().mapToInt(currentStyles::indexOf).min().orElse(currentStyles.size());
+                // to avoid interleaved styles, we have to close all tags that were opened after the first tag that is closed
+                int stylesToKeepOpen = stylesToClose.stream().mapToInt(currentStyles::indexOf).min().orElse(currentStyles.size());
                 List<Style> closingStyles = currentStyles.subList(stylesToKeepOpen, currentStyles.size());
                 
                 // the styles that were closed but not contained in stylesToClose must be reopened again 
                 List<Style> reopeningStyles = new LinkedList<>(closingStyles);
-                reopeningStyles.removeAll(stylesToclose);
+                reopeningStyles.removeAll(stylesToClose);
 
                 // close styles ...
                 appendClosingTags(closingStyles);
@@ -68,10 +68,10 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 appendChars(run);
 
                 // update open styles
-                openStyles.removeAll(stylesToclose);
+                openStyles.removeAll(stylesToClose);
                 openStyles.addAll(openingStyles);
             }
-            // close all remeining styles
+            // close all remaining styles
             appendClosingTags(openStyles);
 
             return this;

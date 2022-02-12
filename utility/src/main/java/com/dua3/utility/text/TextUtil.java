@@ -289,7 +289,7 @@ public final class TextUtil {
     }
 
     /**
-     * Find the index of the first occurence of a char in a string.
+     * Find the index of the first occurrence of a char in a string.
      *
      * @param s the string to search
      * @param chars the chars to search for
@@ -309,7 +309,7 @@ public final class TextUtil {
     }
 
     /**
-     * Find the index of the first occurence of a char in a string.
+     * Find the index of the first occurrence of a char in a string.
      *
      * @param s the string to search
      * @param chars the chars to search for

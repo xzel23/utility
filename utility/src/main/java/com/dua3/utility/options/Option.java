@@ -48,8 +48,8 @@ public abstract class Option<T> {
         return this;
     }
 
-    protected Option<T> occurence(int min, int max) {
-        LangUtil.check(min >= 0, "minimum occurences is negative");
+    protected Option<T> occurrence(int min, int max) {
+        LangUtil.check(min >= 0, "minimum occurrences is negative");
         LangUtil.check(min <= max, "minimum occurrences > max occurrences");
         LangUtil.check(minOccurrences == 0 && maxOccurrences == Integer.MAX_VALUE, "occurrences already set");
 
@@ -133,16 +133,16 @@ public abstract class Option<T> {
     }
 
     /**
-     * Get minimum number of occurences of this option.
-     * @return minimum occurences
+     * Get minimum number of occurrences of this option.
+     * @return minimum occurrences
      */
     public int minOccurrences() {
         return minOccurrences;
     }
 
     /**
-     * Get maximum number of occurences of this option.
-     * @return maximum occurences
+     * Get maximum number of occurrences of this option.
+     * @return maximum occurrences
      */
     public int maxOccurrences() {
         return maxOccurrences;

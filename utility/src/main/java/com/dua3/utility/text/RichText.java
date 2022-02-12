@@ -575,7 +575,7 @@ public final class RichText
     }
 
     /**
-     * Replace the first occurence of a regular expresseion.
+     * Replace the first occurrence of a regular expression.
      * @param regex the regular expression
      * @return this text with the first instances of regex replaced by the replacement
      * @see String#replaceFirst(String, String) 
@@ -585,7 +585,7 @@ public final class RichText
     }
 
     /**
-     * Replace the first occurence of a regular expresseion.
+     * Replace the first occurrence of a regular expression.
      * @param regex the regular expression
      * @return this text with the first instances of regex replaced by the replacement
      * @see String#replaceFirst(String, String)
@@ -595,7 +595,7 @@ public final class RichText
     }
 
     /**
-     * Replace all occurences a regular expresseion.
+     * Replace all occurrences a regular expression.
      * @param regex the regular expression
      * @return this text with all instances of regex replaced by the replacement
      * @see String#replaceAll(String, String) 
@@ -605,7 +605,7 @@ public final class RichText
     }
 
     /**
-     * Replace all occurences a regular expresseion.
+     * Replace all occurrences a regular expression.
      * @param regex the regular expression
      * @return this text with all instances of regex replaced by the replacement
      * @see String#replaceAll(String, String)

@@ -25,7 +25,7 @@ public class CryptUtilTest {
     @Test
     public void testTextEncryption() throws GeneralSecurityException {
         for (int keyLength : KEY_LENGTHS) {
-            System.out.format("Testing encryption with keylength %d bits%n", keyLength);
+            System.out.format("Testing encryption with key length %d bits%n", keyLength);
 
             byte[] key = CryptUtil.generateKey(keyLength);
             System.out.format("key = %s%n", HexFormat.of().formatHex(key));

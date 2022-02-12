@@ -18,7 +18,7 @@ public abstract class AbstractCurve2f extends Segment2f {
      * Constructor.
      * <p>
      * <strong>NOTE:</strong> The array of control points is used as is. It is the caller's
-     * responsibility that the array is not modified after constrcution of the curve.
+     * responsibility that the array is not modified after construction of the curve.
      * @param path the path this curve belongs to
      * @param controls the control points
      */

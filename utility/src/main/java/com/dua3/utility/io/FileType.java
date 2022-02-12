@@ -292,15 +292,15 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     /**
-     * Whether this is a compund file type (a wrapper for different filetypes having common properties).
+     * Whether this is a compound file type (a wrapper for different filetypes having common properties).
      * <p>
-     * <strong>NOTE:</strong> Compund file types are excluded when looking up a file type by supported extensions.
+     * <strong>NOTE:</strong> Compound file types are excluded when looking up a file type by supported extensions.
      * <p>
      * Some file types are used in dialogs to group together different other types that have common properties, i. e.
-     * "All supported files" of an application. These compund file types can be useful to offer a better user experience
-     * but are not suitable for determininng in what file format data should be written (an example being "Excel files"
+     * "All supported files" of an application. These compound file types can be useful to offer a better user experience
+     * but are not suitable for determining in what file format data should be written (an example being "Excel files"
      * which refers to both XLS and XLSX files).
-     * @return if this file type is a compund file type
+     * @return if this file type is a compound file type
      */
     @SuppressWarnings("MethodMayBeStatic")
     public boolean isCompound() {

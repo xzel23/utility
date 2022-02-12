@@ -31,7 +31,7 @@ public class RichTextTest {
     }
     
     @Test
-    public void testEqauls() {
+    public void testEquals() {
         // tests all sorts if equals comparisons
         String s = "hello world!";
         RichText a = RichText.valueOf(s);
@@ -209,8 +209,7 @@ public class RichTextTest {
         assertEquals("Hello world!", sb.toString());
     }
 
-    // Test that Runs containing same text and attributes but with different offsets to the same base compare ewuals.
-    //
+    // Test that Runs containing same text and attributes but with different offsets to the same base compare equal.
     @Test
     public void testRunEquals() {
         RichText txt= RichText.valueOf("1 2 3");

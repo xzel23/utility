@@ -63,7 +63,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         protected abstract T get();
 
         /**
-         * Apply new font. Depending on the implemetation, using either the font or the changes passed is more
+         * Apply new font. Depending on the implementation, using either the font or the changes passed is more
          * convenient and the implementation is free to choose whichever is suitable and ignore the other. 
          * @param changedAttributes map of the changed attribute values  
          */

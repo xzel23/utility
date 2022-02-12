@@ -52,24 +52,24 @@ public final class StandardOption<T> extends Option<T> {
     }
 
     /**
-     * Set the number of occurences for this option. This methods sets minimum and maximum number of occurrences to the 
+     * Set the number of occurrences for this option. This methods sets minimum and maximum number of occurrences to the 
      * same value, i. e. calling {@code occurrence(n)} means the option has to be passed exactly {@code n} times.
      * @param n the number of occurrences to set
      * @return the option
      */
-    public StandardOption<T> occurence(int n) {
-        return occurence(n, n);
+    public StandardOption<T> occurrence(int n) {
+        return occurrence(n, n);
     }
 
     /**
      * Set the number of occurrences for this option.
-     * @param min the minimum number of occurrencess
-     * @param max the maximum number of occurrencess
+     * @param min the minimum number of occurrences
+     * @param max the maximum number of occurrences
      * @return the option
      */
     @Override
-    public StandardOption<T> occurence(int min, int max) {
-        super.occurence(min, max);
+    public StandardOption<T> occurrence(int min, int max) {
+        super.occurrence(min, max);
         return this;
     }
 

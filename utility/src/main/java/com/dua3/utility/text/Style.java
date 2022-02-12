@@ -172,7 +172,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     /** 
-     * Get a propertx's value.
+     * Get a property's value.
      * @param property the property name
      * @return the value of the property or {@code null} if no value was set
      */
@@ -181,7 +181,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     /**
-     * Get a propertx's value.
+     * Get a property's value.
      * @param property the property name
      * @param dflt the default value
      * @return the value of the property or dflt if no value was set

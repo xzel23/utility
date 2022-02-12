@@ -9,7 +9,7 @@ import java.util.function.Function;
  * return value of {@code toString()}.
  *
  * @param <T>
- *        type of funcion argument
+ *        type of function argument
  * @param <R>
  *        type of function return value
  */

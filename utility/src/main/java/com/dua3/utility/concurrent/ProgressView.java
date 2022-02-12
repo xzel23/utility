@@ -37,12 +37,12 @@ public class ProgressView<T> implements ProgressTracker<T> {
         }
     }
 
-    private final Function<T,ProgressIndicator> createProgessIndicator;
+    private final Function<T,ProgressIndicator> createProgressIndicator;
     
     private final Map<T, TaskRecord> tasks = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    public ProgressView(Function<T,ProgressIndicator> createProgessIndicator) {
-        this.createProgessIndicator = Objects.requireNonNull(createProgessIndicator);
+    public ProgressView(Function<T,ProgressIndicator> createProgressIndicator) {
+        this.createProgressIndicator = Objects.requireNonNull(createProgressIndicator);
     }
     
     @SafeVarargs
@@ -54,7 +54,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
 
     private TaskRecord getTaskRecord(T task) {
         return tasks.computeIfAbsent(task, t -> {
-            ProgressIndicator pi = createProgessIndicator.apply(t);
+            ProgressIndicator pi = createProgressIndicator.apply(t);
             return new TaskRecord(pi);
         });
     }

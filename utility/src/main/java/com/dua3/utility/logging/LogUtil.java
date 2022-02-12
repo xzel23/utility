@@ -65,7 +65,7 @@ public final class LogUtil {
     private static final String DEFAULT_FORMAT = "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s [%2$s] %5$s%6$s%n";
 
     /**
-     * Utility method to set global log level at program starttup. The argument list is scanned for arguments
+     * Utility method to set global log level at program startup. The argument list is scanned for arguments
      * that control logging and the log system is set up accordingly.
      * @param args          the command line args
      * @return              the command line args with arguments for setting up logging removed
@@ -75,7 +75,7 @@ public final class LogUtil {
     }
 
     /**
-     * Utility method to set global log level at program starttup. The argument list is scanned for arguments
+     * Utility method to set global log level at program startup. The argument list is scanned for arguments
      * that control logging and the log system is set up accordingly.
      * @param msgPrinter    print method for displaying usage messages concerning the "-log..." options
      * @param args          the command line args

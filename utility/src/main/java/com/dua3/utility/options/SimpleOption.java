@@ -39,7 +39,7 @@ public final class SimpleOption<T> extends Option<T> {
                          Function<? super T, String> formatter,
                          String... names) {
         super(mapper, formatter, names);
-        occurence(0,1);
+        occurrence(0,1);
         arity(1,1);
     }
     

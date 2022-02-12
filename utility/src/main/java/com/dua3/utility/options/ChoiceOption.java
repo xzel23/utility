@@ -53,7 +53,7 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     /**
-     * Create a choice option of enum type with the enum valueas as possible option values. 
+     * Create a choice option of enum type with the enum values as possible option values. 
      * @param <E> the enum type
      * @param cls the enum class
      * @param names the option names
@@ -95,7 +95,7 @@ public final class ChoiceOption<T> extends Option<T> {
                          Supplier<? extends Collection<? extends T>> values,
                          String... names) {
         super(valueMapper, formatter, names);
-        occurence(0,1);
+        occurrence(0,1);
         arity(1,1);
         this.values = Objects.requireNonNull(values);
     }

@@ -39,7 +39,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
      *
-     * @param attribute the attibute
+     * @param attribute the attribute
      * @param mapper    the mapper
      * @return the option tp use
      */
@@ -51,7 +51,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
      *
-     * @param attribute the attibute
+     * @param attribute the attribute
      * @param mapper    the mapper
      * @return the option tp use
      */
@@ -250,7 +250,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * whether or not CSS output shoud be generated.
+     * whether or not CSS output should be generated.
      */
     private boolean useCss = false;
 
