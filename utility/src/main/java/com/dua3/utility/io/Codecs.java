@@ -1,6 +1,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.LangUtil;
 
 import java.io.DataInput;
@@ -41,7 +42,7 @@ public class Codecs {
         registerCodec(Long.class, DataOutput::writeLong, DataInput::readLong);
 
         // dua3 utility classes
-        registerCodec(Color.class, (DataOutputStream os, Color c) -> os.writeInt(c.argb()), (DataInputStream is) -> Color.argb(is.readInt()));
+        registerCodec(RGBColor.class, (DataOutputStream os, RGBColor c) -> os.writeInt(c.argb()), (DataInputStream is) -> RGBColor.argb(is.readInt()));
     }
 
     public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {

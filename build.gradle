@@ -193,7 +193,7 @@ subprojects {
         sign publishing.publications.mavenJava
     }
 
-    // === SPOTBUGS === >
+    // === SPOTBUGS ===
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
@@ -203,6 +203,7 @@ subprojects {
         }
     }
 
+    // === ERRORPRONE ===
     config {
         quality {
             errorprone.setEnabled(true)
@@ -217,7 +218,8 @@ subprojects {
             disable("StringSplitter")
         }
     }
-    
+
+    // === PUBLISHING ===
     tasks.withType(PublishToMavenRepository) {
         dependsOn publishToMavenLocal
     }

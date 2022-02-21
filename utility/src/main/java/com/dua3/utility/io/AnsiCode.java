@@ -6,6 +6,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.RGBColor;
 
 /**
  * Support for ANSI escape codes for setting text attributes on ANSI-supporting consoles.
@@ -85,10 +86,11 @@ public final class AnsiCode {
 
     /**
      * Set text color.
-     * @param c the color
+     * @param color the color
      * @return the ESC string
      */
-    public static String fg(Color c) {
+    public static String fg(Color color) {
+        RGBColor c = color.toRGBColor();
         return fg(c.r(), c.g(), c.b());
     }
 
@@ -97,7 +99,7 @@ public final class AnsiCode {
      * @param c the color
      * @return the ESC string
      */
-    public static String bg(Color c) {
+    public static String bg(RGBColor c) {
         return bg(c.r(), c.g(), c.b());
     }
 

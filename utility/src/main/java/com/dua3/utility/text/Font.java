@@ -68,7 +68,7 @@ public class Font {
      *                      if text should be displayed strike-through
      */
     public Font(String family, float size, Color color, boolean bold, boolean italic, boolean underline,
-            boolean strikeThrough) {
+                boolean strikeThrough) {
         this.size = size;
         this.bold = bold;
         this.italic = italic;

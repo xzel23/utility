@@ -5,12 +5,14 @@
 
 package com.dua3.utility.data;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ColorTest {
 
@@ -54,15 +56,17 @@ public class ColorTest {
     @Test
     public void testValueOfWithRgb() {
         for (Color c : Color.values()) {
-            int r = c.r();
-            int g = c.g();
-            int b = c.b();
-            int a = c.a();
+            RGBColor rgb = c.toRGBColor();
+            
+            int r = rgb.r();
+            int g = rgb.g();
+            int b = rgb.b();
+            int a = rgb.a();
 
             if (a == 0xFF) {
                 String text = String.format(Locale.ROOT,"rgb(%d,%d,%d)", r, g, b);
                 Color actual = Color.valueOf(text);
-                assertEquals(c, actual);
+                assertEquals(c.argb(), actual.argb());
             }
         }
     }
@@ -70,14 +74,17 @@ public class ColorTest {
     @Test
     public void testValueOfWithRgba() {
         for (Color c : Color.values()) {
-            int r = c.r();
-            int g = c.g();
-            int b = c.b();
-            int a = c.a();
+            RGBColor rgb = c.toRGBColor();
+
+            int r = rgb.r();
+            int g = rgb.g();
+            int b = rgb.b();
+            int a = rgb.a();
+
             String text = String.format(Locale.ROOT,"rgba(%d,%d,%d,%d)", r, g, b, a);
             Color actual = Color.valueOf(text);
 
-            assertEquals(c, actual);
+            assertEquals(c.argb(), actual.argb());
         }
     }
 

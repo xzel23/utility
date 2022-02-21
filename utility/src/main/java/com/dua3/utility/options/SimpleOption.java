@@ -75,10 +75,20 @@ public final class SimpleOption<T> extends Option<T> {
     }
 
     /**
+     * Mark option as required.
+     * @return this option
+     */
+    public SimpleOption<T> required() {
+        occurrence(1,1);
+        return this;
+    }
+
+    /**
      * Get the default value.
      * @return Optional holding the default value.
      */
     public Optional<T> getDefault() {
         return Optional.ofNullable(defaultValue.get());
     }
+
 }

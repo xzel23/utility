@@ -8,6 +8,7 @@ package com.dua3.utility.swing;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
+import com.dua3.utility.data.RGBColor;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -255,7 +256,7 @@ public final class SwingUtil {
      *               Color
      */
     public static Color toColor(java.awt.Color color) {
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+        return new RGBColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
     /**
