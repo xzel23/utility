@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public interface Color {
+    float F_BRIGHTEN = 0.7f;
+
     /** The color ALICEBLUE. */
     Color ALICEBLUE = register("ALICEBLUE", 0xFFF0F8FF);
     /** The color ANTIQUEWHITE. */
@@ -494,7 +496,37 @@ public interface Color {
     private static int rgba2argb(int v) {
         return (v<<24) + (v>>>8);
     }
+    
+    /**
+     * Get color components.
+     *
+     * @return byte array of size 4 containing this color's components in argb
+     *         order
+     */
+    default byte[] toByteArray() {
+        int argb = argb();
+        
+        byte a = (byte) ((argb >> RGBColor.SHIFT_A) & 0xff);
+        byte r = (byte) ((argb >> RGBColor.SHIFT_R) & 0xff);
+        byte g = (byte) ((argb >> RGBColor.SHIFT_G) & 0xff);
+        byte b = (byte) ((argb >> RGBColor.SHIFT_B) & 0xff);
 
+        return new byte[] { a, r, g, b };
+    }
+
+    /**
+     * Get a brighter color.
+     *
+     * @return a brighter version of this color
+     */
+    public Color brighter();
+
+    /**
+     * Get a darker color.
+     *
+     * @return a darker version of this color
+     */
+    public Color darker();
 }
 
 class Colors {

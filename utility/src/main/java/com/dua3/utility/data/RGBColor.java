@@ -13,17 +13,10 @@ import com.dua3.utility.lang.LangUtil;
  */
 public final class RGBColor implements Color {
 
-    // predefined Color constants
-
-    private static final double F_BRIGHTEN = 0.7;
-
-    private static final int SHIFT_A = 24;
-
-    private static final int SHIFT_B = 0;
-
-    private static final int SHIFT_G = 8;
-
-    private static final int SHIFT_R = 16;
+    static final int SHIFT_A = 24;
+    static final int SHIFT_B = 0;
+    static final int SHIFT_G = 8;
+    static final int SHIFT_R = 16;
 
     private static int shiftComponentValue(int value, int bits) {
         LangUtil.check(value >= 0 && value <= 255, () -> new IllegalArgumentException("value out of range: "+value));
@@ -141,12 +134,8 @@ public final class RGBColor implements Color {
         return b() / 255.0f;
     }
 
-    /**
-     * Get a brighter color.
-     *
-     * @return a brighter version of this color
-     */
-    public Color brighter() {
+    @Override
+    public RGBColor brighter() {
         int r = r();
         int g = g();
         int b = b();
@@ -172,15 +161,10 @@ public final class RGBColor implements Color {
                 Math.min((int) (b / F_BRIGHTEN), 255), alpha);
     }
 
-    /**
-     * Get a darker color.
-     *
-     * @return a darker version of this color
-     */
-    public Color darker() {
+    @Override
+    public RGBColor darker() {
         //noinspection NumericCastThatLosesPrecision
-        return new RGBColor(Math.max((int) (r() * F_BRIGHTEN), 0), Math.max((int) (g() * F_BRIGHTEN), 0),
-                Math.max((int) (b() * F_BRIGHTEN), 0), a());
+        return new RGBColor((int) (r() * F_BRIGHTEN), (int) (g() * F_BRIGHTEN), (int) (b() * F_BRIGHTEN), a());
     }
 
     @Override
@@ -222,17 +206,6 @@ public final class RGBColor implements Color {
      */
     public float rf() {
         return r() / 255.0f;
-    }
-
-    /**
-     * Get color components.
-     *
-     * @return byte array of size 4 containing this color's components in argb
-     *         order
-     */
-    public byte[] toByteArray() {
-        //noinspection NumericCastThatLosesPrecision
-        return new byte[] { (byte) a(), (byte) r(), (byte) g(), (byte) b() };
     }
 
     @Override

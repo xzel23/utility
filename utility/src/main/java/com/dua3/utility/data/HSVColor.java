@@ -79,6 +79,16 @@ public record HSVColor(float alpha, float h, float s, float v) implements Color 
         };
     }
 
+    @Override
+    public Color brighter() {
+        return new HSVColor(alpha, h(), s(), Math.min(v()/F_BRIGHTEN, 1));
+    }
+
+    @Override
+    public Color darker() {
+        return new HSVColor(alpha, h(), s(), v()*F_BRIGHTEN);
+    }
+
     private static int argbf(float a, float r, float g, float b) {
         int ri = Math.round(r*255);
         int gi = Math.round(g*255);
