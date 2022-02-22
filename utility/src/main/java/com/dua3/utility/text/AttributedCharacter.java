@@ -1,5 +1,8 @@
 package com.dua3.utility.text;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A styled character interface.
  */
@@ -31,8 +34,17 @@ public interface AttributedCharacter {
     char character();
 
     /**
-     * Get style.
-     * @return the style
+     * Get text attributes.
+     * @return the text attributes
      */
     TextAttributes attributes();
+
+    /**
+     * Get list of styles.
+     * @return the list of styles
+     */
+    @SuppressWarnings("unchecked")
+    default List<Style> getStyles() {
+        return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
+    }
 }

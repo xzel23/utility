@@ -140,9 +140,21 @@ public class Run implements AttributedCharSequence {
         return text.subSequence(start, start + length).toString();
     }
 
+    /**
+     * Get text attributes
+     * @return the text attributes
+     */
+    public TextAttributes attributes() {
+        return attributes;
+    }
+
+    /**
+     * Get list of styles.
+     * @return the list of styles
+     */
     @SuppressWarnings("unchecked")
     public List<Style> getStyles() {
-        return (List<Style>) attributes.getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
+        return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 
     /**
