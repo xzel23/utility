@@ -379,7 +379,35 @@ public interface Color {
         // no luck so far
         throw new IllegalArgumentException("\"" + s + "\" is no valid color.");
     }
+    
+    static RGBColor argb(int argb) {
+        return new RGBColor(argb);
+    }
+    
+    static RGBColor rgb(int r, int g, int b) {
+        return new RGBColor(r, g, b);
+    }
+    
+    static RGBColor rgb(int r, int g, int b, int a) {
+        return new RGBColor(r, g, b, a);
+    }
+    
+    static RGBColor rgb(float r, float g, float b) {
+        return new RGBColor(Math.round(r*255), Math.round(g*255), Math.round(b*255));
+    }
+    
+    static RGBColor rgb(float r, float g, float b, float a) {
+        return new RGBColor(Math.round(r*255), Math.round(g*255), Math.round(b*255) ,Math.round(a*255));
+    }
 
+    static HSVColor hsv(float h, float s, float v) {
+        return new HSVColor(h, s, v, 1);
+    }
+    
+    static HSVColor hsv(float h, float s, float v, float alpha) {
+        return new HSVColor(h, s, v, alpha);
+    }
+    
     /**
      * Get Iterable over all declared color values.
      *

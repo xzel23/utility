@@ -3,7 +3,7 @@ package com.dua3.utility.data;
 import java.util.DoubleSummaryStatistics;
 import java.util.stream.DoubleStream;
 
-public record HSVColor(float alpha, float h, float s, float v) implements Color {
+public record HSVColor(float h, float s, float v, float alpha) implements Color {
     
     public static HSVColor valueOf(int argb) {
         float a = ((argb >> 24) & 0xff)/255.0f;
@@ -36,7 +36,7 @@ public record HSVColor(float alpha, float h, float s, float v) implements Color 
         float s = max == 0 ? 0 : (float)(max-min)/max;
         float v = max;
 
-        return new HSVColor(a, h, s, v);
+        return new HSVColor(h, s, v, a);
     }
 
     @Override
@@ -81,12 +81,12 @@ public record HSVColor(float alpha, float h, float s, float v) implements Color 
 
     @Override
     public Color brighter() {
-        return new HSVColor(alpha, h(), s(), Math.min(v()/F_BRIGHTEN, 1));
+        return new HSVColor(h(), s(), Math.min(v() / F_BRIGHTEN, 1), alpha);
     }
 
     @Override
     public Color darker() {
-        return new HSVColor(alpha, h(), s(), v()*F_BRIGHTEN);
+        return new HSVColor(h(), s(), v() * F_BRIGHTEN, alpha);
     }
 
     private static int argbf(float a, float r, float g, float b) {
