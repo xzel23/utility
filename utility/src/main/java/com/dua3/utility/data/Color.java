@@ -528,8 +528,7 @@ public interface Color {
     /**
      * Get color components.
      *
-     * @return byte array of size 4 containing this color's components in argb
-     *         order
+     * @return byte array of size 4 containing this color's components in argb order
      */
     default byte[] toByteArray() {
         int argb = argb();
@@ -540,6 +539,21 @@ public interface Color {
         byte b = (byte) ((argb >> RGBColor.SHIFT_B) & 0xff);
 
         return new byte[] { a, r, g, b };
+    }
+
+    /**
+     * Get color components.
+     *
+     * @return byte array of size 3 containing this color's components in rgb order
+     */
+    default byte[] toByteArrayRGB() {
+        int argb = argb();
+        
+        byte r = (byte) ((argb >> RGBColor.SHIFT_R) & 0xff);
+        byte g = (byte) ((argb >> RGBColor.SHIFT_G) & 0xff);
+        byte b = (byte) ((argb >> RGBColor.SHIFT_B) & 0xff);
+
+        return new byte[] { r, g, b };
     }
 
     /**
