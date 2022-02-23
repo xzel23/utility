@@ -50,7 +50,6 @@ public class SwingLogPane extends JPanel {
     private final JTable table;
     private final JTextArea details;
     private final LogTableModel model;
-    private final JScrollPane scrollPaneTable;
     private final Function<LogEntry, Color> colorize;
     private final JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
@@ -325,7 +324,7 @@ public class SwingLogPane extends JPanel {
         table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "escape");
         
         // prepare the ScrollPanes
-        scrollPaneTable = new JScrollPane(table);
+        JScrollPane scrollPaneTable = new JScrollPane(table);
         JScrollPane scrollPaneDetails = new JScrollPane(details);
         
         // create SplitPane for table and detail pane

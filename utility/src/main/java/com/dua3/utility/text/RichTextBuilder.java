@@ -20,8 +20,6 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static com.dua3.utility.text.RichText.ATTRIBUTE_NAME_STYLE_LIST;
-
 /**
  * A builder class for rich text data.
  * <p>
@@ -210,7 +208,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
             String key = entry.getKey();
             Object value = entry.getValue();
             
-            if (key.equals(ATTRIBUTE_NAME_STYLE_LIST)) {
+            if (key.equals(RichText.ATTRIBUTE_NAME_STYLE_LIST)) {
                 value = new ArrayList<>((Collection<Style>) value);
             }
             
@@ -251,11 +249,11 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     @SuppressWarnings("unchecked")
     public void push(Style style) {
-        List<Style> styles = (List<Style>) getOrDefault(ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
+        List<Style> styles = (List<Style>) getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
         List<Style> newStyles = new ArrayList<>(styles.size()+1);
         newStyles.addAll(styles);
         newStyles.add(style);
-        push(ATTRIBUTE_NAME_STYLE_LIST, newStyles);
+        push(RichText.ATTRIBUTE_NAME_STYLE_LIST, newStyles);
     }
 
     /**
@@ -265,7 +263,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @param style the Style
      */
     public void pop(Style style) {
-        pop(ATTRIBUTE_NAME_STYLE_LIST);
+        pop(RichText.ATTRIBUTE_NAME_STYLE_LIST);
     }
 
     private Map<String, Object> split() { 
@@ -275,7 +273,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     @SuppressWarnings("unchecked")
     void apply(Style style) {
         for (Map<String,Object> attributes: parts.values()) {
-            List<Style> styles = (List<Style>) attributes.computeIfAbsent(ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
+            List<Style> styles = (List<Style>) attributes.computeIfAbsent(RichText.ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
             styles.add(0, style); // add the style at the first position!
         }
     }

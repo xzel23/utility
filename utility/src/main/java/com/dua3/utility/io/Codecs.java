@@ -1,6 +1,5 @@
 package com.dua3.utility.io;
 
-import com.dua3.utility.data.Color;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.LangUtil;
 

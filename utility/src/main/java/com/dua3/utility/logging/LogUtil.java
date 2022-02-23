@@ -71,6 +71,7 @@ public final class LogUtil {
      * @return              the command line args with arguments for setting up logging removed
      */
     public static String[] handleLoggingCmdArgs(String... args) {
+        //noinspection UseOfSystemOutOrSystemErr
         return handleLoggingCmdArgs(System.err::println, args);    
     }
 

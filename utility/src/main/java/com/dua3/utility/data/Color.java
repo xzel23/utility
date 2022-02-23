@@ -561,16 +561,20 @@ public interface Color {
      *
      * @return a brighter version of this color
      */
-    public Color brighter();
+    Color brighter();
 
     /**
      * Get a darker color.
      *
      * @return a darker version of this color
      */
-    public Color darker();
+    Color darker();
 }
 
-class Colors {
+@SuppressWarnings("ClassNameDiffersFromFileName")
+final class Colors {
+    private Colors() { 
+        // utility class
+    }
     static Map<String, Color> COLORS = new LinkedHashMap<>();
 }

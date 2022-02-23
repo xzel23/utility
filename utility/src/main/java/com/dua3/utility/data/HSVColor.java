@@ -9,7 +9,7 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
         float a = ((argb >> 24) & 0xff)/255.0f;
         float r = ((argb >> 16) & 0xff)/255.0f;
         float g = ((argb >>  8) & 0xff)/255.0f;
-        float b = ((argb >>  0) & 0xff)/255.0f;
+        float b = ( argb        & 0xff)/255.0f;
         
         DoubleSummaryStatistics is = DoubleStream.of(r, g, b).summaryStatistics();
 
@@ -18,22 +18,22 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
 
         float h;
         if (min == max) {
-            h = 0f;
+            h = 0.0f;
         } else if (max == r) {
-            h = 60f*(0f + (g-b) / (max - min));
+            h = 60.0f * (0.0f + (g - b) / (max - min));
         } else if (max == g) {
-            h = 60f*(2f + (b-r) / (max - min));
+            h = 60.0f * (2.0f + (b - r) / (max - min));
         } else if (max == b) {
-            h = 60f*(4f + (r-g) / (max - min));
+            h = 60.0f * (4.0f + (r - g) / (max - min));
         } else {
             throw new IllegalStateException("color conversion error");
         }
 
         if (h<0) {
-            h += 360f;
+            h += 360.0f;
         }
 
-        float s = max == 0 ? 0 : (float)(max-min)/max;
+        float s = max == 0 ? 0 : (max-min) / max;
         float v = max;
 
         return new HSVColor(h, s, v, a);
@@ -62,7 +62,7 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
     @Override
     public int argb() {
         int hi = (int)(h / 60);
-        float f = h/60f - hi;
+        float f = h / 60.0f - hi;
 
         float p = v * (1 - s);
         float q = v * (1 - s * f);
