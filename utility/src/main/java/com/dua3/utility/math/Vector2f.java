@@ -16,6 +16,46 @@ public record Vector2f(float x, float y) {
     public static final Vector2f ORIGIN = new Vector2f(0,0);
 
     /**
+     * The vector (1,0).
+     */
+    public static final Vector2f ONE_ZERO = new Vector2f(1,0);
+
+    /**
+     * The vector (1,1).
+     */
+    public static final Vector2f ONE_ONE = new Vector2f(1,1);
+
+    /**
+     * The vector (0,1).
+     */
+    public static final Vector2f ZERO_ONE = new Vector2f(0,1);
+
+    /**
+     * The vector (-1,1).
+     */
+    public static final Vector2f MINUS_ONE_ONE = new Vector2f(-1,1);
+
+    /**
+     * The vector (-1,0).
+     */
+    public static final Vector2f MINUS_ONE_ZERO = new Vector2f(-1,0);
+
+    /**
+     * The vector (-1,-1).
+     */
+    public static final Vector2f MINUS_ONE_MINUS_ONE = new Vector2f(-1,-1);
+
+    /**
+     * The vector (0,-1).
+     */
+    public static final Vector2f ZERO_MINUS_ONE = new Vector2f(0,-1);
+
+    /**
+     * The vector (1,-1).
+     */
+    public static final Vector2f ONE_MINUS_ONE = new Vector2f(1,-1);
+
+    /**
      * Create instance from coordinate values.
      * @param x the x-coordinate
      * @param y the y-coordinate
