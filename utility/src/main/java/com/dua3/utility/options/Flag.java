@@ -10,6 +10,10 @@ import java.util.function.Consumer;
  */
 public final class Flag extends Option<Boolean> {
 
+    /**
+     * Create a new flag with the given name(s).
+     * @param names names for the flag, at least one.
+     */
     public static Flag create(String... names) {
         return new Flag(names);
     }

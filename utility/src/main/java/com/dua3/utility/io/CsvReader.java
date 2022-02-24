@@ -36,8 +36,10 @@ import java.util.regex.Pattern;
 
 public class CsvReader extends CsvIo {
 
+    /**
+     * Interface used to build rows when reading CSV files. 
+     */
     public interface RowBuilder {
-
         /**
          * Add a value.
          *
@@ -56,6 +58,9 @@ public class CsvReader extends CsvIo {
         void startRow();
     }
 
+    /**
+     * A {@link RowBuilder} implementation that creates a list of Strings for the cells contained in each row read.
+     */
     public static class ListRowBuilder implements RowBuilder {
 
         private final List<String> row = new ArrayList<>();
@@ -323,11 +328,9 @@ public class CsvReader extends CsvIo {
     }
 
     /**
-     * read some rows with CSV data.
+     * Read some rows of CSV data.
      *
-     * @param  maxRows            maximum number of rows to be read or 0 to read
-     *                            till end of
-     *                            input
+     * @param  maxRows            maximum number of rows to be read or 0 to read till end of input
      * @return                    number of rows read
      * @throws IOException
      *  if an error occurs during reading
@@ -345,6 +348,16 @@ public class CsvReader extends CsvIo {
         return read;
     }
 
+    /**
+     * Read some rows of CSV data.
+     *
+     * @param  rowsToRead         number of rows to be read
+     * @return                    number of rows read
+     * @throws IOException
+     *  if an error occurs during reading
+     * @throws CsvFormatException
+     *  if the data read can not be correctly interpreted
+     */
     public int readSome(int rowsToRead) throws IOException {
         return rowsToRead > 0 ? readRows(rowsToRead) : 0;
     }

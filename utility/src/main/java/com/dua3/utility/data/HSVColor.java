@@ -3,8 +3,20 @@ package com.dua3.utility.data;
 import java.util.DoubleSummaryStatistics;
 import java.util.stream.DoubleStream;
 
+/**
+ * {@link Color} implementation that uses the HSV (hue, saturation, value) color model.
+ * @param h the hue in the range [0 .. 360]
+ * @param s the saturation value [0 .. 1]
+ * @param v the brightness value [0 .. 1]
+ * @param alpha the alpha value  [0 .. 1]
+ */
 public record HSVColor(float h, float s, float v, float alpha) implements Color {
-    
+
+    /**
+     * Create HSVColor from packed ARGB integer value.
+     * @param argb the packed ARGB value
+     * @return color instance
+     */
     public static HSVColor valueOf(int argb) {
         float a = ((argb >> 24) & 0xff)/255.0f;
         float r = ((argb >> 16) & 0xff)/255.0f;

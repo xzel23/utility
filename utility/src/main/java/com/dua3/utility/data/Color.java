@@ -5,7 +5,11 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * A common interface for different color implementations.
+ */
 public interface Color {
+    /** Factor to apply when generating a brighter or darker version of a color. */
     float F_BRIGHTEN = 0.7f;
 
     /** The color ALICEBLUE. */
@@ -379,35 +383,85 @@ public interface Color {
         // no luck so far
         throw new IllegalArgumentException("\"" + s + "\" is no valid color.");
     }
-    
+
+    /**
+     * Create color from ARGB packed integer value.
+     * @param argb the ARGB packed integer value
+     * @return the color
+     */
     static RGBColor argb(int argb) {
         return new RGBColor(argb);
     }
-    
+
+    /**
+     * Create color from RGB values.
+     * @param r the red component   [0 .. 255]
+     * @param g the green component [0 .. 255]
+     * @param b the blue component  [0 .. 255]
+     * @return the color
+     */
     static RGBColor rgb(int r, int g, int b) {
         return new RGBColor(r, g, b);
     }
-    
+
+    /**
+     * Create color from RGB values.
+     * @param r the red component   [0 .. 255]
+     * @param g the green component [0 .. 255]
+     * @param b the blue component  [0 .. 255]
+     * @param a the alpha value     [0 .. 255]
+     * @return the color
+     */
     static RGBColor rgb(int r, int g, int b, int a) {
         return new RGBColor(r, g, b, a);
     }
-    
+
+    /**
+     * Create color from RGB values.
+     * @param r the red component   [0 .. 1]
+     * @param g the green component [0 .. 1]
+     * @param b the blue component  [0 .. 1]
+     * @return the color
+     */
     static RGBColor rgb(float r, float g, float b) {
         return new RGBColor(Math.round(r*255), Math.round(g*255), Math.round(b*255));
     }
-    
-    static RGBColor rgb(float r, float g, float b, float a) {
-        return new RGBColor(Math.round(r*255), Math.round(g*255), Math.round(b*255) ,Math.round(a*255));
+
+    /**
+     * Create color from RGB values.
+     * @param r the red component   [0 .. 1]
+     * @param g the green component [0 .. 1]
+     * @param b the blue component  [0 .. 1]
+     * @param alpha the alpha value [0 .. 1]
+     * @return the color
+     */
+    static RGBColor rgb(float r, float g, float b, float alpha) {
+        return new RGBColor(Math.round(r*255), Math.round(g*255), Math.round(b*255) ,Math.round(alpha*255));
     }
 
+    /**
+     * Create color from HSV values.
+     * @param h the hue        [0 .. 360]
+     * @param s the saturation [0 .. 1]
+     * @param v the brightness [0 .. 1]
+     * @return the color
+     */
     static HSVColor hsv(float h, float s, float v) {
         return new HSVColor(h, s, v, 1);
     }
-    
+
+    /**
+     * Create color from HSV values.
+     * @param h the hue        [0 .. 360]
+     * @param s the saturation [0 .. 1]
+     * @param v the brightness [0 .. 1]
+     * @param alpha the alpha value     [0 .. 1]
+     * @return the color
+     */
     static HSVColor hsv(float h, float s, float v, float alpha) {
         return new HSVColor(h, s, v, alpha);
     }
-    
+
     /**
      * Get Iterable over all declared color values.
      *
@@ -571,6 +625,10 @@ public interface Color {
     Color darker();
 }
 
+
+/**
+ * Utility class that holds the predefined color constants.
+ */
 @SuppressWarnings("ClassNameDiffersFromFileName")
 final class Colors {
     private Colors() { 

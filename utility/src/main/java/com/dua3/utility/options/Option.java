@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 /**
  * Command line or configuration option.
+ * @param <T> the type of option values
  */
 public abstract class Option<T> {
     private final Function<String, ? extends T> mapper;

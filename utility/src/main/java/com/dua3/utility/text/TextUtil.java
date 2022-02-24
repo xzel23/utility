@@ -71,6 +71,8 @@ public final class TextUtil {
      * Append HTML-escaped character to an Appendable.
      *
      * @param app the {@link Appendable}
+     * @param c the character
+     * @throws IOException if an exception occurs
      */
     public static void appendHtmlEscapedCharacter(Appendable app, char c) throws IOException {
         if (c >= 127 || c == '"' || c == '<' || c == '>' || c == '&' || c == '\0') {
@@ -86,6 +88,7 @@ public final class TextUtil {
      * Append HTML-escaped character to a {@link StringBuilder}.
      *
      * @param sb the {@link StringBuilder}
+     * @param c the character
      */
     public static void appendHtmlEscapedCharacter(StringBuilder sb, char c) {
         try {

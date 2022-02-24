@@ -14,6 +14,10 @@ public class WrappedException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Construct new wrapped exception.
+     * @param cause the exception to wrap
+     */
     public WrappedException(Exception cause) {
         super(cause);
     }

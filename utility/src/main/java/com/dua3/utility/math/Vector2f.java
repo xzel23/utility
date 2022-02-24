@@ -10,12 +10,16 @@ package com.dua3.utility.math;
  */
 public record Vector2f(float x, float y) {
 
+    /**
+     * The origin of the coordinate space.
+     */
     public static final Vector2f ORIGIN = new Vector2f(0,0);
 
     /**
      * Create instance from coordinate values.
      * @param x the x-coordinate
      * @param y the y-coordinate
+     * @return Vector with the the components x and y 
      */
     public static Vector2f of(float x, float y) {
         return new Vector2f(x,y);

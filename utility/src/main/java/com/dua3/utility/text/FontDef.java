@@ -108,6 +108,9 @@ public final class FontDef {
     private Boolean underline = null;
     private Boolean strikeThrough = null;
 
+    /**
+     * Default constructor that creates a {FontDe} instance without any properties set.
+     */
     public FontDef() {
         // nop - everything being initialized to null is just fine
     }
