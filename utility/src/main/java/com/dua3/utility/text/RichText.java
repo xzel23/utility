@@ -103,23 +103,25 @@ public final class RichText
     }
 
     /**
-     * Get RichText containing an objects string representation.
+     * Get styled RichText containing an objects string representation.
+     * 
      * @param obj the object to convert to RichText
      * @param styles the styles to apply
      * @return RichText.valueOf(String.valueOf(obj))
      */
-    public static RichText valueOf(Object obj, Collection<Style> styles) {
-        return valueOf(String.valueOf(obj), styles);
+    public static RichText valueOf(Object obj, Style... styles) {
+        return valueOf(String.valueOf(obj), Arrays.asList(styles));
     }
 
     /**
-     * Convert String to RichText.
+     * Get styled RichText containing an objects string representation.
      *
-     * @param  s the String to convert
+     * @param obj the object to convert to RichText
      * @param styles the styles to apply
      * @return   RichText representation of s
      */
-    public static RichText valueOf(String s, Collection<Style> styles) {
+    public static RichText valueOf(Object obj, Collection<Style> styles) {
+        String s = String.valueOf(obj);
         RichTextBuilder rtb = new RichTextBuilder((s.length()));
         styles.forEach(rtb::push);
         rtb.append(s);
@@ -134,7 +136,18 @@ public final class RichText
      * @param c the character
      * @return RichText containing only the character c
      */
-    public static RichText valueOf(char c, List<Style> styles) {
+    public static RichText valueOf(char c, Style... styles) {
+        return RichText.valueOf(Character.toString(c), styles);
+    }
+
+    /**
+     * Convert char to RichText.
+     *
+     * @param styles the styles to apply
+     * @param c the character
+     * @return RichText containing only the character c
+     */
+    public static RichText valueOf(char c, Collection<Style> styles) {
         return RichText.valueOf(Character.toString(c), styles);
     }
 
