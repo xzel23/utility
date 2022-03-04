@@ -11,11 +11,12 @@ import com.dua3.utility.lang.LangUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 
 /**
  * A sequence of characters that share the same properties.
  */
-public class Run implements AttributedCharSequence {
+public final class Run implements AttributedCharSequence {
 
     private final CharSequence text;
     private final int start;
@@ -51,12 +52,20 @@ public class Run implements AttributedCharSequence {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass() || hashCode()!=obj.hashCode()) {
             return false;
         }
+        
+        return equals((Run) obj, TextAttributes::equals);
+    }
 
-        Run other = (Run) obj;
-        if (length != other.length) {
+    /**
+     * Compare text ignoring attributes.
+     * @param other the object to compare to
+     * @return result true, if obj is an instance of Run and its characters compare equal
+     */
+    public boolean textEquals(@Nullable Run other) {
+        if (other == null || length != other.length) {
             return false;
         }
         for (int i = 0; i < length; i++) {
@@ -64,7 +73,18 @@ public class Run implements AttributedCharSequence {
                 return false;
             }
         }
-        return attributes.equals(other.attributes);
+        return true;        
+    }
+    
+    /**
+     * Compare using a user supplied predicate for comparing TextAttributes.
+     * @param other the object to compare to
+     * @param attributesEquals the BiPredicate used for comparing
+     * @return result true, if obj is an instance of Run and all runs compare as equal to this instances
+     *                runs using the supplied predicate
+     */
+    public boolean equals(@Nullable Run other, BiPredicate<? super TextAttributes, ? super TextAttributes> attributesEquals) {
+        return textEquals(other) && attributesEquals.test(attributes, other.attributes);
     }
 
     /**
@@ -110,12 +130,18 @@ public class Run implements AttributedCharSequence {
         return attributes;
     }
 
+    private int hash = 0;
+    
     @Override
     public int hashCode() {
-        int h = attributes.hashCode();
-        for (int i = 0; i < length; i++) {
-            //noinspection CharUsedInArithmeticContext
-            h = 31 * h + charAt(i);
+        int h = hash;
+        if (h == 0 && length > 0) {
+            h = attributes.hashCode();
+            for (int i = 0; i < length; i++) {
+                //noinspection CharUsedInArithmeticContext
+                h = 31 * h + charAt(i);
+            }
+            hash = h;
         }
         return h;
     }
@@ -157,15 +183,20 @@ public class Run implements AttributedCharSequence {
         return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 
+    private FontDef fd = null;
+
     /**
      * Get the FontDef for this style.
      * @return the FontDef
      */
     public FontDef getFontDef() {
-        FontDef collected = new FontDef();
-        for (Style style: getStyles()) {
-            collected.merge(style.getFontDef());
+        if (fd==null) {
+            FontDef collected = new FontDef();
+            for (Style style : getStyles()) {
+                collected.merge(style.getFontDef());
+            }
+            fd = collected;
         }
-        return collected;
+        return fd;
     } 
 }

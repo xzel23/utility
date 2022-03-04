@@ -99,4 +99,14 @@
         <Bug pattern="UCF_USELESS_CONTROL_FLOW" />
     </Match>
 
+    <Match>
+        <Class name="com.dua3.utility.text.RichText" />
+        <Bug pattern="EQ_UNUSUAL" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.text.Run" />
+        <Bug pattern="EQ_UNUSUAL" />
+    </Match>
+
 </FindBugsFilter>

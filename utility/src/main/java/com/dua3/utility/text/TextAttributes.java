@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
@@ -18,7 +19,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A set of text attributes.
+ * An immutable set of text attributes.
  */
 public final class TextAttributes extends AbstractMap<String, Object> {
     
@@ -97,5 +98,25 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         return fd;
     }
 
+    private int hash = 0;
+
+    @Override
+    public boolean equals(@Nullable Object o) {
+        if (o==null || o.getClass()!=getClass() || o.hashCode()!=hashCode()) {
+            return false;
+        }
+        
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = hash;
+        if (h == 0) {
+            hash = super.hashCode();
+        }
+        return h;
+    }
+    
 }
 

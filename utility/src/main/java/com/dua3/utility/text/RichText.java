@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Spliterator;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -200,11 +201,18 @@ public final class RichText
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
+        return equals((RichText) obj, Run::equals);
+    }
 
-        RichText other = (RichText) obj;
-        
-        // compare the text length and hashcode
-        if (length!=other.length() || hashCode()!=other.hashCode()) {
+    /**
+     * Compare using a user supplied predicate for comparing Run instances.
+     * @param other the object to compare to
+     * @param runEquals the BiPredicate used for comparing
+     * @return result true, if obj is an instance of RichText and all runs compare as equal to this instances
+     *                runs using the supplied predicate
+     */
+    public boolean equals(@Nullable RichText other, BiPredicate<? super Run, ? super Run> runEquals) {
+        if (other == null || other.textHash()!=textHash()) {
             return false;
         }
         
@@ -212,7 +220,7 @@ public final class RichText
         Iterator<Run> iter1 = this.iterator();
         Iterator<Run> iter2 = other.iterator();
         while (iter1.hasNext()&&iter2.hasNext()) {
-            if (!Objects.equals(iter1.next(), iter2.next())) {
+            if (!runEquals.test(iter1.next(), iter2.next())) {
                 return false;
             }
         }
@@ -254,16 +262,11 @@ public final class RichText
     /**
      * Textual compare.
      * @param other the {@link CharSequence} to compare to
-     * @return true, if the other
+     * @return true, if this instance contains the same sequence of characters as {@code other}
      */
     public boolean textEquals(@Nullable CharSequence other) {
         if (other==null || other.length()!=this.length) {
             return false;
-        }
-
-        if (this.isEmpty()) {
-            // we already know that both sequences have the same length
-            return true;
         }
 
         for (int idx=0; idx<length; idx++) {
@@ -275,29 +278,28 @@ public final class RichText
         return true;
     }
 
-    public int textCompare(CharSequence other) {
-        for (int idx=0; idx<length; idx++) {
-            char a = charAt(idx);
-            char b = other.charAt(idx);
-            attributedCharAt(idx);
-            if (a != b) {
-                return a - b;
+    // calculate the hashCode on demand
+    private int textHash = 0;
+    
+    public int textHash() {
+        int h = textHash;
+        if (h == 0 && length > 0) {
+            for (Run r: run) {
+                h = 17 * h + r.hashCode();
             }
+            textHash = h;
         }
-        
-        return Integer.compare(length, other.length());
+        return h;
     }
 
-    // calculate the hashCode on demand
     private int hash = 0;
-    
-    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
+
     @Override
     public int hashCode() {
         int h = hash;
         if (h == 0 && length > 0) {
-            for (int i = start; i < start+length; i++) {
-                h = 31 * h + text.charAt(i);
+            for (Run r: run) {
+                h = 17 * h + r.hashCode();
             }
             hash = h;
         }
