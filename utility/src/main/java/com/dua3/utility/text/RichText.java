@@ -281,7 +281,7 @@ public final class RichText
     // calculate the hashCode on demand
     private int textHash = 0;
     
-    public int textHash() {
+    private int textHash() {
         int h = textHash;
         if (h == 0 && length > 0) {
             for (Run r: run) {
