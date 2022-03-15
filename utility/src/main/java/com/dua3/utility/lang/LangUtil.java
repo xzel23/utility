@@ -937,7 +937,7 @@ public final class LangUtil {
      * @param x the number to test
      * @param a the lower bound
      * @param b the upper bound
-     * @return true, exactly if a <= x && x <= b
+     * @return true, exactly if a ≤ x and x ≤ b
      */
     public static boolean isBetween(long x, long a, long b) {
         assert a<=b;
@@ -949,7 +949,7 @@ public final class LangUtil {
      * @param x the number to test
      * @param a the lower bound
      * @param b the upper bound
-     * @return true, exactly if a <= x && x <= b
+     * @return true, exactly if a ≤ x and x ≤ b
      */
     public static boolean isBetween(double x, double a, double b) {
         assert a<=b;
@@ -962,7 +962,7 @@ public final class LangUtil {
      * @param x the number to test
      * @param a the lower bound
      * @param b the upper bound
-     * @return true, exactly if a.compareTo(x) <= 0 && x.compareTo(b) <= 0
+     * @return true, exactly if a.compareTo(x) ≤ 0 and x.compareTo(b) ≤ 0
      */
     public static <T extends Comparable<T>> boolean isBetween(T x, T a, T b) {
         assert a.compareTo(b) <= 0;
