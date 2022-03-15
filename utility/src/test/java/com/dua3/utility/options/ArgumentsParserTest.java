@@ -3,10 +3,14 @@ package com.dua3.utility.options;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ArgumentsParserTest {
 
@@ -175,5 +179,145 @@ public class ArgumentsParserTest {
 
         assertEquals(List.of("a", "e"), yeaSayer);
         assertEquals(List.of("b", "c", "d", "f"), naySayer);
+    }
+    
+    @Test public void testStandardOptionOccurrences() {
+        ArgumentsParser cmd = new ArgumentsParser("testSimpleOption", "Unit test for passing simple options on the command line.");
+
+        Option<String> optionExactlyTwice = cmd.option(String.class, "--exactly-twice").occurrence(2);
+        Option<String> optionAtMostTwice = cmd.option(String.class, "--at-most-twice").occurrence(0,2);
+        Option<String> optionTwoOrThreeTimes = cmd.option(String.class, "--two-or-three-times").occurrence(2,3);
+        Option<String> optionAtLeastTwice = cmd.option(String.class, "--at-least-twice").occurrence(2,Integer.MAX_VALUE);
+
+        // test occurrences
+        Arguments e1 = cmd.parse(
+                "--exactly-twice",
+                "--exactly-twice",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--at-least-twice",
+                "--at-least-twice"
+        );
+        assertEquals(2, e1.stream(optionExactlyTwice).count());
+        assertEquals(0, e1.stream(optionAtMostTwice).count());
+        assertEquals(2, e1.stream(optionTwoOrThreeTimes).count());
+        assertEquals(2, e1.stream(optionAtLeastTwice).count());
+
+        Arguments e2 = cmd.parse(
+                "--exactly-twice",
+                "--exactly-twice",
+                "--at-most-twice",
+                "--at-most-twice",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--at-least-twice",
+                "--at-least-twice",
+                "--at-least-twice"
+        );
+        assertEquals(2, e2.stream(optionExactlyTwice).count());
+        assertEquals(2, e2.stream(optionAtMostTwice).count());
+        assertEquals(3, e2.stream(optionTwoOrThreeTimes).count());
+        assertEquals(3, e2.stream(optionAtLeastTwice).count());
+        
+        assertThrows(OptionException.class, () -> cmd.parse(
+                "--exactly-twice",
+                "--at-most-twice",
+                "--at-most-twice",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--at-least-twice",
+                "--at-least-twice",
+                "--at-least-twice"
+        ));
+        
+        assertThrows(OptionException.class, () -> cmd.parse(
+                "--exactly-twice",
+                "--exactly-twice",
+                "--exactly-twice",
+                "--at-most-twice",
+                "--at-most-twice",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--at-least-twice",
+                "--at-least-twice",
+                "--at-least-twice"
+        ));
+        
+        assertThrows(OptionException.class, () -> cmd.parse(
+                "--exactly-twice",
+                "--exactly-twice",
+                "--at-most-twice",
+                "--at-most-twice",
+                "--at-most-twice",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--at-least-twice",
+                "--at-least-twice",
+                "--at-least-twice"
+        ));
+        
+        assertThrows(OptionException.class, () -> cmd.parse(
+                "--exactly-twice",
+                "--exactly-twice",
+                "--at-most-twice",
+                "--at-most-twice",
+                "--two-or-three-times",
+                "--at-least-twice",
+                "--at-least-twice",
+                "--at-least-twice"
+        ));
+        
+        assertThrows(OptionException.class, () -> cmd.parse(
+                "--exactly-twice",
+                "--exactly-twice",
+                "--at-most-twice",
+                "--at-most-twice",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--at-least-twice",
+                "--at-least-twice",
+                "--at-least-twice"
+        ));
+        
+        assertThrows(OptionException.class, () -> cmd.parse(
+                "--exactly-twice",
+                "--exactly-twice",
+                "--at-most-twice",
+                "--at-most-twice",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--two-or-three-times",
+                "--at-least-twice"
+        ));
+    }
+
+    @Test public void testStandardOptionArity() {
+        ArgumentsParser cmd = new ArgumentsParser("testSimpleOption", "Unit test for passing simple options on the command line.", 0, 0);
+
+        Option<String> optionAtMostTwoArgs = cmd.option(String.class, "--at-most-two-args").arity(0, 2);
+        Option<String> optionExactlyTwoArgs = cmd.option(String.class, "--exactly-two-args").arity(2);
+        Option<String> optionTwoOrMoreArgs = cmd.option(String.class, "--two-or-more-args").arity(2, Integer.MAX_VALUE);
+
+        assertEquals(List.of(Collections.emptyList()), cmd.parse("--at-most-two-args").stream(optionAtMostTwoArgs).toList());
+        assertEquals(List.of(List.of("A")), cmd.parse("--at-most-two-args", "A").stream(optionAtMostTwoArgs).toList());
+        assertEquals(List.of(List.of("A", "B")), cmd.parse("--at-most-two-args", "A", "B").stream(optionAtMostTwoArgs).toList());
+        assertThrows(OptionException.class, () -> cmd.parse("--at-most-two-args", "A", "B", "C"));
+        
+        assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args"));
+        assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args", "A"));
+        assertEquals(List.of(List.of("A", "B")), cmd.parse("--exactly-two-args", "A", "B").stream(optionExactlyTwoArgs).toList());
+        assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args", "A", "B", "C"));
+        
+        assertThrows(OptionException.class, () -> cmd.parse("--two-or-more-args"));
+        assertThrows(OptionException.class, () -> cmd.parse("--two-or-more-args", "A"));
+        assertEquals(List.of(List.of("A", "B")), cmd.parse("--two-or-more-args", "A", "B").stream(optionTwoOrMoreArgs).toList());
+        assertEquals(List.of(List.of("A", "B", "C")), cmd.parse("--two-or-more-args", "A", "B", "C").stream(optionTwoOrMoreArgs).toList());
     }
 }

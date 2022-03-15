@@ -229,7 +229,7 @@ public class ArgumentsParser {
         }
 
         if (positionalArgs.size()>maxPositionalArgs) {
-            throw new OptionException("too many arguments (at most " + minPositionalArgs + " arguments can be given)");
+            throw new OptionException("too many arguments (at most " + maxPositionalArgs + " arguments can be given)");
         }
 
         return new Arguments(parsedOptions, positionalArgs);
@@ -241,6 +241,7 @@ public class ArgumentsParser {
      * @throws OptionException if an error is detected
      */
     private void validate(Collection<Arguments.Entry<?>> parsedOptions) {
+        // check occurrences
         Map<Option<?>, Integer> hist = new HashMap<>();
         parsedOptions.forEach(entry -> hist.compute(entry.option, (k_,i_) -> i_==null ? 1 : i_+1));
 
@@ -249,18 +250,46 @@ public class ArgumentsParser {
                 .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
                 .forEach(p -> {
                     Option<?> option = p.first();
-                    int count = p.second();
-                    LangUtil.check(option.minOccurrences() <= count,
-                            () -> new OptionException(String.format(
-                                "option '%s' must be specified at least %d time(s), but was only %d times",
-                                option.name(), option.minOccurrences(), count
+                    int occurences = p.second();
+                    // check min occurrences
+                    LangUtil.check(option.minOccurrences() <= occurences,
+                            () -> new OptionException(
+                                "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
+                                option.name(), option.minOccurrences(), occurences
                             )));
-                    LangUtil.check(option.maxOccurrences() >= count,
-                            () -> new OptionException(String.format(
-                                "option '%s' must be specified at most %d time(s), but was %d times",
-                                option.name(), option.maxOccurrences(), count
+                    // check max occurrences
+                    LangUtil.check(option.maxOccurrences() >= occurences,
+                            () -> new OptionException(
+                                "option '%s' must be specified at most %d time(s), but was %d times".formatted(
+                                option.name(), option.maxOccurrences(), occurences
                             )));
                 });
+
+        // check arity
+        parsedOptions.forEach(entry -> {
+            Option<?> option = entry.option;
+            int nParams = entry.params.size();
+            LangUtil.check(
+                option.minArity <= nParams,
+                () -> new OptionException(
+                    "option '%s' must have at least %d parameters, but has only %d".formatted(
+                            option.name(),
+                            option.minArity,
+                            nParams
+                    )
+                )
+            );
+            LangUtil.check(
+                nParams <= option.maxArity,
+                () -> new OptionException(
+                    "option '%s' must have at most %d parameters, but has %d".formatted(
+                            option.name(),
+                            option.maxArity,
+                            nParams
+                    )
+                )
+            );
+        });
     }
 
     /**
