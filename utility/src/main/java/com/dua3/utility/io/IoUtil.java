@@ -12,12 +12,15 @@ import com.dua3.utility.lang.LangUtil;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.UncheckedIOException;
+import java.lang.ref.Cleaner;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -624,6 +627,120 @@ public final class IoUtil {
         return new ByteArrayInputStream(s.getBytes(cs));
     }
 
+    private static class Combiner implements AutoCloseable {
+
+        public final byte[] prefixA;
+        public final byte[] prefixB;
+        
+        private final OutputStream out;
+        
+        private final Cleaner cleaner;
+                
+        private ByteArrayOutputStream baosA = new ByteArrayOutputStream(128);
+        private ByteArrayOutputStream baosB = new ByteArrayOutputStream(128);
+
+        public Combiner(Path path, byte[] prefixA, byte[] prefixB, Cleaner cleaner) throws IOException {
+            this(Files.newOutputStream(path), prefixA, prefixB, cleaner);
+        }
+        
+        public Combiner(OutputStream out, byte[] prefixA, byte[] prefixB, Cleaner cleaner) {
+            this.cleaner = cleaner;
+            this.out = out;
+            this.prefixA = prefixA;
+            this.prefixB = prefixB;
+        }
+
+        void writeA(int b) throws IOException {
+            baosA.write(b);
+            if(b == '\n') {
+                flushA();
+            }
+        }
+        
+        void writeB(int b) throws IOException {
+            baosB.write(b);
+            if(b == '\n') {
+                flushB();
+            }
+        }
+
+        void flushA() throws IOException {
+            out.write(prefixA);
+            out.write(baosA.toByteArray());
+            baosA.reset();
+        }
+
+        void flushB() throws IOException {
+            out.write(prefixB);
+            out.write(baosB.toByteArray());
+            baosA.reset();
+        }
+        
+        OutputStream streamA() {
+            return new OutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                    writeA(b);
+                }
+            };
+        }
+        
+        OutputStream streamB() {
+            return new OutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                    writeB(b);
+                }
+            };
+        }
+
+        @Override
+        public void close() throws Exception {
+            try {
+                flushA();
+                flushB();
+            } finally {
+                out.flush();
+            }
+        }
+    }
+    
+    static class CleanupSystemStreams implements Runnable {
+        private PrintStream sOut;
+        private PrintStream sErr;
+        
+        CleanupSystemStreams() {
+            this.sOut = System.out;
+            this.sErr = System.err;
+        }
+        
+        public void run() {
+            System.setOut(sOut);
+            System.setErr(sErr);
+        }
+    }
+
+    /**
+     * Redirect System.out and System.err to a file
+     * @param path
+     * @param cleaner
+     * @return
+     * @throws IOException
+     */
+    public static AutoCloseable redirect(Path path, Cleaner cleaner) throws IOException {
+        // IMPORTANT: create the cleanup object before redirecting system streams!
+        Runnable cleanup = new CleanupSystemStreams();
+
+        Combiner combiner = new Combiner(path, "stdout: ".getBytes(StandardCharsets.UTF_8), "stderr: ".getBytes(StandardCharsets.UTF_8), cleaner);
+
+        cleaner.register(combiner, cleanup);
+
+        System.setOut(new PrintStream(combiner.streamA(), true, StandardCharsets.UTF_8));
+        System.setErr(new PrintStream(combiner.streamB(), true, StandardCharsets.UTF_8));
+        
+        return combiner;
+    }
+    
 }
 
 @SuppressWarnings("ClassNameDiffersFromFileName")
