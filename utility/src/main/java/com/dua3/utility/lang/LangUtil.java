@@ -933,6 +933,43 @@ public final class LangUtil {
     }
 
     /**
+     * Check if number is between two other numbers.
+     * @param x the number to test
+     * @param a the lower bound
+     * @param b the upper bound
+     * @return true, exactly if a <= x && x <= b
+     */
+    public static boolean isBetween(long x, long a, long b) {
+        assert a<=b;
+        return a<=x && x<=b;
+    }
+    
+    /**
+     * Check if number is between two other numbers.
+     * @param x the number to test
+     * @param a the lower bound
+     * @param b the upper bound
+     * @return true, exactly if a <= x && x <= b
+     */
+    public static boolean isBetween(double x, double a, double b) {
+        assert a<=b;
+        return a<=x && x<=b;
+    }
+    
+    /**
+     * Check if value of a {@link Comparable} is between two other values.
+     * @param <T> generic type of Comparable
+     * @param x the number to test
+     * @param a the lower bound
+     * @param b the upper bound
+     * @return true, exactly if a.compareTo(x) <= 0 && x.compareTo(b) <= 0
+     */
+    public static <T extends Comparable<T>> boolean isBetween(T x, T a, T b) {
+        assert a.compareTo(b) <= 0;
+        return a.compareTo(x) <= 0 && x.compareTo(b) <= 0;
+    }
+    
+    /**
      * Get stack trace as text
      * @param e exception
      * @return the exception stack trace as text
