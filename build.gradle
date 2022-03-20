@@ -33,7 +33,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '10-BETA22'
+    version = '10-BETA23-SNAPSHOT'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
@@ -49,7 +49,7 @@ subprojects {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         java_version = '17'
         junit_version = '5.8.2'
-        cabe_version = '0.4.1'
+        cabe_version = '0.5-BETA1'
     }
 
     sourceCompatibility = java_version
