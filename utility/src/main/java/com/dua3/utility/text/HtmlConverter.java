@@ -202,7 +202,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
     /**
      * The mappings of this converter.
-     *
+     * <p>
      * Key: the attribute name
      * Value: the function that maps values to tags
      */

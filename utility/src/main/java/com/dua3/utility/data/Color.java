@@ -634,5 +634,5 @@ final class Colors {
     private Colors() { 
         // utility class
     }
-    static Map<String, Color> COLORS = new LinkedHashMap<>();
+    static final Map<String, Color> COLORS = new LinkedHashMap<>();
 }

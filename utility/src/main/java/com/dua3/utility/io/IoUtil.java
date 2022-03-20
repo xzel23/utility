@@ -634,14 +634,14 @@ public final class IoUtil {
         
         private final OutputStream out;
         
-        private ByteArrayOutputStream baosA = new ByteArrayOutputStream(128);
-        private ByteArrayOutputStream baosB = new ByteArrayOutputStream(128);
+        private final ByteArrayOutputStream baosA = new ByteArrayOutputStream(128);
+        private final ByteArrayOutputStream baosB = new ByteArrayOutputStream(128);
 
-        public Combiner(Path path, byte[] prefixA, byte[] prefixB) throws IOException {
+        Combiner(Path path, byte[] prefixA, byte[] prefixB) throws IOException {
             this(Files.newOutputStream(path), prefixA, prefixB);
         }
         
-        public Combiner(OutputStream out, byte[] prefixA, byte[] prefixB) {
+        Combiner(OutputStream out, byte[] prefixA, byte[] prefixB) {
             this.out = out;
             this.prefixA = prefixA;
             this.prefixB = prefixB;
@@ -703,14 +703,15 @@ public final class IoUtil {
     }
     
     static class CleanupSystemStreams implements Runnable {
-        private PrintStream sOut;
-        private PrintStream sErr;
+        private final PrintStream sOut;
+        private final PrintStream sErr;
         
         CleanupSystemStreams() {
             this.sOut = System.out;
             this.sErr = System.err;
         }
         
+        @Override
         public void run() {
             System.setOut(sOut);
             System.setErr(sErr);
@@ -719,10 +720,10 @@ public final class IoUtil {
 
     /**
      * Redirect System.out and System.err to a file
-     * @param path
-     * @param cleaner
-     * @return
-     * @throws IOException
+     * @param path path to the output file
+     * @param cleaner the cleaner to register the cleanup operation (reset standard output streams)
+     * @return AutoCloseable instance (calling close() will reset standard output streams)
+     * @throws IOException if an error occurs
      */
     public static AutoCloseable redirect(Path path, Cleaner cleaner) throws IOException {
         // IMPORTANT: create the cleanup object before redirecting system streams!

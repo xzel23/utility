@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 /**
  * A simple option class. 
- *
+ * <p>
  * A simple option can be present at most once in an {@link Arguments} instance and takes exactly one parameter.
  * Its value can be queried by calling {@link Arguments#get(SimpleOption)}.
  */

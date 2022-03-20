@@ -250,18 +250,18 @@ public class ArgumentsParser {
                 .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
                 .forEach(p -> {
                     Option<?> option = p.first();
-                    int occurences = p.second();
+                    int occurrences = p.second();
                     // check min occurrences
-                    LangUtil.check(option.minOccurrences() <= occurences,
+                    LangUtil.check(option.minOccurrences() <= occurrences,
                             () -> new OptionException(
                                 "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
-                                option.name(), option.minOccurrences(), occurences
+                                option.name(), option.minOccurrences(), occurrences
                             )));
                     // check max occurrences
-                    LangUtil.check(option.maxOccurrences() >= occurences,
+                    LangUtil.check(option.maxOccurrences() >= occurrences,
                             () -> new OptionException(
                                 "option '%s' must be specified at most %d time(s), but was %d times".formatted(
-                                option.name(), option.maxOccurrences(), occurences
+                                option.name(), option.maxOccurrences(), occurrences
                             )));
                 });
 

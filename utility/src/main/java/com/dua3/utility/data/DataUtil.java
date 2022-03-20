@@ -197,6 +197,7 @@ public final class DataUtil {
         // convert to File
         if (targetClass==File.class) {
             if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary 
+                //noinspection ConstantConditions
                 return (T) ((Path) value).toFile();
             }
         }

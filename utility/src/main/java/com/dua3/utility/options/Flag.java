@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 /**
  * A flag class, which is in principle a boolean option. 
- * 
+ * <p> 
  * A flag can be given at most once on a command line. It can be queried by calling {@link Arguments#isSet(Flag)}.
  */
 public final class Flag extends Option<Boolean> {

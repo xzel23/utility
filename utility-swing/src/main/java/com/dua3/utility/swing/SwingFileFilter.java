@@ -12,7 +12,7 @@ import com.dua3.utility.io.OpenMode;
 
 /**
  * A FileFilter class to be used as a drop-in file filter for dialogs.
- *
+ * <p>
  * This class can be used in all cases where one of the three standard Java file
  * filter implementations is required, namely:
  * <ul>
