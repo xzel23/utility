@@ -634,17 +634,14 @@ public final class IoUtil {
         
         private final OutputStream out;
         
-        private final Cleaner cleaner;
-                
         private ByteArrayOutputStream baosA = new ByteArrayOutputStream(128);
         private ByteArrayOutputStream baosB = new ByteArrayOutputStream(128);
 
-        public Combiner(Path path, byte[] prefixA, byte[] prefixB, Cleaner cleaner) throws IOException {
-            this(Files.newOutputStream(path), prefixA, prefixB, cleaner);
+        public Combiner(Path path, byte[] prefixA, byte[] prefixB) throws IOException {
+            this(Files.newOutputStream(path), prefixA, prefixB);
         }
         
-        public Combiner(OutputStream out, byte[] prefixA, byte[] prefixB, Cleaner cleaner) {
-            this.cleaner = cleaner;
+        public Combiner(OutputStream out, byte[] prefixA, byte[] prefixB) {
             this.out = out;
             this.prefixA = prefixA;
             this.prefixB = prefixB;
@@ -731,7 +728,7 @@ public final class IoUtil {
         // IMPORTANT: create the cleanup object before redirecting system streams!
         Runnable cleanup = new CleanupSystemStreams();
 
-        Combiner combiner = new Combiner(path, "stdout: ".getBytes(StandardCharsets.UTF_8), "stderr: ".getBytes(StandardCharsets.UTF_8), cleaner);
+        Combiner combiner = new Combiner(path, "stdout: ".getBytes(StandardCharsets.UTF_8), "stderr: ".getBytes(StandardCharsets.UTF_8));
 
         cleaner.register(combiner, cleanup);
 
