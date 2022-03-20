@@ -101,7 +101,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 - **Java 17 required!**
 - changed module names to com.dua3.utility again
-- upgraded gradle to 7.2 for Java 17 support
+- upgraded gradle to 7.4 for Java 17 support
 - publish snapshots to sonatype snapshot repository
 - geometry classes taking float parameters have been renamed to ...2f
 - some classes (Pair, Vector2f, ...) have been converted to records
