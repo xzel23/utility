@@ -127,6 +127,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 - remove LogUtil.format() as it is not shorter than the equivalent lambda (i.e. `LogUtil.format("message %s", arg)` can be replaced by `() -> "message %s".formatted(arg)`)
 - Color is now an interface with implementations RGBColor and HSVColor
 - RichText and Run classes provide an overloaded equals() method that accepts a predicate to give fine grained control to exclude certain attributes from equality checks
+- Platform: added methods to help with quoting arguments for ProcessBuilder
 - small fixes and improvements
 
 **The following functionality has been removed because it is available in JDK 17**:

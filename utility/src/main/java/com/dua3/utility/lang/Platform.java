@@ -2,6 +2,7 @@ package com.dua3.utility.lang;
 
 import java.util.Locale;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Enumeration for the different Platforms/Operating systems.
@@ -12,13 +13,44 @@ public enum Platform {
     /** The macOS operating system. */
     MACOS,
     /** The Windows operating system. */
-    WINDOWS,
+    WINDOWS {
+        @Override
+        public boolean isProcessBuilderQuotingNeeded(String s) {
+            int len = s.length();
+            if (len == 0) {
+                // empty string has to be quoted on windows
+                return true;
+            }
+            
+            for (int i = 0; i < len; i++) {
+                switch (s.charAt(i)) {
+                case ' ', '\t', '\\', '"':
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static final Pattern PATTERN_DOUBLE_QUOTE = Pattern.compile("(\\\\*)\"");
+        private static final Pattern PATTERN_EOS = Pattern.compile("(\\\\*)\\z");
+
+        @Override
+        public String quoteProcessBuilderArg(String s) {
+            if (!isProcessBuilderQuotingNeeded(s)) {
+                return s;
+            }
+            
+            s = PATTERN_DOUBLE_QUOTE.matcher(s).replaceAll("$1$1\\\\\"");
+            s = PATTERN_EOS.matcher(s).replaceAll("$1$1");
+            return "\"" + s + "\"";
+        }
+    },
     /** Unknown operating system. */
     UNKNOWN;
 
     private static final Logger LOG = Logger.getLogger(Platform.class.getName());
     private static final Platform DETECTED = determinePlatform();
-    
+
     private static Platform determinePlatform() {
         final Platform platform;
         
@@ -42,7 +74,7 @@ public enum Platform {
      * Get the detected platform that the program runs on.
      * @return the detected platform
      */
-    public static Platform getCurrentPlatform() {
+    public static Platform currentPlatform() {
         return DETECTED;
     }
 
@@ -77,4 +109,23 @@ public enum Platform {
     public static boolean isUnknown() {
         return DETECTED == UNKNOWN;
     }
+
+    /**
+     * Check if argument needs to be quoted before passing to {@link ProcessBuilder}.
+     * @param s the argument
+     * @return true, if s needs to be quoted
+     */
+    public boolean isProcessBuilderQuotingNeeded(String s) {
+        return false;
+    }
+
+    /**
+     * Quote argument for {@link ProcessBuilder}.
+     * @param s the argument
+     * @return quoted version of s if quoting needed, otherwise s
+     */
+    public String quoteProcessBuilderArg(String s) {
+        return s;
+    }
+
 }
