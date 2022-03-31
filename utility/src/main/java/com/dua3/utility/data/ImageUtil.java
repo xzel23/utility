@@ -11,8 +11,10 @@ import java.util.ServiceLoader;
  */
 public interface ImageUtil<I> {
 
-    String NO_IMPLEMENTATION = "no ImageUtil implementation present";
-
+    /**
+     * Return the default ImageUtil instance.
+     * @return default instance
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     static ImageUtil<? extends Image> getInstance() {
         Iterator<ImageUtil> serviceIterator = ServiceLoader
@@ -24,19 +26,21 @@ public interface ImageUtil<I> {
             iu = serviceIterator.next();
         } else {
             iu = new ImageUtil<>() {
+                private <T> T noImplementation() { throw new UnsupportedOperationException("no ImageUtil implementation present"); }
+
                 @Override
                 public Image load(InputStream in) {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                    return noImplementation();
                 }
 
                 @Override
                 public Image create(int w, int h, int[] data) {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                    return noImplementation();
                 }
 
                 @Override
                 public Image convert(Image img) {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                    return noImplementation();
                 }
             };
         }
