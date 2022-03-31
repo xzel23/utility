@@ -302,7 +302,7 @@ public final class LangUtil {
     public static <T,E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T, E> c) {
         return arg -> {
             try {
-                c.apply(arg);
+                c.accept(arg);
             } catch (Exception e) {
                 throw wrapException(e);
             }
@@ -533,6 +533,10 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface RunnableThrows<E extends Exception> {
+        static <E extends Exception> RunnableThrows<E> ofRunnable(Runnable r) {
+            return () -> r.run();    
+        }
+        
         /**
          * Equivalent to {@link Runnable#run()}, but may throw checked exceptions.
          * @throws E depending on override
@@ -551,8 +555,15 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface FunctionThrows<T, R, E extends Exception> {
+        /**
+         * Applies this function to the given argument.
+         *
+         * @param t the function argument
+         * @return the function result
+         * @throws E depending on implementation
+         */
         @SuppressWarnings("ProhibitedExceptionDeclared")
-        R apply(T arg) throws E;
+        R apply(T t) throws E;
     }
 
     /**
@@ -564,8 +575,50 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface ConsumerThrows<T, E extends Exception> {
+        /**
+         * Performs this operation on the given argument.
+         *
+         * @param t the input argument
+         * @throws E depending on implementation
+         */
         @SuppressWarnings("ProhibitedExceptionDeclared")
-        void apply(T arg) throws E;
+        void accept(T t) throws E;
+
+        /**
+         * Returns a composed {@code Consumer} that performs, in sequence, this
+         * operation followed by the {@code after} operation. If performing either
+         * operation throws an exception, it is relayed to the caller of the
+         * composed operation.  If performing this operation throws an exception,
+         * the {@code after} operation will not be performed.
+         *
+         * @param after the operation to perform after this operation
+         * @return a composed {@code Consumer} that performs in sequence this
+         * operation followed by the {@code after} operation
+         * @throws NullPointerException if {@code after} is null
+         * @throws E depending on implementation
+         */
+        default ConsumerThrows<T,E> andThen(ConsumerThrows<? super T, ? extends E> after) throws E {
+            Objects.requireNonNull(after);
+            return (T t) -> { accept(t); after.accept(t); };
+        }
+
+        /**
+         * Returns a composed {@code Consumer} that performs, in sequence, this
+         * operation followed by the {@code after} operation. If performing either
+         * operation throws an exception, it is relayed to the caller of the
+         * composed operation.  If performing this operation throws an exception,
+         * the {@code after} operation will not be performed.
+         *
+         * @param after the operation to perform after this operation
+         * @return a composed {@code Consumer} that performs in sequence this
+         * operation followed by the {@code after} operation
+         * @throws NullPointerException if {@code after} is null
+         * @throws E depending on implementation
+         */
+        default ConsumerThrows<T,E> andThen(Consumer<? super T> after) throws E {
+            Objects.requireNonNull(after);
+            return (T t) -> { accept(t); after.accept(t); };
+        }
     }
 
     /**
@@ -578,6 +631,12 @@ public final class LangUtil {
     @FunctionalInterface
     public interface SupplierThrows<T, E extends Exception> {
         @SuppressWarnings("ProhibitedExceptionDeclared")
+        /**
+         * Gets a result.
+         *
+         * @return a result
+         * @throws E depending on implementation
+         */
         T get() throws E;
     }
 
