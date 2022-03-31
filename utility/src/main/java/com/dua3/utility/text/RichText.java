@@ -460,7 +460,7 @@ public final class RichText
     }
 
     /**
-     * See {@link String#trim()}.
+     * @see String#trim()
      */
     public RichText trim() {
         int st = 0;
@@ -522,10 +522,16 @@ public final class RichText
         return join(RichText.valueOf(Objects.requireNonNull(delimiter)), elements);
     }
 
+    /**
+     * @see String#split(String)
+     */
     public RichText[] split(String regex) {
         return split(regex, 0);
     }
 
+    /**
+     * @see String#split(String, int)
+     */
     public RichText[] split(String regex, int limit) {
         /* fastpath if the regex is a
          * (1) one-char String and this character is not one of the
@@ -590,9 +596,6 @@ public final class RichText
     }
 
     /**
-     * Replace the first occurrence of a regular expression.
-     * @param regex the regular expression
-     * @return this text with the first instances of regex replaced by the replacement
      * @see String#replaceFirst(String, String) 
      */
     public RichText replaceFirst(String regex, RichText replacement) {
@@ -600,9 +603,6 @@ public final class RichText
     }
 
     /**
-     * Replace the first occurrence of a regular expression.
-     * @param regex the regular expression
-     * @return this text with the first instances of regex replaced by the replacement
      * @see String#replaceFirst(String, String)
      */
     public RichText replaceFirst(String regex, String replacement) {
@@ -610,9 +610,6 @@ public final class RichText
     }
 
     /**
-     * Replace all occurrences a regular expression.
-     * @param regex the regular expression
-     * @return this text with all instances of regex replaced by the replacement
      * @see String#replaceAll(String, String) 
      */
     public RichText replaceAll(String regex, RichText replacement) {
@@ -620,9 +617,6 @@ public final class RichText
     }
 
     /**
-     * Replace all occurrences a regular expression.
-     * @param regex the regular expression
-     * @return this text with all instances of regex replaced by the replacement
      * @see String#replaceAll(String, String)
      */
     public RichText replaceAll(String regex, String replacement) {
@@ -633,8 +627,9 @@ public final class RichText
      * Find character.
      * @param ch the character
      * @return the position of the first occurrence of ch, or -1 if not found
+     * @see String#indexOf(int)  
      */
-    public int indexOf(char ch) {
+    public int indexOf(int ch) {
         return TextUtil.indexOf(this, ch);
     }
 

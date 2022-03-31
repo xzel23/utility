@@ -383,7 +383,7 @@ public final class TextUtil {
      * @param needle   the char to find
      * @return the position where the char was found or -1 if not found
      */
-    public static int indexOf(CharSequence haystack, char needle) {
+    public static int indexOf(CharSequence haystack, int needle) {
         return indexOf(haystack, needle, 0);
     }
 
@@ -406,7 +406,7 @@ public final class TextUtil {
      * @param fromIndex the index to start from
      * @return the position where the char was found or -1 if not found
      */
-    public static int indexOf(CharSequence haystack, char needle, int fromIndex) {
+    public static int indexOf(CharSequence haystack, int needle, int fromIndex) {
         final int haystackLength = haystack.length();
         return IntStream.range(fromIndex, haystackLength)
                 .filter(pos -> haystack.charAt(pos) == needle)
