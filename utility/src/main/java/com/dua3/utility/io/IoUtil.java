@@ -702,6 +702,7 @@ public final class IoUtil {
         }
     }
     
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     static class CleanupSystemStreams implements Runnable {
         private final PrintStream sOut;
         private final PrintStream sErr;
