@@ -533,10 +533,6 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface RunnableThrows<E extends Exception> {
-        static <E extends Exception> RunnableThrows<E> ofRunnable(Runnable r) {
-            return () -> r.run();    
-        }
-        
         /**
          * Equivalent to {@link Runnable#run()}, but may throw checked exceptions.
          * @throws E depending on override
@@ -630,13 +626,13 @@ public final class LangUtil {
      */
     @FunctionalInterface
     public interface SupplierThrows<T, E extends Exception> {
-        @SuppressWarnings("ProhibitedExceptionDeclared")
         /**
          * Gets a result.
          *
          * @return a result
          * @throws E depending on implementation
          */
+        @SuppressWarnings("ProhibitedExceptionDeclared")
         T get() throws E;
     }
 

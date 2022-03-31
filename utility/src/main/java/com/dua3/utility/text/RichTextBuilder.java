@@ -85,8 +85,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Get attribute of the current Run.
      *
-     * @param  property
-     *                  the property
+     * @param  property the property
      * @return          value of the property
      */
     public Object get(String property) {
@@ -96,8 +95,8 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Get attribute of the current Run.
      *
-     * @param  property
-     *                  the property
+     * @param  property the property
+     * @param defaultValue the default value for the property
      * @return          value of the property
      */
     public Object getOrDefault(String property, Object defaultValue) {

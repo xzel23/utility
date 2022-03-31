@@ -23,24 +23,24 @@ import java.util.Set;
  */
 public final class TextAttributes extends AbstractMap<String, Object> {
     
-    /** empty {@link TextAttributes} instance */
+    /** empty instance */
     private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
     
     /**
-     * The empty style instance.
+     * Empty TextAttributes instance.
      *
-     * @return the empty style
+     * @return empty instance
      */
     public static TextAttributes none() {
         return NONE;
     }
 
     /**
-     * Construct style with attributes.
+     * Construct instance with attributes.
      *
      * @param  entries
      *                 the attribute/value pairs to add
-     * @return         the new style
+     * @return         TextAttributes instance
      */
     @SafeVarargs
     public static TextAttributes of(Pair<String, ?>... entries) {
@@ -52,7 +52,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      *
      * @param  entries
      *                 the attribute/value pairs to add
-     * @return         the new style
+     * @return         TextAttributes instance
      */
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
         Set<Entry<String, Object>> entrySet = new HashSet<>();
@@ -62,6 +62,12 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         return new TextAttributes(entrySet);
     }
 
+    /**
+     * Construct style with attributes.
+     *
+     * @param  map     mapping from attributes to values
+     * @return         TextAttributes instance
+     */
     public static TextAttributes of(Map<String, Object> map) {
         return new TextAttributes(map.entrySet());
     }

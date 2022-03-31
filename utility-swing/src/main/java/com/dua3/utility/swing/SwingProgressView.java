@@ -69,7 +69,10 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
             });
         }
     }
-    
+
+    /**
+     * Constructor.
+     */
     public SwingProgressView() {
         this.imp = new ProgressView<>(this::createProgressIndicator);
 
