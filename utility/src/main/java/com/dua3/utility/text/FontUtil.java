@@ -15,8 +15,10 @@ import java.util.ServiceLoader;
  */
 public interface FontUtil<F> {
 
-    String NO_IMPLEMENTATION = "no FontUtil implementation present";
-
+    /**
+     * Get FontUtil instance.
+     * @return the default FontUtil instance
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     static FontUtil<?> getInstance() {
         Iterator<FontUtil> serviceIterator = ServiceLoader
@@ -28,30 +30,32 @@ public interface FontUtil<F> {
             fu = serviceIterator.next();
         } else {
             fu = new FontUtil<>() {
+                private <T> T noImplementation() { throw new UnsupportedOperationException("no FontUtil implementation present"); }
+
                 @Override
                 public Void convert(Font f) {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                    return noImplementation();
                 }
 
                 @Override
                 public Dimension2f getTextDimension(CharSequence s, Font f) {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                    return noImplementation();
                 }
 
                 @SuppressWarnings("RedundantThrows")
                 @Override
                 public List<Font> loadFonts(InputStream in) throws IOException {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                    return noImplementation();
                 }
 
                 @Override
                 public List<String> getFamilies(FontTypes types) {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                    return noImplementation();
                 }
 
                 @Override
                 public Font loadFontAs(InputStream in, Font font) throws IOException {
-                    throw new UnsupportedOperationException(NO_IMPLEMENTATION);
+                    return noImplementation();
                 }
             };
         }
@@ -122,8 +126,11 @@ public interface FontUtil<F> {
      * Font type enumeration.
      */
     enum FontTypes {
+        /** Enum value for proportional fonts. */
         PROPORTIONAL,
+        /** Enum value for monospaced fonts. */
         MONOSPACED,
+        /** Enum value for all fonts. */
         ALL
     }
 
