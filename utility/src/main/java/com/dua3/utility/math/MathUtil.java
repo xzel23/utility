@@ -466,6 +466,11 @@ public final class MathUtil {
         return x-> roundingOperation.applyAsDouble(x*scale)/scale;
     }
 
+    /**
+     * Get a DoubleUnaryOperator that implements rounding according to the requested mode.
+     * @param mode the {@link RoundingMode}
+     * @return rounding operation
+     */
     public static DoubleUnaryOperator getRoundingOperation(RoundingMode mode) {
         return switch (mode) {
             case HALF_UP -> x -> x >= 0 ? Math.floor(x + 0.5) : Math.ceil(x - 0.5);

@@ -15,6 +15,11 @@ import java.util.function.Function;
  */
 public record NamedFunction<T, R>(String name, Function<T, R> f) implements Function<T, R> {
 
+    /**
+     * Constructor
+     * @param name the function name
+     * @param f the function to perform
+     */
     public NamedFunction {
         Objects.requireNonNull(name);
         Objects.requireNonNull(f);
