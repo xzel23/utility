@@ -18,6 +18,9 @@ import java.util.function.Supplier;
  */
 public class Stopwatch {
 
+    /**
+     * Enum defining the different output formats.
+     */
     public enum Format {
         /**
          * standard format, same as {@link #HOURS_MINUTES_SECONDS_MILLIS}.
@@ -122,7 +125,12 @@ public class Stopwatch {
                 return negative ? "-" + positive : positive;
             }
         };
-        
+
+        /**
+         * Format a duration.
+         * @param d the duration
+         * @return d formatted as a string
+         */
         public abstract String format(Duration d);
     }
     

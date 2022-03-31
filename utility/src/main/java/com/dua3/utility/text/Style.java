@@ -278,6 +278,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     
     /**
      * Get Font for this style.
+     * @param baseFont the font used to derive the requested font by applying this style
      * @return if set, the font of this style, otherwise the resulting font of applying this style's {@link FontDef} to the supplied baseFont 
      */
     public Font getFont(Font baseFont) {

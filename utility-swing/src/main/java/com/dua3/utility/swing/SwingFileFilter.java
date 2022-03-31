@@ -3,12 +3,12 @@
  */
 package com.dua3.utility.swing;
 
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.OpenMode;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.dua3.utility.io.FileType;
-import com.dua3.utility.io.OpenMode;
 
 /**
  * A FileFilter class to be used as a drop-in file filter for dialogs.
@@ -21,6 +21,7 @@ import com.dua3.utility.io.OpenMode;
  * <li>{@link javax.swing.filechooser.FileFilter
  * javax.swing.filechooser.FileFilter}</li>
  * </ul>
+ * @param <T> the generic parameter for {@link FileType}
  */
 public final class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
         implements java.io.FileFilter, java.io.FilenameFilter {
