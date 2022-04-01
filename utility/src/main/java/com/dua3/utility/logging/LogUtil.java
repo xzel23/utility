@@ -132,7 +132,7 @@ public final class LogUtil {
         
         // set log level
         arguments.forEach(optLevel, params -> {
-            LangUtil.check(params.size()==2, "wrong number of arguments for option "+optLevel.name());
+            LangUtil.check(params.size()==2, "wrong number of arguments for option %s ", optLevel.name());
             String loggerName = params.get(0);
             Level level = Level.parse(params.get(1));
             setLogLevel(level, Logger.getLogger(loggerName));
