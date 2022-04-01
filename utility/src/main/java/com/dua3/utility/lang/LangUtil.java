@@ -1039,4 +1039,13 @@ public final class LangUtil {
             return "[error while formatting exception stack trace]";
         }
     }
+
+    /**
+     * Get default toString() for object.
+     * @param o the object
+     * @return string generated like the default implementation of {@link Object#toString()} or "null" if o is null
+     */
+    public static String defaultToString(@Nullable Object o) {
+        return o==null ? "null" : o.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(o));
+    }
 }
