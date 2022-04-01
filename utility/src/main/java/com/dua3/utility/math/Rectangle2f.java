@@ -5,7 +5,6 @@
 
 package com.dua3.utility.math;
 
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 
 /**
@@ -52,7 +51,6 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @return rectangle
      */
     public static Rectangle2f of(float x, float y, float w, float h) {
-        LangUtil.check(w>=0 && h>=0, "w and h must not be negative: w=%f, h=%f", w, h);
         return new Rectangle2f(x, y, w, h);
     }
 
