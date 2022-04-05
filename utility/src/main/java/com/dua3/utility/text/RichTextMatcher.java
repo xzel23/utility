@@ -116,10 +116,14 @@ public class RichTextMatcher implements MatchResult {
     }
 
     private RichText replace(RichText replacement, int maxOccurrences) {
-        RichTextBuilder rtb = new RichTextBuilder(text.length());
-
+        boolean found = find();
+        if (!found) {
+            return text;
+        }
+        
+        RichTextBuilder rtb = new RichTextBuilder(text.length()+replacement.length());
         int off, i;
-        for(off = 0, i= 0; i++<maxOccurrences && find(); off = end()) {
+        for(off = 0, i= 0; i++<maxOccurrences && found; off = end(), found=find()) {
             rtb.append(text.subSequence(off, start())).append(replacement);
         }
 
@@ -128,10 +132,14 @@ public class RichTextMatcher implements MatchResult {
     }
 
     private RichText replace(String replacement, int maxOccurrences) {
-        RichTextBuilder rtb = new RichTextBuilder(text.length());
+        boolean found = find();
+        if (!found) {
+            return text;
+        }
 
+        RichTextBuilder rtb = new RichTextBuilder(text.length()+replacement.length());
         int off, i;
-        for(off = 0, i= 0; i++<maxOccurrences && find(); off = end()) {
+        for(off = 0, i= 0; i++<maxOccurrences && found; off = end(), found=find()) {
             rtb.append(text.subSequence(off, start())).append(replacement);
         }
 
