@@ -456,7 +456,7 @@ public final class RichText
     @Override
     public AttributedCharacter attributedCharAt(int pos) {
         Run r = runAt(pos);
-        return r.attributedCharAt(r.convertIndex(pos));
+        return r.attributedCharAt(r.convertIndex(start+pos));
     }
 
     /**

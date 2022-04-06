@@ -209,6 +209,33 @@ public class RichTextTest {
         assertEquals("Hello world!", sb.toString());
     }
 
+    // regression: java.lang.IndexOutOfBoundsException was thrown when iterating over attributed chars of a subSequence
+    @Test
+    public void testAttributedCharsOfSubString() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("I said: Hello ");
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("world");
+        builder.pop(Style.FONT_WEIGHT);
+        builder.append("!");
+        RichText rt_ = builder.toRichText();
+
+        RichText rt = rt_.subSequence(8);
+        
+        // test extracting the characters using attributedCharAt()
+        String s = rt.toString();
+        assertEquals("Hello world!", s);
+        for (int i=0; i<rt.length(); i++) {
+            assertEquals(s.charAt(i), rt.charAt(i));
+            assertEquals(s.charAt(i), rt.attributedCharAt(i).character());
+        }
+
+        // test the attributed character iterator
+        StringBuilder sb = new StringBuilder();
+        rt.attributedChars().map(AttributedCharacter::character).forEach(sb::append);
+        assertEquals("Hello world!", sb.toString());
+    }
+
     // Test that Runs containing same text and attributes but with different offsets to the same base compare equal.
     @Test
     public void testRunEquals() {
