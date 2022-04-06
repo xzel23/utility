@@ -195,6 +195,7 @@ subprojects {
 
     // === SPOTBUGS ===
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
+    spotbugs.toolVersion ='4.6.0'
 
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         reports {
@@ -207,7 +208,7 @@ subprojects {
     config {
         quality {
             errorprone.setEnabled(true)
-            errorprone.setErrorProneVersion('2.11.0')
+            errorprone.setErrorProneVersion('2.12.1')
         }
     }
     
