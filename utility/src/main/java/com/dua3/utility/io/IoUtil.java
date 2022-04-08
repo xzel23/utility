@@ -52,7 +52,7 @@ public final class IoUtil {
 
     private static final Logger LOG = Logger.getLogger(IoUtil.class.getName());
     
-    private static final Pattern PATTERN_URI = Pattern.compile("^[a-z][a-z0-9]+:.*");
+    private static final Pattern PATTERN_URI = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:.*");
 
     private IoUtil() {
         // utility class
