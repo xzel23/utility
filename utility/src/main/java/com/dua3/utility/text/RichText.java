@@ -229,6 +229,15 @@ public final class RichText
 
     /**
      * Check if texts and style are equal, ignoring other attributes.
+     * @param other the text to compare with
+     * @return true, if other consist of the same characters with the same styling as this instance
+     */
+    public boolean equalsTextAndFont(@Nullable RichText other) {
+        return textAndFontEquals(this, other);
+    }
+    
+    /**
+     * Check if texts and style are equal, ignoring other attributes.
      * @param a text
      * @param b text
      * @return true, if a and b consist of the same characters with the same styling
@@ -238,7 +247,7 @@ public final class RichText
             return a==b;
         }
 
-        if (!a.textEquals(b)) {
+        if (!a.equalsText(b)) {
             return false;
         }
 
@@ -297,7 +306,7 @@ public final class RichText
      * @param other the {@link CharSequence} to compare to
      * @return true, if this instance contains the same sequence of characters as {@code other}
      */
-    public boolean textEquals(@Nullable CharSequence other) {
+    public boolean equalsText(@Nullable CharSequence other) {
         if (other==null || other.length()!=this.length) {
             return false;
         }
@@ -309,6 +318,19 @@ public final class RichText
         }
         
         return true;
+    }
+
+    /**
+     * Textual compare ignoring case.
+     * @param other the {@link CharSequence} to compare to
+     * @return true, if this instance contains the same sequence of characters as {@code other}
+     */
+    public boolean equalsTextIgnoreCase(@Nullable CharSequence other) {
+        if (other==null || other.length()!=this.length) {
+            return false;
+        }
+        
+        return toString().equalsIgnoreCase(other.toString());
     }
 
     // calculate the hashCode on demand
@@ -508,6 +530,20 @@ public final class RichText
         return subSequence(st, len);
     }
 
+    /**
+     * Wrap {@link RichText} in style.
+     * 
+     * @param style the style
+     * @return copy of this {@link RichText} instance with style applied
+     */
+    public RichText wrap(Style style) {
+        RichTextBuilder rtb = new RichTextBuilder(length);
+        rtb.push(style);
+        rtb.append(this);
+        rtb.pop(style);
+        return rtb.toRichText();
+    }
+    
     /**
      * Join RichText instances together.
      * @param delimiter the delimiter

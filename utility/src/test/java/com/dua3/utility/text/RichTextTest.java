@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Axel Howind
@@ -85,7 +87,40 @@ public class RichTextTest {
         assertNotEquals(f, c);
         assertNotEquals(f, d);
     }
-    
+
+    @Test
+    public void testEqualsText() {
+        // tests all sorts if equals comparisons
+        RichText text = RichText.valueOf("text");
+
+        RichText blue = text.wrap(Style.BLUE);
+        RichText red = text.wrap(Style.RED);
+        RichText upper = RichText.valueOf("TEXT");
+
+        RichText texts = RichText.valueOf("texts");
+        RichText blues = texts.wrap(Style.BLUE);
+        RichText blue2 = blues.subSequence(0,4);
+
+        assertFalse(text.equalsText(upper));
+        assertTrue(text.equalsText(text));
+        assertTrue(text.equalsText(blue));
+        assertTrue(text.equalsText(red));
+        assertFalse(text.equalsText(texts));
+        
+        assertTrue(RichText.textAndFontEquals(blue, blue2));
+        assertFalse(RichText.textAndFontEquals(blue, blues));
+        
+        assertTrue(blue.equalsTextAndFont(blue2));
+        assertTrue(blue.equalsTextAndFont(blue2));
+        assertFalse(blue.equalsTextAndFont(red));
+
+        assertTrue(text.equalsTextIgnoreCase(upper));
+        assertTrue(text.equalsTextIgnoreCase(text));
+        assertTrue(text.equalsTextIgnoreCase(blue));
+        assertTrue(text.equalsTextIgnoreCase(red));
+        assertFalse(text.equalsTextIgnoreCase(texts));
+    }
+
     @Test
     public void testsubSequence() {
         RichTextBuilder builder = new RichTextBuilder();

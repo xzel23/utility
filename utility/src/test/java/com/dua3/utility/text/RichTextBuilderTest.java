@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author Axel Howind
+ * {@link RichTextBuilder} unit test.
  */
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class RichTextBuilderTest {
