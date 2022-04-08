@@ -96,7 +96,7 @@ public class JdbcDriverInfo {
     /**
      * Parse a configuration schema string.
      * <p>
-     * Example: {@code https://${SERVER}:${PORT}}
+     * Example string: {@code "https://${SERVER}:${PORT}"}
      *
      * @param s the scheme to parse
      * @return {@link Pair} consisting of

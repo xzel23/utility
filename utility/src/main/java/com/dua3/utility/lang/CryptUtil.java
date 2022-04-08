@@ -20,8 +20,9 @@ import java.security.spec.AlgorithmParameterSpec;
 /**
  * Cryptographic utilities.
  * <p>
- * Code is based on an article by Patrick Favre-Bulle.
- * https://proandroiddev.com/security-best-practices-symmetric-encryption-with-aes-in-java-7616beaaade9
+ * Code is based on an
+ * <a href="https://proandroiddev.com/security-best-practices-symmetric-encryption-with-aes-in-java-7616beaaade9">article</a>
+ * by Patrick Favre-Bulle.
  */
 @SuppressWarnings("HardcodedFileSeparator")
 public final class CryptUtil {
