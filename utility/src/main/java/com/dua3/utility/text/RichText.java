@@ -212,7 +212,7 @@ public final class RichText
      *                runs using the supplied predicate
      */
     public boolean equals(@Nullable RichText other, BiPredicate<? super Run, ? super Run> runEquals) {
-        if (other == null || other.textHash()!=textHash()) {
+        if (other == null || other.length != length || other.textHash()!=textHash()) {
             return false;
         }
         
@@ -225,6 +225,39 @@ public final class RichText
             }
         }
         return iter1.hasNext()==iter2.hasNext();
+    }
+
+    /**
+     * Check if texts and style are equal, ignoring other attributes.
+     * @param a text
+     * @param b text
+     * @return true, if a and b consist of the same characters with the same styling
+     */
+    public static boolean textAndFontEquals(@Nullable RichText a, @Nullable RichText b) {
+        if (a==null || b==null) {
+            return a==b;
+        }
+
+        if (!a.textEquals(b)) {
+            return false;
+        }
+
+        assert a.length == b.length : "a and b should have same length since textEquals() returned true";
+
+        for ( int idx=0; idx<a.length(); ) {
+            Run runA = a.runAt(idx);
+            Run runB = b.runAt(idx);
+            
+            if (!Objects.equals(runA.getFontDef(), runB.getFontDef())) {
+                return false;
+            }
+            
+            int step = Math.min(runA.getEnd() - a.start, runB.getEnd() - b.start);
+            assert step > 0;
+            idx += step;
+        }
+
+        return true;
     }
     
     /**
