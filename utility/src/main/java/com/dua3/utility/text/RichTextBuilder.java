@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 
 import java.util.ArrayDeque;
@@ -61,24 +62,52 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     @Override
-    public RichTextBuilder append(CharSequence csq) {
+    public RichTextBuilder append(@Nullable CharSequence csq) {
         buffer.append(csq);
         return this;
     }
 
     @Override
-    public Appendable append(CharSequence csq, int start, int end) {
+    public Appendable append(@Nullable CharSequence csq, int start, int end) {
         buffer.append(csq, start, end);
         return this;
     }
 
-    public RichTextBuilder append(ToRichText trt) {
-        trt.appendTo(this);
+    /**
+     * Appends the {@link ToRichText} instance to this {@code RichTextBuilder}.
+     *
+     * @param  trt
+     *         The {@link ToRichText} instance to append.  If {@code trt} is
+     *         {@code null}, then the four characters {@code "null"} are
+     *         appended to this RichTextBuilder.
+     *
+     * @return  A reference to this {@code RichTextBuilder}
+     */
+    public RichTextBuilder append(@Nullable ToRichText trt) {
+        if (trt == null) {
+            append("null");
+        } else {
+            trt.appendTo(this);
+        }
         return this;
     }
 
-    public RichTextBuilder append(RichText rt) {
-        rt.appendTo(this);
+    /**
+     * Appends the {@link RichText} instance to this {@code RichTextBuilder}.
+     *
+     * @param  rt
+     *         The {@link RichText} instance to append.  If {@code rt} is
+     *         {@code null}, then the four characters {@code "null"} are
+     *         appended to this RichTextBuilder.
+     *
+     * @return  A reference to this {@code RichTextBuilder}
+     */
+    public RichTextBuilder append(@Nullable RichText rt) {
+        if (rt == null) {
+            append("null");
+        } else {
+            rt.appendTo(this);
+        }
         return this;
     }
 
@@ -229,12 +258,21 @@ public class RichTextBuilder implements Appendable, ToRichText {
         }
     }
 
+    /**
+     * Push attribute. Remove the attribute again by calling {@link #pop(String)}.
+     * @param name attribute name
+     * @param value attribute value
+     */
     public void push(String name, Object value) {
         Objects.requireNonNull(value, "value must not be null");
         Object previousValue = split().put(name, value);
         openedAttributes.push(new AttributeChange(name, previousValue, value));
     }
 
+    /**
+     * Pop attribute that has been set using {@link #push(String, Object)}.
+     * @param name attribute name
+     */
     public void pop(String name) {
         AttributeChange change = openedAttributes.pop();
         LangUtil.check(name.equals(change.name()));
@@ -246,6 +284,10 @@ public class RichTextBuilder implements Appendable, ToRichText {
         }
     }
 
+    /**
+     * Push style. Remove the style again by calling {@link #pop(Style)}.
+     * @param style the {@link Style} to push
+     */
     @SuppressWarnings("unchecked")
     public void push(Style style) {
         List<Style> styles = (List<Style>) getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
@@ -256,10 +298,8 @@ public class RichTextBuilder implements Appendable, ToRichText {
     }
 
     /**
-     * Pop a style, i. e. stop using the style at the current position.
-     * Also see {@link #push(Style)}.
-     *
-     * @param style the Style
+     * Pop style that has been set using {@link #push(Style)}.
+     * @param style the style
      */
     public void pop(Style style) {
         pop(RichText.ATTRIBUTE_NAME_STYLE_LIST);

@@ -495,6 +495,7 @@ public final class RichText
     /**
      * @see String#trim()
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText trim() {
         int st = 0;
         int len = length;
@@ -558,6 +559,7 @@ public final class RichText
     /**
      * @see String#split(String)
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText[] split(String regex) {
         return split(regex, 0);
     }
@@ -565,6 +567,7 @@ public final class RichText
     /**
      * @see String#split(String, int)
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText[] split(String regex, int limit) {
         /* fastpath if the regex is a
          * (1) one-char String and this character is not one of the
@@ -631,6 +634,7 @@ public final class RichText
     /**
      * @see String#replaceFirst(String, String) 
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText replaceFirst(String regex, RichText replacement) {
         return matcher(Pattern.compile(regex), this).replaceFirst(replacement);
     }
@@ -638,6 +642,7 @@ public final class RichText
     /**
      * @see String#replaceFirst(String, String)
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText replaceFirst(String regex, String replacement) {
         return matcher(Pattern.compile(regex), this).replaceFirst(replacement);
     }
@@ -645,6 +650,7 @@ public final class RichText
     /**
      * @see String#replaceAll(String, String) 
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText replaceAll(String regex, RichText replacement) {
         return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }
@@ -652,6 +658,7 @@ public final class RichText
     /**
      * @see String#replaceAll(String, String)
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText replaceAll(String regex, String replacement) {
         return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }

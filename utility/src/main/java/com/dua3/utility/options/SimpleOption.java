@@ -14,6 +14,7 @@ import java.util.function.Supplier;
  * <p>
  * A simple option can be present at most once in an {@link Arguments} instance and takes exactly one parameter.
  * Its value can be queried by calling {@link Arguments#get(SimpleOption)}.
+ * @param <T> the option's argument type.
  */
 public final class SimpleOption<T> extends Option<T> {
 

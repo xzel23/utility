@@ -76,6 +76,7 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#find()}.
      */
+    @SuppressWarnings("MissingJavadoc")
     public boolean find() {
         return matcher.find();
     }
@@ -83,6 +84,7 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#find(int)}.
      */
+    @SuppressWarnings("MissingJavadoc")
     public boolean find(int start) {
         return matcher.find(start);
     }
@@ -90,6 +92,7 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#replaceFirst(String)}.
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText replaceFirst(String replacement) {
         return replace(replacement, 1);
     }
@@ -97,6 +100,7 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText replaceFirst(RichText replacement) {
         return replace(replacement, 1);
     }
@@ -104,6 +108,7 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText replaceAll(String replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }
@@ -111,6 +116,7 @@ public class RichTextMatcher implements MatchResult {
     /**
      * See {@link Matcher#replaceAll(String)}.
      */
+    @SuppressWarnings("MissingJavadoc")
     public RichText replaceAll(RichText replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }
