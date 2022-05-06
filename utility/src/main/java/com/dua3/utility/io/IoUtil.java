@@ -627,6 +627,9 @@ public final class IoUtil {
         return new ByteArrayInputStream(s.getBytes(cs));
     }
 
+    /**
+     * Combine two {@link OutputStream} instances into a single stream.
+     */
     private static class Combiner implements AutoCloseable {
 
         public final byte[] prefixA;
@@ -701,7 +704,7 @@ public final class IoUtil {
             }
         }
     }
-    
+
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     static class CleanupSystemStreams implements Runnable {
         private final PrintStream sOut;
@@ -726,7 +729,7 @@ public final class IoUtil {
      * @return AutoCloseable instance (calling close() will reset standard output streams)
      * @throws IOException if an error occurs
      */
-    public static AutoCloseable redirect(Path path, Cleaner cleaner) throws IOException {
+    public static AutoCloseable redirectStandardStreams(Path path, Cleaner cleaner) throws IOException {
         // IMPORTANT: create the cleanup object before redirecting system streams!
         Runnable cleanup = new CleanupSystemStreams();
 
