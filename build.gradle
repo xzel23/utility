@@ -9,7 +9,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '1.0-BETA2'
+        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '1.0.0-RC2'
     }
 }
 
@@ -33,7 +33,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '10-BETA26'
+    version = '10-BETA27-SNAPSHOT'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
@@ -49,7 +49,7 @@ subprojects {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         java_version = '17'
         junit_version = '5.8.2'
-        cabe_version = '1.0-BETA2'
+        cabe_version = '1.0.0-RC2'
     }
 
     sourceCompatibility = java_version
