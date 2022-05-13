@@ -9,13 +9,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '1.0.0-RC2'
+        classpath group: 'com.dua3.cabe', name: 'com.dua3.cabe.gradle.plugin', version: '1.0.0-RC3'
     }
 }
 
 plugins {
     id 'com.adarshr.test-logger' version '3.2.0' apply false
-    id 'com.github.spotbugs' version '5.0.6' apply false
+    id 'com.github.spotbugs' version '5.0.7' apply false
     id 'org.kordamp.gradle.errorprone' version '0.47.0'
     id 'com.github.ben-manes.versions' version '0.42.0'
 }
@@ -29,7 +29,7 @@ subprojects {
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.adarshr.test-logger'
     apply plugin: 'org.kordamp.gradle.errorprone'
-    apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
+    apply plugin: "com.dua3.cabe"
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
@@ -49,7 +49,7 @@ subprojects {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         java_version = '17'
         junit_version = '5.8.2'
-        cabe_version = '1.0.0-RC2'
+        cabe_version = '1.0.0-RC3'
     }
 
     sourceCompatibility = java_version
