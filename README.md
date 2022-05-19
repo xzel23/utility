@@ -131,6 +131,8 @@ When running your code with exceptions enabled, parameters are checked for inval
 - LangUtil.defaultToString()
 - rename RichText.textEquals() to equalsText()
 - add equalsTextAndFont(), equalsIgnoreCase()
+- add TextUTil.normalizeLineEnds(), TextUtil.toUnixLineEnds(), TextUtil.toWindowsLineEnds(), TextUtil.toSystemLineEnds()
+- fix unit test failures on windows
 - small fixes and improvements
 
 **The following functionality has been removed because it is available in JDK 17**:
