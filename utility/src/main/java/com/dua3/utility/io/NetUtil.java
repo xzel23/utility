@@ -57,8 +57,8 @@ public final class NetUtil {
      *                     if an I/O error occurs
      */
     public static String readContent(URL url, Charset cs) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), cs))) {
-            return reader.lines().collect(Collectors.joining("\n"));
+        try (var in = url.openStream()) {
+            return new String(in.readAllBytes(), cs);
         }
     }
 
