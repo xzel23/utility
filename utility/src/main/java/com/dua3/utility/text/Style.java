@@ -270,7 +270,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
 
     /**
      * Get Font for this style.
-     * @return Optional holding the Font if this Style's Font has been set (not if just part if the FontDef is set)
+     * @return Optional holding the Font if this Style's Font has been set (not if just part of the FontDef is set)
      */
     public Optional<Font> getFont() {
         return Optional.ofNullable((Font) get(FONT));

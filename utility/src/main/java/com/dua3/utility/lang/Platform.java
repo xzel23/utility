@@ -18,7 +18,7 @@ public enum Platform {
         public boolean isProcessBuilderQuotingNeeded(String s) {
             int len = s.length();
             if (len == 0) {
-                // empty string has to be quoted on windows
+                // empty string has to be quoted on Windows
                 return true;
             }
             
@@ -95,8 +95,8 @@ public enum Platform {
     }
 
     /**
-     * Check if current platform is MacOS.
-     * @return true if currently running under a MacOS operating system
+     * Check if current platform is macOS.
+     * @return true if currently running under a macOS operating system
      */
     public static boolean isMacOS() {
         return DETECTED == MACOS;

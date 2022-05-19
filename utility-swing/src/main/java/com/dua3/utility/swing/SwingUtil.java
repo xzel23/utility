@@ -156,7 +156,7 @@ public final class SwingUtil {
 
     /**
      * Set the Swing Look&amp;Feel to the native Look&amp;Feel.
-     * On Mac OS, the global menubar is also enabled.
+     * On macOS, the global menubar is also enabled.
      */
     public static void setNativeLookAndFeel() {
         setNativeLookAndFeel_(null);
@@ -164,7 +164,7 @@ public final class SwingUtil {
 
     /**
      * Set the Swing Look&amp;Feel to the native Look&amp;Feel.
-     * On Mac OS, the global menubar is also enabled.
+     * On macOS, the global menubar is also enabled.
      *
      * @param applicationName
      *                        the application name to set

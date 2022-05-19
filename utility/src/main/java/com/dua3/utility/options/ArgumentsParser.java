@@ -236,7 +236,7 @@ public class ArgumentsParser {
     }
 
     /**
-     * Validate the parsed option, i. e. check number of occurrences and arity.
+     * Validate the parsed option, i.e. check number of occurrences and arity.
      * @param parsedOptions the parsed options to validate
      * @throws OptionException if an error is detected
      */

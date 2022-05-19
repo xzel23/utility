@@ -923,7 +923,7 @@ public final class LangUtil {
      * @param before number of items to accept before each match
      * @param after number of items to accept after each match
      * @param <T> the element type
-     * @return a list that contains all items within a the given range before and after each match
+     * @return a list that contains all items within the given range before and after each match
      */
     public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after) {
         return surroundingItems_(list, test, before, after, null);
@@ -937,7 +937,7 @@ public final class LangUtil {
      * @param after number of items to accept after each match
      * @param placeHolder generator for placeholder items; first argument is number of items replaced, second one is current item index in original list
      * @param <T> the element type
-     * @return a list that contains all items within a the given range before and after each match
+     * @return a list that contains all items within the given range before and after each match
      */
     @SuppressWarnings("AssignmentToForLoopParameter")
     public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {

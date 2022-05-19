@@ -4,7 +4,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 /**
- * A helper interface that serves as a demultiplexer for {@link DocumentEvent}, i. e. update events received by
+ * A helper interface that serves as a demultiplexer for {@link DocumentEvent}, i.e. update events received by
  * either of the three methods {@link #insertUpdate(DocumentEvent)}, {@link #removeUpdate(DocumentEvent)}, and
  * {@link #changedUpdate(DocumentEvent)} are mapped to the single method {@link #update(DocumentEvent)}.
  */

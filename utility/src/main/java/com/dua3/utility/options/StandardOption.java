@@ -52,8 +52,8 @@ public final class StandardOption<T> extends Option<T> {
     }
 
     /**
-     * Set the number of occurrences for this option. This methods sets minimum and maximum number of occurrences to the 
-     * same value, i. e. calling {@code occurrence(n)} means the option has to be passed exactly {@code n} times.
+     * Set the number of occurrences for this option. This method sets the minimum and maximum number of occurrences to
+     * the same value, i.e. calling {@code occurrence(n)} means the option has to be passed exactly {@code n} times.
      * @param n the number of occurrences to set
      * @return the option
      */
@@ -74,8 +74,8 @@ public final class StandardOption<T> extends Option<T> {
     }
 
     /**
-     * Set the arity for this option. This methods sets minimum and maximum arity to the same
-     * value, i. e. calling {@code arity(n)} means the option takes exactly {@code n} arguments for each invocation.
+     * Set the arity for this option. This method sets the minimum and maximum arity to the same
+     * value, i.e. calling {@code arity(n)} means the option takes exactly {@code n} arguments for each invocation.
      * @param n the arity to set
      * @return the option
      */

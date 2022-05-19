@@ -80,7 +80,7 @@ public final class Run implements AttributedCharSequence {
      * Compare using a user supplied predicate for comparing TextAttributes.
      * @param other the object to compare to
      * @param attributesEquals the BiPredicate used for comparing
-     * @return result true, if obj is an instance of Run and all runs compare as equal to this instances
+     * @return result true, if obj is an instance of Run and all runs compare as equal to this instance's
      *                runs using the supplied predicate
      */
     public boolean equals(@Nullable Run other, BiPredicate<? super TextAttributes, ? super TextAttributes> attributesEquals) {

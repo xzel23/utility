@@ -68,7 +68,7 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     /**
-     * Create a choice option where strings in a list are mapped to values. 
+     * Create a choice option that maps strings in a list to values.
      * @param <T> the option type
      * @param valueMapper the mapper that maps strings to values
      * @param formatter the formatter that creates strings from values

@@ -240,7 +240,7 @@ public final class DbUtil {
         final String RESOURCE_PATH_TO_DRIVER_INFO = "META-INF/services/java.sql.Driver";
 
         try {
-            // read JDBC driver class name from meta data
+            // read JDBC driver class name from metadata
             Enumeration<URL> meta = loader.getResources(RESOURCE_PATH_TO_DRIVER_INFO);
             URL driverInfo = meta.hasMoreElements() ? meta.nextElement() : null;
             if (driverInfo == null) {

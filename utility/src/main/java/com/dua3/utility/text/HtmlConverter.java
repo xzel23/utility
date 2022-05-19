@@ -63,7 +63,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * Set the default mapper which is called when no mapper is registered for the attribute.
      * @param mapper the mapper to set as the default mapper
-     * @return HtmlConversionOption tat sets the default mapper
+     * @return HtmlConversionOption that sets the default mapper
      */
     public static HtmlConversionOption defaultMapper(BiFunction<String, Object, HtmlTag> mapper) {
         return new HtmlConversionOption(c -> c.setDefaultMapper(mapper));
@@ -250,7 +250,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * whether or not CSS output should be generated.
+     * Whether CSS output should be generated.
      */
     private boolean useCss = false;
 

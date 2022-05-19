@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 
 /**
- * Utility class for getting font properties through AWT. This class should normally not used directly by user code
+ * Utility class for getting font properties through AWT. This class should normally not be used directly by user code
  * as the functionality should be available in the {@link com.dua3.utility.text.TextUtil} utility class which
  * in turn uses this class via SPI (Java ServiceProvider interface). 
  * See usage of {@link FontUtil} in {@link com.dua3.utility.text.TextUtil} for details.

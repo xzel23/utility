@@ -208,7 +208,7 @@ public final class RichText
      * Compare using a user supplied predicate for comparing Run instances.
      * @param other the object to compare to
      * @param runEquals the BiPredicate used for comparing
-     * @return result true, if obj is an instance of RichText and all runs compare as equal to this instances
+     * @return result true, if obj is an instance of RichText and all runs compare as equal to this instance's
      *                runs using the supplied predicate
      */
     public boolean equals(@Nullable RichText other, BiPredicate<? super Run, ? super Run> runEquals) {

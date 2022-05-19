@@ -59,7 +59,7 @@ public record Vector2f(float x, float y) {
      * Create instance from coordinate values.
      * @param x the x-coordinate
      * @param y the y-coordinate
-     * @return Vector with the the components x and y 
+     * @return Vector with the components x and y
      */
     public static Vector2f of(float x, float y) {
         return new Vector2f(x,y);
@@ -69,7 +69,7 @@ public record Vector2f(float x, float y) {
      * Return result vector of componentwise maximum.
      * @param a first vector
      * @param b second vector
-     * @return Vector with the the componentwise maxima of a and b as components. 
+     * @return Vector with the componentwise maxima of a and b as components.
      */
     public static Vector2f max(Vector2f a, Vector2f b) {
         return Vector2f.of(Math.max(a.x, b.x), Math.max(a.y, b.y));
@@ -79,7 +79,7 @@ public record Vector2f(float x, float y) {
      * Return result vector of componentwise minimum.
      * @param a first vector
      * @param b second vector
-     * @return Vector with the the componentwise minima of a and b as components. 
+     * @return Vector with the componentwise minima of a and b as components.
      */
     public static Vector2f min(Vector2f a, Vector2f b) {
         return Vector2f.of(Math.min(a.x, b.x), Math.min(a.y, b.y));

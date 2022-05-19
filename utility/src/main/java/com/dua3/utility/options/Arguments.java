@@ -87,7 +87,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
 
         /**
          * Get the parameters given for this invocation of the option.
-         * @return liest of option parameters, converted to the target type
+         * @return list of option parameters, converted to the target type
          */
         public List<T> getParams() {
             return Collections.unmodifiableList(params);

@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
- * A mutable class holding font attributes to help creating immutable font
+ * A mutable class holding font attributes to help create immutable font
  * instances.
  */
 @SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode"})
