@@ -181,6 +181,7 @@ subprojects {
 
     // === sign artifacts
     signing {
+        required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
         sign publishing.publications.mavenJava
     }
 
