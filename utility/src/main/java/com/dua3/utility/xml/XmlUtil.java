@@ -1,6 +1,7 @@
 package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.text.TextUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -304,11 +305,11 @@ public final class XmlUtil {
      * @return XML for the document
      */
     public String prettyPrint(Document document) {
-        return formatNode(document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        return formatNode(document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ TextUtil.LINE_END_SYSTEM);
     }
 
     private String formatNode(Node node, String prefix) {
-        try (StringWriter writer = new StringWriter()) {
+        try (StringWriter writer = new StringWriter(64)) {
             writer.write(prefix);
             format(writer, node, StandardCharsets.UTF_8);
             return writer.toString();

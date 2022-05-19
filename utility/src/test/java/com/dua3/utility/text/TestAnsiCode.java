@@ -10,10 +10,10 @@ public class TestAnsiCode {
     @Test
     public void testStyles() {
         String actual = 
-          String.format("This is %sbold%s text%n", AnsiCode.bold(true), AnsiCode.bold(false))
-        + String.format("This is %sunderlined%s text%n", AnsiCode.underline(true), AnsiCode.underline(false))
-        + String.format("This is %sstrikethrough%s text%n", AnsiCode.strikeThrough(true), AnsiCode.strikeThrough(false))
-        + String.format("This is %sitalic%s text%n", AnsiCode.italic(true), AnsiCode.italic(false));
+          String.format("This is %sbold%s text\n", AnsiCode.bold(true), AnsiCode.bold(false))
+        + String.format("This is %sunderlined%s text\n", AnsiCode.underline(true), AnsiCode.underline(false))
+        + String.format("This is %sstrikethrough%s text\n", AnsiCode.strikeThrough(true), AnsiCode.strikeThrough(false))
+        + String.format("This is %sitalic%s text\n", AnsiCode.italic(true), AnsiCode.italic(false));
 
         System.out.println(actual);
 

@@ -309,15 +309,15 @@ public class ArgumentsParser {
     public void help(Formatter fmt) {
         // print title
         if (!name.isEmpty()) {
-            fmt.format("%n%s%n", name);
-            fmt.format("%s%n", "-".repeat(name.length()));
-            fmt.format("%n");
+            fmt.format("\n%s\n", name);
+            fmt.format("%s\n", "-".repeat(name.length()));
+            fmt.format("\n");
         }
         
         // print description
         if (!description.isEmpty()) {
-            fmt.format("%s%n", description);
-            fmt.format("%n");
+            fmt.format("%s\n", description);
+            fmt.format("\n");
         }
         
         // print command line example
@@ -326,7 +326,7 @@ public class ArgumentsParser {
             cmdText += " <options>";
         }
         cmdText += getArgText(minPositionalArgs, maxPositionalArgs);
-        fmt.format("%s%n%n", cmdText);
+        fmt.format("%s\n\n", cmdText);
         
         // print options
         options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
@@ -335,7 +335,7 @@ public class ArgumentsParser {
 
             // print option names
             for (String name: option.names()) {
-                fmt.format("    %s%s%n", name, argText);
+                fmt.format("    %s%s\n", name, argText);
             }
             
             // print option description
@@ -343,7 +343,7 @@ public class ArgumentsParser {
                 fmt.format("%s", option.description.indent(12));
             }
             
-            fmt.format("%n");
+            fmt.format("\n");
         });
     }
 
@@ -384,15 +384,15 @@ public class ArgumentsParser {
     public void errorMessage(Formatter fmt, OptionException e) {
         // print title
         if (!name.isEmpty()) {
-            fmt.format("%s%n", name);
-            fmt.format("%s%n", "-".repeat(name.length()));
-            fmt.format("%n");
+            fmt.format("%s\n", name);
+            fmt.format("%s\n", "-".repeat(name.length()));
+            fmt.format("\n");
         }
 
         // print description
         if (!description.isEmpty()) {
-            fmt.format("%s%n", description);
-            fmt.format("%n");
+            fmt.format("%s\n", description);
+            fmt.format("\n");
         }
         
         fmt.format("ERROR: %s", e.getMessage());

@@ -1,6 +1,7 @@
 package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -47,7 +48,7 @@ class XmlUtilTest {
     void prettyPrint() throws Exception {
         Document document = XML_UTIL.parse(XML_UNFORMATTED);
         String text = XML_UTIL.prettyPrint(document);
-        assertEquals(XML, text);
+        assertEquals(TextUtil.toSystemLineEnds(XML), text);
     }
 
 }

@@ -25,6 +25,7 @@ import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -666,4 +667,43 @@ public final class TextUtil {
         }
     }
 
+    /**
+     * Convert all line ends to '\n'.
+     * @param s the input string
+     * @return input string with normalized line ends
+     */
+    public static String normalizeLineEnds(String s) {
+        return setLineEnds(s, TextUtil.LINE_END_UNIX);
+    }
+
+    /**
+     * Convert all line ends to Unix convention.
+     * @param s the input string
+     * @return input string with Unix line ends
+     */
+    public static String toUnixLineEnds(String s) {
+        return setLineEnds(s, TextUtil.LINE_END_UNIX);
+    }
+
+    /**
+     * Convert all line ends to Windows convention.
+     * @param s the input string
+     * @return input string with Windows line ends
+     */
+    public static String toWindowsLineEnds(String s) {
+        return setLineEnds(s, TextUtil.LINE_END_WINDOWS);
+    }
+
+    /**
+     * Convert all line ends to system convention.
+     * @param s the input string
+     * @return input string with system line ends
+     */
+    public static String toSystemLineEnds(String s) {
+        return setLineEnds(s, TextUtil.LINE_END_SYSTEM);
+    }
+
+    private static String setLineEnds(String s, String lineEnd) {
+        return s.lines().collect(Collectors.joining(lineEnd, "", lineEnd));
+    }
 }

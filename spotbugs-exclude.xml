@@ -6,7 +6,10 @@
     <Match>
         <Bug pattern="EI_EXPOSE_REP2" />
     </Match>
-    
+    <Match>
+        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE" />
+    </Match>
+
     <!-- SecurityManager will soon be gone, so will be doPrivileged() -->
     <Match>
         <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED" />
