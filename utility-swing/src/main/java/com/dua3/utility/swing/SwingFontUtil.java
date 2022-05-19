@@ -132,7 +132,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
         String thin = "1 l";
         String thick = "M_W";
         for (String family: fonts) {
-            java.awt.Font font = new java.awt.Font(family, 0, 14);
+            java.awt.Font font = new java.awt.Font(family, java.awt.Font.PLAIN, 14);
             FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
             boolean monospaced = Objects.equals(font.getStringBounds(thin, frc), font.getStringBounds(thick, frc));
             if (mono == monospaced) {
