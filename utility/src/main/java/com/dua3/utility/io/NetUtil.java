@@ -7,9 +7,7 @@ package com.dua3.utility.io;
 
 import com.dua3.cabe.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,7 +17,6 @@ import java.net.URLStreamHandler;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Network related utility class.
