@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings("ClassWithMultipleLoggers")
+@SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
 public class TestSwingComponents extends JFrame {
 
     private static final Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + TestSwingComponents.class.getName());
