@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings({"ProhibitedExceptionThrown", "OptionalGetWithoutIsPresent"})
+@SuppressWarnings("ALL")
 class LangUtilTest {
 
     @Test
@@ -178,6 +178,7 @@ class LangUtilTest {
         Integer[] a = {1,2,3,4,5};
         Integer[] b = {1,2,3,4,5,6,7};
         Integer[] c = {1,2,0,4,5};
+        @SuppressWarnings("MismatchedReadAndWriteOfArray")
         Integer[] d = {};
 
         assertTrue(LangUtil.equals(Arrays.stream(a), Arrays.stream(a)));

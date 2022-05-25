@@ -12,6 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("ConstantConditions")
 public class RingBufferTest {
 
     private static final int CAPACITY = 10;
