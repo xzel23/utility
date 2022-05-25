@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Axel Howind
  */
-@SuppressWarnings("UnnecessaryLocalVariable")
+@SuppressWarnings({"UnnecessaryLocalVariable", "StringBufferWithoutInitialCapacity"})
 public class RichTextTest {
 
     @Test
