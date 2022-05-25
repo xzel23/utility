@@ -161,7 +161,6 @@ public final class RichText
     private final int[] runStart;
     private final Run[] run;
     
-    @SuppressWarnings("unchecked")
     RichText(Run... runs) {
         this.run = Arrays.copyOf(runs, runs.length);
         this.runStart = new int[runs.length];

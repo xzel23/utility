@@ -768,9 +768,7 @@ final class StreamSupplier<V> {
         list.add(def(InputStream.class, v -> v, StreamSupplier::outputUnsupported));
         list.add(def(OutputStream.class, StreamSupplier::inputUnsupported, v-> v));
         list.add(def(URI.class, v-> IoUtil.toURL(v).openStream(), v->Files.newOutputStream(IoUtil.toPath(v))));
-        //noinspection NullableProblems
         list.add(def(URL.class, URL::openStream, v->Files.newOutputStream(IoUtil.toPath(v))));
-        //noinspection NullableProblems
         list.add(def(Path.class, Files::newInputStream, Files::newOutputStream));
         list.add(def(File.class, v->Files.newInputStream(v.toPath()), v->Files.newOutputStream(v.toPath())));
         streamSuppliers = list;

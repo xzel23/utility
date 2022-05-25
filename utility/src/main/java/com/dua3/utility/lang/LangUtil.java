@@ -537,7 +537,6 @@ public final class LangUtil {
          * Equivalent to {@link Runnable#run()}, but may throw checked exceptions.
          * @throws E depending on override
          */
-        @SuppressWarnings("ProhibitedExceptionDeclared")
         void run() throws E;
     }
 
@@ -558,7 +557,6 @@ public final class LangUtil {
          * @return the function result
          * @throws E depending on implementation
          */
-        @SuppressWarnings("ProhibitedExceptionDeclared")
         R apply(T t) throws E;
     }
 
@@ -577,7 +575,6 @@ public final class LangUtil {
          * @param t the input argument
          * @throws E depending on implementation
          */
-        @SuppressWarnings("ProhibitedExceptionDeclared")
         void accept(T t) throws E;
 
         /**
@@ -632,7 +629,6 @@ public final class LangUtil {
          * @return a result
          * @throws E depending on implementation
          */
-        @SuppressWarnings("ProhibitedExceptionDeclared")
         T get() throws E;
     }
 
@@ -939,7 +935,6 @@ public final class LangUtil {
      * @param <T> the element type
      * @return a list that contains all items within the given range before and after each match
      */
-    @SuppressWarnings("AssignmentToForLoopParameter")
     public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         return surroundingItems_(list, test, before, after, placeHolder);
     }

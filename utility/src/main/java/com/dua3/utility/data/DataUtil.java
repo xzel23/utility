@@ -173,7 +173,6 @@ public final class DataUtil {
         // Don't rely on Boolean.valueOf(String) because it might introduce subtle bugs,
         // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw IllegalArgumentException instead.
         if (targetClass == Boolean.class && sourceClass == String.class) {
-            //noinspection ConstantConditions
             return switch (((String) value).toLowerCase(Locale.ROOT)) {
                 case "true" -> (T) Boolean.TRUE;
                 case "false" -> (T) Boolean.FALSE;

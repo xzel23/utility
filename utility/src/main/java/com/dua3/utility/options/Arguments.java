@@ -59,7 +59,6 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         final Option<T> option;
         final List<T> params;
 
-        @SuppressWarnings("unchecked")
         static Entry<?> create(Option<?> option) {
             return new Entry<>(option);
         }

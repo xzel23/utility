@@ -168,7 +168,6 @@ public class RichTextBuilder implements Appendable, ToRichText {
         return runs;
     }
 
-    @SuppressWarnings("unchecked")
     private void normalize() {
         // combine subsequent runs sharing the same attributes
         boolean first = true;
