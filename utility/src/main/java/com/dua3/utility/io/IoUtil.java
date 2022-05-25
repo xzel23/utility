@@ -723,7 +723,7 @@ public final class IoUtil {
     }
 
     /**
-     * Redirect System.out and System.err to a file
+     * Redirect {@code System.out} and {@code System.err} to a file
      * @param path path to the output file
      * @param cleaner the cleaner to register the cleanup operation (reset standard output streams)
      * @return AutoCloseable instance (calling close() will reset standard output streams)

@@ -118,8 +118,7 @@ public final class DbUtil {
      * @return
      *                               LocalDate instance or {@code null}
      * @throws IllegalStateException
-     *                               if {@code item} is neither {@code null} nor of
-     *                               any of the supported types
+     *                               if {@code item} is neither {@code null} nor of the supported types
      */
     public static LocalDate toLocalDate(@Nullable Object item) {
         if (item == null) {
@@ -146,8 +145,7 @@ public final class DbUtil {
      * @return
      *                               LocalDateTime instance or {@code null}
      * @throws IllegalStateException
-     *                               if {@code item} is neither {@code null} nor of
-     *                               any of the supported types
+     *                               if {@code item} is neither {@code null} nor of the supported types
      */
     public static LocalDateTime toLocalDateTime(@Nullable Object item) {
         if (item == null) {
@@ -174,8 +172,7 @@ public final class DbUtil {
      * @return
      *                               LocalTime instance or {@code null}
      * @throws IllegalStateException
-     *                               if {@code item} is neither {@code null} nor of
-     *                               any of the supported types
+     *                               if {@code item} is neither {@code null} nor of the supported types
      */
     public static LocalTime toLocalTime(@Nullable Object item) {
         if (item == null) {

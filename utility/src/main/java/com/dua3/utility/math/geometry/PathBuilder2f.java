@@ -143,7 +143,7 @@ public class PathBuilder2f {
 
     /**
      * Stroke the current path. 
-     * @return Path2f instance holding the constructed path
+     * @return {@link Path2f} instance holding the constructed path
      */
     public Path2f strokePath() {
         impl.addSegment(new StrokePath2f(impl, currentIndex()));
@@ -153,7 +153,7 @@ public class PathBuilder2f {
     /**
      * Fill the current path.
      * @param fillRule the {@link FillRule} to use
-     * @return Path2f instance holding the constructed path
+     * @return {@link Path2f} instance holding the constructed path
      */
     public Path2f fillPath(FillRule fillRule) {
         impl.addSegment(new FillPath2f(impl, currentIndex(), fillRule));
@@ -163,7 +163,7 @@ public class PathBuilder2f {
     /**
      * Fill and stroke the current path. 
      * @param fillRule the {@link FillRule} to use
-     * @return Path2f instance holding the constructed path
+     * @return {@link Path2f} instance holding the constructed path
      */
     public Path2f fillAndStrokePath(FillRule fillRule) {
         impl.addSegment(new FillAndStrokePath2f(impl, currentIndex(), fillRule));
@@ -173,7 +173,7 @@ public class PathBuilder2f {
     /**
      * Set clip region to the current path. 
      * @param fillRule the {@link FillRule} to use
-     * @return Path2f instance holding the constructed path
+     * @return {@link Path2f} instance holding the constructed path
      */
     public Path2f clipPath(FillRule fillRule) {
         impl.addSegment(new ClipPath2f(impl, currentIndex(), fillRule));
