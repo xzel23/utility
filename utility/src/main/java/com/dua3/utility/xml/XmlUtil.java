@@ -135,34 +135,7 @@ public final class XmlUtil {
      */
     @SuppressWarnings("MethodMayBeStatic")
     public Stream<Node> nodeStream(NodeList nodes) {
-        Spliterator<Node> spliterator = new Spliterator<>() {
-            int idx = 0;
-
-            @Override
-            public boolean tryAdvance(Consumer<? super Node> action) {
-                if (idx >= nodes.getLength()) {
-                    return false;
-                }
-                action.accept(nodes.item(idx++));
-                return true;
-            }
-
-            @Override
-            public Spliterator<Node> trySplit() {
-                return null;
-            }
-
-            @Override
-            public long estimateSize() {
-                return nodes.getLength();
-            }
-
-            @Override
-            public int characteristics() {
-                return Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.ORDERED | Spliterator.SIZED;
-            }
-        };
-        return StreamSupport.stream(spliterator, false);
+        return StreamSupport.stream(new NodeSpliterator(nodes), false);
     }
 
     /**
@@ -337,6 +310,40 @@ public final class XmlUtil {
         } catch (ParserConfigurationException e) {
             // this shouldn't happen since a DocumentBuilder has already been created in the constructor
             throw new IllegalStateException("DocumentBuilderFactory configuration error", e); 
+        }
+    }
+
+    private static class NodeSpliterator implements Spliterator<Node> {
+        private final NodeList nodes;
+        int idx;
+
+        public NodeSpliterator(NodeList nodes) {
+            this.nodes = nodes;
+            idx = 0;
+        }
+
+        @Override
+        public boolean tryAdvance(Consumer<? super Node> action) {
+            if (idx >= nodes.getLength()) {
+                return false;
+            }
+            action.accept(nodes.item(idx++));
+            return true;
+        }
+
+        @Override
+        public Spliterator<Node> trySplit() {
+            return null;
+        }
+
+        @Override
+        public long estimateSize() {
+            return nodes.getLength();
+        }
+
+        @Override
+        public int characteristics() {
+            return Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.ORDERED | Spliterator.SIZED;
         }
     }
 }
