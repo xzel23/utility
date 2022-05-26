@@ -69,7 +69,7 @@ public class JdbcDriverInfo {
     public final String urlPrefix;
     /** The URL scheme for JDBC connections used by this driver. */
     public final String urlScheme;
-    /** Linke to the vendor's driver webpage. */
+    /** Link to the vendor's driver webpage. */
     public final String link;
     /** This driver's options. */
     public final Collection<SimpleOption<?>> options;
