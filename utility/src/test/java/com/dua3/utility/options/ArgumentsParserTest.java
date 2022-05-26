@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class ArgumentsParserTest {
 
     @Test
@@ -53,6 +54,7 @@ public class ArgumentsParserTest {
         assertEquals(expected, cmd.help());
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     enum E {
         TALL, GRANDE, VENTI, TRENTA
     }
