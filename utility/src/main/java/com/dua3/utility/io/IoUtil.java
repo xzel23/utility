@@ -695,7 +695,7 @@ public final class IoUtil {
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() throws IOException {
             try {
                 flushA();
                 flushB();
