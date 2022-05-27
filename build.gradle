@@ -200,7 +200,7 @@ subprojects {
     config {
         quality {
             errorprone.setEnabled(true)
-            errorprone.setErrorProneVersion('2.12.1')
+            errorprone.setErrorProneVersion('2.13.1')
         }
     }
     
