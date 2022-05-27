@@ -29,19 +29,6 @@ public final class NetUtil {
     }
 
     /**
-     * Register a custom URLHandler that deviates all non-local URL-connections to a
-     * local path.
-     * Note: this should be called exactly once at the start of the application.
-     *
-     * @param localFiles
-     *                   A view to the local file's root.
-     */
-    public static void registerSandboxURLHandler(FileSystemView localFiles) {
-        LOG.fine(() -> "Setting SandBoxURLHandler with root %s".formatted(localFiles));
-        URL.setURLStreamHandlerFactory(new SandboxURLStreamHandlerFactory(localFiles));
-    }
-
-    /**
      * Reads a complete resource into a string.
      *
      * @param  url
