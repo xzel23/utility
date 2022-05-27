@@ -37,6 +37,7 @@ public class LineOutputStream extends OutputStream {
         }
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
     public void write(int b) {
         synchronized (lock) {

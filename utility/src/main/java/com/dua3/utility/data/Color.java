@@ -584,6 +584,7 @@ public interface Color {
      *
      * @return byte array of size 4 containing this color's components in argb order
      */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     default byte[] toByteArray() {
         int argb = argb();
         
@@ -600,6 +601,7 @@ public interface Color {
      *
      * @return byte array of size 3 containing this color's components in rgb order
      */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     default byte[] toByteArrayRGB() {
         int argb = argb();
         

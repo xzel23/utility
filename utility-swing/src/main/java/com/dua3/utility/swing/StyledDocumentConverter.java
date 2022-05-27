@@ -114,6 +114,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     private Map<Object, Function<Font, Object>> createDictionary() {
         Map<Object,Function<Font,Object>> m = new HashMap<>();
         m.put(StyleConstants.Family, Font::getFamily);
+        //noinspection NumericCastThatLosesPrecision
         m.put(StyleConstants.Size, f -> (int) Math.round(scale*f.getSizeInPoints()));
         m.put(StyleConstants.Bold, Font::isBold);
         m.put(StyleConstants.Italic, Font::isItalic);

@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
  * in turn uses this class via SPI (Java ServiceProvider interface). 
  * See usage of {@link FontUtil} in {@link com.dua3.utility.text.TextUtil} for details.
  */
+@SuppressWarnings("NumericCastThatLosesPrecision")
 public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     /**

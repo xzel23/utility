@@ -279,6 +279,7 @@ public class SwingLogPane extends JPanel {
             
             java.awt.Font font = table.getFont();
             int chars = cd.preferredCharWidth();
+            //noinspection NumericCastThatLosesPrecision
             int width = (int) Math.ceil(fu.getTextWidth("M".repeat(Math.abs(chars)), font));
             if (chars>=0) {
                 column.setPreferredWidth(width);

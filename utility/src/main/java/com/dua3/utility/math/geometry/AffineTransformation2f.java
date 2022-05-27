@@ -34,6 +34,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * @param alpha the angle in radians
      * @return affine transformation (rotation)
      */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static AffineTransformation2f rotate(double alpha) {
         float sin = (float) Math.sin(alpha);
         float cos = (float) Math.cos(alpha);

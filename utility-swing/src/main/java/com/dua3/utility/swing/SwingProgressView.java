@@ -65,6 +65,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
             SwingUtilities.invokeLater( () -> {
                 pb.setIndeterminate(false);
                 pb.setMaximum(MAX);
+                //noinspection NumericCastThatLosesPrecision
                 pb.setValue((int) (MathUtil.clamp(0, MAX, percentDone * MAX) + 0.5));
             });
         }
