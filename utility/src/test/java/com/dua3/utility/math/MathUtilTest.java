@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * @author axel
+ * A math utility class.
  */
 @SuppressWarnings("BoundedWildcard")
 public class MathUtilTest {
@@ -201,15 +201,6 @@ public class MathUtilTest {
         assertEquals(xHALF_DOWN, operations.get(RoundingMode.HALF_DOWN).applyAsDouble(x));
         assertEquals(xHALF_EVEN, operations.get(RoundingMode.HALF_EVEN).applyAsDouble(x));
         assertEquals(x, operations.get(RoundingMode.UNNECESSARY).applyAsDouble(x));
-    }
-
-    /**
-     * Test of toDecimalString method, of class MathUtil.
-     */
-    @Test
-    public void testToDecimalString() {
-        System.out.println("toDecimalString");
-        assertEquals("1.0", MathUtil.toDecimalString(1.0, 1));
     }
 
     @Test

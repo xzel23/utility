@@ -485,44 +485,6 @@ public final class MathUtil {
         };
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    public static String toDecimalString(double xm, int digits) {
-        StringBuilder sb = new StringBuilder();
-
-        // sign
-        final String sign;
-        if (xm < 0) {
-            sign = "-";
-            xm = -xm;
-        } else {
-            sign = "";
-        }
-
-        // avoid error due to imprecise decimal representation
-        final double corr = pow10(-(digits + 1));
-        xm += corr;
-
-        // integer part
-        //noinspection NumericCastThatLosesPrecision
-        final int xi = (int) round(xm, digits);
-        sb.append(xi);
-        xm -= xi;
-
-        boolean showSign = xi != 0;
-        if (digits > 0) {
-            sb.append(".");
-            int k = 10;
-            for (int i = 0; i < digits; i++) {
-                final int d = ((int) (xm * k)) % 10;
-                sb.append((char) ('0' + d));
-                k *= 10;
-                showSign |= d != 0;
-            }
-        }
-
-        return showSign ? sign + sb : sb.toString();
-    }
-
     /**
      * Utility class - private constructor.
      */
