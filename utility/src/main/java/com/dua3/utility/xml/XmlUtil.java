@@ -22,7 +22,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -158,17 +157,6 @@ public final class XmlUtil {
      */
     public org.w3c.dom.Document parse(URI uri) throws IOException, SAXException {
         return documentBuilder().parse(uri.toString());
-    }
-
-    /**
-     * Parse the content of {@code file} to {@link org.w3c.dom.Document}.
-     * @param file the file to read the XML from
-     * @return the parsed {@link org.w3c.dom.Document}
-     * @throws IOException in case of an I/O error
-     * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
-     */
-    public org.w3c.dom.Document parse(File file) throws IOException, SAXException {
-        return documentBuilder().parse(file);
     }
 
     /**

@@ -17,7 +17,6 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +33,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A class that reads data from CSV files.
+ */
 public class CsvReader extends CsvIo {
 
     /**
@@ -75,6 +77,10 @@ public class CsvReader extends CsvIo {
             // nop
         }
 
+        /**
+         * Get row data.
+         * @return list of values contained in the row
+         */
         public List<String> getRow() {
             return Collections.unmodifiableList(row);
         }
@@ -94,10 +100,6 @@ public class CsvReader extends CsvIo {
 
     public static  CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
         return new CsvReader(builder, reader, null, options);
-    }
-
-    public static  CsvReader create(RowBuilder builder, File file, Arguments options) throws IOException {
-        return create(builder, file.toPath(), options);
     }
 
     public static  CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {

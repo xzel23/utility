@@ -16,7 +16,6 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,15 +26,11 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- * @author axel@dua3.com
+ * A class that writes data in CSV format.
  */
 public class CsvWriter extends CsvIo implements Flushable {
     public static CsvWriter create(BufferedWriter writer, Arguments options) {
         return new CsvWriter(writer, options);
-    }
-
-    public static CsvWriter create(File file, Arguments options) throws IOException {
-        return create(file.toPath(), options);
     }
 
     public static CsvWriter create(Path path, Arguments options) throws IOException {
