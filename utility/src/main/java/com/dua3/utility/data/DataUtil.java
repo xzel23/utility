@@ -114,7 +114,7 @@ public final class DataUtil {
      * @return
      *  the object converted to the target class
      */
-    @SuppressWarnings("unchecked") // types are checked with isAssignable()
+    @SuppressWarnings({"unchecked", "ChainOfInstanceofChecks"}) // types are checked with isAssignable()
     public static<T> T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
         // null -> null
         if (value==null) {

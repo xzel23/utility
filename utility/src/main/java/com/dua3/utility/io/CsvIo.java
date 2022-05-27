@@ -66,6 +66,7 @@ public abstract class CsvIo implements AutoCloseable {
         this.numberFormat.setMaximumFractionDigits(15);
     }
 
+    @SuppressWarnings("ChainOfInstanceofChecks")
     protected String format(Object obj) {
         final String text;
         if (obj instanceof Number) {
