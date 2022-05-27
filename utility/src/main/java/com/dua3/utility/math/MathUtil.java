@@ -308,17 +308,17 @@ public final class MathUtil {
      * @return   ceil(log10(x))
      */
     public static int ilog10(double x) {
-        LangUtil.check(x > 0 && !Double.isInfinite(x), "Illegal argument: %f", x);
+        LangUtil.check(x > 0.0 && !Double.isInfinite(x), "Illegal argument: %f", x);
 
         if (x >= 1.0) {
             int i = 0;
-            while ((x /= 10.0) >= 1) {
+            while ((x /= 10.0) >= 1.0) {
                 i++;
             }
             return i;
         } else {
             int i = -1;
-            while ((x *= 10.0) < 1) {
+            while ((x *= 10.0) < 1.0) {
                 i--;
             }
             return i;
