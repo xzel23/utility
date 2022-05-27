@@ -122,4 +122,39 @@
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
     </Match>
 
+    <Match>
+        <Class name="com.dua3.utility.math.MathUtil" />
+        <Bug pattern="FL_FLOATS_AS_LOOP_COUNTERS" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.lang.LangUtil" />
+        <Bug pattern="THROWS_METHOD_THROWS_RUNTIMEEXCEPTION" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.lang.LangUtil" />
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.lang.LangUtil$ConsumerThrows" />
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.lang.LangUtil$FunctionThrows" />
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.lang.LangUtil$RunnableThrows" />
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.lang.LangUtil$SupplierThrows" />
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+    </Match>
+
 </FindBugsFilter>
