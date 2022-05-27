@@ -35,10 +35,12 @@ import java.util.stream.Collectors;
 
 /**
  * A class representing files of a certain type.
+ * @param <T> the type corresponding to the data contained in files of this {@link FileType} instance.
  */
 public abstract class FileType<T> implements Comparable<FileType<?>> {
 
-    private static final Set<FileType<?>> types = new HashSet<>();
+    /** Set of defined file types. */
+    private static final Set<FileType<?>> FILE_TYPES = new HashSet<>();
 
     // Load FileType  implementations
     static {
@@ -50,6 +52,13 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     private final OpenMode mode;
     private final List<String> extensions; // unmodifiable!
 
+    /**
+     * Constructor.
+     * @param name the file type name
+     * @param mode the {@link OpenMode} supported by files of this file type
+     * @param cls the implementing class
+     * @param extensions list of extensions used by files of this file type (i.e. "txt", "xls")
+     */
     protected FileType(String name, OpenMode mode, Class<? extends T> cls, String... extensions) {
         this.name = name;
         this.mode = mode;
@@ -59,20 +68,29 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     /**
      * Add file type to set of available file types.
-     *
      * @param ft  the type to add
      * @param <T> the file type's document type
      */
     protected static <T> void addType(FileType<T> ft) {
-        types.add(ft);
+        FILE_TYPES.add(ft);
     }
 
+    /**
+     * Get unmodifiable Collection of registered file types. The returned collection will be updated when new file
+     * types are registered.
+     * @return collection of the registered file types
+     */
     public static Collection<FileType<?>> fileTypes() {
-        return Collections.unmodifiableSet(types);
+        return Collections.unmodifiableSet(FILE_TYPES);
     }
 
+    /**
+     * Query file type by extension.
+     * @param ext the extension (case sensitive)
+     * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
+     */
     public static Optional<FileType<?>> forExtension(String ext) {
-        for (FileType<?> t : types) {
+        for (FileType<?> t : FILE_TYPES) {
             if (!t.isCompound() && t.extensions.contains(ext)) {
                 return Optional.of(t);
             }
@@ -80,21 +98,42 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return Optional.empty();
     }
 
+    /**
+     * Query file type by URI.
+     * @param uri the URI
+     * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
+     */
     public static Optional<FileType<?>> forUri(URI uri) {
         return forExtension(IoUtil.getExtension(uri));
     }
 
+    /**
+     * Query file type by URI and class. This method for determining the correct file type to use when data of the given
+     * class has to be written. For example when several file types support a given extension, the implementation
+     * matching the class must be chosen.
+     * @param uri the URI
+     * @param cls the class
+     * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
+     */
     public static <T> Optional<FileType<T>> forUri(URI uri, Class<T> cls) {
-        return forFileName(cls, uri.getSchemeSpecificPart());
+        return forFileName(uri.getSchemeSpecificPart(), cls);
     }
 
+    /**
+     * Query file type by path and class. This method for determining the correct file type to use when data of the given
+     * class has to be written. For example when several file types support a given extension, the implementation
+     * matching the class must be chosen.
+     * @param path the path
+     * @param cls the class
+     * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
+     */
     public static <T> Optional<FileType<T>> forPath(Path path, Class<T> cls) {
-        return forFileName(cls, String.valueOf(path.getFileName()));
+        return forFileName(String.valueOf(path.getFileName()), cls);
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> Optional<FileType<T>> forFileName(Class<T> cls, String fileName) {
-        for (FileType<?> t : types) {
+    private static <T> Optional<FileType<T>> forFileName(String fileName, Class<T> cls) {
+        for (FileType<?> t : FILE_TYPES) {
             if (t.matches(fileName) && cls.isAssignableFrom(t.getDocumentClass())) {
                 return Optional.of((FileType<T>) t);
             }
@@ -102,11 +141,31 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return Optional.empty();
     }
 
+    /**
+     * Read data. This method determines the file type according to URI and class and then reads an object from
+     * the given URI.
+     * @param uri the URI to read from
+     * @param cls the class
+     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     *         determined
+     * @param <T> the generic class parameter
+     * @throws IOException if the fily type could be determined but an error occurred while reading
+     */
     public static <T> Optional<T> read(URI uri, Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forUri(uri, cls);
         return type.isPresent() ? Optional.of(type.get().read(uri)) : Optional.empty();
     }
 
+    /**
+     * Read data. This method determines the file type according to URI and class and then reads an object from
+     * the given URI.
+     * @param path the path to read from
+     * @param cls the class
+     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     *         determined
+     * @param <T> the generic class parameter
+     * @throws IOException if the fily type could be determined but an error occurred while reading
+     */
     public static <T> Optional<T> read(Path path, Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forPath(path, cls);
         return type.isPresent() ? Optional.of(type.get().read(path)) : Optional.empty();
@@ -119,7 +178,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return the list of file types supporting the requested mode
      */
     public static List<FileType<?>> getFileTypes(OpenMode mode) {
-        List<FileType<?>> list = new ArrayList<>(types);
+        List<FileType<?>> list = new ArrayList<>(FILE_TYPES);
         list.removeIf(t -> (t.mode.n & mode.n) != mode.n);
         return list;
     }
@@ -134,7 +193,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      */
     @SuppressWarnings("unchecked")
     public static <T> List<FileType<T>> getFileTypes(OpenMode mode, Class<T> cls) {
-        return types.stream()
+        return FILE_TYPES.stream()
                 .filter(t -> t.isSupported(mode))
                 /* either reading is not requested or files of this type must be assignable to cls */
                 .filter(t -> !mode.includes(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))

@@ -5,6 +5,11 @@ package com.dua3.utility.math.geometry;
  */
 public record Dimension2f(float width, float height) {
 
+    /**
+     * Constructor.
+     * @param width the width (>= 0)
+     * @param height the height (>= 0)
+     */
     public Dimension2f {
         assert width >=0;
         assert height >=0;
