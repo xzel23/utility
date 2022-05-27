@@ -88,7 +88,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param destinationAttributes the destination map
          */
         private static void copyAttributes(Iterable<? extends Map.Entry<String, Object>> sourceAttributes, 
-                                           Map<? super String, Object> destinationAttributes) {
+                                           Map<String, Object> destinationAttributes) {
             sourceAttributes.forEach( entry -> {
                 String attribute = entry.getKey();
                 Object value = entry.getValue();
@@ -96,14 +96,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
                     // special handling if FONT is set: as FONT overrides all other font related attributes,
                     // once FONT is set it will override all subsequent font related changes until a new FONT
                     // is encountered. so filter out FONT and instead set the individual attributes.
-                    Font font = (Font) value;
-                    destinationAttributes.put(Style.FONT_TYPE, font.getFamily());
-                    destinationAttributes.put(Style.FONT_SIZE, font.getSizeInPoints());
-                    destinationAttributes.put(Style.COLOR, font.getColor());
-                    destinationAttributes.put(Style.FONT_STYLE, font.isItalic() ? Style.FONT_STYLE_VALUE_ITALIC : Style.FONT_STYLE_VALUE_NORMAL);
-                    destinationAttributes.put(Style.FONT_WEIGHT, font.isBold() ? Style.FONT_WEIGHT_VALUE_BOLD : Style.FONT_WEIGHT_VALUE_NORMAL);
-                    destinationAttributes.put(Style.TEXT_DECORATION_UNDERLINE, font.isUnderline() ? Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE : Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE);
-                    destinationAttributes.put(Style.TEXT_DECORATION_LINE_THROUGH, font.isStrikeThrough() ? Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE : Style.TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE);
+                    RichTextConverter.putFontProperties(destinationAttributes, (Font) value);
                 } else {
                     destinationAttributes.put(attribute, value);
                 }
