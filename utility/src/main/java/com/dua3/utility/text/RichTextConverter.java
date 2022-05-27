@@ -9,6 +9,11 @@ import java.util.Map;
 @FunctionalInterface
 public interface RichTextConverter<T> {
 
+    /**
+     * A font properties of to map.
+     * @param props the property map
+     * @param font the font
+     */
     static void putFontProperties(Map<String, Object> props, Font font) {
         props.put(Style.FONT_TYPE, font.getFamily());
         props.put(Style.FONT_SIZE, font.getSizeInPoints());

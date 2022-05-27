@@ -12,6 +12,13 @@ import com.dua3.utility.math.geometry.Dimension2f;
  */
 public record Rectangle2f(float x, float y, float width, float height) {
 
+    /**
+     * Constructor.
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param width the width (>= 0)
+     * @param height the height (>= 0)
+     */
     public Rectangle2f {
         assert width>=0;
         assert height>=0;
