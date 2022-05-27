@@ -104,7 +104,7 @@ public final class RichText
     }
 
     /**
-     * Get styled RichText containing an objects string representation.
+     * Get styled RichText containing an object's string representation.
      * 
      * @param obj the object to convert to RichText
      * @param styles the styles to apply
@@ -115,7 +115,7 @@ public final class RichText
     }
 
     /**
-     * Get styled RichText containing an objects string representation.
+     * Get styled RichText containing an object's string representation.
      *
      * @param obj the object to convert to RichText
      * @param styles the styles to apply

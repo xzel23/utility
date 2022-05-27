@@ -9,6 +9,12 @@ import java.lang.ref.SoftReference;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+/**
+ * A lazily loaded and cached resource. Instances are created from a supplier that creates the resource on demand
+ * when {@link #get()} is called and hold a {@link SoftReference} to it. When {@link #get()} is called the next time,
+ * the same instance is returned if it has not yet been garbage collected. Otherwise, the supplier is called again.
+ * @param <T>
+ */
 public final class SoftResource<T> {
 
     private Supplier<? extends T> supplier;
