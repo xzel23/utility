@@ -2,9 +2,13 @@ package com.dua3.utility.text;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Pair;
+import com.dua3.utility.lang.LangUtil;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -13,6 +17,8 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode"})
 public final class FontDef {
+
+    private static final Logger LOG = Logger.getLogger(FontDef.class.getName());
 
     private static final Pattern PATTERN_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?");
 
@@ -118,7 +124,9 @@ public final class FontDef {
     /**
      * Parse fontspec.
      * @param fontspec the fontspec
-     * @return FontDef instance matching fontspec 
+     * @return FontDef instance matching fontspec
+     * @throws IllegalArgumentException
+     * @throws NumberFormatException
      */
     public static FontDef parseFontspec(String fontspec) {
         String[] parts = fontspec.split("-");
@@ -151,6 +159,101 @@ public final class FontDef {
         }
 
         return fd;
+    }
+
+    /**
+     * Parse fontspec.
+     * @param fontdef the CSS font definition
+     * @return FontDef instance matching fontspec
+     */
+    public static FontDef parseCssFontDef(String fontdef) {
+        fontdef = fontdef.strip();
+
+        if (fontdef.startsWith("{") && fontdef.endsWith("}")) {
+            fontdef = fontdef.substring(1,fontdef.length()-1);
+        }
+
+        FontDef fd = new FontDef();
+
+        for (String rule: fontdef.split(";")) {
+            Pair<String,String> pair = parseCssRule(rule);
+
+            String attribute = pair.first().toLowerCase(Locale.ROOT);
+            String value = pair.second().strip();
+
+            switch (attribute) {
+                case "color" -> fd.setColor(parseColor(value));
+                case "font-size" -> fd.setSize(parseFontSize(value));
+                case "font-family" -> fd.setFamily(value);
+                case "font-weight" -> fd.setBold(parseFontWeight(value));
+                case "font-style" -> fd.setItalic(parseFontStyle(value));
+                default -> LOG.warning("unknown font attribute: "+attribute);
+            }
+        }
+
+        return fd;
+    }
+
+    private static Color parseColor(String value) {
+        return value.equalsIgnoreCase("inherit") ? null : Color.valueOf(value);
+    }
+
+    private static Boolean parseFontWeight(String value) {
+        return switch (value) {
+            case "bold" -> Boolean.TRUE;
+            case "normal" -> Boolean.FALSE;
+            case "inherit" -> null;
+            default -> throw new IllegalArgumentException("invalid value for font-weight: "+value);
+        };
+    }
+
+    private static Boolean parseFontStyle(String value) {
+        return switch (value) {
+            case "italic", "oblique" -> Boolean.TRUE;
+            case "normal" -> Boolean.FALSE;
+            case "inherit" -> null;
+            default -> throw new IllegalArgumentException("invalid value for font-style: "+value);
+        };
+    }
+
+    private static Float parseFontSize(String sz) {
+        sz = sz.strip();
+
+        float f = 1.0f;
+        if (sz.equalsIgnoreCase("inherit")) {
+            return null;
+        } else if (sz.endsWith("pt")) {
+            f = 1.0f;
+            sz = sz.substring(0, sz.length()-2);
+        } else if (sz.endsWith("em")) {
+            f = 12.0f;
+            sz = sz.substring(0, sz.length()-2);
+        } else if (sz.endsWith("px")) {
+            f = 18.0f/24.0f;
+            sz = sz.substring(0, sz.length()-2);
+        } else if (sz.endsWith("%")) {
+            f = 12.0f/100.0f;
+            sz = sz.substring(0, sz.length()-1);
+        } else if (sz.endsWith("vw")) {
+            LOG.warning("unit 'vw' unsupported, treating as 'em'");
+            f = 12.0f;
+            sz = sz.substring(0, sz.length()-2);
+        } else {
+            throw new IllegalArgumentException("invalid value for font-size: "+sz);
+        }
+
+        return f*Float.parseFloat(sz.strip());
+    }
+
+    private static Pair<String,String> parseCssRule(String rule) {
+        int splitIdx = rule.indexOf(':');
+
+        LangUtil.check(splitIdx>0, () -> new IllegalArgumentException("invalid CSS rule: "+rule));
+
+        String attribute = rule.substring(0,splitIdx).strip();
+        String value = rule.substring(splitIdx+1).strip();
+
+        return Pair.of(attribute, value);
     }
 
     /**
