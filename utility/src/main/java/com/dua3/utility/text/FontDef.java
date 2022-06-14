@@ -125,8 +125,8 @@ public final class FontDef {
      * Parse fontspec.
      * @param fontspec the fontspec
      * @return FontDef instance matching fontspec
-     * @throws IllegalArgumentException
-     * @throws NumberFormatException
+     * @throws IllegalArgumentException if the ont definition could not be parsed
+     * @throws NumberFormatException if a numeric value could not be parsed
      */
     public static FontDef parseFontspec(String fontspec) {
         String[] parts = fontspec.split("-");
@@ -219,7 +219,7 @@ public final class FontDef {
     private static Float parseFontSize(String sz) {
         sz = sz.strip();
 
-        float f = 1.0f;
+        float f;
         if (sz.equalsIgnoreCase("inherit")) {
             return null;
         } else if (sz.endsWith("pt")) {
