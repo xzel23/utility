@@ -78,7 +78,6 @@ public final class StreamUtil {
             return iters.stream().anyMatch(Iterator::hasNext);
         }
 
-        // NOT THREAD SAFE
         @Override
         public T next() {
             return iters.stream().min(this::compareNextElement).orElseThrow(NoSuchElementException::new).next();
