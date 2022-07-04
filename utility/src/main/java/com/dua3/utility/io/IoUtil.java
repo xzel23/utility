@@ -34,10 +34,8 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -742,73 +740,46 @@ public final class IoUtil {
         
         return combiner;
     }
-    
-}
 
-@SuppressWarnings("ClassNameDiffersFromFileName")
-final class StreamSupplier<V> {
-
-    @FunctionalInterface
-    interface InputStreamSupplier<C> {
-        InputStream getInputStream(C connection) throws IOException;
+    /**
+     * Create a Runnable that closes multiple {@link AutoCloseable} instances. Suppressed exceptions are added to the
+     * first exception encountered using the {@link Throwable#addSuppressed(Throwable)} method.
+     * @param closeables the {@link AutoCloseable} instances to close
+     * @return Runnable instance that closes all passed arguments when run
+     */
+    public static Runnable composedClose(AutoCloseable... closeables) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Throwable t = null;
+                for (AutoCloseable c: closeables) {
+                    try {
+                        c.close();
+                    } catch (Throwable t1) {
+                        if (t==null) {
+                            t = t1;
+                        } else {
+                            try {
+                                t.addSuppressed(t1);
+                            } catch (Throwable ignore) {}
+                        }
+                    }
+                }
+                if (t!=null) {
+                    sneakyThrow(t);
+                }
+            }
+        };
     }
 
-    @FunctionalInterface
-    interface OutputStreamSupplier<C> {
-        OutputStream getOutputStream(C connection) throws IOException;
-    }
-
-    private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
-
-    private static final List<StreamSupplier<?>> streamSuppliers;
-    
-    // complicated initialization code because Java 8 does not support List.of
-    static {
-        List<StreamSupplier<?>> list = new ArrayList<>();
-        list.add(def(InputStream.class, v -> v, StreamSupplier::outputUnsupported));
-        list.add(def(OutputStream.class, StreamSupplier::inputUnsupported, v-> v));
-        list.add(def(URI.class, v-> IoUtil.toURL(v).openStream(), v->Files.newOutputStream(IoUtil.toPath(v))));
-        list.add(def(URL.class, URL::openStream, v->Files.newOutputStream(IoUtil.toPath(v))));
-        list.add(def(Path.class, Files::newInputStream, Files::newOutputStream));
-        list.add(def(File.class, v->Files.newInputStream(v.toPath()), v->Files.newOutputStream(v.toPath())));
-        streamSuppliers = list;
-    }
-
-    private static InputStream inputUnsupported(Object o) {
-        throw new UnsupportedOperationException("InputStream creation not supported: "+o.getClass().getName());
-    }
-
-    private static OutputStream outputUnsupported(Object o) {
-        throw new UnsupportedOperationException("OutputStream creation not supported: "+o.getClass().getName());
-    }
-
-    private final Class<V> clazz;
-    private final InputStreamSupplier<V> iss;
-    private final OutputStreamSupplier<V> oss;
-
-    private StreamSupplier(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
-        this.clazz = clazz;
-        this.iss = iss;
-        this.oss = oss;
-    }
-
-    private static <V> StreamSupplier<V> def(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
-        return new StreamSupplier<>(clazz, iss, oss);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <C> StreamSupplier<? super C> supplier(C o) {
-        return streamSuppliers.stream()
-                .filter(s -> s.clazz.isInstance(o))
-                .findFirst().<StreamSupplier<? super C>>map(s -> (StreamSupplier<? super C>) s)
-                .orElse(UNSUPPORTED);
-    }
-
-    public static <C> InputStream getInputStream(C o) throws IOException {
-        return supplier(o).iss.getInputStream(o);
-    }
-
-    public static OutputStream getOutputStream(Object o) throws IOException {
-        return supplier(o).oss.getOutputStream(o);
+    /**
+     * Throw any exception circumvention language checks for declared exceptions.
+     * @param e the {@link Throwable} to throw
+     * @param <E> the generic exception type
+     * @throws E always
+     */
+    private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
+        throw (E) e;
     }
 }
+
