@@ -136,6 +136,8 @@ When running your code with exceptions enabled, parameters are checked for inval
 - add equalsTextAndFont(), equalsIgnoreCase()
 - add TextUTil.normalizeLineEnds(), TextUtil.toUnixLineEnds(), TextUtil.toWindowsLineEnds(), TextUtil.toSystemLineEnds()
 - fix unit test failures on Windows
+- StreamUtil.concat()
+- StreamUtil.merge()
 - small fixes and improvements
 
 **The following functionality has been removed because it is available in JDK 17**:
