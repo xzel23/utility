@@ -144,6 +144,10 @@ When running your code with exceptions enabled, parameters are checked for inval
 - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
 - TextUtil.hexStringToByteArray(): use HexFormat.of().parseHex()
 
+### 9.1.0
+
+- BACKPORT: StreamUtil.merge()
+
 ### 9.0.1
 
 - add HtmlConverter.inlineTextDecorations()
