@@ -5,7 +5,6 @@
 
 plugins {
     id 'com.adarshr.test-logger' version '2.1.0' apply false
-    id 'com.github.spotbugs' version '4.7.0' apply false
 }
 
 subprojects {
@@ -14,12 +13,11 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
     apply plugin: 'idea'
-    apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.adarshr.test-logger'
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.utility'
-    version = '9.0.1'
+    version = '9.1.0'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/utility.git'
     ext.repo = 'public'
@@ -219,16 +217,6 @@ subprojects {
     // === sign artifacts
     signing {
         sign publishing.publications.mavenJava
-    }
-
-    // === SPOTBUGS === >
-    spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
-
-    tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
-        reports {
-            xml.enabled false
-            html.enabled true
-        }
     }
 
 }

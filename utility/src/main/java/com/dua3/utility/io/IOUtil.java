@@ -580,6 +580,47 @@ public final class IOUtil {
         return StreamSupplier.getOutputStream(o);
     }
 
+    /**
+     * Create a Runnable that closes multiple {@link AutoCloseable} instances. Suppressed exceptions are added to the
+     * first exception encountered using the {@link Throwable#addSuppressed(Throwable)} method.
+     * @param closeables the {@link AutoCloseable} instances to close
+     * @return Runnable instance that closes all passed arguments when run
+     */
+    public static Runnable composedClose(AutoCloseable... closeables) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Throwable t = null;
+                for (AutoCloseable c: closeables) {
+                    try {
+                        c.close();
+                    } catch (Throwable t1) {
+                        if (t==null) {
+                            t = t1;
+                        } else {
+                            try {
+                                t.addSuppressed(t1);
+                            } catch (Throwable ignore) {}
+                        }
+                    }
+                }
+                if (t!=null) {
+                    sneakyThrow(t);
+                }
+            }
+        };
+    }
+
+    /**
+     * Throw any exception circumvention language checks for declared exceptions.
+     * @param e the {@link Throwable} to throw
+     * @param <E> the generic exception type
+     * @throws E always
+     */
+    private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
+        throw (E) e;
+    }
+    
 }
 
 final class StreamSupplier<V> {

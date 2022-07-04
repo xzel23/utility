@@ -21,4 +21,18 @@
         <Bug pattern="EI_EXPOSE_REP" />
     </Match>
     
+    <!-- False positive. -->
+    <Match>
+        <Class name="com.dua3.utility.io.IOUtil" />
+        <Method name="deleteRecursive" />
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+    </Match>
+    
+    <!-- Let me use that Random in test code. -->
+    <Match>
+        <Class name="com.dua3.utility.swing.TestSwingComponents" />
+        <Method name="generateThrowable" />
+        <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
+    </Match>
+    
 </FindBugsFilter>

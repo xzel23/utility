@@ -61,6 +61,10 @@ IMHO, using a logging framework in *libraries* is in most cases not necessary an
 
 ## Changes
 
+### 9.1.0
+
+ - BACKPORT: StreamUtil.merge()
+
 ### 9.0.1
 
 - add HtmlConverter.inlineTextDecorations()
