@@ -1,4 +1,13 @@
 <FindBugsFilter>
+    <!-- do not check these in test code -->
+    <Match>
+        <Source name="~.*/test/java/.*"></Source>
+        <Or>
+            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE"></Bug>
+            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"></Bug>
+        </Or>
+    </Match>
+    
     <!-- this bug pattern is currently completely broken / https://github.com/spotbugs/spotbugs/issues/1601 -->
     <Match>
         <Bug pattern="EI_EXPOSE_REP" />
@@ -155,6 +164,11 @@
     <Match>
         <Class name="com.dua3.utility.lang.LangUtil$SupplierThrows" />
         <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+    </Match>
+
+    <Match>
+        <Class name="com.dua3.utility.io.IoUtil" method="sneakyThrow"/>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE" />
     </Match>
 
 </FindBugsFilter>

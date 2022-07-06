@@ -100,6 +100,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 ### 10 (to be released)
 
 - **Java 17 required!**
+- use Kotlin DSL in gradle build scripts
 - changed module names to com.dua3.utility again
 - upgraded gradle to 7.4 for Java 17 support
 - publish snapshots to sonatype snapshot repository
