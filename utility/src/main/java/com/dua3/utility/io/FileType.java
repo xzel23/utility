@@ -113,6 +113,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * matching the class must be chosen.
      * @param uri the URI
      * @param cls the class
+     * @param <T> the generic type of this filetype's data
      * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
      */
     public static <T> Optional<FileType<T>> forUri(URI uri, Class<T> cls) {
@@ -125,6 +126,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * matching the class must be chosen.
      * @param path the path
      * @param cls the class
+     * @param <T> the generic type of this filetype's data
      * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
      */
     public static <T> Optional<FileType<T>> forPath(Path path, Class<T> cls) {

@@ -39,14 +39,18 @@ public interface IThrowable {
             cause.appendTo(app);
         }
     }
-    
+
+    /**
+     * Format this instance to a String.
+     * @return string representation
+     */
     default String format() {
         try {
             StringBuilder sb = new StringBuilder(80);
             appendTo(sb);
             return sb.toString();
         } catch (IOException e) {
-            return toString();
+            return getClass().getName()+"@"+Integer.toHexString(System.identityHashCode(this));
         }
     }
     

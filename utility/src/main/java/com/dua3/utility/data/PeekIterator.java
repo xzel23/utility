@@ -39,6 +39,11 @@ public class PeekIterator<T> implements Iterator<T> {
         return item;
     }
 
+    /**
+     * Peek next element.
+     * @return the element that will be returned when {@link #next()} is called without advancing the iterator.
+     * @throws NoSuchElementException when there are no elements left
+     */
     public T peek() {
         if (done) {
             throw new NoSuchElementException("there are no elements left");
