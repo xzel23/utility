@@ -94,7 +94,7 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
-    // === val publication: MAVEN = == >
+    // === publication: MAVEN = == >
 
     // Create the publication with the pom configuration:
     publishing {
