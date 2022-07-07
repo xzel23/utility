@@ -7,7 +7,7 @@ import java.net.URI;
 import com.adarshr.gradle.testlogger.theme.ThemeType;
 
 plugins {
-    id("java-library")
+    id("java")
     id("maven-publish")
     id("signing")
     id("idea")
@@ -18,10 +18,9 @@ plugins {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-project.group = "com.dua3.utility"
-project.version = "10.0.0-RC4-SNAPSHOT"
-
 object meta {
+    val group           = "com.dua3.utility"
+    val version         = "10.0.0-RC4" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
     val developerId     = "axh"
@@ -87,6 +86,10 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
+    tasks.compileTestJava {
+        options.encoding = "UTF-8"
+    }
+
     tasks.javadoc {
         options.encoding = "UTF-8"
     }
@@ -97,12 +100,12 @@ subprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                groupId    = project.group.toString()
+                groupId    = meta.group
                 artifactId = project.name
-                version    = version.toString()
+                version    = meta.version
 
                 from(components["java"])
-                
+
                 pom {
                     withXml {
                         val root = asNode()
@@ -110,7 +113,7 @@ subprojects {
                         root.appendNode("name", project.name)
                         root.appendNode("url", meta.scm)
                     }
-                    
+
                     licenses {
                         license {
                             name.set("MIT")
