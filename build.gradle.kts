@@ -20,7 +20,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.utility"
-    val version         = "10.0.0-RC4" 
+    val version         = "10.0.0-RC5-SNAPSHOT" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
     val developerId     = "axh"
@@ -59,11 +59,11 @@ subprojects {
     // dependencies
     dependencies {
         // Cabe (source annotations)
-        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0-RC3")
+        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0-RC4")
 
         // JUnit
         testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.8.2")
-        testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.8.2")
+        testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.8.2")
     }
 
     idea {
