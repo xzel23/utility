@@ -13,7 +13,7 @@ plugins {
     id("idea")
     id("com.github.ben-manes.versions") version "0.42.0"
     id("com.adarshr.test-logger") version "3.2.0"
-    id("com.github.spotbugs") version "5.0.8"
+    id("com.github.spotbugs") version "5.0.9"
     id("com.dua3.cabe") version "1.0.0-RC4"
 }
 
