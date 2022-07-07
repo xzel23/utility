@@ -23,6 +23,8 @@ object meta {
     val version         = "10.0.0-RC5-SNAPSHOT" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
+    val licenseName     = "MIT"
+    val licenseUrl      = "https://opensource.org/licenses/MIT"
     val developerId     = "axh"
     val developerName   = "Axel Howind"
     val developerEmail  = "axh@dua3.com"
@@ -116,8 +118,8 @@ subprojects {
 
                     licenses {
                         license {
-                            name.set("MIT")
-                            url.set("https://opensource.org/licenses/MIT")
+                            name.set(meta.licenseName)
+                            url.set(meta.licenseUrl)
                         }
                     }
                     developers {
