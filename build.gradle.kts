@@ -31,7 +31,7 @@ object meta {
 }
 /////////////////////////////////////////////////////////////////////////////
 
-val isReleaseVersion = !project.version.toString().endsWith("SNAPSHOT")
+val isReleaseVersion = !meta.version.endsWith("SNAPSHOT")
 
 subprojects {
 
