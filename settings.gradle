@@ -1,2 +1,0 @@
-rootProject.name = 'dua3-utility'
-include 'utility', 'utility-db', 'utility-swing'
