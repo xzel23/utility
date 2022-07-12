@@ -20,7 +20,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.utility"
-    val version         = "10.0.0-RC5" 
+    val version         = "10.0.0-RC6-SNAPSHOT" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
     val licenseName     = "MIT"
@@ -36,6 +36,8 @@ object meta {
 val isReleaseVersion = !meta.version.endsWith("SNAPSHOT")
 
 subprojects {
+    
+    project.setVersion(meta.version)
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
