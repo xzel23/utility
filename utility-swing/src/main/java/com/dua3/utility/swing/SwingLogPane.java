@@ -150,11 +150,12 @@ public class SwingLogPane extends JPanel {
                 added++;
             } else {
                 synchronized (buffer) {
-                    if (replaced) {
-                        fireTableRowsDeleted(0, removed);
-                    }
                     int sz = buffer.size();
-                    fireTableRowsInserted(sz - 1, sz - 1);
+                    if (replaced) {
+                        fireTableRowsUpdated(sz-1, sz-1);
+                    } else {
+                        fireTableRowsInserted(sz-1, sz-1);                     
+                    }
                 }
             }
         }
@@ -168,11 +169,13 @@ public class SwingLogPane extends JPanel {
                 added += entries.size();
             } else {
                 synchronized (buffer) {
-                    if (replaced > 0) {
-                        fireTableRowsDeleted(0, replaced);
-                    }
                     int sz = buffer.size();
-                    fireTableRowsInserted(sz - entries.size(), sz - 1);
+                    if (replaced>0) {
+                        fireTableRowsUpdated(sz-entries.size(), sz-entries.size()+replaced-1);
+                        fireTableRowsInserted(sz-entries.size()+replaced, sz - 1);
+                    } else {
+                        fireTableRowsInserted(sz - entries.size(), sz - 1);
+                    }
                 }
             }
         }

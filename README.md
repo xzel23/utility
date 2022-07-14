@@ -145,6 +145,10 @@ When running your code with exceptions enabled, parameters are checked for inval
 - TextUtil.byteArrayToHexString(): use HexFormat.of().formatHex()
 - TextUtil.hexStringToByteArray(): use HexFormat.of().parseHex()
 
+### 9.1.1
+
+- fix AIOOBE in SwingLogPane when messages come in at a high rate
+
 ### 9.1.0
 
 - BACKPORT: StreamUtil.merge()
@@ -174,6 +178,12 @@ When running your code with exceptions enabled, parameters are checked for inval
 - introduce class Dimension2d
 - changes to FontUtil interface; rename FontUtil.getTextBounds() to getTextDimension(); loadFont replaced by loadFonts()
 - introduce math.geometry package and contained classes
+
+### 8.2.2
+
+- remove bintray support
+- publish builds to GitLab Packages (private access)
+- TODO: publish to Mavencentral
 
 ### 8.2.1
 
