@@ -6,7 +6,7 @@
 /**
  * Module containing database utilities.
  */
-module com.dua3.utility.db {
+open module com.dua3.utility.db {
     exports com.dua3.utility.db;
 
     requires transitive java.sql;

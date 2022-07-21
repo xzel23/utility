@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-module com.dua3.utility {
+open module com.dua3.utility {
     exports com.dua3.utility.concurrent;
     exports com.dua3.utility.data;
     exports com.dua3.utility.io;
