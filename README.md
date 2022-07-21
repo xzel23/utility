@@ -139,6 +139,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 - fix unit test failures on Windows
 - StreamUtil.concat()
 - StreamUtil.merge()
+- Bearer interface
 - small fixes and improvements
 
 **The following functionality has been removed because it is available in JDK 17**:
