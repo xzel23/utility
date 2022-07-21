@@ -20,7 +20,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.utility"
-    val version         = "10.0.0-RC6" 
+    val version         = "10.0.0-RC7-SNAPSHOT" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
     val licenseName     = "MIT"
@@ -88,6 +88,7 @@ subprojects {
 
     tasks.compileJava {
         options.encoding = "UTF-8"
+        options.javaModuleVersion.set(provider { project.version as String })
     }
 
     tasks.compileTestJava {
