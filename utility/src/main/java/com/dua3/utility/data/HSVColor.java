@@ -47,9 +47,8 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
         }
 
         float s = max == 0 ? 0 : (max-min) / max;
-        float v = max;
 
-        return new HSVColor(h, s, v, a);
+        return new HSVColor(h, s, max, a);
     }
 
     @Override

@@ -446,11 +446,11 @@ public final class FontDef {
     
     /**
      * Run action if a value for the color property is defined.
+     *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
-     * @return true, if the action was run
      */
-    public boolean ifColorDefined(Consumer<? super Color> c) {
-        return consumeIfDefined(color, c);
+    public void ifColorDefined(Consumer<? super Color> c) {
+        consumeIfDefined(color, c);
     }
 
     /**
@@ -473,38 +473,38 @@ public final class FontDef {
 
     /**
      * Run action if a value for the bold property is defined.
+     *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
-     * @return true, if the action was run
      */
-    public boolean ifBoldDefined(Consumer<? super Boolean> c) {
-        return consumeIfDefined(bold, c);
+    public void ifBoldDefined(Consumer<? super Boolean> c) {
+        consumeIfDefined(bold, c);
     }
 
     /**
      * Run action if a value for the italic property is defined.
+     *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
-     * @return true, if the action was run
      */
-    public boolean ifItalicDefined(Consumer<? super Boolean> c) {
-        return consumeIfDefined(italic, c);
+    public void ifItalicDefined(Consumer<? super Boolean> c) {
+        consumeIfDefined(italic, c);
     }
 
     /**
      * Run action if a value for the underline property is defined.
+     *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
-     * @return true, if the action was run
      */
-    public boolean ifUnderlineDefined(Consumer<? super Boolean> c) {
-        return consumeIfDefined(underline, c);
+    public void ifUnderlineDefined(Consumer<? super Boolean> c) {
+        consumeIfDefined(underline, c);
     }
 
     /**
      * Run action if a value for the strike-through property is defined.
+     *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
-     * @return true, if the action was run
      */
-    public boolean ifStrikeThroughDefined(Consumer<? super Boolean> c) {
-        return consumeIfDefined(strikeThrough, c);
+    public void ifStrikeThroughDefined(Consumer<? super Boolean> c) {
+        consumeIfDefined(strikeThrough, c);
     }
 
     /**

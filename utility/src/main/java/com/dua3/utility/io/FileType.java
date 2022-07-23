@@ -151,7 +151,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
      *         determined
      * @param <T> the generic class parameter
-     * @throws IOException if the fily type could be determined but an error occurred while reading
+     * @throws IOException if the file type could be determined but an error occurred while reading
      */
     public static <T> Optional<T> read(URI uri, Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forUri(uri, cls);
@@ -166,7 +166,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
      *         determined
      * @param <T> the generic class parameter
-     * @throws IOException if the fily type could be determined but an error occurred while reading
+     * @throws IOException if the file type could be determined but an error occurred while reading
      */
     public static <T> Optional<T> read(Path path, Class<T> cls) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forPath(path, cls);
@@ -363,7 +363,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * which refers to both XLS and XLSX files).
      * @return if this file type is a compound file type
      */
-    @SuppressWarnings("MethodMayBeStatic")
+    @SuppressWarnings({"MethodMayBeStatic", "SameReturnValue"})
     public boolean isCompound() {
         return false;
     }

@@ -530,10 +530,10 @@ public final class RichText
     }
 
     /**
-     * Wrap {@link RichText} in style.
+     * Wrap RichText in style.
      * 
      * @param style the style
-     * @return copy of this {@link RichText} instance with style applied
+     * @return copy of this RichText instance with style applied
      */
     public RichText wrap(Style style) {
         RichTextBuilder rtb = new RichTextBuilder(length);

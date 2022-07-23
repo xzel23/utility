@@ -305,7 +305,7 @@ public final class XmlUtil {
         private final NodeList nodes;
         int idx;
 
-        public NodeSpliterator(NodeList nodes) {
+        NodeSpliterator(NodeList nodes) {
             this.nodes = nodes;
             idx = 0;
         }

@@ -63,8 +63,7 @@ public class PeekIterator<T> implements Iterator<T> {
         }
 
         if (iterator.hasNext()) {
-            T item = iterator.next();
-            current = item;
+            current = iterator.next();
             return;
         }
 

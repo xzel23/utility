@@ -563,21 +563,18 @@ public final class DataUtil {
 
     /**
      * Execute action if key is mapped. See also {@link #ifMapped(Map, Object, Consumer)}.
-     * @param map the map
-     * @param key the key
+     *
+     * @param map    the map
+     * @param key    the key
      * @param action the action
-     * @param <T> the key type
-     * @param <U> the value type
-     * @return true, if action was called
+     * @param <T>    the key type
+     * @param <U>    the value type
      */
-    public static <T,U> boolean ifPresent(Map<T,U> map, T key, Consumer<? super U> action) {
+    public static <T,U> void ifPresent(Map<T,U> map, T key, Consumer<? super U> action) {
         // we need to check using containsKey() since key may be mapped to null
-        if (!map.containsKey(key)) {
-            return false;
+        if (map.containsKey(key)) {
+            action.accept(map.get(key));
         }
-        
-        action.accept(map.get(key));
-        return true;
     }
 
     /**

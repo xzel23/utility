@@ -748,26 +748,23 @@ public final class IoUtil {
      * @return Runnable instance that closes all passed arguments when run
      */
     public static Runnable composedClose(AutoCloseable... closeables) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                Throwable t = null;
-                for (AutoCloseable c: closeables) {
-                    try {
-                        c.close();
-                    } catch (Throwable t1) {
-                        if (t==null) {
-                            t = t1;
-                        } else {
-                            try {
-                                t.addSuppressed(t1);
-                            } catch (Throwable ignore) {}
-                        }
+        return () -> {
+            Throwable t = null;
+            for (AutoCloseable c: closeables) {
+                try {
+                    c.close();
+                } catch (Throwable t1) {
+                    if (t==null) {
+                        t = t1;
+                    } else {
+                        try {
+                            t.addSuppressed(t1);
+                        } catch (Throwable ignore) {}
                     }
                 }
-                if (t!=null) {
-                    sneakyThrow(t);
-                }
+            }
+            if (t!=null) {
+                sneakyThrow(t);
             }
         };
     }

@@ -53,12 +53,13 @@ public final class StreamUtil {
     }
 
     /**
-     * Concat multiple streams. The resulting stream contains all elments from the first passed stream followed
+     * Concat multiple streams. The resulting stream contains all elements from the first passed stream followed
      * by the elements of the second passed stream, and so on.
      * @param streams the streams to concat
      * @param <T> the generic element type
-     * @return the stream creating by concatenatig elements from the argument streams
+     * @return the stream creating by concatenating elements from the argument streams
      */
+    @SafeVarargs
     public static <T> Stream<T> concat(Stream<T>... streams) {
         return Stream.of(streams).flatMap(i -> i);
     }
@@ -103,6 +104,7 @@ public final class StreamUtil {
      * @return sorted stream containing the elements of the argument streams
      * @param <T> the generic element type
      */
+    @SafeVarargs
     public static <T> Stream<T> merge(Comparator<T> comparator, Stream<T>... streams) {
         var iters = Arrays.stream(streams).map(Stream::iterator).toList();
         Iterable<T> i = () -> new MergeIterator<>(comparator, iters);
@@ -117,6 +119,7 @@ public final class StreamUtil {
      * @return sorted stream containing the elements of the argument streams
      * @param <T> the generic element type
      */
+    @SafeVarargs
     public static <T extends Comparable<T>> Stream<T> merge(Stream<T>... streams) {
         return merge(Comparator.naturalOrder(), streams);
     }
