@@ -7,7 +7,7 @@ import java.util.function.Supplier;
  * A bearer holding data, combining the {@link Supplier} and {@link Consumer} interfaces.
  * @param <T> the generic data type
  */
-interface Bearer<T> extends Consumer<T>, Supplier<T> {
+public interface Bearer<T> extends Consumer<T>, Supplier<T> {
     /**
      * Create Bearer.
      * @param get the getter
