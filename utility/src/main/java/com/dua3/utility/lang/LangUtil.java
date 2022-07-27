@@ -1043,4 +1043,18 @@ public final class LangUtil {
     public static String defaultToString(@Nullable Object o) {
         return o==null ? "null" : o.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(o));
     }
+
+    /**
+     * Select argument based on tri-state logic.
+     * @param b the tristate {@link Boolean} argument
+     * @param whenTrue return value when b is true
+     * @param whenFalse return value when b is false
+     * @param otherwise return value when b is null
+     * @return one of the parameters whenTrue, whenFalse, otherwise depending on the value of b
+     * @param <T> the generic argument type
+     */
+    public static <T> T triStateSelect(@Nullable Boolean b, T whenTrue, T whenFalse, T otherwise) {
+        return b != null ? ( b ? whenTrue : whenFalse ) : otherwise;
+    }
+    
 }

@@ -140,6 +140,8 @@ When running your code with exceptions enabled, parameters are checked for inval
 - StreamUtil.concat()
 - StreamUtil.merge()
 - Bearer interface
+- LangUtil.triStateSelect()
+- added FontDef.fontspec()
 - small fixes and improvements
 
 **The following functionality has been removed because it is available in JDK 17**:

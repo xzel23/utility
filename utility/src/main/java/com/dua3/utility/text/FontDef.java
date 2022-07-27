@@ -122,6 +122,28 @@ public final class FontDef {
     }
 
     /**
+     * Get fontspec for this FontDef instance.
+     * <p>
+     * The fontspec returned by this method will alwayys return a fontspec containing all attributes. An astgerisk ('*')
+     * is used for attributes whose values are not defined in the FintDef instance so that it is possible to reparse a
+     * fontspec into a FontDef that will be equal to the original one.
+     * @return String representation of this instance
+     */
+    public String fontspec() {
+        StringBuilder sb = new StringBuilder(64);
+
+        sb.append(Objects.requireNonNullElse(family, "*"));
+        sb.append(LangUtil.triStateSelect(bold, "-bold", "-regular", "-*"));
+        sb.append(LangUtil.triStateSelect(italic, "-italic", "-normal", "-*"));
+        sb.append(LangUtil.triStateSelect(underline, "-underline", "-none", "-*"));
+        sb.append(LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "*"));
+        sb.append('-').append(size != null ? size : "*");
+        sb.append('-').append(color != null ? color.toCss() : "*");
+
+        return sb.toString();
+    }
+
+    /**
      * Parse fontspec.
      * @param fontspec the fontspec
      * @return FontDef instance matching fontspec
@@ -142,9 +164,13 @@ public final class FontDef {
             // check for text-decoration
             switch (s) {
                 case "bold" -> fd.setBold(true);
+                case "regular" -> fd.setBold(false);
                 case "italic" -> fd.setItalic(true);
+                case "normal" -> fd.setItalic(false);
                 case "underline" -> fd.setUnderline(true);
+                case "none" -> fd.setUnderline(false);
                 case "strikethrough" -> fd.setStrikeThrough(true);
+                case "noline" -> fd.setStrikeThrough(false);
                 default -> {
                     // check for font size
                     if (PATTERN_FONT_SIZE.matcher(s).matches()) {
