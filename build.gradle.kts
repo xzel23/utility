@@ -14,13 +14,13 @@ plugins {
     id("com.github.ben-manes.versions") version "0.42.0"
     id("com.adarshr.test-logger") version "3.2.0"
     id("com.github.spotbugs") version "5.0.9"
-    id("com.dua3.cabe") version "1.0.0-RC4"
+    id("com.dua3.cabe") version "1.0.0-RC7"
 }
 
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.utility"
-    val version         = "10.0.0-RC7-SNAPSHOT" 
+    val version         = "10.0.0-RC8-SNAPSHOT" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
     val licenseName     = "MIT"
@@ -63,7 +63,7 @@ subprojects {
     // dependencies
     dependencies {
         // Cabe (source annotations)
-        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0-RC4")
+        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0-RC7")
 
         // JUnit
         testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.8.2")
@@ -95,7 +95,7 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
-    tasks.javadoc {
+    tasks.withType<Javadoc> {
         options.encoding = "UTF-8"
     }
 
