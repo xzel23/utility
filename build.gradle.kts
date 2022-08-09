@@ -14,7 +14,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.42.0"
     id("com.adarshr.test-logger") version "3.2.0"
     id("com.github.spotbugs") version "5.0.9"
-    id("com.dua3.cabe") version "1.0.0-RC7"
+    id("com.dua3.cabe") version "1.0.0"
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ subprojects {
     // dependencies
     dependencies {
         // Cabe (source annotations)
-        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0-RC7")
+        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0")
 
         // JUnit
         testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.8.2")
