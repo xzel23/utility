@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -18,6 +19,63 @@ import java.util.function.Supplier;
  */
 public class Stopwatch {
 
+    /**
+     * Create new instance.
+     * @param name the name
+     * @return new instance
+     */
+    public static Stopwatch create(String name) {
+        return new Stopwatch(name);
+    }
+
+    /**
+     * Create new instance.
+     * @param name the name supplier
+     * @return new instance
+     */
+    public static Stopwatch create(Supplier<String> name) {
+        return new Stopwatch(name);
+    }
+
+    /**
+     * Create new instance.
+     * @param name the name
+     * @param onClose the actionn to perform when close() is called
+     * @return new instance
+     */
+    public static AutoCloseableStopWatch create(String name, Consumer<Stopwatch> onClose) {
+        return new AutoCloseableStopWatch(name, onClose);
+    }
+
+    /**
+     * Create new instance.
+     * @param name the name supplier
+     * @param onClose the actionn to perform when close() is called
+     * @return new instance
+     */
+    public static AutoCloseableStopWatch create(Supplier<String> name, Consumer<Stopwatch> onClose) {
+        return new AutoCloseableStopWatch(name, onClose);
+    }
+    
+    public static class AutoCloseableStopWatch extends Stopwatch implements AutoCloseable {
+        private final Consumer<Stopwatch> onClose;
+
+        protected AutoCloseableStopWatch(String name, Consumer<Stopwatch> onClose) {
+            super(name);
+            this.onClose = onClose;
+        }
+
+        protected AutoCloseableStopWatch(Supplier<String> name, Consumer<Stopwatch> onClose) {
+            super(name);
+            this.onClose = onClose;
+        }
+        
+        @Override
+        public void close() {
+            onClose.accept(this);
+        }
+    }
+    
     /**
      * Enum defining the different output formats.
      */
@@ -145,7 +203,7 @@ public class Stopwatch {
      *
      * @param name the name for this instance; it is included in {@code toString()}
      */
-    public Stopwatch(String name) {
+    protected Stopwatch(String name) {
         this.name = Objects.requireNonNull(name);
         this.start = this.startSplit = Instant.now();
     }
