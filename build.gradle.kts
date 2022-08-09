@@ -66,8 +66,8 @@ subprojects {
         compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0")
 
         // JUnit
-        testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.8.2")
-        testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.8.2")
+        testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.9.0")
+        testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.9.0")
     }
 
     idea {
