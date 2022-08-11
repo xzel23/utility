@@ -1,8 +1,6 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.lang.WrappedException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -363,6 +361,19 @@ class LangUtilTest {
                 Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,-1),
                 LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
                         n -> n==3 || n==8, 3, 3, (count,pos) -> -count));
+
+        // assert empty list is returned if there are no matches
+        assertEquals(
+                Arrays.asList(),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                        n -> false, 2, 3));
+
+
+        // assert placeholder is returned if there are no matches and a placeholder is given
+        assertEquals(
+                Arrays.asList(99),
+                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                        n -> false, 2, 3, (count,pos) -> 99));
     }
     
     @Test
