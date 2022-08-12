@@ -97,7 +97,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ## Changes
 
-### 10 (to be released)
+### 10.0.0
 
 - **Java 17 required!**
 - use Kotlin DSL in gradle build scripts
