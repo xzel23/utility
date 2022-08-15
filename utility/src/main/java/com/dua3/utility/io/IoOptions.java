@@ -1,14 +1,13 @@
 package com.dua3.utility.io;
 
-import com.dua3.utility.options.ChoiceOption;
 import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.ChoiceOption;
 import com.dua3.utility.options.SimpleOption;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +35,7 @@ public final class IoOptions {
         return ChoiceOption.create(
                 Locale::forLanguageTag, 
                 Object::toString, 
-                () -> Arrays.asList(Locale.getAvailableLocales()),
+                () -> List.of(Locale.getAvailableLocales()),
                         "--locale")
                 .description("set locale")
                 .defaultValue(Locale::getDefault);

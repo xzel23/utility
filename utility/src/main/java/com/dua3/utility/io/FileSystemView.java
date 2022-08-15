@@ -16,7 +16,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +79,7 @@ public final class FileSystemView implements AutoCloseable {
     public static FileSystemView create(Path root, Flags... flags) throws IOException {
         Objects.requireNonNull(root);
 
-        List<Flags> flagList = Arrays.asList(flags);
+        List<Flags> flagList = List.of(flags);
         boolean createIfMissing = flagList.contains(Flags.CREATE_IF_MISSING);
 
         // determine type
@@ -117,7 +116,7 @@ public final class FileSystemView implements AutoCloseable {
      *                     if the file does not exist or an I/O error occurs
      */
     public static FileSystemView forArchive(Path root, Flags... flags) throws IOException {
-        List<Flags> flagList = Arrays.asList(flags);
+        List<Flags> flagList = List.of(flags);
 
         Map<String, String> env = new HashMap<>();
         boolean exists = Files.notExists(root);

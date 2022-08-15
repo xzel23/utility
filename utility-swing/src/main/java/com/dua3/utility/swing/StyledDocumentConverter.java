@@ -17,9 +17,9 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -38,7 +38,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @return new converter instance
      */
     public static StyledDocumentConverter create(StyledDocumentConversionOption... options)  {
-        return create(Arrays.asList(options));
+        return create(List.of(options));
     }
 
     /**

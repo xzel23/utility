@@ -6,7 +6,6 @@ import com.dua3.utility.lang.LangUtil;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Formatter;
@@ -168,7 +167,7 @@ public class ArgumentsParser {
      * @return object holding the parsed command line arguments
      */
     public Arguments parse(String... args) {
-        List<String> argList = Arrays.asList(args);
+        List<String> argList = List.of(args);
 
         Queue<Arguments.Entry<?>> parsedOptions = new ArrayDeque<>();
         List<String> positionalArgs = new ArrayList<>();

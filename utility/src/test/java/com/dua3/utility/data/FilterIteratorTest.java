@@ -1,9 +1,7 @@
 package com.dua3.utility.data;
 
-import com.dua3.utility.data.FilterIterator;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,7 +22,7 @@ class FilterIteratorTest {
 
     @Test
     public void testAllMatching() {
-        List<Integer> items = Arrays.asList(1,2,3);
+        List<Integer> items = List.of(1,2,3);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->true);
         assertTrue(fi.hasNext());
@@ -38,7 +36,7 @@ class FilterIteratorTest {
 
     @Test
     public void testNonMatching() {
-        List<Integer> items = Arrays.asList(1,2,3);
+        List<Integer> items = List.of(1,2,3);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->false);
         assertFalse(fi.hasNext());
@@ -47,7 +45,7 @@ class FilterIteratorTest {
 
     @Test
     public void testSomeMatchingFirstNonMatching() {
-        List<Integer> items = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
+        List<Integer> items = List.of(1,2,3,4,5,6,7,8,9,10);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->i%3==0);
         assertTrue(fi.hasNext());
@@ -61,7 +59,7 @@ class FilterIteratorTest {
 
     @Test
     public void testSomeMatchingFirstMatching() {
-        List<Integer> items = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
+        List<Integer> items = List.of(1,2,3,4,5,6,7,8,9,10);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->(i&1)==1);
         assertTrue(fi.hasNext());
@@ -79,7 +77,7 @@ class FilterIteratorTest {
 
     @Test
     public void testSomeMatchingLastMatching() {
-        List<Integer> items = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
+        List<Integer> items = List.of(1,2,3,4,5,6,7,8,9,10);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i->i%2==0);
         assertTrue(fi.hasNext());

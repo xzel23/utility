@@ -11,9 +11,9 @@ import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -44,7 +44,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      */
     @SafeVarargs
     public static TextAttributes of(Pair<String, ?>... entries) {
-        return of(Arrays.asList(entries));
+        return of(List.of(entries));
     }
 
     /**

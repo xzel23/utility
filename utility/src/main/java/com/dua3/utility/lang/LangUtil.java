@@ -190,7 +190,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <T> boolean isOneOf(@Nullable T arg, T... rest) {
-        return Arrays.asList(rest).contains(arg);
+        return List.of(rest).contains(arg);
     }
 
     /**
@@ -805,7 +805,7 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <E extends Enum<E>> EnumSet<E> enumSet(Class<E> clss, E... values) {
-        return enumSet(clss, Arrays.asList(values));
+        return enumSet(clss, List.of(values));
     }
 
     /**

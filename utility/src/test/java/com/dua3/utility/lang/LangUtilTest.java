@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -286,93 +287,93 @@ class LangUtilTest {
     void testSurroundingItems() {
         // assert correct items are present in output
         assertEquals(
-                Arrays.asList(7,8,9,10,11,12,16,17,18,19,20,21), 
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26), 
+                List.of(7,8,9,10,11,12,16,17,18,19,20,21), 
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26), 
                 n -> n%9==0, 2, 3));
 
         // assert position is passed correctly
         assertEquals(
-                Arrays.asList(0,7,8,9,10,11,12,-12,16,17,18,19,20,21,-21),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                List.of(0,7,8,9,10,11,12,-12,16,17,18,19,20,21,-21),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
                         n -> n%9==0, 2, 3, (count,pos) -> -pos));
 
         // assert item count is passed correctly
         assertEquals(
-                Arrays.asList(-6,7,8,9,10,11,12,-3,16,17,18,19,20,21,-5),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                List.of(-6,7,8,9,10,11,12,-3,16,17,18,19,20,21,-5),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
                         n -> n%9==0, 2, 3, (count,pos) -> -count));
 
         // assert correct items are present in output, first item matches
         assertEquals(
-                Arrays.asList(1,2,3,4,8,9,10,11,12,13,17,18,19,20,21,22),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                List.of(1,2,3,4,8,9,10,11,12,13,17,18,19,20,21,22),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
                         n -> (n+8)%9==0, 2, 3));
 
         // assert position is passed correctly, first item matches
         assertEquals(
-                Arrays.asList(1,2,3,4,-4,8,9,10,11,12,13,-13,17,18,19,20,21,22,-22),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                List.of(1,2,3,4,-4,8,9,10,11,12,13,-13,17,18,19,20,21,22,-22),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
                         n -> (n+8)%9==0, 2, 3, (count,pos) -> -pos));
 
         // assert item count is passed correctly, first item matches
         assertEquals(
-                Arrays.asList(1,2,3,4,-3,8,9,10,11,12,13,-3,17,18,19,20,21,22,-4),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                List.of(1,2,3,4,-3,8,9,10,11,12,13,-3,17,18,19,20,21,22,-4),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
                         n -> (n+8)%9==0, 2, 3, (count,pos) -> -count));
 
         // assert correct items are present in output, last item matches
         assertEquals(
-                Arrays.asList(7,8,9,10,11,12,16,17,18,19,20,21,25,26,27),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
+                List.of(7,8,9,10,11,12,16,17,18,19,20,21,25,26,27),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
                         n -> n%9==0, 2, 3));
 
         // assert position is passed correctly, last item matches
         assertEquals(
-                Arrays.asList(0,7,8,9,10,11,12,-12,16,17,18,19,20,21,-21,25,26,27),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
+                List.of(0,7,8,9,10,11,12,-12,16,17,18,19,20,21,-21,25,26,27),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
                         n -> n%9==0, 2, 3, (count,pos) -> -pos));
 
         // assert item count is passed correctly, last item matches
         assertEquals(
-                Arrays.asList(-6,7,8,9,10,11,12,-3,16,17,18,19,20,21,-3,25,26,27),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
+                List.of(-6,7,8,9,10,11,12,-3,16,17,18,19,20,21,-3,25,26,27),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
                         n -> n%9==0, 2, 3, (count,pos) -> -count));
 
         // assert correct items are present in output, multiple subsequent matches
         assertEquals(
-                Arrays.asList(3,4,5,6,7,8,9,10),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
+                List.of(3,4,5,6,7,8,9,10),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12),
                         n -> n>=5&&n<=7, 2, 3));
 
         // assert position is passed correctly, multiple subsequent matches
         assertEquals(
-                Arrays.asList(0,3,4,5,6,7,8,9,10,-10),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
+                List.of(0,3,4,5,6,7,8,9,10,-10),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12),
                         n -> n>=5&&n<=7, 2, 3, (count,pos) -> -pos));
 
         // assert item count is passed correctly, multiple subsequent matches
         assertEquals(
-                Arrays.asList(-2,3,4,5,6,7,8,9,10,-2),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
+                List.of(-2,3,4,5,6,7,8,9,10,-2),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12),
                         n -> n>=5&&n<=7, 2, 3, (count,pos) -> -count));
 
         // assert item count is passed correctly, after/before overlap
         assertEquals(
-                Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,-1),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12),
+                List.of(1,2,3,4,5,6,7,8,9,10,11,-1),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12),
                         n -> n==3 || n==8, 3, 3, (count,pos) -> -count));
 
         // assert empty list is returned if there are no matches
         assertEquals(
-                Arrays.asList(),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                List.of(),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
                         n -> false, 2, 3));
 
 
         // assert placeholder is returned if there are no matches and a placeholder is given
         assertEquals(
-                Arrays.asList(99),
-                LangUtil.surroundingItems(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                List.of(99),
+                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
                         n -> false, 2, 3, (count,pos) -> 99));
     }
     

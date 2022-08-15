@@ -7,7 +7,6 @@ package com.dua3.utility.lang;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -73,7 +72,7 @@ public class RingBuffer<E> implements Collection<E> {
     @Override
     public boolean containsAll(Collection<?> c) {
         //noinspection SlowListContainsAll
-        return Arrays.asList(toArray()).containsAll(c);
+        return List.of(toArray()).containsAll(c);
     }
 
     /**

@@ -3,9 +3,9 @@ package com.dua3.utility.options;
 import com.dua3.cabe.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -46,7 +46,7 @@ public final class ChoiceOption<T> extends Option<T> {
     @SuppressWarnings("unchecked")
     private static <E extends Enum<E>> Collection<E> enumValues(Class<? extends E> cls) {
         try {
-            return Arrays.asList((E[]) cls.getMethod("values").invoke(null));
+            return List.of((E[]) cls.getMethod("values").invoke(null));
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }

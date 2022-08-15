@@ -1,7 +1,6 @@
 package com.dua3.utility.text;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -271,7 +270,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @return converter with standard mappings
      */
     public static HtmlConverter create(HtmlConversionOption... options) {
-        return create(Arrays.asList(options));
+        return create(List.of(options));
     }
 
     /**
@@ -291,7 +290,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @return converter
      */
     public static HtmlConverter createBlank(HtmlConversionOption... options) {
-        return create(Arrays.asList(options));
+        return create(List.of(options));
     }
 
     /**

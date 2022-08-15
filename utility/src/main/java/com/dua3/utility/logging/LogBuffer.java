@@ -4,7 +4,6 @@ import com.dua3.utility.lang.RingBuffer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +18,7 @@ public class LogBuffer implements LogListener {
     /** The default capacity. */
     public static final int DEFAULT_CAPACITY = 10000;
     
-    private static final List<Function<LogEntry, Object>> DEFAULT_FORMAT_PARTS = Arrays.asList(
+    private static final List<Function<LogEntry, Object>> DEFAULT_FORMAT_PARTS = List.of(
             LogEntry::time,
             e -> " ",
             LogEntry::category,
@@ -112,7 +111,7 @@ public class LogBuffer implements LogListener {
 
     public List<LogEntry> entries() {
         synchronized(buffer) {
-            return Arrays.asList(buffer.toArray(LogEntry[]::new));
+            return List.of(buffer.toArray(LogEntry[]::new));
         }
     }
 
@@ -146,7 +145,7 @@ public class LogBuffer implements LogListener {
 
     @SafeVarargs
     public final void appendTo(Appendable app, Function<LogEntry, Object>... parts) throws IOException {
-        appendTo(app, Arrays.asList(parts));
+        appendTo(app, List.of(parts));
     }
     
     public void appendTo(Appendable app) throws IOException {

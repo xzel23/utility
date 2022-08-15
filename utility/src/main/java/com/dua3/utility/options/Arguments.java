@@ -2,7 +2,6 @@ package com.dua3.utility.options;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +30,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return new instance
      */
     public static Arguments of(Entry<?>... args) {
-        return new Arguments(new ArrayDeque<>(Arrays.asList(args)), Collections.emptyList());
+        return new Arguments(new ArrayDeque<>(List.of(args)), Collections.emptyList());
     }
 
     /**
