@@ -17,7 +17,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -68,7 +67,6 @@ public class TestSwingComponents extends JFrame {
         constraints.weightx = 1;
         add(progress, constraints);
 
-        HashMap<Level,Integer> counter = new HashMap<>();
         progress.start("Logging");
 
         // -- Spacer
@@ -140,6 +138,7 @@ public class TestSwingComponents extends JFrame {
                             case 3 -> JUL_LOGGER.info(msg);
                             case 4 -> JUL_LOGGER.warning(msg);
                             case 5 -> JUL_LOGGER.log(Level.SEVERE, msg, generateThrowable());
+                            default -> throw new IllegalStateException("integer out of range");
                         }
                         break;
                         
