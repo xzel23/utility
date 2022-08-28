@@ -1,7 +1,9 @@
 package com.dua3.utility.lang;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Locale;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -48,7 +50,7 @@ public enum Platform {
     /** Unknown operating system. */
     UNKNOWN;
 
-    private static final Logger LOG = Logger.getLogger(Platform.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(Platform.class);
     private static final Platform DETECTED = determinePlatform();
 
     private static Platform determinePlatform() {
@@ -65,7 +67,7 @@ public enum Platform {
             platform = Platform.UNKNOWN;
         }
         
-        LOG.fine(() -> "platform identified as: "+platform);
+        LOG.debug("platform identified as: {}", platform);
         
         return platform;
     }

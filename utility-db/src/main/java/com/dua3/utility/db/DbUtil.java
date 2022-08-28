@@ -12,6 +12,8 @@ import com.dua3.utility.io.IoOptions;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -36,8 +38,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Database utility class.
@@ -48,7 +48,7 @@ public final class DbUtil {
     }
 
     /** Logger instance. */
-    private static final Logger LOG = Logger.getLogger(DbUtil.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(DbUtil.class);
 
     /** List of know JDBC drivers. */
     private static final SortedMap<String, JdbcDriverInfo> drivers = new TreeMap<>();
@@ -92,7 +92,7 @@ public final class DbUtil {
                 }
             });
         } catch (IOException e) {
-            LOG.log(Level.WARNING, "could not load JDBC driver data", e);
+            LOG.warn("could not load JDBC driver data", e);
         }
 
     }
@@ -207,7 +207,7 @@ public final class DbUtil {
      */
     public static Optional<? extends java.sql.Driver> loadDriver(URL... urls)
             throws ClassNotFoundException, SQLException {
-        LOG.fine(() -> "loadDriver() - URLs: " + Arrays.toString(urls));
+        LOG.atDebug().setMessage(() -> "loadDriver() - URLs: {}" + Arrays.toString(urls)).log();
         return loadDriver(new URLClassLoader(urls));
     }
 
@@ -243,12 +243,12 @@ public final class DbUtil {
             Enumeration<URL> meta = loader.getResources(RESOURCE_PATH_TO_DRIVER_INFO);
             URL driverInfo = meta.hasMoreElements() ? meta.nextElement() : null;
             if (driverInfo == null) {
-                LOG.warning(RESOURCE_PATH_TO_DRIVER_INFO + " not found.");
+                LOG.warn(RESOURCE_PATH_TO_DRIVER_INFO + " not found.");
                 return Optional.empty();
             }
             if (meta.hasMoreElements()) {
-                LOG.warning(() -> "more than one entries found, which one gets loaded is undefined: "
-                        + RESOURCE_PATH_TO_DRIVER_INFO);
+                LOG.warn("more than one entries found, which one gets loaded is undefined: {}",
+                        RESOURCE_PATH_TO_DRIVER_INFO);
             }
             String driverClassName = IoUtil.read(driverInfo, StandardCharsets.UTF_8).trim();
 
@@ -256,14 +256,14 @@ public final class DbUtil {
             Class<?> cls = loader.loadClass(driverClassName);
 
             if (!java.sql.Driver.class.isAssignableFrom(cls)) {
-                LOG.warning(cls.getName() + " does not implement java.sql.Driver: ");
+                LOG.warn("{} does not implement java.sql.Driver", cls.getName());
                 return Optional.empty();
             }
 
             @SuppressWarnings("unchecked") // type is checked above
             Class<? extends java.sql.Driver> driverClass = (Class<? extends java.sql.Driver>) cls;
 
-            LOG.fine(() -> "loaded driver class " + driverClass.getName());
+            LOG.debug("loaded driver class: {}", driverClass.getName());
 
             try {
                 Driver driver = driverClass.getConstructor().newInstance();

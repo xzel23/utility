@@ -9,6 +9,8 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -45,15 +47,13 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Utility methods for Swing applications.
  */
 public final class SwingUtil {
     /** Logger instance. */
-    private static final Logger LOG = Logger.getLogger(SwingUtil.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SwingUtil.class);
 
     /**
      * Create an action to be used in menus.
@@ -189,7 +189,7 @@ public final class SwingUtil {
             UIManager.setLookAndFeel(lafName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException e) {
-            LOG.log(Level.WARNING, "Could not set Look&Feel.", e);
+            LOG.warn("Could not set Look&Feel.", e);
         }
     }
 
@@ -348,7 +348,7 @@ public final class SwingUtil {
         try {
             file = current.toFile().getAbsoluteFile();
         } catch (UnsupportedOperationException|SecurityException e) {
-            LOG.log(Level.WARNING, "path cannot be converted to file: " + current, e);
+            LOG.warn("path cannot be converted to file: " + current, e);
             file = new File(".").getAbsoluteFile();
         }
 

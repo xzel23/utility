@@ -6,6 +6,8 @@
 package com.dua3.utility.io;
 
 import com.dua3.cabe.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -16,13 +18,12 @@ import java.net.URLDecoder;
 import java.net.URLStreamHandler;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
 
 /**
  * Network related utility class.
  */
 public final class NetUtil {
-    private static final Logger LOG = Logger.getLogger(NetUtil.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(NetUtil.class);
 
     private NetUtil() {
         // nop: utility class

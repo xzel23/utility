@@ -1,10 +1,10 @@
 package com.dua3.utility.swing;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.logging.Category;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.math.MathUtil;
+import org.slf4j.event.Level;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -53,14 +53,13 @@ public class SwingLogPane extends JPanel {
     private final Function<LogEntry, Color> colorize;
     private final JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
-    private Function<LogEntry, String> format = LogEntry::format;
+    private Function<LogEntry, String> format = LogEntry::formatMessage;
     private double dividerLocation = 0.5;
 
     private static Color defaultColorize(LogEntry entry) {
-        return switch (entry.category()) {
-            case FATAL -> Color.DARKRED;
-            case SEVERE -> Color.RED;
-            case WARNING -> Color.DARKORANGE;
+        return switch (entry.level()) {
+            case ERROR -> Color.DARKRED;
+            case WARN -> Color.RED;
             case INFO -> Color.DARKBLUE;
             case DEBUG -> Color.BLACK;
             case TRACE -> Color.DARKGRAY;
@@ -133,12 +132,12 @@ public class SwingLogPane extends JPanel {
 
         @Override
         public String getColumnName(int column) {
-            return COLUMNS[column].field().toString();
+            return COLUMNS[column].field().name();
         }
 
         @Override
         public Class<?> getColumnClass(int columnIndex) {
-            return LogEntry.Field.class;
+            return LogEntryField.class;
         }
 
         @Override
@@ -193,10 +192,45 @@ public class SwingLogPane extends JPanel {
 
     }
 
+    static enum LogEntryField {
+        LOGGER {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.logger().getName();
+            }
+        },
+        TIME {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.time().toString();
+            }
+        },
+        LEVEL {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.level().name();
+            }
+        },
+        MESSAGE {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.formatMessage();
+            }
+        },
+        THROWABLE {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.throwable().toString();
+            }
+        };
+        
+        public abstract String get(LogEntry entry);
+    }
+    
     private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
-        private final LogEntry.Field f;
+        private final LogEntryField f;
 
-        private LogEntryFieldCellRenderer(LogEntry.Field f) {
+        private LogEntryFieldCellRenderer(LogEntryField f) {
             this.f = f;
         }
 
@@ -207,7 +241,7 @@ public class SwingLogPane extends JPanel {
             Object v;
             if (value instanceof LogEntry entry) {
                 color = SwingUtil.toAwtColor(colorize.apply(entry));
-                v = entry.get(f);
+                v = f.get(entry);
             } else {
                 color = java.awt.Color.BLACK;
                 v = value;
@@ -234,13 +268,13 @@ public class SwingLogPane extends JPanel {
         }
     }
     
-    private record Column(LogEntry.Field field, int preferredCharWidth, boolean hideable) {}
+    private record Column(LogEntryField field, int preferredCharWidth, boolean hideable) {}
     
     private static final Column[] COLUMNS = {
-            new Column(LogEntry.Field.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
-            new Column(LogEntry.Field.LEVEL, -"WARNING".length(), true),
-            new Column(LogEntry.Field.LOGGER, "com.example.class".length(), true),
-            new Column(LogEntry.Field.MESSAGE, 80, false)
+        new Column(LogEntryField.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
+        new Column(LogEntryField.LOGGER, "com.example.class".length(), true),
+        new Column(LogEntryField.LEVEL, -"ERROR".length(), true),
+        new Column(LogEntryField.MESSAGE, 80, false)
     };
     
     public SwingLogPane(LogBuffer buffer) {
@@ -354,10 +388,10 @@ public class SwingLogPane extends JPanel {
 
         // add filtering based on level
         toolBar.add(new JLabel("Min Level:"));
-        JComboBox<Category> cbCategory = new JComboBox<>(Category.values());
-        toolBar.add(cbCategory);
-        cbCategory.addItemListener(a -> setFilter((Category) a.getItem()));
-        cbCategory.setSelectedItem(Category.INFO);
+        JComboBox<Level> cbLevel = new JComboBox<>(Level.values());
+        toolBar.add(cbLevel);
+        cbLevel.addItemListener(a -> setFilter((Level) a.getItem()));
+        cbLevel.setSelectedItem(Level.INFO);
 
         // checkbox for text only
         toolBar.add(new JSeparator(JSeparator.VERTICAL));
@@ -403,12 +437,12 @@ public class SwingLogPane extends JPanel {
         }
     }
 
-    private void setFilter(Category c) {
+    private void setFilter(Level c) {
         tableRowSorter.setRowFilter(new RowFilter<>() {
             @Override
             public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
                 LogEntry value = (LogEntry) entry.getValue(0);
-                return value == null || value.category().compareTo(c) <= 0;
+                return value == null || value.level().compareTo(c) <= 0;
             }
         });
     }

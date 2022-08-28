@@ -6,6 +6,8 @@
 package com.dua3.utility.db;
 
 import com.dua3.cabe.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -43,8 +45,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -85,7 +85,7 @@ import java.util.logging.Logger;
  */
 public class NamedParameterStatement implements AutoCloseable {
     /** Logger instance. */
-    private static final Logger LOG = Logger.getLogger(NamedParameterStatement.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(NamedParameterStatement.class);
 
     /** The statement this object is wrapping. */
     private final PreparedStatement statement;
@@ -213,12 +213,12 @@ public class NamedParameterStatement implements AutoCloseable {
         try {
             addParameterInfo();
         } catch (SQLException e) {
-            LOG.log(Level.WARNING, "could not get parameter info for PreparedStatement", e);
+            LOG.warn("could not get parameter info for PreparedStatement", e);
         } catch (UnsupportedOperationException e) {
-            LOG.log(Level.WARNING, "could not get parameter info for PreparedStatement (unsupported operation)", e);
+            LOG.warn("could not get parameter info for PreparedStatement (unsupported operation)", e);
         } catch (IllegalStateException e) {
-            LOG.log(Level.WARNING, "could not get parameter info for PreparedStatement (conflicting types for the same parameter)", e);
-        }     
+            LOG.warn("could not get parameter info for PreparedStatement (conflicting types for the same parameter)", e);
+        }
     }
     
     private static boolean showUnknownParameterTypeAsWarning = true;
@@ -232,10 +232,10 @@ public class NamedParameterStatement implements AutoCloseable {
             // [SPR-13825] Oracle 12c JDBC driver throws inconsistent exception from
             // getParameterType (affecting setNull calls)
             if (showUnknownParameterTypeAsWarning) {
-                LOG.log(Level.WARNING, "Could not determine parameter types");
+                LOG.warn("Could not determine parameter types");
                 showUnknownParameterTypeAsWarning = false;
             } else {
-                LOG.log(Level.FINE, "(REPEAT) Could not determine parameter types");
+                LOG.debug("(REPEAT) Could not determine parameter types");
             }
             return null;
         }

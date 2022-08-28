@@ -19,4 +19,6 @@ open module com.dua3.utility.swing {
     requires java.logging;
     
     requires static com.dua3.cabe.annotations;
+    requires org.slf4j;
+    requires com.dua3.utility.logging;
 }

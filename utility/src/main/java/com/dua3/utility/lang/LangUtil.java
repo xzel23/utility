@@ -8,6 +8,8 @@ package com.dua3.utility.lang;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -49,7 +51,6 @@ import java.util.function.IntFunction;
 import java.util.function.LongFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -57,7 +58,7 @@ import java.util.stream.Stream;
  */
 public final class LangUtil {
 
-    private static final Logger LOG = Logger.getLogger(LangUtil.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LangUtil.class);
 
     // private constructor for utility class
     private LangUtil() {
@@ -902,13 +903,13 @@ public final class LangUtil {
         for (int i=candidates.size()-1; i>=0; i--) {
             URL url = cls.getResource(candidates.get(i));
             if (url!=null) {
-                LOG.fine(() -> "requested resource '"+name+"', localised resource found: "+url);
+                LOG.debug("requested resource '{}', localised resource found: {}", name, url);
                 return url;
             }
         }
         
         // nothing found
-        LOG.warning(() ->"resource '" + name + "' not found. candidates: " + candidates);
+        LOG.warn("resource '{}' not found. candidates: {}", name, candidates);
         throw new MissingResourceException("Resource not found: " + name, cls.getName(), name);
     }
 

@@ -1,9 +1,11 @@
 package com.dua3.utility.db;
 
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.SimpleOption;
-import com.dua3.utility.data.Pair;
 import com.dua3.utility.text.TextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,8 +17,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  */
 public class JdbcDriverInfo {
 
-    private static final Logger LOG = Logger.getLogger(JdbcDriverInfo.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcDriverInfo.class);
 
     /**
      * Identifier String for the option type.
@@ -151,7 +151,7 @@ public class JdbcDriverInfo {
         String old = arguments.put(arg, val);
         //noinspection VariableNotUsedInsideIf
         if (old != null) {
-            LOG.log(Level.WARNING, () -> String.format(Locale.ROOT,"while parsing option string: multiple values for argument '%s'", arg));
+            LOG.warn("while parsing option string: multiple values for argument '{}'", arg);
         }
     }
 

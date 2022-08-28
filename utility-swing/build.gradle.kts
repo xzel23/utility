@@ -2,6 +2,9 @@ project.description = "Java utilities (swing)"
 
 dependencies {
     implementation(project(":utility"))
-
-    testImplementation(group = "org.apache.logging.log4j", name = "log4j-core", version = "2.18.0")
+    compileOnly(project(":utility-logging"))
+    
+    testImplementation(project(":utility-logging"))
+    testImplementation("org.apache.logging.log4j:log4j-core:2.18.0")
+    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.18.0")
 }

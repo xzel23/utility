@@ -5,8 +5,6 @@
 
 package com.dua3.utility.lang;
 
-import com.dua3.utility.logging.LogUtil;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
@@ -292,7 +290,7 @@ public class Stopwatch {
      */
     public Supplier<String> logElapsed(Format fmt) {
         Instant instant = Instant.now();
-        return LogUtil.formatLazy(() -> fmt.format(Duration.between(start, instant)));
+        return () -> fmt.format(Duration.between(start, instant));
     }
 
     /**
@@ -304,6 +302,6 @@ public class Stopwatch {
     public Supplier<String> logElapsedSplit(Format fmt, boolean newSplit) {
         Instant startOfSplit = startSplit;
         Instant instant = Instant.now();
-        return LogUtil.formatLazy(() -> fmt.format(Duration.between(startOfSplit, instant)));
+        return () -> fmt.format(Duration.between(startOfSplit, instant));
     }
 }

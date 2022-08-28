@@ -1,11 +1,12 @@
 package com.dua3.utility.lang;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patchLevel, String separator, String suffix) {
 
-    private static final Logger LOG = Logger.getLogger(BuildInfo.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(BuildInfo.class);
     
     /**
      * Key to use for the build version in properties files.
@@ -50,7 +51,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
 
         BuildInfo buildInfo = new BuildInfo(buildTime, major, minor, patch, separator, suffix);
         
-        LOG.fine(() -> "BuildInfo: "+buildInfo);
+        LOG.debug("BuildInfo: {}", buildInfo);
         
         return buildInfo;
     }
@@ -76,7 +77,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
         try (in) {
             return create(LangUtil.loadProperties(in));
         } catch (Exception e) {
-            LOG.log(Level.WARNING, "could not load build properties", e);
+            LOG.warn("could not load build properties", e);
             throw new IllegalStateException("could not load build properties", e);
         }
     }

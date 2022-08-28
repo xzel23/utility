@@ -1,11 +1,13 @@
-package com.dua3.utility.swing;
+package com.dua3.utility.swing.test;
 
 import com.dua3.utility.concurrent.ProgressTracker;
-import com.dua3.utility.logging.JULAdapter;
-import com.dua3.utility.logging.Log4jAdapter;
 import com.dua3.utility.logging.LogBuffer;
-import com.dua3.utility.logging.SystemAdapter;
+import com.dua3.utility.swing.SwingLogPane;
+import com.dua3.utility.swing.SwingProgressView;
+import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
@@ -15,17 +17,16 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
 public class TestSwingComponents extends JFrame {
 
-    private static final Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + TestSwingComponents.class.getName());
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + TestSwingComponents.class.getName());
+    private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + TestSwingComponents.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = LogManager.getLogger("LOG4J."+TestSwingComponents.class.getName());
 
     public static final int SLEEP_MILLIS = 10;
@@ -36,8 +37,7 @@ public class TestSwingComponents extends JFrame {
     private final AtomicInteger n = new AtomicInteger();
 
     public static void main(String[] args) {
-        JUL_LOGGER.setLevel(Level.ALL);
-        JUL_LOGGER.info("starting up");
+        LOG.info("starting up");
 
         SwingUtil.setNativeLookAndFeel();
         
@@ -56,10 +56,8 @@ public class TestSwingComponents extends JFrame {
     }
 
     private void init() {
-        final Level[] levels = { Level.FINER, Level.FINE, Level.INFO, Level.WARNING, Level.SEVERE};
-
         // -- SwingProcessView
-        SwingProgressView<Level> progress = new SwingProgressView<>();
+        SwingProgressView<String> progress = new SwingProgressView<>();
         int max = 200;
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -71,8 +69,7 @@ public class TestSwingComponents extends JFrame {
         add(progress, constraints);
 
         HashMap<Level,Integer> counter = new HashMap<>();
-        Arrays.stream(levels).forEach(lvl -> { counter.put(lvl, 0); progress.start(lvl); });
-        progress.start(Level.OFF);
+        progress.start("Logging");
 
         // -- Spacer
         constraints = new GridBagConstraints();
@@ -87,10 +84,12 @@ public class TestSwingComponents extends JFrame {
         // -- SwingLogPane
 
         // setup logging
-        LogBuffer buffer = new LogBuffer();
-        JULAdapter.addListener(buffer);
-        Log4jAdapter.addListener(buffer);
-        SystemAdapter.addSystemListener(buffer);
+        ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
+        if (!(loggerFactory instanceof com.dua3.utility.logging.LoggerFactory)) {
+            throw new IllegalStateException("wrong logging implementaion!");
+        }
+        LogBuffer buffer = ((com.dua3.utility.logging.LoggerFactory) loggerFactory).getLogBuffer()
+                .orElseThrow(() -> new IllegalStateException("buffer not configured"));
 
         // create the log pane
         SwingLogPane logPane = new SwingLogPane(buffer);
@@ -119,27 +118,41 @@ public class TestSwingComponents extends JFrame {
                 }
 
                 int nr = n.incrementAndGet();
+                String msg = "Message "+nr+".";
                 
-                if (random.nextBoolean()) {
-                    String msg = String.format("Message %d.", nr);
-                    Level level = levels[random.nextInt(levels.length)];
-                    if (level.equals(Level.SEVERE)) {
-                        JUL_LOGGER.log(level, msg, generateThrowable());
-                    } else {
-                        JUL_LOGGER.log(level, msg);
-                    }
-                    progress.update(level, max, counter.compute(level, (lvl, old) -> Math.min(old+1, max)));
-                } else {
-                    String msg = "Message {}.";
-                    Object[] args = { nr };
-                    switch (random.nextInt(5)) {
-                        case 0 -> LOG4J_LOGGER.trace(msg, args);
-                        case 1 -> LOG4J_LOGGER.debug(msg, args);
-                        case 2 -> LOG4J_LOGGER.info(msg, args);
-                        case 3 -> LOG4J_LOGGER.warn(msg, args);
-                        case 4 -> LOG4J_LOGGER.error("Ouch! this is message " + nr + ".", generateThrowable());
-                        default -> throw new IllegalStateException("integer out of range");
-                    }
+                switch(random.nextInt(3)) {
+                    case 0:
+                        switch (random.nextInt(5)) {
+                            case 0 -> LOG.trace(msg);
+                            case 1 -> LOG.debug(msg);
+                            case 2 -> LOG.info(msg);
+                            case 3 -> LOG.warn(msg);
+                            case 4 -> LOG.error(msg, generateThrowable());
+                            default -> throw new IllegalStateException("integer out of range");
+                        }
+                        break;
+
+                    case 1:
+                        switch (random.nextInt(6)) {
+                            case 0 -> JUL_LOGGER.finest(msg);
+                            case 1 -> JUL_LOGGER.finer(msg);
+                            case 2 -> JUL_LOGGER.fine(msg);
+                            case 3 -> JUL_LOGGER.info(msg);
+                            case 4 -> JUL_LOGGER.warning(msg);
+                            case 5 -> JUL_LOGGER.log(Level.SEVERE, msg, generateThrowable());
+                        }
+                        break;
+                        
+                    case 2: 
+                        switch (random.nextInt(5)) {
+                            case 0 -> LOG4J_LOGGER.trace(msg);
+                            case 1 -> LOG4J_LOGGER.debug(msg);
+                            case 2 -> LOG4J_LOGGER.info(msg);
+                            case 3 -> LOG4J_LOGGER.warn(msg);
+                            case 4 -> LOG4J_LOGGER.error(msg, generateThrowable());
+                            default -> throw new IllegalStateException("integer out of range");
+                        }
+                        break;
                 }
 
                 int current = n.get();
@@ -158,7 +171,7 @@ public class TestSwingComponents extends JFrame {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            progress.finish(Level.OFF, ProgressTracker.State.COMPLETED_SUCCESS);
+            progress.finish("Logging", ProgressTracker.State.COMPLETED_SUCCESS);
         });
         thread2.start();
     }

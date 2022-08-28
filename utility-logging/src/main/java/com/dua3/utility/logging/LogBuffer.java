@@ -2,7 +2,10 @@ package com.dua3.utility.logging;
 
 import com.dua3.utility.lang.RingBuffer;
 
+import java.io.Externalizable;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,22 +16,40 @@ import java.util.function.Function;
 /**
  * A log buffer class intended to provide a buffer for log messages to display in GUI applications.
  */
-public class LogBuffer implements LogListener {
+public class LogBuffer implements LogEntryHandler, Externalizable {
 
     /** The default capacity. */
-    public static final int DEFAULT_CAPACITY = 10000;
+    public static final int DEFAULT_CAPACITY = 10_000;
     
     private static final List<Function<LogEntry, Object>> DEFAULT_FORMAT_PARTS = List.of(
             LogEntry::time,
             e -> " ",
-            LogEntry::category,
+            LogEntry::level,
             e -> "\n",
-            LogEntry::message,
-            e -> (e.cause().map(cause -> "\n"+cause.format()).orElse("")),
+            LogEntry::formatMessage,
+            e -> (e.throwable() != null ? "\n"+ e.throwable() : ""),
             e -> "\n"
     );
 
     private final RingBuffer<LogEntry> buffer;
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        Object[] entries = buffer.toArray();
+        out.write(entries.length);
+        for (Object entry: entries) {
+            out.writeObject(entry);
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        buffer.clear();
+        int n = in.readInt();
+        for (int i=0; i<n; i++) {
+            buffer.add((LogEntry) in.readObject());
+        }
+    }
 
     /**
      * Interface for Listeners on changes of a {@link LogBuffer} instance's contents.
@@ -92,7 +113,7 @@ public class LogBuffer implements LogListener {
     }
 
     @Override
-    public void entry(LogEntry entry) {
+    public void handleEntry(LogEntry entry) {
         boolean replaced;
         synchronized(buffer) {
             int oldSize = buffer.size();
@@ -108,7 +129,7 @@ public class LogBuffer implements LogListener {
         }
         listeners.forEach(LogBufferListener::clear);
     }
-
+    
     public List<LogEntry> entries() {
         synchronized(buffer) {
             return List.of(buffer.toArray(LogEntry[]::new));

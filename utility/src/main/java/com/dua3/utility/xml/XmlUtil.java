@@ -2,6 +2,8 @@ package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.text.TextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -38,8 +40,6 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -47,7 +47,7 @@ import java.util.stream.StreamSupport;
  * A Utility class for handling {@link org.w3c.dom} documents and nodes.
  */
 public final class XmlUtil {
-    private static final Logger LOG = Logger.getLogger(XmlUtil.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(XmlUtil.class);
     
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
@@ -246,7 +246,7 @@ public final class XmlUtil {
             transformer.setOutputProperty(OutputKeys.ENCODING, charset.name());
             return transformer;
         } catch (TransformerConfigurationException e) {
-            LOG.log(Level.SEVERE, "unexpected error creating transformer", e);
+            LOG.error("unexpected error creating transformer", e);
             throw new IllegalStateException("error creating transformer", e);
         }
     }

@@ -8,6 +8,8 @@ package com.dua3.utility.io;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -39,7 +41,6 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -48,7 +49,7 @@ import java.util.stream.Stream;
  */
 public final class IoUtil {
 
-    private static final Logger LOG = Logger.getLogger(IoUtil.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(IoUtil.class);
     
     private static final Pattern PATTERN_URI = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:.*");
 
@@ -531,7 +532,7 @@ public final class IoUtil {
                 return text;
             } catch (@SuppressWarnings("unused") CharacterCodingException e) {
                 // ignore exception and try the next encoding
-                LOG.finer(() -> "unsuccessfully tried encoding "+cs.name());
+                LOG.debug("unsuccessfully tried encoding {}", cs.name());
             }
         }
 

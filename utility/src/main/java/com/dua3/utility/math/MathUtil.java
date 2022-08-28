@@ -6,19 +6,20 @@
 package com.dua3.utility.math;
 
 import com.dua3.utility.lang.LangUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
-import java.util.logging.Logger;
 
 /**
  * @author axel
  */
 public final class MathUtil {
     
-    private static final Logger LOG = Logger.getLogger(MathUtil.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MathUtil.class);
 
     /**
      * Clip argument to range.
@@ -270,7 +271,7 @@ public final class MathUtil {
                         // keep value of dy
                     }
                 } catch (@SuppressWarnings("unused") Exception e) {
-                    LOG.finer(() -> "no root");
+                    LOG.debug("no root");
                 }
             }
             xa = x;

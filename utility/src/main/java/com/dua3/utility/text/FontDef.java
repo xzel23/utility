@@ -4,11 +4,12 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode"})
 public final class FontDef {
 
-    private static final Logger LOG = Logger.getLogger(FontDef.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(FontDef.class);
 
     private static final Pattern PATTERN_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?");
 
@@ -213,7 +214,7 @@ public final class FontDef {
                 case "font-family" -> fd.setFamily(value);
                 case "font-weight" -> fd.setBold(parseFontWeight(value));
                 case "font-style" -> fd.setItalic(parseFontStyle(value));
-                default -> LOG.warning("unknown font attribute: "+attribute);
+                default -> LOG.warn("unknown font attribute: {}", attribute);
             }
         }
 
@@ -261,7 +262,7 @@ public final class FontDef {
             f = 12.0f/100.0f;
             sz = sz.substring(0, sz.length()-1);
         } else if (sz.endsWith("vw")) {
-            LOG.warning("unit 'vw' unsupported, treating as 'em'");
+            LOG.warn("unit 'vw' unsupported, treating as 'em'");
             f = 12.0f;
             sz = sz.substring(0, sz.length()-2);
         } else {

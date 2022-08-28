@@ -20,7 +20,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.utility"
-    val version         = "10.0.1-SNAPSHOT" 
+    val version         = "10.1.0-SNAPSHOT" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
     val licenseName     = "MIT"
@@ -64,6 +64,9 @@ subprojects {
     dependencies {
         // Cabe (source annotations)
         compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0")
+
+        // SLF4J
+        implementation("org.slf4j:slf4j-api:2.0.0")
 
         // JUnit
         testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.9.0")
