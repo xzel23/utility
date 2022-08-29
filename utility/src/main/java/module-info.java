@@ -18,7 +18,6 @@ open module com.dua3.utility {
     requires static org.apache.logging.log4j.core;
     requires static com.dua3.cabe.annotations;
 
-    requires java.logging;
     requires java.xml;
     requires org.slf4j;
 

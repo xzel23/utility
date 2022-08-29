@@ -16,7 +16,6 @@ open module com.dua3.utility.swing {
 
     requires java.datatransfer;
     requires java.desktop;
-    requires java.logging;
     
     requires static com.dua3.cabe.annotations;
     requires org.slf4j;
