@@ -214,12 +214,10 @@ public final class DbUtil {
     /**
      * Load JDBC driver.
      * <p>
-     * <strong>Note:</strong> the Driver returned can in general cannot be used with
-     * `DriverManager.getConnection()`
-     * because the `DriverManager` class checks that the class can be loaded from
-     * the parent class loader which
-     * is not the case. It can however be used directly or as driver for a
-     * `JdbcDataSource`.
+     * <strong>Note:</strong> the Driver returned can in general not be used with
+     * `DriverManager.getConnection()` because the `DriverManager` class checks that
+     * the class can be loaded from the parent class loader which is not the case.
+     * It can however be used directly or as driver for a `JdbcDataSource`.
      *
      * @param  loader
      *                                the ClassLoader instance
