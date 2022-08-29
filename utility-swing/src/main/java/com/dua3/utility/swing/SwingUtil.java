@@ -189,7 +189,7 @@ public final class SwingUtil {
             UIManager.setLookAndFeel(lafName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException e) {
-            LOG.warn("Could not set Look&Feel.", e);
+            LOG.warn("could not set look&feel", e);
         }
     }
 

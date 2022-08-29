@@ -243,7 +243,7 @@ public final class DbUtil {
             Enumeration<URL> meta = loader.getResources(RESOURCE_PATH_TO_DRIVER_INFO);
             URL driverInfo = meta.hasMoreElements() ? meta.nextElement() : null;
             if (driverInfo == null) {
-                LOG.warn(RESOURCE_PATH_TO_DRIVER_INFO + " not found.");
+                LOG.warn(RESOURCE_PATH_TO_DRIVER_INFO + " not found");
                 return Optional.empty();
             }
             if (meta.hasMoreElements()) {

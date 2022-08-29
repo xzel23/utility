@@ -232,10 +232,10 @@ public class NamedParameterStatement implements AutoCloseable {
             // [SPR-13825] Oracle 12c JDBC driver throws inconsistent exception from
             // getParameterType (affecting setNull calls)
             if (showUnknownParameterTypeAsWarning) {
-                LOG.warn("Could not determine parameter types");
+                LOG.warn("could not determine parameter types");
                 showUnknownParameterTypeAsWarning = false;
             } else {
-                LOG.debug("(REPEAT) Could not determine parameter types");
+                LOG.debug("(REPEAT) could not determine parameter types");
             }
             return null;
         }
