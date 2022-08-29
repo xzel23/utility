@@ -348,7 +348,7 @@ public final class SwingUtil {
         try {
             file = current.toFile().getAbsoluteFile();
         } catch (UnsupportedOperationException|SecurityException e) {
-            LOG.warn("path cannot be converted to file: " + current, e);
+            LOG.warn("path cannot be converted to file: {}", current, e);
             file = new File(".").getAbsoluteFile();
         }
 

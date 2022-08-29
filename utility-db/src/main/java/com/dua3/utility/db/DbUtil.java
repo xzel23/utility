@@ -241,12 +241,11 @@ public final class DbUtil {
             Enumeration<URL> meta = loader.getResources(RESOURCE_PATH_TO_DRIVER_INFO);
             URL driverInfo = meta.hasMoreElements() ? meta.nextElement() : null;
             if (driverInfo == null) {
-                LOG.warn(RESOURCE_PATH_TO_DRIVER_INFO + " not found");
+                LOG.warn("not found: {}", RESOURCE_PATH_TO_DRIVER_INFO);
                 return Optional.empty();
             }
             if (meta.hasMoreElements()) {
-                LOG.warn("more than one entries found, which one gets loaded is undefined: {}",
-                        RESOURCE_PATH_TO_DRIVER_INFO);
+                LOG.warn("more than one entries found, which one gets loaded is undefined: {}", RESOURCE_PATH_TO_DRIVER_INFO);
             }
             String driverClassName = IoUtil.read(driverInfo, StandardCharsets.UTF_8).trim();
 
