@@ -207,7 +207,7 @@ public final class DbUtil {
      */
     public static Optional<? extends java.sql.Driver> loadDriver(URL... urls)
             throws ClassNotFoundException, SQLException {
-        LOG.atDebug().setMessage(() -> "loadDriver() - URLs: {}" + Arrays.toString(urls)).log();
+        LOG.atDebug().setMessage(() -> "loadDriver() - URLs: {}").addArgument(() -> Arrays.toString(urls)).log();
         return loadDriver(new URLClassLoader(urls));
     }
 
