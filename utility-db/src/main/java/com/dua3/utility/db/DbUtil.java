@@ -29,7 +29,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
@@ -207,7 +206,7 @@ public final class DbUtil {
      */
     public static Optional<? extends java.sql.Driver> loadDriver(URL... urls)
             throws ClassNotFoundException, SQLException {
-        LOG.atDebug().setMessage(() -> "loadDriver() - URLs: {}").addArgument(() -> Arrays.toString(urls)).log();
+        LOG.debug("loadDriver() - URLs: {}", (Object) urls);
         return loadDriver(new URLClassLoader(urls));
     }
 
