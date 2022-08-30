@@ -14,8 +14,6 @@ open module com.dua3.utility {
     exports com.dua3.utility.text;
     exports com.dua3.utility.xml;
 
-    requires static org.apache.logging.log4j;
-    requires static org.apache.logging.log4j.core;
     requires static com.dua3.cabe.annotations;
 
     requires java.xml;

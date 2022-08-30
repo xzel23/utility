@@ -1,5 +1,6 @@
 package com.dua3.utility.logging;
 
+import com.dua3.cabe.annotations.Nullable;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
@@ -12,7 +13,7 @@ import java.util.Map;
 public class Logger extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
-    private List<LogEntryHandler> handlers;
+    private final List<LogEntryHandler> handlers;
     private final Map<Marker,Level> markerLevelMap = new HashMap<>();
     private Level level = null;
     
@@ -40,7 +41,7 @@ public class Logger extends AbstractLogger {
     }
 
     @Override
-    protected void handleNormalizedLoggingCall(Level level, Marker marker, String msg, Object[] arguments, Throwable throwable) {
+    protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String msg, @Nullable Object[] arguments, @Nullable Throwable throwable) {
         handlers.forEach(handler -> handler.handleEntry(new LogEntry(this, Instant.now(), level, marker, msg, arguments, throwable)));
     }
 
