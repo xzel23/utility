@@ -99,7 +99,7 @@ Just to save the time searching the internet for this:
 
 ### SwingLogPane (Swing-widget for log viewing)
 
-If you want to show logs in a swing application, configure a log buffer and add a SwingLogPane to your UI. Have a look at the `TestSwingComponents` sample for details.
+If you want to show logs in a swing application, configure a log buffer and add a SwingLogPane to your UI. Have a look at the code of `SwingComponentsSample` for details.
 
 ## Using the BuildInfo class in Gradle builds
 

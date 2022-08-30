@@ -23,7 +23,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
-public class TestSwingComponents extends JFrame {
+public class SwingComponentsSample extends JFrame {
 
     static {
         java.util.logging.LogManager.getLogManager().reset();
@@ -31,9 +31,9 @@ public class TestSwingComponents extends JFrame {
         Logger.setDefaultLevel(Level.TRACE);
     }
     
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + TestSwingComponents.class.getName());
-    private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + TestSwingComponents.class.getName());
-    private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J."+TestSwingComponents.class.getName());
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + SwingComponentsSample.class.getName());
+    private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSample.class.getName());
+    private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSample.class.getName());
 
     public static final int SLEEP_MILLIS = 25;
     private volatile boolean done = false;
@@ -48,13 +48,13 @@ public class TestSwingComponents extends JFrame {
         SwingUtil.setNativeLookAndFeel();
         
         SwingUtilities.invokeLater(() -> {
-            TestSwingComponents instance = new TestSwingComponents();
+            SwingComponentsSample instance = new SwingComponentsSample();
             instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             instance.setVisible(true);
         });
     }
 
-    public TestSwingComponents() {
+    public SwingComponentsSample() {
         setLayout(new GridBagLayout());
         setSize(800,600);
 
