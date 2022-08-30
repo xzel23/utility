@@ -12,7 +12,8 @@ import java.util.Map;
 
 public class ConsoleHandler implements LogEntryHandler {
     private static final Pair<String, String> NO_ESCAPE_SEQUENCES = Pair.of("", "");
-    
+    private static final String ESC_RESET = AnsiCode.reset();
+
     private final PrintStream out;
     private final Map<Level, Pair<String,String>> brackets = new EnumMap<>(Level.class);
     private final DateTimeFormatter dtf;
@@ -20,12 +21,11 @@ public class ConsoleHandler implements LogEntryHandler {
     public ConsoleHandler(PrintStream out, boolean colored) {
         this.out = out;
         if (colored) {
-            String reset = AnsiCode.reset();
-            this.brackets.put(Level.TRACE, Pair.of(AnsiCode.fg(Color.DARKGRAY), reset));
-            this.brackets.put(Level.DEBUG, Pair.of(AnsiCode.fg(Color.BLACK), reset));
-            this.brackets.put(Level.INFO, Pair.of(AnsiCode.fg(Color.BLUE), reset));
-            this.brackets.put(Level.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED), reset));
-            this.brackets.put(Level.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED), reset));
+            this.brackets.put(Level.TRACE, Pair.of(AnsiCode.fg(Color.DARKGRAY), ESC_RESET));
+            this.brackets.put(Level.DEBUG, Pair.of(AnsiCode.fg(Color.BLACK), ESC_RESET));
+            this.brackets.put(Level.INFO, Pair.of(AnsiCode.fg(Color.BLUE), ESC_RESET));
+            this.brackets.put(Level.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED), ESC_RESET));
+            this.brackets.put(Level.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED), ESC_RESET));
         }
         this.dtf = DateTimeFormatter.ISO_INSTANT;
     }

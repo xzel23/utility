@@ -1,6 +1,7 @@
 package com.dua3.utility.logging;
 
 import org.slf4j.ILoggerFactory;
+import org.slf4j.event.Level;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +13,12 @@ import java.util.Optional;
 import java.util.Properties;
 
 public class LoggerFactory implements ILoggerFactory {
-    public static final String LOGGER_CONSOLE = "logger.console";
+    public static final String LEVEL = "logger.level";
+
+    public static final String LOGGER_CONSOLE_STREAM = "logger.console.stream";
     public static final String LOGGER_CONSOLE_COLORED = "logger.console.colored";
-    public static final String LOGGER_BUFFER = "logger.buffer";
+    
+    public static final String LOGGER_BUFFER_SIZE = "logger.buffer.size";
     
     private final LogBuffer logBuffer;
     private final List<LogEntryHandler> handlers = new ArrayList<>();
@@ -24,12 +28,12 @@ public class LoggerFactory implements ILoggerFactory {
         Properties properties = new Properties();
         try (InputStream in = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             if (in==null) {
-                properties.put(LOGGER_CONSOLE, "system.out");
+                properties.put(LOGGER_CONSOLE_STREAM, "system.out");
             } else {
                 properties.load(in);
             }
         } catch (IOException e) {
-            properties.put(LOGGER_CONSOLE, "system.out");
+            properties.put(LOGGER_CONSOLE_STREAM, "system.out");
             e.printStackTrace(System.err);
         }
         return properties;
@@ -37,25 +41,31 @@ public class LoggerFactory implements ILoggerFactory {
 
     public LoggerFactory() {
         Properties properties = getProperties();
+
+        // set global level
+        Level level = Level.valueOf(properties.getProperty(LEVEL, Level.INFO.name()).trim().toUpperCase(Locale.ROOT));
+        Logger.setDefaultLevel(level);
         
-        String propertyConsole = properties.getProperty(LOGGER_CONSOLE, "").trim().toLowerCase(Locale.ROOT);
-        final PrintStream stream = switch (propertyConsole) {
+        // configure console handler
+        String propertyConsoleStream = properties.getProperty(LOGGER_CONSOLE_STREAM, "").trim().toLowerCase(Locale.ROOT);
+        final PrintStream stream = switch (propertyConsoleStream) {
             case "" -> null;
             case "system.err" -> System.err;
             case "system.out" -> System.out;
-            default -> throw new IllegalArgumentException("invalid value for property "+LOGGER_CONSOLE+": '"+propertyConsole+"'");
+            default -> throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_STREAM + ": '" + propertyConsoleStream + "'");
         };
-        String propertyColored = properties.getProperty(LOGGER_CONSOLE_COLORED, "true").trim().toLowerCase(Locale.ROOT);
-        final boolean colored = switch (propertyColored) {
+        String propertyConsoleColored = properties.getProperty(LOGGER_CONSOLE_COLORED, "true").trim().toLowerCase(Locale.ROOT);
+        final boolean colored = switch (propertyConsoleColored) {
             case "true" -> true;
             case "false" -> false;
-            default -> throw new IllegalArgumentException("invalid value for property "+LOGGER_CONSOLE_COLORED+": '"+propertyColored+"'");
+            default -> throw new IllegalArgumentException("invalid value for property "+LOGGER_CONSOLE_COLORED+": '"+propertyConsoleColored+"'");
         };
         if (stream!=null) {
             handlers.add(new ConsoleHandler(stream, colored));
         }
-        
-        String propertyBuffer = properties.getProperty(LOGGER_BUFFER, "0").trim();
+
+        // configure buffer handler
+        String propertyBuffer = properties.getProperty(LOGGER_BUFFER_SIZE, "0").trim();
         int bufferSize = Integer.parseInt(propertyBuffer);
         if (bufferSize > 0) {
             logBuffer = new LogBuffer(bufferSize);

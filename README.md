@@ -65,14 +65,20 @@ This project adds a small lightweight implementation that can be used instead of
 
 Configuration is done by providing a file called `logging.properties` on the classpath.
 
- * configure logging to console (standard or error stream):
+ * configure global log level
     ```
-     logger.console = system.out|system.err
+     logger.level = ERROR|WARN|INFO|DEBUG|TRACE
+    ```
+   
+ * configure logging to console
+    ```
+     logger.console.stream = system.out|system.err
+     logger.console.colored = true|false
     ```
 
  * configure a log buffer (see below):
     ```
-    logger.buffer = <#entries>
+    logger.buffer = #entries
     ```
 
 ### Using SLF4J with different logging frameworks

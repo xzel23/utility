@@ -2,14 +2,12 @@ package com.dua3.utility.swing.test;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.LogBuffer;
-import com.dua3.utility.logging.Logger;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.slf4j.event.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
@@ -28,7 +26,6 @@ public class SwingComponentsSample extends JFrame {
     static {
         java.util.logging.LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
-        Logger.setDefaultLevel(Level.TRACE);
     }
     
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + SwingComponentsSample.class.getName());
