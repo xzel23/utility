@@ -51,7 +51,7 @@ public class Logger extends AbstractLogger {
     }
 
     @Override
-    public boolean isTraceEnabled(Marker marker) {
+    public boolean isTraceEnabled(@Nullable Marker marker) {
         return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.TRACE.toInt();
     }
 
@@ -61,7 +61,7 @@ public class Logger extends AbstractLogger {
     }
 
     @Override
-    public boolean isDebugEnabled(Marker marker) {
+    public boolean isDebugEnabled(@Nullable Marker marker) {
         return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.DEBUG.toInt();
     }
 
@@ -71,7 +71,7 @@ public class Logger extends AbstractLogger {
     }
 
     @Override
-    public boolean isInfoEnabled(Marker marker) {
+    public boolean isInfoEnabled(@Nullable Marker marker) {
         return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.INFO.toInt();
     }
 
@@ -81,7 +81,7 @@ public class Logger extends AbstractLogger {
     }
 
     @Override
-    public boolean isWarnEnabled(Marker marker) {
+    public boolean isWarnEnabled(@Nullable Marker marker) {
         return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.WARN.toInt();
     }
 
@@ -91,7 +91,7 @@ public class Logger extends AbstractLogger {
     }
 
     @Override
-    public boolean isErrorEnabled(Marker marker) {
+    public boolean isErrorEnabled(@Nullable Marker marker) {
         return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.ERROR.toInt();
     }
 
