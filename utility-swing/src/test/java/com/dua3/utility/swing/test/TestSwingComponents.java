@@ -5,9 +5,9 @@ import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
-import org.apache.logging.log4j.LogManager;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
@@ -24,11 +24,16 @@ import java.util.logging.Level;
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
 public class TestSwingComponents extends JFrame {
 
+    static {
+        java.util.logging.LogManager.getLogManager().reset();
+        SLF4JBridgeHandler.install();
+    }
+    
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + TestSwingComponents.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + TestSwingComponents.class.getName());
-    private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = LogManager.getLogger("LOG4J."+TestSwingComponents.class.getName());
+    private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J."+TestSwingComponents.class.getName());
 
-    public static final int SLEEP_MILLIS = 10;
+    public static final int SLEEP_MILLIS = 25;
     private volatile boolean done = false;
 
     @SuppressWarnings("UnsecureRandomNumberGeneration") // used only to create a random sequence of log levels in tests

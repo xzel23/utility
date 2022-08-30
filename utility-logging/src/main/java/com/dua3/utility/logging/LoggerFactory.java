@@ -4,6 +4,7 @@ import org.slf4j.ILoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Properties;
 
 public class LoggerFactory implements ILoggerFactory {
     public static final String LOGGER_CONSOLE = "logger.console";
+    public static final String LOGGER_CONSOLE_COLORED = "logger.console.colored";
     public static final String LOGGER_BUFFER = "logger.buffer";
     
     private final LogBuffer logBuffer;
@@ -47,11 +49,20 @@ public class LoggerFactory implements ILoggerFactory {
         Properties properties = getProperties();
         
         String propertyConsole = properties.getProperty(LOGGER_CONSOLE, "").trim().toLowerCase(Locale.ROOT);
-        switch (propertyConsole) {
-            case "" -> {}
-            case "system.err" -> handlers.add(new ConsoleHandler(System.err));
-            case "system.out" -> handlers.add(new ConsoleHandler(System.out));
+        final PrintStream stream = switch (propertyConsole) {
+            case "" -> null;
+            case "system.err" -> System.err;
+            case "system.out" -> System.out;
             default -> throw new IllegalArgumentException("invalid value for property "+LOGGER_CONSOLE+": '"+propertyConsole+"'");
+        };
+        String propertyColored = properties.getProperty(LOGGER_CONSOLE_COLORED, "true").trim().toLowerCase(Locale.ROOT);
+        final boolean colored = switch (propertyColored) {
+            case "true" -> true;
+            case "false" -> false;
+            default -> throw new IllegalArgumentException("invalid value for property "+LOGGER_CONSOLE_COLORED+": '"+propertyColored+"'");
+        };
+        if (stream!=null) {
+            handlers.add(new ConsoleHandler(stream, colored));
         }
         
         String propertyBuffer = properties.getProperty(LOGGER_BUFFER, "0").trim();

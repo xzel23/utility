@@ -11,6 +11,7 @@ open module com.dua3.utility.swing.test {
     requires com.dua3.utility.swing;
     requires org.apache.logging.log4j;
     requires org.slf4j;
+    requires jul.to.slf4j;
     requires java.desktop;
     requires java.logging;
 }

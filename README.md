@@ -2,11 +2,12 @@
 
 Some libraries with utility classes.
 
-| library       | description               | exported module        |
-|---------------|---------------------------|------------------------|
-| utility       | general purpose utilities | com.dua3.utility       |
-| utility-db    | database utilities        | com.dua3.utility.db    |
-| utility-swing | swing utilities           | com.dua3.utility.swing |
+| library         | description                                           | exported module          |
+|-----------------|-------------------------------------------------------|--------------------------|
+| utility         | general purpose utilities                             | com.dua3.utility         |
+| utility-db      | database utilities                                    | com.dua3.utility.db      |
+| utility-swing   | swing utilities                                       | com.dua3.utility.swing   |
+| utility-logging | logging utilities and simple logging implementation | com.dua3.utility.logging |
 
 ## License
 
@@ -52,14 +53,53 @@ Replace `${utility_version}` with the current version.
 
 ## Logging
 
-All logging is done through JUL (java.util.logging).
- 
- - If you use a logging framework such as logback in your __application__, please use that framework's JUL bridge to reroute logging messages. 
- - If your project is a library, don't try to reroute log messages - you cannot tell which framework the user of your library will prefer using, so please don't make his (and your own) life harder by forcing the user of your library to use the framework of *your* choice.
- 
-IMHO, using a logging framework in *libraries* is in most cases not necessary anymore in Java 8+ since log messages can now be formatted using lambdas that are only called when logging on that level is enabled. I have had more than enough trouble with trying to put libraries using different versions of log4j, SLF4J, logback, commons.logging, and more into a single project that I will not integrate any logging framework into my libraries, so please don't even ask for it. Most advanced logging framework now have some sort of JUL bridge, so that there shouldn't be any issues with this. 
+**As of version 10.1.0, all logging is done through SLF4J!**
 
-If you develop a Swing application, the SwingLogPane might come in handy. Have a look at the TestSwingComponents sample to see how to display log messages from the different logging frameworks in your application. If you use SLF4J, add SLF4J's [JUL backend](https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14) to your classpath to reroute SLF4J log messages to JUL.
+I made the switch after SLF4J 2.0.0 was released as that is the first stable version to have proper JPMS support.
+
+You can use whatever logging implementation you want, for configuration refer to the SLF4J documentation.
+
+### utility-logging
+
+This project adds a small lightweight implementation that can be used instead of SLF4J SimpleLogger. It is intended as a lightweight logging implementation in desktop applications or during development and does not support advanced features such as log rotation or writing to a database.
+
+Configuration is done by providing a file called `logging.properties` on the classpath.
+
+ * configure logging to console (standard or error stream):
+    ```
+     logger.console = system.out|system.err
+    ```
+
+ * configure a log buffer (see below):
+    ```
+    logger.buffer = <#entries>
+    ```
+
+### Using SLF4J with different logging frameworks
+
+Just to save the time searching the internet for this:
+
+* **JUL (java.util.logging)**
+
+  * add "org.slf4j:jul-to-slf4j:<version>" to your dependencies
+
+  * when using JPMS modules, add `requires jul.to.slf4j;` to your module-info.java
+
+  * initialize the bridge handler:
+     ```
+     static {
+         java.util.logging.LogManager.getLogManager().reset();
+         SLF4JBridgeHandler.install();
+     }
+     ```
+
+* **Log4J2**
+
+  * add "org.apache.logging.log4j:log4j-to-slf4j:2.18.0" to your dependencies
+
+### SwingLogPane (Swing-widget for log viewing)
+
+If you want to show logs in a swing application, configure a log buffer and add a SwingLogPane to your UI. Have a look at the `TestSwingComponents` sample for details.
 
 ## Using the BuildInfo class in Gradle builds
 
@@ -96,6 +136,11 @@ When you run your code with assertions disabled, virtually no overhead is introd
 When running your code with exceptions enabled, parameters are checked for invalid null values and an AssertionError will be generated when null is passed for a `@NotNull` annotated parameter. The assertion message contains the name of the parameter. 
 
 ## Changes
+
+### 10.1.0
+
+- **Logging is done through SLF4J**
+- moved the logging stuff to its own library utility-logging so that you don't need to pull everything unless needed
 
 ### 10.0.0
 
