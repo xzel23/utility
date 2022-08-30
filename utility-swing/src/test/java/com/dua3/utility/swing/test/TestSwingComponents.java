@@ -2,12 +2,14 @@ package com.dua3.utility.swing.test;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.LogBuffer;
+import com.dua3.utility.logging.Logger;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.slf4j.event.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
@@ -19,7 +21,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
 public class TestSwingComponents extends JFrame {
@@ -27,6 +28,7 @@ public class TestSwingComponents extends JFrame {
     static {
         java.util.logging.LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
+        Logger.setDefaultLevel(Level.TRACE);
     }
     
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + TestSwingComponents.class.getName());
@@ -142,7 +144,7 @@ public class TestSwingComponents extends JFrame {
                             case 2 -> JUL_LOGGER.fine(msg);
                             case 3 -> JUL_LOGGER.info(msg);
                             case 4 -> JUL_LOGGER.warning(msg);
-                            case 5 -> JUL_LOGGER.log(Level.SEVERE, msg, generateThrowable());
+                            case 5 -> JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
                             default -> throw new IllegalStateException("integer out of range");
                         }
                         break;
