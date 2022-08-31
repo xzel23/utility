@@ -53,7 +53,7 @@ public class SwingLogPane extends JPanel {
     private final Function<LogEntry, Color> colorize;
     private final JSplitPane splitPane;
     private TableRowSorter<AbstractTableModel> tableRowSorter;
-    private Function<LogEntry, String> format = LogEntry::formatMessage;
+    private Function<LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
 
     private static Color defaultColorize(LogEntry entry) {

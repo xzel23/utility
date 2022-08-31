@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * A log buffer class intended to provide a buffer for log messages to display in GUI applications.
@@ -21,16 +20,6 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     /** The default capacity. */
     public static final int DEFAULT_CAPACITY = 10_000;
     
-    private static final List<Function<LogEntry, Object>> DEFAULT_FORMAT_PARTS = List.of(
-            LogEntry::time,
-            e -> " ",
-            LogEntry::level,
-            e -> "\n",
-            LogEntry::formatMessage,
-            e -> (e.throwable() != null ? "\n"+ e.throwable() : ""),
-            e -> "\n"
-    );
-
     private final RingBuffer<LogEntry> buffer;
 
     @Override
@@ -156,20 +145,9 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
         }
     }
     
-    public void appendTo(Appendable app, Iterable<? extends Function<LogEntry, Object>> parts) throws IOException {
-        for (LogEntry entry: getLogEntries()) {
-            for (Function<LogEntry, Object> p: parts) {
-                app.append(String.valueOf(p.apply(entry)));
-            }
-        }
-    }
-
-    @SafeVarargs
-    public final void appendTo(Appendable app, Function<LogEntry, Object>... parts) throws IOException {
-        appendTo(app, List.of(parts));
-    }
-    
     public void appendTo(Appendable app) throws IOException {
-        appendTo(app, DEFAULT_FORMAT_PARTS);
+        for (LogEntry entry: getLogEntries()) {
+            app.append(entry.toString()).append("\n");
+        }
     }
 }
