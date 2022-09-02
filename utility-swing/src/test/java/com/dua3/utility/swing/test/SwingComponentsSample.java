@@ -5,6 +5,8 @@ import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
+
+import org.slf4j.event.Level;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -17,11 +19,15 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
 public class SwingComponentsSample extends JFrame {
+
+    public static final String TASK_INDETERMINATE = "indeterminate";
 
     static {
         java.util.logging.LogManager.getLogManager().reset();
@@ -60,7 +66,7 @@ public class SwingComponentsSample extends JFrame {
 
     private void init() {
         // -- SwingProcessView
-        SwingProgressView<String> progress = new SwingProgressView<>();
+        SwingProgressView<Object> progress = new SwingProgressView<>();
         int max = 200;
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -71,7 +77,9 @@ public class SwingComponentsSample extends JFrame {
         constraints.weightx = 1;
         add(progress, constraints);
 
-        progress.start("Logging");
+        HashMap<Level,Integer> counter = new HashMap<>();
+        Arrays.stream(Level.values()).forEach(lvl -> { counter.put(lvl, 0); progress.start(lvl); });
+        progress.start(TASK_INDETERMINATE);
 
         // -- Spacer
         constraints = new GridBagConstraints();
@@ -121,10 +129,15 @@ public class SwingComponentsSample extends JFrame {
 
                 int nr = n.incrementAndGet();
                 String msg = "Message "+nr+".";
-                
-                switch(random.nextInt(3)) {
+
+                int implementation = random.nextInt(3);
+                int bound = implementation==1 ? 6:5;
+                int levelInt = random.nextInt(bound);
+                Level level = Level.values()[implementation==1 ? Math.max(0, levelInt-1) : levelInt];
+                        
+                switch(implementation) {
                     case 0:
-                        switch (random.nextInt(5)) {
+                        switch (levelInt) {
                             case 0 -> LOG.trace(msg);
                             case 1 -> LOG.debug(msg);
                             case 2 -> LOG.info(msg);
@@ -135,7 +148,7 @@ public class SwingComponentsSample extends JFrame {
                         break;
 
                     case 1:
-                        switch (random.nextInt(6)) {
+                        switch (levelInt) {
                             case 0 -> JUL_LOGGER.finest(msg);
                             case 1 -> JUL_LOGGER.finer(msg);
                             case 2 -> JUL_LOGGER.fine(msg);
@@ -147,7 +160,7 @@ public class SwingComponentsSample extends JFrame {
                         break;
                         
                     case 2: 
-                        switch (random.nextInt(5)) {
+                        switch (levelInt) {
                             case 0 -> LOG4J_LOGGER.trace(msg);
                             case 1 -> LOG4J_LOGGER.debug(msg);
                             case 2 -> LOG4J_LOGGER.info(msg);
@@ -157,6 +170,7 @@ public class SwingComponentsSample extends JFrame {
                         }
                         break;
                 }
+                progress.update(level, max, counter.compute(level, (lvl, old) -> Math.min(old+1, max)));
 
                 int current = n.get();
                 if (current%100==0) {
@@ -174,7 +188,7 @@ public class SwingComponentsSample extends JFrame {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            progress.finish("Logging", ProgressTracker.State.COMPLETED_SUCCESS);
+            progress.finish(TASK_INDETERMINATE, ProgressTracker.State.COMPLETED_SUCCESS);
         });
         thread2.start();
     }
