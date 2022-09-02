@@ -83,16 +83,18 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
     private <T> ProgressView.ProgressIndicator createProgressIndicator(T t) {
         ProgressBarIndicator pi = new ProgressBarIndicator();
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.LINE_END;
-        constraints.ipadx = 8;
-        constraints.gridx = 0;
-        constraints.gridy = rowCount;
-        add(new Label(t.toString()), constraints);
-        constraints.gridx = 1;
-        constraints.gridy = rowCount;
-        add(pi.pb, constraints);
-        rowCount++;
+        int row = rowCount++;
+        SwingUtilities.invokeLater( () -> {
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.anchor = GridBagConstraints.LINE_END;
+            constraints.ipadx = 8;
+            constraints.gridx = 0;
+            constraints.gridy = row;
+            add(new Label(t.toString()), constraints);
+            constraints.gridx = 1;
+            constraints.gridy = row;
+            add(pi.pb, constraints);
+        });
         return pi;
     }
 
