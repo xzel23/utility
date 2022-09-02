@@ -94,6 +94,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
             constraints.gridx = 1;
             constraints.gridy = row;
             add(pi.pb, constraints);
+            revalidate();
         });
         return pi;
     }

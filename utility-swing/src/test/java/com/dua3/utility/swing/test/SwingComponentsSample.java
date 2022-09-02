@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
 public class SwingComponentsSample extends JFrame {
 
-    public static final String TASK_INDETERMINATE = "indeterminate";
+    public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
+    public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
 
     static {
         java.util.logging.LogManager.getLogManager().reset();
@@ -79,7 +80,7 @@ public class SwingComponentsSample extends JFrame {
 
         HashMap<Level,Integer> counter = new HashMap<>();
         Arrays.stream(Level.values()).forEach(lvl -> { counter.put(lvl, 0); progress.start(lvl); });
-        progress.start(TASK_INDETERMINATE);
+        progress.start(TASK_INDETERMINATE_1);
 
         // -- Spacer
         constraints = new GridBagConstraints();
@@ -188,7 +189,15 @@ public class SwingComponentsSample extends JFrame {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            progress.finish(TASK_INDETERMINATE, ProgressTracker.State.COMPLETED_SUCCESS);
+            progress.finish(TASK_INDETERMINATE_1, ProgressTracker.State.COMPLETED_SUCCESS);
+            
+            progress.start(TASK_INDETERMINATE_2);
+            try {
+                Thread.sleep(10_000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            progress.finish(TASK_INDETERMINATE_2, ProgressTracker.State.COMPLETED_SUCCESS);
         });
         thread2.start();
     }
