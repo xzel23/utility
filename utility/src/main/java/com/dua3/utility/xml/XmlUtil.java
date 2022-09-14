@@ -5,11 +5,13 @@ import com.dua3.utility.text.TextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +39,11 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -74,12 +81,27 @@ public final class XmlUtil {
      * Lazily construct the default instance since it might pull in a lot of dependencies which is not desirable
      * in case only a specialized version is needed.
      */
-    private static class LazySingleton {
+    private static class LazySingletonDefaultInstance {
         private static final XmlUtil INSTANCE;
 
         static {
             try {
-                INSTANCE = new XmlUtil();
+                INSTANCE = new XmlUtil(DocumentBuilderFactory.newDefaultNSInstance(), TransformerFactory.newDefaultInstance(), XPathFactory.newDefaultInstance());
+            } catch (ParserConfigurationException e) {
+                throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
+            }
+        }
+    }
+    
+    /*
+     * Lazily construct the a instance using JAXP Lookup Mechanism for obtaining the different factories.
+     */
+    private static class LazySingletonJaxpInstance {
+        private static final XmlUtil INSTANCE;
+
+        static {
+            try {
+                INSTANCE = new XmlUtil(DocumentBuilderFactory.newNSInstance(), TransformerFactory.newInstance(), XPathFactory.newInstance());
             } catch (ParserConfigurationException e) {
                 throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
             }
@@ -87,38 +109,23 @@ public final class XmlUtil {
     }
     
     /**
-     * Get default instance with factories configured according to the description in the package javax.xml. 
+     * Get instance using the default implementation supplied by the JDK. 
      * @return default instance
      * @throws IllegalStateException if default instance could not be created
      */
     public static XmlUtil defaultInstance() {
-        return LazySingleton.INSTANCE;
+        return LazySingletonDefaultInstance.INSTANCE;
+    }
+
+    /**
+     * Get instance using JAXP Lookup Mechanism to obtain implementing classes. 
+     * @return new instance
+     * @throws IllegalStateException if default instance could not be created
+     */
+    public static XmlUtil jaxpInstance() {
+        return LazySingletonJaxpInstance.INSTANCE;
     }
     
-    /**
-     * Construct a new instance.
-     * @throws ParserConfigurationException if a configuration error occurs
-     */
-    public XmlUtil() throws ParserConfigurationException {
-        this(newDocumentBuilderFactory(), newTransformerFactory(), newXPathFactory());
-    }
-
-    private static DocumentBuilderFactory newDocumentBuilderFactory() {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        return factory;
-    }
-
-    private static TransformerFactory newTransformerFactory() {
-        TransformerFactory factory = TransformerFactory.newInstance();
-        return factory;
-    }
-
-    private static XPathFactory newXPathFactory() {
-        XPathFactory factory = XPathFactory.newInstance();
-        return factory;
-    }
-
     /**
      * Construct a new instance.
      * @param documentBuilderFactory the {@link DocumentBuilderFactory} to use
@@ -298,12 +305,81 @@ public final class XmlUtil {
 
     /**
      * Create {@link XPath} instance.
+     * <p>
+     * The returned instance is <strong>not</strong> namespace aware. Eihter use {@link #xpath(Node)} or supply
+     * a custom {@link NamespaceContext} if namespaces should be supported.
      * @return new {@link XPath} instance.
      */
     public XPath xpath() {
         return xPathFactory.newXPath();
     }
 
+    /**
+     * Create {@link XPath} instance for a node with a matching {@link NamespaceContext}.
+     * @return new {@link XPath} instance generated from he supplied argument and its parent's
+     * namespace declarations.
+     */
+    public XPath xpath(Node node) {
+        XPath xpath = xpath();
+
+        HashMap<String, String> nsToUri = new HashMap<>();
+        HashMap<String, List<String>> uriToNs = new HashMap<>();
+
+        String defaultUri = null;
+        for (Node n = node; n != null; n = n.getParentNode()) {
+            NamedNodeMap attrs = n.getAttributes();
+            
+            if (attrs != null) {
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    Node item = attrs.item(i);
+
+                    String key = item.getNodeName();
+                    String value = item.getTextContent();
+
+                    if (key.equals("xmlns") && defaultUri == null) {
+                        defaultUri = value;
+                    } else if (key.startsWith("xmlns:")) {
+                        String ns = key.substring("xmlns:".length());
+                        String uri = value;
+                        nsToUri.putIfAbsent(ns, uri);
+                        uriToNs.computeIfAbsent(uri, k -> new ArrayList<>()).add(ns);
+                    }
+                }
+            }
+        }
+        if (defaultUri != null) {
+            String ns = "ns";
+            for (int i = 1; nsToUri.containsKey(ns); i++) {
+                ns = "ns" + i;
+            }
+            nsToUri.put(ns, defaultUri);
+            uriToNs.computeIfAbsent(defaultUri, k -> new ArrayList<>()).add(ns);
+        }
+
+        NamespaceContext ctx = new NamespaceContext() {
+            @Override
+            public String getNamespaceURI(String prefix) {
+                return nsToUri.get(prefix);
+            }
+
+            @Override
+            public String getPrefix(String namespaceURI) {
+                List<String> namespaces = uriToNs.get(namespaceURI);
+                return namespaces==null || namespaces.isEmpty() ? null : namespaces.get(0);
+            }
+
+            @Override
+            public Iterator<String> getPrefixes(String namespaceURI) {
+                return Collections.unmodifiableList(uriToNs.getOrDefault(namespaceURI, Collections.emptyList())).iterator();
+            }
+        };
+        
+        xpath.setNamespaceContext(ctx);
+        
+        return xpath;
+    }
+    
+    
     /**
      * Create new {@link DocumentBuilder}.
      * @return new {@link DocumentBuilder} instance

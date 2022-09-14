@@ -5,6 +5,8 @@ import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
+import javax.xml.xpath.XPath;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -90,4 +92,40 @@ class XmlUtilTest {
         assertEquals(TextUtil.toSystemLineEnds(XML_WITH_NAMESPACES), text);
     }
 
+    @Test
+    void xpath() throws Exception {
+        Document document = XML_UTIL.parse(XML_UNFORMATTED);
+        XPath xpath = XML_UTIL.xpath();
+        
+        String expected = "Canada";
+        String actual = xpath.evaluate("//Country[@ShortName='CA']/@LongName", document);
+        
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void xpath_withNamespace() throws Exception {
+        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES_UNFORMATTED);
+        XPath xpath = XML_UTIL.xpath(document.getDocumentElement());
+        
+        String expected = "Canada";
+        String actual = xpath.evaluate("//c:Country[@ShortName='CA']/@LongName", document);
+        assertEquals(expected, actual);
+        
+        String expected2 = "";
+        String actual2 = xpath.evaluate("//c:Country[@ShortName='US']/@LongName", document);
+        assertEquals(expected2, actual2);
+        
+        String expected3 = "";
+        String actual3 = xpath.evaluate("//d:Country[@ShortName='CA']/@LongName", document);
+        assertEquals(expected3, actual3);
+        
+        String expected4 = "";
+        String actual4 = xpath.evaluate("//d:Country[@ShortName='CA']/@Name", document);
+        assertEquals(expected4, actual4);
+        
+        String expected5 = "United States";
+        String actual5 = xpath.evaluate("//d:Country[@ShortName='US']/@Name", document);
+        assertEquals(expected5, actual5);
+    }
 }
