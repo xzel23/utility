@@ -100,7 +100,23 @@ public final class XmlUtil {
      * @throws ParserConfigurationException if a configuration error occurs
      */
     public XmlUtil() throws ParserConfigurationException {
-        this(DocumentBuilderFactory.newInstance(), TransformerFactory.newInstance(), XPathFactory.newInstance());
+        this(newDocumentBuilderFactory(), newTransformerFactory(), newXPathFactory());
+    }
+
+    private static DocumentBuilderFactory newDocumentBuilderFactory() {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        return factory;
+    }
+
+    private static TransformerFactory newTransformerFactory() {
+        TransformerFactory factory = TransformerFactory.newInstance();
+        return factory;
+    }
+
+    private static XPathFactory newXPathFactory() {
+        XPathFactory factory = XPathFactory.newInstance();
+        return factory;
     }
 
     /**

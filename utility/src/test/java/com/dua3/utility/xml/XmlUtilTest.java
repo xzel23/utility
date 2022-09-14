@@ -2,7 +2,6 @@ package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.text.TextUtil;
-import com.dua3.utility.xml.XmlUtil;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -32,15 +31,35 @@ class XmlUtilTest {
             """;
 
     private final String XML_UNFORMATTED = XML.replaceAll("^\\s+", "");
+
+    private static final String XML_WITH_NAMESPACES = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <Countries xmlns:c="https://www.dua3.com/countries" xmlns:d="https://www.dua3.com/other_countries">
+                <c:Country LongName="Canada" ShortName="CA">
+                    <c:Provinces>
+                        <c:Province Name="Alberta"/>
+                        <c:Province Name="Manitoba"/>
+                    </c:Provinces>
+                </c:Country>
+                <d:Country Name="United States" ShortName="US">
+                    <d:Provinces>
+                        <d:Province Name="Alaska"/>
+                        <d:Province Name="Alabama"/>
+                    </d:Provinces>
+                </d:Country>
+            </Countries>
+            """;
+
+    private final String XML_WITH_NAMESPACES_UNFORMATTED = XML_WITH_NAMESPACES.replaceAll("^\\s+", "");
     
     @Test
-    void parse() throws Exception {
+    void parseString() throws Exception {
         Document document = XML_UTIL.parse(XML);
         assertNotNull(document);
     }
 
     @Test
-    void testParse() throws Exception {
+    void parseStream() throws Exception {
         Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML));
         assertNotNull(document);
     }
@@ -50,6 +69,25 @@ class XmlUtilTest {
         Document document = XML_UTIL.parse(XML_UNFORMATTED);
         String text = XML_UTIL.prettyPrint(document);
         assertEquals(TextUtil.toSystemLineEnds(XML), text);
+    }
+
+    @Test
+    void parseString_withNamespace() throws Exception {
+        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        assertNotNull(document);
+    }
+
+    @Test
+    void parseStream_withNamespace() throws Exception {
+        Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML_WITH_NAMESPACES));
+        assertNotNull(document);
+    }
+    
+    @Test
+    void prettyPrint_withNamespace() throws Exception {
+        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES_UNFORMATTED);
+        String text = XML_UTIL.prettyPrint(document);
+        assertEquals(TextUtil.toSystemLineEnds(XML_WITH_NAMESPACES), text);
     }
 
 }

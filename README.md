@@ -143,6 +143,15 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ## Changes
 
+### 10.1.2
+
+- make XMLUtil namespace aware by default
+
+### 10.1.1
+
+- print exception stack traces in log
+- some fixes for SwingProgressView
+
 ### 10.1.0
 
 - **Logging is done through SLF4J**
