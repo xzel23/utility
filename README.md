@@ -65,9 +65,17 @@ This project adds a small lightweight implementation that can be used instead of
 
 Configuration is done by providing a file called `logging.properties` on the classpath.
 
- * configure global log level
+ * configure log level:
     ```
-     logger.level = ERROR|WARN|INFO|DEBUG|TRACE
+     logger.level = (ERROR|WARN|INFO|DEBUG|TRACE)(, <prefix>:(ERROR|WARN|INFO|DEBUG|TRACE))*
+    ```
+   setting ony the global level:
+    ```
+     logger.level = INFO
+    ```
+   setting global level and different levels for packages:
+    ```
+     logger.level = WARN, com.dua3.:DEBUG, my.current.project.:TRACE
     ```
    
  * configure logging to console
@@ -146,6 +154,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 ### 10.1.2
 
 - make XMLUtil namespace aware by default
+- log levels can be configured by prefix in logging.properties file
 
 ### 10.1.1
 

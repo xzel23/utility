@@ -1,5 +1,7 @@
 package com.dua3.utility.logging;
 
+import com.dua3.utility.data.Pair;
+import com.dua3.utility.lang.LangUtil;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.event.Level;
 
@@ -7,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -21,6 +24,7 @@ public class LoggerFactory implements ILoggerFactory {
     public static final String LOGGER_BUFFER_SIZE = "logger.buffer.size";
     
     private final LogBuffer logBuffer;
+    private final List<Pair<String,Level>> prefixes = new ArrayList<>();
     private final List<LogEntryHandler> handlers = new ArrayList<>();
     
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -38,13 +42,39 @@ public class LoggerFactory implements ILoggerFactory {
         }
         return properties;
     }
+     
+    private Optional<Pair<String, Level>> getPrefixEntry(String name) {
+        return prefixes.stream().filter(p -> name.startsWith(p.first())).findFirst();    
+    }
 
+    private Level getLevel(String name) {
+        return getPrefixEntry(name).map(Pair::second).orElseGet(Logger::getDefaultLevel);
+    }
+    
     public LoggerFactory() {
         Properties properties = getProperties();
 
-        // set global level
-        Level level = Level.valueOf(properties.getProperty(LEVEL, Level.INFO.name()).trim().toUpperCase(Locale.ROOT));
-        Logger.setDefaultLevel(level);
+        // parse log level entry
+        String leveldeclaration = properties.getProperty(LEVEL, Level.INFO.name());
+        String[] decls = leveldeclaration.split(",");
+        
+        if (decls.length>0) {
+            Logger.setDefaultLevel(Level.valueOf(decls[0].strip()));
+        }
+
+        Arrays.stream(decls)
+                .skip(1) // gloabal level has already been set
+                .forEachOrdered( s -> {
+                    String[] parts = s.split(":");
+                    LangUtil.check(parts.length==2, "invalid log level declaration: %s", s);
+                    String prefix = parts[0].strip();
+                    Level level = Level.valueOf(parts[1].strip());
+
+                    var entry = getPrefixEntry(prefix);
+                    LangUtil.check(entry.isEmpty(), () -> new IllegalStateException("prefix '%s' is shadowed by '%s'".formatted(prefix, entry.orElseThrow().first())));
+
+                    prefixes.add(Pair.of(prefix,level));
+                });
         
         // configure console handler
         String propertyConsoleStream = properties.getProperty(LOGGER_CONSOLE_STREAM, "").trim().toLowerCase(Locale.ROOT);
@@ -77,7 +107,9 @@ public class LoggerFactory implements ILoggerFactory {
     
     @Override
     public org.slf4j.Logger getLogger(String name) {
-        return new Logger(name, handlers);
+        Logger logger = new Logger(name, handlers);
+        logger.setLevel(getLevel(name));
+        return logger;
     }
 
     public Optional<LogBuffer> getLogBuffer() {
