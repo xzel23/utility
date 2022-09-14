@@ -39,11 +39,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -324,7 +320,6 @@ public final class XmlUtil {
         XPath xpath = xpath();
 
         HashMap<String, String> nsToUri = new HashMap<>();
-        HashMap<String, List<String>> uriToNs = new HashMap<>();
 
         String defaultUri = null;
         for (Node n = node; n != null; n = n.getParentNode()) {
@@ -341,9 +336,7 @@ public final class XmlUtil {
                         defaultUri = value;
                     } else if (key.startsWith("xmlns:")) {
                         String ns = key.substring("xmlns:".length());
-                        String uri = value;
-                        nsToUri.putIfAbsent(ns, uri);
-                        uriToNs.computeIfAbsent(uri, k -> new ArrayList<>()).add(ns);
+                        nsToUri.putIfAbsent(ns, value);
                     }
                 }
             }
@@ -354,26 +347,9 @@ public final class XmlUtil {
                 ns = "ns" + i;
             }
             nsToUri.put(ns, defaultUri);
-            uriToNs.computeIfAbsent(defaultUri, k -> new ArrayList<>()).add(ns);
         }
 
-        NamespaceContext ctx = new NamespaceContext() {
-            @Override
-            public String getNamespaceURI(String prefix) {
-                return nsToUri.get(prefix);
-            }
-
-            @Override
-            public String getPrefix(String namespaceURI) {
-                List<String> namespaces = uriToNs.get(namespaceURI);
-                return namespaces==null || namespaces.isEmpty() ? null : namespaces.get(0);
-            }
-
-            @Override
-            public Iterator<String> getPrefixes(String namespaceURI) {
-                return Collections.unmodifiableList(uriToNs.getOrDefault(namespaceURI, Collections.emptyList())).iterator();
-            }
-        };
+        NamespaceContext ctx = new SimpleNamespaceContext(nsToUri);
         
         xpath.setNamespaceContext(ctx);
         
@@ -427,4 +403,5 @@ public final class XmlUtil {
             return Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.ORDERED | Spliterator.SIZED;
         }
     }
+
 }
