@@ -2,12 +2,12 @@
 
 Some libraries with utility classes.
 
-| library         | description                                           | exported module          |
-|-----------------|-------------------------------------------------------|--------------------------|
-| utility         | general purpose utilities                             | com.dua3.utility         |
-| utility-db      | database utilities                                    | com.dua3.utility.db      |
-| utility-swing   | swing utilities                                       | com.dua3.utility.swing   |
-| utility-logging | logging utilities and simple logging implementation | com.dua3.utility.logging |
+| library         | description                                          | exported module           |
+|-----------------|------------------------------------------------------|---------------------------|
+| utility         | general purpose utilities                            | com.dua3.utility          |
+| utility-db      | database utilities                                   | com.dua3.utility.db       |
+| utility-swing   | swing utilities                                      | com.dua3.utility.swing    |
+| utility-logging | logging utilities and simple logging implementation  | com.dua3.utility.logging  |
 
 ## License
 

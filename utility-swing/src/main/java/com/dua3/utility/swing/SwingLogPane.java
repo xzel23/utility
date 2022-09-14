@@ -192,7 +192,7 @@ public class SwingLogPane extends JPanel {
 
     }
 
-    static enum LogEntryField {
+    enum LogEntryField {
         LOGGER {
             @Override
             public String get(LogEntry entry) {

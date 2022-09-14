@@ -771,12 +771,13 @@ public final class IoUtil {
     }
 
     /**
-     * Throw any exception circumvention language checks for declared exceptions.
+     * Throw any exception circumventing language checks for declared exceptions.
      * @param e the {@link Throwable} to throw
      * @param <E> the generic exception type
      * @throws E always
      */
     private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
+        //noinspection unchecked
         throw (E) e;
     }
 }

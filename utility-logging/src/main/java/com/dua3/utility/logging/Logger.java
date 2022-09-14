@@ -13,7 +13,7 @@ import java.util.Map;
 public class Logger extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
-    private final List<LogEntryHandler> handlers;
+    private final List<? extends LogEntryHandler> handlers;
     private final Map<Marker,Level> markerLevelMap = new HashMap<>();
     private Level level = null;
     
@@ -25,7 +25,7 @@ public class Logger extends AbstractLogger {
         return defaultLevel;
     }
     
-    public Logger(String name, List<LogEntryHandler> handlers) {
+    public Logger(String name, List<? extends LogEntryHandler> handlers) {
         super.name = name;
         this.handlers = handlers;
     }

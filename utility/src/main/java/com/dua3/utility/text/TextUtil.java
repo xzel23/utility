@@ -11,7 +11,6 @@ import com.dua3.utility.math.geometry.Dimension2f;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -645,26 +644,22 @@ public final class TextUtil {
      */
     public static String generateMailToLink(String email, String subject) {
         // give some care to translate space to "%20"
-        try {
-            String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8.name());
-            String s2 = URLEncoder.encode(subject.replace(" ", "_"), StandardCharsets.UTF_8.name());
-            StringBuilder sb = new StringBuilder(s1.length());
-            for (int i = 0; i < s1.length(); i++) {
-                if (s1.charAt(i) == '+' && s2.charAt(i) == '_') {
-                    sb.append("%20");
-                } else {
-                    sb.append(s1.charAt(i));
-                }
+        String s1 = URLEncoder.encode(subject, StandardCharsets.UTF_8);
+        String s2 = URLEncoder.encode(subject.replace(" ", "_"), StandardCharsets.UTF_8);
+        StringBuilder sb = new StringBuilder(s1.length());
+        for (int i = 0; i < s1.length(); i++) {
+            if (s1.charAt(i) == '+' && s2.charAt(i) == '_') {
+                sb.append("%20");
+            } else {
+                sb.append(s1.charAt(i));
             }
-            String s = sb.toString();
-    
-            return String.format(Locale.ROOT,
-                    "mailto:%s?subject=%s",
-                    email,
-                    s);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
         }
+        String s = sb.toString();
+
+        return String.format(Locale.ROOT,
+                "mailto:%s?subject=%s",
+                email,
+                s);
     }
 
     /**

@@ -31,7 +31,7 @@ public class ConsoleHandler implements LogEntryHandler {
     @Override
     public void handleEntry(LogEntry entry) {
         var esc = brackets.getOrDefault(entry.level(), NO_ESCAPE_SEQUENCES);
-        out.append(esc.first()+entry+esc.second()+NEWLINE);
+        out.append(esc.first()).append(String.valueOf(entry)).append(esc.second()).append(NEWLINE);
     }
 
 }

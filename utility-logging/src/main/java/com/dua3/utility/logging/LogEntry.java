@@ -31,6 +31,7 @@ public record LogEntry(Logger logger, Instant time, Level level, @Nullable Marke
         }
     }
     
+    @Override
     public String toString() {
         if (throwable()==null) {
             return "[%-5s] %s %s\t%s".formatted(level, DateTimeFormatter.ISO_INSTANT.format(time), logger.getName(), formatMessage());

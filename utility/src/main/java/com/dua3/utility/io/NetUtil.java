@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -64,12 +63,8 @@ public final class NetUtil {
             return false;
         }
 
-        try {
-            return URLDecoder.decode(u1.toString(), StandardCharsets.UTF_8.name())
-                    .equals(URLDecoder.decode(u2.toString(), StandardCharsets.UTF_8.name()));
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        }
+        return URLDecoder.decode(u1.toString(), StandardCharsets.UTF_8)
+                .equals(URLDecoder.decode(u2.toString(), StandardCharsets.UTF_8));
     }
 
     /** The void URL. */

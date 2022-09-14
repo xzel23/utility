@@ -19,7 +19,7 @@ public interface FontUtil<F> {
      * Get FontUtil instance.
      * @return the default FontUtil instance
      */
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings("rawtypes")
     static FontUtil<?> getInstance() {
         Iterator<FontUtil> serviceIterator = ServiceLoader
                 .load(FontUtil.class)

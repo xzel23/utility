@@ -316,6 +316,7 @@ public final class XmlUtil {
 
     /**
      * Create {@link XPath} instance for a node with a matching {@link NamespaceContext}.
+     * @param node the node to determine the used namespaces from
      * @return new {@link XPath} instance generated from he supplied argument and its parent's
      * namespace declarations.
      */
