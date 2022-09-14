@@ -20,7 +20,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.utility"
-    val version         = "10.1.2" 
+    val version         = "10.2.0-SNAPSHOT" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
     val licenseName     = "MIT"
@@ -67,7 +67,8 @@ subprojects {
 
         // SLF4J
         implementation("org.slf4j:slf4j-api:2.0.0")
-
+        testImplementation("org.slf4j:slf4j-simple:2.0.0")
+        
         // JUnit
         testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.9.0")
         testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.9.0")
