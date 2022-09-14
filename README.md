@@ -151,6 +151,11 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ## Changes
 
+### 10.2.0 (to be released)
+
+- add XmlUtil.xpath(node) to create namespace aware XPath instances
+- small fixes and improvements
+
 ### 10.1.2
 
 - make XMLUtil namespace aware by default
