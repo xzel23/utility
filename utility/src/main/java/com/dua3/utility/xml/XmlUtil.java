@@ -1,5 +1,6 @@
 package com.dua3.utility.xml;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.text.TextUtil;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -311,15 +313,44 @@ public final class XmlUtil {
     }
 
     /**
+     * Create {@link XPath} instance with a namespace context.
+     * @param ctx the {@link NamespaceContext} to use
+     * @return new {@link XPath} instance.
+     */
+    public XPath xpath(NamespaceContext ctx) {
+        XPath xpath = xpath();
+        xpath.setNamespaceContext(ctx);
+        return xpath;
+    }
+
+    /**
+     * Create {@link XPath} instance with only a default namespace set The default namespace will be identified by
+     * the name "ns" in xpath expressions.
+     * @param defaultUri the URI of the default namespace
+     * @return new {@link XPath} instance.
+     */
+    public XPath xpath(String defaultUri) {
+        return xpath(new SimpleNamespaceContext(defaultUri));
+    }
+
+    /**
+     * Create {@link XPath} instance with a mapping and a default namespace.
+     * @param nsToUri mapping from namespace name to URI
+     * @param defaultUri the URI of the default namespace
+     * @return new {@link XPath} instance.
+     */
+    public XPath xpath(Map<String,String> nsToUri, @Nullable String defaultUri) {
+        return xpath(new SimpleNamespaceContext(nsToUri, defaultUri));
+    }
+
+    /**
      * Create {@link XPath} instance for a node with a matching {@link NamespaceContext}.
      * @param node the node to determine the used namespaces from
      * @return new {@link XPath} instance generated from he supplied argument and its parent's
      * namespace declarations.
      */
     public XPath xpath(Node node) {
-        XPath xpath = xpath();
-
-        HashMap<String, String> nsToUri = new HashMap<>();
+        Map<String, String> nsToUri = new HashMap<>();
 
         String defaultUri = null;
         for (Node n = node; n != null; n = n.getParentNode()) {
@@ -341,19 +372,8 @@ public final class XmlUtil {
                 }
             }
         }
-        if (defaultUri != null) {
-            String ns = "ns";
-            for (int i = 1; nsToUri.containsKey(ns); i++) {
-                ns = "ns" + i;
-            }
-            nsToUri.put(ns, defaultUri);
-        }
 
-        NamespaceContext ctx = new SimpleNamespaceContext(nsToUri);
-        
-        xpath.setNamespaceContext(ctx);
-        
-        return xpath;
+        return xpath(nsToUri, defaultUri);
     }
     
     

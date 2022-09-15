@@ -151,9 +151,11 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ## Changes
 
-### 10.2.0 (to be released)
+### 10.2.0
 
-- add XmlUtil.xpath(node) to create namespace aware XPath instances
+- add SimpleNamespaceContext for use with XPath
+- add XmlUtil.xpath(node) to create namespace aware XPath instances (namespace information is automatically extracted from the node and its parents)
+- fix SLF4J warnings on console when running unit tests
 - small fixes and improvements
 
 ### 10.1.2
