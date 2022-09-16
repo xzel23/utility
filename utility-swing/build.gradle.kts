@@ -5,8 +5,8 @@ dependencies {
     compileOnly(project(":utility-logging"))
     
     testImplementation(project(":utility-logging"))
-    testImplementation("org.slf4j:jul-to-slf4j:2.0.0")
-    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.18.0")
+    testImplementation(rootProject.libs.jul.to.slf4j)
+    testImplementation(rootProject.libs.log4j.to.slf4j)
 }
 
 // test utility-swing rely on our own Logger implementation, so exclude SLF4J SimpleLogger

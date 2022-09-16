@@ -9,18 +9,19 @@ import com.adarshr.gradle.testlogger.theme.ThemeType;
 plugins {
     id("java-library")
     id("maven-publish")
+    id("version-catalog")
     id("signing")
     id("idea")
-    id("com.github.ben-manes.versions") version "0.42.0"
-    id("com.adarshr.test-logger") version "3.2.0"
-    id("com.github.spotbugs") version "5.0.12"
-    id("com.dua3.cabe") version "1.0.0"
+    alias(libs.plugins.versions)
+    alias(libs.plugins.test.logger)
+    alias(libs.plugins.spotbugs)
+    alias(libs.plugins.cabe)
 }
 
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.utility"
-    val version         = "10.2.0" 
+    val version         = "10.2.1-SNAPSHOT" 
     val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
     val repo            = "public"
     val licenseName     = "MIT"
@@ -41,6 +42,7 @@ subprojects {
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
+    apply(plugin = "version-catalog")
     apply(plugin = "signing")
     apply(plugin = "idea")
     apply(plugin = "com.github.ben-manes.versions")
@@ -63,15 +65,15 @@ subprojects {
     // dependencies
     dependencies {
         // Cabe (source annotations)
-        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0")
+        compileOnly(rootProject.libs.cabe.annotations)
 
         // SLF4J
-        implementation("org.slf4j:slf4j-api:2.0.0")
-        testImplementation("org.slf4j:slf4j-simple:2.0.0")
+        implementation(rootProject.libs.slf4j.api)
+        testImplementation(rootProject.libs.slf4j.simple)
         
         // JUnit
-        testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.9.0")
-        testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.9.0")
+        testImplementation(rootProject.libs.junit.jupiter.api)
+        testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
     }
 
     idea {
