@@ -6,6 +6,15 @@ include("utility-swing")
 include("utility-logging")
 
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+
+        // Maven Central Repository
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             plugin("versions", "com.github.ben-manes.versions").version("0.42.0")

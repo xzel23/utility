@@ -58,10 +58,6 @@ subprojects {
         withSourcesJar()
     }
     
-    repositories {
-        mavenCentral()
-    }
-
     // dependencies
     dependencies {
         // Cabe (source annotations)
