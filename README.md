@@ -151,7 +151,7 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ## Changes
 
-### 10.2.1 (to be released)
+### 10.2.1
 
 - fix handling of default namespace URI in SimpleNamespaceContext
 - use version catalog defined in settings.gradle.kts for dependencies and plugins
