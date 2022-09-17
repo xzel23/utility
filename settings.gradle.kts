@@ -30,6 +30,7 @@ dependencyResolutionManagement {
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
             library("jul-to-slf4j", "org.slf4j", "jul-to-slf4j").versionRef("slf4j")
 
+            library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
             
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
