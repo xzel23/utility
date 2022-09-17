@@ -6,15 +6,7 @@ include("utility-swing")
 include("utility-logging")
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
 
-        // Maven Central Repository
-        mavenCentral()
-    }
-}
-
-dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             plugin("versions", "com.github.ben-manes.versions").version("0.42.0")
@@ -30,7 +22,7 @@ dependencyResolutionManagement {
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
             library("jul-to-slf4j", "org.slf4j", "jul-to-slf4j").versionRef("slf4j")
 
-            version("log4j", "2.18.0")
+            version("log4j", "2.19.0")
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
 
             version("junit", "5.9.0")
@@ -38,4 +30,11 @@ dependencyResolutionManagement {
             library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
         }
     }
+
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        // Maven Central Repository
+        mavenCentral()
+    }
+    
 }
