@@ -20,25 +20,23 @@ plugins {
 
 /////////////////////////////////////////////////////////////////////////////
 object meta {
-    val group           = "com.dua3.utility"
-    val version         = "10.2.1-SNAPSHOT" 
-    val scm             = "https://gitlab.com/com.dua3/lib/utility.git"
-    val repo            = "public"
-    val licenseName     = "MIT"
-    val licenseUrl      = "https://opensource.org/licenses/MIT"
-    val developerId     = "axh"
-    val developerName   = "Axel Howind"
-    val developerEmail  = "axh@dua3.com"
-    val organization    = "dua3"
-    val organizationUrl = "https://www.dua3.com"
+    val group            = "com.dua3.utility"
+    val scm              = "https://gitlab.com/com.dua3/lib/utility.git"
+    val repo             = "public"
+    val licenseName      = "MIT"
+    val licenseUrl       = "https://opensource.org/licenses/MIT"
+    val developerId      = "axh"
+    val developerName    = "Axel Howind"
+    val developerEmail   = "axh@dua3.com"
+    val organization     = "dua3"
+    val organizationUrl  = "https://www.dua3.com"
 }
 /////////////////////////////////////////////////////////////////////////////
 
-val isReleaseVersion = !meta.version.endsWith("SNAPSHOT")
-
 subprojects {
     
-    project.setVersion(meta.version)
+    project.setVersion(rootProject.libs.versions.projectVersion.get())
+    val isReleaseVersion = !project.getVersion().toString().endsWith("SNAPSHOT")
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -109,7 +107,7 @@ subprojects {
             create<MavenPublication>("maven") {
                 groupId    = meta.group
                 artifactId = project.name
-                version    = meta.version
+                version    = project.version.toString()
 
                 from(components["java"])
 
