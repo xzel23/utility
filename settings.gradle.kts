@@ -20,9 +20,9 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("1.0.0")
 
             version("cabe", "1.0.0")
-            version("junit", "5.9.0")
+            version("junit", "5.9.1")
             version("log4j", "2.19.0")
-            version("slf4j", "2.0.1")
+            version("slf4j", "2.0.2")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
 
