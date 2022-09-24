@@ -1,12 +1,5 @@
 package com.dua3.utility.options;
 
-import com.dua3.utility.options.Arguments;
-import com.dua3.utility.options.ArgumentsParser;
-import com.dua3.utility.options.ChoiceOption;
-import com.dua3.utility.options.Flag;
-import com.dua3.utility.options.Option;
-import com.dua3.utility.options.OptionException;
-import com.dua3.utility.options.SimpleOption;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -90,15 +83,13 @@ public class ArgumentsParserTest {
 
         SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n").description("set name");
         SimpleOption<Integer> optionAge = cmd.simpleOption(Integer.class, "--age", "-a");
-
+        
         assertFalse(cmd.parse().get(optionName).isPresent());
         assertFalse(cmd.parse().get(optionAge).isPresent());
 
         assertEquals("Eve", cmd.parse("-n", "Eve").getOrThrow(optionName));
         assertEquals(30, cmd.parse("--age", "30").getOrThrow(optionAge));
-
-        assertThrows(OptionException.class, () -> cmd.parse("-n", "Eve", "--name", "Bob"));
-
+        
         Arguments eve30 = cmd.parse("-n", "Eve", "--age", "30");
         assertEquals("Eve", eve30.getOrThrow(optionName));
         assertEquals(30, eve30.getOrThrow(optionAge));
@@ -111,6 +102,44 @@ public class ArgumentsParserTest {
                           Unit test for passing simple options on the command line.
                           
                           testSimpleOption <options> [arg1] ...
+                          
+                              --age arg
+                              -a arg
+                          
+                              --name arg
+                              -n arg
+                                      set name
+                                      
+                          """;
+        assertEquals(expected, cmd.help());
+    }
+    
+    @Test
+    public void testSimpleOptionRequired() {
+        ArgumentsParser cmd = new ArgumentsParser("testSimpleOptionRequired", "Unit test for passing simple options on the command line.");
+
+        SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n").description("set name").required();
+        SimpleOption<Integer> optionAge = cmd.simpleOption(Integer.class, "--age", "-a");
+
+        assertThrows(OptionException.class, () -> cmd.parse());
+
+        assertEquals("Eve", cmd.parse("-n", "Eve").getOrThrow(optionName));
+        assertThrows(OptionException.class, () -> cmd.parse("--age", "30").getOrThrow(optionAge));
+
+        assertThrows(OptionException.class, () -> cmd.parse("-n", "Eve", "--name", "Bob"));
+
+        Arguments eve30 = cmd.parse("-n", "Eve", "--age", "30");
+        assertEquals("Eve", eve30.getOrThrow(optionName));
+        assertEquals(30, eve30.getOrThrow(optionAge));
+
+        String expected = """
+                          
+                          testSimpleOptionRequired
+                          ------------------------
+                          
+                          Unit test for passing simple options on the command line.
+                          
+                          testSimpleOptionRequired <options> [arg1] ...
                           
                               --age arg
                               -a arg

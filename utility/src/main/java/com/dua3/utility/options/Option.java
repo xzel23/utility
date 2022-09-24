@@ -52,7 +52,8 @@ public abstract class Option<T> {
     protected Option<T> occurrence(int min, int max) {
         LangUtil.check(min >= 0, "minimum occurrences is negative");
         LangUtil.check(min <= max, "minimum occurrences > max occurrences");
-        LangUtil.check(minOccurrences == 0 && maxOccurrences == Integer.MAX_VALUE, "occurrences already set");
+        LangUtil.check(minOccurrences == 0 || minOccurrences == min, "minOccurrences already set");
+        LangUtil.check(maxOccurrences == Integer.MAX_VALUE || maxOccurrences == max, "maxOccurrences already set");
 
         this.minOccurrences = min;
         this.maxOccurrences = max;
