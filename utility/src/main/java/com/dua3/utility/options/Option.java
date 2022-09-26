@@ -19,14 +19,14 @@ public abstract class Option<T> {
     private final Function<?super T, String> formatter;
     
     private final String[] names;
-    
-    String displayName = "";
-    String description = "";
-    int minArity = 0;
-    int maxArity = 0;
-    int minOccurrences = 0;
-    int maxOccurrences = Integer.MAX_VALUE;
-    Consumer<Collection<T>> handler = values -> {};
+
+    private String displayName = "";
+    private String description = "";
+    private int minArity = 0;
+    private int maxArity = 0;
+    private int minOccurrences = 0;
+    private int maxOccurrences = Integer.MAX_VALUE;
+    private Consumer<Collection<T>> handler = values -> {};
 
     protected Option(Function<String, ? extends T> mapper,
                      Function<?super T, String> formatter,

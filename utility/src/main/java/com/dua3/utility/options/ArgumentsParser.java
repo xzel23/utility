@@ -194,7 +194,7 @@ public class ArgumentsParser {
             }
 
             // if maximum number of args is consumed, reset the current entry
-            if (currentEntry!=null && currentEntry.getParams().size() == currentEntry.getOption().maxArity) {
+            if (currentEntry!=null && currentEntry.getParams().size() == currentEntry.getOption().maxArity()) {
                 currentEntry = null;
             }
 
@@ -205,7 +205,7 @@ public class ArgumentsParser {
                 currentEntry = Arguments.Entry.create(option);
                 parsedOptions.add(currentEntry);
                 
-                if (currentEntry.getOption().maxArity==0) {
+                if (currentEntry.getOption().maxArity()==0) {
                     currentEntry=null;
                 }
             } else {
@@ -269,21 +269,21 @@ public class ArgumentsParser {
             Option<?> option = entry.option;
             int nParams = entry.params.size();
             LangUtil.check(
-                option.minArity <= nParams,
+                option.minArity() <= nParams,
                 () -> new OptionException(
                     "option '%s' must have at least %d parameters, but has only %d".formatted(
                             option.name(),
-                            option.minArity,
+                            option.minArity(),
                             nParams
                     )
                 )
             );
             LangUtil.check(
-                nParams <= option.maxArity,
+                nParams <= option.maxArity(),
                 () -> new OptionException(
                     "option '%s' must have at most %d parameters, but has %d".formatted(
                             option.name(),
-                            option.maxArity,
+                            option.maxArity(),
                             nParams
                     )
                 )
@@ -330,7 +330,7 @@ public class ArgumentsParser {
         // print options
         options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
             // get argument text
-            String argText = getArgText(option.minArity, option.maxArity);
+            String argText = getArgText(option.minArity(), option.maxArity());
 
             // print option names
             for (String name: option.names()) {
@@ -338,8 +338,8 @@ public class ArgumentsParser {
             }
             
             // print option description
-            if (!option.description.isEmpty()) {
-                fmt.format("%s", option.description.indent(12));
+            if (!option.description().isEmpty()) {
+                fmt.format("%s", option.description().indent(12));
             }
             
             fmt.format("\n");
