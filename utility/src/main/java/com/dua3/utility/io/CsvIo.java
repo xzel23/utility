@@ -12,6 +12,7 @@
  */
 package com.dua3.utility.io;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 
@@ -67,7 +68,7 @@ public abstract class CsvIo implements AutoCloseable {
     }
 
     @SuppressWarnings("ChainOfInstanceofChecks")
-    protected String format(Object obj) {
+    protected String format(@Nullable Object obj) {
         final String text;
         if (obj instanceof Number) {
             text = numberFormat.format(obj);
