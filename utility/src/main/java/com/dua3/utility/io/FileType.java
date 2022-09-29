@@ -304,7 +304,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if an error occurs
      */
     public T read(Path path, Function<FileType<? extends T>, Arguments> options) throws IOException {
-        return read(path.toUri());
+        return read(path.toUri(), options);
     }
 
     /**
