@@ -26,8 +26,9 @@ public enum Platform {
             
             for (int i = 0; i < len; i++) {
                 switch (s.charAt(i)) {
-                case ' ', '\t', '\\', '"':
-                    return true;
+                    case ' ', '\t', '\\', '"' -> {
+                        return true;
+                    }
                 }
             }
             return false;

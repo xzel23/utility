@@ -36,11 +36,6 @@ public class Logger extends AbstractLogger {
     }
 
     @Override
-    public String getName() {
-        return super.getName();
-    }
-
-    @Override
     protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String msg, @Nullable Object[] arguments, @Nullable Throwable throwable) {
         handlers.forEach(handler -> handler.handleEntry(new LogEntry(this, Instant.now(), level, marker, msg, arguments, throwable)));
     }
