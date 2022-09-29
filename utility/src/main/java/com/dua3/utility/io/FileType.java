@@ -154,8 +154,23 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
     public static <T> Optional<T> read(URI uri, Class<T> cls) throws IOException {
+        return read(uri, cls, t -> Arguments.empty());
+    }
+
+    /**
+     * Read data. This method determines the file type according to URI and class and then reads an object from
+     * the given URI.
+     * @param uri the URI to read from
+     * @param cls the class
+     * @param options the options to use
+     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     *         determined
+     * @param <T> the generic class parameter
+     * @throws IOException if the file type could be determined but an error occurred while reading
+     */
+    public static <T> Optional<T> read(URI uri, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forUri(uri, cls);
-        return type.isPresent() ? Optional.of(type.get().read(uri)) : Optional.empty();
+        return type.isPresent() ? Optional.of(type.get().read(uri, options)) : Optional.empty();
     }
 
     /**
@@ -169,8 +184,22 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
     public static <T> Optional<T> read(Path path, Class<T> cls) throws IOException {
+        return read(path, cls, t -> Arguments.empty());
+    }
+
+    /**
+     * Read data. This method determines the file type according to URI and class and then reads an object from
+     * the given URI.
+     * @param path the path to read from
+     * @param cls the class
+     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     *         determined
+     * @param <T> the generic class parameter
+     * @throws IOException if the file type could be determined but an error occurred while reading
+     */
+    public static <T> Optional<T> read(Path path, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
         Optional<com.dua3.utility.io.FileType<T>> type = forPath(path, cls);
-        return type.isPresent() ? Optional.of(type.get().read(path)) : Optional.empty();
+        return type.isPresent() ? Optional.of(type.get().read(path, options)) : Optional.empty();
     }
 
     /**
