@@ -121,7 +121,7 @@ public class ArgumentsParserTest {
         SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n").description("set name").required();
         SimpleOption<Integer> optionAge = cmd.simpleOption(Integer.class, "--age", "-a");
 
-        assertThrows(OptionException.class, () -> cmd.parse());
+        assertThrows(OptionException.class, cmd::parse);
 
         assertEquals("Eve", cmd.parse("-n", "Eve").getOrThrow(optionName));
         assertThrows(OptionException.class, () -> cmd.parse("--age", "30").getOrThrow(optionAge));
