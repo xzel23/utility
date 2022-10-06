@@ -87,7 +87,7 @@ public class CsvReader extends CsvIo {
 
         @Override
         public void startRow() {
-            assert row.isEmpty();
+            assert row.isEmpty() : "row ist not empty";
         }
     }
 
@@ -302,7 +302,7 @@ public class CsvReader extends CsvIo {
                 continue;
             }
 
-            assert field != null;
+            assert field != null : "field must not be null";
             rb.add(field);
             columnNr++;
 

@@ -38,7 +38,7 @@ public final class MathUtil {
      *             </ul>
      */
     public static int clamp(int min, int max, int arg) {
-        assert min <= max;
+        assert min <= max : "invalid interval: min="+min+", max="+max;
         return arg < min ? min : Math.min(arg, max);
     }
 
@@ -59,7 +59,7 @@ public final class MathUtil {
      *             </ul>
      */
     public static long clamp(long min, long max, long arg) {
-        assert min <= max;
+        assert min <= max : "invalid interval: min="+min+", max="+max;
         return arg < min ? min : Math.min(arg, max);
     }
 
@@ -80,7 +80,7 @@ public final class MathUtil {
      *             </ul>
      */
     public static double clamp(double min, double max, double arg) {
-        assert min <= max;
+        assert min <= max : "invalid interval: min="+min+", max="+max;
         return arg < min ? min : Math.min(arg, max);
     }
 
@@ -101,7 +101,7 @@ public final class MathUtil {
      *             </ul>
      */
     public static float clamp(float min, float max, float arg) {
-        assert min <= max;
+        assert min <= max : "invalid interval: min="+min+", max="+max;
         return arg < min ? min : Math.min(arg, max);
     }
 

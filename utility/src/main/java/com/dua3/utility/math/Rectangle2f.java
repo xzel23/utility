@@ -20,8 +20,8 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @param height the height (>= 0)
      */
     public Rectangle2f {
-        assert width>=0;
-        assert height>=0;
+        assert width>=0 : "width is negative: "+width;
+        assert height>=0 : "height is negative: "+height;
     }
 
     /**

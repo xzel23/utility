@@ -991,7 +991,7 @@ public final class LangUtil {
      * @return true, exactly if a ≤ x and x ≤ b
      */
     public static boolean isBetween(long x, long a, long b) {
-        assert a<=b;
+        assert a<=b : "invalid interval: a="+a+", b="+b;
         return a<=x && x<=b;
     }
     
@@ -1003,7 +1003,7 @@ public final class LangUtil {
      * @return true, exactly if a ≤ x and x ≤ b
      */
     public static boolean isBetween(double x, double a, double b) {
-        assert a<=b;
+        assert a<=b : "invalid interval: a="+a+", b="+b;
         return a<=x && x<=b;
     }
     
@@ -1016,7 +1016,7 @@ public final class LangUtil {
      * @return true, exactly if a.compareTo(x) ≤ 0 and x.compareTo(b) ≤ 0
      */
     public static <T extends Comparable<T>> boolean isBetween(T x, T a, T b) {
-        assert a.compareTo(b) <= 0;
+        assert a.compareTo(b) <= 0 : "invalid interval: a="+a+", b="+b;
         return a.compareTo(x) <= 0 && x.compareTo(b) <= 0;
     }
     

@@ -17,7 +17,6 @@ class Path2fImpl {
     }
     
     void addVertex(Vector2f v) {
-        assert v != null;
         vertices.add(v);
     }
 
@@ -38,7 +37,6 @@ class Path2fImpl {
     }
 
     void addSegment(Segment2f segment) {
-        assert segment != null;
         segments.add(segment);
     }
 }

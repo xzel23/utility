@@ -347,7 +347,7 @@ public class ArgumentsParser {
     }
 
     private static String getArgText(int min, int max) {
-        assert min<=max;
+        assert min <= max : "invalid interval: min="+min+", max="+max;
         
         String argText = switch (min) {
             case 0 -> "";

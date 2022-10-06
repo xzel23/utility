@@ -111,7 +111,7 @@ public record Vector2f(float x, float y) {
         double denominator = a.length() * b.length();
 
         // denominator==0 implies nominator==0, so this should only happen if scalarProduct() or length() is broken
-        assert denominator != 0;  
+        assert denominator != 0 : "denominator is 0, arguments: a="+a+", b="+b;
         
         return Math.acos(nominator/denominator);
     }

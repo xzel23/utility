@@ -9,7 +9,6 @@ public abstract class Segment2f {
     protected final Path2fImpl path;
     
     protected Segment2f(Path2fImpl path) {
-        assert path != null;
         this.path = path;
     }
 

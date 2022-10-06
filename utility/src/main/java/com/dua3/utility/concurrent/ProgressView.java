@@ -98,13 +98,13 @@ public class ProgressView<T> implements ProgressTracker<T> {
 
     @Override
     public void update(T task, int total, int done) {
-        assert 0 <= done && done<=total;
+        assert 0 <= done && done<=total : "invalid arguments for '"+task+"': done="+done+", total="+total;
         getTaskRecord(task).update(done, total);
     }
 
     @Override
     public void update(T task, double percentDone) {
-        assert 0 <= percentDone && percentDone<=1.0;
+        assert 0 <= percentDone && percentDone<=1.0 : "invalid arguments for '"+task+"': percentDone="+percentDone;
         getTaskRecord(task).update(percentDone);
     }
 

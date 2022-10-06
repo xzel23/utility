@@ -171,7 +171,7 @@ public final class RichText
             this.length=0;
         } else {
             this.text = run[0].base();
-            assert checkAllRunsHaveTextAsBase();
+            assert checkAllRunsHaveTextAsBase() : "runs are based on different texts";
 
             for (int idx=0; idx<run.length; idx++) {
                 runStart[idx] = run[idx].getStart();
@@ -261,7 +261,7 @@ public final class RichText
             }
             
             int step = Math.min(runA.getEnd() - a.start, runB.getEnd() - b.start);
-            assert step > 0;
+            assert step > 0 : "invalid step: "+step;
             idx += step;
         }
 
