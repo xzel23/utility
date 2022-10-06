@@ -151,6 +151,14 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ## Changes
 
+### 10.2.2
+
+- update dependencies
+- fix javadoc problems
+- make Option fields private
+- FileType.read(): add overloads taking options
+- fix AssertionError when writing null value in CSV
+
 ### 10.2.1
 
 - fix handling of default namespace URI in SimpleNamespaceContext
