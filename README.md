@@ -151,6 +151,10 @@ When running your code with exceptions enabled, parameters are checked for inval
 
 ## Changes
 
+### 10.2.3
+
+ - add assertion messages
+
 ### 10.2.2
 
 - update dependencies
