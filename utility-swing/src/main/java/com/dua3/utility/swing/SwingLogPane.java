@@ -227,6 +227,20 @@ public class SwingLogPane extends JPanel {
         public abstract String get(LogEntry entry);
     }
 
+    private static class RowFilter extends javax.swing.RowFilter<AbstractTableModel, Integer> {
+        private final Level c;
+
+        public RowFilter(Level c) {
+            this.c = c;
+        }
+
+        @Override
+        public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
+            LogEntry value = (LogEntry) entry.getValue(0);
+            return value == null || value.level().compareTo(c) <= 0;
+        }
+    }
+
     private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
         private final LogEntryField f;
 
@@ -439,13 +453,7 @@ public class SwingLogPane extends JPanel {
     }
 
     private void setFilter(Level c) {
-        tableRowSorter.setRowFilter(new RowFilter<>() {
-            @Override
-            public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
-                LogEntry value = (LogEntry) entry.getValue(0);
-                return value == null || value.level().compareTo(c) <= 0;
-            }
-        });
+        tableRowSorter.setRowFilter(new RowFilter(c));
     }
 
     private void handleEscapeKey() {
