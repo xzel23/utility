@@ -92,7 +92,7 @@ public final class XmlUtil {
     }
 
     /*
-     * Lazily construct the a instance using JAXP Lookup Mechanism for obtaining the different factories.
+     * Lazily construct the instance using JAXP Lookup Mechanism for obtaining the different factories.
      */
     private static class LazySingletonJaxpInstance {
         private static final XmlUtil INSTANCE;

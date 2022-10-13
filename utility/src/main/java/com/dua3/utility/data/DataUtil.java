@@ -519,7 +519,7 @@ public final class DataUtil {
      * @param b the second map
      * @param <U> the key type
      * @param <V> the value type
-     * @return a new map that contains the changes as pairs (value in a, value in b) 
+     * @return a new map that contains the changes as pairs (value in {@code a}, value in {@code b})
      */
     public static <U, V> Map<U, Pair<V, V>> changes(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());

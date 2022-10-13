@@ -15,7 +15,7 @@ import java.util.Optional;
  * A simple {@link NamespaceContext} implementation that automatically creates the reverse mapping from URI to
  * namespace. When a default namespace is set via "xmlns=..." it will be associated with the namespace name "ns"
  * if that is not already in use. Otherwise, the next free namespace name of the form "ns#number" is used.
- * Whether or not a default namespace has been set and what name it uses can be queried via {@link #getDefaultPrefix()}.
+ * Whether a default namespace has been set and what name it uses can be queried via {@link #getDefaultPrefix()}.
  */
 public class SimpleNamespaceContext implements NamespaceContext {
     private final HashMap<String, String> nsToUri;
