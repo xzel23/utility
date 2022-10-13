@@ -163,7 +163,10 @@ the parameter.
 
 ### 10.2.3
 
+- add XmlUtil.prettyPrint(String)
+- use ProgressView.update(PROGRESS_INDETERMINATE) to set indeterminate state
 - add assertion messages
+- code cleanup
 
 ### 10.2.2
 
