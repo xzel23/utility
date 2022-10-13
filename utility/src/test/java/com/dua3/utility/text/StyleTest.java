@@ -1,6 +1,5 @@
 package com.dua3.utility.text;
 
-import com.dua3.utility.text.Style;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

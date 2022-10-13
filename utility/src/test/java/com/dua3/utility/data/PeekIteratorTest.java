@@ -1,6 +1,5 @@
 package com.dua3.utility.data;
 
-import com.dua3.utility.data.PeekIterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

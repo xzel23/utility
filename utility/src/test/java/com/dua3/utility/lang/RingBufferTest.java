@@ -5,7 +5,6 @@
 
 package com.dua3.utility.lang;
 
-import com.dua3.utility.lang.RingBuffer;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

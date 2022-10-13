@@ -5,7 +5,6 @@
 
 package com.dua3.utility.io;
 
-import com.dua3.utility.io.IoUtil;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

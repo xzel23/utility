@@ -1,6 +1,5 @@
 package com.dua3.utility.math;
 
-import com.dua3.utility.math.Vector2f;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import org.junit.jupiter.api.Test;
 

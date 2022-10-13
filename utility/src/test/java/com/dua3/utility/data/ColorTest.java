@@ -5,8 +5,6 @@
 
 package com.dua3.utility.data;
 
-import com.dua3.utility.data.Color;
-import com.dua3.utility.data.RGBColor;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;

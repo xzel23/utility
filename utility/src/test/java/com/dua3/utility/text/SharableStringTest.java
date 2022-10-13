@@ -5,8 +5,6 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.utility.text.SharableString;
-import com.dua3.utility.text.SharedString;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

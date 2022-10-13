@@ -1,6 +1,5 @@
 package com.dua3.utility.lang;
 
-import com.dua3.utility.lang.BuildInfo;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;

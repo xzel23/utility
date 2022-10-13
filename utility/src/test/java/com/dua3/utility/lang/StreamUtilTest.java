@@ -1,7 +1,6 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.lang.StreamUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

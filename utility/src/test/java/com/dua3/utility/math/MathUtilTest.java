@@ -5,7 +5,6 @@
 
 package com.dua3.utility.math;
 
-import com.dua3.utility.math.MathUtil;
 import org.junit.jupiter.api.Test;
 
 import java.math.RoundingMode;
