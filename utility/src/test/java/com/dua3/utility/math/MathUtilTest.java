@@ -176,7 +176,7 @@ public class MathUtilTest {
 
         // create operations
         Map<RoundingMode, DoubleUnaryOperator> operations = new EnumMap<>(RoundingMode.class);
-        for (RoundingMode mode: RoundingMode.values()) {
+        for (RoundingMode mode : RoundingMode.values()) {
             operations.put(mode, MathUtil.roundingOperation(0, mode));
         }
 
@@ -186,11 +186,11 @@ public class MathUtilTest {
         checkRounding(operations, 1.6, 2, 1, 2, 1, 2, 2, 2);
         checkRounding(operations, 1.1, 2, 1, 2, 1, 1, 1, 1);
         checkRounding(operations, 1.0, 1, 1, 1, 1, 1, 1, 1);
-        checkRounding(operations, -1.0, -1, -1,	-1, -1, -1, -1, -1);
-        checkRounding(operations, -1.1, -2, -1,	-1, -2, -1, -1, -1);
-        checkRounding(operations, -1.6, -2, -1,	-1, -2, -2, -2, -2);
-        checkRounding(operations, -2.5, -3, -2,	-2, -3, -3, -2, -2);
-        checkRounding(operations, -5.5, -6, -5,	-5, -6, -6, -5, -6);
+        checkRounding(operations, -1.0, -1, -1, -1, -1, -1, -1, -1);
+        checkRounding(operations, -1.1, -2, -1, -1, -2, -1, -1, -1);
+        checkRounding(operations, -1.6, -2, -1, -1, -2, -2, -2, -2);
+        checkRounding(operations, -2.5, -3, -2, -2, -3, -3, -2, -2);
+        checkRounding(operations, -5.5, -6, -5, -5, -6, -6, -5, -6);
     }
 
     private static void checkRounding(Map<RoundingMode, DoubleUnaryOperator> operations, double x, double xUP, double xDOWN, double xCEILING, double xFLOOR, double xHALF_UP, double xHALF_DOWN, double xHALF_EVEN) {
@@ -207,8 +207,8 @@ public class MathUtilTest {
     @Test
     public void testClamp_int() {
         assertEquals(-2, MathUtil.clamp(-2, 5, -5));
-        assertEquals(5, MathUtil.clamp(-2, 5,  7));
-        assertEquals(1, MathUtil.clamp(-2, 5,  1));
+        assertEquals(5, MathUtil.clamp(-2, 5, 7));
+        assertEquals(1, MathUtil.clamp(-2, 5, 1));
     }
 
     @Test
@@ -221,50 +221,50 @@ public class MathUtilTest {
     @Test
     public void testClamp_double() {
         assertEquals(0.5, MathUtil.clamp(0.5, 1.5, -5.0));
-        assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  5.0));
-        assertEquals(1.0, MathUtil.clamp(0.5, 1.5,  1.0));
-        assertEquals(0.5, MathUtil.clamp(0.5, 1.5,  Double.NEGATIVE_INFINITY));
-        assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  Double.POSITIVE_INFINITY));
-        
-        assertTrue(Double.isNaN(MathUtil.clamp(0.5, 1.5,  Double.NaN)));
+        assertEquals(1.5, MathUtil.clamp(0.5, 1.5, 5.0));
+        assertEquals(1.0, MathUtil.clamp(0.5, 1.5, 1.0));
+        assertEquals(0.5, MathUtil.clamp(0.5, 1.5, Double.NEGATIVE_INFINITY));
+        assertEquals(1.5, MathUtil.clamp(0.5, 1.5, Double.POSITIVE_INFINITY));
+
+        assertTrue(Double.isNaN(MathUtil.clamp(0.5, 1.5, Double.NaN)));
     }
 
     @Test
     public void testClamp_doubleWithDefaultForNaN() {
         assertEquals(0.5, MathUtil.clamp(0.5, 1.5, -5.0, Math.PI));
-        assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  5.0, Math.PI));
-        assertEquals(1.0, MathUtil.clamp(0.5, 1.5,  1.0, Math.PI));
-        assertEquals(0.5, MathUtil.clamp(0.5, 1.5,  Double.NEGATIVE_INFINITY, Math.PI));
-        assertEquals(1.5, MathUtil.clamp(0.5, 1.5,  Double.POSITIVE_INFINITY, Math.PI));
+        assertEquals(1.5, MathUtil.clamp(0.5, 1.5, 5.0, Math.PI));
+        assertEquals(1.0, MathUtil.clamp(0.5, 1.5, 1.0, Math.PI));
+        assertEquals(0.5, MathUtil.clamp(0.5, 1.5, Double.NEGATIVE_INFINITY, Math.PI));
+        assertEquals(1.5, MathUtil.clamp(0.5, 1.5, Double.POSITIVE_INFINITY, Math.PI));
 
         assertFalse(Double.isNaN(MathUtil.clamp(0.5, 1.5, Double.NaN, Math.PI)));
-        assertEquals(Math.PI, MathUtil.clamp(0.5, 1.5,  Double.NaN, Math.PI));
+        assertEquals(Math.PI, MathUtil.clamp(0.5, 1.5, Double.NaN, Math.PI));
     }
 
     @Test
     public void testClamp_float() {
         assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f, -5.0f));
-        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  5.0f));
-        assertEquals(1.0f, MathUtil.clamp(0.5f, 1.5f,  1.0f));
-        assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f,  Float.NEGATIVE_INFINITY));
-        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  Float.POSITIVE_INFINITY));
-        
-        assertTrue(Double.isNaN(MathUtil.clamp(0.5, 1.5,  Double.NaN)));
+        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f, 5.0f));
+        assertEquals(1.0f, MathUtil.clamp(0.5f, 1.5f, 1.0f));
+        assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f, Float.NEGATIVE_INFINITY));
+        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f, Float.POSITIVE_INFINITY));
+
+        assertTrue(Double.isNaN(MathUtil.clamp(0.5, 1.5, Double.NaN)));
     }
 
     @Test
     public void testClamp_floatWithDefaultForNaN() {
         float pi = (float) Math.PI;
         assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f, -5.0f, pi));
-        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  5.0f, pi));
-        assertEquals(1.0f, MathUtil.clamp(0.5f, 1.5f,  1.0f, pi));
-        assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f,  Float.NEGATIVE_INFINITY, pi));
-        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f,  Float.POSITIVE_INFINITY, pi));
+        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f, 5.0f, pi));
+        assertEquals(1.0f, MathUtil.clamp(0.5f, 1.5f, 1.0f, pi));
+        assertEquals(0.5f, MathUtil.clamp(0.5f, 1.5f, Float.NEGATIVE_INFINITY, pi));
+        assertEquals(1.5f, MathUtil.clamp(0.5f, 1.5f, Float.POSITIVE_INFINITY, pi));
 
         assertFalse(Double.isNaN(MathUtil.clamp(0.5f, 1.5f, Float.NaN, pi)));
-        assertEquals(pi, MathUtil.clamp(0.5f, 1.5f,  Float.NaN, pi));
+        assertEquals(pi, MathUtil.clamp(0.5f, 1.5f, Float.NaN, pi));
     }
-    
+
     @Test
     public void testIsIntegral() {
         assertTrue(MathUtil.isIntegral(0.0));
@@ -272,7 +272,7 @@ public class MathUtilTest {
         assertTrue(MathUtil.isIntegral(-10.0));
         assertTrue(MathUtil.isIntegral(1265456.0));
         assertTrue(MathUtil.isIntegral(-1265456.0));
-        
+
         assertFalse(MathUtil.isIntegral(0.1));
         assertFalse(MathUtil.isIntegral(1.1));
         assertFalse(MathUtil.isIntegral(-10.1));
@@ -291,7 +291,7 @@ public class MathUtilTest {
         assertFalse(MathUtil.isIntegral(1265456.0000001));
         assertFalse(MathUtil.isIntegral(-1265456.0000001));
     }
-    
+
     @Test
     public void testGcd() {
         assertEquals(6L, MathUtil.gcd(48L, 18L));

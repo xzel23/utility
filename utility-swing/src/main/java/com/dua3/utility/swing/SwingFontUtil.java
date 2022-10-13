@@ -93,15 +93,15 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     }
 
     private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
-    
+
     @Override
     public List<Font> loadFonts(InputStream in) throws IOException {
         try (in) {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
-            List<Font> fonts =new ArrayList<>(awtFonts.length);
-            for (var awtFont: awtFonts) {
+            List<Font> fonts = new ArrayList<>(awtFonts.length);
+            for (var awtFont : awtFonts) {
                 Font font = new Font(awtFont.getFamily(), awtFont.getSize(), Color.BLACK, awtFont.isBold(), awtFont.isItalic(), false, false);
-                fontMap.putIfAbsent(font, awtFont);       
+                fontMap.putIfAbsent(font, awtFont);
                 fonts.add(font);
             }
             return Collections.unmodifiableList(fonts);
@@ -125,10 +125,10 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
         }
 
         List<String> list = new ArrayList<>();
-        
+
         String thin = "1 l";
         String thick = "M_W";
-        for (String family: fonts) {
+        for (String family : fonts) {
             java.awt.Font font = new java.awt.Font(family, java.awt.Font.PLAIN, 14);
             FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
             boolean monospaced = Objects.equals(font.getStringBounds(thin, frc), font.getStringBounds(thick, frc));
@@ -136,7 +136,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
                 list.add(family);
             }
         }
-        
+
         return list;
     }
 
@@ -147,12 +147,12 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     @Override
     public java.awt.Font convert(Font font) {
-        return fontMap.computeIfAbsent(font, 
+        return fontMap.computeIfAbsent(font,
                 fnt -> getAwtFont(
-                    font.getFamily(),
-                    font.getSizeInPoints(),
+                        font.getFamily(),
+                        font.getSizeInPoints(),
                         font.isBold(),
-                    font.isItalic()
+                        font.isItalic()
                 )
         );
     }
@@ -166,7 +166,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     public Font loadFontAs(InputStream in, Font font) throws IOException {
         try (in) {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
-            LangUtil.check(awtFonts.length>0, () -> new IOException("no font loaded"));
+            LangUtil.check(awtFonts.length > 0, () -> new IOException("no font loaded"));
             java.awt.Font awtFont = awtFonts[0].deriveFont(font.getSizeInPoints());
             Font loadedFont = new Font(font.getFamily(), font.getSizeInPoints(), font.getColor(), font.isBold(), font.isItalic(), font.isUnderline(), font.isStrikeThrough());
             fontMap.putIfAbsent(loadedFont, awtFont);
@@ -175,5 +175,5 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
             throw new IOException(e);
         }
     }
-    
+
 }

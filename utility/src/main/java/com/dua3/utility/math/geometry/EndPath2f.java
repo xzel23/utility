@@ -41,5 +41,5 @@ public class EndPath2f extends Segment2f {
     public Vector2f end() {
         return start();
     }
-    
+
 }

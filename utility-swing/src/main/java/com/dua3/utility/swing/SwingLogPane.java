@@ -74,13 +74,13 @@ public class SwingLogPane extends JPanel {
             this.buffer = Objects.requireNonNull(buffer);
             buffer.addLogBufferListener(this);
         }
-        
+
         private List<LogEntry> data = null;
         private int removed = 0;
         private int added = 0;
-        
+
         private boolean isLocked() {
-            return data!=null;
+            return data != null;
         }
 
         public synchronized void lock() {
@@ -119,7 +119,7 @@ public class SwingLogPane extends JPanel {
         public synchronized int getRowCount() {
             return data == null ? buffer.size() : data.size();
         }
-        
+
         @Override
         public int getColumnCount() {
             return COLUMNS.length;
@@ -151,9 +151,9 @@ public class SwingLogPane extends JPanel {
                 synchronized (buffer) {
                     int sz = buffer.size();
                     if (replaced) {
-                        fireTableRowsUpdated(sz-1, sz-1);
+                        fireTableRowsUpdated(sz - 1, sz - 1);
                     } else {
-                        fireTableRowsInserted(sz-1, sz-1);                     
+                        fireTableRowsInserted(sz - 1, sz - 1);
                     }
                 }
             }
@@ -169,9 +169,9 @@ public class SwingLogPane extends JPanel {
             } else {
                 synchronized (buffer) {
                     int sz = buffer.size();
-                    if (replaced>0) {
-                        fireTableRowsUpdated(sz-entries.size(), sz-entries.size()+replaced-1);
-                        fireTableRowsInserted(sz-entries.size()+replaced, sz - 1);
+                    if (replaced > 0) {
+                        fireTableRowsUpdated(sz - entries.size(), sz - entries.size() + replaced - 1);
+                        fireTableRowsInserted(sz - entries.size() + replaced, sz - 1);
                     } else {
                         fireTableRowsInserted(sz - entries.size(), sz - 1);
                     }
@@ -223,10 +223,10 @@ public class SwingLogPane extends JPanel {
                 return entry.throwable().toString();
             }
         };
-        
+
         public abstract String get(LogEntry entry);
     }
-    
+
     private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
         private final LogEntryField f;
 
@@ -236,8 +236,8 @@ public class SwingLogPane extends JPanel {
 
         @Override
         public void setValue(Object value) {
-            java.awt.Color color; 
-            
+            java.awt.Color color;
+
             Object v;
             if (value instanceof LogEntry entry) {
                 color = SwingUtil.toAwtColor(colorize.apply(entry));
@@ -249,7 +249,7 @@ public class SwingLogPane extends JPanel {
 
             setForeground(color);
             setBackground(table.getBackground());
-            
+
             super.setValue(v);
         }
 
@@ -263,31 +263,32 @@ public class SwingLogPane extends JPanel {
                 setForeground(bg);
                 setBackground(fg);
             }
-            
+
             return this;
         }
     }
-    
-    private record Column(LogEntryField field, int preferredCharWidth, boolean hideable) {}
-    
+
+    private record Column(LogEntryField field, int preferredCharWidth, boolean hideable) {
+    }
+
     private static final Column[] COLUMNS = {
-        new Column(LogEntryField.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
-        new Column(LogEntryField.LOGGER, "com.example.class".length(), true),
-        new Column(LogEntryField.LEVEL, -"ERROR".length(), true),
-        new Column(LogEntryField.MESSAGE, 80, false)
+            new Column(LogEntryField.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
+            new Column(LogEntryField.LOGGER, "com.example.class".length(), true),
+            new Column(LogEntryField.LEVEL, -"ERROR".length(), true),
+            new Column(LogEntryField.MESSAGE, 80, false)
     };
-    
+
     public SwingLogPane(LogBuffer buffer) {
         this(buffer, SwingLogPane::defaultColorize);
     }
-    
+
     public SwingLogPane(LogBuffer buffer, Function<LogEntry, Color> colorize) {
         super(new BorderLayout());
-        
+
         this.buffer = Objects.requireNonNull(buffer);
         this.colorize = Objects.requireNonNull(colorize);
         this.model = new LogTableModel(buffer);
-        
+
         // create the table
         table = new JTable(model) {
             @Override
@@ -300,25 +301,25 @@ public class SwingLogPane extends JPanel {
                 }
             }
         };
-        
+
         // create the detail pane
         details = new JTextArea(5, 80);
 
         // column settings
         SwingFontUtil fu = new SwingFontUtil();
-        
+
         TableColumnModel columnModel = table.getColumnModel();
         for (int i = 0; i < columnModel.getColumnCount(); i++) {
             Column cd = COLUMNS[i];
             TableColumn column = columnModel.getColumn(i);
             TableCellRenderer r = new LogEntryFieldCellRenderer(cd.field());
             column.setCellRenderer(r);
-            
+
             java.awt.Font font = table.getFont();
             int chars = cd.preferredCharWidth();
             //noinspection NumericCastThatLosesPrecision
             int width = (int) Math.ceil(fu.getTextWidth("M".repeat(Math.abs(chars)), font));
-            if (chars>=0) {
+            if (chars >= 0) {
                 column.setPreferredWidth(width);
             } else {
                 column.setMinWidth(width);
@@ -327,17 +328,17 @@ public class SwingLogPane extends JPanel {
             }
         }
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        
+
         // update detail pane when entry is selected
         table.getSelectionModel().addListSelectionListener(evt -> {
-            ListSelectionModel lsm = (ListSelectionModel)evt.getSource();
+            ListSelectionModel lsm = (ListSelectionModel) evt.getSource();
             final String text;
             if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
                 text = "";
             } else {
                 StringBuilder sb = new StringBuilder(1024);
                 synchronized (buffer) {
-                    for (int idx:lsm.getSelectedIndices()) {
+                    for (int idx : lsm.getSelectedIndices()) {
                         if (lsm.isSelectedIndex(idx)) {
                             int idxModel = tableRowSorter.convertRowIndexToModel(idx);
                             LogEntry entry = model.getValueAt(idxModel, 0);
@@ -347,7 +348,7 @@ public class SwingLogPane extends JPanel {
                 }
                 text = sb.toString();
             }
-            
+
             SwingUtilities.invokeLater(() -> {
                 details.setText(text);
                 details.setCaretPosition(0);
@@ -356,15 +357,15 @@ public class SwingLogPane extends JPanel {
 
         tableRowSorter = new TableRowSorter<>(model);
         table.setRowSorter(tableRowSorter);
-        
+
         KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         table.getActionMap().put("escape", SwingUtil.createAction("escape", this::handleEscapeKey));
         table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "escape");
-        
+
         // prepare the ScrollPanes
         JScrollPane scrollPaneTable = new JScrollPane(table);
         JScrollPane scrollPaneDetails = new JScrollPane(details);
-        
+
         // create SplitPane for table and detail pane
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);
         splitPane.setDividerLocation(dividerLocation);
@@ -372,17 +373,17 @@ public class SwingLogPane extends JPanel {
         final JScrollBar tableScroller = scrollPaneTable.getVerticalScrollBar();
         model.addTableModelListener(evt -> {
             // handle scrolling
-            SwingUtilities.invokeLater( () -> {
-                if (table.getSelectedRowCount()==0 && tableScroller.getValue() >= tableScroller.getMaximum() - tableScroller.getVisibleAmount() - table.getRowHeight()) {
+            SwingUtilities.invokeLater(() -> {
+                if (table.getSelectedRowCount() == 0 && tableScroller.getValue() >= tableScroller.getMaximum() - tableScroller.getVisibleAmount() - table.getRowHeight()) {
                     // scroll to last row
-                    boolean selectionEmpty = table.getSelectedRow()<0;
+                    boolean selectionEmpty = table.getSelectedRow() < 0;
                     if (selectionEmpty) {
                         scrollRowIntoView(model.getRowCount());
                     }
                 }
             });
         });
-        
+
         // create toolbar
         JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
 
@@ -398,38 +399,38 @@ public class SwingLogPane extends JPanel {
         JCheckBox cbTextOnly = new JCheckBox(SwingUtil.createAction("Show text only", evt -> setTextOnly(((JCheckBox) (evt.getSource())).isSelected())));
         cbTextOnly.setSelected(true);
         toolBar.add(cbTextOnly);
-        
+
         // buttons "clear" and "copy"
         toolBar.add(new JSeparator(JSeparator.VERTICAL));
         toolBar.add(SwingUtil.createAction("Clear", this::clearBuffer));
         toolBar.add(SwingUtil.createAction("Copy", this::copyBuffer));
-        
+
         add(toolBar, BorderLayout.PAGE_START);
         add(splitPane, BorderLayout.CENTER);
-        
+
         setTextOnly(cbTextOnly.isSelected());
     }
 
     private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
-    
+
     private void setTextOnly(boolean textOnly) {
         synchronized (model) {
             TableColumnModel columnModel = table.getColumnModel();
-    
+
             // keep list of all columns
             if (tableColumns.isEmpty()) {
-                for (int i=0; i<columnModel.getColumnCount(); i++) {
+                for (int i = 0; i < columnModel.getColumnCount(); i++) {
                     tableColumns.add(columnModel.getColumn(i));
-                }         
+                }
             }
 
             // remove all columns from model
-            while (columnModel.getColumnCount()>0) {
+            while (columnModel.getColumnCount() > 0) {
                 columnModel.removeColumn(columnModel.getColumn(0));
             }
 
             // add visible columns again
-            for (int i=0; i<table.getModel().getColumnCount(); i++) {
+            for (int i = 0; i < table.getModel().getColumnCount(); i++) {
                 if (!textOnly || !COLUMNS[i].hideable()) {
                     table.getColumnModel().addColumn(tableColumns.get(i));
                 }
@@ -450,9 +451,9 @@ public class SwingLogPane extends JPanel {
     private void handleEscapeKey() {
         ListSelectionModel selectionModel = table.getSelectionModel();
         int rows = model.getRowCount();
-        if (selectionModel.isSelectionEmpty()&&rows>0) {
+        if (selectionModel.isSelectionEmpty() && rows > 0) {
             // select last row
-            selectionModel.setSelectionInterval(rows-1, rows-1);
+            selectionModel.setSelectionInterval(rows - 1, rows - 1);
         } else {
             // clear selection and scroll to bottom
             selectionModel.clearSelection();
@@ -473,7 +474,7 @@ public class SwingLogPane extends JPanel {
             this.format = Objects.requireNonNull(format);
         }
     }
-    
+
     /**
      * Set the divider location. Analog to {@link JSplitPane#setDividerLocation(double)}.
      * @param proportionalLocation the proportional location 
@@ -503,7 +504,7 @@ public class SwingLogPane extends JPanel {
      */
     public void copyBuffer() {
         try {
-            StringBuilder sb = new StringBuilder(16*1024);
+            StringBuilder sb = new StringBuilder(16 * 1024);
             buffer.appendTo(sb);
             SwingUtil.setClipboardText(sb.toString());
         } catch (IOException e) {
@@ -515,8 +516,8 @@ public class SwingLogPane extends JPanel {
     @Override
     public void setBounds(int x, int y, int width, int height) {
         super.setBounds(x, y, width, height);
-        SwingUtilities.invokeLater( () -> 
-            splitPane.setDividerLocation(dividerLocation) 
+        SwingUtilities.invokeLater(() ->
+                splitPane.setDividerLocation(dividerLocation)
         );
     }
 }

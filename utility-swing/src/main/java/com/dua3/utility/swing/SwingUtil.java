@@ -172,7 +172,7 @@ public final class SwingUtil {
     public static void setNativeLookAndFeel(String applicationName) {
         setNativeLookAndFeel_(applicationName);
     }
-    
+
     private static void setNativeLookAndFeel_(@Nullable String applicationName) {
         if (System.getProperty("os.name").toUpperCase(Locale.ROOT).startsWith("MAC")) {
             if (applicationName != null) {
@@ -188,7 +188,7 @@ public final class SwingUtil {
             String lafName = UIManager.getSystemLookAndFeelClassName();
             UIManager.setLookAndFeel(lafName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
-                | IllegalAccessException e) {
+                 | IllegalAccessException e) {
             LOG.warn("could not set look&feel", e);
         }
     }
@@ -337,17 +337,17 @@ public final class SwingUtil {
      */
     @SafeVarargs
     public static Optional<Path> showOpenDialog(Component parent, Path current, int selectionMode,
-            Pair<String, String[]>... types) {
+                                                Pair<String, String[]>... types) {
         return showFileDialog(parent, current, selectionMode, JFileChooser::showOpenDialog, types);
     }
 
     @SafeVarargs
-    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<JFileChooser,Component,Integer> showDialog,
+    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<JFileChooser, Component, Integer> showDialog,
                                                  Pair<String, String[]>... types) {
         File file;
         try {
             file = current.toFile().getAbsoluteFile();
-        } catch (UnsupportedOperationException|SecurityException e) {
+        } catch (UnsupportedOperationException | SecurityException e) {
             LOG.warn("path cannot be converted to file: {}", current, e);
             file = new File(".").getAbsoluteFile();
         }
@@ -396,7 +396,7 @@ public final class SwingUtil {
      * Create JScrollPane with unit increment set.
      *
      * @param  unitIncrement the unit increment
-     * @return               new JScrollPane
+     * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement) {
         JScrollPane jsp = new JScrollPane();
@@ -409,7 +409,7 @@ public final class SwingUtil {
      *
      * @param  unitIncrement the unit increment
      * @param  view          the view
-     * @return               new JScrollPane
+     * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement, Component view) {
         JScrollPane jsp = new JScrollPane(view);
@@ -423,7 +423,7 @@ public final class SwingUtil {
      * @param  unitIncrement the unit increment
      * @param  vsbPolicy     vertical scroll bar policy
      * @param  hsbPolicy     horizontal scroll bar policy
-     * @return               new JScrollPane
+     * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement, int vsbPolicy, int hsbPolicy) {
         JScrollPane jsp = new JScrollPane(vsbPolicy, hsbPolicy);
@@ -438,7 +438,7 @@ public final class SwingUtil {
      * @param  view          the view
      * @param  vsbPolicy     vertical scroll bar policy
      * @param  hsbPolicy     horizontal scroll bar policy
-     * @return               new JScrollPane
+     * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement, Component view, int vsbPolicy, int hsbPolicy) {
         JScrollPane jsp = new JScrollPane(view, vsbPolicy, hsbPolicy);
@@ -452,7 +452,8 @@ public final class SwingUtil {
      * @param action the action to perform when files are dropped
      */
     public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action) {
-        addDropFilesSupport(component, action, files -> !files.isEmpty(), e -> {});
+        addDropFilesSupport(component, action, files -> !files.isEmpty(), e -> {
+        });
     }
 
     /**
@@ -506,23 +507,24 @@ public final class SwingUtil {
             }
         });
     }
-    
+
     /**
-    * Add support for dropping text on a component.
-    * @param component the component to add drop support to
-    * @param action the action to perform when text is dropped
-    */
+     * Add support for dropping text on a component.
+     * @param component the component to add drop support to
+     * @param action the action to perform when text is dropped
+     */
     public static void addDropTextSupport(JComponent component, Consumer<String> action) {
-        addDropTextSupport(component, action, text -> !text.isEmpty(), e -> {});
+        addDropTextSupport(component, action, text -> !text.isEmpty(), e -> {
+        });
     }
 
     /**
-    * Add support for dropping text on a component.
-    * @param component the component to add drop support to
-    * @param action the action to perform when files are dropped
-    * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
-    * @param exceptionHandler handler to call when an exception is caught
-    */
+     * Add support for dropping text on a component.
+     * @param component the component to add drop support to
+     * @param action the action to perform when files are dropped
+     * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
+     * @param exceptionHandler handler to call when an exception is caught
+     */
     public static void addDropTextSupport(JComponent component, Consumer<String> action, Predicate<String> test, Consumer<? super Exception> exceptionHandler) {
         component.setDropTarget(new DropTarget() {
             @Override

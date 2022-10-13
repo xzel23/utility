@@ -51,7 +51,7 @@ public final class NetUtil {
      *
      * @param  u1 the first URL
      * @param  u2 the second URL
-     * @return    true, if both are {@code null}, or if the decoded String
+     * @return true, if both are {@code null}, or if the decoded String
      *            representations of u1 and u2 are equal
      */
     public static boolean sameURL(@Nullable URL u1, @Nullable URL u2) {

@@ -20,21 +20,21 @@ plugins {
 
 /////////////////////////////////////////////////////////////////////////////
 object meta {
-    val group            = "com.dua3.utility"
-    val scm              = "https://gitlab.com/com.dua3/lib/utility.git"
-    val repo             = "public"
-    val licenseName      = "MIT"
-    val licenseUrl       = "https://opensource.org/licenses/MIT"
-    val developerId      = "axh"
-    val developerName    = "Axel Howind"
-    val developerEmail   = "axh@dua3.com"
-    val organization     = "dua3"
-    val organizationUrl  = "https://www.dua3.com"
+    val group = "com.dua3.utility"
+    val scm = "https://gitlab.com/com.dua3/lib/utility.git"
+    val repo = "public"
+    val licenseName = "MIT"
+    val licenseUrl = "https://opensource.org/licenses/MIT"
+    val developerId = "axh"
+    val developerName = "Axel Howind"
+    val developerEmail = "axh@dua3.com"
+    val organization = "dua3"
+    val organizationUrl = "https://www.dua3.com"
 }
 /////////////////////////////////////////////////////////////////////////////
 
 subprojects {
-    
+
     project.setVersion(rootProject.libs.versions.projectVersion.get())
     val isReleaseVersion = !project.getVersion().toString().endsWith("SNAPSHOT")
 
@@ -53,7 +53,7 @@ subprojects {
         withJavadocJar()
         withSourcesJar()
     }
-    
+
     // dependencies
     dependencies {
         // Cabe (source annotations)
@@ -62,7 +62,7 @@ subprojects {
         // SLF4J
         implementation(rootProject.libs.slf4j.api)
         testImplementation(rootProject.libs.slf4j.simple)
-        
+
         // JUnit
         testImplementation(rootProject.libs.junit.jupiter.api)
         testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
@@ -103,9 +103,9 @@ subprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                groupId    = meta.group
+                groupId = meta.group
                 artifactId = project.name
-                version    = project.version.toString()
+                version = project.version.toString()
 
                 from(components["java"])
 

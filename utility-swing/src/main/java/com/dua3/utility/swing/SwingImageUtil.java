@@ -21,7 +21,7 @@ public class SwingImageUtil implements ImageUtil<BufferedImage> {
     @Override
     public BufferedImage convert(com.dua3.utility.data.Image img) {
         if (!(img instanceof SwingImage)) {
-            throw new UnsupportedOperationException("unsupported image class: "+img.getClass());
+            throw new UnsupportedOperationException("unsupported image class: " + img.getClass());
         }
         return ((SwingImage) img).bufferedImage();
     }

@@ -59,7 +59,7 @@ public final class DataUtil {
 
         @Override
         public String getMessage() {
-            return String.format(Locale.ROOT,"%s\n[trying to convert %s -> %s]", super.getMessage(), sourceClassName, targetClassName);
+            return String.format(Locale.ROOT, "%s\n[trying to convert %s -> %s]", super.getMessage(), sourceClassName, targetClassName);
         }
     }
 
@@ -115,9 +115,9 @@ public final class DataUtil {
      *  the object converted to the target class
      */
     @SuppressWarnings({"unchecked", "ChainOfInstanceofChecks"}) // types are checked with isAssignable()
-    public static<T> T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
+    public static <T> T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
         // null -> null
-        if (value==null) {
+        if (value == null) {
             return null;
         }
 
@@ -139,13 +139,13 @@ public final class DataUtil {
                 //noinspection NumericCastThatLosesPrecision
                 int n = (int) d;
                 //noinspection FloatingPointEquality
-                LangUtil.check(n==d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
-                return (T)(Integer) n;
+                LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
+                return (T) (Integer) n;
             } else if (targetClass == Long.class) {
                 //noinspection NumericCastThatLosesPrecision
                 long n = (long) d;
-                LangUtil.check(n==d, () -> new IllegalArgumentException("value cannot be converted to long without loss of precision: " + value));
-                return (T)(Long) n;
+                LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to long without loss of precision: " + value));
+                return (T) (Long) n;
             }
         }
 
@@ -179,39 +179,39 @@ public final class DataUtil {
                 default -> throw new IllegalArgumentException("invalid text for boolean conversion: " + value);
             };
         }
-        
+
         // convert to Path
         if (targetClass == Path.class) {
             if (sourceClass == String.class) {
                 return (T) Paths.get(value.toString());
             }
             if (sourceClass == File.class) {
-                return (T) ((File)value).toPath();
+                return (T) ((File) value).toPath();
             }
             if (sourceClass == URI.class) {
-                return (T) Paths.get((URI)value);
+                return (T) Paths.get((URI) value);
             }
         }
-        
+
         // convert to File
-        if (targetClass==File.class) {
+        if (targetClass == File.class) {
             if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary 
-                //noinspection ConstantConditions
+                assert value instanceof Path;
                 return (T) ((Path) value).toFile();
             }
         }
 
         // target provides public static valueOf(U) where value is instance of U
         // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
-        for (Method method: targetClass.getDeclaredMethods()) {
-            if ( method.getModifiers()==( Modifier.PUBLIC | Modifier.STATIC )
-                 && method.getName().equals("valueOf")
-                 && method.getParameterCount()==1
-                 && method.getParameterTypes()[0] == sourceClass
-                 && targetClass.isAssignableFrom(method.getReturnType())) {
+        for (Method method : targetClass.getDeclaredMethods()) {
+            if (method.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC)
+                    && method.getName().equals("valueOf")
+                    && method.getParameterCount() == 1
+                    && method.getParameterTypes()[0] == sourceClass
+                    && targetClass.isAssignableFrom(method.getReturnType())) {
                 try {
                     return (T) method.invoke(null, value);
-                } catch (IllegalAccessException|InvocationTargetException e) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new ConversionException(sourceClass, targetClass, "error invoking valueOf(String)", e);
                 }
             }
@@ -219,14 +219,14 @@ public final class DataUtil {
 
         // ... or provides a public constructor taking the value's class (and is enabled by parameter)
         if (useConstructor) {
-            for (Constructor<?> constructor: targetClass.getDeclaredConstructors()) {
-                if ( constructor.getModifiers()==( Modifier.PUBLIC )
-                        && constructor.getParameterCount()==1
+            for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
+                if (constructor.getModifiers() == (Modifier.PUBLIC)
+                        && constructor.getParameterCount() == 1
                         && constructor.getParameterTypes()[0] == sourceClass) {
                     try {
                         return (T) constructor.newInstance(value);
-                    } catch (IllegalAccessException|InvocationTargetException|InstantiationException e) {
-                        throw new ConversionException(sourceClass, targetClass, "error invoking constructor "+targetClass.getName()+"(String)", e);
+                    } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                        throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
                     }
                 }
             }
@@ -252,7 +252,7 @@ public final class DataUtil {
      * @return
      *  array containing the converted elements
      */
-    public static <T,U> U [] convertToArray(Collection<T> data, Class<? extends U> targetClass) {
+    public static <T, U> U[] convertToArray(Collection<T> data, Class<? extends U> targetClass) {
         return convertToArray(data, targetClass, false);
     }
 
@@ -276,10 +276,10 @@ public final class DataUtil {
      *  array containing the converted elements
      */
     @SuppressWarnings("unchecked")
-    public static <T,U> U [] convertToArray(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
+    public static <T, U> U[] convertToArray(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
-                .toArray( n -> (U[]) Array.newInstance(targetClass, n));
+                .toArray(n -> (U[]) Array.newInstance(targetClass, n));
     }
 
     /**
@@ -299,7 +299,7 @@ public final class DataUtil {
      * @return
      *  list containing the converted elements
      */
-    public static <T,U> List<U> convert(Collection<T> data, Function<? super T, ? extends U> mapper) {
+    public static <T, U> List<U> convert(Collection<T> data, Function<? super T, ? extends U> mapper) {
         return data.stream().map(mapper).collect(Collectors.toList());
     }
 
@@ -324,7 +324,7 @@ public final class DataUtil {
      * @return
      *  list containing the converted elements
      */
-    public static <T,U> List<U> convert(Collection<T> data, Class<U> targetClass) {
+    public static <T, U> List<U> convert(Collection<T> data, Class<U> targetClass) {
         return convert(data, targetClass, false);
     }
 
@@ -351,7 +351,7 @@ public final class DataUtil {
      * @return
      *  list containing the converted elements
      */
-    public static <T,U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
+    public static <T, U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toList());
@@ -378,7 +378,7 @@ public final class DataUtil {
      * @return
      *  collection containing the converted elements
      */
-    public static <T,U,C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier) {
+    public static <T, U, C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier) {
         return convertCollection(data, targetClass, supplier, false);
     }
 
@@ -405,7 +405,7 @@ public final class DataUtil {
      * @return
      *  collection containing the converted elements
      */
-    public static <T,U,C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier, boolean useConstructor) {
+    public static <T, U, C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier, boolean useConstructor) {
         return data.stream()
                 .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toCollection(supplier));
@@ -439,7 +439,7 @@ public final class DataUtil {
      * @return
      *  iterator instance that converts items of type {@code T} to {@code U}
      */
-    public static <T,U> Iterator<U> map(Iterator<T> iterator, Function<? super T, ? extends U> mapping) {
+    public static <T, U> Iterator<U> map(Iterator<T> iterator, Function<? super T, ? extends U> mapping) {
         return new MappingIterator<>(iterator, mapping);
     }
 
@@ -514,22 +514,22 @@ public final class DataUtil {
     /**
      * Compute the change of mappings between two maps. The result is a mapping from keys to pairs (value a, value b)
      * of the changes. See also {@link #diff(Map, Map)}.
-     * 
+     *
      * @param a the first map
      * @param b the second map
      * @param <U> the key type
      * @param <V> the value type
      * @return a new map that contains the changes as pairs (value in a, value in b) 
      */
-    public static <U,V> Map<U,Pair<V,V>> changes(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
+    public static <U, V> Map<U, Pair<V, V>> changes(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
-        
-        Map<U,Pair<V,V>> changes = new HashMap<>();
-        keys.forEach( k -> {
+
+        Map<U, Pair<V, V>> changes = new HashMap<>();
+        keys.forEach(k -> {
             V va = a.get(k);
             V vb = b.get(k);
-            if (!Objects.equals(va,vb)) {
+            if (!Objects.equals(va, vb)) {
                 changes.put(k, Pair.of(va, vb));
             }
         });
@@ -546,15 +546,15 @@ public final class DataUtil {
      * @param <V> the value type
      * @return a new map that contains the changed mappings (k -> mapped value in b) 
      */
-    public static <U,V> Map<U,V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
+    public static <U, V> Map<U, V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
-        
-        Map<U,V> diff = new HashMap<>();
-        keys.forEach( k -> {
+
+        Map<U, V> diff = new HashMap<>();
+        keys.forEach(k -> {
             V va = a.get(k);
             V vb = b.get(k);
-            if (!Objects.equals(va,vb)) {
+            if (!Objects.equals(va, vb)) {
                 diff.put(k, vb);
             }
         });
@@ -570,7 +570,7 @@ public final class DataUtil {
      * @param <T>    the key type
      * @param <U>    the value type
      */
-    public static <T,U> void ifPresent(Map<T,U> map, T key, Consumer<? super U> action) {
+    public static <T, U> void ifPresent(Map<T, U> map, T key, Consumer<? super U> action) {
         // we need to check using containsKey() since key may be mapped to null
         if (map.containsKey(key)) {
             action.accept(map.get(key));
@@ -586,18 +586,19 @@ public final class DataUtil {
      * @param <U> the value type
      * @return true, if action was called
      */
-    public static <T,U> boolean ifMapped(Map<T,U> map, T key, Consumer<? super U> action) {
+    public static <T, U> boolean ifMapped(Map<T, U> map, T key, Consumer<? super U> action) {
         // we need to check using containsKey() since key may be mapped to null
         U value = map.get(key);
         if (value == null) {
             return false;
         }
-        
+
         action.accept(value);
         return true;
     }
-    
+
     // Utility class - private constructor
-    private DataUtil() {}
+    private DataUtil() {
+    }
 
 }

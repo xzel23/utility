@@ -20,5 +20,5 @@ public record AnsiConversionOption(Consumer<? super AnsiConverter> action) {
     void apply(AnsiConverter converter) {
         action.accept(converter);
     }
-    
+
 }

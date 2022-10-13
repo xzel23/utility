@@ -19,11 +19,11 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static HSVColor valueOf(int argb) {
-        float a = ((argb >> 24) & 0xff)/255.0f;
-        float r = ((argb >> 16) & 0xff)/255.0f;
-        float g = ((argb >>  8) & 0xff)/255.0f;
-        float b = ( argb        & 0xff)/255.0f;
-        
+        float a = ((argb >> 24) & 0xff) / 255.0f;
+        float r = ((argb >> 16) & 0xff) / 255.0f;
+        float g = ((argb >> 8) & 0xff) / 255.0f;
+        float b = (argb & 0xff) / 255.0f;
+
         DoubleSummaryStatistics is = DoubleStream.of(r, g, b).summaryStatistics();
 
         float min = (float) is.getMin();
@@ -42,28 +42,28 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
             throw new IllegalStateException("color conversion error");
         }
 
-        if (h<0) {
+        if (h < 0) {
             h += 360.0f;
         }
 
-        float s = max == 0 ? 0 : (max-min) / max;
+        float s = max == 0 ? 0 : (max - min) / max;
 
         return new HSVColor(h, s, max, a);
     }
 
     @Override
     public int a() {
-        return Math.round(255*alpha);
+        return Math.round(255 * alpha);
     }
 
     @Override
     public boolean isOpaque() {
-        return alpha==1;
+        return alpha == 1;
     }
 
     @Override
     public boolean isTransparent() {
-        return alpha==0;
+        return alpha == 0;
     }
 
     @Override
@@ -74,12 +74,12 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
     @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
     public int argb() {
-        int hi = (int)(h / 60);
+        int hi = (int) (h / 60);
         float f = h / 60.0f - hi;
 
         float p = v * (1 - s);
         float q = v * (1 - s * f);
-        float t = v * (1 - s * (1-f));
+        float t = v * (1 - s * (1 - f));
 
         return switch (hi) {
             case 0, 6 -> argbf(alpha, v, t, p);
@@ -103,13 +103,13 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
     }
 
     private static int argbf(float a, float r, float g, float b) {
-        int ri = Math.round(r*255);
-        int gi = Math.round(g*255);
-        int bi = Math.round(b*255);
-        int ai = Math.round(a*255);
+        int ri = Math.round(r * 255);
+        int gi = Math.round(g * 255);
+        int bi = Math.round(b * 255);
+        int ai = Math.round(a * 255);
         return (ai << 24) + (ri << 16) + (gi << 8) + bi;
     }
-    
+
     @Override
     public String toString() {
         return toCss();

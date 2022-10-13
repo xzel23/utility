@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
  * A path in 2-dimensional space that is defined by joining together different segments.
  */
 public final class Path2f {
-    
+
     private final Path2fImpl impl;
-    
+
     Path2f(Path2fImpl impl) {
         this.impl = impl;
     }

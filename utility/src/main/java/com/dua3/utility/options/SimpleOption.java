@@ -20,17 +20,17 @@ public final class SimpleOption<T> extends Option<T> {
 
     private Supplier<T> defaultValue = () -> null;
 
-    public static <T> SimpleOption<T>  create(Function<String, ? extends T> mapper,
-                                                       String... names) {
+    public static <T> SimpleOption<T> create(Function<String, ? extends T> mapper,
+                                             String... names) {
         return new SimpleOption<>(mapper, Object::toString, names);
     }
-    
-    public static <T> SimpleOption<T>  create(Function<String, ? extends T> mapper,
-                                                       Function<? super T, String> formatter,
-                                                       String... names) {
+
+    public static <T> SimpleOption<T> create(Function<String, ? extends T> mapper,
+                                             Function<? super T, String> formatter,
+                                             String... names) {
         return new SimpleOption<>(mapper, formatter, names);
     }
-    
+
     /**
      * Construct a new simple option with the given name(s).
      * @param mapper the mapping function to the target type
@@ -40,10 +40,10 @@ public final class SimpleOption<T> extends Option<T> {
                          Function<? super T, String> formatter,
                          String... names) {
         super(mapper, formatter, names);
-        occurrence(0,1);
-        arity(1,1);
+        occurrence(0, 1);
+        arity(1, 1);
     }
-    
+
     @Override
     public SimpleOption<T> description(String description) {
         super.description(description);
@@ -80,7 +80,7 @@ public final class SimpleOption<T> extends Option<T> {
      * @return this option
      */
     public SimpleOption<T> required() {
-        occurrence(1,1);
+        occurrence(1, 1);
         return this;
     }
 

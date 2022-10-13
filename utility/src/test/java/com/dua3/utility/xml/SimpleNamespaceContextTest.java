@@ -28,7 +28,7 @@ class SimpleNamespaceContextTest {
                 "ns2", "http://www.namespaceB.com",
                 "ns3", "http://www.namespaceA.com"
         ));
-        
+
         assertEquals("ns", ctx.getPrefix("http://www.namespace.com"));
         assertIterableEquals(List.of("ns"), (Iterable<String>) () -> ctx.getPrefixes("http://www.namespace.com"));
         assertIterableEquals(List.of("ns1", "ns3"), (Iterable<String>) () -> ctx.getPrefixes("http://www.namespaceA.com"));
@@ -46,8 +46,8 @@ class SimpleNamespaceContextTest {
                 "ns1", "http://www.namespaceA.com",
                 "ns2", "http://www.namespaceB.com",
                 "ns3", "http://www.namespaceA.com"
-            ),
-            "http://www.default.com"
+        ),
+                "http://www.default.com"
         );
 
         assertEquals("ns4", ctx.getDefaultPrefix().orElseThrow());

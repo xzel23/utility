@@ -51,7 +51,7 @@ public class RingBuffer<E> implements Collection<E> {
      * @param item
      *             the item to add
      * @return
-     *             true 
+     *             true
      */
     @Override
     public boolean add(E item) {
@@ -88,16 +88,16 @@ public class RingBuffer<E> implements Collection<E> {
         if (items.isEmpty()) {
             return false;
         }
-        
-        for (E item: items) {
-            if (entries<capacity()) {
+
+        for (E item : items) {
+            if (entries < capacity()) {
                 data[index(entries++)] = item;
             } else {
                 start = (start + 1) % capacity();
                 data[index(entries - 1)] = item;
             }
         }
-        
+
         return true;
     }
 
@@ -133,7 +133,7 @@ public class RingBuffer<E> implements Collection<E> {
      *
      * @param  i
      *           index
-     * @return   the i-th element
+     * @return the i-th element
      */
     @SuppressWarnings("unchecked")
     public E get(int i) {
@@ -153,7 +153,7 @@ public class RingBuffer<E> implements Collection<E> {
 
     @Override
     public boolean contains(Object o) {
-        for (E item: this) {
+        for (E item : this) {
             if (Objects.equals(item, o)) {
                 return true;
             }
@@ -165,13 +165,13 @@ public class RingBuffer<E> implements Collection<E> {
     public Iterator<E> iterator() {
         final int entries_ = entries;
         final int start_ = start;
-        
+
         return new Iterator<>() {
             int idx = 0;
 
             private void checkValid() {
                 LangUtil.check(
-                        start_ == start && entries_ == entries, 
+                        start_ == start && entries_ == entries,
                         () -> new ConcurrentModificationException("RingBuffer was modified")
                 );
             }
@@ -183,9 +183,9 @@ public class RingBuffer<E> implements Collection<E> {
             }
 
             @Override
-            public E next() throws NoSuchElementException{
+            public E next() throws NoSuchElementException {
                 checkValid();
-                LangUtil.check(idx<entries_, NoSuchElementException::new);
+                LangUtil.check(idx < entries_, NoSuchElementException::new);
                 return get(idx++);
             }
         };
@@ -194,8 +194,8 @@ public class RingBuffer<E> implements Collection<E> {
     @Override
     public Object[] toArray() {
         Object[] arr = new Object[entries];
-        int n1 = Math.min(entries, data.length-start);
-        int n2 = entries-n1;
+        int n1 = Math.min(entries, data.length - start);
+        int n2 = entries - n1;
         System.arraycopy(data, start, arr, 0, n1);
         System.arraycopy(data, 0, arr, n1, n2);
         return arr;
@@ -205,19 +205,19 @@ public class RingBuffer<E> implements Collection<E> {
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
         if (a.length < entries) {
-            a = (T[])java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
+            a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
         }
 
         // copy contents to array
-        int n1 = Math.min(entries, data.length-start);
-        int n2 = entries-n1;
+        int n1 = Math.min(entries, data.length - start);
+        int n2 = entries - n1;
         System.arraycopy(data, start, a, 0, n1);
         System.arraycopy(data, 0, a, n1, n2);
 
         if (a.length > entries) {
             a[entries] = null;
         }
-        
+
         return a;
     }
 
@@ -280,7 +280,7 @@ public class RingBuffer<E> implements Collection<E> {
      * {@code fromIndex}, inclusive, and {@code toIndex}, exclusive.  (If
      * {@code fromIndex} and {@code toIndex} are equal, the returned list is
      * empty.)  The returned list is backed by this buffer.
-     * 
+     *
      * @param fromIndex low endpoint (inclusive) of the subList
      * @param toIndex high endpoint (exclusive) of the subList
      * @return a view of the specified range within this list
@@ -291,10 +291,10 @@ public class RingBuffer<E> implements Collection<E> {
     public List<E> subList(int fromIndex, int toIndex) {
         int s1 = size();
         LangUtil.checkIndex(fromIndex, s1);
-        LangUtil.check(toIndex<=s1, "toIndex>size(): %d", toIndex);
+        LangUtil.check(toIndex <= s1, "toIndex>size(): %d", toIndex);
 
-        final int s2 = toIndex-fromIndex;
-        LangUtil.check(s2>=0, "toIndex<fromIndex: fromIndex=%d, toIndex=%d", fromIndex, toIndex);
+        final int s2 = toIndex - fromIndex;
+        LangUtil.check(s2 >= 0, "toIndex<fromIndex: fromIndex=%d, toIndex=%d", fromIndex, toIndex);
 
         return new AbstractList<>() {
             @Override

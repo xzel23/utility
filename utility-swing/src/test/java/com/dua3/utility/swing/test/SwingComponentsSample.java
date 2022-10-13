@@ -34,7 +34,7 @@ public class SwingComponentsSample extends JFrame {
         java.util.logging.LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
     }
-    
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + SwingComponentsSample.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSample.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSample.class.getName());
@@ -50,7 +50,7 @@ public class SwingComponentsSample extends JFrame {
         LOG.info("starting up");
 
         SwingUtil.setNativeLookAndFeel();
-        
+
         SwingUtilities.invokeLater(() -> {
             SwingComponentsSample instance = new SwingComponentsSample();
             instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -60,7 +60,7 @@ public class SwingComponentsSample extends JFrame {
 
     public SwingComponentsSample() {
         setLayout(new GridBagLayout());
-        setSize(800,600);
+        setSize(800, 600);
 
         init();
     }
@@ -71,15 +71,18 @@ public class SwingComponentsSample extends JFrame {
         int max = 200;
 
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(8,8,8,8);
+        constraints.insets = new Insets(8, 8, 8, 8);
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1;
         add(progress, constraints);
 
-        HashMap<Level,Integer> counter = new HashMap<>();
-        Arrays.stream(Level.values()).forEach(lvl -> { counter.put(lvl, 0); progress.start(lvl); });
+        HashMap<Level, Integer> counter = new HashMap<>();
+        Arrays.stream(Level.values()).forEach(lvl -> {
+            counter.put(lvl, 0);
+            progress.start(lvl);
+        });
         progress.start(TASK_INDETERMINATE_1);
 
         // -- Spacer
@@ -89,7 +92,7 @@ public class SwingComponentsSample extends JFrame {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1;
         JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
-        separator.setMinimumSize(new Dimension(8,8));
+        separator.setMinimumSize(new Dimension(8, 8));
         add(separator, constraints);
 
         // -- SwingLogPane
@@ -106,7 +109,7 @@ public class SwingComponentsSample extends JFrame {
         SwingLogPane logPane = new SwingLogPane(buffer);
 
         constraints = new GridBagConstraints();
-        constraints.insets = new Insets(8,8,8,8);
+        constraints.insets = new Insets(8, 8, 8, 8);
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.fill = GridBagConstraints.BOTH;
@@ -129,14 +132,14 @@ public class SwingComponentsSample extends JFrame {
                 }
 
                 int nr = n.incrementAndGet();
-                String msg = "Message "+nr+".";
+                String msg = "Message " + nr + ".";
 
                 int implementation = random.nextInt(3);
-                int bound = implementation==1 ? 6:5;
+                int bound = implementation == 1 ? 6 : 5;
                 int levelInt = random.nextInt(bound);
-                Level level = Level.values()[implementation==1 ? Math.max(0, levelInt-1) : levelInt];
-                        
-                switch(implementation) {
+                Level level = Level.values()[implementation == 1 ? Math.max(0, levelInt - 1) : levelInt];
+
+                switch (implementation) {
                     case 0:
                         switch (levelInt) {
                             case 0 -> LOG.trace(msg);
@@ -159,8 +162,8 @@ public class SwingComponentsSample extends JFrame {
                             default -> throw new IllegalStateException("integer out of range");
                         }
                         break;
-                        
-                    case 2: 
+
+                    case 2:
                         switch (levelInt) {
                             case 0 -> LOG4J_LOGGER.trace(msg);
                             case 1 -> LOG4J_LOGGER.debug(msg);
@@ -171,12 +174,12 @@ public class SwingComponentsSample extends JFrame {
                         }
                         break;
                 }
-                progress.update(level, max, counter.compute(level, (lvl, old) -> Math.min(old+1, max)));
+                progress.update(level, max, counter.compute(level, (lvl, old) -> Math.min(old + 1, max)));
 
                 int current = n.get();
-                if (current%100==0) {
+                if (current % 100 == 0) {
                     System.err.format("That was %d messages%n", current);
-                } else if (current%10==0) {
+                } else if (current % 10 == 0) {
                     System.out.format("That was %d messages%n", current);
                 }
             }
@@ -190,7 +193,7 @@ public class SwingComponentsSample extends JFrame {
                 Thread.currentThread().interrupt();
             }
             progress.finish(TASK_INDETERMINATE_1, ProgressTracker.State.COMPLETED_SUCCESS);
-            
+
             progress.start(TASK_INDETERMINATE_2);
             try {
                 Thread.sleep(10_000);
@@ -209,7 +212,7 @@ public class SwingComponentsSample extends JFrame {
             return new IllegalStateException("What happened?");
         }
     }
-    
+
     @Override
     public void dispose() {
         done = true;

@@ -58,7 +58,7 @@ public interface Encoder<T> {
      * @throws IOException if an error occurs
      */
     default void encodeOptional(DataOutputStream os, @Nullable T t) throws IOException {
-        if (t==null) {
+        if (t == null) {
             os.writeBoolean(false);
         } else {
             os.writeBoolean(true);

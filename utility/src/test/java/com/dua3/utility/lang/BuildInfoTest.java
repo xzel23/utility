@@ -59,5 +59,5 @@ class BuildInfoTest {
         assertEquals("SNAPSHOT", bi.suffix());
         assertEquals("1.2.3-SNAPSHOT", bi.version());
     }
-    
+
 }

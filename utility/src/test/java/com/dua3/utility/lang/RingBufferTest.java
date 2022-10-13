@@ -141,44 +141,44 @@ public class RingBufferTest {
 
         // test with a partially filled buffer
         buffer.addAll(List.of(1, 2, 3, 4, 5));
-        assertEquals(Collections.emptyList(), buffer.subList(0,0));
-        assertEquals(Collections.emptyList(), buffer.subList(4,4));
-        assertEquals(List.of(1,2,3,4,5), buffer.subList(0,5));
-        assertEquals(List.of(1,2,3,4), buffer.subList(0,4));
-        assertEquals(List.of(2,3,4,5), buffer.subList(1,5));
-        assertEquals(List.of(2,3,4), buffer.subList(1,4));
+        assertEquals(Collections.emptyList(), buffer.subList(0, 0));
+        assertEquals(Collections.emptyList(), buffer.subList(4, 4));
+        assertEquals(List.of(1, 2, 3, 4, 5), buffer.subList(0, 5));
+        assertEquals(List.of(1, 2, 3, 4), buffer.subList(0, 4));
+        assertEquals(List.of(2, 3, 4, 5), buffer.subList(1, 5));
+        assertEquals(List.of(2, 3, 4), buffer.subList(1, 4));
 
         // test with a fully filled buffer
         buffer.addAll(List.of(6, 7, 8, 9, 10));
-        assertEquals(Collections.emptyList(), buffer.subList(0,0));
-        assertEquals(Collections.emptyList(), buffer.subList(9,9));
-        assertEquals(List.of(1,2,3,4,5), buffer.subList(0,5));
-        assertEquals(List.of(1,2,3,4), buffer.subList(0,4));
-        assertEquals(List.of(2,3,4,5), buffer.subList(1,5));
-        assertEquals(List.of(2,3,4), buffer.subList(1,4));
+        assertEquals(Collections.emptyList(), buffer.subList(0, 0));
+        assertEquals(Collections.emptyList(), buffer.subList(9, 9));
+        assertEquals(List.of(1, 2, 3, 4, 5), buffer.subList(0, 5));
+        assertEquals(List.of(1, 2, 3, 4), buffer.subList(0, 4));
+        assertEquals(List.of(2, 3, 4, 5), buffer.subList(1, 5));
+        assertEquals(List.of(2, 3, 4), buffer.subList(1, 4));
 
         // test after elements are discarded (contiguous sublist)
         buffer.addAll(List.of(11, 12, 13, 14, 15));
-        assertEquals(Collections.emptyList(), buffer.subList(0,0));
-        assertEquals(Collections.emptyList(), buffer.subList(9,9));
-        assertEquals(List.of(6,7,8,9,10), buffer.subList(0,5));
-        assertEquals(List.of(6,7,8,9), buffer.subList(0,4));
-        assertEquals(List.of(7,8,9,10), buffer.subList(1,5));
-        assertEquals(List.of(7,8,9), buffer.subList(1,4));
-        assertEquals(List.of(6,7,8,9,10,11,12,13,14,15), buffer.subList(0,10));
-        
+        assertEquals(Collections.emptyList(), buffer.subList(0, 0));
+        assertEquals(Collections.emptyList(), buffer.subList(9, 9));
+        assertEquals(List.of(6, 7, 8, 9, 10), buffer.subList(0, 5));
+        assertEquals(List.of(6, 7, 8, 9), buffer.subList(0, 4));
+        assertEquals(List.of(7, 8, 9, 10), buffer.subList(1, 5));
+        assertEquals(List.of(7, 8, 9), buffer.subList(1, 4));
+        assertEquals(List.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15), buffer.subList(0, 10));
+
         // test after elements are discarded (non-contiguous sublist)
-        assertEquals(List.of(9,10,11,12), buffer.subList(3,7));
-        assertEquals(List.of(15), buffer.subList(9,10));
+        assertEquals(List.of(9, 10, 11, 12), buffer.subList(3, 7));
+        assertEquals(List.of(15), buffer.subList(9, 10));
     }
-    
+
     @Test
     void testAddAll() {
         buffer.clear();
         assertTrue(buffer.isEmpty());
-        buffer.addAll(List.of(1,2,3,4,5));
-        assertArrayEquals(List.of(1,2,3,4,5).toArray(), buffer.toArray());
-        buffer.addAll(List.of(6,7,8,9,10,11,12,13,14,15));
-        assertArrayEquals(List.of(6,7,8,9,10,11,12,13,14,15).toArray(), buffer.toArray());
+        buffer.addAll(List.of(1, 2, 3, 4, 5));
+        assertArrayEquals(List.of(1, 2, 3, 4, 5).toArray(), buffer.toArray());
+        buffer.addAll(List.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
+        assertArrayEquals(List.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15).toArray(), buffer.toArray());
     }
 }

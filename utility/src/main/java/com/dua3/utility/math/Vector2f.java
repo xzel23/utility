@@ -13,47 +13,47 @@ public record Vector2f(float x, float y) {
     /**
      * The origin of the coordinate space.
      */
-    public static final Vector2f ORIGIN = new Vector2f(0,0);
+    public static final Vector2f ORIGIN = new Vector2f(0, 0);
 
     /**
      * The vector (1,0).
      */
-    public static final Vector2f ONE_ZERO = new Vector2f(1,0);
+    public static final Vector2f ONE_ZERO = new Vector2f(1, 0);
 
     /**
      * The vector (1,1).
      */
-    public static final Vector2f ONE_ONE = new Vector2f(1,1);
+    public static final Vector2f ONE_ONE = new Vector2f(1, 1);
 
     /**
      * The vector (0,1).
      */
-    public static final Vector2f ZERO_ONE = new Vector2f(0,1);
+    public static final Vector2f ZERO_ONE = new Vector2f(0, 1);
 
     /**
      * The vector (-1,1).
      */
-    public static final Vector2f MINUS_ONE_ONE = new Vector2f(-1,1);
+    public static final Vector2f MINUS_ONE_ONE = new Vector2f(-1, 1);
 
     /**
      * The vector (-1,0).
      */
-    public static final Vector2f MINUS_ONE_ZERO = new Vector2f(-1,0);
+    public static final Vector2f MINUS_ONE_ZERO = new Vector2f(-1, 0);
 
     /**
      * The vector (-1,-1).
      */
-    public static final Vector2f MINUS_ONE_MINUS_ONE = new Vector2f(-1,-1);
+    public static final Vector2f MINUS_ONE_MINUS_ONE = new Vector2f(-1, -1);
 
     /**
      * The vector (0,-1).
      */
-    public static final Vector2f ZERO_MINUS_ONE = new Vector2f(0,-1);
+    public static final Vector2f ZERO_MINUS_ONE = new Vector2f(0, -1);
 
     /**
      * The vector (1,-1).
      */
-    public static final Vector2f ONE_MINUS_ONE = new Vector2f(1,-1);
+    public static final Vector2f ONE_MINUS_ONE = new Vector2f(1, -1);
 
     /**
      * Create instance from coordinate values.
@@ -62,7 +62,7 @@ public record Vector2f(float x, float y) {
      * @return Vector with the components x and y
      */
     public static Vector2f of(float x, float y) {
-        return new Vector2f(x,y);
+        return new Vector2f(x, y);
     }
 
     /**
@@ -92,7 +92,7 @@ public record Vector2f(float x, float y) {
      * @return this * v
      */
     public static float scalarProduct(Vector2f a, Vector2f b) {
-        return a.x*b.x+a.y*b.y;
+        return a.x * b.x + a.y * b.y;
     }
 
     /**
@@ -103,17 +103,17 @@ public record Vector2f(float x, float y) {
      */
     public static double angle(Vector2f a, Vector2f b) {
         float nominator = scalarProduct(a, b);
-        
-        if (nominator==0) {
+
+        if (nominator == 0) {
             return Float.NaN;
         }
-        
+
         double denominator = a.length() * b.length();
 
         // denominator==0 implies nominator==0, so this should only happen if scalarProduct() or length() is broken
-        assert denominator != 0 : "denominator is 0, arguments: a="+a+", b="+b;
-        
-        return Math.acos(nominator/denominator);
+        assert denominator != 0 : "denominator is 0, arguments: a=" + a + ", b=" + b;
+
+        return Math.acos(nominator / denominator);
     }
 
     /**
@@ -122,18 +122,18 @@ public record Vector2f(float x, float y) {
      * @return this + v
      */
     public Vector2f add(Vector2f v) {
-        return new Vector2f(x + v.x, y + v.y);    
+        return new Vector2f(x + v.x, y + v.y);
     }
-    
+
     /**
      * Vector subtraction.
      * @param v the argument
      * @return this - v
      */
     public Vector2f subtract(Vector2f v) {
-        return new Vector2f(x - v.x, y - v.y);    
+        return new Vector2f(x - v.x, y - v.y);
     }
-    
+
     /**
      * Calculate length of vector.
      * @return the length
@@ -149,5 +149,5 @@ public record Vector2f(float x, float y) {
     public double angle() {
         return Math.atan2(y(), x());
     }
-            
+
 }

@@ -16,8 +16,8 @@ import java.util.function.Function;
  */
 public abstract class Option<T> {
     private final Function<String, ? extends T> mapper;
-    private final Function<?super T, String> formatter;
-    
+    private final Function<? super T, String> formatter;
+
     private final String[] names;
 
     private String displayName = "";
@@ -26,10 +26,11 @@ public abstract class Option<T> {
     private int maxArity = 0;
     private int minOccurrences = 0;
     private int maxOccurrences = Integer.MAX_VALUE;
-    private Consumer<Collection<T>> handler = values -> {};
+    private Consumer<Collection<T>> handler = values -> {
+    };
 
     protected Option(Function<String, ? extends T> mapper,
-                     Function<?super T, String> formatter,
+                     Function<? super T, String> formatter,
                      String... names) {
         LangUtil.check(names.length > 0, "at least one name must be given");
 
@@ -45,7 +46,7 @@ public abstract class Option<T> {
 
         this.minArity = minArity;
         this.maxArity = maxArity;
-        
+
         return this;
     }
 
@@ -190,7 +191,7 @@ public abstract class Option<T> {
     public String format(T v) {
         return formatter.apply(v);
     }
-    
+
     @Override
     public boolean equals(@Nullable Object o) {
         if (this == o) return true;

@@ -59,7 +59,7 @@ public final class RichText
     /**
      * Returns RichText containing a single tabulator.
      *
-     * @return RichText.valueOf("\t")
+     * @return RichText.valueOf(" \ t ")
      */
     public static RichText tab() {
         return TAB;
@@ -68,7 +68,7 @@ public final class RichText
     /**
      * Returns RichText containing a single newline character.
      *
-     * @return RichText.valueOf("\n")
+     * @return RichText.valueOf(" \ n ")
      */
     public static RichText newline() {
         return NEWLINE;
@@ -77,7 +77,7 @@ public final class RichText
     /**
      * Get RichText containing an objects string representation.
      * @param obj the object to convert to RichText
-     * @return RichText.valueOf(String.valueOf(obj))
+     * @return RichText.valueOf(String.valueOf ( obj))
      */
     public static RichText valueOf(Object obj) {
         return valueOf(String.valueOf(obj));
@@ -87,7 +87,7 @@ public final class RichText
      * Convert String to RichText.
      *
      * @param  s the String to convert
-     * @return   RichText representation of s
+     * @return RichText representation of s
      */
     public static RichText valueOf(String s) {
         return new RichText(Collections.singletonList(new Run(s, 0, s.length(), TextAttributes.none())));
@@ -95,7 +95,7 @@ public final class RichText
 
     /**
      * Convert char to RichText.
-     * 
+     *
      * @param c the character
      * @return RichText containing only the character c
      */
@@ -105,10 +105,10 @@ public final class RichText
 
     /**
      * Get styled RichText containing an object's string representation.
-     * 
+     *
      * @param obj the object to convert to RichText
      * @param styles the styles to apply
-     * @return RichText.valueOf(String.valueOf(obj))
+     * @return RichText.valueOf(String.valueOf ( obj))
      */
     public static RichText valueOf(Object obj, Style... styles) {
         return valueOf(String.valueOf(obj), List.of(styles));
@@ -119,7 +119,7 @@ public final class RichText
      *
      * @param obj the object to convert to RichText
      * @param styles the styles to apply
-     * @return   RichText representation of s
+     * @return RichText representation of s
      */
     public static RichText valueOf(Object obj, Collection<Style> styles) {
         String s = String.valueOf(obj);
@@ -154,31 +154,31 @@ public final class RichText
 
     /** The underlying CharSequence. */
     private final CharSequence text;
-    
+
     private final int start;
     private final int length;
 
     private final int[] runStart;
     private final Run[] run;
-    
+
     RichText(Run... runs) {
         this.run = Arrays.copyOf(runs, runs.length);
         this.runStart = new int[runs.length];
-        
-        if (runs.length==0) {
-            this.text="";
-            this.start=0;
-            this.length=0;
+
+        if (runs.length == 0) {
+            this.text = "";
+            this.start = 0;
+            this.length = 0;
         } else {
             this.text = run[0].base();
             assert checkAllRunsHaveTextAsBase() : "runs are based on different texts";
 
-            for (int idx=0; idx<run.length; idx++) {
+            for (int idx = 0; idx < run.length; idx++) {
                 runStart[idx] = run[idx].getStart();
             }
 
             this.start = runStart[0];
-            this.length = run[run.length-1].getEnd()-this.start;
+            this.length = run[run.length - 1].getEnd() - this.start;
         }
     }
 
@@ -211,19 +211,19 @@ public final class RichText
      *                runs using the supplied predicate
      */
     public boolean equals(@Nullable RichText other, BiPredicate<? super Run, ? super Run> runEquals) {
-        if (other == null || other.length != length || other.textHash()!=textHash()) {
+        if (other == null || other.length != length || other.textHash() != textHash()) {
             return false;
         }
-        
+
         // compare contents
         Iterator<Run> iter1 = this.iterator();
         Iterator<Run> iter2 = other.iterator();
-        while (iter1.hasNext()&&iter2.hasNext()) {
+        while (iter1.hasNext() && iter2.hasNext()) {
             if (!runEquals.test(iter1.next(), iter2.next())) {
                 return false;
             }
         }
-        return iter1.hasNext()==iter2.hasNext();
+        return iter1.hasNext() == iter2.hasNext();
     }
 
     /**
@@ -234,7 +234,7 @@ public final class RichText
     public boolean equalsTextAndFont(@Nullable RichText other) {
         return textAndFontEquals(this, other);
     }
-    
+
     /**
      * Check if texts and style are equal, ignoring other attributes.
      * @param a text
@@ -242,8 +242,8 @@ public final class RichText
      * @return true, if a and b consist of the same characters with the same styling
      */
     public static boolean textAndFontEquals(@Nullable RichText a, @Nullable RichText b) {
-        if (a==null || b==null) {
-            return a==b;
+        if (a == null || b == null) {
+            return a == b;
         }
 
         if (!a.equalsText(b)) {
@@ -252,22 +252,22 @@ public final class RichText
 
         assert a.length == b.length : "a and b should have same length since textEquals() returned true";
 
-        for ( int idx=0; idx<a.length(); ) {
+        for (int idx = 0; idx < a.length(); ) {
             Run runA = a.runAt(idx);
             Run runB = b.runAt(idx);
-            
+
             if (!Objects.equals(runA.getFontDef(), runB.getFontDef())) {
                 return false;
             }
-            
+
             int step = Math.min(runA.getEnd() - a.start, runB.getEnd() - b.start);
-            assert step > 0 : "invalid step: "+step;
+            assert step > 0 : "invalid step: " + step;
             idx += step;
         }
 
         return true;
     }
-    
+
     /**
      * Get the index of the run the character at a position belongs to.
      * @param pos the character position
@@ -275,7 +275,7 @@ public final class RichText
      */
     @SuppressWarnings("fallthrough")
     private int runIndex(int pos) {
-        final int pos_ = start+pos;
+        final int pos_ = start + pos;
         switch (runStart.length) {
             case 7:
                 if (pos_ >= runStart[6]) return 6;
@@ -296,7 +296,7 @@ public final class RichText
                 // if pos is not contained in the array, binarySearch will return -insert position -1,
                 // so -idx-1 will point at the next entry -> we have to subtract 2
                 int idx = Arrays.binarySearch(runStart, pos_);
-                return idx >=0 ? idx : -idx-2;
+                return idx >= 0 ? idx : -idx - 2;
         }
     }
 
@@ -306,16 +306,16 @@ public final class RichText
      * @return true, if this instance contains the same sequence of characters as {@code other}
      */
     public boolean equalsText(@Nullable CharSequence other) {
-        if (other==null || other.length()!=this.length) {
+        if (other == null || other.length() != this.length) {
             return false;
         }
 
-        for (int idx=0; idx<length; idx++) {
-            if (other.charAt(idx)!=charAt(idx)) {
+        for (int idx = 0; idx < length; idx++) {
+            if (other.charAt(idx) != charAt(idx)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -325,20 +325,20 @@ public final class RichText
      * @return true, if this instance contains the same sequence of characters as {@code other}
      */
     public boolean equalsTextIgnoreCase(@Nullable CharSequence other) {
-        if (other==null || other.length()!=this.length) {
+        if (other == null || other.length() != this.length) {
             return false;
         }
-        
+
         return toString().equalsIgnoreCase(other.toString());
     }
 
     // calculate the hashCode on demand
     private int textHash = 0;
-    
+
     private int textHash() {
         int h = textHash;
         if (h == 0 && length > 0) {
-            for (Run r: run) {
+            for (Run r : run) {
                 h = 17 * h + r.hashCode();
             }
             textHash = h;
@@ -352,7 +352,7 @@ public final class RichText
     public int hashCode() {
         int h = hash;
         if (h == 0 && length > 0) {
-            for (Run r: run) {
+            for (Run r : run) {
                 h = 17 * h + r.hashCode();
             }
             hash = h;
@@ -367,7 +367,7 @@ public final class RichText
      */
     @Override
     public boolean isEmpty() {
-        return length()==0;
+        return length() == 0;
     }
 
     @Override
@@ -396,7 +396,7 @@ public final class RichText
 
     @Override
     public String toString() {
-        return text.subSequence(start, start+length).toString();
+        return text.subSequence(start, start + length).toString();
     }
 
     @Override
@@ -464,32 +464,32 @@ public final class RichText
      */
     @Override
     public RichText subSequence(int begin, int end) {
-        if (begin==0 && end==length) {
+        if (begin == 0 && end == length) {
             return this;
         }
-        if (end==begin) {
+        if (end == begin) {
             return emptyText();
         }
-        if (end==begin+1) {
+        if (end == begin + 1) {
             Run r = runAt(begin);
             int pos = begin + this.start - r.getStart();
-            return new RichText(r.subSequence(pos, pos+1));
+            return new RichText(r.subSequence(pos, pos + 1));
         }
-        
+
         int floorKey = runIndex(begin);
-        int ceilingKey = runIndex(end-1);
-        Run[] subRuns = Arrays.copyOfRange(run, floorKey, ceilingKey+1);
-        
+        int ceilingKey = runIndex(end - 1);
+        Run[] subRuns = Arrays.copyOfRange(run, floorKey, ceilingKey + 1);
+
         Run firstRun = subRuns[0];
-        if (firstRun.getStart() < start+begin) {
-            subRuns[0] = firstRun.subSequence(begin+start-firstRun.getStart(), firstRun.length());
+        if (firstRun.getStart() < start + begin) {
+            subRuns[0] = firstRun.subSequence(begin + start - firstRun.getStart(), firstRun.length());
         }
-        
-        Run lastRun = subRuns[subRuns.length-1];
-        if (lastRun.getEnd() > start+end) {
-            subRuns[subRuns.length-1] = lastRun.subSequence(0, lastRun.length()-(lastRun.getEnd()-(start+end)));
+
+        Run lastRun = subRuns[subRuns.length - 1];
+        if (lastRun.getEnd() > start + end) {
+            subRuns[subRuns.length - 1] = lastRun.subSequence(0, lastRun.length() - (lastRun.getEnd() - (start + end)));
         }
-        
+
         return new RichText(subRuns);
     }
 
@@ -501,16 +501,16 @@ public final class RichText
     public RichText subSequence(int beginIndex) {
         return subSequence(beginIndex, length());
     }
-    
+
     @Override
     public char charAt(int index) {
-        return text.charAt(start+index);
+        return text.charAt(start + index);
     }
 
     @Override
     public AttributedCharacter attributedCharAt(int pos) {
         Run r = runAt(pos);
-        return r.attributedCharAt(r.convertIndex(start+pos));
+        return r.attributedCharAt(r.convertIndex(start + pos));
     }
 
     /**
@@ -531,7 +531,7 @@ public final class RichText
 
     /**
      * Wrap RichText in style.
-     * 
+     *
      * @param style the style
      * @return copy of this RichText instance with style applied
      */
@@ -542,7 +542,7 @@ public final class RichText
         rtb.pop(style);
         return rtb.toRichText();
     }
-    
+
     /**
      * Join RichText instances together.
      * @param delimiter the delimiter
@@ -563,14 +563,14 @@ public final class RichText
         RichTextBuilder rtb = new RichTextBuilder();
 
         RichText d = RichText.emptyText();
-        for (RichText element: elements) {
+        for (RichText element : elements) {
             rtb.append(d).append(element);
             d = delimiter;
         }
 
         return rtb.toRichText();
     }
-    
+
     /**
      * Join RichText instances together.
      * @param delimiter the delimiter
@@ -612,15 +612,14 @@ public final class RichText
          */
         char ch;
         if (((regex.length() == 1 &&
-              ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
-             (regex.length() == 2 &&
-              regex.charAt(0) == '\\' &&
-              (((ch = regex.charAt(1))-'0')|('9'-ch)) < 0 &&
-              ((ch-'a')|('z'-ch)) < 0 &&
-              ((ch-'A')|('Z'-ch)) < 0)) &&
-            (ch < Character.MIN_HIGH_SURROGATE ||
-             ch > Character.MAX_LOW_SURROGATE))
-        {
+                ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
+                (regex.length() == 2 &&
+                        regex.charAt(0) == '\\' &&
+                        (((ch = regex.charAt(1)) - '0') | ('9' - ch)) < 0 &&
+                        ((ch - 'a') | ('z' - ch)) < 0 &&
+                        ((ch - 'A') | ('Z' - ch)) < 0)) &&
+                (ch < Character.MIN_HIGH_SURROGATE ||
+                        ch > Character.MAX_LOW_SURROGATE)) {
             int off = 0;
             int next;
             boolean limited = limit > 0;
@@ -667,7 +666,7 @@ public final class RichText
     }
 
     /**
-     * @see String#replaceFirst(String, String) 
+     * @see String#replaceFirst(String, String)
      */
     @SuppressWarnings("MissingJavadoc")
     public RichText replaceFirst(String regex, RichText replacement) {
@@ -683,7 +682,7 @@ public final class RichText
     }
 
     /**
-     * @see String#replaceAll(String, String) 
+     * @see String#replaceAll(String, String)
      */
     @SuppressWarnings("MissingJavadoc")
     public RichText replaceAll(String regex, RichText replacement) {
@@ -702,7 +701,7 @@ public final class RichText
      * Find character.
      * @param ch the character
      * @return the position of the first occurrence of ch, or -1 if not found
-     * @see String#indexOf(int)  
+     * @see String#indexOf(int)
      */
     public int indexOf(int ch) {
         return TextUtil.indexOf(this, ch);
@@ -792,7 +791,7 @@ public final class RichText
      * @return the Run the character at the given position belongs to
      */
     public Run runAt(int pos) {
-        return run[runIndex(pos)];    
+        return run[runIndex(pos)];
     }
 
     /**
@@ -802,7 +801,7 @@ public final class RichText
     public List<Run> runs() {
         return List.of(run);
     }
-    
+
     /**
      * Create a {@link RichTextJoiner}.
      * @param delimiter the delimiter to use
@@ -820,8 +819,8 @@ public final class RichText
      * @return the joiner
      */
     public static RichTextJoiner joiner(RichText delimiter,
-                                                 RichText prefix,
-                                                 RichText suffix) {
+                                        RichText prefix,
+                                        RichText suffix) {
         return new RichTextJoiner(delimiter, prefix, suffix);
     }
 
@@ -842,8 +841,8 @@ public final class RichText
      * @return the joiner
      */
     public static RichTextJoiner joiner(String delimiter,
-                                                 String prefix,
-                                                 String suffix) {
+                                        String prefix,
+                                        String suffix) {
         return new RichTextJoiner(delimiter, prefix, suffix);
     }
 

@@ -47,7 +47,7 @@ public class MoveTo2f extends Segment2f {
     @Override
     public String toString() {
         return "MoveTo2f{" +
-               vertexToString(idx) +
-               '}';
+                vertexToString(idx) +
+                '}';
     }
 }

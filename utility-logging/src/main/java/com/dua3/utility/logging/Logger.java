@@ -14,22 +14,22 @@ public class Logger extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
     private final List<? extends LogEntryHandler> handlers;
-    private final Map<Marker,Level> markerLevelMap = new HashMap<>();
+    private final Map<Marker, Level> markerLevelMap = new HashMap<>();
     private Level level = null;
-    
+
     public static void setDefaultLevel(Level level) {
         defaultLevel = level;
     }
-    
+
     public static Level getDefaultLevel() {
         return defaultLevel;
     }
-    
+
     public Logger(String name, List<? extends LogEntryHandler> handlers) {
         super.name = name;
         this.handlers = handlers;
     }
-    
+
     @Override
     protected String getFullyQualifiedCallerName() {
         return null;
@@ -91,7 +91,7 @@ public class Logger extends AbstractLogger {
     }
 
     public Level getLevel() {
-        return level!=null ? level : defaultLevel;
+        return level != null ? level : defaultLevel;
     }
 
     public void setLevel(Level level) {

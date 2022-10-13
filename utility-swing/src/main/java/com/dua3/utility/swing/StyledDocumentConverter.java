@@ -37,7 +37,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param options the options to use
      * @return new converter instance
      */
-    public static StyledDocumentConverter create(StyledDocumentConversionOption... options)  {
+    public static StyledDocumentConverter create(StyledDocumentConversionOption... options) {
         return create(List.of(options));
     }
 
@@ -56,7 +56,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     }
 
     private static final Font DEFAULT_FONT = new Font();
-    
+
     // some settings controlling the conversion
     private Font defaultFont = DEFAULT_FONT;
     private Map<String, Object> defaultAttributes = new HashMap<>();
@@ -96,7 +96,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @return the option to use
      */
     public static StyledDocumentConversionOption defaultFont(Font font) {
-        return new StyledDocumentConversionOption(c -> c.defaultFont = Objects.requireNonNull(font) );
+        return new StyledDocumentConversionOption(c -> c.defaultFont = Objects.requireNonNull(font));
     }
 
     /**
@@ -112,10 +112,10 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     private final Map<Object, Function<Font, Object>> dictionary = createDictionary();
 
     private Map<Object, Function<Font, Object>> createDictionary() {
-        Map<Object,Function<Font,Object>> m = new HashMap<>();
+        Map<Object, Function<Font, Object>> m = new HashMap<>();
         m.put(StyleConstants.Family, Font::getFamily);
         //noinspection NumericCastThatLosesPrecision
-        m.put(StyleConstants.Size, f -> (int) Math.round(scale*f.getSizeInPoints()));
+        m.put(StyleConstants.Size, f -> (int) Math.round(scale * f.getSizeInPoints()));
         m.put(StyleConstants.Bold, Font::isBold);
         m.put(StyleConstants.Italic, Font::isItalic);
         m.put(StyleConstants.Underline, Font::isUnderline);
@@ -134,7 +134,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param scale the scale
      */
     public void setScale(double scale) {
-        this.scale=scale;
+        this.scale = scale;
     }
 
     class StyledDocumentConverterImpl extends AttributeBasedConverterImpl<StyledDocument> {
@@ -142,14 +142,14 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         private final StyledDocument buffer;
         private AttributeSet currentAttributes;
         private Font currentFont;
-        
+
         StyledDocumentConverterImpl() {
             super(defaultAttributes);
             buffer = new DefaultStyledDocument();
             currentAttributes = defaultStyledAttributes;
-            currentFont=defaultFont;
+            currentFont = defaultFont;
         }
-        
+
         @Override
         protected StyledDocument get() {
             return buffer;
@@ -158,7 +158,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         @Override
         protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
             Map<String, Object> attributes = new HashMap<>();
-            changedAttributes.forEach( (attribute, values) -> attributes.put(attribute, values.second()));
+            changedAttributes.forEach((attribute, values) -> attributes.put(attribute, values.second()));
             // apply the default font styles 
             currentFont = currentFont.deriveFont(TextAttributes.getFontDef(attributes));
             currentAttributes = createAttributeSet(currentFont);
@@ -177,7 +177,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
                 throw new IllegalStateException(e);
             }
         }
-        
+
         /**
          * Create AttributeSet for a Font instance
          * @param font the font
@@ -186,9 +186,9 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         private AttributeSet createAttributeSet(Font font) {
             SimpleAttributeSet attrs = new SimpleAttributeSet();
             attrs.addAttributes(defaultStyledAttributes);
-            dictionary.forEach( (key,getter) -> attrs.addAttribute(key,getter.apply(font)));
+            dictionary.forEach((key, getter) -> attrs.addAttribute(key, getter.apply(font)));
             return attrs;
         }
-        
+
     }
 }

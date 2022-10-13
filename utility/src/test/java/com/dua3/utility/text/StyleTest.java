@@ -9,19 +9,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class StyleTest {
-    
+
     @SuppressWarnings("StringBufferReplaceableByString")
     @Test
     public void testEquals() {
-        Style s1 = Style.create("style", 
+        Style s1 = Style.create("style",
                 Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE),
                 Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
-        
+
         String s2Name = new StringBuilder("st").append("yle").toString();
         Style s2 = Style.create(s2Name,
                 Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD),
                 Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
-        
+
         // first make sure the names are equal but not identical 
         assertEquals(s2.name(), s1.name());
         assertNotSame(s1.name(), s2.name());
@@ -29,5 +29,5 @@ public class StyleTest {
         // s1 and s2 do not possess any properties
         assertEquals(s1, s2);
     }
-    
+
 }

@@ -52,7 +52,7 @@ public interface Decoder<T> {
         LangUtil.check(size >= 0, "invalid collection size: %d", size);
 
         Collection<T> collection = collectionConstructor.apply(size);
-        for (int i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             collection.add(codec.decode(is));
         }
 

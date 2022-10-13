@@ -61,7 +61,7 @@ public class JdbcDataSource implements DataSource {
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
         if (!iface.isAssignableFrom(this.getClass())) {
-            throw new SQLException(iface.getName()+" is not assignable from "+this.getClass().getName());
+            throw new SQLException(iface.getName() + " is not assignable from " + this.getClass().getName());
         }
         return (T) this;
     }
@@ -120,7 +120,7 @@ public class JdbcDataSource implements DataSource {
      *  the database user or `null` to unset
      */
     public void setUser(@Nullable String user) {
-        if (user==null) {
+        if (user == null) {
             // Properties class does not support storing null values!
             properties.remove(USER);
         } else {
@@ -134,7 +134,7 @@ public class JdbcDataSource implements DataSource {
      *  the database password or `null` to unset
      */
     public void setPassword(@Nullable String password) {
-        if (password==null) {
+        if (password == null) {
             // Properties class does not support storing null values!
             properties.remove(PASSWORD);
         } else {

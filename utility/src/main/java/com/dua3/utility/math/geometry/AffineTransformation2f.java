@@ -18,7 +18,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * The identity transformation.
      */
     public static final AffineTransformation2f IDENTITY = new AffineTransformation2f(1, 0, 0, 0, 1, 0);
-    
+
     /**
      * Return the identity transformation.
      * @return affine transformation (identity)
@@ -51,7 +51,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     public static AffineTransformation2f translate(float tx, float ty) {
         return new AffineTransformation2f(1, 0, tx, 0, 1, ty);
     }
-    
+
     /**
      * Create an affine transformation for a translation.
      * See {@link #translate(float, float)}.
@@ -69,7 +69,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * @return affine transformation (scale)
      */
     public static AffineTransformation2f scale(float s) {
-        return scale(s,s);
+        return scale(s, s);
     }
 
     /**
@@ -100,9 +100,9 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      */
     public AffineTransformation2f append(AffineTransformation2f A) {
         return new AffineTransformation2f(
-                A.a*a+A.b*d, A.a*b+A.b*e, A.a*c+A.b*f+A.c,
-                A.d*a+A.e*d, A.d*b+A.e*e, A.d*c+A.e*f+A.f
-        );  
+                A.a * a + A.b * d, A.a * b + A.b * e, A.a * c + A.b * f + A.c,
+                A.d * a + A.e * d, A.d * b + A.e * e, A.d * c + A.e * f + A.f
+        );
     }
 
     /**
@@ -113,7 +113,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     public Vector2f transform(Vector2f v) {
         return transform(v.x(), v.y());
     }
-    
+
     /**
      * Transform vector by applying this affine transformation to it.
      * @param x the x-coordinate of the point to transform
@@ -121,51 +121,65 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * @return the result of transformation
      */
     public Vector2f transform(float x, float y) {
-        float xt = a*x + b*y + c;
-        float yt = d*x + e*y + f;
-        return Vector2f.of(xt,yt);
+        float xt = a * x + b * y + c;
+        float yt = d * x + e * y + f;
+        return Vector2f.of(xt, yt);
     }
-    
-    /** 
+
+    /**
      * Get scaling factor for x-axis. 
      * @return the x-axis scaling factor
      */
-    public float getScaleX() { return a; }
+    public float getScaleX() {
+        return a;
+    }
 
     /**
      * Get shearing factor for x-axis. 
      * @return the x-axis shearing factor
      */
-    public float getShearX() { return b; }
+    public float getShearX() {
+        return b;
+    }
 
     /**
      * Get translation for x-axis. 
      * @return the x-axis translation value
      */
-    public float getTranslateX() { return c; }
+    public float getTranslateX() {
+        return c;
+    }
 
     /**
      * Get shearing factor for y-axis. 
      * @return the y-axis shearing factor
      */
-    public float getShearY() { return d; }
+    public float getShearY() {
+        return d;
+    }
 
     /**
      * Get scaling factor for y-axis. 
      * @return the y-axis scaling factor
      */
-    public float getScaleY() { return e; }
+    public float getScaleY() {
+        return e;
+    }
 
     /**
      * Get translation for y-axis. 
      * @return the y-axis translation value
      */
-    public float getTranslateY() { return f; }
+    public float getTranslateY() {
+        return f;
+    }
 
-    /** 
+    /**
      * Get translation vector. 
      * @return the translation vector
      */
-    public Vector2f getTranslate() { return Vector2f.of(e,f); }
+    public Vector2f getTranslate() {
+        return Vector2f.of(e, f);
+    }
 
 }

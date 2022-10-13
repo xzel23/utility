@@ -396,7 +396,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     public boolean isCompound() {
         return false;
     }
-    
+
     /**
      * Get optional settings for this file type
      *
@@ -427,5 +427,5 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
         return getName().compareTo(o.getName());
     }
-    
+
 }

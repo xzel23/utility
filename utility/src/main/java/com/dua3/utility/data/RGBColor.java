@@ -19,7 +19,7 @@ public final class RGBColor implements Color {
     static final int SHIFT_R = 16;
 
     private static int shiftComponentValue(int value, int bits) {
-        LangUtil.check(value >= 0 && value <= 255, () -> new IllegalArgumentException("value out of range: "+value));
+        LangUtil.check(value >= 0 && value <= 255, () -> new IllegalArgumentException("value out of range: " + value));
         return value << bits;
     }
 
@@ -31,7 +31,7 @@ public final class RGBColor implements Color {
     public static RGBColor valueOf(int argb) {
         return argb(argb);
     }
-    
+
     /**
      * Create color from ARGB value.
      * @param argb the ARGB value
@@ -40,7 +40,7 @@ public final class RGBColor implements Color {
     public static RGBColor argb(int argb) {
         return new RGBColor(argb);
     }
-    
+
     /**
      * Create color from RGB value.
      * @param rgb the RGB value (the highest 16 bits are ignored)
@@ -49,7 +49,7 @@ public final class RGBColor implements Color {
     public static RGBColor rgb(int rgb) {
         return new RGBColor(0xff000000 | rgb);
     }
-    
+
     /** This color's ARGB value. */
     private final int argb;
 
@@ -94,7 +94,7 @@ public final class RGBColor implements Color {
 
     @Override
     public float alpha() {
-        return a()/255.0f;
+        return a() / 255.0f;
     }
 
     @Override
@@ -217,7 +217,7 @@ public final class RGBColor implements Color {
     public boolean isTransparent() {
         return (argb & 0xff000000) == 0x00000000;
     }
-    
+
     @Override
     public RGBColor toRGBColor() {
         return this;

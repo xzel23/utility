@@ -34,7 +34,7 @@ public enum PredefinedDateTimeFormat {
     public DateTimeFormatter getDateTimeFormatter(Locale locale) {
         return dateTimeFormatterFactory.apply(locale);
     }
-    
+
     public DateTimeFormatter getDateFormatter(Locale locale) {
         return dateFormatterFactory.apply(locale);
     }

@@ -30,16 +30,16 @@ public class SimpleNamespaceContext implements NamespaceContext {
     public SimpleNamespaceContext(Map<String, String> nsToUri) {
         this(nsToUri, null);
     }
-    
+
     /**
      * Construct new instance with mappings and default namespace.
      *
      * @param defaultUri URI for the default namespace
      */
     public SimpleNamespaceContext(@Nullable String defaultUri) {
-        this(Collections.emptyMap(), defaultUri);       
+        this(Collections.emptyMap(), defaultUri);
     }
-    
+
     /**
      * Construct new instance with mappings and default namespace.
      *
@@ -48,7 +48,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
      */
     public SimpleNamespaceContext(Map<String, String> nsToUriMapping, @Nullable String defaultUri) {
         this.nsToUri = new HashMap<>(nsToUriMapping);
-        
+
         // determine a namespace name for the default namespace
         if (defaultUri != null) {
             String prefix = "ns";

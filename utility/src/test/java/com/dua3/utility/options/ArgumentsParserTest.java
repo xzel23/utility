@@ -37,19 +37,19 @@ public class ArgumentsParserTest {
         assertFalse(cmd.parse("hello", "Bob").isSet(oPrint));
 
         String expected = """
-                          
-                          testFlag
-                          --------
-                          
-                          Unit test for passing flags on the command line.
-                          
-                          testFlag <options> [arg1] ...
-                          
-                              --print
-                              -p
-                                      print result to terminal
-                          
-                          """;
+                                          
+                testFlag
+                --------
+                                          
+                Unit test for passing flags on the command line.
+                                          
+                testFlag <options> [arg1] ...
+                                          
+                    --print
+                    -p
+                            print result to terminal
+                                          
+                """;
 
         assertEquals(expected, cmd.help());
     }
@@ -58,7 +58,7 @@ public class ArgumentsParserTest {
     public enum E {
         TALL, GRANDE, VENTI, TRENTA
     }
-    
+
     @Test
     public void testChoiceOption() {
         ArgumentsParser cmd = new ArgumentsParser("testChoiceOption", "Unit test for passing choices on the command line.");
@@ -83,37 +83,37 @@ public class ArgumentsParserTest {
 
         SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n").description("set name");
         SimpleOption<Integer> optionAge = cmd.simpleOption(Integer.class, "--age", "-a");
-        
+
         assertFalse(cmd.parse().get(optionName).isPresent());
         assertFalse(cmd.parse().get(optionAge).isPresent());
 
         assertEquals("Eve", cmd.parse("-n", "Eve").getOrThrow(optionName));
         assertEquals(30, cmd.parse("--age", "30").getOrThrow(optionAge));
-        
+
         Arguments eve30 = cmd.parse("-n", "Eve", "--age", "30");
         assertEquals("Eve", eve30.getOrThrow(optionName));
         assertEquals(30, eve30.getOrThrow(optionAge));
 
         String expected = """
-                          
-                          testSimpleOption
-                          ----------------
-                          
-                          Unit test for passing simple options on the command line.
-                          
-                          testSimpleOption <options> [arg1] ...
-                          
-                              --age arg
-                              -a arg
-                          
-                              --name arg
-                              -n arg
-                                      set name
-                                      
-                          """;
+                                          
+                testSimpleOption
+                ----------------
+                                          
+                Unit test for passing simple options on the command line.
+                                          
+                testSimpleOption <options> [arg1] ...
+                                          
+                    --age arg
+                    -a arg
+                                          
+                    --name arg
+                    -n arg
+                            set name
+                            
+                """;
         assertEquals(expected, cmd.help());
     }
-    
+
     @Test
     public void testSimpleOptionRequired() {
         ArgumentsParser cmd = new ArgumentsParser("testSimpleOptionRequired", "Unit test for passing simple options on the command line.");
@@ -133,22 +133,22 @@ public class ArgumentsParserTest {
         assertEquals(30, eve30.getOrThrow(optionAge));
 
         String expected = """
-                          
-                          testSimpleOptionRequired
-                          ------------------------
-                          
-                          Unit test for passing simple options on the command line.
-                          
-                          testSimpleOptionRequired <options> [arg1] ...
-                          
-                              --age arg
-                              -a arg
-                          
-                              --name arg
-                              -n arg
-                                      set name
-                                      
-                          """;
+                                          
+                testSimpleOptionRequired
+                ------------------------
+                                          
+                Unit test for passing simple options on the command line.
+                                          
+                testSimpleOptionRequired <options> [arg1] ...
+                                          
+                    --age arg
+                    -a arg
+                                          
+                    --name arg
+                    -n arg
+                            set name
+                            
+                """;
         assertEquals(expected, cmd.help());
     }
 
@@ -157,20 +157,20 @@ public class ArgumentsParserTest {
         ArgumentsParser cmd = new ArgumentsParser("testPositionalArgs1", "Unit test for passing positional arguments on the command line.");
 
         String expected = """
-                                                        
-                          testPositionalArgs1
-                          -------------------
-                                                        
-                          Unit test for passing positional arguments on the command line.
-                                                        
-                          testPositionalArgs1 [arg1] ...
-                          
-                          """;
+                                              
+                testPositionalArgs1
+                -------------------
+                                              
+                Unit test for passing positional arguments on the command line.
+                                              
+                testPositionalArgs1 [arg1] ...
+                                          
+                """;
         assertEquals(expected, cmd.help());
 
         Arguments args1 = cmd.parse();
         assertTrue(args1.positionalArgs().isEmpty());
-        
+
         Arguments args2 = cmd.parse("abc", "def");
         assertEquals(List.of("abc", "def"), args2.positionalArgs());
     }
@@ -180,17 +180,17 @@ public class ArgumentsParserTest {
         ArgumentsParser cmd = new ArgumentsParser("testPositionalArgs2", "Unit test for passing positional arguments on the command line.", 1, 3);
 
         String expected = """
-                          
-                          testPositionalArgs2
-                          -------------------
-                          
-                          Unit test for passing positional arguments on the command line.
-                          
-                          testPositionalArgs2 arg1 [arg2] ... (up to 3 arguments)
-                          
-                          """;
+                                          
+                testPositionalArgs2
+                -------------------
+                                          
+                Unit test for passing positional arguments on the command line.
+                                          
+                testPositionalArgs2 arg1 [arg2] ... (up to 3 arguments)
+                                          
+                """;
         assertEquals(expected, cmd.help());
-        
+
         // min arity is 1!
         assertThrows(OptionException.class, cmd::parse);
 
@@ -209,7 +209,7 @@ public class ArgumentsParserTest {
 
         List<String> yeaSayer = new ArrayList<>();
         List<String> naySayer = new ArrayList<>();
-        
+
         cmd.option(String.class, "-y").arity(1).handler(yeaSayer::addAll);
         cmd.option(String.class, "-n").arity(1).handler(naySayer::addAll);
 
@@ -218,14 +218,15 @@ public class ArgumentsParserTest {
         assertEquals(List.of("a", "e"), yeaSayer);
         assertEquals(List.of("b", "c", "d", "f"), naySayer);
     }
-    
-    @Test public void testStandardOptionOccurrences() {
+
+    @Test
+    public void testStandardOptionOccurrences() {
         ArgumentsParser cmd = new ArgumentsParser("testSimpleOption", "Unit test for passing simple options on the command line.");
 
         Option<String> optionExactlyTwice = cmd.option(String.class, "--exactly-twice").occurrence(2);
-        Option<String> optionAtMostTwice = cmd.option(String.class, "--at-most-twice").occurrence(0,2);
-        Option<String> optionTwoOrThreeTimes = cmd.option(String.class, "--two-or-three-times").occurrence(2,3);
-        Option<String> optionAtLeastTwice = cmd.option(String.class, "--at-least-twice").occurrence(2,Integer.MAX_VALUE);
+        Option<String> optionAtMostTwice = cmd.option(String.class, "--at-most-twice").occurrence(0, 2);
+        Option<String> optionTwoOrThreeTimes = cmd.option(String.class, "--two-or-three-times").occurrence(2, 3);
+        Option<String> optionAtLeastTwice = cmd.option(String.class, "--at-least-twice").occurrence(2, Integer.MAX_VALUE);
 
         // test occurrences
         Arguments e1 = cmd.parse(
@@ -257,7 +258,7 @@ public class ArgumentsParserTest {
         assertEquals(2, e2.stream(optionAtMostTwice).count());
         assertEquals(3, e2.stream(optionTwoOrThreeTimes).count());
         assertEquals(3, e2.stream(optionAtLeastTwice).count());
-        
+
         assertThrows(OptionException.class, () -> cmd.parse(
                 "--exactly-twice",
                 "--at-most-twice",
@@ -269,7 +270,7 @@ public class ArgumentsParserTest {
                 "--at-least-twice",
                 "--at-least-twice"
         ));
-        
+
         assertThrows(OptionException.class, () -> cmd.parse(
                 "--exactly-twice",
                 "--exactly-twice",
@@ -283,7 +284,7 @@ public class ArgumentsParserTest {
                 "--at-least-twice",
                 "--at-least-twice"
         ));
-        
+
         assertThrows(OptionException.class, () -> cmd.parse(
                 "--exactly-twice",
                 "--exactly-twice",
@@ -297,7 +298,7 @@ public class ArgumentsParserTest {
                 "--at-least-twice",
                 "--at-least-twice"
         ));
-        
+
         assertThrows(OptionException.class, () -> cmd.parse(
                 "--exactly-twice",
                 "--exactly-twice",
@@ -308,7 +309,7 @@ public class ArgumentsParserTest {
                 "--at-least-twice",
                 "--at-least-twice"
         ));
-        
+
         assertThrows(OptionException.class, () -> cmd.parse(
                 "--exactly-twice",
                 "--exactly-twice",
@@ -322,7 +323,7 @@ public class ArgumentsParserTest {
                 "--at-least-twice",
                 "--at-least-twice"
         ));
-        
+
         assertThrows(OptionException.class, () -> cmd.parse(
                 "--exactly-twice",
                 "--exactly-twice",
@@ -336,7 +337,8 @@ public class ArgumentsParserTest {
         ));
     }
 
-    @Test public void testStandardOptionArity() {
+    @Test
+    public void testStandardOptionArity() {
         ArgumentsParser cmd = new ArgumentsParser("testSimpleOption", "Unit test for passing simple options on the command line.", 0, 0);
 
         Option<String> optionAtMostTwoArgs = cmd.option(String.class, "--at-most-two-args").arity(0, 2);
@@ -347,12 +349,12 @@ public class ArgumentsParserTest {
         assertEquals(List.of(List.of("A")), cmd.parse("--at-most-two-args", "A").stream(optionAtMostTwoArgs).toList());
         assertEquals(List.of(List.of("A", "B")), cmd.parse("--at-most-two-args", "A", "B").stream(optionAtMostTwoArgs).toList());
         assertThrows(OptionException.class, () -> cmd.parse("--at-most-two-args", "A", "B", "C"));
-        
+
         assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args"));
         assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args", "A"));
         assertEquals(List.of(List.of("A", "B")), cmd.parse("--exactly-two-args", "A", "B").stream(optionExactlyTwoArgs).toList());
         assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args", "A", "B", "C"));
-        
+
         assertThrows(OptionException.class, () -> cmd.parse("--two-or-more-args"));
         assertThrows(OptionException.class, () -> cmd.parse("--two-or-more-args", "A"));
         assertEquals(List.of(List.of("A", "B")), cmd.parse("--two-or-more-args", "A", "B").stream(optionTwoOrMoreArgs).toList());

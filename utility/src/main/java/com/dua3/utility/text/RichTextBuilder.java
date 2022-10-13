@@ -35,8 +35,9 @@ public class RichTextBuilder implements Appendable, ToRichText {
     private final SortedMap<Integer, Map<String, Object>> parts;
     private final Deque<AttributeChange> openedAttributes = new ArrayDeque<>();
 
-    private record AttributeChange(String name, Object previousValue, Object value) {}
-    
+    private record AttributeChange(String name, Object previousValue, Object value) {
+    }
+
     /**
      * Construct a new empty builder.
      */
@@ -51,7 +52,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     public RichTextBuilder(int capacity) {
         this.buffer = new StringBuilder(capacity);
         this.parts = new TreeMap<>();
-        
+
         parts.put(0, new HashMap<>());
     }
 
@@ -81,7 +82,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *         {@code null}, then the four characters {@code "null"} are
      *         appended to this RichTextBuilder.
      *
-     * @return  A reference to this {@code RichTextBuilder}
+     * @return A reference to this {@code RichTextBuilder}
      */
     public RichTextBuilder append(@Nullable ToRichText trt) {
         if (trt == null) {
@@ -100,7 +101,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *         {@code null}, then the four characters {@code "null"} are
      *         appended to this RichTextBuilder.
      *
-     * @return  A reference to this {@code RichTextBuilder}
+     * @return A reference to this {@code RichTextBuilder}
      */
     public RichTextBuilder append(@Nullable RichText rt) {
         if (rt == null) {
@@ -115,7 +116,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * Get attribute of the current Run.
      *
      * @param  property the property
-     * @return          value of the property
+     * @return value of the property
      */
     public Object get(String property) {
         return parts.get(parts.lastKey()).get(property);
@@ -126,7 +127,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *
      * @param  property the property
      * @param defaultValue the default value for the property
-     * @return          value of the property
+     * @return value of the property
      */
     public Object getOrDefault(String property, Object defaultValue) {
         return parts.get(parts.lastKey()).getOrDefault(property, defaultValue);
@@ -145,7 +146,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private Run[] getRuns() {
         normalize();
-        
+
         String text = buffer.toString();
         Run[] runs = new Run[parts.size()];
 
@@ -173,10 +174,10 @@ public class RichTextBuilder implements Appendable, ToRichText {
         boolean first = true;
         List<Integer> keysToRemove = new ArrayList<>();
         Map<String, Object> lastAttributes = Collections.emptyMap();
-        for (Entry<Integer, Map<String, Object>> entry: parts.entrySet()) {
+        for (Entry<Integer, Map<String, Object>> entry : parts.entrySet()) {
             Integer pos = entry.getKey();
             Map<String, Object> attributes = entry.getValue();
-            
+
             if (!first && attributes.equals(lastAttributes)) {
                 keysToRemove.add(pos);
             }
@@ -184,12 +185,12 @@ public class RichTextBuilder implements Appendable, ToRichText {
             lastAttributes = attributes;
             first = false;
         }
-        
+
         // remove splits
         keysToRemove.forEach(parts.keySet()::remove);
 
         // always remove a trailing empty run if it exists
-        if (parts.size()>1) {
+        if (parts.size() > 1) {
             parts.remove(length());
         }
     }
@@ -234,22 +235,22 @@ public class RichTextBuilder implements Appendable, ToRichText {
         for (Entry<String, Object> entry : run.getAttributes().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            
+
             if (key.equals(RichText.ATTRIBUTE_NAME_STYLE_LIST)) {
                 value = new ArrayList<>((Collection<Style>) value);
             }
-            
+
             Object oldValue = attributes.put(key, value);
             backup.put(key, oldValue);
         }
 
         // append CharSequence
         append(run);
-        
+
         // restore attributes
         attributes = split();
-        for (Entry<String, Object> entry: backup.entrySet()) {
-            if (entry.getValue()==null) {
+        for (Entry<String, Object> entry : backup.entrySet()) {
+            if (entry.getValue() == null) {
                 attributes.remove(entry.getKey());
             } else {
                 attributes.put(entry.getKey(), entry.getValue());
@@ -276,7 +277,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
         AttributeChange change = openedAttributes.pop();
         LangUtil.check(name.equals(change.name()));
         Map<String, Object> attributes = split();
-        if (change.previousValue()==null) {
+        if (change.previousValue() == null) {
             attributes.remove(name);
         } else {
             attributes.put(name, change.previousValue());
@@ -290,7 +291,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     @SuppressWarnings("unchecked")
     public void push(Style style) {
         List<Style> styles = (List<Style>) getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
-        List<Style> newStyles = new ArrayList<>(styles.size()+1);
+        List<Style> newStyles = new ArrayList<>(styles.size() + 1);
         newStyles.addAll(styles);
         newStyles.add(style);
         push(RichText.ATTRIBUTE_NAME_STYLE_LIST, newStyles);
@@ -304,13 +305,13 @@ public class RichTextBuilder implements Appendable, ToRichText {
         pop(RichText.ATTRIBUTE_NAME_STYLE_LIST);
     }
 
-    private Map<String, Object> split() { 
+    private Map<String, Object> split() {
         return parts.computeIfAbsent(length(), pos -> new HashMap<>(parts.get(parts.lastKey())));
     }
 
     @SuppressWarnings("unchecked")
     void apply(Style style) {
-        for (Map<String,Object> attributes: parts.values()) {
+        for (Map<String, Object> attributes : parts.values()) {
             List<Style> styles = (List<Style>) attributes.computeIfAbsent(RichText.ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
             styles.add(0, style); // add the style at the first position!
         }

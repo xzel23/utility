@@ -20,18 +20,18 @@ public class LoggerFactory implements ILoggerFactory {
 
     public static final String LOGGER_CONSOLE_STREAM = "logger.console.stream";
     public static final String LOGGER_CONSOLE_COLORED = "logger.console.colored";
-    
+
     public static final String LOGGER_BUFFER_SIZE = "logger.buffer.size";
-    
+
     private final LogBuffer logBuffer;
-    private final List<Pair<String,Level>> prefixes = new ArrayList<>();
+    private final List<Pair<String, Level>> prefixes = new ArrayList<>();
     private final List<LogEntryHandler> handlers = new ArrayList<>();
-    
+
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private static Properties getProperties() {
         Properties properties = new Properties();
         try (InputStream in = ClassLoader.getSystemResourceAsStream("logging.properties")) {
-            if (in==null) {
+            if (in == null) {
                 properties.put(LOGGER_CONSOLE_STREAM, "system.out");
             } else {
                 properties.load(in);
@@ -42,55 +42,57 @@ public class LoggerFactory implements ILoggerFactory {
         }
         return properties;
     }
-     
+
     private Optional<Pair<String, Level>> getPrefixEntry(String name) {
-        return prefixes.stream().filter(p -> name.startsWith(p.first())).findFirst();    
+        return prefixes.stream().filter(p -> name.startsWith(p.first())).findFirst();
     }
 
     private Level getLevel(String name) {
         return getPrefixEntry(name).map(Pair::second).orElseGet(Logger::getDefaultLevel);
     }
-    
+
     public LoggerFactory() {
         Properties properties = getProperties();
 
         // parse log level entry
         String leveldeclaration = properties.getProperty(LEVEL, Level.INFO.name());
         String[] decls = leveldeclaration.split(",");
-        
-        if (decls.length>0) {
+
+        if (decls.length > 0) {
             Logger.setDefaultLevel(Level.valueOf(decls[0].strip()));
         }
 
         Arrays.stream(decls)
                 .skip(1) // gloabal level has already been set
-                .forEachOrdered( s -> {
+                .forEachOrdered(s -> {
                     String[] parts = s.split(":");
-                    LangUtil.check(parts.length==2, "invalid log level declaration: %s", s);
+                    LangUtil.check(parts.length == 2, "invalid log level declaration: %s", s);
                     String prefix = parts[0].strip();
                     Level level = Level.valueOf(parts[1].strip());
 
                     var entry = getPrefixEntry(prefix);
                     LangUtil.check(entry.isEmpty(), () -> new IllegalStateException("prefix '%s' is shadowed by '%s'".formatted(prefix, entry.orElseThrow().first())));
 
-                    prefixes.add(Pair.of(prefix,level));
+                    prefixes.add(Pair.of(prefix, level));
                 });
-        
+
         // configure console handler
         String propertyConsoleStream = properties.getProperty(LOGGER_CONSOLE_STREAM, "").trim().toLowerCase(Locale.ROOT);
         final PrintStream stream = switch (propertyConsoleStream) {
             case "" -> null;
             case "system.err" -> System.err;
             case "system.out" -> System.out;
-            default -> throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_STREAM + ": '" + propertyConsoleStream + "'");
+            default ->
+                    throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_STREAM + ": '" + propertyConsoleStream + "'");
         };
         String propertyConsoleColored = properties.getProperty(LOGGER_CONSOLE_COLORED, "true").trim().toLowerCase(Locale.ROOT);
         final boolean colored = switch (propertyConsoleColored) {
             case "true" -> true;
             case "false" -> false;
-            default -> throw new IllegalArgumentException("invalid value for property "+LOGGER_CONSOLE_COLORED+": '"+propertyConsoleColored+"'");
+            default ->
+                    throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_COLORED + ": '" + propertyConsoleColored + "'");
         };
-        if (stream!=null) {
+        if (stream != null) {
             handlers.add(new ConsoleHandler(stream, colored));
         }
 
@@ -104,7 +106,7 @@ public class LoggerFactory implements ILoggerFactory {
             logBuffer = null;
         }
     }
-    
+
     @Override
     public org.slf4j.Logger getLogger(String name) {
         Logger logger = new Logger(name, handlers);

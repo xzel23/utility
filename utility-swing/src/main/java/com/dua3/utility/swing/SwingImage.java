@@ -30,13 +30,13 @@ public record SwingImage(BufferedImage bufferedImage) implements Image {
             if (!iter.hasNext()) {
                 throw new IOException("no matching ImageReader found");
             }
-            
+
             ImageReader reader = iter.next();
             BufferedImage bufferedImage = reader.read(0);
             return new SwingImage(bufferedImage);
         }
     }
-    
+
     @Override
     public int width() {
         return bufferedImage().getWidth();
@@ -49,7 +49,7 @@ public record SwingImage(BufferedImage bufferedImage) implements Image {
 
     @Override
     public int[] getArgb() {
-        return bufferedImage().getRaster().getPixels( 0, 0, width(), height(), (int[]) null);
+        return bufferedImage().getRaster().getPixels(0, 0, width(), height(), (int[]) null);
     }
 
 }

@@ -43,7 +43,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     @SafeVarargs
     public static <T> Entry<T> createEntry(Option<T> option, T... args) {
         Entry<T> entry = new Entry<>(option);
-        for (var arg: args) {
+        for (var arg : args) {
             entry.addArg(arg);
         }
         return entry;
@@ -215,7 +215,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     public <T> void ifPresent(SimpleOption<T> option, Consumer<? super T> action) {
         stream(option).map(list -> list.get(0)).forEach(action);
     }
-        
+
     /**
      * Execute an action for every instance of the given {@link Option}.
      * @param option the option
@@ -232,10 +232,10 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     public void handle() {
         parsedOptions.forEach(Entry::handle);
     }
-    
+
     @Override
     public Iterator<Arguments.Entry<?>> iterator() {
         return parsedOptions.iterator();
     }
-    
+
 }

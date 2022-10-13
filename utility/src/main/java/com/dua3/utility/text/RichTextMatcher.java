@@ -12,7 +12,7 @@ public class RichTextMatcher implements MatchResult {
 
     private final RichText text;
     private final Matcher matcher;
-    
+
     RichTextMatcher(Pattern pattern, RichText text) {
         this.text = Objects.requireNonNull(text);
         this.matcher = pattern.matcher(text);
@@ -51,7 +51,7 @@ public class RichTextMatcher implements MatchResult {
     public RichText rgroup() {
         return text.subSequence(start(), end());
     }
-    
+
     @Override
     public String group(int group) {
         return matcher.group(group);
@@ -67,7 +67,7 @@ public class RichTextMatcher implements MatchResult {
     public RichText rgroup(int group) {
         return text.subSequence(start(group), end(group));
     }
-    
+
     @Override
     public int groupCount() {
         return matcher.groupCount();
@@ -80,7 +80,7 @@ public class RichTextMatcher implements MatchResult {
     public boolean find() {
         return matcher.find();
     }
-    
+
     /**
      * See {@link Matcher#find(int)}.
      */
@@ -126,10 +126,10 @@ public class RichTextMatcher implements MatchResult {
         if (!found) {
             return text;
         }
-        
-        RichTextBuilder rtb = new RichTextBuilder(text.length()+replacement.length());
+
+        RichTextBuilder rtb = new RichTextBuilder(text.length() + replacement.length());
         int off, i;
-        for(off = 0, i= 0; i++<maxOccurrences && found; off = end(), found=find()) {
+        for (off = 0, i = 0; i++ < maxOccurrences && found; off = end(), found = find()) {
             rtb.append(text.subSequence(off, start())).append(replacement);
         }
 
@@ -143,9 +143,9 @@ public class RichTextMatcher implements MatchResult {
             return text;
         }
 
-        RichTextBuilder rtb = new RichTextBuilder(text.length()+replacement.length());
+        RichTextBuilder rtb = new RichTextBuilder(text.length() + replacement.length());
         int off, i;
-        for(off = 0, i= 0; i++<maxOccurrences && found; off = end(), found=find()) {
+        for (off = 0, i = 0; i++ < maxOccurrences && found; off = end(), found = find()) {
             rtb.append(text.subSequence(off, start())).append(replacement);
         }
 

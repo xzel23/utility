@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
-    
+
     /**
      * Create a lazily populated FileTree with the given path as its root. 
      * @param root the tree root
@@ -87,7 +87,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
                     .collect(Collectors.toList());
         }
     }
-    
+
     @Override
     public Stream<T> stream() {
         return children().stream();
@@ -120,7 +120,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     public boolean isLazy() {
         return lazy;
     }
-    
+
     public boolean isLeaf() {
         return children().isEmpty();
     }

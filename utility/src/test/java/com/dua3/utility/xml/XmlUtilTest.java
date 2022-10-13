@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class XmlUtilTest {
 
     private static final XmlUtil XML_UTIL = XmlUtil.defaultInstance();
-    
+
     private static final String XML = """
             <?xml version="1.0" encoding="UTF-8"?>
             <Countries>
@@ -53,7 +53,7 @@ class XmlUtilTest {
             """;
 
     private final String XML_WITH_NAMESPACES_UNFORMATTED = XML_WITH_NAMESPACES.replaceAll("^\\s+", "");
-    
+
     @Test
     void parseString() throws Exception {
         Document document = XML_UTIL.parse(XML);
@@ -65,7 +65,7 @@ class XmlUtilTest {
         Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML));
         assertNotNull(document);
     }
-    
+
     @Test
     void prettyPrintDocument() throws Exception {
         Document document = XML_UTIL.parse(XML_UNFORMATTED);
@@ -90,7 +90,7 @@ class XmlUtilTest {
         Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML_WITH_NAMESPACES));
         assertNotNull(document);
     }
-    
+
     @Test
     void prettyPrint_withNamespace() throws Exception {
         Document document = XML_UTIL.parse(XML_WITH_NAMESPACES_UNFORMATTED);
@@ -102,10 +102,10 @@ class XmlUtilTest {
     void xpath() throws Exception {
         Document document = XML_UTIL.parse(XML_UNFORMATTED);
         XPath xpath = XML_UTIL.xpath();
-        
+
         String expected = "Canada";
         String actual = xpath.evaluate("//Country[@ShortName='CA']/@LongName", document);
-        
+
         assertEquals(expected, actual);
     }
 
@@ -113,23 +113,23 @@ class XmlUtilTest {
     void xpath_withNamespace() throws Exception {
         Document document = XML_UTIL.parse(XML_WITH_NAMESPACES_UNFORMATTED);
         XPath xpath = XML_UTIL.xpath(document.getDocumentElement());
-        
+
         String expected = "Canada";
         String actual = xpath.evaluate("//c:Country[@ShortName='CA']/@LongName", document);
         assertEquals(expected, actual);
-        
+
         String expected2 = "";
         String actual2 = xpath.evaluate("//c:Country[@ShortName='US']/@LongName", document);
         assertEquals(expected2, actual2);
-        
+
         String expected3 = "";
         String actual3 = xpath.evaluate("//d:Country[@ShortName='CA']/@LongName", document);
         assertEquals(expected3, actual3);
-        
+
         String expected4 = "";
         String actual4 = xpath.evaluate("//d:Country[@ShortName='CA']/@Name", document);
         assertEquals(expected4, actual4);
-        
+
         String expected5 = "United States";
         String actual5 = xpath.evaluate("//d:Country[@ShortName='US']/@Name", document);
         assertEquals(expected5, actual5);

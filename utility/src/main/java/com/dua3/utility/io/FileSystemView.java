@@ -70,7 +70,7 @@ public final class FileSystemView implements AutoCloseable {
      *                     an existing directory or a zip-file.
      * @param  flags
      *                     the {@link Flags} to use
-     * @return             a new FileSystemView
+     * @return a new FileSystemView
      * @throws IOException
      *                     if the view cannot be created
      * @throws IllegalArgumentException
@@ -133,30 +133,30 @@ public final class FileSystemView implements AutoCloseable {
      * @param  clazz
      *                     the class relative to which paths should be resolved.
      *                     Classes loaded from Jar files are supported.
-     * @return             a new FileSystemView
+     * @return a new FileSystemView
      * @throws IOException
      *                     if the view cannot be created
      */
     public static FileSystemView forClass(Class<?> clazz) throws IOException {
         try {
             String classFile = clazz.getSimpleName() + ".class";
-            URI uri = Objects.requireNonNull(clazz.getResource(classFile), () -> "class file not found: "+classFile).toURI();
+            URI uri = Objects.requireNonNull(clazz.getResource(classFile), () -> "class file not found: " + classFile).toURI();
             switch (uri.getScheme()) {
-            case "file":
-                return create(Paths.get(uri.resolve(".")));
-            case "jar":
-                String jarUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
-                String jar = jarUriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
-                String jarPath = jarUriStr.replaceAll("^jar:file:.*!(.*)" + classFile + "$", "$1");
-                URI jarUri = new URI("jar", jar, null);
-                return createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
-            case "jrt":
-                String jrtUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
-                String jrtPath = jrtUriStr.replaceAll("^jrt:/(.*)" + classFile + "$", "$1");
-                URI jrtUri = URI.create("jrt:/");
-                return createFileSystemView(FileSystems.newFileSystem(jrtUri, Collections.emptyMap()), jrtPath);
-            default:
-                throw new IOException("unsupported scheme: " + uri.getScheme());
+                case "file":
+                    return create(Paths.get(uri.resolve(".")));
+                case "jar":
+                    String jarUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
+                    String jar = jarUriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
+                    String jarPath = jarUriStr.replaceAll("^jar:file:.*!(.*)" + classFile + "$", "$1");
+                    URI jarUri = new URI("jar", jar, null);
+                    return createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
+                case "jrt":
+                    String jrtUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
+                    String jrtPath = jrtUriStr.replaceAll("^jrt:/(.*)" + classFile + "$", "$1");
+                    URI jrtUri = URI.create("jrt:/");
+                    return createFileSystemView(FileSystems.newFileSystem(jrtUri, Collections.emptyMap()), jrtPath);
+                default:
+                    throw new IOException("unsupported scheme: " + uri.getScheme());
             }
         } catch (URISyntaxException e) {
             throw new IOException(e);
@@ -217,7 +217,7 @@ public final class FileSystemView implements AutoCloseable {
      *
      * @param  path
      *              the path to resolve
-     * @return      the resolved path
+     * @return the resolved path
      * @see         java.nio.file.Path#resolve(String)
      */
     public Path resolve(String path) {
@@ -236,7 +236,7 @@ public final class FileSystemView implements AutoCloseable {
      *
      * @param  path
      *              the path to resolve
-     * @return      the resolved path
+     * @return the resolved path
      * @see         java.nio.file.Path#resolve(Path)
      */
     Path resolve(Path path) {

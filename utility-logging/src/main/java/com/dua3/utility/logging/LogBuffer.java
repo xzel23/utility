@@ -19,14 +19,14 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
 
     /** The default capacity. */
     public static final int DEFAULT_CAPACITY = 10_000;
-    
+
     private final RingBuffer<LogEntry> buffer;
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         Object[] entries = buffer.toArray();
         out.write(entries.length);
-        for (Object entry: entries) {
+        for (Object entry : entries) {
             out.writeObject(entry);
         }
     }
@@ -35,7 +35,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         buffer.clear();
         int n = in.readInt();
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             buffer.add((LogEntry) in.readObject());
         }
     }
@@ -51,7 +51,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
          *                the new one
          */
         default void entry(LogEntry entry, boolean replaced) {
-            entries(Collections.singleton(entry), replaced ? 1 : 0);    
+            entries(Collections.singleton(entry), replaced ? 1 : 0);
         }
 
         /**
@@ -66,16 +66,16 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
          */
         void clear();
     }
-    
+
     private final Collection<LogBufferListener> listeners = new ArrayList<>();
 
     /**
      * Construct a new LogBuffer instance with default capacity.
      */
     public LogBuffer() {
-        this(DEFAULT_CAPACITY);    
+        this(DEFAULT_CAPACITY);
     }
-    
+
     /**
      * Construct a new LogBuffer instance.
      *
@@ -104,23 +104,23 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     @Override
     public void handleEntry(LogEntry entry) {
         boolean replaced;
-        synchronized(buffer) {
+        synchronized (buffer) {
             int oldSize = buffer.size();
             buffer.add(entry);
-            replaced = buffer.size()==oldSize;
+            replaced = buffer.size() == oldSize;
         }
         listeners.forEach(listener -> listener.entry(entry, replaced));
     }
 
-   public void clear() {
-        synchronized(buffer) {
+    public void clear() {
+        synchronized (buffer) {
             buffer.clear();
         }
         listeners.forEach(LogBufferListener::clear);
     }
-    
+
     public List<LogEntry> entries() {
-        synchronized(buffer) {
+        synchronized (buffer) {
             return List.of(buffer.toArray(LogEntry[]::new));
         }
     }
@@ -128,25 +128,25 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public LogEntry get(int i) {
         return buffer.get(i);
     }
-    
+
     public int size() {
         return buffer.size();
     }
-    
+
     public List<LogEntry> subList(int fromIndex, int toIndex) {
-        synchronized(buffer) {
+        synchronized (buffer) {
             return new ArrayList<>(buffer.subList(fromIndex, toIndex));
         }
     }
-    
+
     public List<LogEntry> getLogEntries() {
         synchronized (buffer) {
             return new ArrayList<>(buffer);
         }
     }
-    
+
     public void appendTo(Appendable app) throws IOException {
-        for (LogEntry entry: getLogEntries()) {
+        for (LogEntry entry : getLogEntries()) {
             app.append(entry.toString()).append("\n");
         }
     }

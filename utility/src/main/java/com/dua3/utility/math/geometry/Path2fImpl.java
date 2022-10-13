@@ -7,15 +7,15 @@ import java.util.Collections;
 import java.util.List;
 
 class Path2fImpl {
-    
+
     private final List<Vector2f> vertices;
     private final List<Segment2f> segments;
-    
+
     Path2fImpl() {
         vertices = new ArrayList<>();
         segments = new ArrayList<>();
     }
-    
+
     void addVertex(Vector2f v) {
         vertices.add(v);
     }
@@ -23,7 +23,7 @@ class Path2fImpl {
     int vertexCount() {
         return vertices.size();
     }
-    
+
     List<Vector2f> vertices() {
         return Collections.unmodifiableList(vertices);
     }

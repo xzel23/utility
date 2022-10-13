@@ -19,8 +19,9 @@ import java.util.stream.StreamSupport;
  * Utility class for Java streams.
  */
 public final class StreamUtil {
-    
-    private StreamUtil() {}
+
+    private StreamUtil() {
+    }
 
     /**
      * Zip two streams, creating a new stream consisting of pairs of items from either stream.
@@ -68,7 +69,7 @@ public final class StreamUtil {
 
         private final Comparator<T> comparator;
         private final List<PeekIterator<T>> iters = new ArrayList<>();
-        
+
         MergeIterator(Comparator<T> comparator, Collection<Iterator<T>> iters) {
             this.comparator = Objects.requireNonNull(comparator);
             iters.stream().map(PeekIterator::new).forEach(this.iters::add);
@@ -93,7 +94,7 @@ public final class StreamUtil {
             }
             return comparator.compare(i1.peek(), i2.peek());
         }
-        
+
     }
 
     /**
@@ -123,5 +124,5 @@ public final class StreamUtil {
     public static <T extends Comparable<T>> Stream<T> merge(Stream<T>... streams) {
         return merge(Comparator.naturalOrder(), streams);
     }
-    
+
 }

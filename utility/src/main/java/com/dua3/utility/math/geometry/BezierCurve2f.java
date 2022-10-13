@@ -13,7 +13,7 @@ public final class BezierCurve2f extends AbstractCurve2f {
      * Constructor.
      * <p>
      * The control points are passed as indices into the path's vertex list.
-     * 
+     *
      * @param path the path this curve belongs to
      * @param b0 first control point
      * @param b1 second control point

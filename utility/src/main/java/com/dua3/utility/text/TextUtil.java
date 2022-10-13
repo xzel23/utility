@@ -108,7 +108,7 @@ public final class TextUtil {
      */
     public static <T extends Appendable> void appendHtmlEscapedCharacters(T app, CharSequence cs) throws IOException {
         int length = cs.length();
-        for (int idx=0; idx<length; idx++) {
+        for (int idx = 0; idx < length; idx++) {
             appendHtmlEscapedCharacter(app, cs.charAt(idx));
         }
     }
@@ -120,8 +120,8 @@ public final class TextUtil {
      */
     public static void appendHtmlEscapedCharacters(StringBuilder sb, CharSequence cs) {
         int length = cs.length();
-        sb.ensureCapacity(sb.length()+length);
-        for (int idx=0; idx<length; idx++) {
+        sb.ensureCapacity(sb.length() + length);
+        for (int idx = 0; idx < length; idx++) {
             appendHtmlEscapedCharacter(sb, cs.charAt(idx));
         }
     }
@@ -155,10 +155,9 @@ public final class TextUtil {
                 switch (Character.getType(c)) {
                     // numbers: pass through
                     // letters: pass all non-modifying letters through
-                    case Character.DECIMAL_DIGIT_NUMBER, Character.LETTER_NUMBER, Character.OTHER_NUMBER, 
-                            Character.UPPERCASE_LETTER, Character.LOWERCASE_LETTER, Character.OTHER_LETTER, 
-                            Character.TITLECASE_LETTER 
-                            -> out.append(c);
+                    case Character.DECIMAL_DIGIT_NUMBER, Character.LETTER_NUMBER, Character.OTHER_NUMBER,
+                            Character.UPPERCASE_LETTER, Character.LOWERCASE_LETTER, Character.OTHER_LETTER,
+                            Character.TITLECASE_LETTER -> out.append(c);
 
                     // escape all remaining characters
                     default -> out.append("\\u").append(String.format(Locale.ROOT, "%04X", (int) c));
@@ -177,17 +176,17 @@ public final class TextUtil {
      * @see #transform(String, UnaryOperator)
      */
     @SafeVarargs
-    public static String transform(String template, 
-                                   Pair<String,String>... substitutions) {
+    public static String transform(String template,
+                                   Pair<String, String>... substitutions) {
         UnaryOperator<String> env = s -> {
-            for (Pair<String, String> r: substitutions) {
+            for (Pair<String, String> r : substitutions) {
                 if (Objects.equals(s, r.first())) {
                     return r.second();
                 }
             }
             return s;
         };
-        
+
         return transform(template, env);
     }
 
@@ -217,8 +216,8 @@ public final class TextUtil {
      * @param env      substitution environment
      * @param output   output
      */
-    public static void transform(String template, 
-                                 UnaryOperator<String> env, 
+    public static void transform(String template,
+                                 UnaryOperator<String> env,
                                  Consumer<? super CharSequence> output) {
         int pos = 0;
         while (pos < template.length()) {
@@ -299,10 +298,10 @@ public final class TextUtil {
      * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
      */
     public static int indexOfFirst(CharSequence s, char... chars) {
-        for (int i=0;i<s.length(); i++) {
+        for (int i = 0; i < s.length(); i++) {
             char c1 = s.charAt(i);
-            for (char c2: chars) {
-                if (c1==c2) {
+            for (char c2 : chars) {
+                if (c1 == c2) {
                     return i;
                 }
             }
@@ -329,7 +328,7 @@ public final class TextUtil {
      * @return true, if {@code s2} is contained in {@code s1}
      */
     public static boolean contains(CharSequence s1, CharSequence s2) {
-        return indexOf(s1, s2)>=0;
+        return indexOf(s1, s2) >= 0;
     }
 
     /**
@@ -447,18 +446,18 @@ public final class TextUtil {
      * @return true, if a starts with s
      */
     public static boolean startsWith(CharSequence a, CharSequence b) {
-        if (a.length()<b.length()) {
+        if (a.length() < b.length()) {
             return false;
         }
-        
-        for (int i=0; i< b.length(); i++) {
-            if (a.charAt(i)!=b.charAt(i)) {
+
+        for (int i = 0; i < b.length(); i++) {
+            if (a.charAt(i) != b.charAt(i)) {
                 return false;
             }
         }
         return true;
     }
-    
+
     /**
      * Get capturing group.
      *
@@ -468,9 +467,9 @@ public final class TextUtil {
      * @return the sequence matched or {@code Optional.empty()}, if not
      * matched
      */
-    public static Optional<CharSequence> group(Matcher matcher, 
-                                                        CharSequence input, 
-                                                        String name) {
+    public static Optional<CharSequence> group(Matcher matcher,
+                                               CharSequence input,
+                                               String name) {
         int start = matcher.start(name);
         return start < 0 ? Optional.empty() : Optional.of(input.subSequence(start, matcher.end(name)));
     }
@@ -538,7 +537,7 @@ public final class TextUtil {
      * @return value in points
      */
     public static double mm2pt(double mm) {
-        return mm*72/25.4;
+        return mm * 72 / 25.4;
     }
 
     /**
@@ -547,7 +546,7 @@ public final class TextUtil {
      * @return value in points
      */
     public static double pt2mm(double pt) {
-        return pt*25.4/72;
+        return pt * 25.4 / 72;
     }
 
     /**
@@ -631,7 +630,8 @@ public final class TextUtil {
         return switch (align) {
             case LEFT -> s + fill.repeat(Math.max(0, width - len));
             case RIGHT -> fill.repeat(Math.max(0, width - len)) + s;
-            case CENTER -> fill.repeat(Math.max(0, width - len) / 2) + s + fill.repeat(Math.max(0, width - len - (width - len) / 2));
+            case CENTER ->
+                    fill.repeat(Math.max(0, width - len) / 2) + s + fill.repeat(Math.max(0, width - len - (width - len) / 2));
             default -> throw new IllegalArgumentException(align.toString());
         };
     }

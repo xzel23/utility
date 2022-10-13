@@ -92,9 +92,9 @@ public final class Line2f extends Segment2f {
     @Override
     public String toString() {
         return "LineTo2d{" +
-               vertexToString(a) + "," +
-               vertexToString(b) +
-               '}';
+                vertexToString(a) + "," +
+                vertexToString(b) +
+                '}';
     }
-    
+
 }

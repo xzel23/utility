@@ -56,9 +56,9 @@ public class JdbcDriverInfo {
     private static final String PATTERN_VAR_END = "\\}";
     private static final Pattern PATTERN_VAR = Pattern.compile(
             PATTERN_VAR_START
-            + PATTERN_VAR_NAME
-            + "(" + PATTERN_VAR_ARG_1 + PATTERN_VAR_REMAINING_ARGS + ")?"
-            + PATTERN_VAR_END);
+                    + PATTERN_VAR_NAME
+                    + "(" + PATTERN_VAR_ARG_1 + PATTERN_VAR_REMAINING_ARGS + ")?"
+                    + PATTERN_VAR_END);
     private static final Pattern PATTERN_ARGN = Pattern.compile(PATTERN_VAR_ARG_N);
 
     /** The driver name. */
@@ -74,7 +74,7 @@ public class JdbcDriverInfo {
     /** This driver's options. */
     public final Collection<SimpleOption<?>> options;
 
-    /** 
+    /**
      * Constructor.
      * @param name driver name
      * @param className driver's class name
@@ -167,9 +167,12 @@ public class JdbcDriverInfo {
         String dflt = arguments.get("default");
         return switch (type) {
             case OPTION_TYPE_STRING -> SimpleOption.create(s -> s, name).description(name).defaultValue(dflt);
-            case OPTION_TYPE_PATH -> SimpleOption.create(Paths::get, name).description(name).defaultValue(dflt == null ? null : Paths.get(dflt));
-            case OPTION_TYPE_INTEGER -> SimpleOption.create(Integer::valueOf, name).description(name).defaultValue(dflt == null ? null : Integer.valueOf(dflt));
-            case OPTION_TYPE_DOUBLE -> SimpleOption.create(Double::valueOf, name).description(name).defaultValue(dflt == null ? null : Double.valueOf(dflt));
+            case OPTION_TYPE_PATH ->
+                    SimpleOption.create(Paths::get, name).description(name).defaultValue(dflt == null ? null : Paths.get(dflt));
+            case OPTION_TYPE_INTEGER ->
+                    SimpleOption.create(Integer::valueOf, name).description(name).defaultValue(dflt == null ? null : Integer.valueOf(dflt));
+            case OPTION_TYPE_DOUBLE ->
+                    SimpleOption.create(Double::valueOf, name).description(name).defaultValue(dflt == null ? null : Double.valueOf(dflt));
             default -> throw new IllegalStateException("unsupported type: " + type);
         };
     }
@@ -200,11 +203,11 @@ public class JdbcDriverInfo {
      * @return the connection URL
      */
     public String getUrl(Arguments values) {
-        return TextUtil.transform(urlScheme, 
+        return TextUtil.transform(urlScheme,
                 s -> Objects.toString(
                         values.get(
                                 getOption(s).orElseThrow(() -> new NoSuchElementException("No value present"))
-                        ).orElseThrow(), 
+                        ).orElseThrow(),
                         "")
         );
     }

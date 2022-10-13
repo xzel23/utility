@@ -77,7 +77,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public static final String BACKGROUND_COLOR = "background-color";
 
     // -- define some default styles
-    
+
     /** Default Sansserif font. */
     public static final Style SANS_SERIF = Style.create("sans-serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SANS_SERIF));
     /** Default Serif font. */
@@ -126,7 +126,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public static final Style LIGHTGRAY = Style.create("lightgray", Map.entry(COLOR, Color.LIGHTGRAY));
 
     // -- instance fields and methods
-    
+
     private final String name;
     private final Map<String, Object> properties;
 
@@ -147,8 +147,8 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @return new instance
      */
     @SafeVarargs
-    public static Style create(String styleName, 
-                                        Map.Entry<String, Object>... args) {
+    public static Style create(String styleName,
+                               Map.Entry<String, Object>... args) {
         return create(styleName, Map.ofEntries(args));
     }
 
@@ -158,12 +158,12 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param args list of key-value pairs to set as properties of this style
      * @return new instance
      */
-    public static Style create(String styleName, 
-                                        Map<String, Object> args) {
+    public static Style create(String styleName,
+                               Map<String, Object> args) {
         return new Style(styleName, new HashMap<>(args));
     }
 
-    /** 
+    /**
      * Get style name. 
      * @return the style name
      */
@@ -171,7 +171,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
         return name;
     }
 
-    /** 
+    /**
      * Get a property's value.
      * @param property the property name
      * @return the value of the property or {@code null} if no value was set
@@ -200,7 +200,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     @SuppressWarnings("unchecked")
     public <T> void ifPresent(String key, Consumer<T> action) throws ClassCastException {
         T value = (T) get(key);
-        if (value!=null) {
+        if (value != null) {
             action.accept(value);
         }
     }
@@ -214,15 +214,15 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresentOrElseGet(String key, 
-                                       Supplier<T> defaultSupplier, 
+    public <T> void ifPresentOrElseGet(String key,
+                                       Supplier<T> defaultSupplier,
                                        Consumer<? super T> action) {
         Object raw = get(key);
         try {
             T value = (T) raw;
             action.accept(value != null ? value : defaultSupplier.get());
         } catch (Exception e) {
-            throw new IllegalStateException("error processing attribute '"+key+" with value': "+raw, e);
+            throw new IllegalStateException("error processing attribute '" + key + " with value': " + raw, e);
         }
     }
 
@@ -235,15 +235,15 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresentOrElse(String key, 
-                                    T defaultValue, 
+    public <T> void ifPresentOrElse(String key,
+                                    T defaultValue,
                                     Consumer<T> action) {
         Object raw = get(key);
         try {
             T value = (T) raw;
-            action.accept(value!=null ? value : defaultValue);
+            action.accept(value != null ? value : defaultValue);
         } catch (Exception e) {
-            throw new IllegalStateException("error processing attribute '"+key+" with value': "+raw, e);
+            throw new IllegalStateException("error processing attribute '" + key + " with value': " + raw, e);
         }
     }
 
@@ -251,12 +251,12 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * Get FontDef for this style.
      * @return the FontDef
      */
-    public  FontDef getFontDef() {
+    public FontDef getFontDef() {
         Font font = (Font) get(FONT);
         if (font != null) {
             return font.toFontDef();
         }
-        
+
         FontDef fd = new FontDef();
         ifPresent(FONT_TYPE, fd::setFamily);
         ifPresent(FONT_SIZE, fd::setSize);
@@ -275,7 +275,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public Optional<Font> getFont() {
         return Optional.ofNullable((Font) get(FONT));
     }
-    
+
     /**
      * Get Font for this style.
      * @param baseFont the font used to derive the requested font by applying this style
@@ -284,7 +284,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public Font getFont(Font baseFont) {
         return getFont().orElseGet(() -> baseFont.deriveFont(getFontDef()));
     }
-    
+
     @Override
     public boolean equals(@Nullable Object o) {
         if (this == o) return true;
@@ -316,6 +316,6 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param action the action to perform
      */
     public void forEach(BiConsumer<String, Object> action) {
-        forEach(entry -> action.accept(entry.getKey(), entry.getValue()));        
+        forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
     }
 }

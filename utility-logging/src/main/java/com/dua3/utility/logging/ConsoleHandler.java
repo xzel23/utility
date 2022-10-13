@@ -15,7 +15,7 @@ public class ConsoleHandler implements LogEntryHandler {
     private static final String ESC_RESET = AnsiCode.reset();
 
     private final PrintStream out;
-    private final Map<Level, Pair<String,String>> brackets = new EnumMap<>(Level.class);
+    private final Map<Level, Pair<String, String>> brackets = new EnumMap<>(Level.class);
 
     public ConsoleHandler(PrintStream out, boolean colored) {
         this.out = out;

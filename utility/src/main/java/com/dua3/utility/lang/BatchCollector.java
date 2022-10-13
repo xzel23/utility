@@ -20,7 +20,7 @@ import java.util.stream.Collector;
  * @param <T> the item type
  * @param <K> the key type
  */
-public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
+public class BatchCollector<T, K> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
     private final Function<? super T, ? extends K> keyMapper;
     private final K defaultKey;
 
@@ -38,7 +38,7 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
      * For each item in the stream, a key is determined applying the keyMapper. If the generated key is null, or
      * equals the last item's key, the item is added to the current batch. If not, a new batch is created and the 
      * item added.
-     * 
+     *
      * @param keyMapper the key mapper
      * @param defaultKey the default key
      */
@@ -58,22 +58,22 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
             K key = keyMapper.apply(item);
 
             List<T> bucket;
-            if (accu.isEmpty() || (key!=null && !Objects.equals(key, accu.peekLast().first())) ) {
+            if (accu.isEmpty() || (key != null && !Objects.equals(key, accu.peekLast().first()))) {
                 bucket = new ArrayList<>();
                 accu.addLast(Pair.of(key == null ? defaultKey : key, bucket));
             } else {
                 bucket = accu.peekLast().second();
             }
-            
+
             bucket.add(item);
         };
     }
 
     @Override
     public BinaryOperator<Deque<Pair<K, List<T>>>> combiner() {
-        return (left, right) -> { 
-            left.addAll(right); 
-            return left; 
+        return (left, right) -> {
+            left.addAll(right);
+            return left;
         };
     }
 
@@ -82,7 +82,7 @@ public class BatchCollector<T,K> implements Collector<T, Deque<Pair<K, List<T>>>
         return ArrayList::new;
     }
 
-    @Override 
+    @Override
     public Set<Characteristics> characteristics() {
         return EnumSet.of(Characteristics.IDENTITY_FINISH);
     }

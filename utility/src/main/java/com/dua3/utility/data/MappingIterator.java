@@ -10,7 +10,7 @@ import java.util.function.Function;
  * @param <U>
  *  the target iterator element type
  */
-class MappingIterator<T,U> implements Iterator<U> {
+class MappingIterator<T, U> implements Iterator<U> {
     private final Iterator<? extends T> iterator;
     private final Function<? super T, ? extends U> mapping;
 

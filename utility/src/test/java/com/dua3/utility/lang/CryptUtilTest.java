@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CryptUtilTest {
 
-    private static final int[] KEY_LENGTHS = { 128, 192, 256 };
+    private static final int[] KEY_LENGTHS = {128, 192, 256};
 
     private final String[] MESSAGES = {
             "",

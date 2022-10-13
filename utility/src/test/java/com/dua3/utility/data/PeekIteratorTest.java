@@ -12,8 +12,8 @@ class PeekIteratorTest {
 
     @Test
     void peekIterator() {
-        List<Integer>  items = List.of(1,2,3);
-        
+        List<Integer> items = List.of(1, 2, 3);
+
         PeekIterator<Integer> iter = new PeekIterator<>(items.iterator());
         Assertions.assertTrue(iter.hasNext());
         Assertions.assertEquals(1, (int) iter.peek());

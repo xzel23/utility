@@ -17,13 +17,13 @@ public interface ProgressTracker<T> {
         COMPLETED_SUCCESS(true),
         COMPLETED_FAILURE(true),
         ABORTED(true);
-        
+
         private final boolean terminal;
-        
+
         State(boolean terminal) {
             this.terminal = terminal;
         }
-        
+
         public boolean isTerminal() {
             return terminal;
         }
@@ -40,7 +40,7 @@ public interface ProgressTracker<T> {
         static <T> TaskUpdater create(ProgressTracker<T> tracker, T task) {
             return new TaskUpdater(tracker, task);
         }
-        
+
         TaskUpdater(ProgressTracker tracker, Object task) {
             this.tracker = Objects.requireNonNull(tracker);
             this.task = Objects.requireNonNull(task);
@@ -49,36 +49,48 @@ public interface ProgressTracker<T> {
         /**
          * Mark task as started.
          */
-        public void start() { tracker.start(task); }
+        public void start() {
+            tracker.start(task);
+        }
 
         /**
          * Mark task as paused.
          */
-        public void pause() { tracker.pause(task); }
+        public void pause() {
+            tracker.pause(task);
+        }
 
         /**
          * Mark task as aborted.
          */
-        public void abort() { tracker.abort(task); }
+        public void abort() {
+            tracker.abort(task);
+        }
 
         /**
          * Mark task as completed.
          * @param s terminal status of task
          */
-        public void finish(State s) { tracker.finish(task, s); }
+        public void finish(State s) {
+            tracker.finish(task, s);
+        }
 
         /**
          * Update progress of task. Use update(0,0) for indeterminate progress.
          * @param total the total amount of work
          * @param done the work done
          */
-        public void update(int total, int done) { tracker.update(task, total, done); }
+        public void update(int total, int done) {
+            tracker.update(task, total, done);
+        }
 
         /**
          * Update progress of task.
          * @param percentDone percentage of work done
          */
-        public void update(double percentDone) { tracker.update(task, percentDone); }
+        public void update(double percentDone) {
+            tracker.update(task, percentDone);
+        }
     }
 
     /**

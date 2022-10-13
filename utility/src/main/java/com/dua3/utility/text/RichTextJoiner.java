@@ -19,7 +19,7 @@ import java.util.stream.Collector;
  * A Joiner for {@link RichText} to be used with {@link java.util.stream.Stream#collect(Collector)}.
  */
 public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, AtomicInteger>, RichText> {
-    
+
     final Consumer<RichTextBuilder> appendDelimiter;
     final Consumer<RichTextBuilder> appendPrefix;
     final Consumer<RichTextBuilder> appendSuffix;
@@ -31,11 +31,11 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
         this.appendDelimiter = rtb -> rtb.append(delimiter);
         this.appendPrefix = rtb -> rtb.append(prefix);
         this.appendSuffix = rtb -> rtb.append(suffix);
-        this.calculateSupplementaryLength = n -> prefix.length() + n * delimiter.length() + suffix.length(); 
+        this.calculateSupplementaryLength = n -> prefix.length() + n * delimiter.length() + suffix.length();
     }
 
     public RichTextJoiner(CharSequence delimiter) {
-        this(delimiter,"","");
+        this(delimiter, "", "");
     }
 
     public RichTextJoiner(RichText delimiter,
@@ -48,7 +48,7 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
     }
 
     public RichTextJoiner(RichText delimiter) {
-        this(delimiter,RichText.emptyText(), RichText.emptyText());
+        this(delimiter, RichText.emptyText(), RichText.emptyText());
     }
 
     @Override
@@ -58,12 +58,19 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
 
     @Override
     public BiConsumer<Pair<List<RichText>, AtomicInteger>, RichText> accumulator() {
-        return (accu, text) -> { accu.first().add(text); accu.second().addAndGet(text.length()); };
+        return (accu, text) -> {
+            accu.first().add(text);
+            accu.second().addAndGet(text.length());
+        };
     }
 
     @Override
     public BinaryOperator<Pair<List<RichText>, AtomicInteger>> combiner() {
-        return (a, b) -> { a.first().addAll(b.first()); a.second().addAndGet(b.second().get()); return a; };
+        return (a, b) -> {
+            a.first().addAll(b.first());
+            a.second().addAndGet(b.second().get());
+            return a;
+        };
     }
 
     @Override
@@ -71,7 +78,7 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
         return accu -> {
             int length = accu.second().get();
 
-            if (length==0) {
+            if (length == 0) {
                 return RichText.emptyText();
             }
 
@@ -80,21 +87,21 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
             int supplementaryLength = calculateSupplementaryLength.applyAsInt(n);
             int totalLength = length + supplementaryLength;
             RichTextBuilder rtb = new RichTextBuilder(totalLength);
-            
+
             // append prefix and first item
             appendPrefix.accept(rtb);
             rtb.append(accu.first().get(0));
-            
+
             // append remaining items separated by delimiter
             List<RichText> first = accu.first();
             for (int i = 1, firstSize = first.size(); i < firstSize; i++) {
                 appendDelimiter.accept(rtb);
                 rtb.append(first.get(i));
             }
-            
+
             // append suffix
             appendSuffix.accept(rtb);
-            
+
             return rtb.toRichText();
         };
     }

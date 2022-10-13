@@ -7,168 +7,168 @@
             <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"></Bug>
         </Or>
     </Match>
-    
+
     <!-- this bug pattern is currently completely broken / https://github.com/spotbugs/spotbugs/issues/1601 -->
     <Match>
-        <Bug pattern="EI_EXPOSE_REP" />
+        <Bug pattern="EI_EXPOSE_REP"/>
     </Match>
     <Match>
-        <Bug pattern="EI_EXPOSE_REP2" />
+        <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
     <Match>
-        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE" />
+        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
     </Match>
 
     <!-- SecurityManager will soon be gone, so will be doPrivileged() -->
     <Match>
-        <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED" />
+        <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
     </Match>
-    
+
     <!-- by design -->
     <Match>
-        <Class name="com.dua3.utility.db.NamedParameterStatement" />
-        <Bug pattern="EI_EXPOSE_REP" />
+        <Class name="com.dua3.utility.db.NamedParameterStatement"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
     </Match>
     <Match>
-        <Class name="com.dua3.utility.db.JdbcDataSource" />
-        <Bug pattern="EI_EXPOSE_REP" />
+        <Class name="com.dua3.utility.db.JdbcDataSource"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
     </Match>
     <Match>
-        <Class name="com.dua3.utility.db.JdbcDataSource" />
-        <Bug pattern="EI_EXPOSE_REP2" />
+        <Class name="com.dua3.utility.db.JdbcDataSource"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
-    
+
     <!-- by design; implementing classes should be immutable -->
     <Match>
-        <Class name="com.dua3.utility.swing.SwingFileFilter" />
-        <Bug pattern="EI_EXPOSE_REP" />
+        <Class name="com.dua3.utility.swing.SwingFileFilter"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
     </Match>
-    
+
     <!-- by design; the components is used to display changes to the buffer  -->
     <Match>
-        <Class name="com.dua3.utility.swing.SwingLogPane" />
-        <Bug pattern="EI_EXPOSE_REP2" />
+        <Class name="com.dua3.utility.swing.SwingLogPane"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
 
     <!-- RichText is immutable. -->
     <Match>
-        <Class name="com.dua3.utility.text.RichText" />
-        <Bug pattern="MS_EXPOSE_REP" />
+        <Class name="com.dua3.utility.text.RichText"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
     </Match>
 
     <!-- URL is immutable in practice -->
     <Match>
-        <Class name="com.dua3.utility.io.NetUtil" />
-        <Bug pattern="MS_EXPOSE_REP" />
-        <Method name="voidURL" />"
+        <Class name="com.dua3.utility.io.NetUtil"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
+        <Method name="voidURL"/>"
     </Match>
 
     <!-- TextAttributes.NONE is immutable (because the set passed to the instance is) -->
     <Match>
-        <Class name="com.dua3.utility.text.TextAttributes" />
-        <Bug pattern="MS_EXPOSE_REP" />
-        <Method name="none" />"
+        <Class name="com.dua3.utility.text.TextAttributes"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
+        <Method name="none"/>"
     </Match>
 
     <!-- False positives. -->
     <Match>
-        <Class name="com.dua3.utility.data.FileTreeNode" />
-        <Bug pattern="NP_NULL_PARAM_DEREF" />
+        <Class name="com.dua3.utility.data.FileTreeNode"/>
+        <Bug pattern="NP_NULL_PARAM_DEREF"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.data.FileTreeNode" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+        <Class name="com.dua3.utility.data.FileTreeNode"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.data.FileTreeNode" />
-        <Bug pattern="NP_NULL_PARAM_DEREF" />
+        <Class name="com.dua3.utility.data.FileTreeNode"/>
+        <Bug pattern="NP_NULL_PARAM_DEREF"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.io.IoUtil" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+        <Class name="com.dua3.utility.io.IoUtil"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.io.IoUtil$Combiner" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+        <Class name="com.dua3.utility.io.IoUtil$Combiner"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.options.OptionException$ParameterConversionException" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+        <Class name="com.dua3.utility.options.OptionException$ParameterConversionException"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.text.Font" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+        <Class name="com.dua3.utility.text.Font"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.text.RichText" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+        <Class name="com.dua3.utility.text.RichText"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.data.Color" />
-        <Bug pattern="UCF_USELESS_CONTROL_FLOW" />
+        <Class name="com.dua3.utility.data.Color"/>
+        <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.text.RichText" />
-        <Bug pattern="EQ_UNUSUAL" />
+        <Class name="com.dua3.utility.text.RichText"/>
+        <Bug pattern="EQ_UNUSUAL"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.text.Run" />
-        <Bug pattern="EQ_UNUSUAL" />
+        <Class name="com.dua3.utility.text.Run"/>
+        <Bug pattern="EQ_UNUSUAL"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.lang.LangUtil" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+        <Class name="com.dua3.utility.lang.LangUtil"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.math.MathUtil" />
-        <Bug pattern="FL_FLOATS_AS_LOOP_COUNTERS" />
+        <Class name="com.dua3.utility.math.MathUtil"/>
+        <Bug pattern="FL_FLOATS_AS_LOOP_COUNTERS"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.lang.LangUtil" />
-        <Bug pattern="THROWS_METHOD_THROWS_RUNTIMEEXCEPTION" />
+        <Class name="com.dua3.utility.lang.LangUtil"/>
+        <Bug pattern="THROWS_METHOD_THROWS_RUNTIMEEXCEPTION"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.lang.LangUtil" />
-        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+        <Class name="com.dua3.utility.lang.LangUtil"/>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.lang.LangUtil$ConsumerThrows" />
-        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+        <Class name="com.dua3.utility.lang.LangUtil$ConsumerThrows"/>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.lang.LangUtil$FunctionThrows" />
-        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+        <Class name="com.dua3.utility.lang.LangUtil$FunctionThrows"/>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.lang.LangUtil$RunnableThrows" />
-        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+        <Class name="com.dua3.utility.lang.LangUtil$RunnableThrows"/>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
     </Match>
 
     <Match>
-        <Class name="com.dua3.utility.lang.LangUtil$SupplierThrows" />
-        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+        <Class name="com.dua3.utility.lang.LangUtil$SupplierThrows"/>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
     </Match>
 
     <Match>
         <Class name="com.dua3.utility.io.IoUtil" method="sneakyThrow"/>
-        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE" />
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE"/>
     </Match>
 
 </FindBugsFilter>

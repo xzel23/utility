@@ -18,7 +18,7 @@ import java.util.function.DoubleUnaryOperator;
  * @author axel
  */
 public final class MathUtil {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(MathUtil.class);
 
     /**
@@ -38,7 +38,7 @@ public final class MathUtil {
      *             </ul>
      */
     public static int clamp(int min, int max, int arg) {
-        assert min <= max : "invalid interval: min="+min+", max="+max;
+        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
         return arg < min ? min : Math.min(arg, max);
     }
 
@@ -59,7 +59,7 @@ public final class MathUtil {
      *             </ul>
      */
     public static long clamp(long min, long max, long arg) {
-        assert min <= max : "invalid interval: min="+min+", max="+max;
+        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
         return arg < min ? min : Math.min(arg, max);
     }
 
@@ -80,7 +80,7 @@ public final class MathUtil {
      *             </ul>
      */
     public static double clamp(double min, double max, double arg) {
-        assert min <= max : "invalid interval: min="+min+", max="+max;
+        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
         return arg < min ? min : Math.min(arg, max);
     }
 
@@ -101,7 +101,7 @@ public final class MathUtil {
      *             </ul>
      */
     public static float clamp(float min, float max, float arg) {
-        assert min <= max : "invalid interval: min="+min+", max="+max;
+        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
         return arg < min ? min : Math.min(arg, max);
     }
 
@@ -127,7 +127,7 @@ public final class MathUtil {
     public static double clamp(double min, double max, double arg, double valueIfNaN) {
         return Double.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
     }
-    
+
     /**
      * Clip argument to range.
      *
@@ -150,7 +150,7 @@ public final class MathUtil {
     public static float clamp(float min, float max, float arg, float valueIfNaN) {
         return Float.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
     }
-    
+
     /**
      * Find root of function.
      * The root finding uses a modified secant algorithm. The values given as
@@ -167,7 +167,7 @@ public final class MathUtil {
      *             second starting point
      * @param  eps
      *             desired accuracy
-     * @return     the calculated root or Double.NaN if none is found
+     * @return the calculated root or Double.NaN if none is found
      */
     public static double findRoot(DoubleUnaryOperator f, double xa, double xb, double eps) {
 
@@ -238,7 +238,7 @@ public final class MathUtil {
      *               maximum number of iterations
      * @param  eps
      *               maximum error
-     * @return       list of all calculated roots
+     * @return list of all calculated roots
      */
     @SuppressWarnings("FloatingPointEquality")
     public static List<Double> findRootsInInterval(DoubleUnaryOperator f, double x0, double x1, int steps, double eps) {
@@ -290,7 +290,7 @@ public final class MathUtil {
      *           first argument
      * @param  b
      *           second argument
-     * @return   greatest common divisor of a and b.
+     * @return greatest common divisor of a and b.
      */
     public static long gcd(long a, long b) {
         while (b != 0) {
@@ -306,7 +306,7 @@ public final class MathUtil {
      *
      * @param  x
      *           argument
-     * @return   ceil(log10(x))
+     * @return ceil(log10 ( x))
      */
     public static int ilog10(double x) {
         LangUtil.check(x > 0.0 && !Double.isInfinite(x), "Illegal argument: %f", x);
@@ -385,7 +385,7 @@ public final class MathUtil {
      *           value to round
      * @param  n
      *           number of decimal places
-     * @return   x rounded to n decimal places
+     * @return x rounded to n decimal places
      */
     public static double round(double x, int n) {
         if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
@@ -419,14 +419,14 @@ public final class MathUtil {
      *           value to round
      * @param  p
      *           number of digits (p must be positive)
-     * @return   x rounded to p digits precision
+     * @return x rounded to p digits precision
      */
     public static double roundToPrecision(double x, int p) {
         if (x == 0 || Double.isNaN(x) || Double.isInfinite(x)) {
             return x;
         }
 
-        LangUtil.check(p>0, "p must be positive: %d", p);
+        LangUtil.check(p > 0, "p must be positive: %d", p);
 
         int n = p - ilog10(Math.abs(x)) - 1;
         return round(x, n);
@@ -450,7 +450,7 @@ public final class MathUtil {
      */
     public static DoubleUnaryOperator roundingOperation(int n, RoundingMode mode) {
         // special case: no rounding
-        if (mode==RoundingMode.UNNECESSARY) {
+        if (mode == RoundingMode.UNNECESSARY) {
             return x -> x;
         }
 
@@ -458,13 +458,13 @@ public final class MathUtil {
         DoubleUnaryOperator roundingOperation = getRoundingOperation(mode);
 
         // special case: rounding to integer needs no scale
-        if (n==0) {
+        if (n == 0) {
             return roundingOperation;
         }
 
         // otherwise precalculate and use scale
         double scale = pow10(n);
-        return x-> roundingOperation.applyAsDouble(x*scale)/scale;
+        return x -> roundingOperation.applyAsDouble(x * scale) / scale;
     }
 
     /**

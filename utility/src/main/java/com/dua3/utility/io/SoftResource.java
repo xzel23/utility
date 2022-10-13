@@ -31,7 +31,7 @@ public final class SoftResource<T> {
      * @param           <T> the type of the resource
      * @param  supplier the resource supplier; the supplier should upon each
      *                  invocation return equal instances
-     * @return          soft resource
+     * @return soft resource
      */
     public static <T> SoftResource<T> of(Supplier<? extends T> supplier) {
         return new SoftResource<>(Objects.requireNonNull(supplier));

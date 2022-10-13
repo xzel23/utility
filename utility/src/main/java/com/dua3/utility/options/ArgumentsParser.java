@@ -40,12 +40,12 @@ public class ArgumentsParser {
 
     /** The maximum number of positional arguments. */
     final int maxPositionalArgs;
-    
+
     /**
      * Constructor. 
      */
     public ArgumentsParser() {
-        this("","");
+        this("", "");
     }
 
     /**
@@ -60,7 +60,7 @@ public class ArgumentsParser {
         this.description = Objects.requireNonNull(description);
 
         LangUtil.check(minArgs >= 0);
-        LangUtil.check(maxArgs>=minArgs);
+        LangUtil.check(maxArgs >= minArgs);
         this.minPositionalArgs = minArgs;
         this.maxPositionalArgs = maxArgs;
     }
@@ -72,9 +72,9 @@ public class ArgumentsParser {
      * @param minArgs minimum number of positional arguments
      */
     public ArgumentsParser(String name, String description, int minArgs) {
-        this(name, description, minArgs, Integer.MAX_VALUE);        
+        this(name, description, minArgs, Integer.MAX_VALUE);
     }
-    
+
     /**
      * Constructor. 
      * @param name the command name to show in help text.
@@ -89,7 +89,7 @@ public class ArgumentsParser {
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the flag
      */
-    public Flag  flag(String... names) {
+    public Flag flag(String... names) {
         return addOption(Flag.create(names));
     }
 
@@ -144,11 +144,11 @@ public class ArgumentsParser {
      * @param <T> the generic type of the option 
      * @return the option
      */
-    public <T> StandardOption<T> option(Function<String,T> mapper, String... names) {
+    public <T> StandardOption<T> option(Function<String, T> mapper, String... names) {
         return addOption(StandardOption.create(mapper, names));
     }
 
-    /** 
+    /**
      * Add option to parser. 
      * @param <O> the option type
      * @param option the option to add
@@ -175,14 +175,14 @@ public class ArgumentsParser {
 
         boolean parsingPositional = false;
         boolean remainingAllPositional = false;
-        
+
         for (int idx = 0; idx < args.length; idx++) {
             // get next arg
             String arg = argList.get(idx);
-            
+
             // shortcut if positional marker has been encountered 
             if (remainingAllPositional) {
-                positionalArgs.add(arg); 
+                positionalArgs.add(arg);
                 continue;
             }
 
@@ -194,7 +194,7 @@ public class ArgumentsParser {
             }
 
             // if maximum number of args is consumed, reset the current entry
-            if (currentEntry!=null && currentEntry.getParams().size() == currentEntry.getOption().maxArity()) {
+            if (currentEntry != null && currentEntry.getParams().size() == currentEntry.getOption().maxArity()) {
                 currentEntry = null;
             }
 
@@ -204,13 +204,13 @@ public class ArgumentsParser {
                 // start processing of next option
                 currentEntry = Arguments.Entry.create(option);
                 parsedOptions.add(currentEntry);
-                
-                if (currentEntry.getOption().maxArity()==0) {
-                    currentEntry=null;
+
+                if (currentEntry.getOption().maxArity() == 0) {
+                    currentEntry = null;
                 }
             } else {
                 // add option to current entry or positional args
-                if (currentEntry!=null) {
+                if (currentEntry != null) {
                     currentEntry.addParameter(arg);
                 } else {
                     if (!parsingPositional) {
@@ -223,11 +223,11 @@ public class ArgumentsParser {
 
         validate(parsedOptions);
 
-        if (positionalArgs.size()<minPositionalArgs) {
+        if (positionalArgs.size() < minPositionalArgs) {
             throw new OptionException("missing argument (at least " + minPositionalArgs + " arguments must be given)");
         }
 
-        if (positionalArgs.size()>maxPositionalArgs) {
+        if (positionalArgs.size() > maxPositionalArgs) {
             throw new OptionException("too many arguments (at most " + maxPositionalArgs + " arguments can be given)");
         }
 
@@ -242,7 +242,7 @@ public class ArgumentsParser {
     private void validate(Collection<Arguments.Entry<?>> parsedOptions) {
         // check occurrences
         Map<Option<?>, Integer> hist = new HashMap<>();
-        parsedOptions.forEach(entry -> hist.compute(entry.option, (k_,i_) -> i_==null ? 1 : i_+1));
+        parsedOptions.forEach(entry -> hist.compute(entry.option, (k_, i_) -> i_ == null ? 1 : i_ + 1));
 
         Collection<Option<?>> allOptions = new HashSet<>(options.values());
         allOptions.stream()
@@ -253,15 +253,15 @@ public class ArgumentsParser {
                     // check min occurrences
                     LangUtil.check(option.minOccurrences() <= occurrences,
                             () -> new OptionException(
-                                "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
-                                option.name(), option.minOccurrences(), occurrences
-                            )));
+                                    "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
+                                            option.name(), option.minOccurrences(), occurrences
+                                    )));
                     // check max occurrences
                     LangUtil.check(option.maxOccurrences() >= occurrences,
                             () -> new OptionException(
-                                "option '%s' must be specified at most %d time(s), but was %d times".formatted(
-                                option.name(), option.maxOccurrences(), occurrences
-                            )));
+                                    "option '%s' must be specified at most %d time(s), but was %d times".formatted(
+                                            option.name(), option.maxOccurrences(), occurrences
+                                    )));
                 });
 
         // check arity
@@ -269,24 +269,24 @@ public class ArgumentsParser {
             Option<?> option = entry.option;
             int nParams = entry.params.size();
             LangUtil.check(
-                option.minArity() <= nParams,
-                () -> new OptionException(
-                    "option '%s' must have at least %d parameters, but has only %d".formatted(
-                            option.name(),
-                            option.minArity(),
-                            nParams
+                    option.minArity() <= nParams,
+                    () -> new OptionException(
+                            "option '%s' must have at least %d parameters, but has only %d".formatted(
+                                    option.name(),
+                                    option.minArity(),
+                                    nParams
+                            )
                     )
-                )
             );
             LangUtil.check(
-                nParams <= option.maxArity(),
-                () -> new OptionException(
-                    "option '%s' must have at most %d parameters, but has %d".formatted(
-                            option.name(),
-                            option.maxArity(),
-                            nParams
+                    nParams <= option.maxArity(),
+                    () -> new OptionException(
+                            "option '%s' must have at most %d parameters, but has %d".formatted(
+                                    option.name(),
+                                    option.maxArity(),
+                                    nParams
+                            )
                     )
-                )
             );
         });
     }
@@ -312,13 +312,13 @@ public class ArgumentsParser {
             fmt.format("%s\n", "-".repeat(name.length()));
             fmt.format("\n");
         }
-        
+
         // print description
         if (!description.isEmpty()) {
             fmt.format("%s\n", description);
             fmt.format("\n");
         }
-        
+
         // print command line example
         String cmdText = name.isEmpty() ? "<program>" : name;
         if (!options.isEmpty()) {
@@ -326,29 +326,29 @@ public class ArgumentsParser {
         }
         cmdText += getArgText(minPositionalArgs, maxPositionalArgs);
         fmt.format("%s\n\n", cmdText);
-        
+
         // print options
         options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
             // get argument text
             String argText = getArgText(option.minArity(), option.maxArity());
 
             // print option names
-            for (String name: option.names()) {
+            for (String name : option.names()) {
                 fmt.format("    %s%s\n", name, argText);
             }
-            
+
             // print option description
             if (!option.description().isEmpty()) {
                 fmt.format("%s", option.description().indent(12));
             }
-            
+
             fmt.format("\n");
         });
     }
 
     private static String getArgText(int min, int max) {
-        assert min <= max : "invalid interval: min="+min+", max="+max;
-        
+        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
+
         String argText = switch (min) {
             case 0 -> "";
             case 1 -> (min == max) ? " arg" : " arg1";
@@ -361,15 +361,15 @@ public class ArgumentsParser {
         // handle max arity
         if (max == Integer.MAX_VALUE) {
             //noinspection StringConcatenationMissingWhitespace
-            argText += " [arg" + (min+1) + "] ...";
+            argText += " [arg" + (min + 1) + "] ...";
         } else {
             int optionalCount = max - min;
-            if (optionalCount==1) {
+            if (optionalCount == 1) {
                 //noinspection StringConcatenationMissingWhitespace
-                argText += " [arg" + (min+1) + "]";
-            } else if (optionalCount >1) {
+                argText += " [arg" + (min + 1) + "]";
+            } else if (optionalCount > 1) {
                 //noinspection StringConcatenationMissingWhitespace
-                argText += " [arg" + (min+1) + "] ... (up to " + max + " arguments)";
+                argText += " [arg" + (min + 1) + "] ... (up to " + max + " arguments)";
             }
         }
         return argText;
@@ -393,7 +393,7 @@ public class ArgumentsParser {
             fmt.format("%s\n", description);
             fmt.format("\n");
         }
-        
+
         fmt.format("ERROR: %s", e.getMessage());
     }
 
@@ -408,5 +408,5 @@ public class ArgumentsParser {
             return fmt.toString();
         }
     }
-    
+
 }

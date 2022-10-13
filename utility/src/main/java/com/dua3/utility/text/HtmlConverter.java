@@ -43,7 +43,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @return the option tp use
      */
     public static HtmlConversionOption map(String attribute,
-                                                    Function<Object, HtmlTag> mapper) {
+                                           Function<Object, HtmlTag> mapper) {
         return new HtmlConversionOption(c -> c.addMapping(attribute, Objects.requireNonNull(mapper)));
     }
 
@@ -55,7 +55,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @return the option tp use
      */
     public static HtmlConversionOption replaceMapping(String attribute,
-                                                               Function<Object, HtmlTag> mapper) {
+                                                      Function<Object, HtmlTag> mapper) {
         return new HtmlConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
     }
 
@@ -68,15 +68,15 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         return new HtmlConversionOption(c -> c.setDefaultMapper(mapper));
     }
 
-    public static HtmlConversionOption refineStyleProperties(UnaryOperator<Map<String,Object>> refineStyleProperties) {
+    public static HtmlConversionOption refineStyleProperties(UnaryOperator<Map<String, Object>> refineStyleProperties) {
         return new HtmlConversionOption(c -> c.setRefineStyleProperties(refineStyleProperties));
     }
 
-    private void setRefineStyleProperties(UnaryOperator<Map<String,Object>> refineStyleProperties) {
-        this.refineStyleProperties = Objects.requireNonNull(refineStyleProperties);    
+    private void setRefineStyleProperties(UnaryOperator<Map<String, Object>> refineStyleProperties) {
+        this.refineStyleProperties = Objects.requireNonNull(refineStyleProperties);
     }
-    
-    private UnaryOperator<Map<String,Object>> refineStyleProperties = m -> m;
+
+    private UnaryOperator<Map<String, Object>> refineStyleProperties = m -> m;
 
     /**
      * Replace font declarations with declarations for single properties. Use this as argument to 
@@ -85,8 +85,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param styleProperties map with style properties
      * @return style properties with font declarations replaced
      */
-    public static Map<String,Object> inlineTextDecorations(Map<String,Object> styleProperties) {
-        Map<String,Object> props = new LinkedHashMap<>();
+    public static Map<String, Object> inlineTextDecorations(Map<String, Object> styleProperties) {
+        Map<String, Object> props = new LinkedHashMap<>();
         styleProperties.forEach((key, value) -> {
             switch (key) {
                 case Style.FONT -> RichTextConverter.putFontProperties(props, (Font) value);
@@ -102,19 +102,19 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     private class HtmlConverterImpl extends TagBasedConverterImpl<String> {
-        
+
         private final StringBuilder buffer;
-        
+
         HtmlConverterImpl(RichText text) {
             // create a buffer with 25% overhead for HTML
-            this.buffer = new StringBuilder(text.length()*125/100);    
+            this.buffer = new StringBuilder(text.length() * 125 / 100);
         }
 
         @Override
         protected void appendOpeningTags(List<Style> styles) {
             List<HtmlTag> tags = getTags(styles);
             //noinspection ForLoopReplaceableByForEach because of symmetry with #appendClosingTags
-            for (int i=0; i<tags.size(); i++) {
+            for (int i = 0; i < tags.size(); i++) {
                 buffer.append(tags.get(i).open());
             }
         }
@@ -122,21 +122,21 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         @Override
         protected void appendClosingTags(List<Style> styles) {
             List<HtmlTag> tags = getTags(styles);
-            for (int i=tags.size()-1; i>=0; i--) {
+            for (int i = tags.size() - 1; i >= 0; i--) {
                 buffer.append(tags.get(i).close());
             }
         }
-        
+
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
-            Map<String,Object> properties = new LinkedHashMap<>();
-            for (Style style: styles) {
+            Map<String, Object> properties = new LinkedHashMap<>();
+            for (Style style : styles) {
                 style.stream().forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
             }
             refineStyleProperties.apply(properties).entrySet().stream().map(e -> HtmlConverter.this.get(e.getKey(), e.getValue())).forEach(tags::add);
             return tags;
         }
-        
+
         @Override
         protected void appendChars(CharSequence s) {
             TextUtil.appendHtmlEscapedCharacters(buffer, s);
@@ -149,7 +149,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
-        addMapping(attr, v -> Objects.equals(v,value) ? tag : HtmlTag.emptyTag());
+        addMapping(attr, v -> Objects.equals(v, value) ? tag : HtmlTag.emptyTag());
     }
 
     void doAddDefaultMappings() {
@@ -169,7 +169,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             } else {
                 return switch (value.toString()) {
                     case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<code>", "</code>");
-                    case Style.FONT_TYPE_VALUE_SANS_SERIF -> HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
+                    case Style.FONT_TYPE_VALUE_SANS_SERIF ->
+                            HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
                     case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
                     default -> HtmlTag.emptyTag();
                 };
@@ -221,19 +222,20 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param m2 the second mapper
      * @return the new mapper
      */
-    private static Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1, 
-                                                                     Function<Object, ? extends HtmlTag> m2) {
+    private static Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1,
+                                                            Function<Object, ? extends HtmlTag> m2) {
         return value -> {
             HtmlTag oldTag = m1.apply(value);
             HtmlTag newTag = m2.apply(value);
             return new HtmlTag() {
                 @Override
                 public String open() {
-                    return newTag.open()+oldTag.open();
+                    return newTag.open() + oldTag.open();
                 }
+
                 @Override
                 public String close() {
-                    return oldTag.close()+newTag.close();
+                    return oldTag.close() + newTag.close();
                 }
             };
         };
@@ -317,5 +319,5 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         Function<Object, HtmlTag> mapper = mappings.get(attribute);
         return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);
     }
-    
+
 }

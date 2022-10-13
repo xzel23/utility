@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  */
 public class Codecs {
 
-    private final Map<String,Codec<?>> CODECS = new HashMap<>();
+    private final Map<String, Codec<?>> CODECS = new HashMap<>();
 
     /**
      * Constructor.
@@ -46,7 +46,7 @@ public class Codecs {
 
     public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
         Object prev = CODECS.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
-        LangUtil.check(prev==null, "Codec already registered for class: "+cls);
+        LangUtil.check(prev == null, "Codec already registered for class: " + cls);
     }
 
     @SuppressWarnings("unchecked")
@@ -118,14 +118,14 @@ public class Codecs {
         };
     }
 
-    public static <K,V> Codec<Map.Entry<K,V>> mapEntryCodec(Codec<K> codecK, Codec<? extends V> codecV) {
+    public static <K, V> Codec<Map.Entry<K, V>> mapEntryCodec(Codec<K> codecK, Codec<? extends V> codecV) {
         return createCodec(
-                Map.Entry.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">", 
-                (DataOutputStream os, Map.Entry<K,V> entry) -> codecK.encode(os, entry.getKey()),
+                Map.Entry.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">",
+                (DataOutputStream os, Map.Entry<K, V> entry) -> codecK.encode(os, entry.getKey()),
                 (DataInputStream is) -> {
                     K k = codecK.decode(is);
-                    V v = codecV.decode(is); 
-                    return new Map.Entry<K,V>() {
+                    V v = codecV.decode(is);
+                    return new Map.Entry<K, V>() {
                         @Override
                         public K getKey() {
                             return k;
@@ -144,7 +144,7 @@ public class Codecs {
                 }
         );
     }
-    
+
     /**
      * Get {@link Codec} for a {@link java.util.Map}.
      * @param <K> the key type
@@ -155,11 +155,11 @@ public class Codecs {
      * @param construct the map construction method
      * @return map codec
      */
-    public static <K,V,M extends Map<K,V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
-        final String name = Map.class.getCanonicalName()+"<"+codecK.name()+","+codecV.name()+">";
-        final Codec<Map.Entry<K,V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
-        final Codec<Collection<Map.Entry<K,V>>> ENTRIES_CODEC = Codecs.collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
-        
+    public static <K, V, M extends Map<K, V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
+        final String name = Map.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">";
+        final Codec<Map.Entry<K, V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
+        final Codec<Collection<Map.Entry<K, V>>> ENTRIES_CODEC = Codecs.collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
+
         return new Codec<>() {
             @Override
             public String name() {

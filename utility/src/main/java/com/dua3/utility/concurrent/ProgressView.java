@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * 
+ *
  * @param <T>
  */
 public class ProgressView<T> implements ProgressTracker<T> {
@@ -35,13 +35,14 @@ public class ProgressView<T> implements ProgressTracker<T> {
          * @param total total number of steps
          */
         void update(int done, int total);
+
         /**
          * Update task progess.
          * @param percentDone percentage value, 0.0 &le; percentDone &le; 1.0 or use PROGRESS_INDETERMINATE to mark as indeterminate
          */
         void update(double percentDone);
     }
-    
+
     private static class TaskRecord {
         private final ProgressIndicator progressIndicator;
         State state = State.SCHEDULED;
@@ -63,17 +64,17 @@ public class ProgressView<T> implements ProgressTracker<T> {
         }
     }
 
-    private final Function<T,ProgressIndicator> createProgressIndicator;
-    
+    private final Function<T, ProgressIndicator> createProgressIndicator;
+
     private final Map<T, TaskRecord> tasks = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    public ProgressView(Function<T,ProgressIndicator> createProgressIndicator) {
+    public ProgressView(Function<T, ProgressIndicator> createProgressIndicator) {
         this.createProgressIndicator = Objects.requireNonNull(createProgressIndicator);
     }
-    
+
     @SafeVarargs
-    public final void addTasks(T ... tasks) {
-        for (T task: tasks) {
+    public final void addTasks(T... tasks) {
+        for (T task : tasks) {
             getTaskRecord(task);
         }
     }
@@ -124,13 +125,13 @@ public class ProgressView<T> implements ProgressTracker<T> {
 
     @Override
     public void update(T task, int total, int done) {
-        assert 0 <= done && done<=total : "invalid arguments for '"+task+"': done="+done+", total="+total;
+        assert 0 <= done && done <= total : "invalid arguments for '" + task + "': done=" + done + ", total=" + total;
         getTaskRecord(task).update(done, total);
     }
 
     @Override
     public void update(T task, double percentDone) {
-        assert 0 <= percentDone && percentDone<=1.0 : "invalid arguments for '"+task+"': percentDone="+percentDone;
+        assert 0 <= percentDone && percentDone <= 1.0 : "invalid arguments for '" + task + "': percentDone=" + percentDone;
         getTaskRecord(task).update(percentDone);
     }
 

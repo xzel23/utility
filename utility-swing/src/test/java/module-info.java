@@ -5,7 +5,7 @@
 
 open module com.dua3.utility.swing.test {
     exports com.dua3.utility.swing.test;
-    
+
     requires com.dua3.utility;
     requires com.dua3.utility.logging;
     requires com.dua3.utility.swing;

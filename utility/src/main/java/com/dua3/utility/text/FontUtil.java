@@ -30,7 +30,9 @@ public interface FontUtil<F> {
             fu = serviceIterator.next();
         } else {
             fu = new FontUtil<>() {
-                private <T> T noImplementation() { throw new UnsupportedOperationException("no FontUtil implementation present"); }
+                private <T> T noImplementation() {
+                    throw new UnsupportedOperationException("no FontUtil implementation present");
+                }
 
                 @Override
                 public Void convert(Font f) {
@@ -59,10 +61,10 @@ public interface FontUtil<F> {
                 }
             };
         }
-        
+
         return fu;
     }
-    
+
     /**
      * Convert font.
      *

@@ -17,9 +17,9 @@ public interface AttributedCharSequence extends CharSequence {
      *
      * @param   index   the index of the {@code AttributedCharacter} value to be returned
      *
-     * @return  the specified {@code AttributedCharacter} value
+     * @return the specified {@code AttributedCharacter} value
      *
-     * @throws  IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException
      *          if the {@code index} argument is negative or not less than
      *          {@code length()}
      */
@@ -30,7 +30,7 @@ public interface AttributedCharSequence extends CharSequence {
 
     /**
      * Returns a stream of {@code AttributedCharacter} values from this sequence.
-     * 
+     *
      * @return a stream of {@link AttributedCharacter} values from this sequence
      */
     default Stream<AttributedCharacter> attributedChars() {

@@ -20,8 +20,8 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @param height the height (>= 0)
      */
     public Rectangle2f {
-        assert width>=0 : "width is negative: "+width;
-        assert height>=0 : "height is negative: "+height;
+        assert width >= 0 : "width is negative: " + width;
+        assert height >= 0 : "height is negative: " + height;
     }
 
     /**
@@ -31,22 +31,22 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @return rectangle
      */
     public static Rectangle2f withCorners(Vector2f p, Vector2f q) {
-        float x,y,w,h;
-        if (p.x()<=q.x()) {
+        float x, y, w, h;
+        if (p.x() <= q.x()) {
             x = p.x();
-            w = q.x()-p.x();
+            w = q.x() - p.x();
         } else {
             x = q.x();
-            w = p.x()-q.x();
+            w = p.x() - q.x();
         }
-        if (p.y()<=q.y()) {
+        if (p.y() <= q.y()) {
             y = p.y();
-            h = q.y()-p.y();
+            h = q.y() - p.y();
         } else {
             y = q.y();
-            h = p.y()-q.y();
+            h = p.y() - q.y();
         }
-        return new Rectangle2f(x,y,w,h);
+        return new Rectangle2f(x, y, w, h);
     }
 
     /**
@@ -68,7 +68,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @return rectangle
      */
     public static Rectangle2f of(Vector2f p, Dimension2f d) {
-        return Rectangle2f.of(p.x(), p.y(), d.width(), d.height());    
+        return Rectangle2f.of(p.x(), p.y(), d.width(), d.height());
     }
 
     /**
@@ -92,7 +92,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @return maximum x-coordinate
      */
     public float xMax() {
-        return x+width;
+        return x + width;
     }
 
     /**
@@ -100,7 +100,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @return maximum y-coordinate
      */
     public float yMax() {
-        return y+height;
+        return y + height;
     }
-    
+
 }

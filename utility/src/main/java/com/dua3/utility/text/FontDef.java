@@ -160,7 +160,7 @@ public final class FontDef {
         fd.setFamily(parts[0]);
 
         // check remaining parts
-        for(int i=1;i<parts.length;i++) {
+        for (int i = 1; i < parts.length; i++) {
             String s = parts[i];
             // check for text-decoration
             switch (s) {
@@ -197,13 +197,13 @@ public final class FontDef {
         fontdef = fontdef.strip();
 
         if (fontdef.startsWith("{") && fontdef.endsWith("}")) {
-            fontdef = fontdef.substring(1,fontdef.length()-1);
+            fontdef = fontdef.substring(1, fontdef.length() - 1);
         }
 
         FontDef fd = new FontDef();
 
-        for (String rule: fontdef.split(";")) {
-            Pair<String,String> pair = parseCssRule(rule);
+        for (String rule : fontdef.split(";")) {
+            Pair<String, String> pair = parseCssRule(rule);
 
             String attribute = pair.first().toLowerCase(Locale.ROOT);
             String value = pair.second().strip();
@@ -230,7 +230,7 @@ public final class FontDef {
             case "bold" -> Boolean.TRUE;
             case "normal" -> Boolean.FALSE;
             case "inherit" -> null;
-            default -> throw new IllegalArgumentException("invalid value for font-weight: "+value);
+            default -> throw new IllegalArgumentException("invalid value for font-weight: " + value);
         };
     }
 
@@ -239,7 +239,7 @@ public final class FontDef {
             case "italic", "oblique" -> Boolean.TRUE;
             case "normal" -> Boolean.FALSE;
             case "inherit" -> null;
-            default -> throw new IllegalArgumentException("invalid value for font-style: "+value);
+            default -> throw new IllegalArgumentException("invalid value for font-style: " + value);
         };
     }
 
@@ -251,34 +251,34 @@ public final class FontDef {
             return null;
         } else if (sz.endsWith("pt")) {
             f = 1.0f;
-            sz = sz.substring(0, sz.length()-2);
+            sz = sz.substring(0, sz.length() - 2);
         } else if (sz.endsWith("em")) {
             f = 12.0f;
-            sz = sz.substring(0, sz.length()-2);
+            sz = sz.substring(0, sz.length() - 2);
         } else if (sz.endsWith("px")) {
-            f = 18.0f/24.0f;
-            sz = sz.substring(0, sz.length()-2);
+            f = 18.0f / 24.0f;
+            sz = sz.substring(0, sz.length() - 2);
         } else if (sz.endsWith("%")) {
-            f = 12.0f/100.0f;
-            sz = sz.substring(0, sz.length()-1);
+            f = 12.0f / 100.0f;
+            sz = sz.substring(0, sz.length() - 1);
         } else if (sz.endsWith("vw")) {
             LOG.warn("unit 'vw' unsupported, treating as 'em'");
             f = 12.0f;
-            sz = sz.substring(0, sz.length()-2);
+            sz = sz.substring(0, sz.length() - 2);
         } else {
-            throw new IllegalArgumentException("invalid value for font-size: "+sz);
+            throw new IllegalArgumentException("invalid value for font-size: " + sz);
         }
 
-        return f*Float.parseFloat(sz.strip());
+        return f * Float.parseFloat(sz.strip());
     }
 
-    private static Pair<String,String> parseCssRule(String rule) {
+    private static Pair<String, String> parseCssRule(String rule) {
         int splitIdx = rule.indexOf(':');
 
-        LangUtil.check(splitIdx>0, () -> new IllegalArgumentException("invalid CSS rule: "+rule));
+        LangUtil.check(splitIdx > 0, () -> new IllegalArgumentException("invalid CSS rule: " + rule));
 
-        String attribute = rule.substring(0,splitIdx).strip();
-        String value = rule.substring(splitIdx+1).strip();
+        String attribute = rule.substring(0, splitIdx).strip();
+        String value = rule.substring(splitIdx + 1).strip();
 
         return Pair.of(attribute, value);
     }
@@ -387,12 +387,12 @@ public final class FontDef {
         if (o == null || getClass() != o.getClass()) return false;
         FontDef fontDef = (FontDef) o;
         return Objects.equals(color, fontDef.color) &&
-               Objects.equals(size, fontDef.size) &&
-               Objects.equals(family, fontDef.family) &&
-               Objects.equals(bold, fontDef.bold) &&
-               Objects.equals(italic, fontDef.italic) &&
-               Objects.equals(underline, fontDef.underline) &&
-               Objects.equals(strikeThrough, fontDef.strikeThrough);
+                Objects.equals(size, fontDef.size) &&
+                Objects.equals(family, fontDef.family) &&
+                Objects.equals(bold, fontDef.bold) &&
+                Objects.equals(italic, fontDef.italic) &&
+                Objects.equals(underline, fontDef.underline) &&
+                Objects.equals(strikeThrough, fontDef.strikeThrough);
     }
 
     @Override
@@ -403,8 +403,8 @@ public final class FontDef {
     @Override
     public String toString() {
         return "FontDef{" +
-               getCssStyle() +
-               "}";
+                getCssStyle() +
+                "}";
     }
 
     /**
@@ -417,18 +417,18 @@ public final class FontDef {
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
         //noinspection StringConcatenationMissingWhitespace
         return (color == null ? "" : "color: " + color + ";") +
-               (size == null ? "" : "font-size: " + size + "pt;") +
-               (family == null ? "" : "font-family: " + family + ";") +
-               (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + ";") +
-               (italic == null ? "" : "font-style: " + (italic ? "italic" : "normal") + ";") +
-               (isStrikeThrough || isUnderline
-                       ? "text-decoration:" +
-                         (isUnderline ? " underline" : "") +
-                         (isStrikeThrough ? " line-through" : "") +
-                         ";"
-                       : "");
+                (size == null ? "" : "font-size: " + size + "pt;") +
+                (family == null ? "" : "font-family: " + family + ";") +
+                (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + ";") +
+                (italic == null ? "" : "font-style: " + (italic ? "italic" : "normal") + ";") +
+                (isStrikeThrough || isUnderline
+                        ? "text-decoration:" +
+                        (isUnderline ? " underline" : "") +
+                        (isStrikeThrough ? " line-through" : "") +
+                        ";"
+                        : "");
     }
-    
+
     /**
      * Test if all attributes defined by this instance match those of the given {@link Font}.
      * @param font the {@link Font} to test
@@ -436,16 +436,16 @@ public final class FontDef {
      */
     public boolean matches(Font font) {
         return nullOrEquals(color, font.getColor())
-               && nullOrEquals(size, font.getSizeInPoints())
-               && nullOrEquals(family, font.getFamily())
-               && nullOrEquals(bold, font.isBold())
-               && nullOrEquals(italic, font.isItalic())
-               && nullOrEquals(underline, font.isUnderline())
-               && nullOrEquals(strikeThrough, font.isStrikeThrough());
+                && nullOrEquals(size, font.getSizeInPoints())
+                && nullOrEquals(family, font.getFamily())
+                && nullOrEquals(bold, font.isBold())
+                && nullOrEquals(italic, font.isItalic())
+                && nullOrEquals(underline, font.isUnderline())
+                && nullOrEquals(strikeThrough, font.isStrikeThrough());
     }
 
     private static boolean nullOrEquals(@Nullable Object a, @Nullable Object b) {
-        return a==null || b==null || a.equals(b);
+        return a == null || b == null || a.equals(b);
     }
 
     /**
@@ -470,7 +470,7 @@ public final class FontDef {
         }
         return run;
     }
-    
+
     /**
      * Run action if a value for the color property is defined.
      *
@@ -539,12 +539,12 @@ public final class FontDef {
      * @return true, if none of the attributes is set
      */
     public boolean isEmpty() {
-        return    color==null 
-               && size==null 
-               && family==null 
-               && bold==null 
-               && italic==null 
-               && underline==null 
-               && strikeThrough==null;
+        return color == null
+                && size == null
+                && family == null
+                && bold == null
+                && italic == null
+                && underline == null
+                && strikeThrough == null;
     }
 }

@@ -96,18 +96,18 @@ public class CsvReader extends CsvIo {
 
     // the bytes sequence the UTF-8 BOM
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
+    private static final byte[] UTF8_BOM_BYTES = {(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
 
-    public static  CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
+    public static CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
         return new CsvReader(builder, reader, null, options);
     }
 
-    public static  CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
+    public static CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
         Charset cs = IoOptions.getCharset(options);
         return create(builder, Files.newBufferedReader(path, cs), options);
     }
 
-    public static  CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
+    public static CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
         // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
         // selection in options)
         Charset charset = IoOptions.getCharset(options);
@@ -192,7 +192,7 @@ public class CsvReader extends CsvIo {
 
     /**
      * @param  columnNr the column number
-     * @return          name of column or columnNr as String if no name was set
+     * @return name of column or columnNr as String if no name was set
      */
     public String getColumnName(int columnNr) {
         if (columnNames != null && columnNr < columnNames.size()) {
@@ -258,7 +258,7 @@ public class CsvReader extends CsvIo {
     /**
      * read a single row of CSV data.
      *
-     * @return             number of fields in row or -1 when end of input is
+     * @return number of fields in row or -1 when end of input is
      *                     reached
      * @throws IOException
      *  if an error occurs during reading
@@ -333,7 +333,7 @@ public class CsvReader extends CsvIo {
      * Read some rows of CSV data.
      *
      * @param  maxRows            maximum number of rows to be read or 0 to read till end of input
-     * @return                    number of rows read
+     * @return number of rows read
      * @throws IOException
      *  if an error occurs during reading
      * @throws CsvFormatException
@@ -354,7 +354,7 @@ public class CsvReader extends CsvIo {
      * Read some rows of CSV data.
      *
      * @param  rowsToRead         number of rows to be read
-     * @return                    number of rows read
+     * @return number of rows read
      * @throws IOException
      *  if an error occurs during reading
      * @throws CsvFormatException

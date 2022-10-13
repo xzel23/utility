@@ -23,5 +23,5 @@ public record HtmlConversionOption(Consumer<? super HtmlConverter> action) {
     void apply(HtmlConverter converter) {
         action.accept(converter);
     }
-    
+
 }

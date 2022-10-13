@@ -31,7 +31,7 @@ public class Font {
     private String fontspec = null;
     private int hash = 0;
     private FontDef fd = null;
-    private double spaceWidth=-1;
+    private double spaceWidth = -1;
 
     /**
      * Construct a new {@code Font}.
@@ -42,7 +42,7 @@ public class Font {
 
     /**
      * Construct a new {@code Font} from a fontspec string.
-     * 
+     *
      * @param fontspec the fontspec
      */
     public Font(String fontspec) {
@@ -100,7 +100,7 @@ public class Font {
      *
      * @param  fd
      *            the {@link FontDef} describing the attributes to set
-     * @return    new Font instance
+     * @return new Font instance
      */
     public Font deriveFont(FontDef fd) {
         return new Font(this, fd);
@@ -175,7 +175,7 @@ public class Font {
      * @return font description
      */
     public String fontspec() {
-        if (fontspec==null) {
+        if (fontspec == null) {
             StringBuilder sb = new StringBuilder(32);
 
             sb.append(getFamily());
@@ -196,10 +196,10 @@ public class Font {
             sb.append(getSizeInPoints());
             sb.append('-');
             sb.append(getColor().toCss());
-            
+
             fontspec = sb.toString();
         }
-        
+
         return fontspec;
     }
 
@@ -250,17 +250,17 @@ public class Font {
      */
     public String getCssStyle() {
         return String.format(Locale.ROOT, "color: %s; font-size: %spt; font-family: %s; font-weight: %s; font-style: %s;%s",
-               color,
-               size, /* use "%s" for size to avoid unnecessary zeros after decimal point */
-               family,
-               bold ? "bold" : "normal",
-               italic ? "italic" : "normal",
-               strikeThrough || underline
-                   ? "text-decoration:" +
-                     (underline ? " underline" : "") +
-                     (strikeThrough ? " line-through": "") +
-                     ";"
-                   : ""
+                color,
+                size, /* use "%s" for size to avoid unnecessary zeros after decimal point */
+                family,
+                bold ? "bold" : "normal",
+                italic ? "italic" : "normal",
+                strikeThrough || underline
+                        ? "text-decoration:" +
+                        (underline ? " underline" : "") +
+                        (strikeThrough ? " line-through" : "") +
+                        ";"
+                        : ""
         );
     }
 
@@ -273,7 +273,7 @@ public class Font {
      * @param <T> object type
      * @param <U> attribute type
      */
-    private static <T,U> void deltaHelper(T o1, T o2, Function<T,U> getter, Consumer<? super U> setter) {
+    private static <T, U> void deltaHelper(T o1, T o2, Function<T, U> getter, Consumer<? super U> setter) {
         U v1 = getter.apply(o1);
         U v2 = getter.apply(o2);
         if (!Objects.equals(v1, v2)) {
@@ -318,13 +318,13 @@ public class Font {
         }
         return fd;
     }
-    
+
     /**
      * Get width of a space character in this font.
      * @return width of a single space character in this font
      */
     public double getSpaceWidth() {
-        if (spaceWidth<0) {
+        if (spaceWidth < 0) {
             spaceWidth = TextUtil.getTextWidth(" ", this);
         }
         return spaceWidth;
@@ -336,7 +336,7 @@ public class Font {
      * @return a copy of this font with the requested size, or this font, if the size matches
      */
     public Font withSize(float size) {
-        return size==this.size ? this : deriveFont(FontDef.size(size));
+        return size == this.size ? this : deriveFont(FontDef.size(size));
     }
 
     /**
@@ -345,7 +345,7 @@ public class Font {
      * @return a copy of this font with the bold attribute set to the requested value, or this font if values match
      */
     public Font withBold(boolean flag) {
-        return flag==this.bold ? this : deriveFont(FontDef.bold(flag));
+        return flag == this.bold ? this : deriveFont(FontDef.bold(flag));
     }
 
     /**
@@ -354,7 +354,7 @@ public class Font {
      * @return a copy of this font with the italic attribute set to the requested value, or this font if values match
      */
     public Font withItalic(boolean flag) {
-        return flag==this.italic ? this : deriveFont(FontDef.italic(flag));
+        return flag == this.italic ? this : deriveFont(FontDef.italic(flag));
     }
 
     /**
@@ -363,7 +363,7 @@ public class Font {
      * @return a copy of this font with the underline attribute set to the requested value, or this font if values match
      */
     public Font withUnderline(boolean flag) {
-        return flag==this.underline ? this : deriveFont(FontDef.underline(flag));
+        return flag == this.underline ? this : deriveFont(FontDef.underline(flag));
     }
 
     /**
@@ -372,7 +372,7 @@ public class Font {
      * @return a copy of this font with the strike-through attribute set to the requested value, or this font if values match
      */
     public Font withStrikeThrough(boolean flag) {
-        return flag==this.strikeThrough ? this : deriveFont(FontDef.strikeThrough(flag));
+        return flag == this.strikeThrough ? this : deriveFont(FontDef.strikeThrough(flag));
     }
 
     /**

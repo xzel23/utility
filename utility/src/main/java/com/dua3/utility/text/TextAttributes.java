@@ -22,10 +22,10 @@ import java.util.Set;
  * An immutable set of text attributes.
  */
 public final class TextAttributes extends AbstractMap<String, Object> {
-    
+
     /** empty instance */
     private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
-    
+
     /**
      * Empty TextAttributes instance.
      *
@@ -40,7 +40,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      *
      * @param  entries
      *                 the attribute/value pairs to add
-     * @return         TextAttributes instance
+     * @return TextAttributes instance
      */
     @SafeVarargs
     public static TextAttributes of(Pair<String, ?>... entries) {
@@ -52,7 +52,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      *
      * @param  entries
      *                 the attribute/value pairs to add
-     * @return         TextAttributes instance
+     * @return TextAttributes instance
      */
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
         Set<Entry<String, Object>> entrySet = new HashSet<>();
@@ -66,7 +66,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * Construct style with attributes.
      *
      * @param  map     mapping from attributes to values
-     * @return         TextAttributes instance
+     * @return TextAttributes instance
      */
     public static TextAttributes of(Map<String, Object> map) {
         return new TextAttributes(map.entrySet());
@@ -108,10 +108,10 @@ public final class TextAttributes extends AbstractMap<String, Object> {
 
     @Override
     public boolean equals(@Nullable Object o) {
-        if (o==null || o.getClass()!=getClass() || o.hashCode()!=hashCode()) {
+        if (o == null || o.getClass() != getClass() || o.hashCode() != hashCode()) {
             return false;
         }
-        
+
         return super.equals(o);
     }
 
@@ -123,6 +123,6 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         }
         return h;
     }
-    
+
 }
 

@@ -6,7 +6,7 @@ import com.dua3.utility.math.Vector2f;
  * A builder class for {@link Path2f} instances.
  */
 public class PathBuilder2f {
-    
+
     private Vector2f pos = Vector2f.ORIGIN;
     private Path2fImpl impl;
     private boolean open = false;
@@ -49,7 +49,7 @@ public class PathBuilder2f {
      * @return the current index, that is the index of the last added vertex
      */
     private int currentIndex() {
-        return impl.vertexCount()-1;
+        return impl.vertexCount() - 1;
     }
 
     /**
@@ -80,7 +80,7 @@ public class PathBuilder2f {
         if (!open) {
             moveTo(pos);
         }
-        
+
         int p = currentIndex();
         int q = addVertex(v);
         impl.addSegment(new Line2f(impl, p, q));
@@ -90,7 +90,7 @@ public class PathBuilder2f {
      * Add a Bézier curve from the current position to a new position.
      * <p>
      * The curve starts at the current position (p0) and ends at p3.
-     *  
+     *
      * @param p1 second control point  
      * @param p2 third control point
      * @param p3 fourth control point

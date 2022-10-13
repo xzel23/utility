@@ -27,17 +27,17 @@ public class ColorTest {
             Color d = Color.valueOf(hex);
             assertEquals(c, d);
 
-            assertEquals((c.isOpaque()?7:9), c.toCss().length());
+            assertEquals((c.isOpaque() ? 7 : 9), c.toCss().length());
         }
-        
+
         // illegal char in hax
-        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("#1234567g")); 
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("#1234567g"));
         // negative value
-        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgb(0,0,-1)")); 
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgb(0,0,-1)"));
         // three components expected
-        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgb(0,0,0,0)")); 
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgb(0,0,0,0)"));
         // 256 is out of range
-        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgba(1,5,256,128)")); 
+        assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgba(1,5,256,128)"));
         // four components expected
         assertThrows(IllegalArgumentException.class, () -> Color.valueOf("rgba(1,5,255)"));
         // gibberish text
@@ -59,14 +59,14 @@ public class ColorTest {
     public void testValueOfWithRgb() {
         for (Color c : Color.values()) {
             RGBColor rgb = c.toRGBColor();
-            
+
             int r = rgb.r();
             int g = rgb.g();
             int b = rgb.b();
             int a = rgb.a();
 
             if (a == 0xFF) {
-                String text = String.format(Locale.ROOT,"rgb(%d,%d,%d)", r, g, b);
+                String text = String.format(Locale.ROOT, "rgb(%d,%d,%d)", r, g, b);
                 Color actual = Color.valueOf(text);
                 assertEquals(c.argb(), actual.argb());
             }
@@ -83,7 +83,7 @@ public class ColorTest {
             int b = rgb.b();
             int a = rgb.a();
 
-            String text = String.format(Locale.ROOT,"rgba(%d,%d,%d,%d)", r, g, b, a);
+            String text = String.format(Locale.ROOT, "rgba(%d,%d,%d,%d)", r, g, b, a);
             Color actual = Color.valueOf(text);
 
             assertEquals(c.argb(), actual.argb());

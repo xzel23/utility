@@ -11,20 +11,20 @@ import java.util.function.Function;
  * @param <T> the option's argument type.
  */
 public final class StandardOption<T> extends Option<T> {
-    
+
     public static <T> StandardOption<T> create(Class<? extends T> type,
-                                                        String... names) {
+                                               String... names) {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
     public static <T> StandardOption<T> create(Function<String, ? extends T> mapper,
-                                               String [] names) {
+                                               String[] names) {
         return new StandardOption<>(mapper, Object::toString, names);
     }
 
-    public static <T> StandardOption<T> create(Function<String,T> mapper,
-                                                        Function<? super T, String> formatter,
-                                                        String [] names) {
+    public static <T> StandardOption<T> create(Function<String, T> mapper,
+                                               Function<? super T, String> formatter,
+                                               String[] names) {
         return new StandardOption<>(mapper, formatter, names);
     }
 
@@ -80,7 +80,7 @@ public final class StandardOption<T> extends Option<T> {
      * @return the option
      */
     public StandardOption<T> arity(int n) {
-        return arity(n,n);
+        return arity(n, n);
     }
 
     /**

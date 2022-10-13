@@ -23,7 +23,7 @@ public enum Platform {
                 // empty string has to be quoted on Windows
                 return true;
             }
-            
+
             for (int i = 0; i < len; i++) {
                 switch (s.charAt(i)) {
                     case ' ', '\t', '\\', '"' -> {
@@ -42,7 +42,7 @@ public enum Platform {
             if (!isProcessBuilderQuotingNeeded(s)) {
                 return s;
             }
-            
+
             s = PATTERN_DOUBLE_QUOTE.matcher(s).replaceAll("$1$1\\\\\"");
             s = PATTERN_EOS.matcher(s).replaceAll("$1$1");
             return "\"" + s + "\"";
@@ -56,7 +56,7 @@ public enum Platform {
 
     private static Platform determinePlatform() {
         final Platform platform;
-        
+
         String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ROOT);
         if ((os.contains("mac")) || (os.contains("darwin"))) {
             platform = Platform.MACOS;
@@ -67,9 +67,9 @@ public enum Platform {
         } else {
             platform = Platform.UNKNOWN;
         }
-        
+
         LOG.debug("platform identified as: {}", platform);
-        
+
         return platform;
     }
 

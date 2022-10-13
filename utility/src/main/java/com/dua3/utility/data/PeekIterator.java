@@ -49,9 +49,9 @@ public class PeekIterator<T> implements Iterator<T> {
             throw new NoSuchElementException("there are no elements left");
         }
 
-        return current;    
+        return current;
     }
-    
+
     @Override
     public boolean hasNext() {
         return !done;

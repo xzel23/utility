@@ -7,7 +7,7 @@ import com.dua3.utility.math.Vector2f;
  */
 public abstract class Segment2f {
     protected final Path2fImpl path;
-    
+
     protected Segment2f(Path2fImpl path) {
         this.path = path;
     }
@@ -29,7 +29,7 @@ public abstract class Segment2f {
      * @return the end of the segment 
      */
     public abstract Vector2f end();
-    
+
     protected String vertexToString(int idx) {
         Vector2f v = path.vertex(idx);
         return String.format("[%d](%f,%f)", idx, v.x(), v.y());

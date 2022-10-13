@@ -53,28 +53,28 @@ import java.util.stream.StreamSupport;
  */
 public final class XmlUtil {
     private static final Logger LOG = LoggerFactory.getLogger(XmlUtil.class);
-    
+
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
     private final DocumentBuilder documentBuilder;
     private final Transformer utf8Transformer;
-    
+
     private static final String PRETTY_PRINT_XSLT = """
-                            <?xml version="1.0" encoding="UTF-8"?>
-                            <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-                              <xsl:output indent="yes"/>
-                              <xsl:strip-space elements="*"/>
-                                            
-                              <xsl:template match="@*|node()">
-                                <xsl:copy>
-                                  <xsl:apply-templates select="@*|node()"/>
-                                </xsl:copy>
-                              </xsl:template>
-                                            
-                            </xsl:stylesheet>
-                            """;
-    
+            <?xml version="1.0" encoding="UTF-8"?>
+            <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+              <xsl:output indent="yes"/>
+              <xsl:strip-space elements="*"/>
+                            
+              <xsl:template match="@*|node()">
+                <xsl:copy>
+                  <xsl:apply-templates select="@*|node()"/>
+                </xsl:copy>
+              </xsl:template>
+                            
+            </xsl:stylesheet>
+            """;
+
     /*
      * Lazily construct the default instance since it might pull in a lot of dependencies which is not desirable
      * in case only a specialized version is needed.
@@ -90,7 +90,7 @@ public final class XmlUtil {
             }
         }
     }
-    
+
     /*
      * Lazily construct the a instance using JAXP Lookup Mechanism for obtaining the different factories.
      */
@@ -105,7 +105,7 @@ public final class XmlUtil {
             }
         }
     }
-    
+
     /**
      * Get instance using the default implementation supplied by the JDK. 
      * @return default instance
@@ -123,7 +123,7 @@ public final class XmlUtil {
     public static XmlUtil jaxpInstance() {
         return LazySingletonJaxpInstance.INSTANCE;
     }
-    
+
     /**
      * Construct a new instance.
      * @param documentBuilderFactory the {@link DocumentBuilderFactory} to use
@@ -253,7 +253,7 @@ public final class XmlUtil {
             // should not happen(tm)
             throw new IllegalStateException(e);
         } catch (TransformerException e) {
-            throw new IOException("error in transformation: "+e.getMessage(), e);
+            throw new IOException("error in transformation: " + e.getMessage(), e);
         }
     }
 
@@ -287,7 +287,7 @@ public final class XmlUtil {
      * @return formatted XML for the document
      */
     public String prettyPrint(Document document) {
-        return formatNode(document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ TextUtil.LINE_END_SYSTEM);
+        return formatNode(document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + TextUtil.LINE_END_SYSTEM);
     }
 
     /**
@@ -298,7 +298,7 @@ public final class XmlUtil {
     public String prettyPrint(String xml) {
         try {
             return prettyPrint(parse(xml));
-        } catch (IOException|SAXException e) {
+        } catch (IOException | SAXException e) {
             LOG.warn("could not parse XML");
             return xml;
         }
@@ -353,7 +353,7 @@ public final class XmlUtil {
      * @param defaultUri the URI of the default namespace
      * @return new {@link XPath} instance.
      */
-    public XPath xpath(Map<String,String> nsToUri, @Nullable String defaultUri) {
+    public XPath xpath(Map<String, String> nsToUri, @Nullable String defaultUri) {
         return xpath(new SimpleNamespaceContext(nsToUri, defaultUri));
     }
 
@@ -369,7 +369,7 @@ public final class XmlUtil {
         String defaultUri = null;
         for (Node n = node; n != null; n = n.getParentNode()) {
             NamedNodeMap attrs = n.getAttributes();
-            
+
             if (attrs != null) {
                 for (int i = 0; i < attrs.getLength(); i++) {
                     Node item = attrs.item(i);
@@ -389,8 +389,8 @@ public final class XmlUtil {
 
         return xpath(nsToUri, defaultUri);
     }
-    
-    
+
+
     /**
      * Create new {@link DocumentBuilder}.
      * @return new {@link DocumentBuilder} instance
@@ -400,7 +400,7 @@ public final class XmlUtil {
             return documentBuilderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             // this shouldn't happen since a DocumentBuilder has already been created in the constructor
-            throw new IllegalStateException("DocumentBuilderFactory configuration error", e); 
+            throw new IllegalStateException("DocumentBuilderFactory configuration error", e);
         }
     }
 

@@ -13,10 +13,11 @@ import java.util.regex.Pattern;
 /**
  * Build information record.
  */
-public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patchLevel, String separator, String suffix) {
+public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patchLevel, String separator,
+                        String suffix) {
 
     private static final Logger LOG = LoggerFactory.getLogger(BuildInfo.class);
-    
+
     /**
      * Key to use for the build version in properties files.
      */
@@ -36,11 +37,11 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     public static BuildInfo create(String version, String zonedDateTimeBuild) {
         Pattern pattern = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?(?<separator>[-_.])?(?<suffix>\\w+)?");
         Matcher m = pattern.matcher(version);
-        
+
         if (!m.matches()) {
-            throw new IllegalArgumentException("Version does not match pattern: "+version);
+            throw new IllegalArgumentException("Version does not match pattern: " + version);
         }
-        
+
         int major = Integer.parseInt(m.group("major"));
         int minor = group(m, "minor").map(Integer::parseInt).orElse(0);
         int patch = group(m, "patch").map(Integer::parseInt).orElse(0);
@@ -50,9 +51,9 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
         ZonedDateTime buildTime = ZonedDateTime.parse(zonedDateTimeBuild);
 
         BuildInfo buildInfo = new BuildInfo(buildTime, major, minor, patch, separator, suffix);
-        
+
         LOG.debug("BuildInfo: {}", buildInfo);
-        
+
         return buildInfo;
     }
 
@@ -64,7 +65,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     public static BuildInfo create(Properties properties) {
         String version = properties.getProperty(KEY_BUILD_VERSION, "0.0.1-SNAPSHOT");
         String buildTime = properties.getProperty(KEY_BUILD_TIME, "2000-01-01T00:00Z[UTC]");
-        return create(version, buildTime);        
+        return create(version, buildTime);
     }
 
     /**
@@ -92,7 +93,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     public static BuildInfo create(Class<?> cls, String resource) {
         return create(cls.getResourceAsStream(resource));
     }
-    
+
     /**
      * Get version string. 
      * @return the version string

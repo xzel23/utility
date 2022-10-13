@@ -48,11 +48,11 @@ public class RichTextBuilderTest {
         builder.pop(style);
         builder.append("!");
         RichText rt = builder.toRichText();
-        
+
         assertEquals("Hello world!", rt.toString());
         assertEquals("Hello world!", rt.stream().collect(Collectors.joining()));
         assertEquals(2, rt.stream().count());
         assertEquals("Hello world", rt.stream().findFirst().get().toString());
     }
-    
+
 }

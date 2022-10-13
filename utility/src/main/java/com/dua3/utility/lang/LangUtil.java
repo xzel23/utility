@@ -185,7 +185,7 @@ public final class LangUtil {
      * @param       <T> argument type
      * @param  arg  first argument
      * @param  rest remaining arguments
-     * @return      true, if {@code rest} contains at least one item that is equal
+     * @return true, if {@code rest} contains at least one item that is equal
      *              to
      *              {@code arg}
      */
@@ -201,10 +201,10 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b
      */
-    public static <T>  T orElse(@Nullable T a, @Nullable T b) {
+    public static <T> T orElse(@Nullable T a, @Nullable T b) {
         return a != null ? a : b;
     }
-    
+
     /**
      * Return first argument if non-null, generate value otherwise. 
      * @param a the first argument
@@ -215,7 +215,7 @@ public final class LangUtil {
     public static <T> T orElseGet(@Nullable T a, Supplier<? extends T> b) {
         return a != null ? a : b.get();
     }
-    
+
     /**
      * Find enum by Predicate.
      * @param clazz the enum class
@@ -258,7 +258,7 @@ public final class LangUtil {
             throw new IllegalStateException("calling Enum.values() failed", e);
         }
     }
-    
+
     /** The byte order mark in UTF files */
     public static final char UTF_BYTE_ORDER_MARK = 0xfeff;
 
@@ -266,7 +266,7 @@ public final class LangUtil {
      * Test if character is the byte order mark.
      *
      * @param  c the character to test
-     * @return   true if c is the byte order mark
+     * @return true if c is the byte order mark
      */
     public static boolean isByteOrderMark(char c) {
         return c == UTF_BYTE_ORDER_MARK;
@@ -294,13 +294,13 @@ public final class LangUtil {
      * @param  <T> the argument type
      * @param  <E> the exception type
      * @param  c the consumer to call (instance of {@link ConsumerThrows})
-     * @return   instance of Consumer that invokes f and converts IOException to
+     * @return instance of Consumer that invokes f and converts IOException to
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T,E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T, E> c) {
+    public static <T, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T, E> c) {
         return arg -> {
             try {
                 c.accept(arg);
@@ -317,13 +317,13 @@ public final class LangUtil {
      * @param  <T> the argument type
      * @param  <E> the exception type
      * @param  s the supplier to call (instance of {@link SupplierThrows})
-     * @return   instance of {@link Supplier} that invokes f and converts IOException to
+     * @return instance of {@link Supplier} that invokes f and converts IOException to
      *           UncheckedIOException, CheckedException to WrappedException, and lets UncheckedExceptions through
      * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T,E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
+    public static <T, E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
         return () -> {
             try {
                 return s.get();
@@ -341,14 +341,14 @@ public final class LangUtil {
      * @param    <R> the result type
      * @param  <E> the exception type
      * @param  f the function to call (instance of {@link FunctionThrows})
-     * @return   instance of Function that invokes f and converts IOException to
+     * @return instance of Function that invokes f and converts IOException to
      *           UncheckedIOException and other checked exceptions to {@link WrappedException}
      * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T,R,E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, ? extends R, E> f) {
+    public static <T, R, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, ? extends R, E> f) {
         return arg -> {
             try {
                 return f.apply(arg);
@@ -364,7 +364,7 @@ public final class LangUtil {
      *
      * @param <E> exception type as declared by {@link RunnableThrows}
      * @param  r the Runnable to call (instance of {@link RunnableThrows})
-     * @return   instance of Function that invokes f and converts IOException to
+     * @return instance of Function that invokes f and converts IOException to
      *           UncheckedIOException
      * @throws RuntimeException if {@link RuntimeException} is thrown during execution of the argument passed
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
@@ -385,7 +385,7 @@ public final class LangUtil {
      * Trim string, remove prepending byte order mark.
      *
      * @param  s the string to trim
-     * @return   the trimmed string
+     * @return the trimmed string
      */
     public static String trimWithByteOrderMark(String s) {
         if (s.isEmpty()) {
@@ -431,7 +431,7 @@ public final class LangUtil {
      * @param        <K> the key type
      * @param        <V> the value type
      * @param  items the key-value pairs to put into the map
-     * @return       unmodifiable map
+     * @return unmodifiable map
      */
     @SafeVarargs
     public static <K, V> Map<K, V> map(Pair<K, V>... items) {
@@ -449,7 +449,7 @@ public final class LangUtil {
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(OptionalInt opt, IntFunction<? extends T> f) {
-        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));    
+        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));
     }
 
     /**
@@ -461,7 +461,7 @@ public final class LangUtil {
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(OptionalLong opt, LongFunction<? extends T> f) {
-        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));    
+        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));
     }
 
     /**
@@ -473,16 +473,16 @@ public final class LangUtil {
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Optional<T> map(OptionalDouble opt, DoubleFunction<? extends T> f) {
-        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));    
+        return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));
     }
-    
+
     /**
      * Test streams for equality.
      *
      * @param     <T> the element type
      * @param  s1 first stream
      * @param  s2 second stream
-     * @return    true, if and only if both streams are equal elementwise
+     * @return true, if and only if both streams are equal elementwise
      */
     public static <T> boolean equals(Stream<T> s1, Stream<T> s2) {
         Iterator<T> iter1 = s1.iterator();
@@ -591,9 +591,12 @@ public final class LangUtil {
          * @throws NullPointerException if {@code after} is null
          * @throws E depending on implementation
          */
-        default ConsumerThrows<T,E> andThen(ConsumerThrows<? super T, ? extends E> after) throws E {
+        default ConsumerThrows<T, E> andThen(ConsumerThrows<? super T, ? extends E> after) throws E {
             Objects.requireNonNull(after);
-            return (T t) -> { accept(t); after.accept(t); };
+            return (T t) -> {
+                accept(t);
+                after.accept(t);
+            };
         }
 
         /**
@@ -609,9 +612,12 @@ public final class LangUtil {
          * @throws NullPointerException if {@code after} is null
          * @throws E depending on implementation
          */
-        default ConsumerThrows<T,E> andThen(Consumer<? super T> after) throws E {
+        default ConsumerThrows<T, E> andThen(Consumer<? super T> after) throws E {
             Objects.requireNonNull(after);
-            return (T t) -> { accept(t); after.accept(t); };
+            return (T t) -> {
+                accept(t);
+                after.accept(t);
+            };
         }
     }
 
@@ -640,7 +646,7 @@ public final class LangUtil {
      *
      * @param           <T> the result type
      * @param  supplier the Supplier
-     * @return          caching Supplier
+     * @return caching Supplier
      */
     public static <T> Supplier<T> cache(Supplier<? extends T> supplier) {
         return new CachingSupplier<>(supplier, t -> {
@@ -657,7 +663,7 @@ public final class LangUtil {
      * @param           <T> the result type
      * @param  supplier the Supplier
      * @param  cleaner  the cleanup operation to be executed on `close()`
-     * @return          caching Supplier
+     * @return caching Supplier
      */
     public static <T> AutoCloseableSupplier<T> cache(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
         return new CachingSupplier<>(supplier, cleaner);
@@ -708,7 +714,7 @@ public final class LangUtil {
      *
      * @param  clazz    the Class that's used to load the resource.
      * @param  resource path (relative to clazz) of resource to load
-     * @return          URL for the given resource
+     * @return URL for the given resource
      * @throws NullPointerException if the resource could not be found
      */
     public static URL getResourceURL(Class<?> clazz, String resource) {
@@ -720,7 +726,7 @@ public final class LangUtil {
      *
      * @param  clazz       the Class that's used to load the resource.
      * @param  resource    path (relative to clazz) of resource to load
-     * @return             A String containing the resource's content
+     * @return A String containing the resource's content
      * @throws IOException if the resource could not be loaded
      */
     public static String getResourceAsString(Class<?> clazz, String resource) throws IOException {
@@ -732,7 +738,7 @@ public final class LangUtil {
      *
      * @param  clazz       the Class that's used to load the resource.
      * @param  resource    path (relative to clazz) of resource to load
-     * @return             A byte array containing the resource's content
+     * @return A byte array containing the resource's content
      * @throws IOException if the resource could not be loaded
      */
     public static byte[] getResource(Class<?> clazz, String resource) throws IOException {
@@ -792,7 +798,7 @@ public final class LangUtil {
         }
         return p;
     }
-    
+
     /**
      * Create an EnumSet. This method also works if values is empty.
      * @param clss
@@ -831,7 +837,7 @@ public final class LangUtil {
      * returns "id" whereas the bundle uses "in" as suffix.
      *
      * @param locale    the locale
-     *                  
+     *
      * @return the language suffix as used by the resource bundle
      */
     public static String getLocaleSuffix(Locale locale) {
@@ -842,7 +848,7 @@ public final class LangUtil {
 
         String country = locale.getCountry();
         if (country.isEmpty()) {
-            return "_"+language;
+            return "_" + language;
         }
 
         String variant = locale.getVariant();
@@ -868,7 +874,7 @@ public final class LangUtil {
      * @param locale    the locale
      *
      * @return the URL of the resource if found, or {@code null}
-     * 
+     *
      * @throws MissingResourceException if no resource was found
      */
     public static URL getResourceURL(Class<?> cls, String name, Locale locale) {
@@ -879,35 +885,35 @@ public final class LangUtil {
         List<String> candidates = new ArrayList<>();
 
         String candidateName = basename;
-        candidates.add(candidateName+"."+extension);
+        candidates.add(candidateName + "." + extension);
 
         String language = locale.getLanguage();
         if (!language.isEmpty()) {
             candidateName = candidateName + "_" + language;
-            candidates.add(candidateName+"."+extension);
-            
+            candidates.add(candidateName + "." + extension);
+
             String country = locale.getCountry();
             if (!country.isEmpty()) {
                 candidateName = candidateName + "_" + country;
-                candidates.add(candidateName+"."+extension);
+                candidates.add(candidateName + "." + extension);
 
                 String variant = locale.getVariant();
                 if (!variant.isEmpty()) {
                     candidateName = candidateName + "_" + variant;
-                    candidates.add(candidateName+"."+extension);
+                    candidates.add(candidateName + "." + extension);
                 }
             }
         }
 
         // try loading in reverse order
-        for (int i=candidates.size()-1; i>=0; i--) {
+        for (int i = candidates.size() - 1; i >= 0; i--) {
             URL url = cls.getResource(candidates.get(i));
-            if (url!=null) {
+            if (url != null) {
                 LOG.debug("requested resource '{}', localised resource found: {}", name, url);
                 return url;
             }
         }
-        
+
         // nothing found
         LOG.warn("resource '{}' not found. candidates: {}", name, candidates);
         throw new MissingResourceException("Resource not found: " + name, cls.getName(), name);
@@ -925,7 +931,7 @@ public final class LangUtil {
     public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after) {
         return surroundingItems_(list, test, before, after, null);
     }
-    
+
     /**
      * Filter surrounding items of a list.
      * @param list The unfiltered list
@@ -939,47 +945,47 @@ public final class LangUtil {
     public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         return surroundingItems_(list, test, before, after, placeHolder);
     }
-    
+
     private static <T> List<T> surroundingItems_(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
-        for (int i=0; i<list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             // find next difference
-            while (i<list.size() && !test.test(list.get(i))) {
+            while (i < list.size() && !test.test(list.get(i))) {
                 i++;
             }
 
             // not found
-            if (i>=list.size()) {
+            if (i >= list.size()) {
                 break;
             }
 
             int startIndex = i;
 
             // add a placeholder if lines are omitted
-            int count = startIndex-before-(lastIndex+1);
-            if (placeHolder!= null && count>0) {
-                filtered.add(placeHolder.apply(count, lastIndex+1));
+            int count = startIndex - before - (lastIndex + 1);
+            if (placeHolder != null && count > 0) {
+                filtered.add(placeHolder.apply(count, lastIndex + 1));
             }
 
             // find end of difference
-            while (i<list.size() && test.test(list.get(i))) {
+            while (i < list.size() && test.test(list.get(i))) {
                 i++;
             }
             int endIndex = i;
 
             // print changes
-            int from = Math.max(startIndex-before, Math.max(0, lastIndex+1));
-            int to = Math.min(endIndex+after, list.size());
-            
-            filtered.addAll(list.subList(from,to));
-            lastIndex = to-1;
+            int from = Math.max(startIndex - before, Math.max(0, lastIndex + 1));
+            int to = Math.min(endIndex + after, list.size());
+
+            filtered.addAll(list.subList(from, to));
+            lastIndex = to - 1;
         }
-        if (placeHolder!= null && lastIndex<list.size()-1) {
-            int count = list.size() - (lastIndex+1);
-            filtered.add(placeHolder.apply(count, lastIndex+1));
+        if (placeHolder != null && lastIndex < list.size() - 1) {
+            int count = list.size() - (lastIndex + 1);
+            filtered.add(placeHolder.apply(count, lastIndex + 1));
         }
-        
+
         return filtered;
     }
 
@@ -991,10 +997,10 @@ public final class LangUtil {
      * @return true, exactly if a ≤ x and x ≤ b
      */
     public static boolean isBetween(long x, long a, long b) {
-        assert a<=b : "invalid interval: a="+a+", b="+b;
-        return a<=x && x<=b;
+        assert a <= b : "invalid interval: a=" + a + ", b=" + b;
+        return a <= x && x <= b;
     }
-    
+
     /**
      * Check if number is between two other numbers.
      * @param x the number to test
@@ -1003,10 +1009,10 @@ public final class LangUtil {
      * @return true, exactly if a ≤ x and x ≤ b
      */
     public static boolean isBetween(double x, double a, double b) {
-        assert a<=b : "invalid interval: a="+a+", b="+b;
-        return a<=x && x<=b;
+        assert a <= b : "invalid interval: a=" + a + ", b=" + b;
+        return a <= x && x <= b;
     }
-    
+
     /**
      * Check if value of a {@link Comparable} is between two other values.
      * @param <T> generic type of Comparable
@@ -1016,17 +1022,17 @@ public final class LangUtil {
      * @return true, exactly if a.compareTo(x) ≤ 0 and x.compareTo(b) ≤ 0
      */
     public static <T extends Comparable<T>> boolean isBetween(T x, T a, T b) {
-        assert a.compareTo(b) <= 0 : "invalid interval: a="+a+", b="+b;
+        assert a.compareTo(b) <= 0 : "invalid interval: a=" + a + ", b=" + b;
         return a.compareTo(x) <= 0 && x.compareTo(b) <= 0;
     }
-    
+
     /**
      * Get stack trace as text
      * @param e exception
      * @return the exception stack trace as text
      */
     public static String formatStackTrace(Exception e) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1024); 
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
              PrintStream s = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
             e.printStackTrace(s);
             s.flush();
@@ -1042,7 +1048,7 @@ public final class LangUtil {
      * @return string generated like the default implementation of {@link Object#toString()} or "null" if o is null
      */
     public static String defaultToString(@Nullable Object o) {
-        return o==null ? "null" : o.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(o));
+        return o == null ? "null" : o.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(o));
     }
 
     /**
@@ -1055,7 +1061,7 @@ public final class LangUtil {
      * @param <T> the generic argument type
      */
     public static <T> T triStateSelect(@Nullable Boolean b, T whenTrue, T whenFalse, T otherwise) {
-        return b != null ? ( b ? whenTrue : whenFalse ) : otherwise;
+        return b != null ? (b ? whenTrue : whenFalse) : otherwise;
     }
-    
+
 }

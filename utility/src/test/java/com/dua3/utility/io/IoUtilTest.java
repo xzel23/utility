@@ -38,7 +38,7 @@ public class IoUtilTest {
         assertEquals("txt", IoUtil.getExtension("./folder/subfolder/test.txt/"));
 
         assertEquals("def", IoUtil.getExtension("test.txt.def"));
-        
+
         assertEquals("", IoUtil.getExtension("test"));
         assertEquals("", IoUtil.getExtension("folder/subfolder/test"));
         assertEquals("", IoUtil.getExtension("folder/subfolder/test/"));

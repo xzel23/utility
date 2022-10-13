@@ -8,7 +8,7 @@ import java.util.List;
  * @param <T> the conversion target type
  */
 public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
-    
+
     protected abstract TagBasedConverterImpl<T> createConverter(RichText text);
 
     @Override
@@ -21,7 +21,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
      * @param <T> the conversion target type
      */
     protected abstract static class TagBasedConverterImpl<T> {
-        
+
         private List<Style> currentStyles = new ArrayList<>();
 
         protected abstract void appendOpeningTags(List<Style> openingStyles);
@@ -31,28 +31,28 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
         protected abstract void appendChars(CharSequence s);
 
         protected abstract T get();
-        
+
         protected TagBasedConverterImpl<T> append(RichText text) {
             List<Style> openStyles = new ArrayList<>();
-            for (Run run: text) {
+            for (Run run : text) {
                 List<Style> runStyles = run.getStyles();
 
                 // determine all styles to close
                 List<Style> stylesToClose = new ArrayList<>(openStyles);
                 stylesToClose.removeAll(runStyles);
-                
+
                 // to avoid interleaved styles, we have to close all tags that were opened after the first tag that is closed
                 int stylesToKeepOpen = stylesToClose.stream().mapToInt(currentStyles::indexOf).min().orElseGet(() -> currentStyles.size());
                 List<Style> closingStyles = currentStyles.subList(stylesToKeepOpen, currentStyles.size());
-                
+
                 // the styles that were closed but not contained in stylesToClose must be reopened again 
                 List<Style> reopeningStyles = new ArrayList<>(closingStyles);
                 reopeningStyles.removeAll(stylesToClose);
 
                 // close styles ...
                 appendClosingTags(closingStyles);
-                currentStyles=currentStyles.subList(0,stylesToKeepOpen);
-                        
+                currentStyles = currentStyles.subList(0, stylesToKeepOpen);
+
                 // ... then reopen the styles to keep
                 appendOpeningTags(reopeningStyles);
                 currentStyles.addAll(reopeningStyles);

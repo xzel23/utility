@@ -73,9 +73,9 @@ public abstract class CsvIo implements AutoCloseable {
         if (obj instanceof Number) {
             text = numberFormat.format(obj);
         } else if (obj instanceof LocalDate) {
-            text = ((LocalDate)obj).format(dateFormatter);
+            text = ((LocalDate) obj).format(dateFormatter);
         } else if (obj instanceof LocalDateTime) {
-            text = ((LocalDateTime)obj).format(dateTimeFormatter);
+            text = ((LocalDateTime) obj).format(dateTimeFormatter);
         } else {
             text = Objects.toString(obj, "");
         }
@@ -84,9 +84,9 @@ public abstract class CsvIo implements AutoCloseable {
 
     protected boolean isQuoteNeeded(String text) {
         // also quote if unusual characters are present
-        for (int i=0; i<text.length(); i++) {
+        for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            if (c==separator || c == delimiter || !Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
+            if (c == separator || c == delimiter || !Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
                 return true;
             }
         }

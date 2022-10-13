@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 public class LineOutputStream extends OutputStream {
     public static final int INITIAL_BUFFER_SIZE = 128;
     public static final int MAX_BUFFER_SIZE = 1024;
-    
+
     private final Object lock = new Object();
     private byte[] buf;
     private int count;
@@ -52,12 +52,12 @@ public class LineOutputStream extends OutputStream {
 
     private void ensureCapacity(int minCapacity) {
         int oldCapacity = buf.length;
-        
-        if (minCapacity<=oldCapacity) {
+
+        if (minCapacity <= oldCapacity) {
             return;
         }
-        
-        int newCapacity = Math.max(minCapacity, 2*oldCapacity);
+
+        int newCapacity = Math.max(minCapacity, 2 * oldCapacity);
         buf = Arrays.copyOf(buf, newCapacity);
     }
 

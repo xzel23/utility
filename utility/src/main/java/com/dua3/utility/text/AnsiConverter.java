@@ -44,13 +44,13 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      * @return the option tp use
      */
     public static AnsiConversionOption map(String attribute,
-                                                    BiFunction<Object,Object, String> mapper) {
+                                           BiFunction<Object, Object, String> mapper) {
         return new AnsiConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
     }
 
     private boolean reset = false;
     private boolean reverseVideo = false;
-    private final HashMap<String, BiFunction<Object,Object, String>> mappings = new HashMap<>();
+    private final HashMap<String, BiFunction<Object, Object, String>> mappings = new HashMap<>();
 
     /**
      * Create a converter.
@@ -83,20 +83,20 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         this.reverseVideo = flag;
     }
 
-    private static final Map<String,Object> DEFAULT_ATTRIBUTES = new HashMap<>();
-    
+    private static final Map<String, Object> DEFAULT_ATTRIBUTES = new HashMap<>();
+
     @Override
     protected AnsiConverterImpl createConverter(RichText text) {
         return new AnsiConverterImpl(text);
     }
-    
+
     class AnsiConverterImpl extends AttributeBasedConverterImpl<String> {
 
         private final StringBuilder buffer;
 
         AnsiConverterImpl(RichText text) {
             super(DEFAULT_ATTRIBUTES);
-            this.buffer = new StringBuilder(text.length()*11/10);
+            this.buffer = new StringBuilder(text.length() * 11 / 10);
             if (reset) buffer.append(AnsiCode.reset());
             if (reverseVideo) buffer.append(AnsiCode.reverse(true));
         }
@@ -110,7 +110,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
             Map<String, Object> attributes = new HashMap<>();
             Deque<String> tags = new ArrayDeque<>();
-            changedAttributes.forEach( (attribute, values) -> {
+            changedAttributes.forEach((attribute, values) -> {
                 attributes.put(attribute, values.second());
                 BiFunction<Object, Object, String> mapping = mappings.get(attribute);
                 if (mapping != null) {

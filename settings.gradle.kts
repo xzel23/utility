@@ -13,7 +13,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             version("projectVersion", projectVersion)
-            
+
             plugin("versions", "com.github.ben-manes.versions").version("0.42.0")
             plugin("test-logger", "com.adarshr.test-logger").version("3.2.0")
             plugin("spotbugs", "com.github.spotbugs").version("5.0.12")
@@ -31,7 +31,7 @@ dependencyResolutionManagement {
             library("jul-to-slf4j", "org.slf4j", "jul-to-slf4j").versionRef("slf4j")
 
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
-            
+
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
             library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
         }
@@ -46,7 +46,7 @@ dependencyResolutionManagement {
         // Sonatype Releases
         maven {
             name = "oss.sonatype.org-releases"
-            url  = java.net.URI("https://s01.oss.sonatype.org/content/repositories/releases/")
+            url = java.net.URI("https://s01.oss.sonatype.org/content/repositories/releases/")
             mavenContent {
                 releasesOnly()
             }
@@ -55,7 +55,7 @@ dependencyResolutionManagement {
         // Apache releases
         maven {
             name = "apache-releases"
-            url  = java.net.URI("https://repository.apache.org/content/repositories/releases/")
+            url = java.net.URI("https://repository.apache.org/content/repositories/releases/")
             mavenContent {
                 releasesOnly()
             }
@@ -64,7 +64,7 @@ dependencyResolutionManagement {
         if (isSnapshot) {
             // local maven repository
             mavenLocal()
-            
+
             // Sonatype Snapshots
             maven {
                 name = "oss.sonatype.org-snapshots"
@@ -93,5 +93,5 @@ dependencyResolutionManagement {
             }
         }
     }
-    
+
 }

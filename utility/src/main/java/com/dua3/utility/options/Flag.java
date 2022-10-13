@@ -18,15 +18,15 @@ public final class Flag extends Option<Boolean> {
     public static Flag create(String... names) {
         return new Flag(names);
     }
-    
+
     /**
      * Construct a new flag with the given name(s).
      * @param names names for the flag, at least one.
      */
-    private Flag(String [] names) {
+    private Flag(String[] names) {
         super(Flag::mapToBoolean, b -> Boolean.toString(b), names);
-        occurrence(0,1);
-        arity(0,0);
+        occurrence(0, 1);
+        arity(0, 0);
     }
 
     @Override
@@ -48,7 +48,7 @@ public final class Flag extends Option<Boolean> {
         if (s.equalsIgnoreCase("false")) {
             return false;
         }
-        throw new IllegalArgumentException("invalid boolean value: "+s);
+        throw new IllegalArgumentException("invalid boolean value: " + s);
     }
-    
+
 }

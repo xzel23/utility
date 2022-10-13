@@ -16,7 +16,7 @@ import java.awt.Label;
  * @param <T> the task type
  */
 public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
-    
+
     private final ProgressView<T> imp;
     private int rowCount = 0;
 
@@ -25,25 +25,25 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         final JProgressBar pb;
 
         ProgressBarIndicator() {
-            this.pb = new JProgressBar();    
+            this.pb = new JProgressBar();
         }
 
         @Override
         public void finish(State s) {
-            SwingUtilities.invokeLater( () -> {
+            SwingUtilities.invokeLater(() -> {
                 if (pb.isIndeterminate()) {
                     pb.setIndeterminate(false);
                     pb.setMaximum(1);
                 }
-                
+
                 pb.setValue(pb.getMaximum());
             });
         }
 
         @Override
         public void update(int done, int total) {
-            SwingUtilities.invokeLater( () -> {
-                if (total==0) {
+            SwingUtilities.invokeLater(() -> {
+                if (total == 0) {
                     pb.setIndeterminate(true);
                     pb.setMaximum(1);
                     pb.setValue(0);
@@ -54,15 +54,15 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
                 }
             });
         }
-        
+
         /**
          * The integer value that corresponds to 100% in percentage mode. 
          */
         private static final int MAX = 1000;
-        
+
         @Override
         public void update(double percentDone) {
-            SwingUtilities.invokeLater( () -> {
+            SwingUtilities.invokeLater(() -> {
                 if (Double.isNaN(percentDone)) {
                     pb.setIndeterminate(true);
                     pb.setMaximum(1);
@@ -90,7 +90,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     private ProgressView.ProgressIndicator createProgressIndicator(T t) {
         ProgressBarIndicator pi = new ProgressBarIndicator();
         int row = rowCount++;
-        SwingUtilities.invokeLater( () -> {
+        SwingUtilities.invokeLater(() -> {
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.anchor = GridBagConstraints.LINE_END;
             constraints.ipadx = 8;

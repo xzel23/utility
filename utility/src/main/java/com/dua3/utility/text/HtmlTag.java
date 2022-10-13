@@ -50,7 +50,7 @@ public interface HtmlTag {
 
 @SuppressWarnings("ClassNameDiffersFromFileName")
 final class Empty {
-    static final HtmlTag EMPTY_TAG = HtmlTag.tag("","");
+    static final HtmlTag EMPTY_TAG = HtmlTag.tag("", "");
 
     private Empty() {
     }

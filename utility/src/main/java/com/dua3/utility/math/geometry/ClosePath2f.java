@@ -47,8 +47,8 @@ public class ClosePath2f extends Segment2f {
     @Override
     public String toString() {
         return "ClosePath2f{" +
-               vertexToString(p) + "," +
-               vertexToString(q) +
-               '}';
+                vertexToString(p) + "," +
+                vertexToString(q) +
+                '}';
     }
 }

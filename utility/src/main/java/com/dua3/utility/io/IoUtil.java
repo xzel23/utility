@@ -50,7 +50,7 @@ import java.util.stream.Stream;
 public final class IoUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(IoUtil.class);
-    
+
     private static final Pattern PATTERN_URI = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:.*");
 
     private IoUtil() {
@@ -76,16 +76,16 @@ public final class IoUtil {
     private static Pair<Integer, Integer> getFilenameInfo(CharSequence path) {
         // trim trailing separators
         int end = path.length();
-        while (end>0 && isSeparatorChar(path.charAt(end-1))) {
+        while (end > 0 && isSeparatorChar(path.charAt(end - 1))) {
             end--;
         }
 
         // find start of filename
         int start = end;
-        while (start>0 && !isSeparatorChar(path.charAt(start-1))) {
+        while (start > 0 && !isSeparatorChar(path.charAt(start - 1))) {
             start--;
         }
-        return Pair.of(start,end);
+        return Pair.of(start, end);
     }
 
     /**
@@ -93,20 +93,20 @@ public final class IoUtil {
      * <p>
      * In addition to the system dependent
      * {@link File#separatorChar}, the forward slash '/' is always considered a separator.
-     *      
+     *
      * @param c the char to test
      * @return true if separator
      */
     public static boolean isSeparatorChar(char c) {
-        return c=='/' || c==File.separatorChar;
+        return c == '/' || c == File.separatorChar;
     }
-    
+
     /**
      * Get file extension.
      *
      * @param  path
      *              the path
-     * @return      the extension
+     * @return the extension
      */
     public static String getExtension(Path path) {
         Path fnamePath = path.getFileName();
@@ -124,7 +124,7 @@ public final class IoUtil {
      *
      * @param  url
      *             the URL
-     * @return     the extension
+     * @return the extension
      */
     public static String getExtension(URL url) {
         return getExtension(url.getFile());
@@ -134,7 +134,7 @@ public final class IoUtil {
      * Get file extension.
      *
      * @param  uri the URI
-     * @return     the extension
+     * @return the extension
      */
     public static String getExtension(URI uri) {
         return getExtension(uri.getSchemeSpecificPart());
@@ -144,7 +144,7 @@ public final class IoUtil {
      * Get file extension.
      *
      * @param  path  the path
-     * @return       the extension
+     * @return the extension
      */
     public static String getExtension(String path) {
         return getExtensionUnsafe(getFilename(path));
@@ -155,7 +155,7 @@ public final class IoUtil {
      * <p>
      * <em>NOTE:</em> {@code fname} must not contain path separators.
      * @param  fname the filename
-     * @return       the extension
+     * @return the extension
      */
     private static String getExtensionUnsafe(String fname) {
         int pos = fname.lastIndexOf('.');
@@ -167,7 +167,7 @@ public final class IoUtil {
      *
      * @param  path
      *               the file path
-     * @return       filename without extension
+     * @return filename without extension
      */
     public static String stripExtension(String path) {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
@@ -187,7 +187,7 @@ public final class IoUtil {
      *               the file path
      * @param extension
      *              the new file extension
-     * @return       filename with replaced extension
+     * @return filename with replaced extension
      */
     public static String replaceExtension(String path, String extension) {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
@@ -197,13 +197,13 @@ public final class IoUtil {
 
         if (pos < fi.first()) {
             // filename has no extension => insert extension
-            return path.substring(0, fi.second())+'.'+extension+path.substring(fi.second());
+            return path.substring(0, fi.second()) + '.' + extension + path.substring(fi.second());
         } else {
             // filename has extension => replace extension
             return path.substring(0, pos) + '.' + extension + path.substring(fi.second());
         }
     }
-    
+
     /**
      * Replace file extension.
      * <p>
@@ -213,18 +213,18 @@ public final class IoUtil {
      *               the file path
      * @param extension
      *              the new file extension
-     * @return       filename with replaced extension
+     * @return filename with replaced extension
      */
     public static Path replaceExtension(Path path, String extension) {
         Path parent = path.getParent();
-        
+
         Path filename = path.getFileName();
-        if (filename==null) {
+        if (filename == null) {
             return path;
         }
-        
+
         filename = Paths.get(replaceExtension(filename.toString(), extension));
-        
+
         return parent == null ? filename : parent.resolve(filename);
     }
 
@@ -235,7 +235,7 @@ public final class IoUtil {
      *                     the Path
      * @param  cs
      *                     the Charset
-     * @return             content of path
+     * @return content of path
      * @throws IOException
      *                     if content could not be read
      */
@@ -254,7 +254,7 @@ public final class IoUtil {
      *                     the url
      * @param  cs
      *                     the Charset
-     * @return             content of url
+     * @return content of url
      * @throws IOException
      *                     if content could not be read
      */
@@ -271,7 +271,7 @@ public final class IoUtil {
      *                     the uri
      * @param  cs
      *                     the Charset
-     * @return             content of uri
+     * @return content of uri
      * @throws IOException
      *                     if content could not be read
      */
@@ -341,7 +341,7 @@ public final class IoUtil {
      * Get URL for path.
      *
      * @param  path                  the path
-     * @return                       the URL
+     * @return the URL
      * @throws IllegalArgumentException if conversion fails
      */
     public static URL toURL(Path path) {
@@ -352,7 +352,7 @@ public final class IoUtil {
      * Get URI for path.
      *
      * @param  path                  the path
-     * @return                       the URI
+     * @return the URI
      */
     public static URI toURI(Path path) {
         return path.toUri();
@@ -362,7 +362,7 @@ public final class IoUtil {
      * Get URL for URI.
      *
      * @param  uri                   the URI
-     * @return                       the URL
+     * @return the URL
      * @throws IllegalArgumentException if conversion fails
      */
     public static URL toURL(URI uri) {
@@ -377,7 +377,7 @@ public final class IoUtil {
      * Get Path for URI.
      *
      * @param  uri                   the URI
-     * @return                       the Path
+     * @return the Path
      */
     public static Path toPath(URI uri) {
         return Paths.get(uri);
@@ -387,7 +387,7 @@ public final class IoUtil {
      * Get URI for URL.
      *
      * @param  url                   the URL
-     * @return                       the URI
+     * @return the URI
      * @throws IllegalArgumentException if conversion fails
      */
     public static URI toURI(URL url) {
@@ -402,7 +402,7 @@ public final class IoUtil {
      * Get URI for URL.
      *
      * @param  url                   the URL
-     * @return                       the URI
+     * @return the URI
      * @throws IllegalArgumentException if conversion fails
      */
     public static Path toPath(URL url) {
@@ -421,14 +421,14 @@ public final class IoUtil {
         if (root != null) {
             sb.append(root.toString().replace("\\", sep));
         }
-        for (Path p: path) {
+        for (Path p : path) {
             sb.append(sep);
             sb.append(p);
             sep = "/";
         }
         return sb.toString();
     }
-    
+
     /**
      * Check if string denotes a URI.
      * @param s the string
@@ -463,7 +463,7 @@ public final class IoUtil {
             return Paths.get(s);
         }
     }
-    
+
     /**
      * Delete a file or directory recursively.
      *
@@ -518,7 +518,7 @@ public final class IoUtil {
     public static String loadText(
             Path path,
             Consumer<? super Charset> onCharsetDetected,
-            Charset ... charsets)
+            Charset... charsets)
             throws IOException {
         ByteBuffer data = ByteBuffer.wrap(Files.readAllBytes(path));
         data.mark();
@@ -580,7 +580,7 @@ public final class IoUtil {
      *  if the type is supported but an IOException occurs during stream creation
      */
     public static InputStream getInputStream(@Nullable Object o) throws IOException {
-        return o==null ? InputStream.nullInputStream() : StreamSupplier.getInputStream(o);
+        return o == null ? InputStream.nullInputStream() : StreamSupplier.getInputStream(o);
     }
 
     /**
@@ -604,7 +604,7 @@ public final class IoUtil {
      *  if the type is supported but an IOException occurs during stream creation
      */
     public static OutputStream getOutputStream(@Nullable Object o) throws IOException {
-        return o==null ? OutputStream.nullOutputStream() : StreamSupplier.getOutputStream(o);
+        return o == null ? OutputStream.nullOutputStream() : StreamSupplier.getOutputStream(o);
     }
 
     /**
@@ -633,16 +633,16 @@ public final class IoUtil {
 
         public final byte[] prefixA;
         public final byte[] prefixB;
-        
+
         private final OutputStream out;
-        
+
         private final ByteArrayOutputStream baosA = new ByteArrayOutputStream(128);
         private final ByteArrayOutputStream baosB = new ByteArrayOutputStream(128);
 
         Combiner(Path path, byte[] prefixA, byte[] prefixB) throws IOException {
             this(Files.newOutputStream(path), prefixA, prefixB);
         }
-        
+
         Combiner(OutputStream out, byte[] prefixA, byte[] prefixB) {
             this.out = out;
             this.prefixA = prefixA;
@@ -651,14 +651,14 @@ public final class IoUtil {
 
         void writeA(int b) throws IOException {
             baosA.write(b);
-            if(b == '\n') {
+            if (b == '\n') {
                 flushA();
             }
         }
-        
+
         void writeB(int b) throws IOException {
             baosB.write(b);
-            if(b == '\n') {
+            if (b == '\n') {
                 flushB();
             }
         }
@@ -674,7 +674,7 @@ public final class IoUtil {
             out.write(baosB.toByteArray());
             baosA.reset();
         }
-        
+
         OutputStream streamA() {
             return new OutputStream() {
                 @Override
@@ -683,7 +683,7 @@ public final class IoUtil {
                 }
             };
         }
-        
+
         OutputStream streamB() {
             return new OutputStream() {
                 @Override
@@ -708,12 +708,12 @@ public final class IoUtil {
     static class CleanupSystemStreams implements Runnable {
         private final PrintStream sOut;
         private final PrintStream sErr;
-        
+
         CleanupSystemStreams() {
             this.sOut = System.out;
             this.sErr = System.err;
         }
-        
+
         @Override
         public void run() {
             System.setOut(sOut);
@@ -738,7 +738,7 @@ public final class IoUtil {
 
         System.setOut(new PrintStream(combiner.streamA(), true, StandardCharsets.UTF_8));
         System.setErr(new PrintStream(combiner.streamB(), true, StandardCharsets.UTF_8));
-        
+
         return combiner;
     }
 
@@ -751,20 +751,21 @@ public final class IoUtil {
     public static Runnable composedClose(AutoCloseable... closeables) {
         return () -> {
             Throwable t = null;
-            for (AutoCloseable c: closeables) {
+            for (AutoCloseable c : closeables) {
                 try {
                     c.close();
                 } catch (Throwable t1) {
-                    if (t==null) {
+                    if (t == null) {
                         t = t1;
                     } else {
                         try {
                             t.addSuppressed(t1);
-                        } catch (Throwable ignore) {}
+                        } catch (Throwable ignore) {
+                        }
                     }
                 }
             }
-            if (t!=null) {
+            if (t != null) {
                 sneakyThrow(t);
             }
         };

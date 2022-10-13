@@ -26,7 +26,9 @@ public interface ImageUtil<I> {
             iu = serviceIterator.next();
         } else {
             iu = new ImageUtil<>() {
-                private <T> T noImplementation() { throw new UnsupportedOperationException("no ImageUtil implementation present"); }
+                private <T> T noImplementation() {
+                    throw new UnsupportedOperationException("no ImageUtil implementation present");
+                }
 
                 @Override
                 public Image load(InputStream in) {
@@ -78,5 +80,5 @@ public interface ImageUtil<I> {
      * @return image
      */
     Image convert(I img);
-    
+
 }

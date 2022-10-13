@@ -330,7 +330,7 @@ public interface Color {
      *
      * @param  s
      *           the text
-     * @return   result of conversion
+     * @return result of conversion
      */
     static Color valueOf(String s) {
         // try named colors first
@@ -343,7 +343,7 @@ public interface Color {
         if (s.startsWith("#")) {
             String v = s.substring(1);
             int i = Integer.parseUnsignedInt(v, 16);
-            boolean hasAlpha = v.length()>6; // use RGBA if alpha is present, else add opaque alpha
+            boolean hasAlpha = v.length() > 6; // use RGBA if alpha is present, else add opaque alpha
             return new RGBColor(hasAlpha ? rgba2argb(i) : i + 0xff000000);
         }
 
@@ -424,7 +424,7 @@ public interface Color {
      * @return the color
      */
     static RGBColor rgb(float r, float g, float b) {
-        return new RGBColor(Math.round(r*255), Math.round(g*255), Math.round(b*255));
+        return new RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
     }
 
     /**
@@ -436,7 +436,7 @@ public interface Color {
      * @return the color
      */
     static RGBColor rgb(float r, float g, float b, float alpha) {
-        return new RGBColor(Math.round(r*255), Math.round(g*255), Math.round(b*255) ,Math.round(alpha*255));
+        return new RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), Math.round(alpha * 255));
     }
 
     /**
@@ -511,7 +511,7 @@ public interface Color {
      * @return hex-string
      */
     default String toArgb() {
-        return String.format(Locale.ROOT,"#%08x", argb());
+        return String.format(Locale.ROOT, "#%08x", argb());
     }
 
     /**
@@ -520,7 +520,7 @@ public interface Color {
      * @return hex-string
      */
     default String toRgba() {
-        return String.format(Locale.ROOT,"#%08x", rgba());
+        return String.format(Locale.ROOT, "#%08x", rgba());
     }
 
     /**
@@ -551,7 +551,7 @@ public interface Color {
         if (!isOpaque()) {
             return toRgba();
         } else {
-            return String.format(Locale.ROOT,"#%06x", argb()&0x00ffffff);
+            return String.format(Locale.ROOT, "#%06x", argb() & 0x00ffffff);
         }
     }
 
@@ -572,13 +572,13 @@ public interface Color {
     }
 
     private static int argb2rgba(int v) {
-        return (v<<8) + (v>>>24);
+        return (v << 8) + (v >>> 24);
     }
 
     private static int rgba2argb(int v) {
-        return (v<<24) + (v>>>8);
+        return (v << 24) + (v >>> 8);
     }
-    
+
     /**
      * Get color components.
      *
@@ -587,13 +587,13 @@ public interface Color {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     default byte[] toByteArray() {
         int argb = argb();
-        
+
         byte a = (byte) ((argb >> RGBColor.SHIFT_A) & 0xff);
         byte r = (byte) ((argb >> RGBColor.SHIFT_R) & 0xff);
         byte g = (byte) ((argb >> RGBColor.SHIFT_G) & 0xff);
         byte b = (byte) ((argb >> RGBColor.SHIFT_B) & 0xff);
 
-        return new byte[] { a, r, g, b };
+        return new byte[]{a, r, g, b};
     }
 
     /**
@@ -604,12 +604,12 @@ public interface Color {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     default byte[] toByteArrayRGB() {
         int argb = argb();
-        
+
         byte r = (byte) ((argb >> RGBColor.SHIFT_R) & 0xff);
         byte g = (byte) ((argb >> RGBColor.SHIFT_G) & 0xff);
         byte b = (byte) ((argb >> RGBColor.SHIFT_B) & 0xff);
 
-        return new byte[] { r, g, b };
+        return new byte[]{r, g, b};
     }
 
     /**
@@ -633,8 +633,9 @@ public interface Color {
  */
 @SuppressWarnings("ClassNameDiffersFromFileName")
 final class Colors {
-    private Colors() { 
+    private Colors() {
         // utility class
     }
+
     static final Map<String, Color> COLORS = new LinkedHashMap<>();
 }

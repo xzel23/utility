@@ -10,7 +10,7 @@ open module com.dua3.utility.db {
     exports com.dua3.utility.db;
 
     requires transitive java.sql;
-    
+
     requires com.dua3.utility;
 
     requires static com.dua3.cabe.annotations;

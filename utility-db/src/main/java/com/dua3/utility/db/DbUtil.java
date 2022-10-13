@@ -55,8 +55,8 @@ public final class DbUtil {
     static {
         try {
             // load properties
-            Map<Object,Object> p = LangUtil.loadProperties(DbUtil.class.getResourceAsStream("jdbc_drivers.properties"));
-            
+            Map<Object, Object> p = LangUtil.loadProperties(DbUtil.class.getResourceAsStream("jdbc_drivers.properties"));
+
             // parse entries
             p.forEach((key1, value) -> {
                 try {
@@ -265,7 +265,7 @@ public final class DbUtil {
                 Driver driver = driverClass.getConstructor().newInstance();
                 return Optional.of(driver);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | SecurityException e) {
+                     | InvocationTargetException | SecurityException e) {
                 throw new SQLException("could instantiate driver", e);
             }
         } catch (IOException e) {

@@ -54,7 +54,7 @@ public class Stopwatch {
     public static AutoCloseableStopWatch create(Supplier<String> name, Consumer<Stopwatch> onClose) {
         return new AutoCloseableStopWatch(name, onClose);
     }
-    
+
     public static class AutoCloseableStopWatch extends Stopwatch implements AutoCloseable {
         private final Consumer<Stopwatch> onClose;
 
@@ -67,13 +67,13 @@ public class Stopwatch {
             super(name);
             this.onClose = onClose;
         }
-        
+
         @Override
         public void close() {
             onClose.accept(this);
         }
     }
-    
+
     /**
      * Enum defining the different output formats.
      */
@@ -92,7 +92,7 @@ public class Stopwatch {
 
                 long hr = absSeconds / 3600;
                 long min = (absSeconds % 3600) / 60;
-                double sec = (absSeconds%60) + nano / 1_000_000_000.0;
+                double sec = (absSeconds % 60) + nano / 1_000_000_000.0;
 
                 String positive = String.format(
                         Locale.ROOT,
@@ -126,7 +126,7 @@ public class Stopwatch {
                 int nano = Math.abs(d.getNano());
 
                 long min = absSeconds / 60;
-                double sec = (absSeconds%60) + nano / 1_000_000_000.0;
+                double sec = (absSeconds % 60) + nano / 1_000_000_000.0;
 
                 String positive = String.format(
                         Locale.ROOT,
@@ -171,7 +171,7 @@ public class Stopwatch {
                 long absSeconds = Math.abs(seconds);
                 int nano = Math.abs(d.getNano());
 
-                double millis = (absSeconds + nano / 1_000_000_000.0)*1000.0;
+                double millis = (absSeconds + nano / 1_000_000_000.0) * 1000.0;
 
                 String positive = String.format(
                         Locale.ROOT,
@@ -189,7 +189,7 @@ public class Stopwatch {
          */
         public abstract String format(Duration d);
     }
-    
+
     private final Object name;
     private final Instant start;
     private Instant startSplit;
@@ -261,7 +261,7 @@ public class Stopwatch {
 
     @Override
     public String toString() {
-        return "[" + name + "] current split: " + elapsedStringSplit(false) + " total: "+ elapsedString();
+        return "[" + name + "] current split: " + elapsedStringSplit(false) + " total: " + elapsedString();
     }
 
     /**

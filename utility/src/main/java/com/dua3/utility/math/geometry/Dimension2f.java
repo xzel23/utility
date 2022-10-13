@@ -11,8 +11,8 @@ public record Dimension2f(float width, float height) {
      * @param height the height (>= 0)
      */
     public Dimension2f {
-        assert width >=0 : "width is negative: "+width;
-        assert height >=0 : "height is negative: "+height;
+        assert width >= 0 : "width is negative: " + width;
+        assert height >= 0 : "height is negative: " + height;
     }
 
     /**
@@ -22,7 +22,7 @@ public record Dimension2f(float width, float height) {
      * @return instance with given width and height
      */
     public static Dimension2f of(float w, float h) {
-        return new Dimension2f(w,h);    
+        return new Dimension2f(w, h);
     }
-    
+
 }

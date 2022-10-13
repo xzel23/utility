@@ -19,7 +19,7 @@ public class OptionException extends IllegalStateException {
          * @param e the parent exception
          */
         public ParameterConversionException(Option<?> option, String parameter, Exception e) {
-            super("invalid value passed to "+option.name()+": "+parameter, e);
+            super("invalid value passed to " + option.name() + ": " + parameter, e);
             this.option = option;
             this.parameter = parameter;
         }
@@ -30,7 +30,7 @@ public class OptionException extends IllegalStateException {
          * @param parameter the parameter value as String
          */
         public ParameterConversionException(Option<?> option, String parameter) {
-            super("invalid value passed to "+option.name()+": "+parameter);
+            super("invalid value passed to " + option.name() + ": " + parameter);
             this.option = option;
             this.parameter = parameter;
         }

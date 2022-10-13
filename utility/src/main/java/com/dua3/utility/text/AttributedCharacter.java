@@ -26,7 +26,7 @@ public interface AttributedCharacter {
             }
         };
     }
-    
+
     /**
      * Get character.
      * @return the char value

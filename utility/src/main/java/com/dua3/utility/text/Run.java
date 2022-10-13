@@ -52,10 +52,10 @@ public final class Run implements AttributedCharSequence {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null || getClass() != obj.getClass() || hashCode()!=obj.hashCode()) {
+        if (obj == null || getClass() != obj.getClass() || hashCode() != obj.hashCode()) {
             return false;
         }
-        
+
         return equals((Run) obj, TextAttributes::equals);
     }
 
@@ -73,9 +73,9 @@ public final class Run implements AttributedCharSequence {
                 return false;
             }
         }
-        return true;        
+        return true;
     }
-    
+
     /**
      * Compare using a user supplied predicate for comparing TextAttributes.
      * @param other the object to compare to
@@ -117,10 +117,10 @@ public final class Run implements AttributedCharSequence {
      * Convert index into this {@link RichText} instance to index into base sequence.
      * @return index into base sequence
      */
-    int convertIndex(int baseIndex){
-        return baseIndex-this.start;
+    int convertIndex(int baseIndex) {
+        return baseIndex - this.start;
     }
-    
+
     /**
      * Get style of this Run.
      *
@@ -131,7 +131,7 @@ public final class Run implements AttributedCharSequence {
     }
 
     private int hash = 0;
-    
+
     @Override
     public int hashCode() {
         int h = hash;
@@ -190,7 +190,7 @@ public final class Run implements AttributedCharSequence {
      * @return the FontDef
      */
     public FontDef getFontDef() {
-        if (fd==null) {
+        if (fd == null) {
             FontDef collected = new FontDef();
             for (Style style : getStyles()) {
                 collected.merge(style.getFontDef());
@@ -198,5 +198,5 @@ public final class Run implements AttributedCharSequence {
             fd = collected;
         }
         return fd;
-    } 
+    }
 }

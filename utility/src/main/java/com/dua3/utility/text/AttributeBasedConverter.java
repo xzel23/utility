@@ -42,15 +42,15 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
     protected abstract static class AttributeBasedConverterImpl<T> {
 
         /** The current font used when appending text. */
-        private Map<String,Object> currentAttributes;
+        private Map<String, Object> currentAttributes;
         /** Store the initial attributes so that they can be restored at the end. */
-        private final Map<String,Object> initialAttributes;
+        private final Map<String, Object> initialAttributes;
 
         /**
          * Create a new instance.
          * @param defaultAttributes the default attributes to be used
          */
-        protected AttributeBasedConverterImpl(Map<String,Object> defaultAttributes) {
+        protected AttributeBasedConverterImpl(Map<String, Object> defaultAttributes) {
             this.initialAttributes = defaultAttributes;
             // copy currentAttributes
             this.currentAttributes = new HashMap<>();
@@ -76,7 +76,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @return Map containing all attributes set by this run's styles
          */
         protected static Map<String, Object> collectAttributes(Run run) {
-            Map<String,Object> styleAttributes = new HashMap<>();
+            Map<String, Object> styleAttributes = new HashMap<>();
             run.getStyles().forEach(style -> copyAttributes(style, styleAttributes));
             return styleAttributes;
         }
@@ -87,9 +87,9 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param sourceAttributes the source entries
          * @param destinationAttributes the destination map
          */
-        private static void copyAttributes(Iterable<? extends Map.Entry<String, Object>> sourceAttributes, 
+        private static void copyAttributes(Iterable<? extends Map.Entry<String, Object>> sourceAttributes,
                                            Map<String, Object> destinationAttributes) {
-            sourceAttributes.forEach( entry -> {
+            sourceAttributes.forEach(entry -> {
                 String attribute = entry.getKey();
                 Object value = entry.getValue();
                 if (Objects.equals(Style.FONT, attribute)) {
@@ -100,16 +100,16 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
                 } else {
                     destinationAttributes.put(attribute, value);
                 }
-            });            
+            });
         }
-        
+
         /**
          * Update style. There should be no need to override this method in implementations.
          * @param run the run for which the style should be updated
          */
         protected void setStyle(Run run) {
             // collect this run's attribute
-            Map<String,Object> newAttributes = collectAttributes(run);
+            Map<String, Object> newAttributes = collectAttributes(run);
             handleAttributeChanges(newAttributes);
         }
 
@@ -137,10 +137,10 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
                 setStyle(run);
                 appendChars(run);
             }
-            
+
             // reset attributes
             handleAttributeChanges(initialAttributes);
-            
+
             return this;
         }
 

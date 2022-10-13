@@ -21,7 +21,7 @@ public class HtmlConverterTest {
     @Test
     public void testEmbeddedStyle() {
         Style bold = Style.create("bold", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
-        
+
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
         builder.push(bold);
@@ -33,7 +33,7 @@ public class HtmlConverterTest {
 
         String expected = "Hello <b>world</b>!";
         String actual = HtmlConverter.create().convert(rt);
-        
+
         assertEquals(expected, actual);
     }
 
@@ -50,7 +50,7 @@ public class HtmlConverterTest {
 
         String expected = "Hello <b>world!</b>";
         String actual = HtmlConverter.create().convert(rt);
-        
+
         assertEquals(expected, actual);
     }
 
@@ -59,7 +59,7 @@ public class HtmlConverterTest {
         Style sans = Style.create("sans", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SANS_SERIF));
         Style serif = Style.create("serif", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SERIF));
         Style mono = Style.create("mono", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
-        
+
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(sans);
         builder.append("Keyboard input is shown in a ");
@@ -75,7 +75,7 @@ public class HtmlConverterTest {
         RichText rt = builder.toRichText();
         String expected = "<span style=\"font-family: sans-serif\">Keyboard input is shown in a <code>monospaced</code> typeface, direct speech is shown in a font with <span style=\"font-family: serif\">serifs</span>.</span>";
         String actual = HtmlConverter.create().convert(rt);
-        
+
         assertEquals(expected, actual);
     }
 
@@ -83,10 +83,10 @@ public class HtmlConverterTest {
     public void testFont() {
         Font arial = new Font("arial-16-bold");
         Font times = new Font("courier-12");
-        
+
         Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
         Style style2 = Style.create("style2", Map.entry(Style.FONT, times));
-        
+
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
         builder.append("Don't ");
@@ -98,7 +98,7 @@ public class HtmlConverterTest {
         RichText rt = builder.toRichText();
         String expected = "<span style=\"color: #000000; font-size: 16.0pt; font-family: arial; font-weight: bold; font-style: normal;\">Don't <span style=\"color: #000000; font-size: 12.0pt; font-family: courier; font-weight: normal; font-style: normal;\">mix</span> too many fonts!</span>";
         String actual = HtmlConverter.create().convert(rt);
-        
+
         assertEquals(expected, actual);
     }
 
@@ -106,10 +106,10 @@ public class HtmlConverterTest {
     public void testFontCss() {
         Font arial = new Font("arial-16-bold");
         Font times = new Font("courier-12");
-        
+
         Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
         Style style2 = Style.create("style2", Map.entry(Style.FONT, times));
-        
+
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
         builder.append("Don't ");
@@ -121,7 +121,7 @@ public class HtmlConverterTest {
         RichText rt = builder.toRichText();
         String expected = "<span class=\"arial-bold-16.0-#000000\">Don't <span class=\"courier-12.0-#000000\">mix</span> too many fonts!</span>";
         String actual = HtmlConverter.create(HtmlConverter.useCss(true)).convert(rt);
-        
+
         assertEquals(expected, actual);
     }
 
