@@ -67,9 +67,15 @@ class XmlUtilTest {
     }
     
     @Test
-    void prettyPrint() throws Exception {
+    void prettyPrintDocument() throws Exception {
         Document document = XML_UTIL.parse(XML_UNFORMATTED);
         String text = XML_UTIL.prettyPrint(document);
+        assertEquals(TextUtil.toSystemLineEnds(XML), text);
+    }
+
+    @Test
+    void prettyPrintText() throws Exception {
+        String text = XML_UTIL.prettyPrint(XML_UNFORMATTED);
         assertEquals(TextUtil.toSystemLineEnds(XML), text);
     }
 

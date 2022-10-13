@@ -284,10 +284,24 @@ public final class XmlUtil {
     /**
      * Pretty print W3C Document.
      * @param document the document
-     * @return XML for the document
+     * @return formatted XML for the document
      */
     public String prettyPrint(Document document) {
         return formatNode(document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ TextUtil.LINE_END_SYSTEM);
+    }
+
+    /**
+     * Pretty print XML. If the document cannot be parsed, the unchanged text is returned.
+     * @param xml the XML text
+     * @return formatted XML for the document
+     */
+    public String prettyPrint(String xml) {
+        try {
+            return prettyPrint(parse(xml));
+        } catch (IOException|SAXException e) {
+            LOG.warn("could not parse XML");
+            return xml;
+        }
     }
 
     private String formatNode(Node node, String prefix) {
