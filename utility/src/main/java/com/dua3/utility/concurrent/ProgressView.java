@@ -8,11 +8,37 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * 
+ * @param <T>
+ */
 public class ProgressView<T> implements ProgressTracker<T> {
 
+    /**
+     * Value to pass to {@link ProgressIndicator#update(double)} for an indeterminate progress.
+     */
+    public static final double PROGRESS_INDETERMINATE = Double.NaN;
+
+    /**
+     * Indicator for a single task's progress.
+     */
     public interface ProgressIndicator {
+        /**
+         * Mark task as finished
+         * @param s the {@link com.dua3.utility.concurrent.ProgressTracker.State} to set
+         */
         void finish(State s);
+
+        /**
+         * Update task progess.
+         * @param done number of finished steps
+         * @param total total number of steps
+         */
         void update(int done, int total);
+        /**
+         * Update task progess.
+         * @param percentDone percentage value, 0.0 &le; percentDone &le; 1.0 or use PROGRESS_INDETERMINATE to mark as indeterminate
+         */
         void update(double percentDone);
     }
     

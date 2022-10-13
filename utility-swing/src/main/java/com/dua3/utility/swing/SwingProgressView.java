@@ -63,10 +63,16 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         @Override
         public void update(double percentDone) {
             SwingUtilities.invokeLater( () -> {
-                pb.setIndeterminate(false);
-                pb.setMaximum(MAX);
-                //noinspection NumericCastThatLosesPrecision
-                pb.setValue((int) (MathUtil.clamp(0, MAX, percentDone * MAX) + 0.5));
+                if (Double.isNaN(percentDone)) {
+                    pb.setIndeterminate(true);
+                    pb.setMaximum(1);
+                    pb.setValue(0);
+                } else {
+                    pb.setIndeterminate(false);
+                    pb.setMaximum(MAX);
+                    //noinspection NumericCastThatLosesPrecision
+                    pb.setValue((int) (MathUtil.clamp(0, MAX, percentDone * MAX) + 0.5));
+                }
             });
         }
     }
@@ -81,7 +87,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
         setLayout(new GridBagLayout());
     }
 
-    private <T> ProgressView.ProgressIndicator createProgressIndicator(T t) {
+    private ProgressView.ProgressIndicator createProgressIndicator(T t) {
         ProgressBarIndicator pi = new ProgressBarIndicator();
         int row = rowCount++;
         SwingUtilities.invokeLater( () -> {
