@@ -3,9 +3,10 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import java.net.URI;
-import com.adarshr.gradle.testlogger.theme.ThemeType;
+import java.net.URI
+import com.adarshr.gradle.testlogger.theme.ThemeType
 
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id("java-library")
     id("maven-publish")
