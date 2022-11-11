@@ -291,6 +291,35 @@ public final class XmlUtil {
     }
 
     /**
+     * Pretty print W3C Document.
+     * @param writer the {@link Writer} to use
+     * @param document the document
+     */
+    public void prettyPrint(Writer writer, Document document) throws IOException {
+        formatNode(writer, document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + TextUtil.LINE_END_SYSTEM);
+        writer.flush();
+    }
+
+    /**
+     * Pretty print W3C Document.
+     * @param out the {@link OutputStream} to use
+     * @param document the document
+     */
+    public void prettyPrint(OutputStream out, Document document) throws IOException {
+        prettyPrint(out, document, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Pretty print W3C Document.
+     * @param out the {@link OutputStream} to use
+     * @param document the document
+     * @param cs the {@link Charset} to use
+     */
+    public void prettyPrint(OutputStream out, Document document, Charset cs) throws IOException {
+        prettyPrint(new OutputStreamWriter(out, cs), document);
+    }
+
+    /**
      * Pretty print XML. If the document cannot be parsed, the unchanged text is returned.
      * @param xml the XML text
      * @return formatted XML for the document
@@ -304,15 +333,57 @@ public final class XmlUtil {
         }
     }
 
+    /**
+     * Pretty print XML. If the document cannot be parsed, the unchanged text is written.
+     * @param writer the {@link Writer} to use
+     * @param xml the XML text
+     */
+    public void prettyPrint(Writer writer, String xml) throws IOException {
+        try {
+            prettyPrint(writer, parse(xml));
+        } catch (SAXException e) {
+            LOG.warn("could not parse XML");
+            writer.write(xml);
+        }
+    }
+
+    /**
+     * Pretty print XML. If the document cannot be parsed, the unchanged text is written.
+     * @param out the {@link OutputStream} to use
+     * @param xml the XML text
+     */
+    public void prettyPrint(OutputStream out, String xml) throws IOException {
+        prettyPrint(out, xml, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Pretty print XML. If the document cannot be parsed, the unchanged text is written.
+     * @param out the {@link OutputStream} to use
+     * @param xml the XML text
+     * @param cs the {@link Charset} to use
+     */
+    public void prettyPrint(OutputStream out, String xml, Charset cs) throws IOException {
+        try {
+            prettyPrint(new OutputStreamWriter(out, cs), parse(xml));
+        } catch (SAXException e) {
+            LOG.warn("could not parse XML");
+            new OutputStreamWriter(out, cs).write(xml);
+        }
+    }
+
     private String formatNode(Node node, String prefix) {
         try (StringWriter writer = new StringWriter(64)) {
-            writer.write(prefix);
-            format(writer, node, StandardCharsets.UTF_8);
+            formatNode(writer, node, prefix);
             return writer.toString();
         } catch (IOException e) {
             // should not happen when writing to a String
             throw new UncheckedIOException(e);
         }
+    }
+
+    private void formatNode(Writer writer, Node node, String prefix) throws IOException {
+        writer.write(prefix);
+        format(writer, node, StandardCharsets.UTF_8);
     }
 
     /**
