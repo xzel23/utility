@@ -161,6 +161,21 @@ the parameter.
 
 ## Changes
 
+### 10.2.6
+
+- support value "auto" for configuring colored log output. colors are enabled if a terminal is attached and the TERM environment variable is set. this is the new default for this option.
+- update plugins, junit
+
+### 10.2.5
+
+- add overloads for XmlUtil.prettyPrint()
+- update gradle, dependencies
+
+### 10.2.4
+
+- update plugins
+- fix compile time warnings in build script
+
 ### 10.2.3
 
 - add XmlUtil.prettyPrint(String)

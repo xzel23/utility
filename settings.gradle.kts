@@ -1,5 +1,5 @@
 rootProject.name = "dua3-utility"
-val projectVersion = "10.2.5"
+val projectVersion = "10.2.6"
 
 include("utility")
 include("utility-db")
@@ -14,7 +14,7 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("versions", "com.github.ben-manes.versions").version("0.44.0")
+            plugin("versions", "com.github.ben-manes.versions").version("0.45.0")
             plugin("test-logger", "com.adarshr.test-logger").version("3.2.0")
             plugin("spotbugs", "com.github.spotbugs").version("5.0.13")
             plugin("cabe", "com.dua3.cabe").version("1.0.0")
