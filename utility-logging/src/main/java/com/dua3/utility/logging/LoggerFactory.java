@@ -85,10 +85,12 @@ public class LoggerFactory implements ILoggerFactory {
             default ->
                     throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_STREAM + ": '" + propertyConsoleStream + "'");
         };
-        String propertyConsoleColored = properties.getProperty(LOGGER_CONSOLE_COLORED, "true").trim().toLowerCase(Locale.ROOT);
+        String propertyConsoleColored = properties.getProperty(LOGGER_CONSOLE_COLORED, "auto").trim().toLowerCase(Locale.ROOT);
         final boolean colored = switch (propertyConsoleColored) {
             case "true" -> true;
             case "false" -> false;
+            // "auto" enables colored output when a terminal is attached and the TERM environment variable is set
+            case "auto" -> System.console() != null && System.getenv().get("TERM") != null;
             default ->
                     throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_COLORED + ": '" + propertyConsoleColored + "'");
         };
