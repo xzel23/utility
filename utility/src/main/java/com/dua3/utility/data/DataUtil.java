@@ -9,7 +9,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -44,6 +47,10 @@ public final class DataUtil {
     public static class ConversionException extends IllegalArgumentException {
         private final String sourceClassName;
         private final String targetClassName;
+
+        ConversionException(Class<?> sourceClass, Class<?> targetClass, Throwable cause) {
+            this(sourceClass, targetClass, "could not convert from "+sourceClass.getSimpleName()+" to "+targetClass.getSimpleName(), cause);
+        }
 
         ConversionException(Class<?> sourceClass, Class<?> targetClass, String message) {
             super(message);
@@ -99,6 +106,8 @@ public final class DataUtil {
      *     <li> if the target class is an integer type and the value is of type double, a conversion without loss of precision is tried;
      *     <li> if the target class is {@link LocalDate} and the source class is {@link String}, use DateTimeFormatter.ISO_DATE;
      *     <li> if the target class is {@link java.time.LocalDateTime} and the source class is {@link String}, use DateTimeFormatter.ISO_DATE_TIME;
+     *     <li> if the source and target classes is any of URI, URL, File, Path, the standard conversion rules are applied;
+     *     <li> if the source class is {@link String} and the target class is any of URI, URL, File, Path, the standard conversion rules are applied;
      *     <li> if the target class provides a method {@code public static T valueOf(U)} and {value instanceof U}, that method is invoked;
      *     <li> if {@code useConstructor} is {@code true} and the target class provides a constructor taking a single argument of value's type, that constructor is used;
      *     <li> otherwise an exception is thrown.
@@ -191,13 +200,85 @@ public final class DataUtil {
             if (sourceClass == URI.class) {
                 return (T) Paths.get((URI) value);
             }
+            if (sourceClass == URL.class) {
+                try {
+                    return (T) Paths.get(((URL) value).toURI());
+                } catch (URISyntaxException e) {
+                    throw new ConversionException(sourceClass, targetClass, e);
+                }
+            }
         }
 
         // convert to File
         if (targetClass == File.class) {
-            if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary 
+            if (sourceClass == String.class) {
+                return (T) new File(value.toString());
+            }
+            if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary
                 assert value instanceof Path;
                 return (T) ((Path) value).toFile();
+            }
+            if (sourceClass == URI.class) {
+                return (T) Paths.get((URI) value).toFile();
+            }
+            if (sourceClass == URL.class) {
+                try {
+                    return (T) Paths.get(((URL) value).toURI()).toFile();
+                } catch (URISyntaxException e) {
+                    throw new ConversionException(sourceClass, targetClass, e);
+                }
+            }
+        }
+
+        // convert to URI
+        if (targetClass == URI.class) {
+            if (sourceClass == String.class) {
+                return (T) URI.create(value.toString());
+            }
+            if (sourceClass == File.class) {
+                return (T) ((File) value).toURI();
+            }
+            if (sourceClass == URL.class) {
+                try {
+                    return (T) ((URL) value).toURI();
+                } catch (URISyntaxException e) {
+                    throw new ConversionException(sourceClass, targetClass, e);
+                }
+            }
+            if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
+                return (T) ((Path) value).toUri();
+            }
+        }
+
+        // convert to URL
+        if (targetClass == URL.class) {
+            if (sourceClass == String.class) {
+                try {
+                    return (T) new URL(value.toString());
+                } catch (MalformedURLException e) {
+                    throw new ConversionException(sourceClass, targetClass, e);
+                }
+            }
+            if (sourceClass == File.class) {
+                try {
+                    return (T) ((File) value).toURI().toURL();
+                } catch (MalformedURLException e) {
+                    throw new ConversionException(sourceClass, targetClass, e);
+                }
+            }
+            if (sourceClass == URI.class) {
+                try {
+                    return (T) ((URI) value).toURL();
+                } catch (MalformedURLException e) {
+                    throw new ConversionException(sourceClass, targetClass, e);
+                }
+            }
+            if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
+                try {
+                    return (T) ((Path) value).toUri().toURL();
+                } catch (MalformedURLException e) {
+                    throw new ConversionException(sourceClass, targetClass, e);
+                }
             }
         }
 

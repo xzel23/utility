@@ -2,6 +2,12 @@ package com.dua3.utility.data;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DataUtilTest {
 
     @Test
-    void testConvert() {
+    void testConvert() throws IOException {
         // Object to String
         assertEquals("123", DataUtil.convert(123, String.class));
 
@@ -71,6 +77,32 @@ class DataUtilTest {
 
         // String to LocalDateTime
         assertEquals(LocalDateTime.of(2019, 6, 30, 14, 53), DataUtil.convert("2019-06-30T14:53", LocalDateTime.class));
+
+        // String, URL, Path, File to URI
+        assertEquals(URI.create("http://www.dua3.com"), DataUtil.convert("http://www.dua3.com", URI.class));
+        assertEquals(URI.create("http://www.dua3.com"), DataUtil.convert(new URL("http://www.dua3.com"), URI.class));
+        assertEquals(Paths.get(".").toUri(), DataUtil.convert(Paths.get("."), URI.class));
+        assertEquals(new File(".").toURI(), DataUtil.convert(new File("."), URI.class));
+
+        // String, URI, Path, File to URL
+        assertEquals(new URL("http://www.dua3.com"), DataUtil.convert("http://www.dua3.com", URL.class));
+        assertEquals(new URL("http://www.dua3.com"), DataUtil.convert(URI.create("http://www.dua3.com"), URL.class));
+        assertEquals(Paths.get(".").toUri().toURL(), DataUtil.convert(Paths.get("."), URL.class));
+        assertEquals(new File(".").toURI().toURL(), DataUtil.convert(new File("."), URL.class));
+
+        // String, URI, URL, File to Path
+        Path path = Paths.get(".").toAbsolutePath().normalize();
+        assertEquals(path, DataUtil.convert(".", Path.class).toAbsolutePath().normalize());
+        assertEquals(path, DataUtil.convert(path.toFile(), Path.class).normalize());
+        assertEquals(path, DataUtil.convert(path.toUri(), Path.class).normalize());
+        assertEquals(path, DataUtil.convert(path.toUri().toURL(), Path.class).normalize());
+
+        // String, URI, URL, Path to File
+        File file = path.toFile();
+        assertEquals(file, DataUtil.convert(".", File.class).getCanonicalFile());
+        assertEquals(file, DataUtil.convert(file.toPath(), File.class).getAbsoluteFile());
+        assertEquals(file, DataUtil.convert(path.toUri(), File.class).getAbsoluteFile());
+        assertEquals(file, DataUtil.convert(path.toUri().toURL(), File.class).getAbsoluteFile());
     }
 
     @Test

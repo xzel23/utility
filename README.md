@@ -161,6 +161,14 @@ the parameter.
 
 ## Changes
 
+### 10.2.8
+
+- DataUtil.convert converting to/from URI, URL, Path, File
+
+### 10.2.7
+
+- FileInput swing component
+
 ### 10.2.6
 
 - support value "auto" for configuring colored log output. colors are enabled if a terminal is attached and the TERM environment variable is set. this is the new default for this option.

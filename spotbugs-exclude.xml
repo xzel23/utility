@@ -87,6 +87,11 @@
     </Match>
 
     <Match>
+        <Class name="com.dua3.utility.data.DataUtil$ConversionException"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+    </Match>
+
+    <Match>
         <Class name="com.dua3.utility.io.IoUtil"/>
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
