@@ -31,7 +31,6 @@ class StopwatchTest {
         assertTrue(t5.getSeconds() == 1 && t4.getNano() < 500_000_000L);
         assertTrue(t6.getSeconds() == 5 && t5.getNano() < 500_000_000L);
 
-        // test output format - this test might occasionally fail on a slow server because of timing problems
-        assertTrue(st.matches("\\[StopwatchTest\\] current split: 0:00:03[.,][0-2][0-9]{2} total: 0:00:06[.,][0-5][0-9]{2}"), "format mismatch: " + st);
+        assertTrue(st.matches("\\[StopwatchTest\\] current split: 0:00:0[34][.,][0-9]{3} total: 0:00:0[67][.,][0-9]{3}"), "format mismatch: " + st);
     }
 }
