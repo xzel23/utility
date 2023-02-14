@@ -25,19 +25,14 @@ final class StreamSupplier<V> {
 
     private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
 
-    private static final List<StreamSupplier<?>> streamSuppliers;
-
-    // complicated initialization code because Java 8 does not support List.of
-    static {
-        List<StreamSupplier<?>> list = new ArrayList<>();
-        list.add(def(InputStream.class, v -> v, StreamSupplier::outputUnsupported));
-        list.add(def(OutputStream.class, StreamSupplier::inputUnsupported, v -> v));
-        list.add(def(URI.class, v -> IoUtil.toURL(v).openStream(), v -> Files.newOutputStream(IoUtil.toPath(v))));
-        list.add(def(URL.class, URL::openStream, v -> Files.newOutputStream(IoUtil.toPath(v))));
-        list.add(def(Path.class, Files::newInputStream, Files::newOutputStream));
-        list.add(def(File.class, v -> Files.newInputStream(v.toPath()), v -> Files.newOutputStream(v.toPath())));
-        streamSuppliers = list;
-    }
+    private static final List<StreamSupplier<?>> streamSuppliers = List.of(
+        def(InputStream.class, v -> v, StreamSupplier::outputUnsupported),
+        def(OutputStream.class, StreamSupplier::inputUnsupported, v -> v),
+        def(URI.class, v -> IoUtil.toURL(v).openStream(), v -> Files.newOutputStream(IoUtil.toPath(v))),
+        def(URL.class, URL::openStream, v -> Files.newOutputStream(IoUtil.toPath(v))),
+        def(Path.class, Files::newInputStream, Files::newOutputStream),
+        def(File.class, v -> Files.newInputStream(v.toPath()), v -> Files.newOutputStream(v.toPath()))
+    );
 
     private static InputStream inputUnsupported(Object o) {
         throw new UnsupportedOperationException("InputStream creation not supported: " + o.getClass().getName());

@@ -16,13 +16,22 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stax.StAXResult;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
@@ -36,14 +45,18 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Spliterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -56,6 +69,8 @@ public final class XmlUtil {
 
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
+    private final XMLInputFactory inputFactory;
+    private final XMLOutputFactory outputFactory;
     private final XPathFactory xPathFactory;
     private final DocumentBuilder documentBuilder;
     private final Transformer utf8Transformer;
@@ -134,6 +149,8 @@ public final class XmlUtil {
     public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory, XPathFactory xPathFactory) throws ParserConfigurationException {
         this.documentBuilderFactory = Objects.requireNonNull(documentBuilderFactory);
         this.transformerFactory = Objects.requireNonNull(transformerFactory);
+        this.inputFactory = XMLInputFactory.newDefaultFactory();
+        this.outputFactory = XMLOutputFactory.newDefaultFactory();
         this.xPathFactory = Objects.requireNonNull(xPathFactory);
         this.documentBuilder = this.documentBuilderFactory.newDocumentBuilder();
         this.utf8Transformer = getTransformer(StandardCharsets.UTF_8);
@@ -325,10 +342,26 @@ public final class XmlUtil {
      * @return formatted XML for the document
      */
     public String prettyPrint(String xml) {
-        try {
-            return prettyPrint(parse(xml));
-        } catch (IOException | SAXException e) {
-            LOG.warn("could not parse XML");
+        try (InputStream in = IoUtil.stringInputStream(xml);
+             StringWriter out = new StringWriter(xml.length()*6/5)) {
+
+            // create reader
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(in);
+
+            // create writer
+            XMLStreamWriter writer = (XMLStreamWriter) Proxy.newProxyInstance(
+                    XMLStreamWriter.class.getClassLoader(),
+                    new Class[]{XMLStreamWriter.class},
+                    new XmlStreamWriterProxyPrettyPrint(outputFactory.createXMLStreamWriter(out))
+            );
+
+            // create transformer
+            Transformer transformer = utf8Transformer;
+            transformer.transform(new StAXSource(reader), new StAXResult(writer));
+
+            return out.toString();
+        } catch (IOException | XMLStreamException | TransformerException e) {
+            LOG.warn("could not parse XML", e);
             return xml;
         }
     }
