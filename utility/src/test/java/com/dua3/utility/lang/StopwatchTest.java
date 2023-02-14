@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StopwatchTest {
@@ -24,12 +25,12 @@ class StopwatchTest {
         Thread.sleep(1000);
         String st = s.toString();
 
-        assertTrue(t1.getSeconds() == 1);
-        assertTrue(t2.getSeconds() == 2);
-        assertTrue(t3.getSeconds() == 3);
-        assertTrue(t4.getSeconds() == 4);
-        assertTrue(t5.getSeconds() == 1);
-        assertTrue(t6.getSeconds() == 5);
+        assertEquals(1, t1.getSeconds());
+        assertEquals(2, t2.getSeconds());
+        assertEquals(3, t3.getSeconds());
+        assertEquals(4, t4.getSeconds());
+        assertEquals(1, t5.getSeconds());
+        assertEquals(5, t6.getSeconds());
 
         assertTrue(st.matches("\\[StopwatchTest\\] current split: 0:00:0[34][.,][0-9]{3} total: 0:00:0[67][.,][0-9]{3}"), "format mismatch: " + st);
     }
