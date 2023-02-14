@@ -13,10 +13,10 @@ public class XmlStreamWriterProxyPrettyPrint implements InvocationHandler {
     private static final int DEFAULT_INDENT = 4;
 
     private final XMLStreamWriter target;
-    private final BitSet hasChildren = new BitSet();
     private final String lineFeed;
     private final int indentWidth;
-    int depth = 0;
+    private int depth = 0;
+    private boolean hasChildren = false;
 
     public XmlStreamWriterProxyPrettyPrint(XMLStreamWriter target) {
         this(target, DEFAULT_INDENT, DEFAULT_LINE_FEED);
@@ -37,13 +37,7 @@ public class XmlStreamWriterProxyPrettyPrint implements InvocationHandler {
         String methodName = method.getName();
         switch (methodName) {
             case "writeStartElement" -> {
-                // update state of parent node
-                if (depth > 0) {
-                    hasChildren.set(depth-1);
-                }
-
-                // reset state of current node
-                hasChildren.clear(depth);
+                hasChildren = false;
 
                 // indent for current depth
                 target.writeCharacters(lineFeed);
@@ -52,19 +46,21 @@ public class XmlStreamWriterProxyPrettyPrint implements InvocationHandler {
             }
             case "writeEndElement" -> {
                 depth--;
-                if (hasChildren.get(depth)) {
+                if (hasChildren) {
                     target.writeCharacters(lineFeed);
                     target.writeCharacters(" ".repeat(depth*indentWidth));
                 }
+
+                // parent has children
+                hasChildren = true;
             }
             case "writeEmptyElement" -> {
-                // update state of parent node
-                if (depth > 0) {
-                    hasChildren.set(depth-1);
-                }
                 // indent for current depth
                 target.writeCharacters(lineFeed);
                 target.writeCharacters(" ".repeat(depth*indentWidth));
+
+                // parent has children
+                hasChildren = true;
             }
         }
 
