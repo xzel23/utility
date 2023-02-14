@@ -342,7 +342,7 @@ public final class XmlUtil {
      * @return formatted XML for the document
      */
     public String prettyPrint(String xml) {
-        try (InputStream in = IoUtil.stringInputStream(xml);
+        try (StringReader in = new StringReader(xml);
              StringWriter out = new StringWriter(xml.length()*6/5)) {
 
             // create reader
