@@ -161,6 +161,10 @@ the parameter.
 
 ## Changes
 
+### 10.2.9
+
+- reimplemented XmlUtil.prettyPrint(String) with a StAX parser so that no DOM has to be created when pretty-printing
+
 ### 10.2.8
 
 - DataUtil.convert converting to/from URI, URL, Path, File
