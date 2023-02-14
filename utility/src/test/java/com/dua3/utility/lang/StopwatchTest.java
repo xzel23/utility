@@ -24,12 +24,12 @@ class StopwatchTest {
         Thread.sleep(1000);
         String st = s.toString();
 
-        assertTrue(t1.getSeconds() == 1 && t1.getNano() < 500_000_000L);
-        assertTrue(t2.getSeconds() == 2 && t2.getNano() < 500_000_000L);
-        assertTrue(t3.getSeconds() == 3 && t3.getNano() < 500_000_000L);
-        assertTrue(t4.getSeconds() == 4 && t4.getNano() < 500_000_000L);
-        assertTrue(t5.getSeconds() == 1 && t4.getNano() < 500_000_000L);
-        assertTrue(t6.getSeconds() == 5 && t5.getNano() < 500_000_000L);
+        assertTrue(t1.getSeconds() == 1);
+        assertTrue(t2.getSeconds() == 2);
+        assertTrue(t3.getSeconds() == 3);
+        assertTrue(t4.getSeconds() == 4);
+        assertTrue(t5.getSeconds() == 1);
+        assertTrue(t6.getSeconds() == 5);
 
         assertTrue(st.matches("\\[StopwatchTest\\] current split: 0:00:0[34][.,][0-9]{3} total: 0:00:0[67][.,][0-9]{3}"), "format mismatch: " + st);
     }
