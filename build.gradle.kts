@@ -22,7 +22,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group = "com.dua3.utility"
-    val scm = "https://gitlab.com/com.dua3/lib/utility.git"
+    val scm = "https://github.com/xzel23/utility.git"
     val repo = "public"
     val licenseName = "MIT"
     val licenseUrl = "https://opensource.org/licenses/MIT"
