@@ -12,13 +12,11 @@ open module com.dua3.utility.swing {
     provides com.dua3.utility.data.ImageUtil
             with com.dua3.utility.swing.SwingImageUtil;
 
-    requires com.dua3.utility;
+    requires static com.dua3.cabe.annotations;
+    requires static com.dua3.utility.logging;
 
     requires java.datatransfer;
     requires java.desktop;
-
+    requires com.dua3.utility;
     requires org.slf4j;
-
-    requires static com.dua3.cabe.annotations;
-    requires static com.dua3.utility.logging;
 }
