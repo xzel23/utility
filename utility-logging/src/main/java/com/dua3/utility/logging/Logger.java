@@ -26,6 +26,7 @@ public class Logger extends AbstractLogger {
     }
 
     public Logger(String name, List<? extends LogEntryHandler> handlers) {
+        //noinspection AssignmentToSuperclassField: it is the only way to set the logger name
         super.name = name;
         this.handlers = handlers;
     }

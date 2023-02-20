@@ -166,7 +166,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     }
 
     /**
-     * Test if flag is set.
+     * Test if the flag is set.
      * @param flag the flag
      * @return true, if the flag is set
      */
@@ -186,7 +186,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     }
 
     /**
-     * Get stream of parsed options.
+     * Get the stream of parsed options.
      * @return stream of parsed options and respective arguments
      */
     public Stream<Entry<?>> stream() {
@@ -194,7 +194,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     }
 
     /**
-     * Get stream of values for an option.
+     * Get the stream of values for an option.
      * @param option the option
      * @param <T> the generic type of the option 
      * @return stream of lists containing the arguments for each appearance of the given option 

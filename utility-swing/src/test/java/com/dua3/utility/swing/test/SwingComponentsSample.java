@@ -100,7 +100,7 @@ public class SwingComponentsSample extends JFrame {
         // setup logging
         ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
         if (!(loggerFactory instanceof com.dua3.utility.logging.LoggerFactory)) {
-            throw new IllegalStateException("wrong logging implementaion!");
+            throw new IllegalStateException("wrong logging implementation!");
         }
         LogBuffer buffer = ((com.dua3.utility.logging.LoggerFactory) loggerFactory).getLogBuffer()
                 .orElseThrow(() -> new IllegalStateException("buffer not configured"));

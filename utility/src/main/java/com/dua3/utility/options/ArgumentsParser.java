@@ -116,7 +116,7 @@ public class ArgumentsParser {
     }
 
     /**
-     * Add choice option to parser.
+     * Add a choice option to the parser.
      * @param <E> enum class
      * @param enumClass the enum class instance
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
@@ -149,7 +149,7 @@ public class ArgumentsParser {
     }
 
     /**
-     * Add option to parser. 
+     * Add an option to the parser.
      * @param <O> the option type
      * @param option the option to add
      * @return the option
@@ -193,15 +193,15 @@ public class ArgumentsParser {
                 continue;
             }
 
-            // if maximum number of args is consumed, reset the current entry
+            // if the maximum number of args is consumed, reset the current entry
             if (currentEntry != null && currentEntry.getParams().size() == currentEntry.getOption().maxArity()) {
                 currentEntry = null;
             }
 
-            // is argument start of a new option?
+            // is the argument the start of a new option?
             Option<?> option = options.get(arg);
             if (option != null) {
-                // start processing of next option
+                // start processing of the next option
                 currentEntry = Arguments.Entry.create(option);
                 parsedOptions.add(currentEntry);
 
@@ -209,7 +209,7 @@ public class ArgumentsParser {
                     currentEntry = null;
                 }
             } else {
-                // add option to current entry or positional args
+                // add an option to the current entry or positional args
                 if (currentEntry != null) {
                     currentEntry.addParameter(arg);
                 } else {
@@ -235,7 +235,7 @@ public class ArgumentsParser {
     }
 
     /**
-     * Validate the parsed option, i.e. check number of occurrences and arity.
+     * Validate the parsed option, i.e. check the number of occurrences and arity.
      * @param parsedOptions the parsed options to validate
      * @throws OptionException if an error is detected
      */

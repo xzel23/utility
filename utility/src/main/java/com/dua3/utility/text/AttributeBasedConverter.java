@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Base class for attribute based converters.
+ * Base class for attribute-based converters.
  * @param  <T> target type of conversion
  */
 public abstract class AttributeBasedConverter<T> implements RichTextConverter<T> {
@@ -36,7 +36,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
     }
 
     /**
-     * Abstract base class for the attribute based converter implementation classes.
+     * Abstract base class for the attribute-based converter implementation classes.
      * @param <T> the conversion target type
      */
     protected abstract static class AttributeBasedConverterImpl<T> {
@@ -65,7 +65,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
 
         /**
          * Apply new font. Depending on the implementation, using either the font or the changes passed is more
-         * convenient and the implementation is free to choose whichever is suitable and ignore the other. 
+         * convenient and the implementation is free to select whichever is suitable and ignore the other.
          * @param changedAttributes map of the changed attribute values  
          */
         protected abstract void apply(Map<String, Pair<Object, Object>> changedAttributes);
@@ -145,7 +145,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         }
 
         /**
-         * Append chars to conversion result.
+         * Append chars to the conversion result.
          * @param s chars to append
          */
         protected abstract void appendChars(CharSequence s);

@@ -94,7 +94,7 @@ Configuration is done by providing a file called `logging.properties` on the cla
 
 ### Using SLF4J with different logging frameworks
 
-Just to save the time searching the internet for this:
+Just to save time searching the internet for this:
 
 * **JUL (java.util.logging)**
 

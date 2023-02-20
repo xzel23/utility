@@ -1,5 +1,5 @@
 /**
- * Classes and utilities for creating Swing based user interfaces.
+ * Classes and utilities for creating Swing-based user interfaces.
  */
 @NotNullApi
 package com.dua3.utility.swing;

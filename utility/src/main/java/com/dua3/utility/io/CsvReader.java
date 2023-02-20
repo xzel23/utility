@@ -159,8 +159,7 @@ public class CsvReader extends CsvIo {
         //
         // http://www.unicode.org/faq/utf_bom.html:
         // > In the absence of a protocol supporting its use as a BOM and when
-        // not at the beginning
-        // > of a text stream, U+FEFF should normally not occur.
+        // > not at the beginning of a text stream, U+FEFF should normally not occur.
         reader.mark(1);
         if (reader.read() != UTF8_BOM) {
             reader.reset();
@@ -169,7 +168,7 @@ public class CsvReader extends CsvIo {
         String sep = Pattern.quote(Character.toString(separator));
         String del = Pattern.quote(Character.toString(delimiter));
 
-        // create pattern for matching of csv fields
+        // create a pattern for matching of csv fields
         String regexEnd = "(?:" + sep + "|$)";
         // pattern group1: unquoted field
         String regexUnquotedField = "(?:((?:[^" + del + sep + "][^" + sep + "]*)?)" + regexEnd + ")";

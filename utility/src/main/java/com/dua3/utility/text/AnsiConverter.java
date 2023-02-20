@@ -28,7 +28,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
     }
 
     /**
-     * Enable reverse video ofr output.
+     * Enable reverse video for output.
      * @param flag set to true to enable reverse video output
      * @return the option to use
      */
@@ -39,7 +39,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
     /**
      * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
      * @param attribute the name of the attribute to map
-     * @param mapper    the mapper, a function object mapping attribute values to a pair of (opening,closing) 
+     * @param mapper    the mapper, a function object mapping attribute values to a pair of (opening, closing)
      *                  ESC sequences
      * @return the option tp use
      */

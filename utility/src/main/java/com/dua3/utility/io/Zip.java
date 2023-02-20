@@ -19,7 +19,7 @@ public class Zip implements AutoCloseable, Flushable {
     private String path = "";
 
     /**
-     * Create new Zip instance.
+     * Create a new Zip instance.
      * @param out the {@link OutputStream} to write the zip data to
      */
     public Zip(OutputStream out) {
@@ -77,7 +77,7 @@ public class Zip implements AutoCloseable, Flushable {
         // append '/' if needed
         dirname = dirname.endsWith("/") ? dirname : dirname + "/";
 
-        // handle '/' at beginning of name
+        // handle '/' at the beginning of name
         if (dirname.startsWith("/")) {
             dirname = dirname.substring(1);
         } else {

@@ -32,7 +32,7 @@ import java.util.Objects;
 public abstract class CsvIo implements AutoCloseable {
 
     /**
-     * Get list of options controlling CSV I/O.
+     * Get the list of options controlling CSV I/O.
      * @return list of options
      */
     public static Collection<Option<?>> getOptions() {

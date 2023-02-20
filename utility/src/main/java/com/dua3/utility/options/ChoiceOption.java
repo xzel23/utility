@@ -53,7 +53,7 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     /**
-     * Create a choice option of enum type with the enum values as possible option values. 
+     * Create a choice option of enum-type with the enum values as possible option values.
      * @param <E> the enum type
      * @param cls the enum class
      * @param names the option names
@@ -61,7 +61,7 @@ public final class ChoiceOption<T> extends Option<T> {
      */
     public static <E extends Enum<E>> ChoiceOption<E> create(Class<? extends E> cls,
                                                              String... names) {
-        Function<String, E> parser = s -> ChoiceOption.valueOf(cls, s);
+        Function<String, E> parser = s -> valueOf(cls, s);
         Function<E, String> formatter = Object::toString;
         Supplier<Collection<E>> values = () -> enumValues(cls);
         return new ChoiceOption<>(parser, formatter, values, names);
@@ -109,7 +109,7 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     /**
-     * Get collection of choices.
+     * Get the collection of choices.
      * @return collection holding the possible choices
      */
     public Collection<Choice<T>> choices() {

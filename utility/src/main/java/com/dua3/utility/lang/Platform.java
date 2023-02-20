@@ -59,13 +59,13 @@ public enum Platform {
 
         String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ROOT);
         if ((os.contains("mac")) || (os.contains("darwin"))) {
-            platform = Platform.MACOS;
+            platform = MACOS;
         } else if (os.contains("windows")) {
-            platform = Platform.WINDOWS;
+            platform = WINDOWS;
         } else if (os.contains("linux")) {
-            platform = Platform.LINUX;
+            platform = LINUX;
         } else {
-            platform = Platform.UNKNOWN;
+            platform = UNKNOWN;
         }
 
         LOG.debug("platform identified as: {}", platform);

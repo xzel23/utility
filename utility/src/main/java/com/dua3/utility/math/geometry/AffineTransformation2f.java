@@ -63,7 +63,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Create an affine transformation for a scaling operation (using same factor for x and y coordinates)
+     * Create an affine transformation for a scaling operation (using the same factor for x and y coordinates)
      * {@code (x,y) -> (sx,sy)}.
      * @param s the scaling factor
      * @return affine transformation (scale)
@@ -127,7 +127,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Get scaling factor for x-axis. 
+     * Get the scaling factor for the x-axis.
      * @return the x-axis scaling factor
      */
     public float getScaleX() {
@@ -135,7 +135,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Get shearing factor for x-axis. 
+     * Get the shearing factor for the x-axis.
      * @return the x-axis shearing factor
      */
     public float getShearX() {
@@ -151,7 +151,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Get shearing factor for y-axis. 
+     * Get the shearing factor for the y-axis.
      * @return the y-axis shearing factor
      */
     public float getShearY() {
@@ -159,7 +159,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Get scaling factor for y-axis. 
+     * Get the scaling factor for the y-axis.
      * @return the y-axis scaling factor
      */
     public float getScaleY() {

@@ -478,35 +478,35 @@ public interface Color {
     }
 
     /**
-     * Get alpha component of color.
+     * Get the alpha component of this color.
      *
      * @return alpha component
      */
     float alpha();
 
     /**
-     * Get alpha component of color.
+     * Get the alpha component of this color as an integer.
      *
      * @return alpha component
      */
     int a();
 
     /**
-     * Test if color is opaque.
+     * Test if this color is opaque.
      *
      * @return true, if the color uses the maximum alpha value
      */
     boolean isOpaque();
 
     /**
-     * Test if color is transparent.
+     * Test if this color is transparent.
      *
      * @return true, if the color uses an alpha value of 0
      */
     boolean isTransparent();
 
     /**
-     * Get hex-string in ARGB form for color.
+     * Get hex-string in ARGB form for this color.
      *
      * @return hex-string
      */
@@ -515,7 +515,7 @@ public interface Color {
     }
 
     /**
-     * Get hex-string in RGBA form for color.
+     * Get hex-string in RGBA form for this color.
      *
      * @return hex-string
      */
@@ -524,7 +524,7 @@ public interface Color {
     }
 
     /**
-     * Convert to {@link RGBColor}.
+     * Convert this color to {@link RGBColor}.
      * @return this color as RGBColor instance
      */
     default RGBColor toRGBColor() {
@@ -532,7 +532,7 @@ public interface Color {
     }
 
     /**
-     * Convert to {@link HSVColor}.
+     * Convert this color to {@link HSVColor}.
      * @return this color as RGBColor instance
      */
     default HSVColor toHSVColor() {
@@ -540,7 +540,7 @@ public interface Color {
     }
 
     /**
-     * Get CSS compatible string representation of color.
+     * Get CSS compatible string representation of this color.
      * <p>
      * Opaque colors are represented as 3 component hex strings, i. e. "#ff0000" for red.
      * Colors using transparency are represented as 4 component hex strings in rrggbbaa format.
@@ -556,14 +556,14 @@ public interface Color {
     }
 
     /**
-     * Get color value.
+     * Get the color value as an integer in ARGB order.
      *
-     * @return this color encoded as an integer value
+     * @return this color encoded as an integer value in ARGB order
      */
     int argb();
 
     /**
-     * Get color value.
+     * Get the color value as an integer in RGBA order.
      *
      * @return this color encoded as an integer value
      */
@@ -580,7 +580,7 @@ public interface Color {
     }
 
     /**
-     * Get color components.
+     * Get the color components.
      *
      * @return byte array of size 4 containing this color's components in argb order
      */
@@ -597,7 +597,7 @@ public interface Color {
     }
 
     /**
-     * Get color components.
+     * Get the color components.
      *
      * @return byte array of size 3 containing this color's components in rgb order
      */

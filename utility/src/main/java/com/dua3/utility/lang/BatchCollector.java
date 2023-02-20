@@ -35,7 +35,7 @@ public class BatchCollector<T, K> implements Collector<T, Deque<Pair<K, List<T>>
     /**
      * Create a new BatchCollector.
      * <p>
-     * For each item in the stream, a key is determined applying the keyMapper. If the generated key is null, or
+     * For each item in the stream, a key is determined by applying the keyMapper. If the generated key is null, or
      * equals the last item's key, the item is added to the current batch. If not, a new batch is created and the 
      * item added.
      *

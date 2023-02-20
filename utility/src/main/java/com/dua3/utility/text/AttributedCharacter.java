@@ -40,7 +40,7 @@ public interface AttributedCharacter {
     TextAttributes attributes();
 
     /**
-     * Get list of styles.
+     * Get the list of styles.
      * @return the list of styles
      */
     @SuppressWarnings("unchecked")

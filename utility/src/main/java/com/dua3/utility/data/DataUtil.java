@@ -71,7 +71,7 @@ public final class DataUtil {
     }
 
     /**
-     * Convert object to a different class.
+     * Convert an object to a different class.
      * <p>
      * Conversion works as follows:
      * <ul>
@@ -96,7 +96,7 @@ public final class DataUtil {
     }
 
     /**
-     * Convert object to a different class.
+     * Convert an object to a different class.
      * <p>
      * Conversion works as follows:
      * <ul>
@@ -359,7 +359,7 @@ public final class DataUtil {
     @SuppressWarnings("unchecked")
     public static <T, U> U[] convertToArray(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
-                .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
+                .map(obj -> convert(obj, targetClass, useConstructor))
                 .toArray(n -> (U[]) Array.newInstance(targetClass, n));
     }
 
@@ -434,7 +434,7 @@ public final class DataUtil {
      */
     public static <T, U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
-                .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
+                .map(obj -> convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toList());
     }
 
@@ -488,7 +488,7 @@ public final class DataUtil {
      */
     public static <T, U, C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier, boolean useConstructor) {
         return data.stream()
-                .map(obj -> DataUtil.convert(obj, targetClass, useConstructor))
+                .map(obj -> convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toCollection(supplier));
     }
 
@@ -525,7 +525,7 @@ public final class DataUtil {
     }
 
     /**
-     * Collect items from an iterable into a List.
+     * Collect items obtained from an iterable into a List.
      * @param iterable
      *  the iterable
      * @param <T>
@@ -553,7 +553,7 @@ public final class DataUtil {
     }
 
     /**
-     * Collect items from an iterable into an array.
+     * Collect items obtained from an iterable into an array.
      * @param iterable
      *  the iterable
      * @param <T>

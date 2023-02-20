@@ -29,7 +29,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     public static final String KEY_BUILD_TIME = "build.time";
 
     /**
-     * Create from version and timestamp
+     * Create from a version and timestamp
      * @param version the version string
      * @param zonedDateTimeBuild the timestamp, compatible with {@link ZonedDateTime#parse(CharSequence)}
      * @return BuildInfo instance

@@ -11,7 +11,7 @@ import com.dua3.utility.math.Vector2f;
 public class ClipPath2f extends Segment2f {
 
     /**
-     * Name of segment type.
+     * Name of the segment type.
      */
     public static final String NAME = "CLIP_PATH";
 

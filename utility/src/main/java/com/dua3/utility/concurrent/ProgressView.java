@@ -30,14 +30,14 @@ public class ProgressView<T> implements ProgressTracker<T> {
         void finish(State s);
 
         /**
-         * Update task progess.
+         * Update task progress.
          * @param done number of finished steps
          * @param total total number of steps
          */
         void update(int done, int total);
 
         /**
-         * Update task progess.
+         * Update task progress.
          * @param percentDone percentage value, 0.0 &le; percentDone &le; 1.0 or use PROGRESS_INDETERMINATE to mark as indeterminate
          */
         void update(double percentDone);

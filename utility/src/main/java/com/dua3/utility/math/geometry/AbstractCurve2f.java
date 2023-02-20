@@ -28,7 +28,7 @@ public abstract class AbstractCurve2f extends Segment2f {
     }
 
     /**
-     * Get number of control points.
+     * Get the number of control points.
      * @return number of control points
      */
     public int numberOfControls() {

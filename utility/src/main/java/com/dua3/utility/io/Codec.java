@@ -10,7 +10,7 @@ import java.io.DataOutputStream;
 public interface Codec<T> extends Encoder<T>, Decoder<T> {
 
     /**
-     * The encoder name, usually a corresponding to the object type.
+     * The encoder name, usually corresponds to the object type.
      * @return name
      */
     String name();

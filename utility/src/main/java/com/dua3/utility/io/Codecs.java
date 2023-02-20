@@ -158,7 +158,7 @@ public class Codecs {
     public static <K, V, M extends Map<K, V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
         final String name = Map.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">";
         final Codec<Map.Entry<K, V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
-        final Codec<Collection<Map.Entry<K, V>>> ENTRIES_CODEC = Codecs.collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
+        final Codec<Collection<Map.Entry<K, V>>> ENTRIES_CODEC = collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
 
         return new Codec<>() {
             @Override

@@ -34,7 +34,7 @@ public final class CryptUtil {
 
     /**
      * Generate key.
-     * @param bits number of bits, must be a multiple of 8
+     * @param bits the number of bits; must be a multiple of 8
      * @return the generated key
      */
     public static byte[] generateKey(int bits) {

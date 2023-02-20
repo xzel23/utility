@@ -668,7 +668,7 @@ public final class TextUtil {
      * @return input string with normalized line ends
      */
     public static String normalizeLineEnds(String s) {
-        return setLineEnds(s, TextUtil.LINE_END_UNIX);
+        return setLineEnds(s, LINE_END_UNIX);
     }
 
     /**
@@ -677,7 +677,7 @@ public final class TextUtil {
      * @return input string with Unix line ends
      */
     public static String toUnixLineEnds(String s) {
-        return setLineEnds(s, TextUtil.LINE_END_UNIX);
+        return setLineEnds(s, LINE_END_UNIX);
     }
 
     /**
@@ -686,7 +686,7 @@ public final class TextUtil {
      * @return input string with Windows line ends
      */
     public static String toWindowsLineEnds(String s) {
-        return setLineEnds(s, TextUtil.LINE_END_WINDOWS);
+        return setLineEnds(s, LINE_END_WINDOWS);
     }
 
     /**
@@ -695,7 +695,7 @@ public final class TextUtil {
      * @return input string with system line ends
      */
     public static String toSystemLineEnds(String s) {
-        return setLineEnds(s, TextUtil.LINE_END_SYSTEM);
+        return setLineEnds(s, LINE_END_SYSTEM);
     }
 
     private static String setLineEnds(String s, String lineEnd) {

@@ -68,7 +68,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @return rectangle
      */
     public static Rectangle2f of(Vector2f p, Dimension2f d) {
-        return Rectangle2f.of(p.x(), p.y(), d.width(), d.height());
+        return of(p.x(), p.y(), d.width(), d.height());
     }
 
     /**

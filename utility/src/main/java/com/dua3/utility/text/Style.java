@@ -79,51 +79,51 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     // -- define some default styles
 
     /** Default Sansserif font. */
-    public static final Style SANS_SERIF = Style.create("sans-serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SANS_SERIF));
+    public static final Style SANS_SERIF = create("sans-serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SANS_SERIF));
     /** Default Serif font. */
-    public static final Style SERIF = Style.create("serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SERIF));
+    public static final Style SERIF = create("serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SERIF));
     /** Default Monospace font. */
-    public static final Style MONOSPACE = Style.create("monospace", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_MONOSPACE));
+    public static final Style MONOSPACE = create("monospace", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_MONOSPACE));
 
     /** Bold style. */
-    public static final Style BOLD = Style.create("bold", Map.entry(FONT_WEIGHT, FONT_WEIGHT_VALUE_BOLD));
+    public static final Style BOLD = create("bold", Map.entry(FONT_WEIGHT, FONT_WEIGHT_VALUE_BOLD));
     /** Normal (=not bold) style. */
-    public static final Style NORMAL = Style.create("normal", Map.entry(FONT_WEIGHT, FONT_WEIGHT_VALUE_NORMAL));
+    public static final Style NORMAL = create("normal", Map.entry(FONT_WEIGHT, FONT_WEIGHT_VALUE_NORMAL));
 
     /** Italics style. */
-    public static final Style ITALIC = Style.create("italic", Map.entry(FONT_STYLE, FONT_STYLE_VALUE_ITALIC));
+    public static final Style ITALIC = create("italic", Map.entry(FONT_STYLE, FONT_STYLE_VALUE_ITALIC));
     /** Regular style. */
-    public static final Style REGULAR = Style.create("regular", Map.entry(FONT_STYLE, FONT_STYLE_VALUE_NORMAL));
+    public static final Style REGULAR = create("regular", Map.entry(FONT_STYLE, FONT_STYLE_VALUE_NORMAL));
 
     /** Underline style. */
-    public static final Style UNDERLINE = Style.create("underline", Map.entry(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_LINE));
+    public static final Style UNDERLINE = create("underline", Map.entry(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_LINE));
     /** No-Underline style. */
-    public static final Style NO_UNDERLINE = Style.create("no-underline", Map.entry(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
+    public static final Style NO_UNDERLINE = create("no-underline", Map.entry(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
 
     /** Line-through (=strikethrough) style. */
-    public static final Style LINE_THROUGH = Style.create("line-through", Map.entry(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE));
+    public static final Style LINE_THROUGH = create("line-through", Map.entry(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE));
     /** No-Line-through (=no-strikethrough) style. */
-    public static final Style NO_LINE_THROUGH = Style.create("no-line-through", Map.entry(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
+    public static final Style NO_LINE_THROUGH = create("no-line-through", Map.entry(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
 
     // predefined styles for colors
     /** Black text. */
-    public static final Style BLACK = Style.create("black", Map.entry(COLOR, Color.BLACK));
+    public static final Style BLACK = create("black", Map.entry(COLOR, Color.BLACK));
     /** White text. */
-    public static final Style WHITE = Style.create("white", Map.entry(COLOR, Color.WHITE));
+    public static final Style WHITE = create("white", Map.entry(COLOR, Color.WHITE));
     /** Red text. */
-    public static final Style RED = Style.create("red", Map.entry(COLOR, Color.RED));
+    public static final Style RED = create("red", Map.entry(COLOR, Color.RED));
     /** Green text. */
-    public static final Style GREEN = Style.create("green", Map.entry(COLOR, Color.GREEN));
+    public static final Style GREEN = create("green", Map.entry(COLOR, Color.GREEN));
     /** Blue text. */
-    public static final Style BLUE = Style.create("blue", Map.entry(COLOR, Color.BLUE));
+    public static final Style BLUE = create("blue", Map.entry(COLOR, Color.BLUE));
     /** Yellow text. */
-    public static final Style YELLOW = Style.create("yellow", Map.entry(COLOR, Color.YELLOW));
+    public static final Style YELLOW = create("yellow", Map.entry(COLOR, Color.YELLOW));
     /** Gray text. */
-    public static final Style GRAY = Style.create("gray", Map.entry(COLOR, Color.GRAY));
+    public static final Style GRAY = create("gray", Map.entry(COLOR, Color.GRAY));
     /** Darkgray text. */
-    public static final Style DARKGRAY = Style.create("darkgray", Map.entry(COLOR, Color.DARKGRAY));
+    public static final Style DARKGRAY = create("darkgray", Map.entry(COLOR, Color.DARKGRAY));
     /** Lightgray text. */
-    public static final Style LIGHTGRAY = Style.create("lightgray", Map.entry(COLOR, Color.LIGHTGRAY));
+    public static final Style LIGHTGRAY = create("lightgray", Map.entry(COLOR, Color.LIGHTGRAY));
 
     // -- instance fields and methods
 

@@ -287,7 +287,7 @@ public final class DbUtil {
      * @return
      *                      DataSource instance
      * @throws SQLException
-     *                      if the driver dies not accept the URL or connecting
+     *                      if the driver does not accept the URL or connecting
      *                      fails
      */
     public static DataSource createDataSource(Driver driver, String url, String user, String password)

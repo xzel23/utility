@@ -42,7 +42,7 @@ public class CsvFormatException extends IOException {
     }
 
     /**
-     * Get exception message.
+     * Get the exception message.
      *
      * @return the exception message
      */

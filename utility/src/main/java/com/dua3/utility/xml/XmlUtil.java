@@ -16,7 +16,6 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -408,7 +407,7 @@ public final class XmlUtil {
     /**
      * Create {@link XPath} instance.
      * <p>
-     * The returned instance is <strong>not</strong> namespace aware. Eihter use {@link #xpath(Node)} or supply
+     * The returned instance is <strong>not</strong> namespace aware. Either use {@link #xpath(Node)} or supply
      * a custom {@link NamespaceContext} if namespaces should be supported.
      * @return new {@link XPath} instance.
      */

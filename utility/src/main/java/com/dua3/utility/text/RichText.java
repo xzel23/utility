@@ -33,10 +33,10 @@ public final class RichText
 
     static final String ATTRIBUTE_NAME_STYLE_LIST = "__styles";
 
-    private static final RichText EMPTY_TEXT = RichText.valueOf("");
-    private static final RichText SPACE = RichText.valueOf(" ");
-    private static final RichText TAB = RichText.valueOf("\t");
-    private static final RichText NEWLINE = RichText.valueOf("\n");
+    private static final RichText EMPTY_TEXT = valueOf("");
+    private static final RichText SPACE = valueOf(" ");
+    private static final RichText TAB = valueOf("\t");
+    private static final RichText NEWLINE = valueOf("\n");
 
     /**
      * Returns the empty String as RichText.
@@ -100,7 +100,7 @@ public final class RichText
      * @return RichText containing only the character c
      */
     public static RichText valueOf(char c) {
-        return RichText.valueOf(Character.toString(c));
+        return valueOf(Character.toString(c));
     }
 
     /**
@@ -138,7 +138,7 @@ public final class RichText
      * @return RichText containing only the character c
      */
     public static RichText valueOf(char c, Style... styles) {
-        return RichText.valueOf(Character.toString(c), styles);
+        return valueOf(Character.toString(c), styles);
     }
 
     /**
@@ -149,7 +149,7 @@ public final class RichText
      * @return RichText containing only the character c
      */
     public static RichText valueOf(char c, Collection<Style> styles) {
-        return RichText.valueOf(Character.toString(c), styles);
+        return valueOf(Character.toString(c), styles);
     }
 
     /** The underlying CharSequence. */
@@ -562,7 +562,7 @@ public final class RichText
     public static RichText join(RichText delimiter, Iterable<RichText> elements) {
         RichTextBuilder rtb = new RichTextBuilder();
 
-        RichText d = RichText.emptyText();
+        RichText d = emptyText();
         for (RichText element : elements) {
             rtb.append(d).append(element);
             d = delimiter;
@@ -578,7 +578,7 @@ public final class RichText
      * @return RichText containing the joined elements
      */
     public static RichText join(CharSequence delimiter, RichText... elements) {
-        return join(RichText.valueOf(Objects.requireNonNull(delimiter)), elements);
+        return join(valueOf(Objects.requireNonNull(delimiter)), elements);
     }
 
     /**
@@ -588,7 +588,7 @@ public final class RichText
      * @return RichText containing the joined elements
      */
     public static RichText join(CharSequence delimiter, Iterable<RichText> elements) {
-        return join(RichText.valueOf(Objects.requireNonNull(delimiter)), elements);
+        return join(valueOf(Objects.requireNonNull(delimiter)), elements);
     }
 
     /**

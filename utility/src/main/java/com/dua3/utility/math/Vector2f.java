@@ -72,7 +72,7 @@ public record Vector2f(float x, float y) {
      * @return Vector with the componentwise maxima of a and b as components.
      */
     public static Vector2f max(Vector2f a, Vector2f b) {
-        return Vector2f.of(Math.max(a.x, b.x), Math.max(a.y, b.y));
+        return of(Math.max(a.x, b.x), Math.max(a.y, b.y));
     }
 
     /**
@@ -82,7 +82,7 @@ public record Vector2f(float x, float y) {
      * @return Vector with the componentwise minima of a and b as components.
      */
     public static Vector2f min(Vector2f a, Vector2f b) {
-        return Vector2f.of(Math.min(a.x, b.x), Math.min(a.y, b.y));
+        return of(Math.min(a.x, b.x), Math.min(a.y, b.y));
     }
 
     /**

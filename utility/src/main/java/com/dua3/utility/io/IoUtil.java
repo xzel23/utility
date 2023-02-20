@@ -61,7 +61,7 @@ public final class IoUtil {
      * Extract the filename from a path given as a String. In addition to the system dependent
      * {@link File#separatorChar}, the forward slash '/' is always considered a separator.
      * @param path the path of the file
-     * @return the filename of the last element of the path
+     * @return the filename of the path's last element
      */
     public static String getFilename(String path) {
         Pair<Integer, Integer> fi = getFilenameInfo(path);
@@ -71,7 +71,7 @@ public final class IoUtil {
     /**
      * Find start and end index of the filename, discarding trailing path separators.
      * @param path the path to get the filename for
-     * @return pair with start, end indices
+     * @return pair with start, end indexes
      */
     private static Pair<Integer, Integer> getFilenameInfo(CharSequence path) {
         // trim trailing separators

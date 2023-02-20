@@ -161,7 +161,7 @@ public record Pair<T1, T2>(T1 first, T2 second) {
      * @return Pair consisting of the mapped values of this pair
      */
     public <U1, U2> Pair<U1, U2> map(Function<? super T1, ? extends U1> f1, Function<? super T2, ? extends U2> f2) {
-        return Pair.of(f1.apply(first()), f2.apply(second()));
+        return of(f1.apply(first()), f2.apply(second()));
     }
 
     /**
@@ -171,6 +171,6 @@ public record Pair<T1, T2>(T1 first, T2 second) {
      * @return Pair consisting of the mapped values of this pair
      */
     public <U> Pair<U, U> map(Function<Object, ? extends U> f) {
-        return Pair.of(f.apply(first()), f.apply(second()));
+        return of(f.apply(first()), f.apply(second()));
     }
 }

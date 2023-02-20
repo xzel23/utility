@@ -125,8 +125,8 @@ public final class FontDef {
     /**
      * Get fontspec for this FontDef instance.
      * <p>
-     * The fontspec returned by this method will alwayys return a fontspec containing all attributes. An astgerisk ('*')
-     * is used for attributes whose values are not defined in the FintDef instance so that it is possible to reparse a
+     * The fontspec returned by this method will always return a fontspec containing all attributes. An asterisk ('*')
+     * is used for attributes whose values are not defined in the FontDef instance so that it is possible to reparse a
      * fontspec into a FontDef that will be equal to the original one.
      * @return String representation of this instance
      */

@@ -63,7 +63,7 @@ public class LoggerFactory implements ILoggerFactory {
         }
 
         Arrays.stream(decls)
-                .skip(1) // gloabal level has already been set
+                .skip(1) // global level has already been set
                 .forEachOrdered(s -> {
                     String[] parts = s.split(":");
                     LangUtil.check(parts.length == 2, "invalid log level declaration: %s", s);
