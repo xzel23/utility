@@ -161,6 +161,11 @@ the parameter.
 
 ## Changes
 
+### 10.2.10
+
+- IoUtil.prettyPrint(String) retains comments in output
+- code and javadoc cleanup
+
 ### 10.2.9
 
 - reimplemented XmlUtil.prettyPrint(String) with a StAX parser so that no DOM has to be created when pretty-printing
