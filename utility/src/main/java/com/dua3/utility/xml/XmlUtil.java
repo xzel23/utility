@@ -13,12 +13,27 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.Comment;
+import javax.xml.stream.events.DTD;
+import javax.xml.stream.events.EndDocument;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.EntityReference;
+import javax.xml.stream.events.Namespace;
+import javax.xml.stream.events.ProcessingInstruction;
+import javax.xml.stream.events.StartDocument;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -26,7 +41,6 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
@@ -338,14 +352,74 @@ public final class XmlUtil {
         try (StringReader in = new StringReader(xml);
              StringWriter out = new StringWriter(xml.length()*6/5)) {
 
-            out.write(XML_DECLARATION);
+            XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+            XMLEventReader reader = xmlInputFactory.createXMLEventReader(in);
 
-            StAXSource source = new StAXSource(inputFactory.createXMLEventReader(in));
-            StreamResult result = new StreamResult(out);
-            utf8Transformer.transform(source, result);
+            XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
+            XMLStreamWriter writer = xmlOutputFactory.createXMLStreamWriter(out);
+
+            while (reader.hasNext()) {
+                XMLEvent event = reader.nextEvent();
+
+                if (event instanceof StartElement se) {
+                    while (reader.hasNext() && reader.peek().getEventType() == XMLEvent.SPACE) {
+                        reader.next();
+                    }
+                    QName seName = se.getName();
+                    if (reader.peek().isEndElement() && reader.next() instanceof EndElement ee) {
+                        writer.writeEmptyElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
+                    } else {
+                        writer.writeStartElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
+                    }
+                    se.getAttributes().forEachRemaining(attr -> {
+                        try {
+                            QName attrName = attr.getName();
+                            writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
+                        } catch (XMLStreamException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                } else if (event instanceof EndElement ee) {
+                    writer.writeEndElement();
+                } else if (event.getEventType() == XMLEvent.SPACE) {
+                    // nop
+                } else if (event instanceof ProcessingInstruction pi) {
+                    writer.writeProcessingInstruction(pi.getTarget(), pi.getData());
+                } else if (event instanceof Characters ch) {
+                    if (ch.isCData()) {
+                        writer.writeCData(ch.getData());
+                    } else {
+                        writer.writeCharacters(ch.getData());
+                    }
+                } else if (event instanceof Comment co) {
+                    String text = co.getText();
+                    writer.writeComment(text);
+                    if (!text.contains("\n")) { // seems linefeed is automatically added after multi-line comments
+                        writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
+                    }
+                } else if (event instanceof StartDocument sd) {
+                    writer.writeStartDocument(StandardCharsets.UTF_8.name(), sd.getVersion());
+                    writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
+                } else if (event instanceof EndDocument ed) {
+                    writer.writeEndDocument();
+                    writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
+                } else if (event instanceof EntityReference er) {
+                    writer.writeEntityRef(er.getName());
+                } else if (event instanceof Attribute at) {
+                    QName qName = at.getName();
+                    writer.writeAttribute(qName.getPrefix(), qName.getNamespaceURI(), qName.getLocalPart(), at.getValue());
+                } else if (event instanceof DTD dtd) {
+                    writer.writeDTD(dtd.getDocumentTypeDeclaration());
+                } else if (event instanceof Namespace ns) {
+                    writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI());
+                } else {
+                    LOG.trace("ignoring element: {}", event);
+                }
+            }
+            writer.flush();
 
             return out.toString();
-        } catch (IOException | TransformerException | XMLStreamException e) {
+        } catch (IOException | XMLStreamException e) {
             LOG.warn("could not parse XML", e);
             return xml;
         }

@@ -34,6 +34,31 @@ class XmlUtilTest {
 
     private final String XML_UNFORMATTED = XML.replaceAll("^\\s+", "");
 
+    private static final String XML_WITH_COMMENT = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!-- Important comment -->
+            <Countries>
+                <!--
+                 multi-line comments
+                 here
+                 -->
+                <Country LongName="Canada" ShortName="CA">
+                    <Provinces>
+                        <Province Name="Alberta"/>
+                        <Province Name="Manitoba"/>
+                    </Provinces>
+                </Country>
+                <Country LongName="United States" ShortName="US">
+                    <Provinces>
+                        <Province Name="Alaska"/>
+                        <Province Name="Alabama"/>
+                    </Provinces>
+                </Country>
+            </Countries>
+            """;
+
+    private final String XML_WITH_COMMENT_UNFORMATTED = XML_WITH_COMMENT.replaceAll("^\\s+", "");
+
     private static final String XML_WITH_NAMESPACES = """
             <?xml version="1.0" encoding="UTF-8"?>
             <Countries xmlns:c="https://www.dua3.com/countries" xmlns:d="https://www.dua3.com/other_countries">
@@ -77,6 +102,12 @@ class XmlUtilTest {
     void prettyPrintText() throws Exception {
         String text = XML_UTIL.prettyPrint(XML_UNFORMATTED);
         assertEquals(TextUtil.toSystemLineEnds(XML), text);
+    }
+
+    @Test
+    void prettyPrintTextWithComment() throws Exception {
+        String text = XML_UTIL.prettyPrint(XML_WITH_COMMENT_UNFORMATTED);
+        assertEquals(TextUtil.toSystemLineEnds(XML_WITH_COMMENT), text);
     }
 
     @Test
