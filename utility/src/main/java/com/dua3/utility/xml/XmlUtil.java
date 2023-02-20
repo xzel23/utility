@@ -418,7 +418,7 @@ public final class XmlUtil {
             }
             writer.flush();
 
-            return out.toString();
+            return TextUtil.toSystemLineEnds(out.toString());
         } catch (IOException | XMLStreamException e) {
             LOG.warn("could not parse XML", e);
             return xml;
