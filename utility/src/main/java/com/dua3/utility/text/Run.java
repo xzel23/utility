@@ -132,6 +132,7 @@ public final class Run implements AttributedCharSequence {
 
     private int hash = 0;
 
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         int h = hash;

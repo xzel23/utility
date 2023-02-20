@@ -246,6 +246,7 @@ public final class DataUtil {
                 }
             }
             if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
+                //noinspection DataFlowIssue
                 return (T) ((Path) value).toUri();
             }
         }
@@ -275,6 +276,7 @@ public final class DataUtil {
             }
             if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
                 try {
+                    //noinspection DataFlowIssue
                     return (T) ((Path) value).toUri().toURL();
                 } catch (MalformedURLException e) {
                     throw new ConversionException(sourceClass, targetClass, e);

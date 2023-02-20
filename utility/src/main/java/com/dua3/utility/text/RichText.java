@@ -190,7 +190,7 @@ public final class RichText
         boolean ok = true;
         for (Run run : run) {
             //noinspection ObjectEquality
-            ok &= run.base() == text;
+            ok = ok && (run.base() == text);
         }
         return ok;
     }
@@ -348,6 +348,7 @@ public final class RichText
 
     private int hash = 0;
 
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         int h = hash;

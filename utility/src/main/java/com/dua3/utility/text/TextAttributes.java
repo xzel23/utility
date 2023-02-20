@@ -115,6 +115,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         return super.equals(o);
     }
 
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         int h = hash;
