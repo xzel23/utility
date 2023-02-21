@@ -161,6 +161,11 @@ the parameter.
 
 ## Changes
 
+### 10.2.11
+
+- StreamUtil.stream() to create streams from iterators and iterables
+- IoUtil.prettyPrint(String) support namespaces; attributes written in alphabetical order
+
 ### 10.2.10
 
 - IoUtil.prettyPrint(String) retains comments in output
