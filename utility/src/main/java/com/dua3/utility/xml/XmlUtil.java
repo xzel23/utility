@@ -2,6 +2,8 @@ package com.dua3.utility.xml;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.StreamUtil;
 import com.dua3.utility.text.TextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -343,6 +346,22 @@ public final class XmlUtil {
         prettyPrint(new OutputStreamWriter(out, cs), document);
     }
 
+    private static class WrappedXMLStreamException extends RuntimeException {
+        WrappedXMLStreamException(XMLStreamException e) {
+            super(e);
+        }
+    }
+
+    private static <T> Consumer<T> consume(LangUtil.ConsumerThrows<T,XMLStreamException> c) {
+        return (T arg) -> {
+            try {
+                c.accept(arg);
+            } catch (XMLStreamException e) {
+                throw new WrappedXMLStreamException(e);
+            }
+        };
+    }
+
     /**
      * Pretty print XML. If the document cannot be parsed, the unchanged text is returned.
      * @param xml the XML text
@@ -371,14 +390,16 @@ public final class XmlUtil {
                     } else {
                         writer.writeStartElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
                     }
-                    se.getAttributes().forEachRemaining(attr -> {
-                        try {
-                            QName attrName = attr.getName();
-                            writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
-                        } catch (XMLStreamException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
+                    // write namespaces and attributes in alphabetical order to obtain reproducible results
+                    StreamUtil.stream(se.getNamespaces())
+                            .sorted(Comparator.comparing(Namespace::getPrefix))
+                            .forEach(consume( ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));
+                    StreamUtil.stream(se.getAttributes())
+                            .sorted(Comparator.comparing(Attribute::toString))
+                            .forEach(consume( attr -> {
+                                QName attrName = attr.getName();
+                                writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
+                            }));
                 } else if (event instanceof EndElement ee) {
                     writer.writeEndElement();
                 } else if (event.getEventType() == XMLEvent.SPACE) {
@@ -419,7 +440,7 @@ public final class XmlUtil {
             writer.flush();
 
             return TextUtil.toSystemLineEnds(out.toString());
-        } catch (IOException | XMLStreamException e) {
+        } catch (IOException | XMLStreamException | WrappedXMLStreamException e) {
             LOG.warn("could not parse XML", e);
             return xml;
         }

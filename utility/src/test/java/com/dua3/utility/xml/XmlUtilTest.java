@@ -79,6 +79,37 @@ class XmlUtilTest {
 
     private final String XML_WITH_NAMESPACES_UNFORMATTED = XML_WITH_NAMESPACES.replaceAll("^\\s+", "");
 
+    private static final String XML_EXAMPLE = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+                <xsl:template match="/">
+                    <html>
+                        <body>
+                            <h2>XML-Test</h2>
+                            <table border="1">
+                                <tr>
+                                    <th style="text-align:left">Test</th>
+                                    <th style="text-align:left">Result</th>
+                                </tr>
+                                <xsl:for-each select="suites/testcase">
+                                    <tr>
+                                        <td>
+                                            <xsl:value-of select="name"/>
+                                        </td>
+                                        <td>
+                                            <xsl:value-of select="result"/>
+                                        </td>
+                                    </tr>
+                                </xsl:for-each>
+                            </table>
+                        </body>
+                    </html>
+                </xsl:template>
+            </xsl:stylesheet>
+            """;
+
+    private final String XML_EXAMPLE_UNFORMATTED = XML_EXAMPLE.replaceAll("^\\s+", "");
+
     @Test
     void parseString() throws Exception {
         Document document = XML_UTIL.parse(XML);
@@ -108,6 +139,32 @@ class XmlUtilTest {
     void prettyPrintTextWithComment() throws Exception {
         String text = XML_UTIL.prettyPrint(XML_WITH_COMMENT_UNFORMATTED);
         assertEquals(TextUtil.toSystemLineEnds(XML_WITH_COMMENT), text);
+    }
+
+    @Test
+    void prettyPrintDocumentWithNamespace() throws Exception {
+        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES_UNFORMATTED);
+        String text = XML_UTIL.prettyPrint(document);
+        assertEquals(TextUtil.toSystemLineEnds(XML_WITH_NAMESPACES), text);
+    }
+
+    @Test
+    void prettyPrintTextWithNamespace() throws Exception {
+        String text = XML_UTIL.prettyPrint(XML_WITH_NAMESPACES_UNFORMATTED);
+        assertEquals(TextUtil.toSystemLineEnds(XML_WITH_NAMESPACES), text);
+    }
+
+    @Test
+    void prettyPrintExampleDocumentWithNamespace() throws Exception {
+        Document document = XML_UTIL.parse(XML_EXAMPLE_UNFORMATTED);
+        String text = XML_UTIL.prettyPrint(document);
+        assertEquals(TextUtil.toSystemLineEnds(XML_EXAMPLE), text);
+    }
+
+    @Test
+    void prettyPrintExampleTextWithNamespace() throws Exception {
+        String text = XML_UTIL.prettyPrint(XML_EXAMPLE_UNFORMATTED);
+        assertEquals(TextUtil.toSystemLineEnds(XML_EXAMPLE), text);
     }
 
     @Test
