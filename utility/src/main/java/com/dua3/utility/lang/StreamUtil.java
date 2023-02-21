@@ -125,4 +125,24 @@ public final class StreamUtil {
         return merge(Comparator.naturalOrder(), streams);
     }
 
+    /**
+     * Create a stream from the elements obtained from an iterator.
+     * @param iter the iterator
+     * @return stream of elements
+     * @param <T> the element type
+     */
+    public static <T> Stream<T> stream(Iterator<T> iter) {
+        return stream(() -> iter);
+    }
+
+    /**
+     * Create a stream from the elements obtained from an iterable.
+     * @param iterable the iterable
+     * @return stream of elements
+     * @param <T> the element type
+     */
+    public static <T> Stream<T> stream(Iterable<T> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false);
+    }
+
 }
