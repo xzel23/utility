@@ -1,5 +1,5 @@
 rootProject.name = "dua3-utility"
-val projectVersion = "10.3.0"
+val projectVersion = "10.3.1-SNAPSHOT"
 
 include("utility")
 include("utility-db")
@@ -21,7 +21,7 @@ dependencyResolutionManagement {
 
             version("cabe", "1.0.0")
             version("junit", "5.9.2")
-            version("log4j", "2.19.0")
+            version("log4j", "2.20.0")
             version("slf4j", "2.0.6")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
