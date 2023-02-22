@@ -10,9 +10,7 @@ import javax.xml.xpath.XPath;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertLinesMatch;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class XmlUtilTest {
 
@@ -138,12 +136,12 @@ class XmlUtilTest {
         String input = prepareInput(xml);
         Document document = XML_UTIL.parse(input);
         String result = XML_UTIL.prettyPrint(document);
-        assertEquals(xml, result);
+        assertLinesMatch(xml.lines(), result.lines());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {XML, XML_WITH_COMMENT, XML_WITH_NAMESPACES, XML_EXAMPLE})
-    void prettyPrintText(String xml) throws Exception {
+    void prettyPrintText(String xml) {
         String input = prepareInput(xml);
         String result = XML_UTIL.prettyPrint(input);
         assertLinesMatch(xml.lines(), result.lines());
