@@ -368,6 +368,8 @@ public final class XmlUtil {
      * @return formatted XML for the document
      */
     public String prettyPrint(String xml) {
+        boolean hasChildren = false;
+        int level = 0;
         try (StringReader in = new StringReader(xml);
              StringWriter out = new StringWriter(xml.length()*6/5)) {
 
@@ -381,12 +383,15 @@ public final class XmlUtil {
                 XMLEvent event = reader.nextEvent();
 
                 if (event instanceof StartElement se) {
-                    while (reader.hasNext() && reader.peek().getEventType() == XMLEvent.SPACE) {
-                        reader.next();
-                    }
+                    skipWhitespace(reader);
+                    writeIndentation(writer, level);
+                    hasChildren = false;
+                    level++;
                     QName seName = se.getName();
                     if (reader.peek().isEndElement() && reader.next() instanceof EndElement ee) {
                         writer.writeEmptyElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
+                        level--;
+                        hasChildren = true;
                     } else {
                         writer.writeStartElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
                     }
@@ -401,11 +406,19 @@ public final class XmlUtil {
                                 writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
                             }));
                 } else if (event instanceof EndElement ee) {
+                    level--;
+                    if (hasChildren) {
+                        writeIndentation(writer, level);
+                    }
                     writer.writeEndElement();
+                    hasChildren = true;
                 } else if (event.getEventType() == XMLEvent.SPACE) {
                     // nop
                 } else if (event instanceof ProcessingInstruction pi) {
+                    skipWhitespace(reader);
+                    writeIndentation(writer, level);
                     writer.writeProcessingInstruction(pi.getTarget(), pi.getData());
+                    hasChildren = true;
                 } else if (event instanceof Characters ch) {
                     if (ch.isCData()) {
                         writer.writeCData(ch.getData());
@@ -413,9 +426,18 @@ public final class XmlUtil {
                         writer.writeCharacters(ch.getData());
                     }
                 } else if (event instanceof Comment co) {
+                    writeIndentation(writer, level);
                     String text = co.getText();
-                    writer.writeComment(text);
-                    if (!text.contains("\n")) { // seems linefeed is automatically added after multi-line comments
+                    if (text.contains("\n")) { // seems linefeed is automatically added after multi-line comments
+                        // multi line comment
+                        writer.writeComment(
+                                text.indent(indentation(level)+1)
+                                        .replaceFirst("^\\s*\n", "\n")
+                                        .replaceFirst("\n$", "\n"+" ".repeat(indentation(level)))
+                        );
+                    } else {
+                        // single line comment
+                        writer.writeComment(text);
                         writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
                     }
                 } else if (event instanceof StartDocument sd) {
@@ -444,6 +466,22 @@ public final class XmlUtil {
             LOG.warn("could not parse XML", e);
             return xml;
         }
+    }
+
+    private static void skipWhitespace(XMLEventReader reader) throws XMLStreamException {
+        while (reader.hasNext() && reader.peek().getEventType() == XMLEvent.SPACE) {
+            reader.next();
+        }
+    }
+
+    private static void writeIndentation(XMLStreamWriter writer, int level) throws XMLStreamException {
+        assert level>=0;
+        writer.writeCharacters(" ".repeat(indentation(level)));
+    }
+
+    private static int indentation(int level) {
+        int indent = 4;
+        return level * indent;
     }
 
     /**

@@ -7,12 +7,20 @@ import org.w3c.dom.Document;
 
 import javax.xml.xpath.XPath;
 
+import java.util.regex.Pattern;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class XmlUtilTest {
 
     private static final XmlUtil XML_UTIL = XmlUtil.defaultInstance();
+
+    private static final Pattern PATTERN_LEADING_WHITESPACE = Pattern.compile("^\\s+", Pattern.MULTILINE);
+
+    private static String stripLeadingWhitespace(String s) {
+        return PATTERN_LEADING_WHITESPACE.matcher(s).replaceAll("");
+    }
 
     private static final String XML = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -32,7 +40,7 @@ class XmlUtilTest {
             </Countries>
             """;
 
-    private final String XML_UNFORMATTED = XML.replaceAll("^\\s+", "");
+    private final String XML_UNFORMATTED = stripLeadingWhitespace(XML);
 
     private static final String XML_WITH_COMMENT = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -41,7 +49,7 @@ class XmlUtilTest {
                 <!--
                  multi-line comments
                  here
-                 -->
+                -->
                 <Country LongName="Canada" ShortName="CA">
                     <Provinces>
                         <Province Name="Alberta"/>
@@ -57,7 +65,7 @@ class XmlUtilTest {
             </Countries>
             """;
 
-    private final String XML_WITH_COMMENT_UNFORMATTED = XML_WITH_COMMENT.replaceAll("^\\s+", "");
+    private final String XML_WITH_COMMENT_UNFORMATTED = stripLeadingWhitespace(XML_WITH_COMMENT);
 
     private static final String XML_WITH_NAMESPACES = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -77,7 +85,7 @@ class XmlUtilTest {
             </Countries>
             """;
 
-    private final String XML_WITH_NAMESPACES_UNFORMATTED = XML_WITH_NAMESPACES.replaceAll("^\\s+", "");
+    private final String XML_WITH_NAMESPACES_UNFORMATTED = stripLeadingWhitespace(XML_WITH_NAMESPACES);
 
     private static final String XML_EXAMPLE = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -108,7 +116,7 @@ class XmlUtilTest {
             </xsl:stylesheet>
             """;
 
-    private final String XML_EXAMPLE_UNFORMATTED = XML_EXAMPLE.replaceAll("^\\s+", "");
+    private final String XML_EXAMPLE_UNFORMATTED =  stripLeadingWhitespace(XML_EXAMPLE);
 
     @Test
     void parseString() throws Exception {
