@@ -1,26 +1,23 @@
 package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IoUtil;
-import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.w3c.dom.Document;
 
 import javax.xml.xpath.XPath;
-
+import java.util.Random;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class XmlUtilTest {
 
     private static final XmlUtil XML_UTIL = XmlUtil.defaultInstance();
-
-    private static final Pattern PATTERN_LEADING_WHITESPACE = Pattern.compile("^\\s+", Pattern.MULTILINE);
-
-    private static String stripLeadingWhitespace(String s) {
-        return PATTERN_LEADING_WHITESPACE.matcher(s).replaceAll("");
-    }
 
     private static final String XML = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -39,8 +36,6 @@ class XmlUtilTest {
                 </Country>
             </Countries>
             """;
-
-    private final String XML_UNFORMATTED = stripLeadingWhitespace(XML);
 
     private static final String XML_WITH_COMMENT = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -65,8 +60,6 @@ class XmlUtilTest {
             </Countries>
             """;
 
-    private final String XML_WITH_COMMENT_UNFORMATTED = stripLeadingWhitespace(XML_WITH_COMMENT);
-
     private static final String XML_WITH_NAMESPACES = """
             <?xml version="1.0" encoding="UTF-8"?>
             <Countries xmlns:c="https://www.dua3.com/countries" xmlns:d="https://www.dua3.com/other_countries">
@@ -84,8 +77,6 @@ class XmlUtilTest {
                 </d:Country>
             </Countries>
             """;
-
-    private final String XML_WITH_NAMESPACES_UNFORMATTED = stripLeadingWhitespace(XML_WITH_NAMESPACES);
 
     private static final String XML_EXAMPLE = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -116,8 +107,6 @@ class XmlUtilTest {
             </xsl:stylesheet>
             """;
 
-    private final String XML_EXAMPLE_UNFORMATTED =  stripLeadingWhitespace(XML_EXAMPLE);
-
     @Test
     void parseString() throws Exception {
         Document document = XML_UTIL.parse(XML);
@@ -130,49 +119,35 @@ class XmlUtilTest {
         assertNotNull(document);
     }
 
-    @Test
-    void prettyPrintDocument() throws Exception {
-        Document document = XML_UTIL.parse(XML_UNFORMATTED);
-        String text = XML_UTIL.prettyPrint(document);
-        assertEquals(TextUtil.toSystemLineEnds(XML), text);
+    /**
+     * scramble indentation of the input text.
+     * @param text the text
+     * @return text with random indentation
+     */
+    private static String prepareInput(String text) {
+        Random r = new Random(text.hashCode()); // reproducible results
+        return text.lines()
+                .map(String::strip)
+                .map(s -> s.indent(r.nextInt(8)))
+                .collect(Collectors.joining())
+                .trim();
     }
 
-    @Test
-    void prettyPrintText() throws Exception {
-        String text = XML_UTIL.prettyPrint(XML_UNFORMATTED);
-        assertEquals(TextUtil.toSystemLineEnds(XML), text);
+    @ParameterizedTest
+    @ValueSource(strings = {XML, /* don't run because Transformer formats multi-line comments differently: XML_WITH_COMMENT, */ XML_WITH_NAMESPACES, XML_EXAMPLE})
+    void prettyPrintDocument(String xml) throws Exception {
+        String input = prepareInput(xml);
+        Document document = XML_UTIL.parse(input);
+        String result = XML_UTIL.prettyPrint(document);
+        assertEquals(xml, result);
     }
 
-    @Test
-    void prettyPrintTextWithComment() throws Exception {
-        String text = XML_UTIL.prettyPrint(XML_WITH_COMMENT_UNFORMATTED);
-        assertEquals(TextUtil.toSystemLineEnds(XML_WITH_COMMENT), text);
-    }
-
-    @Test
-    void prettyPrintDocumentWithNamespace() throws Exception {
-        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES_UNFORMATTED);
-        String text = XML_UTIL.prettyPrint(document);
-        assertEquals(TextUtil.toSystemLineEnds(XML_WITH_NAMESPACES), text);
-    }
-
-    @Test
-    void prettyPrintTextWithNamespace() throws Exception {
-        String text = XML_UTIL.prettyPrint(XML_WITH_NAMESPACES_UNFORMATTED);
-        assertEquals(TextUtil.toSystemLineEnds(XML_WITH_NAMESPACES), text);
-    }
-
-    @Test
-    void prettyPrintExampleDocument() throws Exception {
-        Document document = XML_UTIL.parse(XML_EXAMPLE_UNFORMATTED);
-        String text = XML_UTIL.prettyPrint(document);
-        assertEquals(TextUtil.toSystemLineEnds(XML_EXAMPLE), text);
-    }
-
-    @Test
-    void prettyPrintExampleText() throws Exception {
-        String text = XML_UTIL.prettyPrint(XML_EXAMPLE_UNFORMATTED);
-        assertEquals(TextUtil.toSystemLineEnds(XML_EXAMPLE), text);
+    @ParameterizedTest
+    @ValueSource(strings = {XML, XML_WITH_COMMENT, XML_WITH_NAMESPACES, XML_EXAMPLE})
+    void prettyPrintText(String xml) throws Exception {
+        String input = prepareInput(xml);
+        String result = XML_UTIL.prettyPrint(input);
+        assertLinesMatch(xml.lines(), result.lines());
     }
 
     @Test
@@ -188,15 +163,8 @@ class XmlUtilTest {
     }
 
     @Test
-    void prettyPrint_withNamespace() throws Exception {
-        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES_UNFORMATTED);
-        String text = XML_UTIL.prettyPrint(document);
-        assertEquals(TextUtil.toSystemLineEnds(XML_WITH_NAMESPACES), text);
-    }
-
-    @Test
     void xpath() throws Exception {
-        Document document = XML_UTIL.parse(XML_UNFORMATTED);
+        Document document = XML_UTIL.parse(XML);
         XPath xpath = XML_UTIL.xpath();
 
         String expected = "Canada";
@@ -207,7 +175,7 @@ class XmlUtilTest {
 
     @Test
     void xpath_withNamespace() throws Exception {
-        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES_UNFORMATTED);
+        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
         XPath xpath = XML_UTIL.xpath(document.getDocumentElement());
 
         String expected = "Canada";

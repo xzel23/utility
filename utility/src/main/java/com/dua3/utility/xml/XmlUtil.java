@@ -370,7 +370,7 @@ public final class XmlUtil {
     public String prettyPrint(String xml) {
         boolean hasChildren = false;
         int level = 0;
-        try (StringReader in = new StringReader(xml);
+        try (StringReader in = new StringReader(xml.indent(Integer.MIN_VALUE));
              StringWriter out = new StringWriter(xml.length()*6/5)) {
 
             XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();

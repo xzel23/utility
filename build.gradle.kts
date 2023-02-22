@@ -66,6 +66,7 @@ subprojects {
 
         // JUnit
         testImplementation(rootProject.libs.junit.jupiter.api)
+        testImplementation(rootProject.libs.junit.jupiter.params)
         testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
     }
 
