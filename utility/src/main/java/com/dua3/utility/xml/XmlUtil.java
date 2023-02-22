@@ -79,8 +79,6 @@ public final class XmlUtil {
 
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
-    private final XMLInputFactory inputFactory;
-    private final XMLOutputFactory outputFactory;
     private final XPathFactory xPathFactory;
     private final DocumentBuilder documentBuilder;
     private final Transformer utf8Transformer;
@@ -159,8 +157,6 @@ public final class XmlUtil {
     public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory, XPathFactory xPathFactory) throws ParserConfigurationException {
         this.documentBuilderFactory = Objects.requireNonNull(documentBuilderFactory);
         this.transformerFactory = Objects.requireNonNull(transformerFactory);
-        this.inputFactory = XMLInputFactory.newDefaultFactory();
-        this.outputFactory = XMLOutputFactory.newDefaultFactory();
         this.xPathFactory = Objects.requireNonNull(xPathFactory);
         this.documentBuilder = this.documentBuilderFactory.newDocumentBuilder();
         this.utf8Transformer = getTransformer(StandardCharsets.UTF_8);
