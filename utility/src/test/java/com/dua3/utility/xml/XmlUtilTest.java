@@ -8,7 +8,6 @@ import org.w3c.dom.Document;
 
 import javax.xml.xpath.XPath;
 import java.util.Random;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
