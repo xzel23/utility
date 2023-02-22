@@ -161,6 +161,10 @@ the parameter.
 
 ## Changes
 
+### 10.3.1
+
+- Fix XmlUtil.prettyPrint(String) not indenting
+
 ### 10.3.0
 
 - StreamUtil.stream() to create streams from iterators and iterables

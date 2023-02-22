@@ -428,7 +428,7 @@ public final class XmlUtil {
                 } else if (event instanceof Comment co) {
                     writeIndentation(writer, level);
                     String text = co.getText();
-                    if (text.contains("\n")) { // seems linefeed is automatically added after multi-line comments
+                    if (text.contains("\n")) {
                         // multi line comment
                         writer.writeComment(
                                 text.indent(indentation(level)+1)

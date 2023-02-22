@@ -163,14 +163,14 @@ class XmlUtilTest {
     }
 
     @Test
-    void prettyPrintExampleDocumentWithNamespace() throws Exception {
+    void prettyPrintExampleDocument() throws Exception {
         Document document = XML_UTIL.parse(XML_EXAMPLE_UNFORMATTED);
         String text = XML_UTIL.prettyPrint(document);
         assertEquals(TextUtil.toSystemLineEnds(XML_EXAMPLE), text);
     }
 
     @Test
-    void prettyPrintExampleTextWithNamespace() throws Exception {
+    void prettyPrintExampleText() throws Exception {
         String text = XML_UTIL.prettyPrint(XML_EXAMPLE_UNFORMATTED);
         assertEquals(TextUtil.toSystemLineEnds(XML_EXAMPLE), text);
     }
