@@ -161,6 +161,10 @@ the parameter.
 
 ## Changes
 
+### 10.3.2
+
+- Fix XmlUtil.prettyPrint(String) indentation
+
 ### 10.3.1
 
 - Fix XmlUtil.prettyPrint(String) not indenting
