@@ -51,12 +51,12 @@ public class JdbcDriverInfo {
     private static final String PATTERN_VAR_ARG_1 = "(:((?<arg1>\\p{Alpha}(\\p{Alnum}|_)*)=(?<value1>[^,}]*)))";
     private static final String PATTERN_VAR_ARG_N = "(,((?<argn>\\p{Alpha}(\\p{Alnum}|_)*)=(?<valuen>[^,}]*)))";
     private static final String PATTERN_VAR_REMAINING_ARGS = "(?<remainingargs>" + PATTERN_VAR_ARG_N + "*)";
+    private static final String PATTERN_VAR_END = "\\}";
     private static final Pattern PATTERN_VAR = Pattern.compile(
             PATTERN_VAR_START
                     + PATTERN_VAR_NAME
                     + "(" + PATTERN_VAR_ARG_1 + PATTERN_VAR_REMAINING_ARGS + ")?"
                     + PATTERN_VAR_END);
-    private static final String PATTERN_VAR_END = "\\}";
     private static final Pattern PATTERN_ARGN = Pattern.compile(PATTERN_VAR_ARG_N);
 
     /**
