@@ -244,7 +244,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * Whether CSS output should be generated.
      */
-    private boolean useCss = false;
+    private boolean useCss;
 
     /**
      * En-/disable CSS in output.

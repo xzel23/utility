@@ -40,7 +40,7 @@ public class SwingComponentsSample extends JFrame {
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSample.class.getName());
 
     public static final int SLEEP_MILLIS = 25;
-    private volatile boolean done = false;
+    private volatile boolean done;
 
     @SuppressWarnings("UnsecureRandomNumberGeneration") // used only to create a random sequence of log levels in tests
     private final Random random = new Random();

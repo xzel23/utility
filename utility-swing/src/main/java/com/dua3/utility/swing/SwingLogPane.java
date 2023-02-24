@@ -74,9 +74,9 @@ public class SwingLogPane extends JPanel {
             buffer.addLogBufferListener(this);
         }
 
-        private List<LogEntry> data = null;
-        private int removed = 0;
-        private int added = 0;
+        private List<LogEntry> data;
+        private int removed;
+        private int added;
 
         private boolean isLocked() {
             return data != null;

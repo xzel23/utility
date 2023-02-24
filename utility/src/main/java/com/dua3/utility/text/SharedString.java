@@ -16,7 +16,7 @@ public class SharedString implements CharSequence {
     private final String base;
     private final int start;
     private final int end;
-    private int hash = 0;
+    private int hash;
 
     SharedString(String base, int start, int end) {
         this.base = Objects.requireNonNull(base);

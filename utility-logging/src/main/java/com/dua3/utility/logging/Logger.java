@@ -15,7 +15,7 @@ public class Logger extends AbstractLogger {
 
     private final List<? extends LogEntryHandler> handlers;
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
-    private Level level = null;
+    private Level level;
 
     public static void setDefaultLevel(Level level) {
         defaultLevel = level;

@@ -18,7 +18,7 @@ import java.awt.Label;
 public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
     private final ProgressView<T> imp;
-    private int rowCount = 0;
+    private int rowCount;
 
     private static class ProgressBarIndicator implements ProgressView.ProgressIndicator {
 

@@ -48,8 +48,8 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         return new AnsiConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
     }
 
-    private boolean reset = false;
-    private boolean reverseVideo = false;
+    private boolean reset;
+    private boolean reverseVideo;
     private final HashMap<String, BiFunction<Object, Object, String>> mappings = new HashMap<>();
 
     /**

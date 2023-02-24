@@ -28,9 +28,9 @@ public class Font {
     private final boolean strikeThrough;
 
     // lazily populated fields
-    private String fontspec = null;
-    private int hash = 0;
-    private FontDef fd = null;
+    private String fontspec;
+    private int hash;
+    private FontDef fd;
     private double spaceWidth = -1;
 
     /**

@@ -107,13 +107,13 @@ public final class FontDef {
         return fd;
     }
 
-    private Color color = null;
-    private Float size = null;
-    private String family = null;
-    private Boolean bold = null;
-    private Boolean italic = null;
-    private Boolean underline = null;
-    private Boolean strikeThrough = null;
+    private Color color;
+    private Float size;
+    private String family;
+    private Boolean bold;
+    private Boolean italic;
+    private Boolean underline;
+    private Boolean strikeThrough;
 
     /**
      * Default constructor that creates a {FontDe} instance without any properties set.
@@ -131,17 +131,13 @@ public final class FontDef {
      * @return String representation of this instance
      */
     public String fontspec() {
-        StringBuilder sb = new StringBuilder(64);
-
-        sb.append(Objects.requireNonNullElse(family, "*"));
-        sb.append(LangUtil.triStateSelect(bold, "-bold", "-regular", "-*"));
-        sb.append(LangUtil.triStateSelect(italic, "-italic", "-normal", "-*"));
-        sb.append(LangUtil.triStateSelect(underline, "-underline", "-none", "-*"));
-        sb.append(LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "*"));
-        sb.append('-').append(size != null ? size : "*");
-        sb.append('-').append(color != null ? color.toCss() : "*");
-
-        return sb.toString();
+        return Objects.requireNonNullElse(family, "*") +
+                LangUtil.triStateSelect(bold, "-bold", "-regular", "-*") +
+                LangUtil.triStateSelect(italic, "-italic", "-normal", "-*") +
+                LangUtil.triStateSelect(underline, "-underline", "-none", "-*") +
+                LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "*") +
+                '-' + (size != null ? size : "*") +
+                '-' + (color != null ? color.toCss() : "*");
     }
 
     /**

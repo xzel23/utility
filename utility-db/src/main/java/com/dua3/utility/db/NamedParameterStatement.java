@@ -91,7 +91,7 @@ public class NamedParameterStatement implements AutoCloseable {
     private final PreparedStatement statement;
 
     /** flag: has meta data been added to parameter info? */
-    private boolean hasMeta = false;
+    private boolean hasMeta;
 
     /**
      * A class holding parameter information.

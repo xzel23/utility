@@ -167,7 +167,7 @@ public class RingBuffer<E> implements Collection<E> {
         final int start_ = start;
 
         return new Iterator<>() {
-            int idx = 0;
+            int idx;
 
             private void checkValid() {
                 LangUtil.check(

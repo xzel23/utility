@@ -18,8 +18,8 @@ public class FilterIterator<T> implements Iterator<T> {
 
     private final Iterator<T> iterator;
     private final Predicate<T> predicate;
-    private boolean done = false;
-    private T current = null;
+    private boolean done;
+    private T current;
 
     /**
      * Construct a new FilterIterator.

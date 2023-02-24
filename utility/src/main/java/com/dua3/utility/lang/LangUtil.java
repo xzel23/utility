@@ -681,8 +681,8 @@ public final class LangUtil {
     private static class CachingSupplier<T> implements AutoCloseableSupplier<T> {
         private final Supplier<? extends T> supplier;
         private final Consumer<? super T> cleaner;
-        private T obj = null;
-        private boolean initialized = false;
+        private T obj;
+        private boolean initialized;
 
         CachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
             this.supplier = Objects.requireNonNull(supplier);

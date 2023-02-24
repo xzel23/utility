@@ -35,7 +35,7 @@ public interface AttributedCharSequence extends CharSequence {
      */
     default Stream<AttributedCharacter> attributedChars() {
         class AttributedCharIterator implements Iterator<AttributedCharacter> {
-            int cur = 0;
+            int cur;
 
             @Override
             public boolean hasNext() {

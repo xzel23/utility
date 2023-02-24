@@ -15,8 +15,8 @@ import java.util.Objects;
 public class PeekIterator<T> implements Iterator<T> {
 
     private final Iterator<T> iterator;
-    private boolean done = false;
-    private T current = null;
+    private boolean done;
+    private T current;
 
     /**
      * Construct a new PeekIterator.

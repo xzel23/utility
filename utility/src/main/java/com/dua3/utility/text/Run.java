@@ -130,7 +130,7 @@ public final class Run implements AttributedCharSequence {
         return attributes;
     }
 
-    private int hash = 0;
+    private int hash;
 
     @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
@@ -184,7 +184,7 @@ public final class Run implements AttributedCharSequence {
         return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 
-    private FontDef fd = null;
+    private FontDef fd;
 
     /**
      * Get the FontDef for this style.

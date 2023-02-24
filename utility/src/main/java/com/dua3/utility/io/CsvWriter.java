@@ -46,7 +46,7 @@ public class CsvWriter extends CsvIo implements Flushable {
 
     private final BufferedWriter out;
 
-    private int fieldsInRow = 0;
+    private int fieldsInRow;
 
     public CsvWriter(BufferedWriter out, Arguments options) {
         super(options);

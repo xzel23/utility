@@ -104,7 +104,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         return fd;
     }
 
-    private int hash = 0;
+    private int hash;
 
     @Override
     public boolean equals(@Nullable Object o) {

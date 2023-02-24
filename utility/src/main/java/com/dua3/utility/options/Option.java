@@ -22,9 +22,9 @@ public abstract class Option<T> {
 
     private String displayName = "";
     private String description = "";
-    private int minArity = 0;
-    private int maxArity = 0;
-    private int minOccurrences = 0;
+    private int minArity;
+    private int maxArity;
+    private int minOccurrences;
     private int maxOccurrences = Integer.MAX_VALUE;
     private Consumer<Collection<T>> handler = values -> {
     };

@@ -333,7 +333,7 @@ public final class RichText
     }
 
     // calculate the hashCode on demand
-    private int textHash = 0;
+    private int textHash;
 
     private int textHash() {
         int h = textHash;
@@ -346,7 +346,7 @@ public final class RichText
         return h;
     }
 
-    private int hash = 0;
+    private int hash;
 
     @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
@@ -425,7 +425,7 @@ public final class RichText
      */
     private Spliterator<RichText> lineSpliterator() {
         return new Spliterator<>() {
-            private int idx = 0;
+            private int idx;
 
             @Override
             public boolean tryAdvance(Consumer<? super RichText> action) {

@@ -9,7 +9,7 @@ public class PathBuilder2f {
 
     private Vector2f pos = Vector2f.ORIGIN;
     private Path2fImpl impl;
-    private boolean open = false;
+    private boolean open;
 
     /**
      * Constructor.

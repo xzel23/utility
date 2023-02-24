@@ -46,7 +46,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     private final T parent;
     private final Path path;
     private final boolean lazy;
-    private List<T> children = null;
+    private List<T> children;
 
     private final List<Consumer<T>> listeners = new ArrayList<>();
 
