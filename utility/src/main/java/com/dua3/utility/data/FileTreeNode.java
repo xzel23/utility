@@ -23,6 +23,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     private final boolean lazy;
     private final List<Consumer<T>> listeners = new ArrayList<>();
     private List<T> children;
+
     protected FileTreeNode(@Nullable T parent, Path path, boolean lazy) {
         this.parent = parent;
         this.path = path;

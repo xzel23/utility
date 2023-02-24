@@ -202,7 +202,6 @@ public class SwingLogPane extends JPanel {
             case INFO -> Color.DARKBLUE;
             case DEBUG -> Color.BLACK;
             case TRACE -> Color.DARKGRAY;
-            default -> Color.BLACK;
         };
     }
 
@@ -351,6 +350,7 @@ public class SwingLogPane extends JPanel {
         private List<LogEntry> data;
         private int removed;
         private int added;
+
         private LogTableModel(LogBuffer buffer) {
             this.buffer = Objects.requireNonNull(buffer);
             buffer.addLogBufferListener(this);

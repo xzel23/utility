@@ -21,6 +21,7 @@ public final class ChoiceOption<T> extends Option<T> {
 
     private final Supplier<? extends Collection<? extends T>> values;
     private Supplier<? extends T> defaultValue = () -> null;
+
     /**
      * Constructor.
      *

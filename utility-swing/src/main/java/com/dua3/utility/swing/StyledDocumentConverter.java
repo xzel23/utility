@@ -40,6 +40,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     private double scale = 1.0;
     // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
     private final Map<Object, Function<Font, Object>> dictionary = createDictionary();
+
     private StyledDocumentConverter() {
     }
 

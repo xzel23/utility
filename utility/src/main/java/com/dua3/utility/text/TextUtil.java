@@ -614,7 +614,6 @@ public final class TextUtil {
             case RIGHT -> fill.repeat(Math.max(0, width - len)) + s;
             case CENTER ->
                     fill.repeat(Math.max(0, width - len) / 2) + s + fill.repeat(Math.max(0, width - len - (width - len) / 2));
-            default -> throw new IllegalArgumentException(align.toString());
         };
     }
 

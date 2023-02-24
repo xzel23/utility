@@ -53,6 +53,7 @@ public class CsvReader extends CsvIo {
     private List<String> columnNames;
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
+
     public CsvReader(RowBuilder rowBuilder, BufferedReader reader, @Nullable URI source, Arguments options)
             throws IOException {
         super(options);

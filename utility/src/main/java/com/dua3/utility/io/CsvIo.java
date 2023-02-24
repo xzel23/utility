@@ -39,6 +39,7 @@ public abstract class CsvIo implements AutoCloseable {
     protected final DateTimeFormatter dateTimeFormatter;
     protected final DateTimeFormatter dateFormatter;
     protected final NumberFormat numberFormat;
+
     protected CsvIo(Arguments options) {
         this.separator = IoOptions.getFieldSeparator(options);
         this.delimiter = IoOptions.getTextDelimiter(options);

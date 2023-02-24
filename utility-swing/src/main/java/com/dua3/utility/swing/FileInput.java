@@ -31,6 +31,7 @@ public class FileInput extends JPanel {
     private final JTextField textField;
     private final JButton button;
     private final SelectionMode mode;
+
     /**
      * Constructor.
      *

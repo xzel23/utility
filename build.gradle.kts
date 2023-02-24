@@ -36,8 +36,8 @@ object meta {
 
 subprojects {
 
-    project.setVersion(rootProject.libs.versions.projectVersion.get())
-    val isReleaseVersion = !project.getVersion().toString().endsWith("SNAPSHOT")
+    project.version = rootProject.libs.versions.projectVersion.get()
+    val isReleaseVersion = !project.version.toString().endsWith("SNAPSHOT")
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -158,7 +158,7 @@ subprojects {
 
     // === sign artifacts
     signing {
-        setRequired(isReleaseVersion && gradle.taskGraph.hasTask("publish"))
+        isRequired = isReleaseVersion && gradle.taskGraph.hasTask("publish")
         sign(publishing.publications["maven"])
     }
 

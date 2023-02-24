@@ -441,7 +441,6 @@ public final class MathUtil {
             case FLOOR -> Math::floor;
             case CEILING -> Math::ceil;
             case UNNECESSARY -> x -> x;
-            default -> throw new IllegalArgumentException("unsupported rounding mode: " + mode);
         };
     }
 }
