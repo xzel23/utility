@@ -19,7 +19,8 @@ public abstract class AbstractCurve2f extends Segment2f {
      * <p>
      * <strong>NOTE:</strong> The array of control points is used as is. It is the caller's
      * responsibility that the array is not modified after construction of the curve.
-     * @param path the path this curve belongs to
+     *
+     * @param path     the path this curve belongs to
      * @param controls the control points
      */
     AbstractCurve2f(Path2fImpl path, int... controls) {
@@ -29,6 +30,7 @@ public abstract class AbstractCurve2f extends Segment2f {
 
     /**
      * Get the number of control points.
+     *
      * @return number of control points
      */
     public int numberOfControls() {
@@ -37,6 +39,7 @@ public abstract class AbstractCurve2f extends Segment2f {
 
     /**
      * Get control point by index
+     *
      * @param idx index of control point
      * @return the control point
      */
@@ -56,18 +59,18 @@ public abstract class AbstractCurve2f extends Segment2f {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(16+16*numberOfControls());
-        
+        StringBuilder sb = new StringBuilder(16 + 16 * numberOfControls());
+
         sb.append(getClass().getSimpleName()).append("{");
         String sep = "";
-        for (int control: controls) {
+        for (int control : controls) {
             sb.append(sep);
             sb.append(vertexToString(control));
             sb.append("\n");
             sep = ", ";
         }
         sb.append("}");
-        
+
         return sb.toString();
     }
 }

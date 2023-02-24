@@ -5,11 +5,10 @@ import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
-
-import org.slf4j.event.Level;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.slf4j.event.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
@@ -29,22 +28,27 @@ public class SwingComponentsSample extends JFrame {
 
     public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
     public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
+    public static final int SLEEP_MILLIS = 25;
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + SwingComponentsSample.class.getName());
+    private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSample.class.getName());
+    private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSample.class.getName());
 
     static {
         java.util.logging.LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
     }
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + SwingComponentsSample.class.getName());
-    private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSample.class.getName());
-    private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSample.class.getName());
-
-    public static final int SLEEP_MILLIS = 25;
-    private volatile boolean done;
-
     @SuppressWarnings("UnsecureRandomNumberGeneration") // used only to create a random sequence of log levels in tests
     private final Random random = new Random();
     private final AtomicInteger n = new AtomicInteger();
+    private volatile boolean done;
+
+    public SwingComponentsSample() {
+        setLayout(new GridBagLayout());
+        setSize(800, 600);
+
+        init();
+    }
 
     public static void main(String[] args) {
         LOG.info("starting up");
@@ -56,13 +60,6 @@ public class SwingComponentsSample extends JFrame {
             instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             instance.setVisible(true);
         });
-    }
-
-    public SwingComponentsSample() {
-        setLayout(new GridBagLayout());
-        setSize(800, 600);
-
-        init();
     }
 
     private void init() {

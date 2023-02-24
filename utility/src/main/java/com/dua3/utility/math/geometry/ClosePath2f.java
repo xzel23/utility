@@ -12,16 +12,21 @@ public class ClosePath2f extends Segment2f {
      */
     public static final String NAME = "CLOSE_PATH";
 
-    /** Index of the start point of this segment (actually the last of the vertices). */
+    /**
+     * Index of the start point of this segment (actually the last of the vertices).
+     */
     private final int p;
-    /** Index of the end point of this segment (actually the start of the path). */
+    /**
+     * Index of the end point of this segment (actually the start of the path).
+     */
     private final int q;
 
     /**
      * Constructor.
+     *
      * @param path the path
-     * @param p index of the start point of this segment
-     * @param q index of the end point of this segment
+     * @param p    index of the start point of this segment
+     * @param q    index of the end point of this segment
      */
     ClosePath2f(Path2fImpl path, int p, int q) {
         super(path);

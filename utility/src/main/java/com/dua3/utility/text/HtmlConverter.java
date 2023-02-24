@@ -17,6 +17,29 @@ import java.util.function.UnaryOperator;
 public final class HtmlConverter extends TagBasedConverter<String> {
 
     /**
+     * The mappings of this converter.
+     * <p>
+     * Key: the attribute name
+     * Value: the function that maps values to tags
+     */
+    private final Map<String, Function<Object, HtmlTag>> mappings = new HashMap<>();
+    private UnaryOperator<Map<String, Object>> refineStyleProperties = m -> m;
+    /**
+     * The default mapper used to generate tags for attributes without mapping.
+     */
+    private BiFunction<String, Object, HtmlTag> defaultMapper = (attribute, value) -> HtmlTag.emptyTag();
+    /**
+     * Whether CSS output should be generated.
+     */
+    private boolean useCss;
+
+    /**
+     * Constructor.
+     */
+    private HtmlConverter() {
+    }
+
+    /**
      * Use CSS in output.
      *
      * @param flag set to true to enable CSS output
@@ -61,6 +84,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
     /**
      * Set the default mapper which is called when no mapper is registered for the attribute.
+     *
      * @param mapper the mapper to set as the default mapper
      * @return HtmlConversionOption that sets the default mapper
      */
@@ -72,16 +96,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         return new HtmlConversionOption(c -> c.setRefineStyleProperties(refineStyleProperties));
     }
 
-    private void setRefineStyleProperties(UnaryOperator<Map<String, Object>> refineStyleProperties) {
-        this.refineStyleProperties = Objects.requireNonNull(refineStyleProperties);
-    }
-
-    private UnaryOperator<Map<String, Object>> refineStyleProperties = m -> m;
-
     /**
-     * Replace font declarations with declarations for single properties. Use this as argument to 
+     * Replace font declarations with declarations for single properties. Use this as argument to
      * {@link #setRefineStyleProperties(UnaryOperator)} to generate style tags like <pre><b>...</b></pre>
      * instead of <pre><span>...</span></pre>.
+     *
      * @param styleProperties map with style properties
      * @return style properties with font declarations replaced
      */
@@ -96,9 +115,170 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         return props;
     }
 
+    /**
+     * Combine to mappers by creating a new mapper that simply concatenates tags.
+     *
+     * @param m1 the first mapper
+     * @param m2 the second mapper
+     * @return the new mapper
+     */
+    private static Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1,
+                                                            Function<Object, ? extends HtmlTag> m2) {
+        return value -> {
+            HtmlTag oldTag = m1.apply(value);
+            HtmlTag newTag = m2.apply(value);
+            return new HtmlTag() {
+                @Override
+                public String open() {
+                    return newTag.open() + oldTag.open();
+                }
+
+                @Override
+                public String close() {
+                    return oldTag.close() + newTag.close();
+                }
+            };
+        };
+    }
+
+    /**
+     * Create a converter with default mappings.
+     *
+     * @param options the options to use
+     * @return converter with standard mappings
+     */
+    public static HtmlConverter create(Collection<HtmlConversionOption> options) {
+        HtmlConverter instance = new HtmlConverter();
+        instance.doAddDefaultMappings();
+        options.forEach(o -> o.apply(instance));
+        return instance;
+    }
+
+    /**
+     * Create a converter with default mappings.
+     *
+     * @param options the options to use
+     * @return converter with standard mappings
+     */
+    public static HtmlConverter create(HtmlConversionOption... options) {
+        return create(List.of(options));
+    }
+
+    /**
+     * Create a converter without any mappings.
+     *
+     * @param options the options to use
+     * @return converter
+     */
+    public static HtmlConverter createBlank(Collection<HtmlConversionOption> options) {
+        HtmlConverter instance = new HtmlConverter();
+        options.forEach(o -> o.apply(instance));
+        return instance;
+    }
+
+    /**
+     * Create a converter without any mappings.
+     *
+     * @param options the options to use
+     * @return converter
+     */
+    public static HtmlConverter createBlank(HtmlConversionOption... options) {
+        return create(List.of(options));
+    }
+
+    private void setRefineStyleProperties(UnaryOperator<Map<String, Object>> refineStyleProperties) {
+        this.refineStyleProperties = Objects.requireNonNull(refineStyleProperties);
+    }
+
     @Override
     protected TagBasedConverterImpl<String> createConverter(RichText text) {
         return new HtmlConverterImpl(text);
+    }
+
+    private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
+        addMapping(attr, v -> Objects.equals(v, value) ? tag : HtmlTag.emptyTag());
+    }
+
+    void doAddDefaultMappings() {
+        addSimpleMapping(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
+        addSimpleMapping(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
+        addSimpleMapping(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
+        addSimpleMapping(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
+
+        addMapping(Style.FONT_TYPE, value -> {
+            if (isUseCss()) {
+                return switch (value.toString()) {
+                    case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<span class=\"monospace\">", "</span>");
+                    case Style.FONT_TYPE_VALUE_SANS_SERIF -> HtmlTag.tag("<span class=\"sans-serif\">", "</span>");
+                    case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span class=\"serif\">", "</span>");
+                    default -> HtmlTag.emptyTag();
+                };
+            } else {
+                return switch (value.toString()) {
+                    case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<code>", "</code>");
+                    case Style.FONT_TYPE_VALUE_SANS_SERIF ->
+                            HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
+                    case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
+                    default -> HtmlTag.emptyTag();
+                };
+            }
+        });
+
+        addMapping(Style.FONT, value -> {
+            Font font = (Font) value;
+            if (isUseCss()) {
+                return HtmlTag.tag("<span class=\"" + font.toString() + "\">", "</span>");
+            } else {
+                return HtmlTag.tag("<span style=\"" + font.getCssStyle() + "\">", "</span>");
+            }
+        });
+    }
+
+    void setDefaultMapper(BiFunction<String, Object, HtmlTag> defaultMapper) {
+        this.defaultMapper = Objects.requireNonNull(defaultMapper);
+    }
+
+    /**
+     * Add mapper for an attribute.
+     *
+     * @param attribute the attribute
+     * @param mapper    the mapper
+     */
+    void addMapping(String attribute, Function<Object, HtmlTag> mapper) {
+        Objects.requireNonNull(attribute);
+        Objects.requireNonNull(mapper);
+
+        mappings.merge(attribute, mapper, HtmlConverter::combineMappers);
+    }
+
+    /**
+     * Whether CSS is used in output.
+     *
+     * @return true, if CSS output is enabled
+     */
+    public boolean isUseCss() {
+        return useCss;
+    }
+
+    /**
+     * En-/disable CSS in output.
+     *
+     * @param flag true to enable CSS output
+     */
+    void setUseCss(boolean flag) {
+        this.useCss = true;
+    }
+
+    /**
+     * Get tag for attribute value.
+     *
+     * @param attribute the attribute
+     * @param value     the attribute value
+     * @return the tag
+     */
+    public HtmlTag get(String attribute, Object value) {
+        Function<Object, HtmlTag> mapper = mappings.get(attribute);
+        return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);
     }
 
     private class HtmlConverterImpl extends TagBasedConverterImpl<String> {
@@ -146,178 +326,6 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         protected String get() {
             return buffer.toString();
         }
-    }
-
-    private void addSimpleMapping(String attr, Object value, HtmlTag tag) {
-        addMapping(attr, v -> Objects.equals(v, value) ? tag : HtmlTag.emptyTag());
-    }
-
-    void doAddDefaultMappings() {
-        addSimpleMapping(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD, HtmlTag.tag("<b>", "</b>"));
-        addSimpleMapping(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC, HtmlTag.tag("<i>", "</i>"));
-        addSimpleMapping(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
-        addSimpleMapping(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
-
-        addMapping(Style.FONT_TYPE, value -> {
-            if (isUseCss()) {
-                return switch (value.toString()) {
-                    case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<span class=\"monospace\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SANS_SERIF -> HtmlTag.tag("<span class=\"sans-serif\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span class=\"serif\">", "</span>");
-                    default -> HtmlTag.emptyTag();
-                };
-            } else {
-                return switch (value.toString()) {
-                    case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<code>", "</code>");
-                    case Style.FONT_TYPE_VALUE_SANS_SERIF ->
-                            HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
-                    default -> HtmlTag.emptyTag();
-                };
-            }
-        });
-
-        addMapping(Style.FONT, value -> {
-            Font font = (Font) value;
-            if (isUseCss()) {
-                return HtmlTag.tag("<span class=\"" + font.toString() + "\">", "</span>");
-            } else {
-                return HtmlTag.tag("<span style=\"" + font.getCssStyle() + "\">", "</span>");
-            }
-        });
-    }
-
-    void setDefaultMapper(BiFunction<String, Object, HtmlTag> defaultMapper) {
-        this.defaultMapper = Objects.requireNonNull(defaultMapper);
-    }
-
-    /**
-     * The mappings of this converter.
-     * <p>
-     * Key: the attribute name
-     * Value: the function that maps values to tags
-     */
-    private final Map<String, Function<Object, HtmlTag>> mappings = new HashMap<>();
-
-    /**
-     * The default mapper used to generate tags for attributes without mapping.
-     */
-    private BiFunction<String, Object, HtmlTag> defaultMapper = (attribute, value) -> HtmlTag.emptyTag();
-
-    /**
-     * Add mapper for an attribute.
-     * @param attribute the attribute
-     * @param mapper the mapper
-     */
-    void addMapping(String attribute, Function<Object, HtmlTag> mapper) {
-        Objects.requireNonNull(attribute);
-        Objects.requireNonNull(mapper);
-
-        mappings.merge(attribute, mapper, HtmlConverter::combineMappers);
-    }
-
-    /**
-     * Combine to mappers by creating a new mapper that simply concatenates tags.
-     * @param m1 the first mapper
-     * @param m2 the second mapper
-     * @return the new mapper
-     */
-    private static Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1,
-                                                            Function<Object, ? extends HtmlTag> m2) {
-        return value -> {
-            HtmlTag oldTag = m1.apply(value);
-            HtmlTag newTag = m2.apply(value);
-            return new HtmlTag() {
-                @Override
-                public String open() {
-                    return newTag.open() + oldTag.open();
-                }
-
-                @Override
-                public String close() {
-                    return oldTag.close() + newTag.close();
-                }
-            };
-        };
-    }
-
-    /**
-     * Whether CSS output should be generated.
-     */
-    private boolean useCss;
-
-    /**
-     * En-/disable CSS in output.
-     * @param flag true to enable CSS output
-     */
-    void setUseCss(boolean flag) {
-        this.useCss = true;
-    }
-
-    /**
-     * Create a converter with default mappings.
-     * @param options the options to use
-     * @return converter with standard mappings
-     */
-    public static HtmlConverter create(Collection<HtmlConversionOption> options) {
-        HtmlConverter instance = new HtmlConverter();
-        instance.doAddDefaultMappings();
-        options.forEach(o -> o.apply(instance));
-        return instance;
-    }
-
-    /**
-     * Create a converter with default mappings.
-     * @param options the options to use
-     * @return converter with standard mappings
-     */
-    public static HtmlConverter create(HtmlConversionOption... options) {
-        return create(List.of(options));
-    }
-
-    /**
-     * Create a converter without any mappings.
-     * @param options the options to use
-     * @return converter
-     */
-    public static HtmlConverter createBlank(Collection<HtmlConversionOption> options) {
-        HtmlConverter instance = new HtmlConverter();
-        options.forEach(o -> o.apply(instance));
-        return instance;
-    }
-
-    /**
-     * Create a converter without any mappings.
-     * @param options the options to use
-     * @return converter
-     */
-    public static HtmlConverter createBlank(HtmlConversionOption... options) {
-        return create(List.of(options));
-    }
-
-    /**
-     * Constructor.
-     */
-    private HtmlConverter() {
-    }
-
-    /**
-     * Whether CSS is used in output.
-     * @return true, if CSS output is enabled
-     */
-    public boolean isUseCss() {
-        return useCss;
-    }
-
-    /**
-     * Get tag for attribute value.
-     * @param attribute the attribute
-     * @param value the attribute value
-     * @return the tag
-     */
-    public HtmlTag get(String attribute, Object value) {
-        Function<Object, HtmlTag> mapper = mappings.get(attribute);
-        return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);
     }
 
 }

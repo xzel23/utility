@@ -29,6 +29,14 @@ import java.util.Objects;
  * A class that writes data in CSV format.
  */
 public class CsvWriter extends CsvIo implements Flushable {
+    private final BufferedWriter out;
+    private int fieldsInRow;
+
+    public CsvWriter(BufferedWriter out, Arguments options) {
+        super(options);
+        this.out = Objects.requireNonNull(out);
+    }
+
     public static CsvWriter create(BufferedWriter writer, Arguments options) {
         return new CsvWriter(writer, options);
     }
@@ -42,15 +50,6 @@ public class CsvWriter extends CsvIo implements Flushable {
         Charset cs = IoOptions.getCharset(options);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
         return create(writer, options);
-    }
-
-    private final BufferedWriter out;
-
-    private int fieldsInRow;
-
-    public CsvWriter(BufferedWriter out, Arguments options) {
-        super(options);
-        this.out = Objects.requireNonNull(out);
     }
 
     public void addField(@Nullable Object obj) throws IOException {

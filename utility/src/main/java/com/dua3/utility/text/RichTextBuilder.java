@@ -35,9 +35,6 @@ public class RichTextBuilder implements Appendable, ToRichText {
     private final SortedMap<Integer, Map<String, Object>> parts;
     private final Deque<AttributeChange> openedAttributes = new ArrayDeque<>();
 
-    private record AttributeChange(String name, Object previousValue, Object value) {
-    }
-
     /**
      * Construct a new empty builder.
      */
@@ -47,6 +44,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     /**
      * Construct a new empty builder.
+     *
      * @param capacity the initial capacity
      */
     public RichTextBuilder(int capacity) {
@@ -77,11 +75,9 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Appends the {@link ToRichText} instance to this {@code RichTextBuilder}.
      *
-     * @param  trt
-     *         The {@link ToRichText} instance to append.  If {@code trt} is
-     *         {@code null}, then the four characters {@code "null"} are
-     *         appended to this RichTextBuilder.
-     *
+     * @param trt The {@link ToRichText} instance to append.  If {@code trt} is
+     *            {@code null}, then the four characters {@code "null"} are
+     *            appended to this RichTextBuilder.
      * @return A reference to this {@code RichTextBuilder}
      */
     public RichTextBuilder append(@Nullable ToRichText trt) {
@@ -96,11 +92,9 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Appends the {@link RichText} instance to this {@code RichTextBuilder}.
      *
-     * @param  rt
-     *         The {@link RichText} instance to append.  If {@code rt} is
-     *         {@code null}, then the four characters {@code "null"} are
-     *         appended to this RichTextBuilder.
-     *
+     * @param rt The {@link RichText} instance to append.  If {@code rt} is
+     *           {@code null}, then the four characters {@code "null"} are
+     *           appended to this RichTextBuilder.
      * @return A reference to this {@code RichTextBuilder}
      */
     public RichTextBuilder append(@Nullable RichText rt) {
@@ -115,7 +109,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Get attribute of the current Run.
      *
-     * @param  property the property
+     * @param property the property
      * @return value of the property
      */
     public Object get(String property) {
@@ -125,7 +119,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Get attribute of the current Run.
      *
-     * @param  property the property
+     * @param property     the property
      * @param defaultValue the default value for the property
      * @return value of the property
      */
@@ -212,7 +206,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * Ensures that the capacity is at least equal to the specified minimum.
      *
      * @param minimumCapacity the minimum desired capacity.
-     * @see                   StringBuilder#ensureCapacity(int)
+     * @see StringBuilder#ensureCapacity(int)
      */
     public void ensureCapacity(int minimumCapacity) {
         buffer.ensureCapacity(minimumCapacity);
@@ -260,7 +254,8 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     /**
      * Push attribute. Remove the attribute again by calling {@link #pop(String)}.
-     * @param name attribute name
+     *
+     * @param name  attribute name
      * @param value attribute value
      */
     public void push(String name, Object value) {
@@ -271,6 +266,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     /**
      * Pop attribute that has been set using {@link #push(String, Object)}.
+     *
      * @param name attribute name
      */
     public void pop(String name) {
@@ -286,6 +282,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     /**
      * Push style. Remove the style again by calling {@link #pop(Style)}.
+     *
      * @param style the {@link Style} to push
      */
     @SuppressWarnings("unchecked")
@@ -299,6 +296,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     /**
      * Pop style that has been set using {@link #push(Style)}.
+     *
      * @param style the style
      */
     public void pop(Style style) {
@@ -315,6 +313,9 @@ public class RichTextBuilder implements Appendable, ToRichText {
             List<Style> styles = (List<Style>) attributes.computeIfAbsent(RichText.ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
             styles.add(0, style); // add the style at the first position!
         }
+    }
+
+    private record AttributeChange(String name, Object previousValue, Object value) {
     }
 
 }

@@ -76,13 +76,6 @@ public final class XmlUtil {
     private static final Logger LOG = LoggerFactory.getLogger(XmlUtil.class);
 
     private static final String XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + TextUtil.LINE_END_SYSTEM;
-
-    private final DocumentBuilderFactory documentBuilderFactory;
-    private final TransformerFactory transformerFactory;
-    private final XPathFactory xPathFactory;
-    private final DocumentBuilder documentBuilder;
-    private final Transformer utf8Transformer;
-
     private static final String PRETTY_PRINT_XSLT = """
             <?xml version="1.0" encoding="UTF-8"?>
             <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -97,61 +90,18 @@ public final class XmlUtil {
                             
             </xsl:stylesheet>
             """;
-
-    /*
-     * Lazily construct the default instance since it might pull in a lot of dependencies which is not desirable
-     * in case only a specialized version is needed.
-     */
-    private static class LazySingletonDefaultInstance {
-        private static final XmlUtil INSTANCE;
-
-        static {
-            try {
-                INSTANCE = new XmlUtil(DocumentBuilderFactory.newDefaultNSInstance(), TransformerFactory.newDefaultInstance(), XPathFactory.newDefaultInstance());
-            } catch (ParserConfigurationException e) {
-                throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
-            }
-        }
-    }
-
-    /*
-     * Lazily construct the instance using JAXP Lookup Mechanism for obtaining the different factories.
-     */
-    private static class LazySingletonJaxpInstance {
-        private static final XmlUtil INSTANCE;
-
-        static {
-            try {
-                INSTANCE = new XmlUtil(DocumentBuilderFactory.newNSInstance(), TransformerFactory.newInstance(), XPathFactory.newInstance());
-            } catch (ParserConfigurationException e) {
-                throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
-            }
-        }
-    }
-
-    /**
-     * Get instance using the default implementation supplied by the JDK. 
-     * @return default instance
-     * @throws IllegalStateException if default instance could not be created
-     */
-    public static XmlUtil defaultInstance() {
-        return LazySingletonDefaultInstance.INSTANCE;
-    }
-
-    /**
-     * Get instance using JAXP Lookup Mechanism to obtain implementing classes. 
-     * @return new instance
-     * @throws IllegalStateException if default instance could not be created
-     */
-    public static XmlUtil jaxpInstance() {
-        return LazySingletonJaxpInstance.INSTANCE;
-    }
+    private final DocumentBuilderFactory documentBuilderFactory;
+    private final TransformerFactory transformerFactory;
+    private final XPathFactory xPathFactory;
+    private final DocumentBuilder documentBuilder;
+    private final Transformer utf8Transformer;
 
     /**
      * Construct a new instance.
+     *
      * @param documentBuilderFactory the {@link DocumentBuilderFactory} to use
-     * @param transformerFactory the {@link TransformerFactory} to use
-     * @param xPathFactory the {@link XPathFactory} to use
+     * @param transformerFactory     the {@link TransformerFactory} to use
+     * @param xPathFactory           the {@link XPathFactory} to use
      * @throws ParserConfigurationException if a configuration error occurs
      */
     public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory, XPathFactory xPathFactory) throws ParserConfigurationException {
@@ -163,7 +113,54 @@ public final class XmlUtil {
     }
 
     /**
+     * Get instance using the default implementation supplied by the JDK.
+     *
+     * @return default instance
+     * @throws IllegalStateException if default instance could not be created
+     */
+    public static XmlUtil defaultInstance() {
+        return LazySingletonDefaultInstance.INSTANCE;
+    }
+
+    /**
+     * Get instance using JAXP Lookup Mechanism to obtain implementing classes.
+     *
+     * @return new instance
+     * @throws IllegalStateException if default instance could not be created
+     */
+    public static XmlUtil jaxpInstance() {
+        return LazySingletonJaxpInstance.INSTANCE;
+    }
+
+    private static <T> Consumer<T> consume(LangUtil.ConsumerThrows<T, XMLStreamException> c) {
+        return (T arg) -> {
+            try {
+                c.accept(arg);
+            } catch (XMLStreamException e) {
+                throw new WrappedXMLStreamException(e);
+            }
+        };
+    }
+
+    private static void skipWhitespace(XMLEventReader reader) throws XMLStreamException {
+        while (reader.hasNext() && reader.peek().getEventType() == XMLEvent.SPACE) {
+            reader.next();
+        }
+    }
+
+    private static void writeIndentation(XMLStreamWriter writer, int level) throws XMLStreamException {
+        assert level >= 0;
+        writer.writeCharacters(" ".repeat(indentation(level)));
+    }
+
+    private static int indentation(int level) {
+        int indent = 4;
+        return level * indent;
+    }
+
+    /**
      * Get stream of child nodes.
+     *
      * @param node the node
      * @return stream of the child nodes
      */
@@ -173,6 +170,7 @@ public final class XmlUtil {
 
     /**
      * Convert {@code NodeList} to {@code Stream<Node>}.
+     *
      * @param nodes the NodeList
      * @return stream of nodes
      */
@@ -183,9 +181,10 @@ public final class XmlUtil {
 
     /**
      * Read XML from an {@link InputStream} and parse it to {@link org.w3c.dom.Document}.
+     *
      * @param in the stream to read the XML from
      * @return the parsed {@link org.w3c.dom.Document}
-     * @throws IOException in case of an I/O error
+     * @throws IOException  in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
      */
     public org.w3c.dom.Document parse(InputStream in) throws IOException, SAXException {
@@ -194,9 +193,10 @@ public final class XmlUtil {
 
     /**
      * Parse the content of {@code file} to {@link org.w3c.dom.Document}.
+     *
      * @param uri the URI to read the XML from
      * @return the parsed {@link org.w3c.dom.Document}
-     * @throws IOException in case of an I/O error
+     * @throws IOException  in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
      */
     public org.w3c.dom.Document parse(URI uri) throws IOException, SAXException {
@@ -205,9 +205,10 @@ public final class XmlUtil {
 
     /**
      * Parse the content of {@code path} to {@link org.w3c.dom.Document}.
+     *
      * @param path the path to read the XML from
      * @return the parsed {@link org.w3c.dom.Document}
-     * @throws IOException in case of an I/O error
+     * @throws IOException  in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
      */
     public org.w3c.dom.Document parse(Path path) throws IOException, SAXException {
@@ -216,9 +217,10 @@ public final class XmlUtil {
 
     /**
      * Parse text to {@link org.w3c.dom.Document}.
+     *
      * @param text the XML as a String
      * @return the parsed {@link org.w3c.dom.Document}
-     * @throws IOException in case of an I/O error
+     * @throws IOException  in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
      */
     public org.w3c.dom.Document parse(String text) throws IOException, SAXException {
@@ -229,7 +231,8 @@ public final class XmlUtil {
 
     /**
      * Pretty print W3C Node using UTF-8 encoding.
-     * @param out the stream to write to
+     *
+     * @param out  the stream to write to
      * @param node the node
      * @throws IOException when an I/O error occurs
      */
@@ -239,8 +242,9 @@ public final class XmlUtil {
 
     /**
      * Pretty print W3C Node using the provided charset for encoding.
-     * @param out the stream to write to
-     * @param node the node
+     *
+     * @param out     the stream to write to
+     * @param node    the node
      * @param charset the {@link Charset} to use for encoding the output
      * @throws IOException when an I/O error occurs
      */
@@ -249,12 +253,12 @@ public final class XmlUtil {
     }
 
     /**
-     * Pretty print W3C Node. 
+     * Pretty print W3C Node.
      * <br>
      * <strong>Note:</strong> the writer should be using the UTF-8 character encoding!
      *
      * @param writer the writer to write to
-     * @param node the node
+     * @param node   the node
      * @throws IOException when an I/O error occurs
      */
     public void format(Writer writer, Node node) throws IOException {
@@ -263,8 +267,9 @@ public final class XmlUtil {
 
     /**
      * Pretty print W3C Document. Note that the provided charset should match the one used by the writer!
-     * @param writer the writer to write to
-     * @param node the node
+     *
+     * @param writer  the writer to write to
+     * @param node    the node
      * @param charset the {@link Charset} to use for encoding the output
      * @throws IOException when an I/O error occurs
      */
@@ -297,6 +302,7 @@ public final class XmlUtil {
 
     /**
      * Format node to XML.
+     *
      * @param node the node
      * @return XML for the node
      */
@@ -306,6 +312,7 @@ public final class XmlUtil {
 
     /**
      * Pretty print W3C Document.
+     *
      * @param document the document
      * @return formatted XML for the document
      */
@@ -315,7 +322,8 @@ public final class XmlUtil {
 
     /**
      * Pretty print W3C Document.
-     * @param writer the {@link Writer} to use
+     *
+     * @param writer   the {@link Writer} to use
      * @param document the document
      */
     public void prettyPrint(Writer writer, Document document) throws IOException {
@@ -325,7 +333,8 @@ public final class XmlUtil {
 
     /**
      * Pretty print W3C Document.
-     * @param out the {@link OutputStream} to use
+     *
+     * @param out      the {@link OutputStream} to use
      * @param document the document
      */
     public void prettyPrint(OutputStream out, Document document) throws IOException {
@@ -334,32 +343,18 @@ public final class XmlUtil {
 
     /**
      * Pretty print W3C Document.
-     * @param out the {@link OutputStream} to use
+     *
+     * @param out      the {@link OutputStream} to use
      * @param document the document
-     * @param cs the {@link Charset} to use
+     * @param cs       the {@link Charset} to use
      */
     public void prettyPrint(OutputStream out, Document document, Charset cs) throws IOException {
         prettyPrint(new OutputStreamWriter(out, cs), document);
     }
 
-    private static class WrappedXMLStreamException extends RuntimeException {
-        WrappedXMLStreamException(XMLStreamException e) {
-            super(e);
-        }
-    }
-
-    private static <T> Consumer<T> consume(LangUtil.ConsumerThrows<T,XMLStreamException> c) {
-        return (T arg) -> {
-            try {
-                c.accept(arg);
-            } catch (XMLStreamException e) {
-                throw new WrappedXMLStreamException(e);
-            }
-        };
-    }
-
     /**
      * Pretty print XML. If the document cannot be parsed, the unchanged text is returned.
+     *
      * @param xml the XML text
      * @return formatted XML for the document
      */
@@ -367,7 +362,7 @@ public final class XmlUtil {
         boolean hasChildren = false;
         int level = 0;
         try (StringReader in = new StringReader(xml.indent(Integer.MIN_VALUE));
-             StringWriter out = new StringWriter(xml.length()*6/5)) {
+             StringWriter out = new StringWriter(xml.length() * 6 / 5)) {
 
             XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
             XMLEventReader reader = xmlInputFactory.createXMLEventReader(in);
@@ -394,10 +389,10 @@ public final class XmlUtil {
                     // write namespaces and attributes in alphabetical order to obtain reproducible results
                     StreamUtil.stream(se.getNamespaces())
                             .sorted(Comparator.comparing(Namespace::getPrefix))
-                            .forEach(consume( ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));
+                            .forEach(consume(ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));
                     StreamUtil.stream(se.getAttributes())
                             .sorted(Comparator.comparing(Attribute::toString))
-                            .forEach(consume( attr -> {
+                            .forEach(consume(attr -> {
                                 QName attrName = attr.getName();
                                 writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
                             }));
@@ -427,9 +422,9 @@ public final class XmlUtil {
                     if (text.contains("\n")) {
                         // multi line comment
                         writer.writeComment(
-                                text.indent(indentation(level)+1)
+                                text.indent(indentation(level) + 1)
                                         .replaceFirst("^\\s*\n", "\n")
-                                        .replaceFirst("\n$", "\n"+" ".repeat(indentation(level)))
+                                        .replaceFirst("\n$", "\n" + " ".repeat(indentation(level)))
                         );
                     } else {
                         // single line comment
@@ -464,26 +459,11 @@ public final class XmlUtil {
         }
     }
 
-    private static void skipWhitespace(XMLEventReader reader) throws XMLStreamException {
-        while (reader.hasNext() && reader.peek().getEventType() == XMLEvent.SPACE) {
-            reader.next();
-        }
-    }
-
-    private static void writeIndentation(XMLStreamWriter writer, int level) throws XMLStreamException {
-        assert level>=0;
-        writer.writeCharacters(" ".repeat(indentation(level)));
-    }
-
-    private static int indentation(int level) {
-        int indent = 4;
-        return level * indent;
-    }
-
     /**
      * Pretty print XML. If the document cannot be parsed, the unchanged text is written.
+     *
      * @param writer the {@link Writer} to use
-     * @param xml the XML text
+     * @param xml    the XML text
      */
     public void prettyPrint(Writer writer, String xml) throws IOException {
         try {
@@ -496,6 +476,7 @@ public final class XmlUtil {
 
     /**
      * Pretty print XML. If the document cannot be parsed, the unchanged text is written.
+     *
      * @param out the {@link OutputStream} to use
      * @param xml the XML text
      */
@@ -505,9 +486,10 @@ public final class XmlUtil {
 
     /**
      * Pretty print XML. If the document cannot be parsed, the unchanged text is written.
+     *
      * @param out the {@link OutputStream} to use
      * @param xml the XML text
-     * @param cs the {@link Charset} to use
+     * @param cs  the {@link Charset} to use
      */
     public void prettyPrint(OutputStream out, String xml, Charset cs) throws IOException {
         try {
@@ -538,6 +520,7 @@ public final class XmlUtil {
      * <p>
      * The returned instance is <strong>not</strong> namespace aware. Either use {@link #xpath(Node)} or supply
      * a custom {@link NamespaceContext} if namespaces should be supported.
+     *
      * @return new {@link XPath} instance.
      */
     public XPath xpath() {
@@ -546,6 +529,7 @@ public final class XmlUtil {
 
     /**
      * Create {@link XPath} instance with a namespace context.
+     *
      * @param ctx the {@link NamespaceContext} to use
      * @return new {@link XPath} instance.
      */
@@ -558,6 +542,7 @@ public final class XmlUtil {
     /**
      * Create {@link XPath} instance with only a default namespace set The default namespace will be identified by
      * the name "ns" in xpath expressions.
+     *
      * @param defaultUri the URI of the default namespace
      * @return new {@link XPath} instance.
      */
@@ -567,7 +552,8 @@ public final class XmlUtil {
 
     /**
      * Create {@link XPath} instance with a mapping and a default namespace.
-     * @param nsToUri mapping from namespace name to URI
+     *
+     * @param nsToUri    mapping from namespace name to URI
      * @param defaultUri the URI of the default namespace
      * @return new {@link XPath} instance.
      */
@@ -577,6 +563,7 @@ public final class XmlUtil {
 
     /**
      * Create {@link XPath} instance for a node with a matching {@link NamespaceContext}.
+     *
      * @param node the node to determine the used namespaces from
      * @return new {@link XPath} instance generated from he supplied argument and its parent's
      * namespace declarations.
@@ -608,9 +595,9 @@ public final class XmlUtil {
         return xpath(nsToUri, defaultUri);
     }
 
-
     /**
      * Create new {@link DocumentBuilder}.
+     *
      * @return new {@link DocumentBuilder} instance
      */
     public DocumentBuilder documentBuilder() {
@@ -619,6 +606,43 @@ public final class XmlUtil {
         } catch (ParserConfigurationException e) {
             // this shouldn't happen since a DocumentBuilder has already been created in the constructor
             throw new IllegalStateException("DocumentBuilderFactory configuration error", e);
+        }
+    }
+
+    /*
+     * Lazily construct the default instance since it might pull in a lot of dependencies which is not desirable
+     * in case only a specialized version is needed.
+     */
+    private static class LazySingletonDefaultInstance {
+        private static final XmlUtil INSTANCE;
+
+        static {
+            try {
+                INSTANCE = new XmlUtil(DocumentBuilderFactory.newDefaultNSInstance(), TransformerFactory.newDefaultInstance(), XPathFactory.newDefaultInstance());
+            } catch (ParserConfigurationException e) {
+                throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
+            }
+        }
+    }
+
+    /*
+     * Lazily construct the instance using JAXP Lookup Mechanism for obtaining the different factories.
+     */
+    private static class LazySingletonJaxpInstance {
+        private static final XmlUtil INSTANCE;
+
+        static {
+            try {
+                INSTANCE = new XmlUtil(DocumentBuilderFactory.newNSInstance(), TransformerFactory.newInstance(), XPathFactory.newInstance());
+            } catch (ParserConfigurationException e) {
+                throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
+            }
+        }
+    }
+
+    private static class WrappedXMLStreamException extends RuntimeException {
+        WrappedXMLStreamException(XMLStreamException e) {
+            super(e);
         }
     }
 

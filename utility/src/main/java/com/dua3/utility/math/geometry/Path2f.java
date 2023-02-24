@@ -19,6 +19,7 @@ public final class Path2f {
 
     /**
      * Get list of vertices of this path.
+     *
      * @return list of vertices
      */
     public List<Vector2f> vertices() {
@@ -27,6 +28,7 @@ public final class Path2f {
 
     /**
      * Get list of segments of this path.
+     *
      * @return list of segments
      */
     public List<Segment2f> segments() {

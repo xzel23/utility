@@ -9,6 +9,7 @@ import java.util.List;
 public interface AttributedCharacter {
     /**
      * Create instance.
+     *
      * @param c char
      * @param a attributes to apply to character
      * @return attributed character
@@ -29,18 +30,21 @@ public interface AttributedCharacter {
 
     /**
      * Get character.
+     *
      * @return the char value
      */
     char character();
 
     /**
      * Get text attributes.
+     *
      * @return the text attributes
      */
     TextAttributes attributes();
 
     /**
      * Get the list of styles.
+     *
      * @return the list of styles
      */
     @SuppressWarnings("unchecked")

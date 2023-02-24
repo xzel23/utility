@@ -22,16 +22,18 @@ public final class MathUtil {
     private static final Logger LOG = LoggerFactory.getLogger(MathUtil.class);
 
     /**
+     * Utility class - private constructor.
+     */
+    private MathUtil() {
+    }
+
+    /**
      * Clip argument to range.
      *
-     * @param  min
-     *             minimal value
-     * @param  max
-     *             maximum value
-     * @param  arg
-     *             argument
-     * @return
-     *             <ul>
+     * @param min minimal value
+     * @param max maximum value
+     * @param arg argument
+     * @return <ul>
      *             <li>min, if arg &lt; min
      *             <li>max, if arg &gt; max
      *             <li>else arg
@@ -45,14 +47,10 @@ public final class MathUtil {
     /**
      * Clip argument to range.
      *
-     * @param  min
-     *             minimal value
-     * @param  max
-     *             maximum value
-     * @param  arg
-     *             argument
-     * @return
-     *             <ul>
+     * @param min minimal value
+     * @param max maximum value
+     * @param arg argument
+     * @return <ul>
      *             <li>min, if arg &lt; min
      *             <li>max, if arg &gt; max
      *             <li>else arg
@@ -66,14 +64,10 @@ public final class MathUtil {
     /**
      * Clip argument to range.
      *
-     * @param  min
-     *             minimal value
-     * @param  max
-     *             maximum value
-     * @param  arg
-     *             argument
-     * @return
-     *             <ul>
+     * @param min minimal value
+     * @param max maximum value
+     * @param arg argument
+     * @return <ul>
      *             <li>min, if arg &lt; min
      *             <li>max, if arg &gt; max
      *             <li>else arg
@@ -87,14 +81,10 @@ public final class MathUtil {
     /**
      * Clip argument to range.
      *
-     * @param  min
-     *             minimal value
-     * @param  max
-     *             maximum value
-     * @param  arg
-     *             argument
-     * @return
-     *             <ul>
+     * @param min minimal value
+     * @param max maximum value
+     * @param arg argument
+     * @return <ul>
      *             <li>min, if arg &lt; min
      *             <li>max, if arg &gt; max
      *             <li>else arg
@@ -108,16 +98,11 @@ public final class MathUtil {
     /**
      * Clip argument to range.
      *
-     * @param  min
-     *             minimal value
-     * @param  max
-     *             maximum value
-     * @param  arg
-     *             argument
-     * @param  valueIfNaN
-     *             value to return if arg is NaN
-     * @return
-     *             <ul>
+     * @param min        minimal value
+     * @param max        maximum value
+     * @param arg        argument
+     * @param valueIfNaN value to return if arg is NaN
+     * @return <ul>
      *             <li>min, if arg &lt; min
      *             <li>max, if arg &gt; max
      *             <li>valueIfNaN, if arg is NaN
@@ -131,16 +116,11 @@ public final class MathUtil {
     /**
      * Clip argument to range.
      *
-     * @param  min
-     *             minimal value
-     * @param  max
-     *             maximum value
-     * @param  arg
-     *             argument
-     * @param  valueIfNaN
-     *             value to return if arg is NaN
-     * @return
-     *             <ul>
+     * @param min        minimal value
+     * @param max        maximum value
+     * @param arg        argument
+     * @param valueIfNaN value to return if arg is NaN
+     * @return <ul>
      *             <li>min, if arg &lt; min
      *             <li>max, if arg &gt; max
      *             <li>valueIfNaN, if arg is NaN
@@ -159,14 +139,10 @@ public final class MathUtil {
      * second order
      * derivative changes sign in the interval [xa,root] or [xb,root].
      *
-     * @param  f
-     *             the function for which the root shall be calculated
-     * @param  xa
-     *             first starting point
-     * @param  xb
-     *             second starting point
-     * @param  eps
-     *             desired accuracy
+     * @param f   the function for which the root shall be calculated
+     * @param xa  first starting point
+     * @param xb  second starting point
+     * @param eps desired accuracy
      * @return the calculated root or Double.NaN if none is found
      */
     public static double findRoot(DoubleUnaryOperator f, double xa, double xb, double eps) {
@@ -228,16 +204,11 @@ public final class MathUtil {
      * The function is evaluated a fixed number of times to find starting values for
      * root finding.
      *
-     * @param  f
-     *               the function
-     * @param  x0
-     *               first limit of interval
-     * @param  x1
-     *               second limit of interval, must be different from {@code x0}
-     * @param  steps
-     *               maximum number of iterations
-     * @param  eps
-     *               maximum error
+     * @param f     the function
+     * @param x0    first limit of interval
+     * @param x1    second limit of interval, must be different from {@code x0}
+     * @param steps maximum number of iterations
+     * @param eps   maximum error
      * @return list of all calculated roots
      */
     @SuppressWarnings("FloatingPointEquality")
@@ -286,10 +257,8 @@ public final class MathUtil {
      * Calculate the greatest common divisor.
      * The greatest common divisor is calculated using the Euclidean algorithm.
      *
-     * @param  a
-     *           first argument
-     * @param  b
-     *           second argument
+     * @param a first argument
+     * @param b second argument
      * @return greatest common divisor of a and b.
      */
     public static long gcd(long a, long b) {
@@ -304,8 +273,7 @@ public final class MathUtil {
     /**
      * Calculate ceil(log10(x)).
      *
-     * @param  x
-     *           argument
+     * @param x argument
      * @return ceil(log10 ( x))
      */
     public static int ilog10(double x) {
@@ -329,10 +297,8 @@ public final class MathUtil {
     /**
      * Test if number is integral.
      *
-     * @param  a
-     *           the number to test
-     * @return
-     *           true, if {@code a} is integral
+     * @param a the number to test
+     * @return true, if {@code a} is integral
      */
     @SuppressWarnings("FloatingPointEquality")
     public static boolean isIntegral(double a) {
@@ -341,10 +307,9 @@ public final class MathUtil {
 
     /**
      * Calculate powers of 10.
-     * @param i
-     *  the exponent to use
-     * @return
-     *  10 raised to the power of i
+     *
+     * @param i the exponent to use
+     * @return 10 raised to the power of i
      */
     public static double pow10(int i) {
         if (i == Integer.MIN_VALUE) {
@@ -381,10 +346,8 @@ public final class MathUtil {
      *     <li>-0.125 -&gt; -0.12
      * </ul>
      *
-     * @param  x
-     *           value to round
-     * @param  n
-     *           number of decimal places
+     * @param x value to round
+     * @param n number of decimal places
      * @return x rounded to n decimal places
      */
     public static double round(double x, int n) {
@@ -415,10 +378,8 @@ public final class MathUtil {
      *     <li>123 -&gt; 120
      * </ul>
      *
-     * @param  x
-     *           value to round
-     * @param  p
-     *           number of digits (p must be positive)
+     * @param x value to round
+     * @param p number of digits (p must be positive)
      * @return x rounded to p digits precision
      */
     public static double roundToPrecision(double x, int p) {
@@ -441,12 +402,9 @@ public final class MathUtil {
      * <p>
      * The number of places {@code n} may be negative, resulting in rounding taking place before the decimal point.
      *
-     * @param  n
-     *           number of decimal places
-     * @param mode
-     *           the {@link RoundingMode} to use
-     * @return
-     *           operation that performs the requested rounding
+     * @param n    number of decimal places
+     * @param mode the {@link RoundingMode} to use
+     * @return operation that performs the requested rounding
      */
     public static DoubleUnaryOperator roundingOperation(int n, RoundingMode mode) {
         // special case: no rounding
@@ -469,6 +427,7 @@ public final class MathUtil {
 
     /**
      * Get a DoubleUnaryOperator that implements rounding according to the requested mode.
+     *
      * @param mode the {@link RoundingMode}
      * @return rounding operation
      */
@@ -484,11 +443,5 @@ public final class MathUtil {
             case UNNECESSARY -> x -> x;
             default -> throw new IllegalArgumentException("unsupported rounding mode: " + mode);
         };
-    }
-
-    /**
-     * Utility class - private constructor.
-     */
-    private MathUtil() {
     }
 }

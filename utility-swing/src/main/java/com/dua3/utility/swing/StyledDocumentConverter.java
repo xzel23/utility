@@ -32,8 +32,20 @@ import java.util.function.Function;
  */
 public final class StyledDocumentConverter extends AttributeBasedConverter<StyledDocument> {
 
+    private static final Font DEFAULT_FONT = new Font();
+    private final SimpleAttributeSet defaultStyledAttributes = new SimpleAttributeSet();
+    // some settings controlling the conversion
+    private Font defaultFont = DEFAULT_FONT;
+    private Map<String, Object> defaultAttributes = new HashMap<>();
+    private double scale = 1.0;
+    // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
+    private final Map<Object, Function<Font, Object>> dictionary = createDictionary();
+    private StyledDocumentConverter() {
+    }
+
     /**
      * Create a new converter instance.
+     *
      * @param options the options to use
      * @return new converter instance
      */
@@ -43,6 +55,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
     /**
      * Create a new converter instance.
+     *
      * @param options the options to use
      * @return new converter instance
      */
@@ -52,19 +65,9 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         return instance;
     }
 
-    private StyledDocumentConverter() {
-    }
-
-    private static final Font DEFAULT_FONT = new Font();
-
-    // some settings controlling the conversion
-    private Font defaultFont = DEFAULT_FONT;
-    private Map<String, Object> defaultAttributes = new HashMap<>();
-    private final SimpleAttributeSet defaultStyledAttributes = new SimpleAttributeSet();
-    private double scale = 1.0;
-
     /**
      * Set default attributes.
+     *
      * @param attributes attributes for new StyledDocuments
      * @return the option to use
      */
@@ -74,6 +77,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
     /**
      * Set default attributes.
+     *
      * @param attributes attributes for new StyledDocuments
      * @return the option to use
      */
@@ -83,6 +87,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
     /**
      * Set default attributes.
+     *
      * @param attributes the default Attributes
      * @return the option to use
      */
@@ -92,6 +97,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
     /**
      * Set default font.
+     *
      * @param font the default font
      * @return the option to use
      */
@@ -101,15 +107,13 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
     /**
      * Set font scaling factor.
+     *
      * @param scale the font scaling factor
      * @return the option to use
      */
     public static StyledDocumentConversionOption scale(double scale) {
         return new StyledDocumentConversionOption(c -> c.setScale(scale));
     }
-
-    // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
-    private final Map<Object, Function<Font, Object>> dictionary = createDictionary();
 
     private Map<Object, Function<Font, Object>> createDictionary() {
         Map<Object, Function<Font, Object>> m = new HashMap<>();
@@ -131,6 +135,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
     /**
      * Set the scale to use in conversion. This scale will be applied to all font sizes during conversion.
+     *
      * @param scale the scale
      */
     public void setScale(double scale) {
@@ -180,6 +185,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
 
         /**
          * Create AttributeSet for a Font instance
+         *
          * @param font the font
          * @return the AttributeSet
          */

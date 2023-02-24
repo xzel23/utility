@@ -19,8 +19,9 @@ public class EndPath2f extends Segment2f {
 
     /**
      * Constructor.
+     *
      * @param path the path
-     * @param v index of vertex in path
+     * @param v    index of vertex in path
      */
     EndPath2f(Path2fImpl path, int v) {
         super(path);

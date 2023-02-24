@@ -57,6 +57,7 @@ public record Vector2f(float x, float y) {
 
     /**
      * Create instance from coordinate values.
+     *
      * @param x the x-coordinate
      * @param y the y-coordinate
      * @return Vector with the components x and y
@@ -67,6 +68,7 @@ public record Vector2f(float x, float y) {
 
     /**
      * Return result vector of componentwise maximum.
+     *
      * @param a first vector
      * @param b second vector
      * @return Vector with the componentwise maxima of a and b as components.
@@ -77,6 +79,7 @@ public record Vector2f(float x, float y) {
 
     /**
      * Return result vector of componentwise minimum.
+     *
      * @param a first vector
      * @param b second vector
      * @return Vector with the componentwise minima of a and b as components.
@@ -87,6 +90,7 @@ public record Vector2f(float x, float y) {
 
     /**
      * Scalar product.
+     *
      * @param a first vector
      * @param b second vector
      * @return this * v
@@ -97,9 +101,10 @@ public record Vector2f(float x, float y) {
 
     /**
      * Return angle in radians between two vectors.
+     *
      * @param a first vector
      * @param b second vector
-     * @return the angle in radians 
+     * @return the angle in radians
      */
     public static double angle(Vector2f a, Vector2f b) {
         float nominator = scalarProduct(a, b);
@@ -118,6 +123,7 @@ public record Vector2f(float x, float y) {
 
     /**
      * Vector addition.
+     *
      * @param v the argument
      * @return this + v
      */
@@ -127,6 +133,7 @@ public record Vector2f(float x, float y) {
 
     /**
      * Vector subtraction.
+     *
      * @param v the argument
      * @return this - v
      */
@@ -136,6 +143,7 @@ public record Vector2f(float x, float y) {
 
     /**
      * Calculate length of vector.
+     *
      * @return the length
      */
     public double length() {
@@ -144,6 +152,7 @@ public record Vector2f(float x, float y) {
 
     /**
      * Compute the vector's angle in radians.
+     *
      * @return angle in radians in the range [-π,π]
      */
     public double angle() {

@@ -10,11 +10,17 @@ import java.util.regex.Pattern;
  * Enumeration for the different Platforms/Operating systems.
  */
 public enum Platform {
-    /** The Linux operating system. */
+    /**
+     * The Linux operating system.
+     */
     LINUX,
-    /** The macOS operating system. */
+    /**
+     * The macOS operating system.
+     */
     MACOS,
-    /** The Windows operating system. */
+    /**
+     * The Windows operating system.
+     */
     WINDOWS {
         @Override
         public boolean isProcessBuilderQuotingNeeded(String s) {
@@ -48,7 +54,9 @@ public enum Platform {
             return "\"" + s + "\"";
         }
     },
-    /** Unknown operating system. */
+    /**
+     * Unknown operating system.
+     */
     UNKNOWN;
 
     private static final Logger LOG = LoggerFactory.getLogger(Platform.class);
@@ -75,6 +83,7 @@ public enum Platform {
 
     /**
      * Get the detected platform that the program runs on.
+     *
      * @return the detected platform
      */
     public static Platform currentPlatform() {
@@ -83,6 +92,7 @@ public enum Platform {
 
     /**
      * Check if current platform is Windows.
+     *
      * @return true if currently running under a Windows operating system
      */
     public static boolean isWindows() {
@@ -91,6 +101,7 @@ public enum Platform {
 
     /**
      * Check if current platform is Linux.
+     *
      * @return true if currently running under a Linux operating system
      */
     public static boolean isLinux() {
@@ -99,6 +110,7 @@ public enum Platform {
 
     /**
      * Check if current platform is macOS.
+     *
      * @return true if currently running under a macOS operating system
      */
     public static boolean isMacOS() {
@@ -107,6 +119,7 @@ public enum Platform {
 
     /**
      * Check if current platform is unknown.
+     *
      * @return true if currently running under an unknown operating system
      */
     public static boolean isUnknown() {
@@ -115,6 +128,7 @@ public enum Platform {
 
     /**
      * Check if argument needs to be quoted before passing to {@link ProcessBuilder}.
+     *
      * @param s the argument
      * @return true, if s needs to be quoted
      */
@@ -124,6 +138,7 @@ public enum Platform {
 
     /**
      * Quote argument for {@link ProcessBuilder}.
+     *
      * @param s the argument
      * @return quoted version of s if quoting needed, otherwise s
      */

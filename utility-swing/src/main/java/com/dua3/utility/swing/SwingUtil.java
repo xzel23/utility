@@ -52,19 +52,23 @@ import java.util.function.Predicate;
  * Utility methods for Swing applications.
  */
 public final class SwingUtil {
-    /** Logger instance. */
+    /**
+     * Logger instance.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(SwingUtil.class);
+
+    // Utility class, should not be instantiated
+    private SwingUtil() {
+        // nop
+    }
 
     /**
      * Create an action to be used in menus.
      *
-     * @param  name
-     *                           the name to display
-     * @param  onActionPerformed
-     *                           the Consumer that gets called when the Action is
-     *                           invoked
-     * @return
-     *                           new Action instance
+     * @param name              the name to display
+     * @param onActionPerformed the Consumer that gets called when the Action is
+     *                          invoked
+     * @return new Action instance
      */
     public static Action createAction(String name, Consumer<? super ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
@@ -87,13 +91,10 @@ public final class SwingUtil {
     /**
      * Create an action to be used in menus.
      *
-     * @param  name
-     *                           the name to display
-     * @param  onActionPerformed
-     *                           the Runnable that gets called when the Action is
-     *                           invoked
-     * @return
-     *                           new Action instance
+     * @param name              the name to display
+     * @param onActionPerformed the Runnable that gets called when the Action is
+     *                          invoked
+     * @return new Action instance
      */
     public static Action createAction(String name, Runnable onActionPerformed) {
         return new AbstractAction(name) {
@@ -117,8 +118,7 @@ public final class SwingUtil {
     /**
      * Scroll pane to bottom.
      *
-     * @param sp
-     *           a scroll pane
+     * @param sp a scroll pane
      */
     public static void scrollToBottom(JScrollPane sp) {
         scrollToEnd(sp.getVerticalScrollBar());
@@ -127,8 +127,7 @@ public final class SwingUtil {
     /**
      * Scroll scrollbar to end.
      *
-     * @param sb
-     *           a scroll bar
+     * @param sb a scroll bar
      */
     public static void scrollToEnd(JScrollBar sb) {
         AdjustmentListener autoScroller = new AdjustmentListener() {
@@ -145,8 +144,7 @@ public final class SwingUtil {
     /**
      * Set clipboard content.
      *
-     * @param text
-     *             the text to set
+     * @param text the text to set
      */
     public static void setClipboardText(String text) {
         StringSelection selection = new StringSelection(text);
@@ -166,8 +164,7 @@ public final class SwingUtil {
      * Set the Swing Look&amp;Feel to the native Look&amp;Feel.
      * On macOS, the global menubar is also enabled.
      *
-     * @param applicationName
-     *                        the application name to set
+     * @param applicationName the application name to set
      */
     public static void setNativeLookAndFeel(String applicationName) {
         setNativeLookAndFeel_(applicationName);
@@ -196,13 +193,10 @@ public final class SwingUtil {
     /**
      * Show directory open dialog.
      *
-     * @param  parent
-     *                 the parent component for the dialog
-     * @param  current
-     *                 the current file, it determines the folder shown when the
-     *                 dialog opens
-     * @return
-     *                 Optional containing the path to the selected file.
+     * @param parent  the parent component for the dialog
+     * @param current the current file, it determines the folder shown when the
+     *                dialog opens
+     * @return Optional containing the path to the selected file.
      */
     public static Optional<Path> showDirectoryOpenDialog(Component parent, Path current) {
         return showOpenDialog(parent, current, JFileChooser.DIRECTORIES_ONLY);
@@ -211,17 +205,13 @@ public final class SwingUtil {
     /**
      * Show file open dialog.
      *
-     * @param  parent
-     *                 the parent component for the dialog
-     * @param  current
-     *                 the current file, it determines the folder shown when the
-     *                 dialog opens
-     * @param  types
-     *                 the selectable file name filters, given as pairs of
-     *                 description
-     *                 and one or more extensions
-     * @return
-     *                 Optional containing the path to the selected file.
+     * @param parent  the parent component for the dialog
+     * @param current the current file, it determines the folder shown when the
+     *                dialog opens
+     * @param types   the selectable file name filters, given as pairs of
+     *                description
+     *                and one or more extensions
+     * @return Optional containing the path to the selected file.
      */
     @SafeVarargs
     public static Optional<Path> showFileOpenDialog(Component parent, Path current, Pair<String, String[]>... types) {
@@ -231,16 +221,12 @@ public final class SwingUtil {
     /**
      * Show file save dialog.
      *
-     * @param  parent
-     *                 the parent component for the dialog
-     * @param  current
-     *                 the current file, it determines the folder shown when the
-     *                 dialog opens
-     * @param  types
-     *                 the selectable file name filters, given as pairs of
-     *                 description and one or more extensions
-     * @return
-     *                 Optional containing the path to the selected file.
+     * @param parent  the parent component for the dialog
+     * @param current the current file, it determines the folder shown when the
+     *                dialog opens
+     * @param types   the selectable file name filters, given as pairs of
+     *                description and one or more extensions
+     * @return Optional containing the path to the selected file.
      */
     @SafeVarargs
     public static Optional<Path> showFileSaveDialog(Component parent, Path current, Pair<String, String[]>... types) {
@@ -250,10 +236,8 @@ public final class SwingUtil {
     /**
      * Convert java.awt.Color to Color.
      *
-     * @param  color
-     *               java.awt.Color to be converted
-     * @return
-     *               Color
+     * @param color java.awt.Color to be converted
+     * @return Color
      */
     public static Color toColor(java.awt.Color color) {
         return new RGBColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
@@ -262,10 +246,8 @@ public final class SwingUtil {
     /**
      * Convert Color to java.awt.Color.
      *
-     * @param  color
-     *               Color to be converted
-     * @return
-     *               java.awt.Color
+     * @param color Color to be converted
+     * @return java.awt.Color
      */
     public static java.awt.Color toAwtColor(Color color) {
         return new java.awt.Color(color.argb(), color.a() != 0xff);
@@ -274,12 +256,10 @@ public final class SwingUtil {
     /**
      * Convert String to java.awt.Color.
      *
-     * @param  s
-     *           String to be converted
-     * @return
-     *           java.awt.Color
-     * @see      Color#valueOf(String)
-     * @see      #toAwtColor(Color)
+     * @param s String to be converted
+     * @return java.awt.Color
+     * @see Color#valueOf(String)
+     * @see #toAwtColor(Color)
      */
     public static java.awt.Color toAwtColor(String s) {
         return toAwtColor(Color.valueOf(s));
@@ -294,10 +274,8 @@ public final class SwingUtil {
      * the update is performed.
      * </p>
      *
-     * @param sp
-     *               a scroll pane
-     * @param update
-     *               Runnable to do the update
+     * @param sp     a scroll pane
+     * @param update Runnable to do the update
      */
     public static void updateAndScrollToBottom(JScrollPane sp, Runnable update) {
         updateAndScrollToEnd(sp.getVerticalScrollBar(), update);
@@ -312,10 +290,8 @@ public final class SwingUtil {
      * only the update is performed.
      * </p>
      *
-     * @param sb
-     *               a scroll bar
-     * @param update
-     *               Runnable to do the update
+     * @param sb     a scroll bar
+     * @param update Runnable to do the update
      */
     public static void updateAndScrollToEnd(JScrollBar sb, Runnable update) {
         boolean atEnd = sb.getMaximum() == sb.getValue() + sb.getVisibleAmount();
@@ -329,10 +305,11 @@ public final class SwingUtil {
 
     /**
      * Show open dialog.
-     * @param parent the parent component for the dialog
-     * @param current the current path selected when the dialog opens
+     *
+     * @param parent        the parent component for the dialog
+     * @param current       the current path selected when the dialog opens
      * @param selectionMode the selection mode as used in {@link JFileChooser#setFileSelectionMode(int)}
-     * @param types pairs(description, list of extensions) used to create {@link FileNameExtensionFilter} instances
+     * @param types         pairs(description, list of extensions) used to create {@link FileNameExtensionFilter} instances
      * @return an Optional holding the selected path or an empty Optional if nothing was selected
      */
     @SafeVarargs
@@ -395,7 +372,7 @@ public final class SwingUtil {
     /**
      * Create JScrollPane with unit increment set.
      *
-     * @param  unitIncrement the unit increment
+     * @param unitIncrement the unit increment
      * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement) {
@@ -407,8 +384,8 @@ public final class SwingUtil {
     /**
      * Create JScrollPane with unit increment set.
      *
-     * @param  unitIncrement the unit increment
-     * @param  view          the view
+     * @param unitIncrement the unit increment
+     * @param view          the view
      * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement, Component view) {
@@ -420,9 +397,9 @@ public final class SwingUtil {
     /**
      * Create JScrollPane with unit increment set.
      *
-     * @param  unitIncrement the unit increment
-     * @param  vsbPolicy     vertical scroll bar policy
-     * @param  hsbPolicy     horizontal scroll bar policy
+     * @param unitIncrement the unit increment
+     * @param vsbPolicy     vertical scroll bar policy
+     * @param hsbPolicy     horizontal scroll bar policy
      * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement, int vsbPolicy, int hsbPolicy) {
@@ -434,10 +411,10 @@ public final class SwingUtil {
     /**
      * Create JScrollPane with unit increment set.
      *
-     * @param  unitIncrement the unit increment
-     * @param  view          the view
-     * @param  vsbPolicy     vertical scroll bar policy
-     * @param  hsbPolicy     horizontal scroll bar policy
+     * @param unitIncrement the unit increment
+     * @param view          the view
+     * @param vsbPolicy     vertical scroll bar policy
+     * @param hsbPolicy     horizontal scroll bar policy
      * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement, Component view, int vsbPolicy, int hsbPolicy) {
@@ -448,8 +425,9 @@ public final class SwingUtil {
 
     /**
      * Add support for dropping Files on a component.
+     *
      * @param component the component to add drop support to
-     * @param action the action to perform when files are dropped
+     * @param action    the action to perform when files are dropped
      */
     public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action) {
         addDropFilesSupport(component, action, files -> !files.isEmpty(), e -> {
@@ -458,9 +436,10 @@ public final class SwingUtil {
 
     /**
      * Add support for dropping Files on a component.
-     * @param component the component to add drop support to
-     * @param action the action to perform when files are dropped
-     * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
+     *
+     * @param component        the component to add drop support to
+     * @param action           the action to perform when files are dropped
+     * @param test             Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
      * @param exceptionHandler handler to call when an exception is caught
      */
     public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action, Predicate<? super Collection<File>> test, Consumer<? super Exception> exceptionHandler) {
@@ -510,8 +489,9 @@ public final class SwingUtil {
 
     /**
      * Add support for dropping text on a component.
+     *
      * @param component the component to add drop support to
-     * @param action the action to perform when text is dropped
+     * @param action    the action to perform when text is dropped
      */
     public static void addDropTextSupport(JComponent component, Consumer<String> action) {
         addDropTextSupport(component, action, text -> !text.isEmpty(), e -> {
@@ -520,9 +500,10 @@ public final class SwingUtil {
 
     /**
      * Add support for dropping text on a component.
-     * @param component the component to add drop support to
-     * @param action the action to perform when files are dropped
-     * @param test Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
+     *
+     * @param component        the component to add drop support to
+     * @param action           the action to perform when files are dropped
+     * @param test             Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
      * @param exceptionHandler handler to call when an exception is caught
      */
     public static void addDropTextSupport(JComponent component, Consumer<String> action, Predicate<String> test, Consumer<? super Exception> exceptionHandler) {
@@ -567,10 +548,5 @@ public final class SwingUtil {
                 }
             }
         });
-    }
-
-    // Utility class, should not be instantiated
-    private SwingUtil() {
-        // nop
     }
 }

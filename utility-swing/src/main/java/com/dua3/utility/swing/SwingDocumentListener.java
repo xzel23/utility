@@ -13,6 +13,7 @@ public interface SwingDocumentListener extends DocumentListener {
 
     /**
      * Document event handling method.
+     *
      * @param e the document event
      */
     void update(DocumentEvent e);

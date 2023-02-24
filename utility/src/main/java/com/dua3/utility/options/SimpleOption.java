@@ -10,15 +10,30 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * A simple option class. 
+ * A simple option class.
  * <p>
  * A simple option can be present at most once in an {@link Arguments} instance and takes exactly one parameter.
  * Its value can be queried by calling {@link Arguments#get(SimpleOption)}.
+ *
  * @param <T> the option's argument type.
  */
 public final class SimpleOption<T> extends Option<T> {
 
     private Supplier<T> defaultValue = () -> null;
+
+    /**
+     * Construct a new simple option with the given name(s).
+     *
+     * @param mapper the mapping function to the target type
+     * @param names  names for the flag, at least one.
+     */
+    private SimpleOption(Function<String, ? extends T> mapper,
+                         Function<? super T, String> formatter,
+                         String... names) {
+        super(mapper, formatter, names);
+        occurrence(0, 1);
+        arity(1, 1);
+    }
 
     public static <T> SimpleOption<T> create(Function<String, ? extends T> mapper,
                                              String... names) {
@@ -29,19 +44,6 @@ public final class SimpleOption<T> extends Option<T> {
                                              Function<? super T, String> formatter,
                                              String... names) {
         return new SimpleOption<>(mapper, formatter, names);
-    }
-
-    /**
-     * Construct a new simple option with the given name(s).
-     * @param mapper the mapping function to the target type
-     * @param names names for the flag, at least one.
-     */
-    private SimpleOption(Function<String, ? extends T> mapper,
-                         Function<? super T, String> formatter,
-                         String... names) {
-        super(mapper, formatter, names);
-        occurrence(0, 1);
-        arity(1, 1);
     }
 
     @Override
@@ -58,6 +60,7 @@ public final class SimpleOption<T> extends Option<T> {
 
     /**
      * Set default value.
+     *
      * @param defaultValue the default value
      * @return this option
      */
@@ -67,6 +70,7 @@ public final class SimpleOption<T> extends Option<T> {
 
     /**
      * Set default value.
+     *
      * @param defaultValue the default value
      * @return this option
      */
@@ -77,6 +81,7 @@ public final class SimpleOption<T> extends Option<T> {
 
     /**
      * Mark option as required.
+     *
      * @return this option
      */
     public SimpleOption<T> required() {
@@ -86,6 +91,7 @@ public final class SimpleOption<T> extends Option<T> {
 
     /**
      * Get the default value.
+     *
      * @return Optional holding the default value.
      */
     public Optional<T> getDefault() {

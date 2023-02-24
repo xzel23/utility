@@ -21,8 +21,9 @@ public class MoveTo2f extends Segment2f {
 
     /**
      * Constructor.
+     *
      * @param path the path
-     * @param idx index of current point
+     * @param idx  index of current point
      */
     public MoveTo2f(Path2fImpl path, int idx) {
         super(path);

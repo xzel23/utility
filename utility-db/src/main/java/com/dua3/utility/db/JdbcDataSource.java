@@ -25,11 +25,11 @@ public class JdbcDataSource implements DataSource {
 
     private static final String USER = "user";
     private static final String PASSWORD = "password";
+    private final Properties properties = new Properties();
     private String url;
     private PrintWriter logWriter;
     private int loginTimeout;
     private Driver driver;
-    private final Properties properties = new Properties();
 
     /**
      * Constructor.
@@ -46,7 +46,8 @@ public class JdbcDataSource implements DataSource {
 
     /**
      * Set the JDBC driver for this instance.
-     * @param driver  the driver
+     *
+     * @param driver the driver
      */
     public void setDriver(Driver driver) {
         this.driver = Objects.requireNonNull(driver);
@@ -97,17 +98,18 @@ public class JdbcDataSource implements DataSource {
     }
 
     @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
-        this.loginTimeout = seconds;
-    }
-
-    @Override
     public int getLoginTimeout() throws SQLException {
         return loginTimeout;
     }
 
+    @Override
+    public void setLoginTimeout(int seconds) throws SQLException {
+        this.loginTimeout = seconds;
+    }
+
     /**
      * Set database URL.
+     *
      * @param url the URL
      */
     public void setUrl(String url) {
@@ -116,8 +118,8 @@ public class JdbcDataSource implements DataSource {
 
     /**
      * Set database user.
-     * @param user
-     *  the database user or `null` to unset
+     *
+     * @param user the database user or `null` to unset
      */
     public void setUser(@Nullable String user) {
         if (user == null) {
@@ -130,8 +132,8 @@ public class JdbcDataSource implements DataSource {
 
     /**
      * Set database password.
-     * @param password
-     *  the database password or `null` to unset
+     *
+     * @param password the database password or `null` to unset
      */
     public void setPassword(@Nullable String password) {
         if (password == null) {

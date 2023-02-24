@@ -25,8 +25,6 @@ import java.util.regex.Pattern;
  */
 public class JdbcDriverInfo {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcDriverInfo.class);
-
     /**
      * Identifier String for the option type.
      */
@@ -47,40 +45,53 @@ public class JdbcDriverInfo {
      * Type identifier String for double options.
      */
     public static final String OPTION_TYPE_DOUBLE = "double";
-
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcDriverInfo.class);
     private static final String PATTERN_VAR_START = "\\$\\{";
     private static final String PATTERN_VAR_NAME = "(?<name>\\p{Alpha}(\\p{Alnum}|_)*)";
     private static final String PATTERN_VAR_ARG_1 = "(:((?<arg1>\\p{Alpha}(\\p{Alnum}|_)*)=(?<value1>[^,}]*)))";
     private static final String PATTERN_VAR_ARG_N = "(,((?<argn>\\p{Alpha}(\\p{Alnum}|_)*)=(?<valuen>[^,}]*)))";
     private static final String PATTERN_VAR_REMAINING_ARGS = "(?<remainingargs>" + PATTERN_VAR_ARG_N + "*)";
-    private static final String PATTERN_VAR_END = "\\}";
     private static final Pattern PATTERN_VAR = Pattern.compile(
             PATTERN_VAR_START
                     + PATTERN_VAR_NAME
                     + "(" + PATTERN_VAR_ARG_1 + PATTERN_VAR_REMAINING_ARGS + ")?"
                     + PATTERN_VAR_END);
+    private static final String PATTERN_VAR_END = "\\}";
     private static final Pattern PATTERN_ARGN = Pattern.compile(PATTERN_VAR_ARG_N);
 
-    /** The driver name. */
+    /**
+     * The driver name.
+     */
     public final String name;
-    /** The driver's class name. */
+    /**
+     * The driver's class name.
+     */
     public final String className;
-    /** URL prefix used by this driver (used to identify the correct driver to use when accessing a database URL). */
+    /**
+     * URL prefix used by this driver (used to identify the correct driver to use when accessing a database URL).
+     */
     public final String urlPrefix;
-    /** The URL scheme for JDBC connections used by this driver. */
+    /**
+     * The URL scheme for JDBC connections used by this driver.
+     */
     public final String urlScheme;
-    /** Link to the vendor's driver webpage. */
+    /**
+     * Link to the vendor's driver webpage.
+     */
     public final String link;
-    /** This driver's options. */
+    /**
+     * This driver's options.
+     */
     public final Collection<SimpleOption<?>> options;
 
     /**
      * Constructor.
-     * @param name driver name
+     *
+     * @param name      driver name
      * @param className driver's class name
      * @param urlPrefix URL prefix used by this driver
      * @param urlScheme URL scheme for JDBC connections
-     * @param link link to driver vendor webpage
+     * @param link      link to driver vendor webpage
      */
     public JdbcDriverInfo(String name, String className, String urlPrefix, String urlScheme, String link) {
         this.name = name;
@@ -184,6 +195,7 @@ public class JdbcDriverInfo {
 
     /**
      * Get driver description text.
+     *
      * @return the driver description
      */
     public String description() {
@@ -199,6 +211,7 @@ public class JdbcDriverInfo {
 
     /**
      * Construct URL from URL-scheme and supplied options
+     *
      * @param values the option values to set in the URL
      * @return the connection URL
      */

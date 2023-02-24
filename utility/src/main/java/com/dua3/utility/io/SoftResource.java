@@ -13,6 +13,7 @@ import java.util.function.Supplier;
  * A lazily loaded and cached resource. Instances are created from a supplier that creates the resource on demand
  * when {@link #get()} is called and hold a {@link SoftReference} to it. When {@link #get()} is called the next time,
  * the same instance is returned if it has not yet been garbage collected. Otherwise, the supplier is called again.
+ *
  * @param <T>
  */
 public final class SoftResource<T> {
@@ -28,9 +29,9 @@ public final class SoftResource<T> {
     /**
      * Create a soft resource.
      *
-     * @param           <T> the type of the resource
-     * @param  supplier the resource supplier; the supplier should upon each
-     *                  invocation return equal instances
+     * @param <T>      the type of the resource
+     * @param supplier the resource supplier; the supplier should upon each
+     *                 invocation return equal instances
      * @return soft resource
      */
     public static <T> SoftResource<T> of(Supplier<? extends T> supplier) {
@@ -40,7 +41,7 @@ public final class SoftResource<T> {
     /**
      * Create an empty soft resource.
      *
-     * @param  <T> the type of the resource
+     * @param <T> the type of the resource
      * @return empty soft resource
      */
     public static <T> SoftResource<T> emptyReference() {
@@ -51,8 +52,8 @@ public final class SoftResource<T> {
      * Get the resource.
      *
      * @return the resource;
-     *         if it has not yet been set or has been garbage collected, it will be
-     *         restored by invoking the supplier
+     * if it has not yet been set or has been garbage collected, it will be
+     * restored by invoking the supplier
      */
     public T get() {
         T obj = ref.get();
@@ -92,8 +93,8 @@ public final class SoftResource<T> {
      * Helper class to prevent the resource from being garbage collected.
      */
     public static final class ResourceHolder<T> implements AutoCloseable {
-        private T strong;
         private final SoftResource<T> soft;
+        private T strong;
 
         private ResourceHolder(SoftResource<T> sr) {
             this.strong = sr.get();

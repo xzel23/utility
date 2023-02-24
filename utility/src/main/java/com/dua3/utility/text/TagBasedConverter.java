@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base class for tag based converters. 
+ * Base class for tag based converters.
+ *
  * @param <T> the conversion target type
  */
 public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
@@ -18,6 +19,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
     /**
      * Abstract base class for the tag based converter implementation classes.
+     *
      * @param <T> the conversion target type
      */
     protected abstract static class TagBasedConverterImpl<T> {

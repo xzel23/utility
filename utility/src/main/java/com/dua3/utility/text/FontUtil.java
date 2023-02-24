@@ -11,12 +11,14 @@ import java.util.ServiceLoader;
 /**
  * Interface for Font handling utility classes. The concrete implementation is automatically chosen at runtime
  * for use by the {@link TextUtil} class.
+ *
  * @param <F> the implementation's underlying Font class
  */
 public interface FontUtil<F> {
 
     /**
      * Get FontUtil instance.
+     *
      * @return the default FontUtil instance
      */
     @SuppressWarnings("rawtypes")
@@ -68,34 +70,26 @@ public interface FontUtil<F> {
     /**
      * Convert font.
      *
-     * @param  f
-     *           the font
-     * @return
-     *           the font implementation
+     * @param f the font
+     * @return the font implementation
      */
     F convert(Font f);
 
     /**
      * Get text bounds.
      *
-     * @param  s
-     *           the text
-     * @param  f
-     *           the font
-     * @return
-     *           the text bounds
+     * @param s the text
+     * @param f the font
+     * @return the text bounds
      */
     Dimension2f getTextDimension(CharSequence s, Font f);
 
     /**
      * Get text width.
      *
-     * @param  s
-     *           the text
-     * @param  f
-     *           the font
-     * @return
-     *           the text width
+     * @param s the text
+     * @param f the font
+     * @return the text width
      */
     default double getTextWidth(CharSequence s, Font f) {
         return getTextDimension(s, f).width();
@@ -104,12 +98,9 @@ public interface FontUtil<F> {
     /**
      * Get text height.
      *
-     * @param  s
-     *           the text
-     * @param  f
-     *           the font
-     * @return
-     *           the text height
+     * @param s the text
+     * @param f the font
+     * @return the text height
      */
     default double getTextHeight(CharSequence s, Font f) {
         return getTextDimension(s, f).height();
@@ -117,27 +108,17 @@ public interface FontUtil<F> {
 
     /**
      * Load font.
+     *
      * @param in the {@link InputStream} to read the font data from.
      * @return the font loaded
-     * @throws java.io.IOException if an I/O error occurs
+     * @throws java.io.IOException      if an I/O error occurs
      * @throws IllegalArgumentException if the type is not supported
      */
     List<Font> loadFonts(InputStream in) throws IOException;
 
     /**
-     * Font type enumeration.
-     */
-    enum FontTypes {
-        /** Enum value for proportional fonts. */
-        PROPORTIONAL,
-        /** Enum value for monospaced fonts. */
-        MONOSPACED,
-        /** Enum value for all fonts. */
-        ALL
-    }
-
-    /**
      * Get a list of the available font families.
+     *
      * @param types the font types to return
      * @return list of font families
      */
@@ -145,6 +126,7 @@ public interface FontUtil<F> {
 
     /**
      * Get a list of the available font families.
+     *
      * @return list of font families
      */
     default List<String> getFamilies() {
@@ -153,11 +135,30 @@ public interface FontUtil<F> {
 
     /**
      * Load an embedded font.
-     * @param in the stream to read font data from
+     *
+     * @param in   the stream to read font data from
      * @param font the font that is loaded
      * @return font instance
      * @throws IOException if an error occurs
      */
     Font loadFontAs(InputStream in, Font font) throws IOException;
+
+    /**
+     * Font type enumeration.
+     */
+    enum FontTypes {
+        /**
+         * Enum value for proportional fonts.
+         */
+        PROPORTIONAL,
+        /**
+         * Enum value for monospaced fonts.
+         */
+        MONOSPACED,
+        /**
+         * Enum value for all fonts.
+         */
+        ALL
+    }
 
 }

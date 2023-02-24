@@ -45,8 +45,9 @@ public class RichTextMatcher implements MatchResult {
 
     /**
      * Returns the input subsequence matched by the previous match, see {@link Matcher#group()}.
+     *
      * @return the (possibly empty) subsequence matched by the previous match, in {@link RichText} form
-     * @throws IllegalStateException if no match has yet been attempted, or if the previous match operation failed     
+     * @throws IllegalStateException if no match has yet been attempted, or if the previous match operation failed
      */
     public RichText rgroup() {
         return text.subSequence(start(), end());
@@ -59,9 +60,10 @@ public class RichTextMatcher implements MatchResult {
 
     /**
      * Returns the input subsequence captured by the given group during the previous match operation, see {@link Matcher#group(int)}.
+     *
      * @param group the index of a capturing group in this matcher's pattern
      * @return the (possibly empty) subsequence captured by the group during the previous match, or null if the group failed to match part of the input
-     * @throws IllegalStateException if no match has yet been attempted, or if the previous match operation failed
+     * @throws IllegalStateException     if no match has yet been attempted, or if the previous match operation failed
      * @throws IndexOutOfBoundsException if there is no capturing group in the pattern with the given index
      */
     public RichText rgroup(int group) {

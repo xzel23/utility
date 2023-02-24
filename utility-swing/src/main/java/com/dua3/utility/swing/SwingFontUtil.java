@@ -21,14 +21,22 @@ import java.util.WeakHashMap;
 /**
  * Utility class for getting font properties through AWT. This class should normally not be used directly by user code
  * as the functionality should be available in the {@link com.dua3.utility.text.TextUtil} utility class which
- * in turn uses this class via SPI (Java ServiceProvider interface). 
+ * in turn uses this class via SPI (Java ServiceProvider interface).
  * See usage of {@link FontUtil} in {@link com.dua3.utility.text.TextUtil} for details.
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
+    private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
+
+    private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
+        int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
+        return new java.awt.Font(family, style, Math.round(size));
+    }
+
     /**
      * Calculate the string bounds of a text using the font passed as argument.
+     *
      * @param text the text
      * @param font the font
      * @return the text's bounds (positioned at the origin)
@@ -40,7 +48,8 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     /**
      * Calculate the string bounds of a text using the font passed as argument.
-     * @param text the text
+     *
+     * @param text    the text
      * @param awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
@@ -52,8 +61,9 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     /**
      * Calculate the string bounds of a text using the font passed as argument.
-     * @param text the text
-     * @param  awtFont the font
+     *
+     * @param text    the text
+     * @param awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
     public Dimension2f getTextDimension(CharSequence text, java.awt.Font awtFont) {
@@ -63,8 +73,9 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     /**
      * Calculate the height of a text using the font passed as argument.
-     * @param text the text
-     * @param  awtFont the font
+     *
+     * @param text    the text
+     * @param awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
     public double getTextHeight(CharSequence text, java.awt.Font awtFont) {
@@ -73,8 +84,9 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     /**
      * Calculate the width of a text using the font passed as argument.
-     * @param text the text
-     * @param  awtFont the font
+     *
+     * @param text    the text
+     * @param awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
     public double getTextWidth(CharSequence text, java.awt.Font awtFont) {
@@ -91,8 +103,6 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     public double getTextHeight(CharSequence s, Font f) {
         return stringBounds(s, f).getHeight();
     }
-
-    private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
 
     @Override
     public List<Font> loadFonts(InputStream in) throws IOException {
@@ -155,11 +165,6 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
                         font.isItalic()
                 )
         );
-    }
-
-    private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
-        int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
-        return new java.awt.Font(family, style, Math.round(size));
     }
 
     @Override

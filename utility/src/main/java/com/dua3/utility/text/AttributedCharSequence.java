@@ -15,13 +15,10 @@ public interface AttributedCharSequence extends CharSequence {
     /**
      * Returns the {@code AttributedCharacter} value at the specified index.
      *
-     * @param   index   the index of the {@code AttributedCharacter} value to be returned
-     *
+     * @param index the index of the {@code AttributedCharacter} value to be returned
      * @return the specified {@code AttributedCharacter} value
-     *
-     * @throws IndexOutOfBoundsException
-     *          if the {@code index} argument is negative or not less than
-     *          {@code length()}
+     * @throws IndexOutOfBoundsException if the {@code index} argument is negative or not less than
+     *                                   {@code length()}
      */
     AttributedCharacter attributedCharAt(int index);
 

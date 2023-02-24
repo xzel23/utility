@@ -31,21 +31,7 @@ import java.util.Objects;
  */
 public abstract class CsvIo implements AutoCloseable {
 
-    /**
-     * Get the list of options controlling CSV I/O.
-     * @return list of options
-     */
-    public static Collection<Option<?>> getOptions() {
-        return List.of(
-                IoOptions.textDelimiter(),
-                IoOptions.fieldSeparator(),
-                IoOptions.locale(),
-                IoOptions.dateTimeFormat()
-        );
-    }
-
     private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
-
     protected final String lineDelimiter;
     protected final char separator;
     protected final char delimiter;
@@ -53,7 +39,6 @@ public abstract class CsvIo implements AutoCloseable {
     protected final DateTimeFormatter dateTimeFormatter;
     protected final DateTimeFormatter dateFormatter;
     protected final NumberFormat numberFormat;
-
     protected CsvIo(Arguments options) {
         this.separator = IoOptions.getFieldSeparator(options);
         this.delimiter = IoOptions.getTextDelimiter(options);
@@ -65,6 +50,20 @@ public abstract class CsvIo implements AutoCloseable {
         this.numberFormat.setGroupingUsed(false);
         this.numberFormat.setMinimumFractionDigits(0);
         this.numberFormat.setMaximumFractionDigits(15);
+    }
+
+    /**
+     * Get the list of options controlling CSV I/O.
+     *
+     * @return list of options
+     */
+    public static Collection<Option<?>> getOptions() {
+        return List.of(
+                IoOptions.textDelimiter(),
+                IoOptions.fieldSeparator(),
+                IoOptions.locale(),
+                IoOptions.dateTimeFormat()
+        );
     }
 
     @SuppressWarnings("ChainOfInstanceofChecks")

@@ -16,6 +16,7 @@ public class WrappedException extends RuntimeException {
 
     /**
      * Construct new wrapped exception.
+     *
      * @param cause the exception to wrap
      */
     public WrappedException(Exception cause) {

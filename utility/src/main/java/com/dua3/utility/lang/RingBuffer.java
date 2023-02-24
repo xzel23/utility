@@ -24,8 +24,7 @@ import java.util.Objects;
  * the collection.
  * Adding is O(1).
  *
- * @param <E>
- *        the element type
+ * @param <E> the element type
  */
 public class RingBuffer<E> implements Collection<E> {
 
@@ -36,8 +35,7 @@ public class RingBuffer<E> implements Collection<E> {
     /**
      * Construct a new RingBuffer instance.
      *
-     * @param capacity
-     *                 the initial capacity
+     * @param capacity the initial capacity
      */
     public RingBuffer(int capacity) {
         data = new Object[capacity];
@@ -48,10 +46,8 @@ public class RingBuffer<E> implements Collection<E> {
     /**
      * Add item to end of collection.
      *
-     * @param item
-     *             the item to add
-     * @return
-     *             true
+     * @param item the item to add
+     * @return true
      */
     @Override
     public boolean add(E item) {
@@ -78,10 +74,8 @@ public class RingBuffer<E> implements Collection<E> {
     /**
      * Add item to end of collection.
      *
-     * @param items
-     *             collection containing the items to add
-     * @return
-     *             true, if the buffer changed as a result of this operation
+     * @param items collection containing the items to add
+     * @return true, if the buffer changed as a result of this operation
      */
     @Override
     public boolean addAll(Collection<? extends E> items) {
@@ -131,8 +125,7 @@ public class RingBuffer<E> implements Collection<E> {
     /**
      * Get element.
      *
-     * @param  i
-     *           index
+     * @param i index
      * @return the i-th element
      */
     @SuppressWarnings("unchecked")
@@ -224,8 +217,7 @@ public class RingBuffer<E> implements Collection<E> {
     /**
      * Set the capacity. Elements are retained.
      *
-     * @param n
-     *          the new capacity.
+     * @param n the new capacity.
      */
     public void setCapacity(int n) {
         if (n != capacity()) {
@@ -282,11 +274,11 @@ public class RingBuffer<E> implements Collection<E> {
      * empty.)  The returned list is backed by this buffer.
      *
      * @param fromIndex low endpoint (inclusive) of the subList
-     * @param toIndex high endpoint (exclusive) of the subList
+     * @param toIndex   high endpoint (exclusive) of the subList
      * @return a view of the specified range within this list
      * @throws IndexOutOfBoundsException for an illegal endpoint index value
-     *         ({@code fromIndex < 0 || toIndex > size ||
-     *         fromIndex > toIndex})
+     *                                   ({@code fromIndex < 0 || toIndex > size ||
+     *                                   fromIndex > toIndex})
      */
     public List<E> subList(int fromIndex, int toIndex) {
         int s1 = size();

@@ -14,9 +14,10 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
      * Constructor.
-     * @param x the x-coordinate
-     * @param y the y-coordinate
-     * @param width the width (>= 0)
+     *
+     * @param x      the x-coordinate
+     * @param y      the y-coordinate
+     * @param width  the width (>= 0)
      * @param height the height (>= 0)
      */
     public Rectangle2f {
@@ -26,6 +27,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
      * Create rectangle from two vectors.
+     *
      * @param p the first corner
      * @param q the second corner
      * @return rectangle
@@ -51,7 +53,8 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
      * Create rectangle from coordinates and dimension. Both width and height must be non-negative.
-     * @param x the x-coordinate 
+     *
+     * @param x the x-coordinate
      * @param y the y-coordinate
      * @param w the width
      * @param h the height
@@ -63,7 +66,8 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
      * Create rectangle from corner and dimension.
-     * @param p the vector to the corner 
+     *
+     * @param p the vector to the corner
      * @param d the rectangle dimension
      * @return rectangle
      */
@@ -73,6 +77,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
      * The minimum of the two x-coordinates.
+     *
      * @return minimum x-coordinate
      */
     public float xMin() {
@@ -81,6 +86,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
      * The minimum of the two y-coordinates.
+     *
      * @return minimum y-coordinate
      */
     public float yMin() {
@@ -89,6 +95,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
      * The maximum of the two x-coordinates.
+     *
      * @return maximum x-coordinate
      */
     public float xMax() {
@@ -97,6 +104,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
      * The maximum of the two y-coordinates.
+     *
      * @return maximum y-coordinate
      */
     public float yMax() {

@@ -37,6 +37,42 @@ public final class RichText
     private static final RichText SPACE = valueOf(" ");
     private static final RichText TAB = valueOf("\t");
     private static final RichText NEWLINE = valueOf("\n");
+    /**
+     * The underlying CharSequence.
+     */
+    private final CharSequence text;
+    private final int start;
+    private final int length;
+    private final int[] runStart;
+    private final Run[] run;
+    // calculate the hashCode on demand
+    private int textHash;
+    private int hash;
+
+    RichText(Run... runs) {
+        this.run = Arrays.copyOf(runs, runs.length);
+        this.runStart = new int[runs.length];
+
+        if (runs.length == 0) {
+            this.text = "";
+            this.start = 0;
+            this.length = 0;
+        } else {
+            this.text = run[0].base();
+            assert checkAllRunsHaveTextAsBase() : "runs are based on different texts";
+
+            for (int idx = 0; idx < run.length; idx++) {
+                runStart[idx] = run[idx].getStart();
+            }
+
+            this.start = runStart[0];
+            this.length = run[run.length - 1].getEnd() - this.start;
+        }
+    }
+
+    RichText(List<Run> runs) {
+        this(runs.toArray(Run[]::new));
+    }
 
     /**
      * Returns the empty String as RichText.
@@ -76,6 +112,7 @@ public final class RichText
 
     /**
      * Get RichText containing an objects string representation.
+     *
      * @param obj the object to convert to RichText
      * @return RichText.valueOf(String.valueOf ( obj))
      */
@@ -86,7 +123,7 @@ public final class RichText
     /**
      * Convert String to RichText.
      *
-     * @param  s the String to convert
+     * @param s the String to convert
      * @return RichText representation of s
      */
     public static RichText valueOf(String s) {
@@ -106,7 +143,7 @@ public final class RichText
     /**
      * Get styled RichText containing an object's string representation.
      *
-     * @param obj the object to convert to RichText
+     * @param obj    the object to convert to RichText
      * @param styles the styles to apply
      * @return RichText.valueOf(String.valueOf ( obj))
      */
@@ -117,7 +154,7 @@ public final class RichText
     /**
      * Get styled RichText containing an object's string representation.
      *
-     * @param obj the object to convert to RichText
+     * @param obj    the object to convert to RichText
      * @param styles the styles to apply
      * @return RichText representation of s
      */
@@ -134,7 +171,7 @@ public final class RichText
      * Convert char to RichText.
      *
      * @param styles the styles to apply
-     * @param c the character
+     * @param c      the character
      * @return RichText containing only the character c
      */
     public static RichText valueOf(char c, Style... styles) {
@@ -145,98 +182,16 @@ public final class RichText
      * Convert char to RichText.
      *
      * @param styles the styles to apply
-     * @param c the character
+     * @param c      the character
      * @return RichText containing only the character c
      */
     public static RichText valueOf(char c, Collection<Style> styles) {
         return valueOf(Character.toString(c), styles);
     }
 
-    /** The underlying CharSequence. */
-    private final CharSequence text;
-
-    private final int start;
-    private final int length;
-
-    private final int[] runStart;
-    private final Run[] run;
-
-    RichText(Run... runs) {
-        this.run = Arrays.copyOf(runs, runs.length);
-        this.runStart = new int[runs.length];
-
-        if (runs.length == 0) {
-            this.text = "";
-            this.start = 0;
-            this.length = 0;
-        } else {
-            this.text = run[0].base();
-            assert checkAllRunsHaveTextAsBase() : "runs are based on different texts";
-
-            for (int idx = 0; idx < run.length; idx++) {
-                runStart[idx] = run[idx].getStart();
-            }
-
-            this.start = runStart[0];
-            this.length = run[run.length - 1].getEnd() - this.start;
-        }
-    }
-
-    RichText(List<Run> runs) {
-        this(runs.toArray(Run[]::new));
-    }
-
-    private boolean checkAllRunsHaveTextAsBase() {
-        boolean ok = true;
-        for (Run run : run) {
-            //noinspection ObjectEquality
-            ok = ok && (run.base() == text);
-        }
-        return ok;
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        return equals((RichText) obj, Run::equals);
-    }
-
-    /**
-     * Compare using a user supplied predicate for comparing Run instances.
-     * @param other the object to compare to
-     * @param runEquals the BiPredicate used for comparing
-     * @return result true, if obj is an instance of RichText and all runs compare as equal to this instance's
-     *                runs using the supplied predicate
-     */
-    public boolean equals(@Nullable RichText other, BiPredicate<? super Run, ? super Run> runEquals) {
-        if (other == null || other.length != length || other.textHash() != textHash()) {
-            return false;
-        }
-
-        // compare contents
-        Iterator<Run> iter1 = this.iterator();
-        Iterator<Run> iter2 = other.iterator();
-        while (iter1.hasNext() && iter2.hasNext()) {
-            if (!runEquals.test(iter1.next(), iter2.next())) {
-                return false;
-            }
-        }
-        return iter1.hasNext() == iter2.hasNext();
-    }
-
     /**
      * Check if texts and style are equal, ignoring other attributes.
-     * @param other the text to compare with
-     * @return true, if other consist of the same characters with the same styling as this instance
-     */
-    public boolean equalsTextAndFont(@Nullable RichText other) {
-        return textAndFontEquals(this, other);
-    }
-
-    /**
-     * Check if texts and style are equal, ignoring other attributes.
+     *
      * @param a text
      * @param b text
      * @return true, if a and b consist of the same characters with the same styling
@@ -269,7 +224,170 @@ public final class RichText
     }
 
     /**
+     * Join RichText instances together.
+     *
+     * @param delimiter the delimiter
+     * @param elements  the elements to join
+     * @return RichText containing the joined elements
+     */
+    public static RichText join(RichText delimiter, RichText... elements) {
+        return join(delimiter, List.of(elements));
+    }
+
+    /**
+     * Join RichText instances together.
+     *
+     * @param delimiter the delimiter
+     * @param elements  the elements to join
+     * @return RichText containing the joined elements
+     */
+    public static RichText join(RichText delimiter, Iterable<RichText> elements) {
+        RichTextBuilder rtb = new RichTextBuilder();
+
+        RichText d = emptyText();
+        for (RichText element : elements) {
+            rtb.append(d).append(element);
+            d = delimiter;
+        }
+
+        return rtb.toRichText();
+    }
+
+    /**
+     * Join RichText instances together.
+     *
+     * @param delimiter the delimiter
+     * @param elements  the elements to join
+     * @return RichText containing the joined elements
+     */
+    public static RichText join(CharSequence delimiter, RichText... elements) {
+        return join(valueOf(Objects.requireNonNull(delimiter)), elements);
+    }
+
+    /**
+     * Join RichText instances together.
+     *
+     * @param delimiter the delimiter
+     * @param elements  the elements to join
+     * @return RichText containing the joined elements
+     */
+    public static RichText join(CharSequence delimiter, Iterable<RichText> elements) {
+        return join(valueOf(Objects.requireNonNull(delimiter)), elements);
+    }
+
+    /**
+     * Create a {@link RichTextMatcher}.
+     *
+     * @param pattern the pattern
+     * @param text    the text
+     * @return a matcher
+     */
+    public static RichTextMatcher matcher(Pattern pattern, RichText text) {
+        return new RichTextMatcher(pattern, text);
+    }
+
+    /**
+     * Create a {@link RichTextJoiner}.
+     *
+     * @param delimiter the delimiter to use
+     * @return the joiner
+     */
+    public static RichTextJoiner joiner(RichText delimiter) {
+        return new RichTextJoiner(delimiter);
+    }
+
+    /**
+     * Create a {@link RichTextJoiner}.
+     *
+     * @param delimiter the delimiter to use
+     * @param prefix    the prefix
+     * @param suffix    the suffix
+     * @return the joiner
+     */
+    public static RichTextJoiner joiner(RichText delimiter,
+                                        RichText prefix,
+                                        RichText suffix) {
+        return new RichTextJoiner(delimiter, prefix, suffix);
+    }
+
+    /**
+     * Create a {@link RichTextJoiner}.
+     *
+     * @param delimiter the delimiter to use
+     * @return the joiner
+     */
+    public static RichTextJoiner joiner(String delimiter) {
+        return new RichTextJoiner(delimiter);
+    }
+
+    /**
+     * Create a {@link RichTextJoiner}.
+     *
+     * @param delimiter the delimiter to use
+     * @param prefix    the prefix
+     * @param suffix    the suffix
+     * @return the joiner
+     */
+    public static RichTextJoiner joiner(String delimiter,
+                                        String prefix,
+                                        String suffix) {
+        return new RichTextJoiner(delimiter, prefix, suffix);
+    }
+
+    private boolean checkAllRunsHaveTextAsBase() {
+        boolean ok = true;
+        for (Run run : run) {
+            //noinspection ObjectEquality
+            ok = ok && (run.base() == text);
+        }
+        return ok;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        return equals((RichText) obj, Run::equals);
+    }
+
+    /**
+     * Compare using a user supplied predicate for comparing Run instances.
+     *
+     * @param other     the object to compare to
+     * @param runEquals the BiPredicate used for comparing
+     * @return result true, if obj is an instance of RichText and all runs compare as equal to this instance's
+     * runs using the supplied predicate
+     */
+    public boolean equals(@Nullable RichText other, BiPredicate<? super Run, ? super Run> runEquals) {
+        if (other == null || other.length != length || other.textHash() != textHash()) {
+            return false;
+        }
+
+        // compare contents
+        Iterator<Run> iter1 = this.iterator();
+        Iterator<Run> iter2 = other.iterator();
+        while (iter1.hasNext() && iter2.hasNext()) {
+            if (!runEquals.test(iter1.next(), iter2.next())) {
+                return false;
+            }
+        }
+        return iter1.hasNext() == iter2.hasNext();
+    }
+
+    /**
+     * Check if texts and style are equal, ignoring other attributes.
+     *
+     * @param other the text to compare with
+     * @return true, if other consist of the same characters with the same styling as this instance
+     */
+    public boolean equalsTextAndFont(@Nullable RichText other) {
+        return textAndFontEquals(this, other);
+    }
+
+    /**
      * Get the index of the run the character at a position belongs to.
+     *
      * @param pos the character position
      * @return the run index
      */
@@ -302,6 +420,7 @@ public final class RichText
 
     /**
      * Textual compare.
+     *
      * @param other the {@link CharSequence} to compare to
      * @return true, if this instance contains the same sequence of characters as {@code other}
      */
@@ -321,6 +440,7 @@ public final class RichText
 
     /**
      * Textual compare ignoring case.
+     *
      * @param other the {@link CharSequence} to compare to
      * @return true, if this instance contains the same sequence of characters as {@code other}
      */
@@ -332,9 +452,6 @@ public final class RichText
         return toString().equalsIgnoreCase(other.toString());
     }
 
-    // calculate the hashCode on demand
-    private int textHash;
-
     private int textHash() {
         int h = textHash;
         if (h == 0 && length > 0) {
@@ -345,8 +462,6 @@ public final class RichText
         }
         return h;
     }
-
-    private int hash;
 
     @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
@@ -413,6 +528,7 @@ public final class RichText
 
     /**
      * Get stream of lines contained in this instance.
+     *
      * @return stream of lines of this text
      */
     public Stream<RichText> lines() {
@@ -421,6 +537,7 @@ public final class RichText
 
     /**
      * Get a {@link Spliterator<RichText>} over the lines of this instance.
+     *
      * @return spliterator
      */
     private Spliterator<RichText> lineSpliterator() {
@@ -459,8 +576,9 @@ public final class RichText
 
     /**
      * Get a sub range of this instance.
+     *
      * @param begin begin index (inclusive)
-     * @param end end index (exclusive)
+     * @param end   end index (exclusive)
      * @return RichText instance of the sub range
      */
     @Override
@@ -496,6 +614,7 @@ public final class RichText
 
     /**
      * Get a sub range of this instance.
+     *
      * @param beginIndex begin index (inclusive)
      * @return RichText instance of the sub range from beginIndex to the end
      */
@@ -542,54 +661,6 @@ public final class RichText
         rtb.append(this);
         rtb.pop(style);
         return rtb.toRichText();
-    }
-
-    /**
-     * Join RichText instances together.
-     * @param delimiter the delimiter
-     * @param elements the elements to join
-     * @return RichText containing the joined elements
-     */
-    public static RichText join(RichText delimiter, RichText... elements) {
-        return join(delimiter, List.of(elements));
-    }
-
-    /**
-     * Join RichText instances together.
-     * @param delimiter the delimiter
-     * @param elements the elements to join
-     * @return RichText containing the joined elements
-     */
-    public static RichText join(RichText delimiter, Iterable<RichText> elements) {
-        RichTextBuilder rtb = new RichTextBuilder();
-
-        RichText d = emptyText();
-        for (RichText element : elements) {
-            rtb.append(d).append(element);
-            d = delimiter;
-        }
-
-        return rtb.toRichText();
-    }
-
-    /**
-     * Join RichText instances together.
-     * @param delimiter the delimiter
-     * @param elements the elements to join
-     * @return RichText containing the joined elements
-     */
-    public static RichText join(CharSequence delimiter, RichText... elements) {
-        return join(valueOf(Objects.requireNonNull(delimiter)), elements);
-    }
-
-    /**
-     * Join RichText instances together.
-     * @param delimiter the delimiter
-     * @param elements the elements to join
-     * @return RichText containing the joined elements
-     */
-    public static RichText join(CharSequence delimiter, Iterable<RichText> elements) {
-        return join(valueOf(Objects.requireNonNull(delimiter)), elements);
     }
 
     /**
@@ -700,6 +771,7 @@ public final class RichText
 
     /**
      * Find character.
+     *
      * @param ch the character
      * @return the position of the first occurrence of ch, or -1 if not found
      * @see String#indexOf(int)
@@ -710,7 +782,8 @@ public final class RichText
 
     /**
      * Find character.
-     * @param ch the character
+     *
+     * @param ch  the character
      * @param off the starting position
      * @return the position where the char was found or -1 if not found
      */
@@ -719,17 +792,8 @@ public final class RichText
     }
 
     /**
-     * Create a {@link RichTextMatcher}.
-     * @param pattern the pattern
-     * @param text the text
-     * @return a matcher
-     */
-    public static RichTextMatcher matcher(Pattern pattern, RichText text) {
-        return new RichTextMatcher(pattern, text);
-    }
-
-    /**
      * Return the index of the needle in this RichText instance.
+     *
      * @param s the text to find
      * @return the first index, where s is found within this instance
      */
@@ -739,7 +803,8 @@ public final class RichText
 
     /**
      * Return the index of the needle in this RichText instance.
-     * @param s the text to find
+     *
+     * @param s         the text to find
      * @param fromIndex the starting position
      * @return the first index, where s is found within this instance
      */
@@ -749,6 +814,7 @@ public final class RichText
 
     /**
      * Test whether this instance starts with the given {@link CharSequence}.
+     *
      * @param s the sequence to test
      * @return true, if this instance starts with s
      */
@@ -758,6 +824,7 @@ public final class RichText
 
     /**
      * Test if CharSequence is contained.
+     *
      * @param s the sequence to search for
      * @return true, if s is contained
      */
@@ -767,6 +834,7 @@ public final class RichText
 
     /**
      * Gat styled copy of this instance.
+     *
      * @param style the style
      * @return styled copy
      */
@@ -779,6 +847,7 @@ public final class RichText
 
     /**
      * Get active styles at position.
+     *
      * @param pos the position (character index)
      * @return (unmodifiable) list of styles
      */
@@ -788,6 +857,7 @@ public final class RichText
 
     /**
      * Get run at position.
+     *
      * @param pos the position (character index)
      * @return the Run the character at the given position belongs to
      */
@@ -797,54 +867,11 @@ public final class RichText
 
     /**
      * Get the runs of this instance.
+     *
      * @return unmodifiable list of runs
      */
     public List<Run> runs() {
         return List.of(run);
-    }
-
-    /**
-     * Create a {@link RichTextJoiner}.
-     * @param delimiter the delimiter to use
-     * @return the joiner
-     */
-    public static RichTextJoiner joiner(RichText delimiter) {
-        return new RichTextJoiner(delimiter);
-    }
-
-    /**
-     * Create a {@link RichTextJoiner}.
-     * @param delimiter the delimiter to use
-     * @param prefix the prefix
-     * @param suffix the suffix
-     * @return the joiner
-     */
-    public static RichTextJoiner joiner(RichText delimiter,
-                                        RichText prefix,
-                                        RichText suffix) {
-        return new RichTextJoiner(delimiter, prefix, suffix);
-    }
-
-    /**
-     * Create a {@link RichTextJoiner}.
-     * @param delimiter the delimiter to use
-     * @return the joiner
-     */
-    public static RichTextJoiner joiner(String delimiter) {
-        return new RichTextJoiner(delimiter);
-    }
-
-    /**
-     * Create a {@link RichTextJoiner}.
-     * @param delimiter the delimiter to use
-     * @param prefix the prefix
-     * @param suffix the suffix
-     * @return the joiner
-     */
-    public static RichTextJoiner joiner(String delimiter,
-                                        String prefix,
-                                        String suffix) {
-        return new RichTextJoiner(delimiter, prefix, suffix);
     }
 
 }

@@ -27,30 +27,6 @@ public class LoggerFactory implements ILoggerFactory {
     private final List<Pair<String, Level>> prefixes = new ArrayList<>();
     private final List<LogEntryHandler> handlers = new ArrayList<>();
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    private static Properties getProperties() {
-        Properties properties = new Properties();
-        try (InputStream in = ClassLoader.getSystemResourceAsStream("logging.properties")) {
-            if (in == null) {
-                properties.put(LOGGER_CONSOLE_STREAM, "system.out");
-            } else {
-                properties.load(in);
-            }
-        } catch (IOException e) {
-            properties.put(LOGGER_CONSOLE_STREAM, "system.out");
-            e.printStackTrace(System.err);
-        }
-        return properties;
-    }
-
-    private Optional<Pair<String, Level>> getPrefixEntry(String name) {
-        return prefixes.stream().filter(p -> name.startsWith(p.first())).findFirst();
-    }
-
-    private Level getLevel(String name) {
-        return getPrefixEntry(name).map(Pair::second).orElseGet(Logger::getDefaultLevel);
-    }
-
     public LoggerFactory() {
         Properties properties = getProperties();
 
@@ -107,6 +83,30 @@ public class LoggerFactory implements ILoggerFactory {
         } else {
             logBuffer = null;
         }
+    }
+
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    private static Properties getProperties() {
+        Properties properties = new Properties();
+        try (InputStream in = ClassLoader.getSystemResourceAsStream("logging.properties")) {
+            if (in == null) {
+                properties.put(LOGGER_CONSOLE_STREAM, "system.out");
+            } else {
+                properties.load(in);
+            }
+        } catch (IOException e) {
+            properties.put(LOGGER_CONSOLE_STREAM, "system.out");
+            e.printStackTrace(System.err);
+        }
+        return properties;
+    }
+
+    private Optional<Pair<String, Level>> getPrefixEntry(String name) {
+        return prefixes.stream().filter(p -> name.startsWith(p.first())).findFirst();
+    }
+
+    private Level getLevel(String name) {
+        return getPrefixEntry(name).map(Pair::second).orElseGet(Logger::getDefaultLevel);
     }
 
     @Override

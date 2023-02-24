@@ -48,11 +48,11 @@ class LangUtilTest {
 
     @Test
     void checkIndex() {
-        assertThrows(IndexOutOfBoundsException.class, () -> LangUtil.checkIndex(-1,3), "index: -1");
-        assertDoesNotThrow(() -> LangUtil.checkIndex(0,3));
-        assertDoesNotThrow(() -> LangUtil.checkIndex(1,3));
-        assertDoesNotThrow(() -> LangUtil.checkIndex(2,3));
-        assertThrows(IndexOutOfBoundsException.class, () -> LangUtil.checkIndex(3,3), "index: 3");
+        assertThrows(IndexOutOfBoundsException.class, () -> LangUtil.checkIndex(-1, 3), "index: -1");
+        assertDoesNotThrow(() -> LangUtil.checkIndex(0, 3));
+        assertDoesNotThrow(() -> LangUtil.checkIndex(1, 3));
+        assertDoesNotThrow(() -> LangUtil.checkIndex(2, 3));
+        assertThrows(IndexOutOfBoundsException.class, () -> LangUtil.checkIndex(3, 3), "index: 3");
     }
 
     @Test
@@ -66,22 +66,6 @@ class LangUtilTest {
         assertFalse(LangUtil.isOneOf(8, 3, 9, 7, 5));
     }
 
-    enum TestEnum {
-        A ("First Letter"),
-        B ("Second Letter");
-        
-        private final String s;
-        
-        TestEnum(String s) {
-            this.s = s;
-        }
-        
-        @Override
-        public String toString() {
-            return s;
-        }
-    }
-    
     @Test
     void enumConstant() {
         assertFalse(LangUtil.enumConstant(TestEnum.class, "A").isPresent());
@@ -99,45 +83,69 @@ class LangUtilTest {
 
     @Test
     void uncheckedConsumer() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedConsumer(t -> { throw new IOException("test"); }).accept(null), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedConsumer(t -> { throw new IllegalStateException("test"); }).accept(null), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.uncheckedConsumer(t -> { throw new Exception("test"); }).accept(null), "test");
+        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedConsumer(t -> {
+            throw new IOException("test");
+        }).accept(null), "test");
+        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedConsumer(t -> {
+            throw new IllegalStateException("test");
+        }).accept(null), "test");
+        assertThrows(WrappedException.class, () -> LangUtil.uncheckedConsumer(t -> {
+            throw new Exception("test");
+        }).accept(null), "test");
     }
 
     @Test
     void uncheckedSupplier() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedSupplier(() -> { throw new IOException("test"); }).get(), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedSupplier(() -> { throw new IllegalStateException("test"); }).get(), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.uncheckedSupplier(() -> { throw new Exception("test"); }).get(), "test");
+        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedSupplier(() -> {
+            throw new IOException("test");
+        }).get(), "test");
+        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedSupplier(() -> {
+            throw new IllegalStateException("test");
+        }).get(), "test");
+        assertThrows(WrappedException.class, () -> LangUtil.uncheckedSupplier(() -> {
+            throw new Exception("test");
+        }).get(), "test");
     }
 
     @Test
     void uncheckedFunction() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedFunction(x -> { throw new IOException("test"); }).apply(null), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedFunction(x -> { throw new IllegalStateException("test"); }).apply(null), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.uncheckedFunction(x -> { throw new Exception("test"); }).apply(null), "test");
+        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedFunction(x -> {
+            throw new IOException("test");
+        }).apply(null), "test");
+        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedFunction(x -> {
+            throw new IllegalStateException("test");
+        }).apply(null), "test");
+        assertThrows(WrappedException.class, () -> LangUtil.uncheckedFunction(x -> {
+            throw new Exception("test");
+        }).apply(null), "test");
     }
 
     @Test
     void uncheckedRunnable() {
-        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedRunnable(() -> { throw new IOException("test"); }).run(), "test");
-        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedRunnable(() -> { throw new IllegalStateException("test"); }).run(), "test");
-        assertThrows(WrappedException.class, () -> LangUtil.uncheckedRunnable(() -> { throw new Exception("test"); }).run(), "test");
+        assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedRunnable(() -> {
+            throw new IOException("test");
+        }).run(), "test");
+        assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedRunnable(() -> {
+            throw new IllegalStateException("test");
+        }).run(), "test");
+        assertThrows(WrappedException.class, () -> LangUtil.uncheckedRunnable(() -> {
+            throw new Exception("test");
+        }).run(), "test");
     }
 
     @Test
     void trimWithByteOrderMark() {
-        assertEquals("test", LangUtil.trimWithByteOrderMark(new String(new char[] { 0xfeff, 't', 'e', 's', 't' })));
-        assertEquals("test\n"+(char)0xfeff+"test", LangUtil.trimWithByteOrderMark(new String(new char[] { 0xfeff, 't', 'e', 's', 't', '\n', 0xfeff, 't', 'e', 's', 't', '\n' })));
+        assertEquals("test", LangUtil.trimWithByteOrderMark(new String(new char[]{0xfeff, 't', 'e', 's', 't'})));
+        assertEquals("test\n" + (char) 0xfeff + "test", LangUtil.trimWithByteOrderMark(new String(new char[]{0xfeff, 't', 'e', 's', 't', '\n', 0xfeff, 't', 'e', 's', 't', '\n'})));
     }
 
     @Test
     void putAllIfAbsent() {
         Map<Integer, String> map = new HashMap<>();
-        LangUtil.putAll(map, Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"), Pair.of(5, "e"));
+        LangUtil.putAll(map, Pair.of(1, "a"), Pair.of(3, "c"), Pair.of(2, "b"), Pair.of(5, "e"));
 
-        LangUtil.putAllIfAbsent(map, Pair.of(1,"x"), Pair.of(3, "y"), Pair.of(5, "b"), Pair.of(4, "d"));
-        
+        LangUtil.putAllIfAbsent(map, Pair.of(1, "x"), Pair.of(3, "y"), Pair.of(5, "b"), Pair.of(4, "d"));
+
         Map<Integer, String> expected = new HashMap<>();
         expected.put(1, "a");
         expected.put(2, "b");
@@ -151,7 +159,7 @@ class LangUtilTest {
     @Test
     void putAll() {
         Map<Integer, String> map = new HashMap<>();
-        LangUtil.putAll(map, Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"));
+        LangUtil.putAll(map, Pair.of(1, "a"), Pair.of(3, "c"), Pair.of(2, "b"));
 
         Map<Integer, String> expected = new HashMap<>();
         expected.put(1, "a");
@@ -163,7 +171,7 @@ class LangUtilTest {
 
     @Test
     void map() {
-        Map<Integer,String> map = LangUtil.map(Pair.of(1,"a"), Pair.of(3, "c"), Pair.of(2, "b"));
+        Map<Integer, String> map = LangUtil.map(Pair.of(1, "a"), Pair.of(3, "c"), Pair.of(2, "b"));
 
         Map<Integer, String> expected = new HashMap<>();
         expected.put(1, "a");
@@ -176,9 +184,9 @@ class LangUtilTest {
     @SuppressWarnings("ZeroLengthArrayAllocation")
     @Test
     void testEquals() {
-        Integer[] a = {1,2,3,4,5};
-        Integer[] b = {1,2,3,4,5,6,7};
-        Integer[] c = {1,2,0,4,5};
+        Integer[] a = {1, 2, 3, 4, 5};
+        Integer[] b = {1, 2, 3, 4, 5, 6, 7};
+        Integer[] c = {1, 2, 0, 4, 5};
         @SuppressWarnings("MismatchedReadAndWriteOfArray")
         Integer[] d = {};
 
@@ -216,35 +224,26 @@ class LangUtilTest {
 
         AtomicReference<Integer> ref1 = new AtomicReference<>();
         AtomicReference<String> ref2 = new AtomicReference<>();
-        LangUtil.consumeIfPresent(map, 2, (k,v) -> { ref1.set(k); ref2.set(v); });
+        LangUtil.consumeIfPresent(map, 2, (k, v) -> {
+            ref1.set(k);
+            ref2.set(v);
+        });
         assertEquals(2, ref1.get());
         assertEquals("b", ref2.get());
 
-        LangUtil.consumeIfPresent(map, 4, (k,v) -> { ref1.set(k); ref2.set(v); });
+        LangUtil.consumeIfPresent(map, 4, (k, v) -> {
+            ref1.set(k);
+            ref2.set(v);
+        });
         assertEquals(2, ref1.get());
         assertEquals("b", ref2.get());
     }
 
-    static class Foo implements Supplier<Integer> {
-        private static final AtomicInteger n = new AtomicInteger(0);
-        private final int value;
-
-        Foo(int value) {
-            this.value = value;
-        }
-        
-        @Override
-        public Integer get() {
-            n.incrementAndGet();
-            return value;
-        }
-    }
-    
     @Test
     void cache() {
         Supplier<Integer> giveMe5 = LangUtil.cache(new Foo(5));
-        
-        for (int i=1; i<100; i++) {
+
+        for (int i = 1; i < 100; i++) {
             assertEquals(5, giveMe5.get());
         }
         assertTrue(Foo.n.get() < 50); // ideally n==1, but GC might kick in
@@ -272,111 +271,111 @@ class LangUtilTest {
     @Test
     void getLocaleSuffix() {
         assertEquals("_de_DE", LangUtil.getLocaleSuffix(Locale.GERMANY));
-        // Indonesian is a special case as until Java 16, the suffix differed from the language tag! 
+        // Indonesian is a special case as until Java 16, the suffix differed from the language tag!
         // changed with JDK-8267552
         // NOTE: GraalVM 21.3 reports a Java version of 17.0.1 so remove everything following the dot
         int javaVersion = Integer.parseInt(System.getProperty("java.version").replaceFirst("\\..*", ""));
-        if (javaVersion<17) {
+        if (javaVersion < 17) {
             assertEquals("_in", LangUtil.getLocaleSuffix(Locale.forLanguageTag("id")));
         } else {
             assertEquals("_id", LangUtil.getLocaleSuffix(Locale.forLanguageTag("id")));
         }
     }
-    
+
     @Test
     void testSurroundingItems() {
         // assert correct items are present in output
         assertEquals(
-                List.of(7,8,9,10,11,12,16,17,18,19,20,21), 
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26), 
-                n -> n%9==0, 2, 3));
+                List.of(7, 8, 9, 10, 11, 12, 16, 17, 18, 19, 20, 21),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
+                        n -> n % 9 == 0, 2, 3));
 
         // assert position is passed correctly
         assertEquals(
-                List.of(0,7,8,9,10,11,12,-12,16,17,18,19,20,21,-21),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
-                        n -> n%9==0, 2, 3, (count,pos) -> -pos));
+                List.of(0, 7, 8, 9, 10, 11, 12, -12, 16, 17, 18, 19, 20, 21, -21),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
+                        n -> n % 9 == 0, 2, 3, (count, pos) -> -pos));
 
         // assert item count is passed correctly
         assertEquals(
-                List.of(-6,7,8,9,10,11,12,-3,16,17,18,19,20,21,-5),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
-                        n -> n%9==0, 2, 3, (count,pos) -> -count));
+                List.of(-6, 7, 8, 9, 10, 11, 12, -3, 16, 17, 18, 19, 20, 21, -5),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
+                        n -> n % 9 == 0, 2, 3, (count, pos) -> -count));
 
         // assert correct items are present in output, first item matches
         assertEquals(
-                List.of(1,2,3,4,8,9,10,11,12,13,17,18,19,20,21,22),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
-                        n -> (n+8)%9==0, 2, 3));
+                List.of(1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 17, 18, 19, 20, 21, 22),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
+                        n -> (n + 8) % 9 == 0, 2, 3));
 
         // assert position is passed correctly, first item matches
         assertEquals(
-                List.of(1,2,3,4,-4,8,9,10,11,12,13,-13,17,18,19,20,21,22,-22),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
-                        n -> (n+8)%9==0, 2, 3, (count,pos) -> -pos));
+                List.of(1, 2, 3, 4, -4, 8, 9, 10, 11, 12, 13, -13, 17, 18, 19, 20, 21, 22, -22),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
+                        n -> (n + 8) % 9 == 0, 2, 3, (count, pos) -> -pos));
 
         // assert item count is passed correctly, first item matches
         assertEquals(
-                List.of(1,2,3,4,-3,8,9,10,11,12,13,-3,17,18,19,20,21,22,-4),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
-                        n -> (n+8)%9==0, 2, 3, (count,pos) -> -count));
+                List.of(1, 2, 3, 4, -3, 8, 9, 10, 11, 12, 13, -3, 17, 18, 19, 20, 21, 22, -4),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
+                        n -> (n + 8) % 9 == 0, 2, 3, (count, pos) -> -count));
 
         // assert correct items are present in output, last item matches
         assertEquals(
-                List.of(7,8,9,10,11,12,16,17,18,19,20,21,25,26,27),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
-                        n -> n%9==0, 2, 3));
+                List.of(7, 8, 9, 10, 11, 12, 16, 17, 18, 19, 20, 21, 25, 26, 27),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27),
+                        n -> n % 9 == 0, 2, 3));
 
         // assert position is passed correctly, last item matches
         assertEquals(
-                List.of(0,7,8,9,10,11,12,-12,16,17,18,19,20,21,-21,25,26,27),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
-                        n -> n%9==0, 2, 3, (count,pos) -> -pos));
+                List.of(0, 7, 8, 9, 10, 11, 12, -12, 16, 17, 18, 19, 20, 21, -21, 25, 26, 27),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27),
+                        n -> n % 9 == 0, 2, 3, (count, pos) -> -pos));
 
         // assert item count is passed correctly, last item matches
         assertEquals(
-                List.of(-6,7,8,9,10,11,12,-3,16,17,18,19,20,21,-3,25,26,27),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
-                        n -> n%9==0, 2, 3, (count,pos) -> -count));
+                List.of(-6, 7, 8, 9, 10, 11, 12, -3, 16, 17, 18, 19, 20, 21, -3, 25, 26, 27),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27),
+                        n -> n % 9 == 0, 2, 3, (count, pos) -> -count));
 
         // assert correct items are present in output, multiple subsequent matches
         assertEquals(
-                List.of(3,4,5,6,7,8,9,10),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12),
-                        n -> n>=5&&n<=7, 2, 3));
+                List.of(3, 4, 5, 6, 7, 8, 9, 10),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+                        n -> n >= 5 && n <= 7, 2, 3));
 
         // assert position is passed correctly, multiple subsequent matches
         assertEquals(
-                List.of(0,3,4,5,6,7,8,9,10,-10),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12),
-                        n -> n>=5&&n<=7, 2, 3, (count,pos) -> -pos));
+                List.of(0, 3, 4, 5, 6, 7, 8, 9, 10, -10),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+                        n -> n >= 5 && n <= 7, 2, 3, (count, pos) -> -pos));
 
         // assert item count is passed correctly, multiple subsequent matches
         assertEquals(
-                List.of(-2,3,4,5,6,7,8,9,10,-2),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12),
-                        n -> n>=5&&n<=7, 2, 3, (count,pos) -> -count));
+                List.of(-2, 3, 4, 5, 6, 7, 8, 9, 10, -2),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+                        n -> n >= 5 && n <= 7, 2, 3, (count, pos) -> -count));
 
         // assert item count is passed correctly, after/before overlap
         assertEquals(
-                List.of(1,2,3,4,5,6,7,8,9,10,11,-1),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12),
-                        n -> n==3 || n==8, 3, 3, (count,pos) -> -count));
+                List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, -1),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+                        n -> n == 3 || n == 8, 3, 3, (count, pos) -> -count));
 
         // assert empty list is returned if there are no matches
         assertEquals(
                 List.of(),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
                         n -> false, 2, 3));
 
 
         // assert placeholder is returned if there are no matches and a placeholder is given
         assertEquals(
                 List.of(99),
-                LangUtil.surroundingItems(List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
-                        n -> false, 2, 3, (count,pos) -> 99));
+                LangUtil.surroundingItems(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
+                        n -> false, 2, 3, (count, pos) -> 99));
     }
-    
+
     @Test
     void testOrElse() {
         Object a = "a";
@@ -384,15 +383,46 @@ class LangUtilTest {
         assertSame(null, LangUtil.orElse(null, null));
         assertSame(b, LangUtil.orElse(null, b));
         assertSame(a, LangUtil.orElse(a, null));
-        assertSame(a, LangUtil.orElse(a, b));    
+        assertSame(a, LangUtil.orElse(a, b));
     }
-    
+
     @Test
     void testOrElseGet() {
         Object a = "a";
         assertSame(null, LangUtil.orElse(null, null));
         assertEquals("b", LangUtil.orElseGet(null, () -> "b"));
-        assertEquals("a", LangUtil.orElseGet("a", () -> "b"));    
+        assertEquals("a", LangUtil.orElseGet("a", () -> "b"));
     }
-    
+
+    enum TestEnum {
+        A("First Letter"),
+        B("Second Letter");
+
+        private final String s;
+
+        TestEnum(String s) {
+            this.s = s;
+        }
+
+        @Override
+        public String toString() {
+            return s;
+        }
+    }
+
+    static class Foo implements Supplier<Integer> {
+        private static final AtomicInteger n = new AtomicInteger(0);
+        private final int value;
+
+        Foo(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public Integer get() {
+            n.incrementAndGet();
+            return value;
+        }
+    }
+
 }

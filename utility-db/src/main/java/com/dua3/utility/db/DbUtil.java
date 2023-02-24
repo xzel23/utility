@@ -42,14 +42,13 @@ import java.util.TreeMap;
  * Database utility class.
  */
 public final class DbUtil {
-    private DbUtil() {
-        // utility class
-    }
-
-    /** Logger instance. */
+    /**
+     * Logger instance.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(DbUtil.class);
-
-    /** List of know JDBC drivers. */
+    /**
+     * List of know JDBC drivers.
+     */
     private static final SortedMap<String, JdbcDriverInfo> drivers = new TreeMap<>();
 
     static {
@@ -96,6 +95,10 @@ public final class DbUtil {
 
     }
 
+    private DbUtil() {
+        // utility class
+    }
+
     /**
      * Get Map with known JDBC drivers.
      *
@@ -111,13 +114,10 @@ public final class DbUtil {
      * either {@link java.sql.Date} or {@link LocalDate}. This method
      * returns an instance of {@link java.time.LocalDate} in both cases.
      *
-     * @param  item
-     *                               an Object representing a date in an SQL
-     *                               ResultSet
-     * @return
-     *                               LocalDate instance or {@code null}
-     * @throws IllegalStateException
-     *                               if {@code item} is neither {@code null} nor of the supported types
+     * @param item an Object representing a date in an SQL
+     *             ResultSet
+     * @return LocalDate instance or {@code null}
+     * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
     @SuppressWarnings("ChainOfInstanceofChecks")
     public static LocalDate toLocalDate(@Nullable Object item) {
@@ -139,13 +139,10 @@ public final class DbUtil {
      * either {@link java.sql.Timestamp} or {@link LocalDateTime}. This method
      * returns an instance of {@link java.time.LocalDateTime} in both cases.
      *
-     * @param  item
-     *                               an Object representing a timestamp in an SQL
-     *                               ResultSet
-     * @return
-     *                               LocalDateTime instance or {@code null}
-     * @throws IllegalStateException
-     *                               if {@code item} is neither {@code null} nor of the supported types
+     * @param item an Object representing a timestamp in an SQL
+     *             ResultSet
+     * @return LocalDateTime instance or {@code null}
+     * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
     @SuppressWarnings("ChainOfInstanceofChecks")
     public static LocalDateTime toLocalDateTime(@Nullable Object item) {
@@ -167,13 +164,10 @@ public final class DbUtil {
      * either {@link java.sql.Time} or {@link LocalTime}. This method
      * returns an instance of {@link java.time.LocalTime} in both cases.
      *
-     * @param  item
-     *                               an Object representing a time value in an SQL
-     *                               ResultSet
-     * @return
-     *                               LocalTime instance or {@code null}
-     * @throws IllegalStateException
-     *                               if {@code item} is neither {@code null} nor of the supported types
+     * @param item an Object representing a time value in an SQL
+     *             ResultSet
+     * @return LocalTime instance or {@code null}
+     * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
     public static LocalTime toLocalTime(@Nullable Object item) {
         if (item == null) {
@@ -191,17 +185,13 @@ public final class DbUtil {
     /**
      * Load JDBC driver.
      *
-     * @param  urls
-     *                                the URLs used to construct a ClassLoader
-     *                                instance
-     * @return
-     *                                an Optional containing the driver object or an
-     *                                empty Optional if not driver class is found
-     * @throws ClassNotFoundException
-     *                                if a driver class could be determined but
+     * @param urls the URLs used to construct a ClassLoader
+     *             instance
+     * @return an Optional containing the driver object or an
+     * empty Optional if not driver class is found
+     * @throws ClassNotFoundException if a driver class could be determined but
      *                                could not be loaded
-     * @throws SQLException
-     *                                if a driver class was found and loaded but
+     * @throws SQLException           if a driver class was found and loaded but
      *                                could not be instantiated
      */
     public static Optional<? extends java.sql.Driver> loadDriver(URL... urls)
@@ -218,17 +208,13 @@ public final class DbUtil {
      * the class can be loaded from the parent class loader which is not the case.
      * It can however be used directly or as driver for a `JdbcDataSource`.
      *
-     * @param  loader
-     *                                the ClassLoader instance
-     * @return
-     *                                an Optional containing the driver object or an
-     *                                empty Optional if not driver class is found on
-     *                                the classpath
-     * @throws ClassNotFoundException
-     *                                if a driver class could be determined but
+     * @param loader the ClassLoader instance
+     * @return an Optional containing the driver object or an
+     * empty Optional if not driver class is found on
+     * the classpath
+     * @throws ClassNotFoundException if a driver class could be determined but
      *                                could not be loaded
-     * @throws SQLException
-     *                                if a driver class was found and loaded but
+     * @throws SQLException           if a driver class was found and loaded but
      *                                could not be instantiated
      */
     public static Optional<? extends java.sql.Driver> loadDriver(ClassLoader loader)
@@ -276,18 +262,12 @@ public final class DbUtil {
     /**
      * Create DataSource.
      *
-     * @param  driver
-     *                      the driver to use
-     * @param  url
-     *                      the database URL
-     * @param  user
-     *                      the database user
-     * @param  password
-     *                      the database password
-     * @return
-     *                      DataSource instance
-     * @throws SQLException
-     *                      if the driver does not accept the URL or connecting
+     * @param driver   the driver to use
+     * @param url      the database URL
+     * @param user     the database user
+     * @param password the database password
+     * @return DataSource instance
+     * @throws SQLException if the driver does not accept the URL or connecting
      *                      fails
      */
     public static DataSource createDataSource(Driver driver, String url, String user, String password)

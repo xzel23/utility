@@ -22,6 +22,20 @@ public final class FontDef {
     private static final Logger LOG = LoggerFactory.getLogger(FontDef.class);
 
     private static final Pattern PATTERN_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?");
+    private Color color;
+    private Float size;
+    private String family;
+    private Boolean bold;
+    private Boolean italic;
+    private Boolean underline;
+    private Boolean strikeThrough;
+
+    /**
+     * Default constructor that creates a {FontDe} instance without any properties set.
+     */
+    public FontDef() {
+        // nop - everything being initialized to null is just fine
+    }
 
     /**
      * Create FontDef instance with only the color attribute set.
@@ -107,45 +121,13 @@ public final class FontDef {
         return fd;
     }
 
-    private Color color;
-    private Float size;
-    private String family;
-    private Boolean bold;
-    private Boolean italic;
-    private Boolean underline;
-    private Boolean strikeThrough;
-
-    /**
-     * Default constructor that creates a {FontDe} instance without any properties set.
-     */
-    public FontDef() {
-        // nop - everything being initialized to null is just fine
-    }
-
-    /**
-     * Get fontspec for this FontDef instance.
-     * <p>
-     * The fontspec returned by this method will always return a fontspec containing all attributes. An asterisk ('*')
-     * is used for attributes whose values are not defined in the FontDef instance so that it is possible to reparse a
-     * fontspec into a FontDef that will be equal to the original one.
-     * @return String representation of this instance
-     */
-    public String fontspec() {
-        return Objects.requireNonNullElse(family, "*") +
-                LangUtil.triStateSelect(bold, "-bold", "-regular", "-*") +
-                LangUtil.triStateSelect(italic, "-italic", "-normal", "-*") +
-                LangUtil.triStateSelect(underline, "-underline", "-none", "-*") +
-                LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "*") +
-                '-' + (size != null ? size : "*") +
-                '-' + (color != null ? color.toCss() : "*");
-    }
-
     /**
      * Parse fontspec.
+     *
      * @param fontspec the fontspec
      * @return FontDef instance matching fontspec
      * @throws IllegalArgumentException if the ont definition could not be parsed
-     * @throws NumberFormatException if a numeric value could not be parsed
+     * @throws NumberFormatException    if a numeric value could not be parsed
      */
     public static FontDef parseFontspec(String fontspec) {
         String[] parts = fontspec.split("-");
@@ -186,6 +168,7 @@ public final class FontDef {
 
     /**
      * Parse fontspec.
+     *
      * @param fontdef the CSS font definition
      * @return FontDef instance matching fontspec
      */
@@ -279,53 +262,43 @@ public final class FontDef {
         return Pair.of(attribute, value);
     }
 
+    private static boolean nullOrEquals(@Nullable Object a, @Nullable Object b) {
+        return a == null || b == null || a.equals(b);
+    }
+
+    // a little helper for the consumeIfDefined... methods
+    private static <T> boolean consumeIfDefined(T v, Consumer<T> c) {
+        boolean run = v != null;
+        if (run) {
+            c.accept(v);
+        }
+        return run;
+    }
+
+    /**
+     * Get fontspec for this FontDef instance.
+     * <p>
+     * The fontspec returned by this method will always return a fontspec containing all attributes. An asterisk ('*')
+     * is used for attributes whose values are not defined in the FontDef instance so that it is possible to reparse a
+     * fontspec into a FontDef that will be equal to the original one.
+     *
+     * @return String representation of this instance
+     */
+    public String fontspec() {
+        return Objects.requireNonNullElse(family, "*") +
+                LangUtil.triStateSelect(bold, "-bold", "-regular", "-*") +
+                LangUtil.triStateSelect(italic, "-italic", "-normal", "-*") +
+                LangUtil.triStateSelect(underline, "-underline", "-none", "-*") +
+                LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "*") +
+                '-' + (size != null ? size : "*") +
+                '-' + (color != null ? color.toCss() : "*");
+    }
+
     /**
      * @return the bold
      */
     public Boolean getBold() {
         return bold;
-    }
-
-    /**
-     * @return the color
-     */
-    public Color getColor() {
-        return color;
-    }
-
-    /**
-     * @return the family
-     */
-    public String getFamily() {
-        return family;
-    }
-
-    /**
-     * @return the italic
-     */
-    public Boolean getItalic() {
-        return italic;
-    }
-
-    /**
-     * @return the size in points
-     */
-    public Float getSize() {
-        return size;
-    }
-
-    /**
-     * @return the strikeThrough
-     */
-    public Boolean getStrikeThrough() {
-        return strikeThrough;
-    }
-
-    /**
-     * @return the underline
-     */
-    public Boolean getUnderline() {
-        return underline;
     }
 
     /**
@@ -336,10 +309,24 @@ public final class FontDef {
     }
 
     /**
+     * @return the color
+     */
+    public Color getColor() {
+        return color;
+    }
+
+    /**
      * @param color the color to set
      */
     public void setColor(@Nullable Color color) {
         this.color = color;
+    }
+
+    /**
+     * @return the family
+     */
+    public String getFamily() {
+        return family;
     }
 
     /**
@@ -350,10 +337,24 @@ public final class FontDef {
     }
 
     /**
+     * @return the italic
+     */
+    public Boolean getItalic() {
+        return italic;
+    }
+
+    /**
      * @param italic the italic to set
      */
     public void setItalic(@Nullable Boolean italic) {
         this.italic = italic;
+    }
+
+    /**
+     * @return the size in points
+     */
+    public Float getSize() {
+        return size;
     }
 
     /**
@@ -364,10 +365,24 @@ public final class FontDef {
     }
 
     /**
+     * @return the strikeThrough
+     */
+    public Boolean getStrikeThrough() {
+        return strikeThrough;
+    }
+
+    /**
      * @param strikeThrough the strikeThrough to set
      */
     public void setStrikeThrough(@Nullable Boolean strikeThrough) {
         this.strikeThrough = strikeThrough;
+    }
+
+    /**
+     * @return the underline
+     */
+    public Boolean getUnderline() {
+        return underline;
     }
 
     /**
@@ -427,6 +442,7 @@ public final class FontDef {
 
     /**
      * Test if all attributes defined by this instance match those of the given {@link Font}.
+     *
      * @param font the {@link Font} to test
      * @return true, if the font's attributes match all attributes defined by this instance
      */
@@ -440,12 +456,9 @@ public final class FontDef {
                 && nullOrEquals(strikeThrough, font.isStrikeThrough());
     }
 
-    private static boolean nullOrEquals(@Nullable Object a, @Nullable Object b) {
-        return a == null || b == null || a.equals(b);
-    }
-
     /**
      * Update this FontDef with the non-null values of another FontDef instance.
+     *
      * @param delta the FontDef containing the values to apply
      */
     public void merge(FontDef delta) {
@@ -456,15 +469,6 @@ public final class FontDef {
         if (delta.italic != null) this.italic = delta.italic;
         if (delta.underline != null) this.underline = delta.underline;
         if (delta.strikeThrough != null) this.strikeThrough = delta.strikeThrough;
-    }
-
-    // a little helper for the consumeIfDefined... methods
-    private static <T> boolean consumeIfDefined(T v, Consumer<T> c) {
-        boolean run = v != null;
-        if (run) {
-            c.accept(v);
-        }
-        return run;
     }
 
     /**
@@ -478,6 +482,7 @@ public final class FontDef {
 
     /**
      * Run action if a value for the size property is defined.
+     *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
@@ -487,6 +492,7 @@ public final class FontDef {
 
     /**
      * Run action if a value for the family property is defined.
+     *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
@@ -532,6 +538,7 @@ public final class FontDef {
 
     /**
      * Test if this instance holds no data.
+     *
      * @return true, if none of the attributes is set
      */
     public boolean isEmpty() {

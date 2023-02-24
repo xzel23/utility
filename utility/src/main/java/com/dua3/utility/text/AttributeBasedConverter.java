@@ -14,12 +14,14 @@ import java.util.Objects;
 
 /**
  * Base class for attribute-based converters.
- * @param  <T> target type of conversion
+ *
+ * @param <T> target type of conversion
  */
 public abstract class AttributeBasedConverter<T> implements RichTextConverter<T> {
 
     /**
      * Factory method to create a compatible converter implementation instance for this converter.
+     *
      * @param text the text to be converted
      * @return instance of the implementation class
      */
@@ -27,6 +29,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
 
     /**
      * Convert {@link RichText} instance to the target class.
+     *
      * @param text the text to convert
      * @return the conversion result
      */
@@ -37,17 +40,23 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
 
     /**
      * Abstract base class for the attribute-based converter implementation classes.
+     *
      * @param <T> the conversion target type
      */
     protected abstract static class AttributeBasedConverterImpl<T> {
 
-        /** The current font used when appending text. */
-        private Map<String, Object> currentAttributes;
-        /** Store the initial attributes so that they can be restored at the end. */
+        /**
+         * Store the initial attributes so that they can be restored at the end.
+         */
         private final Map<String, Object> initialAttributes;
+        /**
+         * The current font used when appending text.
+         */
+        private Map<String, Object> currentAttributes;
 
         /**
          * Create a new instance.
+         *
          * @param defaultAttributes the default attributes to be used
          */
         protected AttributeBasedConverterImpl(Map<String, Object> defaultAttributes) {
@@ -58,20 +67,8 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         }
 
         /**
-         * Get the converted document once conversion is finished
-         * @return converted document
-         */
-        protected abstract T get();
-
-        /**
-         * Apply new font. Depending on the implementation, using either the font or the changes passed is more
-         * convenient and the implementation is free to select whichever is suitable and ignore the other.
-         * @param changedAttributes map of the changed attribute values  
-         */
-        protected abstract void apply(Map<String, Pair<Object, Object>> changedAttributes);
-
-        /**
          * Collect all style attributes into a single map.
+         *
          * @param run the {@link Run}
          * @return Map containing all attributes set by this run's styles
          */
@@ -84,7 +81,8 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         /**
          * Copy attributes and make sure to replace the FONT attribute to avoid clashes between FONT and FONT_XXX
          * attributes.
-         * @param sourceAttributes the source entries
+         *
+         * @param sourceAttributes      the source entries
          * @param destinationAttributes the destination map
          */
         private static void copyAttributes(Iterable<? extends Map.Entry<String, Object>> sourceAttributes,
@@ -104,7 +102,23 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         }
 
         /**
+         * Get the converted document once conversion is finished
+         *
+         * @return converted document
+         */
+        protected abstract T get();
+
+        /**
+         * Apply new font. Depending on the implementation, using either the font or the changes passed is more
+         * convenient and the implementation is free to select whichever is suitable and ignore the other.
+         *
+         * @param changedAttributes map of the changed attribute values
+         */
+        protected abstract void apply(Map<String, Pair<Object, Object>> changedAttributes);
+
+        /**
          * Update style. There should be no need to override this method in implementations.
+         *
          * @param run the run for which the style should be updated
          */
         protected void setStyle(Run run) {
@@ -115,6 +129,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
 
         /**
          * Handle changes in attributes.
+         *
          * @param newAttributes map containing the changed attributes and their new values
          */
         protected void handleAttributeChanges(Map<String, Object> newAttributes) {
@@ -128,6 +143,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
 
         /**
          * Append {@link RichText}.
+         *
          * @param text the text to append
          * @return this instance
          */
@@ -146,6 +162,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
 
         /**
          * Append chars to the conversion result.
+         *
          * @param s chars to append
          */
         protected abstract void appendChars(CharSequence s);

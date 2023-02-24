@@ -15,6 +15,13 @@ public enum PredefinedDateFormat {
     ISO_DATE("ISO 8601 (2000-12-31)", locale -> DateTimeFormatter.ISO_LOCAL_DATE);
 
     private static final Pattern PATTERN_YEAR_PATTERN = Pattern.compile("\\byy\\b");
+    private final String name;
+    private final Function<? super Locale, DateTimeFormatter> factory;
+
+    PredefinedDateFormat(String name, Function<? super Locale, DateTimeFormatter> factory) {
+        this.name = name;
+        this.factory = factory;
+    }
 
     /**
      * Create a date locale dependent date format.
@@ -42,15 +49,6 @@ public enum PredefinedDateFormat {
                         locale);
         formatPattern = PATTERN_YEAR_PATTERN.matcher(formatPattern).replaceAll("yyyy");
         return DateTimeFormatter.ofPattern(formatPattern, locale);
-    }
-
-    private final String name;
-
-    private final Function<? super Locale, DateTimeFormatter> factory;
-
-    PredefinedDateFormat(String name, Function<? super Locale, DateTimeFormatter> factory) {
-        this.name = name;
-        this.factory = factory;
     }
 
     public DateTimeFormatter getFormatter(Locale locale) {

@@ -7,12 +7,14 @@ import java.util.ServiceLoader;
 
 /**
  * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
+ *
  * @param <I> the implementation's underlying Image class
  */
 public interface ImageUtil<I> {
 
     /**
      * Return the default ImageUtil instance.
+     *
      * @return default instance
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -52,6 +54,7 @@ public interface ImageUtil<I> {
 
     /**
      * Load image.
+     *
      * @param in the stream to load the image from
      * @return the image
      * @throws IOException if loading fails
@@ -60,8 +63,9 @@ public interface ImageUtil<I> {
 
     /**
      * Create image from pixel data.
-     * @param w the image width
-     * @param h the image height
+     *
+     * @param w    the image width
+     * @param h    the image height
      * @param data the pixel data as int values containing ARGB values
      * @return the image
      */
@@ -69,6 +73,7 @@ public interface ImageUtil<I> {
 
     /**
      * Convert image to underlying implementation.
+     *
      * @param img the image
      * @return implementation dependent image class
      */
@@ -76,6 +81,7 @@ public interface ImageUtil<I> {
 
     /**
      * Convert image underlying implementation. to image.
+     *
      * @param img the implementation dependent image
      * @return image
      */

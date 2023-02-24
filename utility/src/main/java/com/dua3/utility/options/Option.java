@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 /**
  * Command line or configuration option.
+ *
  * @param <T> the type of option values
  */
 public abstract class Option<T> {
@@ -64,6 +65,7 @@ public abstract class Option<T> {
 
     /**
      * Set description.
+     *
      * @param description the description
      * @return this option
      */
@@ -75,6 +77,7 @@ public abstract class Option<T> {
 
     /**
      * Set display name
+     *
      * @param displayName display name
      * @return this option
      */
@@ -86,6 +89,7 @@ public abstract class Option<T> {
 
     /**
      * Set handler for this option.
+     *
      * @param handler the handler to call in {@link Arguments#handle()} for each invocation of this option
      * @return this option
      */
@@ -96,6 +100,7 @@ public abstract class Option<T> {
 
     /**
      * Get this option's handler.
+     *
      * @return the handler for this option (always non-null, options are initialised with a no-op handler)
      */
     public Consumer<Collection<T>> handler() {
@@ -108,6 +113,7 @@ public abstract class Option<T> {
 
     /**
      * Map String to option type.
+     *
      * @param s the String
      * @return {@code s} mapped to the option type
      */
@@ -121,6 +127,7 @@ public abstract class Option<T> {
 
     /**
      * Get option name.
+     *
      * @return the name of this option
      */
     public String name() {
@@ -129,6 +136,7 @@ public abstract class Option<T> {
 
     /**
      * Get all names for this option
+     *
      * @return collection containing all names for this option
      */
     public Collection<String> names() {
@@ -137,6 +145,7 @@ public abstract class Option<T> {
 
     /**
      * Get minimum number of occurrences of this option.
+     *
      * @return minimum occurrences
      */
     public int minOccurrences() {
@@ -145,6 +154,7 @@ public abstract class Option<T> {
 
     /**
      * Get maximum number of occurrences of this option.
+     *
      * @return maximum occurrences
      */
     public int maxOccurrences() {
@@ -153,6 +163,7 @@ public abstract class Option<T> {
 
     /**
      * Get minimum arity of this option.
+     *
      * @return minimum arity
      */
     public int minArity() {
@@ -161,6 +172,7 @@ public abstract class Option<T> {
 
     /**
      * Get maximum arity of this option.
+     *
      * @return maximum arity
      */
     public int maxArity() {
@@ -169,6 +181,7 @@ public abstract class Option<T> {
 
     /**
      * Get description for this option.
+     *
      * @return description
      */
     public String description() {
@@ -177,6 +190,7 @@ public abstract class Option<T> {
 
     /**
      * Get display name of this option.
+     *
      * @return display name
      */
     public String displayName() {
@@ -185,6 +199,7 @@ public abstract class Option<T> {
 
     /**
      * Format option value to {@link String}.
+     *
      * @param v the value
      * @return String representation of value
      */

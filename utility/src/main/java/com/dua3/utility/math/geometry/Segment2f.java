@@ -14,19 +14,22 @@ public abstract class Segment2f {
 
     /**
      * The identifying name for the type of the segment.
+     *
      * @return name of the segment
      */
     public abstract String name();
 
     /**
      * The segment's starting point.
-     * @return the start of the segment 
+     *
+     * @return the start of the segment
      */
     public abstract Vector2f start();
 
     /**
      * The segment's end point.
-     * @return the end of the segment 
+     *
+     * @return the end of the segment
      */
     public abstract Vector2f end();
 

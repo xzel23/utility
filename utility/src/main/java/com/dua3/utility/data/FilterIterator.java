@@ -11,8 +11,8 @@ import java.util.function.Predicate;
  * The constructor takes an {@link Iterator} instance and a predicate on the element type. It constructs a new
  * Iterator instance with the same element type, but that leaves out all elements that do not match the
  * predicate.
- * @param <T>
- *  the element t type
+ *
+ * @param <T> the element t type
  */
 public class FilterIterator<T> implements Iterator<T> {
 
@@ -23,10 +23,9 @@ public class FilterIterator<T> implements Iterator<T> {
 
     /**
      * Construct a new FilterIterator.
-     * @param iterator
-     *  the base iterator
-     * @param predicate
-     * the predicate
+     *
+     * @param iterator  the base iterator
+     * @param predicate the predicate
      */
     public FilterIterator(Iterator<T> iterator, Predicate<T> predicate) {
         this.iterator = Objects.requireNonNull(iterator);

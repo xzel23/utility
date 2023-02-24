@@ -15,9 +15,9 @@ public class LineOutputStream extends OutputStream {
     public static final int MAX_BUFFER_SIZE = 1024;
 
     private final Object lock = new Object();
+    private final Consumer<String> processor;
     private byte[] buf;
     private int count;
-    private final Consumer<String> processor;
 
     public LineOutputStream(Consumer<String> processor) {
         this.buf = new byte[INITIAL_BUFFER_SIZE];

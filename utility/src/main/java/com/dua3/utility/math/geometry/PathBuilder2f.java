@@ -37,6 +37,7 @@ public class PathBuilder2f {
 
     /**
      * Get vertex by index.
+     *
      * @param idx index
      * @return the vertex at the given index
      */
@@ -46,6 +47,7 @@ public class PathBuilder2f {
 
     /**
      * Get current index.
+     *
      * @return the current index, that is the index of the last added vertex
      */
     private int currentIndex() {
@@ -54,6 +56,7 @@ public class PathBuilder2f {
 
     /**
      * Get the current (last added) vertex.
+     *
      * @return the current vertex
      */
     public Vector2f current() {
@@ -64,6 +67,7 @@ public class PathBuilder2f {
      * Move to a new position.
      * <br>
      * <strong>NOTE:</strong> This implicitly starts a new path.
+     *
      * @param v the vertex that marks the start of the new path
      */
     public void moveTo(Vector2f v) {
@@ -74,6 +78,7 @@ public class PathBuilder2f {
 
     /**
      * Add a line from the current position to a new position.
+     *
      * @param v the new position
      */
     public void lineTo(Vector2f v) {
@@ -91,7 +96,7 @@ public class PathBuilder2f {
      * <p>
      * The curve starts at the current position (p0) and ends at p3.
      *
-     * @param p1 second control point  
+     * @param p1 second control point
      * @param p2 third control point
      * @param p3 fourth control point
      */
@@ -115,7 +120,7 @@ public class PathBuilder2f {
      *     <li> this method does not affect the number of vertices in this path
      *     <li> the current position is set to the start of the path
      *     <li> the path is reset when new segments are added to it after calling this method
-     * </ul> 
+     * </ul>
      */
     public void closePath() {
         if (open) {
@@ -132,7 +137,7 @@ public class PathBuilder2f {
      * <ul>
      *     <li> this method does not affect the number of vertices in this path
      *     <li> the path is reset when new segments are added to it after calling this method
-     * </ul> 
+     * </ul>
      */
     public void endPath() {
         if (open) {
@@ -142,7 +147,8 @@ public class PathBuilder2f {
     }
 
     /**
-     * Stroke the current path. 
+     * Stroke the current path.
+     *
      * @return {@link Path2f} instance holding the constructed path
      */
     public Path2f strokePath() {
@@ -152,6 +158,7 @@ public class PathBuilder2f {
 
     /**
      * Fill the current path.
+     *
      * @param fillRule the {@link FillRule} to use
      * @return {@link Path2f} instance holding the constructed path
      */
@@ -161,7 +168,8 @@ public class PathBuilder2f {
     }
 
     /**
-     * Fill and stroke the current path. 
+     * Fill and stroke the current path.
+     *
      * @param fillRule the {@link FillRule} to use
      * @return {@link Path2f} instance holding the constructed path
      */
@@ -171,7 +179,8 @@ public class PathBuilder2f {
     }
 
     /**
-     * Set clip region to the current path. 
+     * Set clip region to the current path.
+     *
      * @param fillRule the {@link FillRule} to use
      * @return {@link Path2f} instance holding the constructed path
      */

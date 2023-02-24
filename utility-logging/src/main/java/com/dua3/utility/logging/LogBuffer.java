@@ -17,10 +17,29 @@ import java.util.Objects;
  */
 public class LogBuffer implements LogEntryHandler, Externalizable {
 
-    /** The default capacity. */
+    /**
+     * The default capacity.
+     */
     public static final int DEFAULT_CAPACITY = 10_000;
 
     private final RingBuffer<LogEntry> buffer;
+    private final Collection<LogBufferListener> listeners = new ArrayList<>();
+
+    /**
+     * Construct a new LogBuffer instance with default capacity.
+     */
+    public LogBuffer() {
+        this(DEFAULT_CAPACITY);
+    }
+
+    /**
+     * Construct a new LogBuffer instance.
+     *
+     * @param capacity the initial capacity
+     */
+    public LogBuffer(int capacity) {
+        buffer = new RingBuffer<>(capacity);
+    }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -41,52 +60,8 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     }
 
     /**
-     * Interface for Listeners on changes of a {@link LogBuffer} instance's contents.
-     */
-    public interface LogBufferListener {
-        /**
-         * Called when an entry was added to the buffer.
-         * @param entry the added entry
-         * @param replaced true, if the buffer's capacity was reached and another entry was removed to make space for
-         *                the new one
-         */
-        default void entry(LogEntry entry, boolean replaced) {
-            entries(Collections.singleton(entry), replaced ? 1 : 0);
-        }
-
-        /**
-         * Called when multiple entries have been added in a batch. 
-         * @param entries the added entries
-         * @param replaced the number of replaced entries as described in {@link #entry(LogEntry, boolean)}
-         */
-        void entries(Collection<LogEntry> entries, int replaced);
-
-        /**
-         * Called after the buffer has been cleared.
-         */
-        void clear();
-    }
-
-    private final Collection<LogBufferListener> listeners = new ArrayList<>();
-
-    /**
-     * Construct a new LogBuffer instance with default capacity.
-     */
-    public LogBuffer() {
-        this(DEFAULT_CAPACITY);
-    }
-
-    /**
-     * Construct a new LogBuffer instance.
-     *
-     * @param capacity the initial capacity
-     */
-    public LogBuffer(int capacity) {
-        buffer = new RingBuffer<>(capacity);
-    }
-
-    /**
      * Add LogBufferListener.
+     *
      * @param listener the listener to add
      */
     public void addLogBufferListener(LogBufferListener listener) {
@@ -95,6 +70,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
 
     /**
      * Remove LogBufferListener.
+     *
      * @param listener the listener to remove
      */
     public void removeLogBufferListener(LogBufferListener listener) {
@@ -149,5 +125,34 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
         for (LogEntry entry : getLogEntries()) {
             app.append(entry.toString()).append("\n");
         }
+    }
+
+    /**
+     * Interface for Listeners on changes of a {@link LogBuffer} instance's contents.
+     */
+    public interface LogBufferListener {
+        /**
+         * Called when an entry was added to the buffer.
+         *
+         * @param entry    the added entry
+         * @param replaced true, if the buffer's capacity was reached and another entry was removed to make space for
+         *                 the new one
+         */
+        default void entry(LogEntry entry, boolean replaced) {
+            entries(Collections.singleton(entry), replaced ? 1 : 0);
+        }
+
+        /**
+         * Called when multiple entries have been added in a batch.
+         *
+         * @param entries  the added entries
+         * @param replaced the number of replaced entries as described in {@link #entry(LogEntry, boolean)}
+         */
+        void entries(Collection<LogEntry> entries, int replaced);
+
+        /**
+         * Called after the buffer has been cleared.
+         */
+        void clear();
     }
 }

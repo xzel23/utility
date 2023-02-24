@@ -17,33 +17,26 @@ import java.util.Optional;
  */
 public class FileInput extends JPanel {
     /**
-     * Enum for file selection modes.
+     * Select files only.
      */
-    public enum SelectionMode {
-        SELECT_FILE(JFileChooser.FILES_ONLY), SELECT_DIRECTORY(JFileChooser.DIRECTORIES_ONLY), SELECT_FILE_OR_DIRECTORY(JFileChooser.FILES_AND_DIRECTORIES);
-        private final int fileSelectionMode;
-
-        SelectionMode(int fileSelectionMode) {
-            this.fileSelectionMode = fileSelectionMode;
-        }
-    }
-
-    /** Select files only. */
     public static final SelectionMode SELECT_FILE = SelectionMode.SELECT_FILE;
-    /** Select directories only. */
+    /**
+     * Select directories only.
+     */
     public static final SelectionMode SELECT_DIRECTORY = SelectionMode.SELECT_DIRECTORY;
-    /** Select files or directories. */
+    /**
+     * Select files or directories.
+     */
     public static final SelectionMode SELECT_FILE_OR_DIRECTORY = SelectionMode.SELECT_FILE_OR_DIRECTORY;
-
     private final JTextField textField;
     private final JButton button;
     private final SelectionMode mode;
-
     /**
      * Constructor.
-     * @param mode the {@link SelectionMode}
+     *
+     * @param mode        the {@link SelectionMode}
      * @param initialPath the initial path
-     * @param length the length of the text field
+     * @param length      the length of the text field
      */
     public FileInput(SelectionMode mode, Path initialPath, int length) {
         setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
@@ -81,15 +74,8 @@ public class FileInput extends JPanel {
     }
 
     /**
-     * Set path.
-     * @param p the path
-     */
-    public void setPath(Path p) {
-        textField.setText(p.toString());
-    }
-
-    /**
      * Get path. Note that the file or directory described by the returned path may or may not exist on the file system.
+     *
      * @return Optional containing the path; empty, if the content of the text field is not a valid path (valid here
      * does not mean a path to an existing file or directory).
      */
@@ -102,10 +88,32 @@ public class FileInput extends JPanel {
     }
 
     /**
+     * Set path.
+     *
+     * @param p the path
+     */
+    public void setPath(Path p) {
+        textField.setText(p.toString());
+    }
+
+    /**
      * Get text. It is not checked whether the text is a valid path.
+     *
      * @return the content of the text field
      */
     public String getText() {
         return textField.getText();
+    }
+
+    /**
+     * Enum for file selection modes.
+     */
+    public enum SelectionMode {
+        SELECT_FILE(JFileChooser.FILES_ONLY), SELECT_DIRECTORY(JFileChooser.DIRECTORIES_ONLY), SELECT_FILE_OR_DIRECTORY(JFileChooser.FILES_AND_DIRECTORIES);
+        private final int fileSelectionMode;
+
+        SelectionMode(int fileSelectionMode) {
+            this.fileSelectionMode = fileSelectionMode;
+        }
     }
 }

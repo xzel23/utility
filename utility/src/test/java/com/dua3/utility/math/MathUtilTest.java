@@ -23,6 +23,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SuppressWarnings("BoundedWildcard")
 public class MathUtilTest {
 
+    private static void checkRounding(Map<RoundingMode, DoubleUnaryOperator> operations, double x, double xUP, double xDOWN, double xCEILING, double xFLOOR, double xHALF_UP, double xHALF_DOWN, double xHALF_EVEN) {
+        assertEquals(xUP, operations.get(RoundingMode.UP).applyAsDouble(x));
+        assertEquals(xDOWN, operations.get(RoundingMode.DOWN).applyAsDouble(x));
+        assertEquals(xCEILING, operations.get(RoundingMode.CEILING).applyAsDouble(x));
+        assertEquals(xFLOOR, operations.get(RoundingMode.FLOOR).applyAsDouble(x));
+        assertEquals(xHALF_UP, operations.get(RoundingMode.HALF_UP).applyAsDouble(x));
+        assertEquals(xHALF_DOWN, operations.get(RoundingMode.HALF_DOWN).applyAsDouble(x));
+        assertEquals(xHALF_EVEN, operations.get(RoundingMode.HALF_EVEN).applyAsDouble(x));
+        assertEquals(x, operations.get(RoundingMode.UNNECESSARY).applyAsDouble(x));
+    }
+
     /**
      * Test of findRoot method, of class MathUtil.
      */
@@ -190,17 +201,6 @@ public class MathUtilTest {
         checkRounding(operations, -1.6, -2, -1, -1, -2, -2, -2, -2);
         checkRounding(operations, -2.5, -3, -2, -2, -3, -3, -2, -2);
         checkRounding(operations, -5.5, -6, -5, -5, -6, -6, -5, -6);
-    }
-
-    private static void checkRounding(Map<RoundingMode, DoubleUnaryOperator> operations, double x, double xUP, double xDOWN, double xCEILING, double xFLOOR, double xHALF_UP, double xHALF_DOWN, double xHALF_EVEN) {
-        assertEquals(xUP, operations.get(RoundingMode.UP).applyAsDouble(x));
-        assertEquals(xDOWN, operations.get(RoundingMode.DOWN).applyAsDouble(x));
-        assertEquals(xCEILING, operations.get(RoundingMode.CEILING).applyAsDouble(x));
-        assertEquals(xFLOOR, operations.get(RoundingMode.FLOOR).applyAsDouble(x));
-        assertEquals(xHALF_UP, operations.get(RoundingMode.HALF_UP).applyAsDouble(x));
-        assertEquals(xHALF_DOWN, operations.get(RoundingMode.HALF_DOWN).applyAsDouble(x));
-        assertEquals(xHALF_EVEN, operations.get(RoundingMode.HALF_EVEN).applyAsDouble(x));
-        assertEquals(x, operations.get(RoundingMode.UNNECESSARY).applyAsDouble(x));
     }
 
     @Test

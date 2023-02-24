@@ -75,6 +75,10 @@ public final class AnsiCode {
      */
     public static final char BACKGROUND_COLOR = 48;
 
+    private AnsiCode() {
+        // utility class
+    }
+
     /**
      * Create an escape sequence.
      *
@@ -195,9 +199,5 @@ public final class AnsiCode {
      */
     public static String bold(boolean on) {
         return esc(on ? BOLD_ON : BOLD_OFF);
-    }
-
-    private AnsiCode() {
-        // utility class
     }
 }

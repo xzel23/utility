@@ -21,10 +21,17 @@ import java.util.List;
  * <li>{@link javax.swing.filechooser.FileFilter
  * javax.swing.filechooser.FileFilter}</li>
  * </ul>
+ *
  * @param <T> the generic parameter for {@link FileType}
  */
 public final class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
         implements java.io.FileFilter, java.io.FilenameFilter {
+    private final FileType<T> fileType;
+
+    private SwingFileFilter(FileType<T> fileType) {
+        this.fileType = fileType;
+    }
+
     public static <T> List<SwingFileFilter<T>> getFilters(OpenMode mode, Class<T> cls) {
         List<FileType<T>> fileTypes = FileType.getFileTypes(mode, cls);
         List<SwingFileFilter<T>> filters = new ArrayList<>(fileTypes.size());
@@ -32,12 +39,6 @@ public final class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
             filters.add(new SwingFileFilter<>(ft));
         }
         return filters;
-    }
-
-    private final FileType<T> fileType;
-
-    private SwingFileFilter(FileType<T> fileType) {
-        this.fileType = fileType;
     }
 
     @Override

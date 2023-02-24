@@ -25,7 +25,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
     /**
      * Construct new instance with mappings.
      *
-     * @param nsToUri    mapping from namespace to URI
+     * @param nsToUri mapping from namespace to URI
      */
     public SimpleNamespaceContext(Map<String, String> nsToUri) {
         this(nsToUri, null);
@@ -44,7 +44,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
      * Construct new instance with mappings and default namespace.
      *
      * @param nsToUriMapping mapping from namespace to URI
-     * @param defaultUri URI for the default namespace
+     * @param defaultUri     URI for the default namespace
      */
     public SimpleNamespaceContext(Map<String, String> nsToUriMapping, @Nullable String defaultUri) {
         this.nsToUri = new HashMap<>(nsToUriMapping);
@@ -84,6 +84,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
 
     /**
      * Get prefix for default namespace.
+     *
      * @return the default namespace prefix (optional)
      */
     public Optional<String> getDefaultPrefix() {

@@ -7,7 +7,8 @@ public record Dimension2f(float width, float height) {
 
     /**
      * Constructor.
-     * @param width the width (>= 0)
+     *
+     * @param width  the width (>= 0)
      * @param height the height (>= 0)
      */
     public Dimension2f {
@@ -17,6 +18,7 @@ public record Dimension2f(float width, float height) {
 
     /**
      * Get instance.
+     *
      * @param w the width
      * @param h the height
      * @return instance with given width and height

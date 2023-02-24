@@ -20,6 +20,7 @@ public class Zip implements AutoCloseable, Flushable {
 
     /**
      * Create a new Zip instance.
+     *
      * @param out the {@link OutputStream} to write the zip data to
      */
     public Zip(OutputStream out) {
@@ -30,8 +31,9 @@ public class Zip implements AutoCloseable, Flushable {
      * Add file to zip.
      * <p>
      * The file will be placed under the last created directory.
-     * @param filename  the filename
-     * @param data  the data
+     *
+     * @param filename the filename
+     * @param data     the data
      * @throws IOException on error
      */
     public void add(String filename, byte[] data) throws IOException {
@@ -43,8 +45,9 @@ public class Zip implements AutoCloseable, Flushable {
      * Add file to zip.
      * <p>
      * The file will be placed under the last created directory.
-     * @param filename  the filename
-     * @param in  the {@link InputStream} to read the data from
+     *
+     * @param filename the filename
+     * @param in       the {@link InputStream} to read the data from
      * @throws IOException on error
      */
     public void add(String filename, InputStream in) throws IOException {
@@ -68,7 +71,8 @@ public class Zip implements AutoCloseable, Flushable {
      * Add directory to zip.
      * <p>
      * The directory will be placed under the last created directory unless it starts with '/' (denotes the zip's root).
-     * @param dirname  the directory name
+     *
+     * @param dirname the directory name
      * @throws IOException on error
      */
     public void directory(String dirname) throws IOException {

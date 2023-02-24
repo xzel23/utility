@@ -13,69 +13,13 @@ import java.awt.Label;
 
 /**
  * A {@link ProgressTracker} implementation for use in Swing applications.
+ *
  * @param <T> the task type
  */
 public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
 
     private final ProgressView<T> imp;
     private int rowCount;
-
-    private static class ProgressBarIndicator implements ProgressView.ProgressIndicator {
-
-        final JProgressBar pb;
-
-        ProgressBarIndicator() {
-            this.pb = new JProgressBar();
-        }
-
-        @Override
-        public void finish(State s) {
-            SwingUtilities.invokeLater(() -> {
-                if (pb.isIndeterminate()) {
-                    pb.setIndeterminate(false);
-                    pb.setMaximum(1);
-                }
-
-                pb.setValue(pb.getMaximum());
-            });
-        }
-
-        @Override
-        public void update(int done, int total) {
-            SwingUtilities.invokeLater(() -> {
-                if (total == 0) {
-                    pb.setIndeterminate(true);
-                    pb.setMaximum(1);
-                    pb.setValue(0);
-                } else {
-                    pb.setIndeterminate(false);
-                    pb.setMaximum(total);
-                    pb.setValue(done);
-                }
-            });
-        }
-
-        /**
-         * The integer value that corresponds to 100% in percentage mode. 
-         */
-        private static final int MAX = 1000;
-
-        @Override
-        public void update(double percentDone) {
-            SwingUtilities.invokeLater(() -> {
-                if (Double.isNaN(percentDone)) {
-                    pb.setIndeterminate(true);
-                    pb.setMaximum(1);
-                    pb.setValue(0);
-                } else {
-                    pb.setIndeterminate(false);
-                    pb.setMaximum(MAX);
-                    //noinspection NumericCastThatLosesPrecision
-                    pb.setValue((int) (MathUtil.clamp(0, MAX, percentDone * MAX) + 0.5));
-                }
-            });
-        }
-    }
 
     /**
      * Constructor.
@@ -138,6 +82,62 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
     @Override
     public void update(T task, double percentDone) {
         imp.update(task, percentDone);
+    }
+
+    private static class ProgressBarIndicator implements ProgressView.ProgressIndicator {
+
+        /**
+         * The integer value that corresponds to 100% in percentage mode.
+         */
+        private static final int MAX = 1000;
+        final JProgressBar pb;
+
+        ProgressBarIndicator() {
+            this.pb = new JProgressBar();
+        }
+
+        @Override
+        public void finish(State s) {
+            SwingUtilities.invokeLater(() -> {
+                if (pb.isIndeterminate()) {
+                    pb.setIndeterminate(false);
+                    pb.setMaximum(1);
+                }
+
+                pb.setValue(pb.getMaximum());
+            });
+        }
+
+        @Override
+        public void update(int done, int total) {
+            SwingUtilities.invokeLater(() -> {
+                if (total == 0) {
+                    pb.setIndeterminate(true);
+                    pb.setMaximum(1);
+                    pb.setValue(0);
+                } else {
+                    pb.setIndeterminate(false);
+                    pb.setMaximum(total);
+                    pb.setValue(done);
+                }
+            });
+        }
+
+        @Override
+        public void update(double percentDone) {
+            SwingUtilities.invokeLater(() -> {
+                if (Double.isNaN(percentDone)) {
+                    pb.setIndeterminate(true);
+                    pb.setMaximum(1);
+                    pb.setValue(0);
+                } else {
+                    pb.setIndeterminate(false);
+                    pb.setMaximum(MAX);
+                    //noinspection NumericCastThatLosesPrecision
+                    pb.setValue((int) (MathUtil.clamp(0, MAX, percentDone * MAX) + 0.5));
+                }
+            });
+        }
     }
 
 }

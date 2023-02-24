@@ -14,25 +14,30 @@ import java.util.function.Supplier;
 
 /**
  * An {@link Option} implementation that only allows a single argument out of a limited set of possible values.
+ *
  * @param <T> the value type
  */
 public final class ChoiceOption<T> extends Option<T> {
 
-    /**
-     * A Choice is for a {@link ChoiceOption}, basically an object holding a combination of a value and its
-     * string representation for a selectable value in a choice option.
-     *
-     * @param <T> the value type
-     */
-    public record Choice<T>(T value, String text) {
-        @Override
-        public String toString() {
-            return text;
-        }
-    }
-
-    private Supplier<? extends T> defaultValue = () -> null;
     private final Supplier<? extends Collection<? extends T>> values;
+    private Supplier<? extends T> defaultValue = () -> null;
+    /**
+     * Constructor.
+     *
+     * @param valueMapper the mapper that maps strings to values
+     * @param formatter   the formatter that creates strings from values
+     * @param values      list of valid strings
+     * @param names       the option names
+     */
+    private ChoiceOption(Function<String, ? extends T> valueMapper,
+                         Function<? super T, String> formatter,
+                         Supplier<? extends Collection<? extends T>> values,
+                         String... names) {
+        super(valueMapper, formatter, names);
+        occurrence(0, 1);
+        arity(1, 1);
+        this.values = Objects.requireNonNull(values);
+    }
 
     @SuppressWarnings("unchecked")
     private static <E extends Enum<E>> E valueOf(Class<? extends E> cls, String s) {
@@ -54,8 +59,9 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Create a choice option of enum-type with the enum values as possible option values.
-     * @param <E> the enum type
-     * @param cls the enum class
+     *
+     * @param <E>   the enum type
+     * @param cls   the enum class
      * @param names the option names
      * @return choice option
      */
@@ -69,11 +75,12 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Create a choice option that maps strings in a list to values.
-     * @param <T> the option type
+     *
+     * @param <T>         the option type
      * @param valueMapper the mapper that maps strings to values
-     * @param formatter the formatter that creates strings from values
-     * @param values list of valid strings
-     * @param names the option names
+     * @param formatter   the formatter that creates strings from values
+     * @param values      list of valid strings
+     * @param names       the option names
      * @return choice option
      */
     public static <T> ChoiceOption<T> create(Function<String, ? extends T> valueMapper,
@@ -84,24 +91,8 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     /**
-     * Constructor.
-     * @param valueMapper the mapper that maps strings to values
-     * @param formatter the formatter that creates strings from values
-     * @param values list of valid strings
-     * @param names the option names
-     */
-    private ChoiceOption(Function<String, ? extends T> valueMapper,
-                         Function<? super T, String> formatter,
-                         Supplier<? extends Collection<? extends T>> values,
-                         String... names) {
-        super(valueMapper, formatter, names);
-        occurrence(0, 1);
-        arity(1, 1);
-        this.values = Objects.requireNonNull(values);
-    }
-
-    /**
      * Get possible values.
+     *
      * @return collection holding the possible values
      */
     public Collection<T> values() {
@@ -110,6 +101,7 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Get the collection of choices.
+     *
      * @return collection holding the possible choices
      */
     public Collection<Choice<T>> choices() {
@@ -118,6 +110,7 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Get choices.
+     *
      * @param v the choice to use in a ChoiceOption
      * @return collection holding the possible choices
      */
@@ -139,6 +132,7 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Set default value.
+     *
      * @param defaultValue the default value
      * @return this option
      */
@@ -148,6 +142,7 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Set default value.
+     *
      * @param defaultValue the default value
      * @return this option
      */
@@ -158,10 +153,24 @@ public final class ChoiceOption<T> extends Option<T> {
 
     /**
      * Get the default value.
+     *
      * @return Optional holding the default value.
      */
     public Optional<T> getDefault() {
         return Optional.ofNullable(defaultValue.get());
+    }
+
+    /**
+     * A Choice is for a {@link ChoiceOption}, basically an object holding a combination of a value and its
+     * string representation for a selectable value in a choice option.
+     *
+     * @param <T> the value type
+     */
+    public record Choice<T>(T value, String text) {
+        @Override
+        public String toString() {
+            return text;
+        }
     }
 
 }

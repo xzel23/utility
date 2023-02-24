@@ -35,11 +35,14 @@ import java.util.stream.Collectors;
 
 /**
  * A class representing files of a certain type.
+ *
  * @param <T> the type corresponding to the data contained in files of this {@link FileType} instance.
  */
 public abstract class FileType<T> implements Comparable<FileType<?>> {
 
-    /** Set of defined file types. */
+    /**
+     * Set of defined file types.
+     */
     private static final Set<FileType<?>> FILE_TYPES = new HashSet<>();
 
     // Load FileType  implementations
@@ -54,9 +57,10 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     /**
      * Constructor.
-     * @param name the file type name
-     * @param mode the {@link OpenMode} supported by files of this file type
-     * @param cls the implementing class
+     *
+     * @param name       the file type name
+     * @param mode       the {@link OpenMode} supported by files of this file type
+     * @param cls        the implementing class
      * @param extensions list of extensions used by files of this file type (i.e. "txt", "xls")
      */
     protected FileType(String name, OpenMode mode, Class<? extends T> cls, String... extensions) {
@@ -68,6 +72,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     /**
      * Add file type to set of available file types.
+     *
      * @param ft  the type to add
      * @param <T> the file type's document type
      */
@@ -78,6 +83,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Get unmodifiable Collection of registered file types. The returned collection will be updated when new file
      * types are registered.
+     *
      * @return collection of the registered file types
      */
     public static Collection<FileType<?>> fileTypes() {
@@ -86,6 +92,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     /**
      * Query file type by extension.
+     *
      * @param ext the extension (case-sensitive)
      * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
      */
@@ -100,6 +107,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     /**
      * Query file type by URI.
+     *
      * @param uri the URI
      * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
      */
@@ -111,6 +119,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * Query file type by URI and class. This method for determining the correct file type to use when data of the given
      * class has to be written. For example when several file types support a given extension, the implementation
      * matching the class must be chosen.
+     *
      * @param uri the URI
      * @param cls the class
      * @param <T> the generic type of this filetype's data
@@ -124,9 +133,10 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * Query file type by path and class. This method for determining the correct file type to use when data of the given
      * class has to be written. For example when several file types support a given extension, the implementation
      * matching the class must be chosen.
+     *
      * @param path the path
-     * @param cls the class
-     * @param <T> the generic type of this filetype's data
+     * @param cls  the class
+     * @param <T>  the generic type of this filetype's data
      * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
      */
     public static <T> Optional<FileType<T>> forPath(Path path, Class<T> cls) {
@@ -146,11 +156,12 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Read data. This method determines the file type according to URI and class and then reads an object from
      * the given URI.
+     *
      * @param uri the URI to read from
      * @param cls the class
-     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
-     *         determined
      * @param <T> the generic class parameter
+     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
     public static <T> Optional<T> read(URI uri, Class<T> cls) throws IOException {
@@ -160,12 +171,13 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Read data. This method determines the file type according to URI and class and then reads an object from
      * the given URI.
-     * @param uri the URI to read from
-     * @param cls the class
+     *
+     * @param uri     the URI to read from
+     * @param cls     the class
      * @param options the options to use
+     * @param <T>     the generic class parameter
      * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
-     *         determined
-     * @param <T> the generic class parameter
+     * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
     public static <T> Optional<T> read(URI uri, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
@@ -176,11 +188,12 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Read data. This method determines the file type according to URI and class and then reads an object from
      * the given URI.
+     *
      * @param path the path to read from
-     * @param cls the class
+     * @param cls  the class
+     * @param <T>  the generic class parameter
      * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
-     *         determined
-     * @param <T> the generic class parameter
+     * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
     public static <T> Optional<T> read(Path path, Class<T> cls) throws IOException {
@@ -190,11 +203,12 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Read data. This method determines the file type according to URI and class and then reads an object from
      * the given URI.
+     *
      * @param path the path to read from
-     * @param cls the class
+     * @param cls  the class
+     * @param <T>  the generic class parameter
      * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
-     *         determined
-     * @param <T> the generic class parameter
+     * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
     public static <T> Optional<T> read(Path path, Class<T> cls, Function<FileType<? extends T>, Arguments> options) throws IOException {
@@ -390,6 +404,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * "All supported files" of an application. These compound file types can be useful to offer a better user experience
      * but are not suitable for determining in what file format data should be written (an example being "Excel files"
      * which refers to both XLS and XLSX files).
+     *
      * @return if this file type is a compound file type
      */
     @SuppressWarnings({"MethodMayBeStatic", "SameReturnValue"})

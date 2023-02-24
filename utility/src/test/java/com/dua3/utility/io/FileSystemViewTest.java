@@ -19,6 +19,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FileSystemViewTest {
 
+    private static void testClassHelper(Class<?> clazz) throws IOException {
+        try (FileSystemView fsv = FileSystemView.forClass(clazz)) {
+            assertNotNull(fsv);
+
+            String pathToClassFile = clazz.getSimpleName() + ".class";
+            Path path = fsv.resolve(pathToClassFile);
+
+            assertTrue(Files.exists(path));
+            assertTrue(Files.size(path) > 0);
+        }
+    }
+
     /**
      * Construct a FileSystemView for classpath resources and try to access a class
      * file.
@@ -26,8 +38,7 @@ public class FileSystemViewTest {
      * eclipse
      * is loaded from a class file on the file system.
      *
-     * @throws IOException
-     *                     if resource could not be loaded
+     * @throws IOException if resource could not be loaded
      */
     @Test
     public void testClass() throws IOException {
@@ -42,26 +53,13 @@ public class FileSystemViewTest {
      * file.
      * In this test, a JDK class is used which is loaded from within a jar file.
      *
-     * @throws IOException
-     *                     if resource could not be loaded
+     * @throws IOException if resource could not be loaded
      */
     @Test
     public void testJarClass() throws IOException {
         // org.junit.Assert should be loaded from rt.jar, so this tests the jar
         // functionality
         testClassHelper(org.junit.jupiter.api.Test.class);
-    }
-
-    private static void testClassHelper(Class<?> clazz) throws IOException {
-        try (FileSystemView fsv = FileSystemView.forClass(clazz)) {
-            assertNotNull(fsv);
-
-            String pathToClassFile = clazz.getSimpleName() + ".class";
-            Path path = fsv.resolve(pathToClassFile);
-
-            assertTrue(Files.exists(path));
-            assertTrue(Files.size(path) > 0);
-        }
     }
 
 }

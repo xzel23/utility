@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 /**
  * A registry for {@link Codec} instances.
- * <p> 
+ * <p>
  * Codecs are registered by calling {@link #registerCodec(Class, Encoder, Decoder)}.
  * Registered codecs for a class can be obtained by using {@link #get(Class)}.
  */
@@ -44,22 +44,13 @@ public class Codecs {
         registerCodec(RGBColor.class, (DataOutputStream os, RGBColor c) -> os.writeInt(c.argb()), (DataInputStream is) -> RGBColor.argb(is.readInt()));
     }
 
-    public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
-        Object prev = CODECS.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
-        LangUtil.check(prev == null, "Codec already registered for class: " + cls);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> Optional<Codec<T>> get(Class<T> cls) {
-        return Optional.ofNullable((Codec<T>) CODECS.get(cls.getCanonicalName()));
-    }
-
     /**
      * Create new Codec instance from {@link Encoder} and {@link Decoder}.
+     *
      * @param name the codec name
-     * @param enc the encoder
-     * @param dec the decoder
-     * @param <T> the object type
+     * @param enc  the encoder
+     * @param dec  the decoder
+     * @param <T>  the object type
      * @return the new codec
      */
     public static <T> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<? extends T> dec) {
@@ -83,10 +74,11 @@ public class Codecs {
 
     /**
      * Get {@link Codec} for a {@link java.util.Collection}.
-     * @param <T> the type of collection elements
-     * @param <C> the collection type
-     * @param name the codec name
-     * @param codec the element codec
+     *
+     * @param <T>       the type of collection elements
+     * @param <C>       the collection type
+     * @param name      the codec name
+     * @param codec     the element codec
      * @param construct collection factory method
      * @return collection codec
      */
@@ -147,11 +139,12 @@ public class Codecs {
 
     /**
      * Get {@link Codec} for a {@link java.util.Map}.
-     * @param <K> the key type
-     * @param <V> the value type
-     * @param <M> the map type
-     * @param codecK the key codec
-     * @param codecV the value codec
+     *
+     * @param <K>       the key type
+     * @param <V>       the value type
+     * @param <M>       the map type
+     * @param codecK    the key codec
+     * @param codecV    the value codec
      * @param construct the map construction method
      * @return map codec
      */
@@ -178,5 +171,15 @@ public class Codecs {
                 return map;
             }
         };
+    }
+
+    public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
+        Object prev = CODECS.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
+        LangUtil.check(prev == null, "Codec already registered for class: " + cls);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Optional<Codec<T>> get(Class<T> cls) {
+        return Optional.ofNullable((Codec<T>) CODECS.get(cls.getCanonicalName()));
     }
 }

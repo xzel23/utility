@@ -32,24 +32,25 @@ import java.util.stream.IntStream;
  */
 public final class TextUtil {
 
-    private static final String TRANSFORM_REF_START = "${";
-
-    private static final String TRANSFORM_REF_END = "}";
-
     /**
      * The current system's end-of-line sequence.
      */
     public static final String LINE_END_SYSTEM = String.format("%n");
-
     /**
      * UNIX end-of-line sequence.
      */
     public static final String LINE_END_UNIX = "\n";
-
     /**
      * Windows end-of-line sequence.
      */
     public static final String LINE_END_WINDOWS = "\r\n";
+    private static final String TRANSFORM_REF_START = "${";
+    private static final String TRANSFORM_REF_END = "}";
+    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
+
+    private TextUtil() {
+        // nop: utility class
+    }
 
     /**
      * HTML-escape a string.
@@ -71,7 +72,7 @@ public final class TextUtil {
      * Append HTML-escaped character to an Appendable.
      *
      * @param app the {@link Appendable}
-     * @param c the character
+     * @param c   the character
      * @throws IOException if an exception occurs
      */
     public static void appendHtmlEscapedCharacter(Appendable app, char c) throws IOException {
@@ -88,7 +89,7 @@ public final class TextUtil {
      * Append HTML-escaped character to a {@link StringBuilder}.
      *
      * @param sb the {@link StringBuilder}
-     * @param c the character
+     * @param c  the character
      */
     public static void appendHtmlEscapedCharacter(StringBuilder sb, char c) {
         try {
@@ -101,8 +102,9 @@ public final class TextUtil {
 
     /**
      * Append HTML escaped characters to {@link Appendable}.
+     *
      * @param app the {@link Appendable} instance
-     * @param cs the unescaped {@link CharSequence}
+     * @param cs  the unescaped {@link CharSequence}
      * @param <T> the type of the Appendable
      * @throws IOException if an error occurs
      */
@@ -115,6 +117,7 @@ public final class TextUtil {
 
     /**
      * Append HTML escaped characters to {@link StringBuilder}.
+     *
      * @param sb the {@link StringBuilder} instance
      * @param cs the unescaped {@link CharSequence}
      */
@@ -170,7 +173,7 @@ public final class TextUtil {
     /**
      * Transform a templated String.
      *
-     * @param template the template
+     * @param template      the template
      * @param substitutions the substitutions
      * @return result of transformation
      * @see #transform(String, UnaryOperator)
@@ -244,10 +247,6 @@ public final class TextUtil {
         }
     }
 
-    private TextUtil() {
-        // nop: utility class
-    }
-
     /**
      * Get the font size in pt for a font size given as string.
      *
@@ -293,7 +292,7 @@ public final class TextUtil {
     /**
      * Find the index of the first occurrence of a char in a string.
      *
-     * @param s the string to search
+     * @param s     the string to search
      * @param chars the chars to search for
      * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
      */
@@ -313,7 +312,7 @@ public final class TextUtil {
     /**
      * Find the index of the first occurrence of a char in a string.
      *
-     * @param s the string to search
+     * @param s     the string to search
      * @param chars the chars to search for
      * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
      */
@@ -323,6 +322,7 @@ public final class TextUtil {
 
     /**
      * Test if {@link CharSequence} is contained-
+     *
      * @param s1 the {@link CharSequence} to search in
      * @param s2 the {@link CharSequence} to search for
      * @return true, if {@code s2} is contained in {@code s1}
@@ -334,7 +334,7 @@ public final class TextUtil {
     /**
      * Test if string contains none of the given characters.
      *
-     * @param s the string to search
+     * @param s     the string to search
      * @param chars the chars to search for
      * @return true if {@code s} contains none of the characters in {@code chars}
      */
@@ -345,7 +345,7 @@ public final class TextUtil {
     /**
      * Test if string contains none of the given characters.
      *
-     * @param s the string to search
+     * @param s     the string to search
      * @param chars the chars to search for
      * @return true if {@code s} contains none of the characters in {@code chars}
      */
@@ -356,7 +356,7 @@ public final class TextUtil {
     /**
      * Test if string contains any of the given characters.
      *
-     * @param s the string to search
+     * @param s     the string to search
      * @param chars the chars to search for
      * @return true if {@code s} contains one or more of the characters in {@code chars}
      */
@@ -367,7 +367,7 @@ public final class TextUtil {
     /**
      * Test if string contains any of the given characters.
      *
-     * @param s the string to search
+     * @param s     the string to search
      * @param chars the chars to search for
      * @return true if {@code s} contains one or more of the characters in {@code chars}
      */
@@ -441,6 +441,7 @@ public final class TextUtil {
 
     /**
      * Test whether a {@link CharSequence} starts with another {@link CharSequence}.
+     *
      * @param a the sequence to search in
      * @param b the sequence to search for
      * @return true, if a starts with s
@@ -529,10 +530,9 @@ public final class TextUtil {
         return Base64.getDecoder().decode(text);
     }
 
-    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
-
     /**
      * Convert mm to pt.
+     *
      * @param mm value in millimeters
      * @return value in points
      */
@@ -542,6 +542,7 @@ public final class TextUtil {
 
     /**
      * Convert pt to mm.
+     *
      * @param pt value in millimeters
      * @return value in points
      */
@@ -552,12 +553,9 @@ public final class TextUtil {
     /**
      * Get text height.
      *
-     * @param  text
-     *           the text
-     * @param  font
-     *           the font
-     * @return
-     *           the text height
+     * @param text the text
+     * @param font the font
+     * @return the text height
      */
     public static double getTextHeight(CharSequence text, Font font) {
         return FONT_UTIL.getTextWidth(text, font);
@@ -566,12 +564,9 @@ public final class TextUtil {
     /**
      * Get text width.
      *
-     * @param  text
-     *           the text
-     * @param  font
-     *           the font
-     * @return
-     *           the text width
+     * @param text the text
+     * @param font the font
+     * @return the text width
      */
     public static double getTextWidth(CharSequence text, Font font) {
         return FONT_UTIL.getTextWidth(text, font);
@@ -580,36 +575,22 @@ public final class TextUtil {
     /**
      * Get text bounds.
      *
-     * @param  text
-     *           the text
-     * @param  font
-     *           the font
-     * @return
-     *           the text bounds
+     * @param text the text
+     * @param font the font
+     * @return the text bounds
      */
     public static Dimension2f getTextDimension(CharSequence text, Font font) {
         return FONT_UTIL.getTextDimension(text, font);
     }
 
     /**
-     * Alignment.
-     */
-    public enum Alignment {
-        /** align left. */
-        LEFT,
-        /** align centered. */
-        CENTER,
-        /** align right. */
-        RIGHT
-    }
-
-    /**
      * Pad String to width with alignment.
-     * @param s the string
+     *
+     * @param s     the string
      * @param width the width
      * @param align the alignment
-     * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string 
-     *         is returned
+     * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string
+     * is returned
      */
     public static String align(String s, int width, Alignment align) {
         return align(s, width, align, ' ');
@@ -617,12 +598,13 @@ public final class TextUtil {
 
     /**
      * Pad String to width with alignment.
-     * @param s the string
-     * @param width the width
-     * @param align the alignment
+     *
+     * @param s      the string
+     * @param width  the width
+     * @param align  the alignment
      * @param filler the fill character
-     * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string 
-     *         is returned
+     * @return the padded nd aligned string; if the input string width exceeds the requested width, the original string
+     * is returned
      */
     public static String align(String s, int width, Alignment align, char filler) {
         String fill = Character.toString(filler);
@@ -638,7 +620,8 @@ public final class TextUtil {
 
     /**
      * Generate mailto-link.
-     * @param email the email recipient
+     *
+     * @param email   the email recipient
      * @param subject the email subject
      * @return email-link
      */
@@ -664,6 +647,7 @@ public final class TextUtil {
 
     /**
      * Convert all line ends to '\n'.
+     *
      * @param s the input string
      * @return input string with normalized line ends
      */
@@ -673,6 +657,7 @@ public final class TextUtil {
 
     /**
      * Convert all line ends to Unix convention.
+     *
      * @param s the input string
      * @return input string with Unix line ends
      */
@@ -682,6 +667,7 @@ public final class TextUtil {
 
     /**
      * Convert all line ends to Windows convention.
+     *
      * @param s the input string
      * @return input string with Windows line ends
      */
@@ -691,6 +677,7 @@ public final class TextUtil {
 
     /**
      * Convert all line ends to system convention.
+     *
      * @param s the input string
      * @return input string with system line ends
      */
@@ -700,5 +687,23 @@ public final class TextUtil {
 
     private static String setLineEnds(String s, String lineEnd) {
         return s.lines().collect(Collectors.joining(lineEnd, "", lineEnd));
+    }
+
+    /**
+     * Alignment.
+     */
+    public enum Alignment {
+        /**
+         * align left.
+         */
+        LEFT,
+        /**
+         * align centered.
+         */
+        CENTER,
+        /**
+         * align right.
+         */
+        RIGHT
     }
 }

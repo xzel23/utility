@@ -54,11 +54,6 @@ public class ArgumentsParserTest {
         assertEquals(expected, cmd.help());
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
-    public enum E {
-        TALL, GRANDE, VENTI, TRENTA
-    }
-
     @Test
     public void testChoiceOption() {
         ArgumentsParser cmd = new ArgumentsParser("testChoiceOption", "Unit test for passing choices on the command line.");
@@ -359,5 +354,10 @@ public class ArgumentsParserTest {
         assertThrows(OptionException.class, () -> cmd.parse("--two-or-more-args", "A"));
         assertEquals(List.of(List.of("A", "B")), cmd.parse("--two-or-more-args", "A", "B").stream(optionTwoOrMoreArgs).toList());
         assertEquals(List.of(List.of("A", "B", "C")), cmd.parse("--two-or-more-args", "A", "B", "C").stream(optionTwoOrMoreArgs).toList());
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
+    public enum E {
+        TALL, GRANDE, VENTI, TRENTA
     }
 }

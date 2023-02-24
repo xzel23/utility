@@ -29,11 +29,12 @@ public final class StreamUtil {
      * Consider two streams {@code a = a1, a2, a3, ...} and {@code b = b1, b2, b3, ...}. The result of zipping
      * is a new stream {@code zip(a,b) = Pair.of(a1,b1), Pair.of(a2,b2), Pair.of(a3,b3) ...}. The stream ends
      * when either {@code a} or {@code b} end.
-     * @param a first stream
-     * @param b second stream
+     *
+     * @param a   first stream
+     * @param b   second stream
      * @param <A> first stream generic item type
      * @param <B> second stream generic item type
-     * @return stream consisting of pairs od items created from items of either stream 
+     * @return stream consisting of pairs od items created from items of either stream
      */
     public static <A, B> Stream<Pair<A, B>> zip(Stream<A> a, Stream<B> b) {
         Iterator<A> i1 = a.iterator();
@@ -56,13 +57,66 @@ public final class StreamUtil {
     /**
      * Concat multiple streams. The resulting stream contains all elements from the first passed stream followed
      * by the elements of the second passed stream, and so on.
+     *
      * @param streams the streams to concat
-     * @param <T> the generic element type
+     * @param <T>     the generic element type
      * @return the stream creating by concatenating elements from the argument streams
      */
     @SafeVarargs
     public static <T> Stream<T> concat(Stream<T>... streams) {
         return Stream.of(streams).flatMap(i -> i);
+    }
+
+    /**
+     * Merge several <strong>sorted</strong> streams into a single sorted stream containing the elements from the
+     * streams passed as the argument.
+     *
+     * @param comparator the comparator that defines the sort order
+     * @param streams    the sorted streams to merge
+     * @param <T>        the generic element type
+     * @return sorted stream containing the elements of the argument streams
+     */
+    @SafeVarargs
+    public static <T> Stream<T> merge(Comparator<T> comparator, Stream<T>... streams) {
+        var iters = Arrays.stream(streams).map(Stream::iterator).toList();
+        Iterable<T> i = () -> new MergeIterator<>(comparator, iters);
+        Stream<T> stream = StreamSupport.stream(i.spliterator(), false);
+        return stream.onClose(IoUtil.composedClose(streams));
+    }
+
+    /**
+     * Merge several <strong>sorted</strong> streams into a single sorted stream containing the elements from the
+     * streams passed as the argument. Natural sort order is used as implemented in the element class.
+     *
+     * @param streams the sorted streams to merge
+     * @param <T>     the generic element type
+     * @return sorted stream containing the elements of the argument streams
+     */
+    @SafeVarargs
+    public static <T extends Comparable<T>> Stream<T> merge(Stream<T>... streams) {
+        return merge(Comparator.naturalOrder(), streams);
+    }
+
+    /**
+     * Create a stream from the elements obtained from an iterator.
+     *
+     * @param iter the iterator
+     * @param <T>  the element type
+     * @return stream of elements
+     */
+    public static <T> Stream<T> stream(Iterator<T> iter) {
+        return stream(() -> iter);
+    }
+
+    /**
+     * Create a stream from the elements obtained from an iterable.
+     *
+     * @param iterable the iterable
+     * @param <T>      the element type
+     * @return stream of elements
+     */
+    public static <T> Stream<T> stream(Iterable<T> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false);
     }
 
     private static class MergeIterator<T> implements Iterator<T> {
@@ -95,54 +149,6 @@ public final class StreamUtil {
             return comparator.compare(i1.peek(), i2.peek());
         }
 
-    }
-
-    /**
-     * Merge several <strong>sorted</strong> streams into a single sorted stream containing the elements from the
-     * streams passed as the argument.
-     * @param comparator the comparator that defines the sort order
-     * @param streams the sorted streams to merge
-     * @return sorted stream containing the elements of the argument streams
-     * @param <T> the generic element type
-     */
-    @SafeVarargs
-    public static <T> Stream<T> merge(Comparator<T> comparator, Stream<T>... streams) {
-        var iters = Arrays.stream(streams).map(Stream::iterator).toList();
-        Iterable<T> i = () -> new MergeIterator<>(comparator, iters);
-        Stream<T> stream = StreamSupport.stream(i.spliterator(), false);
-        return stream.onClose(IoUtil.composedClose(streams));
-    }
-
-    /**
-     * Merge several <strong>sorted</strong> streams into a single sorted stream containing the elements from the
-     * streams passed as the argument. Natural sort order is used as implemented in the element class.
-     * @param streams the sorted streams to merge
-     * @return sorted stream containing the elements of the argument streams
-     * @param <T> the generic element type
-     */
-    @SafeVarargs
-    public static <T extends Comparable<T>> Stream<T> merge(Stream<T>... streams) {
-        return merge(Comparator.naturalOrder(), streams);
-    }
-
-    /**
-     * Create a stream from the elements obtained from an iterator.
-     * @param iter the iterator
-     * @return stream of elements
-     * @param <T> the element type
-     */
-    public static <T> Stream<T> stream(Iterator<T> iter) {
-        return stream(() -> iter);
-    }
-
-    /**
-     * Create a stream from the elements obtained from an iterable.
-     * @param iterable the iterable
-     * @return stream of elements
-     * @param <T> the element type
-     */
-    public static <T> Stream<T> stream(Iterable<T> iterable) {
-        return StreamSupport.stream(iterable.spliterator(), false);
     }
 
 }

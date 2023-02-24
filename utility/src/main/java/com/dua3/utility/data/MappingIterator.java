@@ -5,10 +5,9 @@ import java.util.function.Function;
 
 /**
  * An Iterator implementation that does on-the-fly conversion of elements.
- * @param <T>
- *  the source iterator element type
- * @param <U>
- *  the target iterator element type
+ *
+ * @param <T> the source iterator element type
+ * @param <U> the target iterator element type
  */
 class MappingIterator<T, U> implements Iterator<U> {
     private final Iterator<? extends T> iterator;
@@ -16,10 +15,9 @@ class MappingIterator<T, U> implements Iterator<U> {
 
     /**
      * Construct new instance.
-     * @param iterator
-     *  the base iterator
-     * @param mapping
-     *  the element mapping
+     *
+     * @param iterator the base iterator
+     * @param mapping  the element mapping
      */
     MappingIterator(Iterator<? extends T> iterator, Function<? super T, ? extends U> mapping) {
         this.iterator = iterator;

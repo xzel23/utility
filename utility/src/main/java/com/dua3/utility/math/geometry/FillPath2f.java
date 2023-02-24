@@ -24,8 +24,9 @@ public class FillPath2f extends Segment2f {
 
     /**
      * Constructor.
-     * @param path the path
-     * @param idx index of current vertex
+     *
+     * @param path     the path
+     * @param idx      index of current vertex
      * @param fillRule the fill rule to use
      */
     FillPath2f(Path2fImpl path, int idx, FillRule fillRule) {
@@ -51,6 +52,7 @@ public class FillPath2f extends Segment2f {
 
     /**
      * Get fill rule.
+     *
      * @return the fill rule
      */
     public FillRule fillRule() {

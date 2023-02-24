@@ -2,12 +2,12 @@
 
 Some libraries with utility classes.
 
-| library         | description                                          | exported module           |
-|-----------------|------------------------------------------------------|---------------------------|
-| utility         | general purpose utilities                            | com.dua3.utility          |
-| utility-db      | database utilities                                   | com.dua3.utility.db       |
-| utility-swing   | swing utilities                                      | com.dua3.utility.swing    |
-| utility-logging | logging utilities and simple logging implementation  | com.dua3.utility.logging  |
+| library         | description                                         | exported module          |
+|-----------------|-----------------------------------------------------|--------------------------|
+| utility         | general purpose utilities                           | com.dua3.utility         |
+| utility-db      | database utilities                                  | com.dua3.utility.db      |
+| utility-swing   | swing utilities                                     | com.dua3.utility.swing   |
+| utility-logging | logging utilities and simple logging implementation | com.dua3.utility.logging |
 
 ## License
 
@@ -193,7 +193,8 @@ the parameter.
 
 ### 10.2.6
 
-- support value "auto" for configuring colored log output. colors are enabled if a terminal is attached and the TERM environment variable is set. this is the new default for this option.
+- support value "auto" for configuring colored log output. colors are enabled if a terminal is attached and the TERM
+  environment variable is set. this is the new default for this option.
 - update plugins, junit
 
 ### 10.2.5

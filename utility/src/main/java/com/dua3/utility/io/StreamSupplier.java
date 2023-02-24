@@ -12,35 +12,15 @@ import java.util.List;
 
 final class StreamSupplier<V> {
 
-    @FunctionalInterface
-    interface InputStreamSupplier<C> {
-        InputStream getInputStream(C connection) throws IOException;
-    }
-
-    @FunctionalInterface
-    interface OutputStreamSupplier<C> {
-        OutputStream getOutputStream(C connection) throws IOException;
-    }
-
     private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
-
     private static final List<StreamSupplier<?>> streamSuppliers = List.of(
-        def(InputStream.class, v -> v, StreamSupplier::outputUnsupported),
-        def(OutputStream.class, StreamSupplier::inputUnsupported, v -> v),
-        def(URI.class, v -> IoUtil.toURL(v).openStream(), v -> Files.newOutputStream(IoUtil.toPath(v))),
-        def(URL.class, URL::openStream, v -> Files.newOutputStream(IoUtil.toPath(v))),
-        def(Path.class, Files::newInputStream, Files::newOutputStream),
-        def(File.class, v -> Files.newInputStream(v.toPath()), v -> Files.newOutputStream(v.toPath()))
+            def(InputStream.class, v -> v, StreamSupplier::outputUnsupported),
+            def(OutputStream.class, StreamSupplier::inputUnsupported, v -> v),
+            def(URI.class, v -> IoUtil.toURL(v).openStream(), v -> Files.newOutputStream(IoUtil.toPath(v))),
+            def(URL.class, URL::openStream, v -> Files.newOutputStream(IoUtil.toPath(v))),
+            def(Path.class, Files::newInputStream, Files::newOutputStream),
+            def(File.class, v -> Files.newInputStream(v.toPath()), v -> Files.newOutputStream(v.toPath()))
     );
-
-    private static InputStream inputUnsupported(Object o) {
-        throw new UnsupportedOperationException("InputStream creation not supported: " + o.getClass().getName());
-    }
-
-    private static OutputStream outputUnsupported(Object o) {
-        throw new UnsupportedOperationException("OutputStream creation not supported: " + o.getClass().getName());
-    }
-
     private final Class<V> clazz;
     private final InputStreamSupplier<V> iss;
     private final OutputStreamSupplier<V> oss;
@@ -49,6 +29,14 @@ final class StreamSupplier<V> {
         this.clazz = clazz;
         this.iss = iss;
         this.oss = oss;
+    }
+
+    private static InputStream inputUnsupported(Object o) {
+        throw new UnsupportedOperationException("InputStream creation not supported: " + o.getClass().getName());
+    }
+
+    private static OutputStream outputUnsupported(Object o) {
+        throw new UnsupportedOperationException("OutputStream creation not supported: " + o.getClass().getName());
     }
 
     private static <V> StreamSupplier<V> def(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
@@ -69,5 +57,15 @@ final class StreamSupplier<V> {
 
     public static OutputStream getOutputStream(Object o) throws IOException {
         return supplier(o).oss.getOutputStream(o);
+    }
+
+    @FunctionalInterface
+    interface InputStreamSupplier<C> {
+        InputStream getInputStream(C connection) throws IOException;
+    }
+
+    @FunctionalInterface
+    interface OutputStreamSupplier<C> {
+        OutputStream getOutputStream(C connection) throws IOException;
     }
 }

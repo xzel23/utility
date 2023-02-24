@@ -17,18 +17,18 @@ public class Logger extends AbstractLogger {
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
     private Level level;
 
-    public static void setDefaultLevel(Level level) {
-        defaultLevel = level;
+    public Logger(String name, List<? extends LogEntryHandler> handlers) {
+        //noinspection AssignmentToSuperclassField: it is the only way to set the logger name
+        super.name = name;
+        this.handlers = handlers;
     }
 
     public static Level getDefaultLevel() {
         return defaultLevel;
     }
 
-    public Logger(String name, List<? extends LogEntryHandler> handlers) {
-        //noinspection AssignmentToSuperclassField: it is the only way to set the logger name
-        super.name = name;
-        this.handlers = handlers;
+    public static void setDefaultLevel(Level level) {
+        defaultLevel = level;
     }
 
     @Override

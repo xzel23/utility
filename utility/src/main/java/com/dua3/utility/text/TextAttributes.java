@@ -23,8 +23,16 @@ import java.util.Set;
  */
 public final class TextAttributes extends AbstractMap<String, Object> {
 
-    /** empty instance */
+    /**
+     * empty instance
+     */
     private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
+    private final Set<Entry<String, Object>> entries;
+    private int hash;
+
+    private TextAttributes(Set<Entry<String, Object>> entries) {
+        this.entries = entries;
+    }
 
     /**
      * Empty TextAttributes instance.
@@ -38,8 +46,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     /**
      * Construct instance with attributes.
      *
-     * @param  entries
-     *                 the attribute/value pairs to add
+     * @param entries the attribute/value pairs to add
      * @return TextAttributes instance
      */
     @SafeVarargs
@@ -50,8 +57,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     /**
      * Construct style with attributes.
      *
-     * @param  entries
-     *                 the attribute/value pairs to add
+     * @param entries the attribute/value pairs to add
      * @return TextAttributes instance
      */
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
@@ -65,26 +71,16 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     /**
      * Construct style with attributes.
      *
-     * @param  map     mapping from attributes to values
+     * @param map mapping from attributes to values
      * @return TextAttributes instance
      */
     public static TextAttributes of(Map<String, Object> map) {
         return new TextAttributes(map.entrySet());
     }
 
-    private TextAttributes(Set<Entry<String, Object>> entries) {
-        this.entries = entries;
-    }
-
-    private final Set<Entry<String, Object>> entries;
-
-    @Override
-    public Set<Entry<String, Object>> entrySet() {
-        return entries;
-    }
-
     /**
      * Get {@link FontDef} from TextAttributes.
+     *
      * @param attributes {@link Map} holding TextAttribute values
      * @return FontDef instance
      */
@@ -104,7 +100,10 @@ public final class TextAttributes extends AbstractMap<String, Object> {
         return fd;
     }
 
-    private int hash;
+    @Override
+    public Set<Entry<String, Object>> entrySet() {
+        return entries;
+    }
 
     @Override
     public boolean equals(@Nullable Object o) {

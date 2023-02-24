@@ -10,7 +10,9 @@ import javax.xml.xpath.XPath;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class XmlUtilTest {
 
@@ -104,20 +106,9 @@ class XmlUtilTest {
             </xsl:stylesheet>
             """;
 
-    @Test
-    void parseString() throws Exception {
-        Document document = XML_UTIL.parse(XML);
-        assertNotNull(document);
-    }
-
-    @Test
-    void parseStream() throws Exception {
-        Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML));
-        assertNotNull(document);
-    }
-
     /**
      * scramble indentation of the input text.
+     *
      * @param text the text
      * @return text with random indentation
      */
@@ -128,6 +119,18 @@ class XmlUtilTest {
                 .map(s -> s.indent(r.nextInt(8)))
                 .collect(Collectors.joining())
                 .trim();
+    }
+
+    @Test
+    void parseString() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        assertNotNull(document);
+    }
+
+    @Test
+    void parseStream() throws Exception {
+        Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML));
+        assertNotNull(document);
     }
 
     @ParameterizedTest

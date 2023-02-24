@@ -18,10 +18,22 @@ import java.util.stream.Stream;
 @SuppressWarnings("unchecked")
 public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
+    private final T parent;
+    private final Path path;
+    private final boolean lazy;
+    private final List<Consumer<T>> listeners = new ArrayList<>();
+    private List<T> children;
+    protected FileTreeNode(@Nullable T parent, Path path, boolean lazy) {
+        this.parent = parent;
+        this.path = path;
+        this.lazy = lazy;
+    }
+
     /**
-     * Create a lazily populated FileTree with the given path as its root. 
+     * Create a lazily populated FileTree with the given path as its root.
+     *
      * @param root the tree root
-     * @param <T> the node type
+     * @param <T>  the node type
      * @return the tree
      */
     public static <T extends FileTreeNode<T>> T tree(Path root) {
@@ -29,10 +41,11 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     }
 
     /**
-     * Create FileTree with the given path as its root. 
+     * Create FileTree with the given path as its root.
+     *
      * @param root the tree root
      * @param lazy if true, nodes are not populated before refresh is called
-     * @param <T> the node type
+     * @param <T>  the node type
      * @return the tree
      */
     public static <T extends FileTreeNode<T>> T tree(Path root, boolean lazy) {
@@ -41,19 +54,6 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
             t.refresh();
         }
         return t;
-    }
-
-    private final T parent;
-    private final Path path;
-    private final boolean lazy;
-    private List<T> children;
-
-    private final List<Consumer<T>> listeners = new ArrayList<>();
-
-    protected FileTreeNode(@Nullable T parent, Path path, boolean lazy) {
-        this.parent = parent;
-        this.path = path;
-        this.lazy = lazy;
     }
 
     @Override

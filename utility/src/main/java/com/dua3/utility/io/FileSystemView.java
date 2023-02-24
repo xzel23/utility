@@ -53,28 +53,25 @@ import java.util.Objects;
  */
 public final class FileSystemView implements AutoCloseable {
 
-    public enum Flags {
-        CREATE_IF_MISSING
-    }
+    private final Path root;
+    private final String name;
+    private final CleanUp cleanup;
 
-    @FunctionalInterface
-    private interface CleanUp {
-        void run() throws IOException;
+    private FileSystemView(Path root, CleanUp cleanup, String name) {
+        this.cleanup = cleanup;
+        this.root = root.toAbsolutePath();
+        this.name = name;
     }
 
     /**
      * Create FileSystemView.
      *
-     * @param  root
-     *                     the path to the FileSystemView's root. It can either be
-     *                     an existing directory or a zip-file.
-     * @param  flags
-     *                     the {@link Flags} to use
+     * @param root  the path to the FileSystemView's root. It can either be
+     *              an existing directory or a zip-file.
+     * @param flags the {@link Flags} to use
      * @return a new FileSystemView
-     * @throws IOException
-     *                     if the view cannot be created
-     * @throws IllegalArgumentException
-     *                     if the path could not be handled (i.e. points to an unsupported existing file)
+     * @throws IOException              if the view cannot be created
+     * @throws IllegalArgumentException if the path could not be handled (i.e. points to an unsupported existing file)
      */
     public static FileSystemView create(Path root, Flags... flags) throws IOException {
         Objects.requireNonNull(root);
@@ -106,14 +103,10 @@ public final class FileSystemView implements AutoCloseable {
     /**
      * Create a FileSystemView for a file in Zip-Format.
      *
-     * @param  root
-     *                     denotes the Zip-File
-     * @param  flags
-     *                     the {@link Flags} to use
-     * @return
-     *                     FileSystemView
-     * @throws IOException
-     *                     if the file does not exist or an I/O error occurs
+     * @param root  denotes the Zip-File
+     * @param flags the {@link Flags} to use
+     * @return FileSystemView
+     * @throws IOException if the file does not exist or an I/O error occurs
      */
     public static FileSystemView forArchive(Path root, Flags... flags) throws IOException {
         List<Flags> flagList = List.of(flags);
@@ -130,12 +123,10 @@ public final class FileSystemView implements AutoCloseable {
     /**
      * Create FileSystemView.
      *
-     * @param  clazz
-     *                     the class relative to which paths should be resolved.
-     *                     Classes loaded from Jar files are supported.
+     * @param clazz the class relative to which paths should be resolved.
+     *              Classes loaded from Jar files are supported.
      * @return a new FileSystemView
-     * @throws IOException
-     *                     if the view cannot be created
+     * @throws IOException if the view cannot be created
      */
     public static FileSystemView forClass(Class<?> clazz) throws IOException {
         try {
@@ -166,12 +157,9 @@ public final class FileSystemView implements AutoCloseable {
     /**
      * Create a FileSystemView for an existing directory.
      *
-     * @param  root
-     *                     the directory that will be root of this view
-     * @return
-     *                     FileSystemView
-     * @throws IOException
-     *                     if the directory denoted by {@code path} does not exist
+     * @param root the directory that will be root of this view
+     * @return FileSystemView
+     * @throws IOException if the directory denoted by {@code path} does not exist
      *                     or an I/O error occurs
      */
     public static FileSystemView forDirectory(Path root) throws IOException {
@@ -181,16 +169,6 @@ public final class FileSystemView implements AutoCloseable {
     private static FileSystemView createFileSystemView(FileSystem fs, String path) {
         Path root = fs.getPath(path);
         return new FileSystemView(root, fs::close, "[" + fs + "]" + path);
-    }
-
-    private final Path root;
-    private final String name;
-    private final CleanUp cleanup;
-
-    private FileSystemView(Path root, CleanUp cleanup, String name) {
-        this.cleanup = cleanup;
-        this.root = root.toAbsolutePath();
-        this.name = name;
     }
 
     @Override
@@ -215,10 +193,9 @@ public final class FileSystemView implements AutoCloseable {
     /**
      * Resolve path.
      *
-     * @param  path
-     *              the path to resolve
+     * @param path the path to resolve
      * @return the resolved path
-     * @see         java.nio.file.Path#resolve(String)
+     * @see java.nio.file.Path#resolve(String)
      */
     public Path resolve(String path) {
         Path resolvedPath = root.resolve(path).normalize();
@@ -234,15 +211,23 @@ public final class FileSystemView implements AutoCloseable {
     /**
      * Resolve path.
      *
-     * @param  path
-     *              the path to resolve
+     * @param path the path to resolve
      * @return the resolved path
-     * @see         java.nio.file.Path#resolve(Path)
+     * @see java.nio.file.Path#resolve(Path)
      */
     Path resolve(Path path) {
         Path resolvedPath = root.resolve(path).normalize();
         assertThatResolvedPathIsValid(resolvedPath, path);
         return resolvedPath;
+    }
+
+    public enum Flags {
+        CREATE_IF_MISSING
+    }
+
+    @FunctionalInterface
+    private interface CleanUp {
+        void run() throws IOException;
     }
 
 }

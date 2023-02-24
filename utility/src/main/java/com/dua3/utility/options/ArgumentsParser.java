@@ -23,37 +23,45 @@ import java.util.function.Function;
  */
 public class ArgumentsParser {
 
-    /** Marker to pass on the command line indicating that all remaining args should be treated as positional parameters. */
+    /**
+     * Marker to pass on the command line indicating that all remaining args should be treated as positional parameters.
+     */
     public static final String POSITIONAL_MARKER = "--";
-
-    /** The command name. */
+    /**
+     * The minimum number of positional arguments.
+     */
+    final int minPositionalArgs;
+    /**
+     * The maximum number of positional arguments.
+     */
+    final int maxPositionalArgs;
+    /**
+     * The command name.
+     */
     private final String name;
-
-    /** The command description. */
+    /**
+     * The command description.
+     */
     private final String description;
-
-    /** The options understood by this CommandLineParser instance, stored in a map (command line arg: option). */
+    /**
+     * The options understood by this CommandLineParser instance, stored in a map (command line arg: option).
+     */
     private final Map<String, Option<?>> options = new LinkedHashMap<>();
 
-    /** The minimum number of positional arguments. */
-    final int minPositionalArgs;
-
-    /** The maximum number of positional arguments. */
-    final int maxPositionalArgs;
-
     /**
-     * Constructor. 
+     * Constructor.
      */
     public ArgumentsParser() {
         this("", "");
     }
 
     /**
-     * Constructor. 
-     * @param name program name
-     * @param description program description 
-     * @param minArgs minimum number of positional arguments
-     * @param maxArgs maximum number of positional arguments
+     * Constructor.
+     *
+     * @param name        program name
+     * @param description program description
+     * @param minArgs     minimum number of positional arguments
+     * @param maxArgs     maximum number of positional arguments
      */
     public ArgumentsParser(String name, String description, int minArgs, int maxArgs) {
         this.name = Objects.requireNonNull(name);
@@ -66,26 +74,58 @@ public class ArgumentsParser {
     }
 
     /**
-     * Constructor. 
-     * @param name program name
-     * @param description program description 
-     * @param minArgs minimum number of positional arguments
+     * Constructor.
+     *
+     * @param name        program name
+     * @param description program description
+     * @param minArgs     minimum number of positional arguments
      */
     public ArgumentsParser(String name, String description, int minArgs) {
         this(name, description, minArgs, Integer.MAX_VALUE);
     }
 
     /**
-     * Constructor. 
-     * @param name the command name to show in help text.
+     * Constructor.
+     *
+     * @param name        the command name to show in help text.
      * @param description the command description to show in help text.
      */
     public ArgumentsParser(String name, String description) {
         this(name, description, 0, Integer.MAX_VALUE);
     }
 
+    private static String getArgText(int min, int max) {
+        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
+
+        String argText = switch (min) {
+            case 0 -> "";
+            case 1 -> (min == max) ? " arg" : " arg1";
+            case 2 -> " arg1 arg2";
+            case 3 -> " arg1 arg2 arg3";
+            default -> //noinspection StringConcatenationMissingWhitespace
+                    " arg1 ... arg" + min;
+        };
+
+        // handle max arity
+        if (max == Integer.MAX_VALUE) {
+            //noinspection StringConcatenationMissingWhitespace
+            argText += " [arg" + (min + 1) + "] ...";
+        } else {
+            int optionalCount = max - min;
+            if (optionalCount == 1) {
+                //noinspection StringConcatenationMissingWhitespace
+                argText += " [arg" + (min + 1) + "]";
+            } else if (optionalCount > 1) {
+                //noinspection StringConcatenationMissingWhitespace
+                argText += " [arg" + (min + 1) + "] ... (up to " + max + " arguments)";
+            }
+        }
+        return argText;
+    }
+
     /**
      * Define a new {@link Flag}.
+     *
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the flag
      */
@@ -95,9 +135,10 @@ public class ArgumentsParser {
 
     /**
      * Define a new {@link SimpleOption}.
-     * @param type the class of the target type
+     *
+     * @param type  the class of the target type
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
-     * @param <T> the target type
+     * @param <T>   the target type
      * @return the option
      */
     public <T> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
@@ -106,9 +147,10 @@ public class ArgumentsParser {
 
     /**
      * Define a new {@link SimpleOption}.
+     *
      * @param mapper the mapping to the target type
-     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
-     * @param <T> the target type
+     * @param names  the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     * @param <T>    the target type
      * @return the option
      */
     public <T> SimpleOption<T> simpleOption(Function<String, ? extends T> mapper, String... names) {
@@ -117,9 +159,10 @@ public class ArgumentsParser {
 
     /**
      * Add a choice option to the parser.
-     * @param <E> enum class
+     *
+     * @param <E>       enum class
      * @param enumClass the enum class instance
-     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     * @param names     the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @return the option
      */
     public <E extends Enum<E>> ChoiceOption<E> choiceOption(Class<? extends E> enumClass, String... names) {
@@ -128,9 +171,10 @@ public class ArgumentsParser {
 
     /**
      * Define a new option.
+     *
      * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
-     * @param type the class type instance
-     * @param <T> the generic type of the option 
+     * @param type  the class type instance
+     * @param <T>   the generic type of the option
      * @return the option
      */
     public <T> StandardOption<T> option(Class<? extends T> type, String... names) {
@@ -139,9 +183,10 @@ public class ArgumentsParser {
 
     /**
      * Define a new option.
-     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     *
+     * @param names  the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
      * @param mapper the mapper used to convert string arguments to the target type
-     * @param <T> the generic type of the option 
+     * @param <T>    the generic type of the option
      * @return the option
      */
     public <T> StandardOption<T> option(Function<String, T> mapper, String... names) {
@@ -150,7 +195,8 @@ public class ArgumentsParser {
 
     /**
      * Add an option to the parser.
-     * @param <O> the option type
+     *
+     * @param <O>    the option type
      * @param option the option to add
      * @return the option
      */
@@ -163,6 +209,7 @@ public class ArgumentsParser {
 
     /**
      * Parse command line arguments.
+     *
      * @param args the command line arguments to parse.
      * @return object holding the parsed command line arguments
      */
@@ -180,7 +227,7 @@ public class ArgumentsParser {
             // get next arg
             String arg = argList.get(idx);
 
-            // shortcut if positional marker has been encountered 
+            // shortcut if positional marker has been encountered
             if (remainingAllPositional) {
                 positionalArgs.add(arg);
                 continue;
@@ -236,6 +283,7 @@ public class ArgumentsParser {
 
     /**
      * Validate the parsed option, i.e. check the number of occurrences and arity.
+     *
      * @param parsedOptions the parsed options to validate
      * @throws OptionException if an error is detected
      */
@@ -293,6 +341,7 @@ public class ArgumentsParser {
 
     /**
      * Get a help message listing all available options.
+     *
      * @return help message
      */
     public String help() {
@@ -303,6 +352,7 @@ public class ArgumentsParser {
 
     /**
      * Output option help.
+     *
      * @param fmt the {@link Formatter} used for output
      */
     public void help(Formatter fmt) {
@@ -346,39 +396,11 @@ public class ArgumentsParser {
         });
     }
 
-    private static String getArgText(int min, int max) {
-        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
-
-        String argText = switch (min) {
-            case 0 -> "";
-            case 1 -> (min == max) ? " arg" : " arg1";
-            case 2 -> " arg1 arg2";
-            case 3 -> " arg1 arg2 arg3";
-            default -> //noinspection StringConcatenationMissingWhitespace
-                    " arg1 ... arg" + min;
-        };
-
-        // handle max arity
-        if (max == Integer.MAX_VALUE) {
-            //noinspection StringConcatenationMissingWhitespace
-            argText += " [arg" + (min + 1) + "] ...";
-        } else {
-            int optionalCount = max - min;
-            if (optionalCount == 1) {
-                //noinspection StringConcatenationMissingWhitespace
-                argText += " [arg" + (min + 1) + "]";
-            } else if (optionalCount > 1) {
-                //noinspection StringConcatenationMissingWhitespace
-                argText += " [arg" + (min + 1) + "] ... (up to " + max + " arguments)";
-            }
-        }
-        return argText;
-    }
-
     /**
      * Output error message for the given {@link OptionException} to {@link Formatter} instance.
+     *
      * @param fmt formatter
-     * @param e exception
+     * @param e   exception
      */
     public void errorMessage(Formatter fmt, OptionException e) {
         // print title
@@ -399,6 +421,7 @@ public class ArgumentsParser {
 
     /**
      * Format error message for the given {@link OptionException} to {@link String}.
+     *
      * @param e exception
      * @return error message
      */

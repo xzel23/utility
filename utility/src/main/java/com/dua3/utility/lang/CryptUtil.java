@@ -34,6 +34,7 @@ public final class CryptUtil {
 
     /**
      * Generate key.
+     *
      * @param bits the number of bits; must be a multiple of 8
      * @return the generated key
      */
@@ -54,15 +55,11 @@ public final class CryptUtil {
      * a String
      * by applying the Base64 algorithm.
      *
-     * @param  text
-     *                                  the text to encrypt
-     * @param  key
-     *                                  the encryption key
-     * @return
-     *                                  the encrypted message as a Base64 encoded
-     *                                  String
-     * @throws GeneralSecurityException
-     *                                  if encryption fails
+     * @param text the text to encrypt
+     * @param key  the encryption key
+     * @return the encrypted message as a Base64 encoded
+     * String
+     * @throws GeneralSecurityException if encryption fails
      */
     public static String encrypt(String text, byte[] key) throws GeneralSecurityException {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
@@ -77,14 +74,10 @@ public final class CryptUtil {
      * a String
      * by applying the Base64 algorithm.
      *
-     * @param  cipherText
-     *                                  the Base64 encoded encrypted ciphertext
-     * @param  key
-     *                                  the encryption key used
-     * @return
-     *                                  the decrypted message
-     * @throws GeneralSecurityException
-     *                                  if decryption fails
+     * @param cipherText the Base64 encoded encrypted ciphertext
+     * @param key        the encryption key used
+     * @return the decrypted message
+     * @throws GeneralSecurityException if decryption fails
      */
     public static String decrypt(String cipherText, byte[] key) throws GeneralSecurityException {
         byte[] cipherMessage = TextUtil.base64Decode(cipherText);
@@ -97,15 +90,11 @@ public final class CryptUtil {
      * <p>
      * The text is encrypted using AES.
      *
-     * @param  data
-     *                                  the data to encrypt
-     * @param  key
-     *                                  the encryption key
-     * @return
-     *                                  the encrypted message as a Base64 encoded
-     *                                  String
-     * @throws GeneralSecurityException
-     *                                  if encryption fails
+     * @param data the data to encrypt
+     * @param key  the encryption key
+     * @return the encrypted message as a Base64 encoded
+     * String
+     * @throws GeneralSecurityException if encryption fails
      */
     public static byte[] encrypt(byte[] key, byte[] data) throws GeneralSecurityException {
         // use AES encryption
@@ -133,15 +122,11 @@ public final class CryptUtil {
      * <p>
      * The text is decrypted using AES.
      *
-     * @param  cipherMessage
-     *                                  the encrypted data
-     * @param  key
-     *                                  the encryption key
-     * @return
-     *                                  the encrypted message as a Base64 encoded
-     *                                  String
-     * @throws GeneralSecurityException
-     *                                  if encryption fails
+     * @param cipherMessage the encrypted data
+     * @param key           the encryption key
+     * @return the encrypted message as a Base64 encoded
+     * String
+     * @throws GeneralSecurityException if encryption fails
      */
     public static byte[] decrypt(byte[] key, byte[] cipherMessage) throws GeneralSecurityException {
         ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);

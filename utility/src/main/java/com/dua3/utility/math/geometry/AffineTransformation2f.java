@@ -21,6 +21,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * Return the identity transformation.
+     *
      * @return affine transformation (identity)
      */
     @SuppressWarnings("SameReturnValue")
@@ -31,6 +32,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     /**
      * Create an affine transformation for a rotation around the origin.
      * {@code (x,y) -> (x cos(alpha) - y sin(alpha), x sin(alpha) + y cos(alpha))}.
+     *
      * @param alpha the angle in radians
      * @return affine transformation (rotation)
      */
@@ -44,6 +46,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     /**
      * Create an affine transformation for a translation
      * {@code (x,y) -> (x+u,y+v)}.
+     *
      * @param tx the x-value
      * @param ty the y-value
      * @return affine transformation (translation)
@@ -55,6 +58,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     /**
      * Create an affine transformation for a translation.
      * See {@link #translate(float, float)}.
+     *
      * @param v the translation vector
      * @return affine transformation (translation)
      */
@@ -65,6 +69,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     /**
      * Create an affine transformation for a scaling operation (using the same factor for x and y coordinates)
      * {@code (x,y) -> (sx,sy)}.
+     *
      * @param s the scaling factor
      * @return affine transformation (scale)
      */
@@ -75,6 +80,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     /**
      * Create an affine transformation for a scaling operation
      * {@code (x,y) -> (sx,ty)}.
+     *
      * @param sx the scaling factor for the x-coordinate
      * @param sy the scaling factor for the y-coordinate
      * @return affine transformation (scale)
@@ -84,8 +90,9 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Create an affine transformation for a shearing operation 
+     * Create an affine transformation for a shearing operation
      * {@code (x,y) -> (x+my,y)}.
+     *
      * @param m the shearing factor
      * @return affine transformation (scale)
      */
@@ -95,6 +102,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * Combine affine transformations.
+     *
      * @param A the affine transformation to append
      * @return affine transformation (combination of this and A)
      */
@@ -107,6 +115,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * Transform vector by applying this affine transformation to it.
+     *
      * @param v the vector to transform
      * @return the result of transformation
      */
@@ -116,6 +125,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * Transform vector by applying this affine transformation to it.
+     *
      * @param x the x-coordinate of the point to transform
      * @param y the y-coordinate of the point to transform
      * @return the result of transformation
@@ -128,6 +138,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * Get the scaling factor for the x-axis.
+     *
      * @return the x-axis scaling factor
      */
     public float getScaleX() {
@@ -136,6 +147,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * Get the shearing factor for the x-axis.
+     *
      * @return the x-axis shearing factor
      */
     public float getShearX() {
@@ -143,7 +155,8 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Get translation for x-axis. 
+     * Get translation for x-axis.
+     *
      * @return the x-axis translation value
      */
     public float getTranslateX() {
@@ -152,6 +165,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * Get the shearing factor for the y-axis.
+     *
      * @return the y-axis shearing factor
      */
     public float getShearY() {
@@ -160,6 +174,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * Get the scaling factor for the y-axis.
+     *
      * @return the y-axis scaling factor
      */
     public float getScaleY() {
@@ -167,7 +182,8 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Get translation for y-axis. 
+     * Get translation for y-axis.
+     *
      * @return the y-axis translation value
      */
     public float getTranslateY() {
@@ -175,7 +191,8 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Get translation vector. 
+     * Get translation vector.
+     *
      * @return the translation vector
      */
     public Vector2f getTranslate() {

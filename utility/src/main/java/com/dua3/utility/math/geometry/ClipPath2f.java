@@ -20,8 +20,9 @@ public class ClipPath2f extends Segment2f {
 
     /**
      * Constructor.
-     * @param path the path instance
-     * @param idx index of the current node
+     *
+     * @param path     the path instance
+     * @param idx      index of the current node
      * @param fillRule the {@link FillRule} to use
      */
     ClipPath2f(Path2fImpl path, int idx, FillRule fillRule) {
@@ -47,6 +48,7 @@ public class ClipPath2f extends Segment2f {
 
     /**
      * Get the {@link FillRule}.
+     *
      * @return the fill rule
      */
     public FillRule fillRule() {

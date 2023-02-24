@@ -14,9 +14,10 @@ public class TeeOutputStream extends OutputStream {
 
     /**
      * Constructor.
-     * @param o1 the first {@link OutputStream}
+     *
+     * @param o1     the first {@link OutputStream}
      * @param close1 if true, calling {@link #close()} will close stream 1
-     * @param o2 the second {@link OutputStream}
+     * @param o2     the second {@link OutputStream}
      * @param close2 if true, calling {@link #close()} will close stream 2
      */
     public TeeOutputStream(OutputStream o1, boolean close1, OutputStream o2, boolean close2) {

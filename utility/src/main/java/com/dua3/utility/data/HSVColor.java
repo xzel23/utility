@@ -5,15 +5,17 @@ import java.util.stream.DoubleStream;
 
 /**
  * {@link Color} implementation that uses the HSV (hue, saturation, value) color model.
- * @param h the hue in the range [0 .. 360]
- * @param s the saturation value [0 .. 1]
- * @param v the brightness value [0 .. 1]
+ *
+ * @param h     the hue in the range [0 .. 360]
+ * @param s     the saturation value [0 .. 1]
+ * @param v     the brightness value [0 .. 1]
  * @param alpha the alpha value  [0 .. 1]
  */
 public record HSVColor(float h, float s, float v, float alpha) implements Color {
 
     /**
      * Create HSVColor from packed ARGB integer value.
+     *
      * @param argb the packed ARGB value
      * @return color instance
      */
@@ -49,6 +51,14 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
         float s = max == 0 ? 0 : (max - min) / max;
 
         return new HSVColor(h, s, max, a);
+    }
+
+    private static int argbf(float a, float r, float g, float b) {
+        int ri = Math.round(r * 255);
+        int gi = Math.round(g * 255);
+        int bi = Math.round(b * 255);
+        int ai = Math.round(a * 255);
+        return (ai << 24) + (ri << 16) + (gi << 8) + bi;
     }
 
     @Override
@@ -100,14 +110,6 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
     @Override
     public Color darker() {
         return new HSVColor(h(), s(), v() * F_BRIGHTEN, alpha);
-    }
-
-    private static int argbf(float a, float r, float g, float b) {
-        int ri = Math.round(r * 255);
-        int gi = Math.round(g * 255);
-        int bi = Math.round(b * 255);
-        int ai = Math.round(a * 255);
-        return (ai << 24) + (ri << 16) + (gi << 8) + bi;
     }
 
     @Override

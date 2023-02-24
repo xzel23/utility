@@ -18,8 +18,17 @@ import java.util.function.BiFunction;
  */
 public final class AnsiConverter extends AttributeBasedConverter<String> {
 
+    private static final Map<String, Object> DEFAULT_ATTRIBUTES = new HashMap<>();
+    private final HashMap<String, BiFunction<Object, Object, String>> mappings = new HashMap<>();
+    private boolean reset;
+    private boolean reverseVideo;
+
+    private AnsiConverter() {
+    }
+
     /**
      * Send RESET sequence at beginning.
+     *
      * @param flag set to true to enable RESET before output
      * @return the option to use
      */
@@ -29,6 +38,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
 
     /**
      * Enable reverse video for output.
+     *
      * @param flag set to true to enable reverse video output
      * @return the option to use
      */
@@ -38,6 +48,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
 
     /**
      * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
+     *
      * @param attribute the name of the attribute to map
      * @param mapper    the mapper, a function object mapping attribute values to a pair of (opening, closing)
      *                  ESC sequences
@@ -48,12 +59,9 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         return new AnsiConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
     }
 
-    private boolean reset;
-    private boolean reverseVideo;
-    private final HashMap<String, BiFunction<Object, Object, String>> mappings = new HashMap<>();
-
     /**
      * Create a converter.
+     *
      * @param options the options to apply
      * @return new converter instance
      */
@@ -65,14 +73,12 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
 
     /**
      * Create a converter.
+     *
      * @param options the options to apply
      * @return new converter instance
      */
     public static AnsiConverter create(AnsiConversionOption... options) {
         return create(List.of(options));
-    }
-
-    private AnsiConverter() {
     }
 
     void setReset(boolean flag) {
@@ -82,8 +88,6 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
     void setReverseVideo(boolean flag) {
         this.reverseVideo = flag;
     }
-
-    private static final Map<String, Object> DEFAULT_ATTRIBUTES = new HashMap<>();
 
     @Override
     protected AnsiConverterImpl createConverter(RichText text) {

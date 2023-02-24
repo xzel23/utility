@@ -5,22 +5,9 @@ package com.dua3.utility.text;
  */
 public interface HtmlTag {
     /**
-     * Get text for the opening tag.
-     *
-     * @return opening tag
-     */
-    String open();
-
-    /**
-     * Get text for the closing tag.
-     *
-     * @return closing tag
-     */
-    String close();
-
-    /**
      * Create a new simple tag.
-     * @param open text of the opening tag
+     *
+     * @param open  text of the opening tag
      * @param close text of the closing tag
      * @return the new tag
      */
@@ -39,12 +26,27 @@ public interface HtmlTag {
     }
 
     /**
-     * The empty tag. 
+     * The empty tag.
+     *
      * @return the empty tag
      */
     static HtmlTag emptyTag() {
         return Empty.EMPTY_TAG;
     }
+
+    /**
+     * Get text for the opening tag.
+     *
+     * @return opening tag
+     */
+    String open();
+
+    /**
+     * Get text for the closing tag.
+     *
+     * @return closing tag
+     */
+    String close();
 
 }
 

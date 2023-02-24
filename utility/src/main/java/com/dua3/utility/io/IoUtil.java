@@ -52,6 +52,27 @@ public final class IoUtil {
     private static final Logger LOG = LoggerFactory.getLogger(IoUtil.class);
 
     private static final Pattern PATTERN_URI = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:.*");
+    /**
+     * The default character encoding.
+     */
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    /**
+     * The default character encoding.
+     */
+    private static final Charset PLATFORM_CHARSET = Charset.defaultCharset();
+    /**
+     * The character encodings used to load files.
+     */
+    private static final Charset[] CHARSETS;
+
+    static {
+        // setup list of charset; use a set to avoid duplicate entries
+        Set<Charset> charsets = new LinkedHashSet<>();
+        charsets.add(DEFAULT_CHARSET);
+        charsets.add(PLATFORM_CHARSET);
+        charsets.add(StandardCharsets.ISO_8859_1);
+        CHARSETS = charsets.toArray(new Charset[0]);
+    }
 
     private IoUtil() {
         // utility class
@@ -60,6 +81,7 @@ public final class IoUtil {
     /**
      * Extract the filename from a path given as a String. In addition to the system dependent
      * {@link File#separatorChar}, the forward slash '/' is always considered a separator.
+     *
      * @param path the path of the file
      * @return the filename of the path's last element
      */
@@ -70,6 +92,7 @@ public final class IoUtil {
 
     /**
      * Find start and end index of the filename, discarding trailing path separators.
+     *
      * @param path the path to get the filename for
      * @return pair with start, end indexes
      */
@@ -104,8 +127,7 @@ public final class IoUtil {
     /**
      * Get file extension.
      *
-     * @param  path
-     *              the path
+     * @param path the path
      * @return the extension
      */
     public static String getExtension(Path path) {
@@ -122,8 +144,7 @@ public final class IoUtil {
     /**
      * Get file extension.
      *
-     * @param  url
-     *             the URL
+     * @param url the URL
      * @return the extension
      */
     public static String getExtension(URL url) {
@@ -133,7 +154,7 @@ public final class IoUtil {
     /**
      * Get file extension.
      *
-     * @param  uri the URI
+     * @param uri the URI
      * @return the extension
      */
     public static String getExtension(URI uri) {
@@ -143,7 +164,7 @@ public final class IoUtil {
     /**
      * Get file extension.
      *
-     * @param  path  the path
+     * @param path the path
      * @return the extension
      */
     public static String getExtension(String path) {
@@ -154,7 +175,8 @@ public final class IoUtil {
      * Get file extension.
      * <p>
      * <em>NOTE:</em> {@code fname} must not contain path separators.
-     * @param  fname the filename
+     *
+     * @param fname the filename
      * @return the extension
      */
     private static String getExtensionUnsafe(String fname) {
@@ -165,8 +187,7 @@ public final class IoUtil {
     /**
      * Remove file extension.
      *
-     * @param  path
-     *               the file path
+     * @param path the file path
      * @return filename without extension
      */
     public static String stripExtension(String path) {
@@ -183,10 +204,8 @@ public final class IoUtil {
      * <p>
      * If the filename doesn't have an extension, it will be appended.
      *
-     * @param  path
-     *               the file path
-     * @param extension
-     *              the new file extension
+     * @param path      the file path
+     * @param extension the new file extension
      * @return filename with replaced extension
      */
     public static String replaceExtension(String path, String extension) {
@@ -209,10 +228,8 @@ public final class IoUtil {
      * <p>
      * If the filename doesn't have an extension, it will be appended.
      *
-     * @param  path
-     *               the file path
-     * @param extension
-     *              the new file extension
+     * @param path      the file path
+     * @param extension the new file extension
      * @return filename with replaced extension
      */
     public static Path replaceExtension(Path path, String extension) {
@@ -231,13 +248,10 @@ public final class IoUtil {
     /**
      * Read content of path into String.
      *
-     * @param  path
-     *                     the Path
-     * @param  cs
-     *                     the Charset
+     * @param path the Path
+     * @param cs   the Charset
      * @return content of path
-     * @throws IOException
-     *                     if content could not be read
+     * @throws IOException if content could not be read
      */
     public static String read(Path path, Charset cs) throws IOException {
         Objects.requireNonNull(path);
@@ -250,13 +264,10 @@ public final class IoUtil {
     /**
      * Read content of URL into String.
      *
-     * @param  url
-     *                     the url
-     * @param  cs
-     *                     the Charset
+     * @param url the url
+     * @param cs  the Charset
      * @return content of url
-     * @throws IOException
-     *                     if content could not be read
+     * @throws IOException if content could not be read
      */
     public static String read(URL url, Charset cs) throws IOException {
         try (InputStream in = url.openStream()) {
@@ -267,13 +278,10 @@ public final class IoUtil {
     /**
      * Read content of URI into String.
      *
-     * @param  uri
-     *                     the uri
-     * @param  cs
-     *                     the Charset
+     * @param uri the uri
+     * @param cs  the Charset
      * @return content of uri
-     * @throws IOException
-     *                     if content could not be read
+     * @throws IOException if content could not be read
      */
     public static String read(URI uri, Charset cs) throws IOException {
         try (InputStream in = openInputStream(uri)) {
@@ -283,6 +291,7 @@ public final class IoUtil {
 
     /**
      * Open InputStream for URI-
+     *
      * @param uri the URI
      * @return InputStream
      * @throws IOException on error
@@ -297,7 +306,8 @@ public final class IoUtil {
 
     /**
      * Copy all Bytes from InputStream to OutputStream.
-     * @param in the InputStream to read from
+     *
+     * @param in  the InputStream to read from
      * @param out the outputStream to write to
      * @throws IOException if an error occurs
      */
@@ -311,6 +321,7 @@ public final class IoUtil {
 
     /**
      * Get stream of lines from InputStream instance.
+     *
      * @param in the stream to read from
      * @param cs the Charset to use
      * @return stream of lines
@@ -322,14 +333,10 @@ public final class IoUtil {
     /**
      * Write content String to a path.
      *
-     * @param  path
-     *                     the Path
-     * @param  text
-     *                     the text
-     * @param  options
-     *                     the options to use (see {@link OpenOption})
-     * @throws IOException
-     *                     if something goes wrong
+     * @param path    the Path
+     * @param text    the text
+     * @param options the options to use (see {@link OpenOption})
+     * @throws IOException if something goes wrong
      */
     public static void write(Path path, CharSequence text, OpenOption... options) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, options)) {
@@ -340,7 +347,7 @@ public final class IoUtil {
     /**
      * Get URL for path.
      *
-     * @param  path                  the path
+     * @param path the path
      * @return the URL
      * @throws IllegalArgumentException if conversion fails
      */
@@ -351,7 +358,7 @@ public final class IoUtil {
     /**
      * Get URI for path.
      *
-     * @param  path                  the path
+     * @param path the path
      * @return the URI
      */
     public static URI toURI(Path path) {
@@ -361,7 +368,7 @@ public final class IoUtil {
     /**
      * Get URL for URI.
      *
-     * @param  uri                   the URI
+     * @param uri the URI
      * @return the URL
      * @throws IllegalArgumentException if conversion fails
      */
@@ -376,7 +383,7 @@ public final class IoUtil {
     /**
      * Get Path for URI.
      *
-     * @param  uri                   the URI
+     * @param uri the URI
      * @return the Path
      */
     public static Path toPath(URI uri) {
@@ -386,7 +393,7 @@ public final class IoUtil {
     /**
      * Get URI for URL.
      *
-     * @param  url                   the URL
+     * @param url the URL
      * @return the URI
      * @throws IllegalArgumentException if conversion fails
      */
@@ -401,7 +408,7 @@ public final class IoUtil {
     /**
      * Get URI for URL.
      *
-     * @param  url                   the URL
+     * @param url the URL
      * @return the URI
      * @throws IllegalArgumentException if conversion fails
      */
@@ -410,7 +417,8 @@ public final class IoUtil {
     }
 
     /**
-     * Convert path to a string using the unix path separator (forward slash). 
+     * Convert path to a string using the unix path separator (forward slash).
+     *
      * @param path the path
      * @return the path as a string with path components separated by forward slashes
      */
@@ -431,6 +439,7 @@ public final class IoUtil {
 
     /**
      * Check if string denotes a URI.
+     *
      * @param s the string
      * @return true if string denotes a URI
      */
@@ -440,6 +449,7 @@ public final class IoUtil {
 
     /**
      * Convert string to URI.
+     *
      * @param s the string
      * @return the URI
      */
@@ -453,6 +463,7 @@ public final class IoUtil {
 
     /**
      * Convert string to Path.
+     *
      * @param s the string
      * @return the Path
      */
@@ -467,7 +478,7 @@ public final class IoUtil {
     /**
      * Delete a file or directory recursively.
      *
-     * @param  path        the file or directory to delete
+     * @param path the file or directory to delete
      * @throws IOException if a file or directory could not be deleted
      */
     public static void deleteRecursive(Path path) throws IOException {
@@ -480,40 +491,17 @@ public final class IoUtil {
         }
     }
 
-    /** The default character encoding. */
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-
-    /** The default character encoding. */
-    private static final Charset PLATFORM_CHARSET = Charset.defaultCharset();
-
-    /** The character encodings used to load files. */
-    private static final Charset[] CHARSETS;
-
-    static {
-        // setup list of charset; use a set to avoid duplicate entries
-        Set<Charset> charsets = new LinkedHashSet<>();
-        charsets.add(DEFAULT_CHARSET);
-        charsets.add(PLATFORM_CHARSET);
-        charsets.add(StandardCharsets.ISO_8859_1);
-        CHARSETS = charsets.toArray(new Charset[0]);
-    }
-
     /**
      * Load text with unknown character encoding.
      * Tries to load text into a String. Several encodings are tried in the order
      * given in the parameters to this method. On success, calls `onCharsetDetected`
      * to report back the encoding and returns the text.
      *
-     * @param  path
-     *                           the path to load the text from
-     * @param  onCharsetDetected
-     *                           callback to inform about the detected encoding.
-     * @param  charsets
-     *                           the encodings to try
-     * @return
-     *                           the text read
-     * @throws IOException
-     *                           if an exception occurs during loading the data
+     * @param path              the path to load the text from
+     * @param onCharsetDetected callback to inform about the detected encoding.
+     * @param charsets          the encodings to try
+     * @return the text read
+     * @throws IOException if an exception occurs during loading the data
      */
     public static String loadText(
             Path path,
@@ -546,14 +534,10 @@ public final class IoUtil {
      * - the default encoding for the platform
      * - ISO 8859-1
      *
-     * @param  path
-     *                           the path to load the text from
-     * @param  onCharsetDetected
-     *                           callback to inform about the detected encoding.
-     * @return
-     *                           the text read
-     * @throws IOException
-     *                           if an exception occurs during loading the data
+     * @param path              the path to load the text from
+     * @param onCharsetDetected callback to inform about the detected encoding.
+     * @return the text read
+     * @throws IOException if an exception occurs during loading the data
      */
     public static String loadText(Path path, Consumer<? super Charset> onCharsetDetected) throws IOException {
         return loadText(path, onCharsetDetected, CHARSETS);
@@ -570,14 +554,11 @@ public final class IoUtil {
      *     <li>{@link Path}
      *     <li>{@link File}
      * </ul>
-     * @param o
-     *  object
-     * @return
-     *  InputStream
-     * @throws UnsupportedOperationException
-     *  if the object type is not supported
-     * @throws IOException
-     *  if the type is supported but an IOException occurs during stream creation
+     *
+     * @param o object
+     * @return InputStream
+     * @throws UnsupportedOperationException if the object type is not supported
+     * @throws IOException                   if the type is supported but an IOException occurs during stream creation
      */
     public static InputStream getInputStream(@Nullable Object o) throws IOException {
         return o == null ? InputStream.nullInputStream() : StreamSupplier.getInputStream(o);
@@ -594,14 +575,11 @@ public final class IoUtil {
      *     <li>{@link Path}
      *     <li>{@link File}
      * </ul>
-     * @param o
-     *  object
-     * @return
-     *  InputStream
-     * @throws UnsupportedOperationException
-     *  if the object type is not supported
-     * @throws IOException
-     *  if the type is supported but an IOException occurs during stream creation
+     *
+     * @param o object
+     * @return InputStream
+     * @throws UnsupportedOperationException if the object type is not supported
+     * @throws IOException                   if the type is supported but an IOException occurs during stream creation
      */
     public static OutputStream getOutputStream(@Nullable Object o) throws IOException {
         return o == null ? OutputStream.nullOutputStream() : StreamSupplier.getOutputStream(o);
@@ -609,6 +587,7 @@ public final class IoUtil {
 
     /**
      * Get {@link InputStream} instance that reads from a string. Characters are encoded using UTF-8.
+     *
      * @param s the string to read from
      * @return InputStream instance
      */
@@ -618,12 +597,77 @@ public final class IoUtil {
 
     /**
      * Get {@link InputStream} instance that reads from a string.
-     * @param s the string to read from
+     *
+     * @param s  the string to read from
      * @param cs the charset to use
      * @return InputStream instance
      */
     public static InputStream stringInputStream(String s, Charset cs) {
         return new ByteArrayInputStream(s.getBytes(cs));
+    }
+
+    /**
+     * Redirect {@code System.out} and {@code System.err} to a file
+     *
+     * @param path    path to the output file
+     * @param cleaner the cleaner to register the cleanup operation (reset standard output streams)
+     * @return AutoCloseable instance (calling close() will reset standard output streams)
+     * @throws IOException if an error occurs
+     */
+    public static AutoCloseable redirectStandardStreams(Path path, Cleaner cleaner) throws IOException {
+        // IMPORTANT: create the cleanup object before redirecting system streams!
+        Runnable cleanup = new CleanupSystemStreams();
+
+        Combiner combiner = new Combiner(path, "stdout: ".getBytes(StandardCharsets.UTF_8), "stderr: ".getBytes(StandardCharsets.UTF_8));
+
+        cleaner.register(combiner, cleanup);
+
+        System.setOut(new PrintStream(combiner.streamA(), true, StandardCharsets.UTF_8));
+        System.setErr(new PrintStream(combiner.streamB(), true, StandardCharsets.UTF_8));
+
+        return combiner;
+    }
+
+    /**
+     * Create a Runnable that closes multiple {@link AutoCloseable} instances. Suppressed exceptions are added to the
+     * first exception encountered using the {@link Throwable#addSuppressed(Throwable)} method.
+     *
+     * @param closeables the {@link AutoCloseable} instances to close
+     * @return Runnable instance that closes all passed arguments when run
+     */
+    public static Runnable composedClose(AutoCloseable... closeables) {
+        return () -> {
+            Throwable t = null;
+            for (AutoCloseable c : closeables) {
+                try {
+                    c.close();
+                } catch (Throwable t1) {
+                    if (t == null) {
+                        t = t1;
+                    } else {
+                        try {
+                            t.addSuppressed(t1);
+                        } catch (Throwable ignore) {
+                        }
+                    }
+                }
+            }
+            if (t != null) {
+                sneakyThrow(t);
+            }
+        };
+    }
+
+    /**
+     * Throw any exception circumventing language checks for declared exceptions.
+     *
+     * @param e   the {@link Throwable} to throw
+     * @param <E> the generic exception type
+     * @throws E always
+     */
+    private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
+        //noinspection unchecked
+        throw (E) e;
     }
 
     /**
@@ -719,67 +763,6 @@ public final class IoUtil {
             System.setOut(sOut);
             System.setErr(sErr);
         }
-    }
-
-    /**
-     * Redirect {@code System.out} and {@code System.err} to a file
-     * @param path path to the output file
-     * @param cleaner the cleaner to register the cleanup operation (reset standard output streams)
-     * @return AutoCloseable instance (calling close() will reset standard output streams)
-     * @throws IOException if an error occurs
-     */
-    public static AutoCloseable redirectStandardStreams(Path path, Cleaner cleaner) throws IOException {
-        // IMPORTANT: create the cleanup object before redirecting system streams!
-        Runnable cleanup = new CleanupSystemStreams();
-
-        Combiner combiner = new Combiner(path, "stdout: ".getBytes(StandardCharsets.UTF_8), "stderr: ".getBytes(StandardCharsets.UTF_8));
-
-        cleaner.register(combiner, cleanup);
-
-        System.setOut(new PrintStream(combiner.streamA(), true, StandardCharsets.UTF_8));
-        System.setErr(new PrintStream(combiner.streamB(), true, StandardCharsets.UTF_8));
-
-        return combiner;
-    }
-
-    /**
-     * Create a Runnable that closes multiple {@link AutoCloseable} instances. Suppressed exceptions are added to the
-     * first exception encountered using the {@link Throwable#addSuppressed(Throwable)} method.
-     * @param closeables the {@link AutoCloseable} instances to close
-     * @return Runnable instance that closes all passed arguments when run
-     */
-    public static Runnable composedClose(AutoCloseable... closeables) {
-        return () -> {
-            Throwable t = null;
-            for (AutoCloseable c : closeables) {
-                try {
-                    c.close();
-                } catch (Throwable t1) {
-                    if (t == null) {
-                        t = t1;
-                    } else {
-                        try {
-                            t.addSuppressed(t1);
-                        } catch (Throwable ignore) {
-                        }
-                    }
-                }
-            }
-            if (t != null) {
-                sneakyThrow(t);
-            }
-        };
-    }
-
-    /**
-     * Throw any exception circumventing language checks for declared exceptions.
-     * @param e the {@link Throwable} to throw
-     * @param <E> the generic exception type
-     * @throws E always
-     */
-    private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
-        //noinspection unchecked
-        throw (E) e;
     }
 }
 

@@ -19,8 +19,9 @@ public class StrokePath2f extends Segment2f {
 
     /**
      * Constructor
+     *
      * @param path the path
-     * @param idx index of current point
+     * @param idx  index of current point
      */
     StrokePath2f(Path2fImpl path, int idx) {
         super(path);

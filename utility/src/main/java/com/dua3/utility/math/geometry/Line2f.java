@@ -13,20 +13,21 @@ public final class Line2f extends Segment2f {
     public static final String NAME = "LINE";
 
     /**
-     * Index of starting point. 
+     * Index of starting point.
      */
     final int a;
 
     /**
-     * Index of end point. 
+     * Index of end point.
      */
     final int b;
 
     /**
      * Constructor
+     *
      * @param path the path
-     * @param a index of starting point
-     * @param b index of end point
+     * @param a    index of starting point
+     * @param b    index of end point
      */
     Line2f(Path2fImpl path, int a, int b) {
         super(path);
@@ -51,6 +52,7 @@ public final class Line2f extends Segment2f {
 
     /**
      * Test if line is exactly horizontal.
+     *
      * @return true, if start and end points have the same y-coordinate
      */
     public boolean isHorizontal() {
@@ -59,6 +61,7 @@ public final class Line2f extends Segment2f {
 
     /**
      * Test if line is exactly vertical.
+     *
      * @return true, if start and end points have the same x-coordinate
      */
     public boolean isVertical() {
@@ -67,7 +70,8 @@ public final class Line2f extends Segment2f {
 
     /**
      * Get angle of inclination.
-     * @return the inclination (angle between line and x-axis) 
+     *
+     * @return the inclination (angle between line and x-axis)
      */
     public double inclination() {
         return Math.atan2(deltaY(), deltaX());
@@ -75,6 +79,7 @@ public final class Line2f extends Segment2f {
 
     /**
      * Get difference in x-coordinates.
+     *
      * @return difference in x-coordinates
      */
     public float deltaX() {
@@ -83,6 +88,7 @@ public final class Line2f extends Segment2f {
 
     /**
      * Get difference in y-coordinates.
+     *
      * @return difference in y-coordinates
      */
     public float deltaY() {

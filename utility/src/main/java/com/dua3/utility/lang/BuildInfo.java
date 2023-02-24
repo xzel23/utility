@@ -16,21 +16,21 @@ import java.util.regex.Pattern;
 public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patchLevel, String separator,
                         String suffix) {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BuildInfo.class);
-
     /**
      * Key to use for the build version in properties files.
      */
     public static final String KEY_BUILD_VERSION = "build.version";
-
     /**
      * Key to use for the build time in properties files.
      */
     public static final String KEY_BUILD_TIME = "build.time";
 
+    private static final Logger LOG = LoggerFactory.getLogger(BuildInfo.class);
+
     /**
      * Create from a version and timestamp
-     * @param version the version string
+     *
+     * @param version            the version string
      * @param zonedDateTimeBuild the timestamp, compatible with {@link ZonedDateTime#parse(CharSequence)}
      * @return BuildInfo instance
      */
@@ -59,6 +59,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
 
     /**
      * Create instance from properties.
+     *
      * @param properties the properties instance; use keys as described above
      * @return BuildInfo instance
      */
@@ -70,6 +71,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
 
     /**
      * Load properties from stream and return BuildInfo.
+     *
      * @param in {@link InputStream} to read the build info properties from
      * @return BuildInfo instance
      * @throws IllegalStateException if buildinfo could not be loaded
@@ -85,7 +87,8 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
 
     /**
      * Load properties from resource and return BuildInfo.
-     * @param cls the class used to load the properties
+     *
+     * @param cls      the class used to load the properties
      * @param resource name of the resource file
      * @return BuildInfo instance
      * @throws IllegalStateException if buildinfo could not be loaded
@@ -94,8 +97,13 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
         return create(cls.getResourceAsStream(resource));
     }
 
+    private static Optional<String> group(Matcher m, String group) {
+        return Optional.ofNullable(m.group(group));
+    }
+
     /**
-     * Get version string. 
+     * Get version string.
+     *
      * @return the version string
      */
     public String version() {
@@ -105,10 +113,6 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     @Override
     public String toString() {
         return "%s (%s)".formatted(version(), buildTime());
-    }
-
-    private static Optional<String> group(Matcher m, String group) {
-        return Optional.ofNullable(m.group(group));
     }
 
 }

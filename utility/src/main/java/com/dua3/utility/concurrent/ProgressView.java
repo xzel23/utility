@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- *
  * @param <T>
  */
 public class ProgressView<T> implements ProgressTracker<T> {
@@ -18,54 +17,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
      * Value to pass to {@link ProgressIndicator#update(double)} for an indeterminate progress.
      */
     public static final double PROGRESS_INDETERMINATE = Double.NaN;
-
-    /**
-     * Indicator for a single task's progress.
-     */
-    public interface ProgressIndicator {
-        /**
-         * Mark task as finished
-         * @param s the {@link com.dua3.utility.concurrent.ProgressTracker.State} to set
-         */
-        void finish(State s);
-
-        /**
-         * Update task progress.
-         * @param done number of finished steps
-         * @param total total number of steps
-         */
-        void update(int done, int total);
-
-        /**
-         * Update task progress.
-         * @param percentDone percentage value, 0.0 &le; percentDone &le; 1.0 or use PROGRESS_INDETERMINATE to mark as indeterminate
-         */
-        void update(double percentDone);
-    }
-
-    private static class TaskRecord {
-        private final ProgressIndicator progressIndicator;
-        State state = State.SCHEDULED;
-
-        TaskRecord(ProgressIndicator progressIndicator) {
-            this.progressIndicator = Objects.requireNonNull(progressIndicator);
-        }
-
-        public void update(int done, int total) {
-            progressIndicator.update(done, total);
-        }
-
-        public void finish(State s) {
-            progressIndicator.finish(s);
-        }
-
-        public void update(double percentDone) {
-            progressIndicator.update(percentDone);
-        }
-    }
-
     private final Function<T, ProgressIndicator> createProgressIndicator;
-
     private final Map<T, TaskRecord> tasks = Collections.synchronizedMap(new LinkedHashMap<>());
 
     public ProgressView(Function<T, ProgressIndicator> createProgressIndicator) {
@@ -133,6 +85,54 @@ public class ProgressView<T> implements ProgressTracker<T> {
     public void update(T task, double percentDone) {
         assert 0 <= percentDone && percentDone <= 1.0 : "invalid arguments for '" + task + "': percentDone=" + percentDone;
         getTaskRecord(task).update(percentDone);
+    }
+
+    /**
+     * Indicator for a single task's progress.
+     */
+    public interface ProgressIndicator {
+        /**
+         * Mark task as finished
+         *
+         * @param s the {@link com.dua3.utility.concurrent.ProgressTracker.State} to set
+         */
+        void finish(State s);
+
+        /**
+         * Update task progress.
+         *
+         * @param done  number of finished steps
+         * @param total total number of steps
+         */
+        void update(int done, int total);
+
+        /**
+         * Update task progress.
+         *
+         * @param percentDone percentage value, 0.0 &le; percentDone &le; 1.0 or use PROGRESS_INDETERMINATE to mark as indeterminate
+         */
+        void update(double percentDone);
+    }
+
+    private static class TaskRecord {
+        private final ProgressIndicator progressIndicator;
+        State state = State.SCHEDULED;
+
+        TaskRecord(ProgressIndicator progressIndicator) {
+            this.progressIndicator = Objects.requireNonNull(progressIndicator);
+        }
+
+        public void update(int done, int total) {
+            progressIndicator.update(done, total);
+        }
+
+        public void finish(State s) {
+            progressIndicator.finish(s);
+        }
+
+        public void update(double percentDone) {
+            progressIndicator.update(percentDone);
+        }
     }
 
 }

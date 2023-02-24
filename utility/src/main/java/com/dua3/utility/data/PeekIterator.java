@@ -9,8 +9,8 @@ import java.util.Objects;
  * <p>
  * The constructor takes an {@link Iterator} instance and creates an iterator that offers a peek() method to inspect
  * the next element.
- * @param <T>
- *  the element t type
+ *
+ * @param <T> the element t type
  */
 public class PeekIterator<T> implements Iterator<T> {
 
@@ -20,8 +20,8 @@ public class PeekIterator<T> implements Iterator<T> {
 
     /**
      * Construct a new PeekIterator.
-     * @param iterator
-     *  the base iterator
+     *
+     * @param iterator the base iterator
      */
     public PeekIterator(Iterator<T> iterator) {
         this.iterator = Objects.requireNonNull(iterator);
@@ -41,6 +41,7 @@ public class PeekIterator<T> implements Iterator<T> {
 
     /**
      * Peek next element.
+     *
      * @return the element that will be returned when {@link #next()} is called without advancing the iterator.
      * @throws NoSuchElementException when there are no elements left
      */

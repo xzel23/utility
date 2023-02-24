@@ -17,6 +17,43 @@ public final class RGBColor implements Color {
     static final int SHIFT_B = 0;
     static final int SHIFT_G = 8;
     static final int SHIFT_R = 16;
+    /**
+     * This color's ARGB value.
+     */
+    private final int argb;
+
+    /**
+     * Create a new Color.
+     *
+     * @param r red (0..255)
+     * @param g green (0..255)
+     * @param b blue (0..255)
+     */
+    public RGBColor(int r, int g, int b) {
+        this(r, g, b, 255);
+    }
+
+    /**
+     * Create a new Color.
+     *
+     * @param r red (0..255)
+     * @param g green (0..255)
+     * @param b blue (0..255)
+     * @param a alpha (0..255)
+     */
+    public RGBColor(int r, int g, int b, int a) {
+        argb = shiftComponentValue(a, SHIFT_A) + shiftComponentValue(r, SHIFT_R) + shiftComponentValue(g, SHIFT_G)
+                + shiftComponentValue(b, SHIFT_B);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param argb the ARGB value
+     */
+    RGBColor(int argb) {
+        this.argb = argb;
+    }
 
     private static int shiftComponentValue(int value, int bits) {
         LangUtil.check(value >= 0 && value <= 255, () -> new IllegalArgumentException("value out of range: " + value));
@@ -25,6 +62,7 @@ public final class RGBColor implements Color {
 
     /**
      * Create color from ARGB value.
+     *
      * @param argb the ARGB value
      * @return the color instance
      */
@@ -34,6 +72,7 @@ public final class RGBColor implements Color {
 
     /**
      * Create color from ARGB value.
+     *
      * @param argb the ARGB value
      * @return the color instance
      */
@@ -43,53 +82,12 @@ public final class RGBColor implements Color {
 
     /**
      * Create color from RGB value.
+     *
      * @param rgb the RGB value (the highest 16 bits are ignored)
      * @return the color instance
      */
     public static RGBColor rgb(int rgb) {
         return new RGBColor(0xff000000 | rgb);
-    }
-
-    /** This color's ARGB value. */
-    private final int argb;
-
-    /**
-     * Create a new Color.
-     *
-     * @param r
-     *          red (0..255)
-     * @param g
-     *          green (0..255)
-     * @param b
-     *          blue (0..255)
-     */
-    public RGBColor(int r, int g, int b) {
-        this(r, g, b, 255);
-    }
-
-    /**
-     * Create a new Color.
-     *
-     * @param r
-     *          red (0..255)
-     * @param g
-     *          green (0..255)
-     * @param b
-     *          blue (0..255)
-     * @param a
-     *          alpha (0..255)
-     */
-    public RGBColor(int r, int g, int b, int a) {
-        argb = shiftComponentValue(a, SHIFT_A) + shiftComponentValue(r, SHIFT_R) + shiftComponentValue(g, SHIFT_G)
-                + shiftComponentValue(b, SHIFT_B);
-    }
-
-    /**
-     * Constructor.
-     * @param argb the ARGB value
-     */
-    RGBColor(int argb) {
-        this.argb = argb;
     }
 
     @Override

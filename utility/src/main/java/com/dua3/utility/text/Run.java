@@ -22,18 +22,16 @@ public final class Run implements AttributedCharSequence {
     private final int start;
     private final int length;
     private final TextAttributes attributes;
+    private int hash;
+    private FontDef fd;
 
     /**
      * Construct a new Run.
      *
-     * @param text
-     *               the text that contains the Run
-     * @param start
-     *               start of Run
-     * @param length
-     *               length of Run in characters
-     * @param style
-     *               style for the Run
+     * @param text   the text that contains the Run
+     * @param start  start of Run
+     * @param length length of Run in characters
+     * @param style  style for the Run
      */
     Run(CharSequence text, int start, int length, TextAttributes style) {
         LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
@@ -61,6 +59,7 @@ public final class Run implements AttributedCharSequence {
 
     /**
      * Compare text ignoring attributes.
+     *
      * @param other the object to compare to
      * @return result true, if obj is an instance of Run and its characters compare equal
      */
@@ -78,10 +77,11 @@ public final class Run implements AttributedCharSequence {
 
     /**
      * Compare using a user supplied predicate for comparing TextAttributes.
-     * @param other the object to compare to
+     *
+     * @param other            the object to compare to
      * @param attributesEquals the BiPredicate used for comparing
      * @return result true, if obj is an instance of Run and all runs compare as equal to this instance's
-     *                runs using the supplied predicate
+     * runs using the supplied predicate
      */
     public boolean equals(@Nullable Run other, BiPredicate<? super TextAttributes, ? super TextAttributes> attributesEquals) {
         return textEquals(other) && attributesEquals.test(attributes, other.attributes);
@@ -107,6 +107,7 @@ public final class Run implements AttributedCharSequence {
 
     /**
      * Get the base sequence.
+     *
      * @return base sequence
      */
     CharSequence base() {
@@ -115,6 +116,7 @@ public final class Run implements AttributedCharSequence {
 
     /**
      * Convert index into this {@link RichText} instance to index into base sequence.
+     *
      * @return index into base sequence
      */
     int convertIndex(int baseIndex) {
@@ -129,8 +131,6 @@ public final class Run implements AttributedCharSequence {
     public TextAttributes getAttributes() {
         return attributes;
     }
-
-    private int hash;
 
     @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
@@ -169,6 +169,7 @@ public final class Run implements AttributedCharSequence {
 
     /**
      * Get text attributes
+     *
      * @return the text attributes
      */
     public TextAttributes attributes() {
@@ -177,6 +178,7 @@ public final class Run implements AttributedCharSequence {
 
     /**
      * Get list of styles.
+     *
      * @return the list of styles
      */
     @SuppressWarnings("unchecked")
@@ -184,10 +186,9 @@ public final class Run implements AttributedCharSequence {
         return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 
-    private FontDef fd;
-
     /**
      * Get the FontDef for this style.
+     *
      * @return the FontDef
      */
     public FontDef getFontDef() {

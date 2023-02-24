@@ -41,33 +41,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("BoundedWildcard")
 public final class DataUtil {
 
-    /**
-     * Exception thrown when data conversion fails.
-     */
-    public static class ConversionException extends IllegalArgumentException {
-        private final String sourceClassName;
-        private final String targetClassName;
-
-        ConversionException(Class<?> sourceClass, Class<?> targetClass, Throwable cause) {
-            this(sourceClass, targetClass, "could not convert from "+sourceClass.getSimpleName()+" to "+targetClass.getSimpleName(), cause);
-        }
-
-        ConversionException(Class<?> sourceClass, Class<?> targetClass, String message) {
-            super(message);
-            this.sourceClassName = sourceClass.getName();
-            this.targetClassName = targetClass.getName();
-        }
-
-        ConversionException(Class<?> sourceClass, Class<?> targetClass, String message, Throwable cause) {
-            super(message, cause);
-            this.sourceClassName = sourceClass.getName();
-            this.targetClassName = targetClass.getName();
-        }
-
-        @Override
-        public String getMessage() {
-            return String.format(Locale.ROOT, "%s\n[trying to convert %s -> %s]", super.getMessage(), sourceClassName, targetClassName);
-        }
+    // Utility class - private constructor
+    private DataUtil() {
     }
 
     /**
@@ -82,14 +57,11 @@ public final class DataUtil {
      *     <li> if the value is of type {@link String} and the target class provides a method {@code public static T valueOf(String)}, that method is invoked;
      *     <li> otherwise an exception is thrown.
      * </ul>
-     * @param value
-     *  the object to convert
-     * @param targetClass
-     *  the target class
-     * @param <T>
-     *  target type
-     * @return
-     *  the object converted to the target class
+     *
+     * @param value       the object to convert
+     * @param targetClass the target class
+     * @param <T>         target type
+     * @return the object converted to the target class
      */
     public static <T> T convert(@Nullable Object value, Class<T> targetClass) {
         return convert(value, targetClass, false);
@@ -112,16 +84,12 @@ public final class DataUtil {
      *     <li> if {@code useConstructor} is {@code true} and the target class provides a constructor taking a single argument of value's type, that constructor is used;
      *     <li> otherwise an exception is thrown.
      * </ul>
-     * @param value
-     *  the object to convert
-     * @param targetClass
-     *  the target class
-     * @param useConstructor
-     *  flag whether a public constructor {@code T(U)} should be used in conversion if present where `U` is the value's class
-     * @param <T>
-     *  target type
-     * @return
-     *  the object converted to the target class
+     *
+     * @param value          the object to convert
+     * @param targetClass    the target class
+     * @param useConstructor flag whether a public constructor {@code T(U)} should be used in conversion if present where `U` is the value's class
+     * @param <T>            target type
+     * @return the object converted to the target class
      */
     @SuppressWarnings({"unchecked", "ChainOfInstanceofChecks"}) // types are checked with isAssignable()
     public static <T> T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
@@ -324,16 +292,11 @@ public final class DataUtil {
      * Converts a {@code Collection<T>} to {@code U[]} by using {@link #convert(Object, Class)} on
      * the elements contained in the collection.
      *
-     * @param data
-     *  the collection to convert
-     * @param targetClass
-     *  the element target class
-     * @param <T>
-     *  the element source type
-     * @param <U>
-     *  the element target type
-     * @return
-     *  array containing the converted elements
+     * @param data        the collection to convert
+     * @param targetClass the element target class
+     * @param <T>         the element source type
+     * @param <U>         the element target type
+     * @return array containing the converted elements
      */
     public static <T, U> U[] convertToArray(Collection<T> data, Class<? extends U> targetClass) {
         return convertToArray(data, targetClass, false);
@@ -345,18 +308,12 @@ public final class DataUtil {
      * Converts a {@code Collection<T>} to {@code U[]} by using {@link #convert(Object, Class)} on
      * the elements contained in the collection.
      *
-     * @param data
-     *  the collection to convert
-     * @param targetClass
-     *  the element target class
-     * @param useConstructor
-     *  flag whether a public constructor {@code U(T)} should be used in conversion if present
-     * @param <T>
-     *  the element source type
-     * @param <U>
-     *  the element target type
-     * @return
-     *  array containing the converted elements
+     * @param data           the collection to convert
+     * @param targetClass    the element target class
+     * @param useConstructor flag whether a public constructor {@code U(T)} should be used in conversion if present
+     * @param <T>            the element source type
+     * @param <U>            the element target type
+     * @return array containing the converted elements
      */
     @SuppressWarnings("unchecked")
     public static <T, U> U[] convertToArray(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
@@ -371,16 +328,11 @@ public final class DataUtil {
      * Converts a {@code Collection<T>} to {@code List<U>} by using the supplied mapper function on
      * the elements contained in the collection.
      *
-     * @param data
-     *  the collection to convert
-     * @param mapper
-     *  the mapping function
-     * @param <T>
-     *  the element source type
-     * @param <U>
-     *  the element target type
-     * @return
-     *  list containing the converted elements
+     * @param data   the collection to convert
+     * @param mapper the mapping function
+     * @param <T>    the element source type
+     * @param <U>    the element target type
+     * @return list containing the converted elements
      */
     public static <T, U> List<U> convert(Collection<T> data, Function<? super T, ? extends U> mapper) {
         return data.stream().map(mapper).collect(Collectors.toList());
@@ -396,16 +348,11 @@ public final class DataUtil {
      * Use {@link #convertCollection(Collection, Class, Supplier)} if the source collection contains
      * {@code null} values.</strong>
      *
-     * @param data
-     *  the collection to convert
-     * @param targetClass
-     *  the element target class
-     * @param <T>
-     *  the element source type
-     * @param <U>
-     *  the element target type
-     * @return
-     *  list containing the converted elements
+     * @param data        the collection to convert
+     * @param targetClass the element target class
+     * @param <T>         the element source type
+     * @param <U>         the element target type
+     * @return list containing the converted elements
      */
     public static <T, U> List<U> convert(Collection<T> data, Class<U> targetClass) {
         return convert(data, targetClass, false);
@@ -421,18 +368,12 @@ public final class DataUtil {
      * Use {@link #convertCollection(Collection, Class, Supplier, boolean)} if the source collection contains
      * {@code null} values.</strong>
      *
-     * @param data
-     *  the collection to convert
-     * @param targetClass
-     *  the element target class
-     * @param useConstructor
-     *  flag whether a public constructor {@code U(T)} should be used in conversion if present
-     * @param <T>
-     *  the element source type
-     * @param <U>
-     *  the element target type
-     * @return
-     *  list containing the converted elements
+     * @param data           the collection to convert
+     * @param targetClass    the element target class
+     * @param useConstructor flag whether a public constructor {@code U(T)} should be used in conversion if present
+     * @param <T>            the element source type
+     * @param <U>            the element target type
+     * @return list containing the converted elements
      */
     public static <T, U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         return data.stream()
@@ -446,20 +387,13 @@ public final class DataUtil {
      * Converts a {@code Collection<T>} to {@code Collection<U>} by using {@link #convert(Object, Class)} on
      * the elements contained in the collection.
      *
-     * @param data
-     *  the collection to convert
-     * @param targetClass
-     *  the element target class
-     * @param supplier
-     *  the collection supplier, i. e. {@code ArrayList::new}
-     * @param <T>
-     *  the element source type
-     * @param <U>
-     *  the element target type
-     * @param <C>
-     *  the target collection type
-     * @return
-     *  collection containing the converted elements
+     * @param data        the collection to convert
+     * @param targetClass the element target class
+     * @param supplier    the collection supplier, i. e. {@code ArrayList::new}
+     * @param <T>         the element source type
+     * @param <U>         the element target type
+     * @param <C>         the target collection type
+     * @return collection containing the converted elements
      */
     public static <T, U, C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier) {
         return convertCollection(data, targetClass, supplier, false);
@@ -471,22 +405,14 @@ public final class DataUtil {
      * Converts a {@code Collection<T>} to {@code Collection<U>} by using {@link #convert(Object, Class)} on
      * the elements contained in the collection.
      *
-     * @param data
-     *  the collection to convert
-     * @param targetClass
-     *  the element target class
-     * @param supplier
-     *  the collection supplier, i. e. {@code ArrayList::new}
-     * @param useConstructor
-     *  flag whether a public constructor {@code U(T)} should be used in conversion if present
-     * @param <T>
-     *  the element source type
-     * @param <U>
-     *  the element target type
-     * @param <C>
-     *  the target collection type
-     * @return
-     *  collection containing the converted elements
+     * @param data           the collection to convert
+     * @param targetClass    the element target class
+     * @param supplier       the collection supplier, i. e. {@code ArrayList::new}
+     * @param useConstructor flag whether a public constructor {@code U(T)} should be used in conversion if present
+     * @param <T>            the element source type
+     * @param <U>            the element target type
+     * @param <C>            the target collection type
+     * @return collection containing the converted elements
      */
     public static <T, U, C extends Collection<U>> C convertCollection(Collection<T> data, Class<U> targetClass, Supplier<C> supplier, boolean useConstructor) {
         return data.stream()
@@ -496,14 +422,11 @@ public final class DataUtil {
 
     /**
      * Create a filtering iterator that only lets through items matching a predicate.
-     * @param iterator
-     *  the base iterator
-     * @param predicate
-     *  the predicate to test items with
-     * @param <T>
-     *  the item type
-     * @return
-     *  iterator instance that skips items not matching the predicate
+     *
+     * @param iterator  the base iterator
+     * @param predicate the predicate to test items with
+     * @param <T>       the item type
+     * @return iterator instance that skips items not matching the predicate
      */
     public static <T> Iterator<T> filter(Iterator<T> iterator, Predicate<T> predicate) {
         return new FilterIterator<>(iterator, predicate);
@@ -511,16 +434,12 @@ public final class DataUtil {
 
     /**
      * Create a mapping iterator that converts elements on the fly.
-     * @param iterator
-     *  the base iterator
-     * @param mapping
-     *  the mapping to apply to elements
-     * @param <T>
-     *  the source iterator item type
-     * @param <U>
-     *  the target iterator item type
-     * @return
-     *  iterator instance that converts items of type {@code T} to {@code U}
+     *
+     * @param iterator the base iterator
+     * @param mapping  the mapping to apply to elements
+     * @param <T>      the source iterator item type
+     * @param <U>      the target iterator item type
+     * @return iterator instance that converts items of type {@code T} to {@code U}
      */
     public static <T, U> Iterator<U> map(Iterator<T> iterator, Function<? super T, ? extends U> mapping) {
         return new MappingIterator<>(iterator, mapping);
@@ -528,12 +447,10 @@ public final class DataUtil {
 
     /**
      * Collect items obtained from an iterable into a List.
-     * @param iterable
-     *  the iterable
-     * @param <T>
-     *  the element type
-     * @return
-     *  list of elements
+     *
+     * @param iterable the iterable
+     * @param <T>      the element type
+     * @return list of elements
      */
     public static <T> List<T> collect(Iterable<? extends T> iterable) {
         return collect(iterable.iterator());
@@ -541,12 +458,10 @@ public final class DataUtil {
 
     /**
      * Collect items from an iterator into a List.
-     * @param iterator
-     *  the iterator
-     * @param <T>
-     *  the element type
-     * @return
-     *  list of elements
+     *
+     * @param iterator the iterator
+     * @param <T>      the element type
+     * @return list of elements
      */
     public static <T> List<T> collect(Iterator<? extends T> iterator) {
         List<T> result = new ArrayList<>();
@@ -556,12 +471,10 @@ public final class DataUtil {
 
     /**
      * Collect items obtained from an iterable into an array.
-     * @param iterable
-     *  the iterable
-     * @param <T>
-     *  the element type
-     * @return
-     *  array of elements
+     *
+     * @param iterable the iterable
+     * @param <T>      the element type
+     * @return array of elements
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] collectArray(Iterable<T> iterable) {
@@ -570,12 +483,10 @@ public final class DataUtil {
 
     /**
      * Collect items from an iterator into an array.
-     * @param <T>
-     *  the element type
-     * @param iterator
-     *  the iterator
-     * @return
-     *  array of elements
+     *
+     * @param <T>      the element type
+     * @param iterator the iterator
+     * @return array of elements
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] collectArray(Iterator<T> iterator) {
@@ -584,10 +495,11 @@ public final class DataUtil {
 
     /**
      * Convert {@link Map} to {@link Function}.
-     * @param map the map
+     *
+     * @param map          the map
      * @param defaultValue the value to return if the lookup key is not present
-     * @param <K> type of key
-     * @param <V> type of value
+     * @param <K>          type of key
+     * @param <V>          type of value
      * @return a Function instance returning the map entries
      */
     public static <K, V> Function<K, V> asFunction(Map<K, V> map, V defaultValue) {
@@ -598,8 +510,8 @@ public final class DataUtil {
      * Compute the change of mappings between two maps. The result is a mapping from keys to pairs (value a, value b)
      * of the changes. See also {@link #diff(Map, Map)}.
      *
-     * @param a the first map
-     * @param b the second map
+     * @param a   the first map
+     * @param b   the second map
      * @param <U> the key type
      * @param <V> the value type
      * @return a new map that contains the changes as pairs (value in {@code a}, value in {@code b})
@@ -620,14 +532,14 @@ public final class DataUtil {
     }
 
     /**
-     * Compute the difference of mappings between two maps. The result is a map that maps keys to the new values 
+     * Compute the difference of mappings between two maps. The result is a map that maps keys to the new values
      * for all changed keys. See also {@link #changes(Map, Map)}.
      *
-     * @param a the first map
-     * @param b the second map
+     * @param a   the first map
+     * @param b   the second map
      * @param <U> the key type
      * @param <V> the value type
-     * @return a new map that contains the changed mappings (k -> mapped value in b) 
+     * @return a new map that contains the changed mappings (k -> mapped value in b)
      */
     public static <U, V> Map<U, V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
@@ -662,11 +574,12 @@ public final class DataUtil {
 
     /**
      * Execute action if key is mapped to a non-null value. See also {@link #ifPresent(Map, Object, Consumer)}.
-     * @param map the map
-     * @param key the key
+     *
+     * @param map    the map
+     * @param key    the key
      * @param action the action
-     * @param <T> the key type
-     * @param <U> the value type
+     * @param <T>    the key type
+     * @param <U>    the value type
      * @return true, if action was called
      */
     public static <T, U> boolean ifMapped(Map<T, U> map, T key, Consumer<? super U> action) {
@@ -680,8 +593,33 @@ public final class DataUtil {
         return true;
     }
 
-    // Utility class - private constructor
-    private DataUtil() {
+    /**
+     * Exception thrown when data conversion fails.
+     */
+    public static class ConversionException extends IllegalArgumentException {
+        private final String sourceClassName;
+        private final String targetClassName;
+
+        ConversionException(Class<?> sourceClass, Class<?> targetClass, Throwable cause) {
+            this(sourceClass, targetClass, "could not convert from " + sourceClass.getSimpleName() + " to " + targetClass.getSimpleName(), cause);
+        }
+
+        ConversionException(Class<?> sourceClass, Class<?> targetClass, String message) {
+            super(message);
+            this.sourceClassName = sourceClass.getName();
+            this.targetClassName = targetClass.getName();
+        }
+
+        ConversionException(Class<?> sourceClass, Class<?> targetClass, String message, Throwable cause) {
+            super(message, cause);
+            this.sourceClassName = sourceClass.getName();
+            this.targetClassName = targetClass.getName();
+        }
+
+        @Override
+        public String getMessage() {
+            return String.format(Locale.ROOT, "%s\n[trying to convert %s -> %s]", super.getMessage(), sourceClassName, targetClassName);
+        }
     }
 
 }

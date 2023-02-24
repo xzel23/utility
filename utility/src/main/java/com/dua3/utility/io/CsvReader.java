@@ -38,105 +38,21 @@ import java.util.regex.Pattern;
  */
 public class CsvReader extends CsvIo {
 
-    /**
-     * Interface used to build rows when reading CSV files. 
-     */
-    public interface RowBuilder {
-        /**
-         * Add a value.
-         *
-         * @param value the value to add
-         */
-        void add(String value);
-
-        /**
-         * End the current row.
-         */
-        void endRow();
-
-        /**
-         * Start a new row.
-         */
-        void startRow();
-    }
-
-    /**
-     * A {@link RowBuilder} implementation that creates a list of Strings for the cells contained in each row read.
-     */
-    public static class ListRowBuilder implements RowBuilder {
-
-        private final List<String> row = new ArrayList<>();
-
-        @Override
-        public void add(String value) {
-            row.add(value);
-        }
-
-        @Override
-        public void endRow() {
-            // nop
-        }
-
-        /**
-         * Get row data.
-         * @return list of values contained in the row
-         */
-        public List<String> getRow() {
-            return Collections.unmodifiableList(row);
-        }
-
-        @Override
-        public void startRow() {
-            assert row.isEmpty() : "row ist not empty";
-        }
-    }
-
     // the unicode codepoint for the UTF-8 BOM
     private static final int UTF8_BOM = 0xfeff;
-
     // the bytes sequence the UTF-8 BOM
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private static final byte[] UTF8_BOM_BYTES = {(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
-
-    public static CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
-        return new CsvReader(builder, reader, null, options);
-    }
-
-    public static CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
-        Charset cs = IoOptions.getCharset(options);
-        return create(builder, Files.newBufferedReader(path, cs), options);
-    }
-
-    public static CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
-        // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
-        // selection in options)
-        Charset charset = IoOptions.getCharset(options);
-        if (in.markSupported()) {
-            int bomLength = UTF8_BOM_BYTES.length;
-            byte[] buffer = new byte[bomLength];
-            in.mark(bomLength);
-            if (in.read(buffer) != bomLength || !Arrays.equals(UTF8_BOM_BYTES, buffer)) {
-                in.reset();
-            } else {
-                charset = StandardCharsets.UTF_8;
-            }
-        }
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
-        return create(builder, reader, options);
-    }
-
     private final RowBuilder rowBuilder;
+    private final Pattern patternField;
+    private final BufferedReader reader;
+    private final URI source;
     private int rowNumber;
     private int rowsRead;
     private int lineNumber;
-    private final Pattern patternField;
-    private final BufferedReader reader;
     private List<String> columnNames;
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
-    private final URI source;
-
     public CsvReader(RowBuilder rowBuilder, BufferedReader reader, @Nullable URI source, Arguments options)
             throws IOException {
         super(options);
@@ -184,13 +100,41 @@ public class CsvReader extends CsvIo {
         patternField = Pattern.compile(regexField);
     }
 
+    public static CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
+        return new CsvReader(builder, reader, null, options);
+    }
+
+    public static CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
+        Charset cs = IoOptions.getCharset(options);
+        return create(builder, Files.newBufferedReader(path, cs), options);
+    }
+
+    public static CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
+        // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
+        // selection in options)
+        Charset charset = IoOptions.getCharset(options);
+        if (in.markSupported()) {
+            int bomLength = UTF8_BOM_BYTES.length;
+            byte[] buffer = new byte[bomLength];
+            in.mark(bomLength);
+            if (in.read(buffer) != bomLength || !Arrays.equals(UTF8_BOM_BYTES, buffer)) {
+                in.reset();
+            } else {
+                charset = StandardCharsets.UTF_8;
+            }
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
+        return create(builder, reader, options);
+    }
+
     @Override
     public void close() throws IOException {
         reader.close();
     }
 
     /**
-     * @param  columnNr the column number
+     * @param columnNr the column number
      * @return name of column or columnNr as String if no name was set
      */
     public String getColumnName(int columnNr) {
@@ -209,10 +153,24 @@ public class CsvReader extends CsvIo {
     }
 
     /**
+     * @param ignoreExcessFields the ignoreExcessFields to set
+     */
+    public void setIgnoreExcessFields(boolean ignoreExcessFields) {
+        this.ignoreExcessFields = ignoreExcessFields;
+    }
+
+    /**
      * @return the ignoreMissingFields
      */
     public boolean getIgnoreMissingFields() {
         return ignoreMissingFields;
+    }
+
+    /**
+     * @param ignoreMissingFields the ignoreMissingFields to set
+     */
+    public void setIgnoreMissingFields(boolean ignoreMissingFields) {
+        this.ignoreMissingFields = ignoreMissingFields;
     }
 
     /**
@@ -258,9 +216,8 @@ public class CsvReader extends CsvIo {
      * read a single row of CSV data.
      *
      * @return number of fields in row or -1 when end of input is
-     *                     reached
-     * @throws IOException
-     *  if an error occurs during reading
+     * reached
+     * @throws IOException if an error occurs during reading
      */
     private int readRow(RowBuilder rb) throws IOException {
         String line = reader.readLine();
@@ -331,12 +288,10 @@ public class CsvReader extends CsvIo {
     /**
      * Read some rows of CSV data.
      *
-     * @param  maxRows            maximum number of rows to be read or 0 to read till end of input
+     * @param maxRows maximum number of rows to be read or 0 to read till end of input
      * @return number of rows read
-     * @throws IOException
-     *  if an error occurs during reading
-     * @throws CsvFormatException
-     *  if the data read can not be correctly interpreted
+     * @throws IOException        if an error occurs during reading
+     * @throws CsvFormatException if the data read can not be correctly interpreted
      */
     private int readRows(int maxRows) throws IOException {
         int read = 0;
@@ -352,12 +307,10 @@ public class CsvReader extends CsvIo {
     /**
      * Read some rows of CSV data.
      *
-     * @param  rowsToRead         number of rows to be read
+     * @param rowsToRead number of rows to be read
      * @return number of rows read
-     * @throws IOException
-     *  if an error occurs during reading
-     * @throws CsvFormatException
-     *  if the data read can not be correctly interpreted
+     * @throws IOException        if an error occurs during reading
+     * @throws CsvFormatException if the data read can not be correctly interpreted
      */
     public int readSome(int rowsToRead) throws IOException {
         return rowsToRead > 0 ? readRows(rowsToRead) : 0;
@@ -371,17 +324,57 @@ public class CsvReader extends CsvIo {
     }
 
     /**
-     * @param ignoreExcessFields the ignoreExcessFields to set
+     * Interface used to build rows when reading CSV files.
      */
-    public void setIgnoreExcessFields(boolean ignoreExcessFields) {
-        this.ignoreExcessFields = ignoreExcessFields;
+    public interface RowBuilder {
+        /**
+         * Add a value.
+         *
+         * @param value the value to add
+         */
+        void add(String value);
+
+        /**
+         * End the current row.
+         */
+        void endRow();
+
+        /**
+         * Start a new row.
+         */
+        void startRow();
     }
 
     /**
-     * @param ignoreMissingFields the ignoreMissingFields to set
+     * A {@link RowBuilder} implementation that creates a list of Strings for the cells contained in each row read.
      */
-    public void setIgnoreMissingFields(boolean ignoreMissingFields) {
-        this.ignoreMissingFields = ignoreMissingFields;
+    public static class ListRowBuilder implements RowBuilder {
+
+        private final List<String> row = new ArrayList<>();
+
+        @Override
+        public void add(String value) {
+            row.add(value);
+        }
+
+        @Override
+        public void endRow() {
+            // nop
+        }
+
+        /**
+         * Get row data.
+         *
+         * @return list of values contained in the row
+         */
+        public List<String> getRow() {
+            return Collections.unmodifiableList(row);
+        }
+
+        @Override
+        public void startRow() {
+            assert row.isEmpty() : "row ist not empty";
+        }
     }
 
 }

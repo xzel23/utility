@@ -17,8 +17,34 @@ import java.util.function.Supplier;
  */
 public class Stopwatch {
 
+    private final Object name;
+    private final Instant start;
+    private final Format format = Format.STANDARD;
+    private Instant startSplit;
+
+    /**
+     * Construct instance.
+     *
+     * @param name the name for this instance; it is included in {@code toString()}
+     */
+    protected Stopwatch(String name) {
+        this.name = Objects.requireNonNull(name);
+        this.start = this.startSplit = Instant.now();
+    }
+
+    /**
+     * Construct instance.
+     *
+     * @param name the name for this instance; it is included in {@code toString()}
+     */
+    public Stopwatch(Supplier<String> name) {
+        this.name = Objects.requireNonNull(name);
+        this.start = this.startSplit = Instant.now();
+    }
+
     /**
      * Create new instance.
+     *
      * @param name the name
      * @return new instance
      */
@@ -28,6 +54,7 @@ public class Stopwatch {
 
     /**
      * Create new instance.
+     *
      * @param name the name supplier
      * @return new instance
      */
@@ -37,7 +64,8 @@ public class Stopwatch {
 
     /**
      * Create new instance.
-     * @param name the name
+     *
+     * @param name    the name
      * @param onClose the action to perform when close() is called
      * @return new instance
      */
@@ -47,7 +75,8 @@ public class Stopwatch {
 
     /**
      * Create new instance.
-     * @param name the name supplier
+     *
+     * @param name    the name supplier
      * @param onClose the action to perform when close() is called
      * @return new instance
      */
@@ -55,23 +84,95 @@ public class Stopwatch {
         return new AutoCloseableStopWatch(name, onClose);
     }
 
-    public static class AutoCloseableStopWatch extends Stopwatch implements AutoCloseable {
-        private final Consumer<Stopwatch> onClose;
+    /**
+     * Get start instant.
+     *
+     * @return the instant when this stopwatch was created
+     */
+    public Instant getStart() {
+        return start;
+    }
 
-        protected AutoCloseableStopWatch(String name, Consumer<Stopwatch> onClose) {
-            super(name);
-            this.onClose = onClose;
-        }
+    /**
+     * Get start instant of current split.
+     *
+     * @return the instant of the last split set in this stopwatch or the instant when this stopwatch was created of no split has been set
+     */
+    public Instant getStartSplit() {
+        return startSplit;
+    }
 
-        protected AutoCloseableStopWatch(Supplier<String> name, Consumer<Stopwatch> onClose) {
-            super(name);
-            this.onClose = onClose;
+    /**
+     * Get elapsed time in current split.
+     *
+     * @param newSplit if true, start a new split
+     * @return the duration since the start of the current split
+     */
+    public Duration elapsedSplit(boolean newSplit) {
+        Instant now = Instant.now();
+        Duration duration = Duration.between(startSplit, now);
+        if (newSplit) {
+            startSplit = now;
         }
+        return duration;
+    }
 
-        @Override
-        public void close() {
-            onClose.accept(this);
-        }
+    /**
+     * Get elapsed time.
+     *
+     * @return the duration since this instance was created
+     */
+    public Duration elapsed() {
+        Instant now = Instant.now();
+        return Duration.between(start, now);
+    }
+
+    @Override
+    public String toString() {
+        return "[" + name + "] current split: " + elapsedStringSplit(false) + " total: " + elapsedString();
+    }
+
+    /**
+     * Get elapsed time as a string.
+     *
+     * @return string with elapsed time
+     */
+    public String elapsedString() {
+        return format.format(elapsed());
+    }
+
+    /**
+     * Get elapsed time in current split as a string.
+     *
+     * @param newSplit if true, reset the stopwatch
+     * @return string with elapsed time
+     */
+    public String elapsedStringSplit(boolean newSplit) {
+        return format.format(elapsedSplit(newSplit));
+    }
+
+    /**
+     * Create a Supplier for use in log messages (formatting is only done when {@link Supplier#get()} is called).
+     *
+     * @param fmt the format to use
+     * @return Supplier that returns the state of the stopwatch at time of invocation
+     */
+    public Supplier<String> logElapsed(Format fmt) {
+        Instant instant = Instant.now();
+        return () -> fmt.format(Duration.between(start, instant));
+    }
+
+    /**
+     * Create a Supplier for use in log messages (formatting is only done when {@link Supplier#get()} is called).
+     *
+     * @param fmt      the format to use
+     * @param newSplit if true, start a new split
+     * @return Supplier that returns the state of the stopwatch at time of invocation
+     */
+    public Supplier<String> logElapsedSplit(Format fmt, boolean newSplit) {
+        Instant startOfSplit = startSplit;
+        Instant instant = Instant.now();
+        return () -> fmt.format(Duration.between(startOfSplit, instant));
     }
 
     /**
@@ -184,124 +285,29 @@ public class Stopwatch {
 
         /**
          * Format a duration.
+         *
          * @param d the duration
          * @return d formatted as a string
          */
         public abstract String format(Duration d);
     }
 
-    private final Object name;
-    private final Instant start;
-    private Instant startSplit;
+    public static class AutoCloseableStopWatch extends Stopwatch implements AutoCloseable {
+        private final Consumer<Stopwatch> onClose;
 
-    private final Format format = Format.STANDARD;
-
-    /**
-     * Construct instance.
-     *
-     * @param name the name for this instance; it is included in {@code toString()}
-     */
-    protected Stopwatch(String name) {
-        this.name = Objects.requireNonNull(name);
-        this.start = this.startSplit = Instant.now();
-    }
-
-    /**
-     * Construct instance.
-     *
-     * @param name the name for this instance; it is included in {@code toString()}
-     */
-    public Stopwatch(Supplier<String> name) {
-        this.name = Objects.requireNonNull(name);
-        this.start = this.startSplit = Instant.now();
-    }
-
-    /**
-     * Get start instant.
-     *
-     * @return the instant when this stopwatch was created
-     */
-    public Instant getStart() {
-        return start;
-    }
-
-    /**
-     * Get start instant of current split.
-     *
-     * @return the instant of the last split set in this stopwatch or the instant when this stopwatch was created of no split has been set
-     */
-    public Instant getStartSplit() {
-        return startSplit;
-    }
-
-    /**
-     * Get elapsed time in current split.
-     *
-     * @param newSplit if true, start a new split
-     * @return the duration since the start of the current split
-     */
-    public Duration elapsedSplit(boolean newSplit) {
-        Instant now = Instant.now();
-        Duration duration = Duration.between(startSplit, now);
-        if (newSplit) {
-            startSplit = now;
+        protected AutoCloseableStopWatch(String name, Consumer<Stopwatch> onClose) {
+            super(name);
+            this.onClose = onClose;
         }
-        return duration;
-    }
 
-    /**
-     * Get elapsed time.
-     *
-     * @return the duration since this instance was created
-     */
-    public Duration elapsed() {
-        Instant now = Instant.now();
-        return Duration.between(start, now);
-    }
+        protected AutoCloseableStopWatch(Supplier<String> name, Consumer<Stopwatch> onClose) {
+            super(name);
+            this.onClose = onClose;
+        }
 
-    @Override
-    public String toString() {
-        return "[" + name + "] current split: " + elapsedStringSplit(false) + " total: " + elapsedString();
-    }
-
-    /**
-     * Get elapsed time as a string.
-     *
-     * @return string with elapsed time
-     */
-    public String elapsedString() {
-        return format.format(elapsed());
-    }
-
-    /**
-     * Get elapsed time in current split as a string.
-     *
-     * @param newSplit if true, reset the stopwatch
-     * @return string with elapsed time
-     */
-    public String elapsedStringSplit(boolean newSplit) {
-        return format.format(elapsedSplit(newSplit));
-    }
-
-    /**
-     * Create a Supplier for use in log messages (formatting is only done when {@link Supplier#get()} is called).
-     * @param fmt the format to use
-     * @return Supplier that returns the state of the stopwatch at time of invocation
-     */
-    public Supplier<String> logElapsed(Format fmt) {
-        Instant instant = Instant.now();
-        return () -> fmt.format(Duration.between(start, instant));
-    }
-
-    /**
-     * Create a Supplier for use in log messages (formatting is only done when {@link Supplier#get()} is called).
-     * @param fmt the format to use
-     * @param newSplit if true, start a new split
-     * @return Supplier that returns the state of the stopwatch at time of invocation
-     */
-    public Supplier<String> logElapsedSplit(Format fmt, boolean newSplit) {
-        Instant startOfSplit = startSplit;
-        Instant instant = Instant.now();
-        return () -> fmt.format(Duration.between(startOfSplit, instant));
+        @Override
+        public void close() {
+            onClose.accept(this);
+        }
     }
 }

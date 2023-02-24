@@ -45,251 +45,22 @@ import java.util.function.Function;
  */
 public class SwingLogPane extends JPanel {
 
-    private final LogBuffer buffer;
-    private final JTable table;
-    private final JTextArea details;
-    private final LogTableModel model;
-    private final Function<LogEntry, Color> colorize;
-    private final JSplitPane splitPane;
-    private TableRowSorter<AbstractTableModel> tableRowSorter;
-    private Function<LogEntry, String> format = LogEntry::toString;
-    private double dividerLocation = 0.5;
-
-    private static Color defaultColorize(LogEntry entry) {
-        return switch (entry.level()) {
-            case ERROR -> Color.DARKRED;
-            case WARN -> Color.RED;
-            case INFO -> Color.DARKBLUE;
-            case DEBUG -> Color.BLACK;
-            case TRACE -> Color.DARKGRAY;
-            default -> Color.BLACK;
-        };
-    }
-
-    private static final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
-        private final LogBuffer buffer;
-
-        private LogTableModel(LogBuffer buffer) {
-            this.buffer = Objects.requireNonNull(buffer);
-            buffer.addLogBufferListener(this);
-        }
-
-        private List<LogEntry> data;
-        private int removed;
-        private int added;
-
-        private boolean isLocked() {
-            return data != null;
-        }
-
-        public synchronized void lock() {
-            assert !isLocked() : "internal error: locked";
-
-            synchronized (buffer) {
-                data = new ArrayList<>(buffer.entries());
-                removed = 0;
-                added = 0;
-            }
-        }
-
-        public synchronized void unlock() {
-            assert isLocked() : "internal error: should be locked";
-            assert data != null : "internal error, data should have been set in lock()";
-
-            int sz = data.size();
-            data = null;
-            removed = Math.min(removed, sz);
-
-            if (removed > 0) {
-                fireTableRowsDeleted(0, removed);
-                sz -= removed;
-                removed = 0;
-            }
-
-            added = Math.min(added, sz);
-
-            if (added > 0) {
-                fireTableRowsInserted(sz - added, sz - 1);
-                added = 0;
-            }
-        }
-
-        @Override
-        public synchronized int getRowCount() {
-            return data == null ? buffer.size() : data.size();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return COLUMNS.length;
-        }
-
-        @Override
-        public synchronized LogEntry getValueAt(int rowIndex, int columnIndex) {
-            return data == null ? buffer.get(rowIndex) : data.get(rowIndex);
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return COLUMNS[column].field().name();
-        }
-
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return LogEntryField.class;
-        }
-
-        @Override
-        public synchronized void entry(LogEntry entry, boolean replaced) {
-            if (isLocked()) {
-                if (replaced) {
-                    removed++;
-                }
-                added++;
-            } else {
-                synchronized (buffer) {
-                    int sz = buffer.size();
-                    if (replaced) {
-                        fireTableRowsUpdated(sz - 1, sz - 1);
-                    } else {
-                        fireTableRowsInserted(sz - 1, sz - 1);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public synchronized void entries(Collection<LogEntry> entries, int replaced) {
-            if (isLocked()) {
-                if (replaced > 0) {
-                    removed += replaced;
-                }
-                added += entries.size();
-            } else {
-                synchronized (buffer) {
-                    int sz = buffer.size();
-                    if (replaced > 0) {
-                        fireTableRowsUpdated(sz - entries.size(), sz - entries.size() + replaced - 1);
-                        fireTableRowsInserted(sz - entries.size() + replaced, sz - 1);
-                    } else {
-                        fireTableRowsInserted(sz - entries.size(), sz - 1);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public synchronized void clear() {
-            if (isLocked()) {
-                assert data != null : "internal error, data should have been set in lock()";
-                removed = data.size();
-                added = 0;
-            } else {
-                fireTableDataChanged();
-            }
-        }
-
-    }
-
-    enum LogEntryField {
-        LOGGER {
-            @Override
-            public String get(LogEntry entry) {
-                return entry.logger().getName();
-            }
-        },
-        TIME {
-            @Override
-            public String get(LogEntry entry) {
-                return entry.time().toString();
-            }
-        },
-        LEVEL {
-            @Override
-            public String get(LogEntry entry) {
-                return entry.level().name();
-            }
-        },
-        MESSAGE {
-            @Override
-            public String get(LogEntry entry) {
-                return entry.formatMessage();
-            }
-        },
-        THROWABLE {
-            @Override
-            public String get(LogEntry entry) {
-                return entry.throwable().toString();
-            }
-        };
-
-        public abstract String get(LogEntry entry);
-    }
-
-    private static class RowFilter extends javax.swing.RowFilter<AbstractTableModel, Integer> {
-        private final Level c;
-
-        public RowFilter(Level c) {
-            this.c = c;
-        }
-
-        @Override
-        public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
-            LogEntry value = (LogEntry) entry.getValue(0);
-            return value == null || value.level().compareTo(c) <= 0;
-        }
-    }
-
-    private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
-        private final LogEntryField f;
-
-        private LogEntryFieldCellRenderer(LogEntryField f) {
-            this.f = f;
-        }
-
-        @Override
-        public void setValue(Object value) {
-            java.awt.Color color;
-
-            Object v;
-            if (value instanceof LogEntry entry) {
-                color = SwingUtil.toAwtColor(colorize.apply(entry));
-                v = f.get(entry);
-            } else {
-                color = java.awt.Color.BLACK;
-                v = value;
-            }
-
-            setForeground(color);
-            setBackground(table.getBackground());
-
-            super.setValue(v);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-            if (isSelected) {
-                java.awt.Color fg = getForeground();
-                java.awt.Color bg = getBackground();
-                setForeground(bg);
-                setBackground(fg);
-            }
-
-            return this;
-        }
-    }
-
-    private record Column(LogEntryField field, int preferredCharWidth, boolean hideable) {
-    }
-
     private static final Column[] COLUMNS = {
             new Column(LogEntryField.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
             new Column(LogEntryField.LOGGER, "com.example.class".length(), true),
             new Column(LogEntryField.LEVEL, -"ERROR".length(), true),
             new Column(LogEntryField.MESSAGE, 80, false)
     };
+    private final LogBuffer buffer;
+    private final JTable table;
+    private final JTextArea details;
+    private final LogTableModel model;
+    private final Function<LogEntry, Color> colorize;
+    private final JSplitPane splitPane;
+    private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
+    private TableRowSorter<AbstractTableModel> tableRowSorter;
+    private Function<LogEntry, String> format = LogEntry::toString;
+    private double dividerLocation = 0.5;
 
     public SwingLogPane(LogBuffer buffer) {
         this(buffer, SwingLogPane::defaultColorize);
@@ -424,7 +195,16 @@ public class SwingLogPane extends JPanel {
         setTextOnly(cbTextOnly.isSelected());
     }
 
-    private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
+    private static Color defaultColorize(LogEntry entry) {
+        return switch (entry.level()) {
+            case ERROR -> Color.DARKRED;
+            case WARN -> Color.RED;
+            case INFO -> Color.DARKBLUE;
+            case DEBUG -> Color.BLACK;
+            case TRACE -> Color.DARKGRAY;
+            default -> Color.BLACK;
+        };
+    }
 
     private void setTextOnly(boolean textOnly) {
         synchronized (model) {
@@ -474,6 +254,7 @@ public class SwingLogPane extends JPanel {
 
     /**
      * Set the formatter used to convert log entries to text.
+     *
      * @param format the formatting function
      */
     public void setLogFormatter(Function<LogEntry, String> format) {
@@ -484,7 +265,8 @@ public class SwingLogPane extends JPanel {
 
     /**
      * Set the divider location. Analog to {@link JSplitPane#setDividerLocation(double)}.
-     * @param proportionalLocation the proportional location 
+     *
+     * @param proportionalLocation the proportional location
      */
     public void setDividerLocation(double proportionalLocation) {
         this.dividerLocation = MathUtil.clamp(0.0, 1.0, proportionalLocation);
@@ -493,7 +275,8 @@ public class SwingLogPane extends JPanel {
 
     /**
      * Set the divider location. Analog to {@link JSplitPane#setDividerLocation(int)}.
-     * @param location the location 
+     *
+     * @param location the location
      */
     public void setDividerLocation(int location) {
         setDividerLocation((double) location / (splitPane.getHeight() - splitPane.getDividerSize()));
@@ -526,5 +309,221 @@ public class SwingLogPane extends JPanel {
         SwingUtilities.invokeLater(() ->
                 splitPane.setDividerLocation(dividerLocation)
         );
+    }
+
+    enum LogEntryField {
+        LOGGER {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.logger().getName();
+            }
+        },
+        TIME {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.time().toString();
+            }
+        },
+        LEVEL {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.level().name();
+            }
+        },
+        MESSAGE {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.formatMessage();
+            }
+        },
+        THROWABLE {
+            @Override
+            public String get(LogEntry entry) {
+                return entry.throwable().toString();
+            }
+        };
+
+        public abstract String get(LogEntry entry);
+    }
+
+    private static final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
+        private final LogBuffer buffer;
+        private List<LogEntry> data;
+        private int removed;
+        private int added;
+        private LogTableModel(LogBuffer buffer) {
+            this.buffer = Objects.requireNonNull(buffer);
+            buffer.addLogBufferListener(this);
+        }
+
+        private boolean isLocked() {
+            return data != null;
+        }
+
+        public synchronized void lock() {
+            assert !isLocked() : "internal error: locked";
+
+            synchronized (buffer) {
+                data = new ArrayList<>(buffer.entries());
+                removed = 0;
+                added = 0;
+            }
+        }
+
+        public synchronized void unlock() {
+            assert isLocked() : "internal error: should be locked";
+            assert data != null : "internal error, data should have been set in lock()";
+
+            int sz = data.size();
+            data = null;
+            removed = Math.min(removed, sz);
+
+            if (removed > 0) {
+                fireTableRowsDeleted(0, removed);
+                sz -= removed;
+                removed = 0;
+            }
+
+            added = Math.min(added, sz);
+
+            if (added > 0) {
+                fireTableRowsInserted(sz - added, sz - 1);
+                added = 0;
+            }
+        }
+
+        @Override
+        public synchronized int getRowCount() {
+            return data == null ? buffer.size() : data.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return COLUMNS.length;
+        }
+
+        @Override
+        public synchronized LogEntry getValueAt(int rowIndex, int columnIndex) {
+            return data == null ? buffer.get(rowIndex) : data.get(rowIndex);
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return COLUMNS[column].field().name();
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return LogEntryField.class;
+        }
+
+        @Override
+        public synchronized void entry(LogEntry entry, boolean replaced) {
+            if (isLocked()) {
+                if (replaced) {
+                    removed++;
+                }
+                added++;
+            } else {
+                synchronized (buffer) {
+                    int sz = buffer.size();
+                    if (replaced) {
+                        fireTableRowsUpdated(sz - 1, sz - 1);
+                    } else {
+                        fireTableRowsInserted(sz - 1, sz - 1);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public synchronized void entries(Collection<LogEntry> entries, int replaced) {
+            if (isLocked()) {
+                if (replaced > 0) {
+                    removed += replaced;
+                }
+                added += entries.size();
+            } else {
+                synchronized (buffer) {
+                    int sz = buffer.size();
+                    if (replaced > 0) {
+                        fireTableRowsUpdated(sz - entries.size(), sz - entries.size() + replaced - 1);
+                        fireTableRowsInserted(sz - entries.size() + replaced, sz - 1);
+                    } else {
+                        fireTableRowsInserted(sz - entries.size(), sz - 1);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public synchronized void clear() {
+            if (isLocked()) {
+                assert data != null : "internal error, data should have been set in lock()";
+                removed = data.size();
+                added = 0;
+            } else {
+                fireTableDataChanged();
+            }
+        }
+
+    }
+
+    private static class RowFilter extends javax.swing.RowFilter<AbstractTableModel, Integer> {
+        private final Level c;
+
+        public RowFilter(Level c) {
+            this.c = c;
+        }
+
+        @Override
+        public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
+            LogEntry value = (LogEntry) entry.getValue(0);
+            return value == null || value.level().compareTo(c) <= 0;
+        }
+    }
+
+    private record Column(LogEntryField field, int preferredCharWidth, boolean hideable) {
+    }
+
+    private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {
+        private final LogEntryField f;
+
+        private LogEntryFieldCellRenderer(LogEntryField f) {
+            this.f = f;
+        }
+
+        @Override
+        public void setValue(Object value) {
+            java.awt.Color color;
+
+            Object v;
+            if (value instanceof LogEntry entry) {
+                color = SwingUtil.toAwtColor(colorize.apply(entry));
+                v = f.get(entry);
+            } else {
+                color = java.awt.Color.BLACK;
+                v = value;
+            }
+
+            setForeground(color);
+            setBackground(table.getBackground());
+
+            super.setValue(v);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (isSelected) {
+                java.awt.Color fg = getForeground();
+                java.awt.Color bg = getBackground();
+                setForeground(bg);
+                setBackground(fg);
+            }
+
+            return this;
+        }
     }
 }
