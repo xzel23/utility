@@ -372,7 +372,6 @@ public class SwingLogPane extends JPanel {
 
         public synchronized void unlock() {
             assert isLocked() : "internal error: should be locked";
-            assert data != null : "internal error, data should have been set in lock()";
 
             int sz = data.size();
             data = null;
@@ -459,7 +458,6 @@ public class SwingLogPane extends JPanel {
         @Override
         public synchronized void clear() {
             if (isLocked()) {
-                assert data != null : "internal error, data should have been set in lock()";
                 removed = data.size();
                 added = 0;
             } else {
