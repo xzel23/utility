@@ -439,13 +439,13 @@ public final class XmlUtil {
                     writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
                 } else if (event instanceof EntityReference er) {
                     writer.writeEntityRef(er.getName());
+                } else if (event instanceof Namespace ns) {
+                    writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI());
                 } else if (event instanceof Attribute at) {
                     QName qName = at.getName();
                     writer.writeAttribute(qName.getPrefix(), qName.getNamespaceURI(), qName.getLocalPart(), at.getValue());
                 } else if (event instanceof DTD dtd) {
                     writer.writeDTD(dtd.getDocumentTypeDeclaration());
-                } else if (event instanceof Namespace ns) {
-                    writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI());
                 } else {
                     LOG.trace("ignoring element: {}", event);
                 }
