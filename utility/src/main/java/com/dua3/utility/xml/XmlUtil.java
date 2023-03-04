@@ -496,7 +496,9 @@ public final class XmlUtil {
             prettyPrint(new OutputStreamWriter(out, cs), parse(xml));
         } catch (SAXException e) {
             LOG.warn("could not parse XML");
-            new OutputStreamWriter(out, cs).write(xml);
+            try (Writer writer = new OutputStreamWriter(out, cs)) {
+                writer.write(xml);
+            }
         }
     }
 
