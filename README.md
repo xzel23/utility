@@ -161,6 +161,11 @@ the parameter.
 
 ## Changes
 
+### 10.4.0 (in progress)
+
+- add Qodana to CI pipeline
+- code cleanups
+
 ### 10.3.2
 
 - Fix XmlUtil.prettyPrint(String) indentation
