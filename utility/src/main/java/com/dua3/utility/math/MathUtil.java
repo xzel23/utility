@@ -34,10 +34,10 @@ public final class MathUtil {
      * @param max maximum value
      * @param arg argument
      * @return <ul>
-     *             <li>min, if arg &lt; min
-     *             <li>max, if arg &gt; max
-     *             <li>else arg
-     *             </ul>
+     * <li>min, if arg &lt; min
+     * <li>max, if arg &gt; max
+     * <li>else arg
+     * </ul>
      */
     public static int clamp(int min, int max, int arg) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
@@ -51,10 +51,10 @@ public final class MathUtil {
      * @param max maximum value
      * @param arg argument
      * @return <ul>
-     *             <li>min, if arg &lt; min
-     *             <li>max, if arg &gt; max
-     *             <li>else arg
-     *             </ul>
+     * <li>min, if arg &lt; min
+     * <li>max, if arg &gt; max
+     * <li>else arg
+     * </ul>
      */
     public static long clamp(long min, long max, long arg) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
@@ -68,10 +68,10 @@ public final class MathUtil {
      * @param max maximum value
      * @param arg argument
      * @return <ul>
-     *             <li>min, if arg &lt; min
-     *             <li>max, if arg &gt; max
-     *             <li>else arg
-     *             </ul>
+     * <li>min, if arg &lt; min
+     * <li>max, if arg &gt; max
+     * <li>else arg
+     * </ul>
      */
     public static double clamp(double min, double max, double arg) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
@@ -85,10 +85,10 @@ public final class MathUtil {
      * @param max maximum value
      * @param arg argument
      * @return <ul>
-     *             <li>min, if arg &lt; min
-     *             <li>max, if arg &gt; max
-     *             <li>else arg
-     *             </ul>
+     * <li>min, if arg &lt; min
+     * <li>max, if arg &gt; max
+     * <li>else arg
+     * </ul>
      */
     public static float clamp(float min, float max, float arg) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
@@ -103,11 +103,11 @@ public final class MathUtil {
      * @param arg        argument
      * @param valueIfNaN value to return if arg is NaN
      * @return <ul>
-     *             <li>min, if arg &lt; min
-     *             <li>max, if arg &gt; max
-     *             <li>valueIfNaN, if arg is NaN
-     *             <li>else arg
-     *             </ul>
+     * <li>min, if arg &lt; min
+     * <li>max, if arg &gt; max
+     * <li>valueIfNaN, if arg is NaN
+     * <li>else arg
+     * </ul>
      */
     public static double clamp(double min, double max, double arg, double valueIfNaN) {
         return Double.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
@@ -121,11 +121,11 @@ public final class MathUtil {
      * @param arg        argument
      * @param valueIfNaN value to return if arg is NaN
      * @return <ul>
-     *             <li>min, if arg &lt; min
-     *             <li>max, if arg &gt; max
-     *             <li>valueIfNaN, if arg is NaN
-     *             <li>else arg
-     *             </ul>
+     * <li>min, if arg &lt; min
+     * <li>max, if arg &gt; max
+     * <li>valueIfNaN, if arg is NaN
+     * <li>else arg
+     * </ul>
      */
     public static float clamp(float min, float max, float arg, float valueIfNaN) {
         return Float.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
