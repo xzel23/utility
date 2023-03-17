@@ -165,6 +165,7 @@ the parameter.
 
 - add Qodana to CI pipeline
 - code cleanups
+- added LangUtil.asFunction()
 
 ### 10.3.2
 

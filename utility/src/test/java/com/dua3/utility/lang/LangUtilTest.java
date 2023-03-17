@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -392,6 +393,20 @@ class LangUtilTest {
         assertSame(null, LangUtil.orElse(null, null));
         assertEquals("b", LangUtil.orElseGet(null, () -> "b"));
         assertEquals("a", LangUtil.orElseGet("a", () -> "b"));
+    }
+
+    @Test
+    void testAsFunction() {
+        Map<String, Double> m = Map.of("π", Math.PI, "e", Math.E);
+        Function<String,Double> f1 = LangUtil.asFunction(m);
+        assertEquals(Math.PI, f1.apply("π"));
+        assertEquals(Math.E, f1.apply("e"));
+        assertEquals(null, f1.apply("x"));
+
+        Function<String,Number> f2 = LangUtil.asFunction(m, 123.0);
+        assertEquals(Math.PI, f2.apply("π"));
+        assertEquals(Math.E, f2.apply("e"));
+        assertEquals(123.0, f2.apply("x"));
     }
 
     enum TestEnum {

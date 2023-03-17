@@ -25,6 +25,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,6 +43,7 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -1081,6 +1083,29 @@ public final class LangUtil {
                 initialized = false;
             }
         }
+    }
+
+    /**
+     * Decorate a {@code Map<T,U>} as a {@code Function<T,U>}.
+     * @param map the Map instance
+     * @return a function that returns the mapping of its input value
+     * @param <T> the map's key type
+     * @param <U> the map's value typu
+     */
+    public static <T,U> Function<T,U> asFunction(Map<? super T, ? extends U> map) {
+        return map::get;
+    }
+
+    /**
+     * Decorate a {@code Map<T,U>} as a {@code Function<T,U>}.
+     * @param map the Map instance
+     * @param defaultValue the value to use when there is no mapping for the argument
+     * @return a function that returns the mapping of its input value or {@code defaultValue} if no mapping exists
+     * @param <T> the map's key type
+     * @param <U> the map's value typu
+     */
+    public static <T,U,V extends U> Function<T,U> asFunction(Map<? super T, V> map, V defaultValue) {
+        return t -> map.getOrDefault(t, defaultValue);
     }
 
 }
