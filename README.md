@@ -161,7 +161,7 @@ the parameter.
 
 ## Changes
 
-### 10.4.0 (in progress)
+### 10.3.3
 
 - add Qodana to CI pipeline
 - code cleanups
