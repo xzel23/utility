@@ -1,4 +1,4 @@
-# com.dua3.utility [![CI](https://github.com/xzel23/utility/actions/workflows/gradle.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/gradle.yml)
+# com.dua3.utility [![CI](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
 
 Some libraries with utility classes.
 
