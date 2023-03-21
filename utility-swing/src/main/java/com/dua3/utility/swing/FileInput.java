@@ -1,10 +1,14 @@
 package com.dua3.utility.swing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -16,6 +20,8 @@ import java.util.Optional;
  * and a button that opens a file/directory selection dialog, where a file/directory can be selected.
  */
 public class FileInput extends JPanel {
+    private static final Logger LOG = LoggerFactory.getLogger(FileInput.class);
+
     /**
      * Select files only.
      */
@@ -46,6 +52,10 @@ public class FileInput extends JPanel {
         this.mode = mode;
         add(textField);
         add(button);
+
+        SwingUtil.addDropFilesSupport(textField, files -> {
+            files.stream().findFirst().map(File::toPath).ifPresent(this::setPath);
+        });
     }
 
     /**
@@ -81,9 +91,11 @@ public class FileInput extends JPanel {
      * does not mean a path to an existing file or directory).
      */
     public Optional<Path> getPath() {
+        String t = getText();
         try {
-            return Optional.of(Paths.get(getText()));
+            return Optional.of(Paths.get(t));
         } catch (InvalidPathException e) {
+            LOG.warn("invalid path: {}", t, e);
             return Optional.empty();
         }
     }
@@ -110,7 +122,10 @@ public class FileInput extends JPanel {
      * Enum for file selection modes.
      */
     public enum SelectionMode {
-        SELECT_FILE(JFileChooser.FILES_ONLY), SELECT_DIRECTORY(JFileChooser.DIRECTORIES_ONLY), SELECT_FILE_OR_DIRECTORY(JFileChooser.FILES_AND_DIRECTORIES);
+        SELECT_FILE(JFileChooser.FILES_ONLY),
+        SELECT_DIRECTORY(JFileChooser.DIRECTORIES_ONLY),
+        SELECT_FILE_OR_DIRECTORY(JFileChooser.FILES_AND_DIRECTORIES);
+
         private final int fileSelectionMode;
 
         SelectionMode(int fileSelectionMode) {

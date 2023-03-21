@@ -161,6 +161,10 @@ the parameter.
 
 ## Changes
 
+### NEXT
+
+- add FileInput drag&drop support to FileInput
+
 ### 10.3.3
 
 - add Qodana to CI pipeline
