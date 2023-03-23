@@ -161,7 +161,7 @@ the parameter.
 
 ## Changes
 
-### NEXT
+### 10.3.4
 
 - add FileInput drag&drop support to FileInput
 

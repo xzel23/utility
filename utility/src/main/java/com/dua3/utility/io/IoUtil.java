@@ -224,7 +224,7 @@ public final class IoUtil {
     }
 
     /**
-     * Replace file extension.
+     * Replace the file extension.
      * <p>
      * If the filename doesn't have an extension, it will be appended.
      *
@@ -252,13 +252,11 @@ public final class IoUtil {
      * @param cs   the Charset
      * @return content of path
      * @throws IOException if content could not be read
+     * @deprecated use {@link Files#readString(Path, Charset)}
      */
+    @Deprecated
     public static String read(Path path, Charset cs) throws IOException {
-        Objects.requireNonNull(path);
-        Objects.requireNonNull(cs);
-
-        byte[] ba = Files.readAllBytes(path);
-        return new String(ba, cs);
+        return Files.readString(path, cs);
     }
 
     /**
@@ -310,13 +308,10 @@ public final class IoUtil {
      * @param in  the InputStream to read from
      * @param out the outputStream to write to
      * @throws IOException if an error occurs
+     * @deprecated use {@link InputStream#transferTo(OutputStream)}
      */
     public static void copyAllBytes(InputStream in, OutputStream out) throws IOException {
-        byte[] buf = new byte[8192];
-        int length;
-        while ((length = in.read(buf)) > 0) {
-            out.write(buf, 0, length);
-        }
+        in.transferTo(out);
     }
 
     /**
@@ -337,11 +332,11 @@ public final class IoUtil {
      * @param text    the text
      * @param options the options to use (see {@link OpenOption})
      * @throws IOException if something goes wrong
+     * @deprecated use {@link Files#writeString(Path, CharSequence, OpenOption...)}
      */
+    @Deprecated
     public static void write(Path path, CharSequence text, OpenOption... options) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(path, options)) {
-            writer.append(text);
-        }
+        Files.writeString(path, text, options);
     }
 
     /**
@@ -441,7 +436,7 @@ public final class IoUtil {
      * Check if string denotes a URI.
      *
      * @param s the string
-     * @return true if string denotes a URI
+     * @return true, if string denotes a URI
      */
     private static boolean isURI(String s) {
         return PATTERN_URI.matcher(s).matches();
