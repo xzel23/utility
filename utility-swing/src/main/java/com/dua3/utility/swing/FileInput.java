@@ -49,7 +49,7 @@ public class FileInput extends JPanel {
     public FileInput(SelectionMode mode, Path initialPath, int length) {
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         this.textField = new JTextField(length);
-        this.button = new JButton(SwingUtil.createAction("...", this::showFileSelectionDialog));
+        this.button = new JButton(SwingUtil.createAction("…", this::showFileSelectionDialog));
         this.mode = mode;
         add(textField);
         add(button);
