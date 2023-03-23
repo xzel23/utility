@@ -3,6 +3,7 @@ package com.dua3.utility.swing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -46,7 +47,7 @@ public class FileInput extends JPanel {
      * @param length      the length of the text field
      */
     public FileInput(SelectionMode mode, Path initialPath, int length) {
-        setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         this.textField = new JTextField(length);
         this.button = new JButton(SwingUtil.createAction("...", this::showFileSelectionDialog));
         this.mode = mode;
