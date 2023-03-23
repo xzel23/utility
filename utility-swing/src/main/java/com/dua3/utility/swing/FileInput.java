@@ -53,9 +53,7 @@ public class FileInput extends JPanel {
         add(textField);
         add(button);
 
-        SwingUtil.addDropFilesSupport(textField, files -> {
-            files.stream().findFirst().map(File::toPath).ifPresent(this::setPath);
-        });
+        SwingUtil.addDropFilesSupport(textField, files -> files.stream().findFirst().map(File::toPath).ifPresent(this::setPath));
     }
 
     /**

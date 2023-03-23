@@ -583,7 +583,7 @@ public final class DataUtil {
      * @return true, if action was called
      */
     public static <T, U> boolean ifMapped(Map<T, U> map, T key, Consumer<? super U> action) {
-        // we need to check using containsKey() since key may be mapped to null
+        // we need to check using containsKey() since the key may be mapped to null
         U value = map.get(key);
         if (value == null) {
             return false;

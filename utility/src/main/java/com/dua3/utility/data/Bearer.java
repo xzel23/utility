@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * A bearer holding data, combining the {@link Supplier} and {@link Consumer} interfaces.
+ * A bearer that is holding data, combining the {@link Supplier} and {@link Consumer} interfaces.
  *
  * @param <T> the generic data type
  */
