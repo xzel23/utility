@@ -257,8 +257,9 @@ public class SwingLogPane extends JPanel {
      * @param format the formatting function
      */
     public void setLogFormatter(Function<LogEntry, String> format) {
+        Objects.requireNonNull(format);
         synchronized (buffer) {
-            this.format = Objects.requireNonNull(format);
+            this.format = format;
         }
     }
 

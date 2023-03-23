@@ -260,21 +260,21 @@ public class NamedParameterStatement implements AutoCloseable {
     }
 
     private <T> void setNonNull(String name, T value, SetParameter<T> setter) throws SQLException {
-        Objects.requireNonNull(value, () -> "parameter '" + name + "' must not be null");
+        Objects.requireNonNull(value, () -> "value for parameter '" + name + "' must not be null");
         for (int idx : getIndexes(name)) {
             setter.accept(idx, value);
         }
     }
 
     private <T> void setNonNullWithIntArg(String name, T value, int arg, SetParameterInt<T> setter) throws SQLException {
-        Objects.requireNonNull(value, () -> "parameter '" + name + "' must not be null");
+        Objects.requireNonNull(value, () -> "value for parameter '" + name + "' must not be null");
         for (int idx : getIndexes(name)) {
             setter.accept(idx, value, arg);
         }
     }
 
     private <T> void setNonNullWithLongArg(String name, T value, long arg, SetParameterLong<T> setter) throws SQLException {
-        Objects.requireNonNull(value, () -> "parameter '" + name + "' must not be null");
+        Objects.requireNonNull(value, () -> "value for parameter '" + name + "' must not be null");
         for (int idx : getIndexes(name)) {
             setter.accept(idx, value, arg);
         }

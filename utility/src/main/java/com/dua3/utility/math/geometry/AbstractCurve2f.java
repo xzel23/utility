@@ -25,7 +25,7 @@ public abstract class AbstractCurve2f extends Segment2f {
      */
     AbstractCurve2f(Path2fImpl path, int... controls) {
         super(path);
-        this.controls = Objects.requireNonNull(controls);
+        this.controls = controls;
     }
 
     /**

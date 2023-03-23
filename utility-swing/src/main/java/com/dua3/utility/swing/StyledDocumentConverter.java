@@ -93,7 +93,8 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @return the option to use
      */
     public static StyledDocumentConversionOption defaultAttributes(Map<String, Object> attributes) {
-        return new StyledDocumentConversionOption(c -> c.defaultAttributes = Objects.requireNonNull(attributes));
+        Objects.requireNonNull(attributes);
+        return new StyledDocumentConversionOption(c -> c.defaultAttributes = attributes);
     }
 
     /**
@@ -103,7 +104,8 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @return the option to use
      */
     public static StyledDocumentConversionOption defaultFont(Font font) {
-        return new StyledDocumentConversionOption(c -> c.defaultFont = Objects.requireNonNull(font));
+        Objects.requireNonNull(font);
+        return new StyledDocumentConversionOption(c -> c.defaultFont = font);
     }
 
     /**

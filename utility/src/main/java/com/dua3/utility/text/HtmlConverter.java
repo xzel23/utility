@@ -67,7 +67,9 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      */
     public static HtmlConversionOption map(String attribute,
                                            Function<Object, HtmlTag> mapper) {
-        return new HtmlConversionOption(c -> c.addMapping(attribute, Objects.requireNonNull(mapper)));
+        Objects.requireNonNull(attribute);
+        Objects.requireNonNull(mapper);
+        return new HtmlConversionOption(c -> c.addMapping(attribute, mapper));
     }
 
     /**
@@ -79,7 +81,9 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      */
     public static HtmlConversionOption replaceMapping(String attribute,
                                                       Function<Object, HtmlTag> mapper) {
-        return new HtmlConversionOption(c -> c.mappings.put(Objects.requireNonNull(attribute), Objects.requireNonNull(mapper)));
+        Objects.requireNonNull(attribute);
+        Objects.requireNonNull(mapper);
+        return new HtmlConversionOption(c -> c.mappings.put(attribute, mapper));
     }
 
     /**
@@ -247,7 +251,6 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     void addMapping(String attribute, Function<Object, HtmlTag> mapper) {
         Objects.requireNonNull(attribute);
         Objects.requireNonNull(mapper);
-
         mappings.merge(attribute, mapper, HtmlConverter::combineMappers);
     }
 
