@@ -246,20 +246,6 @@ public final class IoUtil {
     }
 
     /**
-     * Read content of path into String.
-     *
-     * @param path the Path
-     * @param cs   the Charset
-     * @return content of path
-     * @throws IOException if content could not be read
-     * @deprecated use {@link Files#readString(Path, Charset)}
-     */
-    @Deprecated
-    public static String read(Path path, Charset cs) throws IOException {
-        return Files.readString(path, cs);
-    }
-
-    /**
      * Read content of URL into String.
      *
      * @param url the url
@@ -323,20 +309,6 @@ public final class IoUtil {
      */
     public static Stream<String> lines(InputStream in, Charset cs) {
         return new BufferedReader(new InputStreamReader(in, cs)).lines();
-    }
-
-    /**
-     * Write content String to a path.
-     *
-     * @param path    the Path
-     * @param text    the text
-     * @param options the options to use (see {@link OpenOption})
-     * @throws IOException if something goes wrong
-     * @deprecated use {@link Files#writeString(Path, CharSequence, OpenOption...)}
-     */
-    @Deprecated
-    public static void write(Path path, CharSequence text, OpenOption... options) throws IOException {
-        Files.writeString(path, text, options);
     }
 
     /**

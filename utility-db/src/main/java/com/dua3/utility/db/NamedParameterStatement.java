@@ -559,37 +559,6 @@ public class NamedParameterStatement implements AutoCloseable {
      * @param value parameter value
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setDate(int, Date)
-     * @deprecated use {@link #setLocalDate(String, LocalDate)}
-     */
-    @Deprecated
-    public void setDate(String name, @Nullable Date value) throws SQLException {
-        set(JDBCType.DATE, name, value, statement::setDate);
-    }
-
-    /**
-     * Set a parameter.
-     *
-     * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
-     * @param value parameter value
-     * @throws SQLException             if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setDate(int, Date, Calendar)
-     * @deprecated use {@link #setLocalDate(String, LocalDate)}
-     */
-    @SuppressWarnings("UseOfObsoleteDateTimeApi")
-    @Deprecated
-    void setDate(String name, @Nullable Date value, @Nullable Calendar arg) throws SQLException {
-        setWithObjectArg(JDBCType.DATE, name, value, arg, statement::setDate);
-    }
-
-    /**
-     * Set a parameter.
-     *
-     * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
-     * @param value parameter value
-     * @throws SQLException             if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setDouble(int, double)
      */
     public void setDouble(String name, double value) throws SQLException {
@@ -912,67 +881,6 @@ public class NamedParameterStatement implements AutoCloseable {
      */
     public void setString(String name, @Nullable String value) throws SQLException {
         set(JDBCType.CHAR, name, value, statement::setString);
-    }
-
-    /**
-     * Set a parameter.
-     *
-     * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
-     * @param value parameter value
-     * @throws SQLException             if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTime(int, Time)
-     * @deprecated use {@link #setLocalTime(String, LocalTime)}
-     */
-    @Deprecated
-    public void setTime(String name, @Nullable Time value) throws SQLException {
-        set(JDBCType.TIME, name, value, statement::setTime);
-    }
-
-    /**
-     * Set a parameter.
-     *
-     * @param name parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
-     * @throws SQLException             if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTime(int, Time, Calendar)
-     * @deprecated use {@link #setLocalTime(String, LocalTime)}
-     */
-    @SuppressWarnings("UseOfObsoleteDateTimeApi")
-    @Deprecated
-    void setTime(String name, @Nullable Time value, @Nullable Calendar arg) throws SQLException {
-        setWithObjectArg(JDBCType.TIME, name, value, arg, statement::setTime);
-    }
-
-    /**
-     * Set a parameter.
-     *
-     * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
-     * @param value parameter value
-     * @throws SQLException             if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTimestamp(int, Timestamp)
-     * @deprecated use {@link #setLocalDateTime(String, LocalDateTime)}
-     */
-    @Deprecated
-    public void setTimestamp(String name, @Nullable Timestamp value) throws SQLException {
-        set(JDBCType.TIMESTAMP, name, value, statement::setTimestamp);
-    }
-
-    /**
-     * Set a parameter.
-     *
-     * @param name  parameter name (replaces the index parameter of the corresponding method of {@link PreparedStatement}).
-     * @param value parameter value
-     * @throws SQLException             if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTimestamp(int, Timestamp, Calendar)
-     * @deprecated use {@link #setLocalDateTime(String, LocalDateTime)}
-     */
-    @SuppressWarnings("UseOfObsoleteDateTimeApi")
-    @Deprecated
-    void setTimestamp(String name, @Nullable Timestamp value, Calendar arg) throws SQLException {
-        setWithObjectArg(JDBCType.TIMESTAMP, name, value, arg, statement::setTimestamp);
     }
 
     /**
