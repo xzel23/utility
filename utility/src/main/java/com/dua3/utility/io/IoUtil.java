@@ -289,18 +289,6 @@ public final class IoUtil {
     }
 
     /**
-     * Copy all Bytes from InputStream to OutputStream.
-     *
-     * @param in  the InputStream to read from
-     * @param out the outputStream to write to
-     * @throws IOException if an error occurs
-     * @deprecated use {@link InputStream#transferTo(OutputStream)}
-     */
-    public static void copyAllBytes(InputStream in, OutputStream out) throws IOException {
-        in.transferTo(out);
-    }
-
-    /**
      * Get stream of lines from InputStream instance.
      *
      * @param in the stream to read from
