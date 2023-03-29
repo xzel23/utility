@@ -18,7 +18,7 @@ public class SwingDocumentFilter extends DocumentFilter {
 
     private final Function<String, String> processor;
 
-    SwingDocumentFilter(Function<String,String> processor) {
+    SwingDocumentFilter(Function<String, String> processor) {
         this.processor = processor;
     }
 

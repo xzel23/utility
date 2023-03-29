@@ -18,10 +18,8 @@ import java.util.Objects;
  * A ring buffer implementation.
  * This class behaves much like @see {@link ArrayList}, but with a fixed maximum
  * size.
- * The collection grows when new elements are added until the capacity is
- * reached. If even more items
- * are added, the oldest element is removed and the new element is appended to
- * the collection.
+ * The collection grows when new elements are added until the capacity is reached. If even more items are added, the
+ * oldest element is removed and the new element is appended to the collection.
  * Adding is O(1).
  *
  * @param <E> the element type

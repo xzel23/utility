@@ -507,7 +507,7 @@ public final class DataUtil {
     }
 
     /**
-     * Compute the change of mappings between two maps. The result is a mapping from keys to pairs (value a, value b)
+     * Compute the change of mappings between two maps. The result is a mapping from keys to pairs {@code (value a, value b)}
      * of the changes. See also {@link #diff(Map, Map)}.
      *
      * @param a   the first map
