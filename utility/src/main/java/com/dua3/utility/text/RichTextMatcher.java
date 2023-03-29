@@ -95,7 +95,7 @@ public class RichTextMatcher implements MatchResult {
      * See {@link Matcher#replaceFirst(String)}.
      */
     @SuppressWarnings("MissingJavadoc")
-    public RichText replaceFirst(String replacement) {
+    public RichText replaceFirst(CharSequence replacement) {
         return replace(replacement, 1);
     }
 
@@ -103,27 +103,11 @@ public class RichTextMatcher implements MatchResult {
      * See {@link Matcher#replaceAll(String)}.
      */
     @SuppressWarnings("MissingJavadoc")
-    public RichText replaceFirst(RichText replacement) {
-        return replace(replacement, 1);
-    }
-
-    /**
-     * See {@link Matcher#replaceAll(String)}.
-     */
-    @SuppressWarnings("MissingJavadoc")
-    public RichText replaceAll(String replacement) {
+    public RichText replaceAll(CharSequence replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }
 
-    /**
-     * See {@link Matcher#replaceAll(String)}.
-     */
-    @SuppressWarnings("MissingJavadoc")
-    public RichText replaceAll(RichText replacement) {
-        return replace(replacement, Integer.MAX_VALUE);
-    }
-
-    private RichText replace(RichText replacement, int maxOccurrences) {
+    private RichText replace(CharSequence replacement, int maxOccurrences) {
         boolean found = find();
         if (!found) {
             return text;
@@ -132,23 +116,11 @@ public class RichTextMatcher implements MatchResult {
         RichTextBuilder rtb = new RichTextBuilder(text.length() + replacement.length());
         int off, i;
         for (off = 0, i = 0; i++ < maxOccurrences && found; off = end(), found = find()) {
-            rtb.append(text.subSequence(off, start())).append(replacement);
-        }
-
-        rtb.append(text.subSequence(off, text.length()));
-        return rtb.toRichText();
-    }
-
-    private RichText replace(String replacement, int maxOccurrences) {
-        boolean found = find();
-        if (!found) {
-            return text;
-        }
-
-        RichTextBuilder rtb = new RichTextBuilder(text.length() + replacement.length());
-        int off, i;
-        for (off = 0, i = 0; i++ < maxOccurrences && found; off = end(), found = find()) {
-            rtb.append(text.subSequence(off, start())).append(replacement);
+            if (replacement instanceof  ToRichText trt) {
+                rtb.append(text.subSequence(off, start())).append(trt.toRichText());
+            } else {
+                rtb.append(text.subSequence(off, start())).append(replacement);
+            }
         }
 
         rtb.append(text.subSequence(off, text.length()));

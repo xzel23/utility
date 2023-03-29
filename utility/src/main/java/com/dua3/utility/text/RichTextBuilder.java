@@ -62,46 +62,20 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     @Override
     public RichTextBuilder append(@Nullable CharSequence csq) {
-        buffer.append(csq);
+        if (csq instanceof ToRichText trt) {
+            trt.appendTo(this);
+        } else {
+            buffer.append(csq);
+        }
         return this;
     }
 
     @Override
     public Appendable append(@Nullable CharSequence csq, int start, int end) {
-        buffer.append(csq, start, end);
-        return this;
-    }
-
-    /**
-     * Appends the {@link ToRichText} instance to this {@code RichTextBuilder}.
-     *
-     * @param trt The {@link ToRichText} instance to append.  If {@code trt} is
-     *            {@code null}, then the four characters {@code "null"} are
-     *            appended to this RichTextBuilder.
-     * @return A reference to this {@code RichTextBuilder}
-     */
-    public RichTextBuilder append(@Nullable ToRichText trt) {
-        if (trt == null) {
-            append("null");
+        if (csq instanceof ToRichText trt) {
+            trt.toRichText().subSequence(start, end).appendTo(this);
         } else {
-            trt.appendTo(this);
-        }
-        return this;
-    }
-
-    /**
-     * Appends the {@link RichText} instance to this {@code RichTextBuilder}.
-     *
-     * @param rt The {@link RichText} instance to append.  If {@code rt} is
-     *           {@code null}, then the four characters {@code "null"} are
-     *           appended to this RichTextBuilder.
-     * @return A reference to this {@code RichTextBuilder}
-     */
-    public RichTextBuilder append(@Nullable RichText rt) {
-        if (rt == null) {
-            append("null");
-        } else {
-            rt.appendTo(this);
+            buffer.append(csq, start, end);
         }
         return this;
     }
