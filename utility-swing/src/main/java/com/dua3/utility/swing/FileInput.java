@@ -8,7 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.FlowLayout;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;

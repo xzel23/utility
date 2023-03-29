@@ -2,8 +2,6 @@ package com.dua3.utility.math.geometry;
 
 import com.dua3.utility.math.Vector2f;
 
-import java.util.Objects;
-
 /**
  * Abstract Base class for 2-dimensional curves.
  */
