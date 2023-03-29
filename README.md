@@ -161,6 +161,12 @@ the parameter.
 
 ## Changes
 
+### 11.0.0 (in progress)
+
+- remove deprecations
+- add SwingDocumentFilter
+- reduce code duplication in RichTextBuilder
+
 ### 10.3.4
 
 - add FileInput drag&drop support to FileInput
