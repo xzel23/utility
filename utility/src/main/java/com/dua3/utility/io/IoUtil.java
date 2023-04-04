@@ -592,7 +592,9 @@ public final class IoUtil {
             Throwable t = null;
             for (AutoCloseable c : closeables) {
                 try {
-                    c.close();
+                    if (c!=null) {
+                        c.close();
+                    }
                 } catch (Throwable t1) {
                     if (t == null) {
                         t = t1;
