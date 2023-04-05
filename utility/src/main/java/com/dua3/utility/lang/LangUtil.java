@@ -117,11 +117,11 @@ public final class LangUtil {
      * @param idx  index to test
      * @param size collection size
      * @throws IndexOutOfBoundsException if index is out of range
+     * @deprecated use {@link Objects#checkIndex(int, int)}
      */
+    @Deprecated
     public static void checkIndex(int idx, int size) {
-        if (idx < 0 || idx >= size) {
-            throw new IndexOutOfBoundsException("index: " + idx);
-        }
+        Objects.checkIndex(idx, size);
     }
 
     /**
