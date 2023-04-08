@@ -279,23 +279,20 @@ public class RingBuffer<E> implements Collection<E> {
      *                                   fromIndex > toIndex})
      */
     public List<E> subList(int fromIndex, int toIndex) {
-        int s1 = size();
-        LangUtil.checkIndex(fromIndex, s1);
-        LangUtil.check(toIndex <= s1, "toIndex>size(): %d", toIndex);
-
-        final int s2 = toIndex - fromIndex;
-        LangUtil.check(s2 >= 0, "toIndex<fromIndex: fromIndex=%d, toIndex=%d", fromIndex, toIndex);
+        int len = size();
+        Objects.checkFromToIndex(fromIndex, toIndex, len);
+        int sz = toIndex - fromIndex;
+        Objects.checkFromIndexSize(fromIndex, sz, len);
 
         return new AbstractList<>() {
             @Override
             public E get(int index) {
-                LangUtil.checkIndex(index, s2);
-                return RingBuffer.this.get(index + fromIndex);
+                return RingBuffer.this.get(Objects.checkIndex(index, sz) + fromIndex);
             }
 
             @Override
             public int size() {
-                return s2;
+                return sz;
             }
         };
     }

@@ -20,9 +20,8 @@ public class SharedString implements CharSequence {
 
     SharedString(String base, int start, int end) {
         this.base = Objects.requireNonNull(base);
-        LangUtil.checkIndex(start, base.length());
-        this.start = start;
-        LangUtil.check(end >= start && end <= base.length());
+        this.start = Objects.checkIndex(start, base.length());
+        Objects.checkFromToIndex(start, end, base.length());
         this.end = end;
     }
 
@@ -33,8 +32,7 @@ public class SharedString implements CharSequence {
 
     @Override
     public char charAt(int index) {
-        LangUtil.checkIndex(index, end);
-        return base.charAt(start + index);
+        return base.charAt(start + Objects.checkIndex(index, end));
     }
 
     @Override

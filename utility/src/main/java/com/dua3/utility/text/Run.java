@@ -44,8 +44,7 @@ public final class Run implements AttributedCharSequence {
 
     @Override
     public char charAt(int index) {
-        LangUtil.checkIndex(index, length);
-        return text.charAt(start + index);
+        return text.charAt(start + Objects.checkIndex(index, length));
     }
 
     @Override
