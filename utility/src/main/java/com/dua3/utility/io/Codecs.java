@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  */
 public class Codecs {
 
-    private final Map<String, Codec<?>> CODECS = new HashMap<>();
+    private final Map<String, Codec<?>> codecs = new HashMap<>();
 
     /**
      * Constructor.
@@ -174,12 +174,12 @@ public class Codecs {
     }
 
     public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
-        Object prev = CODECS.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
+        Object prev = codecs.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
         LangUtil.check(prev == null, "Codec already registered for class: " + cls);
     }
 
     @SuppressWarnings("unchecked")
     public <T> Optional<Codec<T>> get(Class<T> cls) {
-        return Optional.ofNullable((Codec<T>) CODECS.get(cls.getCanonicalName()));
+        return Optional.ofNullable((Codec<T>) codecs.get(cls.getCanonicalName()));
     }
 }
