@@ -32,6 +32,7 @@ public interface FontUtil<F> {
             fu = serviceIterator.next();
         } else {
             fu = new FontUtil<>() {
+                @SuppressWarnings("MethodMayBeStatic")
                 private <T> T noImplementation() {
                     throw new UnsupportedOperationException("no FontUtil implementation present");
                 }

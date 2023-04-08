@@ -114,6 +114,7 @@ public class NamedParameterStatement implements AutoCloseable {
     public NamedParameterStatement(Connection connection, String query) throws SQLException {
         indexMap = new HashMap<>();
         String parsedQuery = parse(query, indexMap);
+        //noinspection JDBCPrepareStatementWithNonConstantString
         statement = connection.prepareStatement(parsedQuery);
     }
 

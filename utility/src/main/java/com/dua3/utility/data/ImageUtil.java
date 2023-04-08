@@ -28,6 +28,7 @@ public interface ImageUtil<I> {
             iu = serviceIterator.next();
         } else {
             iu = new ImageUtil<>() {
+                @SuppressWarnings("MethodMayBeStatic")
                 private <T> T noImplementation() {
                     throw new UnsupportedOperationException("no ImageUtil implementation present");
                 }

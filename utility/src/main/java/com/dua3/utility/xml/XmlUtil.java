@@ -358,6 +358,7 @@ public final class XmlUtil {
      * @param xml the XML text
      * @return formatted XML for the document
      */
+    @SuppressWarnings("MethodMayBeStatic")
     public String prettyPrint(String xml) {
         boolean hasChildren = false;
         int level = 0;

@@ -9,6 +9,7 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
+import com.dua3.utility.lang.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,7 +172,7 @@ public final class SwingUtil {
     }
 
     private static void setNativeLookAndFeel_(@Nullable String applicationName) {
-        if (System.getProperty("os.name").toUpperCase(Locale.ROOT).startsWith("MAC")) {
+        if (Platform.isMacOS()) {
             if (applicationName != null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
                 System.setProperty("apple.awt.application.name", applicationName);
