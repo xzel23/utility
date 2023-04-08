@@ -48,15 +48,6 @@ class LangUtilTest {
     }
 
     @Test
-    void checkIndex() {
-        assertThrows(IndexOutOfBoundsException.class, () -> LangUtil.checkIndex(-1, 3), "index: -1");
-        assertDoesNotThrow(() -> LangUtil.checkIndex(0, 3));
-        assertDoesNotThrow(() -> LangUtil.checkIndex(1, 3));
-        assertDoesNotThrow(() -> LangUtil.checkIndex(2, 3));
-        assertThrows(IndexOutOfBoundsException.class, () -> LangUtil.checkIndex(3, 3), "index: 3");
-    }
-
-    @Test
     void ignore() {
         assertDoesNotThrow(() -> LangUtil.ignore("test"));
     }

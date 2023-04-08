@@ -112,19 +112,6 @@ public final class LangUtil {
     }
 
     /**
-     * Check that index is valid.
-     *
-     * @param idx  index to test
-     * @param size collection size
-     * @throws IndexOutOfBoundsException if index is out of range
-     * @deprecated use {@link Objects#checkIndex(int, int)}
-     */
-    @Deprecated
-    public static void checkIndex(int idx, int size) {
-        Objects.checkIndex(idx, size);
-    }
-
-    /**
      * Do nothing.
      * <p>
      * This method does exactly nothing. It's purpose is to keep static code
