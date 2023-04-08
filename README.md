@@ -164,6 +164,7 @@ the parameter.
 ### 11.0.0 (in progress)
 
 - remove deprecations
+- remove LangUtil.checkIndex()
 - add SwingDocumentFilter
 - reduce code duplication in RichTextBuilder
 
