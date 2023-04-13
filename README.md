@@ -163,8 +163,8 @@ the parameter.
 
 ### 11.0.0 (in progress)
 
-- remove deprecations
-- remove LangUtil.checkIndex()
+- (BREAKING) remove deprecations
+- (BREAKING) remove LangUtil.checkIndex()
 - add SwingDocumentFilter
 - reduce code duplication in RichTextBuilder
 
