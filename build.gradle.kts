@@ -6,7 +6,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import java.net.URI
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id("java-library")
     id("maven-publish")
