@@ -167,6 +167,7 @@ the parameter.
 - (BREAKING) remove LangUtil.checkIndex()
 - add SwingDocumentFilter
 - reduce code duplication in RichTextBuilder
+- exception handling in drag and drop support
 
 ### 10.3.4
 
