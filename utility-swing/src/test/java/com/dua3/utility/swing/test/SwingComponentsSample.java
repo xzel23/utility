@@ -20,6 +20,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -65,7 +68,7 @@ public class SwingComponentsSample extends JFrame {
     private void init() {
         // -- SwingProcessView
         SwingProgressView<Object> progress = new SwingProgressView<>();
-        int max = 200;
+        int max = 100;
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(8, 8, 8, 8);
@@ -171,7 +174,20 @@ public class SwingComponentsSample extends JFrame {
                         }
                         break;
                 }
-                progress.update(level, max, counter.compute(level, (lvl, old) -> Math.min(old + 1, max)));
+
+                Integer v = counter.compute(level, (lvl, old) -> old != null && old<max ? old+1 : null);
+                if (v!= null) {
+                    if (v<max) {
+                        progress.update(level, max, v);
+                    } else {
+                        ProgressTracker.State s = switch(level) {
+                            case INFO, DEBUG, TRACE, WARN -> ProgressTracker.State.COMPLETED_SUCCESS;
+                            case ERROR -> ProgressTracker.State.COMPLETED_FAILURE;
+                        };
+                        progress.finish(level, s);
+                    }
+
+                }
 
                 int current = n.get();
                 if (current % 100 == 0) {
