@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public class ComboBoxEx<T> extends JPanel {
-    private static final Logger LOG = LoggerFactory.getLogger(FileInput.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ComboBoxEx.class);
 
     private Comparator<? super T> comparator = null;
     private final UnaryOperator<T> edit;
