@@ -53,6 +53,12 @@ public final class SimpleOption<T> extends Option<T> {
     }
 
     @Override
+    public SimpleOption<T> displayName(String displayName) {
+        super.displayName(displayName);
+        return this;
+    }
+
+    @Override
     public SimpleOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
@@ -94,6 +100,7 @@ public final class SimpleOption<T> extends Option<T> {
      *
      * @return Optional holding the default value.
      */
+    @Override
     public Optional<T> getDefault() {
         return Optional.ofNullable(defaultValue.get());
     }

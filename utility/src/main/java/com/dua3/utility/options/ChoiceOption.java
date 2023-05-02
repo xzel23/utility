@@ -126,6 +126,12 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     @Override
+    public ChoiceOption<T> displayName(String displayName) {
+        super.displayName(displayName);
+        return this;
+    }
+
+    @Override
     public ChoiceOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;

@@ -1,6 +1,7 @@
 package com.dua3.utility.options;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -48,9 +49,19 @@ public final class Flag extends Option<Boolean> {
     }
 
     @Override
+    public Flag displayName(String displayName) {
+        super.displayName(displayName);
+        return this;
+    }
+
+    @Override
     public Flag handler(Consumer<Collection<Boolean>> handler) {
         super.handler(handler);
         return this;
     }
 
+    @Override
+    public Optional<Boolean> getDefault() {
+        return Optional.empty();
+    }
 }

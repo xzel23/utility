@@ -3,6 +3,7 @@ package com.dua3.utility.options;
 import com.dua3.utility.data.DataUtil;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -44,6 +45,12 @@ public final class StandardOption<T> extends Option<T> {
     @Override
     public StandardOption<T> description(String description) {
         super.description(description);
+        return this;
+    }
+
+    @Override
+    public StandardOption<T> displayName(String displayName) {
+        super.description(displayName);
         return this;
     }
 
@@ -99,5 +106,10 @@ public final class StandardOption<T> extends Option<T> {
     public StandardOption<T> arity(int min, int max) {
         super.arity(min, max);
         return this;
+    }
+
+    @Override
+    public Optional<T> getDefault() {
+        return Optional.empty();
     }
 }

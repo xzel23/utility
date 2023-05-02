@@ -5,6 +5,7 @@ include("utility")
 include("utility-db")
 include("utility-swing")
 include("utility-logging")
+include("utility-samples")
 
 dependencyResolutionManagement {
 

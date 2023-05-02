@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -81,7 +82,7 @@ public abstract class Option<T> {
      * @param displayName display name
      * @return this option
      */
-    protected Option<T> displayName(String displayName) {
+    public Option<T> displayName(String displayName) {
         LangUtil.check(this.displayName.isEmpty(), "displayName already set");
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");
         return this;
@@ -220,4 +221,17 @@ public abstract class Option<T> {
         return Arrays.hashCode(names);
     }
 
+    /**
+     * Get this option's default value.
+     * @return Optional containing the default value for this option or empty Optional
+     */
+    public abstract Optional<T> getDefault();
+
+    /**
+     * Get string representation this option's default value.
+     * @return Optional containing the string representation of this option's default value or empty Optional
+     */
+    public Optional<String> getDefaultString() {
+        return getDefault().map(this::format);
+    }
 }

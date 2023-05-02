@@ -2,6 +2,7 @@ package com.dua3.utility.options;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +20,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     /**
      * The options passed on the command line with their respective arguments.
      */
-    private final Queue<Entry<?>> parsedOptions;
+    private final List<Entry<?>> parsedOptions;
     /**
      * The positional arguments.
      */
@@ -31,9 +32,9 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param parsedOptions  the options detected by the command line parser
      * @param positionalArgs the positional arguments
      */
-    Arguments(Queue<Entry<?>> parsedOptions, List<String> positionalArgs) {
-        this.parsedOptions = parsedOptions;
-        this.positionalArgs = new ArrayList<>(positionalArgs);
+    public Arguments(Collection<? extends Entry<?>> parsedOptions, Collection<String> positionalArgs) {
+        this.parsedOptions = List.copyOf(parsedOptions);
+        this.positionalArgs = List.copyOf(positionalArgs);
     }
 
     /**
@@ -42,7 +43,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return empty Arguments instance
      */
     public static Arguments empty() {
-        return new Arguments(new ArrayDeque<>(), Collections.emptyList());
+        return new Arguments(Collections.emptyList(), Collections.emptyList());
     }
 
     /**
@@ -52,7 +53,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return new instance
      */
     public static Arguments of(Entry<?>... args) {
-        return new Arguments(new ArrayDeque<>(List.of(args)), Collections.emptyList());
+        return new Arguments(List.of(args), Collections.emptyList());
     }
 
     /**
@@ -226,7 +227,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
             return new Entry<>(option);
         }
 
-        void addParameter(String s) {
+        public void addParameter(String s) {
             addArg(option.map(s));
         }
 

@@ -12,6 +12,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -432,4 +433,12 @@ public class ArgumentsParser {
         }
     }
 
+    /**
+     * Get all options defined for this parser.
+     *
+     * @return list containing all options defined for this parser
+     */
+    public List<Option<?>> options() {
+        return List.copyOf(new LinkedHashSet<>(options.values()));
+    }
 }

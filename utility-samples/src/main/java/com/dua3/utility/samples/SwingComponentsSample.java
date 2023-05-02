@@ -1,10 +1,14 @@
-package com.dua3.utility.swing.test;
+package com.dua3.utility.samples;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.LogBuffer;
+import com.dua3.utility.options.ArgumentsParser;
+import com.dua3.utility.swing.ArgumentsDialog;
+import com.dua3.utility.swing.ComboBoxEx;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
+import net.miginfocom.swing.MigLayout;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -15,16 +19,15 @@ import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
 public class SwingComponentsSample extends JFrame {
@@ -46,13 +49,6 @@ public class SwingComponentsSample extends JFrame {
     private final AtomicInteger n = new AtomicInteger();
     private volatile boolean done;
 
-    public SwingComponentsSample() {
-        setLayout(new GridBagLayout());
-        setSize(800, 600);
-
-        init();
-    }
-
     public static void main(String[] args) {
         LOG.info("starting up");
 
@@ -65,18 +61,71 @@ public class SwingComponentsSample extends JFrame {
         });
     }
 
+    public SwingComponentsSample() {
+        setLayout(new MigLayout("fill", "[grow,fill]", "[][][grow,fill]"));
+        setMinimumSize(new Dimension(400,400));
+        setSize(800, 600);
+
+        init();
+    }
+
+    static class Person {
+        String firstName;
+        String lastName;
+
+        public Person(String firstName, String lastName) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+
+        @Override
+        public String toString() {
+            return Stream.of(lastName, firstName).filter(Objects::nonNull).collect(Collectors.joining(", "));
+        }
+    }
+
+    private Person showPersonDialog() {
+        return showPersonDialog(null);
+    }
+
+    private Person showPersonDialog(Person initialPerson) {
+        Optional<Person> op = Optional.ofNullable(initialPerson);
+        ArgumentsParser parser = new ArgumentsParser();
+        var optFirstName = parser.simpleOption(String.class, "firstName").displayName("First Name").defaultValue(op.map(pp -> pp.firstName).orElse(""));
+        var optLastName = parser.simpleOption(String.class, "lastName").displayName("Last Name").defaultValue(op.map(pp -> pp.lastName).orElse(""));
+        return ArgumentsDialog.showDialog(this, parser)
+                .map(args -> {
+                    Person p = new Person("", "");
+                    p.firstName = args.get(optFirstName).orElse("");
+                    p.lastName = args.get(optLastName).orElse("");
+                    return p;
+                })
+                .orElse(null);
+    }
+
     private void init() {
+
+        // -- ComboboxEx
+        ComboBoxEx<Person> comboBoxEx = new ComboBoxEx<>(
+                this::showPersonDialog,
+                this::showPersonDialog,
+                ComboBoxEx::askBeforeRemoveSelectedItem,
+                Object::toString,
+                new Person("John", "Doe"),
+                new Person("Jane", "Doe"),
+                new Person("Baby", "Doe"),
+                new Person("Richard", "Roe"),
+                new Person("Jeanny", "Roe")
+        );
+        comboBoxEx.setComparator(Comparator.comparing(Person::toString));
+
+        // -- Spacer
+        JSeparator separator1 = new JSeparator(JSeparator.HORIZONTAL);
+        separator1.setMinimumSize(new Dimension(8, 8));
+
         // -- SwingProcessView
         SwingProgressView<Object> progress = new SwingProgressView<>();
         int max = 100;
-
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(8, 8, 8, 8);
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1;
-        add(progress, constraints);
 
         HashMap<Level, Integer> counter = new HashMap<>();
         Arrays.stream(Level.values()).forEach(lvl -> {
@@ -86,14 +135,8 @@ public class SwingComponentsSample extends JFrame {
         progress.start(TASK_INDETERMINATE_1);
 
         // -- Spacer
-        constraints = new GridBagConstraints();
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1;
-        JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
-        separator.setMinimumSize(new Dimension(8, 8));
-        add(separator, constraints);
+        JSeparator separator2 = new JSeparator(JSeparator.HORIZONTAL);
+        separator2.setMinimumSize(new Dimension(8, 8));
 
         // -- SwingLogPane
 
@@ -108,15 +151,14 @@ public class SwingComponentsSample extends JFrame {
         // create the log pane
         SwingLogPane logPane = new SwingLogPane(buffer);
 
-        constraints = new GridBagConstraints();
-        constraints.insets = new Insets(8, 8, 8, 8);
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.weightx = 1;
-        constraints.weighty = 1;
-        add(logPane, constraints);
+        // add components
+        add(comboBoxEx, "wrap");
+        add(separator1, "grow x, wrap");
+        add(progress, "wrap");
+        add(separator2, "grow x, wrap");
+        add(logPane);
 
+        // start threads
         Thread thread = new Thread(() -> {
             try {
                 Thread.sleep(1000);

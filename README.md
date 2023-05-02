@@ -165,7 +165,9 @@ the parameter.
 
 - (BREAKING) remove deprecations
 - (BREAKING) remove LangUtil.checkIndex()
+- add ComboBoxEx
 - add SwingDocumentFilter
+- add samples project
 - reduce code duplication in RichTextBuilder
 - exception handling in drag and drop support
 
