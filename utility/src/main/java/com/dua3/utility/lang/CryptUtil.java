@@ -55,13 +55,13 @@ public final class CryptUtil {
      * a String
      * by applying the Base64 algorithm.
      *
-     * @param text the text to encrypt
      * @param key  the encryption key
+     * @param text the text to encrypt
      * @return the encrypted message as a Base64 encoded
      * String
      * @throws GeneralSecurityException if encryption fails
      */
-    public static String encrypt(String text, byte[] key) throws GeneralSecurityException {
+    public static String encrypt(byte[] key, String text) throws GeneralSecurityException {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
         byte[] cipherMessage = encrypt(key, data);
         return TextUtil.base64Encode(cipherMessage);
@@ -74,12 +74,12 @@ public final class CryptUtil {
      * a String
      * by applying the Base64 algorithm.
      *
-     * @param cipherText the Base64 encoded encrypted ciphertext
      * @param key        the encryption key used
+     * @param cipherText the Base64 encoded encrypted ciphertext
      * @return the decrypted message
      * @throws GeneralSecurityException if decryption fails
      */
-    public static String decrypt(String cipherText, byte[] key) throws GeneralSecurityException {
+    public static String decrypt(byte[] key, String cipherText) throws GeneralSecurityException {
         byte[] cipherMessage = TextUtil.base64Decode(cipherText);
         byte[] data = decrypt(key, cipherMessage);
         return new String(data, StandardCharsets.UTF_8);

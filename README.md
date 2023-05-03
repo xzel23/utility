@@ -165,7 +165,9 @@ the parameter.
 
 - (BREAKING) remove deprecations
 - (BREAKING) remove LangUtil.checkIndex()
+- (BREAKING) reverse order of arguments in CryptUtil.encrypt()/decrypt() with string arguments to match those of byte[] arguments
 - add ComboBoxEx
+- add ArgumentsDialog
 - add SwingDocumentFilter
 - add samples project
 - reduce code duplication in RichTextBuilder

@@ -33,8 +33,8 @@ public class CryptUtilTest {
             for (String message : MESSAGES) {
                 System.out.format("message length = %d%n", message.length());
 
-                String encrypted = CryptUtil.encrypt(message, key);
-                String decrypted = CryptUtil.decrypt(encrypted, key);
+                String encrypted = CryptUtil.encrypt(key, message);
+                String decrypted = CryptUtil.decrypt(key, encrypted);
 
                 System.out.format("cipher  length = %d%n", encrypted.length());
 
