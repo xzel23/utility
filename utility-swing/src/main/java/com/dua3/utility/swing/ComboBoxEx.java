@@ -148,7 +148,7 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     private void addItem() {
-        Optional.of(add.get()).ifPresent(item -> { model.addElement(item); model.setSelectedItem(item); sortItems(); });
+        Optional.ofNullable(add.get()).ifPresent(item -> { model.addElement(item); model.setSelectedItem(item); sortItems(); });
     }
 
     private void removeItem() {
