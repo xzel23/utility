@@ -46,6 +46,7 @@ public class ComboBoxEx<T> extends JPanel {
     /**
      * Constructor.
      */
+    @SafeVarargs
     public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T,String> format, T... items) {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -106,6 +107,7 @@ public class ComboBoxEx<T> extends JPanel {
                 String text = "";
                 if (value!=null) {
                     try {
+                        //noinspection unchecked
                         text = format.apply((T) value);
                     } catch (Exception e) {
                         LOG.warn("error during formatting", e);
@@ -152,6 +154,7 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     private void removeItem() {
+        //noinspection unchecked
         T item = (T) model.getSelectedItem();
         if (Optional.ofNullable(remove).orElse(ComboBoxEx::alwaysRemoveSelectedItem).test(this, item)) {
             model.removeElement(item);
@@ -174,6 +177,7 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     public Optional<T> getSelectedItem() {
+        //noinspection unchecked
         return Optional.ofNullable((T) comboBox.getSelectedItem());
     }
 

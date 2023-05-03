@@ -1,6 +1,5 @@
 package com.dua3.utility.options;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -79,7 +77,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return the positional arguments
      */
     public List<String> positionalArgs() {
-        return Collections.unmodifiableList(positionalArgs);
+        return positionalArgs;
     }
 
     /**
