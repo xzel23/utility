@@ -540,7 +540,7 @@ public final class SwingUtil {
             @Override
             public synchronized void dragOver(DropTargetDragEvent evt) {
                 try {
-                    if (test.test(getText(evt.getTransferable()))) {
+                    if (evt.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor) && test.test(getText(evt.getTransferable()))) {
                         evt.acceptDrag(DnDConstants.ACTION_COPY);
                     } else {
                         evt.rejectDrag();
