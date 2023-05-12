@@ -32,7 +32,8 @@ public class ArgumentsDialog extends JDialog {
     private final ArgumentsPanel panel;
 
     public static class ArgumentsPanel extends JPanel {
-        public record OptionInput(Option<?> option, JComponent component, Supplier<List<String>> getParameter, Consumer<Collection<String>> setParameter) {
+        public record OptionInput(Option<?> option, JComponent component, Supplier<List<String>> getParameter,
+                                  Consumer<Collection<String>> setParameter) {
         }
 
         private ArgumentsParser parser;
@@ -44,8 +45,8 @@ public class ArgumentsDialog extends JDialog {
 
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.gridy = 0;
-            Insets insetsLeft = new Insets(0,8,0, 4);
-            Insets insetsRight = new Insets(0,0,0, 8);
+            Insets insetsLeft = new Insets(0, 8, 0, 4);
+            Insets insetsRight = new Insets(0, 0, 0, 8);
             for (var option : parser.options()) {
                 constraints.gridx = 0;
                 constraints.fill = GridBagConstraints.NONE;
@@ -93,7 +94,7 @@ public class ArgumentsDialog extends JDialog {
 
         public Arguments getArguments() {
             List<? extends Arguments.Entry<?>> parsedOptions = inputs.values().stream()
-                    .map( oi -> {
+                    .map(oi -> {
                         var option = oi.option();
                         var entry = Arguments.createEntry(oi.option);
                         oi.getParameter().get().forEach(entry::addParameter);

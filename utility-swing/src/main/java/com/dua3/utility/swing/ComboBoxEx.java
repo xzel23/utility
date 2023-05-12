@@ -35,7 +35,7 @@ public class ComboBoxEx<T> extends JPanel {
     private Comparator<? super T> comparator = null;
     private final UnaryOperator<T> edit;
     private final Supplier<T> add;
-    private final BiPredicate<ComboBoxEx<T>,T> remove;
+    private final BiPredicate<ComboBoxEx<T>, T> remove;
     private final Function<T, String> format;
     private final DefaultComboBoxModel<T> model;
     private final JComboBox<T> comboBox;
@@ -47,7 +47,7 @@ public class ComboBoxEx<T> extends JPanel {
      * Constructor.
      */
     @SafeVarargs
-    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T,String> format, T... items) {
+    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, T... items) {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         this.format = format;
@@ -56,17 +56,17 @@ public class ComboBoxEx<T> extends JPanel {
         this.comboBox = new JComboBox<>(model);
         add(comboBox);
 
-        if (edit!=null) {
+        if (edit != null) {
             this.edit = edit;
             this.buttonEdit = new JButton(SwingUtil.createAction("✎", this::editItem));
             add(buttonEdit);
-            comboBox.addItemListener(item -> buttonEdit.setEnabled(item!=null));
+            comboBox.addItemListener(item -> buttonEdit.setEnabled(item != null));
         } else {
             this.edit = null;
             this.buttonEdit = null;
         }
 
-        if (add!=null) {
+        if (add != null) {
             this.add = add;
             this.buttonAdd = new JButton(SwingUtil.createAction("+", this::addItem));
             add(buttonAdd);
@@ -75,7 +75,7 @@ public class ComboBoxEx<T> extends JPanel {
             this.buttonAdd = null;
         }
 
-        if (remove!=null) {
+        if (remove != null) {
             this.remove = remove;
             this.buttonRemove = new JButton(SwingUtil.createAction("-", this::removeItem));
             add(buttonRemove);
@@ -89,10 +89,12 @@ public class ComboBoxEx<T> extends JPanel {
             public void intervalAdded(ListDataEvent e) {
                 updateButtonStates();
             }
+
             @Override
             public void intervalRemoved(ListDataEvent e) {
                 updateButtonStates();
             }
+
             @Override
             public void contentsChanged(ListDataEvent e) {
                 updateButtonStates();
@@ -105,7 +107,7 @@ public class ComboBoxEx<T> extends JPanel {
             @Override
             public Component getListCellRendererComponent(JList<?> list, @Nullable Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 String text = "";
-                if (value!=null) {
+                if (value != null) {
                     try {
                         //noinspection unchecked
                         text = format.apply((T) value);
@@ -137,7 +139,7 @@ public class ComboBoxEx<T> extends JPanel {
 
     private void editItem() {
         int idx = comboBox.getSelectedIndex();
-        if (idx >=0) {
+        if (idx >= 0) {
             T item = model.getElementAt(idx);
             item = edit.apply(item);
             if (item != null) {
@@ -150,7 +152,11 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     private void addItem() {
-        Optional.ofNullable(add.get()).ifPresent(item -> { model.addElement(item); model.setSelectedItem(item); sortItems(); });
+        Optional.ofNullable(add.get()).ifPresent(item -> {
+            model.addElement(item);
+            model.setSelectedItem(item);
+            sortItems();
+        });
     }
 
     private void removeItem() {
@@ -189,19 +195,19 @@ public class ComboBoxEx<T> extends JPanel {
         }
         return items;
     }
-    
+
     public void setSelectedItem(T item) {
         comboBox.setSelectedItem(item);
     }
-    
+
     public void insertItemAt(T item, int index) {
         comboBox.insertItemAt(item, index);
     }
-        
+
     public void addActionListener(ActionListener listener) {
         comboBox.addActionListener(listener);
     }
-    
+
     public void addItemListener(ItemListener listener) {
         comboBox.addItemListener(listener);
     }

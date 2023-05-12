@@ -63,7 +63,7 @@ public class SwingComponentsSample extends JFrame {
 
     public SwingComponentsSample() {
         setLayout(new MigLayout("fill", "[grow,fill]", "[][][grow,fill]"));
-        setMinimumSize(new Dimension(400,400));
+        setMinimumSize(new Dimension(400, 400));
         setSize(800, 600);
 
         init();
@@ -217,12 +217,12 @@ public class SwingComponentsSample extends JFrame {
                         break;
                 }
 
-                Integer v = counter.compute(level, (lvl, old) -> old != null && old<max ? old+1 : null);
-                if (v!= null) {
-                    if (v<max) {
+                Integer v = counter.compute(level, (lvl, old) -> old != null && old < max ? old + 1 : null);
+                if (v != null) {
+                    if (v < max) {
                         progress.update(level, max, v);
                     } else {
-                        ProgressTracker.State s = switch(level) {
+                        ProgressTracker.State s = switch (level) {
                             case INFO, DEBUG, TRACE, WARN -> ProgressTracker.State.COMPLETED_SUCCESS;
                             case ERROR -> ProgressTracker.State.COMPLETED_FAILURE;
                         };
