@@ -1,5 +1,6 @@
 package com.dua3.utility.lang;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 
 import java.util.ArrayDeque;
@@ -44,8 +45,8 @@ public class BatchCollector<T, K> implements Collector<T, Deque<Pair<K, List<T>>
      * @param keyMapper  the key mapper
      * @param defaultKey the default key
      */
-    public BatchCollector(Function<? super T, ? extends K> keyMapper, K defaultKey) {
-        this.keyMapper = Objects.requireNonNull(keyMapper);
+    public BatchCollector(Function<? super T, ? extends K> keyMapper, @Nullable K defaultKey) {
+        this.keyMapper = keyMapper;
         this.defaultKey = defaultKey;
     }
 

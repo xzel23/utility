@@ -36,12 +36,10 @@ public class ArgumentsDialog extends JDialog {
                                   Consumer<Collection<String>> setParameter) {
         }
 
-        private ArgumentsParser parser;
-        private Map<Option<?>, OptionInput> inputs = new IdentityHashMap<>();
+        private final Map<Option<?>, OptionInput> inputs = new IdentityHashMap<>();
 
         public ArgumentsPanel(ArgumentsParser parser, Runnable onOk, Runnable onCancel) {
             super(new GridBagLayout());
-            this.parser = parser;
 
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.gridy = 0;

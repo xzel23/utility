@@ -35,7 +35,6 @@ public class FileInput extends JPanel {
      */
     public static final SelectionMode SELECT_FILE_OR_DIRECTORY = SelectionMode.SELECT_FILE_OR_DIRECTORY;
     private final JTextField textField;
-    private final JButton button;
     private final SelectionMode mode;
 
     /**
@@ -48,7 +47,7 @@ public class FileInput extends JPanel {
     public FileInput(SelectionMode mode, Path initialPath, int length) {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.textField = new JTextField(initialPath.toString(), length);
-        this.button = new JButton(SwingUtil.createAction("…", this::showFileSelectionDialog));
+        JButton button = new JButton(SwingUtil.createAction("…", this::showFileSelectionDialog));
         this.mode = mode;
         add(textField);
         add(button);

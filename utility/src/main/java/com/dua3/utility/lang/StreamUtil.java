@@ -125,7 +125,7 @@ public final class StreamUtil {
         private final List<PeekIterator<T>> iters = new ArrayList<>();
 
         MergeIterator(Comparator<T> comparator, Collection<Iterator<T>> iters) {
-            this.comparator = Objects.requireNonNull(comparator);
+            this.comparator = comparator;
             iters.stream().map(PeekIterator::new).forEach(this.iters::add);
         }
 
@@ -136,6 +136,7 @@ public final class StreamUtil {
 
         @Override
         public T next() {
+            //noinspection NewExceptionWithoutArguments
             return iters.stream().min(this::compareNextElement).orElseThrow(NoSuchElementException::new).next();
         }
 

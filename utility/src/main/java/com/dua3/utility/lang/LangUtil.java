@@ -937,7 +937,6 @@ public final class LangUtil {
          * @throws E                    depending on implementation
          */
         default ConsumerThrows<T, E> andThen(ConsumerThrows<? super T, ? extends E> after) throws E {
-            Objects.requireNonNull(after);
             return (T t) -> {
                 accept(t);
                 after.accept(t);
@@ -958,7 +957,6 @@ public final class LangUtil {
          * @throws E                    depending on implementation
          */
         default ConsumerThrows<T, E> andThen(Consumer<? super T> after) throws E {
-            Objects.requireNonNull(after);
             return (T t) -> {
                 accept(t);
                 after.accept(t);
@@ -1046,8 +1044,8 @@ public final class LangUtil {
         private boolean initialized;
 
         CachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {
-            this.supplier = Objects.requireNonNull(supplier);
-            this.cleaner = Objects.requireNonNull(cleaner);
+            this.supplier = supplier;
+            this.cleaner = cleaner;
         }
 
         @Override
