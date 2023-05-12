@@ -11,6 +11,7 @@ import com.dua3.utility.io.CsvReader.ListRowBuilder;
 import com.dua3.utility.io.IoOptions;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.WrappedException;
 import com.dua3.utility.options.Arguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Driver;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,7 +38,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.TreeMap;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Database utility class.
@@ -282,4 +290,61 @@ public final class DbUtil {
         return ds;
     }
 
+    private interface UncheckedCloser extends AutoCloseable {
+        default void doClose() {
+            try {
+                close();
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new WrappedException(e);
+            }
+        }
+
+        static UncheckedCloser wrap(AutoCloseable c) {
+            return c::close;
+        }
+
+        default UncheckedCloser nest(AutoCloseable c) {
+            return () -> {
+                try (UncheckedCloser unused = this) {
+                    c.close();
+                }
+            };
+        }
+    }
+
+    /**
+     * Create a stream of objects from a {@link ResultSet}.
+     * <p>
+     * <strong>IMPORTANT:</strong> do not close the database or the result set before all stream items are consumed.
+     * The result set will be automatically closed together with the stream. If more resources have to be closed,
+     * pass them in the {@code closables} parameter; the items given in {@code closeables} will be closed in reversed
+     * order (right to left) before closing the result set.
+     *
+     * @param rs the ResultSet
+     * @param mapper mapping function to convert the current result item to the object type
+     * @param closeables additional {@link AutoCloseable} instances to close when the stream is closed
+     * @return stream of objects created from the result set items
+     * @param <T> stream item type
+     */
+    public static <T> Stream<T> stream(ResultSet rs, Function<ResultSet, T> mapper, AutoCloseable... closeables) {
+        UncheckedCloser closer = rs::close;
+        for (int i = closeables.length; i >= 0; i++) {
+            closer = closer.nest(closeables[i]);
+        }
+        return StreamSupport.stream(new Spliterators.AbstractSpliterator<T>(
+                Long.MAX_VALUE, Spliterator.ORDERED) {
+            @Override
+            public boolean tryAdvance(Consumer<? super T> action) {
+                try {
+                    if (!rs.next()) return false;
+                    action.accept(mapper.apply(rs));
+                    return true;
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }, false).onClose(closer::doClose);
+    }
 }
