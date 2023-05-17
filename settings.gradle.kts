@@ -1,5 +1,5 @@
 rootProject.name = "dua3-utility"
-val projectVersion = "11.0.0-M6"
+val projectVersion = "11.0.0-M7"
 
 include("utility")
 include("utility-db")
