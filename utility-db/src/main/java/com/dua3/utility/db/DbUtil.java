@@ -330,7 +330,7 @@ public final class DbUtil {
      */
     public static <T> Stream<T> stream(ResultSet rs, Function<ResultSet, T> mapper, AutoCloseable... closeables) {
         UncheckedCloser closer = rs::close;
-        for (int i = closeables.length; i >= 0; i++) {
+        for (int i = 0; i < closeables.length; i++) {
             closer = closer.nest(closeables[i]);
         }
         return StreamSupport.stream(new Spliterators.AbstractSpliterator<T>(
