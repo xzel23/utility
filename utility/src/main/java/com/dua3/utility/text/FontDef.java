@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * instances.
  */
 @SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode"})
-public final class FontDef {
+public final class FontDef implements Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(FontDef.class);
 
@@ -549,5 +549,10 @@ public final class FontDef {
                 && italic == null
                 && underline == null
                 && strikeThrough == null;
+    }
+
+    @Override
+    public FontDef clone() throws CloneNotSupportedException {
+        return (FontDef) super.clone();
     }
 }

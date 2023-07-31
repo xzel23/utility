@@ -174,6 +174,7 @@ the parameter.
 - reduce code duplication in RichTextBuilder
 - exception handling in drag and drop support
 - DbUtil.stream()
+- make FontDef Cloneable
 
 ### 10.3.4
 
