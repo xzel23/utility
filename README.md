@@ -175,6 +175,8 @@ the parameter.
 - exception handling in drag and drop support
 - DbUtil.stream()
 - make FontDef Cloneable
+- RichText.equalizer() returns a customizable equalizer for comparing texts ignoring certain properties
+- RichText.wrap() combines styles instead of replacing them
 
 ### 10.3.4
 

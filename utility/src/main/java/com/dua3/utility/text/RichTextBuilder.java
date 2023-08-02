@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -205,11 +206,24 @@ public class RichTextBuilder implements Appendable, ToRichText {
             Object value = entry.getValue();
 
             if (key.equals(RichText.ATTRIBUTE_NAME_STYLE_LIST)) {
-                value = new ArrayList<>((Collection<Style>) value);
+                LangUtil.check(value instanceof List, "attribute '%s' must contain a list", key);
+                attributes.compute(key, (k,oldValue) -> {
+                    backup.put(key, oldValue);
+                    if (oldValue == null) {
+                        return new ArrayList<>((Collection<Style>) value);
+                    } else {
+                        Collection<Style> oldStyles = (Collection<Style>) oldValue;
+                        Collection<Style> newStyles = (Collection<Style>) value;
+                        LinkedHashSet<Style> styles = new LinkedHashSet<>(oldStyles.size()+ newStyles.size());
+                        styles.addAll(oldStyles);
+                        styles.addAll(newStyles);
+                        return new ArrayList<>(styles);
+                    }
+                });
+            } else {
+                Object oldValue = attributes.put(key, value);
+                backup.put(key, oldValue);
             }
-
-            Object oldValue = attributes.put(key, value);
-            backup.put(key, oldValue);
         }
 
         // append CharSequence

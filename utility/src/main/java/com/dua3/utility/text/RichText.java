@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -874,4 +875,158 @@ public final class RichText
         return List.of(run);
     }
 
+    public static BiPredicate<RichText,RichText> equalizer(ComparisonSettings s) {
+        return (a, b) -> {
+            if (a == b) {
+                return true;
+            }
+            if (a == null || b == null) {
+                return false;
+            }
+            if (s.ignoreCase() && !a.equalsTextIgnoreCase(b) || !s.ignoreCase() && !a.equalsText(b)) {
+                return false;
+            }
+
+            for (int idx = 0; idx < a.length(); ) {
+                Run runA = a.runAt(idx);
+                Run runB = b.runAt(idx);
+
+                FontDef fda = runA.getFontDef();
+                FontDef fdb = runB.getFontDef();
+
+                if (    !s.ignoreFontSize() && !Objects.equals(fda.getSize(), fdb.getSize())
+                     || !s.ignoreTextColor() && !Objects.equals(fda.getColor(), fdb.getColor())
+                     || !s.ignoreUnderline() && !Objects.equals(fda.getUnderline(), fdb.getUnderline())
+                     || !s.ignoreStrikeThrough() && !Objects.equals(fda.getStrikeThrough(), fdb.getStrikeThrough())
+                     || !s.ignoreBold() && !Objects.equals(fda.getBold(), fdb.getBold())
+                     || !s.ignoreItalic() && !Objects.equals(fda.getItalic(), fdb.getItalic())
+                     || !s.ignoreFontFamily() && !Objects.equals(s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
+                    return false;
+                }
+
+                int step = Math.min(runA.getEnd() - a.start, runB.getEnd() - b.start);
+                assert step > 0 : "invalid step: " + step;
+                idx += step;
+            }
+
+            return true;
+        };
+    }
+
+    public static record ComparisonSettings(
+            Function<String,String> fontMapper,
+            boolean ignoreCase,
+            boolean ignoreFontFamily,
+            boolean ignoreFontSize,
+            boolean ignoreTextColor,
+            boolean ignoreUnderline,
+            boolean ignoreStrikeThrough,
+            boolean ignoreBold,
+            boolean ignoreItalic
+    ) {
+        public static ComparisonSettings defaultSettings() {
+            return new Builder().build();
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static class Builder {
+            Function<String,String> fontMapper = Function.identity();
+            boolean ignoreCase = false;
+            boolean ignoreFontFamily = false;
+            boolean ignoreFontSize = false;
+            boolean ignoreTextColor = false;
+            boolean ignoreUnderline = false;
+            boolean ignoreStrikeThrough = false;
+            boolean ignoreBold = false;
+            boolean ignoreItalic = false;
+
+            enum StandardFontMapper implements Function<String, String> {
+                IDENTITY(Function.identity()),
+                IGNORE_SUBSETS(s -> s.replaceFirst("^[A-Z]{6}\\+", "")),
+                KNOWN_ALIASES(s -> switch (s) {
+                    case "ArialMT" -> "Arial";
+                    case "TimesNewRomanPSMT", "Times-Roman" -> "Times New Roman";
+                    case "CourierNewPSMT" -> "Courier New";
+                    default -> s;
+                }),
+                IGNORE_SUBSETS_AND_KNOWN_ALIASES(s -> KNOWN_ALIASES.apply(IGNORE_SUBSETS.apply(s)));
+
+                private final Function<String, String> mapper;
+
+                StandardFontMapper(Function<String, String> mapper) {
+                    this.mapper = mapper;
+                }
+
+                @Override
+                public String apply(String s) {
+                    return mapper.apply(s);
+                }
+            }
+
+            Builder() {}
+
+            public Builder setFontMapper(Function<String, String> fontMapper) {
+                this.fontMapper = fontMapper;
+                return this;
+            }
+
+            public Builder setIgnoreCase(boolean ignoreCase) {
+                this.ignoreCase = ignoreCase;
+                return this;
+            }
+
+            public Builder setIgnoreFontFamily(boolean ignoreFontFamily) {
+                this.ignoreFontFamily = ignoreFontFamily;
+                return this;
+            }
+
+            public Builder setIgnoreFontSize(boolean ignoreFontSize) {
+                this.ignoreFontSize = ignoreFontSize;
+                return this;
+            }
+
+            public Builder setIgnoreTextColor(boolean ignoreTextColor) {
+                this.ignoreTextColor = ignoreTextColor;
+                return this;
+            }
+
+            public Builder setIgnoreUnderline(boolean ignoreUnderline) {
+                this.ignoreUnderline = ignoreUnderline;
+                return this;
+            }
+
+            public Builder setIgnoreStrikeThrough(boolean ignoreStrikeThrough) {
+                this.ignoreStrikeThrough = ignoreStrikeThrough;
+                return this;
+            }
+
+            public Builder setIgnoreBold(boolean ignoreBold) {
+                this.ignoreBold = ignoreBold;
+                return this;
+            }
+
+            public Builder setIgnoreItalic(boolean ignoreItalic) {
+                this.ignoreItalic = ignoreItalic;
+                return this;
+            }
+
+            public ComparisonSettings build() {
+                return new ComparisonSettings(
+                    fontMapper,
+                    ignoreCase,
+                    ignoreFontFamily,
+                    ignoreFontSize,
+                    ignoreTextColor,
+                    ignoreUnderline,
+                    ignoreStrikeThrough,
+                    ignoreBold,
+                    ignoreItalic
+                );
+            }
+        }
+
+    }
 }
