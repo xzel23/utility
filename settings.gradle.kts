@@ -17,7 +17,7 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.47.0")
             plugin("test-logger", "com.adarshr.test-logger").version("3.2.0")
-            plugin("spotbugs", "com.github.spotbugs").version("5.0.14")
+            plugin("spotbugs", "com.github.spotbugs").version("5.1.1")
             plugin("cabe", "com.dua3.cabe").version("1.2.0")
 
             version("cabe", "1.0.0")
