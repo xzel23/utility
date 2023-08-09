@@ -206,6 +206,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @param path the path to read from
      * @param cls  the class
+     * @param options the options to use
      * @param <T>  the generic class parameter
      * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
      * determined

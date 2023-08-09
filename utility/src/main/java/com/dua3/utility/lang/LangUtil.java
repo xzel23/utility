@@ -1085,7 +1085,8 @@ public final class LangUtil {
      * @param map          the Map instance
      * @param defaultValue the value to use when there is no mapping for the argument
      * @param <T>          the map's key type
-     * @param <U>          the map's value typu
+     * @param <U>          the map's value type
+     * @param <V>          the type of the default value
      * @return a function that returns the mapping of its input value or {@code defaultValue} if no mapping exists
      */
     public static <T, U, V extends U> Function<T, U> asFunction(Map<? super T, V> map, V defaultValue) {

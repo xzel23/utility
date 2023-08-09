@@ -125,6 +125,12 @@ public record ComparisonSettings(
             return this;
         }
 
+        /**
+         * Sets whether the method should ignore the underline style when comparing texts.
+         *
+         * @param ignoreUnderline a boolean value indicating whether to ignore the underline style (true) or not (false)
+         * @return the Builder object for method chaining
+         */
         public Builder setIgnoreUnderline(boolean ignoreUnderline) {
             this.ignoreUnderline = ignoreUnderline;
             return this;

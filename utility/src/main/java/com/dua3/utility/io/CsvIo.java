@@ -40,6 +40,12 @@ public abstract class CsvIo implements AutoCloseable {
     protected final DateTimeFormatter dateFormatter;
     protected final NumberFormat numberFormat;
 
+    /**
+     * Constructor for creating a CsvIo object.
+     * Initializes the CsvIo object with the provided options.
+     *
+     * @param options The options to be used for configuring the CsvIo object.
+     */
     protected CsvIo(Arguments options) {
         this.separator = IoOptions.getFieldSeparator(options);
         this.delimiter = IoOptions.getTextDelimiter(options);
@@ -67,6 +73,12 @@ public abstract class CsvIo implements AutoCloseable {
         );
     }
 
+    /**
+     * Format an object into a string based on its type.
+     *
+     * @param obj the object to be formatted
+     * @return the formatted string
+     */
     @SuppressWarnings("ChainOfInstanceofChecks")
     protected String format(@Nullable Object obj) {
         final String text;
@@ -82,6 +94,12 @@ public abstract class CsvIo implements AutoCloseable {
         return quoteIfNeeded(text);
     }
 
+    /**
+     * Checks if a string needs to be surrounded by quotes.
+     *
+     * @param text the string to be checked
+     * @return true if quotes are needed, false otherwise
+     */
     protected boolean isQuoteNeeded(String text) {
         // also quote if unusual characters are present
         for (int i = 0; i < text.length(); i++) {
@@ -93,10 +111,22 @@ public abstract class CsvIo implements AutoCloseable {
         return false;
     }
 
+    /**
+     * Surrounds a string with quotes.
+     *
+     * @param text the string to be surrounded with quotes
+     * @return the quoted string
+     */
     protected String quote(String text) {
         return delimiter + text.replace("\"", "\"\"") + delimiter;
     }
 
+    /**
+     * Returns a quoted string if needed, otherwise returns the original string.
+     *
+     * @param text the string to be checked if quoting is needed
+     * @return the quoted string if needed, otherwise the original string
+     */
     protected String quoteIfNeeded(String text) {
         return isQuoteNeeded(text) ? quote(text) : text;
     }

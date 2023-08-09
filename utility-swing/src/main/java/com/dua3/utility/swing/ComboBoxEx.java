@@ -44,7 +44,13 @@ public class ComboBoxEx<T> extends JPanel {
     private final JButton buttonRemove;
 
     /**
-     * Constructor.
+     * Constructs a ComboBoxEx with optional editing, adding, and removing functionality.
+     *
+     * @param edit a UnaryOperator that allows editing of items in the ComboBoxEx, or null if editing is not enabled
+     * @param add a Supplier that supplies new items to add to the ComboBoxEx, or null if adding is not enabled
+     * @param remove a BiPredicate that determines if an item can be removed from the ComboBoxEx, or null if removing is not enabled
+     * @param format a Function that formats each item in the ComboBoxEx as a string
+     * @param items the initial items to populate the ComboBoxEx with
      */
     @SafeVarargs
     public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<? extends T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, T... items) {
@@ -167,6 +173,14 @@ public class ComboBoxEx<T> extends JPanel {
         }
     }
 
+    /**
+     * Method to be passed as a method reference in the {@code remove} parameter to the ComboBoxEx construvtor.
+     * Asks the user to confirm the removal of a selected item from the given ComboBoxEx.
+     *
+     * @param cb the ComboBoxEx from which the item should be removed
+     * @param item the item to be removed
+     * @return true if the user confirms the removal, false otherwise
+     */
     public static <T> boolean askBeforeRemoveSelectedItem(ComboBoxEx<T> cb, T item) {
         int rc = JOptionPane.showConfirmDialog(
                 cb,
@@ -178,16 +192,34 @@ public class ComboBoxEx<T> extends JPanel {
         return rc == JOptionPane.YES_OPTION;
     }
 
+    /**
+     * Method to be passed as a method reference in the {@code remove} parameter to the ComboBoxEx construvtor.
+     * Always remove selected item from the given ComboBoxEx without asking for user confirmation.
+     *
+     * @param cb the ComboBoxEx from which the item should be removed
+     * @param item the item to be removed
+     * @return always returns true to indicate removal is allowed
+     */
     @SuppressWarnings("SameReturnValue")
     public static <T> boolean alwaysRemoveSelectedItem(ComboBoxEx<T> cb, T item) {
         return true;
     }
 
+    /**
+     * Retrieves the currently selected item from the ComboBoxEx.
+     *
+     * @return an Optional containing the selected item, or an empty Optional if no item is selected
+     */
     public Optional<T> getSelectedItem() {
         //noinspection unchecked
         return Optional.ofNullable((T) comboBox.getSelectedItem());
     }
 
+    /**
+     * Retrieves the list of items in the ComboBoxEx.
+     *
+     * @return a List containing all the items in the ComboBoxEx
+     */
     public List<T> getItems() {
         int n = model.getSize();
         ArrayList<T> items = new ArrayList<>(n);
@@ -197,52 +229,103 @@ public class ComboBoxEx<T> extends JPanel {
         return items;
     }
 
+    /**
+     * Sets the selected item in the ComboBoxEx to the specified item.
+     *
+     * @param item the item to be selected in the ComboBoxEx
+     */
     public void setSelectedItem(T item) {
         comboBox.setSelectedItem(item);
     }
 
+    /**
+     * Inserts the specified item at the specified position in the ComboBoxEx.
+     *
+     * @param item  the item to be inserted in the ComboBoxEx
+     * @param index the index at which the item is to be inserted
+     */
     public void insertItemAt(T item, int index) {
         comboBox.insertItemAt(item, index);
     }
 
+    /**
+     * Adds an ActionListener to the ComboBoxEx.
+     *
+     * @param listener the ActionListener to be added to the ComboBoxEx
+     */
     public void addActionListener(ActionListener listener) {
         comboBox.addActionListener(listener);
     }
 
+    /**
+     * Adds an ItemListener to the ComboBoxEx.
+     *
+     * @param listener the ItemListener to be added to the ComboBoxEx
+     */
     public void addItemListener(ItemListener listener) {
         comboBox.addItemListener(listener);
     }
 
+    /**
+     * Adds a PopupMenuListener to the ComboBoxEx.
+     *
+     * @param listener the PopupMenuListener to be added to the ComboBoxEx
+     */
     public void addPopupMenuListener(PopupMenuListener listener) {
         comboBox.addPopupMenuListener(listener);
     }
 
+    /**
+     * Removes an ActionListener from the ComboBoxEx.
+     *
+     * @param listener the ActionListener to be removed from the ComboBoxEx
+     */
     public void removeActionListener(ActionListener listener) {
         comboBox.removeActionListener(listener);
     }
 
+    /**
+     * Removes an ItemListener from the ComboBoxEx.
+     *
+     * @param listener the ItemListener to be removed from the ComboBoxEx
+     */
     public void removeItemListener(ItemListener listener) {
         comboBox.removeItemListener(listener);
     }
 
+    /**
+     * Removes a PopupMenuListener from the ComboBoxEx.
+     *
+     * @param listener the PopupMenuListener to be removed from the ComboBoxEx
+     */
     public void removePopupMenuListener(PopupMenuListener listener) {
         comboBox.removePopupMenuListener(listener);
     }
 
+    /**
+     * Sets the Comparator used for sorting items in the ComboBoxEx.
+     *
+     * @param comparator the Comparator to be set for sorting items in the ComboBoxEx
+     */
     public void setComparator(Comparator<? super T> comparator) {
         this.comparator = comparator;
         sortItems();
     }
 
+    /**
+     * Sorts the items in the ComboBoxEx using the current Comparator.
+     * If no Comparator is set, the method does nothing.
+     * The selected item is preserved after the sorting.
+     */
     public void sortItems() {
-        if (comparator==null) {
+        if (comparator == null) {
             return;
         }
 
         Optional<T> selectedItem = getSelectedItem();
         int n = model.getSize();
         List<T> elements = new ArrayList<>(n);
-        for (int i = 0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             elements.add(model.getElementAt(i));
         }
         elements.sort(comparator);

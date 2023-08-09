@@ -59,7 +59,7 @@ public interface FontUtil<F> {
                 }
 
                 @Override
-                public Font loadFontAs(InputStream in, Font font) throws IOException {
+                public Font loadFontAs(InputStream in, Font font) {
                     return noImplementation();
                 }
             };

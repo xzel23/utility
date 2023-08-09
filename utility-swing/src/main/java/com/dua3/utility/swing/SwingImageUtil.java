@@ -7,6 +7,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * An implementation of the ImageUtil interface for working with Swing images.
+ */
 public class SwingImageUtil implements ImageUtil<BufferedImage> {
     @Override
     public SwingImage load(InputStream in) throws IOException {

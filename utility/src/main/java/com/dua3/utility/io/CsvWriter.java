@@ -32,26 +32,65 @@ public class CsvWriter extends CsvIo implements Flushable {
     private final BufferedWriter out;
     private int fieldsInRow;
 
+    /**
+     * Constructs a new CsvWriter.
+     *
+     * @param out     the BufferedWriter to write the CSV data to
+     * @param options the Arguments object representing the options for writing CSV formatted data
+     */
     public CsvWriter(BufferedWriter out, Arguments options) {
         super(options);
         this.out = Objects.requireNonNull(out);
     }
 
+    /**
+     * Creates a new CsvWriter by using the provided BufferedWriter and Arguments options.
+     *
+     * @param writer  the BufferedWriter to write the CSV data to
+     * @param options the Arguments object representing the options for writing CSV formatted data
+     * @return a new CsvWriter instance
+     */
     public static CsvWriter create(BufferedWriter writer, Arguments options) {
         return new CsvWriter(writer, options);
     }
 
+    /**
+     * Creates a new CsvWriter by using the provided file path, Arguments options.
+     * The method reads the charset from the options and creates a BufferedWriter from the file path using the charset.
+     *
+     * @param path    the path of the file to write the CSV data to
+     * @param options the Arguments object representing the options for writing CSV formatted data
+     * @return a new CsvWriter instance
+     * @throws IOException if an I/O error occurs
+     */
     public static CsvWriter create(Path path, Arguments options) throws IOException {
         Charset cs = IoOptions.getCharset(options);
         return create(Files.newBufferedWriter(path, cs), options);
     }
 
+    /**
+     * Creates a new CsvWriter by using the provided OutputStream and Arguments options.
+     * The method creates a BufferedWriter from the OutputStream using the charset from the options.
+     *
+     * @param out     the OutputStream to write the CSV data to
+     * @param options the Arguments object representing the options for writing CSV formatted data
+     * @return a new CsvWriter instance
+     */
     public static CsvWriter create(OutputStream out, Arguments options) {
         Charset cs = IoOptions.getCharset(options);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
         return create(writer, options);
     }
 
+    /**
+     * Adds a field to the current row in the CSV writer.
+     * If this is not the first field in the row, a separator is added before the new field.
+     * The field value is converted to a string representation using the format method.
+     *
+     * @param obj the object to be added as a field in the CSV writer.
+     *            This object will be converted to a string representation using the format method.
+     * @throws IOException if an I/O error occurs while writing the field to the CSV writer.
+     */
     public void addField(@Nullable Object obj) throws IOException {
         if (fieldsInRow > 0) {
             out.write(separator);

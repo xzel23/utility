@@ -132,23 +132,23 @@ public final class FileSystemView implements AutoCloseable {
         try {
             String classFile = clazz.getSimpleName() + ".class";
             URI uri = Objects.requireNonNull(clazz.getResource(classFile), () -> "class file not found: " + classFile).toURI();
-            switch (uri.getScheme()) {
-                case "file":
-                    return create(Paths.get(uri.resolve(".")));
-                case "jar":
+            return switch (uri.getScheme()) {
+                case "file" -> create(Paths.get(uri.resolve(".")));
+                case "jar" -> {
                     String jarUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
                     String jar = jarUriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
                     String jarPath = jarUriStr.replaceAll("^jar:file:.*!(.*)" + classFile + "$", "$1");
                     URI jarUri = new URI("jar", jar, null);
-                    return createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
-                case "jrt":
+                    yield createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
+                }
+                case "jrt" -> {
                     String jrtUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
                     String jrtPath = jrtUriStr.replaceAll("^jrt:/(.*)" + classFile + "$", "$1");
                     URI jrtUri = URI.create("jrt:/");
-                    return createFileSystemView(FileSystems.newFileSystem(jrtUri, Collections.emptyMap()), jrtPath);
-                default:
-                    throw new IOException("unsupported scheme: " + uri.getScheme());
-            }
+                    yield createFileSystemView(FileSystems.newFileSystem(jrtUri, Collections.emptyMap()), jrtPath);
+                }
+                default -> throw new IOException("unsupported scheme: " + uri.getScheme());
+            };
         } catch (URISyntaxException e) {
             throw new IOException(e);
         }

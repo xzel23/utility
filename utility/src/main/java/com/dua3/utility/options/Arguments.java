@@ -225,11 +225,21 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
             return new Entry<>(option);
         }
 
+        /**
+         * Adds a parameter to the entry.
+         *
+         * @param s the parameter to be added
+         */
         public void addParameter(String s) {
             addArg(option.map(s));
         }
 
-        void addArg(T v) {
+        /**
+         * Adds an argument to the entry.
+         *
+         * @param v the argument to be added
+         */
+        public void addArg(T v) {
             params.add(v);
         }
 

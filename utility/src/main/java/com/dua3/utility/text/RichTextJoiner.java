@@ -25,6 +25,13 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
     final Consumer<RichTextBuilder> appendSuffix;
     final IntUnaryOperator calculateSupplementaryLength;
 
+    /**
+     * Creates a RichTextJoiner instance with the given delimiter, prefix, and suffix.
+     *
+     * @param delimiter the CharSequence used to separate the joined elements
+     * @param prefix    the CharSequence to be prepended to the joined elements
+     * @param suffix    the CharSequence to be appended to the joined elements
+     */
     public RichTextJoiner(CharSequence delimiter,
                           CharSequence prefix,
                           CharSequence suffix) {
@@ -34,10 +41,22 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
         this.calculateSupplementaryLength = n -> prefix.length() + n * delimiter.length() + suffix.length();
     }
 
+    /**
+     * Creates a RichTextJoiner instance with the given delimiter.
+     *
+     * @param delimiter the CharSequence used to separate the joined elements
+     */
     public RichTextJoiner(CharSequence delimiter) {
         this(delimiter, "", "");
     }
 
+    /**
+     * Creates a RichTextJoiner instance with the given delimiter, prefix, and suffix.
+     *
+     * @param delimiter the RichText used to separate the joined elements
+     * @param prefix the RichText added before the joined elements
+     * @param suffix the RichText added after the joined elements
+     */
     public RichTextJoiner(RichText delimiter,
                           RichText prefix,
                           RichText suffix) {
@@ -47,6 +66,11 @@ public class RichTextJoiner implements Collector<RichText, Pair<List<RichText>, 
         this.calculateSupplementaryLength = n -> prefix.length() + n * delimiter.length() + suffix.length();
     }
 
+    /**
+     * Creates a RichTextJoiner instance with the given delimiter.
+     *
+     * @param delimiter the RichText used to separate the joined elements
+     */
     public RichTextJoiner(RichText delimiter) {
         this(delimiter, RichText.emptyText(), RichText.emptyText());
     }

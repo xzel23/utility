@@ -874,6 +874,12 @@ public final class RichText
         return List.of(run);
     }
 
+    /**
+     * Returns a BiPredicate that checks whether two RichText objects are equal based on the provided ComparisonSettings.
+     *
+     * @param s the ComparisonSettings to be used for the equality check
+     * @return the BiPredicate that checks for equality based on the ComparisonSettings
+     */
     public static BiPredicate<RichText,RichText> equalizer(ComparisonSettings s) {
         return (a, b) -> {
             if (a == b) {
