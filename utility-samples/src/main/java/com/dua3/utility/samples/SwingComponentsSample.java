@@ -182,7 +182,7 @@ public class SwingComponentsSample extends JFrame {
                 Level level = Level.values()[implementation == 1 ? Math.max(0, levelInt - 1) : levelInt];
 
                 switch (implementation) {
-                    case 0:
+                    case 0 -> {
                         switch (levelInt) {
                             case 0 -> LOG.trace(msg);
                             case 1 -> LOG.debug(msg);
@@ -191,9 +191,8 @@ public class SwingComponentsSample extends JFrame {
                             case 4 -> LOG.error(msg, generateThrowable());
                             default -> throw new IllegalStateException("integer out of range");
                         }
-                        break;
-
-                    case 1:
+                    }
+                    case 1 -> {
                         switch (levelInt) {
                             case 0 -> JUL_LOGGER.finest(msg);
                             case 1 -> JUL_LOGGER.finer(msg);
@@ -203,9 +202,8 @@ public class SwingComponentsSample extends JFrame {
                             case 5 -> JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
                             default -> throw new IllegalStateException("integer out of range");
                         }
-                        break;
-
-                    case 2:
+                    }
+                    case 2 -> {
                         switch (levelInt) {
                             case 0 -> LOG4J_LOGGER.trace(msg);
                             case 1 -> LOG4J_LOGGER.debug(msg);
@@ -214,7 +212,7 @@ public class SwingComponentsSample extends JFrame {
                             case 4 -> LOG4J_LOGGER.error(msg, generateThrowable());
                             default -> throw new IllegalStateException("integer out of range");
                         }
-                        break;
+                    }
                 }
 
                 Integer v = counter.compute(level, (lvl, old) -> old != null && old < max ? old + 1 : null);

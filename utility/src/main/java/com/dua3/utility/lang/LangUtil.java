@@ -1005,7 +1005,6 @@ public final class LangUtil {
          * Default constructor.
          */
         public FailedCheckException() {
-            super();
         }
 
         /**

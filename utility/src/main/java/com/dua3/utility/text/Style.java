@@ -361,10 +361,10 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Style style = (Style) o;
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Style style = (Style) obj;
         return Objects.equals(name, style.name) && Objects.equals(properties, style.properties);
     }
 

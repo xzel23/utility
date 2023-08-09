@@ -59,7 +59,7 @@ public class SwingLogPane extends JPanel {
     private final JSplitPane splitPane;
     private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
     private TableRowSorter<AbstractTableModel> tableRowSorter;
-    private Function<LogEntry, String> format = LogEntry::toString;
+    private Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
 
     public SwingLogPane(LogBuffer buffer) {
@@ -256,7 +256,7 @@ public class SwingLogPane extends JPanel {
      *
      * @param format the formatting function
      */
-    public void setLogFormatter(Function<LogEntry, String> format) {
+    public void setLogFormatter(Function<? super LogEntry, String> format) {
         Objects.requireNonNull(format);
         synchronized (buffer) {
             this.format = format;

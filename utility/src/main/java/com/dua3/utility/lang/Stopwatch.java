@@ -8,7 +8,6 @@ package com.dua3.utility.lang;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -293,14 +292,14 @@ public class Stopwatch {
     }
 
     public static class AutoCloseableStopWatch extends Stopwatch implements AutoCloseable {
-        private final Consumer<Stopwatch> onClose;
+        private final Consumer<? super Stopwatch> onClose;
 
-        protected AutoCloseableStopWatch(String name, Consumer<Stopwatch> onClose) {
+        protected AutoCloseableStopWatch(String name, Consumer<? super Stopwatch> onClose) {
             super(name);
             this.onClose = onClose;
         }
 
-        protected AutoCloseableStopWatch(Supplier<String> name, Consumer<Stopwatch> onClose) {
+        protected AutoCloseableStopWatch(Supplier<String> name, Consumer<? super Stopwatch> onClose) {
             super(name);
             this.onClose = onClose;
         }

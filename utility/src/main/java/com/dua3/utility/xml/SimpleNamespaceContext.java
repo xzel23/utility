@@ -25,10 +25,10 @@ public class SimpleNamespaceContext implements NamespaceContext {
     /**
      * Construct new instance with mappings.
      *
-     * @param nsToUri mapping from namespace to URI
+     * @param nsToUriMapping mapping from namespace to URI
      */
-    public SimpleNamespaceContext(Map<String, String> nsToUri) {
-        this(nsToUri, null);
+    public SimpleNamespaceContext(Map<String, String> nsToUriMapping) {
+        this(nsToUriMapping, null);
     }
 
     /**

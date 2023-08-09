@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -578,36 +577,36 @@ public final class RichText
     /**
      * Get a sub range of this instance.
      *
-     * @param begin begin index (inclusive)
+     * @param start begin index (inclusive)
      * @param end   end index (exclusive)
      * @return RichText instance of the sub range
      */
     @Override
-    public RichText subSequence(int begin, int end) {
-        if (begin == 0 && end == length) {
+    public RichText subSequence(int start, int end) {
+        if (start == 0 && end == length) {
             return this;
         }
-        if (end == begin) {
+        if (end == start) {
             return emptyText();
         }
-        if (end == begin + 1) {
-            Run r = runAt(begin);
-            int pos = begin + this.start - r.getStart();
+        if (end == start + 1) {
+            Run r = runAt(start);
+            int pos = start + this.start - r.getStart();
             return new RichText(r.subSequence(pos, pos + 1));
         }
 
-        int floorKey = runIndex(begin);
+        int floorKey = runIndex(start);
         int ceilingKey = runIndex(end - 1);
         Run[] subRuns = Arrays.copyOfRange(run, floorKey, ceilingKey + 1);
 
         Run firstRun = subRuns[0];
-        if (firstRun.getStart() < start + begin) {
-            subRuns[0] = firstRun.subSequence(begin + start - firstRun.getStart(), firstRun.length());
+        if (firstRun.getStart() < this.start + start) {
+            subRuns[0] = firstRun.subSequence(start + this.start - firstRun.getStart(), firstRun.length());
         }
 
         Run lastRun = subRuns[subRuns.length - 1];
-        if (lastRun.getEnd() > start + end) {
-            subRuns[subRuns.length - 1] = lastRun.subSequence(0, lastRun.length() - (lastRun.getEnd() - (start + end)));
+        if (lastRun.getEnd() > this.start + end) {
+            subRuns[subRuns.length - 1] = lastRun.subSequence(0, lastRun.length() - (lastRun.getEnd() - (this.start + end)));
         }
 
         return new RichText(subRuns);
@@ -616,11 +615,11 @@ public final class RichText
     /**
      * Get a sub range of this instance.
      *
-     * @param beginIndex begin index (inclusive)
+     * @param begin begin index (inclusive)
      * @return RichText instance of the sub range from beginIndex to the end
      */
-    public RichText subSequence(int beginIndex) {
-        return subSequence(beginIndex, length());
+    public RichText subSequence(int begin) {
+        return subSequence(begin, length());
     }
 
     @Override
@@ -629,9 +628,9 @@ public final class RichText
     }
 
     @Override
-    public AttributedCharacter attributedCharAt(int pos) {
-        Run r = runAt(pos);
-        return r.attributedCharAt(r.convertIndex(start + pos));
+    public AttributedCharacter attributedCharAt(int index) {
+        Run r = runAt(index);
+        return r.attributedCharAt(r.convertIndex(start + index));
     }
 
     /**
@@ -898,7 +897,7 @@ public final class RichText
                      || !s.ignoreTextColor() && !Objects.equals(fda.getColor(), fdb.getColor())
                      || !s.ignoreUnderline() && !Objects.equals(fda.getUnderline(), fdb.getUnderline())
                      || !s.ignoreStrikeThrough() && !Objects.equals(fda.getStrikeThrough(), fdb.getStrikeThrough())
-                     || !s.ignoreBold() && !Objects.equals(fda.getBold(), fdb.getBold())
+                     || !s.ignoreFontWeight() && !Objects.equals(fda.getBold(), fdb.getBold())
                      || !s.ignoreItalic() && !Objects.equals(fda.getItalic(), fdb.getItalic())
                      || !s.ignoreFontFamily() && !Objects.equals(s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
                     return false;
@@ -913,120 +912,4 @@ public final class RichText
         };
     }
 
-    public static record ComparisonSettings(
-            Function<String,String> fontMapper,
-            boolean ignoreCase,
-            boolean ignoreFontFamily,
-            boolean ignoreFontSize,
-            boolean ignoreTextColor,
-            boolean ignoreUnderline,
-            boolean ignoreStrikeThrough,
-            boolean ignoreBold,
-            boolean ignoreItalic
-    ) {
-        public static ComparisonSettings defaultSettings() {
-            return new Builder().build();
-        }
-
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        public static class Builder {
-            Function<String,String> fontMapper = Function.identity();
-            boolean ignoreCase = false;
-            boolean ignoreFontFamily = false;
-            boolean ignoreFontSize = false;
-            boolean ignoreTextColor = false;
-            boolean ignoreUnderline = false;
-            boolean ignoreStrikeThrough = false;
-            boolean ignoreBold = false;
-            boolean ignoreItalic = false;
-
-            enum StandardFontMapper implements Function<String, String> {
-                IDENTITY(Function.identity()),
-                IGNORE_SUBSETS(s -> s.replaceFirst("^[A-Z]{6}\\+", "")),
-                KNOWN_ALIASES(s -> switch (s) {
-                    case "ArialMT" -> "Arial";
-                    case "TimesNewRomanPSMT", "Times-Roman" -> "Times New Roman";
-                    case "CourierNewPSMT" -> "Courier New";
-                    default -> s;
-                }),
-                IGNORE_SUBSETS_AND_KNOWN_ALIASES(s -> KNOWN_ALIASES.apply(IGNORE_SUBSETS.apply(s)));
-
-                private final Function<String, String> mapper;
-
-                StandardFontMapper(Function<String, String> mapper) {
-                    this.mapper = mapper;
-                }
-
-                @Override
-                public String apply(String s) {
-                    return mapper.apply(s);
-                }
-            }
-
-            Builder() {}
-
-            public Builder setFontMapper(Function<String, String> fontMapper) {
-                this.fontMapper = fontMapper;
-                return this;
-            }
-
-            public Builder setIgnoreCase(boolean ignoreCase) {
-                this.ignoreCase = ignoreCase;
-                return this;
-            }
-
-            public Builder setIgnoreFontFamily(boolean ignoreFontFamily) {
-                this.ignoreFontFamily = ignoreFontFamily;
-                return this;
-            }
-
-            public Builder setIgnoreFontSize(boolean ignoreFontSize) {
-                this.ignoreFontSize = ignoreFontSize;
-                return this;
-            }
-
-            public Builder setIgnoreTextColor(boolean ignoreTextColor) {
-                this.ignoreTextColor = ignoreTextColor;
-                return this;
-            }
-
-            public Builder setIgnoreUnderline(boolean ignoreUnderline) {
-                this.ignoreUnderline = ignoreUnderline;
-                return this;
-            }
-
-            public Builder setIgnoreStrikeThrough(boolean ignoreStrikeThrough) {
-                this.ignoreStrikeThrough = ignoreStrikeThrough;
-                return this;
-            }
-
-            public Builder setIgnoreBold(boolean ignoreBold) {
-                this.ignoreBold = ignoreBold;
-                return this;
-            }
-
-            public Builder setIgnoreItalic(boolean ignoreItalic) {
-                this.ignoreItalic = ignoreItalic;
-                return this;
-            }
-
-            public ComparisonSettings build() {
-                return new ComparisonSettings(
-                    fontMapper,
-                    ignoreCase,
-                    ignoreFontFamily,
-                    ignoreFontSize,
-                    ignoreTextColor,
-                    ignoreUnderline,
-                    ignoreStrikeThrough,
-                    ignoreBold,
-                    ignoreItalic
-                );
-            }
-        }
-
-    }
 }

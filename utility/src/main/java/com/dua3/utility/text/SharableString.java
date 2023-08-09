@@ -28,8 +28,8 @@ public class SharableString implements CharSequence {
     }
 
     @Override
-    public SharedString subSequence(int s, int e) {
-        return new SharedString(base, s, e);
+    public SharedString subSequence(int start, int end) {
+        return new SharedString(base, start, end);
     }
 
     @Override
@@ -43,11 +43,11 @@ public class SharableString implements CharSequence {
     }
 
     @Override
-    public boolean equals(@Nullable Object anObject) {
-        if (this == anObject) {
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (anObject instanceof SharableString anotherString) {
+        if (obj instanceof SharableString anotherString) {
             return base.equals(anotherString.base);
         }
         return false;

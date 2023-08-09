@@ -36,9 +36,9 @@ public class SharedString implements CharSequence {
     }
 
     @Override
-    public SharedString subSequence(int s, int e) {
-        LangUtil.check(e >= s && this.start + e <= this.end);
-        return new SharedString(base, this.start + s, this.start + e);
+    public SharedString subSequence(int start, int end) {
+        LangUtil.check(end >= start && this.start + end <= this.end);
+        return new SharedString(base, this.start + start, this.start + end);
     }
 
     @Override
@@ -62,11 +62,11 @@ public class SharedString implements CharSequence {
     }
 
     @Override
-    public boolean equals(@Nullable Object anObject) {
-        if (this == anObject) {
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (anObject instanceof SharedString anotherString) {
+        if (obj instanceof SharedString anotherString) {
             int n = length();
             if (n == anotherString.length()) {
                 return IntStream.range(0, n).noneMatch(i -> anotherString.charAt(i) != charAt(i));

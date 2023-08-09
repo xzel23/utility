@@ -209,10 +209,10 @@ public abstract class Option<T> {
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Option<?> option = (Option<?>) o;
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Option<?> option = (Option<?>) obj;
         return Arrays.equals(names, option.names);
     }
 

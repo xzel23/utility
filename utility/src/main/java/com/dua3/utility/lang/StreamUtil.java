@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -121,10 +120,10 @@ public final class StreamUtil {
 
     private static class MergeIterator<T> implements Iterator<T> {
 
-        private final Comparator<T> comparator;
+        private final Comparator<? super T> comparator;
         private final List<PeekIterator<T>> iters = new ArrayList<>();
 
-        MergeIterator(Comparator<T> comparator, Collection<Iterator<T>> iters) {
+        MergeIterator(Comparator<? super T> comparator, Collection<Iterator<T>> iters) {
             this.comparator = comparator;
             iters.stream().map(PeekIterator::new).forEach(this.iters::add);
         }
@@ -140,7 +139,7 @@ public final class StreamUtil {
             return iters.stream().min(this::compareNextElement).orElseThrow(NoSuchElementException::new).next();
         }
 
-        private int compareNextElement(PeekIterator<T> i1, PeekIterator<T> i2) {
+        private int compareNextElement(PeekIterator<? extends T> i1, PeekIterator<? extends T> i2) {
             if (!i1.hasNext()) {
                 return 1;
             }

@@ -137,7 +137,7 @@ public class RichTextTest {
         RichText arialSubset = text.wrap(Style.create("AAAAAA+arial", Map.entry(Style.FONT, new Font("AAAAAA+Arial-12"))));
         RichText helvetica = text.wrap(Style.create("arial", Map.entry(Style.FONT, new Font("Helvetica-12"))));
 
-        BiPredicate<RichText, RichText> ignoreColor = RichText.equalizer(RichText.ComparisonSettings.builder().setIgnoreTextColor(true).build());
+        BiPredicate<RichText, RichText> ignoreColor = RichText.equalizer(ComparisonSettings.builder().setIgnoreTextColor(true).build());
         assertTrue(ignoreColor.test(text, text.wrap(Style.RED)));
         assertTrue(ignoreColor.test(text.wrap(Style.BLUE), text.wrap(Style.RED)));
         assertTrue(ignoreColor.test(text.wrap(Style.BLUE), text));
@@ -145,7 +145,7 @@ public class RichTextTest {
         assertFalse(ignoreColor.test(text.wrap(Style.ITALIC), text));
         assertFalse(ignoreColor.test(text, text.wrap(Style.BOLD)));
 
-        BiPredicate<RichText, RichText> ignoreBold = RichText.equalizer(RichText.ComparisonSettings.builder().setIgnoreBold(true).build());
+        BiPredicate<RichText, RichText> ignoreBold = RichText.equalizer(ComparisonSettings.builder().setIgnoreBold(true).build());
         assertTrue(ignoreBold.test(text, text.wrap(Style.BOLD)));
         assertTrue(ignoreBold.test(text.wrap(Style.BOLD), text.wrap(Style.BOLD)));
         assertTrue(ignoreBold.test(text.wrap(Style.BOLD), text));
@@ -153,7 +153,7 @@ public class RichTextTest {
         assertFalse(ignoreBold.test(text.wrap(Style.ITALIC), text));
         assertFalse(ignoreBold.test(text, text.wrap(Style.UNDERLINE)));
 
-        BiPredicate<RichText, RichText> ignoreUnderline = RichText.equalizer(RichText.ComparisonSettings.builder().setIgnoreUnderline(true).build());
+        BiPredicate<RichText, RichText> ignoreUnderline = RichText.equalizer(ComparisonSettings.builder().setIgnoreUnderline(true).build());
         assertTrue(ignoreUnderline.test(text, text.wrap(Style.UNDERLINE)));
         assertTrue(ignoreUnderline.test(text.wrap(Style.UNDERLINE), text.wrap(Style.UNDERLINE)));
         assertTrue(ignoreUnderline.test(text.wrap(Style.UNDERLINE), text));
@@ -161,7 +161,7 @@ public class RichTextTest {
         assertFalse(ignoreUnderline.test(text.wrap(Style.ITALIC), text));
         assertFalse(ignoreUnderline.test(text, text.wrap(Style.BOLD)));
 
-        BiPredicate<RichText, RichText> ignoreStrikeThrough = RichText.equalizer(RichText.ComparisonSettings.builder().setIgnoreStrikeThrough(true).build());
+        BiPredicate<RichText, RichText> ignoreStrikeThrough = RichText.equalizer(ComparisonSettings.builder().setIgnoreStrikeThrough(true).build());
         assertTrue(ignoreStrikeThrough.test(text, text.wrap(Style.LINE_THROUGH)));
         assertTrue(ignoreStrikeThrough.test(text.wrap(Style.LINE_THROUGH), text.wrap(Style.LINE_THROUGH)));
         assertTrue(ignoreStrikeThrough.test(text.wrap(Style.LINE_THROUGH), text));
@@ -169,7 +169,7 @@ public class RichTextTest {
         assertFalse(ignoreStrikeThrough.test(text.wrap(Style.ITALIC), text));
         assertFalse(ignoreStrikeThrough.test(text, text.wrap(Style.BOLD)));
 
-        BiPredicate<RichText, RichText> ignoreItalic = RichText.equalizer(RichText.ComparisonSettings.builder().setIgnoreItalic(true).build());
+        BiPredicate<RichText, RichText> ignoreItalic = RichText.equalizer(ComparisonSettings.builder().setIgnoreItalic(true).build());
         assertTrue(ignoreItalic.test(text, text.wrap(Style.ITALIC)));
         assertTrue(ignoreItalic.test(text.wrap(Style.ITALIC), text.wrap(Style.ITALIC)));
         assertTrue(ignoreItalic.test(text.wrap(Style.ITALIC), text));
@@ -177,7 +177,7 @@ public class RichTextTest {
         assertFalse(ignoreItalic.test(text.wrap(Style.UNDERLINE), text));
         assertFalse(ignoreItalic.test(text, text.wrap(Style.BOLD)));
 
-        BiPredicate<RichText, RichText> ignoreCase = RichText.equalizer(RichText.ComparisonSettings.builder().setIgnoreCase(true).build());
+        BiPredicate<RichText, RichText> ignoreCase = RichText.equalizer(ComparisonSettings.builder().setIgnoreCase(true).build());
         assertTrue(ignoreCase.test(text, upper));
         assertTrue(ignoreCase.test(upper, text));
         assertFalse(ignoreCase.test(text, texts));
@@ -188,7 +188,7 @@ public class RichTextTest {
         assertFalse(ignoreCase.test(text.wrap(Style.UNDERLINE), text));
         assertFalse(ignoreCase.test(text, text.wrap(Style.BOLD)));
 
-        BiPredicate<RichText, RichText> ignoreFontSize = RichText.equalizer(RichText.ComparisonSettings.builder().setIgnoreFontSize(true).build());
+        BiPredicate<RichText, RichText> ignoreFontSize = RichText.equalizer(ComparisonSettings.builder().setIgnoreFontSize(true).build());
         assertTrue(ignoreFontSize.test(text, text));
         assertTrue(ignoreFontSize.test(bigger, bigger));
         assertTrue(ignoreFontSize.test(text, bigger));
@@ -202,7 +202,7 @@ public class RichTextTest {
         assertFalse(ignoreFontSize.test(text.wrap(Style.UNDERLINE), text));
         assertFalse(ignoreFontSize.test(text, text.wrap(Style.BOLD)));
 
-        BiPredicate<RichText, RichText> ignoreFontFamily = RichText.equalizer(RichText.ComparisonSettings.builder().setIgnoreFontFamily(true).build());
+        BiPredicate<RichText, RichText> ignoreFontFamily = RichText.equalizer(ComparisonSettings.builder().setIgnoreFontFamily(true).build());
         assertTrue(ignoreFontFamily.test(text, text));
         assertTrue(ignoreFontFamily.test(bigger, bigger));
         assertTrue(ignoreFontFamily.test(serif, serif));
@@ -216,7 +216,7 @@ public class RichTextTest {
         assertFalse(ignoreFontFamily.test(sans, sans.wrap(Style.ITALIC)));
 
         Function<String,String> fontMapper = s -> s.replaceFirst("[A-Z]{6}\\+", "");
-        BiPredicate<RichText, RichText> mappedFonts = RichText.equalizer(RichText.ComparisonSettings.builder().setFontMapper(fontMapper).build());
+        BiPredicate<RichText, RichText> mappedFonts = RichText.equalizer(ComparisonSettings.builder().setFontMapper(fontMapper).build());
         assertFalse(ignoreCase.test(arial, arialSubset));
         assertTrue(mappedFonts.test(text, text));
         assertTrue(mappedFonts.test(arial, arial));

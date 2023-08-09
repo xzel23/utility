@@ -132,7 +132,7 @@ public final class XmlUtil {
         return LazySingletonJaxpInstance.INSTANCE;
     }
 
-    private static <T> Consumer<T> consume(LangUtil.ConsumerThrows<T, XMLStreamException> c) {
+    private static <T> Consumer<T> consume(LangUtil.ConsumerThrows<? super T, ? extends XMLStreamException> c) {
         return (T arg) -> {
             try {
                 c.accept(arg);

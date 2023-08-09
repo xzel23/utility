@@ -37,8 +37,8 @@ public class Logger extends AbstractLogger {
     }
 
     @Override
-    protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String msg, @Nullable Object[] arguments, @Nullable Throwable throwable) {
-        handlers.forEach(handler -> handler.handleEntry(new LogEntry(this, Instant.now(), level, marker, msg, arguments, throwable)));
+    protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object[] arguments, @Nullable Throwable throwable) {
+        handlers.forEach(handler -> handler.handleEntry(new LogEntry(this, Instant.now(), level, marker, messagePattern, arguments, throwable)));
     }
 
     @Override

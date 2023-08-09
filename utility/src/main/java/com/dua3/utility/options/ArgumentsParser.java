@@ -185,12 +185,12 @@ public class ArgumentsParser {
     /**
      * Define a new option.
      *
-     * @param names  the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
+     * @param names  the (alternative) option names (i.e. "-h", "--help"); at least one name must be given.
      * @param mapper the mapper used to convert string arguments to the target type
      * @param <T>    the generic type of the option
      * @return the option
      */
-    public <T> StandardOption<T> option(Function<String, T> mapper, String... names) {
+    public <T> StandardOption<T> option(Function<String, ? extends T> mapper, String... names) {
         return addOption(StandardOption.create(mapper, names));
     }
 

@@ -519,7 +519,7 @@ public final class SwingUtil {
      * @param test             Predicate to decide whether dropping is allowed (should execute fast; called frequently during drag)
      * @param exceptionHandler handler to call when an exception is caught
      */
-    public static void addDropTextSupport(JComponent component, Consumer<String> action, Predicate<String> test, Consumer<? super Exception> exceptionHandler) {
+    public static void addDropTextSupport(JComponent component, Consumer<? super String> action, Predicate<? super String> test, Consumer<? super Exception> exceptionHandler) {
         component.setDropTarget(new DropTarget() {
             @Override
             public synchronized void dragEnter(DropTargetDragEvent evt) {

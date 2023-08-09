@@ -328,10 +328,10 @@ public final class DbUtil {
      * @return stream of objects created from the result set items
      * @param <T> stream item type
      */
-    public static <T> Stream<T> stream(ResultSet rs, Function<ResultSet, T> mapper, AutoCloseable... closeables) {
+    public static <T> Stream<T> stream(ResultSet rs, Function<? super ResultSet, ? extends T> mapper, AutoCloseable... closeables) {
         UncheckedCloser closer = rs::close;
-        for (int i = 0; i < closeables.length; i++) {
-            closer = closer.nest(closeables[i]);
+        for (AutoCloseable closeable : closeables) {
+            closer = closer.nest(closeable);
         }
         return StreamSupport.stream(new Spliterators.AbstractSpliterator<T>(
                 Long.MAX_VALUE, Spliterator.ORDERED) {

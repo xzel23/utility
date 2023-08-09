@@ -32,9 +32,9 @@ import java.util.function.UnaryOperator;
 public class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LoggerFactory.getLogger(ComboBoxEx.class);
 
-    private Comparator<? super T> comparator = null;
+    private Comparator<? super T> comparator;
     private final UnaryOperator<T> edit;
-    private final Supplier<T> add;
+    private final Supplier<? extends T> add;
     private final BiPredicate<ComboBoxEx<T>, T> remove;
     private final Function<T, String> format;
     private final DefaultComboBoxModel<T> model;
@@ -47,7 +47,7 @@ public class ComboBoxEx<T> extends JPanel {
      * Constructor.
      */
     @SafeVarargs
-    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, T... items) {
+    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<? extends T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, T... items) {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         this.format = format;
@@ -178,6 +178,7 @@ public class ComboBoxEx<T> extends JPanel {
         return rc == JOptionPane.YES_OPTION;
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static <T> boolean alwaysRemoveSelectedItem(ComboBoxEx<T> cb, T item) {
         return true;
     }
