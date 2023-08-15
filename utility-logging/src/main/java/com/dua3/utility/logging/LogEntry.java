@@ -13,12 +13,26 @@ import java.io.StringWriter;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents a log entry with information about the log message, time, level, logger, and optional marker and throwable.
+ */
 public record LogEntry(Logger logger, Instant time, Level level, @Nullable Marker marker, String msg,
                        @Nullable Object[] arguments, @Nullable Throwable throwable) implements Serializable {
+    /**
+     * Formats the message using MessageFormatter.basicArrayFormat.
+     *
+     * @return the formatted message as a string.
+     */
     public String formatMessage() {
         return MessageFormatter.basicArrayFormat(msg, arguments);
     }
 
+    /**
+     * Formats the throwable object by printing its stack trace.
+     * If the throwable object is null, it returns an empty string.
+     *
+     * @return the formatted stack trace as a string.
+     */
     public String formatThrowable() {
         if (throwable == null) {
             return "";

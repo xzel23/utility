@@ -743,7 +743,7 @@ public final class IoUtil {
         if (fs.getSeparator().equals("\\")) {
             // glob characters can't be escaped in this case
             firstGlobCharIndex = findFirstGlobChar(pattern);
-            lastDirSeparatorIndex = pattern.lastIndexOf("/", firstGlobCharIndex);
+            lastDirSeparatorIndex = pattern.lastIndexOf('/', firstGlobCharIndex);
         } else {
             // this should work for all path separators that aren't backslashes
             firstGlobCharIndex = findFirstUnescapedGlobChar(pattern);

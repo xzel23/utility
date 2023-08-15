@@ -88,6 +88,10 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
         listeners.forEach(listener -> listener.entry(entry, replaced));
     }
 
+    /**
+     * Clear the LogBuffer.
+     * Synchronized method that clears the buffer and notifies all registered LogBufferListeners to clear their logs as well.
+     */
     public void clear() {
         synchronized (buffer) {
             buffer.clear();
@@ -95,32 +99,72 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
         listeners.forEach(LogBufferListener::clear);
     }
 
+    /**
+     * Get the List of LogEntries in the LogBuffer.
+     * Synchronized method that returns a List of LogEntries from the buffer.
+     *
+     * @return a List of LogEntries in the LogBuffer
+     */
     public List<LogEntry> entries() {
         synchronized (buffer) {
             return List.of(buffer.toArray(LogEntry[]::new));
         }
     }
 
+    /**
+     * Get the LogEntry at the specified index in the LogBuffer.
+     *
+     * @param i the index of the LogEntry to retrieve
+     * @return the LogEntry at the specified index
+     */
     public LogEntry get(int i) {
         return buffer.get(i);
     }
 
+    /**
+     * Returns the size of the LogBuffer.
+     *
+     * @return the number of LogEntries in the LogBuffer.
+     */
     public int size() {
         return buffer.size();
     }
 
+    /**
+     * Returns a view of the portion of this LogBuffer between the specified
+     * {@code fromIndex}, inclusive, and {@code toIndex}, exclusive.
+     *
+     * @param fromIndex the index of the first LogEntry to be included in the
+     *                  returned subList.
+     * @param toIndex the index after the last LogEntry to be included in the
+     *                returned subList.
+     * @return a view of the specified range within this LogBuffer.
+     * @throws IndexOutOfBoundsException if {@code fromIndex} or {@code toIndex} is
+     *         out of range (fromIndex &lt; 0 || toIndex &gt; size() || fromIndex &gt; toIndex).
+     */
     public List<LogEntry> subList(int fromIndex, int toIndex) {
         synchronized (buffer) {
             return new ArrayList<>(buffer.subList(fromIndex, toIndex));
         }
     }
 
+    /**
+     * Returns a List containing all the LogEntries in this LogBuffer.
+     *
+     * @return a List containing all the LogEntries in this LogBuffer.
+     */
     public List<LogEntry> getLogEntries() {
         synchronized (buffer) {
             return new ArrayList<>(buffer);
         }
     }
 
+    /**
+     * Appends all LogEntries in this LogBuffer to the specified Appendable.
+     *
+     * @param app the Appendable to which the LogEntries will be appended
+     * @throws IOException if an I/O error occurs while appending the LogEntries
+     */
     public void appendTo(Appendable app) throws IOException {
         for (LogEntry entry : getLogEntries()) {
             app.append(entry.toString()).append("\n");

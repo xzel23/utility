@@ -96,6 +96,12 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         return new HtmlConversionOption(c -> c.setDefaultMapper(mapper));
     }
 
+    /**
+     * Set the refineStyleProperties function which refines the style properties of the converted HTML.
+     *
+     * @param refineStyleProperties the function to set as the refineStyleProperties function
+     * @return HtmlConversionOption that sets the refineStyleProperties function
+     */
     public static HtmlConversionOption refineStyleProperties(UnaryOperator<Map<String, Object>> refineStyleProperties) {
         return new HtmlConversionOption(c -> c.setRefineStyleProperties(refineStyleProperties));
     }

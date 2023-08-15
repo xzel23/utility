@@ -57,7 +57,7 @@ public class ArgumentsDialog extends JDialog {
      * onOk and onCancel, which are executed when the corresponding buttons are clicked.
      * <p>
      * The panel is constructed with a GridBagLayout and adds JLabels and JTextFields for each option defined
-     * by the parser. The user inputs are stored in a Map<Option<?>, OptionInput> for easy retrieval.
+     * by the parser. The user inputs are stored in a {@code Map<Option<?>, OptionInput>} for easy retrieval.
      * <p>
      * Example usage:
      * ArgumentsPanel panel = new ArgumentsPanel(parser, () -> {
@@ -66,8 +66,10 @@ public class ArgumentsDialog extends JDialog {
      *   // Handle Cancel button click
      * });
      * <p>
+     * {@code
      * Map<Option<?>, OptionInput> inputs = panel.getInputs();
      * Arguments arguments = panel.getArguments();
+     * }
      */
     public static class ArgumentsPanel extends JPanel {
         /**

@@ -38,6 +38,7 @@ public final class SimpleOption<T> extends Option<T> {
     /**
      * Creates a new instance of SimpleOption with the given mapper function and names.
      *
+     * @param <T> the option's argument type.
      * @param mapper the mapping function to the target type
      * @param names  names for the flag, at least one
      * @return a new instance of SimpleOption with the specified mapper function and names
