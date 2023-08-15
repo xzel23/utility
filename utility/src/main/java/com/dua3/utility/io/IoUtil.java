@@ -8,6 +8,7 @@ package com.dua3.utility.io;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.TextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +31,16 @@ import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -566,7 +571,7 @@ public final class IoUtil {
      * @return AutoCloseable instance (calling close() will reset standard output streams)
      * @throws IOException if an error occurs
      */
-    public static AutoCloseable redirectStandardStreams(Path path, Cleaner cleaner) throws IOException {
+    public static synchronized AutoCloseable redirectStandardStreams(Path path, Cleaner cleaner) throws IOException {
         // IMPORTANT: create the cleanup object before redirecting system streams!
         Runnable cleanup = new CleanupSystemStreams();
 
@@ -716,6 +721,91 @@ public final class IoUtil {
         public void run() {
             System.setOut(sOut);
             System.setErr(sErr);
+        }
+    }
+
+    /**
+     * Generate a stream of paths matching a glob pattern.
+     * For details on pattern syntax refer to the {@link PathMatcher} documentation.
+     * <p>
+     * Make sure to close the stream after processing.
+     *
+     * @param base    the base directory
+     * @param pattern the pattern
+     * @return stream of matching paths.
+     * @throws IOException if an I/O error is thrown when accessing the file system
+     */
+    public static Stream<Path> glob(Path base, String pattern) throws IOException {
+        FileSystem fs = base.getFileSystem();
+
+        // Find the last path separator before the first glob character
+        int firstGlobCharIndex;
+        int lastDirSeparatorIndex;
+        if (fs.getSeparator().equals("\\")) {
+            // glob characters can't be escaped in this case
+            firstGlobCharIndex = findFirstGlobChar(pattern);
+            lastDirSeparatorIndex = pattern.lastIndexOf("/", firstGlobCharIndex);
+        } else {
+            // this should work for all path separators that aren't backslashes
+            firstGlobCharIndex = findFirstUnescapedGlobChar(pattern);
+            lastDirSeparatorIndex = pattern.lastIndexOf(fs.getSeparator(), firstGlobCharIndex);
+        }
+
+        // Find fixed part prefix of glob pattern
+        String fixedPart = (lastDirSeparatorIndex == -1)
+                ? ""
+                : pattern.substring(0, lastDirSeparatorIndex);
+
+        Path fixedPath  = fs.getPath(fixedPart).normalize();
+        if (!fixedPath.isAbsolute()) {
+            fixedPath = base.resolve(fixedPath).toAbsolutePath().normalize();
+        }
+
+        String globPart = (lastDirSeparatorIndex == -1)
+                ? pattern
+                : pattern.substring(lastDirSeparatorIndex);
+
+        String globPattern = (fixedPath+globPart).replace(fs.getSeparator(), "/");
+
+        PathMatcher pathMatcher = fs.getPathMatcher("glob:" + globPattern);
+        return Files.walk(fixedPath).filter(pathMatcher::matches);
+    }
+
+    // Helper method to check for presence of glob symbols
+    private static boolean containsGlobSymbol(String part) {
+        return TextUtil.containsAnyOf(part, "*?[{");
+    }
+
+    private static int findFirstGlobChar(String pattern) {
+        return TextUtil.indexOfFirst(pattern, "*?[{");
+    }
+
+    private static int findFirstUnescapedGlobChar(String pattern) {
+        for (int i = 0; i < pattern.length(); i++) {
+            char c = pattern.charAt(i);
+
+            if (c == '\\') {
+                // Skip over the escaped character.
+                i++;
+            } else if (c == '*' || c == '?' || c == '[' || c == '{') {
+                return i;
+            }
+        }
+
+        return pattern.length();
+    }
+
+    /**
+     * Generate a list of paths matching a glob pattern, analogue to {@link #glob(Path, String)}.
+     *
+     * @param base    the base directory
+     * @param pattern the pattern
+     * @return stream of matching paths.
+     * @throws IOException if an I/O error is thrown when accessing the file system
+     */
+    public static List<Path> findFiles(Path base, String pattern) throws IOException {
+        try (var stream = glob(base, pattern)) {
+            return stream.toList();
         }
     }
 }

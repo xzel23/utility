@@ -1,5 +1,5 @@
 rootProject.name = "dua3-utility"
-val projectVersion = "11.0.0-M10-SNAPSHOT"
+val projectVersion = "11.0.0-M10.1"
 
 include("utility")
 include("utility-db")
@@ -24,6 +24,7 @@ dependencyResolutionManagement {
             version("junit", "5.10.0")
             version("log4j", "2.20.0")
             version("slf4j", "2.0.7")
+            version("jimfs", "1.2")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
 
@@ -36,6 +37,8 @@ dependencyResolutionManagement {
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
             library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
             library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")
+
+            library("jimfs", "com.google.jimfs", "jimfs").version("1.3.0");
         }
     }
 

@@ -176,4 +176,9 @@
         <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE"/>
     </Match>
 
+    <Match>
+        <Class name="com.dua3.utility.io.IoUtilTest" method="glob_absoluteBase_absolutePattern"/>
+        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+    </Match>
+
 </FindBugsFilter>

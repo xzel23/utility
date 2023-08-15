@@ -177,6 +177,7 @@ the parameter.
 - make FontDef Cloneable
 - RichText.equalizer() returns a customizable equalizer for comparing texts ignoring certain properties
 - RichText.wrap() combines styles instead of replacing them
+- IOUtil.glob() and IOUtil.listFiles() to search directory trees
 
 ### 10.3.4
 
