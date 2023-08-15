@@ -323,8 +323,9 @@ public final class XmlUtil {
     /**
      * Pretty print W3C Document.
      *
-     * @param writer   the {@link Writer} to use
-     * @param document the document
+     * @param writer   the {@link Writer} to use for printing the formatted XML
+     * @param document the document to be pretty printed
+     * @throws IOException if an I/O error occurs while writing the formatted XML to the writer
      */
     public void prettyPrint(Writer writer, Document document) throws IOException {
         formatNode(writer, document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + TextUtil.LINE_END_SYSTEM);
@@ -334,8 +335,9 @@ public final class XmlUtil {
     /**
      * Pretty print W3C Document.
      *
-     * @param out      the {@link OutputStream} to use
-     * @param document the document
+     * @param out      the {@link OutputStream} to use for printing the formatted XML
+     * @param document the document to be pretty printed
+     * @throws IOException if an I/O error occurs while writing the formatted XML to the output stream
      */
     public void prettyPrint(OutputStream out, Document document) throws IOException {
         prettyPrint(out, document, StandardCharsets.UTF_8);
@@ -344,9 +346,10 @@ public final class XmlUtil {
     /**
      * Pretty print W3C Document.
      *
-     * @param out      the {@link OutputStream} to use
-     * @param document the document
+     * @param out      the {@link OutputStream} to use for printing the formatted XML
+     * @param document the document to be pretty printed
      * @param cs       the {@link Charset} to use
+     * @throws IOException if an I/O error occurs while writing the formatted XML to the output stream
      */
     public void prettyPrint(OutputStream out, Document document, Charset cs) throws IOException {
         prettyPrint(new OutputStreamWriter(out, cs), document);
@@ -465,6 +468,7 @@ public final class XmlUtil {
      *
      * @param writer the {@link Writer} to use
      * @param xml    the XML text
+     * @throws IOException if an I/O error occurs
      */
     public void prettyPrint(Writer writer, String xml) throws IOException {
         try {
@@ -478,8 +482,9 @@ public final class XmlUtil {
     /**
      * Pretty print XML. If the document cannot be parsed, the unchanged text is written.
      *
-     * @param out the {@link OutputStream} to use
-     * @param xml the XML text
+     * @param out    the {@link OutputStream} to use
+     * @param xml    the XML text
+     * @throws IOException if an I/O error occurs
      */
     public void prettyPrint(OutputStream out, String xml) throws IOException {
         prettyPrint(out, xml, StandardCharsets.UTF_8);
@@ -491,6 +496,7 @@ public final class XmlUtil {
      * @param out the {@link OutputStream} to use
      * @param xml the XML text
      * @param cs  the {@link Charset} to use
+     * @throws IOException if an I/O error occurs
      */
     public void prettyPrint(OutputStream out, String xml, Charset cs) throws IOException {
         try {

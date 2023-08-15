@@ -9,6 +9,10 @@ import java.io.PrintStream;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * The ConsoleHandler class is an implementation of the LogEntryHandler interface.
+ * It handles log entries by writing them to the console.
+ */
 public class ConsoleHandler implements LogEntryHandler {
     private static final String NEWLINE = "%n".formatted();
     private static final Pair<String, String> NO_ESCAPE_SEQUENCES = Pair.of("", "");
@@ -17,6 +21,12 @@ public class ConsoleHandler implements LogEntryHandler {
     private final PrintStream out;
     private final Map<Level, Pair<String, String>> brackets = new EnumMap<>(Level.class);
 
+    /**
+     * Constructs a ConsoleHandler with the specified PrintStream and colored flag.
+     *
+     * @param out     the PrintStream to which log messages will be written
+     * @param colored flag indicating whether to use colored brackets for different log levels
+     */
     public ConsoleHandler(PrintStream out, boolean colored) {
         this.out = out;
         if (colored) {

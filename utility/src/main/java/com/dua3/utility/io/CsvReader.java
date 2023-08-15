@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
 
 /**
  * A class that reads data from CSV files.
+ * <p>
+ * This class extends the CsvIo class and provides methods for reading CSV data from various sources.
  */
 public class CsvReader extends CsvIo {
 
@@ -54,6 +56,15 @@ public class CsvReader extends CsvIo {
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
 
+    /**
+     * A utility class for reading CSV files.
+     *
+     * @param rowBuilder  the row builder for creating CSV rows
+     * @param reader      the buffered reader for reading the CSV file
+     * @param source      the optional URI of the CSV file
+     * @param options     the arguments for configuring the CSV reader
+     * @throws IOException if an I/O error occurs while reading the CSV file
+     */
     public CsvReader(RowBuilder rowBuilder, BufferedReader reader, @Nullable URI source, Arguments options)
             throws IOException {
         super(options);
@@ -101,15 +112,42 @@ public class CsvReader extends CsvIo {
         patternField = Pattern.compile(regexField);
     }
 
+    /**
+     * Creates a new instance of `CsvReader`.
+     *
+     * @param builder  the row builder for creating CSV rows
+     * @param reader      the buffered reader for reading the CSV file
+     * @param options     the arguments for configuring the CSV reader
+     * @return a new instance of `CsvReader`
+     * @throws IOException if an I/O error occurs while reading the CSV file
+     */
     public static CsvReader create(RowBuilder builder, BufferedReader reader, Arguments options) throws IOException {
         return new CsvReader(builder, reader, null, options);
     }
 
+    /**
+     * Creates a new instance of `CsvReader`.
+     *
+     * @param builder  the row builder for creating CSV rows
+     * @param path      the path to the CSV file
+     * @param options     the arguments for configuring the CSV reader
+     * @return a new instance of `CsvReader`
+     * @throws IOException if an I/O error occurs while reading the CSV file
+     */
     public static CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
         Charset cs = IoOptions.getCharset(options);
         return create(builder, Files.newBufferedReader(path, cs), options);
     }
 
+    /**
+     * Creates a new instance of `CsvReader`.
+     *
+     * @param builder  the row builder for creating CSV rows
+     * @param in       the input stream of the CSV data
+     * @param options  the arguments for configuring the CSV reader
+     * @return a new instance of `CsvReader`
+     * @throws IOException if an I/O error occurs while reading the CSV data
+     */
     public static CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
         // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
         // selection in options)
@@ -181,18 +219,40 @@ public class CsvReader extends CsvIo {
         return lineNumber;
     }
 
+    /**
+     * Returns the row number.
+     *
+     * @return the row number
+     */
     public int getRowNumber() {
         return rowNumber;
     }
 
+    /**
+     * Returns the number of rows read.
+     *
+     * @return the number of rows read
+     */
     public int getRowsRead() {
         return rowsRead;
     }
 
+    /**
+     * Returns the source URI.
+     *
+     * @return the source URI
+     */
     private URI getSource() {
         return source;
     }
 
+    /**
+     * Ignores the specified number of rows in a file.
+     *
+     * @param rowsToIgnore the number of rows to ignore
+     * @return the number of rows actually ignored
+     * @throws IOException if an I/O error occurs
+     */
     public int ignoreRows(int rowsToIgnore) throws IOException {
         int ignored = 0;
         while (ignored < rowsToIgnore) {
@@ -203,10 +263,21 @@ public class CsvReader extends CsvIo {
         return ignored;
     }
 
+    /**
+     * Reads all rows in a file.
+     *
+     * @return the number of rows read
+     * @throws IOException if an I/O error occurs
+     */
     public int readAll() throws IOException {
         return readRows(0);
     }
 
+    /**
+     * Reads the column names from the file.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     public void readColumnNames() throws IOException {
         ListRowBuilder rb = new ListRowBuilder();
         readRow(rb);

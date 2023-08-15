@@ -110,6 +110,15 @@ public class Codecs {
         };
     }
 
+    /**
+     * Get {@link Codec} for a {@link Map.Entry}.
+     *
+     * @param <K>     the type of map keys
+     * @param <V>     the type of map values
+     * @param codecK  the codec for keys
+     * @param codecV  the codec for values
+     * @return the map entry codec
+     */
     public static <K, V> Codec<Map.Entry<K, V>> mapEntryCodec(Codec<K> codecK, Codec<? extends V> codecV) {
         return createCodec(
                 Map.Entry.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">",
@@ -173,11 +182,27 @@ public class Codecs {
         };
     }
 
+    /**
+     * Register a codec for a specific class.
+     *
+     * @param <T>  the class type
+     * @param cls  the class to register the codec for
+     * @param enc  the encoder for the class
+     * @param dec  the decoder for the class
+     * @throws IllegalArgumentException if a codec is already registered for the class
+     */
     public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
         Object prev = codecs.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
         LangUtil.check(prev == null, "Codec already registered for class: " + cls);
     }
 
+    /**
+     * Retrieves the codec registered for a specific class.
+     *
+     * @param <T>  the class type
+     * @param cls  the class to retrieve the codec for
+     * @return an Optional containing the codec, or an empty Optional if no codec is registered for the class
+     */
     @SuppressWarnings("unchecked")
     public <T> Optional<Codec<T>> get(Class<T> cls) {
         return Optional.ofNullable((Codec<T>) codecs.get(cls.getCanonicalName()));

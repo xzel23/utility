@@ -26,16 +26,41 @@ public final class StandardOption<T> extends Option<T> {
         super(mapper, formatter, names);
     }
 
+    /**
+     * Create a new instance of StandardOption.
+     *
+     * @param type  the target type of the option
+     * @param names the names to be used on the command line for this option
+     * @param <T>   the type parameter
+     * @return a new instance of StandardOption
+     */
     public static <T> StandardOption<T> create(Class<? extends T> type,
                                                String... names) {
         return create(s -> DataUtil.convert(s, type), v -> DataUtil.convert(v, String.class), names);
     }
 
+    /**
+     * Create a new instance of StandardOption.
+     *
+     * @param mapper a function that converts the command line value to the target type of the option
+     * @param names  the names to be used on the command line for this option
+     * @param <T>    the type parameter
+     * @return a new instance of StandardOption
+     */
     public static <T> StandardOption<T> create(Function<String, ? extends T> mapper,
                                                String[] names) {
         return new StandardOption<>(mapper, Object::toString, names);
     }
 
+    /**
+     * Create a new instance of StandardOption.
+     *
+     * @param mapper    a function that converts the command line value to the target type of the option
+     * @param formatter a function that formats the target type of the option to a string
+     * @param names     the names to be used on the command line for this option
+     * @param <T>       the type parameter
+     * @return a new instance of StandardOption
+     */
     public static <T> StandardOption<T> create(Function<String, T> mapper,
                                                Function<? super T, String> formatter,
                                                String[] names) {

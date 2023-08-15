@@ -32,6 +32,14 @@ public final class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
         this.fileType = fileType;
     }
 
+    /**
+     * Returns a list of SwingFileFilters based on the given OpenMode and class.
+     *
+     * @param <T> the generic parameter for {@link FileType}
+     * @param mode the OpenMode to determine the filters for
+     * @param cls the class type to filter
+     * @return a list of SwingFileFilters with the specified mode and class
+     */
     public static <T> List<SwingFileFilter<T>> getFilters(OpenMode mode, Class<T> cls) {
         List<FileType<T>> fileTypes = FileType.getFileTypes(mode, cls);
         List<SwingFileFilter<T>> filters = new ArrayList<>(fileTypes.size());
@@ -56,6 +64,11 @@ public final class SwingFileFilter<T> extends javax.swing.filechooser.FileFilter
         return fileType.getName();
     }
 
+    /**
+     * Returns the FileType associated with this instance.
+     *
+     * @return the FileType associated with this instance
+     */
     public FileType<T> getFileType() {
         return fileType;
     }

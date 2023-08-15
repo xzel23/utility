@@ -29,6 +29,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+/**
+ * A custom JPanel-based ComboBox component with additional functionality for editing, adding, and removing items.
+ *
+ * @param <T> the type of the items in the ComboBox
+ */
 public class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LoggerFactory.getLogger(ComboBoxEx.class);
 
@@ -177,6 +182,7 @@ public class ComboBoxEx<T> extends JPanel {
      * Method to be passed as a method reference in the {@code remove} parameter to the ComboBoxEx construvtor.
      * Asks the user to confirm the removal of a selected item from the given ComboBoxEx.
      *
+     * @param <T> the type of the items in the ComboBox
      * @param cb the ComboBoxEx from which the item should be removed
      * @param item the item to be removed
      * @return true if the user confirms the removal, false otherwise
@@ -196,6 +202,7 @@ public class ComboBoxEx<T> extends JPanel {
      * Method to be passed as a method reference in the {@code remove} parameter to the ComboBoxEx construvtor.
      * Always remove selected item from the given ComboBoxEx without asking for user confirmation.
      *
+     * @param <T> the type of the items in the ComboBox
      * @param cb the ComboBoxEx from which the item should be removed
      * @param item the item to be removed
      * @return always returns true to indicate removal is allowed

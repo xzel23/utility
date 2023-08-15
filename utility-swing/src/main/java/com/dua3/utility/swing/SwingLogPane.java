@@ -62,10 +62,22 @@ public class SwingLogPane extends JPanel {
     private Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
 
+    /**
+     * Constructs a new SwingLogPane with the given LogBuffer instance.
+     * This constructor calls another constructor with the defaultColorize method as the second argument.
+     *
+     * @param buffer the LogBuffer instance to be used for log messages
+     */
     public SwingLogPane(LogBuffer buffer) {
         this(buffer, SwingLogPane::defaultColorize);
     }
 
+    /**
+     * Constructs a new SwingLogPane with the given LogBuffer instance and colorize function.
+     *
+     * @param buffer   the LogBuffer instance to be used for log messages
+     * @param colorize the colorize function that determines the color for each log entry
+     */
     public SwingLogPane(LogBuffer buffer, Function<LogEntry, Color> colorize) {
         super(new BorderLayout());
 

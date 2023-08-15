@@ -112,6 +112,14 @@ public class CsvWriter extends CsvIo implements Flushable {
         out.flush();
     }
 
+    /**
+     * Moves to the next row in the CSV writer.
+     * After calling this method, the writer will start writing fields to a new row.
+     * If the previous row had any fields, a line delimiter is added before moving to the next row.
+     * The fieldsInRow variable is reset to 0, indicating that the next field will be the first in the new row.
+     *
+     * @throws IOException if an I/O error occurs while moving to the next row in the CSV writer.
+     */
     public void nextRow() throws IOException {
         out.write(lineDelimiter);
         fieldsInRow = 0;

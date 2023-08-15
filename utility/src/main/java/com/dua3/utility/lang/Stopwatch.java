@@ -291,6 +291,9 @@ public class Stopwatch {
         public abstract String format(Duration d);
     }
 
+    /**
+     * A stopwatch that can be used in a try-with-resources block and automatically closed.
+     */
     public static class AutoCloseableStopWatch extends Stopwatch implements AutoCloseable {
         private final Consumer<? super Stopwatch> onClose;
 

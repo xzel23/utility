@@ -35,11 +35,27 @@ public final class SimpleOption<T> extends Option<T> {
         arity(1, 1);
     }
 
+    /**
+     * Creates a new instance of SimpleOption with the given mapper function and names.
+     *
+     * @param mapper the mapping function to the target type
+     * @param names  names for the flag, at least one
+     * @return a new instance of SimpleOption with the specified mapper function and names
+     */
     public static <T> SimpleOption<T> create(Function<String, ? extends T> mapper,
                                              String... names) {
         return new SimpleOption<>(mapper, Object::toString, names);
     }
 
+    /**
+     * Create a new SimpleOption with the given mapper, formatter, and names.
+     *
+     * @param mapper    the mapping function to the target type
+     * @param formatter the function to format the target type as a string
+     * @param names     the names for the flag, at least one
+     * @param <T>       the type of the target value
+     * @return a new SimpleOption
+     */
     public static <T> SimpleOption<T> create(Function<String, ? extends T> mapper,
                                              Function<? super T, String> formatter,
                                              String... names) {
