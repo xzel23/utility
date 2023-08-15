@@ -148,6 +148,23 @@ public class IoUtilTest {
     }
 
     @Test
+    void glob_relativeBase_relativePatternFileInBaseDir() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+
+        // Setup directory structure in mock file system
+        Files.createDirectories(fs.getPath("/foo/bar/baz"));
+        Files.createFile(fs.getPath("/foo/bar/baz/file.txt"));
+        Files.createFile(fs.getPath("/foo/bar/file.txt"));
+        Files.createFile(fs.getPath("/foo/file.txt"));
+
+        Stream<Path> resultStream = IoUtil.glob(fs.getPath("/foo"), "*.txt");
+        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+
+        assertTrue(resultPaths.size() == 1);
+        assertTrue(resultPaths.get(0).toString().equals("/foo/file.txt"));
+    }
+
+    @Test
     void glob_matching_nonmatching_files() throws IOException {
         FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
 
@@ -230,6 +247,23 @@ public class IoUtilTest {
 
         assertTrue(resultPaths.size() == 1);
         assertTrue(resultPaths.get(0).toString().equals("C:\\foo\\bar\\baz\\file.txt"));
+    }
+
+    @Test
+    void glob_relativeBase_relativePatternFileInBaseDir_Windows() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
+
+        // Setup directory structure in mock file system
+        Files.createDirectories(fs.getPath("C:/foo/bar/baz"));
+        Files.createFile(fs.getPath("C:/foo/bar/baz/file.txt"));
+        Files.createFile(fs.getPath("C:/foo/bar/file.txt"));
+        Files.createFile(fs.getPath("C:/foo/file.txt"));
+
+        Stream<Path> resultStream = IoUtil.glob(fs.getPath("C:/foo"), "*.txt");
+        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+
+        assertTrue(resultPaths.size() == 1);
+        assertTrue(resultPaths.get(0).toString().equals("C:\\foo\\file.txt"));
     }
 
     @Test

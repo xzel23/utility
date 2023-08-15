@@ -761,7 +761,7 @@ public final class IoUtil {
         }
 
         String globPart = (lastDirSeparatorIndex == -1)
-                ? pattern
+                ? "/"+pattern
                 : pattern.substring(lastDirSeparatorIndex);
 
         String globPattern = (fixedPath+globPart).replace(fs.getSeparator(), "/");
