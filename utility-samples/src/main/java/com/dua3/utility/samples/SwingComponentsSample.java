@@ -141,15 +141,7 @@ public class SwingComponentsSample extends JFrame {
         // -- SwingLogPane
 
         // setup logging
-        ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
-        if (!(loggerFactory instanceof com.dua3.utility.logging.LoggerFactory)) {
-            throw new IllegalStateException("wrong logging implementation!");
-        }
-        LogBuffer buffer = ((com.dua3.utility.logging.LoggerFactory) loggerFactory).getLogBuffer()
-                .orElseThrow(() -> new IllegalStateException("buffer not configured"));
-
-        // create the log pane
-        SwingLogPane logPane = new SwingLogPane(buffer);
+        SwingLogPane logPane = createLogPane();
 
         // add components
         add(comboBoxEx, "wrap");
@@ -256,6 +248,19 @@ public class SwingComponentsSample extends JFrame {
             progress.finish(TASK_INDETERMINATE_2, ProgressTracker.State.COMPLETED_SUCCESS);
         });
         thread2.start();
+    }
+
+    private static SwingLogPane createLogPane() {
+        ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
+        if (!(loggerFactory instanceof com.dua3.utility.logging.LoggerFactory)) {
+            throw new IllegalStateException("wrong logging implementation!");
+        }
+        LogBuffer buffer = ((com.dua3.utility.logging.LoggerFactory) loggerFactory).getLogBuffer()
+                .orElseThrow(() -> new IllegalStateException("buffer not configured"));
+
+        // create the log pane
+        SwingLogPane logPane = new SwingLogPane(buffer);
+        return logPane;
     }
 
     private IllegalStateException generateThrowable() {

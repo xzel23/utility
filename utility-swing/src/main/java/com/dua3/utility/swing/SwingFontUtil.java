@@ -124,16 +124,20 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     public List<String> getFamilies(FontTypes types) {
         List<String> fonts = List.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
 
-        boolean mono;
+        boolean monospaced;
         switch (types) {
             case ALL -> {
                 return fonts;
             }
-            case MONOSPACED -> mono = true;
-            case PROPORTIONAL -> mono = false;
+            case MONOSPACED -> monospaced = true;
+            case PROPORTIONAL -> monospaced = false;
             default -> throw new IllegalArgumentException("unknown value: " + types);
         }
 
+        return listFonts(fonts, monospaced);
+    }
+
+    private static List<String> listFonts(List<String> fonts, boolean mono) {
         List<String> list = new ArrayList<>();
 
         String thin = "1 l";
@@ -146,7 +150,6 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
                 list.add(family);
             }
         }
-
         return list;
     }
 

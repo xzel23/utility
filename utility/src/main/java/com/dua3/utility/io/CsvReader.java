@@ -97,6 +97,10 @@ public class CsvReader extends CsvIo {
         String del = Pattern.quote(Character.toString(delimiter));
 
         // create a pattern for matching of csv fields
+        patternField = Pattern.compile(generateFieldRegex(sep, del));
+    }
+
+    private static String generateFieldRegex(String sep, String del) {
         String regexEnd = "(?:" + sep + "|$)";
         // pattern group1: unquoted field
         String regexUnquotedField = "(?:((?:[^" + del + sep + "][^" + sep + "]*)?)" + regexEnd + ")";
@@ -109,7 +113,7 @@ public class CsvReader extends CsvIo {
 
         String regexField = "^(?:" + regexQuotedField + "|" + regexUnquotedField + "|"
                 + regexStartQuotedFieldWithLineBreak + ")";
-        patternField = Pattern.compile(regexField);
+        return regexField;
     }
 
     /**

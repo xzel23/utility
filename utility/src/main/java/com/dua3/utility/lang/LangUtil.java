@@ -680,6 +680,23 @@ public final class LangUtil {
         String extension = IoUtil.getExtension(name);
 
         // build the candidate list
+        List<String> candidates = findCandidateResourceNames(locale, basename, extension);
+
+        // try loading in reverse order
+        for (int i = candidates.size() - 1; i >= 0; i--) {
+            URL url = cls.getResource(candidates.get(i));
+            if (url != null) {
+                LOG.debug("requested resource '{}', localised resource found: {}", name, url);
+                return url;
+            }
+        }
+
+        // nothing found
+        LOG.warn("resource '{}' not found. candidates: {}", name, candidates);
+        throw new MissingResourceException("Resource not found: " + name, cls.getName(), name);
+    }
+
+    private static List<String> findCandidateResourceNames(Locale locale, String basename, String extension) {
         List<String> candidates = new ArrayList<>();
 
         String candidateName = basename;
@@ -702,19 +719,7 @@ public final class LangUtil {
                 }
             }
         }
-
-        // try loading in reverse order
-        for (int i = candidates.size() - 1; i >= 0; i--) {
-            URL url = cls.getResource(candidates.get(i));
-            if (url != null) {
-                LOG.debug("requested resource '{}', localised resource found: {}", name, url);
-                return url;
-            }
-        }
-
-        // nothing found
-        LOG.warn("resource '{}' not found. candidates: {}", name, candidates);
-        throw new MissingResourceException("Resource not found: " + name, cls.getName(), name);
+        return candidates;
     }
 
     /**
