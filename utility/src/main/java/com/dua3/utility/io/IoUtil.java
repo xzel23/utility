@@ -766,6 +766,12 @@ public final class IoUtil {
 
         String globPattern = (fixedPath+globPart).replace(fs.getSeparator(), "/");
 
+        if (firstGlobCharIndex == pattern.length()) {
+            // fastpath: pattern does not contain glob characters
+            Path path = fs.getPath(globPattern);
+            return Files.exists(path) ? Stream.of(path) : Stream.empty();
+        }
+
         PathMatcher pathMatcher = fs.getPathMatcher("glob:" + globPattern);
         return Files.walk(fixedPath).filter(pathMatcher::matches);
     }
@@ -776,7 +782,8 @@ public final class IoUtil {
     }
 
     private static int findFirstGlobChar(String pattern) {
-        return TextUtil.indexOfFirst(pattern, "*?[{");
+        int idx = TextUtil.indexOfFirst(pattern, "*?[{");
+        return idx >= 0 ? idx : pattern.length();
     }
 
     private static int findFirstUnescapedGlobChar(String pattern) {

@@ -200,6 +200,23 @@ public class IoUtilTest {
     }
 
     @Test
+    void glob_no_glob_symbols() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+
+        // Setup directory structure in mock file system
+        Files.createDirectories(fs.getPath("/foo/bar/baz"));
+        Files.createFile(fs.getPath("/foo/bar/baz/file.txt"));
+        Files.createFile(fs.getPath("/foo/bar/file.txt"));
+        Files.createFile(fs.getPath("/foo/file.txt"));
+
+        Stream<Path> resultStream = IoUtil.glob(fs.getPath("/foo"), "bar/baz/file.txt");
+        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+
+        assertTrue(resultPaths.size() == 1);
+        assertTrue(resultPaths.get(0).toString().equals("/foo/bar/baz/file.txt"));
+    }
+
+    @Test
     void glob_Windows() throws IOException {
         FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
 
@@ -299,5 +316,22 @@ public class IoUtilTest {
         assertTrue(resultPaths.contains(fs.getPath("C:/foo/a/a_file.txt")));
         assertTrue(resultPaths.contains(fs.getPath("C:/foo/a/b/b_file.txt")));
         assertTrue(resultPaths.contains(fs.getPath("C:/foo/a/b/c/c_file.txt")));
+    }
+
+    @Test
+    void glob_no_glob_symbols_Windows() throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(Configuration.windows());
+
+        // Setup directory structure in mock file system
+        Files.createDirectories(fs.getPath("C:/foo/bar/baz"));
+        Files.createFile(fs.getPath("C:/foo/bar/baz/file.txt"));
+        Files.createFile(fs.getPath("C:/foo/bar/file.txt"));
+        Files.createFile(fs.getPath("C:/foo/file.txt"));
+
+        Stream<Path> resultStream = IoUtil.glob(fs.getPath("C:/foo"), "bar/baz/file.txt");
+        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+
+        assertTrue(resultPaths.size() == 1);
+        assertTrue(resultPaths.get(0).toString().equals("C:\\foo\\bar\\baz\\file.txt"));
     }
 }
