@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
+
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -50,7 +52,10 @@ public enum StandardFontMapper implements Function<String, String> {
         return replaceKnownAliases(removeSubsetTag(s));
     }
 
-    private static String replaceKnownAliases(String s) {
+    private static String replaceKnownAliases(@Nullable String s) {
+        if (s==null) {
+            return null;
+        }
         return switch (s) {
             case "ArialMT" -> "Arial";
             case "TimesNewRomanPSMT", "Times-Roman" -> "Times New Roman";
@@ -61,8 +66,8 @@ public enum StandardFontMapper implements Function<String, String> {
 
     private static final Pattern PATTERN_SUBSET_TAG = Pattern.compile("^[A-Z]{6}\\+");
 
-    private static String removeSubsetTag(String s) {
-        return PATTERN_SUBSET_TAG.matcher(s).replaceFirst("");
+    private static String removeSubsetTag(@Nullable String s) {
+        return s == null ? s : PATTERN_SUBSET_TAG.matcher(s).replaceFirst("");
     }
 
     private final Function<String, String> mapper;
@@ -72,7 +77,7 @@ public enum StandardFontMapper implements Function<String, String> {
     }
 
     @Override
-    public String apply(String s) {
+    public String apply(@Nullable String s) {
         return mapper.apply(s);
     }
 }
