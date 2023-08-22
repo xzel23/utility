@@ -20,10 +20,21 @@ public class ProgressView<T> implements ProgressTracker<T> {
     private final Function<T, ProgressIndicator> createProgressIndicator;
     private final Map<T, TaskRecord> tasks = Collections.synchronizedMap(new LinkedHashMap<>());
 
+    /**
+     * Constructs a new ProgressView object.
+     *
+     * @param createProgressIndicator a function that creates a ProgressIndicator based on a given task type T.
+     *                                The function must not return null.
+     */
     public ProgressView(Function<T, ProgressIndicator> createProgressIndicator) {
         this.createProgressIndicator = Objects.requireNonNull(createProgressIndicator);
     }
 
+    /**
+     * Adds multiple tasks to the ProgressView.
+     *
+     * @param tasks the tasks to be added to the ProgressView. The tasks must be of type T.
+     */
     @SafeVarargs
     public final void addTasks(T... tasks) {
         for (T task : tasks) {

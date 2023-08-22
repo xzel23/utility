@@ -11,7 +11,18 @@ import java.util.function.Consumer;
  * An OutputStream implementation that splits the input into lines and passes these on to a processor.
  */
 public class LineOutputStream extends OutputStream {
+    /**
+     * The initial size of the buffer.
+     * <p>
+     * This constant represents the initial size (in bytes) of a buffer. It is used to allocate memory for storing data
+     * when initializing a buffer.
+     */
     public static final int INITIAL_BUFFER_SIZE = 128;
+    /**
+     * Maximum buffer size constant.
+     *
+     * This constant represents the maximum size (in bytes) that a buffer can have.
+     */
     public static final int MAX_BUFFER_SIZE = 1024;
 
     private final Object lock = new Object();
@@ -19,6 +30,11 @@ public class LineOutputStream extends OutputStream {
     private byte[] buf;
     private int count;
 
+    /**
+     * Creates a new LineOutputStream.
+     *
+     * @param processor the consumer function to process each line of output.
+     */
     public LineOutputStream(Consumer<String> processor) {
         this.buf = new byte[INITIAL_BUFFER_SIZE];
         this.count = 0;

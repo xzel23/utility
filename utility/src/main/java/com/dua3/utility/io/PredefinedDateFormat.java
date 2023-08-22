@@ -51,6 +51,12 @@ public enum PredefinedDateFormat {
         return DateTimeFormatter.ofPattern(formatPattern, locale);
     }
 
+    /**
+     * Get a DateTimeFormatter based on the specified locale.
+     *
+     * @param locale the locale to use
+     * @return the DateTimeFormatter for the specified locale
+     */
     public DateTimeFormatter getFormatter(Locale locale) {
         return factory.apply(locale);
     }

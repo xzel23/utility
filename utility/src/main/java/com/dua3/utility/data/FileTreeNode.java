@@ -15,13 +15,17 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Represents a node in a file tree.
+ * @param <T> the type of the node
+ */
 @SuppressWarnings("unchecked")
 public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
     private final T parent;
     private final Path path;
     private final boolean lazy;
-    private final List<Consumer<T>> listeners = new ArrayList<>();
+    private final List<Consumer<T>> refreshListeners = new ArrayList<>();
     private List<T> children;
 
     protected FileTreeNode(@Nullable T parent, Path path, boolean lazy) {
@@ -65,10 +69,15 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         return Collections.unmodifiableList(children);
     }
 
+    /**
+     * Refreshes the FileTree by invoking the refresh listeners of all its children.
+     *
+     * @throws UncheckedIOException if an error occurs while refreshing the FileTree
+     */
     public void refresh() {
         try {
             this.children = new ArrayList<>(collectChildren());
-            listeners.forEach(lst -> lst.accept((T) this));
+            refreshListeners.forEach(lst -> lst.accept((T) this));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -99,6 +108,11 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         return parent;
     }
 
+    /**
+     * Returns the file path associated with the FileTree.
+     *
+     * @return the file path associated with the FileTree
+     */
     public Path getFilePath() {
         return path;
     }
@@ -118,20 +132,41 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         return path.hashCode();
     }
 
+    /**
+     * Returns a boolean value indicating if the lazy loading mode is enabled or not.
+     *
+     * @return true if the lazy loading mode is enabled, false otherwise
+     */
     public boolean isLazy() {
         return lazy;
     }
 
+    /**
+     * Returns a boolean value indicating whether this node is a leaf node.
+     *
+     * @return {@code true} if this node is a leaf, {@code false} otherwise
+     */
     public boolean isLeaf() {
         return children().isEmpty();
     }
 
-    public void addRefreshListener(Consumer<T> listener) {
-        listeners.add(Objects.requireNonNull(listener));
+    /**
+     * Adds a refresh listener to be notified when the FileTree is refreshed.
+     *
+     * @param refreshListener the refresh listener to be added
+     * @throws NullPointerException if the refreshListener is null
+     */
+    public void addRefreshListener(Consumer<T> refreshListener) {
+        refreshListeners.add(Objects.requireNonNull(refreshListener));
     }
 
-    public void removeRefreshListener(Consumer<T> listener) {
-        listeners.remove(listener);
+    /**
+     * Removes the specified refresh listener from the list of refresh listeners.
+     *
+     * @param refreshListener the refresh listener to be removed
+     */
+    public void removeRefreshListener(Consumer<T> refreshListener) {
+        refreshListeners.remove(refreshListener);
     }
 
 }
