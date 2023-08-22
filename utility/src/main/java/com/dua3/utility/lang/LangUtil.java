@@ -300,7 +300,7 @@ public final class LangUtil {
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T, R, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, ? extends R, E> f) {
+    public static <T, R, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<? super T, ? extends R, E> f) {
         return arg -> {
             try {
                 return f.apply(arg);

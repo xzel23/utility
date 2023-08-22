@@ -269,7 +269,7 @@ public class Font {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null || obj.getClass() != this.getClass() || obj.hashCode() != this.hashCode()) {
+        if (obj == null || obj.getClass() != getClass() || obj.hashCode() != hashCode()) {
             return false;
         }
 
@@ -345,7 +345,7 @@ public class Font {
      * @return a copy of this font with the bold attribute set to the requested value, or this font if values match
      */
     public Font withBold(boolean flag) {
-        return flag == this.bold ? this : deriveFont(FontDef.bold(flag));
+        return flag == bold ? this : deriveFont(FontDef.bold(flag));
     }
 
     /**
@@ -355,7 +355,7 @@ public class Font {
      * @return a copy of this font with the italic attribute set to the requested value, or this font if values match
      */
     public Font withItalic(boolean flag) {
-        return flag == this.italic ? this : deriveFont(FontDef.italic(flag));
+        return flag == italic ? this : deriveFont(FontDef.italic(flag));
     }
 
     /**
@@ -365,7 +365,7 @@ public class Font {
      * @return a copy of this font with the underline attribute set to the requested value, or this font if values match
      */
     public Font withUnderline(boolean flag) {
-        return flag == this.underline ? this : deriveFont(FontDef.underline(flag));
+        return flag == underline ? this : deriveFont(FontDef.underline(flag));
     }
 
     /**
@@ -375,7 +375,7 @@ public class Font {
      * @return a copy of this font with the strike-through attribute set to the requested value, or this font if values match
      */
     public Font withStrikeThrough(boolean flag) {
-        return flag == this.strikeThrough ? this : deriveFont(FontDef.strikeThrough(flag));
+        return flag == strikeThrough ? this : deriveFont(FontDef.strikeThrough(flag));
     }
 
     /**

@@ -57,14 +57,14 @@ public class SimpleNamespaceContext implements NamespaceContext {
                 prefix = "ns" + i;
             }
             this.defaultPrefix = prefix;
-            this.nsToUri.put(defaultPrefix, defaultUri);
+            nsToUri.put(defaultPrefix, defaultUri);
         } else {
             this.defaultPrefix = null;
         }
 
         // create a map reverse mappings
         this.uriToNs = new HashMap<>();
-        this.nsToUri.forEach((k, v) -> uriToNs.computeIfAbsent(v, k_ -> new ArrayList<>()).add(k));
+        nsToUri.forEach((k, v) -> uriToNs.computeIfAbsent(v, k_ -> new ArrayList<>()).add(k));
     }
 
     @Override

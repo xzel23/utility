@@ -21,7 +21,9 @@ import javax.swing.WindowConstants;
 import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
@@ -127,7 +129,7 @@ public class SwingComponentsSample extends JFrame {
         SwingProgressView<Object> progress = new SwingProgressView<>();
         int max = 100;
 
-        HashMap<Level, Integer> counter = new HashMap<>();
+        Map<Level, Integer> counter = new EnumMap<>(Level.class);
         Arrays.stream(Level.values()).forEach(lvl -> {
             counter.put(lvl, 0);
             progress.start(lvl);

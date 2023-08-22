@@ -66,7 +66,7 @@ public final class RichText
             }
 
             this.start = runStart[0];
-            this.length = run[run.length - 1].getEnd() - this.start;
+            this.length = run[run.length - 1].getEnd() - start;
         }
     }
 
@@ -365,7 +365,7 @@ public final class RichText
         }
 
         // compare contents
-        Iterator<Run> iter1 = this.iterator();
+        Iterator<Run> iter1 = iterator();
         Iterator<Run> iter2 = other.iterator();
         while (iter1.hasNext() && iter2.hasNext()) {
             if (!runEquals.test(iter1.next(), iter2.next())) {
@@ -425,7 +425,7 @@ public final class RichText
      * @return true, if this instance contains the same sequence of characters as {@code other}
      */
     public boolean equalsText(@Nullable CharSequence other) {
-        if (other == null || other.length() != this.length) {
+        if (other == null || other.length() != length) {
             return false;
         }
 
@@ -445,7 +445,7 @@ public final class RichText
      * @return true, if this instance contains the same sequence of characters as {@code other}
      */
     public boolean equalsTextIgnoreCase(@Nullable CharSequence other) {
-        if (other == null || other.length() != this.length) {
+        if (other == null || other.length() != length) {
             return false;
         }
 
@@ -517,7 +517,7 @@ public final class RichText
 
     @Override
     public void appendTo(RichTextBuilder builder) {
-        builder.ensureCapacity(builder.length() + this.length());
+        builder.ensureCapacity(builder.length() + length());
         stream().forEach(builder::appendRun);
     }
 
@@ -880,7 +880,7 @@ public final class RichText
      * @param s the ComparisonSettings to be used for the equality check
      * @return the BiPredicate that checks for equality based on the ComparisonSettings
      */
-    public static BiPredicate<RichText,RichText> equalizer(ComparisonSettings s) {
+    public static BiPredicate<RichText, RichText> equalizer(ComparisonSettings s) {
         return (a, b) -> {
             if (a == b) {
                 return true;
@@ -899,13 +899,13 @@ public final class RichText
                 FontDef fda = runA.getFontDef();
                 FontDef fdb = runB.getFontDef();
 
-                if (    !s.ignoreFontSize() && !Objects.equals(fda.getSize(), fdb.getSize())
-                     || !s.ignoreTextColor() && !Objects.equals(fda.getColor(), fdb.getColor())
-                     || !s.ignoreUnderline() && !Objects.equals(fda.getUnderline(), fdb.getUnderline())
-                     || !s.ignoreStrikeThrough() && !Objects.equals(fda.getStrikeThrough(), fdb.getStrikeThrough())
-                     || !s.ignoreFontWeight() && !Objects.equals(fda.getBold(), fdb.getBold())
-                     || !s.ignoreItalic() && !Objects.equals(fda.getItalic(), fdb.getItalic())
-                     || !s.ignoreFontFamily() && !Objects.equals(s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
+                if (!s.ignoreFontSize() && !Objects.equals(fda.getSize(), fdb.getSize())
+                        || !s.ignoreTextColor() && !Objects.equals(fda.getColor(), fdb.getColor())
+                        || !s.ignoreUnderline() && !Objects.equals(fda.getUnderline(), fdb.getUnderline())
+                        || !s.ignoreStrikeThrough() && !Objects.equals(fda.getStrikeThrough(), fdb.getStrikeThrough())
+                        || !s.ignoreFontWeight() && !Objects.equals(fda.getBold(), fdb.getBold())
+                        || !s.ignoreItalic() && !Objects.equals(fda.getItalic(), fdb.getItalic())
+                        || !s.ignoreFontFamily() && !Objects.equals(s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
                     return false;
                 }
 

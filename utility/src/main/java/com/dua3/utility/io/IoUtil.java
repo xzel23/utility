@@ -755,16 +755,16 @@ public final class IoUtil {
                 ? ""
                 : pattern.substring(0, lastDirSeparatorIndex);
 
-        Path fixedPath  = fs.getPath(fixedPart).normalize();
+        Path fixedPath = fs.getPath(fixedPart).normalize();
         if (!fixedPath.isAbsolute()) {
             fixedPath = base.resolve(fixedPath).toAbsolutePath().normalize();
         }
 
         String globPart = (lastDirSeparatorIndex == -1)
-                ? "/"+pattern
+                ? "/" + pattern
                 : pattern.substring(lastDirSeparatorIndex);
 
-        String globPattern = (fixedPath+globPart).replace(fs.getSeparator(), "/");
+        String globPattern = (fixedPath + globPart).replace(fs.getSeparator(), "/");
 
         if (firstGlobCharIndex == pattern.length()) {
             // fastpath: pattern does not contain glob characters

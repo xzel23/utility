@@ -171,7 +171,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     @Override
     public void appendTo(RichTextBuilder builder) {
-        builder.ensureCapacity(builder.length() + this.length());
+        builder.ensureCapacity(builder.length() + length());
         for (Run run : getRuns()) {
             builder.appendRun(run);
         }
@@ -207,14 +207,14 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
             if (key.equals(RichText.ATTRIBUTE_NAME_STYLE_LIST)) {
                 LangUtil.check(value instanceof List, "attribute '%s' must contain a list", key);
-                attributes.compute(key, (k,oldValue) -> {
+                attributes.compute(key, (k, oldValue) -> {
                     backup.put(key, oldValue);
                     if (oldValue == null) {
                         return new ArrayList<>((Collection<Style>) value);
                     } else {
                         Collection<Style> oldStyles = (Collection<Style>) oldValue;
                         Collection<Style> newStyles = (Collection<Style>) value;
-                        LinkedHashSet<Style> styles = new LinkedHashSet<>(oldStyles.size()+ newStyles.size());
+                        LinkedHashSet<Style> styles = new LinkedHashSet<>(oldStyles.size() + newStyles.size());
                         styles.addAll(oldStyles);
                         styles.addAll(newStyles);
                         return new ArrayList<>(styles);

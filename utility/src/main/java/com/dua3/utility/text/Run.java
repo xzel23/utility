@@ -119,7 +119,7 @@ public final class Run implements AttributedCharSequence {
      * @return index into base sequence
      */
     int convertIndex(int baseIndex) {
-        return baseIndex - this.start;
+        return baseIndex - start;
     }
 
     /**

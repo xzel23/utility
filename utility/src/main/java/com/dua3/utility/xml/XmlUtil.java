@@ -22,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
@@ -143,7 +144,7 @@ public final class XmlUtil {
     }
 
     private static void skipWhitespace(XMLEventReader reader) throws XMLStreamException {
-        while (reader.hasNext() && reader.peek().getEventType() == XMLEvent.SPACE) {
+        while (reader.hasNext() && reader.peek().getEventType() == XMLStreamConstants.SPACE) {
             reader.next();
         }
     }
@@ -383,7 +384,7 @@ public final class XmlUtil {
                     hasChildren = false;
                     level++;
                     QName seName = se.getName();
-                    if (reader.peek().isEndElement() && reader.next() instanceof EndElement ee) {
+                    if (reader.peek().isEndElement() && reader.next() instanceof EndElement) {
                         writer.writeEmptyElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
                         level--;
                         hasChildren = true;
@@ -400,14 +401,14 @@ public final class XmlUtil {
                                 QName attrName = attr.getName();
                                 writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
                             }));
-                } else if (event instanceof EndElement ee) {
+                } else if (event instanceof EndElement) {
                     level--;
                     if (hasChildren) {
                         writeIndentation(writer, level);
                     }
                     writer.writeEndElement();
                     hasChildren = true;
-                } else if (event.getEventType() == XMLEvent.SPACE) {
+                } else if (event.getEventType() == XMLStreamConstants.SPACE) {
                     // nop
                 } else if (event instanceof ProcessingInstruction pi) {
                     skipWhitespace(reader);
@@ -438,7 +439,7 @@ public final class XmlUtil {
                 } else if (event instanceof StartDocument sd) {
                     writer.writeStartDocument(StandardCharsets.UTF_8.name(), sd.getVersion());
                     writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
-                } else if (event instanceof EndDocument ed) {
+                } else if (event instanceof EndDocument) {
                     writer.writeEndDocument();
                     writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
                 } else if (event instanceof EntityReference er) {

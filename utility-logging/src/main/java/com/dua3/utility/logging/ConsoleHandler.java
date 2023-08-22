@@ -30,11 +30,11 @@ public class ConsoleHandler implements LogEntryHandler {
     public ConsoleHandler(PrintStream out, boolean colored) {
         this.out = out;
         if (colored) {
-            this.brackets.put(Level.TRACE, Pair.of(AnsiCode.fg(Color.DARKGRAY), ESC_RESET));
-            this.brackets.put(Level.DEBUG, Pair.of(AnsiCode.fg(Color.BLACK), ESC_RESET));
-            this.brackets.put(Level.INFO, Pair.of(AnsiCode.fg(Color.BLUE), ESC_RESET));
-            this.brackets.put(Level.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED), ESC_RESET));
-            this.brackets.put(Level.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED), ESC_RESET));
+            brackets.put(Level.TRACE, Pair.of(AnsiCode.fg(Color.DARKGRAY), ESC_RESET));
+            brackets.put(Level.DEBUG, Pair.of(AnsiCode.fg(Color.BLACK), ESC_RESET));
+            brackets.put(Level.INFO, Pair.of(AnsiCode.fg(Color.BLUE), ESC_RESET));
+            brackets.put(Level.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED), ESC_RESET));
+            brackets.put(Level.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED), ESC_RESET));
         }
     }
 

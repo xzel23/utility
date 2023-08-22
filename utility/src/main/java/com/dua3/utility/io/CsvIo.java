@@ -53,10 +53,10 @@ public abstract class CsvIo implements AutoCloseable {
         this.locale = IoOptions.getLocale(options);
         this.dateTimeFormatter = IoOptions.getDateTimeFormat(options).getDateTimeFormatter(locale);
         this.dateFormatter = IoOptions.getDateFormat(options).getFormatter(locale);
-        this.numberFormat = DecimalFormat.getInstance(locale);
-        this.numberFormat.setGroupingUsed(false);
-        this.numberFormat.setMinimumFractionDigits(0);
-        this.numberFormat.setMaximumFractionDigits(15);
+        this.numberFormat = NumberFormat.getInstance(locale);
+        numberFormat.setGroupingUsed(false);
+        numberFormat.setMinimumFractionDigits(0);
+        numberFormat.setMaximumFractionDigits(15);
     }
 
     /**

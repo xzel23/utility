@@ -53,7 +53,7 @@ public enum StandardFontMapper implements Function<String, String> {
     }
 
     private static String replaceKnownAliases(@Nullable String s) {
-        if (s==null) {
+        if (s == null) {
             return null;
         }
         return switch (s) {

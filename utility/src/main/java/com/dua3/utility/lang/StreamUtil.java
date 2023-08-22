@@ -76,7 +76,7 @@ public final class StreamUtil {
      * @return sorted stream containing the elements of the argument streams
      */
     @SafeVarargs
-    public static <T> Stream<T> merge(Comparator<T> comparator, Stream<T>... streams) {
+    public static <T> Stream<T> merge(Comparator<? super T> comparator, Stream<T>... streams) {
         var iters = Arrays.stream(streams).map(Stream::iterator).toList();
         Iterable<T> i = () -> new MergeIterator<>(comparator, iters);
         Stream<T> stream = StreamSupport.stream(i.spliterator(), false);

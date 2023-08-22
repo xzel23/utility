@@ -127,11 +127,11 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     }
 
     public void addRefreshListener(Consumer<T> listener) {
-        this.listeners.add(Objects.requireNonNull(listener));
+        listeners.add(Objects.requireNonNull(listener));
     }
 
     public void removeRefreshListener(Consumer<T> listener) {
-        this.listeners.remove(listener);
+        listeners.remove(listener);
     }
 
 }

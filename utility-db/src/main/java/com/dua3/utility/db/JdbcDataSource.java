@@ -61,8 +61,8 @@ public class JdbcDataSource implements DataSource {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        if (!iface.isAssignableFrom(this.getClass())) {
-            throw new SQLException(iface.getName() + " is not assignable from " + this.getClass().getName());
+        if (!iface.isAssignableFrom(getClass())) {
+            throw new SQLException(iface.getName() + " is not assignable from " + getClass().getName());
         }
         return (T) this;
     }
@@ -82,8 +82,8 @@ public class JdbcDataSource implements DataSource {
     public Connection getConnection(String username, String password) throws SQLException {
         log("getConnection(username, password)");
         Properties p = new Properties(properties);
-        p.put(USER, username);
-        p.put(PASSWORD, password);
+        p.setProperty(USER, username);
+        p.setProperty(PASSWORD, password);
         return driver.connect(url, p);
     }
 
@@ -126,7 +126,7 @@ public class JdbcDataSource implements DataSource {
             // Properties class does not support storing null values!
             properties.remove(USER);
         } else {
-            properties.put(USER, user);
+            properties.setProperty(USER, user);
         }
     }
 
@@ -140,7 +140,7 @@ public class JdbcDataSource implements DataSource {
             // Properties class does not support storing null values!
             properties.remove(PASSWORD);
         } else {
-            properties.put(PASSWORD, password);
+            properties.setProperty(PASSWORD, password);
         }
     }
 }

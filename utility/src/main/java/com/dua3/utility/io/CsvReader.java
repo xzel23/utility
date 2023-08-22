@@ -111,9 +111,7 @@ public class CsvReader extends CsvIo {
         // must contain delimiter!)
         String regexStartQuotedFieldWithLineBreak = "(" + del + "(?:[^" + del + "]*(?:" + del + del + ")?)*$)";
 
-        String regexField = "^(?:" + regexQuotedField + "|" + regexUnquotedField + "|"
-                + regexStartQuotedFieldWithLineBreak + ")";
-        return regexField;
+        return "^(?:" + regexQuotedField + "|" + regexUnquotedField + "|" + regexStartQuotedFieldWithLineBreak + ")";
     }
 
     /**

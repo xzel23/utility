@@ -90,12 +90,12 @@ public class LoggerFactory implements ILoggerFactory {
         Properties properties = new Properties();
         try (InputStream in = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             if (in == null) {
-                properties.put(LOGGER_CONSOLE_STREAM, "system.out");
+                properties.setProperty(LOGGER_CONSOLE_STREAM, "system.out");
             } else {
                 properties.load(in);
             }
         } catch (IOException e) {
-            properties.put(LOGGER_CONSOLE_STREAM, "system.out");
+            properties.setProperty(LOGGER_CONSOLE_STREAM, "system.out");
             e.printStackTrace(System.err);
         }
         return properties;
