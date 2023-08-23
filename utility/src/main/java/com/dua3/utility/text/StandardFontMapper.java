@@ -48,7 +48,7 @@ public enum StandardFontMapper implements Function<String, String> {
      */
     IGNORE_SUBSETS_AND_KNOWN_ALIASES(StandardFontMapper::removeSubsetTagAndReplaceKnownAliases);
 
-    private static String removeSubsetTagAndReplaceKnownAliases(String s) {
+    private static String removeSubsetTagAndReplaceKnownAliases(@Nullable String s) {
         return replaceKnownAliases(removeSubsetTag(s));
     }
 
