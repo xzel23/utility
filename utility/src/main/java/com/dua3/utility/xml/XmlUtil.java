@@ -67,6 +67,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -91,6 +92,8 @@ public final class XmlUtil {
                             
             </xsl:stylesheet>
             """;
+    private static final Pattern PATTERN_BLANK_LINE = Pattern.compile("^\\s*\n");
+    private static final Pattern PATTERN_END_OF_LINE = Pattern.compile("\n$");
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
@@ -181,50 +184,50 @@ public final class XmlUtil {
     }
 
     /**
-     * Read XML from an {@link InputStream} and parse it to {@link org.w3c.dom.Document}.
+     * Read XML from an {@link InputStream} and parse it to {@link Document}.
      *
      * @param in the stream to read the XML from
-     * @return the parsed {@link org.w3c.dom.Document}
+     * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
      */
-    public org.w3c.dom.Document parse(InputStream in) throws IOException, SAXException {
+    public Document parse(InputStream in) throws IOException, SAXException {
         return documentBuilder().parse(in);
     }
 
     /**
-     * Parse the content of {@code file} to {@link org.w3c.dom.Document}.
+     * Parse the content of {@code file} to {@link Document}.
      *
      * @param uri the URI to read the XML from
-     * @return the parsed {@link org.w3c.dom.Document}
+     * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
      */
-    public org.w3c.dom.Document parse(URI uri) throws IOException, SAXException {
+    public Document parse(URI uri) throws IOException, SAXException {
         return documentBuilder().parse(uri.toString());
     }
 
     /**
-     * Parse the content of {@code path} to {@link org.w3c.dom.Document}.
+     * Parse the content of {@code path} to {@link Document}.
      *
      * @param path the path to read the XML from
-     * @return the parsed {@link org.w3c.dom.Document}
+     * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
      */
-    public org.w3c.dom.Document parse(Path path) throws IOException, SAXException {
+    public Document parse(Path path) throws IOException, SAXException {
         return documentBuilder().parse(path.toFile());
     }
 
     /**
-     * Parse text to {@link org.w3c.dom.Document}.
+     * Parse text to {@link Document}.
      *
      * @param text the XML as a String
-     * @return the parsed {@link org.w3c.dom.Document}
+     * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
      * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
      */
-    public org.w3c.dom.Document parse(String text) throws IOException, SAXException {
+    public Document parse(String text) throws IOException, SAXException {
         try (Reader reader = new StringReader(text)) {
             return documentBuilder.parse(new InputSource(reader));
         }
@@ -427,9 +430,7 @@ public final class XmlUtil {
                     if (text.contains("\n")) {
                         // multi line comment
                         writer.writeComment(
-                                text.indent(indentation(level) + 1)
-                                        .replaceFirst("^\\s*\n", "\n")
-                                        .replaceFirst("\n$", "\n" + " ".repeat(indentation(level)))
+                                PATTERN_END_OF_LINE.matcher(PATTERN_BLANK_LINE.matcher(text.indent(indentation(level) + 1)).replaceFirst("\n")).replaceFirst("\n" + " ".repeat(indentation(level)))
                         );
                     } else {
                         // single line comment
