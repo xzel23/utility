@@ -161,7 +161,7 @@ the parameter.
 
 ## Changes
 
-### 11.0.0 (in progress)
+### 11.0.0
 
 - (BREAKING) remove deprecations
 - (BREAKING) remove LangUtil.checkIndex()
