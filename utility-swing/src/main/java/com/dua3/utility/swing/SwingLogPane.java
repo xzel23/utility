@@ -20,6 +20,7 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -181,7 +182,7 @@ public class SwingLogPane extends JPanel {
         });
 
         // create toolbar
-        JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
+        JToolBar toolBar = new JToolBar(SwingConstants.HORIZONTAL);
 
         // add filtering based on level
         toolBar.add(new JLabel("Min Level:"));
@@ -191,13 +192,13 @@ public class SwingLogPane extends JPanel {
         cbLevel.setSelectedItem(Level.INFO);
 
         // checkbox for text only
-        toolBar.add(new JSeparator(JSeparator.VERTICAL));
+        toolBar.add(new JSeparator(SwingConstants.VERTICAL));
         JCheckBox cbTextOnly = new JCheckBox(SwingUtil.createAction("Show text only", evt -> setTextOnly(((JCheckBox) (evt.getSource())).isSelected())));
         cbTextOnly.setSelected(true);
         toolBar.add(cbTextOnly);
 
         // buttons "clear" and "copy"
-        toolBar.add(new JSeparator(JSeparator.VERTICAL));
+        toolBar.add(new JSeparator(SwingConstants.VERTICAL));
         toolBar.add(SwingUtil.createAction("Clear", this::clearBuffer));
         toolBar.add(SwingUtil.createAction("Copy", this::copyBuffer));
 

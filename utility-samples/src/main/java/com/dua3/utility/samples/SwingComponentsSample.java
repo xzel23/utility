@@ -16,13 +16,13 @@ import org.slf4j.event.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -122,7 +122,7 @@ public class SwingComponentsSample extends JFrame {
         comboBoxEx.setComparator(Comparator.comparing(Person::toString));
 
         // -- Spacer
-        JSeparator separator1 = new JSeparator(JSeparator.HORIZONTAL);
+        JSeparator separator1 = new JSeparator(SwingConstants.HORIZONTAL);
         separator1.setMinimumSize(new Dimension(8, 8));
 
         // -- SwingProcessView
@@ -137,7 +137,7 @@ public class SwingComponentsSample extends JFrame {
         progress.start(TASK_INDETERMINATE_1);
 
         // -- Spacer
-        JSeparator separator2 = new JSeparator(JSeparator.HORIZONTAL);
+        JSeparator separator2 = new JSeparator(SwingConstants.HORIZONTAL);
         separator2.setMinimumSize(new Dimension(8, 8));
 
         // -- SwingLogPane

@@ -67,7 +67,7 @@ public enum StandardFontMapper implements Function<String, String> {
     private static final Pattern PATTERN_SUBSET_TAG = Pattern.compile("^[A-Z]{6}\\+");
 
     private static String removeSubsetTag(@Nullable String s) {
-        return s == null ? s : PATTERN_SUBSET_TAG.matcher(s).replaceFirst("");
+        return s == null ? null : PATTERN_SUBSET_TAG.matcher(s).replaceFirst("");
     }
 
     private final Function<String, String> mapper;

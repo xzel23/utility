@@ -20,7 +20,7 @@ public class LineOutputStream extends OutputStream {
     public static final int INITIAL_BUFFER_SIZE = 128;
     /**
      * Maximum buffer size constant.
-     *
+     * <p>
      * This constant represents the maximum size (in bytes) that a buffer can have.
      */
     public static final int MAX_BUFFER_SIZE = 1024;
