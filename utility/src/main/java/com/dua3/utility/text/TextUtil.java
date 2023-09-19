@@ -486,6 +486,16 @@ public final class TextUtil {
     }
 
     /**
+     * Get MD5 digest as hex string.
+     *
+     * @param data the data for which to calculate the digest
+     * @return the MD5 digest as hex string
+     */
+    public static String getMD5String(byte[] data) {
+        return HexFormat.of().formatHex(getMD5(data));
+    }
+
+    /**
      * Get MD5 digest.
      *
      * @param text the text for which to calculate the digest

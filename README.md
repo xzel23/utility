@@ -161,6 +161,10 @@ the parameter.
 
 ## Changes
 
+### 11.1.0 (to be released)
+
+- overload TextUtil.getMD5String(byte[])
+
 ### 11.0.0
 
 - (BREAKING) remove deprecations
