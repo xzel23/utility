@@ -72,8 +72,8 @@ subprojects {
     idea {
         module {
             inheritOutputDirs = false
-            outputDir = file("$buildDir/classes/java/main/")
-            testOutputDir = file("$buildDir/classes/java/test/")
+            outputDir = project.layout.buildDirectory.file("classes/java/main/").get().asFile
+            testOutputDir = project.layout.buildDirectory.file("classes/java/test/").get().asFile
         }
     }
 
@@ -163,6 +163,15 @@ subprojects {
 
     // === SPOTBUGS ===
     spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
+
+    configurations.named("spotbugs").configure {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.ow2.asm") {
+                useVersion("9.5")
+                because("Asm 9.5 is required for JDK 21 support")
+            }
+        }
+    }
 
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask>() {
         reports.create("html") {
