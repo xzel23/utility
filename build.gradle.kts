@@ -19,17 +19,17 @@ plugins {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-object meta {
-    val group = "com.dua3.utility"
-    val scm = "https://github.com/xzel23/utility.git"
-    val repo = "public"
-    val licenseName = "MIT"
-    val licenseUrl = "https://opensource.org/licenses/MIT"
-    val developerId = "axh"
-    val developerName = "Axel Howind"
-    val developerEmail = "axh@dua3.com"
-    val organization = "dua3"
-    val organizationUrl = "https://www.dua3.com"
+object Meta {
+    const val GROUP = "com.dua3.utility"
+    const val SCM = "https://github.com/xzel23/utility.git"
+    const val REPO = "public"
+    const val LICENSE_NAME = "MIT"
+    const val LICENSE_URL = "https://opensource.org/licenses/MIT"
+    const val DEVELOPER_ID = "axh"
+    const val DEVELOPER_NAME = "Axel Howind"
+    const val DEVELOPER_EMAIL = "axh@dua3.com"
+    const val ORGANIZATION_NAME = "dua3"
+    const val ORGANIZATION_URL = "https://www.dua3.com"
 }
 /////////////////////////////////////////////////////////////////////////////
 
@@ -104,7 +104,7 @@ subprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                groupId = meta.group
+                groupId = Meta.GROUP
                 artifactId = project.name
                 version = project.version.toString()
 
@@ -115,27 +115,27 @@ subprojects {
                         val root = asNode()
                         root.appendNode("description", project.description)
                         root.appendNode("name", project.name)
-                        root.appendNode("url", meta.scm)
+                        root.appendNode("url", Meta.SCM)
                     }
 
                     licenses {
                         license {
-                            name.set(meta.licenseName)
-                            url.set(meta.licenseUrl)
+                            name.set(Meta.LICENSE_NAME)
+                            url.set(Meta.LICENSE_URL)
                         }
                     }
                     developers {
                         developer {
-                            id.set(meta.developerId)
-                            name.set(meta.developerName)
-                            email.set(meta.developerEmail)
-                            organization.set(meta.organization)
-                            organizationUrl.set(meta.organizationUrl)
+                            id.set(Meta.DEVELOPER_ID)
+                            name.set(Meta.DEVELOPER_NAME)
+                            email.set(Meta.DEVELOPER_EMAIL)
+                            organization.set(Meta.ORGANIZATION_NAME)
+                            organizationUrl.set(Meta.ORGANIZATION_URL)
                         }
                     }
 
                     scm {
-                        url.set(meta.scm)
+                        url.set(Meta.SCM)
                     }
                 }
             }
@@ -176,7 +176,7 @@ subprojects {
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask>() {
         reports.create("html") {
             required.set(true)
-            outputLocation.set(file("$buildDir/reports/spotbugs.html"))
+            outputLocation = project.layout.buildDirectory.file("reports/spotbugs.html").get().asFile
             setStylesheet("fancy-hist.xsl")
         }
     }
