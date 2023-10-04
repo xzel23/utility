@@ -47,14 +47,14 @@ public class SimpleValue<T> implements Value<T> {
     }
 
     @Override
-    public void set(T v) {
+    public void set(@Nullable T v) {
         T oldV = v;
         this.v = v;
         changeListeners.forEach(listener -> listener.accept(oldV, v));
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SimpleValue<?> that = (SimpleValue<?>) o;
