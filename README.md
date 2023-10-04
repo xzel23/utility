@@ -161,7 +161,7 @@ the parameter.
 
 ## Changes
 
-### 11.1.0 (to be released)
+### 11.1.0
 
 - overload TextUtil.getMD5String(byte[])
 - Value interface as an abstraction for observable values that is meant to be used in place of JavaFX ObservableValue or 
