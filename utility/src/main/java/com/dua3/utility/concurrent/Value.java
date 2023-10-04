@@ -2,8 +2,6 @@ package com.dua3.utility.concurrent;
 
 import com.dua3.cabe.annotations.Nullable;
 
-import java.util.Collection;
-
 /**
  * Represents a mutable value of type T.
  *

@@ -1,7 +1,6 @@
 package com.dua3.utility.concurrent;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.BiConsumer;
 
 /**
