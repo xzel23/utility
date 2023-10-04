@@ -164,6 +164,8 @@ the parameter.
 ### 11.1.0 (to be released)
 
 - overload TextUtil.getMD5String(byte[])
+- Value interface as an abstraction for observable values that is meant to be used in place of JavaFX ObservableValue or 
+  Swing Properties in library code that is supposed not to have dependencies on either JavaFX or java.desktop
 
 ### 11.0.0
 
