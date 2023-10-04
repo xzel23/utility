@@ -106,7 +106,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     @Override
     public List<Font> loadFonts(InputStream in) throws IOException {
-        try (in) {
+        try {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
             List<Font> fonts = new ArrayList<>(awtFonts.length);
             for (var awtFont : awtFonts) {
@@ -172,7 +172,7 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
 
     @Override
     public Font loadFontAs(InputStream in, Font font) throws IOException {
-        try (in) {
+        try {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
             LangUtil.check(awtFonts.length > 0, () -> new IOException("no font loaded"));
             java.awt.Font awtFont = awtFonts[0].deriveFont(font.getSizeInPoints());
