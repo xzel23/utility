@@ -41,7 +41,7 @@ dependencyResolutionManagement {
             library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
             library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")
 
-            library("jimfs", "com.google.jimfs", "jimfs").version("1.3.0");
+            library("jimfs", "com.google.jimfs", "jimfs").version("1.3.0")
         }
     }
 
