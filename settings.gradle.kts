@@ -15,7 +15,7 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("versions", "com.github.ben-manes.versions").version("0.48.0")
+            plugin("versions", "com.github.ben-manes.versions").version("0.49.0")
             plugin("test-logger", "com.adarshr.test-logger").version("3.2.0")
             plugin("spotbugs", "com.github.spotbugs").version("5.1.3")
             plugin("cabe", "com.dua3.cabe").version("1.3.0")
