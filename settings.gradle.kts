@@ -25,12 +25,15 @@ dependencyResolutionManagement {
             version("log4j", "2.20.0")
             version("slf4j", "2.0.9")
             version("jimfs", "1.2")
+            version("miglayout", "1.2")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
 
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
             library("jul-to-slf4j", "org.slf4j", "jul-to-slf4j").versionRef("slf4j")
+
+            library("miglayout-swing", "com.miglayout", "miglayout-swing").versionRef("miglayout")
 
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
 

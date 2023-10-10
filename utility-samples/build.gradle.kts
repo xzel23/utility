@@ -6,8 +6,7 @@ dependencies {
     implementation(project(":utility-logging"))
     implementation(rootProject.libs.jul.to.slf4j)
     implementation(rootProject.libs.log4j.to.slf4j)
-
-    implementation("com.miglayout:miglayout-swing:11.2")
+    implementation(rootProject.libs.miglayout.swing)
 }
 
 // test utility-swing rely on our own Logger implementation, so exclude SLF4J SimpleLogger
