@@ -25,7 +25,7 @@ dependencyResolutionManagement {
             version("log4j", "2.20.0")
             version("slf4j", "2.0.9")
             version("jimfs", "1.2")
-            version("miglayout", "1.2")
+            version("miglayout", "11.2")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
 
