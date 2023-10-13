@@ -161,10 +161,11 @@ the parameter.
 
 ## Changes
 
-### 11.x (to be released)
+### 11.1.2
 
-- update dependencies
+- update plugins and dependencies
 - Pair.mapFirst() and Pair.mapSecond()
+- code cleanups
 
 ### 11.1.0
 
