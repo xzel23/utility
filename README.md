@@ -164,6 +164,7 @@ the parameter.
 ### 11.x (to be released)
 
 - update dependencies
+- Pair.mapFirst() and Pair.mapSecond()
 
 ### 11.1.0
 

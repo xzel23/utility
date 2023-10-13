@@ -148,4 +148,27 @@ public record Pair<T1, T2>(T1 first, T2 second) {
     public <U> Pair<U, U> map(Function<Object, ? extends U> f) {
         return of(f.apply(first()), f.apply(second()));
     }
+
+    /**
+     * Apply mapping to the first component only.
+     *
+     * @param <U1> the result's first component type
+     * @param f   mapper for first component
+     * @return Pair consisting of the mapped first and original second component of this pair
+     */
+    public <U1> Pair<U1, T2> mapFirst(Function<? super T1, ? extends U1> f) {
+        return of(f.apply(first()), second());
+    }
+
+    /**
+     * Apply mapping to the second component only.
+     *
+     * @param <U2> the result's secondt component type
+     * @param f   mapper for second component
+     * @return Pair consisting of the original first and the mapped second component of this pair
+     */
+    public <U2> Pair<T1, U2> mapSecond(Function<? super T2, ? extends U2> f) {
+        return of(first(), f.apply(second()));
+    }
+
 }
