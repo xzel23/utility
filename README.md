@@ -161,6 +161,10 @@ the parameter.
 
 ## Changes
 
+### 11.1.3
+
+ - update log4j to 2.21.0 (according to release notes now JLink compatible!)
+
 ### 11.1.2
 
 - update plugins and dependencies
