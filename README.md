@@ -163,7 +163,7 @@ the parameter.
 
 ### 11.1.3
 
- - update log4j to 2.21.0 (according to release notes now JLink compatible!)
+ - update log4j to 2.21.0 (according to release notes now fully JLink compatible)
 
 ### 11.1.2
 
