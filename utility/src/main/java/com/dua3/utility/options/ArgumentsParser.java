@@ -299,17 +299,30 @@ public class ArgumentsParser {
                 .forEach(p -> {
                     Option<?> option = p.first();
                     int occurrences = p.second();
+
+                    int minOccurrences = option.minOccurrences();
+                    int maxOccurrences = option.maxOccurrences();
+
                     // check min occurrences
-                    LangUtil.check(option.minOccurrences() <= occurrences,
-                            () -> new OptionException(
-                                    "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
-                                            option.name(), option.minOccurrences(), occurrences
-                                    )));
+                    if (minOccurrences==1) {
+                        LangUtil.check(minOccurrences <= occurrences,
+                                () -> new OptionException(
+                                        "missing required option '%s'".formatted(
+                                                option.name(), minOccurrences, occurrences
+                                        )));
+                    } else {
+                        LangUtil.check(minOccurrences <= occurrences,
+                                () -> new OptionException(
+                                        "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
+                                                option.name(), minOccurrences, occurrences
+                                        )));
+                    }
+
                     // check max occurrences
-                    LangUtil.check(option.maxOccurrences() >= occurrences,
+                    LangUtil.check(maxOccurrences >= occurrences,
                             () -> new OptionException(
                                     "option '%s' must be specified at most %d time(s), but was %d times".formatted(
-                                            option.name(), option.maxOccurrences(), occurrences
+                                            option.name(), maxOccurrences, occurrences
                                     )));
                 });
 
