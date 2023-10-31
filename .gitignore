@@ -1,9 +1,7 @@
 /bin
-/build
-*/bin
-*/build
-*/out
-*/gradle.properties
-*/.*
 **/.*
-/target/
+**/build
+**/bin
+**/out
+**/target
+*/gradle.properties
