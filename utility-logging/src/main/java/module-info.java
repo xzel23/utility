@@ -8,6 +8,8 @@ open module com.dua3.utility.logging {
 
     requires static com.dua3.cabe.annotations;
 
+    uses com.dua3.utility.logging.ILogEntryDispatcherFactory;
+
     requires org.apache.logging.log4j;
     requires com.dua3.utility;
 }

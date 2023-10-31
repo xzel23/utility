@@ -1,6 +1,5 @@
 package com.dua3.utility.logging.slf4j;
 
-import com.dua3.utility.logging.slf4j.LoggerFactory;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.IMarkerFactory;
 import org.slf4j.helpers.BasicMarkerFactory;
@@ -9,9 +8,9 @@ import org.slf4j.helpers.NOP_FallbackServiceProvider;
 import org.slf4j.spi.MDCAdapter;
 import org.slf4j.spi.SLF4JServiceProvider;
 
-public class LoggingServiceProvider implements SLF4JServiceProvider {
+public class LoggingServiceProviderSlf4j implements SLF4JServiceProvider {
 
-    private final LoggerFactory loggerFactory = new LoggerFactory();
+    private final LoggerFactorySlf4j loggerFactory = new LoggerFactorySlf4j();
     private final IMarkerFactory markerFactory = new BasicMarkerFactory();
     private final MDCAdapter mdcAdapter = new NOPMDCAdapter();
 

@@ -1,7 +1,6 @@
 package com.dua3.utility.samples;
 
 import com.dua3.utility.concurrent.ProgressTracker;
-import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.swing.ArgumentsDialog;
@@ -10,7 +9,6 @@ import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
 import net.miginfocom.swing.MigLayout;
-import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -143,7 +141,7 @@ public class SwingComponentsSample extends JFrame {
         // -- SwingLogPane
 
         // setup logging
-        SwingLogPane logPane = createLogPane();
+        SwingLogPane logPane = new SwingLogPane();
 
         // add components
         add(comboBoxEx, "wrap");
@@ -250,19 +248,6 @@ public class SwingComponentsSample extends JFrame {
             progress.finish(TASK_INDETERMINATE_2, ProgressTracker.State.COMPLETED_SUCCESS);
         });
         thread2.start();
-    }
-
-    private static SwingLogPane createLogPane() {
-        ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
-        if (!(loggerFactory instanceof com.dua3.utility.logging.slf4j.LoggerFactory)) {
-            throw new IllegalStateException("wrong logging implementation!");
-        }
-        LogBuffer buffer = ((com.dua3.utility.logging.slf4j.LoggerFactory) loggerFactory).getLogBuffer()
-                .orElseThrow(() -> new IllegalStateException("buffer not configured"));
-
-        // create the log pane
-        SwingLogPane logPane = new SwingLogPane(buffer);
-        return logPane;
     }
 
     private IllegalStateException generateThrowable() {

@@ -2,10 +2,9 @@ package com.dua3.utility.logging.slf4j;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntryHandler;
 import com.dua3.utility.logging.ConsoleHandler;
-import org.slf4j.ILoggerFactory;
+import com.dua3.utility.logging.LogEntryDispatcher;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.event.Level;
 
@@ -14,24 +13,23 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 
-public class LoggerFactory implements ILoggerFactory {
+public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     public static final String LEVEL = "logger.level";
 
     public static final String LOGGER_CONSOLE_STREAM = "logger.console.stream";
     public static final String LOGGER_CONSOLE_COLORED = "logger.console.colored";
 
-    public static final String LOGGER_BUFFER_SIZE = "logger.buffer.size";
-
-    private final LogBuffer logBuffer;
     private final List<Pair<String, Level>> prefixes = new ArrayList<>();
     private final List<LogEntryHandler> handlers = new ArrayList<>();
 
-    public LoggerFactory() {
+    public LoggerFactorySlf4j() {
         Properties properties = getProperties();
 
         // parse log level entry
@@ -39,7 +37,7 @@ public class LoggerFactory implements ILoggerFactory {
         String[] decls = leveldeclaration.split(",");
 
         if (decls.length > 0) {
-            Logger.setDefaultLevel(Level.valueOf(decls[0].strip()));
+            LoggerSlf4j.setDefaultLevel(Level.valueOf(decls[0].strip()));
         }
 
         Arrays.stream(decls)
@@ -77,16 +75,6 @@ public class LoggerFactory implements ILoggerFactory {
         if (stream != null) {
             handlers.add(new ConsoleHandler(stream, colored));
         }
-
-        // configure buffer handler
-        String propertyBuffer = properties.getProperty(LOGGER_BUFFER_SIZE, "0").trim();
-        int bufferSize = Integer.parseInt(propertyBuffer);
-        if (bufferSize > 0) {
-            logBuffer = new LogBuffer(bufferSize);
-            handlers.add(logBuffer);
-        } else {
-            logBuffer = null;
-        }
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -110,17 +98,28 @@ public class LoggerFactory implements ILoggerFactory {
     }
 
     private Level getLevel(String name) {
-        return getPrefixEntry(name).map(Pair::second).orElseGet(Logger::getDefaultLevel);
+        return getPrefixEntry(name).map(Pair::second).orElseGet(LoggerSlf4j::getDefaultLevel);
     }
 
     @Override
     public org.slf4j.Logger getLogger(String name) {
-        Logger logger = new Logger(name, handlers);
+        LoggerSlf4j logger = new LoggerSlf4j(name, handlers);
         logger.setLevel(getLevel(name));
         return logger;
     }
 
-    public Optional<LogBuffer> getLogBuffer() {
-        return Optional.ofNullable(logBuffer);
+    @Override
+    public void addLogEntryHandler(LogEntryHandler handler) {
+        handlers.add(handler);
+    }
+
+    @Override
+    public void removeLogEntryHandler(LogEntryHandler handler) {
+        handlers.add(handler);
+    }
+
+    @Override
+    public Collection<LogEntryHandler> getLogEntryHandlers() {
+        return Collections.unmodifiableCollection(handlers);
     }
 }

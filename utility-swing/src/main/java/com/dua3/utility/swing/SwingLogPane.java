@@ -4,6 +4,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogLevel;
+import com.dua3.utility.logging.LogUtil;
 import com.dua3.utility.math.MathUtil;
 
 import javax.swing.JCheckBox;
@@ -20,6 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -62,6 +64,34 @@ public class SwingLogPane extends JPanel {
     private TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
+
+    /**
+     * Creates a new instance of SwingLogPane with the default buffer size and connects all known loggers.
+     * @see LogBuffer#DEFAULT_CAPACITY
+     */
+    public SwingLogPane() {
+        this(LogBuffer.DEFAULT_CAPACITY);
+    }
+
+    /**
+     * Creates a new instance of SwingLogPane with the given buffer size and connects all known loggers.
+     * @param bufferSize the buffer size
+     */
+    public SwingLogPane(int bufferSize) {
+        this(createBuffer(bufferSize));
+    }
+
+    /**
+     * Creates a LogBuffer with the given buffer size and adds it to the global log entry handler.
+     *
+     * @param bufferSize the size of the buffer
+     * @return the created LogBuffer
+     */
+    private static LogBuffer createBuffer(int bufferSize) {
+        LogBuffer buffer = new LogBuffer(bufferSize);
+        LogUtil.getGlobalDispatcher().addLogEntryHandler(buffer);
+        return buffer;
+    }
 
     /**
      * Constructs a new SwingLogPane with the given LogBuffer instance.

@@ -6,6 +6,7 @@ include("utility-db")
 include("utility-swing")
 include("utility-logging")
 include("utility-logging:utility-logging-slf4j")
+include("utility-logging:utility-logging-log4j")
 include("utility-samples")
 
 dependencyResolutionManagement {

@@ -15,14 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Logger extends AbstractLogger {
+public class LoggerSlf4j extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
     private final List<? extends LogEntryHandler> handlers;
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
     private Level level;
 
-    public Logger(String name, List<? extends LogEntryHandler> handlers) {
+    public LoggerSlf4j(String name, List<? extends LogEntryHandler> handlers) {
         //noinspection AssignmentToSuperclassField: it is the only way to set the logger name
         super.name = name;
         this.handlers = handlers;
