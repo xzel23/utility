@@ -13,8 +13,8 @@ import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.WrappedException;
 import com.dua3.utility.options.Arguments;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -53,7 +53,7 @@ public final class DbUtil {
     /**
      * Logger instance.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(DbUtil.class);
+    private static final Logger LOG = LogManager.getLogger(DbUtil.class);
     /**
      * List of know JDBC drivers.
      */

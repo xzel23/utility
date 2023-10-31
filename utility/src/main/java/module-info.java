@@ -17,7 +17,7 @@ open module com.dua3.utility {
     requires static com.dua3.cabe.annotations;
 
     requires java.xml;
-    requires org.slf4j;
+    requires org.apache.logging.log4j;
 
     uses com.dua3.utility.text.FontUtil;
     uses com.dua3.utility.io.FileType;

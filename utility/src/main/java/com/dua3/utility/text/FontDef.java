@@ -4,8 +4,8 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode"})
 public final class FontDef implements Cloneable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FontDef.class);
+    private static final Logger LOG = LogManager.getLogger(FontDef.class);
 
     private static final Pattern PATTERN_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?");
     private Color color;

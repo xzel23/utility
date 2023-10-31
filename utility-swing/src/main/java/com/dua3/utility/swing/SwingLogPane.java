@@ -3,8 +3,8 @@ package com.dua3.utility.swing;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
+import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.math.MathUtil;
-import org.slf4j.event.Level;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -186,10 +186,10 @@ public class SwingLogPane extends JPanel {
 
         // add filtering based on level
         toolBar.add(new JLabel("Min Level:"));
-        JComboBox<Level> cbLevel = new JComboBox<>(Level.values());
+        JComboBox<LogLevel> cbLevel = new JComboBox<>(LogLevel.values());
         toolBar.add(cbLevel);
-        cbLevel.addItemListener(a -> setFilter((Level) a.getItem()));
-        cbLevel.setSelectedItem(Level.INFO);
+        cbLevel.addItemListener(a -> setFilter((LogLevel) a.getItem()));
+        cbLevel.setSelectedItem(LogLevel.INFO);
 
         // checkbox for text only
         toolBar.add(new JSeparator(SwingConstants.VERTICAL));
@@ -243,7 +243,7 @@ public class SwingLogPane extends JPanel {
         }
     }
 
-    private void setFilter(Level c) {
+    private void setFilter(LogLevel c) {
         tableRowSorter.setRowFilter(new RowFilter(c));
     }
 
@@ -328,7 +328,7 @@ public class SwingLogPane extends JPanel {
         LOGGER {
             @Override
             public String get(LogEntry entry) {
-                return entry.logger().getName();
+                return entry.loggerName();
             }
         },
         TIME {
@@ -482,16 +482,16 @@ public class SwingLogPane extends JPanel {
     }
 
     private static class RowFilter extends javax.swing.RowFilter<AbstractTableModel, Integer> {
-        private final Level c;
+        private final LogLevel c;
 
-        public RowFilter(Level c) {
+        public RowFilter(LogLevel c) {
             this.c = c;
         }
 
         @Override
         public boolean include(Entry<? extends AbstractTableModel, ? extends Integer> entry) {
             LogEntry value = (LogEntry) entry.getValue(0);
-            return value == null || value.level().compareTo(c) <= 0;
+            return value == null || value.level().compareTo(c) >= 0;
         }
     }
 

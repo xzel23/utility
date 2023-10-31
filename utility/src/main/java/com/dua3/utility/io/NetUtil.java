@@ -6,8 +6,8 @@
 package com.dua3.utility.io;
 
 import com.dua3.cabe.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,7 +26,7 @@ public final class NetUtil {
      * The void URL.
      */
     static final URL VOID_URL;
-    private static final Logger LOG = LoggerFactory.getLogger(NetUtil.class);
+    private static final Logger LOG = LogManager.getLogger(NetUtil.class);
 
     static {
         try {

@@ -1,7 +1,11 @@
-package com.dua3.utility.logging;
+package com.dua3.utility.logging.slf4j;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.logging.LogBuffer;
+import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.logging.ConsoleHandler;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.event.Level;
 

@@ -3,8 +3,8 @@ package com.dua3.utility.swing;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.Option;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  */
 public class ArgumentsDialog extends JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ArgumentsDialog.class);
+    private static final Logger LOG = LogManager.getLogger(ArgumentsDialog.class);
     private final ArgumentsPanel panel;
 
     /**

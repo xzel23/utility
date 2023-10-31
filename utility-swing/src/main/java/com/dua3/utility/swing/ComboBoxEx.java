@@ -1,8 +1,8 @@
 package com.dua3.utility.swing;
 
 import com.dua3.cabe.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -35,7 +35,7 @@ import java.util.function.UnaryOperator;
  * @param <T> the type of the items in the ComboBox
  */
 public class ComboBoxEx<T> extends JPanel {
-    private static final Logger LOG = LoggerFactory.getLogger(ComboBoxEx.class);
+    private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     private Comparator<? super T> comparator;
     private final UnaryOperator<T> edit;

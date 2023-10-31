@@ -2,6 +2,7 @@ package com.dua3.utility.samples;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.LogBuffer;
+import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.swing.ArgumentsDialog;
 import com.dua3.utility.swing.ComboBoxEx;
@@ -12,7 +13,6 @@ import net.miginfocom.swing.MigLayout;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.slf4j.event.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
@@ -37,7 +37,7 @@ public class SwingComponentsSample extends JFrame {
     public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
     public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
     public static final int SLEEP_MILLIS = 25;
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("SLF4J." + SwingComponentsSample.class.getName());
+    private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + SwingComponentsSample.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSample.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSample.class.getName());
 
@@ -52,7 +52,7 @@ public class SwingComponentsSample extends JFrame {
     private volatile boolean done;
 
     public static void main(String[] args) {
-        LOG.info("starting up");
+        SLF4J_LOGGER.info("starting up");
 
         SwingUtil.setNativeLookAndFeel();
 
@@ -129,8 +129,8 @@ public class SwingComponentsSample extends JFrame {
         SwingProgressView<Object> progress = new SwingProgressView<>();
         int max = 100;
 
-        Map<Level, Integer> counter = new EnumMap<>(Level.class);
-        Arrays.stream(Level.values()).forEach(lvl -> {
+        Map<LogLevel, Integer> counter = new EnumMap<>(LogLevel.class);
+        Arrays.stream(LogLevel.values()).forEach(lvl -> {
             counter.put(lvl, 0);
             progress.start(lvl);
         });
@@ -173,16 +173,16 @@ public class SwingComponentsSample extends JFrame {
                 int implementation = random.nextInt(3);
                 int bound = implementation == 1 ? 6 : 5;
                 int levelInt = random.nextInt(bound);
-                Level level = Level.values()[implementation == 1 ? Math.max(0, levelInt - 1) : levelInt];
+                LogLevel level = LogLevel.values()[implementation == 1 ? Math.max(0, levelInt - 1) : levelInt];
 
                 switch (implementation) {
                     case 0 -> {
                         switch (levelInt) {
-                            case 0 -> LOG.trace(msg);
-                            case 1 -> LOG.debug(msg);
-                            case 2 -> LOG.info(msg);
-                            case 3 -> LOG.warn(msg);
-                            case 4 -> LOG.error(msg, generateThrowable());
+                            case 0 -> SLF4J_LOGGER.trace(msg);
+                            case 1 -> SLF4J_LOGGER.debug(msg);
+                            case 2 -> SLF4J_LOGGER.info(msg);
+                            case 3 -> SLF4J_LOGGER.warn(msg);
+                            case 4 -> SLF4J_LOGGER.error(msg, generateThrowable());
                             default -> throw new IllegalStateException("integer out of range");
                         }
                     }
@@ -254,10 +254,10 @@ public class SwingComponentsSample extends JFrame {
 
     private static SwingLogPane createLogPane() {
         ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
-        if (!(loggerFactory instanceof com.dua3.utility.logging.LoggerFactory)) {
+        if (!(loggerFactory instanceof com.dua3.utility.logging.slf4j.LoggerFactory)) {
             throw new IllegalStateException("wrong logging implementation!");
         }
-        LogBuffer buffer = ((com.dua3.utility.logging.LoggerFactory) loggerFactory).getLogBuffer()
+        LogBuffer buffer = ((com.dua3.utility.logging.slf4j.LoggerFactory) loggerFactory).getLogBuffer()
                 .orElseThrow(() -> new IllegalStateException("buffer not configured"));
 
         // create the log pane

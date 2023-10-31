@@ -8,9 +8,8 @@ package com.dua3.utility.lang;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IoUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -62,7 +61,7 @@ public final class LangUtil {
      * The byte order mark in UTF files
      */
     public static final char UTF_BYTE_ORDER_MARK = 0xfeff;
-    private static final Logger LOG = LoggerFactory.getLogger(LangUtil.class);
+    private static final Logger LOG = LogManager.getLogger(LangUtil.class);
 
     // private constructor for utility class
     private LangUtil() {

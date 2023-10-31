@@ -4,8 +4,8 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.SimpleOption;
 import com.dua3.utility.text.TextUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class JdbcDriverInfo {
      * Type identifier String for double options.
      */
     public static final String OPTION_TYPE_DOUBLE = "double";
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcDriverInfo.class);
+    private static final Logger LOG = LogManager.getLogger(JdbcDriverInfo.class);
     private static final String PATTERN_VAR_START = "\\$\\{";
     private static final String PATTERN_VAR_NAME = "(?<name>\\p{Alpha}(\\p{Alnum}|_)*)";
     private static final String PATTERN_VAR_ARG_1 = "(:((?<arg1>\\p{Alpha}(\\p{Alnum}|_)*)=(?<value1>[^,}]*)))";

@@ -1,7 +1,7 @@
 package com.dua3.utility.lang;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.InputStream;
 import java.time.ZonedDateTime;
@@ -25,7 +25,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      */
     public static final String KEY_BUILD_TIME = "build.time";
 
-    private static final Logger LOG = LoggerFactory.getLogger(BuildInfo.class);
+    private static final Logger LOG = LogManager.getLogger(BuildInfo.class);
 
     /**
      * Create from a version and timestamp

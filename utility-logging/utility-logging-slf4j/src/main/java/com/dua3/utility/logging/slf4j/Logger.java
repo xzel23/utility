@@ -1,9 +1,14 @@
-package com.dua3.utility.logging;
+package com.dua3.utility.logging.slf4j;
 
 import com.dua3.cabe.annotations.Nullable;
+import com.dua3.utility.logging.LogEntry;
+import com.dua3.utility.logging.LogEntryHandler;
+import com.dua3.utility.logging.LogLevel;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
+import org.slf4j.helpers.MessageFormatter;
+import org.slf4j.spi.LocationAwareLogger;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -38,7 +43,25 @@ public class Logger extends AbstractLogger {
 
     @Override
     protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object[] arguments, @Nullable Throwable throwable) {
-        handlers.forEach(handler -> handler.handleEntry(new LogEntry(this, Instant.now(), level, marker, messagePattern, arguments, throwable)));
+        String markerName = marker != null ? marker.getName() : null;
+        handlers.forEach(handler -> handler.handleEntry(new LogEntry(name, Instant.now(), translate(level), markerName, () -> MessageFormatter.basicArrayFormat(messagePattern, arguments), throwable)));
+    }
+
+    private LogLevel translate(Level level) {
+        int levelInt = level.toInt();
+        if (levelInt < LocationAwareLogger.DEBUG_INT) {
+            return LogLevel.TRACE;
+        }
+        if (levelInt < LocationAwareLogger.INFO_INT) {
+            return LogLevel.DEBUG;
+        }
+        if (levelInt < LocationAwareLogger.WARN_INT) {
+            return LogLevel.INFO;
+        }
+        if (levelInt < LocationAwareLogger.ERROR_INT) {
+            return LogLevel.WARN;
+        }
+        return LogLevel.ERROR;
     }
 
     @Override

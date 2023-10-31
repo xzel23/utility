@@ -6,8 +6,8 @@
 package com.dua3.utility.math;
 
 import com.dua3.utility.lang.LangUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.function.DoubleUnaryOperator;
  */
 public final class MathUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MathUtil.class);
+    private static final Logger LOG = LogManager.getLogger(MathUtil.class);
 
     /**
      * Utility class - private constructor.

@@ -161,6 +161,13 @@ the parameter.
 
 ## Changes
 
+- all internal logging is done through log4j-api instead of slf4j
+- introduced util-logging-slf4j as sub project of util-logging. Note that util-logging is not intended as a production logging
+  replacement. It is intended to provide utilites to capture and display log data in an application window.
+
+### 12.0.0 (to be released)
+
+-
 ### 11.1.3
 
  - update log4j to 2.21.0 (according to release notes now fully JLink compatible)

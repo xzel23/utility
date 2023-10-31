@@ -1,7 +1,7 @@
 package com.dua3.utility.lang;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -59,7 +59,7 @@ public enum Platform {
      */
     UNKNOWN;
 
-    private static final Logger LOG = LoggerFactory.getLogger(Platform.class);
+    private static final Logger LOG = LogManager.getLogger(Platform.class);
     private static final Platform DETECTED = determinePlatform();
 
     private static Platform determinePlatform() {

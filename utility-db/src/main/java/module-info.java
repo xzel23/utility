@@ -14,5 +14,5 @@ open module com.dua3.utility.db {
     requires transitive java.sql;
 
     requires com.dua3.utility;
-    requires org.slf4j;
+    requires org.apache.logging.log4j;
 }

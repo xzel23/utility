@@ -10,8 +10,8 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -55,7 +55,7 @@ public final class SwingUtil {
     /**
      * Logger instance.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(SwingUtil.class);
+    private static final Logger LOG = LogManager.getLogger(SwingUtil.class);
 
     // Utility class, should not be instantiated
     private SwingUtil() {

@@ -1,7 +1,7 @@
 package com.dua3.utility.swing;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -20,7 +20,7 @@ import java.util.Optional;
  * and a button that opens a file/directory selection dialog, where a file/directory can be selected.
  */
 public class FileInput extends JPanel {
-    private static final Logger LOG = LoggerFactory.getLogger(FileInput.class);
+    private static final Logger LOG = LogManager.getLogger(FileInput.class);
 
     /**
      * Select files only.

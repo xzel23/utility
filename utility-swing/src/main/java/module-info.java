@@ -18,5 +18,5 @@ open module com.dua3.utility.swing {
     requires java.datatransfer;
     requires java.desktop;
     requires com.dua3.utility;
-    requires org.slf4j;
+    requires org.apache.logging.log4j;
 }

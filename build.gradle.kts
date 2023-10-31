@@ -60,8 +60,8 @@ subprojects {
         compileOnly(rootProject.libs.cabe.annotations)
 
         // SLF4J
-        implementation(rootProject.libs.slf4j.api)
-        testImplementation(rootProject.libs.slf4j.simple)
+        implementation(rootProject.libs.log4j.api)
+        testImplementation(rootProject.libs.log4j.core)
 
         // JUnit
         testImplementation(rootProject.libs.junit.jupiter.api)

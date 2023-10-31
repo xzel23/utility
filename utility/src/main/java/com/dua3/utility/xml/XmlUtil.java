@@ -5,8 +5,8 @@ import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.StreamUtil;
 import com.dua3.utility.text.TextUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -75,7 +75,7 @@ import java.util.stream.StreamSupport;
  * A Utility class for handling {@link org.w3c.dom} documents and nodes.
  */
 public final class XmlUtil {
-    private static final Logger LOG = LoggerFactory.getLogger(XmlUtil.class);
+    private static final Logger LOG = LogManager.getLogger(XmlUtil.class);
 
     private static final String XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + TextUtil.LINE_END_SYSTEM;
     private static final String PRETTY_PRINT_XSLT = """

@@ -8,6 +8,7 @@ open module com.dua3.utility.samples {
 
     requires com.dua3.utility;
     requires com.dua3.utility.logging;
+    requires com.dua3.utility.logging.slf4j;
     requires com.dua3.utility.swing;
     requires com.miglayout.swing;
     requires org.apache.logging.log4j;

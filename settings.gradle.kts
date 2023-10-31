@@ -1,10 +1,11 @@
 rootProject.name = "dua3-utility"
-val projectVersion = "11.1.4-SNAPSHOT"
+val projectVersion = "12.0.0-SNAPSHOT"
 
 include("utility")
 include("utility-db")
 include("utility-swing")
 include("utility-logging")
+include("utility-logging:utility-logging-slf4j")
 include("utility-samples")
 
 dependencyResolutionManagement {
@@ -30,11 +31,14 @@ dependencyResolutionManagement {
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
 
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
+            //library("slf4j-core", "org.slf4j", "slf4j-core").versionRef("slf4j")
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
             library("jul-to-slf4j", "org.slf4j", "jul-to-slf4j").versionRef("slf4j")
 
             library("miglayout-swing", "com.miglayout", "miglayout-swing").versionRef("miglayout")
 
+            library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
+            library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
 
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")

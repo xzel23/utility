@@ -3,14 +3,11 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import org.slf4j.spi.SLF4JServiceProvider;
-
 open module com.dua3.utility.logging {
     exports com.dua3.utility.logging;
-    provides SLF4JServiceProvider with com.dua3.utility.logging.LoggingServiceProvider;
 
     requires static com.dua3.cabe.annotations;
 
-    requires org.slf4j;
+    requires org.apache.logging.log4j;
     requires com.dua3.utility;
 }

@@ -9,8 +9,8 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -50,7 +50,7 @@ import java.util.stream.Stream;
  */
 public final class IoUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IoUtil.class);
+    private static final Logger LOG = LogManager.getLogger(IoUtil.class);
 
     private static final Pattern PATTERN_URI = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:.*");
     /**

@@ -1,5 +1,6 @@
-package com.dua3.utility.logging;
+package com.dua3.utility.logging.slf4j;
 
+import com.dua3.utility.logging.slf4j.LoggerFactory;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.IMarkerFactory;
 import org.slf4j.helpers.BasicMarkerFactory;
