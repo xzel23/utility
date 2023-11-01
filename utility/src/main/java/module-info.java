@@ -15,6 +15,7 @@ open module com.dua3.utility {
     exports com.dua3.utility.xml;
 
     requires static com.dua3.cabe.annotations;
+    requires static com.github.spotbugs.annotations;
 
     requires java.xml;
     requires org.apache.logging.log4j;

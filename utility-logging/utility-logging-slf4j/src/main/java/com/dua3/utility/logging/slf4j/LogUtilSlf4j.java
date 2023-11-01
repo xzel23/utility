@@ -7,11 +7,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+/**
+ * The LogUtilSlf4j class provides utility methods for working with the SLF4J logging framework.
+ */
 public final class LogUtilSlf4j {
     private static final Logger LOG = LogManager.getLogger(LogUtilSlf4j.class);
 
     private LogUtilSlf4j() {}
 
+    /**
+     * Returns an Optional containing an instance of LoggerFactorySlf4j if the retrieved ILoggerFactory
+     * is an instance of LoggerFactorySlf4j. Otherwise, it returns an empty Optional.
+     *
+     * @return an Optional containing an instance of LoggerFactorySlf4j, or an empty Optional
+     */
     public static Optional<LoggerFactorySlf4j> getLoggerFactory() {
         ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
         if (iLoggerFactory instanceof  LoggerFactorySlf4j factory) {

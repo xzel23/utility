@@ -56,10 +56,11 @@ subprojects {
 
     // dependencies
     dependencies {
-        // Cabe (source annotations)
+        // source annotations
         compileOnly(rootProject.libs.cabe.annotations)
+        compileOnly(rootProject.libs.spotbugs.annotations)
 
-        // SLF4J
+        // LOG4J
         implementation(rootProject.libs.log4j.api)
         testImplementation(rootProject.libs.log4j.core)
 

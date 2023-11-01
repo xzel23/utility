@@ -9,7 +9,10 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * @param <T>
+ * ProgressView class represents a view of the progress of tasks.
+ * It implements the ProgressTracker interface.
+ *
+ * @param <T> the type of tasks being tracked
  */
 public class ProgressView<T> implements ProgressTracker<T> {
 

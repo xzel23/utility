@@ -28,11 +28,12 @@ dependencyResolutionManagement {
             version("slf4j", "2.0.9")
             version("jimfs", "1.2")
             version("miglayout", "11.2")
+            version("spotbugs", "4.8.0")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
+            library("spotbugs-annotations", "com.github.spotbugs", "spotbugs-annotations").versionRef("spotbugs")
 
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
-            //library("slf4j-core", "org.slf4j", "slf4j-core").versionRef("slf4j")
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
             library("jul-to-slf4j", "org.slf4j", "jul-to-slf4j").versionRef("slf4j")
 

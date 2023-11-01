@@ -773,6 +773,7 @@ public final class IoUtil {
         }
 
         PathMatcher pathMatcher = fs.getPathMatcher("glob:" + globPattern);
+        //noinspection resource: caller should clean up
         return Files.walk(fixedPath).filter(pathMatcher::matches);
     }
 

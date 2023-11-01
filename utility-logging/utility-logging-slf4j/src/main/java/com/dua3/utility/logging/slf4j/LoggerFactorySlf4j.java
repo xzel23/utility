@@ -22,6 +22,9 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 
+/**
+ * The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogEntryDispatcher interfaces.
+ */
 public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     public static final String LEVEL = "logger.level";
 

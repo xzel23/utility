@@ -23,7 +23,14 @@ public final class LogEntry {
     private final Throwable throwable;
 
     /**
+     * Creates a new LogEntry object.
      *
+     * @param loggerName The name of the logger.
+     * @param time The time the log entry was created, represented as an Instant object.
+     * @param level The log level of the entry.
+     * @param marker The marker associated with the log entry. Can be null.
+     * @param messageFormatter A Supplier that provides the formatted log message.
+     * @param throwable The throwable associated with the log entry. Can be null.
      */
     public LogEntry(String loggerName, Instant time, LogLevel level, @Nullable String marker, Supplier<String> messageFormatter,
                     @Nullable Throwable throwable) {
@@ -41,7 +48,7 @@ public final class LogEntry {
      * @return the formatted message as a string.
      */
     public String formatMessage() {
-        if (formattedMessage==null) {
+        if (messageFormatter != null) {
             formattedMessage = messageFormatter.get();
             messageFormatter = null;
         }
@@ -80,26 +87,47 @@ public final class LogEntry {
         }
     }
 
+    /**
+     * Returns the logger name.
+     *
+     * @return the name of the logger.
+     */
     public String loggerName() {
         return loggerName;
     }
 
+    /**
+     * Returns the time when the log entry was created.
+     *
+     * @return the time when the log entry was created.
+     */
     public Instant time() {
         return time;
     }
 
+    /**
+     * Returns the log level of the log entry.
+     *
+     * @return the log level of the log entry.
+     */
     public LogLevel level() {
         return level;
     }
 
+    /**
+     * Returns the marker of the log entry.
+     *
+     * @return the marker of the log entry.
+     */
     public String marker() {
         return marker;
     }
 
-    public Supplier<String> messageFormatter() {
-        return messageFormatter;
-    }
-
+    /**
+     * Returns the throwable associated with this log entry.
+     *
+     * @return the throwable associated with this log entry.
+     */
     public Throwable throwable() {
         return throwable;
     }

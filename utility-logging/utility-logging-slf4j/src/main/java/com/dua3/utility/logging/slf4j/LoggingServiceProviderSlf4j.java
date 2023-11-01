@@ -8,6 +8,9 @@ import org.slf4j.helpers.NOP_FallbackServiceProvider;
 import org.slf4j.spi.MDCAdapter;
 import org.slf4j.spi.SLF4JServiceProvider;
 
+/**
+ * Implementation of SLF4JServiceProvider that provides logging functionality using SLF4J.
+ */
 public class LoggingServiceProviderSlf4j implements SLF4JServiceProvider {
 
     private final LoggerFactorySlf4j loggerFactory = new LoggerFactorySlf4j();

@@ -24,6 +24,7 @@ import java.util.Map;
 public class LoggerSlf4j extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE_BAD_FIELD")
     private final List<WeakReference<LogEntryHandler>> handlers;
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
     private Level level;

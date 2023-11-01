@@ -139,8 +139,6 @@ public class SwingComponentsSample extends JFrame {
         separator2.setMinimumSize(new Dimension(8, 8));
 
         // -- SwingLogPane
-
-        // setup logging
         SwingLogPane logPane = new SwingLogPane();
 
         // add components

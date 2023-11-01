@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * when {@link #get()} is called and hold a {@link SoftReference} to it. When {@link #get()} is called the next time,
  * the same instance is returned if it has not yet been garbage collected. Otherwise, the supplier is called again.
  *
- * @param <T>
+ * @param <T> the resource type
  */
 public final class SoftResource<T> {
 

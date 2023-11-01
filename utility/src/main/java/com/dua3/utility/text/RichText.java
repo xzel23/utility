@@ -46,8 +46,8 @@ public final class RichText
     private final int[] runStart;
     private final Run[] run;
     // calculate the hashCode on demand
-    private int textHash;
-    private int hash;
+    private transient int textHash;
+    private transient int hash;
 
     RichText(Run... runs) {
         this.run = Arrays.copyOf(runs, runs.length);

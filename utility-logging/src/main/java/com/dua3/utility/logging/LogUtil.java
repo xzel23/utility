@@ -6,11 +6,21 @@ import org.apache.logging.log4j.Logger;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
+/**
+ * Utility class for logging operations.
+ */
 public final class LogUtil {
     private LogUtil() {}
 
     private static final Logger LOG = LogManager.getLogger(LogUtil.class);
 
+    /**
+     * Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
+     * through ServiceLoaderand connects all known loggers to it.
+     *
+     * @return The global LogEntryDispatcher instance.
+     * @throws ServiceConfigurationError if no factories can create a LogEntryDispatcher.
+     */
     public static LogEntryDispatcher getGlobalDispatcher() {
         ServiceLoader<ILogEntryDispatcherFactory> serviceLoader = ServiceLoader.load(ILogEntryDispatcherFactory.class);
 
