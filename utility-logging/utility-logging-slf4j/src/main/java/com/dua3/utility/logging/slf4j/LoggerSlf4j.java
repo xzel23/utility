@@ -16,6 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents a logger implementation using the SLF4J logging framework. It extends the AbstractLogger class.
+ *
+ * It is used to forward SLF4J log messages to applications.
+ */
 public class LoggerSlf4j extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
@@ -59,7 +64,13 @@ public class LoggerSlf4j extends AbstractLogger {
         }
     }
 
-    private LogLevel translate(Level level) {
+    /**
+     * Translates a given SLF4J Level object to an equivalent LogLevel object.
+     *
+     * @param level the SLF4J Level object to be translated
+     * @return the translated LogLevel object
+     */
+    private static LogLevel translate(Level level) {
         int levelInt = level.toInt();
         if (levelInt < LocationAwareLogger.DEBUG_INT) {
             return LogLevel.TRACE;
