@@ -167,7 +167,8 @@ the parameter.
 
 ### 12.0.0 (to be released)
 
--
+- reworked util-logging, simplyfied SwingLogPane use
+
 ### 11.1.3
 
  - update log4j to 2.21.0 (according to release notes now fully JLink compatible)
