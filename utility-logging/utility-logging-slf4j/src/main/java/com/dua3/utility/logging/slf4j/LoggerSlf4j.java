@@ -10,6 +10,7 @@ import org.slf4j.helpers.AbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
 import org.slf4j.spi.LocationAwareLogger;
 
+import java.lang.ref.WeakReference;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +19,11 @@ import java.util.Map;
 public class LoggerSlf4j extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
-    private final List<? extends LogEntryHandler> handlers;
+    private final List<WeakReference<LogEntryHandler>> handlers;
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
     private Level level;
 
-    public LoggerSlf4j(String name, List<? extends LogEntryHandler> handlers) {
+    public LoggerSlf4j(String name, List<WeakReference<LogEntryHandler>> handlers) {
         //noinspection AssignmentToSuperclassField: it is the only way to set the logger name
         super.name = name;
         this.handlers = handlers;
@@ -44,7 +45,18 @@ public class LoggerSlf4j extends AbstractLogger {
     @Override
     protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object[] arguments, @Nullable Throwable throwable) {
         String markerName = marker != null ? marker.getName() : null;
-        handlers.forEach(handler -> handler.handleEntry(new LogEntry(name, Instant.now(), translate(level), markerName, () -> MessageFormatter.basicArrayFormat(messagePattern, arguments), throwable)));
+        boolean cleanup = false;
+        for (WeakReference<LogEntryHandler> ref: handlers) {
+            LogEntryHandler handler = ref.get();
+            if (handler==null) {
+                cleanup = true;
+            } else {
+                handler.handleEntry(new LogEntry(name, Instant.now(), translate(level), markerName, () -> MessageFormatter.basicArrayFormat(messagePattern, arguments), throwable));
+            }
+        }
+        if (cleanup) {
+            handlers.removeIf(ref -> ref.get()==null);
+        }
     }
 
     private LogLevel translate(Level level) {

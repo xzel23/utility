@@ -6,6 +6,4 @@ public interface LogEntryDispatcher {
     void addLogEntryHandler(LogEntryHandler handler);
 
     void removeLogEntryHandler(LogEntryHandler handler);
-
-    Collection<LogEntryHandler> getLogEntryHandlers();
 }

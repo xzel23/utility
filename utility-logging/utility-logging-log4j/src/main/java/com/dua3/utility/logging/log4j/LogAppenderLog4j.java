@@ -2,8 +2,8 @@ package com.dua3.utility.logging.log4j;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.logging.LogEntry;
-import com.dua3.utility.logging.LogEntryHandler;
 import com.dua3.utility.logging.LogEntryDispatcher;
+import com.dua3.utility.logging.LogEntryHandler;
 import com.dua3.utility.logging.LogLevel;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
@@ -17,10 +17,9 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.spi.StandardLevel;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ import java.util.List;
  */
 public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispatcher {
     public static final String APPENDER_NAME = LogAppenderLog4j.class.getSimpleName();
-    private final List<LogEntryHandler> handlers = new ArrayList<>();
+    private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
 
     protected LogAppenderLog4j(String name, @Nullable Filter filter, @Nullable Layout<? extends Serializable> layout,
                                final boolean ignoreExceptions) {
@@ -55,14 +54,25 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
 
     @Override
     public void append(LogEvent event) {
-        handlers.forEach(handler -> handler.handleEntry(new LogEntry(
-                event.getLoggerName(),
-                Instant.ofEpochMilli(event.getTimeMillis()),
-                translate(event.getLevel()),
-                event.getMarker().getName(),
-                () -> event.getMessage().getFormattedMessage(),
-                event.getThrown()
-        )));
+        boolean cleanup = false;
+        for (WeakReference<LogEntryHandler> ref: handlers) {
+            LogEntryHandler handler = ref.get();
+            if (handler==null) {
+                cleanup = true;
+            } else {
+                handler.handleEntry(new LogEntry(
+                        event.getLoggerName(),
+                        Instant.ofEpochMilli(event.getTimeMillis()),
+                        translate(event.getLevel()),
+                        event.getMarker().getName(),
+                        () -> event.getMessage().getFormattedMessage(),
+                        event.getThrown()
+                ));
+            }
+        }
+        if (cleanup) {
+            handlers.removeIf(ref -> ref.get()==null);
+        }
     }
 
     private LogLevel translate(Level level) {
@@ -84,16 +94,11 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
 
     @Override
     public void addLogEntryHandler(LogEntryHandler handler) {
-        handlers.add(handler);
+        handlers.add(new WeakReference<>(handler));
     }
 
     @Override
     public void removeLogEntryHandler(LogEntryHandler handler) {
-        handlers.add(handler);
-    }
-
-    @Override
-    public Collection<LogEntryHandler> getLogEntryHandlers() {
-        return Collections.unmodifiableCollection(handlers);
+        handlers.removeIf(h -> h.get()==handler);
     }
 }
