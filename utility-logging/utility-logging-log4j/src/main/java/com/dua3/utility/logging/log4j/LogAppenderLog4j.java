@@ -6,6 +6,7 @@ import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogEntryHandler;
 import com.dua3.utility.logging.LogLevel;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -98,11 +99,12 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
             if (handler==null) {
                 cleanup = true;
             } else {
+                Marker marker = event.getMarker();
                 handler.handleEntry(new LogEntry(
                         event.getLoggerName(),
                         Instant.ofEpochMilli(event.getTimeMillis()),
                         translate(event.getLevel()),
-                        event.getMarker().getName(),
+                        marker == null ? null : marker.getName(),
                         () -> event.getMessage().getFormattedMessage(),
                         event.getThrown()
                 ));
