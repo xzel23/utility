@@ -57,7 +57,7 @@ public class LoggerSlf4j extends AbstractLogger {
             if (handler==null) {
                 cleanup = true;
             } else {
-                handler.handleEntry(new LogEntry(name, Instant.now(), translate(level), markerName, () -> MessageFormatter.basicArrayFormat(messagePattern, arguments), throwable));
+                handler.handleEntry(new LogEntry(name, Instant.now(), translate(level), markerName, sb -> sb.append(MessageFormatter.basicArrayFormat(messagePattern, arguments)), throwable));
             }
         }
         if (cleanup) {

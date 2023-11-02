@@ -8,17 +8,18 @@ import java.io.StringWriter;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 /**
  * Represents a log entry with information about the log message, time, level, logger, and optional marker and throwable.
  */
 public final class LogEntry {
+    private static final char[] NEW_LINE = String.format("%n").toCharArray();
     private final String loggerName;
     private final Instant time;
     private final LogLevel level;
     private final String marker;
-    private Supplier<String> messageFormatter;
+    private Consumer<StringBuilder> messageFormatter;
     private String formattedMessage;
     private final Throwable throwable;
 
@@ -32,7 +33,7 @@ public final class LogEntry {
      * @param messageFormatter A Supplier that provides the formatted log message.
      * @param throwable The throwable associated with the log entry. Can be null.
      */
-    public LogEntry(String loggerName, Instant time, LogLevel level, @Nullable String marker, Supplier<String> messageFormatter,
+    public LogEntry(String loggerName, Instant time, LogLevel level, @Nullable String marker, Consumer<StringBuilder> messageFormatter,
                     @Nullable Throwable throwable) {
         this.loggerName = loggerName;
         this.time = time;
@@ -49,7 +50,9 @@ public final class LogEntry {
      */
     public String formatMessage() {
         if (messageFormatter != null) {
-            formattedMessage = messageFormatter.get();
+            StringBuilder sb = new StringBuilder(100);
+            messageFormatter.accept(sb);
+            formattedMessage = sb.toString();
             messageFormatter = null;
         }
         return formattedMessage;
@@ -61,16 +64,16 @@ public final class LogEntry {
      *
      * @return the formatted stack trace as a string.
      */
-    public String formatThrowable() {
+    private void appendThrowable(StringBuilder sb) {
         if (throwable == null) {
-            return "";
-        }
-
-        try (StringWriter sw = new StringWriter(200); PrintWriter pw = new PrintWriter(sw)) {
-            throwable.printStackTrace(pw);
-            return sw.toString();
-        } catch (IOException e) {
-            return throwable.toString();
+            sb.append("null");
+        } else {
+            try (StringWriter sw = new StringWriter(200); PrintWriter pw = new PrintWriter(sw)) {
+                throwable.printStackTrace(pw);
+                sb.append(sw);
+            } catch (IOException e) {
+                sb.append(throwable);
+            }
         }
     }
 
@@ -80,11 +83,20 @@ public final class LogEntry {
     }
 
     String format(String prefix, String suffix) {
-        if (throwable() == null) {
-            return "%s[%-5s] %s %s\t%s%s".formatted(prefix, level, DateTimeFormatter.ISO_INSTANT.format(time), loggerName, formatMessage(), suffix);
-        } else {
-            return "%s[%-5s] %s %s\t%s%n%s%s".formatted(prefix, level, DateTimeFormatter.ISO_INSTANT.format(time), loggerName, formatMessage(), formatThrowable(), suffix);
+        StringBuilder sb = new StringBuilder(100);
+        sb.append(prefix);
+        sb.append('[').append(level).append(']');
+        sb.append(' ');
+        sb.append(DateTimeFormatter.ISO_INSTANT.format(time));
+        sb.append(' ');
+        messageFormatter.accept(sb);
+        sb.append(suffix);
+        if (throwable() != null) {
+            sb.append(NEW_LINE);
+            appendThrowable(sb);
         }
+        sb.append(loggerName);
+        return sb.toString();
     }
 
     /**

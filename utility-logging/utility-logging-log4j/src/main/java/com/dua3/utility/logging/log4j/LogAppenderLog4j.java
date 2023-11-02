@@ -15,6 +15,8 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.message.ReusableMessage;
 import org.apache.logging.log4j.spi.StandardLevel;
 
 import java.io.Serializable;
@@ -22,6 +24,7 @@ import java.lang.ref.WeakReference;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * This class is an implementation of the Log4j Appender and LogEntryHandlerPool interfaces.
@@ -100,13 +103,25 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
                 cleanup = true;
             } else {
                 Marker marker = event.getMarker();
+                Consumer<StringBuilder> messageAppender;
+                Message message = event.getMessage();
+                if (message instanceof ReusableMessage rm) {
+                    // for resusable messages, the message must be formatted instantly
+                    StringBuilder sbMsg = new StringBuilder(80);
+                    rm.formatTo(sbMsg);
+                    String formattedMessage = sbMsg.toString();
+                    messageAppender = sb -> sb.append(formattedMessage);
+                } else {
+                    messageAppender = sb -> sb.append(message.getFormattedMessage());
+                }
+                Throwable thrown = event.getThrown();
                 handler.handleEntry(new LogEntry(
                         event.getLoggerName(),
                         Instant.ofEpochMilli(event.getTimeMillis()),
                         translate(event.getLevel()),
                         marker == null ? null : marker.getName(),
-                        () -> event.getMessage().getFormattedMessage(),
-                        event.getThrown()
+                        messageAppender,
+                        thrown
                 ));
             }
         }
