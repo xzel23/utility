@@ -4,10 +4,12 @@ dependencies {
     implementation(project(":utility"))
     implementation(project(":utility-swing"))
     implementation(project(":utility-logging"))
-    runtimeOnly(project(":utility-logging:utility-logging-slf4j"))
-    implementation(rootProject.libs.jul.to.slf4j)
-    implementation(rootProject.libs.log4j.to.slf4j)
     implementation(rootProject.libs.miglayout.swing)
+    runtimeOnly(project(":utility-logging:utility-logging-log4j"))
+    implementation(rootProject.libs.log4j.core)
+    implementation(rootProject.libs.log4j.jul)
+    implementation(rootProject.libs.log4j.slf4j2)
+    implementation(rootProject.libs.slf4j.api)
 }
 
 // test utility-swing rely on our own Logger implementation, so exclude SLF4J SimpleLogger

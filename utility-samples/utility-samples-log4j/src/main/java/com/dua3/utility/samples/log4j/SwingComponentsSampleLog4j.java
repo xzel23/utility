@@ -1,4 +1,4 @@
-package com.dua3.utility.samples;
+package com.dua3.utility.samples.log4j;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.LogLevel;
@@ -10,7 +10,6 @@ import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
@@ -30,19 +29,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
-public class SwingComponentsSample extends JFrame {
+public class SwingComponentsSampleLog4j extends JFrame {
 
     public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
     public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
     public static final int SLEEP_MILLIS = 25;
-    private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + SwingComponentsSample.class.getName());
-    private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSample.class.getName());
-    private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSample.class.getName());
-
-    static {
-        java.util.logging.LogManager.getLogManager().reset();
-        SLF4JBridgeHandler.install();
-    }
+    private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + SwingComponentsSampleLog4j.class.getName());
+    private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSampleLog4j.class.getName());
+    private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSampleLog4j.class.getName());
 
     @SuppressWarnings("UnsecureRandomNumberGeneration") // used only to create a random sequence of log levels in tests
     private final Random random = new Random();
@@ -50,18 +44,18 @@ public class SwingComponentsSample extends JFrame {
     private volatile boolean done;
 
     public static void main(String[] args) {
-        SLF4J_LOGGER.info("starting up");
+        LOG4J_LOGGER.info("starting up");
 
         SwingUtil.setNativeLookAndFeel();
 
         SwingUtilities.invokeLater(() -> {
-            SwingComponentsSample instance = new SwingComponentsSample();
+            SwingComponentsSampleLog4j instance = new SwingComponentsSampleLog4j();
             instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             instance.setVisible(true);
         });
     }
 
-    public SwingComponentsSample() {
+    public SwingComponentsSampleLog4j() {
         setLayout(new MigLayout("fill", "[grow,fill]", "[][][grow,fill]"));
         setMinimumSize(new Dimension(400, 400));
         setSize(800, 600);

@@ -7,7 +7,8 @@ include("utility-swing")
 include("utility-logging")
 include("utility-logging:utility-logging-slf4j")
 include("utility-logging:utility-logging-log4j")
-include("utility-samples")
+include("utility-samples:utility-samples-slf4j")
+include("utility-samples:utility-samples-log4j")
 
 dependencyResolutionManagement {
 
@@ -41,6 +42,8 @@ dependencyResolutionManagement {
 
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
+            library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").versionRef("log4j")
+            library("log4j-slf4j2", "org.apache.logging.log4j", "log4j-slf4j2-impl").versionRef("log4j")
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
 
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
