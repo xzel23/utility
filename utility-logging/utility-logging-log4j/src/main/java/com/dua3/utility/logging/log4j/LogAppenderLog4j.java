@@ -1,12 +1,8 @@
 package com.dua3.utility.logging.log4j;
 
 import com.dua3.cabe.annotations.Nullable;
-import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogEntryHandler;
-import com.dua3.utility.logging.LogLevel;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -15,16 +11,11 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.apache.logging.log4j.message.Message;
-import org.apache.logging.log4j.message.ReusableMessage;
-import org.apache.logging.log4j.spi.StandardLevel;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * This class is an implementation of the Log4j Appender and LogEntryHandlerPool interfaces.
@@ -102,58 +93,12 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
             if (handler==null) {
                 cleanup = true;
             } else {
-                Marker marker = event.getMarker();
-                Consumer<StringBuilder> messageAppender;
-                Message message = event.getMessage();
-                if (message instanceof ReusableMessage rm) {
-                    // for resusable messages, the message must be formatted instantly
-                    StringBuilder sbMsg = new StringBuilder(80);
-                    rm.formatTo(sbMsg);
-                    String formattedMessage = sbMsg.toString();
-                    messageAppender = sb -> sb.append(formattedMessage);
-                } else {
-                    messageAppender = sb -> sb.append(message.getFormattedMessage());
-                }
-                Throwable thrown = event.getThrown();
-                handler.handleEntry(new LogEntry(
-                        event.getLoggerName(),
-                        Instant.ofEpochMilli(event.getTimeMillis()),
-                        translate(event.getLevel()),
-                        marker == null ? null : marker.getName(),
-                        messageAppender,
-                        thrown
-                ));
+                handler.handleEntry(new LogEntryLog4J(event));
             }
         }
         if (cleanup) {
             handlers.removeIf(ref -> ref.get()==null);
         }
-    }
-
-    /**
-     * Translates a Log4J Level object to a custom LogLevel object.
-     *
-     * This method takes a Log4J Level object as parameter and returns the corresponding custom LogLevel object.
-     * The translation is based on the integer level value of the Log4J Level object.
-     *
-     * @param level the Log4J Level object to be translated
-     * @return the custom LogLevel object that corresponds to the given Log4J Level object
-     */
-    private static LogLevel translate(Level level) {
-        int levelInt = level.intLevel();
-        if (levelInt > StandardLevel.DEBUG.intLevel()) {
-            return LogLevel.TRACE;
-        }
-        if (levelInt > StandardLevel.INFO.intLevel()) {
-            return LogLevel.DEBUG;
-        }
-        if (levelInt > StandardLevel.WARN.intLevel()) {
-            return LogLevel.INFO;
-        }
-        if (levelInt > StandardLevel.ERROR.intLevel()) {
-            return LogLevel.WARN;
-        }
-        return LogLevel.ERROR;
     }
 
     @Override

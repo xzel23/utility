@@ -32,17 +32,17 @@ import java.util.stream.Stream;
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
 public class SwingComponentsSampleSlf4j extends JFrame {
 
+    static {
+        java.util.logging.LogManager.getLogManager().reset();
+        SLF4JBridgeHandler.install();
+    }
+
     public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
     public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
     public static final int SLEEP_MILLIS = 25;
     private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + SwingComponentsSampleSlf4j.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSampleSlf4j.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSampleSlf4j.class.getName());
-
-    static {
-        java.util.logging.LogManager.getLogManager().reset();
-        SLF4JBridgeHandler.install();
-    }
 
     @SuppressWarnings("UnsecureRandomNumberGeneration") // used only to create a random sequence of log levels in tests
     private final Random random = new Random();
@@ -164,12 +164,13 @@ public class SwingComponentsSampleSlf4j extends JFrame {
                 }
 
                 int nr = n.incrementAndGet();
-                String msg = "Message " + nr + ".";
 
                 int implementation = random.nextInt(3);
                 int bound = implementation == 1 ? 6 : 5;
                 int levelInt = random.nextInt(bound);
                 LogLevel level = LogLevel.values()[implementation == 1 ? Math.max(0, levelInt - 1) : levelInt];
+
+                String msg = "Message #%d, imp %s, original integer level %d, level %s".formatted(nr, implementation, levelInt, level);
 
                 switch (implementation) {
                     case 0 -> {

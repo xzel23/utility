@@ -1,7 +1,6 @@
 package com.dua3.utility.logging.slf4j;
 
 import com.dua3.cabe.annotations.Nullable;
-import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogEntryHandler;
 import com.dua3.utility.logging.LogLevel;
 import org.slf4j.Marker;
@@ -50,42 +49,18 @@ public class LoggerSlf4j extends AbstractLogger {
 
     @Override
     protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object[] arguments, @Nullable Throwable throwable) {
-        String markerName = marker != null ? marker.getName() : null;
         boolean cleanup = false;
         for (WeakReference<LogEntryHandler> ref: handlers) {
             LogEntryHandler handler = ref.get();
             if (handler==null) {
                 cleanup = true;
             } else {
-                handler.handleEntry(new LogEntry(name, Instant.now(), translate(level), markerName, sb -> sb.append(MessageFormatter.basicArrayFormat(messagePattern, arguments)), throwable));
+                handler.handleEntry(new LogEntrySlf4j(name, level, marker, () -> MessageFormatter.basicArrayFormat(messagePattern, arguments), throwable));
             }
         }
         if (cleanup) {
             handlers.removeIf(ref -> ref.get()==null);
         }
-    }
-
-    /**
-     * Translates a given SLF4J Level object to an equivalent LogLevel object.
-     *
-     * @param level the SLF4J Level object to be translated
-     * @return the translated LogLevel object
-     */
-    private static LogLevel translate(Level level) {
-        int levelInt = level.toInt();
-        if (levelInt < LocationAwareLogger.DEBUG_INT) {
-            return LogLevel.TRACE;
-        }
-        if (levelInt < LocationAwareLogger.INFO_INT) {
-            return LogLevel.DEBUG;
-        }
-        if (levelInt < LocationAwareLogger.WARN_INT) {
-            return LogLevel.INFO;
-        }
-        if (levelInt < LocationAwareLogger.ERROR_INT) {
-            return LogLevel.WARN;
-        }
-        return LogLevel.ERROR;
     }
 
     @Override

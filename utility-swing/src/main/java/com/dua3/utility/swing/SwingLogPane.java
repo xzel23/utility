@@ -21,7 +21,6 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -376,7 +375,7 @@ public class SwingLogPane extends JPanel {
         MESSAGE {
             @Override
             public String get(LogEntry entry) {
-                return entry.formatMessage();
+                return entry.message();
             }
         },
         THROWABLE {
