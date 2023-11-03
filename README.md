@@ -54,11 +54,9 @@ Replace `${utility_version}` with the current version.
 
 ## Logging
 
-**As of version 10.1.0, all logging is done through SLF4J!**
+**As of version 12.0.0, logging changed from SLF4J to Log4J-API!**
 
-I made the switch after SLF4J 2.0.0 was released as that is the first stable version to have proper JPMS support.
-
-You can use whatever logging implementation you want, for configuration refer to the SLF4J documentation.
+You can use whatever logging implementation you want, for configuration refer to the Log4J documentation. You can also look at the swing samples that use a SwingLogPane and route all logging output regardless of source (Log4J, SLF4J, JUL) to the logging implementation.
 
 ### utility-logging
 
