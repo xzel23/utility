@@ -16,7 +16,7 @@ public final class LogUtil {
 
     /**
      * Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
-     * through ServiceLoaderand connects all known loggers to it.
+     * through ServiceLoader and connects all known loggers to it.
      *
      * @return The global LogEntryDispatcher instance.
      * @throws ServiceConfigurationError if no factories can create a LogEntryDispatcher.

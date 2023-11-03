@@ -68,8 +68,8 @@ public class ArgumentsParser {
         this.name = Objects.requireNonNull(name);
         this.description = Objects.requireNonNull(description);
 
-        LangUtil.check(minArgs >= 0);
-        LangUtil.check(maxArgs >= minArgs);
+        LangUtil.check(minArgs >= 0, "minimal number of arguments must not be negative: %s", minArgs);
+        LangUtil.check(maxArgs >= minArgs, "maximum number of arguments must be greater than or equal to the minimum number of arguments: %s (minimum number of arguments is %s", maxArgs, minArgs);
         this.minPositionalArgs = minArgs;
         this.maxPositionalArgs = maxArgs;
     }

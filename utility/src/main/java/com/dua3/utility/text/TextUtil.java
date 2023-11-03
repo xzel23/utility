@@ -238,7 +238,7 @@ public final class TextUtil {
 
             // determine ref name
             int varEnd = template.indexOf(TRANSFORM_REF_END, pos);
-            LangUtil.check(varEnd != -1);
+            LangUtil.check(varEnd != -1, "unexpected end of template, '%s' expected", TRANSFORM_REF_END);
             String varName = template.substring(pos, varEnd);
             pos = varEnd + TRANSFORM_REF_END.length();
 
