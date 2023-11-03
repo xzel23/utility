@@ -35,7 +35,7 @@ public final class TextUtil {
     /**
      * The current system's end-of-line sequence.
      */
-    public static final String LINE_END_SYSTEM = String.format("%n");
+    public static final String LINE_END_SYSTEM = System.lineSeparator();
     /**
      * UNIX end-of-line sequence.
      */

@@ -13,7 +13,7 @@ import java.util.Map;
  * It handles log entries by writing them to the console.
  */
 public class ConsoleHandler implements LogEntryHandler {
-    private static final String NEWLINE = "%n".formatted();
+    private static final String NEWLINE = System.lineSeparator();
     private final PrintStream out;
     private final Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
 

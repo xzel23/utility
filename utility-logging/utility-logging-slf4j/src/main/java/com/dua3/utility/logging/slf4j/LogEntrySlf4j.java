@@ -17,7 +17,6 @@ import java.util.function.Supplier;
  * Represents a log entry with information about the log message, time, level, logger, and optional marker and throwable.
  */
 public final class LogEntrySlf4j implements LogEntry {
-    private static final char[] NEW_LINE = String.format("%n").toCharArray();
     private final String loggerName;
     private final Instant time;
     private final LogLevel level;

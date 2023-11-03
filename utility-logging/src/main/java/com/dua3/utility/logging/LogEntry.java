@@ -20,10 +20,6 @@ public interface LogEntry {
     Throwable throwable();
 
     default String format(String prefix, String suffix) {
-        class Constants {
-            private static final char[] NEW_LINE = String.format("%n").toCharArray();
-        };
-
         StringBuilder sb = new StringBuilder(100);
         sb.append(prefix);
         sb.append('[').append(level()).append(']');
@@ -34,7 +30,7 @@ public interface LogEntry {
         sb.append(' ');
         sb.append(message());
         if (throwable() != null) {
-            sb.append(Constants.NEW_LINE);
+            sb.append(System.lineSeparator());
             appendThrowable(sb);
         }
         sb.append(suffix);
