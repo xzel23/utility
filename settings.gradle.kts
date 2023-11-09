@@ -1,5 +1,5 @@
 rootProject.name = "dua3-utility"
-val projectVersion = "12.0.0-beta1"
+val projectVersion = "12.0.0-beta2"
 
 include("utility")
 include("utility-db")
@@ -20,16 +20,16 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.49.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.0.0-beta.4")
+            plugin("spotbugs", "com.github.spotbugs").version("6.0.0-rc.2")
             plugin("cabe", "com.dua3.cabe").version("1.3.0")
 
             version("cabe", "1.0.0")
-            version("junit", "5.10.0")
+            version("junit", "5.10.1")
             version("log4j", "2.21.1")
             version("slf4j", "2.0.9")
             version("jimfs", "1.2")
             version("miglayout", "11.2")
-            version("spotbugs", "4.8.0")
+            version("spotbugs", "4.8.1")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
             library("spotbugs-annotations", "com.github.spotbugs", "spotbugs-annotations").versionRef("spotbugs")
