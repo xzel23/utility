@@ -166,6 +166,7 @@ the parameter.
 ### 12.0.0 (to be released)
 
 - reworked util-logging, simplyfied SwingLogPane use
+- added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatemet javadoc
 
 ### 11.1.3
 

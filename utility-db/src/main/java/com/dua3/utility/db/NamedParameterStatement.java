@@ -31,6 +31,7 @@ import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -45,6 +46,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * <p>
@@ -541,7 +543,7 @@ public class NamedParameterStatement implements AutoCloseable {
     }
 
     /**
-     * Sets a parameter.
+     * Set a parameter.
      *
      * @param name  parameter name
      * @param value parameter value
@@ -983,14 +985,13 @@ public class NamedParameterStatement implements AutoCloseable {
     }
 
     /**
-     * Sets a parameter.
+     * Set a parameter.
      *
      * @param name  parameter name
      * @param value parameter value
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTimestamp(int,
-     * java.sql.Timestamp)
+     * @see PreparedStatement#setDate(int, Date)
      */
     public void setLocalDate(String name, @Nullable LocalDate value) throws SQLException {
         if (value == null) {
@@ -1001,14 +1002,13 @@ public class NamedParameterStatement implements AutoCloseable {
     }
 
     /**
-     * Sets a parameter.
+     * Set a parameter.
      *
      * @param name  parameter name
      * @param value parameter value
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTimestamp(int,
-     * java.sql.Timestamp)
+     * @see PreparedStatement#setTimestamp(int, Timestamp)
      */
     public void setLocalDateTime(String name, @Nullable LocalDateTime value) throws SQLException {
         if (value == null) {
@@ -1019,14 +1019,13 @@ public class NamedParameterStatement implements AutoCloseable {
     }
 
     /**
-     * Sets a parameter.
+     * Set a parameter.
      *
      * @param name  parameter name
      * @param value parameter value
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTimestamp(int,
-     * java.sql.Timestamp)
+     * @see PreparedStatement#setTime(int, Time)
      */
     public void setLocalTime(String name, @Nullable LocalTime value) throws SQLException {
         if (value == null) {
@@ -1037,14 +1036,14 @@ public class NamedParameterStatement implements AutoCloseable {
     }
 
     /**
-     * Sets a parameter.
-     *
+     * Set a parameter.
+     * The timestamp is set using the {@link PreparedStatement#setTimestamp(int, Timestamp, Calendar)}
+     * method so that the JDBC driver can make any timezone conversions necessary.
      * @param name  parameter name
      * @param value parameter value
      * @throws SQLException             if an error occurred
      * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTimestamp(int,
-     * java.sql.Timestamp)
+     * @see PreparedStatement#setTimestamp(int, java.sql.Timestamp, java.util.Calendar)
      */
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
     public void setZonedDateTime(String name, @Nullable ZonedDateTime value) throws SQLException {
@@ -1053,6 +1052,30 @@ public class NamedParameterStatement implements AutoCloseable {
         } else {
             Calendar cal = GregorianCalendar.from(value);
             Timestamp ts = Timestamp.valueOf(value.toLocalDateTime());
+            for (int idx : getIndexes(name)) {
+                statement.setTimestamp(idx, ts, cal);
+            }
+        }
+    }
+
+    /**
+     * Set a parameter.
+     * The timestamp is set using the {@link PreparedStatement#setTimestamp(int, Timestamp, Calendar)}
+     * method so that the JDBC driver can make any timezone conversions necessary.
+     *
+     * @param name  parameter name
+     * @param value parameter value
+     * @throws SQLException             if an error occurred
+     * @throws IllegalArgumentException if the parameter does not exist
+     * @see PreparedStatement#setTimestamp(int, java.sql.Timestamp, java.util.Calendar)
+     */
+    public void setInstant(String name, @Nullable Instant value) throws SQLException {
+
+        if (value == null) {
+            setNull(name, JDBCType.TIMESTAMP);
+        } else {
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            Timestamp ts = Timestamp.from(value);
             for (int idx : getIndexes(name)) {
                 statement.setTimestamp(idx, ts, cal);
             }
