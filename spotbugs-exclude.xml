@@ -24,6 +24,20 @@
         <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
     </Match>
 
+    <!-- Do not run these inspections -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+    <Match>
+        <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
+    </Match>
+
+    <!-- this inspection is triggered when using AssertThrows in JUnit tests -->
+    <Match>
+        <Source name="~.*/test/java/.*"/>
+        <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
+    </Match>
+
     <!-- by design -->
     <Match>
         <Class name="com.dua3.utility.db.NamedParameterStatement"/>
