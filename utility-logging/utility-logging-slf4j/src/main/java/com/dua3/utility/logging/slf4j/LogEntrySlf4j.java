@@ -8,9 +8,6 @@ import org.slf4j.event.Level;
 import org.slf4j.spi.LocationAwareLogger;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**

@@ -12,7 +12,8 @@ import java.util.Collection;
  */
 public final class LogUtilLog4J {
 
-    private LogUtilLog4J() {}
+    private LogUtilLog4J() {
+    }
 
     /**
      * Creates a Dua3LogAppenderLog4j instance. NOTE: The appender is not started.

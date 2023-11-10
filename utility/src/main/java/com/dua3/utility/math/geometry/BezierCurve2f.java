@@ -5,7 +5,7 @@ package com.dua3.utility.math.geometry;
  */
 public final class BezierCurve2f extends AbstractCurve2f {
     /**
-     * Name of this type of segment.
+     * Name of this segment type.
      */
     public static final String NAME = "BEZIER";
 

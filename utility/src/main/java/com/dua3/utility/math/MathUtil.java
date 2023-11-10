@@ -337,7 +337,7 @@ public final class MathUtil {
      * The number of places {@code n} may be negative, resulting in rounding taking place before the decimal point,
      * i.e. {@code round(125, -1)=130}.
      * <p>
-     * Examples rounding to 2 digits precision:
+     * Examples rounding to two digits precision:
      * <ul>
      *     <li>0.123 -&gt; 0.12
      *     <li>12.3 -&gt; 12.3
@@ -371,7 +371,7 @@ public final class MathUtil {
      * <p>
      * Round {@code x} to {@code p} digits of precision according to {@link java.math.RoundingMode#HALF_UP}.
      * <p>
-     * Examples rounding to 2 digits precision:
+     * Examples rounding to two digits precision:
      * <ul>
      *     <li>0.123 -&gt; 0.12
      *     <li>12.3 -&gt; 12

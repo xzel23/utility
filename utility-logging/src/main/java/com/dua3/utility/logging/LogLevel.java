@@ -15,10 +15,10 @@ public enum LogLevel {
         this.escEnd = escEnd;
     }
 
-    String escStart;
-    String escEnd;
+    final String escStart;
+    final String escEnd;
 
     String colorize(String text, boolean colored) {
-        return colored ? escStart+text+escEnd : text;
+        return colored ? escStart + text + escEnd : text;
     }
 }

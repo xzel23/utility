@@ -856,8 +856,8 @@ public interface Color {
     /**
      * Get CSS compatible string representation of this color.
      * <p>
-     * Opaque colors are represented as 3 component hex strings, i. e. "#ff0000" for red.
-     * Colors using transparency are represented as 4 component hex strings in rrggbbaa format.
+     * Opaque colors are represented as three component hex strings, i. e. "#ff0000" for red.
+     * Colors using transparency are represented as four component hex strings in rrggbbaa format.
      *
      * @return this color as hex value (in rgb or rgba representation)
      */

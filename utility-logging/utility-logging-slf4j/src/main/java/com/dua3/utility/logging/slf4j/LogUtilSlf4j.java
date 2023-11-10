@@ -13,7 +13,8 @@ import java.util.Optional;
 public final class LogUtilSlf4j {
     private static final Logger LOG = LogManager.getLogger(LogUtilSlf4j.class);
 
-    private LogUtilSlf4j() {}
+    private LogUtilSlf4j() {
+    }
 
     /**
      * Returns an Optional containing an instance of LoggerFactorySlf4j if the retrieved ILoggerFactory
@@ -23,7 +24,7 @@ public final class LogUtilSlf4j {
      */
     public static Optional<LoggerFactorySlf4j> getLoggerFactory() {
         ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
-        if (iLoggerFactory instanceof  LoggerFactorySlf4j factory) {
+        if (iLoggerFactory instanceof LoggerFactorySlf4j factory) {
             LOG.debug("ILoggerFactory of class {} found", factory.getClass());
             return Optional.of(factory);
         } else {

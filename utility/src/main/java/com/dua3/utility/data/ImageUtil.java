@@ -73,7 +73,7 @@ public interface ImageUtil<I> {
     Image create(int w, int h, int[] data);
 
     /**
-     * Convert image to underlying implementation.
+     * Convert {@link Image} instance to underlying implementation.
      *
      * @param img the image
      * @return implementation dependent image class
@@ -81,7 +81,7 @@ public interface ImageUtil<I> {
     I convert(Image img);
 
     /**
-     * Convert image underlying implementation. to image.
+     * Convert image from underlying implementation to {@link Image} instance.
      *
      * @param img the implementation dependent image
      * @return image

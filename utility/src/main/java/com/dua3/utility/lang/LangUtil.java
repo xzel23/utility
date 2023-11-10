@@ -10,6 +10,7 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IoUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -659,7 +660,7 @@ public final class LangUtil {
     }
 
     /**
-     * Get localised resource.
+     * Get localized resource.
      * <p>
      * This method follows the resource bundle lookup algorithm, starting to search from the most specific
      * resource name towards the general one, returning the first found valid URL.

@@ -529,7 +529,7 @@ public final class RichText
     /**
      * Get stream of lines contained in this instance.
      *
-     * @return stream of lines of this text
+     * @return stream of this text's lines
      */
     public Stream<RichText> lines() {
         return StreamSupport.stream(lineSpliterator(), false);
@@ -773,7 +773,7 @@ public final class RichText
      * Find character.
      *
      * @param ch the character
-     * @return the position of the first occurrence of ch, or -1 if not found
+     * @return the index of the first occurrence of {@code ch}, or -1 if not found
      * @see String#indexOf(int)
      */
     public int indexOf(int ch) {

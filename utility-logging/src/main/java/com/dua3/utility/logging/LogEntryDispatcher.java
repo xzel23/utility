@@ -1,7 +1,5 @@
 package com.dua3.utility.logging;
 
-import java.util.Collection;
-
 /**
  * This interface defines the contract for classes that dispatch log entries to registered handlers.
  */

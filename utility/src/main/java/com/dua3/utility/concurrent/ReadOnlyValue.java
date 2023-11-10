@@ -26,7 +26,7 @@ public interface ReadOnlyValue<T> {
      *                 - The new value of type T
      *                 The change listener does not return a value.
      */
-    void addChangeListener(BiConsumer<? super T,? super T> listener);
+    void addChangeListener(BiConsumer<? super T, ? super T> listener);
 
     /**
      * Removes a change listener for the given method. The change listener will no longer be triggered
@@ -35,7 +35,7 @@ public interface ReadOnlyValue<T> {
      * @param listener The change listener to be removed.
      *                 The change listener is a BiConsumer that was previously added using the addChangeListener method.
      */
-    void removeChangeListener(BiConsumer<? super T,? super T> listener);
+    void removeChangeListener(BiConsumer<? super T, ? super T> listener);
 
     /**
      * Returns a collection of all the change listeners currently registered for this method.
@@ -43,5 +43,5 @@ public interface ReadOnlyValue<T> {
      * @return A collection of change listeners, each represented as a BiConsumer.
      *         The change listeners are used to listen for changes in the value of type T.
      */
-    Collection<BiConsumer<? super T,? super T>> getChangeListeners();
+    Collection<BiConsumer<? super T, ? super T>> getChangeListeners();
 }

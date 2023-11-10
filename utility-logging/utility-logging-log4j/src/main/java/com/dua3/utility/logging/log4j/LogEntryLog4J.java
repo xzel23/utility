@@ -1,23 +1,14 @@
 package com.dua3.utility.logging.log4j;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogLevel;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.ReusableMessage;
 import org.apache.logging.log4j.spi.StandardLevel;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.Instant;
-import java.time.InstantSource;
-import java.time.format.DateTimeFormatter;
-import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**

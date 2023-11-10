@@ -56,7 +56,9 @@ Replace `${utility_version}` with the current version.
 
 **As of version 12.0.0, logging changed from SLF4J to Log4J-API!**
 
-You can use whatever logging implementation you want, for configuration refer to the Log4J documentation. You can also look at the swing samples that use a SwingLogPane and route all logging output regardless of source (Log4J, SLF4J, JUL) to the logging implementation.
+You can use whatever logging implementation you want, for configuration refer to the Log4J documentation. You can also
+look at the swing samples that use a SwingLogPane and route all logging output regardless of source (Log4J, SLF4J, JUL)
+to the logging implementation.
 
 ### utility-logging
 
@@ -160,8 +162,8 @@ the parameter.
 ## Changes
 
 - all internal logging is done through log4j-api instead of slf4j
-- introduced util-logging-slf4j as sub project of util-logging. Note that util-logging is not intended as a production logging
-  replacement. It is intended to provide utilites to capture and display log data in an application window.
+- introduced util-logging-slf4j as sub project of util-logging. Note that util-logging is not intended as a production
+  logging replacement. It is intended to provide utilites to capture and display log data in an application window.
 
 ### 12.0.0 (to be released)
 
@@ -170,7 +172,7 @@ the parameter.
 
 ### 11.1.3
 
- - update log4j to 2.21.0 (according to release notes now fully JLink compatible)
+- update log4j to 2.21.0 (according to release notes now fully JLink compatible)
 
 ### 11.1.2
 
@@ -181,7 +183,7 @@ the parameter.
 ### 11.1.0
 
 - overload TextUtil.getMD5String(byte[])
-- Value interface as an abstraction for observable values that is meant to be used in place of JavaFX ObservableValue or 
+- Value interface as an abstraction for observable values that is meant to be used in place of JavaFX ObservableValue or
   Swing Properties in library code that is supposed not to have dependencies on either JavaFX or java.desktop
 
 ### 11.0.0
@@ -687,7 +689,7 @@ the parameter.
 
 ### Version 5.1.2
 
-- added methods in LangUtil to resolve localised resources
+- added methods in LangUtil to resolve localized resources
 - minor cleanups
 
 ### Version 5.1.1

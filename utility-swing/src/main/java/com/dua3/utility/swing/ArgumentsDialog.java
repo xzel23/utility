@@ -166,7 +166,7 @@ public class ArgumentsDialog extends JDialog {
     /**
      * Creates a new ArgumentsDialog with the specified owner, parser, and title.
      * The dialog is displayed as a modal dialog and blocks input from other windows.
-     * The dialog contains an ArgumentsPanel with the specified parser and callback methods for when the dialog is closed or cancelled.
+     * The dialog contains an ArgumentsPanel with the specified parser and callback methods for when the dialog is closed or canceled.
      *
      * @param owner the owner Window of the dialog
      * @param parser the ArgumentsParser used by the dialog to parse arguments

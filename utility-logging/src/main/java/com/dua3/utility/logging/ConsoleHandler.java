@@ -27,11 +27,11 @@ public class ConsoleHandler implements LogEntryHandler {
         this.out = out;
 
         if (colored) {
-            colorMap.put(LogLevel.TRACE, Pair.of(AnsiCode.fg(Color.DARKGRAY), AnsiCode.reset()+NEWLINE));
-            colorMap.put(LogLevel.DEBUG, Pair.of(AnsiCode.fg(Color.BLACK), AnsiCode.reset()+NEWLINE));
-            colorMap.put(LogLevel.INFO, Pair.of(AnsiCode.fg(Color.BLUE), AnsiCode.reset()+NEWLINE));
-            colorMap.put(LogLevel.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED), AnsiCode.reset()+NEWLINE));
-            colorMap.put(LogLevel.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED), AnsiCode.reset()+NEWLINE));
+            colorMap.put(LogLevel.TRACE, Pair.of(AnsiCode.fg(Color.DARKGRAY), AnsiCode.reset() + NEWLINE));
+            colorMap.put(LogLevel.DEBUG, Pair.of(AnsiCode.fg(Color.BLACK), AnsiCode.reset() + NEWLINE));
+            colorMap.put(LogLevel.INFO, Pair.of(AnsiCode.fg(Color.BLUE), AnsiCode.reset() + NEWLINE));
+            colorMap.put(LogLevel.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED), AnsiCode.reset() + NEWLINE));
+            colorMap.put(LogLevel.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED), AnsiCode.reset() + NEWLINE));
         } else {
             colorMap.put(LogLevel.TRACE, Pair.of("", NEWLINE));
             colorMap.put(LogLevel.DEBUG, Pair.of("", NEWLINE));

@@ -2,15 +2,12 @@ package com.dua3.utility.logging.slf4j;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.logging.LogEntryHandler;
-import com.dua3.utility.logging.LogLevel;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
-import org.slf4j.spi.LocationAwareLogger;
 
 import java.lang.ref.WeakReference;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,16 +47,16 @@ public class LoggerSlf4j extends AbstractLogger {
     @Override
     protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object[] arguments, @Nullable Throwable throwable) {
         boolean cleanup = false;
-        for (WeakReference<LogEntryHandler> ref: handlers) {
+        for (WeakReference<LogEntryHandler> ref : handlers) {
             LogEntryHandler handler = ref.get();
-            if (handler==null) {
+            if (handler == null) {
                 cleanup = true;
             } else {
                 handler.handleEntry(new LogEntrySlf4j(name, level, marker, () -> MessageFormatter.basicArrayFormat(messagePattern, arguments), throwable));
             }
         }
         if (cleanup) {
-            handlers.removeIf(ref -> ref.get()==null);
+            handlers.removeIf(ref -> ref.get() == null);
         }
     }
 

@@ -18,18 +18,18 @@ public final class Path2f {
     }
 
     /**
-     * Get list of vertices of this path.
+     * Get this path's vertices as a list.
      *
-     * @return list of vertices
+     * @return unmodifiable list of vertices
      */
     public List<Vector2f> vertices() {
         return impl.vertices();
     }
 
     /**
-     * Get list of segments of this path.
+     * This path's segments as a list.
      *
-     * @return list of segments
+     * @return unmodifiable list of segments
      */
     public List<Segment2f> segments() {
         return impl.segments();

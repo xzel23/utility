@@ -1069,6 +1069,7 @@ public class NamedParameterStatement implements AutoCloseable {
      * @throws IllegalArgumentException if the parameter does not exist
      * @see PreparedStatement#setTimestamp(int, java.sql.Timestamp, java.util.Calendar)
      */
+    @SuppressWarnings("UseOfObsoleteDateTimeApi")
     public void setInstant(String name, @Nullable Instant value) throws SQLException {
 
         if (value == null) {

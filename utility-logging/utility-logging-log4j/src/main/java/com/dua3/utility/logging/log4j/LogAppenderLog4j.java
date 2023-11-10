@@ -7,6 +7,7 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
@@ -46,7 +47,7 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
      */
     protected LogAppenderLog4j(String name, @Nullable Filter filter, @Nullable Layout<? extends Serializable> layout,
                                final boolean ignoreExceptions) {
-        super(name, filter, layout, ignoreExceptions);
+        super(name, filter, layout, ignoreExceptions, Property.EMPTY_ARRAY);
     }
 
     /**
@@ -88,16 +89,16 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
     @Override
     public void append(LogEvent event) {
         boolean cleanup = false;
-        for (WeakReference<LogEntryHandler> ref: handlers) {
+        for (WeakReference<LogEntryHandler> ref : handlers) {
             LogEntryHandler handler = ref.get();
-            if (handler==null) {
+            if (handler == null) {
                 cleanup = true;
             } else {
                 handler.handleEntry(new LogEntryLog4J(event));
             }
         }
         if (cleanup) {
-            handlers.removeIf(ref -> ref.get()==null);
+            handlers.removeIf(ref -> ref.get() == null);
         }
     }
 
@@ -108,6 +109,6 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
 
     @Override
     public void removeLogEntryHandler(LogEntryHandler handler) {
-        handlers.removeIf(h -> h.get()==handler);
+        handlers.removeIf(h -> h.get() == handler);
     }
 }
