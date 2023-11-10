@@ -10,7 +10,8 @@ import java.util.ServiceLoader;
  * Utility class for logging operations.
  */
 public final class LogUtil {
-    private LogUtil() {}
+    private LogUtil() {
+    }
 
     private static final Logger LOG = LogManager.getLogger(LogUtil.class);
 
@@ -33,7 +34,7 @@ public final class LogUtil {
                 }
                 LOG.debug("factory {} did not return a dispatcher", factory.getClass());
             } catch (Exception e) {
-                LOG.warn("factory {} threw an exception when trying to create a dispatcher", e);
+                LOG.warn("factory {} threw an exception when trying to create a dispatcher", factory.getClass().getName(), e);
             }
         }
         throw new ServiceConfigurationError("no factories left to try - could not create a dispatcher");
