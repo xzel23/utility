@@ -307,8 +307,7 @@ public class ArgumentsParser {
                     if (minOccurrences == 1) {
                         LangUtil.check(minOccurrences <= occurrences,
                                 () -> new OptionException(
-                                        "missing required option '%s'".formatted(
-                                                option.name(), minOccurrences, occurrences
+                                        "missing required option '%s'".formatted(option.name()
                                         )));
                     } else {
                         LangUtil.check(minOccurrences <= occurrences,
