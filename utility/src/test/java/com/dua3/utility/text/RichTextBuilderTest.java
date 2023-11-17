@@ -52,4 +52,10 @@ public class RichTextBuilderTest {
         assertEquals("Hello world", rt.stream().findFirst().get().toString());
     }
 
+    @Test
+    public void testEmpty() {
+        RichTextBuilder builder = new RichTextBuilder();
+        RichText rt = builder.toRichText();
+        assertEquals(rt, RichText.emptyText());
+    }
 }

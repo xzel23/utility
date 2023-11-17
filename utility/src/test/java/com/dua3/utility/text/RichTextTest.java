@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -88,6 +89,21 @@ public class RichTextTest {
         assertNotEquals(f, b);
         assertNotEquals(f, c);
         assertNotEquals(f, d);
+    }
+
+    @Test
+    public void testEqualsWithHashCollision() {
+        RichText a = RichText.valueOf("FB");
+        RichText b = RichText.valueOf("Ea");
+
+        Assumptions.assumeTrue(a.hashCode() == b.hashCode(), "hashes do not matxh");
+        assertNotEquals(a, b);
+    }
+
+    @Test
+    public void testisEmpty() {
+        assertTrue(RichText.emptyText().isEmpty());
+        assertFalse(RichText.valueOf(".").isEmpty());
     }
 
     @Test
@@ -397,4 +413,52 @@ public class RichTextTest {
         RichText expected = RichText.valueOf("This should be easy");
         assertEquals(expected, actual);
     }
+
+    @Test
+    void testSplitWithoutLimit() {
+        RichText txt = RichText.valueOf("apple,banana,carrot");
+        RichText[] result = txt.split(",", 0);
+        assertEquals(3, result.length);
+        assertEquals(RichText.valueOf("apple"), result[0]);
+        assertEquals(RichText.valueOf("banana"), result[1]);
+        assertEquals(RichText.valueOf("carrot"), result[2]);
+    }
+
+    @Test
+    void testSplitWithPositiveLimit() {
+        RichText txt = RichText.valueOf("apple,banana,carrot");
+        RichText[] result = txt.split(",", 2);
+        assertEquals(2, result.length);
+        assertEquals(RichText.valueOf("apple"), result[0]);
+        assertEquals(RichText.valueOf("banana,carrot"), result[1]);
+    }
+
+    @Test
+    void testSplitWithLimitGreaterThanArraySize() {
+        RichText txt = RichText.valueOf("apple,banana,carrot");
+        RichText[] result = txt.split(",", 10);
+        assertEquals(3, result.length);
+        assertEquals(RichText.valueOf("apple"), result[0]);
+        assertEquals(RichText.valueOf("banana"), result[1]);
+        assertEquals(RichText.valueOf("carrot"), result[2]);
+    }
+
+    @Test
+    void testSplitWithLimitOne() {
+        RichText txt = RichText.valueOf("apple,banana,carrot");
+        RichText[] result = txt.split(",", 1);
+        assertEquals(1, result.length);
+        assertEquals(RichText.valueOf("apple,banana,carrot"), result[0]);
+    }
+
+    @Test
+    void testSplitWithNegativeLimit() {
+        RichText txt = RichText.valueOf("apple,banana,carrot,,,");
+        RichText[] result = txt.split(",", -1);
+        assertEquals(6, result.length);
+        assertEquals(RichText.valueOf("apple"), result[0]);
+        assertEquals(RichText.valueOf("banana"), result[1]);
+        assertEquals(RichText.valueOf("carrot"), result[2]);
+    }
+
 }
