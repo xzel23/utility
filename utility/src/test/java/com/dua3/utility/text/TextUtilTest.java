@@ -72,4 +72,18 @@ public class TextUtilTest {
         assertEquals("_abcd", TextUtil.align("abcd", 5, TextUtil.Alignment.RIGHT, '_'));
     }
 
+    @Test
+    void testEscapeHTML() {
+        String normalString = "<div>Test Content</div>";
+        String escapedString = TextUtil.escapeHTML(normalString);
+        assertEquals("&lt;div&gt;Test Content&lt;/div&gt;", escapedString);
+
+        String stringWithAmpersand = "Tom & Jerry";
+        escapedString = TextUtil.escapeHTML(stringWithAmpersand);
+        assertEquals("Tom &amp; Jerry", escapedString);
+
+        String specialCharactersString = "< > & \" ' /";
+        escapedString = TextUtil.escapeHTML(specialCharactersString);
+        assertEquals("&lt; &gt; &amp; &quot; &apos; /", escapedString);
+    }
 }

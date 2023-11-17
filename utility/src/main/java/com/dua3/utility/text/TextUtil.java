@@ -80,12 +80,22 @@ public final class TextUtil {
      * @throws IOException if an exception occurs
      */
     public static void appendHtmlEscapedCharacter(Appendable app, char c) throws IOException {
-        if (c >= 127 || c == '"' || c == '<' || c == '>' || c == '&' || c == '\0') {
-            app.append("&#");
-            app.append(Integer.toString(c));
-            app.append(';');
-        } else {
-            app.append(c);
+        switch (c) {
+            case '\0' -> app.append("&#0;");
+            case '"' -> app.append("&quot;");
+            case '<' -> app.append("&lt;");
+            case '>' -> app.append("&gt;");
+            case '&' -> app.append("&amp;");
+            case '\'' -> app.append("&apos;");
+            default -> {
+                if (c < 127) {
+                    app.append(c);
+                } else {
+                    app.append("&#");
+                    app.append(Integer.toString(c));
+                    app.append(';');
+                }
+            }
         }
     }
 
