@@ -169,6 +169,10 @@ the parameter.
 
 - reworked util-logging, simplyfied SwingLogPane use
 - added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatemet javadoc
+- reduce code duplication
+- increase uit test coverage
+- add javadoc
+- fix smaller issues
 
 ### 11.1.3
 
