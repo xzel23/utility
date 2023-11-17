@@ -222,7 +222,7 @@ public final class FontDef implements Cloneable {
         };
     }
 
-    private static Float parseFontSize(String sz) {
+    static Float parseFontSize(String sz) {
         sz = sz.strip();
 
         float f;
