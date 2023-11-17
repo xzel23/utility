@@ -48,7 +48,7 @@ public class SimpleValue<T> implements Value<T> {
 
     @Override
     public void set(@Nullable T v) {
-        T oldV = v;
+        T oldV = this.v;
         this.v = v;
         changeListeners.forEach(listener -> listener.accept(oldV, v));
     }
