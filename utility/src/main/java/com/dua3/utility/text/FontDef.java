@@ -223,32 +223,13 @@ public final class FontDef implements Cloneable {
     }
 
     private static Float parseFontSize(String sz) {
-        sz = sz.strip();
+        sz = sz.strip().toLowerCase(Locale.ROOT);
 
-        if (sz.equalsIgnoreCase("inherit")) {
+        if (sz.equals("inherit")) {
             return null;
         }
 
-        int idxUnit;
-        for (idxUnit = sz.length(); idxUnit>0 && !Character.isDigit(sz.charAt(idxUnit-1)); idxUnit--) {
-            // nop
-        }
-        String unit = sz.substring(idxUnit).strip();
-        String number = sz.substring(0,idxUnit).strip();
-
-        float f = switch(unit.toLowerCase(Locale.ROOT)) {
-            case "pt" -> 1.0f;
-            case "em" -> 12.0f;
-            case "px" -> 18.0f / 24.0f;
-            case "%" -> 12.0f / 100.0f;
-            case "vw" -> {
-                LOG.warn("unit 'vw' unsupported, treating as 'em'");
-                yield 12.0f;
-            }
-            default -> throw new IllegalArgumentException("invalid value for font-size: " + sz);
-        };
-
-        return f * Float.parseFloat(number);
+        return TextUtil.decodeFontSize(sz);
     }
 
     private static Pair<String, String> parseCssRule(String rule) {

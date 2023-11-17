@@ -8,6 +8,8 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -31,6 +33,8 @@ import java.util.stream.IntStream;
  * Text related utility class.
  */
 public final class TextUtil {
+
+    private static final Logger LOG = LogManager.getLogger(TextUtil.class);
 
     /**
      * The current system's end-of-line sequence.
@@ -254,17 +258,28 @@ public final class TextUtil {
      * @return font size in pt
      */
     public static float decodeFontSize(String s) {
-        final float factor;
-        if (s.endsWith("pt")) {
-            s = s.substring(0, s.length() - 2);
-            factor = 1.0f;
-        } else if (s.endsWith("px")) {
-            s = s.substring(0, s.length() - 2);
-            factor = 96.0f / 72.0f;
-        } else {
-            factor = 1.0f;
+        s = s.strip().toLowerCase(Locale.ROOT);
+
+        int idxUnit;
+        for (idxUnit = s.length(); idxUnit>0 && !Character.isDigit(s.charAt(idxUnit-1)); idxUnit--) {
+            // nop
         }
-        return factor * Float.parseFloat(s);
+        String unit = s.substring(idxUnit).strip();
+        String number = s.substring(0,idxUnit).strip();
+
+        float f = switch(unit) {
+            case "pt" -> 1.0f;
+            case "em" -> 12.0f;
+            case "px" -> 18.0f / 24.0f;
+            case "%" -> 12.0f / 100.0f;
+            case "vw" -> {
+                LOG.warn("unit 'vw' unsupported, treating as 'em'");
+                yield 12.0f;
+            }
+            default -> throw new IllegalArgumentException("invalid value for font-size: " + s);
+        };
+
+        return f * Float.parseFloat(number);
     }
 
     /**
