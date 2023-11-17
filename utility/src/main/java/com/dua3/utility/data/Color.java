@@ -631,7 +631,7 @@ public interface Color {
      */
     static Color valueOf(String s) {
         // try named colors first
-        Color color = Colors.COLORS.get(s);
+        Color color = Colors.COLORS.get(s.toUpperCase(Locale.ROOT));
         if (color != null) {
             return color;
         }
