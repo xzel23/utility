@@ -225,30 +225,30 @@ public final class FontDef implements Cloneable {
     static Float parseFontSize(String sz) {
         sz = sz.strip();
 
-        float f;
         if (sz.equalsIgnoreCase("inherit")) {
             return null;
-        } else if (sz.endsWith("pt")) {
-            f = 1.0f;
-            sz = sz.substring(0, sz.length() - 2);
-        } else if (sz.endsWith("em")) {
-            f = 12.0f;
-            sz = sz.substring(0, sz.length() - 2);
-        } else if (sz.endsWith("px")) {
-            f = 18.0f / 24.0f;
-            sz = sz.substring(0, sz.length() - 2);
-        } else if (sz.endsWith("%")) {
-            f = 12.0f / 100.0f;
-            sz = sz.substring(0, sz.length() - 1);
-        } else if (sz.endsWith("vw")) {
-            LOG.warn("unit 'vw' unsupported, treating as 'em'");
-            f = 12.0f;
-            sz = sz.substring(0, sz.length() - 2);
-        } else {
-            throw new IllegalArgumentException("invalid value for font-size: " + sz);
         }
 
-        return f * Float.parseFloat(sz.strip());
+        int idxUnit;
+        for (idxUnit = sz.length(); idxUnit>0 && !Character.isDigit(sz.charAt(idxUnit-1)); idxUnit--) {
+            // nop
+        }
+        String unit = sz.substring(idxUnit).strip();
+        String number = sz.substring(0,idxUnit).strip();
+
+        float f = switch(unit) {
+            case "pt" -> 1.0f;
+            case "em" -> 12.0f;
+            case "px" -> 18.0f / 24.0f;
+            case "%" -> 12.0f / 100.0f;
+            case "vw" -> {
+                LOG.warn("unit 'vw' unsupported, treating as 'em'");
+                yield 12.0f;
+            }
+            default -> throw new IllegalArgumentException("invalid value for font-size: " + sz);
+        };
+
+        return f * Float.parseFloat(number);
     }
 
     private static Pair<String, String> parseCssRule(String rule) {

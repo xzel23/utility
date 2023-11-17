@@ -21,11 +21,11 @@ public class FontDefTest {
         Assertions.assertEquals(24.0f, parseFontSize("2vw"), "2vw should return 24.0");
         Assertions.assertThrows(IllegalArgumentException.class, () -> parseFontSize("10abc"), "Invalid unit should throw an exception");
         Assertions.assertThrows(IllegalArgumentException.class, () -> parseFontSize(""), "Empty string should throw an exception");
-        Assertions.assertThrows(NumberFormatException.class, () -> parseFontSize("abcpt"), "Invalid number should throw an exception");
-        Assertions.assertThrows(NumberFormatException.class, () -> parseFontSize("abc%"), "Invalid number should throw an exception");
-        Assertions.assertThrows(NumberFormatException.class, () -> parseFontSize("abcem"), "Invalid number should throw an exception");
-        Assertions.assertThrows(NumberFormatException.class, () -> parseFontSize("abcpx"), "Invalid number should throw an exception");
-        Assertions.assertThrows(NumberFormatException.class, () -> parseFontSize("abcvw"), "Invalid number should throw an exception");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> parseFontSize("abcpt"), "Invalid number should throw an exception");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> parseFontSize("abc%"), "Invalid number should throw an exception");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> parseFontSize("abcem"), "Invalid number should throw an exception");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> parseFontSize("abcpx"), "Invalid number should throw an exception");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> parseFontSize("abcvw"), "Invalid number should throw an exception");
     }
 
 }
