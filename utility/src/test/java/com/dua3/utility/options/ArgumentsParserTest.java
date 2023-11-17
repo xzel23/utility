@@ -113,7 +113,9 @@ public class ArgumentsParserTest {
     public void testSimpleOptionRequired() {
         ArgumentsParser cmd = new ArgumentsParser("testSimpleOptionRequired", "Unit test for passing simple options on the command line.");
 
-        SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n").description("set name").required();
+        SimpleOption<String> optionName = cmd.simpleOption(String.class, "--name", "-n")
+                .description("set name")
+                .required();
         SimpleOption<Integer> optionAge = cmd.simpleOption(Integer.class, "--age", "-a");
 
         assertThrows(OptionException.class, cmd::parse);

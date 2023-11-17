@@ -65,11 +65,11 @@ public class ArgumentsParser {
      * @param maxArgs     maximum number of positional arguments
      */
     public ArgumentsParser(String name, String description, int minArgs, int maxArgs) {
-        this.name = Objects.requireNonNull(name);
-        this.description = Objects.requireNonNull(description);
+        this.name = Objects.requireNonNull(name, "name is null");
+        this.description = Objects.requireNonNull(description, "description is null");
 
-        LangUtil.check(minArgs >= 0, "minimal number of arguments must not be negative: %s", minArgs);
-        LangUtil.check(maxArgs >= minArgs, "maximum number of arguments must be greater than or equal to the minimum number of arguments: %s (minimum number of arguments is %s", maxArgs, minArgs);
+        LangUtil.check(minArgs >= 0, "minimal number of arguments must not be negative: %d", minArgs);
+        LangUtil.check(maxArgs >= minArgs, "maximum number of arguments must be greater than or equal to the minimum number of arguments: %d (minimum number of arguments is %d)", maxArgs, minArgs);
         this.minPositionalArgs = minArgs;
         this.maxPositionalArgs = maxArgs;
     }
@@ -103,8 +103,9 @@ public class ArgumentsParser {
             case 1 -> (min == max) ? " arg" : " arg1";
             case 2 -> " arg1 arg2";
             case 3 -> " arg1 arg2 arg3";
+            case Integer.MAX_VALUE -> " arg ...";
             default -> //noinspection StringConcatenationMissingWhitespace
-                    " arg1 ... arg" + min;
+                    " arg1 ... arg" + max;
         };
 
         // handle max arity

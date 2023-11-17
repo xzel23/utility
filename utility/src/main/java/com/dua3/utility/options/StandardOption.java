@@ -133,6 +133,17 @@ public final class StandardOption<T> extends Option<T> {
         return this;
     }
 
+    /**
+     * Set the arity for this option.
+     *
+     * @param min the minimum arity
+     * @return the option
+     */
+    public StandardOption<T> minArity(int min) {
+        super.arity(min, Integer.MAX_VALUE);
+        return this;
+    }
+
     @Override
     public Optional<T> getDefault() {
         return Optional.empty();
