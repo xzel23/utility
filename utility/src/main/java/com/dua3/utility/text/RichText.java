@@ -726,14 +726,46 @@ public final class RichText
             return list.subList(0, resultSize).toArray(RichText[]::new);
         }
 
+        // create a matcher and split using matcher
         RichTextMatcher m = matcher(Pattern.compile(regex), this);
+        boolean unlimited = limit <= 0;
         List<RichText> result = new ArrayList<>();
-        int off = 0;
-        while (m.find(off)) {
-            result.add(subSequence(off, m.start()));
-            off = m.end();
+        int index = 0;
+        while(m.find()) {
+            if (unlimited || result.size() < limit - 1) {
+                if (index == 0 && m.end() == index) {
+                    // skip empty leading substring at beginning
+                    continue;
+                }
+                RichText match = subSequence(index, m.start());
+                result.add(match);
+                index = m.end();
+            } else if (result.size() == limit - 1) { // last one
+                RichText match = subSequence(index, length());
+                result.add(match);
+                index = m.end();
+            }
         }
-        result.add(subSequence(off));
+
+        // If no match was found, return this
+        if (index == 0) {
+            return new RichText[]{this};
+        }
+
+        // Add remaining segment
+        if (unlimited || result.size() < limit) {
+            result.add(subSequence(index, length()));
+        }
+
+        // remove trailing emoty segments
+        if (limit == 0) {
+            int s;
+            for (s = result.size(); s>0 && result.get(s-1).isEmpty(); s--) {
+                // nop
+            }
+            result = result.subList(0, s);
+        }
+
         return result.toArray(RichText[]::new);
     }
 

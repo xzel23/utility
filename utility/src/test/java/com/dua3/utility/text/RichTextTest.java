@@ -456,9 +456,31 @@ public class RichTextTest {
         RichText txt = RichText.valueOf("apple,banana,carrot,,,");
         RichText[] result = txt.split(",", -1);
         assertEquals(6, result.length);
+    }
+
+    @Test
+    void testSplitWithComplexExpression() {
+        RichText txt = RichText.valueOf("apple, banana,carrot\nlettuce,,,");
+        RichText[] result = txt.split("[,\\.\\n] *");
+        assertEquals(4, result.length);
         assertEquals(RichText.valueOf("apple"), result[0]);
         assertEquals(RichText.valueOf("banana"), result[1]);
         assertEquals(RichText.valueOf("carrot"), result[2]);
+        assertEquals(RichText.valueOf("lettuce"), result[3]);
+    }
+
+    @Test
+    void testSplitWithComplexExpressionAndNegativeLimit() {
+        RichText txt = RichText.valueOf("apple, banana,carrot\nlettuce,,,");
+        RichText[] result = txt.split("[,\\.\\n] *", -1);
+        assertEquals(7, result.length);
+        assertEquals(RichText.valueOf("apple"), result[0]);
+        assertEquals(RichText.valueOf("banana"), result[1]);
+        assertEquals(RichText.valueOf("carrot"), result[2]);
+        assertEquals(RichText.valueOf("lettuce"), result[3]);
+        assertTrue(result[4].isEmpty());
+        assertTrue(result[5].isEmpty());
+        assertTrue(result[6].isEmpty());
     }
 
 }

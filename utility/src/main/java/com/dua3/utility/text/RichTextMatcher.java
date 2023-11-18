@@ -126,5 +126,4 @@ public class RichTextMatcher implements MatchResult {
         rtb.append(text.subSequence(off, text.length()));
         return rtb.toRichText();
     }
-
 }
