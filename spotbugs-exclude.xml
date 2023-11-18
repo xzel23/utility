@@ -1,10 +1,8 @@
 <FindBugsFilter>
     <!-- do not check these in test code -->
     <Match>
-        <Source name="~.*/test/java/.*"/>
+        <Source name="~.*[/\\]test[/\\]java[/\\].*"/>
         <Or>
-            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE"/>
-            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
             <!-- this inspection is triggered when using AssertThrows in JUnit tests -->
             <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
         </Or>
