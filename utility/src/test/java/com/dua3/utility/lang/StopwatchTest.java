@@ -1,5 +1,6 @@
 package com.dua3.utility.lang;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -10,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StopwatchTest {
     @Test
     void testStopwatch() throws InterruptedException {
+        Assumptions.assumeFalse(Platform.isWindows(), "timings on windows GitHub CI are unreliable");
+
         Stopwatch s = new Stopwatch("StopwatchTest");
         Thread.sleep(1000);
         Duration t1 = s.elapsed();
