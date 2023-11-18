@@ -1,6 +1,8 @@
+// define project name and version
 rootProject.name = "dua3-utility"
 val projectVersion = "12.0.0-beta3"
 
+// define subprojects
 include("utility")
 include("utility-db")
 include("utility-swing")
@@ -10,6 +12,12 @@ include("utility-logging:utility-logging-log4j")
 include("utility-samples:utility-samples-slf4j")
 include("utility-samples:utility-samples-log4j")
 
+// use plugin to add JVM toolchain repository
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+}
+
+// define dependency versions and repositories
 dependencyResolutionManagement {
 
     val isSnapshot = projectVersion.endsWith("SNAPSHOT")
