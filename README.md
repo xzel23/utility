@@ -172,6 +172,7 @@ the parameter.
 - reduce code duplication
 - increase uit test coverage
 - add javadoc
+- fix RichText.split() with non-trivial regex and limit 0 not skipping trailing empty segments in result
 - fix smaller issues
 
 ### 11.1.3
