@@ -180,6 +180,10 @@ subprojects {
             outputLocation = project.layout.buildDirectory.file("reports/spotbugs.html").get().asFile
             setStylesheet("fancy-hist.xsl")
         }
+        reports.create("xml") {
+            required.set(true)
+            outputLocation = project.layout.buildDirectory.file("reports/spotbugs.xml").get().asFile
+        }
     }
 
     // === PUBLISHING ===

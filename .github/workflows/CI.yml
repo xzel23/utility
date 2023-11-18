@@ -32,6 +32,10 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew build
 
+      - uses: jwgmeligmeyling/spotbugs-github-action@master
+        with:
+          path: '**/spotbugs.xml'
+
   qodana:
     runs-on: ubuntu-latest
     steps:
