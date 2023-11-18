@@ -167,6 +167,7 @@ the parameter.
 
 ### 12.0.0 (to be released)
 
+- enable automatic download of Gradle JVM toolchains in build
 - reworked util-logging, simplyfied SwingLogPane use
 - added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatemet javadoc
 - reduce code duplication
