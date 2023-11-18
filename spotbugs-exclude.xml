@@ -5,6 +5,8 @@
         <Or>
             <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE"/>
             <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
+            <!-- this inspection is triggered when using AssertThrows in JUnit tests -->
+            <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
         </Or>
     </Match>
 
@@ -30,12 +32,6 @@
     </Match>
     <Match>
         <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
-    </Match>
-
-    <!-- this inspection is triggered when using AssertThrows in JUnit tests -->
-    <Match>
-        <Source name="~.*/test/java/.*"/>
-        <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
     </Match>
 
     <!-- by design -->
