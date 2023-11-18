@@ -757,11 +757,11 @@ public final class RichText
             result.add(subSequence(index, length()));
         }
 
-        // remove trailing emoty segments
+        // remove trailing empty segments
         if (limit == 0) {
-            int s;
-            for (s = result.size(); s>0 && result.get(s-1).isEmpty(); s--) {
-                // nop
+            int s = result.size();
+            while ( s>0 && result.get(s-1).isEmpty()) {
+                s--;
             }
             result = result.subList(0, s);
         }

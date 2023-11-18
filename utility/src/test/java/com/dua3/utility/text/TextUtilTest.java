@@ -6,6 +6,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -85,5 +86,29 @@ public class TextUtilTest {
         String specialCharactersString = "< > & \" ' /";
         escapedString = TextUtil.escapeHTML(specialCharactersString);
         assertEquals("&lt; &gt; &amp; &quot; &apos; /", escapedString);
+    }
+
+    @Test
+    void testDecodeFontSize() {
+        // Test with "pt"
+        Assertions.assertEquals(10.0f, TextUtil.decodeFontSize("10pt"), 0.001);
+
+        // Test with "em"
+        Assertions.assertEquals(120.0f, TextUtil.decodeFontSize("10em"), 0.001);
+
+        // Test with "px"
+        Assertions.assertEquals(7.5f, TextUtil.decodeFontSize("10px"), 0.001);
+
+        // Test with "%"
+        Assertions.assertEquals(1.2f, TextUtil.decodeFontSize("10%"), 0.001);
+
+        // Test with unknown unit
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TextUtil.decodeFontSize("10abc"));
+
+        // Test with "vw"
+        Assertions.assertEquals(120.0f, TextUtil.decodeFontSize("10vw"), 0.001);
+
+        // Test with empty string
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TextUtil.decodeFontSize(""));
     }
 }

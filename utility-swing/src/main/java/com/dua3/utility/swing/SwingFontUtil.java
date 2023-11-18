@@ -30,7 +30,8 @@ public class SwingFontUtil implements FontUtil<java.awt.Font> {
     private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
 
     private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
-        int style = (bold ? java.awt.Font.BOLD : 0) | (italic ? java.awt.Font.ITALIC : 0);
+        int style = (bold ? java.awt.Font.BOLD : java.awt.Font.PLAIN)
+                | (italic ? java.awt.Font.ITALIC : java.awt.Font.PLAIN);
         return new java.awt.Font(family, style, Math.round(size));
     }
 

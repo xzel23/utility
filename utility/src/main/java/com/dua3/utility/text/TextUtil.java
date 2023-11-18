@@ -270,9 +270,9 @@ public final class TextUtil {
     public static float decodeFontSize(String s) {
         s = s.strip().toLowerCase(Locale.ROOT);
 
-        int idxUnit;
-        for (idxUnit = s.length(); idxUnit>0 && !Character.isDigit(s.charAt(idxUnit-1)); idxUnit--) {
-            // nop
+        int idxUnit = s.length();
+        while (idxUnit > 0 && !Character.isDigit(s.charAt(idxUnit - 1))) {
+            idxUnit--;
         }
         String unit = s.substring(idxUnit).strip();
         String number = s.substring(0,idxUnit).strip();
