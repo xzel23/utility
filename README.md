@@ -171,11 +171,12 @@ the parameter.
 - reworked util-logging, simplyfied SwingLogPane use
 - added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatemet javadoc
 - reduce code duplication
-- increase uit test coverage
+- increase unit test coverage
 - add javadoc
 - fix RichText.split() with non-trivial regex and limit 0 not skipping trailing empty segments in result
 - fix build issues on windows‚
 - fix smaller issues
+- fix issues in FontDef CSS conversion
 
 ### 11.1.3
 
