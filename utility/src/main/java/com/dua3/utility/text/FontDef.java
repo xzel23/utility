@@ -182,6 +182,10 @@ public final class FontDef implements Cloneable {
         FontDef fd = new FontDef();
 
         for (String rule : fontdef.split(";")) {
+            if (rule.isBlank()) {
+                continue;
+            }
+
             Pair<String, String> pair = parseCssRule(rule);
 
             String attribute = pair.first().toLowerCase(Locale.ROOT);
@@ -270,7 +274,7 @@ public final class FontDef implements Cloneable {
                 LangUtil.triStateSelect(bold, "-bold", "-regular", "-*") +
                 LangUtil.triStateSelect(italic, "-italic", "-normal", "-*") +
                 LangUtil.triStateSelect(underline, "-underline", "-none", "-*") +
-                LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "*") +
+                LangUtil.triStateSelect(strikeThrough, "-strikethrough", "-no_line", "-*") +
                 '-' + (size != null ? size : "*") +
                 '-' + (color != null ? color.toCss() : "*");
     }
@@ -408,17 +412,18 @@ public final class FontDef implements Cloneable {
         boolean isUnderline = underline != null && underline;
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
         //noinspection StringConcatenationMissingWhitespace
-        return (color == null ? "" : "color: " + color + ";") +
-                (size == null ? "" : "font-size: " + size + "pt;") +
-                (family == null ? "" : "font-family: " + family + ";") +
-                (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + ";") +
-                (italic == null ? "" : "font-style: " + (italic ? "italic" : "normal") + ";") +
+        String css = (color == null ? "" : " color: " + color + ";") +
+                (size == null ? "" : " font-size: " + size + "pt;") +
+                (family == null ? "" : " font-family: " + family + ";") +
+                (bold == null ? "" : " font-weight: " + (bold ? "bold" : "normal") + ";") +
+                (italic == null ? "" : " font-style: " + (italic ? "italic" : "normal") + ";") +
                 (isStrikeThrough || isUnderline
-                        ? "text-decoration:" +
+                        ? " text-decoration:" +
                         (isUnderline ? " underline" : "") +
                         (isStrikeThrough ? " line-through" : "") +
                         ";"
                         : "");
+        return css.stripLeading();
     }
 
     /**
