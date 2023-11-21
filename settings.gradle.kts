@@ -33,7 +33,7 @@ dependencyResolutionManagement {
 
             version("cabe", "1.0.0")
             version("junit", "5.10.1")
-            version("log4j", "2.21.1")
+            version("log4j", "2.22.0")
             version("slf4j", "2.0.9")
             version("jimfs", "1.2")
             version("miglayout", "11.2")
