@@ -70,9 +70,9 @@ public enum StandardFontMapper implements Function<String, String> {
         return s == null ? null : PATTERN_SUBSET_TAG.matcher(s).replaceFirst("");
     }
 
-    private final Function<String, String> mapper;
+    private final Function<? super String, String> mapper;
 
-    StandardFontMapper(Function<String, String> mapper) {
+    StandardFontMapper(Function<? super String, String> mapper) {
         this.mapper = mapper;
     }
 

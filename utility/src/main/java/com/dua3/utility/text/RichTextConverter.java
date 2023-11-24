@@ -16,7 +16,7 @@ public interface RichTextConverter<T> {
      * @param props the property map
      * @param font  the font
      */
-    static void putFontProperties(Map<String, Object> props, Font font) {
+    static void putFontProperties(Map<? super String, Object> props, Font font) {
         props.put(Style.FONT_TYPE, font.getFamily());
         props.put(Style.FONT_SIZE, font.getSizeInPoints());
         props.put(Style.COLOR, font.getColor());

@@ -29,9 +29,9 @@ public class SwingDocumentFilter extends DocumentFilter {
         return new SwingDocumentFilter(s -> s.toLowerCase(locale));
     }
 
-    private final Function<String, String> processor;
+    private final Function<? super String, String> processor;
 
-    SwingDocumentFilter(Function<String, String> processor) {
+    SwingDocumentFilter(Function<? super String, String> processor) {
         this.processor = processor;
     }
 

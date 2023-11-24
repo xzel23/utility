@@ -642,7 +642,6 @@ public final class TextUtil {
      * is returned
      */
     public static String align(String s, int width, Alignment align, char filler) {
-        String fill = Character.toString(filler);
         int len = s.length();
         return switch (align) {
             case LEFT -> s + padding(filler, width - len);

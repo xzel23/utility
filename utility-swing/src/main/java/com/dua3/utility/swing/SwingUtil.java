@@ -506,7 +506,7 @@ public final class SwingUtil {
      * @param component the component to add drop support to
      * @param action    the action to perform when text is dropped
      */
-    public static void addDropTextSupport(JComponent component, Consumer<String> action) {
+    public static void addDropTextSupport(JComponent component, Consumer<? super String> action) {
         addDropTextSupport(component, action, text -> !text.isEmpty(), e -> {
         });
     }
