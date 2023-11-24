@@ -275,9 +275,9 @@ public final class TextUtil {
             idxUnit--;
         }
         String unit = s.substring(idxUnit).strip();
-        String number = s.substring(0,idxUnit).strip();
+        String number = s.substring(0, idxUnit).strip();
 
-        float f = switch(unit) {
+        float f = switch (unit) {
             case "pt" -> 1.0f;
             case "em" -> 12.0f;
             case "px" -> 18.0f / 24.0f;

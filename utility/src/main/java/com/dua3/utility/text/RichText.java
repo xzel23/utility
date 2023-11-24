@@ -731,7 +731,7 @@ public final class RichText
         boolean unlimited = limit <= 0;
         List<RichText> result = new ArrayList<>();
         int index = 0;
-        while(m.find()) {
+        while (m.find()) {
             if (unlimited || result.size() < limit - 1) {
                 if (index == 0 && m.end() == index) {
                     // skip empty leading substring at beginning
@@ -760,7 +760,7 @@ public final class RichText
         // remove trailing empty segments
         if (limit == 0) {
             int s = result.size();
-            while ( s>0 && result.get(s-1).isEmpty()) {
+            while (s > 0 && result.get(s - 1).isEmpty()) {
                 s--;
             }
             result = result.subList(0, s);
