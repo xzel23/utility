@@ -32,10 +32,15 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew build
 
-# disabled - fails with TypeError
-#      - uses: jwgmeligmeyling/spotbugs-github-action@master
-#        with:
-#          path: '**/spotbugs.xml'
+      - name: Upload spotbugs report
+        uses: actions/upload-artifact@v3
+        with:
+          path: spotbugs.xml
+
+    # disabled - fails with TypeError
+    #      - uses: jwgmeligmeyling/spotbugs-github-action@master
+    #        with:
+    #          path: '**/spotbugs.xml'
 
   qodana:
     runs-on: ubuntu-latest
