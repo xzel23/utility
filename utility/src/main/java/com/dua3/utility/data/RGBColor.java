@@ -167,7 +167,10 @@ public final class RGBColor implements Color {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj != null && obj.getClass() == getClass() && ((RGBColor) obj).argb == argb;
+        if (!(obj instanceof RGBColor other)) {
+            return false;
+        }
+        return other.argb == argb;
     }
 
     /**
