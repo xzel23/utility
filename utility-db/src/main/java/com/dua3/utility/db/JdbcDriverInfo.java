@@ -128,7 +128,7 @@ public class JdbcDriverInfo {
         }
 
         // remove arguments from scheme
-        String r = PATTERN_VAR.matcher(s).replaceAll("\\$\\{${name}\\}");
+        String r = PATTERN_VAR.matcher(s).replaceAll("\\${${name}}");
 
         return Pair.of(r, list);
     }
