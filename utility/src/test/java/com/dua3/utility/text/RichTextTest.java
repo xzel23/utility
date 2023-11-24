@@ -7,7 +7,12 @@ package com.dua3.utility.text;
 
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -483,4 +488,27 @@ public class RichTextTest {
         assertTrue(result[6].isEmpty());
     }
 
+    @ParameterizedTest
+    @MethodSource("joinArguments")
+    void testJoin(String... args) {
+        RichText expected = RichText.valueOf(String.join(":", args));
+        RichText actual = RichText.join(RichText.valueOf(":"), Arrays.stream(args).map(RichText::valueOf).toArray(RichText[]::new));
+        assertEquals(expected, actual);
+    }
+
+    static Stream<Arguments> joinArguments() {
+        return Stream.of(
+                Arguments.of((Object) new String[]{}),
+                Arguments.of((Object) new String[]{"1", "2"}),
+                Arguments.of((Object) new String[]{"1", "2", "3"})
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "  ", "Hello, world!", "Hello, world! ", "     Hello, world!", "\t ABC\tDEF GHI \n"})
+    void trim(String input) {
+        RichText expected = RichText.valueOf(input.trim());
+        RichText actual = RichText.valueOf(input).trim();
+        assertEquals(expected, actual);
+    }
 }

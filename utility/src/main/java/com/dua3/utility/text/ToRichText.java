@@ -8,7 +8,6 @@ package com.dua3.utility.text;
 /**
  * An interface for classes that can be represented as RichText.
  */
-@FunctionalInterface
 public interface ToRichText {
 
     /**
@@ -27,5 +26,7 @@ public interface ToRichText {
      *
      * @param builder the builder
      */
-    void appendTo(RichTextBuilder builder);
+    default void appendTo(RichTextBuilder builder) {
+        builder.append(toString());
+    }
 }
