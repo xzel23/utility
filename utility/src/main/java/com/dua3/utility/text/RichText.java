@@ -197,11 +197,11 @@ public final class RichText
      * @return true, if a and b consist of the same characters with the same styling
      */
     public static boolean textAndFontEquals(@Nullable RichText a, @Nullable RichText b) {
-        if (a == null || b == null) {
-            return a == b;
+        if (a == b) {
+            return true;
         }
 
-        if (!a.equalsText(b)) {
+        if (a == null || b == null || !a.equalsText(b)) {
             return false;
         }
 
@@ -345,10 +345,10 @@ public final class RichText
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null || getClass() != obj.getClass()) {
+        if (!(obj instanceof RichText other)) {
             return false;
         }
-        return equals((RichText) obj, Run::equals);
+        return equals(other, Run::equals);
     }
 
     /**
