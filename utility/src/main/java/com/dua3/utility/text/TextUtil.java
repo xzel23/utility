@@ -645,11 +645,14 @@ public final class TextUtil {
         String fill = Character.toString(filler);
         int len = s.length();
         return switch (align) {
-            case LEFT -> s + fill.repeat(Math.max(0, width - len));
-            case RIGHT -> fill.repeat(Math.max(0, width - len)) + s;
-            case CENTER ->
-                    fill.repeat(Math.max(0, width - len) / 2) + s + fill.repeat(Math.max(0, width - len - (width - len) / 2));
+            case LEFT -> s + padding(filler, width - len);
+            case RIGHT -> padding(filler, width - len) + s;
+            case CENTER -> padding(filler, (width - len) / 2) + s + padding(filler, width - len - (width - len) / 2);
         };
+    }
+
+    private static String padding(char filler, int len) {
+        return Character.toString(filler).repeat(Math.max(0, len));
     }
 
     /**
