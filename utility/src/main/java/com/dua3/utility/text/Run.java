@@ -49,11 +49,11 @@ public final class Run implements AttributedCharSequence {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null || getClass() != obj.getClass() || hashCode() != obj.hashCode()) {
+        if (!(obj instanceof Run other) || hashCode() != obj.hashCode()) {
             return false;
         }
 
-        return equals((Run) obj, TextAttributes::equals);
+        return other == this || equals(other, TextAttributes::equals);
     }
 
     /**
