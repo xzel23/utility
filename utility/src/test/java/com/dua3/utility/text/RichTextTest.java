@@ -511,4 +511,32 @@ public class RichTextTest {
         RichText actual = RichText.valueOf(input).trim();
         assertEquals(expected, actual);
     }
+
+    @Test
+    void testValueOfWithStyles() {
+        Style[] styles = {
+                Style.BOLD,
+                Style.ITALIC,
+                Style.UNDERLINE
+        };
+
+        Object obj = new Object() {
+            @Override
+            public String toString() {
+                return "Hello world!";
+            }
+        };
+
+        // when styles are set in the correct order, equals must return true
+        RichText expected = RichText.valueOf("Hello world!").wrap(Style.UNDERLINE).wrap(Style.ITALIC).wrap(Style.BOLD);
+        RichText actual = RichText.valueOf(obj, styles);
+        assertEquals(expected, actual);
+        assertTrue(actual.equalsTextAndFont(expected), "error in textAndFontEquals()");
+
+        // when styles are set in a different order, equals() must return false, but equalsTextAndFont() must return true
+        RichText a = RichText.valueOf("Hello world!").wrap(Style.BOLD).wrap(Style.ITALIC).wrap(Style.UNDERLINE);
+        RichText b = RichText.valueOf(obj, styles);
+        assertNotEquals(a, b, "error in equals()");
+        assertTrue(a.equalsTextAndFont(b), "error in textAndFontEquals()");
+    }
 }

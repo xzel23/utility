@@ -12,11 +12,12 @@ import com.dua3.utility.data.Pair;
 
 import java.util.AbstractMap;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * An immutable set of text attributes.
@@ -26,11 +27,11 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     /**
      * empty instance
      */
-    private static final TextAttributes NONE = new TextAttributes(Collections.emptySet());
-    private final Set<Entry<String, Object>> entries;
+    private static final TextAttributes NONE = new TextAttributes(Collections.emptySortedSet());
+    private final SortedSet<Entry<String, Object>> entries;
     private int hash;
 
-    private TextAttributes(Set<Entry<String, Object>> entries) {
+    private TextAttributes(SortedSet<Entry<String, Object>> entries) {
         this.entries = entries;
     }
 
@@ -61,7 +62,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @return TextAttributes instance
      */
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
-        Set<Entry<String, Object>> entrySet = new HashSet<>();
+        SortedSet<Entry<String, Object>> entrySet = new TreeSet<>(Entry.comparingByKey());
         for (Pair<String, ?> entry : entries) {
             entrySet.add(new SimpleEntry<>(entry.first(), entry.second()));
         }
@@ -75,7 +76,15 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @return TextAttributes instance
      */
     public static TextAttributes of(Map<String, Object> map) {
-        return new TextAttributes(map.entrySet());
+        Set<Entry<String, Object>> entries = map.entrySet();
+        SortedSet<Map.Entry<String, Object>> sortedEntries;
+        if (entries instanceof SortedSet<Entry<String, Object>> ss) {
+            sortedEntries = ss;
+        } else {
+            sortedEntries = new TreeSet<>(Map.Entry.comparingByKey());
+            sortedEntries.addAll(entries);
+        }
+        return new TextAttributes(sortedEntries);
     }
 
     /**

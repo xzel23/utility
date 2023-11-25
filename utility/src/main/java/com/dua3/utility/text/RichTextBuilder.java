@@ -121,7 +121,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
         int runIdx = 0;
         int start = parts.firstKey();
-        Map<String, Object> style = parts.get(start);
+        Map<String, Object> attributes = parts.get(start);
         for (Map.Entry<Integer, Map<String, Object>> e : parts.entrySet()) {
             int end = e.getKey();
             int runLength = end - start;
@@ -130,11 +130,11 @@ public class RichTextBuilder implements Appendable, ToRichText {
                 continue;
             }
 
-            runs[runIdx++] = new Run(text, start, end - start, TextAttributes.of(style));
+            runs[runIdx++] = new Run(text, start, end - start, TextAttributes.of(attributes));
             start = end;
-            style = e.getValue();
+            attributes = e.getValue();
         }
-        runs[runIdx] = new Run(text, start, text.length() - start, TextAttributes.of(style));
+        runs[runIdx] = new Run(text, start, text.length() - start, TextAttributes.of(attributes));
         return runs;
     }
 

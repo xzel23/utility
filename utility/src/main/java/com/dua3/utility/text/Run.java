@@ -31,13 +31,13 @@ public final class Run implements AttributedCharSequence {
      * @param text   the text that contains the Run
      * @param start  start of Run
      * @param length length of Run in characters
-     * @param style  style for the Run
+     * @param attributes  the {@link TextAttributes} for the Run
      */
-    Run(CharSequence text, int start, int length, TextAttributes style) {
+    Run(CharSequence text, int start, int length, TextAttributes attributes) {
         LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
 
         this.text = Objects.requireNonNull(text);
-        this.attributes = Objects.requireNonNull(style);
+        this.attributes = Objects.requireNonNull(attributes);
         this.start = start;
         this.length = length;
     }
