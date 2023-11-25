@@ -107,11 +107,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
 
     @Override
     public boolean equals(@Nullable Object o) {
-        if (o == null || o.getClass() != getClass() || o.hashCode() != hashCode()) {
-            return false;
-        }
-
-        return super.equals(o);
+        return (o instanceof TextAttributes) && o.hashCode() == hashCode() && super.equals(o);
     }
 
     @SuppressWarnings("NonFinalFieldReferencedInHashCode")
