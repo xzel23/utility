@@ -1,12 +1,23 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Color;
-import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
-import java.util.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test class for TextAttributes
@@ -85,5 +96,44 @@ public class TextAttributesTest {
         assertNotEquals(ta1.hashCode(), ta4.hashCode());
         assertNotEquals(ta3.hashCode(), ta4.hashCode());
         assertTrue(ta1.equals(ta2));
+    }
+
+    @ParameterizedTest
+    @MethodSource("textAttributesArguments")
+    public void testToFontDef(TextAttributes ta) {
+        FontDef fd = TextAttributes.getFontDef(ta);
+        assertNotNull(fd);
+        assertEquals(ta.get(Style.FONT_TYPE), fd.getFamily());
+        assertEquals(ta.get(Style.FONT_SIZE), fd.getSize());
+        assertEquals(ta.get(Style.COLOR), fd.getColor());
+        assertEquals(Optional.ofNullable(ta.get(Style.FONT_WEIGHT)).map(s -> s.equals(Style.FONT_WEIGHT_VALUE_BOLD)).orElse(null), fd.getBold());
+        assertEquals(Optional.ofNullable(ta.get(Style.TEXT_DECORATION_UNDERLINE)).map(s -> s.equals(Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE)).orElse(null), fd.getUnderline());
+        assertEquals(Optional.ofNullable(ta.get(Style.TEXT_DECORATION_LINE_THROUGH)).map(s -> s.equals(Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)).orElse(null), fd.getStrikeThrough());
+        assertEquals(Optional.ofNullable(ta.get(Style.FONT_STYLE)).map(s -> s.equals(Style.FONT_STYLE_VALUE_ITALIC)).orElse(null), fd.getItalic());
+    }
+
+    private static Stream<TextAttributes> textAttributesArguments() {
+        return Stream.of(
+                TextAttributes.none(),
+                TextAttributes.of(Pair.of(Style.FONT_TYPE, "Arial")),
+                TextAttributes.of(Pair.of(Style.FONT_SIZE, 17f)),
+                TextAttributes.of(Pair.of(Style.COLOR, Color.BLUE)),
+                TextAttributes.of(Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD)),
+                TextAttributes.of(Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_NORMAL)),
+                TextAttributes.of(Pair.of(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE)),
+                TextAttributes.of(Pair.of(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE)),
+                TextAttributes.of(Pair.of(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)),
+                TextAttributes.of(Pair.of(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)),
+                TextAttributes.of(Pair.of(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC)),
+                TextAttributes.of(Pair.of(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_NORMAL)),
+                TextAttributes.of(Pair.of(Style.FONT_TYPE, "Arial"),
+                        Pair.of(Style.FONT_SIZE, 17f),
+                        Pair.of(Style.COLOR, Color.BLUE),
+                        Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD),
+                        Pair.of(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE),
+                        Pair.of(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE),
+                        Pair.of(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC)
+                )
+        );
     }
 }

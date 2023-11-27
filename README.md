@@ -177,6 +177,7 @@ the parameter.
 - fix build issues on windows‚
 - fix smaller issues
 - fix issues in FontDef CSS conversion
+- fix font size not extracted when getting FontDef directly from TextAttributes
 
 ### 11.1.3
 

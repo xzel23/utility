@@ -3,8 +3,13 @@ package com.dua3.utility.text;
 import com.dua3.utility.data.Color;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -117,5 +122,32 @@ class FontDefTest {
         String actual = fd.getCssStyle();
 
         assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("fontArguments")
+    public void testToFontDef(Font font) {
+        // Test with a Font set
+        FontDef fd = font.toFontDef();
+        assertNotNull(fd);
+
+        assertEquals(font.getFamily(), fd.getFamily());
+        assertEquals(font.getSizeInPoints(), fd.getSize());
+        assertEquals(font.getColor(), fd.getColor());
+        assertEquals(font.isBold(), fd.getBold());
+        assertEquals(font.isItalic(), fd.getItalic());
+        assertEquals(font.isUnderline(), fd.getUnderline());
+        assertEquals(font.isStrikeThrough(), fd.getStrikeThrough());
+    }
+
+    private static Stream<Font> fontArguments() {
+        return Stream.of(
+                new Font("Arial", 12f, Color.BLACK, false, false, false, false),
+                new Font("Times", 17f, Color.DARKBLUE, true, false, false, false),
+                new Font("Arial", 12f, Color.BLACK, false, true, false, false),
+                new Font("Arial", 12f, Color.BLACK, false, false, true, false),
+                new Font("Arial", 12f, Color.BLACK, false, false, false, true),
+                new Font("Helvetica", 10f, Color.WHITE, true, true, true, true)
+        );
     }
 }

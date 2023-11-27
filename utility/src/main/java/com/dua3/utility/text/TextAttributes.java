@@ -96,6 +96,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
 
         FontDef fd = new FontDef();
         DataUtil.ifPresent(attributes, Style.FONT_TYPE, v -> fd.setFamily(String.valueOf(v)));
+        DataUtil.ifPresent(attributes, Style.FONT_SIZE, v -> fd.setSize((Float) v));
         DataUtil.ifPresent(attributes, Style.COLOR, v -> fd.setColor((Color) v));
         DataUtil.ifPresent(attributes, Style.FONT_WEIGHT, v -> fd.setBold(Objects.equals(v, Style.FONT_WEIGHT_VALUE_BOLD)));
         DataUtil.ifPresent(attributes, Style.TEXT_DECORATION_UNDERLINE, v -> fd.setUnderline(Objects.equals(v, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE)));
