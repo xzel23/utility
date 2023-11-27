@@ -65,4 +65,25 @@ public class TextAttributesTest {
         assertEquals("Value1", textAttributes.get("Key1"));
         assertEquals("Value2", textAttributes.get("Key2"));
     }
+
+    @Test
+    void none() {
+        TextAttributes ta = TextAttributes.none();
+        assertNotNull(ta);
+        assertTrue(ta.isEmpty());
+    }
+
+    @Test
+    void equalsAndHashCode() {
+        TextAttributes ta1 = TextAttributes.of(new Pair<>("key", "value"));
+        TextAttributes ta2 = TextAttributes.of(new Pair<>("key", "value"));
+        TextAttributes ta3 = TextAttributes.of(new Pair<>("key", "value2"));
+        TextAttributes ta4 = TextAttributes.of(new Pair<>("key1", "value"));
+        assertEquals(ta1.hashCode(), ta2.hashCode());
+        assertEquals(ta1.hashCode(), ta1.hashCode());
+        assertNotEquals(ta1.hashCode(), ta3.hashCode());
+        assertNotEquals(ta1.hashCode(), ta4.hashCode());
+        assertNotEquals(ta3.hashCode(), ta4.hashCode());
+        assertTrue(ta1.equals(ta2));
+    }
 }
