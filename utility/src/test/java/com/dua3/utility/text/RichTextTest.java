@@ -5,17 +5,18 @@
 
 package com.dua3.utility.text;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -276,19 +277,49 @@ public class RichTextTest {
     }
 
     @Test
-    public void testsingleCharSubSequence() {
-        String s = "Hello world!";
+    public void testSubSequence() {
+        String s = "Hello world! We need a longer text to reach all case labels in runIndex()!";
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
         builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
         builder.append("world");
         builder.pop(Style.FONT_WEIGHT);
-        builder.append("!");
+        builder.append("! ");
+        builder.push(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC);
+        builder.append("We need a ");
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("longer");
+        builder.pop(Style.FONT_WEIGHT);
+        builder.append(" text to reach ");
+        builder.push(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE);
+        builder.append("all");
+        builder.pop(Style.TEXT_DECORATION_UNDERLINE);
+        builder.append(" case labels in runIndex()!");
+        builder.pop(Style.FONT_STYLE);
+
         RichText r = builder.toRichText();
 
         for (int i = 0; i < s.length() - 1; i++) {
-            assertEquals(s.subSequence(i, i + 1), r.subSequence(i, i + 1).toString());
+            for (int j=i; j<s.length(); j++) {
+                CharSequence expected = s.subSequence(i, j);
+                System.out.println(expected);
+                RichText subSequence = r.subSequence(i, j);
+                String actual = subSequence.toString();
+                // test the current subsequence
+                assertEquals(expected, actual);
+                // Also test all possible subsequences to make sure all case labels in runIndex() are reached.
+                // The case labels correspond to the number of runs and by using all possible subsequences we are
+                // sure to hit all case labels.
+                for (int h = 0; h < subSequence.length() - 1; h++) {
+                    for (int k = h; k < subSequence.length(); k++) {
+                        CharSequence expected2 = expected.subSequence(h, k);
+                        RichText subSequence2 = subSequence.subSequence(h, k);
+                        String actual2 = subSequence2.toString();
+                        assertEquals(expected2, actual2);
+                    }
+                }
+            }
         }
     }
 
@@ -317,22 +348,79 @@ public class RichTextTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    public void testReplaceAll() {
-        String s = "Hello world\n\nThis     is a\ttest!\r\n";
-        assertEquals(s.replaceAll("\\s+", " "), RichText.valueOf(s).replaceAll("\\s+", RichText.valueOf(" ")).toString());
+    record TestDataReplace(String input, String regex, String replacement, String replaceAll, String replaceFirst) {
+        static TestDataReplace of(String input, String regex, String replacement) {
+            return new TestDataReplace(input, regex, replacement, input.replaceAll(regex, replacement), input.replaceFirst(regex, replacement));
+        }
+    }
 
-        String s1 = "As with many great things in life, Git began with a bit of creative destruction and fiery controversy.";
-        RichText r1 = RichText.valueOf(s1);
+    private static Stream<TestDataReplace> provideTestDataReplaceAll() {
+        return Stream.of(
+                TestDataReplace.of("Hello world\n\nThis     is a\ttest!\r\n", "\\s+", " "),
+                TestDataReplace.of("As with many great things in life, Git began with a bit of creative destruction and fiery controversy.", "\\s+", " "),
+                TestDataReplace.of("", "a", "b"),
+                TestDataReplace.of("Hello, world!", "a", "b"),
+                TestDataReplace.of("Hello, world!", "o", "0"),
+                TestDataReplace.of("Hello, world!", "[ol]", "*"),
+                TestDataReplace.of("Hello, world!", "[ol]", ""),
+                TestDataReplace.of("a.b.c", "\\.", "-")
+        );
+    }
 
-        assertEquals(s1.replaceAll("\\s+", " "), r1.replaceAll("\\s+", RichText.valueOf(" ")).toString());
-        assertEquals(RichText.valueOf(s1.replaceAll("\\s+", " ")), r1.replaceAll("\\s+", RichText.valueOf(" ")));
+    @ParameterizedTest
+    @MethodSource("provideTestDataReplaceAll")
+    public void testReplaceAll(TestDataReplace testData) {
+        RichText expected = RichText.valueOf(testData.replaceAll());
+        RichText actual = RichText.valueOf(testData.input()).replaceAll(testData.regex(), RichText.valueOf(testData.replacement()));
+        assertEquals(expected, actual);
+    }
 
-        RichText r2 = r1.subSequence(13, 33);
-        String s2 = r2.toString();
+    @ParameterizedTest
+    @MethodSource("provideTestDataReplaceAll")
+    public void testReplaceAllStringArgument(TestDataReplace testData) {
+        RichText expected = RichText.valueOf(testData.replaceAll());
+        RichText actual = RichText.valueOf(testData.input()).replaceAll(testData.regex(), testData.replacement());
+        assertEquals(expected, actual);
+    }
 
-        assertEquals(s2.replaceAll("\\s+", " "), r2.replaceAll("\\s+", RichText.valueOf(" ")).toString());
-        assertEquals(RichText.valueOf(s2.replaceAll("\\s+", " ")), r2.replaceAll("\\s+", RichText.valueOf(" ")));
+    @ParameterizedTest
+    @MethodSource("provideTestDataReplaceAll")
+    public void testReplaceFirst(TestDataReplace testData) {
+        RichText expected = RichText.valueOf(testData.replaceFirst());
+        RichText actual = RichText.valueOf(testData.input()).replaceFirst(testData.regex(), RichText.valueOf(testData.replacement()));
+        assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestDataReplaceAll")
+    public void testReplaceFirstStringArgument(TestDataReplace testData) {
+        RichText expected = RichText.valueOf(testData.replaceFirst());
+        RichText actual = RichText.valueOf(testData.input()).replaceFirst(testData.regex(), testData.replacement());
+        assertEquals(expected, actual);
+    }
+
+    @Test // not a parameterized test because it expects an exception
+    public void testReplaceAll_MalformedRegex() {
+        RichText input = RichText.valueOf("Hello, world!");
+        Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceAll("[ol", RichText.valueOf("!")));
+    }
+
+    @Test // not a parameterized test because it expects an exception
+    public void testReplaceAllStringArgument_MalformedRegex() {
+        RichText input = RichText.valueOf("Hello, world!");
+        Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceAll("[ol", "!"));
+    }
+
+    @Test // not a parameterized test because it expects an exception
+    public void testReplaceFirst_MalformedRegex() {
+        RichText input = RichText.valueOf("Hello, world!");
+        Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceFirst("[ol", RichText.valueOf("!")));
+    }
+
+    @Test // not a parameterized test because it expects an exception
+    public void testReplaceFirstStringArgument_MalformedRegex() {
+        RichText input = RichText.valueOf("Hello, world!");
+        Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceFirst("[ol", "!"));
     }
 
     @Test
