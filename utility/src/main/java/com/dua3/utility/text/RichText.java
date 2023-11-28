@@ -201,7 +201,7 @@ public final class RichText
             return true;
         }
 
-        if (a == null || b == null || !a.equalsText(b)) {
+        if (a == null || !a.equalsText(b)) {
             return false;
         }
 
@@ -615,11 +615,11 @@ public final class RichText
     /**
      * Get a sub range of this instance.
      *
-     * @param begin begin index (inclusive)
+     * @param start start index (inclusive)
      * @return RichText instance of the sub range from beginIndex to the end
      */
-    public RichText subSequence(int begin) {
-        return subSequence(begin, length());
+    public RichText subSequence(int start) {
+        return subSequence(start, length());
     }
 
     @Override
@@ -653,7 +653,7 @@ public final class RichText
     }
 
     private boolean isSimpleWhitespace(char ch) {
-        return ch <= '\u0020';
+        return ch <= ' ';
     }
 
     /**
@@ -700,7 +700,7 @@ public final class RichText
         return subSequence(0, len);
     }
 
-    private boolean isWhitespace(char ch) {
+    private static boolean isWhitespace(char ch) {
         return Character.isWhitespace(ch);
     }
 
