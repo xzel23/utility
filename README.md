@@ -167,6 +167,8 @@ the parameter.
 
 ### 12.0.0 (to be released)
 
+- BREAKING: RichText.trim() now works the same as String.trim(), i. e. only considers character codes less than or equal to ' ' as whitespace. Use RichText.strip() to remove all whitespace.
+- added RichText.strip(), RichText.stripLeading(), RichText.stripTrailing()
 - enable automatic download of Gradle JVM toolchains in build
 - reworked util-logging, simplified SwingLogPane use
 - added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatemet javadoc

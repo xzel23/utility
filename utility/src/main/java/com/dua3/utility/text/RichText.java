@@ -634,19 +634,74 @@ public final class RichText
     }
 
     /**
+     * Remove leading and trailing whitespace, defined as "any character whose codepoint is less than or equal to
+     * {@code 'U+0020'} (the space character)".
+     * @return copy of this instance with leading and trailing whitespace according to above criteria removed
      * @see String#trim()
+     * @see #strip()
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText trim() {
         int st = 0;
         int len = length;
-        while ((st < len) && Character.isWhitespace(charAt(st))) {
+        while ((st < len) && isSimpleWhitespace(charAt(st))) {
             st++;
         }
-        while ((st < len) && Character.isWhitespace(charAt(len - 1))) {
+        while ((st < len) && isSimpleWhitespace(charAt(len - 1))) {
             len--;
         }
         return subSequence(st, len);
+    }
+
+    private boolean isSimpleWhitespace(char ch) {
+        return ch <= '\u0020';
+    }
+
+    /**
+     * Remove leading and trailing whitespace, as defined by Unicode, removed.
+     * @return copy of this instance with leading and trailing whitespace (according to Unicode) removed
+     * @see String#strip()
+     * @see #trim()
+     */
+    public RichText strip() {
+        int st = 0;
+        int len = length;
+        while ((st < len) && isWhitespace(charAt(st))) {
+            st++;
+        }
+        while ((st < len) && isWhitespace(charAt(len - 1))) {
+            len--;
+        }
+        return subSequence(st, len);
+    }
+
+    /**
+     * Remove leading whitespace, as defined by Unicode, removed.
+     * @return copy of this instance with leading whitespace (according to Unicode) removed
+     * @see String#stripLeading()
+     */
+    public RichText stripLeading() {
+        int st = 0;
+        while ((st < length) && isWhitespace(charAt(st))) {
+            st++;
+        }
+        return subSequence(st, length);
+    }
+
+    /**
+     * Remove trailing whitespace, as defined by Unicode, removed.
+     * @return copy of this instance with trailing whitespace (according to Unicode) removed
+     * @see String#stripTrailing() ()
+     */
+    public RichText stripTrailing() {
+        int len = length;
+        while ((0 < len) && isWhitespace(charAt(len - 1))) {
+            len--;
+        }
+        return subSequence(0, len);
+    }
+
+    private boolean isWhitespace(char ch) {
+        return Character.isWhitespace(ch);
     }
 
     /**

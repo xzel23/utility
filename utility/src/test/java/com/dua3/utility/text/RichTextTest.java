@@ -504,11 +504,64 @@ public class RichTextTest {
         );
     }
 
+    private static String[] stringArgsForTrimAndStrip() {
+        return new String[]{
+                // normal whitespace, i. e. character codes ' ' and lower
+                "", "  ", "Hello, world!", "Hello, world! ", "     Hello, world!", "\t ABC\tDEF GHI \n",
+                // other whitespace
+                "\u00A0hello\u00A0",
+                "\u2000hello\u2000",
+                "\u2001hello\u2001",
+                "\u2002hello\u2002",
+                "\u2003hello\u2003",
+                "\u2004hello\u2004",
+                "\u2005hello\u2005",
+                "\u2006hello\u2006",
+                "\u2007hello\u2007",
+                "\u2008hello\u2008",
+                "\u2009hello\u2009",
+                "\u200Ahello\u200A",
+                "\u200Bhello\u200B",
+                "\u202Fhello\u202F",
+                "\u205Fhello\u205F",
+                "\u3000hello\u3000",
+                "\thello\t",
+                "\nhello\n",
+                "\rhello\r",
+                "\u000Bhello\u000B",
+                "\u000Chello\u000C"
+        };
+    }
+
     @ParameterizedTest
-    @ValueSource(strings = {"", "  ", "Hello, world!", "Hello, world! ", "     Hello, world!", "\t ABC\tDEF GHI \n"})
+    @MethodSource("stringArgsForTrimAndStrip")
     void testTrim(String input) {
         RichText expected = RichText.valueOf(input.trim());
         RichText actual = RichText.valueOf(input).trim();
+        assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringArgsForTrimAndStrip")
+    void testStrip(String input) {
+        RichText expected = RichText.valueOf(input.strip());
+        RichText actual = RichText.valueOf(input).strip();
+        assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringArgsForTrimAndStrip")
+    void testStripLeading(String input) {
+        RichText expected = RichText.valueOf(input.stripLeading());
+        RichText actual = RichText.valueOf(input).stripLeading();
+        assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringArgsForTrimAndStrip")
+    void testStripTrailing(String input) {
+        RichText expected = RichText.valueOf(input.stripTrailing());
+        RichText actual = RichText.valueOf(input).stripTrailing();
         assertEquals(expected, actual);
     }
 
