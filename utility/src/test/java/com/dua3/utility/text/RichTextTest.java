@@ -506,7 +506,7 @@ public class RichTextTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"", "  ", "Hello, world!", "Hello, world! ", "     Hello, world!", "\t ABC\tDEF GHI \n"})
-    void trim(String input) {
+    void testTrim(String input) {
         RichText expected = RichText.valueOf(input.trim());
         RichText actual = RichText.valueOf(input).trim();
         assertEquals(expected, actual);
