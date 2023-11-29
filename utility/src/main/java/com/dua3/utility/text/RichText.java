@@ -652,7 +652,7 @@ public final class RichText
         return subSequence(st, len);
     }
 
-    private boolean isSimpleWhitespace(char ch) {
+    private static boolean isSimpleWhitespace(char ch) {
         return ch <= ' ';
     }
 
