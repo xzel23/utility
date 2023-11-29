@@ -180,6 +180,7 @@ the parameter.
 - fix smaller issues
 - fix issues in FontDef CSS conversion
 - fix font size not extracted when getting FontDef directly from TextAttributes
+- fix Vector2f returning NaN for zero denominator
 
 ### 11.1.3
 

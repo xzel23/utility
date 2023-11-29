@@ -107,17 +107,11 @@ public record Vector2f(float x, float y) {
      * @return the angle in radians
      */
     public static double angle(Vector2f a, Vector2f b) {
-        float nominator = scalarProduct(a, b);
-
-        if (nominator == 0) {
+        double denominator = a.length() * b.length();
+        if (denominator == 0) {
             return Float.NaN;
         }
-
-        double denominator = a.length() * b.length();
-
-        // denominator==0 implies nominator==0, so this should only happen if scalarProduct() or length() is broken
-        assert denominator != 0 : "denominator is 0, arguments: a=" + a + ", b=" + b;
-
+        float nominator = scalarProduct(a, b);
         return Math.acos(nominator / denominator);
     }
 
