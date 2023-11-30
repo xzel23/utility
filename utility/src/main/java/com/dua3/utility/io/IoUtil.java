@@ -729,7 +729,10 @@ public final class IoUtil {
      * Generate a stream of paths matching a glob pattern.
      * For details on pattern syntax refer to the {@link PathMatcher} documentation.
      * <p>
-     * Make sure to close the stream after processing.
+     * The returned paths are {@link Path} objects that are obtained as if by {@link
+     * Path#resolve(Path) resolving} the relative path against {@code base}.
+     * <p>
+     * Make sure to close the stream after processing!
      *
      * @param base    the base directory
      * @param pattern the pattern
