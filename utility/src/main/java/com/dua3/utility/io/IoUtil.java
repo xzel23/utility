@@ -784,11 +784,6 @@ public final class IoUtil {
                 .map(p -> normalizePath(base, p));
     }
 
-    // Helper method to check for presence of glob symbols
-    private static boolean containsGlobSymbol(String part) {
-        return TextUtil.containsAnyOf(part, "*?[{");
-    }
-
     /**
      * Returned path should be created the same as the relative path resolved by base.
      * @param base the base path
