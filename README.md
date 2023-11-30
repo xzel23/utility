@@ -181,6 +181,7 @@ the parameter.
 - fix issues in FontDef CSS conversion
 - fix font size not extracted when getting FontDef directly from TextAttributes
 - fix Vector2f returning NaN for zero denominator
+- fix IoUtil.glob() and IoUtil.findFiles() returning paths with inconsistent root under certain circumstances
 
 ### 11.1.3
 
