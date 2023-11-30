@@ -40,8 +40,10 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -769,17 +771,32 @@ public final class IoUtil {
         if (firstGlobCharIndex == pattern.length()) {
             // fastpath: pattern does not contain glob characters
             Path path = fs.getPath(globPattern);
-            return Files.exists(path) ? Stream.of(path) : Stream.empty();
+            return Files.exists(path) ? Stream.of(path).map(p -> normalizePath(base, p)) : Stream.empty();
         }
 
         PathMatcher pathMatcher = fs.getPathMatcher("glob:" + globPattern);
         //noinspection resource: caller should clean up
-        return Files.walk(fixedPath).filter(pathMatcher::matches);
+        return Files.walk(fixedPath)
+                .filter(pathMatcher::matches)
+                .map(p -> normalizePath(base, p));
     }
 
     // Helper method to check for presence of glob symbols
     private static boolean containsGlobSymbol(String part) {
         return TextUtil.containsAnyOf(part, "*?[{");
+    }
+
+    /**
+     * Returned path should be created the same as the relative path resolved by base.
+     * @param base the base path
+     * @param p the path
+     * @return
+     */
+    private static Path normalizePath(Path base, Path p) {
+        // When a fixed path prefix was extracted in glob, p and base have different root
+        // and relativize will throw an exception. To make sure all paths share a common root,
+        // call relativize with absolute paths.
+        return base.resolve(base.toAbsolutePath().relativize(p.toAbsolutePath()));
     }
 
     private static int findFirstGlobChar(String pattern) {
