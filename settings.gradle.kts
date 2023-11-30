@@ -1,6 +1,6 @@
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "12.0.0-beta6-SNAPSHOT"
+val projectVersion = "12.0.0-beta6"
 
 // define subprojects
 include("utility")
@@ -37,10 +37,9 @@ dependencyResolutionManagement {
             version("slf4j", "2.0.9")
             version("jimfs", "1.2")
             version("miglayout", "11.2")
-            version("spotbugs", "4.8.1")
+            version("spotbugs", "4.8.2")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
-            library("spotbugs-annotations", "com.github.spotbugs", "spotbugs-annotations").versionRef("spotbugs")
 
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")

@@ -8,28 +8,25 @@
         </Or>
     </Match>
 
-    <!-- this bug pattern is currently completely broken / https://github.com/spotbugs/spotbugs/issues/1601 -->
     <Match>
-        <Bug pattern="EI_EXPOSE_REP"/>
+        <Or>
+            <!-- this inspection is triggered when using AssertThrows in JUnit tests -->
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <Bug pattern="EI_EXPOSE_REP2"/>
+            <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
+            <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+            <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
+        </Or>
     </Match>
+
     <Match>
-        <Bug pattern="EI_EXPOSE_REP2"/>
-    </Match>
-    <Match>
-        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
+        <Class name="com.dua3.utility.logging.slf4j.LoggerSlf4j"/>
+        <Bug pattern="SE_BAD_FIELD"/>
     </Match>
 
     <!-- SecurityManager will soon be gone, so will be doPrivileged() -->
     <Match>
         <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
-    </Match>
-
-    <!-- Do not run these inspections -->
-    <Match>
-        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
-    </Match>
-    <Match>
-        <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
     </Match>
 
     <!-- by design -->

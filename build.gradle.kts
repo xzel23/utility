@@ -58,7 +58,6 @@ subprojects {
     dependencies {
         // source annotations
         compileOnly(rootProject.libs.cabe.annotations)
-        compileOnly(rootProject.libs.spotbugs.annotations)
 
         // LOG4J
         implementation(rootProject.libs.log4j.api)

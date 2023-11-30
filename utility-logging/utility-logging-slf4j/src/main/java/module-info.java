@@ -14,7 +14,6 @@ open module com.dua3.utility.logging.slf4j {
     provides ILogEntryDispatcherFactory with LogEntryDispatcherFactorySlf4j;
 
     requires static com.dua3.cabe.annotations;
-    requires static com.github.spotbugs.annotations;
 
     requires com.dua3.utility.logging;
     requires org.apache.logging.log4j;
