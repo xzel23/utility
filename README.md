@@ -167,7 +167,11 @@ the parameter.
 
 ### 12.0.0 (to be released)
 
-- BREAKING: RichText.trim() now works the same as String.trim(), i. e. only considers character codes less than or equal to ' ' as whitespace. Use RichText.strip() to remove all whitespace.
+- BREAKING: RichText.trim() now works the same as String.trim(), i. e. only considers character codes less than or equal
+  to ' ' as whitespace. Use RichText.strip() to remove all whitespace.
+- BREAKING: OpenMode.includes() has been renamed to isIncluded()
+- BREAKING: removed Pair.toMap() static methods. Use Map.ofEntries() instead.
+- Pair<T1,T2> now implements Map.Entry<T1,T2>
 - added RichText.strip(), RichText.stripLeading(), RichText.stripTrailing()
 - enable automatic download of Gradle JVM toolchains in build
 - reworked util-logging, simplified SwingLogPane use
