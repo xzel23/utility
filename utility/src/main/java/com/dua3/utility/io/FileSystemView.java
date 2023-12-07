@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * An abstraction for accessing files stored in different location.
@@ -56,6 +57,8 @@ public final class FileSystemView implements AutoCloseable {
     private final Path root;
     private final String name;
     private final CleanUp cleanup;
+
+    private static final Pattern PATTERN_JAR = Pattern.compile("^jar:(file:.*)!.*$");
 
     private FileSystemView(Path root, CleanUp cleanup, String name) {
         this.cleanup = cleanup;
@@ -136,7 +139,7 @@ public final class FileSystemView implements AutoCloseable {
                 case "file" -> create(Paths.get(uri.resolve(".")));
                 case "jar" -> {
                     String jarUriStr = java.net.URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
-                    String jar = jarUriStr.replaceAll("^jar:(file:.*)!.*$", "$1");
+                    String jar = PATTERN_JAR.matcher(jarUriStr).replaceAll("$1");
                     String jarPath = jarUriStr.replaceAll("^jar:file:.*!(.*)" + classFile + "$", "$1");
                     URI jarUri = new URI("jar", jar, null);
                     yield createFileSystemView(FileSystems.newFileSystem(jarUri, Collections.emptyMap()), jarPath);
