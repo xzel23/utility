@@ -7,11 +7,8 @@ package com.dua3.utility.data;
 
 import com.dua3.cabe.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * A pair helper class.
