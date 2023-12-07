@@ -237,6 +237,7 @@ public interface Color {
     /**
      * The color GREY.
      */
+    @SuppressWarnings("Annotator")
     Color GREY = register("GREY", 0xFF808080);
     /**
      * The color HONEYDEW.

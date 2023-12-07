@@ -38,7 +38,7 @@ public enum OpenMode {
      * @param other the other mode
      * @return true, if all of other mode's functionality is included in this mode
      */
-    public boolean includes(OpenMode other) {
+    public boolean isIncluded(OpenMode other) {
         return (n & other.n) == other.n;
     }
 }

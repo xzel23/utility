@@ -1,5 +1,6 @@
 package com.dua3.utility.io;
 
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.LangUtil;
 
@@ -123,26 +124,7 @@ public class Codecs {
         return createCodec(
                 Map.Entry.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">",
                 (DataOutputStream os, Map.Entry<K, V> entry) -> codecK.encode(os, entry.getKey()),
-                (DataInputStream is) -> {
-                    K k = codecK.decode(is);
-                    V v = codecV.decode(is);
-                    return new Map.Entry<K, V>() {
-                        @Override
-                        public K getKey() {
-                            return k;
-                        }
-
-                        @Override
-                        public V getValue() {
-                            return v;
-                        }
-
-                        @Override
-                        public V setValue(V value) {
-                            throw new UnsupportedOperationException("setValue() is unsupported");
-                        }
-                    };
-                }
+                (DataInputStream is) -> Pair.of(codecK.decode(is), codecV.decode(is))
         );
     }
 
@@ -207,4 +189,5 @@ public class Codecs {
     public <T> Optional<Codec<T>> get(Class<T> cls) {
         return Optional.ofNullable((Codec<T>) codecs.get(cls.getCanonicalName()));
     }
+
 }

@@ -242,9 +242,9 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return FILE_TYPES.stream()
                 .filter(t -> t.isSupported(mode))
                 /* either reading is not requested or files of this type must be assignable to cls */
-                .filter(t -> !mode.includes(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))
+                .filter(t -> !mode.isIncluded(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))
                 /* either writing is not requested or the document must be assignable to this type's document type */
-                .filter(t -> !mode.includes(OpenMode.WRITE) || t.getDocumentClass().isAssignableFrom(cls))
+                .filter(t -> !mode.isIncluded(OpenMode.WRITE) || t.getDocumentClass().isAssignableFrom(cls))
                 /* add the generic parameter */
                 .map(t -> (FileType<T>) t)
                 /* make it a list */

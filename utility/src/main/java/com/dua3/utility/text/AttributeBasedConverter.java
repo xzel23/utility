@@ -86,7 +86,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param destinationAttributes the destination map
          */
         private static void copyAttributes(Iterable<? extends Map.Entry<String, Object>> sourceAttributes,
-                                           Map<String, Object> destinationAttributes) {
+                                           Map<? super String, Object> destinationAttributes) {
             sourceAttributes.forEach(entry -> {
                 String attribute = entry.getKey();
                 Object value = entry.getValue();

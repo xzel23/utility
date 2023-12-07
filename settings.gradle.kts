@@ -12,7 +12,7 @@ include("utility-logging:utility-logging-log4j")
 include("utility-samples:utility-samples-slf4j")
 include("utility-samples:utility-samples-log4j")
 
-// use plugin to add JVM toolchain repository
+// use the foojay-resolver-convention plugin to add JVM toolchain repository
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
 }

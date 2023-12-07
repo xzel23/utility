@@ -20,11 +20,11 @@ import java.util.Map;
 public class LoggerSlf4j extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
-    private final List<WeakReference<LogEntryHandler>> handlers;
+    private final List<? extends WeakReference<LogEntryHandler>> handlers;
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
     private Level level;
 
-    public LoggerSlf4j(String name, List<WeakReference<LogEntryHandler>> handlers) {
+    public LoggerSlf4j(String name, List<? extends WeakReference<LogEntryHandler>> handlers) {
         //noinspection AssignmentToSuperclassField: it is the only way to set the logger name
         super.name = name;
         this.handlers = handlers;

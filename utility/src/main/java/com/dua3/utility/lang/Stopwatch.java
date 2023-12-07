@@ -68,7 +68,7 @@ public class Stopwatch {
      * @param onClose the action to perform when close() is called
      * @return new instance
      */
-    public static AutoCloseableStopWatch create(String name, Consumer<Stopwatch> onClose) {
+    public static AutoCloseableStopWatch create(String name, Consumer<? super Stopwatch> onClose) {
         return new AutoCloseableStopWatch(name, onClose);
     }
 
@@ -79,7 +79,7 @@ public class Stopwatch {
      * @param onClose the action to perform when close() is called
      * @return new instance
      */
-    public static AutoCloseableStopWatch create(Supplier<String> name, Consumer<Stopwatch> onClose) {
+    public static AutoCloseableStopWatch create(Supplier<String> name, Consumer<? super Stopwatch> onClose) {
         return new AutoCloseableStopWatch(name, onClose);
     }
 
