@@ -17,9 +17,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.PrimitiveIterator.OfInt;
@@ -193,18 +195,39 @@ public final class TextUtil {
      * @see #transform(String, UnaryOperator)
      */
     @SafeVarargs
-    public static String transform(String template,
-                                   Pair<String, String>... substitutions) {
+    public static String transform(String template, Map.Entry<String, String>... substitutions) {
+        return transform(template, Arrays.asList(substitutions));
+    }
+
+    /**
+     * Transforms a given template string by replacing placeholders with corresponding values from substitutions.
+     *
+     * @param template       the template string to be transformed
+     * @param substitutions  the key-value pairs used for substitution
+     * @return the transformed string with placeholders replaced by corresponding values
+     */
+    public static String transform(String template, Iterable<Map.Entry<String, String>> substitutions) {
         UnaryOperator<String> env = s -> {
-            for (Pair<String, String> r : substitutions) {
-                if (Objects.equals(s, r.first())) {
-                    return r.second();
+            for (Map .Entry<String, String> r : substitutions) {
+                if (Objects.equals(s, r.getKey())) {
+                    return r.getValue();
                 }
             }
             return s;
         };
 
         return transform(template, env);
+    }
+
+    /**
+     * Takes a template string and a map of substitutions, and returns a transformed string
+     *
+     * @param template       the template string containing placeholders for substitutions
+     * @param substitutions  the map containing key-value pairs for substitutions
+     * @return the transformed string with placeholders replaced by values from the map
+     */
+    public static String transform(String template, Map<String, String> substitutions) {
+        return transform(template, substitutions.entrySet());
     }
 
     /**
