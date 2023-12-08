@@ -39,7 +39,16 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     private Map<String, Object> defaultAttributes = new HashMap<>();
     private double scale = 1.0;
     // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
-    private final Map<Object, Function<Font, Object>> dictionary = createDictionary();
+    private final Map<Object, Function<Font, Object>> dictionary = Map.of(
+            StyleConstants.Family, Font::getFamily,
+            //noinspection NumericCastThatLosesPrecision
+            StyleConstants.Size, f -> (int) Math.round(scale * f.getSizeInPoints()),
+            StyleConstants.Bold, Font::isBold,
+            StyleConstants.Italic, Font::isItalic,
+            StyleConstants.Underline, Font::isUnderline,
+            StyleConstants.StrikeThrough, Font::isStrikeThrough,
+            StyleConstants.Foreground, f -> SwingUtil.toAwtColor(f.getColor())
+    );
 
     private StyledDocumentConverter() {
     }
@@ -72,8 +81,18 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param attributes attributes for new StyledDocuments
      * @return the option to use
      */
-    public static StyledDocumentConversionOption addStyledAttributes(Collection<Pair<Object, Object>> attributes) {
-        return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.first(), p.second())));
+    public static StyledDocumentConversionOption addStyledAttributes(Map<Object, Object> attributes) {
+        return new StyledDocumentConversionOption(c -> attributes.putAll(attributes));
+    }
+
+    /**
+     * Set default attributes.
+     *
+     * @param attributes attributes for new StyledDocuments
+     * @return the option to use
+     */
+    public static StyledDocumentConversionOption addStyledAttributes(Iterable<Map.Entry<Object, Object>> attributes) {
+        return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.getKey(), p.getValue())));
     }
 
     /**
@@ -116,19 +135,6 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      */
     public static StyledDocumentConversionOption scale(double scale) {
         return new StyledDocumentConversionOption(c -> c.setScale(scale));
-    }
-
-    private Map<Object, Function<Font, Object>> createDictionary() {
-        Map<Object, Function<Font, Object>> m = new HashMap<>();
-        m.put(StyleConstants.Family, Font::getFamily);
-        //noinspection NumericCastThatLosesPrecision
-        m.put(StyleConstants.Size, f -> (int) Math.round(scale * f.getSizeInPoints()));
-        m.put(StyleConstants.Bold, Font::isBold);
-        m.put(StyleConstants.Italic, Font::isItalic);
-        m.put(StyleConstants.Underline, Font::isUnderline);
-        m.put(StyleConstants.StrikeThrough, Font::isStrikeThrough);
-        m.put(StyleConstants.Foreground, f -> SwingUtil.toAwtColor(f.getColor()));
-        return m;
     }
 
     @Override
