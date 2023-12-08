@@ -360,8 +360,8 @@ public final class LangUtil {
      * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
-    public static <K, V> void putAllIfAbsent(Map<? super K, ? super V> map, Pair<K, V>... items) {
-        Arrays.stream(items).forEach(item -> map.putIfAbsent(item.first(), item.second()));
+    public static <K, V> void putAllIfAbsent(Map<? super K, ? super V> map, Map.Entry<K, V>... items) {
+        Arrays.stream(items).forEach(item -> map.putIfAbsent(item.getKey(), item.getValue()));
     }
 
     /**
@@ -373,23 +373,8 @@ public final class LangUtil {
      * @param items the key-value pairs to put into the map
      */
     @SafeVarargs
-    public static <K, V> void putAll(Map<? super K, ? super V> map, Pair<K, V>... items) {
-        Arrays.stream(items).forEach(item -> map.put(item.first(), item.second()));
-    }
-
-    /**
-     * Create an unmodifiable map from key-value pairs.
-     *
-     * @param <K>   the key type
-     * @param <V>   the value type
-     * @param items the key-value pairs to put into the map
-     * @return unmodifiable map
-     */
-    @SafeVarargs
-    public static <K, V> Map<K, V> map(Pair<K, V>... items) {
-        Map<K, V> map = new HashMap<>();
-        putAllIfAbsent(map, items);
-        return Collections.unmodifiableMap(map);
+    public static <K, V> void putAll(Map<? super K, ? super V> map, Map.Entry<K, V>... items) {
+        Arrays.stream(items).forEach(item -> map.put(item.getKey(), item.getValue()));
     }
 
     /**

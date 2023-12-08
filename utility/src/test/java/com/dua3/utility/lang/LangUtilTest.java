@@ -161,18 +161,6 @@ class LangUtilTest {
         assertEquals(expected, map);
     }
 
-    @Test
-    void map() {
-        Map<Integer, String> map = LangUtil.map(Pair.of(1, "a"), Pair.of(3, "c"), Pair.of(2, "b"));
-
-        Map<Integer, String> expected = new HashMap<>();
-        expected.put(1, "a");
-        expected.put(2, "b");
-        expected.put(3, "c");
-
-        assertEquals(expected, map);
-    }
-
     @SuppressWarnings("ZeroLengthArrayAllocation")
     @Test
     void testEquals() {
