@@ -319,7 +319,7 @@ public final class SwingUtil {
     }
 
     @SafeVarargs
-    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<JFileChooser, ? super Component, Integer> showDialog,
+    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super Component, Integer> showDialog,
                                                  Pair<String, String[]>... types) {
         File file;
         try {
