@@ -162,10 +162,8 @@ public final class FileSystemView implements AutoCloseable {
      *
      * @param root the directory that will be root of this view
      * @return FileSystemView
-     * @throws IOException if the directory denoted by {@code path} does not exist
-     *                     or an I/O error occurs
      */
-    public static FileSystemView forDirectory(Path root) throws IOException {
+    public static FileSystemView forDirectory(Path root) {
         return new FileSystemView(root, () -> { /* NOOP */ }, root.toString());
     }
 
