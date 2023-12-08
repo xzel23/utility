@@ -1,13 +1,14 @@
-package com.dua3.utility.math;
+package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.geometry.AffineTransformation2f;
+import com.dua3.utility.math.Vector2f;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
-class AffineTransformationTest {
+class AffineTransformation2fTest {
 
     @Test
     void constructorAndAccessors() {
