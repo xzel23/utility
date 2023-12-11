@@ -246,18 +246,20 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @param name  attribute name
      * @param value attribute value
      */
-    public void push(String name, Object value) {
+    public RichTextBuilder push(String name, Object value) {
         Objects.requireNonNull(value, "value must not be null");
         Object previousValue = split().put(name, value);
         openedAttributes.push(new AttributeChange(name, previousValue, value));
+        return this;
     }
 
     /**
      * Pop attribute that has been set using {@link #push(String, Object)}.
      *
      * @param name attribute name
+     * @return
      */
-    public void pop(String name) {
+    public RichTextBuilder pop(String name) {
         AttributeChange change = openedAttributes.pop();
         LangUtil.check(name.equals(change.name()), "name does not match: \"%s\", expected \"%s\"", name, change.name());
         Map<String, Object> attributes = split();
@@ -266,6 +268,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
         } else {
             attributes.put(name, change.previousValue());
         }
+        return this;
     }
 
     /**
@@ -274,12 +277,13 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @param style the {@link Style} to push
      */
     @SuppressWarnings("unchecked")
-    public void push(Style style) {
+    public RichTextBuilder push(Style style) {
         List<Style> styles = (List<Style>) getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
         List<Style> newStyles = new ArrayList<>(styles.size() + 1);
         newStyles.addAll(styles);
         newStyles.add(style);
         push(RichText.ATTRIBUTE_NAME_STYLE_LIST, newStyles);
+        return this;
     }
 
     /**
@@ -287,8 +291,8 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *
      * @param style the style
      */
-    public void pop(Style style) {
-        pop(RichText.ATTRIBUTE_NAME_STYLE_LIST);
+    public RichTextBuilder pop(Style style) {
+        return pop(RichText.ATTRIBUTE_NAME_STYLE_LIST);
     }
 
     private Map<String, Object> split() {
