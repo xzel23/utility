@@ -252,7 +252,7 @@ public final class FontDef implements Cloneable {
     }
 
     // a little helper for the consumeIfDefined... methods
-    private static <T> boolean consumeIfDefined(T v, Consumer<T> c) {
+    private static <T> boolean consumeIfDefined(@Nullable T v, Consumer<T> c) {
         boolean run = v != null;
         if (run) {
             c.accept(v);
