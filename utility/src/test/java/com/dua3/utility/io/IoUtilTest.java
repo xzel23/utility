@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -105,6 +106,54 @@ public class IoUtilTest {
         assertEquals("/test.xyz", IoUtil.replaceExtension("/test", "xyz"));
         assertEquals("./test.xyz", IoUtil.replaceExtension("./test", "xyz"));
         assertEquals("../test.xyz", IoUtil.replaceExtension("../test", "xyz"));
+    }
+
+
+    /**
+     * Test replaceExtension with valid input.
+     */
+    @Test
+    public void testReplaceExtensionValidInput() {
+        String path = "/Users/tester/desktop/file.txt";
+        String extension = "docx";
+        String expected = "/Users/tester/desktop/file.docx";
+
+        assertEquals(expected, IoUtil.replaceExtension(path, extension));
+    }
+
+    /**
+     * Test replaceExtension with empty extension.
+     */
+    @Test
+    public void testReplaceExtensionEmptyExtension() {
+        String path = "/Users/tester/desktop/file.txt";
+        String extension = "";
+        String expected = "/Users/tester/desktop/file.";
+
+        assertEquals(expected, IoUtil.replaceExtension(path, extension));
+    }
+
+    /**
+     * Test replaceExtension with non-existing extension.
+     */
+    @Test
+    public void testReplaceExtensionNonExistingExtension() {
+        String path = "/Users/tester/desktop/file";
+        String extension = "txt";
+        String expected = "/Users/tester/desktop/file.txt";
+
+        assertEquals(expected, IoUtil.replaceExtension(path, extension));
+    }
+
+    /**
+     * Test replaceExtension with empty path.
+     */
+    @Test
+    public void testReplaceExtensionEmptyPath() {
+        String path = "";
+        String extension = "docx";
+
+        assertThrows(IllegalArgumentException.class, () -> IoUtil.replaceExtension(path, extension));
     }
 
     private static String normalize(Configuration configuration, String pathStr) {

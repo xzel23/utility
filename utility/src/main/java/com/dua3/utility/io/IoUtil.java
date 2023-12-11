@@ -210,6 +210,7 @@ public final class IoUtil {
      * @return filename with replaced extension
      */
     public static String replaceExtension(String path, String extension) {
+        LangUtil.check(!path.isEmpty(), () -> new IllegalArgumentException("path must ot be empty"));
         Pair<Integer, Integer> fi = getFilenameInfo(path);
 
         // find dot
