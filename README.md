@@ -171,6 +171,7 @@ the parameter.
   to ' ' as whitespace. Use RichText.strip() to remove all whitespace.
 - BREAKING: OpenMode.includes() has been renamed to isIncluded()
 - BREAKING: removed Pair.toMap() static methods. Use Map.ofEntries() instead.
+- BREAING: LineOutputStream returns lines with line end characters removed
 - Pair<T1,T2> now implements Map.Entry<T1,T2>
 - added RichText.strip(), RichText.stripLeading(), RichText.stripTrailing()
 - enable automatic download of Gradle JVM toolchains in build

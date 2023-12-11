@@ -43,6 +43,13 @@ public class LineOutputStream extends OutputStream {
 
     private void flushLine() {
         synchronized (lock) {
+            // remove line end
+            if (count>0 && buf[count-1]=='\n') {
+                count--;
+                if (count>0 && buf[count-1]=='\r') {
+                    count--;
+                }
+            }
             String text = new String(buf, 0, count, StandardCharsets.UTF_8);
             processor.accept(text);
 
