@@ -261,7 +261,7 @@ public class Stopwatch {
 
                 String positive = String.format(
                         Locale.ROOT,
-                        "%fs",
+                        "%.3fs",
                         sec);
 
                 return negative ? "-" + positive : positive;
@@ -283,7 +283,7 @@ public class Stopwatch {
 
                 String positive = String.format(
                         Locale.ROOT,
-                        "%fms",
+                        "%.3fms",
                         millis);
 
                 return negative ? "-" + positive : positive;
