@@ -37,7 +37,7 @@ public class Stopwatch {
      * @param name the name for this instance; it is included in {@code toString()}
      */
     public Stopwatch(Supplier<String> name) {
-        this.name = name;
+        this.name = new LazyName(name);
         this.start = this.startSplit = Instant.now();
     }
 
@@ -81,6 +81,14 @@ public class Stopwatch {
      */
     public static AutoCloseableStopWatch create(Supplier<String> name, Consumer<? super Stopwatch> onClose) {
         return new AutoCloseableStopWatch(name, onClose);
+    }
+
+    /**
+     * Get the name of this StopWatch instance.
+     * @return the name of this instance
+     */
+    public String getName() {
+        return name.toString();
     }
 
     /**
@@ -310,6 +318,23 @@ public class Stopwatch {
         @Override
         public void close() {
             onClose.accept(this);
+        }
+    }
+
+    private static class LazyName {
+        private final Supplier<String> name;
+        String n;
+
+        public LazyName(Supplier<String> name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            if (n==null) {
+                n = name.get();
+            }
+            return n;
         }
     }
 }

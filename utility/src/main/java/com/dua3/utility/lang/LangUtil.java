@@ -477,8 +477,7 @@ public final class LangUtil {
      * @return caching Supplier
      */
     public static <T> Supplier<T> cache(Supplier<? extends T> supplier) {
-        return new CachingSupplier<>(supplier, t -> {
-        });
+        return new CachingSupplier<>(supplier, t -> {});
     }
 
     /**
