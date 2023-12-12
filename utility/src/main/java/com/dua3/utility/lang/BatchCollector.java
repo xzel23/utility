@@ -61,7 +61,7 @@ public class BatchCollector<T, K> implements Collector<T, Deque<Pair<K, List<T>>
             K key = keyMapper.apply(item);
 
             List<T> bucket;
-            if (accu.isEmpty() || (key != null && !Objects.equals(key, accu.peekLast().first()))) {
+            if (accu.isEmpty() || (!Objects.equals(key, accu.peekLast().first()))) {
                 bucket = new ArrayList<>();
                 accu.addLast(Pair.of(key == null ? defaultKey : key, bucket));
             } else {
@@ -87,6 +87,6 @@ public class BatchCollector<T, K> implements Collector<T, Deque<Pair<K, List<T>>
 
     @Override
     public Set<Characteristics> characteristics() {
-        return EnumSet.of(Characteristics.IDENTITY_FINISH);
+        return EnumSet.noneOf(Characteristics.class);
     }
 }
