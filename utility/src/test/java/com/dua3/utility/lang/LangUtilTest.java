@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -419,4 +420,47 @@ class LangUtilTest {
         }
     }
 
+    @Test
+    void isBetween_forLong_ShouldReturnTrue() {
+        assertTrue(LangUtil.isBetween(5L, 3L, 7L));
+    }
+
+    @Test
+    void isBetween_forLong_ShouldReturnFalse() {
+        assertFalse(LangUtil.isBetween(8L, 3L, 7L));
+    }
+
+    @Test
+    void isBetween_forDouble_ShouldReturnTrue() {
+        assertTrue(LangUtil.isBetween(5.0, 3.0, 7.0));
+    }
+
+    @Test
+    void isBetween_forDouble_ShouldReturnFalse() {
+        assertFalse(LangUtil.isBetween(8.0, 3.0, 7.0));
+    }
+
+    @Test
+    public void isBetween_forComparable_ShouldReturnTrue() {
+        assertTrue(LangUtil.isBetween("b", "a", "c"));
+    }
+
+    @Test
+    public void isBetween_forComparable_ShouldReturnFalse() {
+        assertFalse(LangUtil.isBetween("z", "a", "y"));
+    }
+
+    @Test
+    public void formatStackTrace_ShouldReturnText() {
+        Exception sampleException = new Exception("SampleException");
+        assertFalse(LangUtil.formatStackTrace(sampleException).isEmpty());
+    }
+
+    @Test
+    void defaultToString_ShouldReturnExpectedResult() {
+        assertEquals("null", LangUtil.defaultToString(null));
+        String nonNullObjectToString = LangUtil.defaultToString(new Object());
+        assertNotNull(nonNullObjectToString);
+        assertFalse(nonNullObjectToString.isEmpty());
+    }
 }
