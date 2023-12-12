@@ -1,10 +1,17 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.data.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,8 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -22,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -462,5 +476,95 @@ class LangUtilTest {
         String nonNullObjectToString = LangUtil.defaultToString(new Object());
         assertNotNull(nonNullObjectToString);
         assertFalse(nonNullObjectToString.isEmpty());
+    }
+    @Test
+    public void testMapOptionalInt() {
+        OptionalInt opt = OptionalInt.of(2);
+        Optional<String> optResult = LangUtil.map(opt, i -> Integer.toString(i));
+        Assertions.assertEquals("2", optResult.get());
+
+        opt = OptionalInt.empty();
+        optResult = LangUtil.map(opt, i -> Integer.toString(i));
+        Assertions.assertEquals(Optional.empty(), optResult);
+    }
+
+    @Test
+    public void testMapOptionalLong() {
+        OptionalLong opt = OptionalLong.of(3L);
+        Optional<String> optResult = LangUtil.map(opt, l -> Long.toString(l));
+        Assertions.assertEquals("3", optResult.get());
+
+        opt = OptionalLong.empty();
+        optResult = LangUtil.map(opt, l -> Long.toString(l));
+        Assertions.assertEquals(Optional.empty(), optResult);
+    }
+
+    @Test
+    public void testMapOptionalDouble() {
+        OptionalDouble opt = OptionalDouble.of(1.0);
+        Optional<String> optResult = LangUtil.map(opt, d -> Double.toString(d));
+        Assertions.assertEquals("1.0", optResult.get());
+
+        opt = OptionalDouble.empty();
+        optResult = LangUtil.map(opt, d -> Double.toString(d));
+        Assertions.assertEquals(Optional.empty(), optResult);
+    }
+    @Test
+    void testCache() {
+        // Create a supplier that supplies a new string "test" and a Consumer that does nothing
+        AtomicReference<String> value = new AtomicReference<>("test");
+        Supplier<String> supplier = () -> value.get();
+        Consumer<String> consumer = (String s) -> value.set(null);
+
+        LangUtil.AutoCloseableSupplier<String> cS = LangUtil.cache(supplier, consumer);
+        assertEquals("test", cS.get());
+
+        // Make sure cache is preserving the value
+        assertEquals("test", cS.get());
+
+        // Close the cache
+        cS.close();
+
+        // Make sure cache was resetted to uninitialized state
+        assertNotEquals("test", cS.get());
+    }
+
+    @Test
+    void testGetResourceURL() {
+        URL url = LangUtil.getResourceURL(this.getClass(), "resource.txt");
+        assertNotNull(url);
+    }
+
+    @Test
+    void testGetResourceAsString() throws IOException {
+        String s = LangUtil.getResourceAsString(this.getClass(), "resource.txt");
+        assertEquals("test", s);
+    }
+
+    @Test
+    void testGetResource() throws IOException {
+        byte[] data = LangUtil.getResource(this.getClass(), "resource.txt");
+        assertEquals("test", new String(data, StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void testLoadPropertiesWithPath() throws IOException, URISyntaxException {
+        Path path = Paths.get(this.getClass().getResource("test.properties").toURI());
+        Properties properties = LangUtil.loadProperties(path);
+        assertEquals("value", properties.get("key"));
+    }
+
+    @Test
+    void testLoadPropertiesWithURL() throws IOException {
+        URL url = this.getClass().getResource("test.properties");
+        Properties properties = LangUtil.loadProperties(url);
+        assertEquals("value", properties.get("key"));
+    }
+
+    @Test
+    void testLoadPropertiesWithURI() throws IOException, URISyntaxException {
+        URI uri = this.getClass().getResource("test.properties").toURI();
+        Properties properties = LangUtil.loadProperties(uri);
+        assertEquals("value", properties.get("key"));
     }
 }
