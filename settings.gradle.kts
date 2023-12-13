@@ -36,8 +36,9 @@ dependencyResolutionManagement {
             version("log4j", "2.22.0")
             version("slf4j", "2.0.9")
             version("jimfs", "1.2")
-            version("miglayout", "11.2")
+            version("miglayout", "11.3")
             version("spotbugs", "4.8.2")
+            version("mockito", "5.8.0")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
 
@@ -58,6 +59,7 @@ dependencyResolutionManagement {
             library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")
 
             library("jimfs", "com.google.jimfs", "jimfs").version("1.3.0")
+            library("mockito", "org.mockito", "mockito-core").version("5.8.0")
         }
     }
 
