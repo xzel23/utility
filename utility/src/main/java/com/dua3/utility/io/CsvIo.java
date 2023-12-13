@@ -19,6 +19,7 @@ import com.dua3.utility.options.Option;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +38,7 @@ public abstract class CsvIo implements AutoCloseable {
     protected final Locale locale;
     protected final DateTimeFormatter dateTimeFormatter;
     protected final DateTimeFormatter dateFormatter;
+    protected final DateTimeFormatter timeFormatter;
     protected final NumberFormat numberFormat;
 
     /**
@@ -51,7 +53,8 @@ public abstract class CsvIo implements AutoCloseable {
         this.lineDelimiter = "\r\n";
         this.locale = IoOptions.getLocale(options);
         this.dateTimeFormatter = IoOptions.getDateTimeFormat(options).getDateTimeFormatter(locale);
-        this.dateFormatter = IoOptions.getDateFormat(options).getFormatter(locale);
+        this.dateFormatter = IoOptions.getDateFormat(options).getDateFormatter(locale);
+        this.timeFormatter = IoOptions.getDateFormat(options).getTimeFormatter(locale);
         this.numberFormat = NumberFormat.getInstance(locale);
         numberFormat.setGroupingUsed(false);
         numberFormat.setMinimumFractionDigits(0);
@@ -81,12 +84,14 @@ public abstract class CsvIo implements AutoCloseable {
     @SuppressWarnings("ChainOfInstanceofChecks")
     protected String format(@Nullable Object obj) {
         final String text;
-        if (obj instanceof Number) {
-            text = numberFormat.format(obj);
-        } else if (obj instanceof LocalDate) {
-            text = ((LocalDate) obj).format(dateFormatter);
-        } else if (obj instanceof LocalDateTime) {
-            text = ((LocalDateTime) obj).format(dateTimeFormatter);
+        if (obj instanceof Number n) {
+            text = numberFormat.format(n);
+        } else if (obj instanceof LocalDateTime ldt) {
+            text = ldt.format(dateTimeFormatter);
+        } else if (obj instanceof LocalDate ld) {
+            text = ld.format(dateFormatter);
+        } else if (obj instanceof LocalTime lt) {
+            text = lt.format(timeFormatter);
         } else {
             text = Objects.toString(obj, "");
         }

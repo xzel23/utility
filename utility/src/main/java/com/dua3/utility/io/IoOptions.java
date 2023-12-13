@@ -112,11 +112,11 @@ public final class IoOptions {
      *
      * @return a ChoiceOption object representing the date format option
      */
-    public static ChoiceOption<PredefinedDateFormat> dateFormat() {
+    public static ChoiceOption<PredefinedDateTimeFormat> dateFormat() {
         return ChoiceOption.create(
-                        PredefinedDateFormat.class,
+                        PredefinedDateTimeFormat.class,
                         "--date-format")
-                .defaultValue(PredefinedDateFormat.ISO_DATE);
+                .defaultValue(PredefinedDateTimeFormat.ISO_DATE_TIME);
     }
 
     /**
@@ -159,7 +159,7 @@ public final class IoOptions {
      * @param cmd the Arguments object containing the command line arguments
      * @return the PredefinedDateFormat object representing the specified date format
      */
-    public static PredefinedDateFormat getDateFormat(Arguments cmd) {
+    public static PredefinedDateTimeFormat getDateFormat(Arguments cmd) {
         return cmd.getOrThrow(dateFormat());
     }
 
