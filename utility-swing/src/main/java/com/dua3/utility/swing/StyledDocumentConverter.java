@@ -91,7 +91,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @param attributes attributes for new StyledDocuments
      * @return the option to use
      */
-    public static StyledDocumentConversionOption addStyledAttributes(Iterable<Map.Entry<Object, Object>> attributes) {
+    public static StyledDocumentConversionOption addStyledAttributes(Iterable<? extends Map.Entry<Object, Object>> attributes) {
         return new StyledDocumentConversionOption(c -> attributes.forEach(p -> c.defaultStyledAttributes.addAttribute(p.getKey(), p.getValue())));
     }
 

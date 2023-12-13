@@ -6,7 +6,6 @@
 package com.dua3.utility.lang;
 
 import com.dua3.cabe.annotations.Nullable;
-import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.IoUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,9 +27,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;

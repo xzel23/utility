@@ -5,7 +5,6 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import org.apache.logging.log4j.LogManager;
@@ -206,7 +205,7 @@ public final class TextUtil {
      * @param substitutions  the key-value pairs used for substitution
      * @return the transformed string with placeholders replaced by corresponding values
      */
-    public static String transform(String template, Iterable<Map.Entry<String, String>> substitutions) {
+    public static String transform(String template, Iterable<? extends Map.Entry<String, String>> substitutions) {
         UnaryOperator<String> env = s -> {
             for (Map .Entry<String, String> r : substitutions) {
                 if (Objects.equals(s, r.getKey())) {
