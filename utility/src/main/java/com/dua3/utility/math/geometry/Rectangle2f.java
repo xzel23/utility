@@ -3,9 +3,7 @@
  * This package is distributed under the Artistic License 2.0.
  */
 
-package com.dua3.utility.math;
-
-import com.dua3.utility.math.geometry.Dimension2f;
+package com.dua3.utility.math.geometry;
 
 /**
  * Immutable rectangle with float coordinates.

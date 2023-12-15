@@ -1,7 +1,5 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2f;
-
 /**
  * Abstract Base class for 2-dimensional curves.
  */

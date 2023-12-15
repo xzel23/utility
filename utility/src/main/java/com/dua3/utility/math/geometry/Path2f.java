@@ -1,7 +1,5 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2f;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -10,6 +8,15 @@ import java.util.stream.Collectors;
  * A path in 2-dimensional space that is defined by joining together different segments.
  */
 public final class Path2f {
+
+    /**
+     * Creates a new instance of {@link PathBuilder2f}.
+     *
+     * @return a new instance of {@link PathBuilder2f}
+     */
+    public static PathBuilder2f builder() {
+        return new PathBuilder2f();
+    }
 
     private final Path2fImpl impl;
 
