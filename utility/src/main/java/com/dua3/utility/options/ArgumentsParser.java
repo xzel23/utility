@@ -20,6 +20,8 @@ import java.util.Queue;
  */
 public class ArgumentsParser {
 
+    private static final String POSITIONAL_MARKER = "--";
+
     private final Map<String, Option<?>> options;
 
     int minPositionalArgs;
@@ -32,24 +34,42 @@ public class ArgumentsParser {
 
     private String description;
 
-    static final String POSITIONAL_MARKER = "--";
-
-    static final String DEFAULT_ARG_DISPLAY_NAME = "arg";
-
+    /**
+     * Returns a new instance of ArgumentsParserBuilder.
+     *
+     * @return a new instance of ArgumentsParserBuilder
+     */
     public static ArgumentsParserBuilder builder() {
         return new ArgumentsParserBuilder();
     }
 
+    /**
+     * Represents a parser for command line arguments.
+     *
+     * @param name the name of the parser
+     * @param description the description of the parser
+     * @param options the map of options to be parsed
+     * @param minPositionalArgs the minimum number of positional arguments
+     * @param maxPositionalArgs the maximum number of positional arguments
+     * @param positionalArgDisplayName the display name for positional arguments
+     */
     ArgumentsParser(String name, String description, Map<String, Option<?>> options,
                     int minPositionalArgs, int maxPositionalArgs, String positionalArgDisplayName) {
         this.name = name;
         this.description = description;
-        this.options = options;
+        this.options = Map.copyOf(options);
         this.minPositionalArgs = minPositionalArgs;
         this.maxPositionalArgs = maxPositionalArgs;
         this.positionalArgDisplayName = positionalArgDisplayName;
     }
 
+    /**
+     * Parses command line arguments and returns an instance of Arguments.
+     *
+     * @param args the command line arguments to parse
+     * @return an instance of Arguments containing the parsed options and positional arguments
+     * @throws OptionException if an error is encountered during parsing
+     */
     public Arguments parse(String... args) {
         List<String> argList = List.of(args);
 
@@ -248,7 +268,12 @@ public class ArgumentsParser {
         }
     }
 
-    private boolean hasOptions() {
+    /**
+     * Checks if the ArgumentsParser has any options defined.
+     *
+     * @return true if there are options defined, false otherwise
+     */
+    public boolean hasOptions() {
         return !options.isEmpty();
     }
 
@@ -297,7 +322,15 @@ public class ArgumentsParser {
         return List.copyOf(new LinkedHashSet<>(options.values()));
     }
 
-    static String getArgText(int min, int max, String arg) {
+    /**
+     * Generates the formatted argument text based on the minimum and maximum number of arguments and the argument name.
+     *
+     * @param min the minimum number of arguments
+     * @param max the maximum number of arguments
+     * @param arg the name of the argument
+     * @return the formatted argument text
+     */
+    private static String getArgText(int min, int max, String arg) {
         assert arg != null && !arg.isBlank() : "arg must not be null or the empty string";
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
 
