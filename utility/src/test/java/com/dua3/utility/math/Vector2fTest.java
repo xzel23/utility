@@ -1,5 +1,6 @@
 package com.dua3.utility.math;
 
+import com.dua3.utility.math.geometry.Vector2f;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

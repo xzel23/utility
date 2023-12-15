@@ -3,7 +3,7 @@
  * This package is distributed under the Artistic License 2.0.
  */
 
-package com.dua3.utility.math;
+package com.dua3.utility.math.geometry;
 
 /**
  * An immutable 2-dimensional vector using float coordinates.

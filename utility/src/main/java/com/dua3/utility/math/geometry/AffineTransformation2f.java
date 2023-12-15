@@ -1,7 +1,5 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2f;
-
 /**
  * Defines an affine transformation in form of a matrix
  * <pre>

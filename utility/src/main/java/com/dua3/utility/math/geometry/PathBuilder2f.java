@@ -1,7 +1,5 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2f;
-
 /**
  * A builder class for {@link Path2f} instances.
  */
@@ -14,7 +12,7 @@ public class PathBuilder2f {
     /**
      * Constructor.
      */
-    public PathBuilder2f() {
+    PathBuilder2f() {
         init();
     }
 
@@ -70,18 +68,20 @@ public class PathBuilder2f {
      *
      * @param v the vertex that marks the start of the new path
      */
-    public void moveTo(Vector2f v) {
+    public PathBuilder2f moveTo(Vector2f v) {
         init();
         impl.addSegment(new MoveTo2f(impl, addVertex(v)));
         open = true;
+        return this;
     }
 
     /**
      * Add a line from the current position to a new position.
      *
      * @param v the new position
+     * @return
      */
-    public void lineTo(Vector2f v) {
+    public PathBuilder2f lineTo(Vector2f v) {
         if (!open) {
             moveTo(pos);
         }
@@ -89,6 +89,7 @@ public class PathBuilder2f {
         int p = currentIndex();
         int q = addVertex(v);
         impl.addSegment(new Line2f(impl, p, q));
+        return this;
     }
 
     /**
@@ -99,8 +100,9 @@ public class PathBuilder2f {
      * @param p1 second control point
      * @param p2 third control point
      * @param p3 fourth control point
+     * @return
      */
-    public void curveTo(Vector2f p1, Vector2f p2, Vector2f p3) {
+    public PathBuilder2f curveTo(Vector2f p1, Vector2f p2, Vector2f p3) {
         if (!open) {
             moveTo(pos);
         }
@@ -110,6 +112,7 @@ public class PathBuilder2f {
         int c2 = addVertex(p2);
         int c3 = addVertex(p3);
         impl.addSegment(new BezierCurve2f(impl, c0, c1, c2, c3));
+        return this;
     }
 
     /**
@@ -121,13 +124,16 @@ public class PathBuilder2f {
      *     <li> the current position is set to the start of the path
      *     <li> the path is reset when new segments are added to it after calling this method
      * </ul>
+     *
+     * @return
      */
-    public void closePath() {
+    public PathBuilder2f closePath() {
         if (open) {
             impl.addSegment(new ClosePath2f(impl, currentIndex(), 0));
             pos = vertex(0);
             close();
         }
+        return this;
     }
 
     /**
@@ -138,12 +144,15 @@ public class PathBuilder2f {
      *     <li> this method does not affect the number of vertices in this path
      *     <li> the path is reset when new segments are added to it after calling this method
      * </ul>
+     *
+     * @return
      */
-    public void endPath() {
+    public PathBuilder2f endPath() {
         if (open) {
             impl.addSegment(new EndPath2f(impl, currentIndex()));
             close();
         }
+        return this;
     }
 
     /**
@@ -151,9 +160,9 @@ public class PathBuilder2f {
      *
      * @return {@link Path2f} instance holding the constructed path
      */
-    public Path2f strokePath() {
+    public PathBuilder2f strokePath() {
         impl.addSegment(new StrokePath2f(impl, currentIndex()));
-        return new Path2f(impl);
+        return this;
     }
 
     /**
@@ -162,9 +171,9 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return {@link Path2f} instance holding the constructed path
      */
-    public Path2f fillPath(FillRule fillRule) {
+    public PathBuilder2f fillPath(FillRule fillRule) {
         impl.addSegment(new FillPath2f(impl, currentIndex(), fillRule));
-        return new Path2f(impl);
+        return this;
     }
 
     /**
@@ -173,9 +182,9 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return {@link Path2f} instance holding the constructed path
      */
-    public Path2f fillAndStrokePath(FillRule fillRule) {
+    public PathBuilder2f fillAndStrokePath(FillRule fillRule) {
         impl.addSegment(new FillAndStrokePath2f(impl, currentIndex(), fillRule));
-        return new Path2f(impl);
+        return this;
     }
 
     /**
@@ -184,9 +193,9 @@ public class PathBuilder2f {
      * @param fillRule the {@link FillRule} to use
      * @return {@link Path2f} instance holding the constructed path
      */
-    public Path2f clipPath(FillRule fillRule) {
+    public PathBuilder2f clipPath(FillRule fillRule) {
         impl.addSegment(new ClipPath2f(impl, currentIndex(), fillRule));
-        return new Path2f(impl);
+        return this;
     }
 
     /**
@@ -194,5 +203,14 @@ public class PathBuilder2f {
      */
     private void close() {
         open = false;
+    }
+
+    /**
+     * Builds a {@link Path2f} instance using the current state of the {@link PathBuilder2f}.
+     *
+     * @return a new instance of {@link Path2f} representing the constructed path
+     */
+    public Path2f build() {
+        return new Path2f(impl);
     }
 }

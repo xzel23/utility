@@ -1,7 +1,5 @@
 package com.dua3.utility.math.geometry;
 
-import com.dua3.utility.math.Vector2f;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
