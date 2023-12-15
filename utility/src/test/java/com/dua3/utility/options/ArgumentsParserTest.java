@@ -19,8 +19,8 @@ public class ArgumentsParserTest {
     public void testFlag() {
         // create the parser
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testFlag")
-                .setDescription("Unit test for passing flags on the command line.");
+                .name("testFlag")
+                .description("Unit test for passing flags on the command line.");
         Flag oPrint = builder.flag("--print", "-p").description("print result to terminal");
         ArgumentsParser cmd = builder.build();
 
@@ -62,8 +62,8 @@ public class ArgumentsParserTest {
     @Test
     public void testChoiceOption() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testChoiceOption")
-                .setDescription("Unit test for passing choices on the command line.");
+                .name("testChoiceOption")
+                .description("Unit test for passing choices on the command line.");
         SimpleOption<String> oProduct = builder.simpleOption(String.class, "--product", "-p")
                 .description("the product")
                 .displayName("product name")
@@ -103,8 +103,8 @@ public class ArgumentsParserTest {
     @Test
     public void testChoiceOptionRequired() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testChoiceOptionRequired")
-                .setDescription("Unit test for passing choices on the command line.");
+                .name("testChoiceOptionRequired")
+                .description("Unit test for passing choices on the command line.");
         ChoiceOption<E> oSize = builder.choiceOption(E.class, "--size")
                 .argName("size")
                 .required();
@@ -143,8 +143,8 @@ public class ArgumentsParserTest {
     @Test
     public void testSimpleOption() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testSimpleOption")
-                .setDescription("Unit test for passing simple options on the command line.");
+                .name("testSimpleOption")
+                .description("Unit test for passing simple options on the command line.");
         SimpleOption<String> optionName = builder.simpleOption(String.class, "--name", "-n")
                 .description("set name")
                 .argName("name");
@@ -186,8 +186,8 @@ public class ArgumentsParserTest {
     @Test
     public void testSimpleOptionRequired() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testSimpleOptionRequired")
-                .setDescription("Unit test for passing simple options on the command line.");
+                .name("testSimpleOptionRequired")
+                .description("Unit test for passing simple options on the command line.");
         SimpleOption<String> optionName = builder.simpleOption(String.class, "--name", "-n")
                 .description("set name")
                 .argName("name")
@@ -231,8 +231,8 @@ public class ArgumentsParserTest {
     @Test
     public void testPositionalArgs1() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testPositionalArgs1")
-                .setDescription("Unit test for passing positional arguments on the command line.");
+                .name("testPositionalArgs1")
+                .description("Unit test for passing positional arguments on the command line.");
         ArgumentsParser cmd = builder.build();
 
         String expected = """
@@ -257,9 +257,9 @@ public class ArgumentsParserTest {
     @Test
     public void testPositionalArgs2() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testPositionalArgs2")
-                .setDescription("Unit test for passing positional arguments on the command line.")
-                .setPositionalArgs(1, 3);
+                .name("testPositionalArgs2")
+                .description("Unit test for passing positional arguments on the command line.")
+                .positionalArgs(1, 3);
         ArgumentsParser cmd = builder.build();
 
         String expected = """
@@ -289,8 +289,8 @@ public class ArgumentsParserTest {
     @Test
     public void testOptionHandler() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testOptionHandler")
-                .setDescription("Unit test for option handling.");
+                .name("testOptionHandler")
+                .description("Unit test for option handling.");
         List<String> yeaSayer = new ArrayList<>();
         builder.option(String.class, "-y").arity(1).handler(yeaSayer::addAll);
         List<String> naySayer = new ArrayList<>();
@@ -306,8 +306,8 @@ public class ArgumentsParserTest {
     @Test
     public void testStandardOptionOccurrences() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testSimpleOption")
-                .setDescription("Unit test for passing simple options on the command line.");
+                .name("testSimpleOption")
+                .description("Unit test for passing simple options on the command line.");
         Option<String> optionExactlyTwice = builder.option(String.class, "--exactly-twice").occurrence(2);
         Option<String> optionAtMostTwice = builder.option(String.class, "--at-most-twice").occurrence(0, 2);
         Option<String> optionTwoOrThreeTimes = builder.option(String.class, "--two-or-three-times").occurrence(2, 3);
@@ -426,9 +426,9 @@ public class ArgumentsParserTest {
     @Test
     public void testStandardOptionArity() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .setName("testStandardOptionArity")
-                .setDescription("Unit test for testing opzion arity on the command line.")
-                .setPositionalArgs(0, 0);
+                .name("testStandardOptionArity")
+                .description("Unit test for testing opzion arity on the command line.")
+                .positionalArgs(0, 0);
         Option<String> optionAtMostTwoArgs = builder.option(String.class, "--at-most-two-args").arity(0, 2);
         Option<String> optionExactlyTwoArgs = builder.option(String.class, "--exactly-two-args").arity(2);
         Option<String> optionTwoOrMoreArgs = builder.option(String.class, "--two-or-more-args").arity(2, Integer.MAX_VALUE);

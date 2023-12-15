@@ -22,17 +22,17 @@ public class ArgumentsParserBuilder {
     ArgumentsParserBuilder() {
     }
 
-    public ArgumentsParserBuilder setName(String name) {
+    public ArgumentsParserBuilder name(String name) {
         this.name = name;
         return this;
     }
 
-    public ArgumentsParserBuilder setDescription(String description) {
+    public ArgumentsParserBuilder description(String description) {
         this.description = description;
         return this;
     }
 
-    public ArgumentsParserBuilder setPositionalArgs(int minArgs, int maxArgs, String argDisplayName) {
+    public ArgumentsParserBuilder positionalArgs(int minArgs, int maxArgs, String argDisplayName) {
         if (minArgs < 0 || maxArgs < 0 || minArgs > maxArgs) {
             throw new IllegalArgumentException("Invalid positional arguments range");
         }
@@ -42,8 +42,8 @@ public class ArgumentsParserBuilder {
         return this;
     }
 
-    public ArgumentsParserBuilder setPositionalArgs(int minArgs, int maxArgs) {
-        return setPositionalArgs(minArgs, maxArgs, DEFAULT_ARG_DISPLAY_NAME);
+    public ArgumentsParserBuilder positionalArgs(int minArgs, int maxArgs) {
+        return positionalArgs(minArgs, maxArgs, DEFAULT_ARG_DISPLAY_NAME);
     }
 
     public Flag flag(String... names) {
