@@ -3,6 +3,7 @@ package com.dua3.utility.samples.log4j;
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.options.ArgumentsParser;
+import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.swing.ArgumentsDialog;
 import com.dua3.utility.swing.ComboBoxEx;
 import com.dua3.utility.swing.SwingLogPane;
@@ -88,9 +89,10 @@ public class SwingComponentsSampleLog4j extends JFrame {
 
     private Person showPersonDialog(Person initialPerson) {
         Optional<Person> op = Optional.ofNullable(initialPerson);
-        ArgumentsParser parser = new ArgumentsParser();
-        var optFirstName = parser.simpleOption(String.class, "firstName").displayName("First Name").defaultValue(op.map(pp -> pp.firstName).orElse(""));
-        var optLastName = parser.simpleOption(String.class, "lastName").displayName("Last Name").defaultValue(op.map(pp -> pp.lastName).orElse(""));
+        ArgumentsParserBuilder builder = ArgumentsParser.builder();
+        var optFirstName = builder.simpleOption(String.class, "firstName").displayName("First Name").defaultValue(op.map(pp -> pp.firstName).orElse(""));
+        var optLastName = builder.simpleOption(String.class, "lastName").displayName("Last Name").defaultValue(op.map(pp -> pp.lastName).orElse(""));
+        ArgumentsParser parser = builder.build();
         return ArgumentsDialog.showDialog(this, parser)
                 .map(args -> {
                     Person p = new Person("", "");

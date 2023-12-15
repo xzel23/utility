@@ -1,6 +1,5 @@
 package com.dua3.utility.options;
 
-import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 
@@ -11,210 +10,46 @@ import java.util.Comparator;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
-import java.util.function.Function;
 
 /**
  * A parser that parses command line args into an {@link Arguments} instance.
  */
 public class ArgumentsParser {
 
-    /**
-     * Marker to pass on the command line indicating that all remaining args should be treated as positional parameters.
-     */
-    public static final String POSITIONAL_MARKER = "--";
-    /**
-     * The minimum number of positional arguments.
-     */
-    final int minPositionalArgs;
-    /**
-     * The maximum number of positional arguments.
-     */
-    final int maxPositionalArgs;
-    /**
-     * The command name.
-     */
-    private final String name;
-    /**
-     * The command description.
-     */
-    private final String description;
-    /**
-     * The options understood by this CommandLineParser instance, stored in a map (command line arg: option).
-     */
-    private final Map<String, Option<?>> options = new LinkedHashMap<>();
+    private final Map<String, Option<?>> options;
 
-    /**
-     * Constructor.
-     */
-    public ArgumentsParser() {
-        this("", "");
+    int minPositionalArgs;
+
+    int maxPositionalArgs;
+
+    private String positionalArgDisplayName;
+
+    private String name;
+
+    private String description;
+
+    static final String POSITIONAL_MARKER = "--";
+
+    static final String DEFAULT_ARG_DISPLAY_NAME = "arg";
+
+    public static ArgumentsParserBuilder builder() {
+        return new ArgumentsParserBuilder();
     }
 
-    /**
-     * Constructor.
-     *
-     * @param name        program name
-     * @param description program description
-     * @param minArgs     minimum number of positional arguments
-     * @param maxArgs     maximum number of positional arguments
-     */
-    public ArgumentsParser(String name, String description, int minArgs, int maxArgs) {
-        this.name = Objects.requireNonNull(name, "name is null");
-        this.description = Objects.requireNonNull(description, "description is null");
-
-        LangUtil.check(minArgs >= 0, "minimal number of arguments must not be negative: %d", minArgs);
-        LangUtil.check(maxArgs >= minArgs, "maximum number of arguments must be greater than or equal to the minimum number of arguments: %d (minimum number of arguments is %d)", maxArgs, minArgs);
-        this.minPositionalArgs = minArgs;
-        this.maxPositionalArgs = maxArgs;
+    ArgumentsParser(String name, String description, Map<String, Option<?>> options,
+                    int minPositionalArgs, int maxPositionalArgs, String positionalArgDisplayName) {
+        this.name = name;
+        this.description = description;
+        this.options = options;
+        this.minPositionalArgs = minPositionalArgs;
+        this.maxPositionalArgs = maxPositionalArgs;
+        this.positionalArgDisplayName = positionalArgDisplayName;
     }
 
-    /**
-     * Constructor.
-     *
-     * @param name        program name
-     * @param description program description
-     * @param minArgs     minimum number of positional arguments
-     */
-    public ArgumentsParser(String name, String description, int minArgs) {
-        this(name, description, minArgs, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param name        the command name to show in help text.
-     * @param description the command description to show in help text.
-     */
-    public ArgumentsParser(String name, String description) {
-        this(name, description, 0, Integer.MAX_VALUE);
-    }
-
-    private static String getArgText(int min, int max) {
-        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
-
-        String argText = switch (min) {
-            case 0 -> "";
-            case 1 -> (min == max) ? " arg" : " arg1";
-            case 2 -> " arg1 arg2";
-            case 3 -> " arg1 arg2 arg3";
-            case Integer.MAX_VALUE -> " arg ...";
-            default -> //noinspection StringConcatenationMissingWhitespace
-                    " arg1 ... arg" + max;
-        };
-
-        // handle max arity
-        if (max == Integer.MAX_VALUE) {
-            //noinspection StringConcatenationMissingWhitespace
-            argText += " [arg" + (min + 1) + "] ...";
-        } else {
-            int optionalCount = max - min;
-            if (optionalCount == 1) {
-                //noinspection StringConcatenationMissingWhitespace
-                argText += " [arg" + (min + 1) + "]";
-            } else if (optionalCount > 1) {
-                //noinspection StringConcatenationMissingWhitespace
-                argText += " [arg" + (min + 1) + "] ... (up to " + max + " arguments)";
-            }
-        }
-        return argText;
-    }
-
-    /**
-     * Define a new {@link Flag}.
-     *
-     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
-     * @return the flag
-     */
-    public Flag flag(String... names) {
-        return addOption(Flag.create(names));
-    }
-
-    /**
-     * Define a new {@link SimpleOption}.
-     *
-     * @param type  the class of the target type
-     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
-     * @param <T>   the target type
-     * @return the option
-     */
-    public <T> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
-        return simpleOption(s -> DataUtil.convert(s, type, true), names);
-    }
-
-    /**
-     * Define a new {@link SimpleOption}.
-     *
-     * @param mapper the mapping to the target type
-     * @param names  the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
-     * @param <T>    the target type
-     * @return the option
-     */
-    public <T> SimpleOption<T> simpleOption(Function<String, ? extends T> mapper, String... names) {
-        return addOption(SimpleOption.create(mapper, names));
-    }
-
-    /**
-     * Add a choice option to the parser.
-     *
-     * @param <E>       enum class
-     * @param enumClass the enum class instance
-     * @param names     the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
-     * @return the option
-     */
-    public <E extends Enum<E>> ChoiceOption<E> choiceOption(Class<? extends E> enumClass, String... names) {
-        return addOption(ChoiceOption.create(enumClass, names));
-    }
-
-    /**
-     * Define a new option.
-     *
-     * @param names the (alternative) option names (i. e. "-h", "--help"); at least one name must be given.
-     * @param type  the class type instance
-     * @param <T>   the generic type of the option
-     * @return the option
-     */
-    public <T> StandardOption<T> option(Class<? extends T> type, String... names) {
-        return option(s -> DataUtil.convert(s, type, true), names);
-    }
-
-    /**
-     * Define a new option.
-     *
-     * @param names  the (alternative) option names (i.e. "-h", "--help"); at least one name must be given.
-     * @param mapper the mapper used to convert string arguments to the target type
-     * @param <T>    the generic type of the option
-     * @return the option
-     */
-    public <T> StandardOption<T> option(Function<String, ? extends T> mapper, String... names) {
-        return addOption(StandardOption.create(mapper, names));
-    }
-
-    /**
-     * Add an option to the parser.
-     *
-     * @param <O>    the option type
-     * @param option the option to add
-     * @return the option
-     */
-    public <O extends Option<?>> O addOption(O option) {
-        for (String name : option.names()) {
-            LangUtil.check(options.putIfAbsent(name, option) == null, "duplicate option name: %s", name);
-        }
-        return option;
-    }
-
-    /**
-     * Parse command line arguments.
-     *
-     * @param args the command line arguments to parse.
-     * @return object holding the parsed command line arguments
-     */
     public Arguments parse(String... args) {
         List<String> argList = List.of(args);
 
@@ -385,29 +220,36 @@ public class ArgumentsParser {
 
         // print command line example
         String cmdText = name.isEmpty() ? "<program>" : name;
-        if (!options.isEmpty()) {
+        if (hasOptions()) {
             cmdText += " <options>";
         }
-        cmdText += getArgText(minPositionalArgs, maxPositionalArgs);
+        cmdText += getArgText(minPositionalArgs, maxPositionalArgs, positionalArgDisplayName);
         fmt.format("%s\n\n", cmdText);
 
         // print options
-        options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
-            // get argument text
-            String argText = getArgText(option.minArity(), option.maxArity());
+        if (hasOptions()) {
+            fmt.format("  <options>:\n");
+            options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
+                // get argument text
+                String argText = getArgText(option.minArity(), option.maxArity(), option.getArgName());
 
-            // print option names
-            for (String name : option.names()) {
-                fmt.format("    %s%s\n", name, argText);
-            }
+                // print option names
+                for (String name : option.names()) {
+                    fmt.format("    %s%s\n", name, argText);
+                }
 
-            // print option description
-            if (!option.description().isEmpty()) {
-                fmt.format("%s", option.description().indent(12));
-            }
+                // print option description
+                if (!option.description().isEmpty()) {
+                    fmt.format("%s", option.description().indent(12));
+                }
 
-            fmt.format("\n");
-        });
+                fmt.format("\n");
+            });
+        }
+    }
+
+    private boolean hasOptions() {
+        return !options.isEmpty();
     }
 
     /**
@@ -454,4 +296,35 @@ public class ArgumentsParser {
     public List<Option<?>> options() {
         return List.copyOf(new LinkedHashSet<>(options.values()));
     }
+
+    static String getArgText(int min, int max, String arg) {
+        assert arg != null && !arg.isBlank() : "arg must not be null or the empty string";
+        assert min <= max : "invalid interval: min=" + min + ", max=" + max;
+
+        String argText = switch (min) {
+            case 0 -> "";
+            case 1 -> " <%s%s>".formatted(arg, min == max ? "" : "1");
+            case 2 -> " <%1$s1> <%1$s2>".formatted(arg);
+            case 3 -> " <%1$s1> <%1$s2> <%1$s3>";
+            default -> " <%1$s1> ... <%1$s%2$d>".formatted(arg, max);
+        };
+
+        if (max == Integer.MAX_VALUE) {
+            if (min == 0) {
+                argText += " [<%1$s> ...]".formatted(arg);
+            } else {
+                argText += " [<%1$s%2$d> ...]".formatted(arg, min + 1);
+            }
+        } else {
+            int optionalCount = max - min;
+            switch (optionalCount) {
+                case 0 -> {}
+                case 1 -> argText += " [<%s%d>]".formatted(arg, min + 1);
+                default -> argText += " [... <%1$s%2$d>]".formatted(arg, min + optionalCount);
+            }
+        }
+        return argText;
+    }
+
 }
+
