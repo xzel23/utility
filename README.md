@@ -167,6 +167,7 @@ the parameter.
 
 ### 12.0.0 (to be released)
 
+- BREAKING: ArgumentsParser ahs been split into ArgumentsParserBuilder and ArgumentsParser; see unit tests for examples
 - BREAKING: RichText.trim() now works the same as String.trim(), i. e. only considers character codes less than or equal
   to ' ' as whitespace. Use RichText.strip() to remove all whitespace.
 - BREAKING: OpenMode.includes() has been renamed to isIncluded()
