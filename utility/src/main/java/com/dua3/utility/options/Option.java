@@ -24,6 +24,7 @@ public abstract class Option<T> {
 
     private String displayName = "";
     private String description = "";
+    private String argName = "arg";
     private int minArity;
     private int maxArity;
     private int minOccurrences;
@@ -77,14 +78,26 @@ public abstract class Option<T> {
     }
 
     /**
-     * Set display name
+     * Set the display name.
      *
-     * @param displayName display name
+     * @param displayName the display name
      * @return this option
      */
     public Option<T> displayName(String displayName) {
-        LangUtil.check(this.displayName.isEmpty(), "displayName already set");
+        LangUtil.check(!displayName.isEmpty(), "display name must not be empty");
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");
+        return this;
+    }
+
+    /**
+     * Set the argument name.
+     *
+     * @param argName the argument name
+     * @return this option
+     */
+    public Option<T> argName(String argName) {
+        LangUtil.check(!argName.isEmpty(), "argument name must not be empty");
+        this.argName = Objects.requireNonNull(argName, "argument name must not be null");
         return this;
     }
 
@@ -133,6 +146,24 @@ public abstract class Option<T> {
      */
     public String name() {
         return names[0];
+    }
+
+    /**
+     * Retrieves the display name of this option.
+     *
+     * @return The display name of this option.
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Retrieves the argument name of this option.
+     *
+     * @return The argument name of this option.
+     */
+    public String getArgName() {
+        return argName;
     }
 
     /**

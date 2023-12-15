@@ -159,6 +159,22 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     /**
+     * Mark option as required.
+     *
+     * @return this option
+     */
+    public ChoiceOption<T> required() {
+        occurrence(1, 1);
+        return this;
+    }
+
+    @Override
+    public ChoiceOption<T> argName(String argName) {
+        super.argName(argName);
+        return this;
+    }
+
+    /**
      * Get the default value.
      *
      * @return Optional holding the default value.
