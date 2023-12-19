@@ -116,12 +116,15 @@ class LangUtilTest {
 
     @Test
     void uncheckedFunction() {
+        // make sure IOException is converted
         assertThrows(UncheckedIOException.class, () -> LangUtil.uncheckedFunction(x -> {
             throw new IOException("test");
         }).apply(null), "test");
+        // make sure unchecked exceptions are not converted
         assertThrows(IllegalStateException.class, () -> LangUtil.uncheckedFunction(x -> {
             throw new IllegalStateException("test");
         }).apply(null), "test");
+        // make sure checked exceptions are conerted to unchecked
         assertThrows(WrappedException.class, () -> LangUtil.uncheckedFunction(x -> {
             throw new Exception("test");
         }).apply(null), "test");

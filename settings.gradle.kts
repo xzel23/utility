@@ -29,9 +29,9 @@ dependencyResolutionManagement {
             plugin("versions", "com.github.ben-manes.versions").version("0.50.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.0.4")
-            plugin("cabe", "com.dua3.cabe").version("1.3.1")
+            plugin("cabe", "com.dua3.cabe").version("2.0-beta2")
 
-            version("cabe", "1.0.0")
+            version("cabe-annotations", "2.0")
             version("junit", "5.10.1")
             version("log4j", "2.22.0")
             version("slf4j", "2.0.9")
@@ -40,7 +40,7 @@ dependencyResolutionManagement {
             version("spotbugs", "4.8.2")
             version("mockito", "5.8.0")
 
-            library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
+            library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe-annotations")
 
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
