@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,6 +27,16 @@ public class TextUtilTest {
 
         String expected = "Hello Axel.";
         String actual = TextUtil.transform(template, s -> s.equals("NAME") ? "Axel" : null);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testTransformWithMapArgument() {
+        String template = "Hello ${NAME}.";
+
+        String expected = "Hello Axel.";
+        String actual = TextUtil.transform(template, Map.of("NAME", "Axel"));
 
         assertEquals(expected, actual);
     }

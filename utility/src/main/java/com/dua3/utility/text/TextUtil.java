@@ -194,7 +194,7 @@ public final class TextUtil {
      * @see #transform(String, UnaryOperator)
      */
     @SafeVarargs
-    public static String transform(String template, Map.Entry<String, String>... substitutions) {
+    public static String transform(String template, Map.Entry<String, ?>... substitutions) {
         return transform(template, Arrays.asList(substitutions));
     }
 
@@ -205,11 +205,11 @@ public final class TextUtil {
      * @param substitutions  the key-value pairs used for substitution
      * @return the transformed string with placeholders replaced by corresponding values
      */
-    public static String transform(String template, Iterable<? extends Map.Entry<String, String>> substitutions) {
+    public static String transform(String template, Iterable<? extends Map.Entry<String, ?>> substitutions) {
         UnaryOperator<String> env = s -> {
-            for (Map .Entry<String, String> r : substitutions) {
+            for (Map.Entry<String, ?> r : substitutions) {
                 if (Objects.equals(s, r.getKey())) {
-                    return r.getValue();
+                    return String.valueOf(r.getValue());
                 }
             }
             return s;
@@ -225,7 +225,7 @@ public final class TextUtil {
      * @param substitutions  the map containing key-value pairs for substitutions
      * @return the transformed string with placeholders replaced by values from the map
      */
-    public static String transform(String template, Map<String, String> substitutions) {
+    public static String transform(String template, Map<String, ?> substitutions) {
         return transform(template, substitutions.entrySet());
     }
 
