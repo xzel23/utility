@@ -177,8 +177,9 @@ the parameter.
 - Pair<T1,T2> now implements Map.Entry<T1,T2>
 - added RichText.strip(), RichText.stripLeading(), RichText.stripTrailing()
 - enable automatic download of Gradle JVM toolchains in build
-- reworked util-logging, simplified SwingLogPane use
-- added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatemet javadoc
+- util-logging: reworked util-logging, simplified SwingLogPane use
+- util-db: added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatement javadoc
+- SimpleNamespaceContext: added methods get Prefixes(), getNamespaceURIs
 - reduce code duplication
 - increase unit test coverage
 - add javadoc

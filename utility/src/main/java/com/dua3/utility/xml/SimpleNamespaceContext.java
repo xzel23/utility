@@ -92,4 +92,21 @@ public class SimpleNamespaceContext implements NamespaceContext {
         return Optional.ofNullable(defaultPrefix);
     }
 
+    /**
+     * Returns the list of prefixes currently stored in the mapping.
+     *
+     * @return a list containing all prefixes in the mapping
+     */
+    public List<String> getPrefixes() {
+        return new ArrayList(nsToUri.keySet());
+    }
+
+    /**
+     * Retrieves a list of all the namespace URIs currently stored in the mapping.
+     *
+     * @return A list of namespace URIs.
+     */
+    public List<String> getNamespaceURIs() {
+        return new ArrayList(uriToNs.keySet());
+    }
 }
