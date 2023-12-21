@@ -159,11 +159,13 @@ When running your code with exceptions enabled, parameters are checked for inval
 will be generated when null is passed for a `@NotNull` annotated parameter. The assertion message contains the name of
 the parameter.
 
-## Changes
+## Logging
 
 - all internal logging is done through log4j-api instead of slf4j
 - introduced util-logging-slf4j as sub project of util-logging. Note that util-logging is not intended as a production
   logging replacement. It is intended to provide utilites to capture and display log data in an application window.
+
+## Changes
 
 ### 12.0.0 (to be released)
 
@@ -180,6 +182,7 @@ the parameter.
 - util-logging: reworked util-logging, simplified SwingLogPane use
 - util-db: added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatement javadoc
 - SimpleNamespaceContext: added methods get Prefixes(), getNamespaceURIs
+- TextUtil.transform(): accept Object instances as substitutions (String.valueOf() is used for formatting of instances)
 - reduce code duplication
 - increase unit test coverage
 - add javadoc
@@ -190,6 +193,7 @@ the parameter.
 - fix Vector2f returning NaN for zero denominator
 - fix IoUtil.glob() and IoUtil.findFiles() returning paths with inconsistent root under certain circumstances
 - fix smaller issues
+- update plugins and dependencies
 
 ### 11.1.3
 

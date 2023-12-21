@@ -98,7 +98,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
      * @return a list containing all prefixes in the mapping
      */
     public List<String> getPrefixes() {
-        return new ArrayList(nsToUri.keySet());
+        return new ArrayList<>(nsToUri.keySet());
     }
 
     /**
@@ -107,6 +107,6 @@ public class SimpleNamespaceContext implements NamespaceContext {
      * @return A list of namespace URIs.
      */
     public List<String> getNamespaceURIs() {
-        return new ArrayList(uriToNs.keySet());
+        return new ArrayList<>(uriToNs.keySet());
     }
 }
