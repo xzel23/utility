@@ -1,6 +1,6 @@
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "12.0.0-beta10"
+val projectVersion = "12.0.0-beta11"
 
 // define subprojects
 include("utility")
@@ -29,12 +29,12 @@ dependencyResolutionManagement {
             plugin("versions", "com.github.ben-manes.versions").version("0.50.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.0.4")
-            plugin("cabe", "com.dua3.cabe").version("2.0-rc3")
+            plugin("cabe", "com.dua3.cabe").version("2.0-rc15")
 
             version("cabe-annotations", "2.0")
             version("junit", "5.10.1")
             version("log4j", "2.22.0")
-            version("slf4j", "2.0.9")
+            version("slf4j", "2.0.10")
             version("jimfs", "1.2")
             version("miglayout", "11.3")
             version("spotbugs", "4.8.2")

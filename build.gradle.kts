@@ -46,7 +46,7 @@ subprojects {
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "com.github.spotbugs")
-    //apply(plugin = "com.dua3.cabe")
+    apply(plugin = "com.dua3.cabe")
 
     java {
         toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
@@ -57,7 +57,7 @@ subprojects {
     // dependencies
     dependencies {
         // source annotations
-        compileOnly(rootProject.libs.cabe.annotations)
+        implementation(rootProject.libs.cabe.annotations)
 
         // LOG4J
         implementation(rootProject.libs.log4j.api)
