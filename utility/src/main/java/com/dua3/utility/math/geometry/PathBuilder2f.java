@@ -79,7 +79,7 @@ public class PathBuilder2f {
      * Add a line from the current position to a new position.
      *
      * @param v the new position
-     * @return
+     * @return this instance
      */
     public PathBuilder2f lineTo(Vector2f v) {
         if (!open) {
@@ -100,7 +100,7 @@ public class PathBuilder2f {
      * @param p1 second control point
      * @param p2 third control point
      * @param p3 fourth control point
-     * @return
+     * @return this instance
      */
     public PathBuilder2f curveTo(Vector2f p1, Vector2f p2, Vector2f p3) {
         if (!open) {
@@ -125,7 +125,7 @@ public class PathBuilder2f {
      *     <li> the path is reset when new segments are added to it after calling this method
      * </ul>
      *
-     * @return
+     * @return this instance
      */
     public PathBuilder2f closePath() {
         if (open) {
@@ -145,7 +145,7 @@ public class PathBuilder2f {
      *     <li> the path is reset when new segments are added to it after calling this method
      * </ul>
      *
-     * @return
+     * @return this instance
      */
     public PathBuilder2f endPath() {
         if (open) {

@@ -787,7 +787,7 @@ public final class IoUtil {
      * Returned path should be created the same as the relative path resolved by base.
      * @param base the base path
      * @param p the path
-     * @return
+     * @return the normalized path
      */
     private static Path normalizePath(Path base, Path p) {
         // When a fixed path prefix was extracted in glob, p and base have different root

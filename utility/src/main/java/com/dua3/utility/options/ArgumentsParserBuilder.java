@@ -91,6 +91,7 @@ public class ArgumentsParserBuilder {
      * Creates a SimpleOption with the given mapper function and names.
      *
      * @param <T>    the option's argument type.
+     * @param type   {@link Class} instance of the option's argument type
      * @param names  the names for the option, at least one
      * @return the created SimpleOption
      */
@@ -126,6 +127,7 @@ public class ArgumentsParserBuilder {
      * Adds a standard option to the ArgumentsParserBuilder instance being built.
      *
      * @param <T>    the option's argument type.
+     * @param type   {@link Class} instance of the option's argument type
      * @param names  the names for the option, at least one.
      * @return the created StandardOption.
      */

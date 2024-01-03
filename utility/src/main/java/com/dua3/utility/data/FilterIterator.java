@@ -30,11 +30,12 @@ public class FilterIterator<T> implements Iterator<T> {
     public FilterIterator(Iterator<T> iterator, Predicate<T> predicate) {
         this.iterator = Objects.requireNonNull(iterator);
         this.predicate = Objects.requireNonNull(predicate);
+        this.done = false;
         findNext();
     }
 
     /**
-     * Move internal iterator to the next item that matches the predicate.
+     * Move the internal iterator to the next item that matches the predicate.
      */
     private void findNext() {
         if (done) {

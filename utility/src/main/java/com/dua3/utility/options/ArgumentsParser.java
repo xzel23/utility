@@ -24,15 +24,15 @@ public class ArgumentsParser {
 
     private final Map<String, Option<?>> options;
 
-    int minPositionalArgs;
+    final int minPositionalArgs;
 
-    int maxPositionalArgs;
+    final int maxPositionalArgs;
 
-    private String positionalArgDisplayName;
+    private final String positionalArgDisplayName;
 
-    private String name;
+    private final String name;
 
-    private String description;
+    private final String description;
 
     /**
      * Returns a new instance of ArgumentsParserBuilder.
@@ -64,7 +64,7 @@ public class ArgumentsParser {
     }
 
     /**
-     * Parses command line arguments and returns an instance of Arguments.
+     * Parse the command line arguments and return an instance of {@link Arguments}.
      *
      * @param args the command line arguments to parse
      * @return an instance of Arguments containing the parsed options and positional arguments

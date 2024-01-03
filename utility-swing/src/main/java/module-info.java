@@ -3,6 +3,14 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+/**
+ * This module provides utilities related to Swing-based GUI applications.
+ * <p>
+ * The module provides implementations of the FontUtil and ImageUtil interfaces.
+ * These implementations are automatically chosen at runtime:
+ * - com.dua3.utility.swing.SwingFontUtil is the implementation of FontUtil
+ * - com.dua3.utility.swing.SwingImageUtil is the implementation of ImageUtil
+ */
 open module com.dua3.utility.swing {
     exports com.dua3.utility.swing;
 

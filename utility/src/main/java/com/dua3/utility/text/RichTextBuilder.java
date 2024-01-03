@@ -257,7 +257,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * Pop attribute that has been set using {@link #push(String, Object)}.
      *
      * @param name attribute name
-     * @return
+     * @return this instance
      */
     public RichTextBuilder pop(String name) {
         AttributeChange change = openedAttributes.pop();
@@ -275,6 +275,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * Push style. Remove the style again by calling {@link #pop(Style)}.
      *
      * @param style the {@link Style} to push
+     * @return this instance
      */
     @SuppressWarnings("unchecked")
     public RichTextBuilder push(Style style) {
@@ -290,6 +291,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * Pop style that has been set using {@link #push(Style)}.
      *
      * @param style the style
+     * @return this instance
      */
     public RichTextBuilder pop(Style style) {
         return pop(RichText.ATTRIBUTE_NAME_STYLE_LIST);

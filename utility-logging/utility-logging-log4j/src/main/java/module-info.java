@@ -6,6 +6,9 @@
 import com.dua3.utility.logging.ILogEntryDispatcherFactory;
 import com.dua3.utility.logging.log4j.LogEntryDispatcherFactoryLog4j;
 
+/**
+ * This module provides logging functionality using Log4j.
+ */
 open module com.dua3.utility.logging.log4j {
     exports com.dua3.utility.logging.log4j;
 

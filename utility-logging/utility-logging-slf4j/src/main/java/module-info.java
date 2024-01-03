@@ -8,6 +8,9 @@ import com.dua3.utility.logging.slf4j.LogEntryDispatcherFactorySlf4j;
 import com.dua3.utility.logging.slf4j.LoggingServiceProviderSlf4j;
 import org.slf4j.spi.SLF4JServiceProvider;
 
+/**
+ * This module provides SLF4J logging functionality and integration with the Logging utility module.
+ */
 open module com.dua3.utility.logging.slf4j {
     exports com.dua3.utility.logging.slf4j;
     provides SLF4JServiceProvider with LoggingServiceProviderSlf4j;
