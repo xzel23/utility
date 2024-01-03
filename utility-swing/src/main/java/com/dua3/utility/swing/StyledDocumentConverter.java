@@ -39,9 +39,9 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
     private Map<String, Object> defaultAttributes = new HashMap<>();
     private double scale = 1.0;
     // -- define a dictionary to map StyleConstants attribute keys to calls to Font getters
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     private final Map<Object, Function<Font, Object>> dictionary = Map.of(
             StyleConstants.Family, Font::getFamily,
-            //noinspection NumericCastThatLosesPrecision
             StyleConstants.Size, f -> (int) Math.round(scale * f.getSizeInPoints()),
             StyleConstants.Bold, Font::isBold,
             StyleConstants.Italic, Font::isItalic,
@@ -82,7 +82,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
      * @return the option to use
      */
     public static StyledDocumentConversionOption addStyledAttributes(Map<Object, Object> attributes) {
-        return new StyledDocumentConversionOption(c -> attributes.putAll(attributes));
+        return addStyledAttributes(attributes.entrySet());
     }
 
     /**
