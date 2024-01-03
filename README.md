@@ -185,6 +185,7 @@ the parameter.
 - TextUtil.transform(): accept Object instances as substitutions (String.valueOf() is used for formatting of instances)
 - reduce code duplication
 - increase unit test coverage
+- add @Nullable annotations for record types where needed (because cabe 2.x adds support for record types)
 - add javadoc
 - fix RichText.split() with non-trivial regex and limit 0 not skipping trailing empty segments in result
 - fix build issues on windows

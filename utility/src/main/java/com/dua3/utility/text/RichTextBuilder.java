@@ -307,7 +307,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
         }
     }
 
-    private record AttributeChange(String name, Object previousValue, Object value) {
+    private record AttributeChange(String name, @Nullable Object previousValue, @Nullable Object value) {
     }
 
 }

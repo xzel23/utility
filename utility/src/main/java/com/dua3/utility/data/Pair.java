@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @param <T1> type of first member
  * @param <T2> type of second member
  */
-public record Pair<T1, T2>(T1 first, T2 second) implements Map.Entry<T1, T2> {
+public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements Map.Entry<T1, T2> {
 
     /**
      * Add pairs to a map.

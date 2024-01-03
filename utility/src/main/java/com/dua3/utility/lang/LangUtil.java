@@ -907,7 +907,7 @@ public final class LangUtil {
          * @param t the input argument
          * @throws E depending on implementation
          */
-        void accept(T t) throws E;
+        void accept(@Nullable T t) throws E;
 
         /**
          * Returns a composed {@code Consumer} that performs, in sequence, this
