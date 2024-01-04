@@ -178,6 +178,7 @@ the parameter.
 - BREAKING: removed PredefinedDateFormat - use PredefinedDateTimeFormat instead
 - Pair<T1,T2> now implements Map.Entry<T1,T2>
 - added RichText.strip(), RichText.stripLeading(), RichText.stripTrailing()
+- added ThreadFactoryBuilder class
 - enable automatic download of Gradle JVM toolchains in build
 - util-logging: reworked util-logging, simplified SwingLogPane use
 - util-db: added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatement javadoc
