@@ -20,4 +20,5 @@ open module com.dua3.utility.samples.log4j {
     requires org.slf4j;
     requires java.desktop;
     requires java.logging;
+    requires com.dua3.utility.samples;
 }

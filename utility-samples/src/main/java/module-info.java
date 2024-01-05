@@ -4,10 +4,10 @@
 // https://opensource.org/licenses/MIT
 
 /**
- * This module contains the classes for the sample applications using SLF4J.
+ * This module contains the classes for the sample applications using Log4J.
  */
-open module com.dua3.utility.samples.slf4j {
-    exports com.dua3.utility.samples.slf4j;
+open module com.dua3.utility.samples {
+    exports com.dua3.utility.samples;
 
     requires com.dua3.utility;
     requires com.dua3.utility.logging;
@@ -15,8 +15,6 @@ open module com.dua3.utility.samples.slf4j {
     requires com.miglayout.swing;
     requires org.apache.logging.log4j;
     requires org.slf4j;
-    requires jul.to.slf4j;
     requires java.desktop;
     requires java.logging;
-    requires com.dua3.utility.samples;
 }
