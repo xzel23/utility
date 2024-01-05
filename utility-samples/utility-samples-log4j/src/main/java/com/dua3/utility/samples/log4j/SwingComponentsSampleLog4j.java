@@ -228,6 +228,7 @@ public class SwingComponentsSampleLog4j extends JFrame {
                 }
             }
         });
+        thread.setDaemon(true);
         thread.start();
 
         Thread thread2 = new Thread(() -> {
@@ -246,6 +247,7 @@ public class SwingComponentsSampleLog4j extends JFrame {
             }
             progress.finish(TASK_INDETERMINATE_2, ProgressTracker.State.COMPLETED_SUCCESS);
         });
+        thread2.setDaemon(true);
         thread2.start();
     }
 
