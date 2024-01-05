@@ -33,7 +33,7 @@ dependencyResolutionManagement {
 
             version("cabe-annotations", "2.0")
             version("junit", "5.10.1")
-            version("log4j", "2.22.0")
+            version("log4j", "2.22.1")
             version("slf4j", "2.0.10")
             version("jimfs", "1.2")
             version("miglayout", "11.3")
