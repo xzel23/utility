@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
@@ -38,7 +39,7 @@ public class SwingComponentsSampleLog4j extends JFrame {
 
     public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
     public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
-    public static final int SLEEP_MILLIS = 25;
+    public static final int AVERAGE_SLEEP_MILLIS = 25;
     private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + SwingComponentsSampleLog4j.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + SwingComponentsSampleLog4j.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + SwingComponentsSampleLog4j.class.getName());
@@ -149,87 +150,91 @@ public class SwingComponentsSampleLog4j extends JFrame {
         add(logPane);
 
         // start threads
-        Thread thread = new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-
-            while (!done) {
+        final int numberOfImplementations = 3;
+        for (final int implementation : IntStream.range(0, numberOfImplementations).toArray()) {// for (int implementation = 0; implementation < 3; implementation++) {
+            Thread thread = new Thread(() -> {
                 try {
-                    Thread.sleep(SLEEP_MILLIS);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
 
-                int nr = n.incrementAndGet();
+                Random random = new Random();
+                while (!done) {
+                    long wait = random.nextLong(2 * AVERAGE_SLEEP_MILLIS * numberOfImplementations);
+                    try {
+                        Thread.sleep(wait);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
 
-                int implementation = random.nextInt(3);
-                int bound = implementation == 1 ? 6 : 5;
-                int levelInt = random.nextInt(bound);
-                LogLevel level = LogLevel.values()[implementation == 1 ? Math.max(0, levelInt - 1) : levelInt];
+                    int nr = n.incrementAndGet();
 
-                String msg = "Message #%d, imp %s, original integer level %d, level %s".formatted(nr, implementation, levelInt, level);
+                    int bound = implementation == 1 ? 6 : 5;
+                    int levelInt = random.nextInt(bound);
+                    LogLevel level = LogLevel.values()[implementation == 1 ? Math.max(0, levelInt - 1) : levelInt];
 
-                switch (implementation) {
-                    case 0 -> {
-                        switch (levelInt) {
-                            case 0 -> SLF4J_LOGGER.trace(msg);
-                            case 1 -> SLF4J_LOGGER.debug(msg);
-                            case 2 -> SLF4J_LOGGER.info(msg);
-                            case 3 -> SLF4J_LOGGER.warn(msg);
-                            case 4 -> SLF4J_LOGGER.error(msg, generateThrowable());
-                            default -> throw new IllegalStateException("integer out of range");
+                    String msg = "Message #%d, imp %s, original integer level %d, level %s".formatted(nr, implementation, levelInt, level);
+
+                    switch (implementation) {
+                        case 0 -> {
+                            switch (levelInt) {
+                                case 0 -> SLF4J_LOGGER.trace(msg);
+                                case 1 -> SLF4J_LOGGER.debug(msg);
+                                case 2 -> SLF4J_LOGGER.info(msg);
+                                case 3 -> SLF4J_LOGGER.warn(msg);
+                                case 4 -> SLF4J_LOGGER.error(msg, generateThrowable());
+                                default -> throw new IllegalStateException("integer out of range");
+                            }
+                        }
+                        case 1 -> {
+                            switch (levelInt) {
+                                case 0 -> JUL_LOGGER.finest(msg);
+                                case 1 -> JUL_LOGGER.finer(msg);
+                                case 2 -> JUL_LOGGER.fine(msg);
+                                case 3 -> JUL_LOGGER.info(msg);
+                                case 4 -> JUL_LOGGER.warning(msg);
+                                case 5 -> JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
+                                default -> throw new IllegalStateException("integer out of range");
+                            }
+                        }
+                        case 2 -> {
+                            switch (levelInt) {
+                                case 0 -> LOG4J_LOGGER.trace(msg);
+                                case 1 -> LOG4J_LOGGER.debug(msg);
+                                case 2 -> LOG4J_LOGGER.info(msg);
+                                case 3 -> LOG4J_LOGGER.warn(msg);
+                                case 4 -> LOG4J_LOGGER.error(msg, generateThrowable());
+                                default -> throw new IllegalStateException("integer out of range");
+                            }
                         }
                     }
-                    case 1 -> {
-                        switch (levelInt) {
-                            case 0 -> JUL_LOGGER.finest(msg);
-                            case 1 -> JUL_LOGGER.finer(msg);
-                            case 2 -> JUL_LOGGER.fine(msg);
-                            case 3 -> JUL_LOGGER.info(msg);
-                            case 4 -> JUL_LOGGER.warning(msg);
-                            case 5 -> JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
-                            default -> throw new IllegalStateException("integer out of range");
+
+                    Integer v = counter.compute(level, (lvl, old) -> old != null && old < max ? old + 1 : null);
+                    if (v != null) {
+                        if (v < max) {
+                            progress.update(level, max, v);
+                        } else {
+                            ProgressTracker.State s = switch (level) {
+                                case INFO, DEBUG, TRACE, WARN -> ProgressTracker.State.COMPLETED_SUCCESS;
+                                case ERROR -> ProgressTracker.State.COMPLETED_FAILURE;
+                            };
+                            progress.finish(level, s);
                         }
-                    }
-                    case 2 -> {
-                        switch (levelInt) {
-                            case 0 -> LOG4J_LOGGER.trace(msg);
-                            case 1 -> LOG4J_LOGGER.debug(msg);
-                            case 2 -> LOG4J_LOGGER.info(msg);
-                            case 3 -> LOG4J_LOGGER.warn(msg);
-                            case 4 -> LOG4J_LOGGER.error(msg, generateThrowable());
-                            default -> throw new IllegalStateException("integer out of range");
-                        }
-                    }
-                }
 
-                Integer v = counter.compute(level, (lvl, old) -> old != null && old < max ? old + 1 : null);
-                if (v != null) {
-                    if (v < max) {
-                        progress.update(level, max, v);
-                    } else {
-                        ProgressTracker.State s = switch (level) {
-                            case INFO, DEBUG, TRACE, WARN -> ProgressTracker.State.COMPLETED_SUCCESS;
-                            case ERROR -> ProgressTracker.State.COMPLETED_FAILURE;
-                        };
-                        progress.finish(level, s);
                     }
 
+                    int current = n.get();
+                    if (current % 100 == 0) {
+                        System.err.format("That was %d messages%n", current);
+                    } else if (current % 10 == 0) {
+                        System.out.format("That was %d messages%n", current);
+                    }
                 }
-
-                int current = n.get();
-                if (current % 100 == 0) {
-                    System.err.format("That was %d messages%n", current);
-                } else if (current % 10 == 0) {
-                    System.out.format("That was %d messages%n", current);
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
+            });
+            thread.setDaemon(true);
+            thread.start();
+        }
 
         Thread thread2 = new Thread(() -> {
             try {
