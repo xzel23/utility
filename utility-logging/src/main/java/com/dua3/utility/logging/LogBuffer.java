@@ -106,8 +106,17 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @return a List of LogEntries in the LogBuffer
      */
     public List<LogEntry> entries() {
+        return List.of(toArray());
+    }
+
+    /**
+     * Converts the LogBuffer into an array of LogEntry objects.
+     *
+     * @return an array of LogEntry objects representing the contents of the LogBuffer
+     */
+    public LogEntry[] toArray() {
         synchronized (buffer) {
-            return List.of(buffer.toArray(LogEntry[]::new));
+            return buffer.toArray(LogEntry[]::new);
         }
     }
 
