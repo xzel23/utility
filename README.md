@@ -180,7 +180,7 @@ the parameter.
 - added RichText.strip(), RichText.stripLeading(), RichText.stripTrailing()
 - added ThreadFactoryBuilder class
 - enable automatic download of Gradle JVM toolchains in build
-- util-logging: reworked util-logging, simplified SwingLogPane use
+- util-logging: reworked util-logging, simplified SwingLogPane use, fixed multithreading issues in SwingLogPane
 - util-db: added NamedParameterStatement.setInstant(), cleaned up NamedParameterStatement javadoc
 - SimpleNamespaceContext: added methods get Prefixes(), getNamespaceURIs
 - TextUtil.transform(): accept Object instances as substitutions (String.valueOf() is used for formatting of instances)
