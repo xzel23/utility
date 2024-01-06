@@ -14,6 +14,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * This class represents a table model for displaying log entries in a Swing LogPane.
+ */
 final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
     private static final Logger LOG = LogManager.getLogger(LogTableModel.class);
 
@@ -29,6 +32,12 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     private final Lock updateWriteLock = updateLock.writeLock();
     private final Condition updatesAvailableCondition = updateWriteLock.newCondition();
 
+    /**
+     * Constructs a new LogTableModel with the specified LogBuffer.
+     *
+     * @param buffer the LogBuffer to use for storing log messages
+     * @throws NullPointerException if the buffer is null
+     */
     LogTableModel(LogBuffer buffer) {
         this.buffer = buffer;
         buffer.addLogBufferListener(this);
@@ -100,7 +109,13 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
         }
     }
 
-    public void waitForUpdate() throws InterruptedException {
+    /**
+     * Waits until there is an update available in the LogTableModel. This method will block the calling thread until
+     * an update is available or until the thread is interrupted.
+     *
+     * @throws InterruptedException if the thread is interrupted while waiting for an update
+     */
+    private void waitForUpdate() throws InterruptedException {
         updateWriteLock.lock();
         try {
             while (queuedAdds.get() == 0 && queuedRemoves.get() == 0) {
@@ -111,6 +126,9 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
         }
     }
 
+    /**
+     *
+     */
     public void executeRead(Runnable readTask) {
         snapshotLock.lock();
         try {
@@ -120,6 +138,15 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
         }
     }
 
+    /**
+     * Synchronizes the data of the LogTableModel with the underlying LogBuffer.
+     * This method updates the data array of the LogTableModel by calling the toArray method of the buffer.
+     * If there are removed entries, it notifies the table model by calling the fireTableRowsDeleted method.
+     * If there are added entries, it notifies the table model by calling the fireTableRowsInserted method.
+     *
+     * Note: This method is called from the update thread of the LogTableModel.
+     *       It should not be called directly from other parts of the application.
+     */
     private void sync() {
         snapshotLock.lock();
         try {
