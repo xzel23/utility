@@ -21,7 +21,6 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -61,7 +60,6 @@ public class SwingLogPane extends JPanel {
     private TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
-    private final boolean dirty = false;
 
     /**
      * Creates a new instance of SwingLogPane with the default buffer size and connects all known loggers.
@@ -157,13 +155,13 @@ public class SwingLogPane extends JPanel {
                 if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
                     text = "";
                 } else {
-                    Function<? super LogEntry, String> fmt = this.format;
+                    Function<? super LogEntry, String> fmt = format;
                     StringBuilder sb = new StringBuilder(1024);
                     for (int idx : lsm.getSelectedIndices()) {
                         if (lsm.isSelectedIndex(idx)) {
                             int idxModel = tableRowSorter.convertRowIndexToModel(idx);
                             LogEntry entry = model.getValueAt(idxModel, 0);
-                            sb.append(format.apply(entry)).append("\n");
+                            sb.append(fmt.apply(entry)).append("\n");
                         }
                     }
                     text = sb.toString();

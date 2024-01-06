@@ -38,7 +38,6 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
                 try {
                     waitForUpdate();
                     sync();
-                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     LOG.debug("interrupted", e);
                     Thread.currentThread().interrupt();
@@ -130,8 +129,8 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
             updateReadLock.lock();
             try {
                 data = buffer.toArray();
-                add = this.queuedAdds.getAndSet(0);
-                remove = this.queuedRemoves.getAndSet(0);
+                add = queuedAdds.getAndSet(0);
+                remove = queuedRemoves.getAndSet(0);
             } finally {
                 updateReadLock.unlock();
             }
