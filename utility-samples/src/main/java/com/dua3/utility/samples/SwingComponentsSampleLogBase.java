@@ -32,13 +32,10 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
 
     public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
     public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
-    public static final int AVERAGE_SLEEP_MILLIS = 25;
+    public static final int AVERAGE_SLEEP_MILLIS = 10;
     private final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + getClass().getName());
     private final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + getClass().getName());
     private final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
-
-    @SuppressWarnings("UnsecureRandomNumberGeneration") // used only to create a random sequence of log levels in tests
-    private final Random random = new Random();
     private final AtomicInteger n = new AtomicInteger();
     private volatile boolean done;
 
@@ -164,7 +161,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                                 case 1 -> SLF4J_LOGGER.debug(msg);
                                 case 2 -> SLF4J_LOGGER.info(msg);
                                 case 3 -> SLF4J_LOGGER.warn(msg);
-                                case 4 -> SLF4J_LOGGER.error(msg, generateThrowable());
+                                case 4 -> SLF4J_LOGGER.error(msg, generateThrowable(random));
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
@@ -175,7 +172,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                                 case 2 -> JUL_LOGGER.fine(msg);
                                 case 3 -> JUL_LOGGER.info(msg);
                                 case 4 -> JUL_LOGGER.warning(msg);
-                                case 5 -> JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
+                                case 5 -> JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable(random));
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
@@ -185,7 +182,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                                 case 1 -> LOG4J_LOGGER.debug(msg);
                                 case 2 -> LOG4J_LOGGER.info(msg);
                                 case 3 -> LOG4J_LOGGER.warn(msg);
-                                case 4 -> LOG4J_LOGGER.error(msg, generateThrowable());
+                                case 4 -> LOG4J_LOGGER.error(msg, generateThrowable(random));
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
@@ -212,7 +209,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                         System.out.format("That was %d messages%n", current);
                     }
                 }
-            });
+            }, "Logger-Thread-"+implementation);
             thread.setDaemon(true);
             thread.start();
         }
@@ -237,7 +234,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         thread2.start();
     }
 
-    private IllegalStateException generateThrowable() {
+    private IllegalStateException generateThrowable(Random random) {
         if (random.nextBoolean()) {
             return new IllegalStateException("Why?", new UnsupportedOperationException("Because of me!"));
         } else {

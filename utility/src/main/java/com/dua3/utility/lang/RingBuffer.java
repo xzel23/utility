@@ -5,8 +5,11 @@
 
 package com.dua3.utility.lang;
 
+import com.dua3.cabe.annotations.Nullable;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -48,14 +51,27 @@ public class RingBuffer<E> implements Collection<E> {
      * @return true
      */
     @Override
-    public boolean add(E item) {
+    public boolean add(@Nullable E item) {
+        put(item);
+        return true;
+    }
+
+    /**
+     * Add item to end of collection.
+     *
+     * @param item the item to add
+     * @return true, if the buffer size increased as a result of this operation (in other words, false if an item
+     *               previously contained in the buffer was replaced)
+     */
+    public boolean put(@Nullable E item) {
         if (entries < capacity()) {
             data[index(entries++)] = item;
+            return true;
         } else {
             start = (start + 1) % capacity();
             data[index(entries - 1)] = item;
+            return false;
         }
-        return true;
     }
 
     @Override
@@ -118,6 +134,7 @@ public class RingBuffer<E> implements Collection<E> {
     @Override
     public void clear() {
         start = entries = 0;
+        Arrays.fill(data, null);
     }
 
     /**

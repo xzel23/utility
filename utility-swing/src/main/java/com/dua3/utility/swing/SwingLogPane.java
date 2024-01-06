@@ -21,6 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -37,9 +38,6 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -47,7 +45,7 @@ import java.util.function.Function;
  */
 public class SwingLogPane extends JPanel {
 
-    private static final Column[] COLUMNS = {
+    static final Column[] COLUMNS = {
             new Column(LogEntryField.TIME, -"YYYY-MM-DD_HH:MM:SS.mmm".length(), true),
             new Column(LogEntryField.LOGGER, "com.example.class".length(), true),
             new Column(LogEntryField.LEVEL, -"ERROR".length(), true),
@@ -63,6 +61,7 @@ public class SwingLogPane extends JPanel {
     private TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
+    private final boolean dirty = false;
 
     /**
      * Creates a new instance of SwingLogPane with the default buffer size and connects all known loggers.
@@ -111,20 +110,15 @@ public class SwingLogPane extends JPanel {
     public SwingLogPane(LogBuffer buffer, Function<LogEntry, Color> colorize) {
         super(new BorderLayout());
 
-        this.buffer = Objects.requireNonNull(buffer);
-        this.colorize = Objects.requireNonNull(colorize);
+        this.buffer = buffer;
+        this.colorize = colorize;
         this.model = new LogTableModel(buffer);
 
         // create the table
         table = new JTable(model) {
             @Override
             public void paint(Graphics g) {
-                try {
-                    model.lock();
-                    super.paint(g);
-                } finally {
-                    model.unlock();
-                }
+                model.executeRead(() -> super.paint(g));
             }
         };
 
@@ -157,13 +151,13 @@ public class SwingLogPane extends JPanel {
 
         // update detail pane when entry is selected
         table.getSelectionModel().addListSelectionListener(evt -> {
-            ListSelectionModel lsm = (ListSelectionModel) evt.getSource();
-            final String text;
-            if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
-                text = "";
-            } else {
-                model.lock();
-                try {
+            model.executeRead(() -> {
+                ListSelectionModel lsm = (ListSelectionModel) evt.getSource();
+                final String text;
+                if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
+                    text = "";
+                } else {
+                    Function<? super LogEntry, String> fmt = this.format;
                     StringBuilder sb = new StringBuilder(1024);
                     for (int idx : lsm.getSelectedIndices()) {
                         if (lsm.isSelectedIndex(idx)) {
@@ -173,14 +167,11 @@ public class SwingLogPane extends JPanel {
                         }
                     }
                     text = sb.toString();
-                } finally {
-                    model.unlock();
                 }
-            }
-
-            SwingUtilities.invokeLater(() -> {
-                details.setText(text);
-                details.setCaretPosition(0);
+                SwingUtilities.invokeLater(() -> {
+                    details.setText(text);
+                    details.setCaretPosition(0);
+                });
             });
         });
 
@@ -203,7 +194,7 @@ public class SwingLogPane extends JPanel {
         model.addTableModelListener(evt -> {
             // handle scrolling
             SwingUtilities.invokeLater(() -> {
-                if (table.getSelectedRowCount() == 0 && tableScroller.getValue() >= tableScroller.getMaximum() - tableScroller.getVisibleAmount() - table.getRowHeight()) {
+                if (table.getSelectedRowCount() == 0 && tableScroller.getValue() >= tableScroller.getMaximum() - tableScroller.getVisibleAmount() - 3 * table.getRowHeight()) {
                     // scroll to last row
                     boolean selectionEmpty = table.getSelectedRow() < 0;
                     if (selectionEmpty) {
@@ -302,10 +293,7 @@ public class SwingLogPane extends JPanel {
      * @param format the formatting function
      */
     public void setLogFormatter(Function<? super LogEntry, String> format) {
-        Objects.requireNonNull(format);
-        synchronized (buffer) {
-            this.format = format;
-        }
+        this.format = format;
     }
 
     /**
@@ -391,136 +379,6 @@ public class SwingLogPane extends JPanel {
         public abstract String get(LogEntry entry);
     }
 
-    private static final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
-        private final LogBuffer buffer;
-        private LogEntry[] data;
-        private int removed;
-        private int added;
-
-        private LogTableModel(LogBuffer buffer) {
-            this.buffer = Objects.requireNonNull(buffer);
-            buffer.addLogBufferListener(this);
-        }
-
-        private boolean isLocked() {
-            return data != null;
-        }
-
-        public synchronized boolean checkAndLock() {
-            if (isLocked()) {
-                return false;
-            }
-            lock();
-            return true;
-        }
-
-        public synchronized void lock() {
-            assert !isLocked() : "internal error: locked";
-
-            synchronized (buffer) {
-                data = buffer.entries().toArray(LogEntry[]::new);
-                removed = 0;
-                added = 0;
-            }
-        }
-
-        public synchronized void unlock() {
-            assert isLocked() : "internal error: should be locked";
-
-            int sz = data.length;
-            data = null;
-            removed = Math.min(removed, sz);
-
-            if (removed > 0) {
-                fireTableRowsDeleted(0, removed);
-                sz -= removed;
-                removed = 0;
-            }
-
-            added = Math.min(added, sz);
-
-            if (added > 0) {
-                fireTableRowsInserted(sz - added, sz - 1);
-                added = 0;
-            }
-        }
-
-        @Override
-        public synchronized int getRowCount() {
-            return data == null ? buffer.size() : data.length;
-        }
-
-        @Override
-        public int getColumnCount() {
-            return COLUMNS.length;
-        }
-
-        @Override
-        public synchronized LogEntry getValueAt(int rowIndex, int columnIndex) {
-            return data == null ? buffer.get(rowIndex) : data[rowIndex];
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return COLUMNS[column].field().name();
-        }
-
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return LogEntryField.class;
-        }
-
-        @Override
-        public synchronized void entry(LogEntry entry, boolean replaced) {
-            if (isLocked()) {
-                if (replaced) {
-                    removed++;
-                }
-                added++;
-            } else {
-                synchronized (buffer) {
-                    int sz = buffer.size();
-                    if (replaced) {
-                        fireTableRowsUpdated(sz - 1, sz - 1);
-                    } else {
-                        fireTableRowsInserted(sz - 1, sz - 1);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public synchronized void entries(Collection<LogEntry> entries, int replaced) {
-            if (isLocked()) {
-                if (replaced > 0) {
-                    removed += replaced;
-                }
-                added += entries.size();
-            } else {
-                synchronized (buffer) {
-                    int sz = buffer.size();
-                    if (replaced > 0) {
-                        fireTableRowsUpdated(sz - entries.size(), sz - entries.size() + replaced - 1);
-                        fireTableRowsInserted(sz - entries.size() + replaced, sz - 1);
-                    } else {
-                        fireTableRowsInserted(sz - entries.size(), sz - 1);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public synchronized void clear() {
-            if (isLocked()) {
-                removed = data.length;
-                added = 0;
-            } else {
-                fireTableDataChanged();
-            }
-        }
-
-    }
-
     private static class RowFilter extends javax.swing.RowFilter<AbstractTableModel, Integer> {
         private final LogLevel c;
 
@@ -535,7 +393,7 @@ public class SwingLogPane extends JPanel {
         }
     }
 
-    private record Column(LogEntryField field, int preferredCharWidth, boolean hideable) {
+    record Column(LogEntryField field, int preferredCharWidth, boolean hideable) {
     }
 
     private final class LogEntryFieldCellRenderer extends DefaultTableCellRenderer {

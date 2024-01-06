@@ -79,13 +79,13 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
 
     @Override
     public void handleEntry(LogEntry entry) {
-        boolean replaced;
-        synchronized (buffer) {
-            int oldSize = buffer.size();
-            buffer.add(entry);
-            replaced = buffer.size() == oldSize;
+        synchronized (listeners) {
+            boolean replaced;
+            synchronized (buffer) {
+                replaced = !buffer.put(entry);
+            }
+            listeners.forEach(listener -> listener.entry(entry, replaced));
         }
-        listeners.forEach(listener -> listener.entry(entry, replaced));
     }
 
     /**
@@ -93,20 +93,12 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * Synchronized method that clears the buffer and notifies all registered LogBufferListeners to clear their logs as well.
      */
     public void clear() {
-        synchronized (buffer) {
-            buffer.clear();
+        synchronized (listeners) {
+            synchronized (buffer) {
+                buffer.clear();
+            }
+            listeners.forEach(LogBufferListener::clear);
         }
-        listeners.forEach(LogBufferListener::clear);
-    }
-
-    /**
-     * Get the List of LogEntries in the LogBuffer.
-     * Synchronized method that returns a List of LogEntries from the buffer.
-     *
-     * @return a List of LogEntries in the LogBuffer
-     */
-    public List<LogEntry> entries() {
-        return List.of(toArray());
     }
 
     /**
@@ -127,7 +119,9 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @return the LogEntry at the specified index
      */
     public LogEntry get(int i) {
-        return buffer.get(i);
+        synchronized (buffer) {
+            return buffer.get(i);
+        }
     }
 
     /**
@@ -158,24 +152,13 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     }
 
     /**
-     * Returns a List containing all the LogEntries in this LogBuffer.
-     *
-     * @return a List containing all the LogEntries in this LogBuffer.
-     */
-    public List<LogEntry> getLogEntries() {
-        synchronized (buffer) {
-            return new ArrayList<>(buffer);
-        }
-    }
-
-    /**
      * Appends all LogEntries in this LogBuffer to the specified Appendable.
      *
      * @param app the Appendable to which the LogEntries will be appended
      * @throws IOException if an I/O error occurs while appending the LogEntries
      */
     public void appendTo(Appendable app) throws IOException {
-        for (LogEntry entry : getLogEntries()) {
+        for (LogEntry entry : toArray()) {
             app.append(entry.toString()).append("\n");
         }
     }
