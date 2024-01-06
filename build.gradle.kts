@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import java.net.URI
 
 plugins {
@@ -194,4 +195,26 @@ subprojects {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 
+}
+
+allprojects {
+    // versions plugin configuration
+    fun isStable(version: String): Boolean {
+        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+        val regex = "[0-9,.v-]+-(rc|alpha|beta|b)(-?[0-9]*)?".toRegex()
+        val isStable = stableKeyword || !regex.matches(version)
+        return isStable
+    }
+
+    tasks.withType<DependencyUpdatesTask> {
+        resolutionStrategy {
+            componentSelection {
+                all {
+                    if (!isStable(candidate.version)) {
+                        reject("Release candidate")
+                    }
+                }
+            }
+        }
+    }
 }
