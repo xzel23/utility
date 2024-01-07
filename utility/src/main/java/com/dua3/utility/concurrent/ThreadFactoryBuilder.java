@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ThreadFactoryBuilder {
     private ThreadGroup group = null;
     private long stackSize = 0;
-    private String prefix = null;
+    private String prefix = "";
     private boolean daemon = false;
     private int priority = Thread.NORM_PRIORITY;
 
@@ -51,7 +51,7 @@ public class ThreadFactoryBuilder {
      * @param prefix the prefix to set for the thread names
      * @return the updated ThreadFactoryBuilder instance
      */
-    public ThreadFactoryBuilder prefix(@Nullable String prefix) {
+    public ThreadFactoryBuilder prefix(String prefix) {
         this.prefix = prefix;
         return this;
     }
@@ -119,11 +119,7 @@ public class ThreadFactoryBuilder {
         }
 
         private String generateName() {
-            if (prefix == null) {
-                return null;
-            } else {
-                return prefix + count.incrementAndGet();
-            }
+            return prefix + count.incrementAndGet();
         }
     }
 }
