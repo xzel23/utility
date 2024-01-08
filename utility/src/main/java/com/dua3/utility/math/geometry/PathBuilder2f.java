@@ -92,26 +92,58 @@ public class PathBuilder2f {
         return this;
     }
 
-    /**
-     * Add a Bézier curve from the current position to a new position.
-     * <p>
-     * The curve starts at the current position (p0) and ends at p3.
-     *
-     * @param p1 second control point
-     * @param p2 third control point
-     * @param p3 fourth control point
-     * @return this instance
-     */
-    public PathBuilder2f curveTo(Vector2f p1, Vector2f p2, Vector2f p3) {
+    public PathBuilder2f arcTo(Vector2f ep, Vector2f r, float angle, boolean largeArc, boolean sweep) {
         if (!open) {
             moveTo(pos);
         }
 
         int c0 = currentIndex();
-        int c1 = addVertex(p1);
-        int c2 = addVertex(p2);
-        int c3 = addVertex(p3);
-        impl.addSegment(new BezierCurve2f(impl, c0, c1, c2, c3));
+        int c1 = addVertex(ep);
+        impl.addSegment(new Arc2f(impl, c0, c1, r.x(), r.y(), angle, largeArc, sweep));
+        return this;
+    }
+
+    /**
+     * Add a quadratic Bézier curve from the current position to a new position.
+     * <p>
+     * The curve starts at the current position and ends at ep-
+     *
+     * @param cp the control point
+     * @param ep the end point
+     * @return this instance
+     */
+    public PathBuilder2f curveTo(Vector2f cp, Vector2f ep) {
+        if (!open) {
+            moveTo(pos);
+        }
+
+        int c0 = currentIndex();
+        int c1 = addVertex(cp);
+        int c2 = addVertex(ep);
+        impl.addSegment(new Curve2f(impl, c0, c1, c2));
+        return this;
+    }
+
+    /**
+     * Add a cubic Bézier curve from the current position to a new position.
+     * <p>
+     * The curve starts at the current position (p0) and ends at p3.
+     *
+     * @param cp1 first control point
+     * @param cp2 second control point
+     * @param ep end control point
+     * @return this instance
+     */
+    public PathBuilder2f curveTo(Vector2f cp1, Vector2f cp2, Vector2f ep) {
+        if (!open) {
+            moveTo(pos);
+        }
+
+        int c0 = currentIndex();
+        int c1 = addVertex(cp1);
+        int c2 = addVertex(cp2);
+        int c3 = addVertex(ep);
+        impl.addSegment(new Curve2f(impl, c0, c1, c2, c3));
         return this;
     }
 

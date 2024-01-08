@@ -50,7 +50,7 @@ public abstract class AbstractCurve2f extends Segment2f {
 
     @Override
     public Vector2f end() {
-        return control(3);
+        return control(controls.length - 1);
     }
 
     @Override
