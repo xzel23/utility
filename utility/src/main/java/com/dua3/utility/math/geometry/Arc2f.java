@@ -6,11 +6,11 @@ package com.dua3.utility.math.geometry;
 public final class Arc2f extends AbstractCurve2f {
     public static final String NAME = "ARC";
 
-    private float rx;
-    private float ry;
-    private float angle;
-    private boolean largeArc;
-    private boolean sweep;
+    private final float rx;
+    private final float ry;
+    private final float angle;
+    private final boolean largeArc;
+    private final boolean sweep;
 
     /**
      * Represents a 2-dimensional arc curve.
