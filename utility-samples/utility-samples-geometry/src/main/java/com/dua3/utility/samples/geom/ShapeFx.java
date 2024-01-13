@@ -1,6 +1,7 @@
 package com.dua3.utility.samples.geom;
 
 import com.dua3.utility.math.geometry.Arc2f;
+import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.math.geometry.Curve2f;
 import com.dua3.utility.math.geometry.Line2f;
 import com.dua3.utility.math.geometry.MoveTo2f;
@@ -12,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcTo;
+import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.HLineTo;
 import javafx.scene.shape.LineTo;
@@ -113,6 +115,8 @@ public class ShapeFx extends Application {
                 });
             } else if (segment instanceof Arc2f s) {
                 jfxPath.getElements().add(new ArcTo(s.rx(), s.ry(), s.angle(), s.control(1).x(), s.control(1).y(), false, false));
+            } else if (segment instanceof ClosePath2f c) {
+                jfxPath.getElements().add(new ClosePath());
             } else {
                 throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
             }

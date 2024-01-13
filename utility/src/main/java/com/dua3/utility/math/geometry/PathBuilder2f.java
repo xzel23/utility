@@ -1,5 +1,7 @@
 package com.dua3.utility.math.geometry;
 
+import com.dua3.utility.lang.LangUtil;
+
 /**
  * A builder class for {@link Path2f} instances.
  */
@@ -69,7 +71,10 @@ public class PathBuilder2f {
      * @param v the vertex that marks the start of the new path
      */
     public PathBuilder2f moveTo(Vector2f v) {
-        init();
+        if (open) {
+            close();
+        }
+
         impl.addSegment(new MoveTo2f(impl, addVertex(v)));
         open = true;
         return this;
@@ -82,9 +87,7 @@ public class PathBuilder2f {
      * @return this instance
      */
     public PathBuilder2f lineTo(Vector2f v) {
-        if (!open) {
-            moveTo(pos);
-        }
+        LangUtil.check(open, "no current path");
 
         int p = currentIndex();
         int q = addVertex(v);
@@ -93,9 +96,7 @@ public class PathBuilder2f {
     }
 
     public PathBuilder2f arcTo(Vector2f ep, Vector2f r, float angle, boolean largeArc, boolean sweep) {
-        if (!open) {
-            moveTo(pos);
-        }
+        LangUtil.check(open, "no current path");
 
         int c0 = currentIndex();
         int c1 = addVertex(ep);
@@ -113,9 +114,7 @@ public class PathBuilder2f {
      * @return this instance
      */
     public PathBuilder2f curveTo(Vector2f cp, Vector2f ep) {
-        if (!open) {
-            moveTo(pos);
-        }
+        LangUtil.check(open, "no current path");
 
         int c0 = currentIndex();
         int c1 = addVertex(cp);
@@ -135,9 +134,7 @@ public class PathBuilder2f {
      * @return this instance
      */
     public PathBuilder2f curveTo(Vector2f cp1, Vector2f cp2, Vector2f ep) {
-        if (!open) {
-            moveTo(pos);
-        }
+        LangUtil.check(open, "no current path");
 
         int c0 = currentIndex();
         int c1 = addVertex(cp1);
@@ -160,73 +157,12 @@ public class PathBuilder2f {
      * @return this instance
      */
     public PathBuilder2f closePath() {
-        if (open) {
-            impl.addSegment(new ClosePath2f(impl, currentIndex(), 0));
-            pos = vertex(0);
-            close();
-        }
-        return this;
-    }
+        LangUtil.check(open, "no current path");
 
-    /**
-     * End the current path without appending a new segment.
-     * <p>
-     * <strong>Notes</strong>
-     * <ul>
-     *     <li> this method does not affect the number of vertices in this path
-     *     <li> the path is reset when new segments are added to it after calling this method
-     * </ul>
-     *
-     * @return this instance
-     */
-    public PathBuilder2f endPath() {
-        if (open) {
-            impl.addSegment(new EndPath2f(impl, currentIndex()));
-            close();
-        }
-        return this;
-    }
+        impl.addSegment(new ClosePath2f(impl, currentIndex(), 0));
+        pos = vertex(0);
+        close();
 
-    /**
-     * Stroke the current path.
-     *
-     * @return {@link Path2f} instance holding the constructed path
-     */
-    public PathBuilder2f strokePath() {
-        impl.addSegment(new StrokePath2f(impl, currentIndex()));
-        return this;
-    }
-
-    /**
-     * Fill the current path.
-     *
-     * @param fillRule the {@link FillRule} to use
-     * @return {@link Path2f} instance holding the constructed path
-     */
-    public PathBuilder2f fillPath(FillRule fillRule) {
-        impl.addSegment(new FillPath2f(impl, currentIndex(), fillRule));
-        return this;
-    }
-
-    /**
-     * Fill and stroke the current path.
-     *
-     * @param fillRule the {@link FillRule} to use
-     * @return {@link Path2f} instance holding the constructed path
-     */
-    public PathBuilder2f fillAndStrokePath(FillRule fillRule) {
-        impl.addSegment(new FillAndStrokePath2f(impl, currentIndex(), fillRule));
-        return this;
-    }
-
-    /**
-     * Set clip region to the current path.
-     *
-     * @param fillRule the {@link FillRule} to use
-     * @return {@link Path2f} instance holding the constructed path
-     */
-    public PathBuilder2f clipPath(FillRule fillRule) {
-        impl.addSegment(new ClipPath2f(impl, currentIndex(), fillRule));
         return this;
     }
 
@@ -234,6 +170,7 @@ public class PathBuilder2f {
      * Mark the current path as complete. Adding new segments will start a new path.
      */
     private void close() {
+        assert open;
         open = false;
     }
 
@@ -243,6 +180,11 @@ public class PathBuilder2f {
      * @return a new instance of {@link Path2f} representing the constructed path
      */
     public Path2f build() {
-        return new Path2f(impl);
+        if (open) {
+            close();
+        }
+        Path2f path2f = new Path2f(impl);
+        init();
+        return path2f;
     }
 }
