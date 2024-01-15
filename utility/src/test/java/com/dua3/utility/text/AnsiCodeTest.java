@@ -3,6 +3,8 @@ package com.dua3.utility.text;
 import com.dua3.utility.io.AnsiCode;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AnsiCodeTest {
@@ -10,10 +12,10 @@ public class AnsiCodeTest {
     @Test
     public void testStyles() {
         String actual =
-                String.format("This is %sbold%s text\n", AnsiCode.bold(true), AnsiCode.bold(false))
-                        + String.format("This is %sunderlined%s text\n", AnsiCode.underline(true), AnsiCode.underline(false))
-                        + String.format("This is %sstrikethrough%s text\n", AnsiCode.strikeThrough(true), AnsiCode.strikeThrough(false))
-                        + String.format("This is %sitalic%s text\n", AnsiCode.italic(true), AnsiCode.italic(false));
+                String.format(Locale.ROOT, "This is %sbold%s text\n", AnsiCode.bold(true), AnsiCode.bold(false))
+                        + String.format(Locale.ROOT, "This is %sunderlined%s text\n", AnsiCode.underline(true), AnsiCode.underline(false))
+                        + String.format(Locale.ROOT, "This is %sstrikethrough%s text\n", AnsiCode.strikeThrough(true), AnsiCode.strikeThrough(false))
+                        + String.format(Locale.ROOT, "This is %sitalic%s text\n", AnsiCode.italic(true), AnsiCode.italic(false));
 
         System.out.println(actual);
 

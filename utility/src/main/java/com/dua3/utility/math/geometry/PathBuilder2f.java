@@ -187,4 +187,13 @@ public class PathBuilder2f {
         init();
         return path2f;
     }
+
+    /**
+     * Checks if the path is empty, meaning it contains no vertices.
+     *
+     * @return true if the path is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return impl.vertices().isEmpty();
+    }
 }

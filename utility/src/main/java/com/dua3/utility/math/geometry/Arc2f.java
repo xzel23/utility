@@ -1,5 +1,7 @@
 package com.dua3.utility.math.geometry;
 
+import java.util.Locale;
+
 /**
  * Represents a 2-dimensional arc curve.
  */
@@ -95,10 +97,10 @@ public final class Arc2f extends AbstractCurve2f {
             sb.append("\n");
             sep = ", ";
         }
-        sb.append(String.format(", [r](%f,%f)", rx, ry));
-        sb.append(String.format(", %frad", angle));
-        sb.append(String.format(", largeArc(%d)", largeArc ? 1 : 0));
-        sb.append(String.format(", sweep(%d)", sweep ? 1 : 0));
+        sb.append(String.format(Locale.ROOT, ", [r](%f,%f)", rx, ry));
+        sb.append(String.format(Locale.ROOT, ", %frad", angle));
+        sb.append(String.format(Locale.ROOT, ", largeArc(%d)", largeArc ? 1 : 0));
+        sb.append(String.format(Locale.ROOT, ", sweep(%d)", sweep ? 1 : 0));
         sb.append("}");
 
         return sb.toString();

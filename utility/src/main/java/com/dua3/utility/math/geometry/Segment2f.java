@@ -1,5 +1,7 @@
 package com.dua3.utility.math.geometry;
 
+import java.util.Locale;
+
 /**
  * Base class for segments that form a {@link Path2f}.
  */
@@ -33,7 +35,7 @@ public abstract class Segment2f {
 
     protected String vertexToString(int idx) {
         Vector2f v = path.vertex(idx);
-        return String.format("[%d](%f,%f)", idx, v.x(), v.y());
+        return String.format(Locale.ROOT, "[%d](%f,%f)", idx, v.x(), v.y());
     }
 
     @Override
