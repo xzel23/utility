@@ -167,7 +167,14 @@ the parameter.
 
 ## Changes
 
-### 12.0.0 (to be released)
+### 12.0.1
+
+- remove obsolete classes in utility.math.geometry
+- fix locale dependent output of toString() implementations
+- code cleanup
+- dependency updates
+
+### 12.0.0
 
 - BREAKING: ArgumentsParser has been split into ArgumentsParserBuilder and ArgumentsParser; see unit tests for examples
 - BREAKING: RichText.trim() now works the same as String.trim(), i. e. only considers character codes less than or equal
