@@ -167,6 +167,13 @@ the parameter.
 
 ## Changes
 
+### 12.0.2
+
+- Use assertions to check parameters of internal methods, throw NPE for parameters to methods that are part of the 
+  public API. From now on, snapshots and beta versions will unconditionally throw AssertionErrors when null is passed
+  to a parameter that isn't nullable. In release versions, standard assertions are used for internal methods while
+  methods that are part of the public API will throw NullPointerExceptions.
+
 ### 12.0.1
 
 - remove obsolete classes in utility.math.geometry

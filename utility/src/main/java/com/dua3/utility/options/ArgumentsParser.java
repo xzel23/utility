@@ -331,7 +331,7 @@ public class ArgumentsParser {
      * @return the formatted argument text
      */
     private static String getArgText(int min, int max, String arg) {
-        assert arg != null && !arg.isBlank() : "arg must not be null or the empty string";
+        assert !arg.isBlank() : "arg must not be the empty string";
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
 
         String argText = switch (min) {

@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
+import com.dua3.cabe.processor.Config
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import java.net.URI
 
@@ -53,6 +54,14 @@ subprojects {
         toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
         withJavadocJar()
         withSourcesJar()
+    }
+
+    cabe {
+        if (isReleaseVersion) {
+            config.set(Config.StandardConfig.STANDARD.config)
+        } else {
+            config.set(Config.StandardConfig.DEVELOPMENT.config)
+        }
     }
 
     // dependencies
