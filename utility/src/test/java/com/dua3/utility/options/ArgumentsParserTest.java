@@ -50,8 +50,7 @@ public class ArgumentsParserTest {
                 testFlag <options> [<arg> ...]
                                 
                   <options>:
-                    --print
-                    -p
+                    --print|-p
                             print result to terminal
                                 
                 """;
@@ -89,8 +88,7 @@ public class ArgumentsParserTest {
                 testChoiceOption <options> [<arg> ...]
                                 
                   <options>:
-                    --product <arg>
-                    -p <arg>
+                    --product|-p <arg>
                             the product
                                 
                     --size <arg>
@@ -129,8 +127,7 @@ public class ArgumentsParserTest {
                 testChoiceOptionRequired <options> [<arg> ...]
                                 
                   <options>:
-                    --product <arg>
-                    -p <arg>
+                    --product|-p <arg>
                             set the product name
                                 
                     --size <size>
@@ -172,11 +169,9 @@ public class ArgumentsParserTest {
                 testSimpleOption <options> [<arg> ...]
                                 
                   <options>:
-                    --age <age>
-                    -a <age>
+                    --age|-a <age>
                                 
-                    --name <name>
-                    -n <name>
+                    --name|-n <name>
                             set name
                                 
                 """;
@@ -217,11 +212,9 @@ public class ArgumentsParserTest {
                 testSimpleOptionRequired <options> [<arg> ...]
                                 
                   <options>:
-                    --age <age>
-                    -a <age>
+                    --age|-a <age>
                                 
-                    --name <name>
-                    -n <name>
+                    --name|-n <name>
                             set name
                             
                 """;

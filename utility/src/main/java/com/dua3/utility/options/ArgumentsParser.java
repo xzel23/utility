@@ -253,10 +253,8 @@ public class ArgumentsParser {
                 // get argument text
                 String argText = getArgText(option.minArity(), option.maxArity(), option.getArgName());
 
-                // print option names
-                for (String name : option.names()) {
-                    fmt.format("    %s%s\n", name, argText);
-                }
+                // print option names and arguments
+                fmt.format("    %s%s\n", String.join("|", option.names()), argText);
 
                 // print option description
                 if (!option.description().isEmpty()) {
