@@ -265,4 +265,13 @@ public abstract class Option<T> {
     public Optional<String> getDefaultString() {
         return getDefault().map(this::format);
     }
+
+    /**
+     * Checks if this option is required.
+     *
+     * @return true if this option is required, false otherwise
+     */
+    public boolean isRequired() {
+        return minOccurrences > 0;
+    }
 }
