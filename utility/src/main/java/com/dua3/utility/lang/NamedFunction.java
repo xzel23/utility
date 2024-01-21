@@ -12,18 +12,6 @@ import java.util.function.Function;
  * @param <R> type of function return value
  */
 public record NamedFunction<T, R>(String name, Function<T, R> f) implements Function<T, R> {
-
-    /**
-     * Constructor
-     *
-     * @param name the function name
-     * @param f    the function to perform
-     */
-    public NamedFunction {
-        Objects.requireNonNull(name);
-        Objects.requireNonNull(f);
-    }
-
     @Override
     public R apply(T t) {
         return f.apply(t);

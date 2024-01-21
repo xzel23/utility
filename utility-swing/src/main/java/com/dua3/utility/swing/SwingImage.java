@@ -14,18 +14,9 @@ import java.util.Objects;
 /**
  * A class that represents an image using the Swing BufferedImage API.
  * It implements the Image interface.
+ * @param bufferedImage the BufferedImage to be used for the SwingImage
  */
 public record SwingImage(BufferedImage bufferedImage) implements Image {
-
-    /**
-     * Constructs a SwingImage object with the given BufferedImage.
-     *
-     * @param bufferedImage the BufferedImage to be used for the SwingImage
-     * @throws NullPointerException if the bufferedImage is null
-     */
-    public SwingImage {
-        Objects.requireNonNull(bufferedImage);
-    }
 
     /**
      * Creates a SwingImage object with the given width, height, and pixel data.
