@@ -170,6 +170,7 @@ the parameter.
 ### 12.0.3
 
 - fix record equals() not accepting null arguments
+- make output of ArgumentsParser.help() more compact
 
 ### 12.0.2
 
