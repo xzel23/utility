@@ -9,15 +9,6 @@ import java.util.function.Consumer;
 public record HtmlConversionOption(Consumer<? super HtmlConverter> action) {
 
     /**
-     * Constructor.
-     *
-     * @param action the action executed when applying the option to a {@link HtmlConverter}
-     */
-    public HtmlConversionOption {
-        Objects.requireNonNull(action);
-    }
-
-    /**
      * Apply option to {@link HtmlConverter}.
      *
      * @param converter the converter
