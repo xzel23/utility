@@ -167,6 +167,10 @@ the parameter.
 
 ## Changes
 
+### 12.0.3
+
+- fix record equals() not accepting null arguments
+
 ### 12.0.2
 
 - Use assertions to check parameters of internal methods, throw NPE for parameters to methods that are part of the 
