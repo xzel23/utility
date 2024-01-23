@@ -33,6 +33,7 @@ public final class IoOptions {
                         Object::toString,
                         () -> Collections.unmodifiableCollection(Charset.availableCharsets().values()),
                         "--charset")
+                .displayName("Character Encoding")
                 .description("set character encoding")
                 .defaultValue(StandardCharsets.UTF_8);
     }
@@ -49,6 +50,7 @@ public final class IoOptions {
                         Object::toString,
                         () -> List.of(Locale.getAvailableLocales()),
                         "--locale")
+                .displayName("Locale")
                 .description("set locale")
                 .defaultValue(Locale::getDefault);
     }
@@ -61,8 +63,9 @@ public final class IoOptions {
     public static SimpleOption<Path> input() {
         return SimpleOption.create(
                 Paths::get,
-                "-i", "--input"
-        ).description("set input");
+                "-i", "--input")
+                .displayName("Input")
+                .description("set input");
     }
 
     /**
@@ -73,8 +76,9 @@ public final class IoOptions {
     public static SimpleOption<Path> output() {
         return SimpleOption.create(
                 Paths::get,
-                "-o", "--output"
-        ).description("set output");
+                "-o", "--output")
+                .displayName("Output")
+                .description("set output");
     }
 
     /**
@@ -88,6 +92,7 @@ public final class IoOptions {
                         Object::toString,
                         () -> List.of('"', '\''),
                         "-t", "--text-delimiter")
+                .displayName("Text Delimiter")
                 .description("set text delimiter")
                 .defaultValue('"');
     }
@@ -103,6 +108,7 @@ public final class IoOptions {
                         Object::toString,
                         () -> List.of(',', ';'),
                         "-s", "--field-separator")
+                .displayName("Field Separator")
                 .description("set field separator")
                 .defaultValue(',');
     }
@@ -116,6 +122,8 @@ public final class IoOptions {
         return ChoiceOption.create(
                         PredefinedDateTimeFormat.class,
                         "--date-format")
+                .displayName("Date Format")
+                .description("set date format")
                 .defaultValue(PredefinedDateTimeFormat.ISO_DATE_TIME);
     }
 
@@ -128,6 +136,8 @@ public final class IoOptions {
         return ChoiceOption.create(
                         PredefinedDateTimeFormat.class,
                         "--date-time-format")
+                .displayName("Date and Time Format")
+                .description("set date and time format")
                 .defaultValue(PredefinedDateTimeFormat.ISO_DATE_TIME);
     }
 
