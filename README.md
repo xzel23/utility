@@ -167,6 +167,10 @@ the parameter.
 
 ## Changes
 
+### 12.0.4
+
+- fix runtime error (cabe)
+
 ### 12.0.3
 
 - fix record equals() not accepting null arguments
