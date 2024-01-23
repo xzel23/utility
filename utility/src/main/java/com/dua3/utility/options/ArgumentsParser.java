@@ -251,7 +251,7 @@ public class ArgumentsParser {
             fmt.format("  <options>:\n");
             options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
                 // get argument text
-                String argText = getArgText(option.minArity(), option.maxArity(), option.getArgName());
+                String argText = getArgText(option.minArity(), option.maxArity(), option.argName());
 
                 // print option names and arguments
                 fmt.format("    %s%s\n", String.join("|", option.names()), argText);

@@ -83,7 +83,7 @@ public abstract class Option<T> {
      * @param displayName the display name
      * @return this option
      */
-    public Option<T> displayName(String displayName) {
+    protected Option<T> displayName(String displayName) {
         LangUtil.check(!displayName.isEmpty(), "display name must not be empty");
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");
         return this;
@@ -95,7 +95,7 @@ public abstract class Option<T> {
      * @param argName the argument name
      * @return this option
      */
-    public Option<T> argName(String argName) {
+    protected Option<T> argName(String argName) {
         LangUtil.check(!argName.isEmpty(), "argument name must not be empty");
         this.argName = Objects.requireNonNull(argName, "argument name must not be null");
         return this;
@@ -107,7 +107,7 @@ public abstract class Option<T> {
      * @param handler the handler to call in {@link Arguments#handle()} for each invocation of this option
      * @return this option
      */
-    public Option<T> handler(Consumer<Collection<T>> handler) {
+    protected Option<T> handler(Consumer<Collection<T>> handler) {
         this.handler = Objects.requireNonNull(handler);
         return this;
     }
@@ -153,8 +153,8 @@ public abstract class Option<T> {
      *
      * @return The display name of this option.
      */
-    public String getDisplayName() {
-        return displayName;
+    public String displayName() {
+        return displayName.isEmpty() ? names[0] : displayName;
     }
 
     /**
@@ -162,7 +162,7 @@ public abstract class Option<T> {
      *
      * @return The argument name of this option.
      */
-    public String getArgName() {
+    public String argName() {
         return argName;
     }
 
@@ -218,15 +218,6 @@ public abstract class Option<T> {
      */
     public String description() {
         return description;
-    }
-
-    /**
-     * Get display name of this option.
-     *
-     * @return display name
-     */
-    public String displayName() {
-        return displayName.isEmpty() ? names[0] : displayName;
     }
 
     /**
