@@ -274,4 +274,17 @@ public abstract class Option<T> {
     public boolean isRequired() {
         return minOccurrences > 0;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+                "displayName='" + displayName + '\'' +
+                ", description='" + description + '\'' +
+                ", names=" + Arrays.toString(names) +
+                ", minArity=" + minArity +
+                ", maxArity=" + maxArity +
+                ", minOccurrences=" + minOccurrences +
+                ", maxOccurrences=" + maxOccurrences +
+                '}';
+    }
 }
