@@ -54,12 +54,12 @@ import java.util.stream.Stream;
  * A Utility class with general purpose methods.
  */
 public final class LangUtil {
+    private static final Logger LOG = LogManager.getLogger(LangUtil.class);
 
     /**
      * The byte order mark in UTF files
      */
     public static final char UTF_BYTE_ORDER_MARK = 0xfeff;
-    private static final Logger LOG = LogManager.getLogger(LangUtil.class);
 
     // private constructor for utility class
     private LangUtil() {
