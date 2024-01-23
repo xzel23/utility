@@ -167,6 +167,10 @@ the parameter.
 
 ## Changes
 
+### (to be released)
+
+- add Arguments.toString()
+
 ### 12.0.4
 
 - fix runtime error (cabe)

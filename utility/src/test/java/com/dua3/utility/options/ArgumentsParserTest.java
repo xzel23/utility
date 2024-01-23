@@ -56,6 +56,14 @@ public class ArgumentsParserTest {
                 """;
 
         assertEquals(expected, cmd.help());
+
+        Arguments args = cmd.parse("-p", "hello", "Bob");
+        String expectedToString = """
+                Arguments{
+                  --print
+                  "hello", "Bob"
+                }""";
+        assertEquals(expectedToString, args.toString());
     }
 
     @Test
@@ -96,6 +104,14 @@ public class ArgumentsParserTest {
                 """;
 
         assertEquals(expected, cmd.help());
+
+        Arguments args = cmd.parse("--product", "MACCHIATO", "--size", "VENTI");
+        String expectedToString = """
+                Arguments{
+                  --product "MACCHIATO"
+                  --size "VENTI"
+                }""";
+        assertEquals(expectedToString, args.toString());
     }
 
     @Test
@@ -176,6 +192,14 @@ public class ArgumentsParserTest {
                                 
                 """;
         assertEquals(expected, cmd.help());
+
+        Arguments args = cmd.parse("-n", "Eve", "--age", "30");
+        String expectedToString = """
+                Arguments{
+                  --name "Eve"
+                  --age "30"
+                }""";
+        assertEquals(expectedToString, args.toString());
     }
 
     @Test
