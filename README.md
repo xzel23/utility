@@ -167,9 +167,12 @@ the parameter.
 
 ## Changes
 
-### (to be released)
+### 12.0.5
 
 - add Arguments.toString()
+- add Option.toString()
+- fix: TextUtil.toSystemLineEnds() appended a newline character even if the argument did not end with newline
+- fix: ArgumentsParserTest failed on Windows
 
 ### 12.0.4
 
