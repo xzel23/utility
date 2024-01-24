@@ -211,16 +211,16 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     @Override
     public String toString() {
         try (Formatter fmt = new Formatter()) {
-            fmt.format("Arguments{%n");
+            fmt.format("Arguments{\n");
             for (Entry<?> entry : parsedOptions) {
                 if (entry.option instanceof Flag) {
-                    fmt.format("  %s%n", entry.option.name());
+                    fmt.format("  %s\n", entry.option.name());
                 } else {
-                    fmt.format("  %s %s%n", entry.option.name(), joinQuoted(entry.getParams()));
+                    fmt.format("  %s %s\n", entry.option.name(), joinQuoted(entry.getParams()));
                 }
             }
             if (!positionalArgs().isEmpty()) {
-                fmt.format("  %s%n", joinQuoted(positionalArgs()));
+                fmt.format("  %s\n", joinQuoted(positionalArgs()));
             }
             fmt.format("}");
             return fmt.toString();
