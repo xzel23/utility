@@ -744,7 +744,8 @@ public final class TextUtil {
     }
 
     private static String setLineEnds(String s, String lineEnd) {
-        return s.lines().collect(Collectors.joining(lineEnd, "", lineEnd));
+        boolean isNewlineTerminated = s.matches(".*\\R$");
+        return s.lines().collect(Collectors.joining(lineEnd, "", isNewlineTerminated ? lineEnd : ""));
     }
 
     /**
