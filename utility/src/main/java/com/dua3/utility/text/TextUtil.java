@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -746,6 +747,46 @@ public final class TextUtil {
     private static String setLineEnds(String s, String lineEnd) {
         boolean isNewlineTerminated = s.matches(".*\\R$");
         return s.lines().collect(Collectors.joining(lineEnd, "", isNewlineTerminated ? lineEnd : ""));
+    }
+
+    /**
+     * Surrounds a string with quotes and escapes control characters according to Java conventions.
+     *
+     * @param text the string to be surrounded with quotes
+     * @return the quoted string
+     */
+    public static String quote(String text) {
+        return "\"" +
+                text.replace("\"", "\\\"")
+                        .replace("\n", "\\n")
+                        .replace("\r", "\\r")
+                        .replace("\t", "\\t")
+                        .replace("\b", "\\b")
+                        .replace("\f", "\\f")
+                + "\"";
+    }
+
+    /**
+     * Returns a quoted string if needed, otherwise returns the original string.
+     *
+     * @param text the string to be checked if quoting is needed
+     * @return the quoted string if needed, otherwise the original string
+     */
+    public static String quoteIfNeeded(String text) {
+        boolean needsQuotes = !text.matches("[\\p{L}\\d,.;+-]+");
+        return needsQuotes ? quote(text) : text;
+    }
+
+    /**
+     * Joins the elements in the given list into a single string, quoting each element. null elements are treated in the same way
+     * as empty strings.
+     *
+     * @param args The list of elements to be joined, can contain elements of any type.
+     * @return A single string that is the result of joining all the elements, with each element quoted and separated
+     *         by a comma and space.
+     */
+    public static String joinQuoted(List<? extends Object> args) {
+        return args.stream().map(arg -> TextUtil.quote(arg != null ? arg.toString() : "")).collect(Collectors.joining(", "));
     }
 
     /**
