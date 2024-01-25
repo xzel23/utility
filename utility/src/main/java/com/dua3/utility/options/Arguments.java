@@ -217,11 +217,11 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
                 if (entry.option instanceof Flag) {
                     fmt.format("  %s\n", entry.option.name());
                 } else {
-                    fmt.format("  %s %s\n", entry.option.name(), TextUtil.joinQuoted(entry.getParams()));
+                    fmt.format("  %s %s\n", entry.option.name(), TextUtil.joinQuoted(entry.getParams(), " "));
                 }
             }
             if (!positionalArgs().isEmpty()) {
-                fmt.format("  %s\n", TextUtil.joinQuoted(positionalArgs()));
+                fmt.format("  %s\n", TextUtil.joinQuoted(positionalArgs(), " "));
             }
             fmt.format("}");
             return fmt.toString();

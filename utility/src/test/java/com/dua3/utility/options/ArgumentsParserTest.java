@@ -61,7 +61,7 @@ public class ArgumentsParserTest {
         String expectedToString = """
                 Arguments{
                   --print
-                  "hello", "Bob"
+                  "hello" "Bob"
                 }""";
         assertEquals(expectedToString, args.toString());
     }
