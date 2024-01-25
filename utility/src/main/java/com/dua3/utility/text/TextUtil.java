@@ -778,15 +778,51 @@ public final class TextUtil {
     }
 
     /**
-     * Joins the elements in the given list into a single string, quoting each element. null elements are treated in the same way
-     * as empty strings.
+     * Joins the elements of the given list into a single string, using the specified delimiter.
+     * If an element needs to be quoted, it will be enclosed in quotes before joining.
+     *
+     * @param args      the list of elements to be joined
+     * @param delimiter the delimiter to be used between the elements
+     * @return the joined string with each element quoted if necessary
+     */
+    public static String joinQuotedIfNeeded(List<? extends Object> args, String delimiter) {
+        return args.stream().map(arg -> TextUtil.quoteIfNeeded(arg != null ? arg.toString() : "")).collect(Collectors.joining(delimiter));
+    }
+
+    /**
+     * Joins the elements of the given list into a single string, using ', ' as delimiter.
+     * If an element needs to be quoted, it will be enclosed in quotes before joining.
+     *
+     * @param args      the list of elements to be joined
+     * @return the joined string with each element quoted if necessary
+     */
+    public static String joinQuotedIfNeeded(List<? extends Object> args) {
+        return joinQuotedIfNeeded(args, ", ");
+    }
+
+    /**
+     * Joins the elements in the given list into a single string, quoting each element.
+     * Null elements are treated in the same way as empty strings.
+     *
+     * @param args The list of elements to be joined, can contain elements of any type.
+     * @param delimiter the delimiter to insert between args
+     * @return A single string that is the result of joining all the elements, with each element quoted and separated
+     *         by a comma and space.
+     */
+    public static String joinQuoted(List<? extends Object> args, String delimiter) {
+        return args.stream().map(arg -> TextUtil.quote(arg != null ? arg.toString() : "")).collect(Collectors.joining(delimiter));
+    }
+
+    /**
+     * Joins the elements in the given list into a single string, quoting each element and using ', ' as delimiter.
+     * Null elements are treated in the same way as empty strings.
      *
      * @param args The list of elements to be joined, can contain elements of any type.
      * @return A single string that is the result of joining all the elements, with each element quoted and separated
      *         by a comma and space.
      */
     public static String joinQuoted(List<? extends Object> args) {
-        return args.stream().map(arg -> TextUtil.quote(arg != null ? arg.toString() : "")).collect(Collectors.joining(", "));
+        return joinQuoted(args, ", ");
     }
 
     /**

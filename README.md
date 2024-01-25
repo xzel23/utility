@@ -167,6 +167,11 @@ the parameter.
 
 ## Changes
 
+### 12.0.6
+
+- TextUtil.quote(), TextUtil.quoteIfNeeded(), TextUtil.joinQuoted()
+- use Java compatible quoting in Arguments.toString()
+
 ### 12.0.5
 
 - add Arguments.toString()
