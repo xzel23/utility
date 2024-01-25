@@ -1,5 +1,7 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.text.TextUtil;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -216,19 +217,15 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
                 if (entry.option instanceof Flag) {
                     fmt.format("  %s\n", entry.option.name());
                 } else {
-                    fmt.format("  %s %s\n", entry.option.name(), joinQuoted(entry.getParams()));
+                    fmt.format("  %s %s\n", entry.option.name(), TextUtil.joinQuoted(entry.getParams()));
                 }
             }
             if (!positionalArgs().isEmpty()) {
-                fmt.format("  %s\n", joinQuoted(positionalArgs()));
+                fmt.format("  %s\n", TextUtil.joinQuoted(positionalArgs()));
             }
             fmt.format("}");
             return fmt.toString();
         }
-    }
-
-    private static String joinQuoted(List<? extends Object> args) {
-        return args.stream().map(arg -> "\"" + arg + "\"").collect(Collectors.joining(", "));
     }
 
     /**
