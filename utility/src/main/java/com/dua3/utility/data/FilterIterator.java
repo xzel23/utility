@@ -28,8 +28,8 @@ public class FilterIterator<T> implements Iterator<T> {
      * @param predicate the predicate
      */
     public FilterIterator(Iterator<T> iterator, Predicate<T> predicate) {
-        this.iterator = Objects.requireNonNull(iterator);
-        this.predicate = Objects.requireNonNull(predicate);
+        this.iterator = iterator;
+        this.predicate = predicate;
         this.done = false;
         findNext();
     }

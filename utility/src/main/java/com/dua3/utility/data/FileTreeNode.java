@@ -157,7 +157,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
      * @throws NullPointerException if the refreshListener is null
      */
     public void addRefreshListener(Consumer<T> refreshListener) {
-        refreshListeners.add(Objects.requireNonNull(refreshListener));
+        refreshListeners.add(refreshListener);
     }
 
     /**

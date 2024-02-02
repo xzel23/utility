@@ -14,7 +14,7 @@ public class RichTextMatcher implements MatchResult {
     private final Matcher matcher;
 
     RichTextMatcher(Pattern pattern, RichText text) {
-        this.text = Objects.requireNonNull(text);
+        this.text = text;
         this.matcher = pattern.matcher(text);
     }
 

@@ -24,7 +24,7 @@ public class PeekIterator<T> implements Iterator<T> {
      * @param iterator the base iterator
      */
     public PeekIterator(Iterator<T> iterator) {
-        this.iterator = Objects.requireNonNull(iterator);
+        this.iterator = iterator;
         this.done = false;
         move();
     }

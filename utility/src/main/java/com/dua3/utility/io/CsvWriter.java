@@ -40,7 +40,7 @@ public class CsvWriter extends CsvIo implements Flushable {
      */
     public CsvWriter(BufferedWriter out, Arguments options) {
         super(options);
-        this.out = Objects.requireNonNull(out);
+        this.out = out;
     }
 
     /**

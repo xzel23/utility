@@ -36,8 +36,8 @@ public final class Run implements AttributedCharSequence {
     Run(CharSequence text, int start, int length, TextAttributes attributes) {
         LangUtil.check(start >= 0 && start <= text.length() && length >= 0 && start + length <= text.length());
 
-        this.text = Objects.requireNonNull(text);
-        this.attributes = Objects.requireNonNull(attributes);
+        this.text = text;
+        this.attributes = attributes;
         this.start = start;
         this.length = length;
     }

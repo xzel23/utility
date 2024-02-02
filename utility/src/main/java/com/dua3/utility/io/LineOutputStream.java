@@ -38,7 +38,7 @@ public class LineOutputStream extends OutputStream {
     public LineOutputStream(Consumer<String> processor) {
         this.buf = new byte[INITIAL_BUFFER_SIZE];
         this.count = 0;
-        this.processor = Objects.requireNonNull(processor);
+        this.processor = processor;
     }
 
     private void flushLine() {

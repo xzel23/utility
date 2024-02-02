@@ -50,7 +50,7 @@ public class JdbcDataSource implements DataSource {
      * @param driver the driver
      */
     public void setDriver(Driver driver) {
-        this.driver = Objects.requireNonNull(driver);
+        this.driver = driver;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class JdbcDataSource implements DataSource {
      * @param url the URL
      */
     public void setUrl(String url) {
-        this.url = Objects.requireNonNull(url);
+        this.url = url;
     }
 
     /**

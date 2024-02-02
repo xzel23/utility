@@ -19,7 +19,7 @@ public class SharedString implements CharSequence {
     private int hash;
 
     SharedString(String base, int start, int end) {
-        this.base = Objects.requireNonNull(base);
+        this.base = base;
         this.start = Objects.checkIndex(start, base.length());
         Objects.checkFromToIndex(start, end, base.length());
         this.end = end;

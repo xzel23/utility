@@ -37,8 +37,8 @@ public abstract class Option<T> {
                      String... names) {
         LangUtil.check(names.length > 0, "at least one name must be given");
 
-        this.mapper = Objects.requireNonNull(mapper);
-        this.formatter = Objects.requireNonNull(formatter);
+        this.mapper = mapper;
+        this.formatter = formatter;
         this.names = names.clone();
     }
 
@@ -73,7 +73,7 @@ public abstract class Option<T> {
      */
     protected Option<T> description(String description) {
         LangUtil.check(this.description.isEmpty(), "description already set");
-        this.description = Objects.requireNonNull(description, "description must not be null");
+        this.description = description;
         return this;
     }
 
@@ -85,7 +85,7 @@ public abstract class Option<T> {
      */
     protected Option<T> displayName(String displayName) {
         LangUtil.check(!displayName.isEmpty(), "display name must not be empty");
-        this.displayName = Objects.requireNonNull(displayName, "displayName must not be null");
+        this.displayName = displayName;
         return this;
     }
 
@@ -97,7 +97,7 @@ public abstract class Option<T> {
      */
     protected Option<T> argName(String argName) {
         LangUtil.check(!argName.isEmpty(), "argument name must not be empty");
-        this.argName = Objects.requireNonNull(argName, "argument name must not be null");
+        this.argName = argName;
         return this;
     }
 
@@ -108,7 +108,7 @@ public abstract class Option<T> {
      * @return this option
      */
     protected Option<T> handler(Consumer<Collection<T>> handler) {
-        this.handler = Objects.requireNonNull(handler);
+        this.handler = handler;
         return this;
     }
 

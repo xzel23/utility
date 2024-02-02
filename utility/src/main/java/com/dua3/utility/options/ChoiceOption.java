@@ -37,7 +37,7 @@ public final class ChoiceOption<T> extends Option<T> {
         super(valueMapper, formatter, names);
         occurrence(0, 1);
         arity(1, 1);
-        this.values = Objects.requireNonNull(values);
+        this.values = values;
     }
 
     @SuppressWarnings("unchecked")
@@ -154,7 +154,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * @return this option
      */
     public ChoiceOption<T> defaultValue(Supplier<T> defaultValue) {
-        this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
+        this.defaultValue = defaultValue;
         return this;
     }
 

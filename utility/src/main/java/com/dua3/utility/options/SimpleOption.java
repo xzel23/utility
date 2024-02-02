@@ -104,7 +104,7 @@ public final class SimpleOption<T> extends Option<T> {
      * @return this option
      */
     public SimpleOption<T> defaultValue(Supplier<T> defaultValue) {
-        this.defaultValue = Objects.requireNonNull(defaultValue, "default value supplier cannot be set to null");
+        this.defaultValue = defaultValue;
         return this;
     }
 

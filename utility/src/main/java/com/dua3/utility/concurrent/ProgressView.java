@@ -30,7 +30,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
      *                                The function must not return null.
      */
     public ProgressView(Function<T, ProgressIndicator> createProgressIndicator) {
-        this.createProgressIndicator = Objects.requireNonNull(createProgressIndicator);
+        this.createProgressIndicator = createProgressIndicator;
     }
 
     /**
@@ -133,7 +133,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
         State state = State.SCHEDULED;
 
         TaskRecord(ProgressIndicator progressIndicator) {
-            this.progressIndicator = Objects.requireNonNull(progressIndicator);
+            this.progressIndicator = progressIndicator;
         }
 
         public void update(int done, int total) {

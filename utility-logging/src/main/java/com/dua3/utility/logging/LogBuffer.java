@@ -65,7 +65,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @param listener the listener to add
      */
     public void addLogBufferListener(LogBufferListener listener) {
-        listeners.add(Objects.requireNonNull(listener));
+        listeners.add(listener);
     }
 
     /**

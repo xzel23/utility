@@ -56,8 +56,6 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
      */
     public static AnsiConversionOption map(String attribute,
                                            BiFunction<Object, Object, String> mapper) {
-        Objects.requireNonNull(attribute);
-        Objects.requireNonNull(mapper);
         return new AnsiConversionOption(c -> c.mappings.put(attribute, mapper));
     }
 

@@ -14,7 +14,7 @@ public class SharableString implements CharSequence {
     private final String base;
 
     public SharableString(String s) {
-        this.base = Objects.requireNonNull(s);
+        this.base = s;
     }
 
     @Override

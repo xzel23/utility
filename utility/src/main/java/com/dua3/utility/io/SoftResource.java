@@ -35,7 +35,7 @@ public final class SoftResource<T> {
      * @return soft resource
      */
     public static <T> SoftResource<T> of(Supplier<? extends T> supplier) {
-        return new SoftResource<>(Objects.requireNonNull(supplier));
+        return new SoftResource<>(supplier);
     }
 
     /**

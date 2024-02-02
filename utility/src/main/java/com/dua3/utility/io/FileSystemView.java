@@ -77,8 +77,6 @@ public final class FileSystemView implements AutoCloseable {
      * @throws IllegalArgumentException if the path could not be handled (i.e. points to an unsupported existing file)
      */
     public static FileSystemView create(Path root, Flags... flags) throws IOException {
-        Objects.requireNonNull(root);
-
         List<Flags> flagList = List.of(flags);
         boolean createIfMissing = flagList.contains(Flags.CREATE_IF_MISSING);
 

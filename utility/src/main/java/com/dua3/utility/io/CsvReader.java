@@ -69,8 +69,8 @@ public class CsvReader extends CsvIo {
             throws IOException {
         super(options);
 
-        this.rowBuilder = Objects.requireNonNull(rowBuilder);
-        this.reader = Objects.requireNonNull(reader);
+        this.rowBuilder = rowBuilder;
+        this.reader = reader;
         this.columnNames = null;
         this.ignoreExcessFields = false;
         this.ignoreMissingFields = false;

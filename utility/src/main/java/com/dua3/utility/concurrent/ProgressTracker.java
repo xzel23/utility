@@ -142,8 +142,8 @@ public interface ProgressTracker<T> {
         private final Object task;
 
         TaskUpdater(ProgressTracker tracker, Object task) {
-            this.tracker = Objects.requireNonNull(tracker);
-            this.task = Objects.requireNonNull(task);
+            this.tracker = tracker;
+            this.task = task;
         }
 
         static <T> TaskUpdater create(ProgressTracker<T> tracker, T task) {

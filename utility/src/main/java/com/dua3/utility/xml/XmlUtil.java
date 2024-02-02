@@ -109,9 +109,9 @@ public final class XmlUtil {
      * @throws ParserConfigurationException if a configuration error occurs
      */
     public XmlUtil(DocumentBuilderFactory documentBuilderFactory, TransformerFactory transformerFactory, XPathFactory xPathFactory) throws ParserConfigurationException {
-        this.documentBuilderFactory = Objects.requireNonNull(documentBuilderFactory);
-        this.transformerFactory = Objects.requireNonNull(transformerFactory);
-        this.xPathFactory = Objects.requireNonNull(xPathFactory);
+        this.documentBuilderFactory = documentBuilderFactory;
+        this.transformerFactory = transformerFactory;
+        this.xPathFactory = xPathFactory;
         this.documentBuilder = this.documentBuilderFactory.newDocumentBuilder();
         this.utf8Transformer = getTransformer(StandardCharsets.UTF_8);
     }

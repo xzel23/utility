@@ -247,7 +247,6 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @param value attribute value
      */
     public RichTextBuilder push(String name, Object value) {
-        Objects.requireNonNull(value, "value must not be null");
         Object previousValue = split().put(name, value);
         openedAttributes.push(new AttributeChange(name, previousValue, value));
         return this;

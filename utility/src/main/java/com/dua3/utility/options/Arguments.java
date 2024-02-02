@@ -239,7 +239,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         final List<T> params;
 
         Entry(Option<T> option) {
-            this.option = Objects.requireNonNull(option);
+            this.option = option;
             this.params = new ArrayList<>();
         }
 

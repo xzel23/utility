@@ -261,7 +261,7 @@ public final class RichText
      * @return RichText containing the joined elements
      */
     public static RichText join(CharSequence delimiter, RichText... elements) {
-        return join(valueOf(Objects.requireNonNull(delimiter)), elements);
+        return join(valueOf(delimiter), elements);
     }
 
     /**
@@ -272,7 +272,7 @@ public final class RichText
      * @return RichText containing the joined elements
      */
     public static RichText join(CharSequence delimiter, Iterable<RichText> elements) {
-        return join(valueOf(Objects.requireNonNull(delimiter)), elements);
+        return join(valueOf(delimiter), elements);
     }
 
     /**
