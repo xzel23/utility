@@ -167,6 +167,11 @@ the parameter.
 
 ## Changes
 
+### 12.0.7
+
+- remove obsolete null-checks
+- update gradle, cabe
+
 ### 12.0.6
 
 - TextUtil.quote(), TextUtil.quoteIfNeeded(), TextUtil.joinQuoted()
