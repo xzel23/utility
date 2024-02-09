@@ -26,8 +26,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -53,6 +55,8 @@ public final class TextUtil {
     private static final String TRANSFORM_REF_START = "${";
     private static final String TRANSFORM_REF_END = "}";
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
+    private static final Predicate<String> IS_NEWLINE_TERMINATED = Pattern.compile(".*\\R$").asMatchPredicate();
+    private static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]+").asMatchPredicate().negate();
 
     private TextUtil() {
         // nop: utility class
@@ -745,7 +749,7 @@ public final class TextUtil {
     }
 
     private static String setLineEnds(String s, String lineEnd) {
-        boolean isNewlineTerminated = s.matches(".*\\R$");
+        boolean isNewlineTerminated = IS_NEWLINE_TERMINATED.test(s);
         return s.lines().collect(Collectors.joining(lineEnd, "", isNewlineTerminated ? lineEnd : ""));
     }
 
@@ -773,8 +777,7 @@ public final class TextUtil {
      * @return the quoted string if needed, otherwise the original string
      */
     public static String quoteIfNeeded(String text) {
-        boolean needsQuotes = !text.matches("[\\p{L}\\d,.;+-]+");
-        return needsQuotes ? quote(text) : text;
+        return IS_QUOTING_NEEDED.test(text) ? quote(text) : text;
     }
 
     /**

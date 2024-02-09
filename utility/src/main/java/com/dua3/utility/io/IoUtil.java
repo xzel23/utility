@@ -42,6 +42,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -52,7 +53,7 @@ public final class IoUtil {
 
     private static final Logger LOG = LogManager.getLogger(IoUtil.class);
 
-    private static final Pattern PATTERN_URI = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:.*");
+    private static final Predicate<String> IS_URI = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:.*").asMatchPredicate();
     /**
      * The default character encoding.
      */
@@ -401,7 +402,7 @@ public final class IoUtil {
      * @return true, if string denotes a URI
      */
     private static boolean isURI(String s) {
-        return PATTERN_URI.matcher(s).matches();
+        return IS_URI.test(s);
     }
 
     /**

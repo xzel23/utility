@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -21,7 +22,7 @@ public final class FontDef implements Cloneable {
 
     private static final Logger LOG = LogManager.getLogger(FontDef.class);
 
-    private static final Pattern PATTERN_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?");
+    private static final Predicate<String> IS_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?").asMatchPredicate();
     private Color color;
     private Float size;
     private String family;
@@ -152,7 +153,7 @@ public final class FontDef implements Cloneable {
                 case "noline" -> fd.setStrikeThrough(false);
                 default -> {
                     // check for font size
-                    if (PATTERN_FONT_SIZE.matcher(s).matches()) {
+                    if (IS_FONT_SIZE.test(s)) {
                         fd.setSize(Float.parseFloat(s));
                         break;
                     }
