@@ -220,7 +220,14 @@ public final class FileSystemView implements AutoCloseable {
         return resolvedPath;
     }
 
+    /**
+     * Flags to use in the FileSystemView class.
+     */
     public enum Flags {
+        /**
+         * The CREATE_IF_MISSING flag is used in the FileSystemView class to indicate whether a new file or directory
+         * should be created if it does not already exist.
+         */
         CREATE_IF_MISSING
     }
 

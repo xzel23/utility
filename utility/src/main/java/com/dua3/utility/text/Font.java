@@ -71,6 +71,11 @@ public class Font {
         this.color = color;
     }
 
+    /**
+     * Construct a new Font instance from another Font instance.
+     * @param baseFont the base font
+     * @param fd the font definition that contains the attributes to change when creating the new font.
+     */
     protected Font(Font baseFont, FontDef fd) {
         this(
                 LangUtil.orElse(fd.getFamily(), baseFont.getFamily()),

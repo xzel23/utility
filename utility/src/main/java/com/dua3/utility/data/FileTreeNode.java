@@ -28,6 +28,9 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     private final List<Consumer<T>> refreshListeners = new ArrayList<>();
     private List<T> children;
 
+    /**
+     * Constructor for a node in a file tree.
+     */
     protected FileTreeNode(@Nullable T parent, Path path, boolean lazy) {
         this.parent = parent;
         this.path = path;
@@ -83,6 +86,12 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
         }
     }
 
+    /**
+     * Collects the children of the current node.
+     *
+     * @return a collection of child nodes
+     * @throws IOException if an I/O error occurs while collecting the children
+     */
     protected Collection<T> collectChildren() throws IOException {
         try (Stream<Path> stream = Files.walk(path, 1)) {
             return stream
