@@ -31,14 +31,42 @@ import java.util.Objects;
  */
 public abstract class CsvIo implements AutoCloseable {
 
-    private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
+    /**
+     * A constant string representing the set of allowed characters (besides letters and digits that are also allowed)
+     * in unquoted fields.
+     */
+    private static final String UNQUOTED_CONTENT_ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
+    /**
+     * The line delimiter used when writing CSV files.
+     */
     protected final String lineDelimiter;
+    /**
+     * The separator character used for CSV data.
+     */
     protected final char separator;
+    /**
+     * This variable represents the delimiter character used in CSV (Comma-Separated Values) files.
+     */
     protected final char delimiter;
+    /**
+     * The {@link Locale} used for formatting and parsing data in CSV I/O.
+     */
     protected final Locale locale;
+    /**
+     * The formatter used for formatting date-time values.
+     */
     protected final DateTimeFormatter dateTimeFormatter;
+    /**
+     * The formatter used for formatting date objects.
+     */
     protected final DateTimeFormatter dateFormatter;
+    /**
+     * The formatter used for formatting time values.
+     */
     protected final DateTimeFormatter timeFormatter;
+    /**
+     * The NumberFormat used for formatting numbers.
+     */
     protected final NumberFormat numberFormat;
 
     /**
@@ -108,7 +136,7 @@ public abstract class CsvIo implements AutoCloseable {
         // also quote if unusual characters are present
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            if (c == separator || c == delimiter || !Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
+            if (c == separator || c == delimiter || !Character.isLetterOrDigit(c) && UNQUOTED_CONTENT_ALLOWED_CHARS.indexOf(c) == -1) {
                 return true;
             }
         }

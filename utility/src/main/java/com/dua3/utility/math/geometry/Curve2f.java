@@ -5,7 +5,7 @@ package com.dua3.utility.math.geometry;
  */
 public final class Curve2f extends AbstractCurve2f {
     /**
-     * Name of this segment type.
+     * The name of the segment type.
      */
     public static final String NAME = "CURVE";
 

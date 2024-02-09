@@ -6,6 +6,9 @@ import java.util.Locale;
  * Represents a 2-dimensional arc curve.
  */
 public final class Arc2f extends AbstractCurve2f {
+    /**
+     * The name of the segment type.
+     */
     public static final String NAME = "ARC";
 
     private final float rx;
