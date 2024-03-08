@@ -6,7 +6,6 @@
 package com.dua3.utility.io;
 
 import java.lang.ref.SoftReference;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**

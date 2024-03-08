@@ -24,11 +24,11 @@ public class BatchCollectorTest {
 
         assertEquals(4, result.size());
         assertEquals(3, result.get(0).first().intValue());
-        assertEquals(List.of("one","two"), result.get(0).second());
+        assertEquals(List.of("one", "two"), result.get(0).second());
         assertEquals(5, result.get(1).first().intValue());
         assertEquals(List.of("three"), result.get(1).second());
         assertEquals(4, result.get(2).first().intValue());
-        assertEquals(List.of("four","five"), result.get(2).second());
+        assertEquals(List.of("four", "five"), result.get(2).second());
         assertEquals(3, result.get(3).first().intValue());
         assertEquals(List.of("six"), result.get(3).second());
     }
@@ -43,11 +43,11 @@ public class BatchCollectorTest {
 
         assertEquals(5, result.size());
         assertEquals(3, result.get(0).first().intValue());
-        assertEquals(List.of("one","two"), result.get(0).second());
+        assertEquals(List.of("one", "two"), result.get(0).second());
         assertEquals(5, result.get(1).first().intValue());
         assertEquals(List.of("three"), result.get(1).second());
         assertEquals(4, result.get(2).first().intValue());
-        assertEquals(List.of("four","five"), result.get(2).second());
+        assertEquals(List.of("four", "five"), result.get(2).second());
         assertEquals(3, result.get(3).first().intValue());
         assertEquals(List.of("six"), result.get(3).second());
         assertEquals(0, result.get(4).first().intValue());

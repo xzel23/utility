@@ -23,7 +23,7 @@ class FontDefTest {
         assertNull(fontDef.getItalic());
         assertNull(fontDef.getSize());
         assertNull(fontDef.getStrikeThrough());
-        assert(fontDef.isEmpty());
+        assert (fontDef.isEmpty());
     }
 
     @Test

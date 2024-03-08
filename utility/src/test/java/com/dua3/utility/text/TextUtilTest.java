@@ -6,7 +6,6 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

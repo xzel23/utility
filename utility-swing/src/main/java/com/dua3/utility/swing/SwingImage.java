@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Objects;
 
 /**
  * A class that represents an image using the Swing BufferedImage API.

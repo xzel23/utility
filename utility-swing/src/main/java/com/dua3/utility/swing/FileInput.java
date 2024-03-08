@@ -117,10 +117,22 @@ public class FileInput extends JPanel {
 
     /**
      * Enum for file selection modes.
+     * <p>
+     * The file selection mode determines whether the user can select only files,
+     * only directories, or both files and directories when browsing for a file.
      */
     public enum SelectionMode {
+        /**
+         * The SELECT_FILE constant indicates that only files should be selectable.
+         */
         SELECT_FILE(JFileChooser.FILES_ONLY),
+        /**
+         * The SELECT_DIRECTORY constant indicates that only directories should be selectable.
+         */
         SELECT_DIRECTORY(JFileChooser.DIRECTORIES_ONLY),
+        /**
+         * The SELECT_DIRECTORY constant indicates that both files and directories should be selectable.
+         */
         SELECT_FILE_OR_DIRECTORY(JFileChooser.FILES_AND_DIRECTORIES);
 
         private final int fileSelectionMode;

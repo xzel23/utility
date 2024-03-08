@@ -69,6 +69,7 @@ public class PathBuilder2f {
      * <strong>NOTE:</strong> This implicitly starts a new path.
      *
      * @param v the vertex that marks the start of the new path
+     * @return this PathBuilder2f instance
      */
     public PathBuilder2f moveTo(Vector2f v) {
         if (open) {
@@ -95,6 +96,16 @@ public class PathBuilder2f {
         return this;
     }
 
+    /**
+     * Adds an arc segment to the path, defined by the endpoint, radii, angle, and arc flags.
+     *
+     * @param ep        the endpoint of the arc segment
+     * @param r         the radii of the arc segment
+     * @param angle     the angle of the arc segment in degrees
+     * @param largeArc  if true, the arc should be greater than or equal to 180 degrees, otherwise less than 180 degrees
+     * @param sweep     if true, the arc should be drawn in a "clockwise" direction, otherwise in a "counterclockwise" direction
+     * @return this PathBuilder2f instance
+     */
     public PathBuilder2f arcTo(Vector2f ep, Vector2f r, float angle, boolean largeArc, boolean sweep) {
         LangUtil.check(open, "no current path");
 

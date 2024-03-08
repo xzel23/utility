@@ -3,7 +3,6 @@ package com.dua3.utility.options;
 import com.dua3.cabe.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;

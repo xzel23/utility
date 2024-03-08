@@ -16,7 +16,7 @@ public class NamedFunctionTest {
      */
     @Test
     public void testApply() {
-        Function<String, Integer> f = s -> Integer.parseInt(s);
+        Function<String, Integer> f = Integer::parseInt;
         NamedFunction<String, Integer> nf = new NamedFunction<>("TestFunction", f);
 
         // Apply number string
@@ -29,7 +29,7 @@ public class NamedFunctionTest {
      */
     @Test
     public void testToString() {
-        Function<String, Integer> f = s -> Integer.parseInt(s);
+        Function<String, Integer> f = Integer::parseInt;
         NamedFunction<String, Integer> nf = new NamedFunction<>("TestFunction", f);
 
         // Test toString

@@ -1,6 +1,5 @@
 package com.dua3.utility.text;
 
-import java.util.Objects;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

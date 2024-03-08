@@ -22,6 +22,15 @@ public final class LogEntrySlf4j implements LogEntry {
     private String formattedMessage;
     private final Throwable throwable;
 
+    /**
+     * Creates a new instance of LogEntrySlf4j.
+     *
+     * @param loggerName        the name of the logger
+     * @param level             the log level of the log entry
+     * @param marker            the marker associated with the log entry (nullable)
+     * @param messageFormatter  the supplier used to format the log message
+     * @param throwable         the throwable associated with the log entry (nullable)
+     */
     public LogEntrySlf4j(String loggerName, Level level, @Nullable Marker marker, Supplier<String> messageFormatter,
                          @Nullable Throwable throwable) {
         this.loggerName = loggerName;

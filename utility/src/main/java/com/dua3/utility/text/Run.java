@@ -87,7 +87,7 @@ public final class Run implements AttributedCharSequence {
     }
 
     /**
-     * Get position of end of Run.
+     * Get the end position of this Run.
      *
      * @return end of Run
      */
@@ -96,7 +96,7 @@ public final class Run implements AttributedCharSequence {
     }
 
     /**
-     * Get position of start of Run.
+     * Get the start position this Run.
      *
      * @return start of Run
      */

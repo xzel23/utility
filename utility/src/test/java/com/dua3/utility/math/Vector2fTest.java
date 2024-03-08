@@ -2,6 +2,7 @@ package com.dua3.utility.math;
 
 import com.dua3.utility.math.geometry.Vector2f;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,7 +20,7 @@ public class Vector2fTest {
         Vector2f v2 = Vector2f.ZERO_ONE; // Vector (0, 1)
         double result = Vector2f.angle(v1, v2);
         // The angle between vector (1, 0) and (0, 1) should be 90 degrees or pi/2 radians
-        assertEquals(Math.PI/2, result, 1e-7);
+        assertEquals(Math.PI / 2, result, 1e-7);
     }
 
     /**

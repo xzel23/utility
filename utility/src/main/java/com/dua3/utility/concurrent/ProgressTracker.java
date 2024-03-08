@@ -1,7 +1,5 @@
 package com.dua3.utility.concurrent;
 
-import java.util.Objects;
-
 /**
  * Interface for progress tracking.
  *

@@ -6,19 +6,59 @@ import java.io.StringWriter;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * The LogEntry interface represents a log entry with various properties such as message, logger name, time, level, marker, and throwable.
+ */
 public interface LogEntry {
+    /**
+     * Retrieves the message of the log entry.
+     *
+     * @return The message of the log entry.
+     */
     String message();
 
+    /**
+     * Returns the name of the logger associated with the log entry.
+     *
+     * @return The name of the logger.
+     */
     String loggerName();
 
+    /**
+     * Returns the time when the logging event was created as an Instant object.
+     *
+     * @return the creation time of the logging event as an Instant object
+     */
     Instant time();
 
+    /**
+     * Returns the log level of the LogEntry.
+     *
+     * @return the log level of the LogEntry
+     */
     LogLevel level();
 
+    /**
+     * Returns the marker associated with this log entry.
+     *
+     * @return the marker
+     */
     String marker();
 
+    /**
+     * Returns the throwable object associated with this LogEntry.
+     *
+     * @return the throwable object associated with this LogEntry, or null if no throwable is present
+     */
     Throwable throwable();
 
+    /**
+     * Formats the log entry with the given prefix and suffix.
+     *
+     * @param prefix the prefix to prepend to the formatted entry
+     * @param suffix the suffix to append to the formatted entry
+     * @return the formatted log entry as a string
+     */
     default String format(String prefix, String suffix) {
         StringBuilder sb = new StringBuilder(100);
         sb.append(prefix);

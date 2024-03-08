@@ -1,6 +1,5 @@
 package com.dua3.utility.lang;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 /**

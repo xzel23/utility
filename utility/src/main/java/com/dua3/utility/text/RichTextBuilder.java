@@ -18,7 +18,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -190,7 +189,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
     /**
      * Returns the length (character count).
      *
-     * @return the length of the sequence of characters
+     * @return the length of the character sequence
      */
     public int length() {
         return buffer.length();
@@ -245,6 +244,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      *
      * @param name  attribute name
      * @param value attribute value
+     * @return this RichTextBuilder instance
      */
     public RichTextBuilder push(String name, Object value) {
         Object previousValue = split().put(name, value);

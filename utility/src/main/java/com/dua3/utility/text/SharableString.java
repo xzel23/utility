@@ -7,8 +7,6 @@ package com.dua3.utility.text;
 
 import com.dua3.cabe.annotations.Nullable;
 
-import java.util.Objects;
-
 public class SharableString implements CharSequence {
 
     private final String base;

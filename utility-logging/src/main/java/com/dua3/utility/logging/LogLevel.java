@@ -3,6 +3,9 @@ package com.dua3.utility.logging;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.io.AnsiCode;
 
+/**
+ * Enumeration representing different log levels.
+ */
 public enum LogLevel {
     TRACE(AnsiCode.fg(Color.DARKGRAY), AnsiCode.reset()),
     DEBUG(AnsiCode.fg(Color.BLACK), AnsiCode.reset()),

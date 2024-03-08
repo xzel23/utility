@@ -2,7 +2,6 @@ package com.dua3.utility.data;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 /**

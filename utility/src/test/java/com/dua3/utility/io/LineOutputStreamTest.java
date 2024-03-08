@@ -23,10 +23,7 @@ public class LineOutputStreamTest {
         List<String> outputLines = new ArrayList<>();
         try (var out = new LineOutputStream(outputLines::add)) {
             String textToWrite = "Hello\nWorld\n";
-
-            textToWrite.chars().forEach(i -> {
-                out.write(i);
-            });
+            textToWrite.chars().forEach(out::write);
         }
 
         assertEquals(3, outputLines.size());
@@ -40,10 +37,7 @@ public class LineOutputStreamTest {
         List<String> outputLines = new ArrayList<>();
         try (var out = new LineOutputStream(outputLines::add)) {
             String textToWrite = "Hello\r\nWorld\r\n";
-
-            textToWrite.chars().forEach(i -> {
-                out.write(i);
-            });
+            textToWrite.chars().forEach(out::write);
         }
 
         assertEquals(3, outputLines.size());
@@ -63,9 +57,7 @@ public class LineOutputStreamTest {
         var out = new LineOutputStream(outputLines::add);
         String textToWrite = "Hello World";
 
-        textToWrite.chars().forEach(i -> {
-            out.write(i);
-        });
+        textToWrite.chars().forEach(out::write);
 
         out.close();
 

@@ -8,7 +8,14 @@ import java.util.Locale;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+/**
+ * The PredefinedDateTimeFormat class defines a set of predefined date and time formats.
+ * Each format represents a specific style and pattern for formatting dates and times.
+ */
 public enum PredefinedDateTimeFormat {
+    /**
+     * The default format to use for the current locale.
+     */
     LOCALE_DEFAULT("locale dependent", PredefinedDateTimeFormat::formatDateTimeFromLocale, PredefinedDateTimeFormat::formatDateFromLocale, PredefinedDateTimeFormat::formatTimeFromLocale),
 
     /**

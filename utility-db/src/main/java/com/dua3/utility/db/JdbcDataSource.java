@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Logger;
 

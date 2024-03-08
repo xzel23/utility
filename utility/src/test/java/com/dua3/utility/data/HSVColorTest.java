@@ -20,7 +20,7 @@ public class HSVColorTest {
 
         HSVColor hsvColor = HSVColor.valueOf(argb);
 
-        // Hue should be zero for grey scale color
+        // Hue should be zero for gray scale color
         Assertions.assertEquals(0.0, hsvColor.h(), "Hue doesn't match with the expected value");
 
         // Saturation should be zero for grey scale color

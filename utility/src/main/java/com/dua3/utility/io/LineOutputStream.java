@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -44,9 +43,9 @@ public class LineOutputStream extends OutputStream {
     private void flushLine() {
         synchronized (lock) {
             // remove line end
-            if (count>0 && buf[count-1]=='\n') {
+            if (count > 0 && buf[count - 1] == '\n') {
                 count--;
-                if (count>0 && buf[count-1]=='\r') {
+                if (count > 0 && buf[count - 1] == '\r') {
                     count--;
                 }
             }

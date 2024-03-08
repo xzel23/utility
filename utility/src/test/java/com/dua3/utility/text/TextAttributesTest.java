@@ -30,6 +30,7 @@ public class TextAttributesTest {
      */
     @Test
     void testOfWithPairArray() {
+        @SuppressWarnings("unchecked")
         Pair<String, ?>[] entries = new Pair[]{
                 Pair.of("Key1", "Value1"),
                 Pair.of("Key2", "Value2"),
