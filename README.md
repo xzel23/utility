@@ -167,6 +167,11 @@ the parameter.
 
 ## Changes
 
+### 12.0.8
+
+- update dependencies and plugins
+- code refactorings and small fixes
+
 ### 12.0.7
 
 - remove obsolete null-checks
