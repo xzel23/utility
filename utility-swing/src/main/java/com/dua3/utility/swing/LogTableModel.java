@@ -24,7 +24,6 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     private volatile LogEntry[] data = new LogEntry[0];
     private final AtomicInteger queuedRemoves = new AtomicInteger();
     private final AtomicInteger queuedAdds = new AtomicInteger();
-    private volatile boolean done = false;
 
     private final ReentrantLock snapshotLock = new ReentrantLock();
     private final ReadWriteLock updateLock = new ReentrantReadWriteLock();
@@ -43,7 +42,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
         buffer.addLogBufferListener(this);
 
         Thread updateThread = new Thread(() -> {
-            while (!done) {
+            while (true) {
                 try {
                     waitForUpdate();
                     sync();
@@ -147,28 +146,26 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
      * Note: This method is called from the update thread of the LogTableModel.
      *       It should not be called directly from other parts of the application.
      */
-    private void sync() {
+    public void sync() {
         snapshotLock.lock();
         try {
-            int sz = data.length;
-            int add;
-            int remove;
             updateReadLock.lock();
             try {
                 data = buffer.toArray();
-                add = queuedAdds.getAndSet(0);
-                remove = queuedRemoves.getAndSet(0);
+                int sz = data.length;
+
+                int remove = queuedRemoves.getAndSet(0);
+                if (remove > 0) {
+                    fireTableRowsDeleted(0, Math.max(0, remove - 1));
+                    sz -= remove;
+                }
+
+                int add = queuedAdds.getAndSet(0);
+                if (add > 0) {
+                    fireTableRowsInserted(Math.max(0, sz - add), Math.max(0, sz - 1));
+                }
             } finally {
                 updateReadLock.unlock();
-            }
-
-            if (remove > 0) {
-                fireTableRowsDeleted(0, Math.max(0, remove - 1));
-                sz -= remove;
-            }
-
-            if (add > 0) {
-                fireTableRowsInserted(Math.max(0, sz - add), Math.max(0, sz - 1));
             }
         } finally {
             snapshotLock.unlock();
