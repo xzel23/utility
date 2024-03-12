@@ -50,6 +50,7 @@ public class SwingLogPane extends JPanel {
             new Column(LogEntryField.LEVEL, -"ERROR".length(), true),
             new Column(LogEntryField.MESSAGE, 80, false)
     };
+
     private final LogBuffer buffer;
     private final JTable table;
     private final JTextArea details;
@@ -115,8 +116,8 @@ public class SwingLogPane extends JPanel {
         // create the table
         table = new JTable(model) {
             @Override
-            public void paint(Graphics g) {
-                model.executeRead(() -> super.paint(g));
+            public void paintComponent(Graphics g) {
+                model.executeRead(() -> super.paintComponent(g));
             }
         };
 
