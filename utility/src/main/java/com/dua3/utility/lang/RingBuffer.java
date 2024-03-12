@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 public class RingBuffer<E> implements Collection<E> {
 
-    private Object[] data;
+    private E[] data;
     private int entries;
     private int start;
 
@@ -38,8 +38,9 @@ public class RingBuffer<E> implements Collection<E> {
      *
      * @param capacity the initial capacity
      */
+    @SuppressWarnings("unchecked")
     public RingBuffer(int capacity) {
-        data = new Object[capacity];
+        data = (E[]) new Object[capacity];
         start = 0;
         entries = 0;
     }
@@ -57,7 +58,8 @@ public class RingBuffer<E> implements Collection<E> {
     }
 
     /**
-     * Add item to end of collection.
+     * Add an item at the end of this collection. If the item count has reached the capacity, the first item will be
+     * removed.
      *
      * @param item the item to add
      * @return true, if the buffer size increased as a result of this operation (in other words, false if an item
@@ -143,10 +145,9 @@ public class RingBuffer<E> implements Collection<E> {
      * @param i index
      * @return the i-th element
      */
-    @SuppressWarnings("unchecked")
     public E get(int i) {
         checkIndex(i);
-        return (E) data[index(i)];
+        return data[index(i)];
     }
 
     /**
@@ -235,9 +236,10 @@ public class RingBuffer<E> implements Collection<E> {
      *
      * @param n the new capacity.
      */
+    @SuppressWarnings("unchecked")
     public void setCapacity(int n) {
         if (n != capacity()) {
-            Object[] dataNew = new Object[n];
+            E[] dataNew = (E[]) new Object[n];
             int itemsToCopy = Math.min(size(), n);
             int startIndex = Math.max(0, size() - n);
             for (int i = 0; i < itemsToCopy; i++) {
