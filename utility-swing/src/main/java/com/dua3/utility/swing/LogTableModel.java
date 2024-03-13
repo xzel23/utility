@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -23,9 +22,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     private final LogBuffer buffer;
     private volatile LogEntry[] data = new LogEntry[0];
     private final AtomicInteger queuedRemoves = new AtomicInteger();
-    private final AtomicInteger queuedAdds = new AtomicInteger();
 
-    private final ReentrantLock snapshotLock = new ReentrantLock();
     private final ReadWriteLock updateLock = new ReentrantReadWriteLock();
     private final Lock updateReadLock = updateLock.readLock();
     private final Lock updateWriteLock = updateLock.writeLock();
@@ -43,14 +40,30 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
 
         Thread updateThread = new Thread(() -> {
             while (true) {
+                updateWriteLock.lock();
                 try {
-                    waitForUpdate();
-                    sync();
+                    updatesAvailableCondition.await();
+
+                    int oldSz = data.length;
+                    data = this.buffer.toArray();
+                    int sz = data.length;
+                    int remove = queuedRemoves.getAndSet(0);
+
+                    if (remove > 0) {
+                        fireTableRowsDeleted(0, Math.max(0, remove - 1));
+                        sz -= remove;
+                    }
+
+                    if (sz>oldSz) {
+                        fireTableRowsInserted(oldSz, sz-1);
+                    }
                 } catch (InterruptedException e) {
                     LOG.debug("interrupted", e);
                     Thread.currentThread().interrupt();
                 } catch (Exception e) {
                     LOG.warn("unexpected exception in update thread: {}", e.getMessage(), e);
+                } finally {
+                    updateWriteLock.unlock();
                 }
             }
         }, "LogTableModel Update Thread");
@@ -89,7 +102,6 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
         updateWriteLock.lock();
         try {
             queuedRemoves.addAndGet(replaced);
-            queuedAdds.addAndGet(entries.size());
             updatesAvailableCondition.signalAll();
         } finally {
             updateWriteLock.unlock();
@@ -101,25 +113,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
         updateWriteLock.lock();
         try {
             queuedRemoves.set(data.length);
-            queuedAdds.set(0);
             updatesAvailableCondition.signalAll();
-        } finally {
-            updateWriteLock.unlock();
-        }
-    }
-
-    /**
-     * Waits until there is an update available in the LogTableModel. This method will block the calling thread until
-     * an update is available or until the thread is interrupted.
-     *
-     * @throws InterruptedException if the thread is interrupted while waiting for an update
-     */
-    private void waitForUpdate() throws InterruptedException {
-        updateWriteLock.lock();
-        try {
-            while (queuedAdds.get() == 0 && queuedRemoves.get() == 0) {
-                updatesAvailableCondition.await();
-            }
         } finally {
             updateWriteLock.unlock();
         }
@@ -129,46 +123,12 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
      *
      */
     public void executeRead(Runnable readTask) {
-        snapshotLock.lock();
+        updateReadLock.lock();
         try {
             readTask.run();
         } finally {
-            snapshotLock.unlock();
+            updateReadLock.unlock();
         }
     }
 
-    /**
-     * Synchronizes the data of the LogTableModel with the underlying LogBuffer.
-     * This method updates the data array of the LogTableModel by calling the toArray method of the buffer.
-     * If there are removed entries, it notifies the table model by calling the fireTableRowsDeleted method.
-     * If there are added entries, it notifies the table model by calling the fireTableRowsInserted method.
-     *
-     * Note: This method is called from the update thread of the LogTableModel.
-     *       It should not be called directly from other parts of the application.
-     */
-    public void sync() {
-        snapshotLock.lock();
-        try {
-            updateReadLock.lock();
-            try {
-                data = buffer.toArray();
-                int sz = data.length;
-
-                int remove = queuedRemoves.getAndSet(0);
-                if (remove > 0) {
-                    fireTableRowsDeleted(0, Math.max(0, remove - 1));
-                    sz -= remove;
-                }
-
-                int add = queuedAdds.getAndSet(0);
-                if (add > 0) {
-                    fireTableRowsInserted(Math.max(0, sz - add), Math.max(0, sz - 1));
-                }
-            } finally {
-                updateReadLock.unlock();
-            }
-        } finally {
-            snapshotLock.unlock();
-        }
-    }
 }

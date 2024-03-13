@@ -174,7 +174,12 @@ public class SwingLogPane extends JPanel {
             });
         });
 
-        tableRowSorter = new TableRowSorter<>(model);
+        tableRowSorter = new TableRowSorter<>(model) {
+            @Override
+            public void sort() {
+                model.executeRead(super::sort);
+            }
+        };
         table.setRowSorter(tableRowSorter);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
