@@ -169,6 +169,9 @@ the parameter.
 
 ### 12.0.8
 
+- javadoc updates
+- refactorings and small fixes
+- fix race condition in SwingLogPane
 - update dependencies and plugins
 - code refactorings and small fixes
 
