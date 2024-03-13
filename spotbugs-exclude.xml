@@ -18,7 +18,7 @@
             <Bug pattern="CT_CONSTRUCTOR_THROW"/>
             <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
             <Bug pattern="NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION"/>
-            <Bug pattern="SE_BAD_FIELD"/>
+            <Bug pattern="SE_BAD_FIELD_STORE"/>
             <!-- false positive -->
             <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE"/>
         </Or>
