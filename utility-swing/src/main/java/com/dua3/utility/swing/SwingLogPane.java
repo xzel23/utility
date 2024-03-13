@@ -58,7 +58,7 @@ public class SwingLogPane extends JPanel {
     private final Function<LogEntry, Color> colorize;
     private final JSplitPane splitPane;
     private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
-    private TableRowSorter<AbstractTableModel> tableRowSorter;
+    private final TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
 
@@ -112,6 +112,12 @@ public class SwingLogPane extends JPanel {
         this.buffer = buffer;
         this.colorize = colorize;
         this.model = new LogTableModel(buffer);
+        this.tableRowSorter = new TableRowSorter<>(model) {
+            @Override
+            public void sort() {
+                model.executeRead(super::sort);
+            }
+        };
 
         // create the table
         table = new JTable(model) {
@@ -149,37 +155,29 @@ public class SwingLogPane extends JPanel {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
         // update detail pane when entry is selected
-        table.getSelectionModel().addListSelectionListener(evt -> {
-            model.executeRead(() -> {
-                ListSelectionModel lsm = (ListSelectionModel) evt.getSource();
-                final String text;
-                if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
-                    text = "";
-                } else {
-                    Function<? super LogEntry, String> fmt = format;
-                    StringBuilder sb = new StringBuilder(1024);
-                    for (int idx : lsm.getSelectedIndices()) {
-                        if (lsm.isSelectedIndex(idx)) {
-                            int idxModel = tableRowSorter.convertRowIndexToModel(idx);
-                            LogEntry entry = model.getValueAt(idxModel, 0);
-                            sb.append(fmt.apply(entry)).append("\n");
-                        }
+        table.getSelectionModel().addListSelectionListener(evt -> model.executeRead(() -> {
+            ListSelectionModel lsm = (ListSelectionModel) evt.getSource();
+            final String text;
+            if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
+                text = "";
+            } else {
+                Function<? super LogEntry, String> fmt = format;
+                StringBuilder sb = new StringBuilder(1024);
+                for (int idx : lsm.getSelectedIndices()) {
+                    if (lsm.isSelectedIndex(idx)) {
+                        int idxModel = tableRowSorter.convertRowIndexToModel(idx);
+                        LogEntry entry = model.getValueAt(idxModel, 0);
+                        sb.append(fmt.apply(entry)).append("\n");
                     }
-                    text = sb.toString();
                 }
-                SwingUtilities.invokeLater(() -> {
-                    details.setText(text);
-                    details.setCaretPosition(0);
-                });
-            });
-        });
-
-        tableRowSorter = new TableRowSorter<>(model) {
-            @Override
-            public void sort() {
-                model.executeRead(super::sort);
+                text = sb.toString();
             }
-        };
+            SwingUtilities.invokeLater(() -> {
+                details.setText(text);
+                details.setCaretPosition(0);
+            });
+        }));
+
         table.setRowSorter(tableRowSorter);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
