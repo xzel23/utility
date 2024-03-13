@@ -211,10 +211,10 @@ public class IoUtilTest {
                 getPath(configuration, fs, "/"),
                 getPattern(configuration, pathStr)
         );
-        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+        List<Path> resultPaths = resultStream.toList();
 
         // It should find one matching path only and it should be "/foo/bar/baz/file.txt"
-        assertTrue(resultPaths.size() == 1);
+        assertEquals(1, resultPaths.size());
         assertPathEquals(
                 resultPaths.get(0),
                 getPath(configuration, fs, "/foo/bar/baz/file.txt")
@@ -238,7 +238,7 @@ public class IoUtilTest {
         );
         List<Path> resultPaths = resultStream.toList();
 
-        assertTrue(resultPaths.size() == 1);
+        assertEquals(1, resultPaths.size());
         assertPathEquals(
                 resultPaths.get(0),
                 getPath(configuration, fs, "/foo/bar/baz/file.txt")
@@ -260,9 +260,9 @@ public class IoUtilTest {
                 getPath(configuration, fs, "/foo"),
                 getPattern(configuration, "bar/baz/*.txt")
         );
-        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+        List<Path> resultPaths = resultStream.toList();
 
-        assertTrue(resultPaths.size() == 1);
+        assertEquals(1, resultPaths.size());
         assertPathEquals(
                 resultPaths.get(0),
                 getPath(configuration, fs, "/foo/bar/baz/file.txt")
@@ -284,9 +284,9 @@ public class IoUtilTest {
                 getPath(configuration, fs, "/foo"),
                 getPattern(configuration, "*.txt")
         );
-        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+        List<Path> resultPaths = resultStream.toList();
 
-        assertTrue(resultPaths.size() == 1);
+        assertEquals(1, resultPaths.size());
         assertPathEquals(
                 resultPaths.get(0),
                 getPath(configuration, fs, "/foo/file.txt")
@@ -307,9 +307,9 @@ public class IoUtilTest {
                 getPath(configuration, fs, "/foo"),
                 getPattern(configuration, "bar/baz/*.txt")
         );
-        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+        List<Path> resultPaths = resultStream.toList();
 
-        assertTrue(resultPaths.size() == 1);
+        assertEquals(1, resultPaths.size());
         assertPathEquals(
                 resultPaths.get(0),
                 getPath(configuration, fs, "/foo/bar/baz/file.txt")
@@ -331,7 +331,7 @@ public class IoUtilTest {
                 getPath(configuration, fs, "/foo"),
                 getPattern(configuration, "**/*.txt")
         );
-        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+        List<Path> resultPaths = resultStream.toList();
 
         assertEquals(3, resultPaths.size());
         assertTrue(resultPaths.contains(getPath(configuration, fs, "/foo/a/a_file.txt")));
@@ -354,9 +354,9 @@ public class IoUtilTest {
                 getPath(configuration, fs, "/foo"),
                 getPattern(configuration, "bar/baz/file.txt")
         );
-        List<Path> resultPaths = resultStream.collect(Collectors.toList());
+        List<Path> resultPaths = resultStream.toList();
 
-        assertTrue(resultPaths.size() == 1);
+        assertEquals(1, resultPaths.size());
         assertPathEquals(
                 resultPaths.get(0),
                 getPath(configuration, fs, "/foo/bar/baz/file.txt")
@@ -377,7 +377,7 @@ public class IoUtilTest {
 
         assertTrue(txtFiles.contains(testDirectory.resolve("test1.txt")));
         assertTrue(txtFiles.contains(testDirectory.resolve("test3.txt")));
-        assertTrue(txtFiles.size() == 2);
+        assertEquals(2, txtFiles.size());
     }
 
     @ParameterizedTest

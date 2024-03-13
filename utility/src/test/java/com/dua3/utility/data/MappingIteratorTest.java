@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MappingIteratorTest {
     @Test
@@ -32,7 +33,7 @@ class MappingIteratorTest {
         MappingIterator<String, String> mappingIterator = new MappingIterator<>(strings, repeat);
 
         // execute & validate
-        assertEquals(true, mappingIterator.hasNext());
+        assertTrue(mappingIterator.hasNext());
     }
 
     @Test

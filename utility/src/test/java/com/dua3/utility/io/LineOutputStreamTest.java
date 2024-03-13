@@ -13,11 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class LineOutputStreamTest {
 
-    /**
-     * Test for the write(int b) method.
-     *
-     * This test checks that the write(int b) method correctly writes bytes to the output stream and splits them into lines.
-     */
     @Test
     public void testWrite_UnixLineEnd() throws IOException {
         List<String> outputLines = new ArrayList<>();

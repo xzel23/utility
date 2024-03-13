@@ -96,7 +96,7 @@ public class TextAttributesTest {
         assertNotEquals(ta1.hashCode(), ta3.hashCode());
         assertNotEquals(ta1.hashCode(), ta4.hashCode());
         assertNotEquals(ta3.hashCode(), ta4.hashCode());
-        assertTrue(ta1.equals(ta2));
+        assertEquals(ta1, ta2);
     }
 
     @ParameterizedTest
