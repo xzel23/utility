@@ -78,10 +78,10 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
 
     /**
      * Dispatches a log event to the list of log entry handlers.
-     *
+     * <p>
      * This method iterates over the list of log entry handlers and invokes the `handleEntry` method
      * on each not garbage collected handler.
-     *
+     * <p>
      * If any garbage collected log entry handler is detected, the log entry list is cleaned up.
      *
      * @param event the log event to be appended

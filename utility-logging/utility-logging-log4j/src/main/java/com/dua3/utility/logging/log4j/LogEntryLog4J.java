@@ -120,7 +120,7 @@ public final class LogEntryLog4J implements LogEntry {
 
     /**
      * Translates a Log4J Level object to a custom LogLevel object.
-     *
+     * <p>
      * This method takes a Log4J Level object as parameter and returns the corresponding custom LogLevel object.
      * The translation is based on the integer level value of the Log4J Level object.
      *

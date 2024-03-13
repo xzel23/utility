@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * This class represents a logger implementation using the SLF4J logging framework. It extends the AbstractLogger class.
- *
+ * <p>
  * It is used to forward SLF4J log messages to applications.
  */
 public class LoggerSlf4j extends AbstractLogger {
