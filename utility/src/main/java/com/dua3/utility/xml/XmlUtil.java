@@ -475,7 +475,7 @@ public final class XmlUtil {
         try {
             prettyPrint(writer, parse(xml));
         } catch (SAXException e) {
-            LOG.warn("could not parse XML");
+            LOG.warn("could not parse XML, writing unchanged data");
             writer.write(xml);
         }
     }
@@ -503,7 +503,7 @@ public final class XmlUtil {
         try {
             prettyPrint(new OutputStreamWriter(out, cs), parse(xml));
         } catch (SAXException e) {
-            LOG.warn("could not parse XML");
+            LOG.warn("could not parse XML, writing unchanged data to stream");
             try (Writer writer = new OutputStreamWriter(out, cs)) {
                 writer.write(xml);
             }
