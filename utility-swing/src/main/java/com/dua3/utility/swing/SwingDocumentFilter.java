@@ -1,5 +1,7 @@
 package com.dua3.utility.swing;
 
+import com.dua3.cabe.annotations.Nullable;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
@@ -36,12 +38,12 @@ public class SwingDocumentFilter extends DocumentFilter {
     }
 
     @Override
-    public void insertString(DocumentFilter.FilterBypass fb, int offset, String s, AttributeSet attr) throws BadLocationException {
+    public void insertString(DocumentFilter.FilterBypass fb, int offset, String s, @Nullable AttributeSet attr) throws BadLocationException {
         fb.insertString(offset, processor.apply(s), attr);
     }
 
     @Override
-    public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String s, AttributeSet attrs) throws BadLocationException {
+    public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String s, @Nullable AttributeSet attrs) throws BadLocationException {
         fb.replace(offset, length, processor.apply(s), attrs);
     }
 
