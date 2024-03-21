@@ -167,6 +167,10 @@ the parameter.
 
 ## Changes
 
+### 12.0.9
+
+- allow null attr parameter for SwingDocumentFilter methods replace() and insertString()
+
 ### 12.0.8
 
 - javadoc updates
