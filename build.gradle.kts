@@ -73,7 +73,6 @@ subprojects {
 
         // LOG4J
         implementation(rootProject.libs.log4j.api)
-        testImplementation(rootProject.libs.log4j.core)
     }
 
     idea {
@@ -88,6 +87,12 @@ subprojects {
         suites {
             val test by getting(JvmTestSuite::class) {
                 useJUnitJupiter()
+
+                dependencies {
+                    implementation(rootProject.libs.log4j.core)
+                    implementation(rootProject.libs.jimfs)
+                    implementation(rootProject.libs.mockito)
+                }
             }
         }
     }
@@ -174,15 +179,6 @@ subprojects {
 
     // === SPOTBUGS ===
     spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
-
-    configurations.named("spotbugs").configure {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "org.ow2.asm") {
-                useVersion("9.5")
-                because("Asm 9.5 is required for JDK 21 support")
-            }
-        }
-    }
 
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask>() {
         reports.create("html") {

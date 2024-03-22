@@ -29,7 +29,7 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.51.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.0.8")
+            plugin("spotbugs", "com.github.spotbugs").version("6.0.9")
             plugin("cabe", "com.dua3.cabe").version("2.1.2")
 
             version("cabe-annotations", "2.0")
@@ -38,7 +38,7 @@ dependencyResolutionManagement {
             version("slf4j", "2.0.12")
             version("jimfs", "1.3.0")
             version("miglayout", "11.3")
-            version("spotbugs", "4.8.2")
+            version("spotbugs", "4.8.3")
             version("mockito", "5.11.0")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe-annotations")
