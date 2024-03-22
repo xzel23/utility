@@ -10,6 +10,11 @@ import java.util.List;
  */
 public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
+    /**
+     * Create a converter for the given argument.
+     * @param text the text to be converted
+     * @return new converter instance
+     */
     protected abstract TagBasedConverterImpl<T> createConverter(RichText text);
 
     @Override

@@ -126,6 +126,11 @@ public interface ProgressTracker<T> {
             this.terminal = terminal;
         }
 
+        /**
+         * Determines if the task is in a terminal state.
+         *
+         * @return {@code true} if the task is in a terminal state, {@code false} otherwise.
+         */
         public boolean isTerminal() {
             return terminal;
         }

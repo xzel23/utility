@@ -31,6 +31,13 @@ public abstract class Option<T> {
     private Consumer<Collection<T>> handler = values -> {
     };
 
+    /**
+     * Represents an option with a set of names, a mapper function to convert from String to the option's type, and a formatter function to convert the option's type to a String.
+     *
+     * @param mapper    the function to map a String to the option's type
+     * @param formatter the function to format the option's type to a String
+     * @param names     the names associated with the option
+     */
     protected Option(Function<String, ? extends T> mapper,
                      Function<? super T, String> formatter,
                      String... names) {
@@ -41,6 +48,15 @@ public abstract class Option<T> {
         this.names = names.clone();
     }
 
+    /**
+     * Sets the arity (minimum and maximum number of arguments) for this option.
+     *
+     * @param minArity the minimum number of arguments required
+     * @param maxArity the maximum number of arguments allowed
+     * @return this option with the arity set
+     * @throws IllegalArgumentException if the minimum arity is negative, the minimum arity is greater than the maximum
+     *         arity, or arity has already been set
+     */
     protected Option<T> arity(int minArity, int maxArity) {
         LangUtil.check(minArity >= 0, "min arity is negative");
         LangUtil.check(minArity <= maxArity, "min arity > max arity");
@@ -52,6 +68,14 @@ public abstract class Option<T> {
         return this;
     }
 
+    /**
+     * Sets the minimum and maximum number of occurrences for this option.
+     *
+     * @param min the minimum number of occurrences
+     * @param max the maximum number of occurrences
+     * @return the modified Option with the occurrences set
+     * @throws IllegalArgumentException if the minimum occurrences is negative or greater than the maximum occurrences or the number of occurrences have already been set
+     */
     protected Option<T> occurrence(int min, int max) {
         LangUtil.check(min >= 0, "minimum occurrences is negative");
         LangUtil.check(min <= max, "minimum occurrences > max occurrences");

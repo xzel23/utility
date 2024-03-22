@@ -30,6 +30,9 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
     /**
      * Constructor for a node in a file tree.
+     * @param parent the parent node or {@code null} for a root node
+     * @param path the path of the file or directory represented by this node
+     * @param lazy if the child nodes should be lazily added to improve performance for collapsed subtrees
      */
     protected FileTreeNode(@Nullable T parent, Path path, boolean lazy) {
         this.parent = parent;
