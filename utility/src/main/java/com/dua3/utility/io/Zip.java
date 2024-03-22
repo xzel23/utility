@@ -10,11 +10,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * A Class helping with creation of zip files.
+ * A Class helping with the creation of zip files.
  */
 public class Zip implements AutoCloseable, Flushable {
 
-    private static final int BUFFER_SIZE = 8 * 1024;
     private final ZipOutputStream zout;
     private String path = "";
 
@@ -52,12 +51,7 @@ public class Zip implements AutoCloseable, Flushable {
      */
     public void add(String filename, InputStream in) throws IOException {
         addFileEntry(filename);
-        byte[] buffer = new byte[BUFFER_SIZE];
-
-        int n;
-        while ((n = in.read(buffer)) >= 0) {
-            zout.write(buffer, 0, n);
-        }
+        in.transferTo(zout);
     }
 
     private void addFileEntry(String filename) throws IOException {
