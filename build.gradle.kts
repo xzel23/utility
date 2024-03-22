@@ -10,6 +10,7 @@ import java.net.URI
 
 plugins {
     id("java-library")
+    id("jvm-test-suite")
     id("maven-publish")
     id("version-catalog")
     id("signing")
@@ -41,6 +42,7 @@ subprojects {
     val isReleaseVersion = !project.version.toString().endsWith("SNAPSHOT")
 
     apply(plugin = "java-library")
+    apply(plugin = "jvm-test-suite")
     apply(plugin = "maven-publish")
     apply(plugin = "version-catalog")
     apply(plugin = "signing")
@@ -72,11 +74,6 @@ subprojects {
         // LOG4J
         implementation(rootProject.libs.log4j.api)
         testImplementation(rootProject.libs.log4j.core)
-
-        // JUnit
-        testImplementation(rootProject.libs.junit.jupiter.api)
-        testImplementation(rootProject.libs.junit.jupiter.params)
-        testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
     }
 
     idea {
@@ -87,8 +84,12 @@ subprojects {
         }
     }
 
-    tasks.test {
-        useJUnitPlatform()
+    testing {
+        suites {
+            val test by getting(JvmTestSuite::class) {
+                useJUnitJupiter()
+            }
+        }
     }
 
     testlogger {

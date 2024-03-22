@@ -55,10 +55,6 @@ dependencyResolutionManagement {
             library("log4j-slf4j2", "org.apache.logging.log4j", "log4j-slf4j2-impl").versionRef("log4j")
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
 
-            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
-            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
-            library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")
-
             library("jimfs", "com.google.jimfs", "jimfs").versionRef("jimfs")
             library("mockito", "org.mockito", "mockito-core").versionRef("mockito")
         }
