@@ -167,6 +167,13 @@ the parameter.
 
 ## Changes
 
+### 12.1.0
+
+- add TextUtil.digest() methods to support other digests than MD5
+- digests can be calculated on streams without loading the full data into memory
+- add IoUtil.zip() and unzip() methods
+- javadoc additions
+
 ### 12.0.9
 
 - allow null attr parameter for SwingDocumentFilter methods replace() and insertString()
