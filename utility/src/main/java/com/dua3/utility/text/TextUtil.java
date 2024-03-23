@@ -11,9 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -548,13 +550,28 @@ public final class TextUtil {
     }
 
     /**
+     * Get MD5 digest as hex string.
+     *
+     * @param in the stream to read data from
+     * @return the MD5 digest as hex string
+     * @throws IOException if an I/O error occurs
+     */
+    public static String getMD5String(InputStream in) throws IOException {
+        return HexFormat.of().formatHex(getMD5(in));
+    }
+
+    /**
      * Get MD5 digest.
      *
      * @param text the text for which to calculate the digest
      * @return the MD5 digest as byte array
      */
     public static byte[] getMD5(String text) {
-        return getMD5(text.getBytes(StandardCharsets.UTF_8));
+        try {
+            return getDigest("MD5", text.getBytes(StandardCharsets.UTF_8));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -565,11 +582,82 @@ public final class TextUtil {
      */
     public static byte[] getMD5(byte[] data) {
         try {
-            return MessageDigest.getInstance("MD5").digest(data);
+            return getDigest("MD5", data);
         } catch (NoSuchAlgorithmException e) {
-            // this should never happen
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * Get MD5 digest.
+     *
+     * @param in the stream to read data from
+     * @return the MD5 digest as byte array
+     * @throws IOException if an I/O error occurs
+     */
+    public static byte[] getMD5(InputStream in) throws IOException {
+        try {
+            return getDigest("MD5", in);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Get digest.
+     *
+     * @param algorithm the algorithm to use
+     * @param data the data for which to calculate the digest
+     * @return the digest as byte array
+     * @throws NoSuchAlgorithmException if the algorithm is not implemented
+     */
+    public static byte[] getDigest(String algorithm, byte[] data) throws NoSuchAlgorithmException {
+        return MessageDigest.getInstance(algorithm).digest(data);
+    }
+
+    /**
+     * Get digest.
+     *
+     * @param algorithm the algorithm to use
+     * @param in the stream to read data from
+     * @return the digest as byte array
+     * @throws IOException if an I/O error occurs
+     * @throws NoSuchAlgorithmException if the algorithm is not implemented
+     */
+    public static byte[] getDigest(String algorithm, InputStream in) throws NoSuchAlgorithmException, IOException {
+        MessageDigest md = MessageDigest.getInstance(algorithm);
+        try (DigestInputStream dis = new DigestInputStream(in, md)) {
+            byte[] buffer = new byte[2048];
+            while (dis.read(buffer) != -1) {
+                // Reading data here to advance the stream, digest is updated automatically by DigestInputStream
+            }
+            return md.digest();
+        }
+    }
+
+    /**
+     * Get digest as hex string.
+     *
+     * @param algorithm the algorithm to use
+     * @param data the data for which to calculate the digest
+     * @return the MD5 digest as hex string
+     * @throws NoSuchAlgorithmException if the algorithm is not implemented
+     */
+    public static String getDigestString(String algorithm, byte[] data) throws NoSuchAlgorithmException {
+        return HexFormat.of().formatHex(getDigest(algorithm, data));
+    }
+
+    /**
+     * Get digest as hex string.
+     *
+     * @param algorithm the algorithm to use
+     * @param in the stream to read data from
+     * @return the MD5 digest as hex string
+     * @throws IOException if an I/O error occurs
+     * @throws NoSuchAlgorithmException if the algorithm is not implemented
+     */
+    public static String getDigestString(String algorithm, InputStream in) throws NoSuchAlgorithmException, IOException {
+        return HexFormat.of().formatHex(getDigest(algorithm, in));
     }
 
     /**
