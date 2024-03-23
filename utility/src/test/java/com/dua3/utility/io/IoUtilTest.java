@@ -5,20 +5,34 @@
 
 package com.dua3.utility.io;
 
+import com.dua3.utility.data.DataUtil;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.TextUtil;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -394,4 +408,81 @@ public class IoUtilTest {
         assertTrue(pyFiles.isEmpty());
     }
 
+    /**
+     * Creates a file system for testing the zip functionality.
+     *
+     * @param configuration the configuration object for the file system
+     * @param rootPath the root path for the created file system
+     * @param zipUrl the URL of the zip file to be used for creating the file system
+     * @return the created file system
+     * @throws IOException if an I/O error occurs during the creation process
+     */
+    static FileSystem createFileSystemForZipTest(Configuration configuration, String rootPath, URL zipUrl) throws IOException {
+        FileSystem fs = Jimfs.newFileSystem(configuration);
+        Path data = fs.getPath(normalize(configuration, rootPath));
+        Files.createDirectories(data);
+        IoUtil.unzip(zipUrl, data);
+        return fs;
+    }
+
+    @ParameterizedTest
+    @MethodSource("jimFsConfigurations")
+    void testZip(Configuration configuration) throws IOException {
+        URL zipUrl = LangUtil.getResourceURL(this.getClass(), "test.zip");
+
+        String rootPath = "/testZip";
+        try (FileSystem fs = createFileSystemForZipTest(configuration, rootPath, zipUrl)) {
+            Path root = fs.getPath(normalize(configuration, rootPath));
+
+            Map<String,String> expected = Map.of(
+                    "test", "",
+                    "test/1", "",
+                    "test/1/file.txt", "b4e448e8600fa63f41cc30e5e784f75c",
+                    "test/1/empty_directory", "",
+                    "test/1/.hidden_file", "62dd8104749e42d09f8ecfde4ea6ca2f",
+                    "test/README.md", "46f8fd89ede71401240d2ba07dda83d5"
+            );
+
+            // test that the filesystem content is correct (this also test unzip result)
+            Path source = root.resolve("test");
+            Map<String, String> sourceHashes = createHashes(source);
+            assertEquals(expected, sourceHashes);
+
+            // create a zip file "test.zip" with the contents of the "test" folder
+            Path destinationZip = root.resolve("test.zip");
+            assertDoesNotThrow(() -> IoUtil.zip(destinationZip, source));
+
+            Path destinationFolder = root.resolve("unzipped");
+            Files.createDirectories(destinationFolder);
+            IoUtil.unzip(destinationZip.toUri().toURL(), destinationFolder);
+
+            Map<String, String> destinationHashes = createHashes(destinationFolder.resolve("test"));
+            assertEquals(expected, destinationHashes);
+        }
+    }
+
+    /**
+     * Creates a map of file paths and their corresponding hashes for a given folder.
+     * Directories are assigned the empty string.
+     *
+     * @param dir the path of the folder to create hashes from
+     * @throws IOException if an I/O error occurs during the hash creation process
+     */
+    private Map<String, String> createHashes(Path dir) throws IOException {
+        Map<String, String> m = new HashMap<>();
+        Path parent = LangUtil.orElse(dir.getParent(), dir.getFileSystem().getPath("."));
+        Files.walk(dir).forEach(p -> {
+            String key = parent.relativize(p).normalize().toString().replace("\\", "/");
+            if (Files.isDirectory(p)) {
+                m.put(key, "");
+            } else {
+                try (InputStream in = Files.newInputStream(p)) {
+                    m.put(key, TextUtil.getMD5String(in));
+                } catch (IOException e) {
+                    throw new UncheckedIOException("Failed to read file " + p, e);
+                }
+            }
+        });
+        return m;
+    }
 }

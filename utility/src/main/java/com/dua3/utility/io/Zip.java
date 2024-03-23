@@ -6,11 +6,14 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
  * A Class helping with the creation of zip files.
+ * This class is mainly for creating zip data on the fly.
+ * For zipping the contents of a directory, use {@link IoUtil#zip(Path, Path)} instead.
  */
 public class Zip implements AutoCloseable, Flushable {
 

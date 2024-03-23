@@ -44,7 +44,12 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Utility class for Input/Output.
@@ -628,6 +633,171 @@ public final class IoUtil {
     private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
         //noinspection unchecked
         throw (E) e;
+    }
+
+    /**
+     * Compresses the given files and directories into a zip file and writes it to the specified output stream.
+     *
+     * @param outputFile the path to the output zip file
+     * @param root the root directory for relative paths of files and directories
+     * @throws IOException if an error occurs during the compression process
+     */
+    public static void zip(Path outputFile, Path root) throws IOException {
+        zip(outputFile, root, String.valueOf(root.getFileName()));
+    }
+
+    /**
+     * Compresses the given files and directories into a zip file and writes it to the specified output stream.
+     *
+     * @param outputFile the path to the output zip file
+     * @param root       the root directory for relative paths of files and directories
+     * @param filter     the predicate used to filter the paths to include in the zip file
+     * @throws IOException if an error occurs during the compression process
+     */
+    public static void zip(Path outputFile, Path root, Predicate<? super Path> filter) throws IOException {
+        zip(outputFile, root, String.valueOf(root.getFileName()), filter);
+    }
+
+    /**
+     * Compresses the given files and directories into a zip file and writes it to the specified output stream.
+     *
+     * @param outputFile the output file to write the zip data to
+     * @param root the root directory for relative paths of files and directories
+     * @param zipRoot the root directory within the zip file
+     * @throws IOException if an error occurs during the compression process
+     */
+    public static void zip(Path outputFile, Path root, String zipRoot) throws IOException {
+        try (OutputStream out = Files.newOutputStream(outputFile);
+             Stream<Path> paths = Files.walk(root)) {
+            zip(out, root, zipRoot, paths);
+        }
+    }
+
+    /**
+     * Compresses the given files and directories into a zip file and writes it to the specified output stream.
+     *
+     * @param outputFile the path to the output zip file
+     * @param root the root directory for relative paths of files and directories
+     * @param zipRoot the root directory within the zip file
+     * @param filter the predicate used to filter the paths to include in the zip file
+     * @throws IOException if an error occurs during the compression process
+     */
+    public static void zip(Path outputFile, Path root, String zipRoot, Predicate<? super Path> filter) throws IOException {
+        try (OutputStream out = Files.newOutputStream(outputFile);
+             Stream<Path> paths = Files.walk(root).filter(filter)) {
+            zip(out, root, zipRoot, paths);
+        }
+    }
+
+    /**
+     * Compresses the given files and directories into a zip file and writes it to the specified output stream.
+     *
+     * @param out the output stream to write the zip data to
+     * @param root the root directory for relative paths of files and directories
+     * @param zipRoot the root directory within the zip file
+     * @param paths the stream of paths to include in the zip file
+     * @throws IOException if an error occurs during the compression process
+     */
+    public static void zip(OutputStream out, Path root, String zipRoot, Stream<? extends Path> paths) throws IOException {
+        try (ZipOutputStream zip = new ZipOutputStream(out)) {
+            paths.map(p -> relativizeZipPath(root, p))
+                    .forEach(p -> {
+                        Path realPath = root.resolve(p);
+                        String zipName = toZipDirectoryName(zipRoot, p);
+                        try {
+                            if (Files.isDirectory(realPath)) {
+                                zip.putNextEntry(new ZipEntry(zipName + "/"));
+                                zip.closeEntry();
+                            } else {
+                                ZipEntry entry = new ZipEntry(zipName);
+                                zip.putNextEntry(entry);
+                                try (InputStream in = Files.newInputStream(realPath)) {
+                                    in.transferTo(zip);
+                                }
+                                zip.closeEntry();
+                            }
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
+    }
+
+    /**
+     * Unzips the contents of a ZIP file to the specified destination directory.
+     * If the entry is a file, it will be extracted. If the entry is a directory, the directory will be created.
+     *
+     * @param zipUrl The URL of the ZIP file to unzip.
+     * @param destination The destination directory where the contents will be extracted to.
+     * @throws IOException if an I/O error occurs while reading or writing the ZIP file.
+     * @throws IllegalArgumentException if the destination is not an existing directory.
+     */
+    public static void unzip(URL zipUrl, Path destination) throws IOException {
+        LangUtil.check(Files.isDirectory(destination), "destination does not exist or is not a directory: %s", destination);
+
+        try (InputStream in = zipUrl.openStream();
+             ZipInputStream zipInputStream = new ZipInputStream(in)) {
+            ZipEntry entry = zipInputStream.getNextEntry();
+
+            while (entry != null) {
+                Path destinationPath = destination.resolve(entry.getName()).normalize();
+
+                if (!destinationPath.startsWith(destination)) {
+                    LOG.warn("possible zip slip attack detected! destination path %s does not start with %s.", destinationPath, destination);
+                    throw new IllegalStateException("invalid path: " + entry.getName());
+                }
+
+                if (entry.isDirectory()) {
+                    // if the entry is a directory, create the directory
+                    Files.createDirectories(destinationPath);
+                } else {
+                    // if the entry is a file, extracts it
+                    Path parent = destinationPath.getParent();
+                    LangUtil.check(parent != null, "destination does not have a parent: %s", destination);
+                    if (!Files.isDirectory(destinationPath)) {
+                        Files.createDirectories(parent);
+                    }
+                    try (OutputStream out = Files.newOutputStream(destinationPath)) {
+                        zipInputStream.transferTo(out);
+                    }
+                }
+                zipInputStream.closeEntry();
+                entry = zipInputStream.getNextEntry();
+            }
+        }
+    }
+
+    /**
+     * Convert the given path to a directory name within a zip.
+     *
+     * @param ziproot the root directory of the zip
+     * @param p the path to be converted
+     * @return the directory name within the zip
+     */
+    private static String toZipDirectoryName(String ziproot, Path p) {
+        String canonicalPathString = IntStream.range(0, p.getNameCount())
+                .mapToObj(p::getName)
+                .map(Path::toString)
+                .collect(Collectors.joining("/"));
+        return ziproot + "/" + canonicalPathString;
+    }
+
+    /**
+     * Relativize the given path relative to the specified root path.
+     *
+     * @param root the root path against which to relativize the path
+     * @param path the path to be relativized
+     * @return the relativized path
+     * @throws UncheckedIOException if the relativized path is not a sibling of the root path
+     */
+    private static Path relativizeZipPath(Path root, Path path) {
+        Path relativizedPath = root.relativize(path).normalize();
+        if (relativizedPath.startsWith("..")) {
+            throw new UncheckedIOException(new IOException(path.toString() + " is not a sibling of " + root));
+        }
+        return relativizedPath;
     }
 
     /**
