@@ -33,7 +33,6 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("2.1.2")
 
             version("cabe-annotations", "2.0")
-            version("junit", "5.10.2")
             version("log4j", "2.23.1")
             version("slf4j", "2.0.12")
             version("jimfs", "1.3.0")
