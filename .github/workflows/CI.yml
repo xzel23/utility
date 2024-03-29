@@ -91,8 +91,8 @@ jobs:
       - name: Generate badges
         id: badges
         run: |
-          echo "::set-output name=compile_badge::https://img.shields.io/badge/compile-${{ needs.compile.outputs.compile_status }}-brightgreen.svg?style=flat-square"
-          echo "::set-output name=test_badge::https://img.shields.io/badge/test-${{ needs.test.outputs.test_status }}-yellow.svg?style=flat-square"
+          echo "::set-output name=compile_badge::https://img.shields.io/badge/Compile-${{ needs.compile.outputs.compile_status }}-brightgreen.svg?style=flat-square"
+          echo "::set-output name=test_badge::https://img.shields.io/badge/Test-${{ needs.test.outputs.test_status }}-yellow.svg?style=flat-square"
           echo "::set-output name=qodana_badge::https://img.shields.io/badge/Qodana-${{ needs.qodana.outputs.qodana_status }}-orange.svg?style=flat-square"
 
   add-badges:
@@ -101,8 +101,10 @@ jobs:
     steps:
       - uses: wow-actions/add-badges@v1
         with:
-          shields: |
-            ![Compile Status](${{ needs.generate-badges.outputs.compile_badge }})
-            ![Test Status](${{ needs.generate-badges.outputs.test_badge }})
-            ![Qodana Scan Status](${{ needs.generate-badges.outputs.qodana_badge }})
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          badges: |
+            {
+              "Compile Status": "${{ needs.generate-badges.outputs.compile_badge }}",
+              "Test Status": "${{ needs.generate-badges.outputs.test_badge }}",
+              "Qodana Scan Status": "${{ needs.generate-badges.outputs.qodana_badge }}"
+            }
