@@ -1,4 +1,6 @@
-# com.dua3.utility <!-- [START BADGES] --><!-- [END BADGES] -->
+# com.dua3.utility
+<!-- [START BADGES] -->
+<!-- [END BADGES] -->
 
 Some libraries with utility classes.
 
@@ -16,7 +18,7 @@ file [LICENSE](LICENSE) for details.
 
 ## Source
 
-Source code is available at https://gitlab.com/com.dua3/lib/utility.git.
+Source code is available at https://github.com/xzel23/utility.
 
 ## Requirements
 
