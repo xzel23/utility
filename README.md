@@ -1,7 +1,4 @@
-# com.dua3.utility
-[![Compile Status](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
-[![Build Status](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
-[![Qodana Scan Status](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
+# com.dua3.utility <!-- [START BADGES] --><!-- [END BADGES] -->
 
 Some libraries with utility classes.
 
