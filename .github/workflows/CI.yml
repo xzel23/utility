@@ -1,10 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
 name: CI
 
 on:
@@ -14,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  gradle:
+  build:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
@@ -37,10 +30,10 @@ jobs:
         with:
           path: spotbugs.xml
 
-    # disabled - fails with TypeError
-    #      - uses: jwgmeligmeyling/spotbugs-github-action@master
-    #        with:
-    #          path: '**/spotbugs.xml'
+      - name: Set up badge for compile status
+        run: echo "::set-output name=compile_status::success"
+      - name: Set up badge for build status
+        run: echo "::set-output name=build_status::success"
 
   qodana:
     runs-on: ubuntu-latest
@@ -56,3 +49,24 @@ jobs:
         uses: JetBrains/qodana-action@v2023.2.6
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+      - name: Set up badge for Qodana scan status
+        run: echo "::set-output name=qodana_status::success"
+
+  generate-badges:
+    needs: [build, qodana]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate badges
+        id: badges
+        run: echo "::set-output name=compile_badge::https://img.shields.io/badge/compile-$((inputs.build.outputs.compile_status))-brightgreen.svg?style=flat-square && echo '::set-output name=build_badge::https://img.shields.io/badge/build-$((inputs.build.outputs.build_status))-yellow.svg?style=flat-square && echo '::set-output name=qodana_badge::https://img.shields.io/badge/Qodana-$((inputs.qodana.outputs.qodana_status))-orange.svg?style=flat-square"
+
+  add-badges:
+    needs: generate-badges
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wow-actions/add-badges@v1
+        with:
+          shields: |
+            ![Compile Status](${{needs.generate-badges.outputs.compile_badge}})
+            ![Build Status](${{needs.generate-badges.outputs.build_badge}})
+            ![Qodana Scan Status](${{needs.generate-badges.outputs.qodana_badge}})
