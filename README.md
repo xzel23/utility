@@ -1,5 +1,7 @@
 # com.dua3.utility
 <!-- [START BADGES] -->
+<!-- Please keep comment here to allow auto update -->
+
 <!-- [END BADGES] -->
 
 Some libraries with utility classes.
