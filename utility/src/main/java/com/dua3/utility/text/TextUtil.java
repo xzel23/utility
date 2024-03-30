@@ -876,7 +876,7 @@ public final class TextUtil {
      * @param delimiter the delimiter to be used between the elements
      * @return the joined string with each element quoted if necessary
      */
-    public static String joinQuotedIfNeeded(List<? extends Object> args, String delimiter) {
+    public static String joinQuotedIfNeeded(List<?> args, String delimiter) {
         return args.stream().map(arg -> TextUtil.quoteIfNeeded(arg != null ? arg.toString() : "")).collect(Collectors.joining(delimiter));
     }
 
@@ -887,7 +887,7 @@ public final class TextUtil {
      * @param args      the list of elements to be joined
      * @return the joined string with each element quoted if necessary
      */
-    public static String joinQuotedIfNeeded(List<? extends Object> args) {
+    public static String joinQuotedIfNeeded(List<?> args) {
         return joinQuotedIfNeeded(args, ", ");
     }
 
@@ -900,7 +900,7 @@ public final class TextUtil {
      * @return A single string that is the result of joining all the elements, with each element quoted and separated
      *         by a comma and space.
      */
-    public static String joinQuoted(List<? extends Object> args, String delimiter) {
+    public static String joinQuoted(List<?> args, String delimiter) {
         return args.stream().map(arg -> TextUtil.quote(arg != null ? arg.toString() : "")).collect(Collectors.joining(delimiter));
     }
 
@@ -912,7 +912,7 @@ public final class TextUtil {
      * @return A single string that is the result of joining all the elements, with each element quoted and separated
      *         by a comma and space.
      */
-    public static String joinQuoted(List<? extends Object> args) {
+    public static String joinQuoted(List<?> args) {
         return joinQuoted(args, ", ");
     }
 

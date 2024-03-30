@@ -47,7 +47,7 @@ class PredefinedDateTimeFormatTest {
         DateTimeFormatter formatter = format.getDateTimeFormatter(locale);
 
         // Validate the date formatting
-        assertEquals(expectedFormat, formatter.format(date), format.getClass().getSimpleName()+"."+format.name()+"@"+locale);
+        assertEquals(expectedFormat, formatter.format(date), format.getClass().getSimpleName() + "." + format.name() + "@" + locale);
     }
 
     private static Stream<Arguments> provideParametersForDateFormatTesting() {
@@ -117,7 +117,7 @@ class PredefinedDateTimeFormatTest {
         DateTimeFormatter formatter = format.getTimeFormatter(locale);
 
         // Validate the date formatting
-        assertEquals(expectedFormat, formatter.format(time), format.getClass().getSimpleName()+"."+format.name()+"@"+locale);
+        assertEquals(expectedFormat, formatter.format(time), format.getClass().getSimpleName() + "." + format.name() + "@" + locale);
     }
 
 }

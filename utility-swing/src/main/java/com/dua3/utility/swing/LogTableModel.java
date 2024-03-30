@@ -54,8 +54,8 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
                         sz -= remove;
                     }
 
-                    if (sz>oldSz) {
-                        fireTableRowsInserted(oldSz, sz-1);
+                    if (sz > oldSz) {
+                        fireTableRowsInserted(oldSz, sz - 1);
                     }
                 } catch (InterruptedException e) {
                     LOG.debug("interrupted", e);

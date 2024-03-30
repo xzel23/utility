@@ -61,9 +61,7 @@ public final class IoOptions {
      * @return a SimpleOption object representing the input option
      */
     public static SimpleOption<Path> input() {
-        return SimpleOption.create(
-                Paths::get,
-                "-i", "--input")
+        return SimpleOption.create(Paths::get, "-i", "--input")
                 .displayName("Input")
                 .description("set input");
     }
@@ -74,9 +72,7 @@ public final class IoOptions {
      * @return a SimpleOption object representing the output option
      */
     public static SimpleOption<Path> output() {
-        return SimpleOption.create(
-                Paths::get,
-                "-o", "--output")
+        return SimpleOption.create(Paths::get, "-o", "--output")
                 .displayName("Output")
                 .description("set output");
     }

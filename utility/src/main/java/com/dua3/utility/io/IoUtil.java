@@ -795,7 +795,7 @@ public final class IoUtil {
     private static Path relativizeZipPath(Path root, Path path) {
         Path relativizedPath = root.relativize(path).normalize();
         if (relativizedPath.startsWith("..")) {
-            throw new UncheckedIOException(new IOException(path.toString() + " is not a sibling of " + root));
+            throw new UncheckedIOException(new IOException(path + " is not a sibling of " + root));
         }
         return relativizedPath;
     }

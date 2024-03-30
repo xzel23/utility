@@ -331,7 +331,7 @@ public class Stopwatch {
 
         @Override
         public String toString() {
-            if (n==null) {
+            if (n == null) {
                 n = name.get();
             }
             return n;

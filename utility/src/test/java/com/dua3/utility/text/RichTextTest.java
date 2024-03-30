@@ -237,7 +237,7 @@ public class RichTextTest {
         assertFalse(ignoreFontFamily.test(text, text.wrap(Style.ITALIC)));
         assertFalse(ignoreFontFamily.test(sans, sans.wrap(Style.ITALIC)));
 
-        Function<String,String> fontMapper = s -> s.replaceFirst("[A-Z]{6}\\+", "");
+        Function<String, String> fontMapper = s -> s.replaceFirst("[A-Z]{6}\\+", "");
         BiPredicate<RichText, RichText> mappedFonts = RichText.equalizer(ComparisonSettings.builder().setFontMapper(fontMapper).build());
         assertFalse(ignoreCase.test(arial, arialSubset));
         assertTrue(mappedFonts.test(text, text));
@@ -301,7 +301,7 @@ public class RichTextTest {
         RichText r = builder.toRichText();
 
         for (int i = 0; i < s.length() - 1; i++) {
-            for (int j=i; j<s.length(); j++) {
+            for (int j = i; j < s.length(); j++) {
                 CharSequence expected = s.subSequence(i, j);
                 System.out.println(expected);
                 RichText subSequence = r.subSequence(i, j);

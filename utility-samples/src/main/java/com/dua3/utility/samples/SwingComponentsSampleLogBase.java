@@ -209,7 +209,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                         System.out.format("That was %d messages%n", current);
                     }
                 }
-            }, "Logger-Thread-"+implementation);
+            }, "Logger-Thread-" + implementation);
             thread.setDaemon(true);
             thread.start();
         }

@@ -37,14 +37,14 @@ class FontDefTest {
     void testFamily() {
         String family = "Times New Roman";
         FontDef fontDef = FontDef.family(family);
-        assertEquals(fontDef.getFamily(), family);
+        assertEquals(family, fontDef.getFamily());
     }
 
     @Test
     void testSize() {
         Float size = 12.0f;
         FontDef fontDef = FontDef.size(size);
-        assertEquals(fontDef.getSize(), size);
+        assertEquals(size, fontDef.getSize());
     }
 
     @Test
@@ -58,11 +58,11 @@ class FontDefTest {
     void parseFontspec() {
         String fontspec = "TimesNewRoman-bold-italic-12-red";
         FontDef result = FontDef.parseFontspec(fontspec);
-        Assertions.assertEquals("TimesNewRoman", result.getFamily());
+        assertEquals("TimesNewRoman", result.getFamily());
         assertTrue(result.getBold());
         assertTrue(result.getItalic());
-        Assertions.assertEquals(12, result.getSize());
-        Assertions.assertEquals(Color.valueOf("red"), result.getColor());
+        assertEquals(12, result.getSize());
+        assertEquals(Color.valueOf("red"), result.getColor());
     }
 
     @Test
@@ -83,9 +83,9 @@ class FontDefTest {
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
 
-        assertEquals(fd.getSize(), 10.5f); // 14px = 10.5pt
-        assertEquals(fd.getColor(), Color.WHITE);
-        assertEquals(fd.getFamily(), "Arial");
+        assertEquals(10.5f, fd.getSize()); // 14px = 10.5pt
+        assertEquals(Color.WHITE, fd.getColor());
+        assertEquals("Arial", fd.getFamily());
         assertTrue(fd.getBold());
         assertTrue(fd.getItalic());
     }

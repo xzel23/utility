@@ -43,7 +43,7 @@ public class LineOutputStreamTest {
 
     /**
      * Test for the close() method.
-     *
+     * <p>
      * This test ensures that the close() method flushes the current line, if any, to the output.
      */
     @Test
