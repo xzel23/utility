@@ -59,7 +59,7 @@ jobs:
       qodana_status: ${{ steps.qodana.outputs.qodana_status }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@4
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
