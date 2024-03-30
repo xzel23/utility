@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-@SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait"})
+@SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait", "NonConstantLogger"})
 public abstract class SwingComponentsSampleLogBase extends JFrame {
 
     public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
