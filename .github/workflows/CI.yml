@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  compile:
+  build:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
@@ -27,33 +27,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
 
-      - name: Execute Gradle compile
-        run: ./gradlew compileJava
+      - name: Execute Gradle build
+        run: ./gradlew build
         id: compile
         continue-on-error: false
 
-  test:
-    needs: compile
-    runs-on: ubuntu-latest
-    outputs:
-      test_status: ${{ steps.test.outputs.test_status }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: zulu
-
-      - name: Execute Gradle test
-        run: ./gradlew test
-        id: test
-        continue-on-error: false
-
   qodana:
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     outputs:
       qodana_status: ${{ steps.qodana.outputs.qodana_status }}
