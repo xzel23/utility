@@ -128,5 +128,5 @@ jobs:
                 "badge": "https://img.shields.io/github/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/Release/master?logo=github&style=flat-square",
                 "alt": "qodana",
                 "link": "${{ needs.generate-badges.outputs.qodana_badge }}"
-              },
+              }
             ]
