@@ -8,7 +8,7 @@ import java.util.Locale;
 public abstract class Segment2f {
     private final Path2fImpl path;
 
-    protected Segment2f(Path2fImpl path) {
+    Segment2f(Path2fImpl path) {
         this.path = path;
     }
 
