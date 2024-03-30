@@ -1,12 +1,7 @@
 # com.dua3.utility
-<!-- [START BADGES] -->
-<!-- Please keep comment here to allow auto update -->
-[![MIT License](https://img.shields.io/github/license//?style=flat-square)](/blob/master/LICENSE)
+[![MIT License](https://img.shields.io/github/license//?style=flat-square)](LICENSE)
 [![Language](https://img.shields.io/badge/language-Java-blue.svg?style=flat-square)](https://github.com/topics/java)
-![build](https://img.shields.io/github/workflow/status///Release/master?logo=github&style=flat-square)
-![test](https://img.shields.io/github/workflow/status///Release/master?logo=github&style=flat-square)
-![qodana](https://img.shields.io/github/workflow/status///Release/master?logo=github&style=flat-square)
-<!-- [END BADGES] -->
+[![build](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
 
 Some libraries with utility classes.
 

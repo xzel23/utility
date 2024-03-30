@@ -16,24 +16,21 @@ jobs:
       compile_status: ${{ steps.compile.outputs.compile_status }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: zulu
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
 
       - name: Execute Gradle compile
         run: ./gradlew compileJava
         id: compile
-        continue-on-error: true
-
-      - name: Set compile status
-        run: echo "::set-output name=compile_status::${{ job.status }}"
+        continue-on-error: false
 
   test:
     needs: compile
@@ -42,10 +39,10 @@ jobs:
       test_status: ${{ steps.test.outputs.test_status }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: zulu
@@ -53,80 +50,28 @@ jobs:
       - name: Execute Gradle test
         run: ./gradlew test
         id: test
-        continue-on-error: true
-
-      - name: Set test status
-        run: echo "::set-output name=test_status::${{ job.status }}"
+        continue-on-error: false
 
   qodana:
+    needs: test
     runs-on: ubuntu-latest
     outputs:
       qodana_status: ${{ steps.qodana.outputs.qodana_status }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@4
         with:
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: zulu
 
       - name: Qodana Scan
         id: qodana
-        uses: JetBrains/qodana-action@v2023.2.6
+        uses: JetBrains/qodana-action@v2023.3.2
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-        continue-on-error: true
-
-      - name: Set qodana status
-        run: echo "::set-output name=qodana_status::${{ job.status }}"
-
-  generate-badges:
-    needs: [compile, test, qodana]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Generate badges
-        id: badges
-        run: |
-          echo "::set-output name=compile_badge::https://img.shields.io/badge/Compile-${{ needs.compile.outputs.compile_status }}-brightgreen.svg?style=flat-square"
-          echo "::set-output name=test_badge::https://img.shields.io/badge/Test-${{ needs.test.outputs.test_status }}-yellow.svg?style=flat-square"
-          echo "::set-output name=qodana_badge::https://img.shields.io/badge/Qodana-${{ needs.qodana.outputs.qodana_status }}-orange.svg?style=flat-square"
-
-  add-badges:
-    needs: generate-badges
-    runs-on: ubuntu-latest
-    steps:
-      - uses: wow-actions/add-badges@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          badges: |
-            [
-              {
-                "badge": "https://img.shields.io/github/license/${{ env.repo_owner }}/${{ env.repo_name }}?style=flat-square",
-                "alt": "MIT License",
-                "link": "${{ env.repo_url }}/blob/master/LICENSE"
-              },
-              {
-                "badge": "https://img.shields.io/badge/language-Java-blue.svg?style=flat-square",
-                "alt": "Language",
-                "link": "https://github.com/topics/java"
-              },
-              {
-                "badge": "https://img.shields.io/github/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/Release/master?logo=github&style=flat-square",
-                "alt": "build",
-                "link": "${{ needs.generate-badges.outputs.compile_badge }}"
-              },
-              {
-                "badge": "https://img.shields.io/github/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/Release/master?logo=github&style=flat-square",
-                "alt": "test",
-                "link": "${{ needs.generate-badges.outputs.test_badge }}"
-              },
-              {
-                "badge": "https://img.shields.io/github/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/Release/master?logo=github&style=flat-square",
-                "alt": "qodana",
-                "link": "${{ needs.generate-badges.outputs.qodana_badge }}"
-              }
-            ]
+        continue-on-error: false
