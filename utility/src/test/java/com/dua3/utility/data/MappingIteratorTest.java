@@ -3,8 +3,8 @@ package com.dua3.utility.data;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +39,7 @@ class MappingIteratorTest {
     @Test
     void testHasNextWithoutElements() {
         // setup
-        Iterator<String> emptyIterator = List.<String>of().iterator();
+        Iterator<String> emptyIterator = Collections.emptyIterator();
         Function<String, String> repeat = s -> s.repeat(2);
         MappingIterator<String, String> mappingIterator = new MappingIterator<>(emptyIterator, repeat);
 
