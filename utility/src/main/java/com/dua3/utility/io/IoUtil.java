@@ -745,7 +745,7 @@ public final class IoUtil {
                 Path destinationPath = destination.resolve(entry.getName()).normalize();
 
                 if (!destinationPath.startsWith(destination)) {
-                    LOG.warn("possible zip slip attack detected! destination path %s does not start with %s.", destinationPath, destination);
+                    LOG.warn("possible zip slip attack detected! destination path {} does not start with {}.", destinationPath, destination);
                     throw new IllegalStateException("invalid path: " + entry.getName());
                 }
 
