@@ -6,10 +6,14 @@ import java.util.Locale;
  * Base class for segments that form a {@link Path2f}.
  */
 public abstract class Segment2f {
-    protected final Path2fImpl path;
+    private final Path2fImpl path;
 
     protected Segment2f(Path2fImpl path) {
         this.path = path;
+    }
+
+    protected Vector2f vertex(int idx) {
+        return path.vertex(idx);
     }
 
     /**

@@ -40,12 +40,12 @@ public final class Line2f extends Segment2f {
 
     @Override
     public Vector2f start() {
-        return path.vertex(a);
+        return vertex(a);
     }
 
     @Override
     public Vector2f end() {
-        return path.vertex(b);
+        return vertex(b);
     }
 
     /**

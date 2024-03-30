@@ -40,7 +40,7 @@ public abstract class AbstractCurve2f extends Segment2f {
      * @return the control point
      */
     public Vector2f control(int idx) {
-        return path.vertex(controls[idx]);
+        return vertex(controls[idx]);
     }
 
     @Override

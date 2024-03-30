@@ -35,12 +35,12 @@ public class MoveTo2f extends Segment2f {
 
     @Override
     public Vector2f start() {
-        return path.vertex(idx);
+        return vertex(idx);
     }
 
     @Override
     public Vector2f end() {
-        return path.vertex(idx);
+        return vertex(idx);
     }
 
     @Override

@@ -39,12 +39,12 @@ public class ClosePath2f extends Segment2f {
 
     @Override
     public Vector2f start() {
-        return path.vertex(p);
+        return vertex(p);
     }
 
     @Override
     public Vector2f end() {
-        return path.vertex(q);
+        return vertex(q);
     }
 
     @Override
