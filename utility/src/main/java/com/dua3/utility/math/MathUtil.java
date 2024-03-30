@@ -135,7 +135,7 @@ public final class MathUtil {
      * Find root of function.
      * The root finding uses a modified secant algorithm. The values given as
      * staring points should
-     * be rough approximations of the root, ie the algorithm might fail if the
+     * be rough approximations of the root, i.e., the algorithm might fail if the
      * second order
      * derivative changes sign in the interval [xa,root] or [xb,root].
      *
@@ -205,8 +205,8 @@ public final class MathUtil {
      * root finding.
      *
      * @param f     the function
-     * @param x0    first limit of interval
-     * @param x1    second limit of interval, must be different from {@code x0}
+     * @param x0    first limit of the interval
+     * @param x1    second limit of the interval; it must be different from {@code x0}
      * @param steps maximum number of iterations
      * @param eps   maximum error
      * @return list of all calculated roots
@@ -279,19 +279,19 @@ public final class MathUtil {
     public static int ilog10(double x) {
         LangUtil.check(x > 0.0 && !Double.isInfinite(x), "Illegal argument: %f", x);
 
+        int i;
         if (x >= 1.0) {
-            int i = 0;
+            i = 0;
             while ((x /= 10.0) >= 1.0) {
                 i++;
             }
-            return i;
         } else {
-            int i = -1;
+            i = -1;
             while ((x *= 10.0) < 1.0) {
                 i--;
             }
-            return i;
         }
+        return i;
     }
 
     /**
@@ -332,7 +332,7 @@ public final class MathUtil {
      * instead as the scale calculation will take place only once per instance.
      * <p>
      * Round {@code x} to {@code n} decimal places according to {@link java.math.RoundingMode#HALF_UP},
-     * i.e. 1.5 will be rounded to 2 and -1.5 will be rounded to -1.
+     * i.e., 1.5 will be rounded to 2 and -1.5 will be rounded to -1.
      * <p>
      * The number of places {@code n} may be negative, resulting in rounding taking place before the decimal point,
      * i.e. {@code round(125, -1)=130}.
@@ -394,7 +394,7 @@ public final class MathUtil {
     }
 
     /**
-     * Get operation that performs rounding to a fixed number of decimal places.
+     * Get the operation that performs rounding to a fixed number of decimal places.
      * <p>
      * Round {@code x} to {@code n} decimal places according to the supplied {@link java.math.RoundingMode}.
      * <p>
