@@ -170,6 +170,11 @@ the parameter.
 
 ## Changes
 
+### 12.1.1 (to be released)
+
+- code cleanup and refactorings
+- fix a malformed logging message
+
 ### 12.1.0
 
 - add TextUtil.digest() methods to support other digests than MD5
