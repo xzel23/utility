@@ -103,8 +103,30 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           badges: |
-            {
-              "Compile Status": "${{ needs.generate-badges.outputs.compile_badge }}",
-              "Test Status": "${{ needs.generate-badges.outputs.test_badge }}",
-              "Qodana Scan Status": "${{ needs.generate-badges.outputs.qodana_badge }}"
-            }
+            [
+              {
+                "badge": "https://img.shields.io/github/license/${{ env.repo_owner }}/${{ env.repo_name }}?style=flat-square",
+                "alt": "MIT License",
+                "link": "${{ env.repo_url }}/blob/master/LICENSE"
+              },
+              {
+                "badge": "https://img.shields.io/badge/language-Java-blue.svg?style=flat-square",
+                "alt": "Language",
+                "link": "https://github.com/topics/java"
+              },
+              {
+                "badge": "https://img.shields.io/github/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/Release/master?logo=github&style=flat-square",
+                "alt": "build",
+                "link": "${{ needs.generate-badges.outputs.compile_badge }}"
+              },
+              {
+                "badge": "https://img.shields.io/github/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/Release/master?logo=github&style=flat-square",
+                "alt": "test",
+                "link": "${{ needs.generate-badges.outputs.test_badge }}"
+              },
+              {
+                "badge": "https://img.shields.io/github/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/Release/master?logo=github&style=flat-square",
+                "alt": "qodana",
+                "link": "${{ needs.generate-badges.outputs.qodana_badge }}"
+              },
+            ]
