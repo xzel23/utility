@@ -170,10 +170,12 @@ the parameter.
 
 ## Changes
 
-### 12.1.1 (to be released)
+### 12.1.1
 
 - code cleanup and refactorings
 - fix a malformed logging message
+- set modification date for zip entries
+- fix creation of extra empty file in zip
 
 ### 12.1.0
 
