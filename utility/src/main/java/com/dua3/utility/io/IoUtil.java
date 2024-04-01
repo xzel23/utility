@@ -703,13 +703,14 @@ public final class IoUtil {
             paths.map(p -> relativizeZipPath(root, p))
                     .forEach(p -> {
                         Path realPath = root.resolve(p);
-                        String zipName = toZipDirectoryName(zipRoot, p);
+                        String zipName = toZipName(zipRoot, p);
                         try {
                             if (Files.isDirectory(realPath)) {
                                 zip.putNextEntry(new ZipEntry(zipName + "/"));
                                 zip.closeEntry();
                             } else {
                                 ZipEntry entry = new ZipEntry(zipName);
+                                entry.setTime(Files.getLastModifiedTime(realPath).toMillis());
                                 zip.putNextEntry(entry);
                                 try (InputStream in = Files.newInputStream(realPath)) {
                                     in.transferTo(zip);
@@ -776,12 +777,12 @@ public final class IoUtil {
      * @param p the path to be converted
      * @return the directory name within the zip
      */
-    private static String toZipDirectoryName(String ziproot, Path p) {
+    private static String toZipName(String ziproot, Path p) {
         String canonicalPathString = IntStream.range(0, p.getNameCount())
                 .mapToObj(p::getName)
                 .map(Path::toString)
                 .collect(Collectors.joining("/"));
-        return ziproot + "/" + canonicalPathString;
+        return canonicalPathString.isEmpty() ? ziproot : ziproot + "/" + canonicalPathString;
     }
 
     /**
