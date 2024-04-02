@@ -325,7 +325,12 @@ public final class IoUtil {
      * @return the URI
      */
     public static URI toURI(Path path) {
-        return path.toUri();
+        try {
+            return path.isAbsolute() ? toURI(path) : new URI(null, null, toUnixPath(path), null, null);
+        } catch (URISyntaxException e) {
+            // this should not happen
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
