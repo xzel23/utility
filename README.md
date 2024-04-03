@@ -170,6 +170,10 @@ the parameter.
 
 ## Changes
 
+### 12.1.2
+
+- IoUtil.toURI(Path) returns relative URI when called with relative Path instance
+
 ### 12.1.1
 
 - code cleanup and refactorings

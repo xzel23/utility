@@ -319,14 +319,17 @@ public final class IoUtil {
     }
 
     /**
-     * Get URI for path.
+     * Get the {@link URI} for a path.
+     * <p>
+     * For absolute paths, the result is identical to {@link Path#toUri()}.
+     * For relative paths, a relative URI is returned.
      *
      * @param path the path
      * @return the URI
      */
     public static URI toURI(Path path) {
         try {
-            return path.isAbsolute() ? toURI(path) : new URI(null, null, toUnixPath(path), null, null);
+            return path.isAbsolute() ? path.toUri() : new URI(null, null, toUnixPath(path), null, null);
         } catch (URISyntaxException e) {
             // this should not happen
             throw new IllegalArgumentException(e);

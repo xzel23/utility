@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -207,191 +208,194 @@ public class IoUtilTest {
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void glob(Configuration configuration) throws IOException {
-        FileSystem fs = Jimfs.newFileSystem(configuration);
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
 
-        // Setup directory structure in mock file system
-        Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
+            // Setup directory structure in mock file system
+            Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
 
-        String pathStr = "foo/bar/baz/*.txt";
-        Stream<Path> resultStream = IoUtil.glob(
-                getPath(configuration, fs, "/"),
-                getPattern(configuration, pathStr)
-        );
-        List<Path> resultPaths = resultStream.toList();
+            String pathStr = "foo/bar/baz/*.txt";
+            Stream<Path> resultStream = IoUtil.glob(
+                    getPath(configuration, fs, "/"),
+                    getPattern(configuration, pathStr)
+            );
+            List<Path> resultPaths = resultStream.toList();
 
-        // It should find one matching path only and it should be "/foo/bar/baz/file.txt"
-        assertEquals(1, resultPaths.size());
-        assertPathEquals(
-                resultPaths.get(0),
-                getPath(configuration, fs, "/foo/bar/baz/file.txt")
-        );
+            // It should find one matching path only and it should be "/foo/bar/baz/file.txt"
+            assertEquals(1, resultPaths.size());
+            assertPathEquals(
+                    resultPaths.get(0),
+                    getPath(configuration, fs, "/foo/bar/baz/file.txt")
+            );
+        }
     }
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void glob_absoluteBase_absolutePattern(Configuration configuration) throws IOException {
-        FileSystem fs = Jimfs.newFileSystem(configuration);
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            // Setup directory structure in mock file system
+            Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
 
-        // Setup directory structure in mock file system
-        Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
+            Stream<Path> resultStream = IoUtil.glob(
+                    getPath(configuration, fs, "/foo"),
+                    getPattern(configuration, "/foo/bar/baz/*.txt")
+            );
+            List<Path> resultPaths = resultStream.toList();
 
-        Stream<Path> resultStream = IoUtil.glob(
-                getPath(configuration, fs, "/foo"),
-                getPattern(configuration, "/foo/bar/baz/*.txt")
-        );
-        List<Path> resultPaths = resultStream.toList();
-
-        assertEquals(1, resultPaths.size());
-        assertPathEquals(
-                resultPaths.get(0),
-                getPath(configuration, fs, "/foo/bar/baz/file.txt")
-        );
+            assertEquals(1, resultPaths.size());
+            assertPathEquals(
+                    resultPaths.get(0),
+                    getPath(configuration, fs, "/foo/bar/baz/file.txt")
+            );
+        }
     }
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void glob_relativeBase_relativePattern(Configuration configuration) throws IOException {
-        FileSystem fs = Jimfs.newFileSystem(configuration);
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            // Setup directory structure in mock file system
+            Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
 
-        // Setup directory structure in mock file system
-        Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
+            Stream<Path> resultStream = IoUtil.glob(
+                    getPath(configuration, fs, "/foo"),
+                    getPattern(configuration, "bar/baz/*.txt")
+            );
+            List<Path> resultPaths = resultStream.toList();
 
-        Stream<Path> resultStream = IoUtil.glob(
-                getPath(configuration, fs, "/foo"),
-                getPattern(configuration, "bar/baz/*.txt")
-        );
-        List<Path> resultPaths = resultStream.toList();
-
-        assertEquals(1, resultPaths.size());
-        assertPathEquals(
-                resultPaths.get(0),
-                getPath(configuration, fs, "/foo/bar/baz/file.txt")
-        );
+            assertEquals(1, resultPaths.size());
+            assertPathEquals(
+                    resultPaths.get(0),
+                    getPath(configuration, fs, "/foo/bar/baz/file.txt")
+            );
+        }
     }
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void glob_relativeBase_relativePatternFileInBaseDir(Configuration configuration) throws IOException {
-        FileSystem fs = Jimfs.newFileSystem(configuration);
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            // Setup directory structure in mock file system
+            Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
 
-        // Setup directory structure in mock file system
-        Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
+            Stream<Path> resultStream = IoUtil.glob(
+                    getPath(configuration, fs, "/foo"),
+                    getPattern(configuration, "*.txt")
+            );
+            List<Path> resultPaths = resultStream.toList();
 
-        Stream<Path> resultStream = IoUtil.glob(
-                getPath(configuration, fs, "/foo"),
-                getPattern(configuration, "*.txt")
-        );
-        List<Path> resultPaths = resultStream.toList();
-
-        assertEquals(1, resultPaths.size());
-        assertPathEquals(
-                resultPaths.get(0),
-                getPath(configuration, fs, "/foo/file.txt")
-        );
+            assertEquals(1, resultPaths.size());
+            assertPathEquals(
+                    resultPaths.get(0),
+                    getPath(configuration, fs, "/foo/file.txt")
+            );
+        }
     }
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void glob_matching_nonmatching_files(Configuration configuration) throws IOException {
-        FileSystem fs = Jimfs.newFileSystem(configuration);
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
 
-        // Setup directory structure in mock FS
-        Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.doc")));
+            // Setup directory structure in mock FS
+            Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.doc")));
 
-        Stream<Path> resultStream = IoUtil.glob(
-                getPath(configuration, fs, "/foo"),
-                getPattern(configuration, "bar/baz/*.txt")
-        );
-        List<Path> resultPaths = resultStream.toList();
+            Stream<Path> resultStream = IoUtil.glob(
+                    getPath(configuration, fs, "/foo"),
+                    getPattern(configuration, "bar/baz/*.txt")
+            );
+            List<Path> resultPaths = resultStream.toList();
 
-        assertEquals(1, resultPaths.size());
-        assertPathEquals(
-                resultPaths.get(0),
-                getPath(configuration, fs, "/foo/bar/baz/file.txt")
-        );
+            assertEquals(1, resultPaths.size());
+            assertPathEquals(
+                    resultPaths.get(0),
+                    getPath(configuration, fs, "/foo/bar/baz/file.txt")
+            );
+        }
     }
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void glob_different_directory_depths(Configuration configuration) throws IOException {
-        FileSystem fs = Jimfs.newFileSystem(configuration);
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            // Setup directory structure in mock file system
+            Files.createDirectories(fs.getPath(normalize(configuration, "/foo/a/b/c")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/a/a_file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/a/b/b_file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/a/b/c/c_file.txt")));
 
-        // Setup directory structure in mock file system
-        Files.createDirectories(fs.getPath(normalize(configuration, "/foo/a/b/c")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/a/a_file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/a/b/b_file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/a/b/c/c_file.txt")));
+            Stream<Path> resultStream = IoUtil.glob(
+                    getPath(configuration, fs, "/foo"),
+                    getPattern(configuration, "**/*.txt")
+            );
+            List<Path> resultPaths = resultStream.toList();
 
-        Stream<Path> resultStream = IoUtil.glob(
-                getPath(configuration, fs, "/foo"),
-                getPattern(configuration, "**/*.txt")
-        );
-        List<Path> resultPaths = resultStream.toList();
-
-        assertEquals(3, resultPaths.size());
-        assertTrue(resultPaths.contains(getPath(configuration, fs, "/foo/a/a_file.txt")));
-        assertTrue(resultPaths.contains(getPath(configuration, fs, "/foo/a/b/b_file.txt")));
-        assertTrue(resultPaths.contains(getPath(configuration, fs, "/foo/a/b/c/c_file.txt")));
+            assertEquals(3, resultPaths.size());
+            assertTrue(resultPaths.contains(getPath(configuration, fs, "/foo/a/a_file.txt")));
+            assertTrue(resultPaths.contains(getPath(configuration, fs, "/foo/a/b/b_file.txt")));
+            assertTrue(resultPaths.contains(getPath(configuration, fs, "/foo/a/b/c/c_file.txt")));
+        }
     }
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void glob_no_glob_symbols(Configuration configuration) throws IOException {
-        FileSystem fs = Jimfs.newFileSystem(configuration);
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            // Setup directory structure in mock file system
+            Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/file.txt")));
+            Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
 
-        // Setup directory structure in mock file system
-        Files.createDirectories(fs.getPath(normalize(configuration, "/foo/bar/baz")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/baz/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/bar/file.txt")));
-        Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
+            Stream<Path> resultStream = IoUtil.glob(
+                    getPath(configuration, fs, "/foo"),
+                    getPattern(configuration, "bar/baz/file.txt")
+            );
+            List<Path> resultPaths = resultStream.toList();
 
-        Stream<Path> resultStream = IoUtil.glob(
-                getPath(configuration, fs, "/foo"),
-                getPattern(configuration, "bar/baz/file.txt")
-        );
-        List<Path> resultPaths = resultStream.toList();
-
-        assertEquals(1, resultPaths.size());
-        assertPathEquals(
-                resultPaths.get(0),
-                getPath(configuration, fs, "/foo/bar/baz/file.txt")
-        );
+            assertEquals(1, resultPaths.size());
+            assertPathEquals(
+                    resultPaths.get(0),
+                    getPath(configuration, fs, "/foo/bar/baz/file.txt")
+            );
+        }
     }
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void testFindFiles(Configuration configuration) throws IOException {
         // Test to ensure that `findFiles` returns correct files following the glob pattern "*.txt"
-        FileSystem fs = Jimfs.newFileSystem(configuration);
-        Path testDirectory = Files.createDirectories(getPath(configuration, fs, "ioUtilTest"));
-        Files.createFile(testDirectory.resolve("test1.txt"));
-        Files.createFile(testDirectory.resolve("test2.md"));
-        Files.createFile(testDirectory.resolve("test3.txt"));
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            Path testDirectory = Files.createDirectories(getPath(configuration, fs, "ioUtilTest"));
+            Files.createFile(testDirectory.resolve("test1.txt"));
+            Files.createFile(testDirectory.resolve("test2.md"));
+            Files.createFile(testDirectory.resolve("test3.txt"));
 
-        List<Path> txtFiles = IoUtil.findFiles(testDirectory, "*.txt");
+            List<Path> txtFiles = IoUtil.findFiles(testDirectory, "*.txt");
 
-        assertTrue(txtFiles.contains(testDirectory.resolve("test1.txt")));
-        assertTrue(txtFiles.contains(testDirectory.resolve("test3.txt")));
-        assertEquals(2, txtFiles.size());
+            assertTrue(txtFiles.contains(testDirectory.resolve("test1.txt")));
+            assertTrue(txtFiles.contains(testDirectory.resolve("test3.txt")));
+            assertEquals(2, txtFiles.size());
+        }
     }
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void testFindFilesWithNoMatches(Configuration configuration) throws IOException {
         // Test to ensure that `findFiles` returns an empty list when there are no matches for the glob pattern
-        FileSystem fs = Jimfs.newFileSystem(configuration);
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
         Path testDirectory = getPath(configuration, fs, "ioUtilTest");
         Files.createDirectories(testDirectory);
         Files.createFile(testDirectory.resolve("test1.txt"));
@@ -400,6 +404,7 @@ public class IoUtilTest {
         List<Path> pyFiles = IoUtil.findFiles(testDirectory, "*.py");
 
         assertTrue(pyFiles.isEmpty());
+        }
     }
 
     /**
@@ -479,4 +484,36 @@ public class IoUtilTest {
         });
         return m;
     }
+
+    @Test
+    void toURIUrlArgumentParsesCorrectly() throws Exception {
+        URL url = new URL("http://example.com");
+        URI expected = url.toURI();
+
+        assertEquals(expected, IoUtil.toURI(url));
+    }
+
+    @ParameterizedTest
+    @MethodSource("jimFsConfigurations")
+    public void toUriPathArgument_AbsolutePath(Configuration configuration) throws Exception {
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            Path filePath = fs.getPath(normalize(configuration, "/test/path"));
+
+            URI actualUri = IoUtil.toURI(filePath);
+            assertEquals(filePath, Paths.get(actualUri));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("jimFsConfigurations")
+    public void toUriPathArgument_RelativePath(Configuration configuration) throws Exception {
+        try (FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix())) {
+            Path filePath = fileSystem.getPath("test/path");
+
+            Path root = fileSystem.getPath("/");
+            URI actualUri = IoUtil.toURI(filePath);
+            assertEquals(root.resolve(filePath), Paths.get(root.toUri().resolve(actualUri)));
+        }
+    }
+
 }
