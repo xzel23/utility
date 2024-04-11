@@ -164,10 +164,19 @@ public class ArgumentsParserBuilder {
     /**
      * Builds the parser and returns a new instance of ArgumentsParser.
      *
+     * @param validationOverridingOptions options that inhibit validation if present on the command line
      * @return a new instance of ArgumentsParser
      */
-    public ArgumentsParser build() {
-        return new ArgumentsParser(name, description, options, minPositionalArgs, maxPositionalArgs, positionalArgDisplayName);
+    public ArgumentsParser build(Option<?>... validationOverridingOptions) {
+        return new ArgumentsParser(
+                name,
+                description,
+                options,
+                minPositionalArgs,
+                maxPositionalArgs,
+                positionalArgDisplayName,
+                validationOverridingOptions
+        );
     }
 
 }

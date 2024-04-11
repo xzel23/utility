@@ -1,13 +1,17 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.data.Pair;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -20,21 +24,45 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     /**
      * The options passed on the command line with their respective arguments.
      */
-    private final List<Entry<?>> parsedOptions;
+    private final List<Entry<?>> options;
     /**
      * The positional arguments.
      */
-    private final List<String> positionalArgs;
+    private final List<String> args;
+    private final int minArgs;
+    private final int maxArgs;
 
     /**
      * Constructor.
      *
-     * @param parsedOptions  the options detected by the command line parser
-     * @param positionalArgs the positional arguments
+     * @param options  the options to set
+     * @param args the arguments
      */
-    public Arguments(Collection<? extends Entry<?>> parsedOptions, Collection<String> positionalArgs) {
-        this.parsedOptions = List.copyOf(parsedOptions);
-        this.positionalArgs = List.copyOf(positionalArgs);
+    public Arguments(Collection<? extends Entry<?>> options, Collection<String> args) {
+        this(options, args, 0, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param options  the options to set
+     * @param args the arguments
+     * @param minArgs the minimum argument count
+     * @param maxArgs the maximum argument count
+     */
+    public Arguments(
+            Collection<? extends Entry<?>> options,
+            Collection<String> args,
+            int minArgs,
+            int maxArgs
+    ) {
+        LangUtil.check(minArgs >= 0, "minArgs must be non-negative: %d", minArgs);
+        LangUtil.check(maxArgs >= minArgs, "maxArgs must be greater than or equal to minArgs (%d): %d", minArgs, maxArgs);
+
+        this.options = List.copyOf(options);
+        this.args = List.copyOf(args);
+        this.minArgs = minArgs;
+        this.maxArgs = maxArgs;
     }
 
     /**
@@ -73,13 +101,90 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         return entry;
     }
 
+    public <T extends Option<?>> void validate(T... allOptions) {
+        validate(List.of(allOptions));
+    }
+
+    public void validate(
+            Collection<? extends Option<?>> allOptions
+    ) {
+        // check occurrences
+        Map<Option<?>, Integer> hist = new HashMap<>();
+        options.forEach(entry -> hist.compute(entry.option, (k_, i_) -> i_ == null ? 1 : i_ + 1));
+
+        allOptions.stream()
+                .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
+                .forEach(p -> {
+                    Option<?> option = p.first();
+                    int occurrences = p.second();
+
+                    int minOccurrences = option.minOccurrences();
+                    int maxOccurrences = option.maxOccurrences();
+
+                    // check min occurrences
+                    if (minOccurrences == 1) {
+                        LangUtil.check(minOccurrences <= occurrences,
+                                () -> new OptionException(
+                                        "missing required option '%s'".formatted(option.name()
+                                        )));
+                    } else {
+                        LangUtil.check(minOccurrences <= occurrences,
+                                () -> new OptionException(
+                                        "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
+                                                option.name(), minOccurrences, occurrences
+                                        )));
+                    }
+
+                    // check max occurrences
+                    LangUtil.check(maxOccurrences >= occurrences,
+                            () -> new OptionException(
+                                    "option '%s' must be specified at most %d time(s), but was %d times".formatted(
+                                            option.name(), maxOccurrences, occurrences
+                                    )));
+                });
+
+        // check arity
+        options.forEach(entry -> {
+            Option<?> option = entry.option;
+            int nParams = entry.params.size();
+            LangUtil.check(
+                    option.minArity() <= nParams,
+                    () -> new OptionException(
+                            "option '%s' must have at least %d parameters, but has only %d".formatted(
+                                    option.name(),
+                                    option.minArity(),
+                                    nParams
+                            )
+                    )
+            );
+            LangUtil.check(
+                    nParams <= option.maxArity(),
+                    () -> new OptionException(
+                            "option '%s' must have at most %d parameters, but has %d".formatted(
+                                    option.name(),
+                                    option.maxArity(),
+                                    nParams
+                            )
+                    )
+            );
+        });
+
+        if (args.size() < minArgs) {
+            throw new OptionException("missing argument (at least " + minArgs + " arguments must be given)");
+        }
+
+        if (args.size() > maxArgs) {
+            throw new OptionException("too many arguments (at most " + maxArgs + " arguments can be given)");
+        }
+    }
+
     /**
      * Get positional arguments.
      *
      * @return the positional arguments
      */
     public List<String> positionalArgs() {
-        return positionalArgs;
+        return args;
     }
 
     /**
@@ -157,7 +262,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return stream of parsed options and respective arguments
      */
     public Stream<Entry<?>> stream() {
-        return parsedOptions.stream();
+        return options.stream();
     }
 
     /**
@@ -169,7 +274,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      */
     @SuppressWarnings("unchecked")
     public <T> Stream<List<T>> stream(Option<T> option) {
-        return parsedOptions.stream()
+        return options.stream()
                 .filter(entry -> entry.option.equals(option))
                 .map(entry -> ((Entry<T>) entry).getParams());
     }
@@ -200,19 +305,19 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * Call the handlers for all passed options.
      */
     public void handle() {
-        parsedOptions.forEach(Entry::handle);
+        options.forEach(Entry::handle);
     }
 
     @Override
     public Iterator<Arguments.Entry<?>> iterator() {
-        return parsedOptions.iterator();
+        return options.iterator();
     }
 
     @Override
     public String toString() {
         try (Formatter fmt = new Formatter()) {
             fmt.format("Arguments{\n");
-            for (Entry<?> entry : parsedOptions) {
+            for (Entry<?> entry : options) {
                 if (entry.option instanceof Flag) {
                     fmt.format("  %s\n", entry.option.name());
                 } else {

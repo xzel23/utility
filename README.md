@@ -170,6 +170,12 @@ the parameter.
 
 ## Changes
 
+### 12.2
+
+- support for options that prevent validation when present, i. e., to pass a help flag without the parser throwing 
+  an exception when there are problems with other options
+- moved to Arguments and made public argument validation methods
+
 ### 12.1.2
 
 - IoUtil.toURI(Path) returns relative URI when called with relative Path instance

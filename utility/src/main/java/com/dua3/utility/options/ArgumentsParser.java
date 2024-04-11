@@ -1,6 +1,5 @@
 package com.dua3.utility.options;
 
-import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 
 import java.util.ArrayDeque;
@@ -8,12 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Formatter;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 /**
  * A parser that parses command line args into an {@link Arguments} instance.
@@ -24,15 +22,17 @@ public class ArgumentsParser {
 
     private final Map<String, Option<?>> options;
 
-    final int minPositionalArgs;
+    private final int minPositionalArgs;
 
-    final int maxPositionalArgs;
+    private final int maxPositionalArgs;
 
     private final String positionalArgDisplayName;
 
     private final String name;
 
     private final String description;
+
+    private final Collection<Option<?>> validationOverridingOptions;
 
     /**
      * Returns a new instance of ArgumentsParserBuilder.
@@ -46,21 +46,23 @@ public class ArgumentsParser {
     /**
      * Represents a parser for command line arguments.
      *
-     * @param name the name of the parser
-     * @param description the description of the parser
-     * @param options the map of options to be parsed
-     * @param minPositionalArgs the minimum number of positional arguments
-     * @param maxPositionalArgs the maximum number of positional arguments
-     * @param positionalArgDisplayName the display name for positional arguments
+     * @param name                        the name of the parser
+     * @param description                 the description of the parser
+     * @param options                     the map of options to be parsed
+     * @param minPositionalArgs           the minimum number of positional arguments
+     * @param maxPositionalArgs           the maximum number of positional arguments
+     * @param positionalArgDisplayName    the display name for positional arguments
+     * @param validationOverridingOptions options that disable validation when present
      */
     ArgumentsParser(String name, String description, Map<String, Option<?>> options,
-                    int minPositionalArgs, int maxPositionalArgs, String positionalArgDisplayName) {
+                    int minPositionalArgs, int maxPositionalArgs, String positionalArgDisplayName, Option<?>[] validationOverridingOptions) {
         this.name = name;
         this.description = description;
         this.options = Map.copyOf(options);
         this.minPositionalArgs = minPositionalArgs;
         this.maxPositionalArgs = maxPositionalArgs;
         this.positionalArgDisplayName = positionalArgDisplayName;
+        this.validationOverridingOptions = Set.of(validationOverridingOptions);
     }
 
     /**
@@ -125,87 +127,14 @@ public class ArgumentsParser {
             }
         }
 
-        validate(parsedOptions);
+        Arguments arguments = new Arguments(parsedOptions, positionalArgs, minPositionalArgs, maxPositionalArgs);
 
-        if (positionalArgs.size() < minPositionalArgs) {
-            throw new OptionException("missing argument (at least " + minPositionalArgs + " arguments must be given)");
+        // only validate if no validation overriding options are present
+        if (parsedOptions.stream().map(Arguments.Entry::getOption).noneMatch(validationOverridingOptions::contains)) {
+            arguments.validate(options.values());
         }
 
-        if (positionalArgs.size() > maxPositionalArgs) {
-            throw new OptionException("too many arguments (at most " + maxPositionalArgs + " arguments can be given)");
-        }
-
-        return new Arguments(parsedOptions, positionalArgs);
-    }
-
-    /**
-     * Validate the parsed option, i.e. check the number of occurrences and arity.
-     *
-     * @param parsedOptions the parsed options to validate
-     * @throws OptionException if an error is detected
-     */
-    private void validate(Collection<Arguments.Entry<?>> parsedOptions) {
-        // check occurrences
-        Map<Option<?>, Integer> hist = new HashMap<>();
-        parsedOptions.forEach(entry -> hist.compute(entry.option, (k_, i_) -> i_ == null ? 1 : i_ + 1));
-
-        Collection<Option<?>> allOptions = new HashSet<>(options.values());
-        allOptions.stream()
-                .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
-                .forEach(p -> {
-                    Option<?> option = p.first();
-                    int occurrences = p.second();
-
-                    int minOccurrences = option.minOccurrences();
-                    int maxOccurrences = option.maxOccurrences();
-
-                    // check min occurrences
-                    if (minOccurrences == 1) {
-                        LangUtil.check(minOccurrences <= occurrences,
-                                () -> new OptionException(
-                                        "missing required option '%s'".formatted(option.name()
-                                        )));
-                    } else {
-                        LangUtil.check(minOccurrences <= occurrences,
-                                () -> new OptionException(
-                                        "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
-                                                option.name(), minOccurrences, occurrences
-                                        )));
-                    }
-
-                    // check max occurrences
-                    LangUtil.check(maxOccurrences >= occurrences,
-                            () -> new OptionException(
-                                    "option '%s' must be specified at most %d time(s), but was %d times".formatted(
-                                            option.name(), maxOccurrences, occurrences
-                                    )));
-                });
-
-        // check arity
-        parsedOptions.forEach(entry -> {
-            Option<?> option = entry.option;
-            int nParams = entry.params.size();
-            LangUtil.check(
-                    option.minArity() <= nParams,
-                    () -> new OptionException(
-                            "option '%s' must have at least %d parameters, but has only %d".formatted(
-                                    option.name(),
-                                    option.minArity(),
-                                    nParams
-                            )
-                    )
-            );
-            LangUtil.check(
-                    nParams <= option.maxArity(),
-                    () -> new OptionException(
-                            "option '%s' must have at most %d parameters, but has %d".formatted(
-                                    option.name(),
-                                    option.maxArity(),
-                                    nParams
-                            )
-                    )
-            );
-        });
+        return arguments;
     }
 
     /**
