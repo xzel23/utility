@@ -175,6 +175,8 @@ the parameter.
 - support for options that prevent validation when present, i. e., to pass a help flag without the parser throwing 
   an exception when there are problems with other options
 - moved to Arguments and made public argument validation methods
+- added LangUtil.require...() methods to check integer arguments
+- added LangUtil.formatLazy()
 
 ### 12.1.2
 

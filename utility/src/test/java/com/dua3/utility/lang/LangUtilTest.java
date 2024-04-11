@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -570,4 +571,119 @@ class LangUtilTest {
         Properties properties = LangUtil.loadProperties(uri);
         assertEquals("value", properties.get("key"));
     }
+
+    @Test
+    void formatLazy_withValidFormatStringAndArguments_ShouldCreateObject() {
+        Object result = LangUtil.formatLazy("%s %s", "Hello", "World");
+        assertEquals("Hello World", result.toString());
+    }
+
+    @Test
+    void formatLazy_withNullFormatString_ShouldReturnNull() {
+        Object result = LangUtil.formatLazy(null, "Hello", "World");
+        assertNull(result.toString());
+    }
+
+    @Test
+    void formatLazy_withEmptyArguments_ShouldNotReplacePlaceholders() {
+        Object result = LangUtil.formatLazy("%s %s");
+        assertEquals("%s %s", result.toString());
+    }
+
+    @Test
+    public void testRequireNonNegativeLong() {
+        assertEquals(5L, LangUtil.requireNonNegative(5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5L));
+    }
+
+    @Test
+    public void testRequireNonNegativeLongFmtArgs() {
+        assertEquals(5L, LangUtil.requireNonNegative(5L, "Error: %s", -5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5L, "Error: %s", -5L));
+    }
+
+    @Test
+    public void testRequireNonNegativeInt() {
+        assertEquals(5, LangUtil.requireNonNegative(5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5));
+    }
+
+    @Test
+    public void testRequireNonNegativeIntFmtArgs() {
+        assertEquals(5, LangUtil.requireNonNegative(5, "Error: %s", -5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5, "Error: %s", -5));
+    }
+
+    @Test
+    public void testRequirePositiveLong() {
+        assertEquals(5L, LangUtil.requirePositive(5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5L));
+    }
+
+    @Test
+    public void testRequirePositiveLongFmtArgs() {
+        assertEquals(5L, LangUtil.requirePositive(5L, "Error: %s", -5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5L, "Error: %s", -5L));
+    }
+
+    @Test
+    public void testRequirePositiveInt() {
+        assertEquals(5, LangUtil.requirePositive(5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5));
+    }
+
+    @Test
+    public void testRequirePositiveIntFmtArgs() {
+        assertEquals(5, LangUtil.requirePositive(5, "Error: %s", -5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5, "Error: %s", -5));
+    }
+
+    @Test
+    public void testRequireNegativeLong() {
+        assertEquals(-5L, LangUtil.requireNegative(-5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5L));
+    }
+
+    @Test
+    public void testRequireNegativeLongFmtArgs() {
+        assertEquals(-5L, LangUtil.requireNegative(-5L, "Error: %s", 5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5L, "Error: %s", 5L));
+    }
+
+    @Test
+    public void testRequireNegativeInt() {
+        assertEquals(-5, LangUtil.requireNegative(-5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5));
+    }
+
+    @Test
+    public void testRequireNegativeIntFmtArgs() {
+        assertEquals(-5, LangUtil.requireNegative(-5, "Error: %s", 5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5, "Error: %s", 5));
+    }
+
+    @Test
+    public void testRequireInIntervalLong() {
+        assertEquals(5L, LangUtil.requireInInterval(5L, 1L, 10L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5L, 6L, 10L));
+    }
+
+    @Test
+    public void testRequireInIntervalLongFmtArgs() {
+        assertEquals(5L, LangUtil.requireInInterval(5L, 1L, 10L, "Error: %s", 5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5L, 6L, 10L, "Error: %s", 5L));
+    }
+
+    @Test
+    public void testRequireInIntervalInt() {
+        assertEquals(5, LangUtil.requireInInterval(5, 1, 10));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5, 6, 10));
+    }
+
+    @Test
+    public void testRequireInIntervalIntFmtArgs() {
+        assertEquals(5, LangUtil.requireInInterval(5, 1, 10, "Error: %s", 5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5, 6, 10, "Error: %s", 5));
+    }
+
 }
