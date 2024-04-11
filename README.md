@@ -177,6 +177,8 @@ the parameter.
 - moved to Arguments and made public argument validation methods
 - added LangUtil.require...() methods to check integer arguments
 - added LangUtil.formatLazy()
+- fix: LoggerFactorySlf4j should not dispose the default handler
+- add LogEntryDispatcher.getHandlers()
 
 ### 12.1.2
 

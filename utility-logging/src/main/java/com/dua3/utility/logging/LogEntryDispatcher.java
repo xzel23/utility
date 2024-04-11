@@ -1,5 +1,7 @@
 package com.dua3.utility.logging;
 
+import java.util.Collection;
+
 /**
  * This interface defines the contract for classes that dispatch log entries to registered handlers.
  */
@@ -19,4 +21,11 @@ public interface LogEntryDispatcher {
      * @param handler The log entry handler to be removed.
      */
     void removeLogEntryHandler(LogEntryHandler handler);
+
+    /**
+     * Get the registered log entry handlers. Note that implementations usually hold weak references
+     * to the handlers, so unused handlers may already have been removed from the list.
+     * @return collection containing the registered log entry handlers
+     */
+    Collection<LogEntryHandler> getLogEntryHandlers();
 }

@@ -14,8 +14,10 @@ import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -30,6 +32,8 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
 
     private final List<Pair<String, Level>> prefixes = new ArrayList<>();
     private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
+
+    private LogEntryHandler defaultHandler;
 
     public LoggerFactorySlf4j() {
         Properties properties = getProperties();
@@ -74,8 +78,9 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
             default ->
                     throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_COLORED + ": '" + propertyConsoleColored + "'");
         };
-        if (stream != null) {
-            handlers.add(new WeakReference<>(new ConsoleHandler(stream, colored)));
+        defaultHandler = stream != null ? new ConsoleHandler(stream, colored) : null;
+        if (defaultHandler != null) {
+            handlers.add(new WeakReference<>(defaultHandler));
         }
     }
 
@@ -118,5 +123,10 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     @Override
     public void removeLogEntryHandler(LogEntryHandler handler) {
         handlers.removeIf(h -> h.get() == handler);
+    }
+
+    @Override
+    public Collection<LogEntryHandler> getLogEntryHandlers() {
+        return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
     }
 }

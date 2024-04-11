@@ -16,7 +16,9 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class is an implementation of the Log4j Appender and LogEntryHandlerPool interfaces.
@@ -110,5 +112,10 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
     @Override
     public void removeLogEntryHandler(LogEntryHandler handler) {
         handlers.removeIf(h -> h.get() == handler);
+    }
+
+    @Override
+    public Collection<LogEntryHandler> getLogEntryHandlers() {
+        return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
     }
 }
