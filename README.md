@@ -179,6 +179,7 @@ the parameter.
 - added LangUtil.formatLazy()
 - fix: LoggerFactorySlf4j should not dispose the default handler
 - add LogEntryDispatcher.getHandlers()
+- make Stopwatch(Supplier<String> name) protected
 
 ### 12.1.2
 

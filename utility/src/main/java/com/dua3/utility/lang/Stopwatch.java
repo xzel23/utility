@@ -36,7 +36,7 @@ public class Stopwatch {
      *
      * @param name the name for this instance; it is included in {@code toString()}
      */
-    public Stopwatch(Supplier<String> name) {
+    protected Stopwatch(Supplier<String> name) {
         this.name = new LazyName(name);
         this.start = this.startSplit = Instant.now();
     }
