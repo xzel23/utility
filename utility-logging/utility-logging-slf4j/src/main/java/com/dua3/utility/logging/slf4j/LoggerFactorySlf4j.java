@@ -78,7 +78,7 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
             default ->
                     throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_COLORED + ": '" + propertyConsoleColored + "'");
         };
-        defaultHandler = stream != null ? new ConsoleHandler(stream, colored) : null;
+        this.defaultHandler = stream != null ? new ConsoleHandler(stream, colored) : null;
         if (defaultHandler != null) {
             handlers.add(new WeakReference<>(defaultHandler));
         }
@@ -128,5 +128,9 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     @Override
     public Collection<LogEntryHandler> getLogEntryHandlers() {
         return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
+    }
+
+    public LogEntryHandler getDefaultHandler() {
+        return defaultHandler;
     }
 }

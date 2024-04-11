@@ -396,14 +396,14 @@ public class IoUtilTest {
     void testFindFilesWithNoMatches(Configuration configuration) throws IOException {
         // Test to ensure that `findFiles` returns an empty list when there are no matches for the glob pattern
         try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
-        Path testDirectory = getPath(configuration, fs, "ioUtilTest");
-        Files.createDirectories(testDirectory);
-        Files.createFile(testDirectory.resolve("test1.txt"));
-        Files.createFile(testDirectory.resolve("test2.md"));
-        Files.createFile(testDirectory.resolve("test3.txt"));
-        List<Path> pyFiles = IoUtil.findFiles(testDirectory, "*.py");
+            Path testDirectory = getPath(configuration, fs, "ioUtilTest");
+            Files.createDirectories(testDirectory);
+            Files.createFile(testDirectory.resolve("test1.txt"));
+            Files.createFile(testDirectory.resolve("test2.md"));
+            Files.createFile(testDirectory.resolve("test3.txt"));
+            List<Path> pyFiles = IoUtil.findFiles(testDirectory, "*.py");
 
-        assertTrue(pyFiles.isEmpty());
+            assertTrue(pyFiles.isEmpty());
         }
     }
 
@@ -427,13 +427,13 @@ public class IoUtilTest {
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void testZip(Configuration configuration) throws IOException {
-        URL zipUrl = LangUtil.getResourceURL(this.getClass(), "test.zip");
+        URL zipUrl = LangUtil.getResourceURL(getClass(), "test.zip");
 
         String rootPath = "/testZip";
         try (FileSystem fs = createFileSystemForZipTest(configuration, rootPath, zipUrl)) {
             Path root = fs.getPath(normalize(configuration, rootPath));
 
-            Map<String,String> expected = Map.of(
+            Map<String, String> expected = Map.of(
                     "test", "",
                     "test/1", "",
                     "test/1/file.txt", "b4e448e8600fa63f41cc30e5e784f75c",
@@ -470,18 +470,20 @@ public class IoUtilTest {
     private Map<String, String> createHashes(Path dir) throws IOException {
         Map<String, String> m = new HashMap<>();
         Path parent = LangUtil.orElse(dir.getParent(), dir.getFileSystem().getPath("."));
-        Files.walk(dir).forEach(p -> {
-            String key = parent.relativize(p).normalize().toString().replace("\\", "/");
-            if (Files.isDirectory(p)) {
-                m.put(key, "");
-            } else {
-                try (InputStream in = Files.newInputStream(p)) {
-                    m.put(key, TextUtil.getMD5String(in));
-                } catch (IOException e) {
-                    throw new UncheckedIOException("Failed to read file " + p, e);
+        try (Stream<Path> paths = Files.walk(dir)) {
+            paths.forEach(p -> {
+                String key = parent.relativize(p).normalize().toString().replace("\\", "/");
+                if (Files.isDirectory(p)) {
+                    m.put(key, "");
+                } else {
+                    try (InputStream in = Files.newInputStream(p)) {
+                        m.put(key, TextUtil.getMD5String(in));
+                    } catch (IOException e) {
+                        throw new UncheckedIOException("Failed to read file " + p, e);
+                    }
                 }
-            }
-        });
+            });
+        }
         return m;
     }
 

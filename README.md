@@ -172,7 +172,7 @@ the parameter.
 
 ### 12.2
 
-- support for options that prevent validation when present, i. e., to pass a help flag without the parser throwing 
+- support for options that prevent validation when present, i. e., to pass a help flag without the parser throwing
   an exception when there are problems with other options
 - moved to Arguments and made public argument validation methods
 - add separate desciption for arguments
@@ -240,7 +240,7 @@ the parameter.
 
 ### 12.0.2
 
-- Use assertions to check parameters of internal methods, throw NPE for parameters to methods that are part of the 
+- Use assertions to check parameters of internal methods, throw NPE for parameters to methods that are part of the
   public API. From now on, snapshots and beta versions will unconditionally throw AssertionErrors when null is passed
   to a parameter that isn't nullable. In release versions, standard assertions are used for internal methods while
   methods that are part of the public API will throw NullPointerExceptions.

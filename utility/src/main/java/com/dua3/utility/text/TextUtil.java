@@ -181,8 +181,8 @@ public final class TextUtil {
                     // numbers: pass through
                     // letters: pass all non-modifying letters through
                     case Character.DECIMAL_DIGIT_NUMBER, Character.LETTER_NUMBER, Character.OTHER_NUMBER,
-                            Character.UPPERCASE_LETTER, Character.LOWERCASE_LETTER, Character.OTHER_LETTER,
-                            Character.TITLECASE_LETTER -> out.append(c);
+                         Character.UPPERCASE_LETTER, Character.LOWERCASE_LETTER, Character.OTHER_LETTER,
+                         Character.TITLECASE_LETTER -> out.append(c);
 
                     // escape all remaining characters
                     default -> out.append("\\u").append(String.format(Locale.ROOT, "%04X", (int) c));

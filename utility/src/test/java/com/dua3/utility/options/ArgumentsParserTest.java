@@ -41,7 +41,7 @@ public class ArgumentsParserTest {
         assertFalse(cmd.parse("hello", "Bob").isSet(oPrint));
 
         String expected = """
-                                
+                
                 testFlag
                 --------
                                 
@@ -87,20 +87,20 @@ public class ArgumentsParserTest {
         assertEquals(E.GRANDE, cmd.parse("--product MACCHIATO".split(" ")).getOrThrow(oSize));
 
         String expected = """
-                                
+                
                 testChoiceOption
                 ----------------
-                                
+                
                 Unit test for passing choices on the command line.
-                                
+                
                 testChoiceOption <options> [<arg> ...]
-                                
+                
                   <options>:
                     --product|-p <arg>
                             the product
-                                
+                
                     --size <arg>
-                                
+                
                 """;
 
         assertEquals(expected, cmd.help());
@@ -134,20 +134,20 @@ public class ArgumentsParserTest {
         assertThrows(OptionException.class, () -> cmd.parse("--size TALL".split(" ")));
 
         String expected = """
-                                
+                
                 testChoiceOptionRequired
                 ------------------------
-                                
+                
                 Unit test for passing choices on the command line.
-                                
+                
                 testChoiceOptionRequired <options> [<arg> ...]
-                                
+                
                   <options>:
                     --product|-p <arg>
                             set the product name
-                                
+                
                     --size <size>
-                                
+                
                 """;
 
         assertEquals(expected, cmd.help());
@@ -176,20 +176,20 @@ public class ArgumentsParserTest {
         assertEquals(30, eve30.getOrThrow(optionAge));
 
         String expected = """
-                                
+                
                 testSimpleOption
                 ----------------
-                                
+                
                 Unit test for passing simple options on the command line.
-                                
+                
                 testSimpleOption <options> [<arg> ...]
-                                
+                
                   <options>:
                     --age|-a <age>
-                                
+                
                     --name|-n <name>
                             set name
-                                
+                
                 """;
         assertEquals(expected, cmd.help());
 
@@ -227,20 +227,20 @@ public class ArgumentsParserTest {
         assertEquals(30, eve30.getOrThrow(optionAge));
 
         String expected = """
-                                
+                
                 testSimpleOptionRequired
                 ------------------------
-                                
+                
                 Unit test for passing simple options on the command line.
-                                
+                
                 testSimpleOptionRequired <options> [<arg> ...]
-                                
+                
                   <options>:
                     --age|-a <age>
-                                
+                
                     --name|-n <name>
                             set name
-                            
+                
                 """;
         assertEquals(expected, cmd.help());
     }
@@ -253,14 +253,14 @@ public class ArgumentsParserTest {
         ArgumentsParser cmd = builder.build();
 
         String expected = """
-                                
+                
                 testPositionalArgs1
                 -------------------
-                                
+                
                 Unit test for passing positional arguments on the command line.
-                                
+                
                 testPositionalArgs1 [<arg> ...]
-                                
+                
                 """;
         assertEquals(expected, cmd.help());
 
@@ -280,14 +280,14 @@ public class ArgumentsParserTest {
         ArgumentsParser cmd = builder.build();
 
         String expected = """
-                                
+                
                 testPositionalArgs2
                 -------------------
-                                
+                
                 Unit test for passing positional arguments on the command line.
-                                
+                
                 testPositionalArgs2 <arg1> [... <arg3>]
-                                
+                
                 """;
         assertEquals(expected, cmd.help());
 

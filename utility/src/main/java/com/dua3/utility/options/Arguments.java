@@ -101,7 +101,8 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         return entry;
     }
 
-    public <T extends Option<?>> void validate(T... allOptions) {
+    @SafeVarargs
+    public final <T extends Option<?>> void validate(T... allOptions) {
         validate(List.of(allOptions));
     }
 
