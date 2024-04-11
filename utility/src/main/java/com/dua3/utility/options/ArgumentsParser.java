@@ -32,6 +32,8 @@ public class ArgumentsParser {
 
     private final String description;
 
+    private final String argsDescription;
+
     private final Collection<Option<?>> validationOverridingOptions;
 
     /**
@@ -48,16 +50,18 @@ public class ArgumentsParser {
      *
      * @param name                        the name of the parser
      * @param description                 the description of the parser
+     * @param argsDescription             the arguments description of the parser
      * @param options                     the map of options to be parsed
      * @param minPositionalArgs           the minimum number of positional arguments
      * @param maxPositionalArgs           the maximum number of positional arguments
      * @param positionalArgDisplayName    the display name for positional arguments
      * @param validationOverridingOptions options that disable validation when present
      */
-    ArgumentsParser(String name, String description, Map<String, Option<?>> options,
+    ArgumentsParser(String name, String description, String argsDescription, Map<String, Option<?>> options,
                     int minPositionalArgs, int maxPositionalArgs, String positionalArgDisplayName, Option<?>[] validationOverridingOptions) {
         this.name = name;
         this.description = description;
+        this.argsDescription = argsDescription;
         this.options = Map.copyOf(options);
         this.minPositionalArgs = minPositionalArgs;
         this.maxPositionalArgs = maxPositionalArgs;
@@ -174,6 +178,11 @@ public class ArgumentsParser {
         }
         cmdText += getArgText(minPositionalArgs, maxPositionalArgs, positionalArgDisplayName);
         fmt.format("%s\n\n", cmdText);
+
+        if (!argsDescription.isEmpty()) {
+            fmt.format("%s\n", argsDescription.indent(2));
+            fmt.format("\n");
+        }
 
         // print options
         if (hasOptions()) {

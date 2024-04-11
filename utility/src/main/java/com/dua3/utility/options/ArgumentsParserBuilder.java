@@ -16,6 +16,7 @@ public class ArgumentsParserBuilder {
 
     private String name = "";
     private String description = "";
+    private String argsDescription = "";
     private final Map<String, Option<?>> options = new LinkedHashMap<>();
     private int minPositionalArgs = 0;
     private int maxPositionalArgs = Integer.MAX_VALUE;
@@ -43,6 +44,18 @@ public class ArgumentsParserBuilder {
      */
     public ArgumentsParserBuilder description(String description) {
         this.description = description;
+        return this;
+    }
+
+    /**
+     * Sets the arguments description to show below the command line in help for the ArgumentsParserBuilder
+     * instance being built.
+     *
+     * @param argsDescription the arguments description for the ArgumentsParser
+     * @return the ArgumentsParserBuilder instance
+     */
+    public ArgumentsParserBuilder argsDescription(String argsDescription) {
+        this.argsDescription = argsDescription;
         return this;
     }
 
@@ -171,6 +184,7 @@ public class ArgumentsParserBuilder {
         return new ArgumentsParser(
                 name,
                 description,
+                argsDescription,
                 options,
                 minPositionalArgs,
                 maxPositionalArgs,
