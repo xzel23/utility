@@ -34,7 +34,7 @@ dependencyResolutionManagement {
 
             version("cabe-annotations", "2.0")
             version("log4j", "2.23.1")
-            version("slf4j", "2.0.12")
+            version("slf4j", "2.0.13")
             version("jimfs", "1.3.0")
             version("miglayout", "11.3")
             version("spotbugs", "4.8.4")
