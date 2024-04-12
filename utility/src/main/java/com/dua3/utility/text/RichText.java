@@ -70,10 +70,6 @@ public final class RichText
         }
     }
 
-    RichText(List<Run> runs) {
-        this(runs.toArray(Run[]::new));
-    }
-
     /**
      * Returns the empty String as RichText.
      *
@@ -127,7 +123,7 @@ public final class RichText
      * @return RichText representation of s
      */
     public static RichText valueOf(String s) {
-        return new RichText(Collections.singletonList(new Run(s, 0, s.length(), TextAttributes.none())));
+        return new RichText(new Run(s, 0, s.length(), TextAttributes.none()));
     }
 
     /**
