@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A ring buffer implementation.
@@ -83,8 +84,7 @@ public class RingBuffer<E> implements Collection<E> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        //noinspection SlowListContainsAll
-        return List.of(toArray()).containsAll(c);
+        return Set.of(toArray()).containsAll(c);
     }
 
     /**
