@@ -170,6 +170,12 @@ the parameter.
 
 ## Changes
 
+### 12.2.1
+
+- add LangUtil.require...() overloads for double and float arguments
+- LangUtil.isBetween() will throw IllegalArgumentsException when an invalid intervall is specified
+  instead of using an assertion
+
 ### 12.2
 
 - support for options that prevent validation when present, i. e., to pass a help flag without the parser throwing

@@ -439,33 +439,30 @@ class LangUtilTest {
     }
 
     @Test
-    void isBetween_forLong_ShouldReturnTrue() {
+    void isBetweenLong() {
         assertTrue(LangUtil.isBetween(5L, 3L, 7L));
-    }
-
-    @Test
-    void isBetween_forLong_ShouldReturnFalse() {
         assertFalse(LangUtil.isBetween(8L, 3L, 7L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.isBetween(8L, 7L, 3L));
     }
 
     @Test
-    void isBetween_forDouble_ShouldReturnTrue() {
+    void isBetweenDouble() {
         assertTrue(LangUtil.isBetween(5.0, 3.0, 7.0));
-    }
-
-    @Test
-    void isBetween_forDouble_ShouldReturnFalse() {
+        assertTrue(LangUtil.isBetween(5.0, 3.0, Double.POSITIVE_INFINITY));
+        assertTrue(LangUtil.isBetween(5.0, Double.NEGATIVE_INFINITY, 7.0));
+        assertTrue(LangUtil.isBetween(5.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
         assertFalse(LangUtil.isBetween(8.0, 3.0, 7.0));
+        assertFalse(LangUtil.isBetween(Double.NaN, 3.0, 7.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.isBetween(8.0, 7.0, 3.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.isBetween(2.0, Double.NaN, 3.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.isBetween(2.0, 1.0, Double.NaN));
     }
 
     @Test
-    public void isBetween_forComparable_ShouldReturnTrue() {
+    public void isBetweenComparable() {
         assertTrue(LangUtil.isBetween("b", "a", "c"));
-    }
-
-    @Test
-    public void isBetween_forComparable_ShouldReturnFalse() {
         assertFalse(LangUtil.isBetween("z", "a", "y"));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.isBetween("b", "z", "a"));
     }
 
     @Test
@@ -591,20 +588,43 @@ class LangUtilTest {
     }
 
     @Test
+    public void testRequireNonNegativeDouble() {
+        assertEquals(5.0, LangUtil.requireNonNegative(5.0));
+        assertEquals(0.0, LangUtil.requireNonNegative(0.0));
+        assertEquals(Double.POSITIVE_INFINITY, LangUtil.requireNonNegative(Double.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(Double.NaN));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(Double.NEGATIVE_INFINITY));
+    }
+
+    @Test
+    public void testRequireNonNegativeFloat() {
+        assertEquals(5.0f, LangUtil.requireNonNegative(5.0f));
+        assertEquals(0.0f, LangUtil.requireNonNegative(0.0f));
+        assertEquals(Float.POSITIVE_INFINITY, LangUtil.requireNonNegative(Float.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5.0f));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(Float.NaN));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(Float.NEGATIVE_INFINITY));
+    }
+
+    @Test
     public void testRequireNonNegativeLong() {
         assertEquals(5L, LangUtil.requireNonNegative(5L));
+        assertEquals(0L, LangUtil.requireNonNegative(0L));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5L));
     }
 
     @Test
     public void testRequireNonNegativeLongFmtArgs() {
-        assertEquals(5L, LangUtil.requireNonNegative(5L, "Error: %s", -5L));
+        assertEquals(5L, LangUtil.requireNonNegative(5L, "Error: %s", 5L));
+        assertEquals(0L, LangUtil.requireNonNegative(0L, "Error: %s", 0L));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5L, "Error: %s", -5L));
     }
 
     @Test
     public void testRequireNonNegativeInt() {
         assertEquals(5, LangUtil.requireNonNegative(5));
+        assertEquals(0, LangUtil.requireNonNegative(0));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5));
     }
 
@@ -615,20 +635,56 @@ class LangUtilTest {
     }
 
     @Test
+    public void testRequireNonNegativeShort() {
+        assertEquals((short) 5, LangUtil.requireNonNegative((short) 5));
+        assertEquals((short) 0, LangUtil.requireNonNegative((short) 0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative((short) -5));
+    }
+
+    @Test
+    public void testRequireNonNegativeShortFmtArgs() {
+        assertEquals((short) 5, LangUtil.requireNonNegative((short) 5, "Error: %s", -5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNonNegative(-5, "Error: %s", (short) -5));
+    }
+
+    @Test
+    public void testRequirePositiveDouble() {
+        assertEquals(5.0, LangUtil.requirePositive(5.0));
+        assertEquals(Double.POSITIVE_INFINITY, LangUtil.requirePositive(Double.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(0.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(Double.NaN));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(Double.NEGATIVE_INFINITY));
+    }
+
+    @Test
+    public void testRequirePositiveFloat() {
+        assertEquals(5.0f, LangUtil.requirePositive(5.0f));
+        assertEquals(Float.POSITIVE_INFINITY, LangUtil.requirePositive(Float.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(0.0f));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5.0f));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(Float.NaN));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(Float.NEGATIVE_INFINITY));
+    }
+
+    @Test
     public void testRequirePositiveLong() {
         assertEquals(5L, LangUtil.requirePositive(5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(0L));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5L));
     }
 
     @Test
     public void testRequirePositiveLongFmtArgs() {
-        assertEquals(5L, LangUtil.requirePositive(5L, "Error: %s", -5L));
+        assertEquals(5L, LangUtil.requirePositive(5L, "Error: %s", 5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(0L, "Error: %s", 0L));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5L, "Error: %s", -5L));
     }
 
     @Test
     public void testRequirePositiveInt() {
         assertEquals(5, LangUtil.requirePositive(5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(0));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requirePositive(-5));
     }
 
@@ -639,27 +695,63 @@ class LangUtilTest {
     }
 
     @Test
+    public void testRequireNegativeDouble() {
+        assertEquals(-5.0, LangUtil.requireNegative(-5.0));
+        assertEquals(Double.NEGATIVE_INFINITY, LangUtil.requireNegative(Double.NEGATIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(Double.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(Double.NaN));
+    }
+
+    @Test
+    public void testRequireNegativeFloat() {
+        assertEquals(-5.0f, LangUtil.requireNegative(-5.0f));
+        assertEquals(Float.NEGATIVE_INFINITY, LangUtil.requireNegative(Float.NEGATIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(Float.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0.0f));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5.0f));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(Float.NaN));
+    }
+
+    @Test
     public void testRequireNegativeLong() {
         assertEquals(-5L, LangUtil.requireNegative(-5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0L));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5L));
     }
 
     @Test
     public void testRequireNegativeLongFmtArgs() {
         assertEquals(-5L, LangUtil.requireNegative(-5L, "Error: %s", 5L));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0L, "Error: %s", 0L));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5L, "Error: %s", 5L));
     }
 
     @Test
     public void testRequireNegativeInt() {
         assertEquals(-5, LangUtil.requireNegative(-5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5));
     }
 
     @Test
     public void testRequireNegativeIntFmtArgs() {
         assertEquals(-5, LangUtil.requireNegative(-5, "Error: %s", 5));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(0, "Error: %s", 0));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireNegative(5, "Error: %s", 5));
+    }
+
+    @Test
+    public void testRequireInIntervalDouble() {
+        assertEquals(5.0, LangUtil.requireInInterval(5.0, 1.0, 10.0));
+        assertEquals(5.0, LangUtil.requireInInterval(5.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5.0, 6.0, 10.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5.0, 6.0, Double.NaN));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5.0, Double.NaN, 10.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(Double.NaN, 6.0, 10.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(Double.NEGATIVE_INFINITY, 6.0, 10.0));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(Double.POSITIVE_INFINITY, 6.0, 10.0));
     }
 
     @Test

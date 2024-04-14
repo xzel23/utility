@@ -782,10 +782,16 @@ public final class LangUtil {
      * @param a the lower bound
      * @param b the upper bound
      * @return true, exactly if a ≤ x and x ≤ b
+     * @throws IllegalArgumentException if the intervall is invalid
      */
     public static boolean isBetween(long x, long a, long b) {
-        assert a <= b : "invalid interval: a=" + a + ", b=" + b;
-        return a <= x && x <= b;
+        if (a <= x && x <= b) {
+            return true;
+        }
+        if (a <= b) {
+            return false;
+        }
+        throw new IllegalArgumentException("invalid interval: a=" + a + ", b=" + b);
     }
 
     /**
@@ -795,10 +801,16 @@ public final class LangUtil {
      * @param a the lower bound
      * @param b the upper bound
      * @return true, exactly if a ≤ x and x ≤ b
+     * @throws IllegalArgumentException if the intervall is invalid
      */
     public static boolean isBetween(double x, double a, double b) {
-        assert a <= b : "invalid interval: a=" + a + ", b=" + b;
-        return a <= x && x <= b;
+        if (a <= x && x <= b) {
+            return true;
+        }
+        if (a <= b) {
+            return false;
+        }
+        throw new IllegalArgumentException("invalid interval: a=" + a + ", b=" + b);
     }
 
     /**
@@ -811,8 +823,13 @@ public final class LangUtil {
      * @return true, exactly if a.compareTo(x) ≤ 0 and x.compareTo(b) ≤ 0
      */
     public static <T extends Comparable<T>> boolean isBetween(T x, T a, T b) {
-        assert a.compareTo(b) <= 0 : "invalid interval: a=" + a + ", b=" + b;
-        return a.compareTo(x) <= 0 && x.compareTo(b) <= 0;
+        if (a.compareTo(x) <= 0 && x.compareTo(b) <= 0) {
+            return true;
+        }
+        if (a.compareTo(b) <= 0) {
+            return false;
+        }
+        throw new IllegalArgumentException("invalid interval: a=" + a + ", b=" + b);
     }
 
     /**
@@ -1123,6 +1140,59 @@ public final class LangUtil {
      *
      * @param value the value to check
      * @return the given value
+     * @throws IllegalArgumentException if the value is negative or {@link Double#NaN}
+     */
+    public static double requireNonNegative(double value) {
+        return requireNonNegative(value, "value is negative: %f", value);
+    }
+
+    /**
+     * Ensures that a given long value is non-negative. If the value is negative, an {@link IllegalArgumentException}
+     * is thrown with the specified format string and arguments.
+     *
+     * @param value the long value to ensure non-negativity
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative or {@link Double#NaN}
+     */
+    public static double requireNonNegative(double value, String fmt, Object... args) {
+        if (value >= 0.0) {
+            return value;
+        }
+        throw new IllegalArgumentException(fmt.formatted(args));
+    }
+
+    /**
+     * Returns the given value if it is non-negative, otherwise throws an IllegalArgumentException with a specified error message.
+     *
+     * @param value the value to check
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative
+     */
+    public static float requireNonNegative(float value) {
+        return requireNonNegative(value, "value is negative: %f", value);
+    }
+
+    /**
+     * Ensures that a given long value is non-negative. If the value is negative, an {@link IllegalArgumentException}
+     * is thrown with the specified format string and arguments.
+     *
+     * @param value the long value to ensure non-negativity
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative
+     */
+    public static float requireNonNegative(float value, String fmt, Object... args) {
+        return (float) requireNonNegative((double) value, fmt, args);
+    }
+
+    /**
+     * Returns the given value if it is non-negative, otherwise throws an IllegalArgumentException with a specified error message.
+     *
+     * @param value the value to check
+     * @return the given value
      * @throws IllegalArgumentException if the value is negative
      */
     public static long requireNonNegative(long value) {
@@ -1168,6 +1238,83 @@ public final class LangUtil {
      */
     public static int requireNonNegative(int value, String fmt, Object... args) {
         return (int) requireNonNegative((long) value, fmt, args);
+    }
+
+    /**
+     * Checks if the given value is non-negative.
+     *
+     * @param value the value to check for non-negativity
+     * @return the given value
+     * @throws IllegalArgumentException if the given value is negative
+     */
+    public static short requireNonNegative(short value) {
+        return (short) requireNonNegative((long) value);
+    }
+
+    /**
+     * Checks if the given value is a non-negative integer.
+     *
+     * @param value The value to be checked.
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative
+     */
+    public static short requireNonNegative(short value, String fmt, Object... args) {
+        return (short) requireNonNegative((long) value, fmt, args);
+    }
+
+    /**
+     * Returns the specified value if it is greater than 0. Otherwise, throws an IllegalArgumentException with a specific error message.
+     *
+     * @param value the value to be checked
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative or zero
+     */
+    public static double requirePositive(double value) {
+        return requirePositive(value, "value must be greater than 0: %f", value);
+    }
+
+    /**
+     * Checks if the given value is positive. If it is not, throws an {@link IllegalArgumentException} with a formatted
+     * error message using the provided format string and arguments.
+     *
+     * @param value the value to check if it is positive
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative or zero
+     */
+    public static double requirePositive(double value, String fmt, Object... args) {
+        if (value > 0.0) {
+            return value;
+        }
+        throw new IllegalArgumentException(fmt.formatted(args));
+    }
+
+    /**
+     * Returns the specified value if it is greater than 0. Otherwise, throws an IllegalArgumentException with a specific error message.
+     *
+     * @param value the value to be checked
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative or zero
+     */
+    public static float requirePositive(float value) {
+        return requirePositive(value, "value must be greater than 0: %f", value);
+    }
+
+    /**
+     * Checks if the given value is positive. If it is not, throws an {@link IllegalArgumentException} with a formatted
+     * error message using the provided format string and arguments.
+     *
+     * @param value the value to check if it is positive
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative or zero
+     */
+    public static float requirePositive(float value, String fmt, Object... args) {
+        return (float) requirePositive((double) value, fmt, args);
     }
 
     /**
@@ -1225,6 +1372,83 @@ public final class LangUtil {
     }
 
     /**
+     * Returns the given value if it is a positive integer. If the value is negative or zero,
+     * it throws an IllegalArgumentException.
+     *
+     * @param value the integer value to check
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative or zero
+     */
+    public static short requirePositive(short value) {
+        return (short) requirePositive((long) value);
+    }
+
+    /**
+     * Returns the absolute value of the given integer if it is positive.
+     * If the value is negative, it throws an IllegalArgumentException with a specified error message formatted using the given format string and arguments.
+     *
+     * @param value The integer value to be checked.
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is negative or zero
+     */
+    public static short requirePositive(short value, String fmt, Object... args) {
+        return (short) requirePositive((long) value, fmt, args);
+    }
+
+    /**
+     * Checks if the given value is a negative number.
+     *
+     * @param value the value to be checked
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not negative
+     */
+    public static double requireNegative(double value) {
+        return requireNegative(value, "value must be less than 0: %f", value);
+    }
+
+    /**
+     * Throws an IllegalArgumentException if the specified value is not negative.
+     *
+     * @param value the value to check
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not negative
+     */
+    public static double requireNegative(double value, String fmt, Object... args) {
+        if (value < 0.0) {
+            return value;
+        }
+        throw new IllegalArgumentException(fmt.formatted(args));
+    }
+
+    /**
+     * Checks if the given value is a negative number.
+     *
+     * @param value the value to be checked
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not negative
+     */
+    public static float requireNegative(float value) {
+        return requireNegative(value, "value must be less than 0: %f", value);
+    }
+
+    /**
+     * Throws an IllegalArgumentException if the specified value is not negative.
+     *
+     * @param value the value to check
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not negative
+     */
+    public static float requireNegative(float value, String fmt, Object... args) {
+        return (float) requireNegative((double) value,  fmt, args);
+    }
+
+    /**
      * Checks if the given value is a negative number.
      *
      * @param value the value to be checked
@@ -1232,7 +1456,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static long requireNegative(long value) {
-        return requireNegative(value, "value must less than 0: %d", value);
+        return requireNegative(value, "value must be less than 0: %d", value);
     }
 
     /**
@@ -1245,7 +1469,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static long requireNegative(long value, String fmt, Object... args) {
-        if (value > 0) {
+        if (value >= 0) {
             throw new IllegalArgumentException(fmt.formatted(args));
         }
         return value;
@@ -1275,6 +1499,91 @@ public final class LangUtil {
      */
     public static int requireNegative(int value, String fmt, Object... args) {
         return (int) requireNegative((long) value, fmt, args);
+    }
+
+    /**
+     * Returns the negative value of the given integer value. If the value is already negative, then it is returned as is.
+     *
+     * @param value the integer value to be checked and converted to negative
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not negative
+     */
+    public static short requireNegative(short value) {
+        return (short) requireNegative((long) value);
+    }
+
+    /**
+     * Returns the negative value of the given integer if it is not already negative.
+     * Otherwise, it returns the same value. The optional format string and arguments
+     * can be used to specify a message if the value is not negative.
+     *
+     * @param value the integer value to be checked
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not negative
+     */
+    public static short requireNegative(short value, String fmt, Object... args) {
+        return (short) requireNegative((long) value, fmt, args);
+    }
+
+    /**
+     * Checks if a given value is within a specified interval.
+     *
+     * @param value the value to be checked
+     * @param min the minimum value of the interval (inclusive)
+     * @param max the maximum value of the interval (inclusive)
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not within the specified interval
+     */
+    public static double requireInInterval(double value, double min, double max) {
+        return requireInInterval(value, min, max, "value must be between %f and %f: %f", min, max, value);
+    }
+
+    /**
+     * Checks if the given value is within the specified interval and throws an exception if it is not.
+     *
+     * @param value the value to check
+     * @param min   the minimum value of the interval (inclusive)
+     * @param max   the maximum value of the interval (inclusive)
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not within the interval
+     */
+    public static double requireInInterval(double value, double min, double max, String fmt, Object... args) {
+        if (!isBetween(value, min, max)) {
+            throw new IllegalArgumentException(fmt.formatted(args));
+        }
+        return value;
+    }
+
+    /**
+     * Checks if a given value is within a specified interval.
+     *
+     * @param value the value to be checked
+     * @param min the minimum value of the interval (inclusive)
+     * @param max the maximum value of the interval (inclusive)
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not within the specified interval
+     */
+    public static float requireInInterval(float value, float min, float max) {
+        return requireInInterval(value, min, max, "value must be between %f and %f: %f", min, max, value);
+    }
+
+    /**
+     * Checks if the given value is within the specified interval and throws an exception if it is not.
+     *
+     * @param value the value to check
+     * @param min   the minimum value of the interval (inclusive)
+     * @param max   the maximum value of the interval (inclusive)
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is not within the interval
+     */
+    public static float requireInInterval(float value, float min, float max, String fmt, Object... args) {
+        return (float) requireInInterval((double) value, (double) min, (double) max, fmt, args);
     }
 
     /**
@@ -1335,6 +1644,35 @@ public final class LangUtil {
      */
     public static int requireInInterval(int value, int min, int max, String fmt, Object... args) {
         return (int) requireInInterval((long) value, (long) min, (long) max, fmt, args);
+    }
+
+    /**
+     * Checks if the given value is within the specified interval.
+     *
+     * @param value the value to be checked
+     * @param min   the minimum value of the interval (inclusive)
+     * @param max   the maximum value of the interval (inclusive)
+     * @return the given value
+     * @throws IllegalArgumentException if the value is outside the interval
+     */
+    public static short requireInInterval(short value, short min, short max) {
+        return (short) requireInInterval((long) value, (long) min, (long) max);
+    }
+
+    /**
+     * Ensures that the given value is within the specified interval. If the value is outside the interval, an exception
+     * is thrown with a formatted error message.
+     *
+     * @param value the value to check
+     * @param min   the minimum value in the interval (inclusive)
+     * @param max   the maximum value in the interval (inclusive)
+     * @param fmt   the format string for the error message
+     * @param args  the arguments to be formatted in the error message
+     * @return the given value
+     * @throws IllegalArgumentException if the value is outside the interval
+     */
+    public static short requireInInterval(short value, short min, short max, String fmt, Object... args) {
+        return (short) requireInInterval((long) value, (long) min, (long) max, fmt, args);
     }
 
 }
