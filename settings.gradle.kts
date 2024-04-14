@@ -37,7 +37,6 @@ dependencyResolutionManagement {
             version("slf4j", "2.0.13")
             version("jimfs", "1.3.0")
             version("miglayout", "11.3")
-            version("spotbugs", "4.8.4")
             version("mockito", "5.11.0")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe-annotations")
