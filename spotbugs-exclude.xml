@@ -27,6 +27,14 @@
     </Match>
 
     <Match>
+        <Or>
+            <Class name="com.dua3.utility.logging.LogUtil"/>
+            <Class name="com.dua3.utility.logging.slf4j.LogEntryDispatcherFactorySlf4j"/>
+        </Or>
+        <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+
+    <Match>
         <Class name="com.dua3.utility.data.HSVColor"/>
         <Bug pattern="FE_FLOATING_POINT_EQUALITY" />
     </Match>

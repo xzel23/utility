@@ -6,9 +6,10 @@ package com.dua3.utility.logging;
 @FunctionalInterface
 public interface ILogEntryDispatcherFactory {
     /**
-     * Retrieves the global LogEntryDispatcher instance and connects all available loggers to it.
-     *
+     * Retrieves the LogEntryDispatcher instance and connects all available loggers to it.
+     * <p>
+     * NOTE: This method is called by the ServiceProvider and not intended to be called directly by user code.
      * @return The global LogEntryDispatcher instance.
      */
-    LogEntryDispatcher getGlobalDispatcher();
+    LogEntryDispatcher getDispatcher();
 }

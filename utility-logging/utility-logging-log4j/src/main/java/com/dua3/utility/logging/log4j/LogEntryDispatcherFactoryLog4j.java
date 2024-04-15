@@ -10,7 +10,7 @@ import org.apache.logging.log4j.core.LoggerContext;
  */
 public class LogEntryDispatcherFactoryLog4j implements ILogEntryDispatcherFactory {
     @Override
-    public LogEntryDispatcher getGlobalDispatcher() {
+    public LogEntryDispatcher getDispatcher() {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         return LogUtilLog4J.createAppenderAndAttachAllLoggers(context, "LogEntryDispatcherLog4J");
     }
