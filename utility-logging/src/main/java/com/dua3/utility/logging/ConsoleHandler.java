@@ -12,10 +12,30 @@ import java.util.Map;
  * The ConsoleHandler class is an implementation of the LogEntryHandler interface.
  * It handles log entries by writing them to the console.
  */
-public class ConsoleHandler implements LogEntryHandler {
+public final class ConsoleHandler implements LogEntryHandler {
+
     private static final String NEWLINE = System.lineSeparator();
+
+    private static final Map<LogLevel, Pair<String, String>> COLOR_MAP_COLORED = java.util.Map.of(
+        LogLevel.TRACE, Pair.of(AnsiCode.italic(true), AnsiCode.reset() + NEWLINE),
+        LogLevel.DEBUG, Pair.of("", NEWLINE),
+        LogLevel.INFO, Pair.of(AnsiCode.bold(true), NEWLINE),
+        LogLevel.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED) + AnsiCode.bold(true), AnsiCode.reset() + NEWLINE),
+        LogLevel.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED) + AnsiCode.bold(true), AnsiCode.reset() + NEWLINE)
+    );
+
+    private static final Map<LogLevel, Pair<String, String>> COLOR_MAP_MONOCHROME = java.util.Map.of(
+        LogLevel.TRACE, Pair.of("", NEWLINE),
+        LogLevel.DEBUG, Pair.of("", NEWLINE),
+        LogLevel.INFO, Pair.of("", NEWLINE),
+        LogLevel.WARN, Pair.of("", NEWLINE),
+        LogLevel.ERROR, Pair.of("", NEWLINE)
+    );
+
     private final PrintStream out;
-    private final Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
+
+    private volatile Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
+    private volatile LogLevel level = LogLevel.INFO;
 
     /**
      * Constructs a ConsoleHandler with the specified PrintStream and colored flag.
@@ -25,25 +45,48 @@ public class ConsoleHandler implements LogEntryHandler {
      */
     public ConsoleHandler(PrintStream out, boolean colored) {
         this.out = out;
-
-        if (colored) {
-            colorMap.put(LogLevel.TRACE, Pair.of(AnsiCode.fg(Color.DARKGRAY), AnsiCode.reset() + NEWLINE));
-            colorMap.put(LogLevel.DEBUG, Pair.of(AnsiCode.fg(Color.BLACK), AnsiCode.reset() + NEWLINE));
-            colorMap.put(LogLevel.INFO, Pair.of(AnsiCode.fg(Color.BLUE), AnsiCode.reset() + NEWLINE));
-            colorMap.put(LogLevel.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED), AnsiCode.reset() + NEWLINE));
-            colorMap.put(LogLevel.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED), AnsiCode.reset() + NEWLINE));
-        } else {
-            colorMap.put(LogLevel.TRACE, Pair.of("", NEWLINE));
-            colorMap.put(LogLevel.DEBUG, Pair.of("", NEWLINE));
-            colorMap.put(LogLevel.INFO, Pair.of("", NEWLINE));
-            colorMap.put(LogLevel.WARN, Pair.of("", NEWLINE));
-            colorMap.put(LogLevel.ERROR, Pair.of("", NEWLINE));
-        }
+        setColored(colored);
     }
 
     @Override
     public void handleEntry(LogEntry entry) {
-        var colors = colorMap.get(entry.level());
-        out.append(entry.format(colors.first(), colors.second()));
+        if (entry.level().ordinal() >= level.ordinal()) {
+            var colors = colorMap.get(entry.level());
+            out.append(entry.format(colors.first(), colors.second()));
+        }
+    }
+
+    /**
+     * Set the log level.
+     *
+     * @param level the log level to be set
+     */
+    public void setLevel(LogLevel level) {
+        this.level = level;
+    }
+
+    /**
+     * Get the log level.
+     *
+     * @return the log level
+     */
+    public LogLevel getLevel() {
+        return level;
+    }
+
+    /**
+     * Enable/Disable colored output using ANSI codes.
+     * @param colored true, if output use colors
+     */
+    public void setColored(boolean colored) {
+        colorMap = colored ? COLOR_MAP_COLORED : COLOR_MAP_MONOCHROME;
+    }
+
+    /**
+     * Check if colored output is enabled.
+     * @return true, if colored output is enabled
+     */
+    public boolean isColored() {
+        return colorMap == COLOR_MAP_COLORED;
     }
 }
