@@ -8,12 +8,15 @@ import com.dua3.utility.swing.ArgumentsDialog;
 import com.dua3.utility.swing.ComboBoxEx;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
+import com.dua3.utility.swing.SwingUtil;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -23,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -38,6 +42,16 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
     private final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
     private final AtomicInteger n = new AtomicInteger();
     private volatile boolean done;
+
+    public static void start(Supplier<? extends SwingComponentsSampleLogBase> factory, String[] args) {
+        SwingUtil.setNativeLookAndFeel();
+
+        SwingUtilities.invokeLater(() -> {
+            SwingComponentsSampleLogBase instance = factory.get();
+            instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            instance.setVisible(true);
+        });
+    }
 
     protected SwingComponentsSampleLogBase() {
         setLayout(new MigLayout("fill", "[grow,fill]", "[][][grow,fill]"));
