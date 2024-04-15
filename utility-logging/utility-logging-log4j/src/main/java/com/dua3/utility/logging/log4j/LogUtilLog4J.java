@@ -13,6 +13,19 @@ import java.util.ServiceConfigurationError;
 
 /**
  * A utility class for creating and managing Log4j appenders.
+ * <p>
+ * <b>Rerouting logging to Log4J</b><br>
+ * <ul>
+ *     <li><b>JUL (java.util.logging):</b> add {@code log4j-jul} to your dependencies and add a static initializer
+ *     block before declaring any Logger:
+ *     <pre>
+ *        static {
+ *            System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+ *        }
+ *     </pre>
+ *     <li><b>SLF4J:</b> add {@code log4j-slf4j2-impl} to your dependencies. Do not add any other logging implementation
+ *     based on SLF4J (i. e., SimpleLogger, Logback).
+ * </ul>
  */
 public final class LogUtilLog4J {
 

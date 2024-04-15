@@ -9,6 +9,19 @@ import java.util.ServiceConfigurationError;
 
 /**
  * The LogUtilSlf4j class provides utility methods for working with the SLF4J logging framework.
+ * <p>
+ * <b>Rerouting logging to SLF4J</b><br>
+ * <ul>
+ *     <li><b>JUL (java.util.logging):</b> add {@code jul-to-slf4j} to your dependencies and add a static initializer
+ *     block before declaring any Logger:
+ *     <pre>
+ *         static {
+ *             java.util.logging.LogManager.getLogManager().reset();
+ *             SLF4JBridgeHandler.install();
+ *         }
+ *     </pre>
+ *     <li><b>Log4J:</b> add {@code log4j-to-slf4j} to your dependencies. Do not add any {@code log4j-core}.
+ * </ul>
  */
 public final class LogUtilSlf4j {
     private static final Logger LOG = LogManager.getLogger(LogUtilSlf4j.class);
