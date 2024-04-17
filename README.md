@@ -170,6 +170,10 @@ the parameter.
 
 ## Changes
 
+### 12.3
+
+- added i18n package
+
 ### 12.2.1
 
 - add LangUtil.require...() overloads for double and float arguments

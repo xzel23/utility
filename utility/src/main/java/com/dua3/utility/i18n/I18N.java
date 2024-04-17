@@ -1,0 +1,161 @@
+package com.dua3.utility.i18n;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.text.MessageFormat;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+
+/**
+ * The I18N class provides internationalization support for the application. It retrieves localized strings from
+ * the resource bundle based on the current locale.
+ */
+public class I18N {
+    private static final Logger LOG = LogManager.getLogger(I18N.class);
+
+    private final ResourceBundle mainBundle;
+    private final Map<String, ResourceBundle> bundleMap = new HashMap();
+
+    /**
+     * Creates an instance of the I18N class with the provided resource bundle.
+     *
+     * @param bundle The resource bundle to use.
+     */
+    private I18N(ResourceBundle bundle) {
+        this.mainBundle = bundle;
+        mergeBundle(bundle);
+    }
+
+    /**
+     * Merges the given resource bundle into the internal bundleMap.
+     *
+     * @param bundle The resource bundle to merge.
+     */
+    private void mergeBundle(ResourceBundle bundle) {
+        Enumeration<String> keys = bundle.getKeys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            bundleMap.putIfAbsent(key, bundle);
+        }
+    }
+
+    /**
+     * Retrieves the ResourceBundle associated with the given key from the bundleMap.
+     * If the key is not found, the mainBundle is returned.
+     *
+     * @param key The key to lookup in the bundleMap.
+     * @return The retrieved ResourceBundle or the mainBundle if the key is not found.
+     */
+    public ResourceBundle lookupBundle(String key) {
+        return bundleMap.getOrDefault(key, mainBundle);
+    }
+
+    /**
+     * Retrieves the ResourceBundle associated with the given key from the bundleMap.
+     * If the key is not found, a new bundle is loaded using the supplied loader, and if
+     * the key is contained in the new bundle, the new bundle is merged and returned.
+     *
+     * @param key The key to lookup in the bundleMap.
+     * @param bundleLoader The function used to load the ResourceBundle for the given locale.
+     * @return The ResourceBundle containing the key, or {@code null} if the key is not found.
+     */
+    public ResourceBundle lookupBundle(String key, Function<Locale, ResourceBundle> bundleLoader) {
+        return bundleMap.computeIfAbsent(key, k -> {
+            ResourceBundle newBundle = bundleLoader.apply(mainBundle.getLocale());
+            if (!newBundle.containsKey(k)) {
+                return null;
+            }
+            mergeBundle(newBundle);
+            return newBundle;
+        });
+    }
+
+    /**
+     * Creates an instance of the I18N class.
+     *
+     * @param baseName The base name of the resource bundle.
+     * @param locale   The locale to be used for localization.
+     * @return An instance of the I18N class.
+     */
+    public static I18N create(String baseName, Locale locale) {
+        LOG.debug("creating instance for {} with requested locale {}", baseName, locale);
+        ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
+        Locale bundleLocale = bundle.getLocale();
+        if (!Objects.equals(locale, bundleLocale)) {
+            LOG.warn("requested locale {} not available, falling back to {}", locale, bundleLocale);
+        }
+        return new I18N(bundle);
+    }
+
+    /**
+     * Creates an instance of the I18N class with the provided resource bundle.
+     *
+     * @param bundle The resource bundle to use.
+     * @return An instance of the I18N class.
+     */
+    public static I18N create(ResourceBundle bundle) {
+        return new I18N(bundle);
+    }
+
+    /**
+     * Retrieves the locale used for localization.
+     *
+     * @return The locale used for localization.
+     */
+    public Locale getLocale() {
+        return mainBundle.getLocale();
+    }
+
+    /**
+     * Retrieves the object for the given key from the resource bundle.
+     *
+     * @param key the key that represents the string to be retrieved.
+     * @return the object bound to the given key.
+     * @see ResourceBundle#getObject(String)
+     */
+    public Object getObject(String key) {
+        return lookupBundle(key).getObject(key);
+    }
+
+    /**
+     * Retrieves the localized string for the given key from the resource bundle.
+     *
+     * @param key The key that represents the string to be retrieved.
+     * @return The localized string for the given key.
+     * @see ResourceBundle#getString(String)
+     */
+    public String get(String key) {
+        return lookupBundle(key).getString(key);
+    }
+
+    /**
+     * Retrieves the formatted localized string for the given key from the resource bundle,
+     * using the provided arguments.
+     *
+     * @param key  The key that represents the string pattern to be retrieved.
+     * @param args The arguments to be formatted into the string pattern.
+     * @return The formatted string for the given key and arguments.
+     * @see ResourceBundle#getString(String)
+     * @see MessageFormat#format(String, Object...)
+     */
+    public String format(String key, Object... args) {
+        String pattern = lookupBundle(key).getString(key);
+        return MessageFormat.format(pattern, args);
+    }
+
+    /**
+     * Checks if the given key is present in the bundleMap.
+     *
+     * @param key The key to check.
+     * @return {@code true} if the key is present, {@code false} otherwise.
+     */
+    public boolean containsKey(String key) {
+        return bundleMap.containsKey(key);
+    }
+}
