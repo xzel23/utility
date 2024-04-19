@@ -13,8 +13,26 @@ import java.util.ResourceBundle;
 import java.util.function.Function;
 
 /**
- * The I18N class provides internationalization support for the application. It retrieves localized strings from
- * the resource bundle based on the current locale.
+ * The I18N class provides internationalization support for applications.
+ * It retrieves localized strings from one or more resource bundles based on the requested locale.
+ * <p>
+ * This class is intended to control resource management in internationalized environments.
+ * The Application class
+ * should instantiate a single instance of this class with its main {@link ResourceBundle}.
+ * The {@link #getLocale()}
+ * method will return the locale of the main bundle, and it should be passed down to used libraries so that those
+ * can select the appropriate resource bundle for that locale.
+ * This prevents the main application falling back
+ * to the default locale while the libraries using another locale, for example, if the application runs on a system
+ * configured to use a French locale but not providing a bundle matching that locale, this prevents mixed output
+ * using english texts from the application bundle and french texts from the library bundle.
+ * <p>
+ * If the library is built using the I18N class, it should not directly use the library bundle but instead use
+ * {@link #mergeBundle(ResourceBundle)} to add its own bundle to the instance.
+ * Only keys not yet present will
+ * be added to the I18N instance.
+ * This makes it possible for the application to customize library resources
+ * by adding a mapping for the library resource key to be customized.
  */
 public class I18N {
     private static final Logger LOG = LogManager.getLogger(I18N.class);
