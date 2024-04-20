@@ -37,6 +37,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
     public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
     public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
     public static final int AVERAGE_SLEEP_MILLIS = 10;
+    public static final int LOG_BUFFER_SIZE = 1000;
     private final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + getClass().getName());
     private final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + getClass().getName());
     private final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
@@ -132,7 +133,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         separator2.setMinimumSize(new Dimension(8, 8));
 
         // -- SwingLogPane
-        SwingLogPane logPane = new SwingLogPane();
+        SwingLogPane logPane = new SwingLogPane(LOG_BUFFER_SIZE);
 
         // add components
         add(comboBoxEx, "wrap");
