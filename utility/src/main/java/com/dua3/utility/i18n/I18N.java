@@ -6,10 +6,14 @@ import org.apache.logging.log4j.Logger;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.ServiceLoader;
 import java.util.function.Function;
 
 /**
@@ -25,20 +29,63 @@ import java.util.function.Function;
  * This prevents the main application falling back
  * to the default locale while the libraries using another locale, for example, if the application runs on a system
  * configured to use a French locale but not providing a bundle matching that locale, this prevents mixed output
- * using english texts from the application bundle and french texts from the library bundle.
+ * using english texts from the application bundle and French texts from the library bundle.
  * <p>
  * If the library is built using the I18N class, it should not directly use the library bundle but instead use
  * {@link #mergeBundle(ResourceBundle)} to add its own bundle to the instance.
- * Only keys not yet present will
- * be added to the I18N instance.
+ * Only keys not yet present will be added to the I18N instance.
  * This makes it possible for the application to customize library resources
  * by adding a mapping for the library resource key to be customized.
+ * <p>
+ * The application should implement the {@link I18NProvider} interface to announce the I18N instance to libraries.
+ * Once initialised, libraries can get the instance using {@link I18N#getInstance()} and merge their own bundles.
  */
 public class I18N {
     private static final Logger LOG = LogManager.getLogger(I18N.class);
 
     private final ResourceBundle mainBundle;
     private final Map<String, ResourceBundle> bundleMap = new HashMap();
+
+    private static final I18N INSTANCE;
+
+    static {
+        Iterator<I18NProvider> serviceIterator = ServiceLoader
+                .load(I18NProvider.class)
+                .iterator();
+
+        I18N i18n;
+        if (!serviceIterator.hasNext()) {
+            ResourceBundle bundle = new ListResourceBundle() {
+                @Override
+                protected Object[][] getContents() {
+                    return new Object[0][];
+                }
+            };
+            i18n = I18N.create(bundle);
+            LOG.warn("No I18N provider found. Creating empty I18N instance.");
+        } else {
+            i18n = serviceIterator.next().i18n();
+        }
+
+        if (serviceIterator.hasNext()) {
+            throw new IllegalStateException(
+                    "multiple I18N providers found: " + i18n.getClass().getName()
+                            + ", " + serviceIterator.next().i18n().getClass().getName()
+            );
+        }
+
+        LOG.debug("I18N provider: {}", i18n.getClass().getName());
+
+        INSTANCE = i18n;
+    }
+
+    /**
+     * Get the global instance.
+     * @return the singleton instance.
+     */
+    public static I18N getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Creates an instance of the I18N class with the provided resource bundle.
@@ -72,6 +119,17 @@ public class I18N {
      */
     public ResourceBundle lookupBundle(String key) {
         return bundleMap.getOrDefault(key, mainBundle);
+    }
+
+    /**
+     * Retrieves the ResourceBundle associated with the given key from the bundleMap.
+     * If the key is not found, an empty Optional is returned.
+     *
+     * @param key The key to lookup in the bundleMap.
+     * @return Optional containing the bundle the key is mapped to
+     */
+    public Optional<ResourceBundle> getBundle(String key) {
+        return Optional.ofNullable(bundleMap.get(key));
     }
 
     /**
@@ -150,6 +208,32 @@ public class I18N {
      */
     public String get(String key) {
         return lookupBundle(key).getString(key);
+    }
+
+    /**
+     * Retrieves the localized string for the given key from the resource bundle.
+     *
+     * @param key The key that represents the string to be retrieved.
+     * @return The localized string for the given key.
+     * @see ResourceBundle#getString(String)
+     */
+    public String getOrDefault(String key, String defaultValue) {
+        return lookupBundle(key).getString(key);
+    }
+
+    /**
+     * Retrieves the localized string for the given key from the resource bundle
+     * or computes a result if the key is not mapped.
+     * <p>
+     * The computed value is not added to this instance.
+     *
+     * @param key The key that represents the string to be retrieved.
+     * @param compute the function that computes values for unmapped keys
+     * @return The localized string for the given key.
+     * @see ResourceBundle#getString(String)
+     */
+    public String getOrCompute(String key, Function<String, String> compute) {
+        return getBundle(key).map(bundle -> bundle.getString(key)).orElse(compute.apply(key));
     }
 
     /**

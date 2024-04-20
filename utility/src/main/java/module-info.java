@@ -54,4 +54,5 @@ open module com.dua3.utility {
     uses com.dua3.utility.text.FontUtil;
     uses com.dua3.utility.io.FileType;
     uses com.dua3.utility.data.ImageUtil;
+    uses com.dua3.utility.i18n.I18NProvider;
 }
