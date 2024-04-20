@@ -50,12 +50,10 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
                     int remove = queuedRemoves.getAndSet(0);
 
                     if (remove > 0) {
-                        fireTableRowsDeleted(0, Math.max(0, remove - 1));
-                        sz -= remove;
+                        fireTableRowsDeleted(0, remove - 1);
                     }
-
-                    if (sz > oldSz) {
-                        fireTableRowsInserted(oldSz, sz - 1);
+                    if (sz > oldSz - remove) {
+                        fireTableRowsInserted(oldSz-remove, sz - 1);
                     }
                 } catch (InterruptedException e) {
                     LOG.debug("interrupted", e);
