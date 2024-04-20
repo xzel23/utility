@@ -23,6 +23,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -37,6 +38,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -61,6 +64,9 @@ public class SwingLogPane extends JPanel {
     private final TableRowSorter<AbstractTableModel> tableRowSorter;
     private Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
+    private JScrollPane scrollPaneTable;
+    private JScrollPane scrollPaneDetails;
+    private List<LogEntry> selectedEntries = Collections.emptyList();
 
     /**
      * Creates a new instance of SwingLogPane with the default buffer size and connects all known loggers.
@@ -157,24 +163,46 @@ public class SwingLogPane extends JPanel {
         // update detail pane when entry is selected
         table.getSelectionModel().addListSelectionListener(evt -> model.executeRead(() -> {
             ListSelectionModel lsm = (ListSelectionModel) evt.getSource();
-            final String text;
-            if (lsm.isSelectionEmpty() || evt.getValueIsAdjusting()) {
-                text = "";
-            } else {
-                Function<? super LogEntry, String> fmt = format;
-                StringBuilder sb = new StringBuilder(1024);
-                for (int idx : lsm.getSelectedIndices()) {
-                    if (lsm.isSelectedIndex(idx)) {
-                        int idxModel = tableRowSorter.convertRowIndexToModel(idx);
-                        LogEntry entry = model.getValueAt(idxModel, 0);
-                        sb.append(fmt.apply(entry)).append("\n");
+
+            if (evt.getValueIsAdjusting()) {
+                return;
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                final List<LogEntry> newEntries = new ArrayList<>(lsm.getMaxSelectionIndex() - lsm.getMinSelectionIndex() + 1);
+                for (int i = lsm.getMinSelectionIndex(); i <= lsm.getMaxSelectionIndex(); i++) {
+                    if (lsm.isSelectedIndex(i)) {
+                        int idxModel = tableRowSorter.convertRowIndexToModel(i);
+                        newEntries.add(model.getValueAt(idxModel, 0));
                     }
                 }
+
+                boolean changed = newEntries.size() != selectedEntries.size();
+                if (!changed) {
+                    for (int i=0; i<newEntries.size(); i++) {
+                        if (newEntries.get(i) != selectedEntries.get(i)) {
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!changed) {
+                    return;
+                }
+
+                final String text;
+                Function<? super LogEntry, String> fmt = format;
+                StringBuilder sb = new StringBuilder(128*newEntries.size());
+                for (LogEntry entry: newEntries) {
+                    sb.append(fmt.apply(entry)).append("\n");
+                }
                 text = sb.toString();
-            }
-            SwingUtilities.invokeLater(() -> {
+
                 details.setText(text);
                 details.setCaretPosition(0);
+
+                selectedEntries = newEntries;
             });
         }));
 
@@ -185,8 +213,8 @@ public class SwingLogPane extends JPanel {
         table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "escape");
 
         // prepare the ScrollPanes
-        JScrollPane scrollPaneTable = new JScrollPane(table);
-        JScrollPane scrollPaneDetails = new JScrollPane(details);
+        this.scrollPaneTable = new JScrollPane(table);
+        this.scrollPaneDetails = new JScrollPane(details);
 
         // create SplitPane for table and detail pane
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);
@@ -196,6 +224,7 @@ public class SwingLogPane extends JPanel {
         model.addTableModelListener(evt -> {
             // handle scrolling
             SwingUtilities.invokeLater(() -> {
+                // if scroll position is on the last row and no row is selected, automatically scroll down when rows are inserted
                 if (table.getSelectedRowCount() == 0 && tableScroller.getValue() >= tableScroller.getMaximum() - tableScroller.getVisibleAmount() - 3 * table.getRowHeight()) {
                     // scroll to last row
                     boolean selectionEmpty = table.getSelectedRow() < 0;
@@ -285,8 +314,32 @@ public class SwingLogPane extends JPanel {
         }
     }
 
-    private void scrollRowIntoView(int row) {
-        SwingUtilities.invokeLater(() -> table.scrollRectToVisible(new Rectangle(table.getCellRect(row, 0, true))));
+    /**
+     * Scrolls the specified row into view.
+     *
+     * @param row the row index to scroll into view
+     */
+    public void scrollRowIntoView(int row) {
+        SwingUtilities.invokeLater(() ->  {
+            Rectangle rect = new Rectangle(table.getCellRect(row, 0, true));
+            table.scrollRectToVisible(rect);
+        });
+    }
+
+    /**
+     * Scrolls the specified number of rows in the table.
+     *
+     * @param n the number of rows to scroll, positive values scroll down, negative values scroll up
+     */
+    public void scrollNRows(int n) {
+        int rowHeight = table.getRowHeight();
+        JScrollBar verticalScrollBar = scrollPaneTable.getVerticalScrollBar();
+        SwingUtilities.invokeLater(() -> {
+            synchronized (verticalScrollBar) {
+                int value = verticalScrollBar.getValue() + rowHeight * n;
+                verticalScrollBar.setValue(value);
+            }
+        });
     }
 
     /**
