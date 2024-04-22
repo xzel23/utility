@@ -177,6 +177,7 @@ the parameter.
 - added getGlobalDispatcher to the LogUtilLog4J and LogUtilSLF4J classes
 - extracted common code from the two Swing Logging samples
 - added documentation to the LogUtil classes about rerouting logging implementations
+- code cleanup and minor fixes
 
 ### 12.2.1
 
