@@ -5,8 +5,6 @@ import com.dua3.utility.logging.LogEntryDispatcher;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 /**
  * This class is an implementation of the ILogEntryDispatcherFactory interface.
  * It provides the functionality to create a Slf4j LogEntryDispatcher instance.

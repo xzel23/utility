@@ -44,7 +44,7 @@ public class I18N {
     private static final Logger LOG = LogManager.getLogger(I18N.class);
 
     private final ResourceBundle mainBundle;
-    private final Map<String, ResourceBundle> bundleMap = new HashMap();
+    private final Map<String, ResourceBundle> bundleMap = new HashMap<>();
 
     private static final I18N INSTANCE;
 

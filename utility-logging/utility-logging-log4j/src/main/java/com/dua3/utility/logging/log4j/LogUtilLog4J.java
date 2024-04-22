@@ -2,7 +2,6 @@ package com.dua3.utility.logging.log4j;
 
 import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogUtil;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;

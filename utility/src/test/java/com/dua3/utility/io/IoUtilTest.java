@@ -489,7 +489,7 @@ public class IoUtilTest {
 
     @Test
     void toURIUrlArgumentParsesCorrectly() throws Exception {
-        URL url = new URL("http://example.com");
+        URL url = new URL("https://example.com");
         URI expected = url.toURI();
 
         assertEquals(expected, IoUtil.toURI(url));
