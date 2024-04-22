@@ -53,7 +53,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
                         fireTableRowsDeleted(0, remove - 1);
                     }
                     if (sz > oldSz - remove) {
-                        fireTableRowsInserted(oldSz-remove, sz - 1);
+                        fireTableRowsInserted(oldSz - remove, sz - 1);
                     }
                 } catch (InterruptedException e) {
                     LOG.debug("interrupted", e);
