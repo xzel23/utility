@@ -173,8 +173,10 @@ the parameter.
 ### 12.3
 
 - added i18n package
-- ConsoleHandler (utility-logging): make colored output configurable at runtime, can set the log level on Console Handler
+- ConsoleHandler (utility-logging): make colored output configurable at runtime
 - added getGlobalDispatcher to the LogUtilLog4J and LogUtilSLF4J classes
+- reduce logging overhead for LogBuffer
+- log filtering
 - extracted common code from the two Swing Logging samples
 - added documentation to the LogUtil classes about rerouting logging implementations
 - code cleanup and minor fixes

@@ -8,7 +8,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -79,11 +78,11 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     @Override
     public void handleEntry(LogEntry entry) {
         synchronized (listeners) {
-            boolean replaced;
+            int removed;
             synchronized (buffer) {
-                replaced = !buffer.put(entry);
+                removed = buffer.put(entry) ? 0 : 1;
             }
-            listeners.forEach(listener -> listener.entry(entry, replaced));
+            listeners.forEach(listener -> listener.entries(removed, 1));
         }
     }
 
@@ -167,23 +166,12 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      */
     public interface LogBufferListener {
         /**
-         * Called when an entry was added to the buffer.
-         *
-         * @param entry    the added entry
-         * @param replaced true, if the buffer's capacity was reached and another entry was removed to make space for
-         *                 the new one
-         */
-        default void entry(LogEntry entry, boolean replaced) {
-            entries(Collections.singleton(entry), replaced ? 1 : 0);
-        }
-
-        /**
          * Called when multiple entries have been added in a batch.
          *
-         * @param entries  the added entries
-         * @param replaced the number of replaced entries as described in {@link #entry(LogEntry, boolean)}
+         * @param removed the number of removed entries
+         * @param added   the number added entries
          */
-        void entries(Collection<LogEntry> entries, int replaced);
+        void entries(int removed, int added);
 
         /**
          * Called after the buffer has been cleared.

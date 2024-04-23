@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -96,10 +95,10 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     }
 
     @Override
-    public void entries(Collection<LogEntry> entries, int replaced) {
+    public void entries(int removed, int added) {
         updateWriteLock.lock();
         try {
-            queuedRemoves.addAndGet(replaced);
+            queuedRemoves.addAndGet(removed);
             updatesAvailableCondition.signalAll();
         } finally {
             updateWriteLock.unlock();
