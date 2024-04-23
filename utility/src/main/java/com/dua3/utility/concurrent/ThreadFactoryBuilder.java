@@ -18,6 +18,11 @@ public class ThreadFactoryBuilder {
     private ThreadFactoryBuilder() {
     }
 
+    /**
+     * Returns a ThreadFactoryBuilder object that allows creating customized ThreadFactory instances.
+     *
+     * @return the ThreadFactoryBuilder instance
+     */
     public static ThreadFactoryBuilder builder() {
         return new ThreadFactoryBuilder();
     }
@@ -79,7 +84,9 @@ public class ThreadFactoryBuilder {
     }
 
     /**
+     * Builds a CustomThreadFactory instance with the specified parameters.
      *
+     * @return The CustomThreadFactory instance.
      */
     public CustomThreadFactory build() {
         return new CustomThreadFactory(group, stackSize, prefix, daemon, priority);
