@@ -1582,6 +1582,7 @@ public final class LangUtil {
      * @return the given value
      * @throws IllegalArgumentException if the value is not within the interval
      */
+    @SuppressWarnings("RedundantCast")
     public static float requireInInterval(float value, float min, float max, String fmt, Object... args) {
         return (float) requireInInterval((double) value, (double) min, (double) max, fmt, args);
     }

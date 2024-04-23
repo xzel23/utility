@@ -94,20 +94,18 @@ public class StopwatchTest {
     @Test
     public void testAutoCloseableStopWatchConstructor_withName() {
         String expectedName = "StopwatchUnderTest";
-        Stopwatch.AutoCloseableStopWatch stopWatch = Stopwatch.create(expectedName, sw -> {
-        });
-
-        assertEquals(expectedName, stopWatch.getName(), "Expected the Stopwatch name to match the one supplied in the constructor.");
+        try (Stopwatch.AutoCloseableStopWatch stopWatch = Stopwatch.create(expectedName, sw -> {})) {
+            assertEquals(expectedName, stopWatch.getName(), "Expected the Stopwatch name to match the one supplied in the constructor.");
+        }
     }
     // This test case ensures that the correct name is recorded while creating a new AutoCloseableStopWatch instance.
 
     @Test
     public void testAutoCloseableStopWatchConstructor_withNameSupplier() {
         String expectedName = "StopwatchUnderTest";
-        Stopwatch.AutoCloseableStopWatch stopWatch = Stopwatch.create(() -> expectedName, sw -> {
-        });
-
-        assertEquals(expectedName, stopWatch.getName(), "Expected the Stopwatch name to match the one supplied in the constructor.");
+        try (Stopwatch.AutoCloseableStopWatch stopWatch = Stopwatch.create(() -> expectedName, sw -> {})) {
+            assertEquals(expectedName, stopWatch.getName(), "Expected the Stopwatch name to match the one supplied in the constructor.");
+        }
     }
 
     @Test

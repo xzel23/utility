@@ -80,7 +80,7 @@ public final class ConsoleHandler implements LogEntryHandler {
 
     /**
      * Retrieves the filter for log entries.
-     *
+     * <p>
      * This method returns the current filter that is being used to determine if a log entry should
      * be included or excluded.
      *
