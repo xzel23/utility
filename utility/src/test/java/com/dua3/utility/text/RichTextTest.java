@@ -253,30 +253,6 @@ public class RichTextTest {
     }
 
     @Test
-    public void testsubSequence() {
-        RichTextBuilder builder = new RichTextBuilder();
-        builder.append("Hello ");
-        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
-        builder.append("world");
-        builder.pop(Style.FONT_WEIGHT);
-        builder.append("!");
-        RichText rt = builder.toRichText();
-
-        assertEquals("Hello", rt.subSequence(0, 5).toString());
-        assertEquals("Hello ", rt.subSequence(0, 6).toString());
-        assertEquals("ello", rt.subSequence(1, 5).toString());
-        assertEquals("ello ", rt.subSequence(1, 6).toString());
-        assertEquals("ello w", rt.subSequence(1, 7).toString());
-        assertEquals("Hello world", rt.subSequence(0, 11).toString());
-        assertEquals("Hello world!", rt.subSequence(0, 12).toString());
-        assertEquals("", rt.subSequence(0, 0).toString());
-
-        RichText sub = rt.subSequence(5, 10);
-        assertEquals(" worl", sub.toString());
-        assertEquals("wo", sub.subSequence(1, 3).toString());
-    }
-
-    @Test
     public void testSubSequence() {
         String s = "Hello world! We need a longer text to reach all case labels in runIndex()!";
 
