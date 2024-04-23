@@ -33,9 +33,8 @@ public final class ConsoleHandler implements LogEntryHandler {
     );
 
     private final PrintStream out;
-
+    private volatile LogEntryFilter filter = LogEntryFilter.allPass();
     private volatile Map<LogLevel, Pair<String, String>> colorMap = new EnumMap<>(LogLevel.class);
-    private volatile LogLevel level = LogLevel.INFO;
 
     /**
      * Constructs a ConsoleHandler with the specified PrintStream and colored flag.
@@ -50,28 +49,8 @@ public final class ConsoleHandler implements LogEntryHandler {
 
     @Override
     public void handleEntry(LogEntry entry) {
-        if (entry.level().ordinal() >= level.ordinal()) {
-            var colors = colorMap.get(entry.level());
-            out.append(entry.format(colors.first(), colors.second()));
-        }
-    }
-
-    /**
-     * Set the log level.
-     *
-     * @param level the log level to be set
-     */
-    public void setLevel(LogLevel level) {
-        this.level = level;
-    }
-
-    /**
-     * Get the log level.
-     *
-     * @return the log level
-     */
-    public LogLevel getLevel() {
-        return level;
+        var colors = colorMap.get(entry.level());
+        out.append(entry.format(colors.first(), colors.second()));
     }
 
     /**
@@ -88,5 +67,26 @@ public final class ConsoleHandler implements LogEntryHandler {
      */
     public boolean isColored() {
         return colorMap == COLOR_MAP_COLORED;
+    }
+
+    /**
+     * Sets the filter for log entries.
+     *
+     * @param filter the LogEntryFilter to be set as the filter for log entries
+     */
+    public void setFilter(LogEntryFilter filter) {
+        this.filter = filter;
+    }
+
+    /**
+     * Retrieves the filter for log entries.
+     *
+     * This method returns the current filter that is being used to determine if a log entry should
+     * be included or excluded.
+     *
+     * @return the LogEntryFilter that is currently set as the filter for log entries.
+     */
+    public LogEntryFilter getFilter() {
+        return filter;
     }
 }

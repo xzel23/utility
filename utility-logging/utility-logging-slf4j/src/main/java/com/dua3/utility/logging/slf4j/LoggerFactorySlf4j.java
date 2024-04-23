@@ -2,6 +2,7 @@ package com.dua3.utility.logging.slf4j;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogEntryHandler;
 import com.dua3.utility.logging.ConsoleHandler;
 import com.dua3.utility.logging.LogEntryDispatcher;
@@ -33,7 +34,8 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     private final List<Pair<String, Level>> prefixes = new ArrayList<>();
     private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
 
-    private LogEntryHandler defaultHandler;
+    private final LogEntryHandler defaultHandler;
+    private volatile LogEntryFilter filter;
 
     public LoggerFactorySlf4j() {
         Properties properties = getProperties();
@@ -123,6 +125,16 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     @Override
     public void removeLogEntryHandler(LogEntryHandler handler) {
         handlers.removeIf(h -> h.get() == handler);
+    }
+
+    @Override
+    public void setFilter(LogEntryFilter filter) {
+        this.filter = filter;
+    }
+
+    @Override
+    public LogEntryFilter getFilter() {
+        return filter;
     }
 
     @Override

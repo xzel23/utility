@@ -12,6 +12,6 @@ public class LogEntryDispatcherFactoryLog4j implements ILogEntryDispatcherFactor
     @Override
     public LogEntryDispatcher getDispatcher() {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
-        return LogUtilLog4J.createAppenderAndAttachAllLoggers(context, "LogEntryDispatcherLog4J");
+        return LogUtilLog4J.createAppenderAndAttachAllLoggers(context, "LogEntryDispatcherLog4J").dispatcher();
     }
 }

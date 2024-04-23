@@ -2,6 +2,7 @@ package com.dua3.utility.logging.log4j;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.logging.LogEntryDispatcher;
+import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogEntryHandler;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
@@ -17,6 +18,7 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +26,7 @@ import java.util.Objects;
  * This class is an implementation of the Log4j Appender and LogEntryHandlerPool interfaces.
  * It is used as an appender for log events and provides a mechanism for forwarding log4j log events to applications.
  */
-public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispatcher {
+public class LogAppenderLog4j extends AbstractAppender {
     /**
      * The name of the appender class used in the log4j configuration.
      *
@@ -40,6 +42,45 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
     private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
 
     /**
+     * The LogEntryDispatcher associated with this LogAppenderLog4j instance.
+     * The LogEntryDispatcher is responsible for dispatching log entries to registered handlers based on a filter.
+     */
+    private final LogEntryDispatcherLog4J dispatcher;
+
+    /**
+     * This class represents an implementation of the LogEntryDispatcher interface using Log4J.
+     * It dispatches log entries to registered handlers based on a filter.
+     */
+    private class LogEntryDispatcherLog4J implements LogEntryDispatcher {
+        private volatile LogEntryFilter filter = LogEntryFilter.ALL_PASS_FILTER;
+
+        @Override
+        public void addLogEntryHandler(LogEntryHandler handler) {
+            handlers.add(new WeakReference<>(handler));
+        }
+
+        @Override
+        public void removeLogEntryHandler(LogEntryHandler handler) {
+            handlers.removeIf(h -> h.get() == handler);
+        }
+
+        @Override
+        public void setFilter(LogEntryFilter filter) {
+            this.filter = filter;
+        }
+
+        @Override
+        public LogEntryFilter getFilter() {
+            return filter;
+        }
+
+        @Override
+        public Collection<LogEntryHandler> getLogEntryHandlers() {
+            return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
+        }
+    }
+
+    /**
      * Constructs a new instance of LogAppenderLog4j with the specified parameters.
      *
      * @param name              the name of the appender
@@ -50,6 +91,7 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
     protected LogAppenderLog4j(String name, @Nullable Filter filter, @Nullable Layout<? extends Serializable> layout,
                                final boolean ignoreExceptions) {
         super(name, filter, layout, ignoreExceptions, Property.EMPTY_ARRAY);
+        this.dispatcher = new LogEntryDispatcherLog4J();
     }
 
     /**
@@ -90,32 +132,27 @@ public class LogAppenderLog4j extends AbstractAppender implements LogEntryDispat
      */
     @Override
     public void append(LogEvent event) {
-        boolean cleanup = false;
-        for (WeakReference<LogEntryHandler> ref : handlers) {
-            LogEntryHandler handler = ref.get();
+        LogEntryLog4J entry = new LogEntryLog4J(event);
+        boolean pass = dispatcher.filter.test(entry);
+
+        Iterator<WeakReference<LogEntryHandler>> iterator = handlers.iterator();
+        while (iterator.hasNext()) {
+            LogEntryHandler handler = iterator.next().get();
             if (handler == null) {
-                cleanup = true;
-            } else {
-                handler.handleEntry(new LogEntryLog4J(event));
+                iterator.remove();
+            } else if (pass) {
+                handler.handleEntry(entry);
             }
         }
-        if (cleanup) {
-            handlers.removeIf(ref -> ref.get() == null);
-        }
     }
 
-    @Override
-    public void addLogEntryHandler(LogEntryHandler handler) {
-        handlers.add(new WeakReference<>(handler));
+    /**
+     * Returns the LogEntryDispatcher associated with the LogAppenderLog4j instance.
+     *
+     * @return the LogEntryDispatcher
+     */
+    public LogEntryDispatcher dispatcher() {
+        return dispatcher;
     }
 
-    @Override
-    public void removeLogEntryHandler(LogEntryHandler handler) {
-        handlers.removeIf(h -> h.get() == handler);
-    }
-
-    @Override
-    public Collection<LogEntryHandler> getLogEntryHandlers() {
-        return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
-    }
 }
