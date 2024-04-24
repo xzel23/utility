@@ -87,4 +87,33 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
         return knownLoggers.computeIfAbsent(logEntry.loggerName(), loggerName -> filter.test(logEntry.loggerName(), logEntry.level()));
     }
 
+    /**
+     * Creates a copy of the DefaultLogEntryFilter with the same log level and filter.
+     *
+     * @return A new {@link DefaultLogEntryFilter} instance with the same log level and filter.
+     */
+    public DefaultLogEntryFilter copy() {
+        return new DefaultLogEntryFilter(getLevel(), getFilter());
+    }
+
+    /**
+     * Returns a new DefaultLogEntryFilter with the same filter and the specified log level.
+     *
+     * @param newLevel the log level to set
+     * @return a new {@link DefaultLogEntryFilter} instance with the specified log level
+     * @see DefaultLogEntryFilter
+     */
+    public DefaultLogEntryFilter withLevel(LogLevel newLevel) {
+        return new DefaultLogEntryFilter(newLevel, getFilter());
+    }
+
+    /**
+     * Returns a new {@link DefaultLogEntryFilter} with the same log level and the specified filter.
+     *
+     * @param newFilter the new filter to set
+     * @return a new instance of {@link DefaultLogEntryFilter} with the specified filter
+     */
+    public DefaultLogEntryFilter withFilter(BiPredicate<String, LogLevel> newFilter) {
+        return new DefaultLogEntryFilter(getLevel(), newFilter);
+    }
 }
