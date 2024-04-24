@@ -164,9 +164,14 @@ public class Stopwatch {
      * @param fmt the format to use
      * @return Supplier that returns the state of the stopwatch at time of invocation
      */
-    public Supplier<String> logElapsed(Format fmt) {
+    public Object logElapsed(Format fmt) {
         Instant instant = Instant.now();
-        return () -> fmt.format(Duration.between(start, instant));
+        return new Object() {
+            @Override
+            public String toString() {
+                return fmt.format(Duration.between(start, instant));
+            }
+        };
     }
 
     /**
@@ -176,10 +181,15 @@ public class Stopwatch {
      * @param newSplit if true, start a new split
      * @return Supplier that returns the state of the stopwatch at time of invocation
      */
-    public Supplier<String> logElapsedSplit(Format fmt, boolean newSplit) {
+    public Object logElapsedSplit(Format fmt, boolean newSplit) {
         Instant startOfSplit = startSplit;
         Instant instant = Instant.now();
-        return () -> fmt.format(Duration.between(startOfSplit, instant));
+        return new Object() {
+            @Override
+            public String toString() {
+                return fmt.format(Duration.between(startOfSplit, instant));
+            }
+        };
     }
 
     /**

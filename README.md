@@ -180,6 +180,8 @@ the parameter.
 - extracted common code from the two Swing Logging samples
 - added documentation to the LogUtil classes about rerouting logging implementations
 - code cleanup and minor fixes
+- StopWatch.log...() returns an Object that does the formatting in the toString() method instead of a Supplier<String>
+  to integrate better with logging frameworks (this way, lambda support is not needed)
 
 ### 12.2.1
 
