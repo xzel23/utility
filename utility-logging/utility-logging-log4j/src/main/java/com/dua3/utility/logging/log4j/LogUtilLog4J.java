@@ -1,10 +1,14 @@
 package com.dua3.utility.logging.log4j;
 
 import com.dua3.utility.logging.LogEntryDispatcher;
+import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.spi.StandardLevel;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -104,10 +108,62 @@ public final class LogUtilLog4J {
      */
     public static LogAppenderLog4j getGlobalDispatcher() {
         LogEntryDispatcher dispatcher = LogUtil.getGlobalDispatcher();
-        if(dispatcher instanceof LogAppenderLog4j logAppenderLog4j) {
+        if (dispatcher instanceof LogAppenderLog4j logAppenderLog4j) {
             return logAppenderLog4j;
         }
         throw new IllegalStateException("wrong implementation: " + dispatcher.getClass());
     }
 
+    /**
+     * Sets the root log level for Log4j.
+     *
+     * @param level the LogLevel to set as the root log level
+     */
+    public static void setRootLevel(LogLevel level) {
+        Configurator.setRootLevel(translate(level));
+    }
+
+    /**
+     * Translates a Log4J Level object to a custom LogLevel object.
+     * <p>
+     * This method takes a Log4J Level object as parameter and returns the corresponding custom LogLevel object.
+     * The translation is based on the integer level value of the Log4J Level object.
+     *
+     * @param level the Log4J Level object to be translated
+     * @return the custom LogLevel object that corresponds to the given Log4J Level object
+     */
+    public static LogLevel translate(Level level) {
+        int levelInt = level.intLevel();
+        if (levelInt > StandardLevel.DEBUG.intLevel()) {
+            return LogLevel.TRACE;
+        }
+        if (levelInt > StandardLevel.INFO.intLevel()) {
+            return LogLevel.DEBUG;
+        }
+        if (levelInt > StandardLevel.WARN.intLevel()) {
+            return LogLevel.INFO;
+        }
+        if (levelInt > StandardLevel.ERROR.intLevel()) {
+            return LogLevel.WARN;
+        }
+        return LogLevel.ERROR;
+    }
+
+    /**
+     * Translates a {@link LogLevel} object to a Log4J {@link Level} object.
+     * <p>
+     * This method takes a LogLevel Level object as parameter and returns the corresponding Log4J Level object.
+     *
+     * @param level the LogLevel object to be translated
+     * @return the Log4j Level object that corresponds to the given LogLevel object
+     */
+    public static Level translate(LogLevel level) {
+        return switch (level) {
+            case TRACE -> Level.TRACE;
+            case DEBUG -> Level.DEBUG;
+            case INFO -> Level.INFO;
+            case WARN -> Level.WARN;
+            case ERROR -> Level.ERROR;
+        };
+    }
 }

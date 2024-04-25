@@ -2,11 +2,9 @@ package com.dua3.utility.logging.log4j;
 
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogLevel;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.ReusableMessage;
-import org.apache.logging.log4j.spi.StandardLevel;
 
 import java.time.Instant;
 import java.util.function.Supplier;
@@ -32,7 +30,7 @@ public final class LogEntryLog4J implements LogEntry {
         this.loggerName = event.getLoggerName();
         var instant = event.getInstant();
         this.time = Instant.ofEpochSecond(instant.getEpochSecond(), instant.getNanoOfSecond());
-        this.level = translate(event.getLevel());
+        this.level = LogUtilLog4J.translate(event.getLevel());
         var marker = event.getMarker();
         this.marker = marker == null ? "" : marker.getName();
         Message message = event.getMessage();
@@ -116,32 +114,6 @@ public final class LogEntryLog4J implements LogEntry {
     @Override
     public Throwable throwable() {
         return throwable;
-    }
-
-    /**
-     * Translates a Log4J Level object to a custom LogLevel object.
-     * <p>
-     * This method takes a Log4J Level object as parameter and returns the corresponding custom LogLevel object.
-     * The translation is based on the integer level value of the Log4J Level object.
-     *
-     * @param level the Log4J Level object to be translated
-     * @return the custom LogLevel object that corresponds to the given Log4J Level object
-     */
-    private static LogLevel translate(Level level) {
-        int levelInt = level.intLevel();
-        if (levelInt > StandardLevel.DEBUG.intLevel()) {
-            return LogLevel.TRACE;
-        }
-        if (levelInt > StandardLevel.INFO.intLevel()) {
-            return LogLevel.DEBUG;
-        }
-        if (levelInt > StandardLevel.WARN.intLevel()) {
-            return LogLevel.INFO;
-        }
-        if (levelInt > StandardLevel.ERROR.intLevel()) {
-            return LogLevel.WARN;
-        }
-        return LogLevel.ERROR;
     }
 
 }
