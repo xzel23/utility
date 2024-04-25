@@ -106,10 +106,10 @@ public final class LogUtilLog4J {
      * @throws ServiceConfigurationError if no factories can create a LogEntryDispatcher.
      * @throws IllegalStateException if the implementations do not match
      */
-    public static LogAppenderLog4j getGlobalDispatcher() {
+    public static LogAppenderLog4j.LogEntryDispatcherLog4J getGlobalDispatcher() {
         LogEntryDispatcher dispatcher = LogUtil.getGlobalDispatcher();
-        if (dispatcher instanceof LogAppenderLog4j logAppenderLog4j) {
-            return logAppenderLog4j;
+        if (dispatcher instanceof LogAppenderLog4j.LogEntryDispatcherLog4J log4jDispatcher) {
+            return log4jDispatcher;
         }
         throw new IllegalStateException("wrong implementation: " + dispatcher.getClass());
     }

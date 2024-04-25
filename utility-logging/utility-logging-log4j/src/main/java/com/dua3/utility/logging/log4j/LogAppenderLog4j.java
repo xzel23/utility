@@ -51,7 +51,7 @@ public class LogAppenderLog4j extends AbstractAppender {
      * This class represents an implementation of the LogEntryDispatcher interface using Log4J.
      * It dispatches log entries to registered handlers based on a filter.
      */
-    private class LogEntryDispatcherLog4J implements LogEntryDispatcher {
+    public class LogEntryDispatcherLog4J implements LogEntryDispatcher {
         private volatile LogEntryFilter filter = LogEntryFilter.ALL_PASS_FILTER;
 
         @Override
@@ -77,6 +77,15 @@ public class LogAppenderLog4j extends AbstractAppender {
         @Override
         public Collection<LogEntryHandler> getLogEntryHandlers() {
             return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
+        }
+
+        /**
+         * Returns the LogAppenderLog4j instance associated with this LogEntryDispatcherLog4J instance.
+         *
+         * @return the LogAppenderLog4j instance
+         */
+        public LogAppenderLog4j getAppender() {
+            return LogAppenderLog4j.this;
         }
     }
 
