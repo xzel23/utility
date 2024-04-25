@@ -1,5 +1,6 @@
 package com.dua3.utility.i18n;
 
+import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -164,7 +165,12 @@ public class I18N {
         ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
         Locale bundleLocale = bundle.getLocale();
         if (!Objects.equals(locale, bundleLocale)) {
-            LOG.warn("requested locale {} not available, falling back to {}", locale, bundleLocale);
+            String bundleLocaleName = String.valueOf(bundleLocale);
+            if (!bundleLocaleName.isEmpty()) {
+                LOG.info("requested locale {} not available, falling back to {}", locale, bundleLocaleName);
+            } else {
+                LOG.warn("requested locale {} not available, falling back to the default bundle", locale);
+            }
         }
         return new I18N(bundle);
     }
