@@ -50,6 +50,7 @@ dependencyResolutionManagement {
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
             library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").versionRef("log4j")
+            library("log4j-jcl", "org.apache.logging.log4j", "log4j-jcl").versionRef("log4j")
             library("log4j-slf4j2", "org.apache.logging.log4j", "log4j-slf4j2-impl").versionRef("log4j")
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
 

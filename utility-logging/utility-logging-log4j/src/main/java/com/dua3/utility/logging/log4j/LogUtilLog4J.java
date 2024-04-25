@@ -31,6 +31,7 @@ import java.util.ServiceConfigurationError;
  * </ul>
  */
 public final class LogUtilLog4J {
+    // NOTE: do not use logging in this class as it interferes with LogManager creation!
 
     private LogUtilLog4J() {
     }
@@ -115,15 +116,6 @@ public final class LogUtilLog4J {
     }
 
     /**
-     * Sets the root log level for Log4j.
-     *
-     * @param level the LogLevel to set as the root log level
-     */
-    public static void setRootLevel(LogLevel level) {
-        Configurator.setRootLevel(translate(level));
-    }
-
-    /**
      * Translates a Log4J Level object to a custom LogLevel object.
      * <p>
      * This method takes a Log4J Level object as parameter and returns the corresponding custom LogLevel object.
@@ -165,5 +157,19 @@ public final class LogUtilLog4J {
             case WARN -> Level.WARN;
             case ERROR -> Level.ERROR;
         };
+    }
+
+    /**
+     * Configures the Log4J bridge implementations that are available.
+     */
+    public static void init(LogLevel rootLevel) {
+        // configure the JUL bridge
+        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+        // configure the commons-logging bridge
+        System.setProperty("org.apache.commons.logging.LogFactory", "org.apache.logging.log4j.jcl.LogFactoryImpl");
+        // no configuration necessary for SLF4J
+
+        // set the root logger level
+        Configurator.setRootLevel(translate(rootLevel));
     }
 }
