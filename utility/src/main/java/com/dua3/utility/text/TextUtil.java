@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
@@ -243,7 +244,7 @@ public final class TextUtil {
      * @param template the template
      * @param env      substitution environment
      * @return result of transformation
-     * @see #transform(String, UnaryOperator, Consumer)
+     * @see #transform(CharSequence, Function, Consumer)
      */
     public static String transform(String template, UnaryOperator<String> env) {
         StringBuilder sb = new StringBuilder(Math.max(16, template.length()));
@@ -252,24 +253,25 @@ public final class TextUtil {
     }
 
     /**
-     * Transform a templated String.
+     * Transform a templated Text.
      * <p>
      * Read {@code template} and copy its contents to {@code output}. For each
      * reference in the form {@code ${VARIABLE}}, the substitution is determined by
      * calling {@code env.apply("VARIABLE")}.
      * </p>
      *
+     * @param <T> the generic type to use
      * @param template the template
      * @param env      substitution environment
      * @param output   output
      */
-    public static void transform(String template,
-                                 UnaryOperator<String> env,
-                                 Consumer<? super CharSequence> output) {
+    public static <T extends CharSequence> void transform(T template,
+                                                          Function<? super String, ? extends T> env,
+                                                          Consumer<? super CharSequence> output) {
         int pos = 0;
         while (pos < template.length()) {
             // find next ref
-            int varPos = template.indexOf(TRANSFORM_REF_START, pos);
+            int varPos = indexOf(template, TRANSFORM_REF_START, pos);
             if (varPos == -1) {
                 // no more refs => copy the remaining text
                 output.accept(template.subSequence(pos, template.length()));
@@ -281,9 +283,9 @@ public final class TextUtil {
             pos = varPos + TRANSFORM_REF_START.length();
 
             // determine ref name
-            int varEnd = template.indexOf(TRANSFORM_REF_END, pos);
+            int varEnd = indexOf(template, TRANSFORM_REF_END, pos);
             LangUtil.check(varEnd != -1, "unexpected end of template, '%s' expected", TRANSFORM_REF_END);
-            String varName = template.substring(pos, varEnd);
+            String varName = template.subSequence(pos, varEnd).toString();
             pos = varEnd + TRANSFORM_REF_END.length();
 
             // insert ref substitution
