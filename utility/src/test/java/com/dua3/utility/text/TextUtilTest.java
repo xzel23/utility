@@ -85,6 +85,38 @@ public class TextUtilTest {
     }
 
     @Test
+    void testNonEmptyOr() {
+        // Test with non-null, non-empty CharSequence - Expected to return inputString itself
+        String input = "Test Input";
+        String defaultInput = "Default";
+        assertEquals("Test Input", TextUtil.nonEmptyOr(input, defaultInput));
+
+        // Test with empty CharSequence - Expected to return defaultString
+        input = "";
+        assertEquals("Default", TextUtil.nonEmptyOr(input, defaultInput));
+
+        // Test with null CharSequence - Expected to return defaultString
+        CharSequence nullInput = null;
+        assertEquals("Default", TextUtil.nonEmptyOr(nullInput, defaultInput));
+    }
+
+    @Test
+    void testNonEmptyOr_RichText() {
+        // Test with non-null, non-empty CharSequence - Expected to return inputString itself
+        RichText input = RichText.valueOf("Test Input");
+        RichText defaultInput = RichText.valueOf("Default");
+        assertEquals(input, TextUtil.nonEmptyOr(input, defaultInput));
+
+        // Test with empty CharSequence - Expected to return defaultString
+        input = RichText.valueOf("");
+        assertEquals(defaultInput, TextUtil.nonEmptyOr(input, defaultInput));
+
+        // Test with null CharSequence - Expected to return defaultString
+        RichText nullInput = null;
+        assertEquals(defaultInput, TextUtil.nonEmptyOr(nullInput, defaultInput));
+    }
+
+    @Test
     void testEscapeHTML() {
         String normalString = "<div>Test Content</div>";
         String escapedString = TextUtil.escapeHTML(normalString);

@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import org.apache.logging.log4j.LogManager;
@@ -767,6 +768,17 @@ public final class TextUtil {
 
     private static String padding(char filler, int len) {
         return Character.toString(filler).repeat(Math.max(0, len));
+    }
+
+    /**
+     * Returns the given string if it is not null or empty, otherwise returns the specified value.
+     *
+     * @param t The string to check.
+     * @param tIfNullOrEmpty The value to return if the given string is null or empty.
+     * @return The given string if it is not null or empty, otherwise the specified value.
+     */
+    public static <T extends CharSequence> T nonEmptyOr(@Nullable T t, T tIfNullOrEmpty) {
+        return (t == null || t.isEmpty()) ? tIfNullOrEmpty : t;
     }
 
     /**

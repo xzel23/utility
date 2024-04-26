@@ -175,13 +175,15 @@ the parameter.
 - added i18n package
 - ConsoleHandler (utility-logging): make colored output configurable at runtime
 - added getGlobalDispatcher to the LogUtilLog4J and LogUtilSLF4J classes
-- reduce logging overhead for LogBuffer
+- improve logging performance
+- add LogUtilLog4J.init(LogLevel) to initialize the logging system and reroute all logging through Log4J
 - log filtering
 - extracted common code from the two Swing Logging samples
 - added documentation to the LogUtil classes about rerouting logging implementations
 - code cleanup and minor fixes
 - StopWatch.log...() returns an Object that does the formatting in the toString() method instead of a Supplier<String>
   to integrate better with logging frameworks (this way, lambda support is not needed)
+- TextUtil.nonEmptyOr()
 
 ### 12.2.1
 
