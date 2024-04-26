@@ -751,6 +751,19 @@ public final class TextUtil {
     }
 
     /**
+     * Get rich text bounds.
+     *
+     * <p>If {@code text} implements {@link ToRichText}, styles are applied prior to measuring the dimension.
+     *
+     * @param text the text
+     * @param font the base font to apply
+     * @return the text bounds
+     */
+    public static Dimension2f getRichTextDimension(CharSequence text, Font font) {
+        return FONT_UTIL.getRichTextDimension(text, font);
+    }
+
+    /**
      * Pad String to width with alignment.
      *
      * @param s     the string

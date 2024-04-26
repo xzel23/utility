@@ -1,4 +1,4 @@
-package com.dua3.utility.swing;
+package com.dua3.utility.awt;
 
 import com.dua3.utility.data.Image;
 
@@ -15,7 +15,7 @@ import java.util.Iterator;
  * It implements the Image interface.
  * @param bufferedImage the BufferedImage to be used for the SwingImage
  */
-public record SwingImage(BufferedImage bufferedImage) implements Image {
+public record AwtImage(BufferedImage bufferedImage) implements Image {
 
     /**
      * Creates a SwingImage object with the given width, height, and pixel data.
@@ -25,10 +25,10 @@ public record SwingImage(BufferedImage bufferedImage) implements Image {
      * @param data the pixel data to be used for the image
      * @return a new SwingImage object with the specified width, height, and pixel data
      */
-    public static SwingImage create(int w, int h, int[] data) {
+    public static AwtImage create(int w, int h, int[] data) {
         BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         image.setRGB(0, 0, w, h, data, 0, w);
-        return new SwingImage(image);
+        return new AwtImage(image);
     }
 
     /**
@@ -38,7 +38,7 @@ public record SwingImage(BufferedImage bufferedImage) implements Image {
      * @return a new SwingImage object created from the loaded image
      * @throws IOException if an I/O error occurs while reading the image
      */
-    public static SwingImage load(InputStream in) throws IOException {
+    public static AwtImage load(InputStream in) throws IOException {
         try (ImageInputStream iis = ImageIO.createImageInputStream(in)) {
             Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
 
@@ -48,7 +48,7 @@ public record SwingImage(BufferedImage bufferedImage) implements Image {
 
             ImageReader reader = iter.next();
             BufferedImage bufferedImage = reader.read(0);
-            return new SwingImage(bufferedImage);
+            return new AwtImage(bufferedImage);
         }
     }
 

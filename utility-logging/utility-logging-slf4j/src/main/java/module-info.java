@@ -19,7 +19,7 @@ open module com.dua3.utility.logging.slf4j {
     requires static com.dua3.cabe.annotations;
 
     requires com.dua3.utility.logging;
-    requires org.apache.logging.log4j;
+    requires static org.apache.logging.log4j;
     requires com.dua3.utility;
     requires org.slf4j;
 }

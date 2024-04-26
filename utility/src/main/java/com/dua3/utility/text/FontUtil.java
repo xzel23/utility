@@ -1,5 +1,6 @@
 package com.dua3.utility.text;
 
+import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 
 import java.io.IOException;
@@ -31,38 +32,7 @@ public interface FontUtil<F> {
         if (serviceIterator.hasNext()) {
             fu = serviceIterator.next();
         } else {
-            fu = new FontUtil<>() {
-                @SuppressWarnings("MethodMayBeStatic")
-                private <T> T noImplementation() {
-                    throw new UnsupportedOperationException("no FontUtil implementation present");
-                }
-
-                @Override
-                public Void convert(Font f) {
-                    return noImplementation();
-                }
-
-                @Override
-                public Dimension2f getTextDimension(CharSequence s, Font f) {
-                    return noImplementation();
-                }
-
-                @SuppressWarnings("RedundantThrows")
-                @Override
-                public List<Font> loadFonts(InputStream in) throws IOException {
-                    return noImplementation();
-                }
-
-                @Override
-                public List<String> getFamilies(FontTypes types) {
-                    return noImplementation();
-                }
-
-                @Override
-                public Font loadFontAs(InputStream in, Font font) {
-                    return noImplementation();
-                }
-            };
+            fu = AwtFontUtil.getInstance();
         }
 
         return fu;
@@ -84,6 +54,28 @@ public interface FontUtil<F> {
      * @return the text bounds
      */
     Dimension2f getTextDimension(CharSequence s, Font f);
+
+    /**
+     * Calculates the dimension of the given rich text line using the specified font.
+     *
+     * @param s the text
+     * @param f the base font to apply
+     * @return the dimension of the rich text line
+     */
+    default Dimension2f getRichTextDimension(CharSequence s, Font f) {
+        if (s instanceof ToRichText t) {
+            float w = 0;
+            float h = 0;
+            for (Run run : t.toRichText()) {
+                var d = getTextDimension(run, f.deriveFont(run.getFontDef()));
+                w += d.width();
+                h = Math.max(h, d.height());
+            }
+            return new Dimension2f(w, h);
+        } else {
+            return getTextDimension(s, f);
+        }
+    }
 
     /**
      * Get text width.

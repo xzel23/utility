@@ -1627,6 +1627,7 @@ public final class LangUtil {
      * @return the given value
      * @throws IllegalArgumentException if the value is outside the interval
      */
+    @SuppressWarnings("RedundantCast")
     public static int requireInInterval(int value, int min, int max) {
         return (int) requireInInterval((long) value, (long) min, (long) max);
     }

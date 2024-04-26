@@ -24,8 +24,6 @@ import java.util.ServiceConfigurationError;
  * </ul>
  */
 public final class LogUtilSlf4j {
-    private static final Logger LOG = LogManager.getLogger(LogUtilSlf4j.class);
-
     private LogUtilSlf4j() {
     }
 

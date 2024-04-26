@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import com.dua3.utility.awt.AwtImageUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -27,27 +29,7 @@ public interface ImageUtil<I> {
         if (serviceIterator.hasNext()) {
             iu = serviceIterator.next();
         } else {
-            iu = new ImageUtil<>() {
-                @SuppressWarnings("MethodMayBeStatic")
-                private <T> T noImplementation() {
-                    throw new UnsupportedOperationException("no ImageUtil implementation present");
-                }
-
-                @Override
-                public Image load(InputStream in) {
-                    return noImplementation();
-                }
-
-                @Override
-                public Image create(int w, int h, int[] data) {
-                    return noImplementation();
-                }
-
-                @Override
-                public Image convert(Image img) {
-                    return noImplementation();
-                }
-            };
+            iu = new AwtImageUtil();
         }
 
         return iu;

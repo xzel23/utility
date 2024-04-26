@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
@@ -136,7 +137,7 @@ public class SwingLogPane extends JPanel {
         details = new JTextArea(5, 80);
 
         // column settings
-        SwingFontUtil fu = new SwingFontUtil();
+        AwtFontUtil fu = new AwtFontUtil();
 
         TableColumnModel columnModel = table.getColumnModel();
         for (int i = 0; i < columnModel.getColumnCount(); i++) {

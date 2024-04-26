@@ -5,6 +5,8 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.awt.AwtFontUtil;
+import com.dua3.utility.math.geometry.Dimension2f;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,6 +21,7 @@ import static com.dua3.utility.text.TextUtil.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TextUtilTest {
 
@@ -193,4 +196,56 @@ public class TextUtilTest {
         // Test with empty string
         assertThrows(IllegalArgumentException.class, () -> decodeFontSize(""));
     }
+
+    private static Object[][] textDimensionProvider() {
+        Font timesRomanBold12 = new Font("TimesRoman-bold-12");
+        Font timesRomanItalic18 = new Font("TimesRoman-italic-18");
+
+        return new Object[][] {
+                // Testing for empty string
+                {"", timesRomanBold12, AwtFontUtil.getInstance().getTextDimension("", timesRomanBold12) },
+                // Testing for normal use case
+                {"Test text", timesRomanItalic18, AwtFontUtil.getInstance().getTextDimension("Test text", timesRomanItalic18)}
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    @ParameterizedTest
+    @MethodSource("textDimensionProvider")
+    public void testGetTextDimension(CharSequence text, Font font, Object expected) {
+        if (expected instanceof Dimension2f)
+            assertEquals(expected, getTextDimension(text, font));
+        else if (expected instanceof Class<?> && Exception.class.isAssignableFrom((Class<?>) expected))
+            assertThrows((Class<? extends Throwable>) expected, () -> getTextDimension(text, font));
+    }
+
+    @Test
+    public void testGetTextRichtDimension() {
+        Font timesRoman12 = new Font("TimesRoman-12");
+
+        // if the text does not change the font, the result should match the result for the plain string
+        RichText textHiJohn = new RichTextBuilder()
+                .append("Hi ")
+                .append("John")
+                .append("!")
+                .toRichText();
+
+        Dimension2f textDimensionHiJohn = getTextDimension(textHiJohn, timesRoman12);
+        Dimension2f richTextDimensionHiJohn = getRichTextDimension(textHiJohn, timesRoman12);
+        assertEquals(textDimensionHiJohn, richTextDimensionHiJohn);
+
+        // the bold font should use more space
+        RichText textHiBoldJohn = new RichTextBuilder()
+                .append("Hi ")
+                .push(Style.BOLD)
+                .append("John")
+                .pop(Style.BOLD)
+                .append("!")
+                .toRichText();
+
+        Dimension2f richTextDimensionHiBoldJohn = getRichTextDimension(textHiBoldJohn, timesRoman12);
+        assertEquals(textDimensionHiJohn.height(), richTextDimensionHiBoldJohn.height());
+        assertTrue(textDimensionHiJohn.width() < richTextDimensionHiBoldJohn.width());
+    }
+
 }

@@ -5,20 +5,9 @@
 
 /**
  * This module provides utilities related to Swing-based GUI applications.
- * <p>
- * The module provides implementations of the FontUtil and ImageUtil interfaces.
- * These implementations are automatically chosen at runtime:
- * - com.dua3.utility.swing.SwingFontUtil is the implementation of FontUtil
- * - com.dua3.utility.swing.SwingImageUtil is the implementation of ImageUtil
  */
 open module com.dua3.utility.swing {
     exports com.dua3.utility.swing;
-
-    provides com.dua3.utility.text.FontUtil
-            with com.dua3.utility.swing.SwingFontUtil;
-
-    provides com.dua3.utility.data.ImageUtil
-            with com.dua3.utility.swing.SwingImageUtil;
 
     requires static com.dua3.cabe.annotations;
     requires static com.dua3.utility.logging;

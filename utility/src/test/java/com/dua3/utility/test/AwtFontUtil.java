@@ -1,4 +1,4 @@
-package com.dua3.utility.swing;
+package com.dua3.utility.test;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
@@ -25,7 +25,7 @@ import java.util.WeakHashMap;
  * See usage of {@link FontUtil} in {@link com.dua3.utility.text.TextUtil} for details.
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-public class SwingFontUtil implements FontUtil<java.awt.Font> {
+public class AwtFontUtil implements FontUtil<java.awt.Font> {
 
     private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
 
