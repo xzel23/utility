@@ -1,6 +1,5 @@
 package com.dua3.utility.i18n;
 
-import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
