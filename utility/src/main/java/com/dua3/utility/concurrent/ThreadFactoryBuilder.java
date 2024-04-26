@@ -88,7 +88,7 @@ public class ThreadFactoryBuilder {
      *
      * @return The CustomThreadFactory instance.
      */
-    public CustomThreadFactory build() {
+    public ThreadFactory build() {
         return new CustomThreadFactory(group, stackSize, prefix, daemon, priority);
     }
 
