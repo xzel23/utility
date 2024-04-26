@@ -5,30 +5,71 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.utility.data.Pair;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
+
+import static com.dua3.utility.text.TextUtil.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TextUtilTest {
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    private static final List<Pair<String, byte[]>> byteArrayHexStringTestData = List.of(
-            Pair.of("00", new byte[]{0x00}),
-            Pair.of("a0cafe", new byte[]{(byte) 0xa0, (byte) 0xca, (byte) 0xfe}));
-
-    @Test
-    public void testTransform() {
-        String template = "Hello ${NAME}.";
-
-        String expected = "Hello Axel.";
-        String actual = TextUtil.transform(template, s -> s.equals("NAME") ? "Axel" : null);
-
+    @ParameterizedTest
+    @MethodSource("generateTestData_transform")
+    void testTransform(String template, Function<String, String> env, String expected) {
+        String actual = transform(template, env);
         assertEquals(expected, actual);
+    }
+
+    private static Stream<Arguments> generateTestData_transform() {
+        UnaryOperator<String> env = v -> switch (v) {
+            case "greeting" -> "Hi";
+            case "name" -> "John";
+            default -> "";
+        };
+
+        return Stream.of(
+                Arguments.of("Hello, ${name}!", env, "Hello, John!"),
+                Arguments.of("${greeting}, ${name}!", env, "Hi, John!"),
+                Arguments.of("Hello, ${name}! How are you, ${name}?", env, "Hello, John! How are you, John?"),
+                Arguments.of("Hello, name}!", env, "Hello, name}!"),
+                Arguments.of("Hello, John!", env, "Hello, John!"),
+                Arguments.of("", env, "")
+                // Add more test data if needed
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("generateTestData_transform_RichText")
+    void testTransform_RichText(RichText template, Function<String, RichText> env, RichText expected) {
+        RichText actual = transform(template, env);
+        assertEquals(expected, actual);
+    }
+
+    private static Stream<Arguments> generateTestData_transform_RichText() {
+        Function<String, RichText> env = v -> switch (v) {
+            case "greeting" -> RichText.valueOf("Hi");
+            case "name" -> RichText.valueOf("John");
+            default -> RichText.emptyText();
+        };
+
+        return Stream.of(
+                Arguments.of(RichText.valueOf("Hello, ${name}!"), env, RichText.valueOf("Hello, John!")),
+                Arguments.of(RichText.valueOf("${greeting}, ${name}!"), env, RichText.valueOf("Hi, John!")),
+                Arguments.of(RichText.valueOf("Hello, ${name}! How are you, ${name}?"), env, RichText.valueOf("Hello, John! How are you, John?")),
+                Arguments.of(RichText.valueOf("Hello, name}!"), env, RichText.valueOf("Hello, name}!")),
+                Arguments.of(RichText.valueOf("Hello, John!"), env, RichText.valueOf("Hello, John!")),
+                Arguments.of(RichText.valueOf(""), env, RichText.valueOf(""))
+                // Add more test data if needed
+        );
     }
 
     @Test
@@ -36,52 +77,52 @@ public class TextUtilTest {
         String template = "Hello ${NAME}.";
 
         String expected = "Hello Axel.";
-        String actual = TextUtil.transform(template, Map.of("NAME", "Axel"));
+        String actual = transform(template, Map.of("NAME", "Axel"));
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void testAlign() {
-        assertEquals("", TextUtil.align("", 0, TextUtil.Alignment.LEFT));
-        assertEquals("", TextUtil.align("", 0, TextUtil.Alignment.CENTER));
-        assertEquals("", TextUtil.align("", 0, TextUtil.Alignment.RIGHT));
+        assertEquals("", align("", 0, Alignment.LEFT));
+        assertEquals("", align("", 0, Alignment.CENTER));
+        assertEquals("", align("", 0, Alignment.RIGHT));
 
-        assertEquals("   ", TextUtil.align("", 3, TextUtil.Alignment.LEFT));
-        assertEquals("   ", TextUtil.align("", 3, TextUtil.Alignment.CENTER));
-        assertEquals("   ", TextUtil.align("", 3, TextUtil.Alignment.RIGHT));
+        assertEquals("   ", align("", 3, Alignment.LEFT));
+        assertEquals("   ", align("", 3, Alignment.CENTER));
+        assertEquals("   ", align("", 3, Alignment.RIGHT));
 
-        assertEquals("abc", TextUtil.align("abc", 1, TextUtil.Alignment.LEFT));
-        assertEquals("abc", TextUtil.align("abc", 1, TextUtil.Alignment.CENTER));
-        assertEquals("abc", TextUtil.align("abc", 1, TextUtil.Alignment.RIGHT));
+        assertEquals("abc", align("abc", 1, Alignment.LEFT));
+        assertEquals("abc", align("abc", 1, Alignment.CENTER));
+        assertEquals("abc", align("abc", 1, Alignment.RIGHT));
 
-        assertEquals("abc  ", TextUtil.align("abc", 5, TextUtil.Alignment.LEFT));
-        assertEquals(" abc ", TextUtil.align("abc", 5, TextUtil.Alignment.CENTER));
-        assertEquals("  abc", TextUtil.align("abc", 5, TextUtil.Alignment.RIGHT));
+        assertEquals("abc  ", align("abc", 5, Alignment.LEFT));
+        assertEquals(" abc ", align("abc", 5, Alignment.CENTER));
+        assertEquals("  abc", align("abc", 5, Alignment.RIGHT));
 
-        assertEquals("abcd ", TextUtil.align("abcd", 5, TextUtil.Alignment.LEFT));
-        assertEquals("abcd ", TextUtil.align("abcd", 5, TextUtil.Alignment.CENTER));
-        assertEquals(" abcd", TextUtil.align("abcd", 5, TextUtil.Alignment.RIGHT));
+        assertEquals("abcd ", align("abcd", 5, Alignment.LEFT));
+        assertEquals("abcd ", align("abcd", 5, Alignment.CENTER));
+        assertEquals(" abcd", align("abcd", 5, Alignment.RIGHT));
 
-        assertEquals("", TextUtil.align("", 0, TextUtil.Alignment.LEFT, '_'));
-        assertEquals("", TextUtil.align("", 0, TextUtil.Alignment.CENTER, '_'));
-        assertEquals("", TextUtil.align("", 0, TextUtil.Alignment.RIGHT, '_'));
+        assertEquals("", align("", 0, Alignment.LEFT, '_'));
+        assertEquals("", align("", 0, Alignment.CENTER, '_'));
+        assertEquals("", align("", 0, Alignment.RIGHT, '_'));
 
-        assertEquals("___", TextUtil.align("", 3, TextUtil.Alignment.LEFT, '_'));
-        assertEquals("___", TextUtil.align("", 3, TextUtil.Alignment.CENTER, '_'));
-        assertEquals("___", TextUtil.align("", 3, TextUtil.Alignment.RIGHT, '_'));
+        assertEquals("___", align("", 3, Alignment.LEFT, '_'));
+        assertEquals("___", align("", 3, Alignment.CENTER, '_'));
+        assertEquals("___", align("", 3, Alignment.RIGHT, '_'));
 
-        assertEquals("abc", TextUtil.align("abc", 1, TextUtil.Alignment.LEFT, '_'));
-        assertEquals("abc", TextUtil.align("abc", 1, TextUtil.Alignment.CENTER, '_'));
-        assertEquals("abc", TextUtil.align("abc", 1, TextUtil.Alignment.RIGHT, '_'));
+        assertEquals("abc", align("abc", 1, Alignment.LEFT, '_'));
+        assertEquals("abc", align("abc", 1, Alignment.CENTER, '_'));
+        assertEquals("abc", align("abc", 1, Alignment.RIGHT, '_'));
 
-        assertEquals("abc__", TextUtil.align("abc", 5, TextUtil.Alignment.LEFT, '_'));
-        assertEquals("_abc_", TextUtil.align("abc", 5, TextUtil.Alignment.CENTER, '_'));
-        assertEquals("__abc", TextUtil.align("abc", 5, TextUtil.Alignment.RIGHT, '_'));
+        assertEquals("abc__", align("abc", 5, Alignment.LEFT, '_'));
+        assertEquals("_abc_", align("abc", 5, Alignment.CENTER, '_'));
+        assertEquals("__abc", align("abc", 5, Alignment.RIGHT, '_'));
 
-        assertEquals("abcd_", TextUtil.align("abcd", 5, TextUtil.Alignment.LEFT, '_'));
-        assertEquals("abcd_", TextUtil.align("abcd", 5, TextUtil.Alignment.CENTER, '_'));
-        assertEquals("_abcd", TextUtil.align("abcd", 5, TextUtil.Alignment.RIGHT, '_'));
+        assertEquals("abcd_", align("abcd", 5, Alignment.LEFT, '_'));
+        assertEquals("abcd_", align("abcd", 5, Alignment.CENTER, '_'));
+        assertEquals("_abcd", align("abcd", 5, Alignment.RIGHT, '_'));
     }
 
     @Test
@@ -89,15 +130,14 @@ public class TextUtilTest {
         // Test with non-null, non-empty CharSequence - Expected to return inputString itself
         String input = "Test Input";
         String defaultInput = "Default";
-        assertEquals("Test Input", TextUtil.nonEmptyOr(input, defaultInput));
+        assertEquals("Test Input", nonEmptyOr(input, defaultInput));
 
         // Test with empty CharSequence - Expected to return defaultString
         input = "";
-        assertEquals("Default", TextUtil.nonEmptyOr(input, defaultInput));
+        assertEquals("Default", nonEmptyOr(input, defaultInput));
 
         // Test with null CharSequence - Expected to return defaultString
-        CharSequence nullInput = null;
-        assertEquals("Default", TextUtil.nonEmptyOr(nullInput, defaultInput));
+        assertEquals("Default", nonEmptyOr(null, defaultInput));
     }
 
     @Test
@@ -105,53 +145,52 @@ public class TextUtilTest {
         // Test with non-null, non-empty CharSequence - Expected to return inputString itself
         RichText input = RichText.valueOf("Test Input");
         RichText defaultInput = RichText.valueOf("Default");
-        assertEquals(input, TextUtil.nonEmptyOr(input, defaultInput));
+        assertEquals(input, nonEmptyOr(input, defaultInput));
 
         // Test with empty CharSequence - Expected to return defaultString
         input = RichText.valueOf("");
-        assertEquals(defaultInput, TextUtil.nonEmptyOr(input, defaultInput));
+        assertEquals(defaultInput, nonEmptyOr(input, defaultInput));
 
         // Test with null CharSequence - Expected to return defaultString
-        RichText nullInput = null;
-        assertEquals(defaultInput, TextUtil.nonEmptyOr(nullInput, defaultInput));
+        assertEquals(defaultInput, nonEmptyOr(null, defaultInput));
     }
 
     @Test
     void testEscapeHTML() {
         String normalString = "<div>Test Content</div>";
-        String escapedString = TextUtil.escapeHTML(normalString);
+        String escapedString = escapeHTML(normalString);
         assertEquals("&lt;div&gt;Test Content&lt;/div&gt;", escapedString);
 
         String stringWithAmpersand = "Tom & Jerry";
-        escapedString = TextUtil.escapeHTML(stringWithAmpersand);
+        escapedString = escapeHTML(stringWithAmpersand);
         assertEquals("Tom &amp; Jerry", escapedString);
 
         String specialCharactersString = "< > & \" ' /";
-        escapedString = TextUtil.escapeHTML(specialCharactersString);
+        escapedString = escapeHTML(specialCharactersString);
         assertEquals("&lt; &gt; &amp; &quot; &apos; /", escapedString);
     }
 
     @Test
     void testDecodeFontSize() {
         // Test with "pt"
-        assertEquals(10.0f, TextUtil.decodeFontSize("10pt"), 0.001);
+        assertEquals(10.0f, decodeFontSize("10pt"), 0.001);
 
         // Test with "em"
-        assertEquals(120.0f, TextUtil.decodeFontSize("10em"), 0.001);
+        assertEquals(120.0f, decodeFontSize("10em"), 0.001);
 
         // Test with "px"
-        assertEquals(7.5f, TextUtil.decodeFontSize("10px"), 0.001);
+        assertEquals(7.5f, decodeFontSize("10px"), 0.001);
 
         // Test with "%"
-        assertEquals(1.2f, TextUtil.decodeFontSize("10%"), 0.001);
+        assertEquals(1.2f, decodeFontSize("10%"), 0.001);
 
         // Test with unknown unit
-        assertThrows(IllegalArgumentException.class, () -> TextUtil.decodeFontSize("10abc"));
+        assertThrows(IllegalArgumentException.class, () -> decodeFontSize("10abc"));
 
         // Test with "vw"
-        assertEquals(120.0f, TextUtil.decodeFontSize("10vw"), 0.001);
+        assertEquals(120.0f, decodeFontSize("10vw"), 0.001);
 
         // Test with empty string
-        assertThrows(IllegalArgumentException.class, () -> TextUtil.decodeFontSize(""));
+        assertThrows(IllegalArgumentException.class, () -> decodeFontSize(""));
     }
 }

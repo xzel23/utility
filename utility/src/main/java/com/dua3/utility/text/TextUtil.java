@@ -200,7 +200,7 @@ public final class TextUtil {
      * @param template      the template
      * @param substitutions the substitutions
      * @return result of transformation
-     * @see #transform(String, UnaryOperator)
+     * @see #transform(String, Function)
      */
     @SafeVarargs
     public static String transform(String template, Map.Entry<String, ?>... substitutions) {
@@ -246,10 +246,24 @@ public final class TextUtil {
      * @return result of transformation
      * @see #transform(CharSequence, Function, Consumer)
      */
-    public static String transform(String template, UnaryOperator<String> env) {
+    public static String transform(String template, Function<String, String> env) {
         StringBuilder sb = new StringBuilder(Math.max(16, template.length()));
         transform(template, env, sb::append);
         return sb.toString();
+    }
+
+    /**
+     * Transform a templated String.
+     *
+     * @param template the template
+     * @param env      substitution environment
+     * @return result of transformation
+     * @see #transform(CharSequence, Function, Consumer)
+     */
+    public static RichText transform(RichText template, Function<String, RichText> env) {
+        RichTextBuilder b = new RichTextBuilder(Math.max(16, template.length()));
+        transform(template, env, b::append);
+        return b.toRichText();
     }
 
     /**
