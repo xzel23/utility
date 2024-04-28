@@ -109,4 +109,50 @@ public record Rectangle2f(float x, float y, float width, float height) {
         return y + height;
     }
 
+    /**
+     * Translates the rectangle by the specified amounts in the x and y directions.
+     *
+     * @param dx the amount to translate along the x-direction
+     * @param dy the amount to translate along the y-direction
+     * @return a rectangle that is translated by dx and dy
+     */
+    public Rectangle2f translate(float dx, float dy) {
+        if (dx == 0 && dy == 0) {
+            return this;
+        }
+
+        return new Rectangle2f(x + dx, y + dy, width, height);
+    }
+
+    /**
+     * Adds a margin to the current rectangle, i.e., create a rectangle with the same center as this rectangle
+     * but with borders pushed out by the amount given by {@code mx} and {@code my}. Use negative values to shrink the
+     * rectangle.
+     *
+     * @param mx the amount to the margin to apply to the x-coordinates
+     * @param my the amount to the margin to apply to the y-coordinates
+     * @return a new Rectangle2f instance with the added margin
+     */
+    public Rectangle2f addMargin(float mx, float my) {
+        if (mx == 0 && my == 0) {
+            return this;
+        }
+
+        return new Rectangle2f(x - mx, y - my, width + 2 * mx, height + 2 * my);
+    }
+
+    /**
+     * Adds a margin to the current rectangle, i.e., create a rectangle with the same center as this rectangle
+     * but with borders pushed out by the amount given by {@code m}. Use negative values to shrink the rectangle.
+     *
+     * @param m the amount to subtract the margin to add
+     * @return a new Rectangle2f instance with the added margin
+     */
+    public Rectangle2f addMargin(float m) {
+        if (m == 0) {
+            return this;
+        }
+
+        return new Rectangle2f(x - m, y - m, width + 2 * m, height + 2 * m);
+    }
 }
