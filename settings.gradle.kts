@@ -6,6 +6,7 @@ val projectVersion = "13.0-SNAPSHOT"
 include("utility")
 include("utility-db")
 include("utility-swing")
+include("utility-fx")
 include("utility-logging")
 include("utility-logging:utility-logging-slf4j")
 include("utility-logging:utility-logging-log4j")
@@ -31,6 +32,7 @@ dependencyResolutionManagement {
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.0.12")
             plugin("cabe", "com.dua3.cabe").version("2.1.2")
+            plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe-annotations", "2.0")
             version("log4j", "2.23.1")
@@ -38,6 +40,7 @@ dependencyResolutionManagement {
             version("jimfs", "1.3.0")
             version("miglayout", "11.3")
             version("mockito", "5.11.0")
+            version("javafx", "22")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe-annotations")
 

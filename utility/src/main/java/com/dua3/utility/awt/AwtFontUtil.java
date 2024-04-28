@@ -31,6 +31,11 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         private static final AwtFontUtil INSTANCE = new AwtFontUtil();
     }
 
+    /**
+     * Retrieves an instance of the AwtFontUtil class.
+     *
+     * @return an instance of AwtFontUtil
+     */
     public static AwtFontUtil getInstance() {
         return SingletonHolder.INSTANCE;
     }

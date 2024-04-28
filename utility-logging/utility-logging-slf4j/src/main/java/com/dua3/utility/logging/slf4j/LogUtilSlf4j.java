@@ -2,8 +2,6 @@ package com.dua3.utility.logging.slf4j;
 
 import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ServiceConfigurationError;
 

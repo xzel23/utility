@@ -11,6 +11,20 @@ import java.io.InputStream;
  * An implementation of the ImageUtil interface for working with awt images.
  */
 public class AwtImageUtil implements ImageUtil<AwtImage> {
+
+    private static class SingletonHolder {
+        private static final AwtImageUtil INSTANCE = new AwtImageUtil();
+    }
+
+    /**
+     * Returns an instance of AwtImageUtil.
+     *
+     * @return the instance of AwtImageUtil
+     */
+    public static AwtImageUtil getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
     @Override
     public AwtImage load(InputStream in) throws IOException {
         return AwtImage.load(in);

@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Serial;
 import java.io.UncheckedIOException;
+import java.lang.ref.Cleaner;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
@@ -60,6 +61,8 @@ public final class LangUtil {
      * The byte order mark in UTF files
      */
     public static final char UTF_BYTE_ORDER_MARK = 0xfeff;
+
+    private static final Cleaner CLEANER = Cleaner.create();
 
     // private constructor for utility class
     private LangUtil() {
@@ -871,6 +874,24 @@ public final class LangUtil {
      */
     public static <T> T triStateSelect(@Nullable Boolean b, T whenTrue, T whenFalse, T otherwise) {
         return b != null ? (b ? whenTrue : whenFalse) : otherwise;
+    }
+
+    /**
+     * Registers an object and a cleanup action to be executed when the object becomes phantom reachable.
+     *
+     * @param obj    the object to register for cleanup
+     * @param action the cleanup action to be executed when the object becomes phantom reachable
+     * @throws NullPointerException if {@code obj} or {@code action} is {@code null}
+     */
+    public static void registerForCleanup(Object obj, Runnable action) {
+        getCLEANER().register(obj, action);
+    }
+
+    /**
+     * CLEANER is a private static final variable of type Cleaner.
+     */
+    public static Cleaner getCLEANER() {
+        return CLEANER;
     }
 
     /**

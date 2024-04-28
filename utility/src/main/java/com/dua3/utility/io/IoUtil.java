@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
-import java.lang.ref.Cleaner;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -581,17 +580,16 @@ public final class IoUtil {
      * Redirect {@code System.out} and {@code System.err} to a file
      *
      * @param path    path to the output file
-     * @param cleaner the cleaner to register the cleanup operation (reset standard output streams)
      * @return AutoCloseable instance (calling close() will reset standard output streams)
      * @throws IOException if an error occurs
      */
-    public static synchronized AutoCloseable redirectStandardStreams(Path path, Cleaner cleaner) throws IOException {
+    public static synchronized AutoCloseable redirectStandardStreams(Path path) throws IOException {
         // IMPORTANT: create the cleanup object before redirecting system streams!
         Runnable cleanup = new CleanupSystemStreams();
 
         Combiner combiner = new Combiner(path, "stdout: ".getBytes(StandardCharsets.UTF_8), "stderr: ".getBytes(StandardCharsets.UTF_8));
 
-        cleaner.register(combiner, cleanup);
+        LangUtil.registerForCleanup(combiner, cleanup);
 
         System.setOut(new PrintStream(combiner.streamA(), true, StandardCharsets.UTF_8));
         System.setErr(new PrintStream(combiner.streamB(), true, StandardCharsets.UTF_8));
