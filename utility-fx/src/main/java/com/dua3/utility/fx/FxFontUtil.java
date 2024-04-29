@@ -47,6 +47,9 @@ public class FxFontUtil implements FontUtil<Font> {
         return SingletonHolder.INSTANCE;
     }
 
+    /**
+     * Public constructor. Needed fo SPI.
+     */
     public FxFontUtil() {
     }
 
