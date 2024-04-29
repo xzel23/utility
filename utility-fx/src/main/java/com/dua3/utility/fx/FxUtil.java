@@ -61,19 +61,6 @@ public final class FxUtil {
 
     private static final Pattern PATTERN_FILENAME_AND_DOT = Pattern.compile("^\\*\\.");
 
-    private static class SingletonHolder {
-        private static final FxUtil INSTANCE = new FxUtil();
-    }
-
-    /**
-     * Returns an instance of FxUtil.
-     *
-     * @return the instance of FxUtil
-     */
-    public static FxUtil getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
-
     /**
      * Private constructor.
      */
@@ -360,7 +347,7 @@ public final class FxUtil {
      * @param img the image
      */
     public static void copyToClipboard(Image img) {
-        copyToClipboard(FxImageUtil.instance().convert(img));
+        copyToClipboard(FxImageUtil.getInstance().convert(img));
     }
 
     /**

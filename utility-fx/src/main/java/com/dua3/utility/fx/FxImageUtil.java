@@ -13,7 +13,9 @@ import java.io.InputStream;
  */
 public final class FxImageUtil implements ImageUtil<Image> {
 
-    private static final FxImageUtil INSTANCE = new FxImageUtil();
+    private static class SingletonHolder {
+        private static final FxImageUtil INSTANCE = new FxImageUtil();
+    }
 
     /**
      * Returns the instance of FxImageUtil. Only use this if your program uses different implementations of
@@ -22,8 +24,8 @@ public final class FxImageUtil implements ImageUtil<Image> {
      *
      * @return the instance of FxImageUtil
      */
-    public static FxImageUtil instance() {
-        return INSTANCE;
+    public static FxImageUtil getInstance() {
+        return SingletonHolder.INSTANCE;
     }
 
     @Override
