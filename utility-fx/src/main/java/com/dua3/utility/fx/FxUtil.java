@@ -80,16 +80,6 @@ public final class FxUtil {
     private FxUtil() {}
 
     /**
-     * Convert a given URI to text.
-     *
-     * @param uri the URI to convert
-     * @return the text representation of the URI
-     */
-    public static String asText(@Nullable URI uri) {
-        return uri == null ? "" : URLDecoder.decode(uri.toString(), StandardCharsets.UTF_8);
-    }
-
-    /**
      * Convert JavaFX {@link Font} to {@link FontDef}.
      *
      * @param font the font
