@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -40,7 +41,7 @@ public final class StreamUtil {
      * @param <C> result stream generic item type
      * @return stream consisting of pairs od items created from items of either stream
      */
-    public static <A, B, C> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<? super A, ? super B, ? extends C> op) {
+    public static <A, B, C> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<? super A, B, C> op) {
         Iterator<A> i1 = a.iterator();
         Iterator<B> i2 = b.iterator();
         Iterable<C> i = () -> new Iterator<>() {
@@ -68,7 +69,7 @@ public final class StreamUtil {
      */
     @SafeVarargs
     public static <T> Stream<T> concat(Stream<T>... streams) {
-        return Stream.of(streams).flatMap(i -> i);
+        return Stream.of(streams).flatMap(Function.identity()).onClose(IoUtil.composedClose(streams));
     }
 
     /**
