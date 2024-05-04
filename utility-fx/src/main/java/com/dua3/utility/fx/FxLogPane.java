@@ -155,7 +155,7 @@ public class FxLogPane extends BorderPane {
             int n = items.size();
             int pos = current != null ? Math.max(0, items.indexOf(current)) : 0;
             for (int i = 0; i < n; i++) {
-                int j = (pos + step * i) % n;
+                int j = Math.floorMod(pos + step * i, n);
                 LogEntry logEntry = items.get(j);
                 if (logEntry.message().toLowerCase(Locale.ROOT).contains(lowercaseText) && (i != 0 || current == null)) { // skip current entry if selected
                     selectLogEntry(logEntry);
