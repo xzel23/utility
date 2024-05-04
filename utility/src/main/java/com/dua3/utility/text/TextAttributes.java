@@ -77,8 +77,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      */
     public static TextAttributes of(Map<String, Object> map) {
         SortedSet<Map.Entry<String, Object>> entries = new TreeSet<>(Map.Entry.comparingByKey());
-        // do not use addAll() due to DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS
-        map.entrySet().stream().map(Map.Entry::copyOf).forEach(entries::add);
+        entries.addAll(map.entrySet());
         return new TextAttributes(entries);
     }
 
