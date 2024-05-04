@@ -14,7 +14,8 @@ class StreamUtilTest {
         // concatenate two streams
         List<Pair<Integer, Integer>> actual = StreamUtil.zip(
                 Stream.of(1, 3, 5),
-                Stream.of(2, 4, 6)
+                Stream.of(2, 4, 6),
+                Pair::of
         ).toList();
 
         List<Pair<Integer, Integer>> expected = List.of(
@@ -31,7 +32,8 @@ class StreamUtilTest {
         // concatenate two streams
         List<Pair<Integer, Integer>> actual = StreamUtil.zip(
                 Stream.of(1, 3, 5),
-                Stream.of(2, 4)
+                Stream.of(2, 4),
+                Pair::of
         ).toList();
 
         List<Pair<Integer, Integer>> expected = List.of(
