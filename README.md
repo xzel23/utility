@@ -170,6 +170,14 @@ the parameter.
 
 ## Changes
 
+### 13
+
+- new utility-fx module with JavaFX related classes
+- StreamUtil.zip() has been changed to take an operation as third parameter that defines the combining operation
+- code cleanups and reorganizations
+- SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtilas as they are usable also in non-Swing 
+  applications
+
 ### 12.3
 
 - added i18n package
