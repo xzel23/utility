@@ -15,8 +15,8 @@ import java.util.function.Predicate;
  */
 public class FilterIterator<T> implements Iterator<T> {
 
-    private final Iterator<T> iterator;
-    private final Predicate<T> predicate;
+    private final Iterator<? extends T> iterator;
+    private final Predicate<? super T> predicate;
     private boolean done;
     private T current;
 
@@ -26,7 +26,7 @@ public class FilterIterator<T> implements Iterator<T> {
      * @param iterator  the base iterator
      * @param predicate the predicate
      */
-    public FilterIterator(Iterator<T> iterator, Predicate<T> predicate) {
+    public FilterIterator(Iterator<? extends T> iterator, Predicate<? super T> predicate) {
         this.iterator = iterator;
         this.predicate = predicate;
         this.done = false;

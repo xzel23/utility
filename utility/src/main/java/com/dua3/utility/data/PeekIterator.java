@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
  */
 public class PeekIterator<T> implements Iterator<T> {
 
-    private final Iterator<T> iterator;
+    private final Iterator<? extends T> iterator;
     private boolean done;
     private T current;
 
@@ -22,7 +22,7 @@ public class PeekIterator<T> implements Iterator<T> {
      *
      * @param iterator the base iterator
      */
-    public PeekIterator(Iterator<T> iterator) {
+    public PeekIterator(Iterator<? extends T> iterator) {
         this.iterator = iterator;
         this.done = false;
         move();

@@ -184,12 +184,7 @@ public class Stopwatch {
     public Object logElapsedSplit(Format fmt, boolean newSplit) {
         Instant startOfSplit = startSplit;
         Instant instant = Instant.now();
-        return new Object() {
-            @Override
-            public String toString() {
-                return fmt.format(Duration.between(startOfSplit, instant));
-            }
-        };
+        return new ToStringProxy(fmt, startOfSplit, instant);
     }
 
     /**
@@ -345,6 +340,23 @@ public class Stopwatch {
                 n = name.get();
             }
             return n;
+        }
+    }
+
+    private static class ToStringProxy {
+        private final Format fmt;
+        private final Instant startOfSplit;
+        private final Instant instant;
+
+        public ToStringProxy(Format fmt, Instant startOfSplit, Instant instant) {
+            this.fmt = fmt;
+            this.startOfSplit = startOfSplit;
+            this.instant = instant;
+        }
+
+        @Override
+        public String toString() {
+            return fmt.format(Duration.between(startOfSplit, instant));
         }
     }
 }

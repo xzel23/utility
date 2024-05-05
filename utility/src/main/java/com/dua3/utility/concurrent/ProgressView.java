@@ -19,7 +19,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
      * Value to pass to {@link ProgressIndicator#update(double)} for an indeterminate progress.
      */
     public static final double PROGRESS_INDETERMINATE = Double.NaN;
-    private final Function<T, ProgressIndicator> createProgressIndicator;
+    private final Function<? super T, ? extends ProgressIndicator> createProgressIndicator;
     private final Map<T, TaskRecord> tasks = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
@@ -28,7 +28,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
      * @param createProgressIndicator a function that creates a ProgressIndicator based on a given task type T.
      *                                The function must not return null.
      */
-    public ProgressView(Function<T, ProgressIndicator> createProgressIndicator) {
+    public ProgressView(Function<? super T, ? extends ProgressIndicator> createProgressIndicator) {
         this.createProgressIndicator = createProgressIndicator;
     }
 

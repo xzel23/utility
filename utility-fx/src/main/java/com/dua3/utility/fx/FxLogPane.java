@@ -46,7 +46,7 @@ public class FxLogPane extends BorderPane {
 
     public static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;
     public static final double COLUMN_WIDTH_LARGE = 10000.0;
-    private final Function<LogEntry, Color> colorize;
+    private final Function<? super LogEntry, Color> colorize;
     private final ToolBar toolBar;
     private final TextArea details;
     private final TableView<LogEntry> tableView;
@@ -55,7 +55,7 @@ public class FxLogPane extends BorderPane {
 
     private boolean autoScroll = true;
 
-    private <T> TableColumn<LogEntry, T> createColumn(String name, Function<LogEntry,T> getter, boolean fixedWidth, String... sampleTexts) {
+    private <T> TableColumn<LogEntry, T> createColumn(String name, Function<? super LogEntry, ? extends T> getter, boolean fixedWidth, String... sampleTexts) {
         TableColumn<LogEntry, T> column = new TableColumn<>(name);
         column.setCellValueFactory(entry -> new SimpleObjectProperty<>(getter.apply(entry.getValue())));
         if (sampleTexts.length == 0) {
@@ -106,7 +106,7 @@ public class FxLogPane extends BorderPane {
         this(buffer, FxLogPane::defaultColorize);
     }
 
-    public FxLogPane(LogBuffer buffer, Function<LogEntry, Color> colorize) {
+    public FxLogPane(LogBuffer buffer, Function<? super LogEntry, Color> colorize) {
         FilteredList<LogEntry> entries = new FilteredList<>(new LogEntriesObservableList(buffer), p -> true);
 
         this.colorize = colorize;

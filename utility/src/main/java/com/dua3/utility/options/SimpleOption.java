@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  */
 public final class SimpleOption<T> extends Option<T> {
 
-    private Supplier<T> defaultValue = () -> null;
+    private Supplier<? extends T> defaultValue = () -> null;
 
     /**
      * Construct a new simple option with the given name(s).
@@ -102,7 +102,7 @@ public final class SimpleOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public SimpleOption<T> defaultValue(Supplier<T> defaultValue) {
+    public SimpleOption<T> defaultValue(Supplier<? extends T> defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }

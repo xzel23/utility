@@ -246,7 +246,7 @@ public final class TextUtil {
      * @return result of transformation
      * @see #transform(CharSequence, Function, Consumer)
      */
-    public static String transform(String template, Function<String, String> env) {
+    public static String transform(String template, Function<? super String, String> env) {
         StringBuilder sb = new StringBuilder(Math.max(16, template.length()));
         transform(template, env, sb::append);
         return sb.toString();
@@ -260,7 +260,7 @@ public final class TextUtil {
      * @return result of transformation
      * @see #transform(CharSequence, Function, Consumer)
      */
-    public static RichText transform(RichText template, Function<String, RichText> env) {
+    public static RichText transform(RichText template, Function<? super String, RichText> env) {
         RichTextBuilder b = new RichTextBuilder(Math.max(16, template.length()));
         transform(template, env, b::append);
         return b.toRichText();

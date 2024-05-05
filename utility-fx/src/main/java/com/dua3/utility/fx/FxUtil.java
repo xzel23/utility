@@ -379,7 +379,7 @@ public final class FxUtil {
      *
      * @param paths the list of paths to copy to the clipboard
      */
-    public static void copyToClipboard(Collection<Path> paths) {
+    public static void copyToClipboard(Collection<? extends Path> paths) {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
         List<File> files = paths.stream().map(Path::toAbsolutePath).map(Path::toFile).toList();
@@ -548,7 +548,7 @@ public final class FxUtil {
      * @param newHandler  the new event handler to be added
      */
     private static void addHandler(
-            Supplier<EventHandler<? super MouseEvent>> getHandler,
+            Supplier<? extends EventHandler<? super MouseEvent>> getHandler,
             Consumer<EventHandler<? super MouseEvent>> setHandler,
             EventHandler<? super MouseEvent> newHandler) {
         EventHandler<? super MouseEvent> currentHandler = getHandler.get();

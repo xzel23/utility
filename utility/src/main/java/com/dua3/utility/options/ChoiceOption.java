@@ -152,7 +152,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param defaultValue the default value
      * @return this option
      */
-    public ChoiceOption<T> defaultValue(Supplier<T> defaultValue) {
+    public ChoiceOption<T> defaultValue(Supplier<? extends T> defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }

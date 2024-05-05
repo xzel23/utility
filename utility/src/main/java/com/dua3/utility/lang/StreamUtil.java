@@ -41,7 +41,7 @@ public final class StreamUtil {
      * @param <C> result stream generic item type
      * @return stream consisting of pairs od items created from items of either stream
      */
-    public static <A, B, C> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<? super A, B, C> op) {
+    public static <A, B, C> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<? super A, ? super B, ? extends C> op) {
         Iterator<A> i1 = a.iterator();
         Iterator<B> i2 = b.iterator();
         Iterable<C> i = () -> new Iterator<>() {

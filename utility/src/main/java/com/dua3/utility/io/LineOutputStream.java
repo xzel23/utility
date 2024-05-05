@@ -25,7 +25,7 @@ public class LineOutputStream extends OutputStream {
     public static final int MAX_BUFFER_SIZE = 1024;
 
     private final Object lock = new Object();
-    private final Consumer<String> processor;
+    private final Consumer<? super String> processor;
     private byte[] buf;
     private int count;
 
@@ -34,7 +34,7 @@ public class LineOutputStream extends OutputStream {
      *
      * @param processor the consumer function to process each line of output.
      */
-    public LineOutputStream(Consumer<String> processor) {
+    public LineOutputStream(Consumer<? super String> processor) {
         this.buf = new byte[INITIAL_BUFFER_SIZE];
         this.count = 0;
         this.processor = processor;

@@ -237,7 +237,7 @@ public class I18N {
      * @return The localized string for the given key.
      * @see ResourceBundle#getString(String)
      */
-    public String getOrCompute(String key, Function<String, String> compute) {
+    public String getOrCompute(String key, Function<? super String, String> compute) {
         return getBundle(key).map(bundle -> bundle.getString(key)).orElse(compute.apply(key));
     }
 

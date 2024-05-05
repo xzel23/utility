@@ -249,7 +249,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         thread2.start();
     }
 
-    private IllegalStateException generateThrowable(Random random) {
+    private static IllegalStateException generateThrowable(Random random) {
         if (random.nextBoolean()) {
             return new IllegalStateException("Why?", new UnsupportedOperationException("Because of me!"));
         } else {
