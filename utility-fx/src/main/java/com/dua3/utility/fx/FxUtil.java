@@ -18,14 +18,18 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
@@ -42,8 +46,6 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +54,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -103,7 +106,7 @@ public final class FxUtil {
      * @return the color
      */
     public static com.dua3.utility.data.Color convert(Color color) {
-        return com.dua3.utility.data.Color.rgb(
+        return com.dua3.utility.data.Color.rgba(
                 (int) Math.round(color.getRed() * 255.0),
                 (int) Math.round(color.getGreen() * 255.0),
                 (int) Math.round(color.getBlue() * 255.0),
@@ -506,5 +509,68 @@ public final class FxUtil {
                 });
             }
         };
+    }
+
+    /**
+     * Attaches a mouse event handler to a given node for a specific event type.
+     * <p>
+     * If an event handler is already registered, the new handler is called first. If the event is not consumed by the#
+     * handler, the old handler is called too.
+     *
+     * @param node     The node to attach the mouse event handler to.
+     * @param eventType The type of the mouse event to handle.
+     * @param handler  The event handler to be called when the specified mouse event occurs.
+     */
+    public static void addMouseEventHandler(Node node, EventType<MouseEvent> eventType, EventHandler<? super MouseEvent> handler) {
+        if (eventType == MouseEvent.MOUSE_PRESSED) {
+            addHandler(node::getOnMousePressed, node::setOnMousePressed, handler);
+        } else if (eventType == MouseEvent.MOUSE_RELEASED) {
+            addHandler(node::getOnMouseReleased, node::setOnMouseReleased, handler);
+        } else if (eventType == MouseEvent.MOUSE_CLICKED) {
+            addHandler(node::getOnMouseClicked, node::setOnMouseClicked, handler);
+        } else if (eventType == MouseEvent.MOUSE_ENTERED) {
+            addHandler(node::getOnMouseEntered, node::setOnMouseEntered, handler);
+        } else if (eventType == MouseEvent.MOUSE_EXITED) {
+            addHandler(node::getOnMouseExited, node::setOnMouseExited, handler);
+        } else if (eventType == MouseEvent.MOUSE_MOVED) {
+            addHandler(node::getOnMouseMoved, node::setOnMouseMoved, handler);
+        } else if (eventType == MouseEvent.MOUSE_DRAGGED) {
+            addHandler(node::getOnMouseDragged, node::setOnMouseDragged, handler);
+        }
+    }
+
+    /**
+     * Adds a new event handler to a node. If the node already has an event handler of the same event type,
+     * the new handler is invoked before the existing handler is invoked.
+     *
+     * @param getHandler  a supplier function that returns the current event handler for the node
+     * @param setHandler  a consumer function that sets the event handler for the node
+     * @param newHandler  the new event handler to be added
+     */
+    private static void addHandler(
+            Supplier<EventHandler<? super MouseEvent>> getHandler,
+            Consumer<EventHandler<? super MouseEvent>> setHandler,
+            EventHandler<? super MouseEvent> newHandler) {
+        EventHandler<? super MouseEvent> currentHandler = getHandler.get();
+        if (currentHandler == null) {
+            setHandler.accept(newHandler);
+        } else {
+            setHandler.accept(evt -> handleEventChained(evt, newHandler, currentHandler));
+        }
+    }
+
+    /**
+     * Handles an event by invoking two event handlers in sequence.
+     *
+     * @param <E>            the type of the event
+     * @param evt            the event to be handled
+     * @param firstHandler   the first event handler to be invoked
+     * @param secondHandler  the second event handler to be invoked if the event is not consumed by the first handler
+     */
+    private static <E extends Event> void handleEventChained(E evt, EventHandler<? super E> firstHandler, EventHandler<? super E> secondHandler) {
+        firstHandler.handle(evt);
+        if (!evt.isConsumed()) {
+            secondHandler.handle(evt);
+        }
     }
 }

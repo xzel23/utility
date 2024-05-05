@@ -174,9 +174,12 @@ the parameter.
 
 - new utility-fx module with JavaFX related classes
 - StreamUtil.zip() has been changed to take an operation as third parameter that defines the combining operation
+- StreamUtil.concat() did not close streams
 - code cleanups and reorganizations
 - SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtilas as they are usable also in non-Swing 
   applications
+- Color methods have been renamed to reduce ambiguity
+- add helper method FxUtil.addMouseEventHandler()
 
 ### 12.3
 

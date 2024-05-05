@@ -705,7 +705,7 @@ public interface Color {
     }
 
     /**
-     * Create color from RGB values.
+     * Create color from RGBA values.
      *
      * @param r the red component   [0 .. 255]
      * @param g the green component [0 .. 255]
@@ -713,7 +713,7 @@ public interface Color {
      * @param a the alpha value     [0 .. 255]
      * @return the color
      */
-    static RGBColor rgb(int r, int g, int b, int a) {
+    static RGBColor rgba(int r, int g, int b, int a) {
         return new RGBColor(r, g, b, a);
     }
 
@@ -725,7 +725,7 @@ public interface Color {
      * @param b the blue component  [0 .. 1]
      * @return the color
      */
-    static RGBColor rgb(float r, float g, float b) {
+    static RGBColor rgbF(float r, float g, float b) {
         return new RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
     }
 
@@ -738,7 +738,7 @@ public interface Color {
      * @param alpha the alpha value [0 .. 1]
      * @return the color
      */
-    static RGBColor rgb(float r, float g, float b, float alpha) {
+    static RGBColor rgbaF(float r, float g, float b, float alpha) {
         return new RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), Math.round(alpha * 255));
     }
 
@@ -763,7 +763,7 @@ public interface Color {
      * @param alpha the alpha value     [0 .. 1]
      * @return the color
      */
-    static HSVColor hsv(float h, float s, float v, float alpha) {
+    static HSVColor hsva(float h, float s, float v, float alpha) {
         return new HSVColor(h, s, v, alpha);
     }
 
