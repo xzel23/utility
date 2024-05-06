@@ -137,7 +137,7 @@ public class SwingLogPane extends JPanel {
         details = new JTextArea(5, 80);
 
         // column settings
-        AwtFontUtil fu = new AwtFontUtil();
+        AwtFontUtil fu = AwtFontUtil.getInstance();
 
         TableColumnModel columnModel = table.getColumnModel();
         for (int i = 0; i < columnModel.getColumnCount(); i++) {

@@ -41,8 +41,8 @@ module com.dua3.utility.fx {
     exports com.dua3.utility.fx;
     opens com.dua3.utility.fx;
 
-    provides com.dua3.utility.text.FontUtil
-            with FxFontUtil;
+    provides com.dua3.utility.text.FontUtil.Provider
+            with FxFontUtil.Provider;
 
     provides com.dua3.utility.data.ImageUtil
             with FxImageUtil;

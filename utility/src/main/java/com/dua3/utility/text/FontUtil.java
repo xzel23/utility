@@ -2,12 +2,12 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.spi.Loader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ServiceLoader;
+import java.util.function.Supplier;
 
 /**
  * Interface for Font handling utility classes. The concrete implementation is automatically chosen at runtime
@@ -17,6 +17,8 @@ import java.util.ServiceLoader;
  */
 public interface FontUtil<F> {
 
+    interface Provider extends Supplier<FontUtil<?>> {}
+
     /**
      * Get FontUtil instance.
      *
@@ -24,18 +26,15 @@ public interface FontUtil<F> {
      */
     @SuppressWarnings("rawtypes")
     static FontUtil<?> getInstance() {
-        Iterator<FontUtil> serviceIterator = ServiceLoader
-                .load(FontUtil.class)
-                .iterator();
-
-        FontUtil<?> fu;
-        if (serviceIterator.hasNext()) {
-            fu = serviceIterator.next();
-        } else {
-            fu = AwtFontUtil.getInstance();
+        class SingletonHolder {
+            static final FontUtil<?> INSTANCE = Loader.builder(Provider.class)
+                    .defaultSupplier(() -> AwtFontUtil::getInstance)
+                    .build()
+                    .load()
+                    .get();
         }
 
-        return fu;
+        return SingletonHolder.INSTANCE;
     }
 
     /**

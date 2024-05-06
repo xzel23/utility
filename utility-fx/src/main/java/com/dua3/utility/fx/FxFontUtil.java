@@ -34,6 +34,13 @@ import java.util.Locale;
  */
 public class FxFontUtil implements FontUtil<Font> {
 
+    public static class Provider implements FontUtil.Provider {
+        @Override
+        public FontUtil<?> get() {
+            return getInstance();
+        }
+    }
+
     private static class SingletonHolder {
         private static final FxFontUtil INSTANCE = new FxFontUtil();
     }
@@ -50,7 +57,7 @@ public class FxFontUtil implements FontUtil<Font> {
     /**
      * Public constructor. Needed fo SPI.
      */
-    public FxFontUtil() {
+    private FxFontUtil() {
     }
 
     @Override

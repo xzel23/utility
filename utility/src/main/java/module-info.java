@@ -44,6 +44,7 @@ open module com.dua3.utility {
     exports com.dua3.utility.math.geometry;
     exports com.dua3.utility.options;
     exports com.dua3.utility.text;
+    exports com.dua3.utility.spi;
     exports com.dua3.utility.xml;
     exports com.dua3.utility.awt;
 
