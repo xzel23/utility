@@ -1,6 +1,7 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.data.ImageUtil;
+import com.dua3.utility.data.ImageUtilProvider;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
@@ -16,6 +17,8 @@ public final class FxImageUtil implements ImageUtil<Image> {
     private static class SingletonHolder {
         private static final FxImageUtil INSTANCE = new FxImageUtil();
     }
+
+    private FxImageUtil() {} // utility class constructor
 
     /**
      * Returns the instance of FxImageUtil. Only use this if your program uses different implementations of

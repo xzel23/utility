@@ -27,13 +27,6 @@ import java.util.WeakHashMap;
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public class AwtFontUtil implements FontUtil<java.awt.Font> {
 
-    public static class Provider implements FontUtil.Provider {
-        @Override
-        public FontUtil<?> get() {
-            return getInstance();
-        }
-    }
-
     private static class SingletonHolder {
         private static final AwtFontUtil INSTANCE = new AwtFontUtil();
     }

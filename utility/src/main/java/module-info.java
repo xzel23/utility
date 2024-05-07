@@ -3,6 +3,11 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+import com.dua3.utility.data.ImageUtilProvider;
+import com.dua3.utility.i18n.I18NProvider;
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.text.FontUtilProvider;
+
 /**
  * The com.dua3.utility module provides utility classes for various purposes, such as
  * concurrent programming, data manipulation, I/O operations, language utilities,
@@ -54,8 +59,8 @@ open module com.dua3.utility {
     requires static java.desktop;
     requires org.apache.logging.log4j;
 
-    uses com.dua3.utility.text.FontUtil;
-    uses com.dua3.utility.io.FileType;
-    uses com.dua3.utility.data.ImageUtil;
-    uses com.dua3.utility.i18n.I18NProvider;
+    uses FileType;
+    uses I18NProvider;
+    uses FontUtilProvider;
+    uses ImageUtilProvider;
 }

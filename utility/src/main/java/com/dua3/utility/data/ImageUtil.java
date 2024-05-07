@@ -1,11 +1,10 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.awt.AwtImageUtil;
+import com.dua3.utility.spi.Loader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 /**
  * Interface for Image handling utility classes. The concrete implementation is automatically chosen at runtime.
@@ -15,24 +14,21 @@ import java.util.ServiceLoader;
 public interface ImageUtil<I> {
 
     /**
-     * Return the default ImageUtil instance.
+     * Get FontUtil instance.
      *
-     * @return default instance
+     * @return the default FontUtil instance
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    static ImageUtil<? extends Image> getInstance() {
-        Iterator<ImageUtil> serviceIterator = ServiceLoader
-                .load(ImageUtil.class)
-                .iterator();
-
-        ImageUtil<? extends Image> iu;
-        if (serviceIterator.hasNext()) {
-            iu = serviceIterator.next();
-        } else {
-            iu = new AwtImageUtil();
+    @SuppressWarnings("rawtypes")
+    static ImageUtil<?> getInstance() {
+        class SingletonHolder {
+            static final ImageUtil<?> INSTANCE = Loader.builder(ImageUtilProvider.class)
+                    .defaultSupplier(() -> AwtImageUtil::getInstance)
+                    .build()
+                    .load()
+                    .get();
         }
 
-        return iu;
+        return SingletonHolder.INSTANCE;
     }
 
     /**

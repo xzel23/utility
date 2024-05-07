@@ -14,11 +14,18 @@ public final class Loader<T> {
 
     public static class LoaderBuilder<T> {
         private final Class<T> type;
+        private ClassLoader cl;
         private Predicate<T> predicate;
         private Supplier<? extends T> defaultSupplier;
 
         public LoaderBuilder(Class<T> type) {
             this.type = type;
+        }
+
+        public LoaderBuilder<T> classLoader(ClassLoader cl) {
+            LangUtil.check(this.cl == null, "class loader already set");
+            this.cl = cl;
+            return this;
         }
 
         public LoaderBuilder<T> accept(Predicate<T> predicate) {
@@ -36,16 +43,20 @@ public final class Loader<T> {
         public Loader<T> build() {
             Predicate<T> p = predicate != null ? predicate : t -> true;
             Supplier<? extends T> d = this.defaultSupplier != null ? defaultSupplier : () -> null;
-            return new Loader<>(type, p, d);
+            ClassLoader c = this.cl != null ? this.cl : ClassLoader.getSystemClassLoader();
+
+            return new Loader<>(type, c, p, d);
         }
     }
 
     private final Class<T> type;
+    private final ClassLoader cl;
     private final Predicate<T> predicate;
     private final Supplier<? extends T> defaultSupplier;
 
-    private Loader(Class<T> type, Predicate<T> p, Supplier<? extends T> d) {
+    private Loader(Class<T> type, ClassLoader cl, Predicate<T> p, Supplier<? extends T> d) {
         this.type = type;
+        this.cl = cl;
         this.predicate = p;
         this.defaultSupplier = d;
     }
@@ -56,8 +67,9 @@ public final class Loader<T> {
 
     public T load() {
         LOG.debug("loading service: {}", type);
+
         Iterator<T> serviceIterator = ServiceLoader
-                .load(type)
+                .load(type, cl)
                 .iterator();
 
         T instance = null;

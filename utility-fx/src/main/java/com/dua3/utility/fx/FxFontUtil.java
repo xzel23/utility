@@ -17,6 +17,7 @@ package com.dua3.utility.fx;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.FontUtilProvider;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -33,13 +34,6 @@ import java.util.Locale;
  * Utility class for working with fonts in JavaFX.
  */
 public class FxFontUtil implements FontUtil<Font> {
-
-    public static class Provider implements FontUtil.Provider {
-        @Override
-        public FontUtil<?> get() {
-            return getInstance();
-        }
-    }
 
     private static class SingletonHolder {
         private static final FxFontUtil INSTANCE = new FxFontUtil();
