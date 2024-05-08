@@ -61,6 +61,16 @@ public class FxFontUtil implements FontUtil<Font> {
         return FxUtil.convert(font);
     }
 
+    /**
+     * Converts a JavaFX Font object to a com.dua3.utility.text.Font object.
+     *
+     * @param font the JavaFX Font object to be converted
+     * @return the converted com.dua3.utility.text.Font object
+     */
+    public com.dua3.utility.text.Font convert(Font font) {
+        return FxUtil.convert(font);
+    }
+
     @Override
     public Dimension2f getTextDimension(CharSequence s, com.dua3.utility.text.Font f) {
         var bounds = FxUtil.getTextBounds(s, f);
@@ -86,26 +96,20 @@ public class FxFontUtil implements FontUtil<Font> {
 
         List<com.dua3.utility.text.Font> fonts = new ArrayList<>(fxFonts.length);
         for (Font fxFont : fxFonts) {
-            String style = fxFont.getStyle().toLowerCase(Locale.ROOT);
-            com.dua3.utility.text.Font font = new com.dua3.utility.text.Font(
-                    fxFont.getFamily(),
-                    (float) fxFont.getSize(),
-                    com.dua3.utility.data.Color.BLACK,
-                    style.contains("bold"),
-                    style.contains("italic") || style.contains("oblique"),
-                    style.contains("line-through"),
-                    style.contains("line-under")
-            );
-            fonts.add(font);
+            fonts.add(convert(fxFont));
         }
 
         return Collections.unmodifiableList(fonts);
     }
 
     private static class FontList {
+        // map containing all known font families as keys, with mapping family -> monospaced
         private static final Map<String, Boolean> AVAILABLE_FONTS;
+        // alphabetically sorted list of all know font families
         private static final List<String> ALL_FONTS;
+        // alphabetically sorted list of all know monospaced font families
         private static final List<String> MONOSPACE_FONTS;
+        // alphabetically sorted list of all know proportional font families
         private static final List<String> PROPORTIONAL_FONTS;
 
         static {

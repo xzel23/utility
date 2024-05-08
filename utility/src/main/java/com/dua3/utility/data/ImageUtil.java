@@ -18,7 +18,6 @@ public interface ImageUtil<I> {
      *
      * @return the default FontUtil instance
      */
-    @SuppressWarnings("rawtypes")
     static ImageUtil<?> getInstance() {
         class SingletonHolder {
             static final ImageUtil<?> INSTANCE = Loader.builder(ImageUtilProvider.class)

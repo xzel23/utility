@@ -141,9 +141,13 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     }
 
     private static class FontList {
+        // map containing all known font families as keys, with mapping family -> monospaced
         private static final Map<String, Boolean> AVAILABLE_FONTS;
+        // alphabetically sorted list of all know font families
         private static final List<String> ALL_FONTS;
+        // alphabetically sorted list of all know monospaced font families
         private static final List<String> MONOSPACE_FONTS;
+        // alphabetically sorted list of all know proportional font families
         private static final List<String> PROPORTIONAL_FONTS;
 
         static {

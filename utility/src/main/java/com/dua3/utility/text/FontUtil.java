@@ -21,7 +21,6 @@ public interface FontUtil<F> {
      *
      * @return the default FontUtil instance
      */
-    @SuppressWarnings("rawtypes")
     static FontUtil<?> getInstance() {
         class SingletonHolder {
             static final FontUtil<?> INSTANCE = Loader.builder(FontUtilProvider.class)
@@ -37,10 +36,10 @@ public interface FontUtil<F> {
     /**
      * Convert font.
      *
-     * @param f the font
+     * @param font the font
      * @return the font implementation
      */
-    F convert(Font f);
+    F convert(Font font);
 
     /**
      * Get text bounds.
