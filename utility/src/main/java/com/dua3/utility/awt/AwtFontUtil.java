@@ -142,9 +142,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
 
         boolean monospaced;
         switch (types) {
-            case ALL -> {
-                return fonts;
-            }
+            case ALL -> {return fonts;}
             case MONOSPACED -> monospaced = true;
             case PROPORTIONAL -> monospaced = false;
             default -> throw new IllegalArgumentException("unknown value: " + types);
@@ -156,6 +154,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     private static List<String> listFonts(List<String> fonts, boolean mono) {
         List<String> list = new ArrayList<>();
 
+        // measure the width of two strings to find out if font is monospaced
         String thin = "1 l";
         String thick = "M_W";
         for (String family : fonts) {
@@ -166,6 +165,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
                 list.add(family);
             }
         }
+
         return list;
     }
 
