@@ -17,7 +17,6 @@ package com.dua3.utility.fx;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.FontUtil;
-import com.dua3.utility.text.FontUtilProvider;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -27,8 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Utility class for working with fonts in JavaFX.
@@ -100,33 +102,38 @@ public class FxFontUtil implements FontUtil<Font> {
         return Collections.unmodifiableList(fonts);
     }
 
+    private static class FontList {
+        private static final Map<String, Boolean> AVAILABLE_FONTS;
+        private static final List<String> ALL_FONTS;
+        private static final List<String> MONOSPACE_FONTS;
+        private static final List<String> PROPORTIONAL_FONTS;
+
+        static {
+            Map<String, Boolean> fonts = new HashMap<>();
+            Font.getFamilies().forEach(f -> fonts.put(f, isMonospaced(f)));
+            AVAILABLE_FONTS = Collections.unmodifiableMap(fonts);
+            ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
+            MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
+            PROPORTIONAL_FONTS =  ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
+        }
+    }
+
     @Override
     public List<String> getFamilies(FontTypes types) {
-        List<String> fonts = Font.getFamilies();
+        return switch (types) {
+            case ALL -> FontList.ALL_FONTS;
+            case MONOSPACED -> FontList.MONOSPACE_FONTS;
+            case PROPORTIONAL -> FontList.PROPORTIONAL_FONTS;
+        };
+    }
 
-        boolean mono;
-        switch (types) {
-            case ALL -> {return fonts;}
-            case MONOSPACED -> mono = true;
-            case PROPORTIONAL -> mono = false;
-            default -> throw new IllegalArgumentException("unknown value: " + types);
-        }
-
-        List<String> list = new ArrayList<>();
-
+    private static boolean isMonospaced(String family) {
+        Font font = Font.font(family, FontWeight.NORMAL, FontPosture.REGULAR, 14.0d);
         Text thin = new Text("1 l");
         Text thick = new Text("M_W");
-        for (String family : fonts) {
-            Font font = Font.font(family, FontWeight.NORMAL, FontPosture.REGULAR, 14.0d);
-            thin.setFont(font);
-            thick.setFont(font);
-            boolean monospaced = thin.getLayoutBounds().getWidth() == thick.getLayoutBounds().getWidth();
-            if (mono == monospaced) {
-                list.add(family);
-            }
-        }
-
-        return list;
+        thin.setFont(font);
+        thick.setFont(font);
+        return thin.getLayoutBounds().getWidth() == thick.getLayoutBounds().getWidth();
     }
 
     @Override

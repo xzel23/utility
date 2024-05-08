@@ -13,10 +13,14 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
+import java.util.function.Predicate;
 
 /**
  * Utility class for getting font properties through AWT. This class should normally not be used directly by user code
@@ -136,37 +140,36 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         }
     }
 
-    @Override
-    public List<String> getFamilies(FontTypes types) {
-        List<String> fonts = List.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+    private static class FontList {
+        private static final Map<String, Boolean> AVAILABLE_FONTS;
+        private static final List<String> ALL_FONTS;
+        private static final List<String> MONOSPACE_FONTS;
+        private static final List<String> PROPORTIONAL_FONTS;
 
-        boolean monospaced;
-        switch (types) {
-            case ALL -> {return fonts;}
-            case MONOSPACED -> monospaced = true;
-            case PROPORTIONAL -> monospaced = false;
-            default -> throw new IllegalArgumentException("unknown value: " + types);
+        static {
+            Map<String, Boolean> fonts = new HashMap<>();
+            Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
+                    .forEach(f -> fonts.put(f, isMonospaced(f)));
+            AVAILABLE_FONTS = Collections.unmodifiableMap(fonts);
+            ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
+            MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
+            PROPORTIONAL_FONTS =  ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
         }
-
-        return listFonts(fonts, monospaced);
     }
 
-    private static List<String> listFonts(List<String> fonts, boolean mono) {
-        List<String> list = new ArrayList<>();
+    @Override
+    public List<String> getFamilies(FontTypes types) {
+        return switch (types) {
+            case ALL -> FontList.ALL_FONTS;
+            case MONOSPACED -> FontList.MONOSPACE_FONTS;
+            case PROPORTIONAL -> FontList.PROPORTIONAL_FONTS;
+        };
+    }
 
-        // measure the width of two strings to find out if font is monospaced
-        String thin = "1 l";
-        String thick = "M_W";
-        for (String family : fonts) {
-            java.awt.Font font = new java.awt.Font(family, java.awt.Font.PLAIN, 14);
-            FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
-            boolean monospaced = Objects.equals(font.getStringBounds(thin, frc), font.getStringBounds(thick, frc));
-            if (mono == monospaced) {
-                list.add(family);
-            }
-        }
-
-        return list;
+    private static boolean isMonospaced(String family) {
+        java.awt.Font font = new java.awt.Font(family, java.awt.Font.PLAIN, 14);
+        FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
+        return Objects.equals(font.getStringBounds("1 l", frc), font.getStringBounds("M_W", frc));
     }
 
     @Override
