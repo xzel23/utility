@@ -10,6 +10,30 @@
     </Match>
 
     <Match>
+        <Class name="com.dua3.utility.fx.icons.IconView"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+
+    <Match>
+        <Or>
+            <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
+            <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+            <!-- this bug pattern is currently completely broken / https://github.com/spotbugs/spotbugs/issues/1601 -->
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <Bug pattern="EI_EXPOSE_REP2"/>
+            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
+            <Bug pattern="NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION"/>
+        </Or>
+    </Match>
+
+    <!-- false positive; the field contains an unmodifiable list -->
+    <Match>
+        <Class name="com.dua3.fx.icons.IconView"/>
+        <Method name="getClassCssMetaData"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+
+    <Match>
         <Or>
             <!-- this inspection is triggered when using AssertThrows in JUnit tests -->
             <Bug pattern="EI_EXPOSE_REP"/>

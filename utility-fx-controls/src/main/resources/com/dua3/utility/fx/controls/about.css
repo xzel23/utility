@@ -1,0 +1,20 @@
+#dialog {
+    -fx-background-color: #fff;
+    -fx-min-width: 400px;
+    -fx-spacing: 4px;
+}
+
+#title {
+    -fx-alignment: "CENTER";
+    -fx-content-display: "CENTER";
+    -fx-font-family: "System Font";
+    -fx-font-size: 64px;
+}
+
+#version,
+#copyright,
+#mail {
+    -fx-alignment: "CENTER";
+    -fx-content-display: "CENTER";
+    -fx-max-width: "Infinity";
+}

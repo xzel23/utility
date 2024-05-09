@@ -103,7 +103,7 @@ public class ThreadFactoryBuilder {
         /**
          * A custom thread factory implementation that allows creating customized ThreadFactory instances.
          */
-        public CustomThreadFactory(ThreadGroup group, long stackSize, String prefix, boolean daemon, int priority) {
+        public CustomThreadFactory(@Nullable ThreadGroup group, long stackSize, String prefix, boolean daemon, int priority) {
             this.group = group;
             this.stackSize = stackSize;
             this.prefix = prefix;
