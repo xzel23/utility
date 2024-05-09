@@ -172,7 +172,7 @@ the parameter.
 
 ### 13
 
-- new utility-fx module with JavaFX related classes
+- new utility-fx modules with JavaFX related classes
 - StreamUtil.zip() has been changed to take an operation as third parameter that defines the combining operation
 - StreamUtil.concat() did not close streams
 - code cleanups and reorganizations
