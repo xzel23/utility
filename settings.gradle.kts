@@ -13,6 +13,7 @@ include("utility-logging:utility-logging-log4j")
 include("utility-samples:utility-samples-slf4j")
 include("utility-samples:utility-samples-log4j")
 include("utility-samples:utility-samples-geometry")
+include("utility-samples:utility-samples-fxlogpane")
 
 // use the foojay-resolver-convention plugin to add JVM toolchain repository
 plugins {
