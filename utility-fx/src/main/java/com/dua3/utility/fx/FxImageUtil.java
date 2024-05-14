@@ -1,7 +1,6 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.data.ImageUtil;
-import com.dua3.utility.data.ImageUtilProvider;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
