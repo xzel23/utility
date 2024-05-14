@@ -177,6 +177,9 @@ public class FxLogPane extends BorderPane {
         btnSearchUp.setOnAction(evt -> searchAction.accept(tfSearchText.getText(), true));
         btnSearchDown.setOnAction(evt -> searchAction.accept(tfSearchText.getText(), false));
 
+        Button btnClear = new Button("🗑️");
+        btnClear.setOnAction(evt -> buffer.clear());
+
         // create toolbar
         toolBar.getItems().setAll(
                 new Label("Level:"),
@@ -187,7 +190,9 @@ public class FxLogPane extends BorderPane {
                 new Label("Search by Message:"),
                 tfSearchText,
                 btnSearchUp,
-                btnSearchDown
+                btnSearchDown,
+                new Separator(Orientation.HORIZONTAL),
+                btnClear
         );
 
         // define table columns
