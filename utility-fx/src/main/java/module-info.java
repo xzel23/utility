@@ -51,7 +51,6 @@ module com.dua3.utility.fx {
 
     requires com.dua3.utility;
     requires static com.dua3.utility.logging;
-    requires java.prefs;
     requires static javafx.controls;
     requires static javafx.graphics;
     requires org.apache.logging.log4j;

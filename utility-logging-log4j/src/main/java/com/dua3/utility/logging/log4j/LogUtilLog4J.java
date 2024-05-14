@@ -161,6 +161,7 @@ public final class LogUtilLog4J {
 
     /**
      * Configures the Log4J bridge implementations that are available.
+     * @param rootLevel the root level to set
      */
     public static void init(LogLevel rootLevel) {
         // configure the JUL bridge
