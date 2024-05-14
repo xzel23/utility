@@ -93,7 +93,7 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         return new AnsiConverterImpl(text);
     }
 
-    class AnsiConverterImpl extends AttributeBasedConverterImpl<String> {
+    protected class AnsiConverterImpl extends AttributeBasedConverterImpl<String> {
 
         private final StringBuilder buffer;
 

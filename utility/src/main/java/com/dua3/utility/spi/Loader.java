@@ -51,10 +51,10 @@ public final class Loader<T> {
 
     private final Class<T> type;
     private final ClassLoader cl;
-    private final Predicate<T> predicate;
+    private final Predicate<? super T> predicate;
     private final Supplier<? extends T> defaultSupplier;
 
-    private Loader(Class<T> type, ClassLoader cl, Predicate<T> p, Supplier<? extends T> d) {
+    private Loader(Class<T> type, ClassLoader cl, Predicate<? super T> p, Supplier<? extends T> d) {
         this.type = type;
         this.cl = cl;
         this.predicate = p;
