@@ -57,8 +57,8 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
 
                         try {
                             beginChange();
-                            data = newData;
                             List<LogEntry> removed = List.copyOf(data.subList(0, removedRows));
+                            data = newData;
                             nextRemove(0, removed);
                             nextAdd(newSz - addedRows, newSz);
                         } finally {
