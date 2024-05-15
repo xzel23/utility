@@ -14,6 +14,9 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
+/**
+ * This class demonstrates the use of {@link FxLogPane} to display log messages in a window at runtime.
+ */
 public class FxLogPaneSample extends Application {
 
     static {
@@ -28,7 +31,6 @@ public class FxLogPaneSample extends Application {
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + FxLogPaneSample.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + FxLogPaneSample.class.getName());
     private final AtomicInteger n = new AtomicInteger();
-    private volatile boolean done = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -59,7 +61,7 @@ public class FxLogPaneSample extends Application {
                     Thread.currentThread().interrupt();
                 }
 
-                while (!done) {
+                while (true) {
                     if (AVERAGE_SLEEP_MILLIS > 0) {
                         long wait = random.nextLong(2 * AVERAGE_SLEEP_MILLIS * numberOfImplementations);
                         try {
