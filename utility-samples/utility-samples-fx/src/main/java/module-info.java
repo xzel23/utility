@@ -22,4 +22,5 @@ open module com.dua3.utility.samples.fx {
     requires org.apache.commons.logging;
     requires java.logging;
     requires org.apache.logging.log4j;
+    requires org.apache.logging.log4j.jul; // DO NOT REMOVE! this adds the JUL bridge.
 }

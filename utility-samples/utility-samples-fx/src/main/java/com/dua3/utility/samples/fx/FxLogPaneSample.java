@@ -16,6 +16,11 @@ import java.util.stream.IntStream;
 
 public class FxLogPaneSample extends Application {
 
+    static {
+        // this has to be done before the first logger is initialized!
+        LogUtilLog4J.init(LogLevel.TRACE);
+    }
+
     public static final int AVERAGE_SLEEP_MILLIS = 5;
     public static final int LOG_BUFFER_SIZE = 100000;
     private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + FxLogPaneSample.class.getName());
@@ -26,7 +31,6 @@ public class FxLogPaneSample extends Application {
     private volatile boolean done = false;
 
     public static void main(String[] args) {
-        LogUtilLog4J.init(LogLevel.TRACE);
         launch(args);
     }
 
