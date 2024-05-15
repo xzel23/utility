@@ -41,7 +41,7 @@ public final class LogUtilLog4J {
      * @return true, if the Log4J implementation is used
      */
     public static boolean isDefaultImplementation() {
-        return LogUtil.getGlobalDispatcher() instanceof LogAppenderLog4j;
+        return LogUtil.getGlobalDispatcher() instanceof LogAppenderLog4j.LogEntryDispatcherLog4J;
     }
 
     /**
