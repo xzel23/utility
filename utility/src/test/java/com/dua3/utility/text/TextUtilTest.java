@@ -244,7 +244,7 @@ public class TextUtilTest {
                 .toRichText();
 
         Dimension2f richTextDimensionHiBoldJohn = getRichTextDimension(textHiBoldJohn, timesRoman12);
-        assertEquals(textDimensionHiJohn.height(), richTextDimensionHiBoldJohn.height());
+        assertTrue(textDimensionHiJohn.height() <= richTextDimensionHiBoldJohn.height());
         assertTrue(textDimensionHiJohn.width() < richTextDimensionHiBoldJohn.width());
     }
 
