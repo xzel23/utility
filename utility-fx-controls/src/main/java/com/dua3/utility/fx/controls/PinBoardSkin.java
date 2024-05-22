@@ -80,7 +80,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
                     LOG.debug("item is visible: {}", item.name());
                     Rectangle2D itemArea = item.area();
                     Node node = item.nodeBuilder().get();
-                    node.setTranslateX(dx);
+                    node.setTranslateX(dx + itemArea.getMinX());
                     node.setTranslateY(dy + itemArea.getMinY());
                     return node;
                 })
