@@ -172,7 +172,7 @@ the parameter.
 
 ### 13
 
-- new utility-fx modules with JavaFX related classes
+- new utility-fx modules with JavaFX related classes and components
 - StreamUtil.zip() has been changed to take an operation as third parameter that defines the combining operation
 - StreamUtil.concat() did not close streams
 - code cleanups and reorganizations
@@ -180,6 +180,8 @@ the parameter.
   applications
 - Color methods have been renamed to reduce ambiguity
 - add helper method FxUtil.addMouseEventHandler()
+- FxUtil.map() to create an ObservableList that is a view of another ObservableList with an elementwise mapping applied
+- fix PinBoardSkin ignoring x-component
 
 ### 12.3
 

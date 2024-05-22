@@ -18,6 +18,9 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.TransformationList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -61,7 +64,6 @@ import java.util.regex.Pattern;
  * JavaFX utility class.
  */
 public final class FxUtil {
-
     private static final Pattern PATTERN_FILENAME_AND_DOT = Pattern.compile("^\\*\\.");
 
     /**
@@ -591,5 +593,90 @@ public final class FxUtil {
         if (!evt.isConsumed()) {
             secondHandler.handle(evt);
         }
+    }
+
+    /**
+     * MappedList is a subclass of TransformationList that maps elements from a source list to a new type using a converter function.
+     * It maintains a one-to-one mapping between elements in the source list and the mapped list.
+     *
+     * @param <A> the type of elements in the mapped list
+     * @param <B> the type of elements in the source list
+     */
+    static class MappedList<A, B> extends TransformationList<A, B> {
+        private final Function<B, A> converter;
+
+        MappedList(ObservableList<? extends B> list, Function<B, A> converter) {
+            super(list);
+            this.converter = converter;
+        }
+
+        @Override
+        public int getSourceIndex(int index) {
+            return index;
+        }
+
+        @Override
+        public int getViewIndex(int i) {
+            return i;
+        }
+
+        @Override
+        protected void sourceChanged(javafx.collections.ListChangeListener.Change<? extends B> changeB) {
+            ListChangeListener.Change<A> changeA = new ListChangeListener.Change<>(this) {
+                @Override
+                public boolean next() {
+                    return changeB.next();
+                }
+
+                @Override
+                public void reset() {
+                    changeB.reset();
+                }
+
+                @Override
+                public int getFrom() {
+                    return changeB.getFrom();
+                }
+
+                @Override
+                public int getTo() {
+                    return changeB.getTo();
+                }
+
+                @Override
+                public List<A> getRemoved() {
+                    return DataUtil.convert(changeB.getRemoved(), converter);
+                }
+
+                @Override
+                protected int[] getPermutation() {
+                    return new int[0];
+                }
+            };
+            fireChange(changeA);
+        }
+
+        @Override
+        public A get(int index) {
+            return converter.apply(getSource().get(index));
+        }
+
+        @Override
+        public int size() {
+            return getSource().size();
+        }
+    }
+
+    /**
+     * Maps each element of the given ObservableList using the provided mapping function.
+     *
+     * @param list    the ObservableList to be mapped
+     * @param mapping the mapping function to apply to each element of the list
+     * @param <A>     the type of elements in the original list
+     * @param <B>     the type of elements returned by the mapping function
+     * @return a new ObservableList containing the mapped elements
+     */
+    public static <A, B> ObservableList<B> map(ObservableList<A> list, Function<A,B> mapping) {
+        return new MappedList<>(list, mapping);
     }
 }

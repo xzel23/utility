@@ -1,6 +1,6 @@
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "13.0-BETA3-SNAPSHOT"
+val projectVersion = "13.0-BETA4-SNAPSHOT"
 
 // define subprojects
 include("utility")
@@ -46,7 +46,7 @@ dependencyResolutionManagement {
             version("ikonli", "12.3.1")
             version("jimfs", "1.3.0")
             version("miglayout", "11.3")
-            version("mockito", "5.11.0")
+            version("mockito", "5.12.0")
             version("javafx", "22")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe-annotations")
