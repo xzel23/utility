@@ -185,4 +185,12 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         return (c - tMin) / scrollableSize;
     }
+
+    public void setHbarPolicy(ScrollPane.ScrollBarPolicy policy) {
+        scrollPane.setHbarPolicy(policy);
+    }
+
+    public void setVbarPolicy(ScrollPane.ScrollBarPolicy policy) {
+        scrollPane.setVbarPolicy(policy);
+    }
 }

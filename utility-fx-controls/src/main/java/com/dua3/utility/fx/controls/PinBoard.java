@@ -17,6 +17,7 @@ import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Skin;
 
 import java.util.Collection;
@@ -34,6 +35,18 @@ public class PinBoard extends Control {
     private final ObjectProperty<Rectangle2D> areaProperty = new SimpleObjectProperty<>(new Rectangle2D(0, 0, 0, 0));
 
     public PinBoard() {
+    }
+
+    public void setHbarPolicy(ScrollPane.ScrollBarPolicy policy) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.setHbarPolicy(policy);
+        }
+    }
+
+    public void setVbarPolicy(ScrollPane.ScrollBarPolicy policy) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.setVbarPolicy(policy);
+        }
     }
 
     public void clear() {
