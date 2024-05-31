@@ -1,19 +1,15 @@
 package com.dua3.utility.logging.log4j;
 
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.apache.logging.log4j.spi.StandardLevel;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.ServiceConfigurationError;
 
 /**
  * A utility class for creating and managing Log4j appenders.
@@ -34,6 +30,8 @@ import java.util.ServiceConfigurationError;
 public final class LogUtilLog4J {
     // NOTE: do not use logging in this class as it interferes with LogManager creation!
 
+    static final LogAppenderLog4j GLOBAL_APPENDER = new LogAppenderLog4j(LogAppenderLog4j.class.getSimpleName() + "@global", null, null, false);
+
     private LogUtilLog4J() {
     }
 
@@ -43,77 +41,6 @@ public final class LogUtilLog4J {
      */
     public static boolean isDefaultImplementation() {
         return LogUtil.getGlobalDispatcher() instanceof LogAppenderLog4j.LogEntryDispatcherLog4J;
-    }
-
-    /**
-     * Creates a LogAppenderLog4j instance. NOTE: The appender is not started.
-     *
-     * @param ctx  the LoggerContext to use
-     * @param name the name of the appender
-     * @return a LogAppenderLog4j instance
-     */
-    public static LogAppenderLog4j createAppender(LoggerContext ctx, String name) {
-        PatternLayout layout = PatternLayout.createDefaultLayout(ctx.getConfiguration());
-        return LogAppenderLog4j.createAppender(name, true, layout, null);
-    }
-
-    /**
-     * Creates a LogAppenderLog4j instance, starts it, attaches it to all loggers in the given LoggerContext, and updates the LoggerContext.
-     *
-     * @param ctx  the LoggerContext to use
-     * @param name the name of the appender
-     * @return a LogAppenderLog4j instance
-     */
-    public static LogAppenderLog4j createAppenderAndAttachAllLoggers(LoggerContext ctx, String name) {
-        return createAppenderAndAttachLoggers(ctx, name, ctx.getConfiguration().getLoggers().values());
-    }
-
-    /**
-     * Creates a LogAppenderLog4j instance, starts it, attaches it to the given loggers, and updates the LoggerContext.
-     *
-     * @param ctx     the LoggerContext to use
-     * @param name    the name of the appender
-     * @param loggers the loggers to attach to the appender
-     * @return a LogAppenderLog4j instance
-     */
-    public static LogAppenderLog4j createAppenderAndAttachLoggers(LoggerContext ctx, String name, LoggerConfig... loggers) {
-        return createAppenderAndAttachLoggers(ctx, name, Arrays.asList(loggers));
-    }
-
-    /**
-     * Creates a LogAppenderLog4j instance, starts it, attaches it to the given loggers, and updates the LoggerContext.
-     *
-     * @param ctx     the LoggerContext to use
-     * @param name    the name of the appender
-     * @param loggers a collection of LoggerConfig instances to attach the appender to
-     * @return a LogAppenderLog4j instance
-     */
-    public static LogAppenderLog4j createAppenderAndAttachLoggers(LoggerContext ctx, String name, Collection<? extends LoggerConfig> loggers) {
-        LogAppenderLog4j appender = createAppender(ctx, name);
-        appender.start();
-        ctx.getConfiguration().addAppender(appender);
-        loggers.forEach(logger -> logger.addAppender(appender, null, null));
-        ctx.updateLoggers();
-
-        return appender;
-    }
-
-    /**
-     * Returns the global LogEntryDispatcher by using the available ILogEntryDispatcherFactory implementations loaded
-     * through ServiceLoader and connects all known loggers to it.
-     * <p>
-     * NOTE: This method delegates to {@link LogUtil#getGlobalDispatcher()}.
-     *
-     * @return The global LogEntryDispatcher instance.
-     * @throws ServiceConfigurationError if no factories can create a LogEntryDispatcher.
-     * @throws IllegalStateException if the implementations do not match
-     */
-    public static LogAppenderLog4j.LogEntryDispatcherLog4J getGlobalDispatcher() {
-        LogEntryDispatcher dispatcher = LogUtil.getGlobalDispatcher();
-        if (dispatcher instanceof LogAppenderLog4j.LogEntryDispatcherLog4J log4jDispatcher) {
-            return log4jDispatcher;
-        }
-        throw new IllegalStateException("wrong implementation: " + dispatcher.getClass());
     }
 
     /**
@@ -170,6 +97,16 @@ public final class LogUtilLog4J {
         // configure the commons-logging bridge
         setPropertyIfOnClassPath("org.apache.commons.logging.LogFactory", "org.apache.logging.log4j.jcl.LogFactoryImpl");
         // no configuration necessary for SLF4J
+
+        // initialize the context factory
+        Configuration config = new DefaultConfiguration();
+        config.addAppender(GLOBAL_APPENDER);
+        Configurator.initialize(config);
+
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        ctx.getConfiguration().addAppender(GLOBAL_APPENDER);
+        ctx.getLoggers().forEach(logger -> logger.addAppender(GLOBAL_APPENDER));
+        ctx.updateLoggers();
 
         // set the root logger level
         Configurator.setRootLevel(translate(rootLevel));

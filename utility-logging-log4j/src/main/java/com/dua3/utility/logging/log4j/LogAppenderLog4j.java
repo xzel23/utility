@@ -4,9 +4,11 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogEntryHandler;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
@@ -27,6 +29,24 @@ import java.util.Objects;
  * It is used as an appender for log events and provides a mechanism for forwarding log4j log events to applications.
  */
 public class LogAppenderLog4j extends AbstractAppender {
+
+    static class InstanceHolder {
+        static final LogAppenderLog4j INSTANCE;
+
+        static {
+            INSTANCE = LogUtilLog4J.GLOBAL_APPENDER;
+            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+            ctx.getConfiguration().addAppender(INSTANCE);
+            ctx.getLoggers().forEach(logger -> logger.addAppender(INSTANCE));
+            ctx.updateLoggers();
+            INSTANCE.start();
+        }
+    }
+
+    public static LogAppenderLog4j getGlobalInstance() {
+        return InstanceHolder.INSTANCE;
+    }
+
     /**
      * The name of the appender class used in the log4j configuration.
      *
@@ -155,12 +175,17 @@ public class LogAppenderLog4j extends AbstractAppender {
         }
     }
 
+    @Override
+    public void start() {
+        super.start();
+    }
+
     /**
      * Returns the LogEntryDispatcher associated with the LogAppenderLog4j instance.
      *
      * @return the LogEntryDispatcher
      */
-    public LogEntryDispatcher dispatcher() {
+    public LogEntryDispatcherLog4J dispatcher() {
         return dispatcher;
     }
 
