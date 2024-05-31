@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.LogBuffer;
@@ -102,20 +103,20 @@ public class SwingLogPane extends JPanel {
      *
      * @param buffer the LogBuffer instance to be used for log messages
      */
-    public SwingLogPane(LogBuffer buffer) {
+    public SwingLogPane(@Nullable LogBuffer buffer) {
         this(buffer, SwingLogPane::defaultColorize);
     }
 
     /**
      * Constructs a new SwingLogPane with the given LogBuffer instance and colorize function.
      *
-     * @param buffer   the LogBuffer instance to be used for log messages
+     * @param logBuffer the LogBuffer instance to be used for log messages
      * @param colorize the colorize function that determines the color for each log entry
      */
-    public SwingLogPane(LogBuffer buffer, Function<LogEntry, Color> colorize) {
+    public SwingLogPane(@Nullable LogBuffer logBuffer, Function<LogEntry, Color> colorize) {
         super(new BorderLayout());
 
-        this.buffer = buffer;
+        this.buffer = logBuffer == null ? createBuffer(LogBuffer.DEFAULT_CAPACITY) : logBuffer;
         this.colorize = colorize;
         this.model = new LogTableModel(buffer);
         this.tableRowSorter = new TableRowSorter<>(model) {

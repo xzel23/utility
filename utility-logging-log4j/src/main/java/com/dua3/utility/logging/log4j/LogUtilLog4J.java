@@ -1,6 +1,5 @@
 package com.dua3.utility.logging.log4j;
 
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
