@@ -110,6 +110,24 @@ public record Rectangle2f(float x, float y, float width, float height) {
     }
 
     /**
+     * The center of the two x-coordinates.
+     *
+     * @return maximum x-coordinate
+     */
+    public float xCenter() {
+        return x + width / 2;
+    }
+
+    /**
+     * The center of the two y-coordinates.
+     *
+     * @return maximum y-coordinate
+     */
+    public float yCenter() {
+        return y + height / 2;
+    }
+
+    /**
      * Translates the rectangle by the specified amounts in the x and y directions.
      *
      * @param dx the amount to translate along the x-direction
