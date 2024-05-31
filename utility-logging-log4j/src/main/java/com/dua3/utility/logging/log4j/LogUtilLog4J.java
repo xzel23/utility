@@ -1,5 +1,6 @@
 package com.dua3.utility.logging.log4j;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
@@ -165,12 +166,35 @@ public final class LogUtilLog4J {
      */
     public static void init(LogLevel rootLevel) {
         // configure the JUL bridge
-        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+        setPropertyIfOnClassPath("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
         // configure the commons-logging bridge
-        System.setProperty("org.apache.commons.logging.LogFactory", "org.apache.logging.log4j.jcl.LogFactoryImpl");
+        setPropertyIfOnClassPath("org.apache.commons.logging.LogFactory", "org.apache.logging.log4j.jcl.LogFactoryImpl");
         // no configuration necessary for SLF4J
 
         // set the root logger level
         Configurator.setRootLevel(translate(rootLevel));
+    }
+
+    private static void setPropertyIfOnClassPath(String propertyName, String className) {
+        if (isClassOnClasspath(className)) {
+            System.setProperty(propertyName, className);
+        }
+    }
+
+    /**
+     * Check if a class is on the classpath without loading it.
+     *
+     * @param className the fully qualified name of the class
+     * @return true, if the class is on the classpath
+     */
+    // DO NOT MOVE TO LANGUTIL OR CALL LANGUTIL METHODS!!!
+    // LANGUTIL INSTANTIATES A LOGGER BUT INITIALISATION MOST BE DONE BEFORE FIRST LOGGER IS INSTANTIATED!
+    public static boolean isClassOnClasspath(String className) {
+        if (!className.matches("^([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*(\\.[a-zA-Z_$][a-zA-Z\\d_$]*)*$")) {
+            return false;
+        }
+
+        String classAsResource = className.replace('.', '/') + ".class";
+        return ClassLoader.getSystemClassLoader().getResource(classAsResource) != null;
     }
 }

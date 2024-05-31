@@ -1697,16 +1697,4 @@ public final class LangUtil {
     public static short requireInInterval(short value, short min, short max, String fmt, Object... args) {
         return (short) requireInInterval((long) value, (long) min, (long) max, fmt, args);
     }
-
-    /**
-     * Check if a class is on the classpath without loading it.
-     *
-     * @param className the fully qualified name of the class
-     * @return true, if the class is on the classpath
-     */
-    public static boolean isClassOnClasspath(String className) {
-        LangUtil.check(className.matches("^([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*(\\.[a-zA-Z_$][a-zA-Z\\d_$]*)*$"));
-        String classAsResource = className.replace('.', '/') + ".class";
-        return Thread.currentThread().getContextClassLoader().getResource(classAsResource) != null;
-    }
 }

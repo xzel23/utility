@@ -9,6 +9,9 @@
 open module com.dua3.utility.samples.log4j {
     exports com.dua3.utility.samples.log4j;
 
-    requires java.base;
     requires com.dua3.utility.samples;
+    requires com.dua3.utility.logging;
+    requires com.dua3.utility.logging.log4j;
+    requires org.apache.logging.log4j.jcl;
+    requires org.apache.logging.log4j.jul;
 }

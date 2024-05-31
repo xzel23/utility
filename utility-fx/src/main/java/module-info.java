@@ -55,4 +55,5 @@ module com.dua3.utility.fx {
     requires static javafx.graphics;
     requires org.apache.logging.log4j;
     requires static com.dua3.cabe.annotations;
+    requires java.desktop;
 }
