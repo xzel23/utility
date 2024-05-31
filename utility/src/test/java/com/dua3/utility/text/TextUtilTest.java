@@ -7,6 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -220,7 +221,7 @@ public class TextUtilTest {
     }
 
     @Test
-    public void testGetTextRichtDimension() {
+    public void testGetTextDimensionRichtext() {
         Font timesRoman12 = new Font("TimesRoman-12");
 
         // if the text does not change the font, the result should match the result for the plain string
@@ -230,8 +231,8 @@ public class TextUtilTest {
                 .append("!")
                 .toRichText();
 
-        Dimension2f textDimensionHiJohn = getTextDimension(textHiJohn, timesRoman12);
-        Dimension2f richTextDimensionHiJohn = getRichTextDimension(textHiJohn, timesRoman12);
+        Rectangle2f textDimensionHiJohn = getTextDimension(textHiJohn, timesRoman12);
+        Rectangle2f richTextDimensionHiJohn = getRichTextDimension(textHiJohn, timesRoman12);
         assertEquals(textDimensionHiJohn, richTextDimensionHiJohn);
 
         // the bold font should use more space
@@ -243,7 +244,7 @@ public class TextUtilTest {
                 .append("!")
                 .toRichText();
 
-        Dimension2f richTextDimensionHiBoldJohn = getRichTextDimension(textHiBoldJohn, timesRoman12);
+        Rectangle2f richTextDimensionHiBoldJohn = getRichTextDimension(textHiBoldJohn, timesRoman12);
         assertTrue(textDimensionHiJohn.height() <= richTextDimensionHiBoldJohn.height());
         assertTrue(textDimensionHiJohn.width() < richTextDimensionHiBoldJohn.width());
     }

@@ -2,6 +2,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.spi.Loader;
 
 import java.io.IOException;
@@ -66,7 +67,19 @@ public interface FontUtil<F> {
                             // determine bounding rectangle for current line
                             line.runs().stream()
                                     .map(run -> getTextDimension(run, f.deriveFont(run.getFontDef())))
-                                    .reduce( (a, b) -> new Rectangle2f(a.x(), Math.min(a.yMin(), b.yMin()), a.width()+b.width(), Math.max(a.yMax(), b.yMax())) )
+                                    .reduce( (a, b) -> Rectangle2f.withCorners(
+                                                    Vector2f.of(
+                                                            // A: x,y = left of first part, lowest border of both parts
+                                                            a.xMin(),
+                                                            Math.min(a.yMin(), b.yMin())
+                                                    ),
+                                                    Vector2f.of(
+                                                            // B: x,y = left of first part + both widths, height from bottom to top for both parts
+                                                            a.xMin() + a.width() + b.width(),
+                                                            Math.max(a.yMax(), b.yMax())
+                                                    )
+                                            )
+                                    )
                                     .orElseGet(() -> getTextDimension("", f))
                     )
                     .reduce((a,b) -> new Rectangle2f(Math.min(a.xMin(), b.xMin()), Math.min(a.yMin(), b.yMin()), Math.max(a.width(), b.width()), a.height() + b.height()))
