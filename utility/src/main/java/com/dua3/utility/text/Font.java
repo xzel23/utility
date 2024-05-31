@@ -344,6 +344,16 @@ public class Font {
     }
 
     /**
+     * Scales the font by a given factor.
+     *
+     * @param s the scaling factor
+     * @return a new Font instance that is scaled by the given factor, or this font if the scaling factor is 1
+     */
+    public Font scaledBy(float s) {
+        return s == 1 ? this : deriveFont(FontDef.size(s * this.size));
+    }
+
+    /**
      * Return a font derived from this font by applying the given value for the bold attribute.
      *
      * @param flag the value to use
