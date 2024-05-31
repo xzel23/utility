@@ -1,7 +1,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.awt.AwtFontUtil;
-import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.spi.Loader;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public interface FontUtil<F> {
      * @param f the font
      * @return the text bounds
      */
-    Dimension2f getTextDimension(CharSequence s, Font f);
+    Rectangle2f getTextDimension(CharSequence s, Font f);
 
     /**
      * Calculates the dimension of the given rich text line using the specified font.
@@ -57,16 +57,20 @@ public interface FontUtil<F> {
      * @param f the base font to apply
      * @return the dimension of the rich text line
      */
-    default Dimension2f getRichTextDimension(CharSequence s, Font f) {
+    default Rectangle2f getRichTextDimension(CharSequence s, Font f) {
         if (s instanceof ToRichText t) {
             float w = 0;
             float h = 0;
-            for (Run run : t.toRichText()) {
-                var d = getTextDimension(run, f.deriveFont(run.getFontDef()));
-                w += d.width();
-                h = Math.max(h, d.height());
-            }
-            return new Dimension2f(w, h);
+            return t.toRichText().lines()
+                    .map(line ->
+                            // determine bounding rectangle for current line
+                            line.runs().stream()
+                                    .map(run -> getTextDimension(run, f.deriveFont(run.getFontDef())))
+                                    .reduce( (a, b) -> new Rectangle2f(a.x(), Math.min(a.yMin(), b.yMin()), a.width()+b.width(), Math.max(a.yMax(), b.yMax())) )
+                                    .orElseGet(() -> getTextDimension("", f))
+                    )
+                    .reduce((a,b) -> new Rectangle2f(Math.min(a.xMin(), b.xMin()), Math.min(a.yMin(), b.yMin()), Math.max(a.width(), b.width()), a.height() + b.height()))
+                    .orElseGet(() -> getTextDimension("", f));
         } else {
             return getTextDimension(s, f);
         }

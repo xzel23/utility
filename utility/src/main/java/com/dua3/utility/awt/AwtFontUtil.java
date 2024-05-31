@@ -2,7 +2,7 @@ package com.dua3.utility.awt;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 
@@ -86,9 +86,9 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
      * @param awtFont the font
      * @return the text's bounds (positioned at the origin)
      */
-    public Dimension2f getTextDimension(CharSequence text, java.awt.Font awtFont) {
+    public Rectangle2f getTextDimension(CharSequence text, java.awt.Font awtFont) {
         Rectangle2D r = stringBounds(text, awtFont);
-        return Dimension2f.of((float) r.getWidth(), (float) r.getHeight());
+        return new Rectangle2f((float) r.getX(), (float) r.getY(), (float) r.getWidth(), (float) r.getHeight());
     }
 
     /**
@@ -114,9 +114,9 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     }
 
     @Override
-    public Dimension2f getTextDimension(CharSequence s, Font f) {
+    public Rectangle2f getTextDimension(CharSequence s, Font f) {
         Rectangle2D r = stringBounds(s, f);
-        return Dimension2f.of((float) r.getWidth(), (float) r.getHeight());
+        return new Rectangle2f((float) r.getX(), (float) r.getY(), (float) r.getWidth(), (float) r.getHeight());
     }
 
     @Override

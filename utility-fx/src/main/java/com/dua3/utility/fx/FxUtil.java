@@ -223,6 +223,17 @@ public final class FxUtil {
     }
 
     /**
+     * Returns the bounds of the given text string when rendered with the specified font.
+     *
+     * @param s the text string
+     * @param f the font
+     * @return the bounds of the text string
+     */
+    public static Bounds getTextBounds(CharSequence s, Font f) {
+        return boundsInLocal(s, f);
+    }
+
+    /**
      * Calculates the bounds of the given text string when rendered with the specified font.
      *
      * @param s the text string
@@ -232,6 +243,19 @@ public final class FxUtil {
     private static Bounds boundsInLocal(CharSequence s, com.dua3.utility.text.Font f) {
         Text text = new Text(s.toString());
         text.setFont(convert(f));
+        return text.getBoundsInLocal();
+    }
+
+    /**
+     * Calculates the bounds of the given text string when rendered with the specified font.
+     *
+     * @param s the text string
+     * @param f the font
+     * @return the bounds of the text string
+     */
+    private static Bounds boundsInLocal(CharSequence s, Font f) {
+        Text text = new Text(s.toString());
+        text.setFont(f);
         return text.getBoundsInLocal();
     }
 

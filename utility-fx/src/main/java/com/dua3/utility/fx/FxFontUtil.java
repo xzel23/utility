@@ -15,7 +15,7 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.FontUtil;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -55,6 +55,12 @@ public class FxFontUtil implements FontUtil<Font> {
     private FxFontUtil() {
     }
 
+    /**
+     * Converts a com.dua3.utility.text.Font object to a JavaFX Font object.
+     *
+     * @param font the com.dua3.utility.text.Font object to be converted
+     * @return the converted JavaFX Font object
+     */
     @Override
     public Font convert(com.dua3.utility.text.Font font) {
         return FxUtil.convert(font);
@@ -71,9 +77,14 @@ public class FxFontUtil implements FontUtil<Font> {
     }
 
     @Override
-    public Dimension2f getTextDimension(CharSequence s, com.dua3.utility.text.Font f) {
+    public Rectangle2f getTextDimension(CharSequence s, com.dua3.utility.text.Font f) {
         var bounds = FxUtil.getTextBounds(s, f);
-        return Dimension2f.of((float) bounds.getWidth(), (float) bounds.getHeight());
+        return Rectangle2f.of((float) bounds.getMinX(), (float) bounds.getMinY(), (float) bounds.getWidth(), (float) bounds.getHeight());
+    }
+
+    public Rectangle2f getTextDimension(CharSequence s, Font f) {
+        var bounds = FxUtil.getTextBounds(s, f);
+        return Rectangle2f.of((float) bounds.getMinX(), (float) bounds.getMinY(), (float) bounds.getWidth(), (float) bounds.getHeight());
     }
 
     @Override

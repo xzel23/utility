@@ -7,7 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -746,7 +746,7 @@ public final class TextUtil {
      * @param font the font
      * @return the text bounds
      */
-    public static Dimension2f getTextDimension(CharSequence text, Font font) {
+    public static Rectangle2f getTextDimension(CharSequence text, Font font) {
         return FONT_UTIL.getTextDimension(text, font);
     }
 
@@ -759,7 +759,7 @@ public final class TextUtil {
      * @param font the base font to apply
      * @return the text bounds
      */
-    public static Dimension2f getRichTextDimension(CharSequence text, Font font) {
+    public static Rectangle2f getRichTextDimension(CharSequence text, Font font) {
         return FONT_UTIL.getRichTextDimension(text, font);
     }
 
