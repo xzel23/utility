@@ -4,7 +4,6 @@ import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -103,13 +102,14 @@ public final class LogUtilLog4J {
         config.addAppender(GLOBAL_APPENDER);
         Configurator.initialize(config);
 
-        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        ctx.getConfiguration().addAppender(GLOBAL_APPENDER);
-        ctx.getLoggers().forEach(logger -> logger.addAppender(GLOBAL_APPENDER));
-        ctx.updateLoggers();
-
         // set the root logger level
         Configurator.setRootLevel(translate(rootLevel));
+    }
+
+    public static void updateLoggers() {
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        ctx.getLoggers().forEach(logger -> logger.addAppender(GLOBAL_APPENDER));
+        ctx.updateLoggers();
     }
 
     private static void setPropertyIfOnClassPath(String propertyName, String className) {

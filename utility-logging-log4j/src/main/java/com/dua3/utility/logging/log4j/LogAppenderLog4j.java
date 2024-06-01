@@ -30,23 +30,6 @@ import java.util.Objects;
  */
 public class LogAppenderLog4j extends AbstractAppender {
 
-    static class InstanceHolder {
-        static final LogAppenderLog4j INSTANCE;
-
-        static {
-            INSTANCE = LogUtilLog4J.GLOBAL_APPENDER;
-            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-            ctx.getConfiguration().addAppender(INSTANCE);
-            ctx.getLoggers().forEach(logger -> logger.addAppender(INSTANCE));
-            ctx.updateLoggers();
-            INSTANCE.start();
-        }
-    }
-
-    public static LogAppenderLog4j getGlobalInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
     /**
      * The name of the appender class used in the log4j configuration.
      *
