@@ -6,8 +6,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.spi.StandardLevel;
 
 /**
@@ -97,13 +96,15 @@ public final class LogUtilLog4J {
         setPropertyIfOnClassPath("org.apache.commons.logging.LogFactory", "org.apache.logging.log4j.jcl.LogFactoryImpl");
         // no configuration necessary for SLF4J
 
-        // initialize the context factory
-        Configuration config = new DefaultConfiguration();
-        config.addAppender(GLOBAL_APPENDER);
-        Configurator.initialize(config);
-
         // set the root logger level
-        Configurator.setRootLevel(translate(rootLevel));
+        Configuration configuration = LoggerContext.getContext(false).getConfiguration();
+        GLOBAL_APPENDER.start();
+        configuration.addAppender(GLOBAL_APPENDER);
+        LoggerConfig rootLogger = configuration.getRootLogger();
+        rootLogger.addAppender(GLOBAL_APPENDER, null, null);
+        rootLogger.setLevel(translate(rootLevel));
+
+        LogUtil.assureInitialized();
     }
 
     public static void updateLoggers() {

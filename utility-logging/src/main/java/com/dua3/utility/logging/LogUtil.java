@@ -39,7 +39,7 @@ public final class LogUtil {
         }
     }
 
-    private static void assureInitialized() {
+    public static void assureInitialized() {
         if (globalDispatcher == null) {
             init();
         }
