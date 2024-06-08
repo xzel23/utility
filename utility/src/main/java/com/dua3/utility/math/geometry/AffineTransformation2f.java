@@ -18,6 +18,20 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     public static final AffineTransformation2f IDENTITY = new AffineTransformation2f(1, 0, 0, 0, 1, 0);
 
     /**
+     * Combines multiple affine transformations together.
+     *
+     * @param t an array of affine transformations to combine
+     * @return the combined affine transformation
+     */
+    public static AffineTransformation2f combine(AffineTransformation2f... t) {
+        AffineTransformation2f tr = IDENTITY;
+        for (AffineTransformation2f t_ : t) {
+            tr = tr.append(t_);
+        }
+        return tr;
+    }
+
+    /**
      * Return the identity transformation.
      *
      * @return affine transformation (identity)
@@ -197,4 +211,26 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
         return Vector2f.of(e, f);
     }
 
+    /**
+     * Returns a string representation of the matrix elements of the affine transformation.
+     *
+     * <p><b>Example:</b><br>
+     * <pre>
+     *     ⎡  1,50   3,70   0,00⎤
+     *     ⎢ -4,00   1,50   0,00⎥
+     *     ⎣  0,00   0,00   1,00⎦
+     * </pre>
+     * @return a string containing the affine transformation in matrix representation
+     */
+    public String toMatrixString() {
+        return String.format("""
+                ⎡%6.2f %6.2f %6.2f⎤
+                ⎢%6.2f %6.2f %6.2f⎥
+                ⎣%6.2f %6.2f %6.2f⎦
+                """,
+                a, b, c,
+                d, e, f,
+                0f, 0f, 1f
+        );
+    }
 }
