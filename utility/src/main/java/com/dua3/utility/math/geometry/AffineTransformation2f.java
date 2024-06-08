@@ -104,6 +104,16 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
+     * Create an affine transformation for a scaling operation.
+     *
+     * @param s the scale to apply
+     * @return affine transformation (scale)
+     */
+    public static AffineTransformation2f scale(Scale2f s) {
+        return scale(s.sx(), s.sy());
+    }
+
+    /**
      * Create an affine transformation for a shearing operation
      * {@code (x,y) -> (x+my,y)}.
      *
