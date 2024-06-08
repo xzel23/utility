@@ -14,6 +14,15 @@ public record Scale2f(float sx, float sy) {
     }
 
     /**
+     * Constructs a new Scale2f object with the specified scaling factor s for both x and y axes.
+     *
+     * @param s the scaling factor
+     */
+    public Scale2f(float s) {
+        this(s, s);
+    }
+
+    /**
      * Multiplies the current scale by another scale.
      *
      * @param other the scale to multiply with
