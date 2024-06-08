@@ -3,10 +3,16 @@ package com.dua3.utility.math.geometry;
 /**
  * Record holding scaling factors for x- and y-axis.
  *
- * @param x the x-scaling factor
- * @param y the y-scaling factor
+ * @param sx the x-scaling factor
+ * @param sy the y-scaling factor
  */
-public record Scale2f(float x, float y) {
+public record Scale2f(float sx, float sy) {
+    private static final Scale2f IDENTITY = new Scale2f(1f, 1f);
+
+    public static Scale2f identity() {
+        return IDENTITY;
+    }
+
     /**
      * Multiplies the current scale by another scale.
      *
@@ -14,18 +20,18 @@ public record Scale2f(float x, float y) {
      * @return a new Scale object with the multiplied scale factors
      */
     public Scale2f multiply(Scale2f other) {
-        return new Scale2f(x * other.x, y * other.y);
+        return new Scale2f(sx * other.sx, sy * other.sy);
     }
 
     /**
      * Multiplies the scale factors by the specified values and returns a new Scale object with the multiplied values.
      *
-     * @param sx the scaling factor for the x-axis
-     * @param sy the scaling factor for the y-axis
+     * @param sx the scaling factor for the sx-axis
+     * @param sy the scaling factor for the sy-axis
      * @return a new Scale object with the multiplied values
      */
     public Scale2f multiply(float sx, float sy) {
-        return new Scale2f(x * sx, y * sy);
+        return new Scale2f(this.sx * sx, this.sy * sy);
     }
 
     /**
@@ -35,6 +41,6 @@ public record Scale2f(float x, float y) {
      * @return a new Scale object with the multiplied scale factors
      */
     public Scale2f multiply(float s) {
-        return new Scale2f(x * s, y * s);
+        return new Scale2f(sx * s, sy * s);
     }
 }
