@@ -50,6 +50,17 @@ public record Rectangle2f(float x, float y, float width, float height) {
     }
 
     /**
+     * Creates a new rectangle with the specified center point and dimensions.
+     *
+     * @param p   the center point of the rectangle
+     * @param dim the dimensions of the rectangle
+     * @return a new Rectangle2f object
+     */
+    public static Rectangle2f withCenter(Vector2f p, Dimension2f dim) {
+        return new Rectangle2f(p.x() - dim.width()/2, p.y() - dim.height()/2, dim.width(), dim.height());
+    }
+
+    /**
      * Create rectangle from coordinates and dimension. Both width and height must be non-negative.
      *
      * @param x the x-coordinate
@@ -125,6 +136,42 @@ public record Rectangle2f(float x, float y, float width, float height) {
      */
     public float yCenter() {
         return y + height / 2;
+    }
+
+    /**
+     * Retrieves the dimension of the rectangle.
+     *
+     * @return the dimension of the rectangle
+     */
+    public Dimension2f getDimension() {
+        return new Dimension2f(width, height);
+    }
+
+    /**
+     * Returns a new Vector2f instance with the minimum x and y coordinates.
+     *
+     * @return the Vector2f instance with the minimum coordinates
+     */
+    public Vector2f min() {
+        return new Vector2f(xMin(), yMin());
+    }
+
+    /**
+     * Returns a new Vector2f instance with the maximum x and y coordinates.
+     *
+     * @return a new Vector2f with the maximum x-coordinate and the maximum y-coordinate
+     */
+    public Vector2f max() {
+        return new Vector2f(xMax(), yMax());
+    }
+
+    /**
+     * Returns the center of the rectangle as a new Vector2f object.
+     *
+     * @return the center of the rectangle
+     */
+    public Vector2f center() {
+        return new Vector2f(xCenter(), yCenter());
     }
 
     /**
