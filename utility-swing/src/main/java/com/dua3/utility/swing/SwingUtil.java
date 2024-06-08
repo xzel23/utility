@@ -24,6 +24,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Adjustable;
 import java.awt.Component;
+import java.awt.GraphicsConfiguration;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -37,6 +38,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
@@ -60,6 +62,69 @@ public final class SwingUtil {
     // Utility class, should not be instantiated
     private SwingUtil() {
         // nop
+    }
+
+    /**
+     * Record holding the scale factors for x and y.
+     * @param x the x-scaling factor
+     * @param y the y-scaling factor
+     */
+    public record Scale(float x, float y) {
+        /**
+         * Multiplies the current scale by another scale.
+         *
+         * @param other the scale to multiply with
+         * @return a new Scale object with the multiplied scale factors
+         */
+        public Scale multiply(Scale other) {
+            return new Scale(x*other.x, y*other.y);
+        }
+
+        /**
+         * Multiplies the scale factors by the specified values and returns a new Scale object with the multiplied values.
+         *
+         * @param sx the scaling factor for the x-axis
+         * @param sy the scaling factor for the y-axis
+         * @return a new Scale object with the multiplied values
+         */
+        public Scale multiply(float sx, float sy) {
+            return new Scale(x*sx, y*sy);
+        }
+
+        /**
+         * Multiplies the scale factors of the current Scale object by a scalar value.
+         *
+         * @param s the scalar value to multiply the scale factors by
+         * @return a new Scale object with the multiplied scale factors
+         */
+        public Scale multiply(float s) {
+            return new Scale(x*s, y*s);
+        }
+    }
+
+    /**
+     * Retrieves the display scale of a given {@code Component}.
+     *
+     * @param component the component for which to retrieve the display scale
+     * @return the display scale of the component
+     */
+    public static Scale getDisplayScale(Component component) {
+        return getDisplayScale(component.getGraphicsConfiguration());
+    }
+
+    /**
+     * Returns the display scale factor of the given GraphicsConfiguration.
+     *
+     * @param conf the GraphicsConfiguration to retrieve the display scale factor from
+     * @return the display scale
+     */
+    public static Scale getDisplayScale(GraphicsConfiguration conf) {
+        if (conf == null) {
+            return new Scale(1, 1);
+        }
+
+        AffineTransform defaultTransform = conf.getDefaultTransform();
+        return new Scale((float) defaultTransform.getScaleX(), (float) defaultTransform.getScaleY());
     }
 
     /**
