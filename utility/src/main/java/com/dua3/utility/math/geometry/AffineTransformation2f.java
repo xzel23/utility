@@ -1,5 +1,7 @@
 package com.dua3.utility.math.geometry;
 
+import java.util.Optional;
+
 /**
  * Defines an affine transformation in form of a matrix
  * <pre>
@@ -209,6 +211,26 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      */
     public Vector2f getTranslate() {
         return Vector2f.of(e, f);
+    }
+
+    /**
+     * Calculates the inverse of the affine transformation.
+     *
+     * @return an Optional containing the inverse affine transformation if it exists, otherwise empty
+     */
+    public Optional<AffineTransformation2f> inverse() {
+        return Optional.ofNullable(calculateInverse());
+    }
+
+    private AffineTransformation2f calculateInverse() {
+        float det = e * a - b * d;
+        if (det == 0) {
+            return null;
+        }
+        return new AffineTransformation2f(
+                e/det, -b/det, (b*f - e*c)/det,
+                -d/det,  a/det, (c*d - a*f)/det
+        );
     }
 
     /**
