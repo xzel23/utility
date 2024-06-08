@@ -10,6 +10,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.Platform;
+import com.dua3.utility.math.geometry.Scale2f;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -65,50 +66,12 @@ public final class SwingUtil {
     }
 
     /**
-     * Record holding the scale factors for x and y.
-     * @param x the x-scaling factor
-     * @param y the y-scaling factor
-     */
-    public record Scale(float x, float y) {
-        /**
-         * Multiplies the current scale by another scale.
-         *
-         * @param other the scale to multiply with
-         * @return a new Scale object with the multiplied scale factors
-         */
-        public Scale multiply(Scale other) {
-            return new Scale(x*other.x, y*other.y);
-        }
-
-        /**
-         * Multiplies the scale factors by the specified values and returns a new Scale object with the multiplied values.
-         *
-         * @param sx the scaling factor for the x-axis
-         * @param sy the scaling factor for the y-axis
-         * @return a new Scale object with the multiplied values
-         */
-        public Scale multiply(float sx, float sy) {
-            return new Scale(x*sx, y*sy);
-        }
-
-        /**
-         * Multiplies the scale factors of the current Scale object by a scalar value.
-         *
-         * @param s the scalar value to multiply the scale factors by
-         * @return a new Scale object with the multiplied scale factors
-         */
-        public Scale multiply(float s) {
-            return new Scale(x*s, y*s);
-        }
-    }
-
-    /**
      * Retrieves the display scale of a given {@code Component}.
      *
      * @param component the component for which to retrieve the display scale
      * @return the display scale of the component
      */
-    public static Scale getDisplayScale(Component component) {
+    public static Scale2f getDisplayScale(Component component) {
         return getDisplayScale(component.getGraphicsConfiguration());
     }
 
@@ -118,13 +81,13 @@ public final class SwingUtil {
      * @param conf the GraphicsConfiguration to retrieve the display scale factor from
      * @return the display scale
      */
-    public static Scale getDisplayScale(GraphicsConfiguration conf) {
+    public static Scale2f getDisplayScale(GraphicsConfiguration conf) {
         if (conf == null) {
-            return new Scale(1, 1);
+            return new Scale2f(1, 1);
         }
 
         AffineTransform defaultTransform = conf.getDefaultTransform();
-        return new Scale((float) defaultTransform.getScaleX(), (float) defaultTransform.getScaleY());
+        return new Scale2f((float) defaultTransform.getScaleX(), (float) defaultTransform.getScaleY());
     }
 
     /**
