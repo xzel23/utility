@@ -69,10 +69,11 @@ public final class SwingUtil {
      * Retrieves the display scale of a given {@code Component}.
      *
      * @param component the component for which to retrieve the display scale
-     * @return the display scale of the component
+     * @return the display scale of the component, or the default scale if no {@link GraphicsConfiguration} is set to the component
      */
     public static Scale2f getDisplayScale(Component component) {
-        return getDisplayScale(component.getGraphicsConfiguration());
+        GraphicsConfiguration conf = component.getGraphicsConfiguration();
+        return conf == null ? Scale2f.identity() : getDisplayScale(conf);
     }
 
     /**
@@ -82,10 +83,6 @@ public final class SwingUtil {
      * @return the display scale
      */
     public static Scale2f getDisplayScale(GraphicsConfiguration conf) {
-        if (conf == null) {
-            return new Scale2f(1, 1);
-        }
-
         AffineTransform defaultTransform = conf.getDefaultTransform();
         return new Scale2f((float) defaultTransform.getScaleX(), (float) defaultTransform.getScaleY());
     }
