@@ -182,6 +182,12 @@ the parameter.
 - add helper method FxUtil.addMouseEventHandler()
 - FxUtil.map() to create an ObservableList that is a view of another ObservableList with an elementwise mapping applied
 - fix PinBoardSkin ignoring x-component
+- SwingUtil.getDisplayScale() to retrieve the actual scaling factor for the display (taking into account UHD and retina displays)
+- AffineTransformation2f.combine()
+- return value of getTextDimension() changed to Rectangle2f (this gives access to the baseline value)
+- Rectangle2f.getXCenter(), getYCenter()
+- Font.scaledBy()
+- many small fixes and improvements
 
 ### 12.3
 
