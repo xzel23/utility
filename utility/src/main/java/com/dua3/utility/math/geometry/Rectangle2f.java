@@ -220,4 +220,18 @@ public record Rectangle2f(float x, float y, float width, float height) {
 
         return new Rectangle2f(x - m, y - m, width + 2 * m, height + 2 * m);
     }
+
+    /**
+     * Adds a margin to the current rectangle, creating a new rectangle with the same center as this rectangle but with borders pushed out
+     * by the specified margins. Use negative values to shrink the rectangle.
+     *
+     * @param mLeft   the margin to be applied to the left side of the rectangle
+     * @param mTop    the margin to be applied to the top side of the rectangle
+     * @param mRight  the margin to be applied to the right side of the rectangle
+     * @param mBottom the margin to be applied to the bottom side of the rectangle
+     * @return a new Rectangle2f instance with the added margin
+     */
+    public Rectangle2f addMargin(float mLeft, float mTop, float mRight, float mBottom) {
+        return new Rectangle2f(x - mLeft, y - mTop, width + mLeft + mRight, height + mTop + mBottom);
+    }
 }
