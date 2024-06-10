@@ -7,6 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -792,6 +793,39 @@ public final class TextUtil {
             case LEFT -> s + padding(filler, width - len);
             case RIGHT -> padding(filler, width - len) + s;
             case CENTER -> padding(filler, (width - len) / 2) + s + padding(filler, width - len - (width - len) / 2);
+            case JUSTIFIED -> {
+                int spaceToDistribute = Math.max(0, width - len);
+                if (spaceToDistribute == 0) {
+                    yield s;
+                }
+                String[] fragments = s.split("(?<=\\s)|(?=\\s)");
+                record Stats(int blankChars, int blankFragments) {}
+                Stats stats = Arrays.stream(fragments)
+                        .filter(String::isBlank)
+                        .map(r -> new Stats(r.length(), 1))
+                        .reduce((a,b) -> new Stats(a.blankChars + b.blankChars, a.blankFragments + b.blankFragments))
+                        .orElseGet(() -> new Stats(0, 0));
+                if (stats.blankFragments() == 0) {
+                    yield s;
+                }
+                double fBlank = 1f + (double) spaceToDistribute / stats.blankFragments();
+                int used = 0;
+                int processedSpaces = 0;
+                StringBuilder sb = new StringBuilder(width);
+                for (String fragment : fragments) {
+                    if (fragment.isBlank() && used < spaceToDistribute) {
+                        double ideal =  (processedSpaces + fragment.length()) * fBlank - (processedSpaces + used);
+                        int nChars = (int) MathUtil.clamp(1, 1+spaceToDistribute-used, Math.round(ideal));
+                        String blank = padding(filler, nChars);
+                        processedSpaces += fragment.length();
+                        used += blank.length() - fragment.length();
+                        sb.append(blank);
+                    } else {
+                        sb.append(fragment);
+                    }
+                }
+                yield sb.toString();
+            }
         };
     }
 
@@ -967,21 +1001,4 @@ public final class TextUtil {
         return cs.codePoints().allMatch(Character::isWhitespace);
     }
 
-    /**
-     * Alignment.
-     */
-    public enum Alignment {
-        /**
-         * align left.
-         */
-        LEFT,
-        /**
-         * align centered.
-         */
-        CENTER,
-        /**
-         * align right.
-         */
-        RIGHT
-    }
 }

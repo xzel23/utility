@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -86,47 +87,55 @@ public class TextUtilTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    public void testAlign() {
-        assertEquals("", align("", 0, Alignment.LEFT));
-        assertEquals("", align("", 0, Alignment.CENTER));
-        assertEquals("", align("", 0, Alignment.RIGHT));
+    record TestDataAlign(String text, String expected, int width, Alignment align, Character fill) {}
+    @ParameterizedTest
+    @MethodSource("generateTestDataAlign")
+    public void testAlign(TestDataAlign data) {
+        if (data.fill() == null) {
+            assertEquals(data.expected(), align(data.text(), data.width(), data.align()));
+        } else {
+            assertEquals(data.expected(), align(data.text(), data.width(), data.align(), data.fill()));
+        }
+    }
 
-        assertEquals("   ", align("", 3, Alignment.LEFT));
-        assertEquals("   ", align("", 3, Alignment.CENTER));
-        assertEquals("   ", align("", 3, Alignment.RIGHT));
-
-        assertEquals("abc", align("abc", 1, Alignment.LEFT));
-        assertEquals("abc", align("abc", 1, Alignment.CENTER));
-        assertEquals("abc", align("abc", 1, Alignment.RIGHT));
-
-        assertEquals("abc  ", align("abc", 5, Alignment.LEFT));
-        assertEquals(" abc ", align("abc", 5, Alignment.CENTER));
-        assertEquals("  abc", align("abc", 5, Alignment.RIGHT));
-
-        assertEquals("abcd ", align("abcd", 5, Alignment.LEFT));
-        assertEquals("abcd ", align("abcd", 5, Alignment.CENTER));
-        assertEquals(" abcd", align("abcd", 5, Alignment.RIGHT));
-
-        assertEquals("", align("", 0, Alignment.LEFT, '_'));
-        assertEquals("", align("", 0, Alignment.CENTER, '_'));
-        assertEquals("", align("", 0, Alignment.RIGHT, '_'));
-
-        assertEquals("___", align("", 3, Alignment.LEFT, '_'));
-        assertEquals("___", align("", 3, Alignment.CENTER, '_'));
-        assertEquals("___", align("", 3, Alignment.RIGHT, '_'));
-
-        assertEquals("abc", align("abc", 1, Alignment.LEFT, '_'));
-        assertEquals("abc", align("abc", 1, Alignment.CENTER, '_'));
-        assertEquals("abc", align("abc", 1, Alignment.RIGHT, '_'));
-
-        assertEquals("abc__", align("abc", 5, Alignment.LEFT, '_'));
-        assertEquals("_abc_", align("abc", 5, Alignment.CENTER, '_'));
-        assertEquals("__abc", align("abc", 5, Alignment.RIGHT, '_'));
-
-        assertEquals("abcd_", align("abcd", 5, Alignment.LEFT, '_'));
-        assertEquals("abcd_", align("abcd", 5, Alignment.CENTER, '_'));
-        assertEquals("_abcd", align("abcd", 5, Alignment.RIGHT, '_'));
+    static List<TestDataAlign> generateTestDataAlign() {
+        return List.of(
+                new TestDataAlign("", "", 0, Alignment.LEFT, null),
+                new TestDataAlign("", "", 0, Alignment.CENTER, null),
+                new TestDataAlign("", "", 0, Alignment.RIGHT, null),
+                new TestDataAlign("", "   ", 3, Alignment.LEFT, null),
+                new TestDataAlign("", "   ", 3, Alignment.CENTER, null),
+                new TestDataAlign("", "   ", 3, Alignment.RIGHT, null),
+                new TestDataAlign("abc", "abc", 1, Alignment.LEFT, null),
+                new TestDataAlign("abc", "abc", 1, Alignment.CENTER, null),
+                new TestDataAlign("abc", "abc", 1, Alignment.RIGHT, null),
+                new TestDataAlign("abc", "abc  ", 5, Alignment.LEFT, null),
+                new TestDataAlign("abc", " abc ", 5, Alignment.CENTER, null),
+                new TestDataAlign("abc", "  abc", 5, Alignment.RIGHT, null),
+                new TestDataAlign("abcd", "abcd ", 5, Alignment.LEFT, null),
+                new TestDataAlign("abcd", "abcd ", 5, Alignment.CENTER, null),
+                new TestDataAlign("abcd", " abcd", 5, Alignment.RIGHT, null),
+                new TestDataAlign("", "", 0, Alignment.LEFT, '_'),
+                new TestDataAlign("", "", 0, Alignment.CENTER, '_'),
+                new TestDataAlign("", "", 0, Alignment.RIGHT, '_'),
+                new TestDataAlign("", "___", 3, Alignment.LEFT, '_'),
+                new TestDataAlign("", "___", 3, Alignment.CENTER, '_'),
+                new TestDataAlign("", "___", 3, Alignment.RIGHT, '_'),
+                new TestDataAlign("abc", "abc", 1, Alignment.LEFT, '_'),
+                new TestDataAlign("abc", "abc", 1, Alignment.CENTER, '_'),
+                new TestDataAlign("abc", "abc", 1, Alignment.RIGHT, '_'),
+                new TestDataAlign("abc", "abc__", 5, Alignment.LEFT, '_'),
+                new TestDataAlign("abc", "_abc_", 5, Alignment.CENTER, '_'),
+                new TestDataAlign("abc", "__abc", 5, Alignment.RIGHT, '_'),
+                new TestDataAlign("abcd", "abcd_", 5, Alignment.LEFT, '_'),
+                new TestDataAlign("abcd", "abcd_", 5, Alignment.CENTER, '_'),
+                new TestDataAlign("abcd", "_abcd", 5, Alignment.RIGHT, '_'),
+                new TestDataAlign("This is a test", "This is a test", 5, Alignment.JUSTIFIED, ' '),
+                new TestDataAlign("This is a test", "This  is a  test", 16, Alignment.JUSTIFIED, ' '),
+                new TestDataAlign("This is a test", "This  is  a  test", 17, Alignment.JUSTIFIED, ' '),
+                new TestDataAlign("This is a test", "This   is   a   test", 20, Alignment.JUSTIFIED, ' '),
+                new TestDataAlign("This  is a   test", "This      is    a         test", 30, Alignment.JUSTIFIED, ' ')
+        );
     }
 
     @Test
