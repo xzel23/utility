@@ -958,6 +958,16 @@ public final class TextUtil {
     }
 
     /**
+     * Checks if a CharSequence is empty or consists of whitespace characters only.
+     *
+     * @param cs the CharSequence to check
+     * @return {@code true} if the CharSequence is blank, {@code false} otherwise
+     */
+    public static boolean isBlank(CharSequence cs) {
+        return cs.codePoints().allMatch(Character::isWhitespace);
+    }
+
+    /**
      * Alignment.
      */
     public enum Alignment {

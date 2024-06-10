@@ -188,6 +188,7 @@ the parameter.
 - Rectangle2f.getXCenter(), getYCenter(), min(), max(), center(), dimension(), withCenter()
 - Dimension2f.scaled()
 - Font.scaled()
+- TextUtil.isBlank(CharSequence)
 - many small fixes and improvements
 
 ### 12.3
