@@ -13,6 +13,7 @@ import com.dua3.utility.math.geometry.Line2f;
 import com.dua3.utility.math.geometry.MoveTo2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.FontDef;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -46,7 +47,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
+import javafx.stage.Window;
 
+import java.awt.GraphicsConfiguration;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
@@ -702,5 +706,42 @@ public final class FxUtil {
      */
     public static <A, B> ObservableList<B> map(ObservableList<A> list, Function<A,B> mapping) {
         return new MappedList<>(list, mapping);
+    }
+
+    /**
+     * Retrieves the display scale of a given {@code Screen}.
+     *
+     * @param screen the screen for which to retrieve the display scale
+     * @return the display scale of the screen, or the default scale if no {@link GraphicsConfiguration} is set
+     * for the component
+     */
+    public static Scale2f getDisplayScale(Screen screen) {
+        return new Scale2f((float) screen.getOutputScaleX(), (float) screen.getOutputScaleY());
+    }
+
+    /**
+     * Returns the display scale of the given window. The display scale is a scaling factor that is applied
+     * to the window's content to adjust for high-resolution displays.
+     *
+     * @param window the window for which to retrieve the display scale
+     * @return the scale factor applied to the window's content
+     */
+    public static Scale2f getDisplayScale(Window window) {
+        return getDisplayScale(getScreen(window));
+    }
+
+    /**
+     * Returns the Screen where the given Window is located.
+     *
+     * @param window the Window to get the Screen for
+     * @return the Screen where the window is located or the primary screen if the screen could not be determined
+     */
+    public static Screen getScreen(Window window) {
+        double minX = window.getX();
+        double minY = window.getY();
+        double width = window.getWidth();
+        double height = window.getHeight();
+        ObservableList<Screen> screens = Screen.getScreensForRectangle(minX, minY, width, height);
+        return screens.isEmpty() ? Screen.getPrimary() : screens.get(0);
     }
 }
