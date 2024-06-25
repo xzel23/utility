@@ -26,6 +26,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Adjustable;
 import java.awt.Component;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -60,6 +61,17 @@ public final class SwingUtil {
      */
     private static final Logger LOG = LogManager.getLogger(SwingUtil.class);
 
+    static {
+        boolean isHeadless = GraphicsEnvironment.isHeadless();
+        boolean isJavaAwtHeadless = Boolean.getBoolean("java.awt.headless");
+        if (isHeadless) {
+            LOG.warn("No GraphicsEnvironment, swing will not work!");
+        }
+        if (isJavaAwtHeadless) {
+            LOG.warn("Headless mode is enabled, swing will not work!");
+        }
+    }
+
     // Utility class, should not be instantiated
     private SwingUtil() {
         // nop
@@ -69,7 +81,8 @@ public final class SwingUtil {
      * Retrieves the display scale of a given {@code Component}.
      *
      * @param component the component for which to retrieve the display scale
-     * @return the display scale of the component, or the default scale if no {@link GraphicsConfiguration} is set to the component
+     * @return the display scale of the component, or the default scale if no {@link GraphicsConfiguration} is set
+     * for the component
      */
     public static Scale2f getDisplayScale(Component component) {
         GraphicsConfiguration conf = component.getGraphicsConfiguration();
