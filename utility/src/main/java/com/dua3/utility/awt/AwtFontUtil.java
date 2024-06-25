@@ -5,6 +5,8 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -30,6 +32,18 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public class AwtFontUtil implements FontUtil<java.awt.Font> {
+    private static final Logger LOG = LogManager.getLogger(AwtFontUtil.class);
+
+    static {
+        boolean isHeadless = GraphicsEnvironment.isHeadless();
+        boolean isJavaAwtHeadless = Boolean.getBoolean("java.awt.headless");
+        if (isHeadless && isJavaAwtHeadless) {
+            LOG.warn("The environment is headless, but the property java.awt.headless is not set to \"true\", expect problems!");
+        }
+        if (isJavaAwtHeadless) {
+            LOG.info("headless mode is enabled");
+        }
+    }
 
     private static class SingletonHolder {
         private static final AwtFontUtil INSTANCE = new AwtFontUtil();
