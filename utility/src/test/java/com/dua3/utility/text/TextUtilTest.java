@@ -6,6 +6,7 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.awt.AwtFontUtil;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -130,11 +132,31 @@ public class TextUtilTest {
                 new TestDataAlign("abcd", "abcd_", 5, Alignment.LEFT, '_'),
                 new TestDataAlign("abcd", "abcd_", 5, Alignment.CENTER, '_'),
                 new TestDataAlign("abcd", "_abcd", 5, Alignment.RIGHT, '_'),
-                new TestDataAlign("This is a test", "This is a test", 5, Alignment.JUSTIFIED, ' '),
-                new TestDataAlign("This is a test", "This  is a  test", 16, Alignment.JUSTIFIED, ' '),
-                new TestDataAlign("This is a test", "This  is  a  test", 17, Alignment.JUSTIFIED, ' '),
-                new TestDataAlign("This is a test", "This   is   a   test", 20, Alignment.JUSTIFIED, ' '),
-                new TestDataAlign("This  is a   test", "This      is    a         test", 30, Alignment.JUSTIFIED, ' ')
+                new TestDataAlign("This is a test", "This is a test", 5, Alignment.JUSTIFY, ' '),
+                new TestDataAlign("This is a test", "This  is a  test", 16, Alignment.JUSTIFY, ' '),
+                new TestDataAlign("This is a test", "This  is  a  test", 17, Alignment.JUSTIFY, ' '),
+                new TestDataAlign("This is a test", "This   is   a   test", 20, Alignment.JUSTIFY, ' '),
+                new TestDataAlign("This  is a   test", "This      is    a         test", 30, Alignment.JUSTIFY, ' ')
+        );
+    }
+
+    record TestDataWrap(String fileIn, String fileRef, int width, Alignment align, boolean hardWrap) {}
+    @ParameterizedTest
+    @MethodSource("generateTestDataWrap")
+    void testWrap(TestDataWrap data) throws IOException {
+        assertEquals(
+                LangUtil.getResourceAsString(getClass(), data.fileRef()),
+                TextUtil.wrap(LangUtil.getResourceAsString(getClass(), data.fileIn()), data.width, data.align, data.hardWrap),
+                data.fileIn()
+        );
+    }
+
+    static List<TestDataWrap> generateTestDataWrap() {
+        return List.of(
+                new TestDataWrap("unformatted.txt", "formatted-leftaligned-120_chars.txt", 120, Alignment.LEFT, false),
+                new TestDataWrap("unformatted.txt", "formatted-rightaligned-120_chars.txt", 120, Alignment.RIGHT, false),
+                new TestDataWrap("unformatted.txt", "formatted-centeraligned-120_chars.txt", 120, Alignment.CENTER, false),
+                new TestDataWrap("unformatted.txt", "formatted-justifyaligned-120_chars.txt", 120, Alignment.JUSTIFY, false)
         );
     }
 

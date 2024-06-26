@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HexFormat;
@@ -62,6 +63,7 @@ public final class TextUtil {
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
     private static final Predicate<String> IS_NEWLINE_TERMINATED = Pattern.compile(".*\\R$").asMatchPredicate();
     private static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]+").asMatchPredicate().negate();
+    private static final Pattern PATTERN_LINE_END = Pattern.compile("\\R");
 
     private TextUtil() {
         // nop: utility class
@@ -788,12 +790,13 @@ public final class TextUtil {
      * is returned
      */
     public static String align(String s, int width, Alignment align, char filler) {
+        s = s.strip();
         int len = s.length();
         return switch (align) {
-            case LEFT -> s + padding(filler, width - len);
+            case LEFT -> s;
             case RIGHT -> padding(filler, width - len) + s;
-            case CENTER -> padding(filler, (width - len) / 2) + s + padding(filler, width - len - (width - len) / 2);
-            case JUSTIFIED -> {
+            case CENTER -> padding(filler, (width - len) / 2) + s;
+            case JUSTIFY -> {
                 int spaceToDistribute = Math.max(0, width - len);
                 if (spaceToDistribute == 0) {
                     yield s;
@@ -1001,4 +1004,34 @@ public final class TextUtil {
         return cs.codePoints().allMatch(Character::isWhitespace);
     }
 
+    /**
+     * Wraps a given string `s` into multiple lines based on the specified `width`, alignment, and hard wrap options.
+     *
+     * @param s         the input string to be wrapped
+     * @param width     the maximum width of each line
+     * @param align     the alignment of the text within each line
+     * @param hardWrap  a boolean value indicating whether to break words when wrapping
+     * @return a new string with the wrapped lines
+     */
+    public static String wrap(String s, int width, Alignment align, boolean hardWrap) {
+        StringBuilder sb = new StringBuilder(s.length());
+        String eol = "\n";
+        try {
+            for (var par: LineSplitter.process(s, width, hardWrap, " ", StringBuilder::new, StringBuilder::toString, StringBuilder::length)) {
+                for (int i = 0; i < par.size(); i++) {
+                    var line = par.get(i);
+                    if (align==Alignment.JUSTIFY && i == par.size()-1) {
+                        sb.append(TextUtil.align(line, width, Alignment.LEFT));
+                    } else {
+                        sb.append(TextUtil.align(line, width, align));
+                    }
+                    sb.append(eol);
+                }
+                sb.append(eol);
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            throw new UncheckedIOException("should not happen!", e);
+        }
+    }
 }

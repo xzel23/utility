@@ -5,19 +5,19 @@ package com.dua3.utility.text;
  */
 public enum Alignment {
     /**
-     * align left.
+     * Left aligned.
      */
     LEFT,
     /**
-     * align centered.
+     * Center aligned.
      */
     CENTER,
     /**
-     * align right.
+     * Right aligned.
      */
     RIGHT,
     /**
-     * align justified.
+     * Align justified.
      */
-    JUSTIFIED
+    JUSTIFY
 }
