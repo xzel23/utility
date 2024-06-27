@@ -213,6 +213,17 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
                             // line is not empty => wrap here, so that we are the beginning of a new line
                             lines.add(readBuffer.apply(buffer));
                             buffer = createBuffer.get();
+                            if (hardWrap) {
+                                while (cs.length() > width) {
+                                    // split word
+                                    CharSequence part = cs.subSequence(0, width);
+                                    cs = cs.subSequence(width, cs.length());
+
+                                    buffer.append(part);
+                                    lines.add(readBuffer.apply(buffer));
+                                    buffer = createBuffer.get();
+                                }
+                            }
                             buffer.append(cs);
                         } else {
                             // the line is empty
@@ -222,7 +233,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
                                 while (cs.length() > width) {
                                     // split word
                                     CharSequence part = cs.subSequence(0, width);
-                                    cs = cs.subSequence(width, s.length());
+                                    cs = cs.subSequence(width, cs.length());
 
                                     buffer.append(part);
                                     lines.add(readBuffer.apply(buffer));

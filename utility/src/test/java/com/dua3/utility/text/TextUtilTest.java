@@ -153,10 +153,12 @@ public class TextUtilTest {
 
     static List<TestDataWrap> generateTestDataWrap() {
         return List.of(
-                new TestDataWrap("unformatted.txt", "formatted-leftaligned-120_chars.txt", 120, Alignment.LEFT, false),
-                new TestDataWrap("unformatted.txt", "formatted-rightaligned-120_chars.txt", 120, Alignment.RIGHT, false),
-                new TestDataWrap("unformatted.txt", "formatted-centeraligned-120_chars.txt", 120, Alignment.CENTER, false),
-                new TestDataWrap("unformatted.txt", "formatted-justifyaligned-120_chars.txt", 120, Alignment.JUSTIFY, false)
+                new TestDataWrap("mobydick.txt", "mobydick-leftaligned-120_chars.txt", 120, Alignment.LEFT, false),
+                new TestDataWrap("mobydick.txt", "mobydick-rightaligned-120_chars.txt", 120, Alignment.RIGHT, false),
+                new TestDataWrap("mobydick.txt", "mobydick-centeraligned-120_chars.txt", 120, Alignment.CENTER, false),
+                new TestDataWrap("mobydick.txt", "mobydick-justifyaligned-120_chars.txt", 120, Alignment.JUSTIFY, false),
+                new TestDataWrap("longwords.txt", "longwords-leftaligned-12_chars-softwrap.txt", 12, Alignment.LEFT, false),
+                new TestDataWrap("longwords.txt", "longwords-leftaligned-12_chars-hardwrap.txt", 12, Alignment.LEFT, true)
         );
     }
 
