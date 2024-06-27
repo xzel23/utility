@@ -790,12 +790,12 @@ public final class TextUtil {
      * is returned
      */
     public static String align(String s, int width, Alignment align, char filler) {
-        s = s.strip();
+        s = s.stripTrailing();
         int len = s.length();
         return switch (align) {
-            case LEFT -> s;
+            case LEFT -> s + padding(filler, width - len);
             case RIGHT -> padding(filler, width - len) + s;
-            case CENTER -> padding(filler, (width - len) / 2) + s;
+            case CENTER -> padding(filler, (width - len) / 2) + s + padding(filler, width - len - (width - len) / 2);
             case JUSTIFY -> {
                 int spaceToDistribute = Math.max(0, width - len);
                 if (spaceToDistribute == 0) {
