@@ -71,4 +71,13 @@ public class FxLogWindow extends Stage {
         setScene(scene);
         setTitle(title);
     }
+
+    /**
+     * Retrieves the LogBuffer associated with this FxLogWindow.
+     *
+     * @return the LogBuffer instance used by this FxLogWindow
+     */
+    public LogBuffer getLogBuffer() {
+        return logBuffer;
+    }
 }

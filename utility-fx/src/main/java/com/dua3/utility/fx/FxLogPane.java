@@ -46,6 +46,7 @@ public class FxLogPane extends BorderPane {
 
     public static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;
     public static final double COLUMN_WIDTH_LARGE = 10000.0;
+    private final LogBuffer logBuffer;
     private final Function<? super LogEntry, Color> colorize;
     private final ToolBar toolBar;
     private final TextArea details;
@@ -102,13 +103,14 @@ public class FxLogPane extends BorderPane {
         this(createBuffer(bufferSize));
     }
 
-    public FxLogPane(LogBuffer buffer) {
-        this(buffer, FxLogPane::defaultColorize);
+    public FxLogPane(LogBuffer logBuffer) {
+        this(logBuffer, FxLogPane::defaultColorize);
     }
 
-    public FxLogPane(LogBuffer buffer, Function<? super LogEntry, Color> colorize) {
-        FilteredList<LogEntry> entries = new FilteredList<>(new LogEntriesObservableList(buffer), p -> true);
+    public FxLogPane(LogBuffer logBuffer, Function<? super LogEntry, Color> colorize) {
+        FilteredList<LogEntry> entries = new FilteredList<>(new LogEntriesObservableList(logBuffer), p -> true);
 
+        this.logBuffer = logBuffer;
         this.colorize = colorize;
         this.toolBar = new ToolBar();
         this.tableView = new TableView<>(entries);
@@ -178,7 +180,7 @@ public class FxLogPane extends BorderPane {
         btnSearchDown.setOnAction(evt -> searchAction.accept(tfSearchText.getText(), false));
 
         Button btnClear = new Button("🗑️");
-        btnClear.setOnAction(evt -> buffer.clear());
+        btnClear.setOnAction(evt -> logBuffer.clear());
 
         // create toolbar
         toolBar.getItems().setAll(
@@ -328,5 +330,12 @@ public class FxLogPane extends BorderPane {
         };
     }
 
-
+    /**
+     * Retrieves the LogBuffer associated with this FxLogPane instance.
+     *
+     * @return the LogBuffer object
+     */
+    public LogBuffer getLogBuffer() {
+        return logBuffer;
+    }
 }
