@@ -189,6 +189,7 @@ the parameter.
 - Dimension2f.scaled()
 - Font.scaled()
 - TextUtil.isBlank(CharSequence)
+- toolkit agnostic Graphics interface and implementations for Swing and JavaFX
 - many small fixes and improvements
 
 ### 12.3
