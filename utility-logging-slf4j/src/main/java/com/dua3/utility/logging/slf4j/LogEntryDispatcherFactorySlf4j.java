@@ -11,13 +11,17 @@ import org.slf4j.LoggerFactory;
  */
 public class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactory {
 
-    private static LoggerFactorySlf4j factory;
+    private static volatile LoggerFactorySlf4j factory;
 
-    public static synchronized LoggerFactorySlf4j getFactory() {
+    public static LoggerFactorySlf4j getFactory() {
         if (factory == null) {
-            ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
-            if (iLoggerFactory instanceof LoggerFactorySlf4j loggerFactorySlf4j) {
-                factory = loggerFactorySlf4j;
+            synchronized (LogEntryDispatcherFactorySlf4j.class) {
+                if (factory == null) {
+                    ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
+                    if (iLoggerFactory instanceof LoggerFactorySlf4j loggerFactorySlf4j) {
+                        factory = loggerFactorySlf4j;
+                    }
+                }
             }
         }
         return factory;
