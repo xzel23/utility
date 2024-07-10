@@ -19,6 +19,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     private static final Logger LOG = LogManager.getLogger(LogTableModel.class);
 
     private final LogBuffer buffer;
+    @SuppressWarnings("VolatileArrayField")
     private volatile LogEntry[] data = new LogEntry[0];
     private final AtomicInteger queuedRemoves = new AtomicInteger();
 
