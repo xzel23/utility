@@ -156,112 +156,127 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
     }
 
     /**
-     * Splits a single string of text into multiple lines based on a given width and additional parameters.
+     * Splits a single string of text into multiple lines based on a given maxWidth and additional parameters.
      *
-     * @param <S>          the type of the input string
-     * @param <R>          the type of the buffer used to store the lines
-     * @param s            the input string to be broken into lines
-     * @param width        the maximum width of each line
-     * @param hardWrap     specifies whether the text should be hard-wrapped (chopped) or soft-wrapped (wrapped naturally)
-     * @param space        the space character to be used for line breaks
-     * @param createBuffer a supplier function that creates a buffer of type R
-     * @param readBuffer   a function that reads the buffer and returns a string of type S
-     * @param length       a function that calculates the length of the buffer
+     * @param <S>           the type of the input string
+     * @param <R>           the type of the buffer used to store the lines
+     * @param inputText     the input string to be broken into lines
+     * @param maxWidth      the maximum width of each line
+     * @param isHardWrap    specifies whether the text should be hard-wrapped (chopped) or soft-wrapped (wrapped naturally)
+     * @param spaceChar     the space character to be used for line breaks
+     * @param bufferFactory a supplier function that creates a buffer of type R
+     * @param readBuffer    a function that reads the buffer and returns a string of type S
+     * @param bufferLength  a function that calculates the length of the buffer
      * @return a list of strings representing the broken lines
      * @throws IOException if an I/O error occurs
      */
     public static <S extends CharSequence, R extends Appendable> List<List<S>> process(
-            S s,
-            int width,
-            boolean hardWrap,
-            S space,
-            Supplier<R> createBuffer,
+            S inputText,
+            int maxWidth,
+            boolean isHardWrap,
+            S spaceChar,
+            Supplier<R> bufferFactory,
             Function<R,S> readBuffer,
-            ToIntFunction<R> length
+            ToIntFunction<R> bufferLength
     ) throws IOException {
         // tokenize the text
-        LineSplitter<S, R> splitter = new LineSplitter<>(s);
+        LineSplitter<S, R> splitter = new LineSplitter<>(inputText);
         List<Chunk<S>> chunks = splitter.tokenize();
-
         //
         List<List<S>> paragraphs = new ArrayList<>();
-        List<S> lines = new ArrayList<>();
-        paragraphs.add(lines);
-        R buffer = createBuffer.get();
+        List<S> currentLines = new ArrayList<>();
+        paragraphs.add(currentLines);
+        R buffer = bufferFactory.get();
+
         for (Chunk<S> chunk : chunks) {
             switch (chunk.type()) {
                 case EOT -> {
-                    // add current line and return
-                    lines.add(readBuffer.apply(buffer));
+                    handleEndOfText(readBuffer, currentLines, buffer);
                     return paragraphs;
                 }
                 case PARAGRAPH_BREAK -> {
-                    // add current line, then start new paragraph
-                    lines.add(readBuffer.apply(buffer));
-                    lines = new ArrayList<>();
-                    paragraphs.add(lines);
-                    buffer = createBuffer.get();
+                    Result<R, S> result = handleParagraphBreak(readBuffer, bufferFactory, paragraphs, currentLines, buffer);
+                    buffer = result.newBuffer();
+                    currentLines = result.newLines();
                 }
                 case WORD -> {
-                    CharSequence cs = chunk.asCharSequence();
-                    if (length.applyAsInt(buffer) + chunk.length() <= width) {
-                        // chunk fits on the current line, just add it
-                        buffer.append(cs);
-                    } else {
-                        // chunk does not fit on the current line
-                        if (length.applyAsInt(buffer) > 0) {
-                            // line is not empty => wrap here, so that we are the beginning of a new line
-                            lines.add(readBuffer.apply(buffer));
-                            buffer = createBuffer.get();
-                            if (hardWrap) {
-                                while (cs.length() > width) {
-                                    // split word
-                                    CharSequence part = cs.subSequence(0, width);
-                                    cs = cs.subSequence(width, cs.length());
-
-                                    buffer.append(part);
-                                    lines.add(readBuffer.apply(buffer));
-                                    buffer = createBuffer.get();
-                                }
-                            }
-                            buffer.append(cs);
-                        } else {
-                            // the line is empty
-                            assert length.applyAsInt(buffer) == 0 : "buffer should be empty!";
-                            if (length.applyAsInt(buffer) <= width || hardWrap) {
-                                // chop and add after witdh characters until the rest fits into a line
-                                while (cs.length() > width) {
-                                    // split word
-                                    CharSequence part = cs.subSequence(0, width);
-                                    cs = cs.subSequence(width, cs.length());
-
-                                    buffer.append(part);
-                                    lines.add(readBuffer.apply(buffer));
-                                    buffer = createBuffer.get();
-                                }
-
-                                // append the rest
-                                buffer.append(cs);
-                                lines.add(readBuffer.apply(buffer));
-                                buffer = createBuffer.get();
-                            } else {
-                                // just add and wrap after adding
-                                buffer = createBuffer.get();
-                                buffer.append(cs);
-                                lines.add(readBuffer.apply(buffer));
-                                buffer = createBuffer.get();
-                            }
-                        }
-                    }
+                    buffer = handleWordChunk(maxWidth, bufferLength, isHardWrap, bufferFactory, readBuffer, currentLines, buffer, chunk);
                 }
-                case WHITESPACE -> buffer.append(space);
+                case WHITESPACE -> buffer.append(spaceChar);
             }
         }
 
-        if (!paragraphs.isEmpty() && paragraphs.get(paragraphs.size()-1).isEmpty()) {
-            paragraphs.remove(paragraphs.size()-1);
+        if (!paragraphs.isEmpty() && paragraphs.get(paragraphs.size() - 1).isEmpty()) {
+            paragraphs.remove(paragraphs.size() - 1);
         }
-
         return paragraphs;
+    }
+
+    private static <S extends CharSequence, R extends Appendable> void handleEndOfText(Function<R, S> readBuffer, List<S> currentLines, R buffer) throws IOException {
+        currentLines.add(readBuffer.apply(buffer));
+    }
+
+    private static <S extends CharSequence, R extends Appendable> Result<R, S> handleParagraphBreak(
+            Function<R, S> readBuffer, Supplier<R> bufferFactory, List<List<S>> paragraphs, List<S> currentLines, R buffer) throws IOException {
+        currentLines.add(readBuffer.apply(buffer));
+        List<S> newLines = new ArrayList<>();
+        paragraphs.add(newLines);
+        R newBuffer = bufferFactory.get();
+        return new Result<>(newBuffer, newLines);
+    }
+
+    private static <S extends CharSequence, R extends Appendable> R handleWordChunk(
+            int maxWidth, ToIntFunction<R> bufferLength, boolean isHardWrap, Supplier<R> bufferFactory, Function<R, S> readBuffer, List<S> currentLines, R buffer, Chunk<S> chunk) throws IOException {
+        CharSequence cs = chunk.asCharSequence();
+        if (bufferLength.applyAsInt(buffer) + chunk.length() <= maxWidth) {
+            // chunk fits on the current line, just add it
+            buffer.append(cs);
+        } else {
+            // chunk does not fit on the current line
+            if (bufferLength.applyAsInt(buffer) > 0) {
+                // line is not empty => wrap here, so that we are the beginning of a new line
+                currentLines.add(readBuffer.apply(buffer));
+                buffer = bufferFactory.get();
+                if (isHardWrap) {
+                    while (cs.length() > maxWidth) {
+                        // split word
+                        CharSequence part = cs.subSequence(0, maxWidth);
+                        cs = cs.subSequence(maxWidth, cs.length());
+                        buffer.append(part);
+                        currentLines.add(readBuffer.apply(buffer));
+                        buffer = bufferFactory.get();
+                    }
+                }
+                buffer.append(cs);
+            } else {
+                // the line is empty
+                assert bufferLength.applyAsInt(buffer) == 0 : "buffer should be empty!";
+                if (bufferLength.applyAsInt(buffer) <= maxWidth || isHardWrap) {
+                    // chop and add after maxWidth characters until the rest fits into a line
+                    while (cs.length() > maxWidth) {
+                        // split word
+                        CharSequence part = cs.subSequence(0, maxWidth);
+                        cs = cs.subSequence(maxWidth, cs.length());
+                        buffer.append(part);
+                        currentLines.add(readBuffer.apply(buffer));
+                        buffer = bufferFactory.get();
+                    }
+                    // append the rest
+                    buffer.append(cs);
+                    currentLines.add(readBuffer.apply(buffer));
+                    buffer = bufferFactory.get();
+                } else {
+                    // just add and wrap after adding
+                    buffer = bufferFactory.get();
+                    buffer.append(cs);
+                    currentLines.add(readBuffer.apply(buffer));
+                    buffer = bufferFactory.get();
+                }
+            }
+        }
+        return buffer;
+    }
+
+    private record Result<R, S>(R newBuffer, List<S> newLines) {
     }
 }
