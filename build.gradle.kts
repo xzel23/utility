@@ -36,6 +36,16 @@ object Meta {
 }
 /////////////////////////////////////////////////////////////////////////////
 
+tasks.register("printStartMessage") {
+    doFirst {
+        println("NOTE: A JDK with prepackaged JavaFX (i.e., Azul Zulu 'JDK FX' or Bellsoft 'Full JDK') or a properly configured local JavaFX installation is needed!")
+    }
+}
+
+tasks.named("build") {
+    dependsOn(tasks.named("printStartMessage"))
+}
+
 subprojects {
 
     project.version = rootProject.libs.versions.projectVersion.get()

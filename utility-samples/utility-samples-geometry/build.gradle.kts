@@ -12,11 +12,6 @@ application {
 
 description = "samples"
 
-javafx {
-    configuration = "implementation"
-    modules = listOf("javafx.base", "javafx.fxml", "javafx.controls")
-}
-
 dependencies {
     implementation(project(":utility"))
     implementation(project(":utility-swing"))

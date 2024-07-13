@@ -38,7 +38,6 @@ dependencyResolutionManagement {
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.0.19")
             plugin("cabe", "com.dua3.cabe").version("2.1.2")
-            plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe-annotations", "2.0")
             version("log4j", "2.23.1")

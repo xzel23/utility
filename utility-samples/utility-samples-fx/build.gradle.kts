@@ -1,14 +1,5 @@
 project.description = "Java utilities (samples - JavaFX Log Pane)"
 
-plugins {
-    alias(libs.plugins.javafx)
-}
-
-javafx {
-    configuration = "implementation"
-    modules = listOf("javafx.base", "javafx.fxml", "javafx.controls")
-}
-
 dependencies {
     implementation(project(":utility"))
     implementation(project(":utility-fx"))
