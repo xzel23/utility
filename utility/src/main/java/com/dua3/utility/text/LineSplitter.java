@@ -152,7 +152,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
         while (type(get()) == type) {
             // nop
         }
-        return  new Chunk<S>(type, seq, start, pos);
+        return  new Chunk<>(type, seq, start, pos);
     }
 
     /**
