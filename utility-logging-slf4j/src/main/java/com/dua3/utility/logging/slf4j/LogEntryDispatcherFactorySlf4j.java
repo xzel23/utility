@@ -11,20 +11,21 @@ import org.slf4j.LoggerFactory;
  */
 public class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactory {
 
-    private static volatile LoggerFactorySlf4j factory;
+    private static class SingletonHolder {
+        private static final LoggerFactorySlf4j INSTANCE = initInstance();
 
-    public static LoggerFactorySlf4j getFactory() {
-        if (factory == null) {
-            synchronized (LogEntryDispatcherFactorySlf4j.class) {
-                if (factory == null) {
-                    ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
-                    if (iLoggerFactory instanceof LoggerFactorySlf4j loggerFactorySlf4j) {
-                        factory = loggerFactorySlf4j;
-                    }
-                }
+        private static LoggerFactorySlf4j initInstance() {
+            ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
+            if (iLoggerFactory instanceof LoggerFactorySlf4j loggerFactorySlf4j) {
+                return loggerFactorySlf4j;
+            } else {
+                throw new IllegalStateException("unecpected factory type: " + iLoggerFactory.getClass());
             }
         }
-        return factory;
+    }
+
+    public static LoggerFactorySlf4j getFactory() {
+        return SingletonHolder.INSTANCE;
     }
 
     @Override
