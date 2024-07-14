@@ -62,7 +62,6 @@ public final class TextUtil {
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
     private static final Predicate<String> IS_NEWLINE_TERMINATED = Pattern.compile(".*\\R$").asMatchPredicate();
     private static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]+").asMatchPredicate().negate();
-    private static final Pattern PATTERN_LINE_END = Pattern.compile("\\R");
 
     private TextUtil() {
         // nop: utility class
@@ -71,14 +70,14 @@ public final class TextUtil {
     /**
      * HTML-escape a string.
      *
-     * @param s the string
+     * @param seq the string
      * @return the HTML-escaped string
      */
-    public static String escapeHTML(CharSequence s) {
-        int length = s.length();
+    public static String escapeHTML(CharSequence seq) {
+        int length = seq.length();
         StringBuilder out = new StringBuilder(16 + length * 11 / 10);
         for (int i = 0; i < length; i++) {
-            char c = s.charAt(i);
+            char c = seq.charAt(i);
             appendHtmlEscapedCharacter(out, c);
         }
         return out.toString();
@@ -158,13 +157,13 @@ public final class TextUtil {
     /**
      * Backslash-escape a string.
      *
-     * @param s the string
+     * @param seq the string
      * @return the escaped string
      */
-    public static String escape(CharSequence s) {
-        StringBuilder out = new StringBuilder(16 + s.length() * 11 / 10);
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
+    public static String escape(CharSequence seq) {
+        StringBuilder out = new StringBuilder(16 + seq.length() * 11 / 10);
+        for (int i = 0; i < seq.length(); i++) {
+            char c = seq.charAt(i);
             if (c < 127) {
                 // ASCII characters
                 switch (c) {
@@ -263,9 +262,9 @@ public final class TextUtil {
      * @see #transform(CharSequence, Function, Consumer)
      */
     public static RichText transform(RichText template, Function<? super String, RichText> env) {
-        RichTextBuilder b = new RichTextBuilder(Math.max(16, template.length()));
-        transform(template, env, b::append);
-        return b.toRichText();
+        RichTextBuilder rtb = new RichTextBuilder(Math.max(16, template.length()));
+        transform(template, env, rtb::append);
+        return rtb.toRichText();
     }
 
     /**
@@ -365,13 +364,13 @@ public final class TextUtil {
     /**
      * Find the index of the first occurrence of a char in a string.
      *
-     * @param s     the string to search
+     * @param seq     the string to search
      * @param chars the chars to search for
      * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
      */
-    public static int indexOfFirst(CharSequence s, char... chars) {
-        for (int i = 0; i < s.length(); i++) {
-            char c1 = s.charAt(i);
+    public static int indexOfFirst(CharSequence seq, char... chars) {
+        for (int i = 0; i < seq.length(); i++) {
+            char c1 = seq.charAt(i);
             for (char c2 : chars) {
                 if (c1 == c2) {
                     return i;
@@ -385,12 +384,12 @@ public final class TextUtil {
     /**
      * Find the index of the first occurrence of a char in a string.
      *
-     * @param s     the string to search
+     * @param seq     the string to search
      * @param chars the chars to search for
      * @return index of the first occurrence of a char contained in {@code chars}, or -1 if not found
      */
-    public static int indexOfFirst(CharSequence s, String chars) {
-        return indexOfFirst(s, chars.toCharArray());
+    public static int indexOfFirst(CharSequence seq, String chars) {
+        return indexOfFirst(seq, chars.toCharArray());
     }
 
     /**
@@ -407,45 +406,45 @@ public final class TextUtil {
     /**
      * Test if string contains none of the given characters.
      *
-     * @param s     the string to search
+     * @param seq     the string to search
      * @param chars the chars to search for
      * @return true if {@code s} contains none of the characters in {@code chars}
      */
-    public static boolean containsNoneOf(CharSequence s, String chars) {
-        return indexOfFirst(s, chars) < 0;
+    public static boolean containsNoneOf(CharSequence seq, String chars) {
+        return indexOfFirst(seq, chars) < 0;
     }
 
     /**
      * Test if string contains none of the given characters.
      *
-     * @param s     the string to search
+     * @param seq     the string to search
      * @param chars the chars to search for
      * @return true if {@code s} contains none of the characters in {@code chars}
      */
-    public static boolean containsNoneOf(CharSequence s, char... chars) {
-        return indexOfFirst(s, chars) < 0;
+    public static boolean containsNoneOf(CharSequence seq, char... chars) {
+        return indexOfFirst(seq, chars) < 0;
     }
 
     /**
      * Test if string contains any of the given characters.
      *
-     * @param s     the string to search
+     * @param seq     the string to search
      * @param chars the chars to search for
      * @return true if {@code s} contains one or more of the characters in {@code chars}
      */
-    public static boolean containsAnyOf(CharSequence s, String chars) {
-        return indexOfFirst(s, chars) >= 0;
+    public static boolean containsAnyOf(CharSequence seq, String chars) {
+        return indexOfFirst(seq, chars) >= 0;
     }
 
     /**
      * Test if string contains any of the given characters.
      *
-     * @param s     the string to search
+     * @param seq     the string to search
      * @param chars the chars to search for
      * @return true if {@code s} contains one or more of the characters in {@code chars}
      */
-    public static boolean containsAnyOf(CharSequence s, char... chars) {
-        return indexOfFirst(s, chars) >= 0;
+    public static boolean containsAnyOf(CharSequence seq, char... chars) {
+        return indexOfFirst(seq, chars) >= 0;
     }
 
     /**
@@ -805,19 +804,19 @@ public final class TextUtil {
                 Stats stats = Arrays.stream(fragments)
                         .filter(String::isBlank)
                         .map(r -> new Stats(r.length(), 1))
-                        .reduce((a,b) -> new Stats(a.blankChars + b.blankChars, a.blankFragments + b.blankFragments))
+                        .reduce((a, b) -> new Stats(a.blankChars + b.blankChars, a.blankFragments + b.blankFragments))
                         .orElseGet(() -> new Stats(0, 0));
                 if (stats.blankFragments() == 0) {
                     yield s;
                 }
-                double fBlank = 1f + (double) spaceToDistribute / stats.blankFragments();
+                double fBlank = 1.0f + (double) spaceToDistribute / stats.blankFragments();
                 int used = 0;
                 int processedSpaces = 0;
                 StringBuilder sb = new StringBuilder(width);
                 for (String fragment : fragments) {
                     if (fragment.isBlank() && used < spaceToDistribute) {
-                        double ideal =  (processedSpaces + fragment.length()) * fBlank - (processedSpaces + used);
-                        int nChars = (int) MathUtil.clamp(1, 1+spaceToDistribute-used, Math.round(ideal));
+                        double ideal = (processedSpaces + fragment.length()) * fBlank - (processedSpaces + used);
+                        int nChars = (int) MathUtil.clamp(1, 1 + spaceToDistribute - used, Math.round(ideal));
                         String blank = padding(filler, nChars);
                         processedSpaces += fragment.length();
                         used += blank.length() - fragment.length();
@@ -838,6 +837,7 @@ public final class TextUtil {
     /**
      * Returns the given string if it is not null or empty, otherwise returns the specified value.
      *
+     * @param <T> the generic type of the CharSequence
      * @param t The string to check.
      * @param tIfNullOrEmpty The value to return if the given string is null or empty.
      * @return The given string if it is not null or empty, otherwise the specified value.
@@ -1016,10 +1016,10 @@ public final class TextUtil {
         StringBuilder sb = new StringBuilder(s.length());
         String eol = "\n";
         try {
-            for (var par: LineSplitter.process(s, width, hardWrap, " ", StringBuilder::new, StringBuilder::toString, StringBuilder::length)) {
+            for (var par : LineSplitter.process(s, width, hardWrap, " ", StringBuilder::new, StringBuilder::toString, StringBuilder::length)) {
                 for (int i = 0; i < par.size(); i++) {
                     var line = par.get(i);
-                    if (align==Alignment.JUSTIFY && i == par.size()-1) {
+                    if (align == Alignment.JUSTIFY && i == par.size() - 1) {
                         sb.append(TextUtil.align(line, width, Alignment.LEFT));
                     } else {
                         sb.append(TextUtil.align(line, width, align));
