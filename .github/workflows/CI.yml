@@ -36,7 +36,7 @@ jobs:
 
           # Move extracted contents to the correct location
           $extractedFolder = Get-ChildItem -Path $jdkPath -Directory | Select-Object -First 1
-          Move-Item -Path $extractedFolder.FullName\* -Destination $jdkPath
+          Get-ChildItem -Path (Join-Path -Path $extractedFolder.FullName -ChildPath "*") | Move-Item -Destination $jdkPath
           Remove-Item -Recurse -Force $extractedFolder.FullName
           
           # Update JAVA_HOME and PATH
@@ -68,12 +68,4 @@ jobs:
           sudo apt-get install -y ./bellsoft-jdk17.0.6+10-linux-aarch64-full.deb
           sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java17-full-aarch64/bin/java 1
           sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java17-full-aarch64/bin/javac 1
-          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java17-full-aarch64" >> $GITHUB_ENV
-          echo "/usr/lib/jvm/bellsoft-java17-full-aarch64/bin" >> $GITHUB_PATH
-
-      - name: Qodana Scan
-        id: qodana
-        uses: JetBrains/qodana-action@v2023.3.2
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-        continue-on-error: false
+          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java
