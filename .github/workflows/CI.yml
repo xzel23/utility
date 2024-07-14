@@ -30,12 +30,18 @@ jobs:
       - name: Set up BellSoft Liberica Full JDK on Windows
         if: runner.os == 'Windows'
         run: |
-          $jdkPath = "${env:ProgramFiles}\BellSoft\LibericaJDK-17"
+          $jdkPath = 'C:\Program Files\BellSoft\LibericaJDK-17'
           Invoke-WebRequest -Uri "https://download.bell-sw.com/java/17.0.6+10/bellsoft-jdk17.0.6+10-windows-amd64-full.zip" -OutFile "bellsoft-jdk-17-windows-amd64-full.zip"
           Expand-Archive -Path "bellsoft-jdk-17-windows-amd64-full.zip" -DestinationPath $jdkPath
-          $jdkPathBin = "${jdkPath}\bin"
-          echo "JAVA_HOME=$jdkPath" >> $Env:GITHUB_ENV
-          echo "$jdkPathBin" >> $Env:GITHUB_PATH
+
+          # Move extracted contents to the correct location
+          $extractedFolder = Get-ChildItem -Path $jdkPath -Directory | Select-Object -First 1
+          Move-Item -Path $extractedFolder.FullName\* -Destination $jdkPath
+          Remove-Item -Recurse -Force $extractedFolder.FullName
+          
+          # Update JAVA_HOME and PATH
+          echo "JAVA_HOME=$jdkPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "$jdkPath\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
