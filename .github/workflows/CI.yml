@@ -33,7 +33,7 @@ jobs:
           $jdkPath = 'C:\Program Files\BellSoft\LibericaJDK-17'
           Invoke-WebRequest -Uri "https://download.bell-sw.com/java/17.0.6+10/bellsoft-jdk17.0.6+10-windows-amd64-full.zip" -OutFile "bellsoft-jdk-17-windows-amd64-full.zip"
           Expand-Archive -Path "bellsoft-jdk-17-windows-amd64-full.zip" -DestinationPath $jdkPath
-
+          
           # Move extracted contents to the correct location
           $extractedFolder = Get-ChildItem -Path $jdkPath -Directory | Select-Object -First 1
           Get-ChildItem -Path (Join-Path -Path $extractedFolder.FullName -ChildPath "*") | Move-Item -Destination $jdkPath
@@ -68,4 +68,11 @@ jobs:
           sudo apt-get install -y ./bellsoft-jdk17.0.6+10-linux-amd64-full.deb
           sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java17-full-amd64/bin/java 1
           sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java17-full-amd64/bin/javac 1
-          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java
+          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java17-full-amd64" >> $GITHUB_ENV
+          echo "/usr/lib/jvm/bellsoft-java17-full-amd64/bin" >> $GITHUB_PATH
+
+      - name: Run Qodana
+        uses: JetBrains/qodana-action@v5
+        with:
+          project-dir: .
+          results-dir: qodana-results
