@@ -64,8 +64,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          wget https://download.bell-sw.com/java/17.0.6+10/bellsoft-jdk17.0.6+10-linux-aarch64-full.deb
-          sudo apt-get install -y ./bellsoft-jdk17.0.6+10-linux-aarch64-full.deb
-          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java17-full-aarch64/bin/java 1
-          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java17-full-aarch64/bin/javac 1
+          wget https://download.bell-sw.com/java/17.0.6+10/bellsoft-jdk17.0.6+10-linux-amd64-full.deb
+          sudo apt-get install -y ./bellsoft-jdk17.0.6+10-linux-amd64-full.deb
+          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java17-full-amd64/bin/java 1
+          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java17-full-amd64/bin/javac 1
           echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java
