@@ -7,6 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
@@ -1006,6 +1007,8 @@ public final class TextUtil {
 
     /**
      * Wraps a given string `s` into multiple lines based on the specified `width`, alignment, and hard wrap options.
+     * <p>
+     *     This method uses the "\n" as line separator.
      *
      * @param s         the input string to be wrapped
      * @param width     the maximum width of each line
@@ -1014,8 +1017,21 @@ public final class TextUtil {
      * @return a new string with the wrapped lines
      */
     public static String wrap(String s, int width, Alignment align, boolean hardWrap) {
+        return wrap(s, width, align, hardWrap, "\n");
+    }
+
+    /**
+     * Wraps a given string `s` into multiple lines based on the specified `width`, alignment, and hard wrap options.
+     *
+     * @param s             the input string to be wrapped
+     * @param width         the maximum width of each line
+     * @param align         the alignment of the text within each line
+     * @param hardWrap      a boolean value indicating whether to break words when wrapping
+     * @param lineSeparator the line separator to use
+     * @return a new string with the wrapped lines
+     */
+    public static String wrap(String s, int width, Alignment align, boolean hardWrap, String lineSeparator) {
         StringBuilder sb = new StringBuilder(s.length());
-        String eol = "\n";
         try {
             for (var par : LineSplitter.process(s, width, hardWrap, " ", StringBuilder::new, StringBuilder::toString, StringBuilder::length)) {
                 for (int i = 0; i < par.size(); i++) {
@@ -1025,9 +1041,9 @@ public final class TextUtil {
                     } else {
                         sb.append(TextUtil.align(line, width, align));
                     }
-                    sb.append(eol);
+                    sb.append(lineSeparator);
                 }
-                sb.append(eol);
+                sb.append(lineSeparator);
             }
             return sb.toString();
         } catch (IOException e) {
