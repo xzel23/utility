@@ -1,2 +1,2 @@
-# Ensure a consistent line endings for text files
-* text=auto
+# Ensure all files are checked out with original line endings
+* -text
