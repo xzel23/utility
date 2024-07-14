@@ -62,6 +62,7 @@ public final class TextUtil {
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
     private static final Predicate<String> IS_NEWLINE_TERMINATED = Pattern.compile(".*\\R$").asMatchPredicate();
     private static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]+").asMatchPredicate().negate();
+    private static final Pattern PATTERN_SPLIT_PRESERVING_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
 
     private TextUtil() {
         // nop: utility class
@@ -799,7 +800,7 @@ public final class TextUtil {
                 if (spaceToDistribute == 0) {
                     yield s;
                 }
-                String[] fragments = s.split("(?<=\\s)|(?=\\s)");
+                String[] fragments = PATTERN_SPLIT_PRESERVING_WHITESPACE.split(s);
                 record Stats(int blankChars, int blankFragments) {}
                 Stats stats = Arrays.stream(fragments)
                         .filter(String::isBlank)
