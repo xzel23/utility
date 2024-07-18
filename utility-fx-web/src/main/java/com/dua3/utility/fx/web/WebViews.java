@@ -23,6 +23,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Window;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,11 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 
+/**
+ * The {@code WebViews} class provides utility methods for setting up {@code WebEngine} instances and handling events in JavaFX WebViews.
+ * It contains methods for setting alert, confirmation, and prompt handlers, as well as a logger for JavaScript log messages.
+ * Additionally, it provides a method for calling JavaScript methods on a {@code JSObject} and filtering events in a {@code WebView}.
+ */
 public final class WebViews {
     private static final Logger LOG = LogManager.getLogger(WebViews.class);
 
@@ -39,6 +45,12 @@ public final class WebViews {
         // utility class
     }
 
+    /**
+     * Sets up the WebEngine with alert, confirmation, prompt handlers, and a logger.
+     *
+     * @param engine      the WebEngine instance
+     * @param loggerName  the name of the logger to be used
+     */
     public static void setupEngine(WebEngine engine, String loggerName) {
         setAlertHandler(engine);
         setConfirmationHandler(engine);
@@ -46,20 +58,47 @@ public final class WebViews {
         setLogger(engine, LogManager.getLogger(loggerName));
     }
 
+    /**
+     * Sets the alert handler for the given WebEngine. The alert handler is responsible
+     * for displaying alert dialogs in response to JavaScript `alert` statements
+     * in the loaded web page.
+     *
+     * @param engine the WebEngine for which to set the alert handler
+     * @throws NullPointerException if the engine is null
+     */
     public static void setAlertHandler(WebEngine engine) {
         engine.setOnAlert(e -> Dialogs.warning(null).header("%s", e.getData()).showAndWait());
     }
 
+    /**
+     * Sets the confirmation handler for the given WebEngine.
+     *
+     * @param engine the WebEngine to set the confirmation handler for
+     * @return void
+     */
     public static void setConfirmationHandler(WebEngine engine) {
         engine.setConfirmHandler(s -> Dialogs.confirmation(null).header("%s", s).buttons(ButtonType.YES, ButtonType.NO)
                 .defaultButton(ButtonType.NO).showAndWait().filter(b -> b == ButtonType.YES).isPresent());
     }
 
+    /**
+     * Sets the prompt handler for the given WebEngine. The prompt handler is responsible for handling prompt dialogs
+     * that may be triggered by JavaScript code running in the WebEngine.
+     *
+     * @param engine the WebEngine to set the prompt handler for
+     */
     public static void setPromptHandler(WebEngine engine) {
         engine.setPromptHandler(p -> Dialogs.prompt(null).header("%s", p.getMessage())
                 .defaultValue("%s", p.getDefaultValue()).showAndWait().orElse(""));
     }
 
+    /**
+     * Sets a logger for the provided WebEngine instance.
+     *
+     * @param engine the WebEngine instance for which to set the logger
+     * @param logger the logger to be set
+     * @return true if the logger was set successfully, false otherwise
+     */
     public static boolean setLogger(WebEngine engine, Logger logger) {
         JSObject win = (JSObject) engine.executeScript("window");
         win.setMember("javaLogger", new JSLogger(logger));
@@ -85,6 +124,15 @@ public final class WebViews {
         return success;
     }
 
+    /**
+     * Calls a method on a JSObject with the specified arguments.
+     *
+     * @param object the JSObject on which the method will be called
+     * @param methodName the name of the method to call
+     * @param args the arguments to pass to the method
+     * @return the result of the method call
+     * @throws JSException if an exception occurs while calling the method
+     */
     public static Object callMethod(JSObject object, String methodName, Object[] args) {
         try {
             return object.call(methodName, args);
@@ -107,20 +155,73 @@ public final class WebViews {
      * @param filterKey   the KeyEvent filter
      * @param filterMouse the MouseEvent filter
      */
-    public static void filterEvents(WebView wv, Predicate<KeyEvent> filterKey, Predicate<MouseEvent> filterMouse) {
+    public static void filterEvents(WebView wv, Predicate<? super KeyEvent> filterKey, Predicate<? super MouseEvent> filterMouse) {
         WebEventDispatcher dispatcher = new WebEventDispatcher(wv.getEventDispatcher(), filterKey, filterMouse);
         wv.setEventDispatcher(dispatcher);
     }
 
+    /**
+     * The JSLogger class is a utility class for logging messages from JavaScript code.
+     * It wraps an instance of the Logger class from the SLF4J logging framework and provides
+     * methods for logging messages at different levels (error, warn, info, debug, and trace).
+     */
     public static class JSLogger {
         private final Logger logger;
 
+        /**
+         * The JSLogger class is a utility class for logging messages from JavaScript code.
+         * It wraps an instance of the Logger class from the SLF4J logging framework and provides
+         * methods for logging messages at different levels (error, warn, info, debug, and trace).
+         *
+         * @param logger the logger the JavaScript log messages are written to
+         */
         public JSLogger(Logger logger) {
             this.logger = logger;
         }
 
+        /**
+         * Logs an error message with the formatted message obtained from the provided JSObject argument.
+         *
+         * @param args the JSObject argument containing the message and any additional arguments
+         */
         public void error(JSObject args) {
             logger.error("{}", () -> formatMessage(args));
+        }
+
+        /**
+         * Logs a warning message with the formatted message obtained from the provided JSObject argument.
+         *
+         * @param args the JSObject argument containing the message and any additional arguments
+         */
+        public void warn(JSObject args) {
+            logger.warn("{}", () -> formatMessage(args));
+        }
+
+        /**
+         * Logs an information message with the formatted message obtained from the provided JSObject argument.
+         *
+         * @param args the JSObject argument containing the message and any additional arguments
+         */
+        public void info(JSObject args) {
+            logger.info("{}", () -> formatMessage(args));
+        }
+
+        /**
+         * Logs a debug message with the provided JSObject argument.
+         *
+         * @param args the JSObject argument containing the message and any additional arguments
+         */
+        public void debug(JSObject args) {
+            logger.debug("{}", () -> formatMessage(args));
+        }
+
+        /**
+         * Logs a trace message with the formatted message obtained from the provided JSObject argument.
+         *
+         * @param args the JSObject argument containing the message and any additional arguments.
+         */
+        public void trace(JSObject args) {
+            logger.trace("{}", () -> formatMessage(args));
         }
 
         private static String formatMessage(JSObject args) {
@@ -140,22 +241,6 @@ public final class WebViews {
             }
 
             return String.format(msg, restArgs);
-        }
-
-        public void warn(JSObject args) {
-            logger.warn("{}", () -> formatMessage(args));
-        }
-
-        public void info(JSObject args) {
-            logger.info("{}", () -> formatMessage(args));
-        }
-
-        public void debug(JSObject args) {
-            logger.debug("{}", () -> formatMessage(args));
-        }
-
-        public void trace(JSObject args) {
-            logger.trace("{}", () -> formatMessage(args));
         }
     }
 

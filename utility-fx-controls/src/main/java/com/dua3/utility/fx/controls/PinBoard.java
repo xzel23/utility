@@ -34,33 +34,62 @@ public class PinBoard extends Control {
     final ObservableList<Item> items = FXCollections.observableArrayList();
     private final ObjectProperty<Rectangle2D> areaProperty = new SimpleObjectProperty<>(new Rectangle2D(0, 0, 0, 0));
 
+    /**
+     * Default constructor.
+     */
     public PinBoard() {
     }
 
+    /**
+     * Sets the horizontal scrollbar policy of the PinBoardSkin's ScrollPane.
+     *
+     * @param policy the scrollbar policy to set
+     */
     public void setHbarPolicy(ScrollPane.ScrollBarPolicy policy) {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.setHbarPolicy(policy);
         }
     }
 
+    /**
+     * Sets the vertical scrollbar policy of the PinBoardSkin's ScrollPane.
+     *
+     * @param policy the ScrollBarPolicy to set
+     */
     public void setVbarPolicy(ScrollPane.ScrollBarPolicy policy) {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.setVbarPolicy(policy);
         }
     }
 
+    /**
+     * Clears the PinBoard by removing all items and resetting the area property.
+     * This method must be called from the JavaFX Application Thread.
+     */
     public void clear() {
         PlatformHelper.checkApplicationThread();
         items.clear();
         areaProperty.set(new Rectangle2D(0, 0, 0, 0));
     }
 
+    /**
+     * Refreshes the PinBoard skin.
+     * <p>
+     * This method is used to refresh the visual representation of the PinBoard. It checks if the skin associated
+     * with the PinBoard is an instance of PinBoardSkin and then calls the {@link PinBoardSkin#refresh()} method
+     * to update the nodes displayed on the board.
+     * </p>
+     */
     public void refresh() {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.refresh();
         }
     }
 
+    /**
+     * Disposes the PinBoardSkin instance.
+     * Stops the refresher and disposes the super class.
+     */
     public void dispose() {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.dispose();
@@ -72,14 +101,29 @@ public class PinBoard extends Control {
         return new PinBoardSkin(this);
     }
 
+    /**
+     * Returns the read-only property that represents the area of the PinBoard.
+     *
+     * @return The read-only area property of type Rectangle2D.
+     */
     public ReadOnlyObjectProperty<Rectangle2D> areaProperty() {
         return areaProperty;
     }
 
+    /**
+     * Returns an unmodifiable observable list of items.
+     *
+     * @return An unmodifiable observable list of items.
+     */
     public ObservableList<Item> getItems() {
         return FXCollections.unmodifiableObservableList(items);
     }
 
+    /**
+     * Retrieves the current scroll position of the PinBoard.
+     *
+     * @return a Pair containing the horizontal and vertical scroll positions
+     */
     public Pair<Double, Double> getScrollPosition() {
         if (getSkin() instanceof PinBoardSkin skin) {
             return skin.getScrollPosition();
@@ -88,16 +132,32 @@ public class PinBoard extends Control {
         }
     }
 
-    public void setScrollPosition(Pair<Double, Double> scrollPosition) {
-        setScrollPosition(scrollPosition.first(), scrollPosition.second());
-    }
-
+    /**
+     * Sets the scroll position of the PinBoardSkin's ScrollPane.
+     *
+     * @param hValue the horizontal scroll value to set
+     * @param vValue the vertical scroll value to set
+     */
     public void setScrollPosition(double hValue, double vValue) {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.setScrollPosition(hValue, vValue);
         }
     }
 
+    /**
+     * Sets the scroll position of the PinBoardSkin's ScrollPane.
+     *
+     * @param scrollPosition a Pair containing the horizontal and vertical scroll positions
+     */
+    public void setScrollPosition(Pair<Double, Double> scrollPosition) {
+        setScrollPosition(scrollPosition.first(), scrollPosition.second());
+    }
+
+    /**
+     * Scrolls the PinBoard to the specified position within an item.
+     *
+     * @param pos the position within an item to scroll to
+     */
     public void scrollTo(PositionInItem pos) {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.scrollTo(pos);
@@ -145,14 +205,29 @@ public class PinBoard extends Control {
         pin(new Item(name, area, nodeSupplier));
     }
 
+    /**
+     * Returns the area of the PinBoard.
+     *
+     * @return The Rectangle2D representing the area of the PinBoard.
+     */
     public Rectangle2D getArea() {
         return areaProperty.get();
     }
 
+    /**
+     * Pins the given item or collection of items to the PinBoard.
+     *
+     * @param item The item to be pinned. Can be a single item or a collection of items to be pinned together.
+     */
     public void pin(Item item) {
         pin(Collections.singleton(item));
     }
 
+    /**
+     * Pins the given collection of items to the PinBoard.
+     *
+     * @param itemsToPin The collection of items to be pinned.
+     */
     public void pin(Collection<Item> itemsToPin) {
         PlatformHelper.checkApplicationThread();
 
@@ -181,8 +256,25 @@ public class PinBoard extends Control {
                 '}';
     }
 
+    /**
+     * The Item class represents an item on a PinBoard. It contains information about the item's name, area,
+     * and a supplier that can be used to build the item's Node representation.
+     *
+     * @param name The name of the item.
+     * @param area The area occupied by the item on the PinBoard.
+     * @param nodeBuilder A supplier that can be used to build the Node representation of the item.
+     */
     public record Item(String name, Rectangle2D area, Supplier<Node> nodeBuilder) {}
 
+    /**
+     * The PositionInItem class represents the position within an item on a PinBoard.
+     * It contains information about the item, as well as the x and y coordinates within the item.
+     * This class is used for scrolling to a specific position within an item and retrieving the item at a given point.
+     *
+     * @param item The item within which the position is located.
+     * @param x The x-coordinate within the item.
+     * @param y The y-coordinate within the item.
+     */
     public record PositionInItem(Item item, double x, double y) {}
 }
 
