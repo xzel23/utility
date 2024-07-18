@@ -23,7 +23,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Window;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import org.apache.logging.log4j.LogManager;
@@ -74,7 +73,6 @@ public final class WebViews {
      * Sets the confirmation handler for the given WebEngine.
      *
      * @param engine the WebEngine to set the confirmation handler for
-     * @return void
      */
     public static void setConfirmationHandler(WebEngine engine) {
         engine.setConfirmHandler(s -> Dialogs.confirmation(null).header("%s", s).buttons(ButtonType.YES, ButtonType.NO)
