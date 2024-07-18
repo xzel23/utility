@@ -44,7 +44,7 @@ jobs:
           echo "$jdkPath\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Execute Gradle build
         run: ./gradlew build
@@ -71,8 +71,7 @@ jobs:
           echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java17-full-amd64" >> $GITHUB_ENV
           echo "/usr/lib/jvm/bellsoft-java17-full-amd64/bin" >> $GITHUB_PATH
 
-      - name: Run Qodana
+      - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.1
-        with:
-          project-dir: .
-          results-dir: qodana-results
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }} # read the steps about it below
