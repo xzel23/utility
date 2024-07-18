@@ -88,7 +88,7 @@ public class PinBoard extends Control {
 
     /**
      * Disposes the PinBoardSkin instance.
-     * Stops the refresher and disposes the super class.
+     * Stops the refresher and disposes the superclass.
      */
     public void dispose() {
         if (getSkin() instanceof PinBoardSkin skin) {

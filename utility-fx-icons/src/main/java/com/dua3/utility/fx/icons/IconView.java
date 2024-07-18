@@ -149,26 +149,57 @@ public class IconView extends Control {
         return iconIdentifier.get();
     }
 
+    /**
+     * Returns the icon identifier.
+     * The icon identifier is a String value that represents the unique identifier of the icon.
+     *
+     * @return the icon identifier
+     */
     public String getIconIdentifier() {
         return iconIdentifier.getValue();
     }
 
+    /**
+     * Sets the identifier of the icon to be displayed in the IconView.
+     *
+     * @param icon the identifier of the icon
+     */
     public void setIconIdentifier(String icon) {
         iconIdentifier.set(icon);
     }
 
+    /**
+     * Returns the color of the icon.
+     *
+     * @return the color of the icon
+     */
     public Paint getIconColor() {
         return iconColor.getValue();
     }
 
+    /**
+     * Sets the color of the icon.
+     *
+     * @param color the color to set
+     */
     public void setIconColor(Paint color) {
         iconColor.set(color);
     }
 
+    /**
+     * Get the size of the icon.
+     *
+     * @return the size of the icon in pixels
+     */
     public int getIconSize() {
         return iconSize.get();
     }
 
+    /**
+     * Sets the size of the icon.
+     *
+     * @param size the new size of the icon
+     */
     public void setIconSize(int size) {
         iconSize.set(size);
     }
