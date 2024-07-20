@@ -61,20 +61,18 @@ public class AboutDialog extends Dialog<Void> {
 
         lTitle = new Label("name");
         lTitle.setId("title");
-        vBox.getChildren().add(lTitle);
 
         lVersion = new Label("version");
         lVersion.setId("version");
-        vBox.getChildren().add(lVersion);
 
         lCopyright = new Label("copyright");
         lCopyright.setId("copyright");
-        vBox.getChildren().add(lCopyright);
 
         hlMail = new Hyperlink("email");
         hlMail.setId("mail");
         hlMail.setOnAction(e -> mail());
-        vBox.getChildren().add(hlMail);
+
+        vBox.getChildren().setAll(lTitle, lVersion, lCopyright, hlMail);
 
         StackPane content = new StackPane(vBox);
         content.setId("content");
