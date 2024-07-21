@@ -266,7 +266,7 @@ public final class Controls {
      * @param region  the region
      * @param borders the borders to make draggable
      */
-    public static void makeResizable(Region region, Border... borders) {
+    public static void makeResizable(Region region, Position... borders) {
         DragResizer.makeResizable(region, 6, borders);
     }
 
@@ -277,7 +277,7 @@ public final class Controls {
      * @param resizeMargin size of the draggable margin
      * @param borders      the borders to make draggable
      */
-    public static void makeResizable(Region region, int resizeMargin, Border... borders) {
+    public static void makeResizable(Region region, int resizeMargin, Position... borders) {
         DragResizer.makeResizable(region, resizeMargin, borders);
     }
 

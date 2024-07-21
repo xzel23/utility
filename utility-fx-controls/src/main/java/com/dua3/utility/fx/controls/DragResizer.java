@@ -23,7 +23,7 @@ final class DragResizer {
      * The margin (in pixels) around the control that a user can click to resize the region.
      */
     private final Region region;
-    private final Set<Border> borders;
+    private final Set<Position> borders;
     private final int resizeMargin;
 
     private boolean draggingTop = false;
@@ -31,10 +31,10 @@ final class DragResizer {
     private boolean draggingBottom = false;
     private boolean draggingLeft = false;
 
-    private DragResizer(Region region, int resizeMargin, Border... borders) {
+    private DragResizer(Region region, int resizeMargin, Position... borders) {
         this.region = region;
         this.resizeMargin = resizeMargin;
-        this.borders = EnumSet.noneOf(Border.class);
+        this.borders = EnumSet.noneOf(Position.class);
         this.borders.addAll(List.of(borders));
     }
 
@@ -45,7 +45,7 @@ final class DragResizer {
      * @param resizeMargin the margin in pixels
      * @param borders      the borders where dragging should be possible
      */
-    public static void makeResizable(Region region, int resizeMargin, Border... borders) {
+    public static void makeResizable(Region region, int resizeMargin, Position... borders) {
         final DragResizer resizer = new DragResizer(region, resizeMargin, borders);
 
         FxUtil.addMouseEventHandler(region, MouseEvent.MOUSE_PRESSED, resizer::mousePressed);
@@ -123,19 +123,19 @@ final class DragResizer {
     }
 
     private boolean isInDraggableZoneTop(MouseEvent event) {
-        return borders.contains(Border.TOP) && event.getY() < resizeMargin;
+        return borders.contains(Position.TOP) && event.getY() < resizeMargin;
     }
 
     private boolean isInDraggableZoneRight(MouseEvent event) {
-        return borders.contains(Border.RIGHT) && event.getX() > (region.getWidth() - resizeMargin);
+        return borders.contains(Position.RIGHT) && event.getX() > (region.getWidth() - resizeMargin);
     }
 
     private boolean isInDraggableZoneBottom(MouseEvent event) {
-        return borders.contains(Border.BOTTOM) && event.getY() > (region.getHeight() - resizeMargin);
+        return borders.contains(Position.BOTTOM) && event.getY() > (region.getHeight() - resizeMargin);
     }
 
     private boolean isInDraggableZoneLeft(MouseEvent event) {
-        return borders.contains(Border.LEFT) && event.getX() < resizeMargin;
+        return borders.contains(Position.LEFT) && event.getX() < resizeMargin;
     }
 
     private void resizeBottom(MouseEvent event) {

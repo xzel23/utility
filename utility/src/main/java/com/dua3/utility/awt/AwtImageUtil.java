@@ -48,6 +48,12 @@ public class AwtImageUtil implements ImageUtil<AwtImage> {
         return img;
     }
 
+    /**
+     * Converts a {@link BufferedImage} to an {@link AwtImage}.
+     *
+     * @param img the BufferedImage to be converted
+     * @return the converted AwtImage
+     */
     public AwtImage convert(BufferedImage img) {
         return new AwtImage(img);
     }

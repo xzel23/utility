@@ -244,7 +244,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Returns a string representation of the matrix elements of the affine transformation.
+     * a string representation of the matrix elements for the affine transformation.
      *
      * <p><b>Example:</b><br>
      * <pre>
