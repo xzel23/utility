@@ -175,13 +175,9 @@ the parameter.
 - new utility-fx modules with JavaFX related classes and components
 - StreamUtil.zip() has been changed to take an operation as third parameter that defines the combining operation
 - StreamUtil.concat() did not close streams
-- code cleanups and reorganizations
 - SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtilas as they are usable also in non-Swing 
   applications
 - Color methods have been renamed to reduce ambiguity
-- add helper method FxUtil.addMouseEventHandler()
-- FxUtil.map() to create an ObservableList that is a view of another ObservableList with an elementwise mapping applied
-- fix PinBoardSkin ignoring x-component
 - SwingUtil.getDisplayScale() to retrieve the actual scaling factor for the display (taking into account UHD and retina displays)
 - AffineTransformation2f.combine()
 - return value of getTextDimension() changed to Rectangle2f (this gives access to the baseline value)
@@ -190,6 +186,8 @@ the parameter.
 - Font.scaled()
 - TextUtil.isBlank(CharSequence)
 - toolkit agnostic Graphics interface and implementations for Swing and JavaFX
+- code cleanups and reorganizations
+- Javadoc additions
 - many small fixes and improvements
 
 ### 12.3
