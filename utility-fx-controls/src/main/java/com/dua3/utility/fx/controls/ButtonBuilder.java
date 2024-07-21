@@ -1,6 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

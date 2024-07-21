@@ -16,7 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.Comparator;
