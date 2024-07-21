@@ -2,7 +2,7 @@ package com.dua3.utility.text;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TextAssertions {
+public final class TextAssertions {
     public static void assertEqualsWithEscapedOutput(String expected, String actual, String name) {
         if (!expected.equals(actual)) {
             // Escape the whitespace characters

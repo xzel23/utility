@@ -61,7 +61,7 @@ public class I18N {
                     return new Object[0][];
                 }
             };
-            i18n = I18N.create(bundle);
+            i18n = create(bundle);
             LOG.warn("No I18N provider found. Creating empty I18N instance.");
         } else {
             i18n = serviceIterator.next().i18n();

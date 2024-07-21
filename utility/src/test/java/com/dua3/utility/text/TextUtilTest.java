@@ -148,7 +148,7 @@ public class TextUtilTest {
     void testWrap(TestDataWrap data) throws IOException {
         TextAssertions.assertEqualsWithEscapedOutput(
                 LangUtil.getResourceAsString(getClass(), data.fileRef()),
-                TextUtil.wrap(LangUtil.getResourceAsString(getClass(), data.fileIn()), data.width, data.align, data.hardWrap),
+                wrap(LangUtil.getResourceAsString(getClass(), data.fileIn()), data.width, data.align, data.hardWrap),
                 data.fileIn()
         );
     }

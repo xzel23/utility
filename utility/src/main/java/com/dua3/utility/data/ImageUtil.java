@@ -19,7 +19,7 @@ public interface ImageUtil<I> {
      * @return the default FontUtil instance
      */
     static ImageUtil<?> getInstance() {
-        class SingletonHolder {
+        final class SingletonHolder {
             static final ImageUtil<?> INSTANCE = Loader.builder(ImageUtilProvider.class)
                     .defaultSupplier(() -> AwtImageUtil::getInstance)
                     .build()

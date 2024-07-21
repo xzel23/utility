@@ -350,7 +350,7 @@ public class Font {
      * @return a new Font instance that is scaled by the given factor, or this font if the scaling factor is 1
      */
     public Font scaled(float s) {
-        return s == 1 ? this : deriveFont(FontDef.size(s * this.size));
+        return s == 1 ? this : deriveFont(FontDef.size(s * size));
     }
 
     /**

@@ -23,7 +23,7 @@ public class PromptPane extends InputDialogPane<String> {
         // valid.bind(text.textProperty().map(s -> s != null && !s.isEmpty()));
         BooleanBinding binding = new BooleanBinding() {
             {
-                super.bind(text.textProperty());
+                bind(text.textProperty());
             }
 
             @Override

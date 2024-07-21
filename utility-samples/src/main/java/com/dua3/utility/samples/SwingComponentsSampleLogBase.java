@@ -49,7 +49,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
 
         SwingUtilities.invokeLater(() -> {
             SwingComponentsSampleLogBase instance = factory.get();
-            instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            instance.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             instance.setVisible(true);
         });
     }

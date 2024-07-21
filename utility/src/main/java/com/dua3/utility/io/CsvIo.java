@@ -132,7 +132,7 @@ public abstract class CsvIo implements AutoCloseable {
      * @param text the string to be checked
      * @return true if quotes are needed, false otherwise
      */
-    protected boolean isQuoteNeeded(String text) {
+    protected boolean isQuoteNeeded(CharSequence text) {
         // also quote if unusual characters are present
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);

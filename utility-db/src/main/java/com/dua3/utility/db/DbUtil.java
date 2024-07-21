@@ -290,6 +290,7 @@ public final class DbUtil {
         return ds;
     }
 
+    @FunctionalInterface
     private interface UncheckedCloser extends AutoCloseable {
         default void doClose() {
             try {

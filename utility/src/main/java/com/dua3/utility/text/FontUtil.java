@@ -23,7 +23,7 @@ public interface FontUtil<F> {
      * @return the default FontUtil instance
      */
     static FontUtil<?> getInstance() {
-        class SingletonHolder {
+        final class SingletonHolder {
             static final FontUtil<?> INSTANCE = Loader.builder(FontUtilProvider.class)
                     .defaultSupplier(() -> AwtFontUtil::getInstance)
                     .build()

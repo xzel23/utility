@@ -26,7 +26,7 @@ public class FxGraphics implements Graphics {
 
     private AffineTransformation2f transform;
 
-    private float s;
+    private float scale;
     private javafx.scene.paint.Color textColor = javafx.scene.paint.Color.BLACK;
     private javafx.scene.text.Font font = DEFAULT_FONT_FX;
     private boolean isStrikeThrough = false;
@@ -39,7 +39,7 @@ public class FxGraphics implements Graphics {
         this.gc = gc;
         this.w = w;
         this.h = h;
-        this.s = 1f;
+        this.scale = 1f;
         this.parentTransform = FxUtil.convert(gc.getTransform());
     }
 
@@ -131,7 +131,7 @@ public class FxGraphics implements Graphics {
         assert isDrawing : "instance has already been closed!";
 
         this.textColor = FxUtil.convert(font.getColor());
-        this.font = FONT_UTIL.convert(font.scaled(s));
+        this.font = FONT_UTIL.convert(font.scaled(scale));
         this.isStrikeThrough = font.isStrikeThrough();
         this.isUnderline = font.isUnderline();
     }

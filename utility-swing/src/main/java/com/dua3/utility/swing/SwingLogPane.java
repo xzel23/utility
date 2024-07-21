@@ -211,7 +211,7 @@ public class SwingLogPane extends JPanel {
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         table.getActionMap().put("escape", SwingUtil.createAction("escape", this::handleEscapeKey));
-        table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "escape");
+        table.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "escape");
 
         // prepare the ScrollPanes
         this.scrollPaneTable = new JScrollPane(table);

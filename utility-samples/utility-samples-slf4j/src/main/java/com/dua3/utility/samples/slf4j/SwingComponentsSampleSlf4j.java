@@ -10,6 +10,6 @@ public class SwingComponentsSampleSlf4j extends SwingComponentsSampleLogBase {
     }
 
     public static void main(String[] args) {
-        SwingComponentsSampleLogBase.start(SwingComponentsSampleSlf4j::new, args);
+        start(SwingComponentsSampleSlf4j::new, args);
     }
 }

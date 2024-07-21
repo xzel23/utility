@@ -17,7 +17,7 @@ public class SwingLogFrame extends JFrame {
     public SwingLogFrame(String title, @Nullable LogBuffer buffer) {
         super(title);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setContentPane(new SwingLogPane(buffer));
         setSize(800, 600);
     }

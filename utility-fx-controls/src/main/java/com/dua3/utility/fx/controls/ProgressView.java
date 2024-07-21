@@ -29,10 +29,10 @@ public class ProgressView<T> extends GridPane implements ProgressTracker<T> {
 
         int row = getChildren().size();
         Label label = new Label(t.toString());
-        GridPane.setConstraints(label, 0, row);
+        setConstraints(label, 0, row);
         ProgressBar pb = pi.pb;
         pb.setMaxWidth(Double.POSITIVE_INFINITY);
-        GridPane.setConstraints(pb, 1, row);
+        setConstraints(pb, 1, row);
         getChildren().addAll(label, pb);
 
         return pi;

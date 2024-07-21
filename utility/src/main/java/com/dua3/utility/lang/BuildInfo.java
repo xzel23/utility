@@ -34,7 +34,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @param zonedDateTimeBuild the timestamp, compatible with {@link ZonedDateTime#parse(CharSequence)}
      * @return BuildInfo instance
      */
-    public static BuildInfo create(String version, String zonedDateTimeBuild) {
+    public static BuildInfo create(CharSequence version, CharSequence zonedDateTimeBuild) {
         Pattern pattern = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?(?<separator>[-_.])?(?<suffix>\\w+)?");
         Matcher m = pattern.matcher(version);
 

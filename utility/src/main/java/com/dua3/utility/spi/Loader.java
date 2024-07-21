@@ -42,8 +42,8 @@ public final class Loader<T> {
 
         public Loader<T> build() {
             Predicate<T> p = predicate != null ? predicate : t -> true;
-            Supplier<? extends T> d = this.defaultSupplier != null ? defaultSupplier : () -> null;
-            ClassLoader c = this.cl != null ? this.cl : ClassLoader.getSystemClassLoader();
+            Supplier<? extends T> d = defaultSupplier != null ? defaultSupplier : () -> null;
+            ClassLoader c = cl != null ? cl : ClassLoader.getSystemClassLoader();
 
             return new Loader<>(type, c, p, d);
         }

@@ -686,7 +686,7 @@ public final class XmlUtil {
 
         @Override
         public int characteristics() {
-            return Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.ORDERED | Spliterator.SIZED;
+            return IMMUTABLE | NONNULL | ORDERED | SIZED;
         }
     }
 

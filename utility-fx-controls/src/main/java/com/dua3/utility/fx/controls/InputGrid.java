@@ -122,7 +122,7 @@ public class InputGrid extends GridPane {
 
     private void addToGrid(Node child, int c, int r, int span, Insets insets) {
         add(child, c, r, span, 1);
-        GridPane.setMargin(child, insets);
+        setMargin(child, insets);
     }
 
     public void reset() {

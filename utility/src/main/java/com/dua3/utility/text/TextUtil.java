@@ -7,7 +7,6 @@ package com.dua3.utility.text;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
@@ -956,7 +955,7 @@ public final class TextUtil {
      * @return the joined string with each element quoted if necessary
      */
     public static String joinQuotedIfNeeded(List<?> args, String delimiter) {
-        return args.stream().map(arg -> TextUtil.quoteIfNeeded(arg != null ? arg.toString() : "")).collect(Collectors.joining(delimiter));
+        return args.stream().map(arg -> quoteIfNeeded(arg != null ? arg.toString() : "")).collect(Collectors.joining(delimiter));
     }
 
     /**
@@ -980,7 +979,7 @@ public final class TextUtil {
      *         by a comma and space.
      */
     public static String joinQuoted(List<?> args, String delimiter) {
-        return args.stream().map(arg -> TextUtil.quote(arg != null ? arg.toString() : "")).collect(Collectors.joining(delimiter));
+        return args.stream().map(arg -> quote(arg != null ? arg.toString() : "")).collect(Collectors.joining(delimiter));
     }
 
     /**
@@ -1037,9 +1036,9 @@ public final class TextUtil {
                 for (int i = 0; i < par.size(); i++) {
                     var line = par.get(i);
                     if (align == Alignment.JUSTIFY && i == par.size() - 1) {
-                        sb.append(TextUtil.align(line, width, Alignment.LEFT));
+                        sb.append(align(line, width, Alignment.LEFT));
                     } else {
-                        sb.append(TextUtil.align(line, width, align));
+                        sb.append(align(line, width, align));
                     }
                     sb.append(lineSeparator);
                 }

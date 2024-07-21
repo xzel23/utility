@@ -87,7 +87,7 @@ public class ButtonBuilder<B extends ButtonBase> {
      * @param disabled the value to bind the button's disableProperty to
      * @return this ButtonBuilder instance
      */
-    public ButtonBuilder<B> bindDisabled(ObservableBooleanValue disabled) {
+    public ButtonBuilder<B> bindDisabled(ObservableValue<Boolean> disabled) {
         this.disabled = disabled;
         return this;
     }

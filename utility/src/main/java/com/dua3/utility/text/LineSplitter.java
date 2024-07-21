@@ -212,12 +212,12 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
         return paragraphs;
     }
 
-    private static <S extends CharSequence, R extends Appendable> void handleEndOfText(Function<R, S> readBuffer, List<S> currentLines, R buffer) throws IOException {
+    private static <S extends CharSequence, R extends Appendable> void handleEndOfText(Function<R, S> readBuffer, List<S> currentLines, R buffer) {
         currentLines.add(readBuffer.apply(buffer));
     }
 
     private static <S extends CharSequence, R extends Appendable> Result<R, S> handleParagraphBreak(
-            Function<R, S> readBuffer, Supplier<R> bufferFactory, List<List<S>> paragraphs, List<S> currentLines, R buffer) throws IOException {
+            Function<R, S> readBuffer, Supplier<R> bufferFactory, List<List<S>> paragraphs, List<S> currentLines, R buffer) {
         currentLines.add(readBuffer.apply(buffer));
         List<S> newLines = new ArrayList<>();
         paragraphs.add(newLines);
