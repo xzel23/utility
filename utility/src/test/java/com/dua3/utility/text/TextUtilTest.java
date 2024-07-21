@@ -90,6 +90,7 @@ public class TextUtilTest {
     }
 
     record TestDataAlign(String text, String expected, int width, Alignment align, Character fill) {}
+
     @ParameterizedTest
     @MethodSource("generateTestDataAlign")
     public void testAlign(TestDataAlign data) {
@@ -141,6 +142,7 @@ public class TextUtilTest {
     }
 
     record TestDataWrap(String fileIn, String fileRef, int width, Alignment align, boolean hardWrap) {}
+
     @ParameterizedTest
     @MethodSource("generateTestDataWrap")
     void testWrap(TestDataWrap data) throws IOException {
@@ -235,9 +237,9 @@ public class TextUtilTest {
         Font timesRomanBold12 = new Font("TimesRoman-bold-12");
         Font timesRomanItalic18 = new Font("TimesRoman-italic-18");
 
-        return new Object[][] {
+        return new Object[][]{
                 // Testing for empty string
-                {"", timesRomanBold12, AwtFontUtil.getInstance().getTextDimension("", timesRomanBold12) },
+                {"", timesRomanBold12, AwtFontUtil.getInstance().getTextDimension("", timesRomanBold12)},
                 // Testing for normal use case
                 {"Test text", timesRomanItalic18, AwtFontUtil.getInstance().getTextDimension("Test text", timesRomanItalic18)}
         };

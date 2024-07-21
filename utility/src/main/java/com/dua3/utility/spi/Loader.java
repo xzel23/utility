@@ -73,7 +73,7 @@ public final class Loader<T> {
                 .iterator();
 
         T instance = null;
-        while (instance ==null && serviceIterator.hasNext()) {
+        while (instance == null && serviceIterator.hasNext()) {
             T current = serviceIterator.next();
             if (predicate.test(current)) {
                 instance = current;

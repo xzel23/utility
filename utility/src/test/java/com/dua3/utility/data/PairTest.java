@@ -58,10 +58,10 @@ class PairTest {
     @Test
     void ofArray() {
         String[] second = {"two", "three"};
-        Pair<String,String[]> pair = Pair.ofArray("one",second);
+        Pair<String, String[]> pair = Pair.ofArray("one", second);
 
         assertEquals("one", pair.first());
-        assertArrayEquals(second,pair.second());
+        assertArrayEquals(second, pair.second());
     }
 
     @Test
@@ -70,7 +70,7 @@ class PairTest {
 
         Function<Object, Integer> mappings = str -> str.toString().length();
 
-        Pair<Integer,Integer> pair2 = pair1.map(mappings);
+        Pair<Integer, Integer> pair2 = pair1.map(mappings);
 
         assertEquals(3, pair2.first());
         assertEquals(3, pair2.second());
@@ -83,10 +83,10 @@ class PairTest {
 
         Function<Object, Integer> mappings = str -> str.toString().length();
 
-        Pair<Integer,String> pair2 = pair1.mapFirst(mappings);
+        Pair<Integer, String> pair2 = pair1.mapFirst(mappings);
 
         assertEquals(3, pair2.first());
-        assertEquals("two",pair2.second());
+        assertEquals("two", pair2.second());
     }
 
     @Test
@@ -95,9 +95,9 @@ class PairTest {
 
         Function<Object, Integer> mappings = str -> str.toString().length();
 
-        Pair<String,Integer> pair2 = pair1.mapSecond(mappings);
+        Pair<String, Integer> pair2 = pair1.mapSecond(mappings);
 
-        assertEquals("one",pair2.first());
+        assertEquals("one", pair2.first());
         assertEquals(3, pair2.second());
     }
 
@@ -115,6 +115,7 @@ class PairTest {
 
         assertEquals(1, pair.getValue());
     }
+
     @Test
     void setValue_unsupportedOperationException() {
         Pair<String, Integer> pair = Pair.of("one", 1);

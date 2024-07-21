@@ -45,7 +45,7 @@ public final class LogUtilSlf4j {
      */
     public static LoggerFactorySlf4j getGlobalDispatcher() {
         LogEntryDispatcher dispatcher = LogUtil.getGlobalDispatcher();
-        if(dispatcher instanceof LoggerFactorySlf4j loggerFactorySlf4j) {
+        if (dispatcher instanceof LoggerFactorySlf4j loggerFactorySlf4j) {
             return loggerFactorySlf4j;
         }
         throw new IllegalStateException("wrong implementation: " + dispatcher.getClass());

@@ -238,8 +238,8 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
             return null;
         }
         return new AffineTransformation2f(
-                e/det, -b/det, (b*f - e*c)/det,
-                -d/det,  a/det, (c*d - a*f)/det
+                e / det, -b / det, (b * f - e * c) / det,
+                -d / det, a / det, (c * d - a * f) / det
         );
     }
 
@@ -256,10 +256,10 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      */
     public String toMatrixString() {
         return String.format("""
-                ⎡%6.2f %6.2f %6.2f⎤
-                ⎢%6.2f %6.2f %6.2f⎥
-                ⎣%6.2f %6.2f %6.2f⎦
-                """,
+                        ⎡%6.2f %6.2f %6.2f⎤
+                        ⎢%6.2f %6.2f %6.2f⎥
+                        ⎣%6.2f %6.2f %6.2f⎦
+                        """,
                 a, b, c,
                 d, e, f,
                 0f, 0f, 1f

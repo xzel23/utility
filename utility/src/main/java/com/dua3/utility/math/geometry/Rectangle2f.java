@@ -57,7 +57,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @return a new Rectangle2f object
      */
     public static Rectangle2f withCenter(Vector2f p, Dimension2f dim) {
-        return new Rectangle2f(p.x() - dim.width()/2, p.y() - dim.height()/2, dim.width(), dim.height());
+        return new Rectangle2f(p.x() - dim.width() / 2, p.y() - dim.height() / 2, dim.width(), dim.height());
     }
 
     /**

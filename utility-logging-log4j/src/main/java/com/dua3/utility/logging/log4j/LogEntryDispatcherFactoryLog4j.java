@@ -8,7 +8,7 @@ import com.dua3.utility.logging.ILogEntryDispatcherFactory;
  */
 public class LogEntryDispatcherFactoryLog4j implements ILogEntryDispatcherFactory {
     static {
-        LogUtilLog4J.updateLoggers();;
+        LogUtilLog4J.updateLoggers();
     }
 
     @Override

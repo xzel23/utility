@@ -31,7 +31,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
      */
     private record Chunk<S extends CharSequence>(ChunkType type, S text, int start, int end) {
         public int length() {
-            return end-start;
+            return end - start;
         }
 
         public CharSequence asCharSequence() {
@@ -152,7 +152,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
         while (type(get()) == type) {
             // nop
         }
-        return  new Chunk<>(type, seq, start, pos);
+        return new Chunk<>(type, seq, start, pos);
     }
 
     /**
@@ -176,7 +176,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
             boolean isHardWrap,
             S spaceChar,
             Supplier<R> bufferFactory,
-            Function<R,S> readBuffer,
+            Function<R, S> readBuffer,
             ToIntFunction<R> bufferLength
     ) throws IOException {
         // tokenize the text

@@ -1466,7 +1466,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is not negative
      */
     public static float requireNegative(float value, String fmt, Object... args) {
-        return (float) requireNegative((double) value,  fmt, args);
+        return (float) requireNegative((double) value, fmt, args);
     }
 
     /**
