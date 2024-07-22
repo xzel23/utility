@@ -82,6 +82,13 @@ public class FxFontUtil implements FontUtil<Font> {
         return Rectangle2f.of((float) bounds.getMinX(), (float) bounds.getMinY(), (float) bounds.getWidth(), (float) bounds.getHeight());
     }
 
+    /**
+     * Calculates the dimensions of the given text when rendered with the specified font.
+     *
+     * @param s the text to measure
+     * @param f the font used to render the text
+     * @return a {@link Rectangle2f} object representing the dimensions of the rendered text
+     */
     public Rectangle2f getTextDimension(CharSequence s, Font f) {
         var bounds = FxUtil.getTextBounds(s, f);
         return Rectangle2f.of((float) bounds.getMinX(), (float) bounds.getMinY(), (float) bounds.getWidth(), (float) bounds.getHeight());

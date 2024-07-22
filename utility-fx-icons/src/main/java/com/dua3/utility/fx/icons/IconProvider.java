@@ -1,5 +1,8 @@
 package com.dua3.utility.fx.icons;
 
+/**
+ * The IconProvider interface represents a provider of icons.
+ */
 public interface IconProvider {
     /**
      * Get this provider*s name.

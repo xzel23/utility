@@ -19,6 +19,11 @@ public class FxFontEmbedded extends Font {
         this.fxFont = fxFont;
     }
 
+    /**
+     * Retrieves the JavaFX {@link javafx.scene.text.Font} associated with this {@link FxFontEmbedded}.
+     *
+     * @return The JavaFX {@link javafx.scene.text.Font}.
+     */
     public javafx.scene.text.Font fxFont() {
         return fxFont;
     }

@@ -884,13 +884,15 @@ public final class LangUtil {
      * @throws NullPointerException if {@code obj} or {@code action} is {@code null}
      */
     public static void registerForCleanup(Object obj, Runnable action) {
-        getCLEANER().register(obj, action);
+        getCleaner().register(obj, action);
     }
 
     /**
-     * CLEANER is a private static final variable of type Cleaner.
+     * Returns the instance of the Cleaner class.
+     *
+     * @return the instance of the Cleaner class
      */
-    public static Cleaner getCLEANER() {
+    public static Cleaner getCleaner() {
         return CLEANER;
     }
 

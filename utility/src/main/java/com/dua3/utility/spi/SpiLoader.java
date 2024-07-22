@@ -9,8 +9,8 @@ import java.util.ServiceLoader;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public final class Loader<T> {
-    private static final Logger LOG = LogManager.getLogger(Loader.class);
+public final class SpiLoader<T> {
+    private static final Logger LOG = LogManager.getLogger(SpiLoader.class);
 
     public static class LoaderBuilder<T> {
         private final Class<T> type;
@@ -18,7 +18,7 @@ public final class Loader<T> {
         private Predicate<T> predicate;
         private Supplier<? extends T> defaultSupplier;
 
-        public LoaderBuilder(Class<T> type) {
+        private LoaderBuilder(Class<T> type) {
             this.type = type;
         }
 
@@ -40,12 +40,12 @@ public final class Loader<T> {
             return this;
         }
 
-        public Loader<T> build() {
+        public SpiLoader<T> build() {
             Predicate<T> p = predicate != null ? predicate : t -> true;
             Supplier<? extends T> d = defaultSupplier != null ? defaultSupplier : () -> null;
             ClassLoader c = cl != null ? cl : ClassLoader.getSystemClassLoader();
 
-            return new Loader<>(type, c, p, d);
+            return new SpiLoader<>(type, c, p, d);
         }
     }
 
@@ -54,7 +54,7 @@ public final class Loader<T> {
     private final Predicate<? super T> predicate;
     private final Supplier<? extends T> defaultSupplier;
 
-    private Loader(Class<T> type, ClassLoader cl, Predicate<? super T> p, Supplier<? extends T> d) {
+    private SpiLoader(Class<T> type, ClassLoader cl, Predicate<? super T> p, Supplier<? extends T> d) {
         this.type = type;
         this.cl = cl;
         this.predicate = p;

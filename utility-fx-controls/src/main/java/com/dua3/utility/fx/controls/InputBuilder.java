@@ -14,6 +14,15 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+/**
+ * A builder class for creating input controls.
+ * <p>
+ * The InputBuilder class provides methods to add various types of labeled
+ * and unlabeled input controls such as text fields, checkboxes, and combo boxes
+ * to a UI form. It allows customization of the control's ID, label text, default
+ * value, and validation rules. The builder pattern allows chaining of method calls
+ * to create complex input forms with ease.
+ */
 public interface InputBuilder<B extends InputBuilder<B>> {
 
     /**

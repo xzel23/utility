@@ -39,6 +39,11 @@ public final class LogUtil {
         }
     }
 
+    /**
+     * Checks if the globalDispatcher variable is null and initializes it by calling the init() method if necessary.
+     *
+     * @throws ServiceConfigurationError if no factories can create a LogEntryDispatcher
+     */
     public static void assureInitialized() {
         if (globalDispatcher == null) {
             init();

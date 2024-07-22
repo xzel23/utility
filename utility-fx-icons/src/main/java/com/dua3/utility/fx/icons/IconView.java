@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A JavaFX control to display icons.
+ * Represents a custom JavaFX control that displays an icon.
+ * The IconView control can be used to display icons in various JavaFX applications.
+ * It provides methods for setting and getting the icon identifier, size, and color.
  */
 public class IconView extends Control {
     private static final Logger LOG = LogManager.getLogger(IconView.class);

@@ -15,12 +15,23 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
+/**
+ * The IconUtil class provides utility methods for working with icons.
+ * It contains static methods for retrieving icons, retrieving the names of available icon providers,
+ * and creating an empty icon. Icons are represented by the {@link Icon} interface.
+ */
 public final class IconUtil {
     private static final Logger LOG = LogManager.getLogger(IconUtil.class);
 
     private IconUtil() {
     }
 
+    /**
+     * Returns an optional icon based on the given name.
+     *
+     * @param name the name of the icon requested
+     * @return an optional icon that matches the given name, or an empty optional if the icon does not exist
+     */
     public static Optional<Icon> iconFromName(String name) {
         Class<IconProvider> iconProviderClass = IconProvider.class;
         return ServiceLoader.load(iconProviderClass)
@@ -31,6 +42,11 @@ public final class IconUtil {
                 .findFirst();
     }
 
+    /**
+     * Returns a collection of names of available icon providers.
+     *
+     * @return a collection of strings representing the names of the available icon providers
+     */
     public static Collection<String> iconProviderNames() {
         Class<IconProvider> iconProviderClass = IconProvider.class;
         return ServiceLoader.load(iconProviderClass)
@@ -38,6 +54,11 @@ public final class IconUtil {
                 .map(p -> p.type().getName()).toList();
     }
 
+    /**
+     * Returns an empty icon.
+     *
+     * @return an empty icon represented by the {@link Icon} interface
+     */
     public static Icon emptyIcon() {
         return new EmptyIcon();
     }

@@ -3,7 +3,7 @@ package com.dua3.utility.text;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Vector2f;
-import com.dua3.utility.spi.Loader;
+import com.dua3.utility.spi.SpiLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ public interface FontUtil<F> {
      */
     static FontUtil<?> getInstance() {
         final class SingletonHolder {
-            static final FontUtil<?> INSTANCE = Loader.builder(FontUtilProvider.class)
+            static final FontUtil<?> INSTANCE = SpiLoader.builder(FontUtilProvider.class)
                     .defaultSupplier(() -> AwtFontUtil::getInstance)
                     .build()
                     .load()

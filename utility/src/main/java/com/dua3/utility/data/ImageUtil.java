@@ -1,7 +1,7 @@
 package com.dua3.utility.data;
 
 import com.dua3.utility.awt.AwtImageUtil;
-import com.dua3.utility.spi.Loader;
+import com.dua3.utility.spi.SpiLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +20,7 @@ public interface ImageUtil<I> {
      */
     static ImageUtil<?> getInstance() {
         final class SingletonHolder {
-            static final ImageUtil<?> INSTANCE = Loader.builder(ImageUtilProvider.class)
+            static final ImageUtil<?> INSTANCE = SpiLoader.builder(ImageUtilProvider.class)
                     .defaultSupplier(() -> AwtImageUtil::getInstance)
                     .build()
                     .load()

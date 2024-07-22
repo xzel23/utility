@@ -13,7 +13,7 @@ import java.io.Serial;
 public class WrappedException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
-    public static final String MARKER = "[WrappedException] ";
+    private static final String MARKER = "[WrappedException] ";
 
     /**
      * Construct new wrapped exception.

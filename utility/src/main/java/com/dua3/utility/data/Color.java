@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * A common interface for different color implementations.
  */
+@SuppressWarnings({"Annotator", "Style"})
 public interface Color {
     /**
      * Factor to apply when generating a brighter or darker version of a color.
@@ -237,7 +238,6 @@ public interface Color {
     /**
      * The color GREY.
      */
-    @SuppressWarnings("Annotator")
     Color GREY = register("GREY", 0xFF808080);
     /**
      * The color HONEYDEW.

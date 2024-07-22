@@ -41,6 +41,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
+/**
+ * The {@code FxDbUtil} class provides utility methods for populating a JavaFX {@link TableView} with data from a ResultSet.
+ * It also includes methods for converting and formatting data to be displayed in the TableView.
+ */
 public final class FxDbUtil {
 
     /**

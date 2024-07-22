@@ -184,7 +184,7 @@ public class ArgumentsDialog extends JDialog {
     }
 
     /**
-     * Displays a dialog for obtaining arguments from the user.
+     * Displays a dialog for getting arguments from the user.
      *
      * @param owner   the Window object that owns the dialog
      * @param parser  the ArgumentsParser object used to parse the arguments
