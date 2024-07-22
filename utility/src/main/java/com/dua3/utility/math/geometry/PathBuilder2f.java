@@ -186,7 +186,7 @@ public class PathBuilder2f {
     }
 
     /**
-     * Builds a {@link Path2f} instance using the current state of the {@link PathBuilder2f}.
+     * Builds a {@link Path2f} instance using the current state of the {@code PathBuilder2f}.
      *
      * @return a new instance of {@link Path2f} representing the constructed path
      */

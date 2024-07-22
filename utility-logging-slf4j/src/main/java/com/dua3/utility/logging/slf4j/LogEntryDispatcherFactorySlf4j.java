@@ -24,6 +24,11 @@ public class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactor
         }
     }
 
+    /**
+     * Retrieves the instance of the LoggerFactorySlf4j class, which is a singleton implementation of the ILoggerFactory interface and LogEntryDispatcher interface.
+     *
+     * @return The instance of the LoggerFactorySlf4j class.
+     */
     public static LoggerFactorySlf4j getFactory() {
         return SingletonHolder.INSTANCE;
     }

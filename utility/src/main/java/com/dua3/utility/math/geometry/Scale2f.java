@@ -9,6 +9,12 @@ package com.dua3.utility.math.geometry;
 public record Scale2f(float sx, float sy) {
     private static final Scale2f IDENTITY = new Scale2f(1f, 1f);
 
+    /**
+     * Returns the identity scale {@code Scale2f} object.
+     * The identity scale is a {@code Scale2f} object with scaling factors of 1 for both the x and y axes.
+     *
+     * @return the identity scale {@code Scale2f} object
+     */
     public static Scale2f identity() {
         return IDENTITY;
     }

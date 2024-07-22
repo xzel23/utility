@@ -62,6 +62,14 @@ public interface Graphics extends AutoCloseable {
         strokeRect(r.xMin(), r.yMin(), r.width(), r.height());
     }
 
+    /**
+     * Draws the outline of a rectangle with the specified dimensions and coordinates.
+     *
+     * @param x the x-coordinate of the top-left corner of the rectangle
+     * @param y the y-coordinate of the top-left corner of the rectangle
+     * @param w the width of the rectangle
+     * @param h the height of the rectangle
+     */
     void strokeRect(float x, float y, float w, float h);
 
     /**
