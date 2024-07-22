@@ -15,11 +15,12 @@ import javafx.scene.text.Text;
  */
 public class FxGraphics implements Graphics {
     private static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
-    private static final javafx.scene.text.Font DEFAULT_FONT_FX = FONT_UTIL.convert(DEFAULT_FONT);
+    private static final javafx.scene.text.Font DEFAULT_FONT_FX = javafx.scene.text.Font.getDefault();
+    private static final Font DEFAULT_FONT = FONT_UTIL.convert(DEFAULT_FONT_FX);
 
     private final GraphicsContext gc;
-    private final float w;
-    private final float h;
+    private final float width;
+    private final float height;
     private final AffineTransformation2f parentTransform;
 
     private boolean isDrawing = true;
@@ -32,13 +33,20 @@ public class FxGraphics implements Graphics {
     private boolean isStrikeThrough = false;
     private boolean isUnderline = false;
     private javafx.scene.paint.Paint strokeColor = javafx.scene.paint.Color.BLACK;
-    private double width = 1.0;
+    private double strokeWidth = 1.0;
     private javafx.scene.paint.Color fillColor = javafx.scene.paint.Color.BLACK;
 
-    public FxGraphics(GraphicsContext gc, float w, float h) {
+    /**
+     * Creates a new instance of FxGraphics with the given parameters.
+     *
+     * @param gc      the GraphicsContext object
+     * @param width       the width of the graphics object
+     * @param height  the height of the graphics object
+     */
+    public FxGraphics(GraphicsContext gc, float width, float height) {
         this.gc = gc;
-        this.w = w;
-        this.h = h;
+        this.width = width;
+        this.height = height;
         this.scale = 1f;
         this.parentTransform = FxUtil.convert(gc.getTransform());
     }
@@ -51,9 +59,14 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
+    public Font getDefaultFont() {
+        return DEFAULT_FONT;
+    }
+
+    @Override
     public Rectangle2f getBounds() {
         assert isDrawing : "instance has already been closed!";
-        return new Rectangle2f(0, 0, w, h);
+        return new Rectangle2f(0, 0, width, height);
     }
 
     @Override
@@ -75,7 +88,7 @@ public class FxGraphics implements Graphics {
         assert isDrawing : "instance has already been closed!";
 
         gc.setStroke(strokeColor);
-        gc.setLineWidth(width);
+        gc.setLineWidth(strokeWidth);
         gc.strokeRect(x, y, w, h);
     }
 
@@ -92,7 +105,7 @@ public class FxGraphics implements Graphics {
         assert isDrawing : "instance has already been closed!";
 
         gc.setStroke(strokeColor);
-        gc.setLineWidth(width);
+        gc.setLineWidth(strokeWidth);
         gc.strokeLine(x1, y1, x2, y2);
     }
 
@@ -101,7 +114,7 @@ public class FxGraphics implements Graphics {
         assert isDrawing : "instance has already been closed!";
 
         this.strokeColor = FxUtil.convert(c);
-        this.width = width;
+        this.strokeWidth = width;
     }
 
     @Override
@@ -150,19 +163,18 @@ public class FxGraphics implements Graphics {
             Text t = new Text(text.toString());
             t.setFont(font);
             Bounds r = t.getBoundsInLocal();
-            double xStroke = x;
             double wStroke = r.getWidth();
 
             gc.setStroke(textColor);
             gc.setLineWidth(strokeWidth);
 
             if (isUnderline) {
-                double yStroke = y + r.getMaxY()/2f;
-                gc.strokeLine(xStroke, yStroke, xStroke+wStroke, yStroke);
+                double yStroke = y + r.getMaxY() / 2.0f;
+                gc.strokeLine(x, yStroke, (double) x +wStroke, yStroke);
             }
             if (isStrikeThrough) {
-                double yStroke = y + r.getMinY()/2f + r.getMaxY();
-                gc.strokeLine(xStroke, yStroke, xStroke+wStroke, yStroke);
+                double yStroke = y + r.getMinY() / 2.0f + r.getMaxY();
+                gc.strokeLine(x, yStroke, (double) x +wStroke, yStroke);
             }
         }
     }

@@ -25,9 +25,19 @@ import java.util.function.Function;
  */
 public interface Graphics extends AutoCloseable {
 
-    Font DEFAULT_FONT = new Font();
-
+    /**
+     * Retrieves the FontUtil compatible with this Graphics object.
+     *
+     * @return the FontUtil object
+     */
     FontUtil<?> getFontUtil();
+
+    /**
+     * Retrieves the default font for the graphics object.
+     *
+     * @return the default font
+     */
+    Font getDefaultFont();
 
     /**
      * Get bounds.

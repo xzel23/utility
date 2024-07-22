@@ -9,6 +9,8 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -18,14 +20,47 @@ import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.AttributedString;
 
 /**
  * The SwingGraphics class implements the {@link Graphics} interface for rendering graphics in swing based applications.
  */
 public class SwingGraphics implements Graphics {
+    private static final Logger LOG = LogManager.getLogger(SwingGraphics.class);
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
-    private static final java.awt.Font DEFAULT_FONT_AWT = FONT_UTIL.convert(DEFAULT_FONT);
+    private static final java.awt.Font DEFAULT_FONT_AWT;
+    private static final Font DEFAULT_FONT;
+
+    // determine default font
+    static {
+        java.awt.Font defaultFontAwt = null;
+        try {
+            // Attempt to load the UIManager class
+            Class<?> uiManagerClass = Class.forName("javax.swing.UIManager");
+
+            // Check if the getDefaults method exists
+            Method getFontMethod = uiManagerClass.getMethod("getFont", Object.class);
+            if (getFontMethod.invoke(null, "Label.font") instanceof java.awt.Font font) {
+                defaultFontAwt = font;
+                LOG.debug("determined default font using UIManager: {}", defaultFontAwt);
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            LOG.debug("UIManager class or UIManager.getFont() method is not available");
+        }
+        if (defaultFontAwt == null) {
+            LOG.debug("setting default font to awt dialog font with size 12");
+            defaultFontAwt = new java.awt.Font(java.awt.Font.DIALOG, java.awt.Font.PLAIN, 12);
+        }
+        DEFAULT_FONT = new Font(defaultFontAwt.getFamily(), defaultFontAwt.getSize(), Color.BLACK, false, false, false, false);
+        DEFAULT_FONT_AWT = AwtFontUtil.getInstance().convert(DEFAULT_FONT);
+    }
+
+    @Override
+    public Font getDefaultFont() {
+        return DEFAULT_FONT;
+    }
 
     private final Graphics2D g2d;
     private final Rectangle parentBounds;
