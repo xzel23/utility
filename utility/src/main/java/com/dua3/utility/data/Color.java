@@ -630,6 +630,7 @@ public interface Color {
      * @param s the text
      * @return result of conversion
      */
+    @SuppressWarnings("MagicCharacter")
     static Color valueOf(String s) {
         // try named colors first
         Color color = Colors.COLORS.get(s.toUpperCase(Locale.ROOT));

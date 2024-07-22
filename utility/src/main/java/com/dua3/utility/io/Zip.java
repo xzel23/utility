@@ -15,6 +15,7 @@ import java.util.zip.ZipOutputStream;
  * This class is mainly for creating zip data on the fly.
  * For zipping the contents of a directory, use {@link IoUtil#zip(Path, Path)} instead.
  */
+@SuppressWarnings("MagicCharacter")
 public class Zip implements AutoCloseable, Flushable {
 
     private final ZipOutputStream zout;

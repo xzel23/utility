@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 /**
  * A JavaFX component where items can be pinned at a position.
  */
+@SuppressWarnings("MagicCharacter")
 public class PinBoard extends Control {
 
     final ObservableList<Item> items = FXCollections.observableArrayList();

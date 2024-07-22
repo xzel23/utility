@@ -49,6 +49,7 @@ import java.util.stream.StreamSupport;
 /**
  * Database utility class.
  */
+@SuppressWarnings("MagicCharacter")
 public final class DbUtil {
     /**
      * Logger instance.

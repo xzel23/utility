@@ -25,6 +25,7 @@ import org.apache.logging.log4j.spi.StandardLevel;
  *     based on SLF4J (i. e., SimpleLogger, Logback).
  * </ul>
  */
+@SuppressWarnings("MagicCharacter")
 public final class LogUtilLog4J {
     // NOTE: do not use logging in this class as it interferes with LogManager creation!
 

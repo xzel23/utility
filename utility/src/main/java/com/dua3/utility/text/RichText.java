@@ -28,6 +28,7 @@ import java.util.stream.StreamSupport;
  * Sequences of characters that share the same formatting attributes form a
  * {@link Run}.
  */
+@SuppressWarnings("MagicCharacter")
 public final class RichText
         implements Iterable<Run>, AttributedCharSequence, ToRichText {
 
@@ -649,6 +650,7 @@ public final class RichText
     }
 
     private static boolean isSimpleWhitespace(char ch) {
+        //noinspection CharacterComparison
         return ch <= ' ';
     }
 
@@ -734,6 +736,7 @@ public final class RichText
          *     the second is not the ascii digit or ascii letter.
          */
         char ch;
+        //noinspection CharacterComparison
         if (((regex.length() == 1 &&
                 ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
                 (regex.length() == 2 &&
@@ -741,8 +744,7 @@ public final class RichText
                         (((ch = regex.charAt(1)) - '0') | ('9' - ch)) < 0 &&
                         ((ch - 'a') | ('z' - ch)) < 0 &&
                         ((ch - 'A') | ('Z' - ch)) < 0)) &&
-                (ch < Character.MIN_HIGH_SURROGATE ||
-                        ch > Character.MAX_LOW_SURROGATE)) {
+                (ch < Character.MIN_HIGH_SURROGATE || ch > Character.MAX_LOW_SURROGATE)) {
             int off = 0;
             int next;
             boolean limited = limit > 0;

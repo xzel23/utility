@@ -53,6 +53,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * Utility class for Input/Output.
  */
+@SuppressWarnings("MagicCharacter")
 public final class IoUtil {
 
     private static final Logger LOG = LogManager.getLogger(IoUtil.class);
@@ -810,6 +811,7 @@ public final class IoUtil {
     /**
      * Combine two {@link OutputStream} instances into a single stream.
      */
+    @SuppressWarnings("MagicCharacter")
     private static class Combiner implements AutoCloseable {
 
         public final byte[] prefixA;

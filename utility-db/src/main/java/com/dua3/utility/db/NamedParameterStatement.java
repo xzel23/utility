@@ -85,6 +85,7 @@ import java.util.TimeZone;
  * @author adam_crume
  * @author Axel Howind
  */
+@SuppressWarnings("MagicCharacter")
 public class NamedParameterStatement implements AutoCloseable {
     /**
      * Logger instance.

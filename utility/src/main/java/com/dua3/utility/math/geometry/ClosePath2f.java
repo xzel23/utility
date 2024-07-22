@@ -47,6 +47,7 @@ public class ClosePath2f extends Segment2f {
         return vertex(q);
     }
 
+    @SuppressWarnings("MagicCharacter")
     @Override
     public String toString() {
         return "ClosePath2f{" +

@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 /**
  * An OutputStream implementation that splits the input into lines and passes these on to a processor.
  */
+@SuppressWarnings("MagicCharacter")
 public class LineOutputStream extends OutputStream {
     /**
      * The initial size of the buffer.

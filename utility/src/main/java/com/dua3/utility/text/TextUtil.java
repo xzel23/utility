@@ -91,6 +91,7 @@ public final class TextUtil {
      * @param c   the character
      * @throws IOException if an exception occurs
      */
+    @SuppressWarnings("MagicCharacter")
     public static void appendHtmlEscapedCharacter(Appendable app, char c) throws IOException {
         switch (c) {
             case '\0' -> app.append("&#0;");

@@ -5,6 +5,7 @@ package com.dua3.utility.math.geometry;
  * <p>
  * <strong>NOTE: </strong> Only valid at start of path.
  */
+@SuppressWarnings("MagicCharacter")
 public class MoveTo2f extends Segment2f {
 
     /**

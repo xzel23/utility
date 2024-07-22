@@ -46,6 +46,7 @@ public class SharableString implements CharSequence {
             return true;
         }
         if (obj instanceof SharableString anotherString) {
+            //noinspection CallToSuspiciousStringMethod
             return base.equals(anotherString.base);
         }
         return false;

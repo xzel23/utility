@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * A mutable class holding font attributes to help create immutable font
  * instances.
  */
-@SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode"})
+@SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode", "MagicCharacter"})
 public final class FontDef implements Cloneable {
 
     private static final Logger LOG = LogManager.getLogger(FontDef.class);

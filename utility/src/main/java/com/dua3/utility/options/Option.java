@@ -15,6 +15,7 @@ import java.util.function.Function;
  *
  * @param <T> the type of option values
  */
+@SuppressWarnings("MagicCharacter")
 public abstract class Option<T> {
     private final Function<String, ? extends T> mapper;
     private final Function<? super T, String> formatter;

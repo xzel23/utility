@@ -17,6 +17,7 @@ import java.util.function.Function;
 /**
  * Generic font class.
  */
+@SuppressWarnings("MagicCharacter")
 public class Font {
 
     private final Color color;
