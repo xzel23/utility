@@ -101,11 +101,22 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         return entry;
     }
 
+    /**
+     * Validates a variable number of options.
+     *
+     * @param allOptions the options to be validated
+     * @param <T>        the type of the option
+     */
     @SafeVarargs
     public final <T extends Option<?>> void validate(T... allOptions) {
         validate(List.of(allOptions));
     }
 
+    /**
+     * Validates a collection of options.
+     *
+     * @param allOptions the options to be validated
+     */
     public void validate(
             Collection<? extends Option<?>> allOptions
     ) {
