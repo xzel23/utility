@@ -9,9 +9,10 @@ Some libraries with utility classes.
 |-----------------|-----------------------------------------------------|--------------------------|
 | utility         | general purpose utilities                           | com.dua3.utility         |
 | utility-db      | database utilities                                  | com.dua3.utility.db      |
-| utility-swing   | swing utilities                                     | com.dua3.utility.swing   |
 | utility-fx      | JavaFX utilities                                    | com.dua3.utility.fx      |
 | utility-logging | logging utilities and simple logging implementation | com.dua3.utility.logging |
+| utility-samples | samples                                             | com.dua3.utility.samples |
+| utility-swing   | swing utilities                                     | com.dua3.utility.swing   |
 
 ## License
 
