@@ -1050,4 +1050,17 @@ public final class TextUtil {
             throw new UncheckedIOException("should not happen!", e);
         }
     }
+
+    /**
+     * Returns a string representation of the specified object.
+     * If the provided object is not null, return {@code obj.toString()}.
+     * If the provided object is {@code null}, return the specified value instead.
+     *
+     * @param obj The object to convert to string representation. Can be null.
+     * @param valueIfNull The string value to return if the object is null.
+     * @return A string representation of the specified object, or the specified value if the object is null.
+     */
+    public static String toString(@Nullable Object obj, String valueIfNull) {
+        return obj != null ? obj.toString() : valueIfNull;
+    }
 }

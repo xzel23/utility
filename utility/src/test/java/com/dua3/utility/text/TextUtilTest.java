@@ -284,4 +284,33 @@ public class TextUtilTest {
         assertTrue(textDimensionHiJohn.width() < richTextDimensionHiBoldJohn.width());
     }
 
+    @Test
+    void testToStringWithNonNullObject() {
+        String result = TextUtil.toString(123, "default");
+        assertEquals("123", result, "Expected toString() of 123 to be '123'");
+    }
+
+    @Test
+    void testToStringWithNullObject() {
+        String result = TextUtil.toString(null, "default");
+        assertEquals("default", result, "Expected toString() of null to be 'default'");
+    }
+
+    @Test
+    void testToStringWithCustomObject() {
+        Object obj = new Object() {
+            @Override
+            public String toString() {
+                return "CustomObject";
+            }
+        };
+        String result = TextUtil.toString(obj, "default");
+        assertEquals("CustomObject", result, "Expected toString() of custom object to be 'CustomObject'");
+    }
+
+    @Test
+    void testToStringWithEmptyValueIfNull() {
+        String result = TextUtil.toString(null, "");
+        assertEquals("", result, "Expected toString() of null to be an empty string");
+    }
 }

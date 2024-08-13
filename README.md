@@ -172,6 +172,10 @@ the parameter.
 
 ## Changes
 
+### 13.0.1
+
+- TextUtil.toString(Object obj, String valueIfNull)
+
 ### 13
 
 - new utility-fx modules with JavaFX related classes and components
