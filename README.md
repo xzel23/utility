@@ -181,7 +181,7 @@ the parameter.
 - new utility-fx modules with JavaFX related classes and components
 - StreamUtil.zip() has been changed to take an operation as third parameter that defines the combining operation
 - StreamUtil.concat() did not close streams
-- SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtilas as they are usable also in non-Swing 
+- SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtil as as they are usable also in non-Swing 
   applications
 - Color methods have been renamed to reduce ambiguity
 - SwingUtil.getDisplayScale() to retrieve the actual scaling factor for the display (taking into account UHD and retina displays)
