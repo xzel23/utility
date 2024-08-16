@@ -175,6 +175,7 @@ the parameter.
 ### 13.0.1
 
 - TextUtil.toString(Object obj, String valueIfNull)
+- use HexFormat for converting Color instances to hex format
 
 ### 13
 

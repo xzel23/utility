@@ -1,6 +1,7 @@
 package com.dua3.utility.data;
 
 import java.util.Collections;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -608,6 +609,8 @@ public interface Color {
      */
     Color TRANSPARENT_BLACK = register("TRANSPARENT_WHITE", 0x00000000);
 
+    HexFormat HEX_FORMAT = HexFormat.of();
+
     /**
      * Get a mapping from color name to Color instance.
      *
@@ -825,7 +828,7 @@ public interface Color {
      * @return hex-string
      */
     default String toArgb() {
-        return String.format(Locale.ROOT, "#%08x", argb());
+        return "#" + HEX_FORMAT.toHexDigits(argb());
     }
 
     /**
@@ -834,7 +837,7 @@ public interface Color {
      * @return hex-string
      */
     default String toRgba() {
-        return String.format(Locale.ROOT, "#%08x", rgba());
+        return "#" + HEX_FORMAT.toHexDigits(rgba());
     }
 
     /**
@@ -867,7 +870,7 @@ public interface Color {
         if (!isOpaque()) {
             return toRgba();
         } else {
-            return String.format(Locale.ROOT, "#%06x", argb() & 0x00ffffff);
+            return "#" + HEX_FORMAT.toHexDigits(rgba()).substring(0, 6);
         }
     }
 
