@@ -41,7 +41,7 @@ dependencyResolutionManagement {
 
             version("cabe-annotations", "2.0")
             version("log4j", "2.23.1")
-            version("slf4j", "2.0.13")
+            version("slf4j", "2.0.16")
             version("ikonli", "12.3.1")
             version("jimfs", "1.3.0")
             version("miglayout", "11.4")
