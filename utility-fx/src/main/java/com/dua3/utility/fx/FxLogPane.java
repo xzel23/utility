@@ -63,7 +63,7 @@ public class FxLogPane extends BorderPane {
             column.setPrefWidth(COLUMN_WIDTH_LARGE);
             column.setMaxWidth(COLUMN_WIDTH_MAX);
         }else {
-            double w = 8 + Stream.of(sampleTexts).mapToDouble(FxLogPane::getDisplayWidth).max().orElse(80);
+            double w = 8 + Stream.of(sampleTexts).mapToDouble(FxLogPane::getDisplayWidth).max().orElse(200);
             column.setPrefWidth(w);
             if (fixedWidth) {
                 column.setMinWidth(w);
@@ -120,28 +120,41 @@ public class FxLogPane extends BorderPane {
 
         double tfWidth = getDisplayWidth("X".repeat(32));
 
-        // filtering by log level and logger name
+        // filtering by log level, logger name, and message content
         ComboBox<LogLevel> cbLogLevel = new ComboBox<>(FXCollections.observableArrayList(LogLevel.values()));
         TextField tfLoggerName = new TextField();
         tfLoggerName.setPrefWidth(tfWidth);
+        TextField tfMessageContent = new TextField();
+        tfMessageContent.setPrefWidth(tfWidth);
 
         Runnable updateFilter = () -> {
             LogLevel level = cbLogLevel.getSelectionModel().getSelectedItem();
-            BiPredicate<String, LogLevel> predicate;
-            String loggerText = tfLoggerName.getText().toLowerCase(Locale.ROOT);
+
+            BiPredicate<String, LogLevel> predicateLoggerName;
+            String loggerText = tfLoggerName.getText().toLowerCase(Locale.ROOT).strip();
             if (loggerText.isEmpty()) {
-                predicate = (String name, LogLevel lvl) -> true;
+                predicateLoggerName = (String name, LogLevel lvl) -> true;
             } else {
-                predicate = (name, lvl) -> name.toLowerCase(Locale.ROOT).contains(loggerText);
+                predicateLoggerName = (name, lvl) -> name.toLowerCase(Locale.ROOT).contains(loggerText);
             }
-            entries.setPredicate(new DefaultLogEntryFilter(level, predicate));
+
+            BiPredicate<String, LogLevel> predicateContent;
+            String messageContent = tfMessageContent.getText();
+            if (messageContent.isEmpty()) {
+                predicateContent = (String text, LogLevel lvl) -> true;
+            } else {
+                predicateContent = (text, lvl) -> text.contains(messageContent);
+            }
+            entries.setPredicate(new DefaultLogEntryFilter(level, predicateLoggerName, predicateContent));
         };
 
         cbLogLevel.valueProperty().addListener((v,o,n) -> updateFilter.run());
         tfLoggerName.textProperty().addListener((v,o,n) -> updateFilter.run());
+        tfMessageContent.textProperty().addListener((v,o,n) -> updateFilter.run());
 
         cbLogLevel.setValue(LogLevel.INFO);
         tfLoggerName.clear();
+        tfMessageContent.clear();
 
         // search for text
         TextField tfSearchText = new TextField();
@@ -188,8 +201,10 @@ public class FxLogPane extends BorderPane {
                 cbLogLevel,
                 new Label("Logger:"),
                 tfLoggerName,
+                new Label("Text:"),
+                tfMessageContent,
                 new Separator(Orientation.HORIZONTAL),
-                new Label("Search by Message:"),
+                new Label("Search:"),
                 tfSearchText,
                 btnSearchUp,
                 btnSearchDown,

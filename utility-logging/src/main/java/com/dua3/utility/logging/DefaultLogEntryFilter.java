@@ -15,25 +15,28 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
     private final ConcurrentHashMap<String, Boolean> knownLoggers = new ConcurrentHashMap<>();
 
     private volatile LogLevel level;
-    private volatile BiPredicate<String, LogLevel> filter;
+    private volatile BiPredicate<String, LogLevel> filterLoggerName;
+    private volatile BiPredicate<String, LogLevel> filterText;
 
     /**
-     * Constructs a new DefaultLogEntryFilter with {@link LogLevel#TRACE} as the default log level and a filter that
-     * lets all log entries pass.
+     * Constructs a new DefaultLogEntryFilter with {@link LogLevel#TRACE} as the default log level and a looger name and
+     * message filters that let all log entries pass.
      */
     public DefaultLogEntryFilter() {
-        this(LogLevel.TRACE, (name, level) -> true);
+        this(LogLevel.TRACE, (name, level) -> true, (text, level) -> true);
     }
 
     /**
      * Constructs a new DefaultLogEntryFilter with the specified log level and filter.
      *
      * @param level  the log level to set
-     * @param filter the filter to set
+     * @param filterLoggerName the filter to set for the logger name
+     * @param filterLoggerName the filter to set for the message content
      */
-    public DefaultLogEntryFilter(LogLevel level, BiPredicate<String, LogLevel> filter) {
+    public DefaultLogEntryFilter(LogLevel level, BiPredicate<String, LogLevel> filterLoggerName, BiPredicate<String, LogLevel> filterText) {
         this.level = level;
-        this.filter = filter;
+        this.filterLoggerName = filterLoggerName;
+        this.filterText = filterText;
     }
 
     /**
@@ -55,28 +58,52 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
     }
 
     /**
-     * Sets the filter of the DefaultLogEntryFilter.
+     * Sets the logger name filter of the DefaultLogEntryFilter.
      *
      * @param filter A {@link BiPredicate} that takes a logger name and a log level as input and returns a boolean
      *              indicating whether the log entry should be filtered or not.
      *              The first argument is the logger name, and the second argument is the log level.
      *              Returns true if the log entry should be included, false otherwise.
      */
-    public void setFilter(BiPredicate<String, LogLevel> filter) {
-        if (this.filter != filter) {
-            this.filter = filter;
+    public void setFilterLoggerName(BiPredicate<String, LogLevel> filter) {
+        if (this.filterLoggerName != filter) {
+            this.filterLoggerName = filter;
             knownLoggers.clear();
         }
     }
 
     /**
-     * Retrieves the filter used to determine if a log entry should be included or excluded.
+     * Retrieves the filter used to determine if a log entry should be included or excluded based on the logger name.
      *
-     * @return The filter used to determine if a log entry should be included or excluded.
-     * @see #setFilter(BiPredicate)
+     * @return The filter used to determine if a log entry should be included or excluded based on the logger name.
+     * @see #setFilterLoggerName(BiPredicate)
      */
-    public BiPredicate<String, LogLevel> getFilter() {
-        return filter;
+    public BiPredicate<String, LogLevel> getFilterLoggerName() {
+        return filterLoggerName;
+    }
+
+    /**
+     * Sets the message filter of the DefaultLogEntryFilter.
+     *
+     * @param filter A {@link BiPredicate} that takes a log message and a log level as input and returns a boolean
+     *              indicating whether the log entry should be filtered or not.
+     *              The first argument is the message text, and the second argument is the log level.
+     *              Returns true if the log entry should be included, false otherwise.
+     */
+    public void setFilterText(BiPredicate<String, LogLevel> filter) {
+        if (this.filterText != filter) {
+            this.filterText = filter;
+        }
+    }
+
+    /**
+     * Retrieves the filter used to determine if a log entry should be included or excluded based on the logger name.
+     *
+     * @return The filter used to determine if a log entry should be included or excluded based on the logger name.
+     * @see #setFilterLoggerName(BiPredicate)
+     */
+    public BiPredicate<String, LogLevel> getFilterText() {
+        return filterText;
     }
 
     @Override
@@ -84,7 +111,13 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
         if (logEntry.level().ordinal() < level.ordinal()) {
             return false;
         }
-        return knownLoggers.computeIfAbsent(logEntry.loggerName(), loggerName -> filter.test(logEntry.loggerName(), logEntry.level()));
+
+        boolean isLoggerShown = knownLoggers.computeIfAbsent(logEntry.loggerName(), loggerName -> filterLoggerName.test(logEntry.loggerName(), logEntry.level()));
+        if (!isLoggerShown) {
+            return false;
+        }
+
+        return filterText.test(logEntry.message(), logEntry.level());
     }
 
     /**
@@ -93,7 +126,7 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
      * @return A new {code DefaultLogEntryFilter} instance with the same log level and filter.
      */
     public DefaultLogEntryFilter copy() {
-        return new DefaultLogEntryFilter(getLevel(), getFilter());
+        return new DefaultLogEntryFilter(getLevel(), getFilterLoggerName(), getFilterText());
     }
 
     /**
@@ -103,16 +136,26 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
      * @return a new {code DefaultLogEntryFilter} instance with the specified log level
      */
     public DefaultLogEntryFilter withLevel(LogLevel newLevel) {
-        return new DefaultLogEntryFilter(newLevel, getFilter());
+        return new DefaultLogEntryFilter(newLevel, getFilterLoggerName(), getFilterText());
     }
 
     /**
-     * Returns a new {code DefaultLogEntryFilter} with the same log level and the specified filter.
+     * Returns a new {code DefaultLogEntryFilter} with the same log level and the specified logger name filter.
      *
      * @param newFilter the new filter to set
      * @return a new instance of {code DefaultLogEntryFilter} with the specified filter
      */
-    public DefaultLogEntryFilter withFilter(BiPredicate<String, LogLevel> newFilter) {
-        return new DefaultLogEntryFilter(getLevel(), newFilter);
+    public DefaultLogEntryFilter withFilterLoggerName(BiPredicate<String, LogLevel> newFilter) {
+        return new DefaultLogEntryFilter(getLevel(), newFilter, getFilterText());
+    }
+
+    /**
+     * Returns a new {code DefaultLogEntryFilter} with the same log level and the specified message filter.
+     *
+     * @param newFilter the new filter to set
+     * @return a new instance of {code DefaultLogEntryFilter} with the specified filter
+     */
+    public DefaultLogEntryFilter withFilterText(BiPredicate<String, LogLevel> newFilter) {
+        return new DefaultLogEntryFilter(getLevel(), getFilterLoggerName(), newFilter);
     }
 }

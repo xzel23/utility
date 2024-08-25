@@ -176,6 +176,7 @@ the parameter.
 
 - TextUtil.toString(Object obj, String valueIfNull)
 - use HexFormat for converting Color instances to hex format
+- add Text Filter to FxLogPane
 
 ### 13
 

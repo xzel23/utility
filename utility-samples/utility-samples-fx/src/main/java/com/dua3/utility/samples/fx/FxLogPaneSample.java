@@ -41,7 +41,7 @@ public class FxLogPaneSample extends Application {
     public void start(Stage primaryStage) {
         FxLogPane logPane = new FxLogPane(LOG_BUFFER_SIZE);
 
-        Scene scene = new Scene(logPane, 1000, 600);
+        Scene scene = new Scene(logPane, 1200, 600);
 
         primaryStage.setTitle(getClass().getSimpleName());
         primaryStage.setScene(scene);
