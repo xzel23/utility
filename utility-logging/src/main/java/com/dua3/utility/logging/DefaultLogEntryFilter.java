@@ -31,7 +31,7 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
      *
      * @param level  the log level to set
      * @param filterLoggerName the filter to set for the logger name
-     * @param filterLoggerName the filter to set for the message content
+     * @param filterText the filter to set for the message content
      */
     public DefaultLogEntryFilter(LogLevel level, BiPredicate<String, LogLevel> filterLoggerName, BiPredicate<String, LogLevel> filterText) {
         this.level = level;
@@ -58,16 +58,16 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
     }
 
     /**
-     * Sets the logger name filter of the DefaultLogEntryFilter.
+     * Sets the logger name filterLoggerName of the DefaultLogEntryFilter.
      *
-     * @param filter A {@link BiPredicate} that takes a logger name and a log level as input and returns a boolean
+     * @param filterLoggerName A {@link BiPredicate} that takes a logger name and a log level as input and returns a boolean
      *              indicating whether the log entry should be filtered or not.
      *              The first argument is the logger name, and the second argument is the log level.
      *              Returns true if the log entry should be included, false otherwise.
      */
-    public void setFilterLoggerName(BiPredicate<String, LogLevel> filter) {
-        if (this.filterLoggerName != filter) {
-            this.filterLoggerName = filter;
+    public void setFilterLoggerName(BiPredicate<String, LogLevel> filterLoggerName) {
+        if (this.filterLoggerName != filterLoggerName) {
+            this.filterLoggerName = filterLoggerName;
             knownLoggers.clear();
         }
     }
@@ -83,16 +83,16 @@ public class DefaultLogEntryFilter implements LogEntryFilter {
     }
 
     /**
-     * Sets the message filter of the DefaultLogEntryFilter.
+     * Sets the message filterText of the DefaultLogEntryFilter.
      *
-     * @param filter A {@link BiPredicate} that takes a log message and a log level as input and returns a boolean
+     * @param filterText A {@link BiPredicate} that takes a log message and a log level as input and returns a boolean
      *              indicating whether the log entry should be filtered or not.
      *              The first argument is the message text, and the second argument is the log level.
      *              Returns true if the log entry should be included, false otherwise.
      */
-    public void setFilterText(BiPredicate<String, LogLevel> filter) {
-        if (this.filterText != filter) {
-            this.filterText = filter;
+    public void setFilterText(BiPredicate<String, LogLevel> filterText) {
+        if (this.filterText != filterText) {
+            this.filterText = filterText;
         }
     }
 

@@ -44,10 +44,10 @@ import java.util.stream.Stream;
 
 public class FxLogPane extends BorderPane {
 
-    public static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;
-    public static final double COLUMN_WIDTH_LARGE = 10000.0;
+    private static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;
+    private static final double COLUMN_WIDTH_LARGE = 10000.0;
     private final LogBuffer logBuffer;
-    private final Function<? super LogEntry, Color> colorize;
+    private final Function<? super LogEntry, ? extends Color> colorize;
     private final ToolBar toolBar;
     private final TextArea details;
     private final TableView<LogEntry> tableView;
@@ -95,18 +95,39 @@ public class FxLogPane extends BorderPane {
         return new Text(s).getLayoutBounds().getWidth();
     }
 
+    /**
+     * Construct a new FxLogPane instance with default buffer capacity.
+     */
     public FxLogPane() {
         this(LogBuffer.DEFAULT_CAPACITY);
     }
 
+    /**
+     * Construct a new FxLogPane instance with the given buffer capacity.
+     *
+     * @param bufferSize the buffer size
+     */
     public FxLogPane(int bufferSize) {
         this(createBuffer(bufferSize));
     }
 
+    /**
+     * Construct a new FxLogPane instance with the given buffer.
+     *
+     * @param logBuffer the logBuffer to use
+     * @throws NullPointerException if logBuffer is null
+     */
     public FxLogPane(LogBuffer logBuffer) {
         this(logBuffer, FxLogPane::defaultColorize);
     }
 
+    /**
+     * Constructs a new FxLogPane instance with the given LogBuffer and colorize function.
+     *
+     * @param logBuffer the LogBuffer to use for storing log entries
+     * @param colorize  the function used to determine the color of log entries
+     * @throws NullPointerException if logBuffer or colorize is null
+     */
     public FxLogPane(LogBuffer logBuffer, Function<? super LogEntry, Color> colorize) {
         FilteredList<LogEntry> entries = new FilteredList<>(new LogEntriesObservableList(logBuffer), p -> true);
 
