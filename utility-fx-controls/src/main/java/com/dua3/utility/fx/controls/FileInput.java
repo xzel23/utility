@@ -48,15 +48,11 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
         }
     }
 
-    private final TextField tfFilename;
-    private final Button button;
-
     private final ObjectProperty<Path> value = new SimpleObjectProperty<>();
 
     private final FileDialogMode mode;
     private final FileChooser.ExtensionFilter[] filters;
     private final Supplier<Path> dflt;
-    private final boolean existingOnly;
 
     private final StringProperty error = new SimpleStringProperty("");
     private final BooleanProperty valid = new SimpleBooleanProperty(true);
@@ -72,12 +68,11 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
         getStyleClass().setAll("file-input");
 
         this.mode = mode;
-        this.existingOnly = existingOnly;
         this.filters = filters.toArray(FileChooser.ExtensionFilter[]::new);
         this.dflt = dflt;
 
-        this.tfFilename = new TextField();
-        this.button = new Button("…");
+        TextField tfFilename = new TextField();
+        Button button = new Button("…");
 
         HBox.setHgrow(tfFilename, Priority.ALWAYS);
 

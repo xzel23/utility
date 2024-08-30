@@ -1668,6 +1668,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static int requireInInterval(int value, int min, int max, String fmt, Object... args) {
+        //noinspection RedundantCast
         return (int) requireInInterval((long) value, (long) min, (long) max, fmt, args);
     }
 
@@ -1681,6 +1682,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static short requireInInterval(short value, short min, short max) {
+        //noinspection RedundantCast
         return (short) requireInInterval((long) value, (long) min, (long) max);
     }
 
@@ -1697,6 +1699,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static short requireInInterval(short value, short min, short max, String fmt, Object... args) {
+        //noinspection RedundantCast
         return (short) requireInInterval((long) value, (long) min, (long) max, fmt, args);
     }
 }
