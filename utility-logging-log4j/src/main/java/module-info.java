@@ -18,5 +18,4 @@ open module com.dua3.utility.logging.log4j {
 
     requires com.dua3.utility.logging;
     requires static org.apache.logging.log4j.core;
-    requires com.dua3.utility;
 }
