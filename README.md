@@ -172,6 +172,10 @@ the parameter.
 
 ## Changes
 
+### 13.0.2
+
+- add overload of DataUtil.diff() that takes a map factory
+
 ### 13.0.1
 
 - TextUtil.toString(Object obj, String valueIfNull)
