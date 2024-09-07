@@ -540,10 +540,26 @@ public final class DataUtil {
      * @return a new map that contains the changed mappings (k -> mapped value in b)
      */
     public static <U, V> Map<U, V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
+        return diff(a, b, HashMap::new);
+    }
+
+    /**
+     * Compute the difference of mappings between two maps. The result is a map obtained by calling
+     * {@code mapFactory.get()} that maps keys to the new values for all changed keys.
+     * See also{@link #changes(Map, Map)}.
+     *
+     * @param a   the first map
+     * @param b   the second map
+     * @param mapFactory the Map factory
+     * @param <U> the key type
+     * @param <V> the value type
+     * @return a new map that contains the changed mappings (k -> mapped value in b)
+     */
+    public static <U, V> Map<U, V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b, Supplier<? extends Map<U,V>> mapFactory) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
 
-        Map<U, V> diff = new HashMap<>();
+        Map<U, V> diff = mapFactory.get();
         keys.forEach(k -> {
             V va = a.get(k);
             V vb = b.get(k);
