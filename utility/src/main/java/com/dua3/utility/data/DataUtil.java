@@ -474,9 +474,8 @@ public final class DataUtil {
      * @param <T>      the element type
      * @return array of elements
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] collectArray(Iterable<T> iterable) {
-        return (T[]) collect(iterable.iterator()).toArray();
+        return collect(iterable.iterator()).toArray(genericArray());
     }
 
     /**
@@ -486,9 +485,19 @@ public final class DataUtil {
      * @param iterator the iterator
      * @return array of elements
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] collectArray(Iterator<T> iterator) {
-        return (T[]) collect(iterator).toArray();
+        return collect(iterator).toArray(genericArray());
+    }
+
+    /**
+     * Create a generic array of the arguments.
+     * @param args the arguments
+     * @return generic arry containing the arguments
+     * @param <T> the generic array type
+     */
+    @SafeVarargs
+    private static <T> T[] genericArray(T... args) {
+        return args;
     }
 
     /**

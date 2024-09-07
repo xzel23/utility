@@ -125,7 +125,12 @@ class DataUtilTest {
     }
 
     @Test
-    void testCollectArray() {
+    void testCollectArray_Iterable() {
+        assertArrayEquals(new Integer[]{1, 2, 3}, DataUtil.collectArray(List.of(1, 2, 3)));
+    }
+
+    @Test
+    void testCollectArray_Iterator() {
         assertArrayEquals(new Integer[]{1, 2, 3}, DataUtil.collectArray(List.of(1, 2, 3).iterator()));
     }
 }
