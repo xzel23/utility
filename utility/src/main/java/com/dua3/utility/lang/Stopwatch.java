@@ -343,17 +343,7 @@ public class Stopwatch {
         }
     }
 
-    private static class ToStringProxy {
-        private final Format fmt;
-        private final Instant startOfSplit;
-        private final Instant instant;
-
-        public ToStringProxy(Format fmt, Instant startOfSplit, Instant instant) {
-            this.fmt = fmt;
-            this.startOfSplit = startOfSplit;
-            this.instant = instant;
-        }
-
+    private record ToStringProxy(Format fmt, Instant startOfSplit, Instant instant) {
         @Override
         public String toString() {
             return fmt.format(Duration.between(startOfSplit, instant));
