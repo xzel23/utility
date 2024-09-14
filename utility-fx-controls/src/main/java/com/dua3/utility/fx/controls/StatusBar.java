@@ -85,17 +85,13 @@ public class StatusBar extends CustomControl<HBox> implements FxTaskTracker {
                     progressBar.setProgress(1.0);
                     progressBar.setVisible(false);
                 }
-                case READY -> {
+                case READY, CANCELLED, FAILED -> {
                     progressBar.setProgress(0.0);
                     progressBar.setVisible(false);
                 }
                 case SCHEDULED -> {
                     progressBar.setProgress(0.0);
                     progressBar.setVisible(true);
-                }
-                case CANCELLED, FAILED -> {
-                    progressBar.setProgress(0.0);
-                    progressBar.setVisible(false);
                 }
                 default -> LOG.warn("StatusBar.updateTaskState() - unexpected state: {}", state);
             }
