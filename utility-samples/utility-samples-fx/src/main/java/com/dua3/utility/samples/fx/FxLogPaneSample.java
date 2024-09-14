@@ -50,6 +50,7 @@ public class FxLogPaneSample extends Application {
         startLoggingThreads();
     }
 
+    @SuppressWarnings("BusyWait")
     private void startLoggingThreads() {
         // start threads
         final int numberOfImplementations = 4;
