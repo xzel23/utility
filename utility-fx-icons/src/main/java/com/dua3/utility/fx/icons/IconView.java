@@ -9,7 +9,6 @@ import javafx.css.StyleableStringProperty;
 import javafx.css.converter.PaintConverter;
 import javafx.css.converter.SizeConverter;
 import javafx.css.converter.StringConverter;
-import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.control.SkinBase;
@@ -235,7 +234,7 @@ public class IconView extends Control {
                         return iv.iconColor;
                     }
                 };
-        public static final List<CssMetaData<? extends Styleable, ?>> STYLEABLES;
+        public static final List<CssMetaData<? extends Styleable, ?>> STYLEABLES = List.of(ICON_SIZE, ICON_COLOR);
         private static final CssMetaData<IconView, String> ICON_IDENTIFIER =
                 new CssMetaData<>("-fx-icon-identifier",
                         StringConverter.getInstance(), "") {
@@ -250,14 +249,6 @@ public class IconView extends Control {
                         return iv.iconIdentifier;
                     }
                 };
-
-        static {
-            final List<CssMetaData<? extends Styleable, ?>> styleables =
-                    new ArrayList<>(Node.getClassCssMetaData());
-            styleables.add(ICON_SIZE);
-            styleables.add(ICON_COLOR);
-            STYLEABLES = Collections.unmodifiableList(styleables);
-        }
     }
 
     private static class IconViewSkin extends SkinBase<IconView> {
