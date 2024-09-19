@@ -1023,7 +1023,23 @@ public final class IoUtil {
      * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
      */
     public static Path createSecureTempDirectory(String prefix) throws IOException {
-        return createSecureTempDirectory(null, prefix);
+        Path tempDir;
+        switch (Platform.currentPlatform()) {
+            case LINUX, MACOS -> {
+                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+                tempDir = Files.createTempDirectory(prefix, attr);
+            }
+            default -> {
+                tempDir = Files.createTempDirectory(prefix);
+                File asFile = tempDir.toFile();
+                boolean isReadable = asFile.setReadable(true, true);
+                boolean isWriteable = asFile.setWritable(true, true);
+                boolean isExecutable = asFile.setExecutable(true, true);
+                LangUtil.check(isReadable && isWriteable && isExecutable, () -> new IOException("could not set file permissons on temp directory"));
+            }
+        }
+        LOG.trace("created temp directory {}", tempDir);
+        return tempDir;
     }
 
     /**
@@ -1034,7 +1050,7 @@ public final class IoUtil {
      * @return the path to the created temporary directory.
      * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
      */
-    public static Path createSecureTempDirectory(@Nullable Path dir, String prefix) throws IOException {
+    public static Path createSecureTempDirectory(Path dir, String prefix) throws IOException {
         Path tempDir;
         switch (Platform.currentPlatform()) {
             case LINUX, MACOS -> {
@@ -1062,7 +1078,9 @@ public final class IoUtil {
      * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
      */
     public static Path createSecureTempDirectoryAndDeleteOnExit(String prefix) throws IOException {
-        return createSecureTempDirectoryAndDeleteOnExit(null, prefix);
+        Path tempDir = createSecureTempDirectory(prefix);
+        deleteRecursiveOnExit(tempDir);
+        return tempDir;
     }
 
     /**
@@ -1073,15 +1091,24 @@ public final class IoUtil {
      * @return the path to the newly created temporary directory
      * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
      */
-    public static Path createSecureTempDirectoryAndDeleteOnExit(@Nullable Path dir, String prefix) throws IOException {
+    public static Path createSecureTempDirectoryAndDeleteOnExit(Path dir, String prefix) throws IOException {
         Path tempDir = createSecureTempDirectory(dir, prefix);
+        deleteRecursiveOnExit(tempDir);
+        return tempDir;
+    }
+
+    /**
+     * Schedules the deletion of the specified directory and its contents when the JVM exits.
+     *
+     * @param dir the path of the directory to be deleted recursively on JVM exit
+     */
+    private static void deleteRecursiveOnExit(Path dir) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                deleteRecursive(tempDir);
+                deleteRecursive(dir);
             } catch (IOException e) {
-                LOG.warn("could not delete temp directory {}", tempDir);
+                LOG.warn("could not delete temp directory {}", dir);
             }
         }));
-        return tempDir;
     }
 }
