@@ -1102,7 +1102,7 @@ public final class IoUtil {
      *
      * @param dir the path of the directory to be deleted recursively on JVM exit
      */
-    private static void deleteRecursiveOnExit(Path dir) {
+    public static void deleteRecursiveOnExit(Path dir) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 deleteRecursive(dir);
