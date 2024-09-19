@@ -8,6 +8,7 @@ package com.dua3.utility.io;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FilePermission;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -36,6 +38,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1009,5 +1014,74 @@ public final class IoUtil {
             return stream.toList();
         }
     }
-}
 
+    /**
+     * Creates a secure temporary directory with the given prefix.
+     *
+     * @param prefix the prefix for the name of the temporary directory
+     * @return the path to the newly created temporary directory
+     * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
+     */
+    public static Path createSecureTempDirectory(String prefix) throws IOException {
+        return createSecureTempDirectory(null, prefix);
+    }
+
+    /**
+     * Creates a secure temporary directory with specified permissions depending on the operating system.
+     *
+     * @param dir the path to the parent directory, may be {@code null} in which case the default temporary-file directory is used.
+     * @param prefix the prefix string to be used in generating the directory's name; may be a {@code null} string.
+     * @return the path to the created temporary directory.
+     * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
+     */
+    public static Path createSecureTempDirectory(@Nullable Path dir, String prefix) throws IOException {
+        Path tempDir;
+        switch (Platform.currentPlatform()) {
+            case LINUX, MACOS -> {
+                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+                tempDir = Files.createTempDirectory(dir, prefix, attr);
+            }
+            default -> {
+                tempDir = Files.createTempDirectory(dir, prefix);
+                File asFile = tempDir.toFile();
+                boolean isReadable = asFile.setReadable(true, true);
+                boolean isWriteable = asFile.setWritable(true, true);
+                boolean isExecutable = asFile.setExecutable(true, true);
+                LangUtil.check(isReadable && isWriteable && isExecutable, () -> new IOException("could not set file permissons on temp directory"));
+            }
+        }
+        LOG.trace("created temp directory {}", tempDir);
+        return tempDir;
+    }
+
+    /**
+     * Creates a secure temporary directory and schedules it for deletion upon JVM exit.
+     *
+     * @param prefix the prefix string to be used in generating the directory's name; may be null
+     * @return the path to the newly created temporary directory
+     * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
+     */
+    public static Path createSecureTempDirectoryAndDeleteOnExit(String prefix) throws IOException {
+        return createSecureTempDirectoryAndDeleteOnExit(null, prefix);
+    }
+
+    /**
+     * Creates a secure temporary directory and schedules it for deletion upon JVM exit.
+     *
+     * @param dir the parent directory in which the temporary directory is to be created, or null for the system default temporary directory
+     * @param prefix the prefix string to be used in generating the directory's name; may be null
+     * @return the path to the newly created temporary directory
+     * @throws IOException if an I/O error occurs, the temporary directory cannot be created or the permissions set.
+     */
+    public static Path createSecureTempDirectoryAndDeleteOnExit(@Nullable Path dir, String prefix) throws IOException {
+        Path tempDir = createSecureTempDirectory(dir, prefix);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                deleteRecursive(tempDir);
+            } catch (IOException e) {
+                LOG.warn("could not delete temp directory {}", tempDir);
+            }
+        }));
+        return tempDir;
+    }
+}
