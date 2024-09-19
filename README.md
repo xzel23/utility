@@ -174,6 +174,7 @@ the parameter.
 
 ### 13.0.3 (to be released)
 
+- IoUtil: added methods createSecureTempDirectory(), createSecureTempDirectoryAndDeleteOnExit(), deleteRecursiveOnExit()
 - small improvements and code cleanup
 
 ### 13.0.2
