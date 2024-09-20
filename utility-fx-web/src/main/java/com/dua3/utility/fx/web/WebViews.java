@@ -246,31 +246,24 @@ public final class WebViews {
      * EventDispatcher implementation for use by
      * {@link #filterEvents(WebView, Predicate, Predicate)}.
      */
-    private static class WebEventDispatcher implements EventDispatcher {
-        private final EventDispatcher originalDispatcher;
-        private final Predicate<? super KeyEvent> filterKey;
-        private final Predicate<? super MouseEvent> filterMouse;
-
-        WebEventDispatcher(EventDispatcher originalDispatcher, Predicate<? super KeyEvent> filterKey, Predicate<? super MouseEvent> filterMouse) {
-            this.originalDispatcher = originalDispatcher;
-            this.filterKey = filterKey;
-            this.filterMouse = filterMouse;
-        }
-
+    private record WebEventDispatcher(
+            EventDispatcher originalDispatcher,
+            Predicate<? super KeyEvent> filterKey,
+            Predicate<? super MouseEvent> filterMouse
+    ) implements EventDispatcher {
         @Override
-        public Event dispatchEvent(Event event, EventDispatchChain tail) {
-            if (event instanceof KeyEvent keyEvent) {
-                if (filterKey.test(keyEvent)) {
-                    keyEvent.consume();
+            public Event dispatchEvent(Event event, EventDispatchChain tail) {
+                if (event instanceof KeyEvent keyEvent) {
+                    if (filterKey.test(keyEvent)) {
+                        keyEvent.consume();
+                    }
                 }
-            }
-            if (event instanceof MouseEvent mouseEvent) {
-                if (filterMouse.test(mouseEvent)) {
-                    event.consume();
+                if (event instanceof MouseEvent mouseEvent) {
+                    if (filterMouse.test(mouseEvent)) {
+                        event.consume();
+                    }
                 }
+                return originalDispatcher.dispatchEvent(event, tail);
             }
-            return originalDispatcher.dispatchEvent(event, tail);
         }
-    }
-
 }
