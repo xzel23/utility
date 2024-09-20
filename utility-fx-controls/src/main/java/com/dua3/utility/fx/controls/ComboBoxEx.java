@@ -69,31 +69,26 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
         ObservableList<Node> children = container.getChildren();
         children.setAll(comboBox);
 
-        Button buttonEdit;
         if (edit != null) {
             this.edit = edit;
-            buttonEdit = Controls.button().text("✎").action(this::editItem).build();
+            Button buttonEdit = Controls.button().text("✎").action(this::editItem).build();
             children.add(buttonEdit);
             buttonEdit.disableProperty().bind(comboBox.selectionModelProperty().isNull());
         } else {
             this.edit = null;
-            buttonEdit = null;
         }
 
-        Button buttonAdd;
         if (add != null) {
             this.add = add;
-            buttonAdd = Controls.button().text("+").action(this::addItem).build();
+            Button buttonAdd = Controls.button().text("+").action(this::addItem).build();
             children.add(buttonAdd);
         } else {
             this.add = null;
-            buttonAdd = null;
         }
 
-        Button buttonRemove;
         if (remove != null) {
             this.remove = remove;
-            buttonRemove = Controls.button().text("-").action(this::removeItem).build();
+            Button buttonRemove = Controls.button().text("-").action(this::removeItem).build();
             children.add(buttonRemove);
             buttonRemove.disableProperty().bind(Bindings.createBooleanBinding(
                     () -> comboBox.getSelectionModel().getSelectedItem() != null && this.items.size() > 1,
@@ -102,7 +97,6 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
             buttonRemove.disableProperty().bind(comboBox.selectionModelProperty().isNull().or(comboBox.valueProperty().isNull()));
         } else {
             this.remove = null;
-            buttonRemove = null;
         }
 
         Callback<ListView<T>, ListCell<T>> cellFactory = new Callback<>() {
