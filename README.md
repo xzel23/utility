@@ -168,7 +168,7 @@ the parameter.
 
 - all internal logging is done through log4j-api instead of slf4j
 - introduced util-logging-slf4j as sub project of util-logging. Note that util-logging is not intended as a production
-  logging replacement. It is intended to provide utilites to capture and display log data in an application window.
+  logging replacement. It is intended to provide utilities to capture and display log data in an application window.
 
 ## Changes
 
