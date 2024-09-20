@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * A common interface for different color implementations.
  */
-@SuppressWarnings({"Annotator", "Style"})
+@SuppressWarnings({"Style"})
 public interface Color {
     /**
      * Factor to apply when generating a brighter or darker version of a color.

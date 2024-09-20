@@ -136,19 +136,23 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     /**
      * Underline style.
      */
+    @SuppressWarnings("ConstantValue")
     public static final Style UNDERLINE = create("underline", Map.entry(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_LINE));
     /**
      * No-Underline style.
      */
+    @SuppressWarnings("ConstantValue")
     public static final Style NO_UNDERLINE = create("no-underline", Map.entry(TEXT_DECORATION_UNDERLINE, TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE));
 
     /**
      * Line-through (=strikethrough) style.
      */
+    @SuppressWarnings("ConstantValue")
     public static final Style LINE_THROUGH = create("line-through", Map.entry(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE));
     /**
      * No-Line-through (=no-strikethrough) style.
      */
+    @SuppressWarnings("ConstantValue")
     public static final Style NO_LINE_THROUGH = create("no-line-through", Map.entry(TEXT_DECORATION_LINE_THROUGH, TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE));
 
     // predefined styles for colors

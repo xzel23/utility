@@ -130,6 +130,7 @@ class DecorationPane extends AnchorPane {
     }
 
     void removeDecoration(Object oldDecoration) {
+        //noinspection SuspiciousMethodCalls
         getChildren().remove(oldDecoration);
     }
 }

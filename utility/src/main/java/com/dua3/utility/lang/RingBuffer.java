@@ -221,7 +221,9 @@ public class RingBuffer<E> implements Collection<E> {
         // copy contents to array
         int n1 = Math.min(entries, data.length - start);
         int n2 = entries - n1;
+        //noinspection SuspiciousSystemArraycopy
         System.arraycopy(data, start, a, 0, n1);
+        //noinspection SuspiciousSystemArraycopy
         System.arraycopy(data, 0, a, n1, n2);
 
         if (a.length > entries) {
