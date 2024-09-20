@@ -172,6 +172,12 @@ the parameter.
 
 ## Changes
 
+### 13.1.1
+
+- FIX: do no throw an exception when temp directory permissions cannot be set. Instead log a warning message. Th reason 
+ is that especially the Files.setWriteable() does not seem to always return correct results, even when the directory
+  does have the requested permissions.
+
 ### 13.1
 
 - BREAKING: in the fx module, the methods Validator.matches() and Validator.notEmpty() have been renamed to setRegex()

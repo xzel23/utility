@@ -1016,6 +1016,8 @@ public final class IoUtil {
 
     /**
      * Creates a secure temporary directory with the given prefix.
+     * <p>
+     * <strong>On non-POSIX systems like WINDOWS, no exception is thrown if permissions can not be set!</strong>
      *
      * @param prefix the prefix for the name of the temporary directory
      * @return the path to the newly created temporary directory
@@ -1030,7 +1032,7 @@ public final class IoUtil {
             }
             default -> {
                 tempDir = Files.createTempDirectory(prefix);
-                setTempFilePermissonsNonPosix(tempDir);
+                setTempFilePermissionsNonPosix(tempDir);
             }
         }
         LOG.trace("created temp directory {}", tempDir);
@@ -1042,14 +1044,15 @@ public final class IoUtil {
      * This method ensures that the directory is readable, writable, and executable by owner only.
      *
      * @param tempDir the path to the temporary directory whose permissions are to be set
-     * @throws IOException if the permissions could not be set on the temp directory
      */
-    private static void setTempFilePermissonsNonPosix(Path tempDir) throws IOException {
+    private static void setTempFilePermissionsNonPosix(Path tempDir) {
         File asFile = tempDir.toFile();
         boolean isReadable = asFile.setReadable(true, true);
         boolean isWriteable = asFile.setWritable(true, true);
         boolean isExecutable = asFile.setExecutable(true, true);
-        LangUtil.check(isReadable && isWriteable && isExecutable, () -> new IOException("could not set file permissons on temp directory"));
+        if (!isReadable || !isWriteable || !isExecutable) {
+            LOG.warn("file permissions could not be set for {} on non-POSIX system", tempDir);
+        }
     }
 
     /**
@@ -1069,7 +1072,7 @@ public final class IoUtil {
             }
             default -> {
                 tempDir = Files.createTempDirectory(dir, prefix);
-                setTempFilePermissonsNonPosix(tempDir);
+                setTempFilePermissionsNonPosix(tempDir);
             }
         }
         LOG.trace("created temp directory {}", tempDir);
