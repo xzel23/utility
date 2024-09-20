@@ -58,6 +58,13 @@ public abstract class AbstractCurve2f extends Segment2f {
         StringBuilder sb = new StringBuilder(16 + 16 * numberOfControls());
 
         sb.append(getClass().getSimpleName()).append("{");
+        appendControlPoints(sb);
+        sb.append("}");
+
+        return sb.toString();
+    }
+
+    protected void appendControlPoints(StringBuilder sb) {
         String sep = "";
         for (int control : controls) {
             sb.append(sep);
@@ -65,8 +72,5 @@ public abstract class AbstractCurve2f extends Segment2f {
             sb.append("\n");
             sep = ", ";
         }
-        sb.append("}");
-
-        return sb.toString();
     }
 }

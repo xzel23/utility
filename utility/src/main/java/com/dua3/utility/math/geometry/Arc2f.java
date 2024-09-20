@@ -93,13 +93,7 @@ public final class Arc2f extends AbstractCurve2f {
         StringBuilder sb = new StringBuilder(16 + 16 * numberOfControls());
 
         sb.append(getClass().getSimpleName()).append("{");
-        String sep = "";
-        for (int control : controls) {
-            sb.append(sep);
-            sb.append(vertexToString(control));
-            sb.append("\n");
-            sep = ", ";
-        }
+        appendControlPoints(sb);
         sb.append(String.format(Locale.ROOT, ", [r](%f,%f)", rx, ry));
         sb.append(String.format(Locale.ROOT, ", %frad", angle));
         sb.append(String.format(Locale.ROOT, ", largeArc(%d)", largeArc ? 1 : 0));
