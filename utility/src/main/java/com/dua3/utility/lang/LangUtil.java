@@ -962,7 +962,7 @@ public final class LangUtil {
          * @throws NullPointerException if {@code after} is null
          * @throws E                    depending on implementation
          */
-        default ConsumerThrows<T, E> andThen(ConsumerThrows<? super T, ? extends E> after) throws E {
+        default ConsumerThrows<T, E> andThenTry(ConsumerThrows<? super T, ? extends E> after) throws E {
             return (T t) -> {
                 accept(t);
                 after.accept(t);

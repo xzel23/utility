@@ -174,6 +174,9 @@ the parameter.
 
 ### 13.0.3 (to be released)
 
+- IMPORTANT: resolved ambiguity of LangUtil.ConsumerThrows.andThen() overloads by renaming the version taking an 
+  argument of ConsumerThrows to andThenTry(); this might require a source change but code compiled using the previous
+  version should still work in the same way
 - IoUtil: added methods createSecureTempDirectory(), createSecureTempDirectoryAndDeleteOnExit(), deleteRecursiveOnExit()
 - small improvements and code cleanup
 
