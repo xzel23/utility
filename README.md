@@ -172,7 +172,7 @@ the parameter.
 
 ## Changes
 
-### 13.1 (to be released)
+### 13.1
 
 - BREAKING: in the fx module, the methods Validator.matches() and Validator.notEmpty() have been renamed to setRegex()
   and disallowEmpty() to better express the fact that the content is not checked immediately but instead a rule is added
