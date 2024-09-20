@@ -125,23 +125,23 @@ public class Validator {
     }
 
     /**
-     * Validate that a text has been entered.
+     * Add a rule that assures the control is not empty.
      *
      * @param c       the control
      * @param message the message to display if validation fails
      */
-    public void notEmpty(TextInputControl c, String message) {
+    public void disallowEmpty(TextInputControl c, String message) {
         rules(c).add(() -> !c.getText().isEmpty() ? ValidationResult.ok(c) : ValidationResult.error(c, message));
     }
 
     /**
-     * Validate that entered text matches regular expression.
+     * Add a rule that assures the content matches a regular expression.
      *
      * @param c       the control
      * @param message the message to display if validation fails
      * @param regex   the regular expression to test the control's text
      */
-    public void matches(TextInputControl c, String message, String regex) {
+    public void setRegex(TextInputControl c, String message, String regex) {
         rules(c).add(() -> c.getText().matches(regex) ? ValidationResult.ok(c) : ValidationResult.error(c, message));
     }
 
@@ -153,7 +153,7 @@ public class Validator {
      * @param test    the test to perform the validation
      * @param trigger the {@link Observable}s that trigger validation
      */
-    public void check(Control c, String message, BooleanSupplier test, Observable... trigger) {
+    public void addCheck(Control c, String message, BooleanSupplier test, Observable... trigger) {
         rules(c).add(() -> test.getAsBoolean() ? ValidationResult.ok(c) : ValidationResult.error(c, message));
         Arrays.stream(trigger).forEach(t -> {
             InvalidationListener il = tt -> validateNode(c);
@@ -169,7 +169,7 @@ public class Validator {
      * @param message the message to display if validation fails
      * @param test    ObservableValue that triggers updates and provides the validation result
      */
-    public void check(Control c, String message, ObservableValue<Boolean> test) {
+    public void addCheck(Control c, String message, ObservableValue<Boolean> test) {
         rules(c).add(() -> test.getValue() ? ValidationResult.ok(c) : ValidationResult.error(c, message));
         test.addListener((v, o, n) -> validateNode(c));
     }

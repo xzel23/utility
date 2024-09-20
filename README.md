@@ -172,8 +172,11 @@ the parameter.
 
 ## Changes
 
-### 13.0.3 (to be released)
+### 13.1 (to be released)
 
+- BREAKING: in the fx module, the methods Validator.matches() and Validator.notEmpty() have been renamed to setRegex()
+  and disallowEmpty() to better express the fact that the content is not checked immediately but instead a rule is added
+  that is validated at validation time
 - IMPORTANT: resolved ambiguity of LangUtil.ConsumerThrows.andThen() overloads by renaming the version taking an 
   argument of ConsumerThrows to andThenTry(); this might require a source change but code compiled using the previous
   version should still work in the same way
