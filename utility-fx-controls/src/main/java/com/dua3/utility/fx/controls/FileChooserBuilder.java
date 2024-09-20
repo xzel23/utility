@@ -67,19 +67,8 @@ public class FileChooserBuilder {
             chooser.setSelectedExtensionFilter(selectedFilter);
         }
 
-        if (initialDir != null) {
-            // NOTE there's an inconsistency between Paths.get("").toFile() and new File(""), so convert Path to File
-            // before testing for directory and do not use Files.isDirectory(Path)
-            try {
-                File initialFile = initialDir.toFile();
-                if (initialFile.isDirectory()) {
-                    LOG.debug("initial directory: {}", initialFile);
-                    chooser.setInitialDirectory(initialFile);
-                }
-            } catch (UnsupportedOperationException e) {
-                LOG.warn("could not set initial directory", e);
-            }
-        }
+        Controls.setInitialDirectory(chooser::setInitialDirectory, initialDir);
+        LOG.debug("initial directory: {}", chooser::getInitialDirectory);
 
         chooser.setInitialFileName(initialFileName);
 

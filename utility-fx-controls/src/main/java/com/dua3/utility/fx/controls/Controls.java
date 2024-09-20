@@ -18,10 +18,16 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Paint;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public final class Controls {
+    private static final Logger LOG = LogManager.getLogger(Controls.class);
 
     private Controls() {
     }
@@ -356,5 +362,26 @@ public final class Controls {
         mi.setDisable(!enabled);
         mi.setOnAction(evt -> action.run());
         return mi;
+    }
+
+    /**
+     * Sets the initial directory for a file or directory chooser.
+     *
+     * @param setInitialDirectory a Consumer to set the initial directory
+     * @param dir the initial directory path, or null if not specified
+     */
+    static void setInitialDirectory(Consumer<File> setInitialDirectory, @Nullable Path dir) {
+        if (dir != null) {
+            // NOTE there's an inconsistency between Paths.get("").toFile() and new File(""), so convert Path to File
+            // before testing for directory and do not use Files.isDirectory(Path)
+            try {
+                File initialFile = dir.toFile();
+                if (initialFile.isDirectory()) {
+                    setInitialDirectory.accept(initialFile);
+                }
+            } catch (UnsupportedOperationException e) {
+                LOG.warn("could not set initial directory", e);
+            }
+        }
     }
 }
