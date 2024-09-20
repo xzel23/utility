@@ -17,7 +17,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilePermission;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1031,15 +1030,26 @@ public final class IoUtil {
             }
             default -> {
                 tempDir = Files.createTempDirectory(prefix);
-                File asFile = tempDir.toFile();
-                boolean isReadable = asFile.setReadable(true, true);
-                boolean isWriteable = asFile.setWritable(true, true);
-                boolean isExecutable = asFile.setExecutable(true, true);
-                LangUtil.check(isReadable && isWriteable && isExecutable, () -> new IOException("could not set file permissons on temp directory"));
+                setTempFilePermissonsNonPosix(tempDir);
             }
         }
         LOG.trace("created temp directory {}", tempDir);
         return tempDir;
+    }
+
+    /**
+     * Sets the permissions for a temporary file or directory in a non-POSIX compliant file system.
+     * This method ensures that the directory is readable, writable, and executable by owner only.
+     *
+     * @param tempDir the path to the temporary directory whose permissions are to be set
+     * @throws IOException if the permissions could not be set on the temp directory
+     */
+    private static void setTempFilePermissonsNonPosix(Path tempDir) throws IOException {
+        File asFile = tempDir.toFile();
+        boolean isReadable = asFile.setReadable(true, true);
+        boolean isWriteable = asFile.setWritable(true, true);
+        boolean isExecutable = asFile.setExecutable(true, true);
+        LangUtil.check(isReadable && isWriteable && isExecutable, () -> new IOException("could not set file permissons on temp directory"));
     }
 
     /**
@@ -1059,11 +1069,7 @@ public final class IoUtil {
             }
             default -> {
                 tempDir = Files.createTempDirectory(dir, prefix);
-                File asFile = tempDir.toFile();
-                boolean isReadable = asFile.setReadable(true, true);
-                boolean isWriteable = asFile.setWritable(true, true);
-                boolean isExecutable = asFile.setExecutable(true, true);
-                LangUtil.check(isReadable && isWriteable && isExecutable, () -> new IOException("could not set file permissons on temp directory"));
+                setTempFilePermissonsNonPosix(tempDir);
             }
         }
         LOG.trace("created temp directory {}", tempDir);
