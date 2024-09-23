@@ -13,7 +13,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
 
     /** The current codepoint. */
     private int codepoint = 0;
-    /** The current position in he input sequence. */
+    /** The current position in the input sequence. */
     private int pos = 0;
     /** The position of the last split candidate. */
     private int charsForCodepoint = 0;
@@ -102,7 +102,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
     }
 
     /**
-     * Determines the type of a given codepoint.
+     * Determines the type of the given codepoint.
      *
      * @param cp the codepoint to determine the type of
      * @return the type of the codepoint

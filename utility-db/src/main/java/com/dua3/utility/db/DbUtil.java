@@ -239,7 +239,7 @@ public final class DbUtil {
                 return Optional.empty();
             }
             if (meta.hasMoreElements()) {
-                LOG.warn("more than one entries found, which one gets loaded is undefined: {}", RESOURCE_PATH_TO_DRIVER_INFO);
+                LOG.warn("more than one entry found, which one gets loaded is undefined: {}", RESOURCE_PATH_TO_DRIVER_INFO);
             }
             String driverClassName = IoUtil.read(driverInfo, StandardCharsets.UTF_8).trim();
 

@@ -40,7 +40,6 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
     private final InputControl.State<Arguments> state;
     private final Supplier<? extends Collection<Option<?>>> options;
     private final Supplier<Arguments> dflt;
-    private final Property<Arguments> value = new SimpleObjectProperty<>();
     private final Map<Option<?>, InputControl<?>> items = new LinkedHashMap<>();
 
     /**
@@ -56,6 +55,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
     public OptionsPane(Supplier<? extends Collection<Option<?>>> options, Supplier<Arguments> dflt) {
         this.options = options;
         this.dflt = dflt;
+        Property<Arguments> value = new SimpleObjectProperty<>();
         this.state = new State<>(value, dflt);
     }
 

@@ -22,7 +22,7 @@ import org.apache.logging.log4j.spi.StandardLevel;
  *        }
  *     </pre>
  *     <li><b>SLF4J:</b> add {@code log4j-slf4j2-impl} to your dependencies. Do not add any other logging implementation
- *     based on SLF4J (i. e., SimpleLogger, Logback).
+ *     based on SLF4J (i.e., SimpleLogger, Logback).
  * </ul>
  */
 @SuppressWarnings("MagicCharacter")

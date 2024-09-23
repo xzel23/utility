@@ -65,7 +65,6 @@ public class SwingLogPane extends JPanel {
     private Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
     private final JScrollPane scrollPaneTable;
-    private final JScrollPane scrollPaneDetails;
     private List<LogEntry> selectedEntries = Collections.emptyList();
 
     /**
@@ -214,7 +213,7 @@ public class SwingLogPane extends JPanel {
 
         // prepare the ScrollPanes
         this.scrollPaneTable = new JScrollPane(table);
-        this.scrollPaneDetails = new JScrollPane(details);
+        JScrollPane scrollPaneDetails = new JScrollPane(details);
 
         // create SplitPane for table and detail pane
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneTable, scrollPaneDetails);

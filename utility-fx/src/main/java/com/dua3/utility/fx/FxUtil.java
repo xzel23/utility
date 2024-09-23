@@ -169,7 +169,7 @@ public final class FxUtil {
     /**
      * Converts a {@link Path2f} object to a {@link javafx.scene.shape.Path} object.
      *
-     * @param path the Path2f object to convert
+     * @param path the {@link Path2f} object to convert
      * @return the converted javafx.scene.shape.Path object
      * @throws IllegalArgumentException if the path contains unsupported segment types
      */
@@ -208,7 +208,7 @@ public final class FxUtil {
     /**
      * Convert a {@link Rectangle2f} object to a JavaFX Rectangle object.
      *
-     * @param r the Rectangle2f object to convert
+     * @param r the {@link Rectangle2f} object to convert
      * @return the converted JavaFX Rectangle object
      */
     public static javafx.scene.shape.Rectangle convert(Rectangle2f r) {

@@ -12,7 +12,6 @@ public class FxLogWindow extends Stage {
 
     public static final String DEFAULT_WINDOW_TITLE = "Log";
     private final LogBuffer logBuffer;
-    private final FxLogPane logPane;
 
     /**
      * Create a new FxLogWindow instance with a new {@link LogBuffer} using the default capacity;
@@ -66,7 +65,7 @@ public class FxLogWindow extends Stage {
      */
     public FxLogWindow(String title, LogBuffer logBuffer) {
         this.logBuffer = logBuffer;
-        logPane = new FxLogPane(this.logBuffer);
+        FxLogPane logPane = new FxLogPane(this.logBuffer);
         Scene scene = new Scene(logPane, 800, 400);
         setScene(scene);
         setTitle(title);

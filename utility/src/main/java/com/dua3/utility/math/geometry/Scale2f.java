@@ -20,7 +20,7 @@ public record Scale2f(float sx, float sy) {
     }
 
     /**
-     * Constructs a new Scale2f object with the specified scaling factor s for both x and y axes.
+     * Constructs a new {@code Scale2f} object with the specified scaling factor s for both x and y axes.
      *
      * @param s the scaling factor
      */

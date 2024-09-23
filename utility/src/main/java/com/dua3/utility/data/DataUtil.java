@@ -492,7 +492,7 @@ public final class DataUtil {
     /**
      * Create a generic array of the arguments.
      * @param args the arguments
-     * @return generic arry containing the arguments
+     * @return generic array containing the arguments
      * @param <T> the generic array type
      */
     @SafeVarargs

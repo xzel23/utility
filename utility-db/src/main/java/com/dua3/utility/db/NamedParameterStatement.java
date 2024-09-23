@@ -973,7 +973,7 @@ public class NamedParameterStatement implements AutoCloseable {
     }
 
     /**
-     * Set the fetch size for the statement (see {#link {@link Statement#setFetchSize(int)}}.
+     * Set the fetch size for the statement (see {#link {@link Statement#setFetchSize(int)}}).
      *
      * @param rows the fetch size to set
      * @throws SQLException if an error occurs

@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  */
 public class CsvReader extends CsvIo {
 
-    // the unicode codepoint for the UTF-8 BOM
+    // the UNICODE codepoint for the UTF-8 BOM
     private static final int UTF8_BOM = 0xfeff;
     // the bytes sequence the UTF-8 BOM
     @SuppressWarnings("NumericCastThatLosesPrecision")
@@ -77,7 +77,7 @@ public class CsvReader extends CsvIo {
 
         // remove optional UTF-8 BOM from content
         // this should be ok independent of the actual encoding since the
-        // unicode representing
+        // UNICODE representing
         // the UTF-8 BOM marker should only occur at the beginning of UTF-8
         // texts, and the old
         // (now obsolete) meaning as "ZERO WIDTH NON-BREAKING SPACE (ZWNBSP)"

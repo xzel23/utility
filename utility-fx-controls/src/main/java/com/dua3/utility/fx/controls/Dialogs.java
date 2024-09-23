@@ -175,7 +175,7 @@ public final class Dialogs {
     }
 
     /**
-     * Start definition of new options dialog.
+     * Start the definition of a new {@link OptionsDialog}.
      *
      * @param parentWindow the parent window
      * @return new {@link OptionsDialogBuilder} instance

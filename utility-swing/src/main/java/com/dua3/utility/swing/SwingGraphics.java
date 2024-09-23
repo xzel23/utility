@@ -108,10 +108,10 @@ public class SwingGraphics implements Graphics {
     }
 
     /**
-     * Convert a {@link java.awt.Rectangle} object to a {@link Rectangle2f} object.
+     * Convert a {@link Rectangle} object to a {@link Rectangle2f} object.
      *
-     * @param r the Rectangle object to convert
-     * @return a Rectangle2f object with the same position and size as the input
+     * @param r the {@link Rectangle} object to convert
+     * @return a {@link Rectangle2f} object with the same position and size as the input
      */
     public Rectangle2f convert(Rectangle r) {
         assert isDrawing : "instance has been closed!";

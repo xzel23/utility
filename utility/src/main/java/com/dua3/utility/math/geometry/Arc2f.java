@@ -71,7 +71,7 @@ public final class Arc2f extends AbstractCurve2f {
     }
 
     /**
-     * Returns the value of the largeArc property for the Arc2f object.
+     * Returns the value of the largeArc property for the {@code Arc2f} object.
      *
      * @return true if the arc is greater than 180 degrees, false otherwise
      */
@@ -80,7 +80,7 @@ public final class Arc2f extends AbstractCurve2f {
     }
 
     /**
-     * Returns the value of the sweep property for the Arc2f object.
+     * Returns the value of the sweep property for the {@code Arc2f} object.
      *
      * @return true if the arc sweeps in a positive angle direction, false otherwise
      */

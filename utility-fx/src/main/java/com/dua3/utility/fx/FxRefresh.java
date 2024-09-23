@@ -245,8 +245,8 @@ public final class FxRefresh {
      * <ul>
      *     <li>the refresher is running
      *     <li>the refresher's state is "active"
-     *     <li>no other request running
-     *     <li>no no newer request was queued (in that case, the older request will be skipped)
+     *     <li>no other request is running
+     *     <li>no newer request was queued (in that case, the older request will be skipped)
      * </ul>
      */
     public void refresh() {

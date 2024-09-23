@@ -297,7 +297,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
             T value = (T) raw;
             action.accept(value != null ? value : defaultSupplier.get());
         } catch (Exception e) {
-            throw new IllegalStateException("error processing attribute '" + key + " with value': " + raw, e);
+            throw new IllegalStateException("error processing attribute '" + key + "' with value: " + raw, e);
         }
     }
 
@@ -319,7 +319,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
             T value = (T) raw;
             action.accept(value != null ? value : defaultValue);
         } catch (Exception e) {
-            throw new IllegalStateException("error processing attribute '" + key + " with value': " + raw, e);
+            throw new IllegalStateException("error processing attribute '" + key + "' with value: " + raw, e);
         }
     }
 

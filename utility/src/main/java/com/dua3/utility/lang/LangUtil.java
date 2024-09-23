@@ -114,7 +114,7 @@ public final class LangUtil {
     /**
      * Do nothing.
      * <p>
-     * This method does exactly nothing. It's purpose is to keep static code
+     * This method does exactly nothing. Its purpose is to keep static code
      * analysis tools happy that complain about ignored return values of methods
      * like BufferedReader.readLine(). Use this method to explicitly ignore the
      * return value and avoid false positives from static code checkers.

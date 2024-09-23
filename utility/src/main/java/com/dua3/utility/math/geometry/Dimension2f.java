@@ -28,10 +28,10 @@ public record Dimension2f(float width, float height) {
     }
 
     /**
-     * Scales the current Dimension2f object by the specified Scale2f object.
+     * Scales the current {@code Dimension2f} object by the specified {@link Scale2f} object.
      *
-     * @param s the Scale2f object representing the scaling factors for the x-axis and y-axis
-     * @return a new Dimension2f object with the scaled width and height
+     * @param s the {@link Scale2f} object representing the scaling factors for the x-axis and y-axis
+     * @return a new {@code Dimension2f} object with the scaled width and height
      */
     public Dimension2f scaled(Scale2f s) {
         return new Dimension2f(s.sx() * width, s.sy() * height);
@@ -41,7 +41,7 @@ public record Dimension2f(float width, float height) {
      * Scales the dimension by a given factor.
      *
      * @param s the scaling factor.
-     * @return a new Dimension2f object with the scaled width and height.
+     * @return a new {@code Dimension2f} object with the scaled width and height.
      */
     public Dimension2f scaled(float s) {
         return new Dimension2f(s * width, s * height);

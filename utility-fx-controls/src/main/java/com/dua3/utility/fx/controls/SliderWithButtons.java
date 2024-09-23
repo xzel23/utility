@@ -33,7 +33,6 @@ public class SliderWithButtons extends Region {
     private final Button btnIncrement;
     private final Button btnDecrement;
     private final List<Node> children = new ArrayList<>();
-    private Pane pane;
     private TextField tfValue;
     private Label label;
 
@@ -107,7 +106,7 @@ public class SliderWithButtons extends Region {
     }
 
     private void initPane() {
-        pane = box(slider.getOrientation());
+        Pane pane = box(slider.getOrientation());
         pane.getChildren().addAll(children);
         getChildren().setAll(pane);
     }

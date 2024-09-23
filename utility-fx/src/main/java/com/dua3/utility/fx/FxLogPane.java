@@ -48,7 +48,6 @@ public class FxLogPane extends BorderPane {
     private static final double COLUMN_WIDTH_LARGE = 10000.0;
     private final LogBuffer logBuffer;
     private final Function<? super LogEntry, ? extends Color> colorize;
-    private final ToolBar toolBar;
     private final TextArea details;
     private final TableView<LogEntry> tableView;
 
@@ -133,7 +132,7 @@ public class FxLogPane extends BorderPane {
 
         this.logBuffer = logBuffer;
         this.colorize = colorize;
-        this.toolBar = new ToolBar();
+        ToolBar toolBar = new ToolBar();
         this.tableView = new TableView<>(entries);
         this.details = new TextArea();
 

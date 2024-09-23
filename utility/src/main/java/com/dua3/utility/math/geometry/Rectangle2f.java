@@ -54,7 +54,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      *
      * @param p   the center point of the rectangle
      * @param dim the dimensions of the rectangle
-     * @return a new Rectangle2f object
+     * @return a new {@code Rectangle2f} object
      */
     public static Rectangle2f withCenter(Vector2f p, Dimension2f dim) {
         return new Rectangle2f(p.x() - dim.width() / 2, p.y() - dim.height() / 2, dim.width(), dim.height());
@@ -148,25 +148,25 @@ public record Rectangle2f(float x, float y, float width, float height) {
     }
 
     /**
-     * Returns a new Vector2f instance with the minimum x and y coordinates.
+     * Returns a new {@link Vector2f} instance with the minimum x and y coordinates.
      *
-     * @return the Vector2f instance with the minimum coordinates
+     * @return the {@link Vector2f} instance with the minimum coordinates
      */
     public Vector2f min() {
         return new Vector2f(xMin(), yMin());
     }
 
     /**
-     * Returns a new Vector2f instance with the maximum x and y coordinates.
+     * Returns a new {@link Vector2f} instance with the maximum x and y coordinates.
      *
-     * @return a new Vector2f with the maximum x-coordinate and the maximum y-coordinate
+     * @return a new {@link Vector2f} with the maximum x-coordinate and the maximum y-coordinate
      */
     public Vector2f max() {
         return new Vector2f(xMax(), yMax());
     }
 
     /**
-     * Returns the center of the rectangle as a new Vector2f object.
+     * Returns the center of the rectangle as a new {@link Vector2f} object.
      *
      * @return the center of the rectangle
      */
@@ -196,7 +196,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      *
      * @param mx the amount to the margin to apply to the x-coordinates
      * @param my the amount to the margin to apply to the y-coordinates
-     * @return a new Rectangle2f instance with the added margin
+     * @return a new {@code Rectangle2f} instance with the added margin
      */
     public Rectangle2f addMargin(float mx, float my) {
         if (mx == 0 && my == 0) {
@@ -211,7 +211,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * but with borders pushed out by the amount given by {@code m}. Use negative values to shrink the rectangle.
      *
      * @param m the amount to subtract the margin to add
-     * @return a new Rectangle2f instance with the added margin
+     * @return a new {@code Rectangle2f} instance with the added margin
      */
     public Rectangle2f addMargin(float m) {
         if (m == 0) {
@@ -229,7 +229,7 @@ public record Rectangle2f(float x, float y, float width, float height) {
      * @param mTop    the margin to be applied to the top side of the rectangle
      * @param mRight  the margin to be applied to the right side of the rectangle
      * @param mBottom the margin to be applied to the bottom side of the rectangle
-     * @return a new Rectangle2f instance with the added margin
+     * @return a new {@code Rectangle2f} instance with the added margin
      */
     public Rectangle2f addMargin(float mLeft, float mTop, float mRight, float mBottom) {
         return new Rectangle2f(x - mLeft, y - mTop, width + mLeft + mRight, height + mTop + mBottom);

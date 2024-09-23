@@ -147,7 +147,7 @@ public final class WebViews {
     }
 
     /**
-     * Setup an event filter for WebView.
+     * Set up an event filter for WebView.
      *
      * @param wv          the WebView instance
      * @param filterKey   the KeyEvent filter

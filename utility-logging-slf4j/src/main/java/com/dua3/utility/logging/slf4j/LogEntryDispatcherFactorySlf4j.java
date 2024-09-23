@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class is an implementation of the ILogEntryDispatcherFactory interface.
- * It provides the functionality to create a Slf4j LogEntryDispatcher instance.
+ * It provides the functionality to create a SLF4J LogEntryDispatcher instance.
  */
 public class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactory {
 
