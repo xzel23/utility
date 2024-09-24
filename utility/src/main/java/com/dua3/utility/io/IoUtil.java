@@ -644,7 +644,7 @@ public final class IoUtil {
      * @throws IOException if an I/O error occurs during the closing of resources.
      */
     @SuppressWarnings("RedundantThrows")
-    public static void closeAll(Collection<AutoCloseable> closeables) throws IOException {
+    public static void closeAll(Collection<? extends AutoCloseable> closeables) throws IOException {
         doCloseAll(closeables);
     }
 
@@ -656,7 +656,7 @@ public final class IoUtil {
      *
      * @param closeables a collection of AutoCloseable objects to be closed
      */
-    private static void doCloseAll(Iterable<AutoCloseable> closeables) {
+    private static void doCloseAll(Iterable<? extends AutoCloseable> closeables) {
         Throwable t = null;
         for (AutoCloseable c : closeables) {
             try {
