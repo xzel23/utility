@@ -7,6 +7,7 @@ import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.io.Serial;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
@@ -117,7 +118,9 @@ public class LoggerSlf4j extends AbstractLogger {
         this.level = level;
     }
 
+    @Serial
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {throw new java.io.NotSerializableException("com.dua3.utility.logging.slf4j.LoggerSlf4j");}
 
+    @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {throw new java.io.NotSerializableException("com.dua3.utility.logging.slf4j.LoggerSlf4j");}
 }
