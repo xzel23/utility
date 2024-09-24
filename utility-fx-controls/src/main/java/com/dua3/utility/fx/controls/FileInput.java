@@ -32,6 +32,18 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * FileInput is a custom control for selecting files using a FileChooser dialog.
+ * It is composed of a {@link TextField} that contains the file path and a button that
+ * opens a {@link FileChooser} to select a file.
+ *
+ * <p>The control can operate in different modes: OPEN, SAVE, or DIRECTORY, as specified
+ * by the FileDialogMode.</p>
+ *
+ * <p>The control also includes properties for error messages and validation status.
+ * These properties are updated based on the path selected by the user and the
+ * specified validation function.</p>
+ */
 public class FileInput extends CustomControl<HBox> implements InputControl<Path> {
 
     private static final StringConverter<Path> PATH_CONVERTER = new PathConverter();
@@ -57,6 +69,15 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
     private final StringProperty error = new SimpleStringProperty("");
     private final BooleanProperty valid = new SimpleBooleanProperty(true);
 
+    /**
+     * Constructs a FileInput instance with specified parameters.
+     *
+     * @param mode the mode of the file dialog, which can be OPEN, SAVE, or DIRECTORY
+     * @param existingOnly boolean indicating whether only existing files or directories should be selectable
+     * @param dflt a supplier providing the default path
+     * @param filters collection of file extension filters to apply in the file chooser
+     * @param validate a function to validate the selected file path, returning an optional error message
+     */
     public FileInput(
             FileDialogMode mode,
             boolean existingOnly,
@@ -141,6 +162,18 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
         }
     }
 
+    /**
+     * Returns a function object that validates the file selection based on the specified file dialog mode and whether
+     * only existing files or directories are allowed.
+     *
+     * <p>The returned function object is for example used in
+     * {@link InputBuilder#chooseFile(String, String, Supplier, FileDialogMode, boolean, Collection)}
+     * to add validation.
+     *
+     * @param mode the mode of the file dialog; can be OPEN, SAVE, or DIRECTORY
+     * @param existingOnly indicates whether only existing files or directories should be selectable
+     * @return a function that takes a Path and returns an Optional containing an error message if validation fails, or an empty Optional if validation succeeds
+     */
     public static Function<Path, Optional<String>> defaultValidate(FileDialogMode mode, boolean existingOnly) {
         return p -> {
             if (p == null) {

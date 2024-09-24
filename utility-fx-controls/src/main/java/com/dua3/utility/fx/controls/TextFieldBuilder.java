@@ -9,6 +9,12 @@ import javafx.util.converter.IntegerStringConverter;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
+/**
+ * A builder class for constructing customized TextFields.
+ *
+ * This class supports building TextFields with specific configurations
+ * such as setting text, type, and binding the disabled state.
+ */
 public final class TextFieldBuilder {
 
     private static final Pattern INTEGER_PATTERN = Pattern.compile("\\d*|0");
@@ -28,11 +34,26 @@ public final class TextFieldBuilder {
     TextFieldBuilder() {
     }
 
+    /**
+     * Sets the text for the TextField being constructed.
+     *
+     * @param text the text to set in the TextField
+     * @return this builder instance
+     */
     public TextFieldBuilder text(String text) {
         this.text = text;
         return this;
     }
 
+    /**
+     * Sets the type of the TextField.
+     *
+     * This method allows you to specify the type of input the TextField should accept.
+     * The supported types are defined in the {@link TextFieldType} enum.
+     *
+     * @param type the type to set for the TextField
+     * @return this instance for method chaining
+     */
     public TextFieldBuilder type(TextFieldType type) {
         this.type = type;
         return this;
@@ -48,6 +69,11 @@ public final class TextFieldBuilder {
         return this;
     }
 
+    /**
+     * Constructs and returns a customized TextField based on the configurations set in the builder.
+     *
+     * @return the configured TextField instance
+     */
     public TextField build() {
         TextField tf = new TextField();
 

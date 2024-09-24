@@ -48,36 +48,78 @@ public class AboutDialogBuilder {
     private Node graphic;
     private Node expandableContent;
 
+    /**
+     * Constructs a new AboutDialogBuilder with the specified parent window.
+     *
+     * @param parentWindow the window that will be the parent of the dialog, or null if there is no parent window.
+     */
     AboutDialogBuilder(@Nullable Window parentWindow) {
         this.parentWindow = parentWindow;
     }
 
-    public AboutDialogBuilder title(String value) {
-        this.title = value;
+    /**
+     * Sets the title for the about dialog.
+     *
+     * @param title the title to be set for the about dialog
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder title(String title) {
+        this.title = title;
         return this;
     }
 
-    public AboutDialogBuilder name(String value) {
-        this.name = value;
+    /**
+     * Sets the name to be used in the AboutDialog.
+     *
+     * @param name the name to set
+     * @return the current instance of AboutDialogBuilder
+     */
+    public AboutDialogBuilder name(String name) {
+        this.name = name;
         return this;
     }
 
-    public AboutDialogBuilder version(String value) {
-        this.version = value;
+    /**
+     * Sets the version information for the about dialog.
+     *
+     * @param version the version information to be displayed in the dialog.
+     * @return the current instance of AboutDialogBuilder for method chaining.
+     */
+    public AboutDialogBuilder version(String version) {
+        this.version = version;
         return this;
     }
 
-    public AboutDialogBuilder copyright(String value) {
-        this.copyright = value;
+    /**
+     * Sets the copyright information for the About dialog.
+     *
+     * @param text the copyright text to be displayed in the About dialog
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder copyright(String text) {
+        this.copyright = text;
         return this;
     }
 
+    /**
+     * Sets the email address for the About dialog.
+     *
+     * @param address the email address to be displayed and used in the mailto link
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
     public AboutDialogBuilder mail(String address) {
         this.mailText = address;
         this.mailAddress = "mailto:" + address;
         return this;
     }
 
+    /**
+     * Sets the text and mailto URI for the mail link in the About Dialog.
+     *
+     * @param text the text to be displayed for the mail link
+     * @param mailtoUri the mailto URI to be assigned to the mail link
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
     public AboutDialogBuilder mail(String text, String mailtoUri) {
         this.mailText = text;
         this.mailAddress = mailtoUri;
@@ -85,16 +127,25 @@ public class AboutDialogBuilder {
     }
 
     /**
-     * Set supplemental CSS.
+     * Sets the CSS file to be used for styling the dialog.
      *
-     * @param css the name of the CSS resource to load ({@link URL#toExternalForm()}
-     * @return this
+     * @param css the URL of the CSS file
+     * @return the updated instance of AboutDialogBuilder
      */
     public AboutDialogBuilder css(URL css) {
         this.css = css;
         return this;
     }
 
+    /**
+     * Sets the graphic for the about dialog using a URL pointing to the image.
+     * If the URL is null, the graphic will be set to null.
+     * If the URL points to a valid image, the image will be loaded and set as the graphic.
+     * If an error occurs while reading the image, a warning will be logged and the graphic will be set to null.
+     *
+     * @param url the URL pointing to the image to be used as the graphic, can be null
+     * @return the AboutDialogBuilder instance with the updated graphic
+     */
     public AboutDialogBuilder graphic(@Nullable URL url) {
         if (url == null) {
             this.graphic = null;
@@ -111,16 +162,34 @@ public class AboutDialogBuilder {
         return this;
     }
 
+    /**
+     * Sets the graphic node for the About dialog.
+     *
+     * @param graphic the graphic node to set
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
     public AboutDialogBuilder graphic(Node graphic) {
         this.graphic = graphic;
         return this;
     }
 
+    /**
+     * Sets the expandable content for the AboutDialog.
+     *
+     * @param c the node to be displayed as expandable content in the dialog
+     * @return the AboutDialogBuilder instance for method chaining
+     */
     public AboutDialogBuilder expandableContent(Node c) {
         this.expandableContent = c;
         return this;
     }
 
+    /**
+     * Sets expandable content for the AboutDialog.
+     *
+     * @param text the text to set as expandable content; if null or blank, the expandable content is set to null
+     * @return the AboutDialogBuilder instance for method chaining
+     */
     public AboutDialogBuilder expandableContent(@Nullable String text) {
         if (text == null || text.isBlank()) {
             expandableContent = null;
@@ -131,10 +200,22 @@ public class AboutDialogBuilder {
         return this;
     }
 
+    /**
+     * Displays the dialog and waits for the user to respond before returning.
+     *
+     * This method constructs an instance of AboutDialog using the current configuration
+     * and then invokes its showAndWait method to display it. The dialog will be modal
+     * and will block execution until the user dismisses it.
+     */
     public void showAndWait() {
         build().showAndWait();
     }
 
+    /**
+     * Constructs and configures an instance of AboutDialog based on the properties set in the AboutDialogBuilder.
+     *
+     * @return a configured AboutDialog instance
+     */
     public AboutDialog build() {
         AboutDialog dlg = new AboutDialog(css);
 

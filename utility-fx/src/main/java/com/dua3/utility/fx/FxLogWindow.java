@@ -10,7 +10,7 @@ import javafx.stage.Stage;
  */
 public class FxLogWindow extends Stage {
 
-    public static final String DEFAULT_WINDOW_TITLE = "Log";
+    private static final String DEFAULT_WINDOW_TITLE = "Log";
     private final LogBuffer logBuffer;
 
     /**

@@ -26,6 +26,9 @@ import java.nio.file.Path;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+/**
+ * Utility class for creating and managing UI controls.
+ */
 public final class Controls {
     private static final Logger LOG = LogManager.getLogger(Controls.class);
 

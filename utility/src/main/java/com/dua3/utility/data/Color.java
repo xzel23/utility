@@ -609,6 +609,10 @@ public interface Color {
      */
     Color TRANSPARENT_BLACK = register("TRANSPARENT_WHITE", 0x00000000);
 
+    /**
+     * A static instance of HexFormat used for formatting and parsing hexadecimal representations
+     * of color values.
+     */
     HexFormat HEX_FORMAT = HexFormat.of();
 
     /**

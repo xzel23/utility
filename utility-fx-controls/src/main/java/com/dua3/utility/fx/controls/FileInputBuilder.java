@@ -13,6 +13,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * Builder for creating instances of {@link FileInput} with customizable options.
+ * The builder provides methods to configure the file dialog mode, initial path,
+ * extension filters, validation, and disabled state.
+ */
 public final class FileInputBuilder {
 
     private final FileDialogMode mode;
@@ -22,41 +27,90 @@ public final class FileInputBuilder {
     private Function<Path, Optional<String>> validate;
     private ObservableValue<Boolean> disabled;
 
+    /**
+     * Creates a new instance of FileInputBuilder with the specified file dialog mode.
+     *
+     * @param mode the {@link FileDialogMode} indicating the type of file dialog (OPEN, SAVE, or DIRECTORY)
+     */
     FileInputBuilder(FileDialogMode mode) {
         this.mode = mode;
         this.validate = this::defaultValidate;
     }
 
+    /**
+     * Sets the 'disabled' property for the FileInput control.
+     *
+     * @param disabled an ObservableValue object representing the disabled state of the FileInput control
+     * @return the current instance of FileInputBuilder with the 'disabled' property set
+     */
     public FileInputBuilder disabled(ObservableValue<Boolean> disabled) {
         this.disabled = disabled;
         return this;
     }
 
+    /**
+     * Sets the validation function for the file input.
+     *
+     * @param validate a function that takes a Path and returns an Optional containing
+     *                 an error message if validation fails, or an empty Optional if
+     *                 validation succeeds
+     * @return the updated FileInputBuilder instance
+     */
     public FileInputBuilder validate(Function<Path, Optional<String>> validate) {
         this.validate = validate;
         return this;
     }
 
+    /**
+     * Sets the initial path for the file input.
+     *
+     * @param initialPath the initial path to set, which may be null
+     * @return an instance of FileInputBuilder with the specified initial path
+     */
     public FileInputBuilder initialPath(@Nullable Path initialPath) {
         this.initialPath = () -> initialPath;
         return this;
     }
 
+    /**
+     * Sets the initial path for the FileInputBuilder using the provided {@code Supplier<Path>}.
+     *
+     * @param initialPath a Supplier that provides the initial Path
+     * @return the FileInputBuilder instance with the updated initial path
+     */
     public FileInputBuilder initialPath(Supplier<Path> initialPath) {
         this.initialPath = initialPath;
         return this;
     }
 
+    /**
+     * Adds the specified file extension filters to the FileChooser.
+     *
+     * @param filter One or more FileChooser.ExtensionFilter objects representing
+     *               the file extension filters to be added.
+     * @return The current instance of FileInputBuilder, allowing for method chaining.
+     */
     public FileInputBuilder filter(FileChooser.ExtensionFilter... filter) {
         extensionFilters.addAll(Arrays.asList(filter));
         return this;
     }
 
+    /**
+     * Sets the flag indicating whether only existing files or directories should be selectable.
+     *
+     * @param flag a boolean flag; if true, only existing files or directories can be selected, otherwise new ones can also be selected
+     * @return the current instance of FileInputBuilder for method chaining
+     */
     public FileInputBuilder existingOnly(boolean flag) {
         this.existingOnly = flag;
         return this;
     }
 
+    /**
+     * Builds a {@link FileInput} object using the properties specified in the {@code FileInputBuilder}.
+     *
+     * @return a constructed {@link FileInput} control based on the current configuration.
+     */
     public FileInput build() {
         FileInput control = new FileInput(mode, existingOnly, initialPath, extensionFilters, validate);
         if (disabled != null) {
@@ -66,6 +120,13 @@ public final class FileInputBuilder {
         return control;
     }
 
+    /**
+     * Returns a string representation of the item based on the mode and whether the text should be capitalized.
+     *
+     * @param captitalize boolean indicating whether the text should be capitalized
+     * @return a string representing the item, either "Directory" or "directory" when the mode is DIRECTORY,
+     * and "File" or "file" when the mode is OPEN or SAVE
+     */
     private String itemText(boolean captitalize) {
         return switch (mode) {
             case DIRECTORY -> captitalize ? "Directory" : "directory";
@@ -73,9 +134,16 @@ public final class FileInputBuilder {
         };
     }
 
+    /**
+     * Validates a given file path based on the specified file dialog mode and whether
+     * only existing files or directories should be selectable.
+     *
+     * @param p the path to validate, can be null
+     * @return an Optional containing an error message if validation fails, or an empty Optional if validation succeeds
+     */
     private Optional<String> defaultValidate(@Nullable Path p) {
         if (p == null) {
-            return Optional.of("No " + itemText(false) + "selected");
+            return Optional.of("No " + itemText(false) + " selected");
         }
         if (existingOnly && !Files.exists(p)) {
             return Optional.of(itemText(true) + " does not exist");

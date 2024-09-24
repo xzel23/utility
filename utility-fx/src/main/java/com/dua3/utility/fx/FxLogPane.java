@@ -42,6 +42,13 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * FxLogPane is a custom JavaFX component that provides a log viewer with filtering
+ * and search capabilities. It extends BorderPane and consists of a TableView for
+ * displaying log entries and a TextArea for showing details of the selected log entry.
+ * The log entries can be filtered by log level, logger name, and message content.
+ * Additionally, it supports text search within the log messages.
+ */
 public class FxLogPane extends BorderPane {
 
     private static final double COLUMN_WIDTH_MAX = Double.MAX_VALUE;

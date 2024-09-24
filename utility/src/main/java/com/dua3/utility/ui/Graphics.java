@@ -170,10 +170,34 @@ public interface Graphics extends AutoCloseable {
         );
     }
 
+    /**
+     * Enum representing the horizontal anchor positions for text alignment.
+     *
+     * <p>This enum is used in conjunction with graphics operations to specify
+     * the horizontal alignment of text. The positions available are:
+     * <ul>
+     * <li>LEFT: Aligns text to the left side.
+     * <li>RIGHT: Aligns text to the right side.
+     * <li>CENTER: Centers the text horizontally.
+     * </ul>
+     */
     enum HAnchor {
         LEFT, RIGHT, CENTER
     }
 
+    /**
+     * Enum representing vertical anchor points for aligning text or graphics elements.
+     *
+     * <p>This enumeration defines constants that are used to specify the
+     * vertical position of an element relative to a reference point.
+     * The available anchor points are:
+     * <ul>
+     * <li>TOP: Align the top of the element.
+     * <li>BOTTOM: Align the bottom of the element.
+     * <li>BASELINE: Align the baseline of the element.
+     * <li>MIDDLE: Align the middle of the element.
+     * </ul>
+     */
     enum VAnchor {
         TOP, BOTTOM, BASELINE, MIDDLE
     }
