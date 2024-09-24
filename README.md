@@ -167,16 +167,22 @@ the parameter.
 ## Logging
 
 - all internal logging is done through log4j-api instead of slf4j
-- introduced util-logging-slf4j as sub project of util-logging. Note that util-logging is not intended as a production
+- introduced util-logging-slf4j as subproject of util-logging. Note that util-logging is not intended as a production
   logging replacement. It is intended to provide utilities to capture and display log data in an application window.
 
 ## Changes
 
+### 13.1.2
+
+- IoUtil.closeAll()
+- code cleanup
+- javadoc
+
 ### 13.1.1
 
-- FIX: do no throw an exception when temp directory permissions cannot be set. Instead log a warning message. Th reason 
- is that especially the Files.setWriteable() does not seem to always return correct results, even when the directory
-  does have the requested permissions.
+- FIX: do not throw an exception when temp directory permissions cannot be set, log a warning message instead. The
+  reason is that especially the Files.setWriteable() does not seem to always return correct results, even when the  
+  directory does have the requested permissions.
 
 ### 13.1
 
@@ -204,7 +210,7 @@ the parameter.
 - new utility-fx modules with JavaFX related classes and components
 - StreamUtil.zip() has been changed to take an operation as third parameter that defines the combining operation
 - StreamUtil.concat() did not close streams
-- SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtil as as they are usable also in non-Swing 
+- SwingImageUtil, SwingFontUtil have been renamed to AwtImageUtil, AwtFontUtil as they are usable also in non-Swing 
   applications
 - Color methods have been renamed to reduce ambiguity
 - SwingUtil.getDisplayScale() to retrieve the actual scaling factor for the display (taking into account UHD and retina displays)
@@ -242,7 +248,7 @@ the parameter.
 
 ### 12.2
 
-- support for options that prevent validation when present, i. e., to pass a help flag without the parser throwing
+- support for options that prevent validation when present, i.e., to pass a help flag without the parser throwing
   an exception when there are problems with other options
 - moved to Arguments and made public argument validation methods
 - add separate desciption for arguments
@@ -325,7 +331,7 @@ the parameter.
 ### 12.0.0
 
 - BREAKING: ArgumentsParser has been split into ArgumentsParserBuilder and ArgumentsParser; see unit tests for examples
-- BREAKING: RichText.trim() now works the same as String.trim(), i. e. only considers character codes less than or equal
+- BREAKING: RichText.trim() now works the same as String.trim(), i.e. only considers character codes less than or equal
   to ' ' as whitespace. Use RichText.strip() to remove all whitespace.
 - BREAKING: OpenMode.includes() has been renamed to isIncluded()
 - BREAKING: removed Pair.toMap() static methods. Use Map.ofEntries() instead.
