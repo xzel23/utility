@@ -190,7 +190,7 @@ subprojects {
     // === SPOTBUGS ===
     spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
 
-    tasks.withType<com.github.spotbugs.snom.SpotBugsTask>() {
+    tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
         reports.create("html") {
             required.set(true)
             outputLocation = project.layout.buildDirectory.file("reports/spotbugs.html").get().asFile
@@ -203,11 +203,11 @@ subprojects {
     }
 
     // === PUBLISHING ===
-    tasks.withType<PublishToMavenRepository>() {
+    tasks.withType<PublishToMavenRepository> {
         dependsOn(tasks.publishToMavenLocal)
     }
 
-    tasks.withType<Jar>() {
+    tasks.withType<Jar> {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 
