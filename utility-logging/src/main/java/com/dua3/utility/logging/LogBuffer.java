@@ -161,6 +161,10 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
         }
     }
 
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {throw new java.io.NotSerializableException("com.dua3.utility.logging.LogBuffer");}
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {throw new java.io.NotSerializableException("com.dua3.utility.logging.LogBuffer");}
+
     /**
      * Interface for Listeners on changes of a {@link LogBuffer} instance's contents.
      */

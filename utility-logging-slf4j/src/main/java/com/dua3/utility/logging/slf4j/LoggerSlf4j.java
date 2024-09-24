@@ -116,4 +116,8 @@ public class LoggerSlf4j extends AbstractLogger {
     public void setLevel(Level level) {
         this.level = level;
     }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {throw new java.io.NotSerializableException("com.dua3.utility.logging.slf4j.LoggerSlf4j");}
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {throw new java.io.NotSerializableException("com.dua3.utility.logging.slf4j.LoggerSlf4j");}
 }
