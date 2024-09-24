@@ -40,6 +40,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -610,28 +612,71 @@ public final class IoUtil {
      * @return Runnable instance that closes all passed arguments when run
      */
     public static Runnable composedClose(AutoCloseable... closeables) {
-        return () -> {
-            Throwable t = null;
-            for (AutoCloseable c : closeables) {
-                try {
-                    if (c != null) {
-                        c.close();
-                    }
-                } catch (Throwable t1) {
-                    if (t == null) {
-                        t = t1;
-                    } else {
-                        try {
-                            t.addSuppressed(t1);
-                        } catch (Throwable ignore) {
-                        }
+        return () -> doCloseAll(Arrays.asList(closeables));
+    }
+
+    /**
+     * Create a Runnable that closes multiple {@link AutoCloseable} instances. Suppressed exceptions are added to the
+     * first exception encountered using the {@link Throwable#addSuppressed(Throwable)} method.
+     *
+     * @param closeables collection holding the {@link AutoCloseable} instances to close
+     * @return Runnable instance that closes all passed arguments when run
+     */
+    public static Runnable composedClose(Collection<AutoCloseable> closeables) {
+        return () -> doCloseAll(closeables);
+    }
+
+    /**
+     * Closes all provided AutoCloseable resources.
+     *
+     * @param closeables an array of AutoCloseable resources to be closed
+     * @throws IOException if an I/O error occurs during the closing of resources.
+     */
+    @SuppressWarnings("RedundantThrows")
+    public static void closeAll(AutoCloseable... closeables) throws IOException {
+        doCloseAll(Arrays.asList(closeables));
+    }
+
+    /**
+     * Closes all the AutoCloseable resources provided in the Iterable.
+     *
+     * @param closeables a collection of AutoCloseable resources to be closed.
+     * @throws IOException if an I/O error occurs during the closing of resources.
+     */
+    @SuppressWarnings("RedundantThrows")
+    public static void closeAll(Collection<AutoCloseable> closeables) throws IOException {
+        doCloseAll(closeables);
+    }
+
+    /**
+     * Closes all AutoCloseable objects in the provided collection.
+     * <p>
+     * Any exceptions thrown while closing individual objects are suppressed and added to
+     * the primary exception, which is then rethrown.
+     *
+     * @param closeables a collection of AutoCloseable objects to be closed
+     */
+    private static void doCloseAll(Iterable<AutoCloseable> closeables) {
+        Throwable t = null;
+        for (AutoCloseable c : closeables) {
+            try {
+                if (c != null) {
+                    c.close();
+                }
+            } catch (Exception t1) {
+                if (t == null) {
+                    t = t1;
+                } else {
+                    try {
+                        t.addSuppressed(t1);
+                    } catch (Exception ignore) {
                     }
                 }
             }
-            if (t != null) {
-                sneakyThrow(t);
-            }
-        };
+        }
+        if (t != null) {
+            sneakyThrow(t);
+        }
     }
 
     /**
