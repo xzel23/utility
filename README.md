@@ -176,6 +176,7 @@ the parameter.
 
 - IoUtil.closeAll()
 - code cleanup
+- prevent serialization of logging related classes for security reasons
 - javadoc
 
 ### 13.1.1
