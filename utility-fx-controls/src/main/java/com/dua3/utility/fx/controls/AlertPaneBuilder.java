@@ -44,8 +44,16 @@ public class AlertPaneBuilder
         };
     }
 
+    /**
+     * Sets the text content of the alert dialog. The text can be formatted using
+     * a format string and arguments.
+     *
+     * @param fmt the format string.
+     * @param args arguments referenced by the format specifiers in the format string.
+     * @return the current instance of the AlertPaneBuilder for chaining.
+     */
     public AlertPaneBuilder text(String fmt, Object... args) {
-        this.text = format(fmt, args);
+        this.text = String.format(fmt, args);
         return this;
     }
 

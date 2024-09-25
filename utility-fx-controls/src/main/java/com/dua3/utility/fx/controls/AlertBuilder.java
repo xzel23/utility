@@ -79,7 +79,7 @@ public class AlertBuilder
      * @return {@code this}
      */
     public AlertBuilder text(String fmt, Object... args) {
-        this.text = format(fmt, args);
+        this.text = String.format(fmt, args);
         return this;
     }
 

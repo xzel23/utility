@@ -75,12 +75,8 @@ public abstract class AbstractDialogPaneBuilder<D, B extends AbstractDialogPaneB
      */
     @SuppressWarnings("unchecked")
     public B header(String fmt, Object... args) {
-        this.header = format(fmt, args);
+        this.header = String.format(fmt, args);
         return (B) this;
-    }
-
-    protected static String format(String fmt, Object... args) {
-        return String.format(fmt, args);
     }
 
     @SuppressWarnings("unchecked")
