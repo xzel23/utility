@@ -25,16 +25,32 @@ public class LoggerSlf4j extends AbstractLogger {
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
     private Level level;
 
+    /**
+     * Constructs a new LoggerSlf4j instance with the specified name and handlers.
+     *
+     * @param name     the name of the logger
+     * @param handlers a list of handlers for processing log entries
+     */
     public LoggerSlf4j(String name, List<? extends WeakReference<LogEntryHandler>> handlers) {
         //noinspection AssignmentToSuperclassField: it is the only way to set the logger name
         super.name = name;
         this.handlers = handlers;
     }
 
+    /**
+     * Returns the default log level for the logger.
+     *
+     * @return the default log level
+     */
     public static Level getDefaultLevel() {
         return defaultLevel;
     }
 
+    /**
+     * Sets the default logging level.
+     *
+     * @param level the new default logging level
+     */
     public static void setDefaultLevel(Level level) {
         defaultLevel = level;
     }
@@ -110,10 +126,20 @@ public class LoggerSlf4j extends AbstractLogger {
         return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.ERROR.toInt();
     }
 
+    /**
+     * Retrieves the current logging level. If not explicitly set, returns the default level.
+     *
+     * @return the current logging level if set, otherwise the default logging level
+     */
     public Level getLevel() {
         return level != null ? level : defaultLevel;
     }
 
+    /**
+     * Sets the logging level for this logger.
+     *
+     * @param level the new logging level to be set
+     */
     public void setLevel(Level level) {
         this.level = level;
     }

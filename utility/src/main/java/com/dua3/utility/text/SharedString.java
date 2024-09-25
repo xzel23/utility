@@ -11,6 +11,11 @@ import com.dua3.utility.lang.LangUtil;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
+/**
+ * A class that provides a shared view of a portion of a base string, implementing
+ * the {@link CharSequence} interface. This allows efficient sharing of substrings
+ * without copying the underlying character data.
+ */
 public class SharedString implements CharSequence {
 
     private final String base;

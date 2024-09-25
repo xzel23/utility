@@ -34,7 +34,7 @@ import java.util.Optional;
 public class DirectoryChooserBuilder {
     private static final Logger LOG = LogManager.getLogger(DirectoryChooserBuilder.class);
 
-    public static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
+    private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
 
     private Path initialDir = USER_HOME;
 

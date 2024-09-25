@@ -203,7 +203,7 @@ public class AboutDialogBuilder {
     /**
      * Displays the dialog and waits for the user to respond before returning.
      *
-     * This method constructs an instance of AboutDialog using the current configuration
+     * <p>This method constructs an instance of AboutDialog using the current configuration
      * and then invokes its showAndWait method to display it. The dialog will be modal
      * and will block execution until the user dismisses it.
      */

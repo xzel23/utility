@@ -26,9 +26,28 @@ import java.util.Properties;
  * The LoggerFactorySlf4j class is an implementation of the ILoggerFactory and LogEntryDispatcher interfaces.
  */
 public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
+    /**
+     * Specifies the logging level for the {@code LoggerFactorySlf4j}.
+     *
+     * <p>This variable defines the configuration key used to set the logging level
+     * across the application. It is typically read from a properties file during
+     * the initialization of the logger factory.
+     *
+     * <p>Possible values include logging levels such as "DEBUG", "INFO", "WARN", "ERROR", etc.
+     */
     public static final String LEVEL = "logger.level";
 
+    /**
+     * Configuration key used to specify the stream to which log entries are written for console logging.
+     *
+     * <p>This key can be used to configure the console output stream in the logging properties file,
+     * enabling redirection of log entries to different streams such as System.out or System.err.
+     */
     public static final String LOGGER_CONSOLE_STREAM = "logger.console.stream";
+
+    /**
+     * Property key to enable or disable colored output for the console logger.
+     */
     public static final String LOGGER_CONSOLE_COLORED = "logger.console.colored";
 
     private final List<Pair<String, Level>> prefixes = new ArrayList<>();
@@ -37,12 +56,28 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     private final LogEntryHandler defaultHandler;
     private volatile LogEntryFilter filter;
 
+    /**
+     * Constructs a new instance of LoggerFactorySlf4j.
+     *
+     * <p>The constructor initializes logging properties from a properties file,
+     * sets the default logging level, configures logging prefixes and console handlers.
+     *
+     * <p>The initialization process includes:
+     * <ol>
+     * <li> Loading properties from the logging properties file.
+     * <li> Parsing the log level declaration and setting the global/default log level.
+     * <li> Configuring specific log levels for various log message prefixes.
+     * <li> Setting up console handlers based on properties for console stream and colored output.
+     * </ol>
+     *
+     * @throws IllegalArgumentException if an invalid logging configuration is detected.
+     */
     public LoggerFactorySlf4j() {
         Properties properties = getProperties();
 
         // parse log level entry
-        String leveldeclaration = properties.getProperty(LEVEL, Level.INFO.name());
-        String[] decls = leveldeclaration.split(",");
+        String levelDeclaration = properties.getProperty(LEVEL, Level.INFO.name());
+        String[] decls = levelDeclaration.split(",");
 
         if (decls.length > 0) {
             LoggerSlf4j.setDefaultLevel(Level.valueOf(decls[0].strip()));
@@ -142,6 +177,11 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
         return handlers.stream().map(WeakReference::get).filter(Objects::nonNull).toList();
     }
 
+    /**
+     * Returns the default {@code LogEntryHandler}.
+     *
+     * @return the default log entry handler
+     */
     public LogEntryHandler getDefaultHandler() {
         return defaultHandler;
     }

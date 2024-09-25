@@ -18,6 +18,9 @@ import com.dua3.cabe.annotations.Nullable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Window;
 
+/**
+ * Utility class for creating various types of dialogs and panes.
+ */
 public final class Dialogs {
 
     // utility - no instances

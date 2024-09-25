@@ -79,12 +79,23 @@ public abstract class AbstractDialogPaneBuilder<D, B extends AbstractDialogPaneB
         return (B) this;
     }
 
+    /**
+     * Sets the result handler for this dialog pane builder.
+     *
+     * @param resultHandler the result handler to be used for handling dialog results
+     * @return this builder instance
+     */
     @SuppressWarnings("unchecked")
     public B resultHandler(ResultHandler<R> resultHandler) {
         this.resultHandler = resultHandler;
         return (B) this;
     }
 
+    /**
+     * Gets the result handler for this dialog pane builder.
+     *
+     * @return the result handler managing dialog results
+     */
     public ResultHandler<R> getResultHandler() {
         return resultHandler;
     }

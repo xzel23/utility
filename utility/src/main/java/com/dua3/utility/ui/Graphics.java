@@ -171,35 +171,43 @@ public interface Graphics extends AutoCloseable {
     }
 
     /**
-     * Enum representing the horizontal anchor positions for text alignment.
-     *
-     * <p>This enum is used in conjunction with graphics operations to specify
-     * the horizontal alignment of text. The positions available are:
-     * <ul>
-     * <li>LEFT: Aligns text to the left side.
-     * <li>RIGHT: Aligns text to the right side.
-     * <li>CENTER: Centers the text horizontally.
-     * </ul>
+     * Enum representing horizontal anchor points for aligning text or graphics elements relative to a reference point.
      */
     enum HAnchor {
-        LEFT, RIGHT, CENTER
+        /**
+         * Aligns element to the left side.
+         */
+        LEFT,
+        /**
+         * Aligns element to the right side.
+         */
+        RIGHT,
+        /**
+         * Centers element text horizontally.
+         */
+        CENTER
     }
 
     /**
-     * Enum representing vertical anchor points for aligning text or graphics elements.
-     *
-     * <p>This enumeration defines constants that are used to specify the
-     * vertical position of an element relative to a reference point.
-     * The available anchor points are:
-     * <ul>
-     * <li>TOP: Align the top of the element.
-     * <li>BOTTOM: Align the bottom of the element.
-     * <li>BASELINE: Align the baseline of the element.
-     * <li>MIDDLE: Align the middle of the element.
-     * </ul>
+     * Enum representing vertical anchor points for aligning text or graphics elements relative to a reference point.
      */
     enum VAnchor {
-        TOP, BOTTOM, BASELINE, MIDDLE
+        /**
+         * Align the top of the element.
+         */
+        TOP,
+        /**
+         * Align the bottom of the element.
+         */
+        BOTTOM,
+        /**
+         * Aligns the baseline of the element.
+         */
+        BASELINE,
+        /**
+         * Align the middle of the element relative to the reference point.
+         */
+        MIDDLE
     }
 
     /**

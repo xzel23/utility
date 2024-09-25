@@ -108,6 +108,20 @@ public final class LogUtilLog4J {
         LogUtil.assureInitialized();
     }
 
+    /**
+     * Updates all loggers to add the global appender and refresh their configurations.
+     *
+     * <p>
+     * This method retrieves the current {@link LoggerContext} from {@link LogManager} and iterates through
+     * all available loggers, adding the global appender to each logger. After updating
+     * the loggers with the global appender, it calls the updateLoggers method of the {@link LoggerContext}
+     * to apply the changes.
+     *
+     * <p>
+     * This method ensures that all loggers in the application are configured with
+     * the globally defined appender, which might be necessary for consistent logging
+     * behavior across different parts of the application.
+     */
     public static void updateLoggers() {
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         ctx.getLoggers().forEach(logger -> logger.addAppender(GLOBAL_APPENDER));

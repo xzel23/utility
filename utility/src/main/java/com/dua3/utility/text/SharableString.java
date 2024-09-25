@@ -7,10 +7,21 @@ package com.dua3.utility.text;
 
 import com.dua3.cabe.annotations.Nullable;
 
+/**
+ * A class that provides a sharable view of a {@link String} by implementing
+ * the {@link CharSequence} interface. It allows operations of {@link String}
+ * while enabling efficient sharing and subsequencing without copying
+ * underlying character data.
+ */
 public class SharableString implements CharSequence {
 
     private final String base;
 
+    /**
+     * Constructs a new SharableString using the specified string.
+     *
+     * @param s the underlying string to be shared and viewed through this SharableString
+     */
     public SharableString(String s) {
         this.base = s;
     }

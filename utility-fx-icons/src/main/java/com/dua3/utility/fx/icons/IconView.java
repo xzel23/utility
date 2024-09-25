@@ -96,12 +96,22 @@ public class IconView extends Control {
         }
     };
 
+    /**
+     * Creates an instance of IconView.
+     */
     public IconView() {
         this.pane = new StackPane();
         getChildren().setAll(pane);
         iconIdentifier.addListener((v, o, n) -> setIcon(n));
     }
 
+    /**
+     * Constructs an IconView instance with the specified icon identifier, size, and color.
+     *
+     * @param iconId the identifier of the icon to be displayed
+     * @param size the size of the icon
+     * @param color the color of the icon
+     */
     public IconView(String iconId, int size, Paint color) {
         this();
         setIcon(iconId);
@@ -109,6 +119,11 @@ public class IconView extends Control {
         setIconColor(color);
     }
 
+    /**
+     * Retrieves the CSS metadata for the IconView class.
+     *
+     * @return a list of CssMetaData objects associated with the IconView class.
+     */
     public static List<CssMetaData<? extends Styleable, ?>> getClassCssMetaData() {
         return STYLEABLES;
     }

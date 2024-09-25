@@ -38,7 +38,7 @@ import java.util.Optional;
 public class FileChooserBuilder {
     private static final Logger LOG = LogManager.getLogger(FileChooserBuilder.class);
 
-    public static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
+    private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
 
     private Path initialDir = USER_HOME;
     private String initialFileName = "";

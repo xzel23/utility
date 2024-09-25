@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * A builder class for constructing customized TextFields.
  *
- * This class supports building TextFields with specific configurations
+ * <p>This class supports building TextFields with specific configurations
  * such as setting text, type, and binding the disabled state.
  */
 public final class TextFieldBuilder {
@@ -48,7 +48,7 @@ public final class TextFieldBuilder {
     /**
      * Sets the type of the TextField.
      *
-     * This method allows you to specify the type of input the TextField should accept.
+     * <p>This method allows you to specify the type of input the TextField should accept.
      * The supported types are defined in the {@link TextFieldType} enum.
      *
      * @param type the type to set for the TextField
