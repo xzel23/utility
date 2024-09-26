@@ -9,6 +9,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 
+/**
+ * The Decoration class provides static methods to manage decorations for JavaFX Nodes.
+ * Decorations can be added, removed, and their positions updated relative to the owner node.
+ */
 public final class Decoration {
 
     private static final String DECORATION_LIST = Decoration.class.getName() + ".decoration_list";
@@ -19,6 +23,13 @@ public final class Decoration {
     private Decoration() {
     }
 
+    /**
+     * Retrieves the list of decorations associated with a given Node. If no decorations are present,
+     * a new list is created and stored in the node's properties.
+     *
+     * @param node the {@link Node} from which to retrieve or to which to add decorations
+     * @return an observable list of decorations associated with the specified node
+     */
     public static ObservableList<Decoration> getDecorations(Node node) {
         @SuppressWarnings("unchecked")
         ObservableList<Decoration> decorations = (ObservableList<Decoration>) node.getProperties().get(DECORATION_LIST);
@@ -29,6 +40,14 @@ public final class Decoration {
         return decorations;
     }
 
+    /**
+     * Adds a decoration to a specified {@link Node} at a given position with an identifiable ID.
+     *
+     * @param node the node to which the decoration will be added
+     * @param position the position where the decoration will be placed relative to the node
+     * @param decoration the decoration node to be added
+     * @param id the unique identifier for the decoration
+     */
     public static void addDecoration(Node node, Pos position, Node decoration, String id) {
         DecorationPane decorationPane = DecorationPane.getDecorationPane(node);
 
@@ -77,6 +96,13 @@ public final class Decoration {
         return PREFIX + id;
     }
 
+    /**
+     * Removes a decoration from the given Node as identified by the specified ID.
+     * If the decoration exists, it is removed from the decoration pane associated with the node.
+     *
+     * @param node the Node from which to remove the decoration
+     * @param id the unique identifier of the decoration to be removed
+     */
     public static void removeDecoration(Node node, String id) {
         Object oldDecoration = node.getProperties().remove(getDecorationId(id));
         if (oldDecoration != null) {

@@ -17,6 +17,9 @@ package com.dua3.utility.fx;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
 
+/**
+ * Utility class providing methods for manipulating TableView instances.
+ */
 public final class TableViews {
 
     // utility - no instances

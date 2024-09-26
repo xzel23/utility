@@ -31,6 +31,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+/**
+ * A custom ComboBox control that supports additional features like editing, adding, and removing items.
+ *
+ * @param <T> the type of the items contained in the ComboBox
+ */
 public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T> {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
@@ -56,6 +61,15 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
         this(edit, add, remove, format, Arrays.asList(items));
     }
 
+    /**
+     * Constructs a ComboBoxEx with the specified edit, add, remove, format, and items.
+     *
+     * @param edit    the unary operator to perform editing on the selected item (nullable)
+     * @param add     the supplier to provide a new item to add (nullable)
+     * @param remove  the bi-predicate to determine if an item should be removed (nullable)
+     * @param format  the function to format the items as strings
+     * @param items   the initial items to populate the ComboBox (variadic parameter)
+     */
     public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Collection<T> items) {
         super(new HBox());
         container.setAlignment(Pos.CENTER_LEFT);
@@ -176,23 +190,49 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
         return true;
     }
 
+    /**
+     * Retrieves the currently selected item from the ComboBoxEx.
+     *
+     * @return an Optional containing the selected item if one is selected, or an empty Optional if no item is selected
+     */
     public Optional<T> getSelectedItem() {
         return Optional.ofNullable(comboBox.getSelectionModel().getSelectedItem());
     }
 
+    /**
+     * Retrieves a copy of the items in the ComboBoxEx.
+     *
+     * @return an immutable list containing the current items in the ComboBoxEx
+     */
     public List<T> getItems() {
         return List.copyOf(items);
     }
 
+    /**
+     * Returns the property containing the selected item in the ComboBoxEx.
+     *
+     * @return the ReadOnlyObjectProperty representing the selected item property
+     */
     public ReadOnlyObjectProperty<T> selectedItemProperty() {
         return comboBox.selectionModelProperty().get().selectedItemProperty();
     }
 
+    /**
+     * Sets the comparator for the ComboBoxEx and sorts the items accordingly.
+     * If the comparator is null, the items will not be sorted.
+     *
+     * @param comparator the comparator to set, which is used for sorting the items
+     */
     public void setComparator(Comparator<? super T> comparator) {
         this.comparator = comparator;
         sortItems();
     }
 
+    /**
+     * Sorts the items in the ComboBoxEx using the defined comparator.
+     * If the comparator is null, the method returns without performing any action.
+     * The currently selected item, if any, will remain selected after sorting.
+     */
     public void sortItems() {
         if (comparator == null) {
             return;

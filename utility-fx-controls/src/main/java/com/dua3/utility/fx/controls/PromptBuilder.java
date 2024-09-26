@@ -36,11 +36,24 @@ public class PromptBuilder extends AbstractDialogBuilder<TextInputDialog, Prompt
         setDialogSupplier(this::createDialog);
     }
 
+    /**
+     * Sets the default value for the prompt dialog.
+     *
+     * @param fmt the format string or the default value if no arguments are provided
+     * @param args optional arguments for formatting the default value string
+     * @return the current instance of PromptBuilder for method chaining
+     */
     public PromptBuilder defaultValue(String fmt, Object... args) {
         this.defaultValue = args.length == 0 ? fmt : String.format(fmt, args);
         return this;
     }
 
+    /**
+     * Sets the validation logic for the input prompt.
+     *
+     * @param validate a Predicate to validate the input string
+     * @return the current instance of PromptBuilder for method chaining
+     */
     public PromptBuilder validate(Predicate<? super String> validate) {
         this.validate = validate;
         return this;

@@ -131,6 +131,7 @@ public interface InputControl<R> {
     /**
      * Creates a new {@code SimpleInputControl} for a {@link ComboBoxEx} with the specified parameters.
      *
+     * @param <T>      the type of items contained in the {@link ComboBoxEx}
      * @param choices  the collection of choices to populate the {@link ComboBoxEx}
      * @param dflt     a {@link Supplier} for the default value
      * @param edit     a {@link UnaryOperator} to perform editing on the selected item (nullable)
@@ -161,7 +162,7 @@ public interface InputControl<R> {
      * @param existingOnly  specifies if only existing files can be chosen.
      * @param filters       a {@link Collection} of {@link javafx.stage.FileChooser.ExtensionFilter} to apply.
      * @param validate      a {@link Function} that validates the selected file path.
-     * @return An {@link InputControl} instance for file selection.
+     * @return An {@code InputControl} instance for file selection.
      */
     static InputControl<Path> chooseFile(Supplier<Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filters,
                                          Function<Path, Optional<String>> validate) {
@@ -184,6 +185,11 @@ public interface InputControl<R> {
         return valueProperty().getValue();
     }
 
+    /**
+     * Provides the property representing the value of this input control.
+     *
+     * @return the property containing the current value
+     */
     Property<R> valueProperty();
 
     /**
@@ -215,8 +221,20 @@ public interface InputControl<R> {
      */
     void reset();
 
+    /**
+     * Provides a read-only property representing the validity of the input.
+     *
+     * @return a ReadOnlyBooleanProperty that is true if the input is valid and false otherwise
+     */
     ReadOnlyBooleanProperty validProperty();
 
+    /**
+     * Provides a read-only property representing the error message for this input control.
+     *
+     * This property contains an error message if the input is invalid, otherwise it is empty.
+     *
+     * @return a ReadOnlyStringProperty containing the error message if there is a validation error, otherwise empty
+     */
     ReadOnlyStringProperty errorProperty();
 
     class State<R> {

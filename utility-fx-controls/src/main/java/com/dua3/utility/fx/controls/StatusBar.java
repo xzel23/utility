@@ -65,10 +65,22 @@ public class StatusBar extends CustomControl<HBox> implements FxTaskTracker {
         container.getChildren().setAll(text, region, progressBar);
     }
 
+    /**
+     * Sets the text of the status bar.
+     * This method ensures that the text is set on the JavaFX application thread.
+     *
+     * @param s the text to set in the status bar
+     */
     public void setText(String s) {
         PlatformHelper.runLater(() -> text.setText(s));
     }
 
+    /**
+     * Sets the progress of the progress bar.
+     * This method ensures that the progress is set on the JavaFX application thread.
+     *
+     * @param p the progress value to set in the progress bar
+     */
     public void setProgress(double p) {
         PlatformHelper.runLater(() -> progressBar.setProgress(p));
     }
