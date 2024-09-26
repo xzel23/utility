@@ -231,7 +231,7 @@ public interface InputControl<R> {
     /**
      * Provides a read-only property representing the error message for this input control.
      *
-     * This property contains an error message if the input is invalid, otherwise it is empty.
+     * <p>This property contains an error message if the input is invalid, otherwise it is empty.
      *
      * @return a ReadOnlyStringProperty containing the error message if there is a validation error, otherwise empty
      */
