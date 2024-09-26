@@ -20,6 +20,9 @@ public class IkonliIconProvider implements IconProvider {
 
     private static final Logger LOG = LogManager.getLogger(IkonliIconProvider.class);
 
+    /**
+     * Constructs a new instance of {@code IkonliIconProvider} which provides icons using the Ikonli library.
+     */
     public IkonliIconProvider() {}
 
     @Override

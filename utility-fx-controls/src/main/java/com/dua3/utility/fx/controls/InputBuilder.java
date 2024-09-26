@@ -22,6 +22,8 @@ import java.util.function.UnaryOperator;
  * to a UI form. It allows customization of the control's ID, label text, default
  * value, and validation rules. The builder pattern allows chaining of method calls
  * to create complex input forms with ease.
+ *
+ * @param <B> the generic type of the {@link InputBuilder}
  */
 public interface InputBuilder<B extends InputBuilder<B>> {
 
