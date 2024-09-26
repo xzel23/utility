@@ -7,6 +7,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
+/**
+ * A specialized dialog pane for prompting the user to input a string value.
+ */
 public class PromptPane extends InputDialogPane<String> {
 
     /**
@@ -16,6 +19,11 @@ public class PromptPane extends InputDialogPane<String> {
 
     private final TextField text;
 
+    /**
+     * Constructs a new PromptPane. This constructor initializes
+     * the text field and sets up a validation binding to ensure the input is
+     * non-null and not empty.
+     */
     public PromptPane() {
         text = new TextField();
 

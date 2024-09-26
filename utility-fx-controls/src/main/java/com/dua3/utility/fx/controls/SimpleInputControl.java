@@ -9,6 +9,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * SimpleInputControl is a generic class designed to manage an input control element and its state.
+ * It provides functionalities to reset the control's value, validate input, and obtain error messages.
+ *
+ * @param <C> the type of the control, which must extend from Control
+ * @param <R> the type of the value held by the input control
+ */
 public class SimpleInputControl<C extends Control, R> implements InputControl<R> {
 
     private final C control;
