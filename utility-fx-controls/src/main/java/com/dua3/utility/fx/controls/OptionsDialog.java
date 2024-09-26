@@ -32,6 +32,11 @@ public class OptionsDialog extends Dialog<Arguments> {
 
     private OptionsPane optionPane;
 
+    /**
+     * Constructs an OptionsDialog with OK and Cancel buttons and a result converter.
+     * The result converter will return the values provided by the OptionsPane.
+     * If the Cancel button is pressed or if the OptionsPane has not been set, the result is null.
+     */
     public OptionsDialog() {
         // buttons
         DialogPane dialogPane = getDialogPane();

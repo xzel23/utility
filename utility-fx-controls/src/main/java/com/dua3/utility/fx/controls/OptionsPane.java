@@ -30,6 +30,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * OptionsPane is a custom JavaFX GridPane used as a control element for managing
+ * a collection of options represented by instances of the {@link Option} class.
+ * It implements the {@link InputControl} interface which allows it to handle input
+ * and provide output in the form of {@link Arguments}.
+ */
 public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     /**
