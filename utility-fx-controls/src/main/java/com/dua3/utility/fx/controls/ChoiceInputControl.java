@@ -24,6 +24,12 @@ public class ChoiceInputControl<T> implements InputControl<T> {
     private final Supplier<? extends T> dfltValue;
     private final Property<T> valueProperty;
 
+    /**
+     * Constructs a ChoiceInputControl with the given options and default value supplier.
+     *
+     * @param option the ChoiceOption containing possible values for the input control
+     * @param dfltValue a Supplier that provides the default value for the input control
+     */
     public ChoiceInputControl(ChoiceOption<T> option, Supplier<? extends T> dfltValue) {
         this.option = option;
         this.dfltValue = dfltValue;

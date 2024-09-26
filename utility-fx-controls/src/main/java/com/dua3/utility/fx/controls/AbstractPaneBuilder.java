@@ -19,6 +19,12 @@ public class AbstractPaneBuilder<D extends DialogPane & Supplier<R>, B extends A
         super(DialogPane::setHeaderText);
     }
 
+    /**
+     * Sets the next string parameter for the builder.
+     *
+     * @param s the next string to be set
+     * @return this builder instance
+     */
     @SuppressWarnings("unchecked")
     public B next(String s) {
         this.next = s;
