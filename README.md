@@ -172,6 +172,12 @@ the parameter.
 
 ## Changes
 
+### 13.2 (in progress)
+
+- change type parameter for IoUtil.closeAll() to `? extends AutoCloseable`
+- complete Javadoc (except test and sample code)
+- code cleanup
+
 ### 13.1.2
 
 - IoUtil.closeAll()
