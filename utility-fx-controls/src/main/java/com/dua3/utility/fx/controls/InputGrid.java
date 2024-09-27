@@ -24,6 +24,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
+/**
+ * The InputGrid class is an extension of GridPane that manages input controls and
+ * ensures their validation state. It organizes input controls in a grid layout and
+ * provides methods for initialization, resetting, and retrieving input values.
+ */
 public class InputGrid extends GridPane {
 
     /**
@@ -39,6 +44,9 @@ public class InputGrid extends GridPane {
     private Collection<Meta<?>> data = null;
     private int columns = 1;
 
+    /**
+     * Constructs a new instance of the InputGrid class.
+     */
     public InputGrid() {
     }
 
@@ -51,6 +59,12 @@ public class InputGrid extends GridPane {
         return valid;
     }
 
+    /**
+     * Retrieves a map of IDs and their corresponding values from the input controls.
+     *
+     * @return A map containing IDs as keys and their input values as values. The
+     * result might contain keys that map to {@code null} values.
+     */
     public Map<String, Object> get() {
         Map<String, Object> result = new HashMap<>();
         // Collectors.toMap() does not support null values!
@@ -64,6 +78,17 @@ public class InputGrid extends GridPane {
         this.columns = columns;
     }
 
+    /**
+     * Initializes the InputGrid by clearing previous input controls,
+     * creating a new grid layout, and setting up input controls with labels and markers.
+     *
+     * <p>This method performs the following steps:
+     * - Clears all existing child nodes from the grid.
+     * - Iterates through the data entries to add their corresponding input controls,
+     *   labels, and markers to the grid with proper layout settings.
+     * - Binds the overall validity state to the validity states of individual input controls.
+     * - Sets the initial focus to the first input control in the grid.
+     */
     public void init() {
         getChildren().clear();
 
@@ -125,6 +150,13 @@ public class InputGrid extends GridPane {
         setMargin(child, insets);
     }
 
+    /**
+     * Resets all input controls in the grid to their default values.
+     *
+     * <p>This method iterates through each data entry in the grid and invokes the reset method
+     * on its associated control, thereby setting each input control back to its default state as defined
+     * by the corresponding {@code Meta} object's default value supplier.
+     */
     public void reset() {
         data.forEach(entry -> entry.control.reset());
     }

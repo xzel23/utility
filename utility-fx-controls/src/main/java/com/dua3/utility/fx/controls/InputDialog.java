@@ -26,6 +26,14 @@ import java.util.Map;
  */
 public class InputDialog extends Dialog<Map<String, Object>> {
 
+    /**
+     * Constructs a new InputDialog instance.
+     *
+     * <p>This constructor sets up the result converter for the dialog. When the dialog
+     * is closed, this converter determines the result based on the button pressed.
+     * If the OK button is pressed, it retrieves the input values captured in the
+     * dialog pane. Otherwise, it returns null.
+     */
     public InputDialog() {
         setResultConverter(btn -> {
             if (btn != ButtonType.OK) {

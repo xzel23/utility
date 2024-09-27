@@ -17,12 +17,27 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * An abstract base class for dialog panes that handles input and maintains a validity state.
+ * This class also manages button actions within the dialog pane.
+ *
+ * @param <R> the type of the result produced by the input dialog pane
+ */
 public abstract class InputDialogPane<R> extends DialogPane implements Supplier<R> {
 
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
     protected final List<Pair<ButtonType, Consumer<InputDialogPane<R>>>> buttons = new ArrayList<>();
 
+    /**
+     * Initializes the input dialog pane, setting up necessary configurations
+     * or state required before the pane is displayed. This method should be
+     * invoked prior to rendering the dialog pane to ensure all components
+     * are properly prepared.
+     *
+     * <p>Concrete implementations must define the behavior for initializing
+     * input fields, validation logic, and any other setup needed for the dialog pane.
+     */
     public abstract void init();
 
     /**
@@ -34,6 +49,11 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         return valid;
     }
 
+    /**
+     * Initializes the buttons for the dialog pane based on the list of button types and their corresponding actions.
+     * This method clears any existing button types, then iterates over the list of button-action pairs, adding each
+     * button type to the observable list and setting their respective actions.
+     */
     public void initButtons() {
         ObservableList<ButtonType> bt = getButtonTypes();
         bt.clear();

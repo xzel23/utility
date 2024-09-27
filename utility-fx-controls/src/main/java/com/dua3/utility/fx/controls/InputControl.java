@@ -237,6 +237,11 @@ public interface InputControl<R> {
      */
     ReadOnlyStringProperty errorProperty();
 
+    /**
+     * State class encapsulates a value, validation logic, error message, and validity state.
+     *
+     * @param <R> the type of the value being managed
+     */
     class State<R> {
         private final Property<R> value;
         private final BooleanProperty valid = new SimpleBooleanProperty(true);
@@ -246,20 +251,45 @@ public interface InputControl<R> {
 
         private Function<? super R, Optional<String>> validate;
 
+        /**
+         * Constructs a State object with the given value.
+         *
+         * @param value the property representing the value managed by this State
+         */
         public State(Property<R> value) {
             this(value, freeze(value));
 
         }
 
+        /**
+         * Constructs a State object with the given value and default value supplier.
+         *
+         * @param value the property representing the value managed by this State
+         * @param dflt a supplier that provides the default value for the property
+         */
         public State(Property<R> value, Supplier<R> dflt) {
             this(value, dflt, s -> Optional.empty());
         }
 
+        /**
+         * Creates a supplier that always returns the current value of the given ObservableValue,
+         * capturing its value at the moment this method is called.
+         *
+         * @param value the ObservableValue whose current value is to be captured
+         * @return a Supplier that returns the captured value
+         */
         private static <R> Supplier<R> freeze(ObservableValue<? extends R> value) {
             final R frozen = value.getValue();
             return () -> frozen;
         }
 
+        /**
+         * Constructs a State object with the given value, default value supplier, and validation function.
+         *
+         * @param value the property representing the value managed by this State
+         * @param dflt a supplier that provides the default value for the property
+         * @param validate a function that validates the value and returns an optional error message
+         */
         public State(Property<R> value, Supplier<? extends R> dflt, Function<? super R, Optional<String>> validate) {
             this.value = value;
             this.value.addListener((v, o, n) -> updateValidState(n));
@@ -280,22 +310,49 @@ public interface InputControl<R> {
             updateValidState(valueProperty().getValue());
         }
 
+        /**
+         * Returns the property representing the value managed by this State.
+         *
+         * @return the property representing the value
+         */
         public Property<R> valueProperty() {
             return value;
         }
 
+        /**
+         * Provides a read-only boolean property indicating the validity state.
+         *
+         * @return a {@link ReadOnlyBooleanProperty} representing whether the current state is valid
+         */
         public ReadOnlyBooleanProperty validProperty() {
             return valid;
         }
 
+        /**
+         * Returns a read-only string property representing the current error message.
+         * If the value is valid, the error message will be an empty string.
+         *
+         * @return ReadOnlyStringProperty representing the error message.
+         */
         public ReadOnlyStringProperty errorProperty() {
             return error;
         }
 
+        /**
+         * Sets the default value supplier for this State.
+         *
+         * @param dflt a supplier that provides the default value for the property
+         */
         public void setDefault(Supplier<? extends R> dflt) {
             this.dflt = dflt;
         }
 
+        /**
+         * Resets the state to its default value.
+         *
+         * <p>This method sets the current value of the property managed by this
+         * state to the default value supplied during the creation of the state.
+         */
         public void reset() {
             value.setValue(dflt.get());
         }

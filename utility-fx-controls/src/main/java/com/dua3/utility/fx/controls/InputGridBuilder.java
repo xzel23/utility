@@ -52,8 +52,10 @@ public class InputGridBuilder
     InputGridBuilder() {
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#build()
+    /**
+     * Builds and returns an InputGrid with the current data and column configuration.
+     *
+     * @return the constructed InputGrid
      */
     public InputGrid build() {
         InputGrid grid = new InputGrid();
@@ -61,9 +63,7 @@ public class InputGridBuilder
         grid.setContent(data.values(), columns);
 
         return grid;
-    }    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#add(java.lang.String, java.lang.String, java.lang.Class, T, com.dua3.fx.util.controls.InputDialogPane.InputControl)
-     */
+    }
 
     @Override
     public <T> InputGridBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control) {
@@ -104,9 +104,7 @@ public class InputGridBuilder
         public ReadOnlyStringProperty errorProperty() {
             return error;
         }
-    }    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#add(java.lang.String, java.lang.String, java.lang.Class, T, com.dua3.fx.util.controls.InputDialogPane.InputControl)
-     */
+    }
 
     @Override
     public <T> InputGridBuilder add(String id, Class<T> type, Supplier<T> dflt, InputControl<T> control) {
@@ -119,7 +117,6 @@ public class InputGridBuilder
         LangUtil.check(prev == null, "Input with id '" + id + "' already defined");
         return this;
     }
-
 
     @Override
     public InputGridBuilder addNode(String id, @Nullable String label, Node node) {
@@ -137,58 +134,37 @@ public class InputGridBuilder
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#columns(int)
-     */
     @Override
     public InputGridBuilder columns(int columns) {
         this.columns = LangUtil.requirePositive(columns);
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#text(java.lang.String, java.lang.String, java.lang.String, java.util.function.Function)
-     */
     @Override
     public InputGridBuilder string(String id, String label, Supplier<String> dflt, Function<String, Optional<String>> validate) {
         return add(id, label, String.class, dflt, InputControl.stringInput(dflt, validate));
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#integer(java.lang.String, java.lang.String, java.lang.Integer, java.util.function.Function)
-     */
     @Override
     public InputGridBuilder integer(String id, String label, Supplier<Integer> dflt, Function<Integer, Optional<String>> validate) {
         return add(id, label, Integer.class, dflt, InputControl.integerInput(dflt, validate));
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#decimal(java.lang.String, java.lang.String, java.lang.Double, java.util.function.Function)
-     */
     @Override
     public InputGridBuilder decimal(String id, String label, Supplier<Double> dflt, Function<Double, Optional<String>> validate) {
         return add(id, label, Double.class, dflt, InputControl.decimalInput(dflt, validate));
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#checkBox(java.lang.String, java.lang.String, boolean, java.lang.String)
-     */
     @Override
     public InputGridBuilder checkBox(String id, String label, Supplier<Boolean> dflt, String text, Function<Boolean, Optional<String>> validate) {
         return add(id, label, Boolean.class, dflt, InputControl.checkBoxInput(dflt, text, validate));
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#comboBox(java.lang.String, java.lang.String, T, java.lang.Class, java.util.Collection)
-     */
     @Override
     public <T> InputGridBuilder comboBox(String id, String label, Supplier<T> dflt, Class<T> cls, Collection<T> items, Function<T, Optional<String>> validate) {
         return add(id, label, cls, dflt, InputControl.comboBoxInput(items, dflt, validate));
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#comboBoxEx(java.lang.String, java.lang.String, T, java.lang.Class, java.util.Collection)
-     */
     @Override
     public <T> InputGridBuilder comboBoxEx(
             String id,
@@ -204,9 +180,6 @@ public class InputGridBuilder
         return add(id, label, cls, dflt, InputControl.comboBoxExInput(items, dflt, edit, add, remove, format, validate));
     }
 
-    /* (non-Javadoc)
-     * @see com.dua3.fx.util.controls.InputBuilder#radioList(java.lang.String, java.lang.String, T, java.lang.Class, java.util.Collection)
-     */
     @Override
     public <T> InputGridBuilder radioList(String id, String label, Supplier<T> dflt, Class<T> cls, Collection<T> items,
                                           Function<T, Optional<String>> validate) {

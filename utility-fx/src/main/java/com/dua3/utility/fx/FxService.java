@@ -6,6 +6,12 @@ import javafx.concurrent.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class that extends the JavaFX Service class to manage tasks with progress, state, and title trackers.
+ * Allows for the registration and removal of task trackers that implement the FxTaskTracker interface.
+ *
+ * @param <T> The result type of the service.
+ */
 public abstract class FxService<T> extends Service<T> {
 
     private final List<FxTaskTracker> taskTrackers = new ArrayList<>();
@@ -36,10 +42,22 @@ public abstract class FxService<T> extends Service<T> {
         taskTrackers.forEach(t -> t.updateTaskTitle(task, arg));
     }
 
+    /**
+     * Adds an FxTaskTracker to the list of task trackers. The added tracker will receive updates
+     * about task progress, state, and title.
+     *
+     * @param t the FxTaskTracker to be added to the list of task trackers
+     */
     public void addTaskTracker(FxTaskTracker t) {
         taskTrackers.add(t);
     }
 
+    /**
+     * Removes an FxTaskTracker from the list of task trackers. The removed tracker will no longer receive updates
+     * about task progress, state, and title.
+     *
+     * @param t the FxTaskTracker to be removed from the list of task trackers
+     */
     public void removeTaskTracker(FxTaskTracker t) {
         taskTrackers.remove(t);
     }
