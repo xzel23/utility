@@ -305,6 +305,11 @@ public interface InputControl<R> {
             error.setValue(result.orElse(""));
         }
 
+        /**
+         * Sets the validation function for the State.
+         *
+         * @param validate a function that validates the value and returns an optional error message
+         */
         public void setValidate(Function<? super R, Optional<String>> validate) {
             this.validate = validate;
             updateValidState(valueProperty().getValue());

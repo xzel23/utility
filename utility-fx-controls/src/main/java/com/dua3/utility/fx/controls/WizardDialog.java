@@ -21,6 +21,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * Represents a wizard dialog that guides the user through a sequence of pages.
+ * Each page can represent a step in a process, and the wizard dialog allows
+ * navigation between these steps.
+ */
 public class WizardDialog extends Dialog<Map<String, Object>> {
 
     /**
@@ -48,6 +53,10 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
      */
     private Pair<String, Page<?, ?>> current;
 
+    /**
+     * WizardDialog initializes a new dialog that handles the navigation and data collection
+     * of a sequence of wizard pages.
+     */
     public WizardDialog() {
         setResultConverter(btn -> {
             if (btn != ButtonType.FINISH) {
@@ -65,6 +74,12 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
         });
     }
 
+    /**
+     * Sets the wizard pages and the initial page to start from.
+     *
+     * @param pages a map where keys are page identifiers and values are the corresponding Page objects
+     * @param startPage the identifier of the page where the wizard dialog should start
+     */
     public void setPages(Map<String, Page<?, ?>> pages, String startPage) {
         this.pages = pages;
 
@@ -73,6 +88,23 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
         setPage(startPage);
     }
 
+    /**
+     * Verifies the configuration of each page within the wizard, ensuring that next page references exist,
+     * and sets up the dialog pane buttons for each page.
+     *
+     * <p>This method performs the following tasks for each page in the wizard:
+     *<ol>
+     * <li> Confirms that the 'next' page reference for each page exists in the set of pages. If a 'next' page is
+     *    referenced that does not exist, an IllegalStateException is thrown.
+     * <li> Prepares the buttons for the page's dialog pane by initializing the buttons through `initButtons()` method.
+     * <li> Adds a 'cancel' button to the dialog pane if the wizard is cancelable.
+     * <li> Adds a 'next' button or 'finish' button to the dialog pane depending on whether the current page has a
+     *    'next' reference. The 'next' button pushes the current page onto the stack and navigates to the 'next' page.
+     *    The 'finish' button is added if there is no 'next' page.
+     * <li> Adds a 'previous' button to navigate to the previous page if the previous button functionality is enabled.
+     * </ol>
+     * @throws IllegalStateException if any page refers to a 'next' page that does not exist
+     */
     private void checkPages() {
         Set<String> pageNames = pages.keySet();
         for (Entry<String, Page<?, ?>> entry : pages.entrySet()) {
@@ -180,6 +212,11 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
         return showPreviousButton;
     }
 
+    /**
+     * Retrieves the current wizard page.
+     *
+     * @return the current wizard page as a {@link Page} object
+     */
     public Page<?, ?> getCurrentPage() {
         return current.second();
     }

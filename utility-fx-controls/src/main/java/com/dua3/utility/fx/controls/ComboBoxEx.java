@@ -176,6 +176,15 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
         }
     }
 
+    /**
+     * Prompts the user with a confirmation dialogue to verify whether to remove the selected item.
+     *
+     * <p>Pass this as the {@code remove} parameter to the constructor to show a confirmation dialog
+     * when the user wants to remove an item.
+     *
+     * @param item the item to be removed
+     * @return true if the user confirms the removal, false otherwise
+     */
     public boolean askBeforeRemoveSelectedItem(T item) {
         return Dialogs.confirmation(Optional.ofNullable(getScene()).map(Scene::getWindow).orElse(null))
                 .header("Remove %s?", format.apply(item))
@@ -186,6 +195,17 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
                 .orElse(false);
     }
 
+    /**
+     * Remove the selected item without showing a confirmation dialog.
+     *
+     * <p>Pass this as the {@code remove} parameter to the constructor to remove items without showing
+     * a confirmation dialog.
+     *
+     * @param <T> the type of items contained in the {@code ComboBoxEx}
+     * @param cb the {@code ComboBoxEx} to remove the item from
+     * @param item the item to be removed
+     * @return true if the user confirms the removal, false otherwise
+     */
     public static <T> boolean alwaysRemoveSelectedItem(ComboBoxEx<T> cb, T item) {
         return true;
     }

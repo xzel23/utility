@@ -8,10 +8,21 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
+/**
+ * ProgressView is a UI component that displays the progress of tasks in a grid layout.
+ * It extends GridPane and implements the ProgressTracker interface.
+ *
+ * @param <T> the type of the tasks being tracked
+ */
 public class ProgressView<T> extends GridPane implements ProgressTracker<T> {
 
     private final com.dua3.utility.concurrent.ProgressView<T> imp;
 
+    /**
+     * Constructs a new ProgressView object.
+     * This constructor sets up the necessary column constraints for the grid layout of the progress view
+     * and initializes the underlying progress view mechanism.
+     */
     public ProgressView() {
         setHgap(8);
 

@@ -21,11 +21,15 @@ import java.util.Optional;
 import java.util.function.Function;
 
 
+/**
+ * A custom control pane that arranges radio buttons vertically.
+ * This class extends VBox and implements InputControl to provide
+ * selection and validation capabilities.
+ *
+ * @param <T> The type of items that will be represented as radio buttons.
+ */
 public class RadioPane<T> extends VBox implements InputControl<T> {
 
-    /**
-     * Logger
-     */
     protected static final Logger LOG = LogManager.getLogger(RadioPane.class);
     private static final double SPACING = 4;
     private final LinkedHashMap<T, RadioButton> items = new LinkedHashMap<>();
@@ -33,10 +37,11 @@ public class RadioPane<T> extends VBox implements InputControl<T> {
     private final InputControl.State<T> state;
 
     /**
-     * Create new Radio Pane.
+     * Constructs a RadioPane with a given set of items, current value, and validation function.
      *
-     * @param items        the available items
-     * @param currentValue the current value
+     * @param items        the collection of items to be represented as radio buttons
+     * @param currentValue the item to be selected initially, nullable
+     * @param validate     the validation function to validate the selected item, returning an optional error message
      */
     @SuppressWarnings("unchecked")
     public RadioPane(Collection<T> items, @Nullable T currentValue, Function<T, Optional<String>> validate) {

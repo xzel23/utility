@@ -35,16 +35,37 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * property name for the font family
      */
     public static final String FONT_TYPE = "font-type";
+    /**
+     * Constant representing the sans-serif font type.
+     */
     public static final String FONT_TYPE_VALUE_SANS_SERIF = "sans-serif";
+    /**
+     * Constant representing the serif font type.
+     */
     public static final String FONT_TYPE_VALUE_SERIF = "serif";
+    /**
+     * Constant representing the value for monospace font type.
+     */
     public static final String FONT_TYPE_VALUE_MONOSPACE = "monospace";
 
     /**
      * property name for the font style
      */
     public static final String FONT_STYLE = "font-style";
+    /**
+     * Specifies the normal font style.
+     * This value can be used as a setting for the font style to indicate no special styling,
+     * such as italic or oblique, and to maintain the default, standard text appearance.
+     */
     public static final String FONT_STYLE_VALUE_NORMAL = "normal";
+    /**
+     * Represents the italic font style.
+     */
     public static final String FONT_STYLE_VALUE_ITALIC = "italic";
+    /**
+     * Represents the value for the oblique font style.
+     * This is typically used to render text in a slanted manner.
+     */
     public static final String FONT_STYLE_VALUE_OBLIQUE = "oblique";
 
     /**
@@ -61,34 +82,67 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * property name for the font weight
      */
     public static final String FONT_WEIGHT = "font-weight";
+    /**
+     * Represents the font weight property value for bold text.
+     */
     public static final String FONT_WEIGHT_VALUE_BOLD = "bold";
+    /**
+     * Represents the normal font weight value for text styling.
+     */
     public static final String FONT_WEIGHT_VALUE_NORMAL = "normal";
 
     /**
      * property name for the font variant
      */
     public static final String FONT_VARIANT = "font-variant";
+    /**
+     * Represents the normal variant value for font.
+     */
     public static final String FONT_VARIANT_VALUE_NORMAL = "normal";
 
     /**
      * property name for the underline text decoration
      */
     public static final String TEXT_DECORATION_UNDERLINE = "text-decoration-line-under";
+    /**
+     * Indicates that text decoration underline should be applied.
+     */
     public static final Boolean TEXT_DECORATION_UNDERLINE_VALUE_LINE = Boolean.TRUE;
+    /**
+     * Indicates that text decoration underline should not be applied.
+     */
     public static final Boolean TEXT_DECORATION_UNDERLINE_VALUE_NO_LINE = Boolean.FALSE;
 
     /**
      * property name for the line-through text decoration
      */
     public static final String TEXT_DECORATION_LINE_THROUGH = "text-decoration-line-through";
+    /**
+     * Indicates that text decoration line-through should be applied.
+     *
+     * <p>This boolean constant is used to indicate that text within a style should
+     * be rendered with a line through the middle, often used for indicating deleted
+     * or inactive text.
+     */
     public static final Boolean TEXT_DECORATION_LINE_THROUGH_VALUE_LINE = Boolean.TRUE;
+    /**
+     * Indicates that text decoration line-through should not be applied.
+     */
     public static final Boolean TEXT_DECORATION_LINE_THROUGH_VALUE_NO_LINE = Boolean.FALSE;
 
     /**
      * text indentation
      */
     public static final String TEXT_INDENT_LEFT = "indent-left";
+    /**
+     * Represents the left text indentation value of 0.
+     * <p>This constant can be used to specify no indentation
+     * for a text element in a styling context.
+     */
     public static final String TEXT_INDENT_LEFT_VALUE_0 = "0";
+    /**
+     * Represents the left text indentation value of 40 points.
+     */
     public static final String TEXT_INDENT_LEFT_VALUE_1 = "40";
 
     /**
