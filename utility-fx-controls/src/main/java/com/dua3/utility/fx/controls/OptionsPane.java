@@ -53,11 +53,21 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
      *
      * @param optionSet     the available options
      * @param currentValues the current values
+     * @see Option
+     * @see Arguments
      */
     public OptionsPane(Collection<Option<?>> optionSet, Arguments currentValues) {
         this(() -> optionSet, () -> currentValues);
     }
 
+    /**
+     * Constructs a new OptionsPane with the given suppliers for options and default arguments.
+     *
+     * @param options A supplier providing a collection of options.
+     * @param dflt    A supplier providing the default arguments.
+     * @see Option
+     * @see Arguments
+     */
     public OptionsPane(Supplier<? extends Collection<Option<?>>> options, Supplier<Arguments> dflt) {
         this.options = options;
         this.dflt = dflt;

@@ -113,11 +113,39 @@ public interface ProgressTracker<T> {
      * Task status.
      */
     enum State {
+        /**
+         * Indicates that the task is scheduled and waiting to be executed.
+         * This is a non-terminal state.
+         */
         SCHEDULED(false),
+        /**
+         * Indicates that the task is currently paused.
+         * This is a non-terminal state.
+         */
         PAUSED(false),
+        /**
+         * Represents a running task.
+         * Indicates that the task is currently in progress.
+         * This is a non-terminal state.
+         */
         RUNNING(false),
+        /**
+         * Represents a task state where the task has completed successfully.
+         * This state is terminal, meaning no further transitions should occur
+         * from this state.
+         */
         COMPLETED_SUCCESS(true),
+        /**
+         * The state indicating that the task has completed but encountered a failure.
+         * This state is terminal, meaning no further transitions should occur
+         * from this state.
+         */
         COMPLETED_FAILURE(true),
+        /**
+         * Represents a task that has been aborted.
+         * This state is terminal, meaning no further transitions should occur
+         * from this state.
+         */
         ABORTED(true);
 
         private final boolean terminal;
@@ -127,7 +155,7 @@ public interface ProgressTracker<T> {
         }
 
         /**
-         * Determines if the task is in a terminal state.
+         * Determines if the task is in a terminal state, i.e., no further transitions will occur.
          *
          * @return {@code true} if the task is in a terminal state, {@code false} otherwise.
          */
