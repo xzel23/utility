@@ -7,7 +7,7 @@ package com.dua3.utility.math.geometry;
  * @param sy the y-scaling factor
  */
 public record Scale2f(float sx, float sy) {
-    private static final Scale2f IDENTITY = new Scale2f(1f, 1f);
+    private static final Scale2f IDENTITY = new Scale2f(1.0f, 1.0f);
 
     /**
      * Returns the identity scale {@code Scale2f} object.

@@ -412,7 +412,7 @@ public final class XmlUtil {
                     writer.writeEndElement();
                     hasChildren = true;
                 } else if (event.getEventType() == XMLStreamConstants.SPACE) {
-                    // nop
+                    // do nothing - skip whitespace
                 } else if (event instanceof ProcessingInstruction pi) {
                     skipWhitespace(reader);
                     writeIndentation(writer, level);

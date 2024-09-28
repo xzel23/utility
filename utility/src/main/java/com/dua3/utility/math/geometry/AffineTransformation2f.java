@@ -262,7 +262,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
                         """,
                 a, b, c,
                 d, e, f,
-                0f, 0f, 1f
+                0.0f, 0.0f, 1.0f
         );
     }
 }

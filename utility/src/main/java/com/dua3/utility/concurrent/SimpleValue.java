@@ -61,6 +61,7 @@ public class SimpleValue<T> implements Value<T> {
         return Objects.equals(v, that.v);
     }
 
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         return Objects.hash(v);

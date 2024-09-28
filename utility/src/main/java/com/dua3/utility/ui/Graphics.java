@@ -320,19 +320,19 @@ public interface Graphics extends AutoCloseable {
         // generate lists of chunks for each line
         FontUtil<?> fontUtil = getFontUtil();
         List<List<Fragment>> fragmentLines = new ArrayList<>();
-        float textWidth = 0f;
-        float textHeight = 0f;
-        float baseLine = 0f;
+        float textWidth = 0.0f;
+        float textHeight = 0.0f;
+        float baseLine = 0.0f;
         for (RichText line: text.split("\n")) {
             line = trimLine.apply(line);
 
             List<Fragment> fragments = new ArrayList<>();
             fragmentLines.add(fragments);
 
-            float xAct = 0f;
-            float lineHeight = 0f;
-            float lineWidth = 0f;
-            float lineBaseLine = 0f;
+            float xAct = 0.0f;
+            float lineHeight = 0.0f;
+            float lineWidth = 0.0f;
+            float lineBaseLine = 0.0f;
             boolean wrapAllowed = false;
             for (var run: splitLinePreservingWhitespace(line, wrap)) {
                 Font f = font.deriveFont(run.getFontDef());
@@ -347,7 +347,7 @@ public interface Graphics extends AutoCloseable {
                     }
                     fragments = new ArrayList<>();
                     fragmentLines.add(fragments);
-                    xAct = 0f;
+                    xAct = 0.0f;
                     textHeight += lineHeight;
                     fragments.add(new Fragment(xAct, textHeight, tr.width(), tr.height(), lineBaseLine, f, run));
                     xAct += tr.width();
@@ -391,7 +391,7 @@ public interface Graphics extends AutoCloseable {
             case MIDDLE -> cr.yCenter() - textHeight /2;
             case BOTTOM -> cr.yMax() - textHeight;
         };
-        float fillerHeight = vAlign == VerticalAlignment.DISTRIBUTED ?  (cr.height()- textHeight)/Math.max(1, fragmentLines.size()-1) : 0f;
+        float fillerHeight = vAlign == VerticalAlignment.DISTRIBUTED ?  (cr.height()- textHeight)/Math.max(1, fragmentLines.size()-1) : 0.0f;
 
         record LineStatistics(float text, float whiteSpace, int nSpace) {}
         for (int i = 0; i < fragmentLines.size(); i++) {
@@ -400,10 +400,10 @@ public interface Graphics extends AutoCloseable {
             // determine the number and size of whitespace and text fragments
             LineStatistics fi = fragments.stream().map(fragment -> {
                         boolean isWS = TextUtil.isBlank(fragment.text());
-                        return new LineStatistics(isWS ? 0f : fragment.w(), isWS ? fragment.w() : 0f, isWS ? 1 : 0);
+                        return new LineStatistics(isWS ? 0.0f : fragment.w(), isWS ? fragment.w() : 0.0f, isWS ? 1 : 0);
                     })
                     .reduce((a, b) -> new LineStatistics(a.text + b.text, a.whiteSpace + b.whiteSpace, a.nSpace + b.nSpace))
-                    .orElseGet(() -> new LineStatistics(0f, 0f, 1));
+                    .orElseGet(() -> new LineStatistics(0.0f, 0.0f, 1));
 
             float spaceToDistribute = cr.width() - fi.text - fi.whiteSpace;
             float totalSpace = fi.whiteSpace + spaceToDistribute;
@@ -422,15 +422,15 @@ public interface Graphics extends AutoCloseable {
                         }
                     }
                     case RIGHT -> {
-                        if (fragment.x() == 0f) {
+                        if (fragment.x() == 0.0f) {
                             // push everything to the right
                             x += spaceToDistribute;
                         }
                     }
                     case CENTER -> {
-                        if (fragment.x() == 0f) {
+                        if (fragment.x() == 0.0f) {
                             // push everything halfway right
-                            x += spaceToDistribute / 2f;
+                            x += spaceToDistribute / 2.0f;
                         }
                     }
                     case LEFT -> { /* nothing to do */}

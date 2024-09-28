@@ -47,7 +47,7 @@ public class FxGraphics implements Graphics {
         this.gc = gc;
         this.width = width;
         this.height = height;
-        this.scale = 1f;
+        this.scale = 1.0f;
         this.parentTransform = FxUtil.convert(gc.getTransform());
     }
 
@@ -158,7 +158,7 @@ public class FxGraphics implements Graphics {
         gc.fillText(text.toString(), x, y);
 
         if (isStrikeThrough || isUnderline) {
-            double strokeWidth = font.getSize() / 15f;
+            double strokeWidth = font.getSize() / 15.0f;
 
             Text t = new Text(text.toString());
             t.setFont(font);
