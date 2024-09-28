@@ -11,11 +11,21 @@ import javafx.stage.Stage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Demonstrates the usage of the ProgressView component in a JavaFX application.
+ * This class creates a simple UI to monitor the progress of several tasks.
+ * It uses an ExecutorService to manage a fixed pool of threads for task execution.
+ */
 public class ProgressViewSample extends Application {
 
     ExecutorService pool = Executors.newFixedThreadPool(3,
             ThreadFactoryBuilder.builder().prefix("sample-").daemon(true).build());
 
+    /**
+     * The main entry point for the application.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

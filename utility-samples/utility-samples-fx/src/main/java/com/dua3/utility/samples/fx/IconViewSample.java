@@ -8,8 +8,18 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
+/**
+ * The IconViewSample class is a JavaFX application that displays an icon from the icon provider.
+ * The main method prints the available icon providers to the standard output and launches the JavaFX application.
+ * The start method sets up the primary stage with an IconView displaying an icon with specified parameters.
+ */
 public class IconViewSample extends Application {
 
+    /**
+     * The main entry point for the application.
+     *
+     * @param args the command line arguments
+     */
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         System.out.println("available icon providers: " + IconUtil.iconProviderNames());

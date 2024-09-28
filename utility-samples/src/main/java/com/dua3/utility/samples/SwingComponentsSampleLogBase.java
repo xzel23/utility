@@ -30,19 +30,32 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * An abstract base class for demonstrating logging using various frameworks in a Swing application.
+ * This class extends {@link JFrame} and initializes multiple logging frameworks (SLF4J, JUL, LOG4J).
+ * It also sets up and manages the Swing UI components, including a ComboBox with custom objects,
+ * a progress view, and a log pane.
+ */
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait", "NonConstantLogger"})
 public abstract class SwingComponentsSampleLogBase extends JFrame {
 
-    public static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
-    public static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
-    public static final int AVERAGE_SLEEP_MILLIS = 10;
-    public static final int LOG_BUFFER_SIZE = 1000;
+    private static final String TASK_INDETERMINATE_1 = "Indeterminate Task";
+    private static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
+    private static final int AVERAGE_SLEEP_MILLIS = 10;
+    private static final int LOG_BUFFER_SIZE = 1000;
     private final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + getClass().getName());
     private final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + getClass().getName());
     private final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
     private final AtomicInteger n = new AtomicInteger();
     private volatile boolean done;
 
+    /**
+     * Starts the Swing application by setting the native look and feel and
+     * creating an instance of SwingComponentsSampleLogBase using a provided factory.
+     *
+     * @param factory A supplier that provides an instance of SwingComponentsSampleLogBase.
+     * @param args Command-line arguments passed to the application.
+     */
     public static void start(Supplier<? extends SwingComponentsSampleLogBase> factory, String[] args) {
         SwingUtil.setNativeLookAndFeel();
 

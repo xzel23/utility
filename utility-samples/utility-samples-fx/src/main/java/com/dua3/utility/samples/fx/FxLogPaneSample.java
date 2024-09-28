@@ -25,14 +25,19 @@ public class FxLogPaneSample extends Application {
         LogUtilLog4J.init(LogLevel.TRACE);
     }
 
-    public static final int AVERAGE_SLEEP_MILLIS = 5;
-    public static final int LOG_BUFFER_SIZE = 100000;
+    private static final int AVERAGE_SLEEP_MILLIS = 5;
+    private static final int LOG_BUFFER_SIZE = 100000;
     private static final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + FxLogPaneSample.class.getName());
     private static final Log JCL_LOGGER = LogFactory.getLog("JCL." + FxLogPaneSample.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + FxLogPaneSample.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + FxLogPaneSample.class.getName());
     private final AtomicInteger n = new AtomicInteger();
 
+    /**
+     * The main entry point for the application.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

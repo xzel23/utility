@@ -21,6 +21,11 @@ import java.util.Optional;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class DialogSample extends Application {
 
+    /**
+     * The main entry point for the application.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

@@ -3,6 +3,11 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+/**
+ * Open module definition for com.dua3.utility.samples.geom.
+ *
+ * <p>This module contains sample programs.
+ */
 open module com.dua3.utility.samples.geom {
     exports com.dua3.utility.samples.geom;
 

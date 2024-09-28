@@ -18,11 +18,25 @@ import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.HLineTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.stage.Stage;
+import javafx.scene.shape.Path;
 
+/**
+ * The ShapeFx class extends the JavaFX Application class to create and display a window
+ * with two different paths drawn on a pane. The paths are created using different methods,
+ * demonstrating the use of both JavaFX Path elements and a custom Path2f class with segmented paths.
+ */
 public class ShapeFx extends Application {
+
+/**
+     * The main entry point for the application.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage stage) {
@@ -124,7 +138,4 @@ public class ShapeFx extends Application {
         return jfxPath;
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
