@@ -1,3 +1,6 @@
+/**
+ * This package adds Ikonli icon support.
+ */
 @NotNullApi
 package com.dua3.utility.fx.icons.ikonli;
 
