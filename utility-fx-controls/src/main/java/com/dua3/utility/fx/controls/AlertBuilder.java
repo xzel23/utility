@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.stage.Window;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -30,10 +31,10 @@ import java.util.Arrays;
  */
 public class AlertBuilder
         extends AbstractDialogBuilder<Alert, AlertBuilder, ButtonType> {
-    private String css = null;
-    private String text = null;
-    private ButtonType[] buttons;
-    private ButtonType defaultButton;
+    private @Nullable String css = null;
+    private @Nullable String text = null;
+    private ButtonType @Nullable[] buttons;
+    private @Nullable ButtonType defaultButton;
 
     AlertBuilder(AlertType type, Window parentWindow) {
         super(parentWindow);

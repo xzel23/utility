@@ -9,8 +9,7 @@
 open module com.dua3.utility.swing {
     exports com.dua3.utility.swing;
 
-    requires static com.dua3.cabe.annotations;
-    requires static com.dua3.utility.logging;
+    requires static org.jspecify;    requires static com.dua3.utility.logging;
 
     requires java.datatransfer;
     requires java.desktop;

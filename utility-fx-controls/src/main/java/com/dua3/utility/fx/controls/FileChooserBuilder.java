@@ -14,7 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;

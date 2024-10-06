@@ -18,6 +18,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,10 @@ public class SliderWithButtons extends Region {
     private final Button btnIncrement;
     private final Button btnDecrement;
     private final List<Node> children = new ArrayList<>();
-    private TextField tfValue;
-    private Label label;
+    private @Nullable 
+TextField tfValue;
+    private @Nullable 
+Label label;
 
     /**
      * Constructor for SliderWithButtons. This class creates a slider

@@ -2,6 +2,7 @@ package com.dua3.utility.logging;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
@@ -15,7 +16,8 @@ public final class LogUtil {
 
     private static final Logger LOG = LogManager.getLogger(LogUtil.class);
 
-    private static LogEntryDispatcher globalDispatcher;
+    private @Nullable 
+static LogEntryDispatcher globalDispatcher;
 
     private static synchronized void init() {
         if (globalDispatcher == null) {

@@ -79,7 +79,7 @@ subprojects {
     // dependencies
     dependencies {
         // source annotations
-        implementation(rootProject.libs.cabe.annotations)
+        implementation(rootProject.libs.jspecify)
 
         // LOG4J
         implementation(rootProject.libs.log4j.api)

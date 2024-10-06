@@ -5,7 +5,7 @@
 
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;

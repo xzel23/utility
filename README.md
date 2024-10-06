@@ -153,16 +153,20 @@ time information:
 
 ## Cabe
 
-Starting with version 10, utility uses [cabe](https://github.com/xzel23/cabe). Cabe is a library that is used only at
-compile time and does not introduce any dependencies for downstream projects. It contains source-only annotations that
-are not present in the compiled class files of the processed sources.
+Starting with version 14, utility uses [JSpecify](https://jspecify.dev) annotations for all method parameters.
 
-When you run your code with assertions disabled, virtually no overhead is introduced, as assertions are removed on the
+<!-- TODO: update Cabe to work with JSpecify and make sure the code is instrumented correctly.
+
+The resulting Jar files are instrumented using [Cabe](https://github.com/xzel23/cabe). Cabe is a library that is used only at
+compile time and does not introduce any dependencies for downstream projects. 
+
+When you run your code with assertions disabled, virtually no overhead is introduced, as assertions are removed at
 JVM level.
 
 When running your code with exceptions enabled, parameters are checked for invalid null values and an AssertionError
-will be generated when null is passed for a `@NotNull` annotated parameter. The assertion message contains the name of
-the parameter.
+will be generated when null is passed for a `@NonNull` annotated parameter. The assertion message contains the name of
+the parameter if debug info is available.
+-->
 
 ## Logging
 

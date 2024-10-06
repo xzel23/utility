@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
@@ -18,7 +20,8 @@ public class FilterIterator<T> implements Iterator<T> {
     private final Iterator<? extends T> iterator;
     private final Predicate<? super T> predicate;
     private boolean done;
-    private T current;
+    private @Nullable 
+T current;
 
     /**
      * Construct a new FilterIterator.

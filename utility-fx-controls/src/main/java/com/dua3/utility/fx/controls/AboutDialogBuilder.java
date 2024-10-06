@@ -14,7 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -43,10 +43,14 @@ public class AboutDialogBuilder {
     private String mailText = "";
     private String mailAddress = "";
 
-    private final Window parentWindow;
-    private URL css;
-    private Node graphic;
-    private Node expandableContent;
+    private @Nullable 
+final Window parentWindow;
+    private @Nullable 
+URL css;
+    private @Nullable 
+Node graphic;
+    private @Nullable 
+Node expandableContent;
 
     /**
      * Constructs a new AboutDialogBuilder with the specified parent window.

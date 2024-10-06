@@ -9,8 +9,7 @@
 open module com.dua3.utility.db {
     exports com.dua3.utility.db;
 
-    requires static com.dua3.cabe.annotations;
-
+    requires static org.jspecify;
     requires transitive java.sql;
 
     requires com.dua3.utility;

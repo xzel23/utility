@@ -1,6 +1,6 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.AbstractDialogPaneBuilder.ResultHandler;
 import com.dua3.utility.data.Pair;
 import javafx.beans.binding.Bindings;
@@ -47,11 +47,13 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
     /**
      * Map {@code <page-name> |-> <page-information>}.
      */
-    private Map<String, Page<?, ?>> pages;
+    private @Nullable 
+Map<String, Page<?, ?>> pages;
     /**
      * The currently displayed page.
      */
-    private Pair<String, Page<?, ?>> current;
+    private @Nullable 
+Pair<String, Page<?, ?>> current;
 
     /**
      * WizardDialog initializes a new dialog that handles the navigation and data collection
@@ -226,11 +228,14 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
      */
     public static class Page<D extends InputDialogPane<R>, R> {
         private D pane;
-        private String next;
-        private R result;
-        private ResultHandler<? super R> resultHandler;
+        private @Nullable 
+String next;
+        private @Nullable 
+R result;
+        private @Nullable 
+ResultHandler<? super R> resultHandler;
 
-        String getNext() {
+        @Nullable String getNext() {
             return next;
         }
 

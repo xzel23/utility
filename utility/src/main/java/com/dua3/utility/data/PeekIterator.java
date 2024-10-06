@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -15,7 +17,8 @@ public class PeekIterator<T> implements Iterator<T> {
 
     private final Iterator<? extends T> iterator;
     private boolean done;
-    private T current;
+    private @Nullable 
+T current;
 
     /**
      * Construct a new PeekIterator.

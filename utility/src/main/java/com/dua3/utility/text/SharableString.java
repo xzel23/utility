@@ -5,7 +5,7 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A class that provides a sharable view of a {@link String} by implementing

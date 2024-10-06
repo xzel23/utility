@@ -5,7 +5,7 @@
 
 package com.dua3.utility.lang;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.io.IoUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1065,7 +1065,8 @@ public final class LangUtil {
     private static class CachingSupplier<T> implements AutoCloseableSupplier<T> {
         private final Supplier<? extends T> supplier;
         private final Consumer<? super T> cleaner;
-        private T obj;
+        private @Nullable 
+T obj;
         private boolean initialized;
 
         CachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {

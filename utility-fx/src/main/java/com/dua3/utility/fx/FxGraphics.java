@@ -25,7 +25,7 @@ public class FxGraphics implements Graphics {
 
     private boolean isDrawing = true;
 
-    private AffineTransformation2f transform;
+    private AffineTransformation2f transform = AffineTransformation2f.identity();
 
     private float scale;
     private javafx.scene.paint.Color textColor = javafx.scene.paint.Color.BLACK;

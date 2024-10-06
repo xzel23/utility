@@ -1,7 +1,7 @@
 /**
  * This package contains user interface related classes.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.ui;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

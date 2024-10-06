@@ -1,7 +1,7 @@
 /**
  * Utility classes related to I/O operations.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

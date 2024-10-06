@@ -1,6 +1,6 @@
 package com.dua3.utility.logging.slf4j;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogLevel;
 import org.slf4j.Marker;
@@ -19,7 +19,8 @@ public final class LogEntrySlf4j implements LogEntry {
     private final LogLevel level;
     private final String marker;
     private Supplier<String> messageFormatter;
-    private String formattedMessage;
+    private @Nullable 
+String formattedMessage;
     private final Throwable throwable;
 
     /**

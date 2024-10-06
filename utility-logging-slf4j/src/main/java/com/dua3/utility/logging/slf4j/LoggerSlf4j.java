@@ -1,6 +1,6 @@
 package com.dua3.utility.logging.slf4j;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.logging.LogEntryHandler;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
@@ -23,7 +23,8 @@ public class LoggerSlf4j extends AbstractLogger {
 
     private final List<? extends WeakReference<LogEntryHandler>> handlers;
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
-    private Level level;
+    private @Nullable 
+Level level;
 
     /**
      * Constructs a new LoggerSlf4j instance with the specified name and handlers.

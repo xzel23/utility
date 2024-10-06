@@ -1,7 +1,7 @@
 /**
  * Classes for tracking progress of tasks that are executed asynchronously.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.concurrent;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

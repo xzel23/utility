@@ -14,7 +14,8 @@
 
 package com.dua3.utility.fx.controls;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -29,12 +30,14 @@ import java.util.function.BiConsumer;
  * @param <B> the type of the builder class itself
  * @param <R> the type of the result returned by the dialog box
  */
-public abstract class AbstractDialogBuilder<D extends Dialog<R>, B extends AbstractDialogBuilder<D, B, R>, R>
+public abstract class AbstractDialogBuilder<D extends @NonNull Dialog<R>, B extends @NonNull AbstractDialogBuilder<D, B, R>, R>
         extends AbstractDialogPaneBuilder<D, B, R> {
 
     private final BiConsumer<D, String> titleSetter;
-    private final Window parentWindow;
-    private String title;
+    private @Nullable 
+final Window parentWindow;
+    private @Nullable 
+String title;
 
     protected AbstractDialogBuilder(@Nullable Window parentWindow) {
         super(Dialog::setHeaderText);

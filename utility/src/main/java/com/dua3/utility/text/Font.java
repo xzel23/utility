@@ -5,7 +5,7 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 
@@ -29,9 +29,10 @@ public class Font {
     private final boolean strikeThrough;
 
     // lazily populated fields
-    private String fontspec;
+    @Nullable  private String fontspec;
     private int hash;
-    private FontDef fd;
+    private @Nullable 
+FontDef fd;
     private double spaceWidth = -1;
 
     /**

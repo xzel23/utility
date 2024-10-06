@@ -54,8 +54,7 @@ open module com.dua3.utility {
     exports com.dua3.utility.xml;
     exports com.dua3.utility.awt;
 
-    requires static com.dua3.cabe.annotations;
-
+    requires static org.jspecify;
     requires java.xml;
     requires static java.desktop;
     requires org.apache.logging.log4j;

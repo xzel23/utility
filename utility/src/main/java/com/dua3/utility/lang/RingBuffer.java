@@ -5,7 +5,7 @@
 
 package com.dua3.utility.lang;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.AbstractList;
 import java.util.ArrayList;

@@ -14,8 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
-import com.dua3.cabe.annotations.Nullable;
-import javafx.scene.control.Button;
+import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
@@ -61,7 +60,6 @@ public class AboutDialog extends Dialog<Void> {
     Label lVersion;
     Label lCopyright;
     Hyperlink hlMail;
-    Button btnOk;
 
     /**
      * The email URI, i.e. {@code "mailto:info@domain.com"}.

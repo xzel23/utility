@@ -1,7 +1,7 @@
 /**
  * Classes and utilities related to logging.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.logging;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

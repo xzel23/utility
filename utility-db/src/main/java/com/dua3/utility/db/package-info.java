@@ -1,7 +1,7 @@
 /**
  * Database related classes and utilities for JDBC database access.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.db;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

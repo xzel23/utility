@@ -1,6 +1,6 @@
 package com.dua3.utility.logging.log4j;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.logging.LogEntryDispatcher;
 import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogEntryHandler;

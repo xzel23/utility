@@ -1,7 +1,7 @@
 /**
  * JavaFX related classes and utilities.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.fx;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

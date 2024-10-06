@@ -1,6 +1,6 @@
 package com.dua3.utility.swing;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

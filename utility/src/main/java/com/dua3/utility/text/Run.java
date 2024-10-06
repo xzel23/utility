@@ -5,7 +5,7 @@
 
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 
 import java.util.Collections;
@@ -23,7 +23,8 @@ public final class Run implements AttributedCharSequence {
     private final int length;
     private final TextAttributes attributes;
     private int hash;
-    private FontDef fd;
+    private @Nullable 
+FontDef fd;
 
     /**
      * Construct a new Run.

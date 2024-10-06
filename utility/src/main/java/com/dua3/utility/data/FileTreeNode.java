@@ -1,6 +1,6 @@
 package com.dua3.utility.data;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -26,7 +26,8 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     private final Path path;
     private final boolean lazy;
     private final List<Consumer<T>> refreshListeners = new ArrayList<>();
-    private List<T> children;
+    private @Nullable 
+List<T> children;
 
     /**
      * Constructor for a node in a file tree.

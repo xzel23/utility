@@ -1,7 +1,7 @@
 /**
  * This package provides some general utility classes.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.lang;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

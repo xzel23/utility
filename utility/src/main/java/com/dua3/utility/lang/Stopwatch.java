@@ -5,6 +5,8 @@
 
 package com.dua3.utility.lang;
 
+import org.jspecify.annotations.Nullable;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
@@ -328,7 +330,7 @@ public class Stopwatch {
 
     private static class LazyName {
         private final Supplier<String> name;
-        String n;
+        @Nullable String n;
 
         public LazyName(Supplier<String> name) {
             this.name = name;

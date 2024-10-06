@@ -47,6 +47,5 @@ module com.dua3.utility.fx.controls {
     requires com.dua3.utility;
     requires java.desktop;
 
-    requires static com.dua3.cabe.annotations;
-    requires com.dua3.utility.fx;
+    requires static org.jspecify;    requires com.dua3.utility.fx;
 }

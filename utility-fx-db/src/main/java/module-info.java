@@ -35,6 +35,5 @@ module com.dua3.utility.fx.db {
     requires org.apache.logging.log4j;
     requires javafx.controls;
     requires javafx.graphics;
-    requires static com.dua3.cabe.annotations;
-    requires com.dua3.utility.fx;
+    requires static org.jspecify;    requires com.dua3.utility.fx;
 }

@@ -1,7 +1,7 @@
 /**
  * This package defines a set of classes related to mathematics.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.math;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

@@ -20,6 +20,7 @@ import com.dua3.utility.options.Option;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -30,7 +31,8 @@ import java.util.Collection;
  */
 public class OptionsDialog extends Dialog<Arguments> {
 
-    private OptionsPane optionPane;
+    private @Nullable 
+OptionsPane optionPane;
 
     /**
      * Constructs an OptionsDialog with OK and Cancel buttons and a result converter.

@@ -1,6 +1,6 @@
 package com.dua3.utility.text;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
@@ -23,13 +23,20 @@ public final class FontDef implements Cloneable {
     private static final Logger LOG = LogManager.getLogger(FontDef.class);
 
     private static final Predicate<String> IS_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?").asMatchPredicate();
-    private Color color;
-    private Float size;
-    private String family;
-    private Boolean bold;
-    private Boolean italic;
-    private Boolean underline;
-    private Boolean strikeThrough;
+    private @Nullable 
+Color color;
+    private @Nullable 
+Float size;
+    private @Nullable 
+String family;
+    private @Nullable 
+Boolean bold;
+    private @Nullable 
+Boolean italic;
+    private @Nullable 
+Boolean underline;
+    private @Nullable 
+Boolean strikeThrough;
 
     /**
      * Default constructor that creates a {FontDe} instance without any properties set.
@@ -283,7 +290,7 @@ public final class FontDef implements Cloneable {
     /**
      * @return the bold
      */
-    public Boolean getBold() {
+    public @Nullable Boolean getBold() {
         return bold;
     }
 
@@ -297,7 +304,7 @@ public final class FontDef implements Cloneable {
     /**
      * @return the color
      */
-    public Color getColor() {
+    public @Nullable Color getColor() {
         return color;
     }
 
@@ -311,7 +318,7 @@ public final class FontDef implements Cloneable {
     /**
      * @return the family
      */
-    public String getFamily() {
+    public @Nullable String getFamily() {
         return family;
     }
 
@@ -325,7 +332,7 @@ public final class FontDef implements Cloneable {
     /**
      * @return the italic
      */
-    public Boolean getItalic() {
+    public @Nullable Boolean getItalic() {
         return italic;
     }
 
@@ -339,7 +346,7 @@ public final class FontDef implements Cloneable {
     /**
      * @return the size in points
      */
-    public Float getSize() {
+    public @Nullable Float getSize() {
         return size;
     }
 
@@ -353,7 +360,7 @@ public final class FontDef implements Cloneable {
     /**
      * @return the strikeThrough
      */
-    public Boolean getStrikeThrough() {
+    public @Nullable Boolean getStrikeThrough() {
         return strikeThrough;
     }
 
@@ -367,7 +374,7 @@ public final class FontDef implements Cloneable {
     /**
      * @return the underline
      */
-    public Boolean getUnderline() {
+    public @Nullable Boolean getUnderline() {
         return underline;
     }
 

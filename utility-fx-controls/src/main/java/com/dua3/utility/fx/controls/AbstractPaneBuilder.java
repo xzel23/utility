@@ -1,6 +1,7 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.control.DialogPane;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
  */
 public class AbstractPaneBuilder<D extends DialogPane & Supplier<R>, B extends AbstractPaneBuilder<D, B, R>, R>
         extends AbstractDialogPaneBuilder<D, B, R> {
-    protected String next;
+    @Nullable protected String next;
 
     protected AbstractPaneBuilder() {
         super(DialogPane::setHeaderText);

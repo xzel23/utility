@@ -1,6 +1,6 @@
 package com.dua3.utility.fx;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.logging.DefaultLogEntryFilter;
 import com.dua3.utility.logging.LogBuffer;
@@ -58,7 +58,8 @@ public class FxLogPane extends BorderPane {
     private final TextArea details;
     private final TableView<LogEntry> tableView;
 
-    private volatile LogEntry selectedItem;
+    private @Nullable 
+volatile LogEntry selectedItem;
 
     private boolean autoScroll = true;
 

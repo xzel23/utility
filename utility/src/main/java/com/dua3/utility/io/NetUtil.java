@@ -5,7 +5,7 @@
 
 package com.dua3.utility.io;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 

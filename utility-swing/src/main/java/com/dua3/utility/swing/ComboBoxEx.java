@@ -1,6 +1,6 @@
 package com.dua3.utility.swing;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -37,7 +37,8 @@ import java.util.function.UnaryOperator;
 public class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
-    private Comparator<? super T> comparator;
+    private @Nullable 
+Comparator<? super T> comparator;
     private final UnaryOperator<T> edit;
     private final Supplier<? extends T> add;
     private final BiPredicate<ComboBoxEx<T>, T> remove;

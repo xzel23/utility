@@ -1,7 +1,7 @@
 /**
  * Classes and utilities for creating Swing-based user interfaces.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.swing;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

@@ -35,5 +35,4 @@ module com.dua3.utility.fx.icons.ikonli {
     uses org.kordamp.ikonli.IkonHandler;
     provides IconProvider with IkonliIconProvider;
 
-    requires static com.dua3.cabe.annotations;
-}
+    requires static org.jspecify;}

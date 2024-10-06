@@ -1,7 +1,7 @@
 /**
  * This package defines a set of classes to define geometric shapes and transformations.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.math.geometry;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

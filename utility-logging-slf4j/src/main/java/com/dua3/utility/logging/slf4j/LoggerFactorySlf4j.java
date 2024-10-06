@@ -6,6 +6,7 @@ import com.dua3.utility.logging.LogEntryFilter;
 import com.dua3.utility.logging.LogEntryHandler;
 import com.dua3.utility.logging.ConsoleHandler;
 import com.dua3.utility.logging.LogEntryDispatcher;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.event.Level;
 
@@ -54,7 +55,7 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
 
     private final LogEntryHandler defaultHandler;
-    private volatile LogEntryFilter filter;
+    private volatile LogEntryFilter filter = LogEntryFilter.ALL_PASS_FILTER;
 
     /**
      * Constructs a new instance of LoggerFactorySlf4j.

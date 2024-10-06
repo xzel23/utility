@@ -1,6 +1,6 @@
 package com.dua3.utility.options;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;

@@ -5,7 +5,7 @@
 
 package com.dua3.utility.db;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -25,10 +25,13 @@ public class JdbcDataSource implements DataSource {
     private static final String USER = "user";
     private static final String PASSWORD = "password";
     private final Properties properties = new Properties();
-    private String url;
-    private PrintWriter logWriter;
+    private @Nullable 
+String url;
+    private @Nullable 
+PrintWriter logWriter;
     private int loginTimeout;
-    private Driver driver;
+    private @Nullable 
+Driver driver;
 
     /**
      * Constructor.
@@ -87,7 +90,7 @@ public class JdbcDataSource implements DataSource {
     }
 
     @Override
-    public PrintWriter getLogWriter() throws SQLException {
+    public @Nullable PrintWriter getLogWriter() throws SQLException {
         return logWriter;
     }
 

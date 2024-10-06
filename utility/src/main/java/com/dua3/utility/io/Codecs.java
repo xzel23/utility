@@ -3,6 +3,7 @@ package com.dua3.utility.io;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.LangUtil;
+import org.jspecify.annotations.NonNull;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -83,7 +84,7 @@ public class Codecs {
      * @param construct collection factory method
      * @return collection codec
      */
-    public static <T, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
+    public static <T, C extends @NonNull Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -139,7 +140,7 @@ public class Codecs {
      * @param construct the map construction method
      * @return map codec
      */
-    public static <K, V, M extends Map<K, V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
+    public static <K, V, M extends @NonNull Map<K, V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
         final String name = Map.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">";
         final Codec<Map.Entry<K, V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
         final Codec<Collection<Map.Entry<K, V>>> ENTRIES_CODEC = collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);

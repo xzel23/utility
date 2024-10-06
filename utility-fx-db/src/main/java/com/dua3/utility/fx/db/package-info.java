@@ -1,7 +1,7 @@
 /**
  * This package contains database related classes for working with JavaFX.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.fx.db;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;

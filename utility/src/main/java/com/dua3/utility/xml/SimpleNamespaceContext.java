@@ -1,6 +1,6 @@
 package com.dua3.utility.xml;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.xml.namespace.NamespaceContext;
 import java.util.ArrayList;

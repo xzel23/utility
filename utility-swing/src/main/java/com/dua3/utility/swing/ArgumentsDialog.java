@@ -5,6 +5,7 @@ import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.Option;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -195,7 +196,8 @@ public class ArgumentsDialog extends JDialog {
         return Optional.ofNullable(dlg.arguments);
     }
 
-    private Arguments arguments;
+    private @Nullable 
+Arguments arguments;
 
     private void dialogClosed() {
         arguments = panel.getArguments();

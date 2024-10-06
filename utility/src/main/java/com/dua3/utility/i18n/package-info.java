@@ -1,7 +1,7 @@
 /**
  * This package contains classes for international applications.
  */
-@NotNullApi
+@NullMarked
 package com.dua3.utility.i18n;
 
-import com.dua3.cabe.annotations.NotNullApi;
+import org.jspecify.annotations.NullMarked;
