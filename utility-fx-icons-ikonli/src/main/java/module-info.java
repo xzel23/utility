@@ -1,4 +1,6 @@
 import org.jspecify.annotations.NullMarked;
+import com.dua3.utility.fx.icons.IconProvider;
+import com.dua3.utility.fx.icons.ikonli.IkonliIconProvider;
 
 /**
  * This module is a Java module that provides integration of the Ikonli library with JavaFX Icons.
