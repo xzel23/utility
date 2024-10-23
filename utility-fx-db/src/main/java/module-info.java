@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This module provides utility classes for working with databases in JavaFX applications.
  * <p>
@@ -27,9 +29,9 @@
  *   <li>Requires the module {@code com.dua3.cabe.annotations} for the custom annotations used in this module.</li>
  * </ul>
  */
-module com.dua3.utility.fx.db {
+@NullMarked
+open module com.dua3.utility.fx.db {
     exports com.dua3.utility.fx.db;
-    opens com.dua3.utility.fx.db;
 
     requires com.dua3.utility.db;
     requires org.apache.logging.log4j;

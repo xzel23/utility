@@ -1,21 +1,8 @@
-// Copyright 2019 Axel Howind
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import com.dua3.utility.data.ImageUtilProvider;
 import com.dua3.utility.fx.FxFontUtilProvider;
 import com.dua3.utility.fx.FxImageUtilProvider;
 import com.dua3.utility.text.FontUtilProvider;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Utility module for JavaFX.
@@ -39,9 +26,9 @@ import com.dua3.utility.text.FontUtilProvider;
  *   <li>{@code com.dua3.cabe.annotations}</li>
  * </ul>
  */
-module com.dua3.utility.fx {
+@NullMarked
+open module com.dua3.utility.fx {
     exports com.dua3.utility.fx;
-    opens com.dua3.utility.fx;
 
     provides FontUtilProvider
             with FxFontUtilProvider;

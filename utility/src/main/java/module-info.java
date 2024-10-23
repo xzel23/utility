@@ -7,6 +7,7 @@ import com.dua3.utility.data.ImageUtilProvider;
 import com.dua3.utility.i18n.I18NProvider;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.text.FontUtilProvider;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The com.dua3.utility module provides utility classes for various purposes, such as
@@ -39,6 +40,7 @@ import com.dua3.utility.text.FontUtilProvider;
  * <li>com.dua3.utility.data.ImageUtil: A service used for image manipulation.
  * </ul>
  */
+@NullMarked
 open module com.dua3.utility {
     exports com.dua3.utility.concurrent;
     exports com.dua3.utility.data;

@@ -5,10 +5,12 @@
 
 import com.dua3.utility.logging.ILogEntryDispatcherFactory;
 import com.dua3.utility.logging.log4j.LogEntryDispatcherFactoryLog4j;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * This module provides logging functionality using Log4j.
  */
+@NullMarked
 open module com.dua3.utility.logging.log4j {
     exports com.dua3.utility.logging.log4j;
 

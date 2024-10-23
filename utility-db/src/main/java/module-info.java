@@ -1,11 +1,9 @@
-// Copyright (c) 2019 Axel Howind
-//
-// This software is released under the MIT License.
-// https://opensource.org/licenses/MIT
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Module containing database utilities.
  */
+@NullMarked
 open module com.dua3.utility.db {
     exports com.dua3.utility.db;
 

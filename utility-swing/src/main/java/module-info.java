@@ -3,9 +3,12 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This module provides utilities related to Swing-based GUI applications.
  */
+@NullMarked
 open module com.dua3.utility.swing {
     exports com.dua3.utility.swing;
 

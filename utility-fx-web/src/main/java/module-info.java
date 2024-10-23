@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Module for JavaFX WebView integration.
  * <p>
@@ -19,9 +21,9 @@
  * It requires the modules {@code com.dua3.fx.controls}, {@code javafx.web}, {@code jdk.jsobject},
  * {@code org.apache.logging.log4j}, and {@code com.dua3.cabe.annotations}.
  */
-module com.dua3.utility.fx.web {
+@NullMarked
+open module com.dua3.utility.fx.web {
     exports com.dua3.utility.fx.web;
-    opens com.dua3.utility.fx.web;
 
     requires com.dua3.utility.fx.controls;
     requires javafx.web;

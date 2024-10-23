@@ -1,5 +1,4 @@
-import com.dua3.utility.fx.icons.IconProvider;
-import com.dua3.utility.fx.icons.ikonli.IkonliIconProvider;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * This module is a Java module that provides integration of the Ikonli library with JavaFX Icons.
@@ -20,9 +19,9 @@ import com.dua3.utility.fx.icons.ikonli.IkonliIconProvider;
  * This module has a dependency on the {@code com.dua3.cabe.annotations} module for the use of null check injection
  * into the compiled classes.
  */
-module com.dua3.utility.fx.icons.ikonli {
+@NullMarked
+open module com.dua3.utility.fx.icons.ikonli {
     exports com.dua3.utility.fx.icons.ikonli;
-    opens com.dua3.utility.fx.icons.ikonli;
 
     requires org.apache.logging.log4j;
 

@@ -1,4 +1,5 @@
 import com.dua3.utility.fx.icons.IconProvider;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The com.dua3.fx.icons module provides a collection of icons for JavaFX applications.
@@ -35,9 +36,9 @@ import com.dua3.utility.fx.icons.IconProvider;
  * <li>node(): Returns the Node object of the icon.
  * </ul>
  */
-module com.dua3.utility.fx.icons {
+@NullMarked
+open module com.dua3.utility.fx.icons {
     exports com.dua3.utility.fx.icons;
-    opens com.dua3.utility.fx.icons;
 
     requires org.apache.logging.log4j;
 

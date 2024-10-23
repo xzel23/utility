@@ -3,9 +3,12 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This module contains the classes for the sample applications using Log4J.
  */
+@NullMarked
 open module com.dua3.utility.samples.fx {
     exports com.dua3.utility.samples.fx;
 
@@ -21,5 +24,6 @@ open module com.dua3.utility.samples.fx {
     requires org.apache.commons.logging;
     requires java.logging;
     requires org.apache.logging.log4j;
-    requires org.apache.logging.log4j.jul; // DO NOT REMOVE! this adds the JUL bridge.
+    requires org.apache.logging.log4j.jul;
+    requires org.jspecify; // DO NOT REMOVE! this adds the JUL bridge.
 }
