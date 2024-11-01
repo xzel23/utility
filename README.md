@@ -155,29 +155,27 @@ time information:
 
 Starting with version 14, utility uses [JSpecify](https://jspecify.dev) annotations for all method parameters.
 
-<!-- TODO: update Cabe to work with JSpecify and make sure the code is instrumented correctly.
-
-The resulting Jar files are instrumented using [Cabe](https://github.com/xzel23/cabe). Cabe is a library that is used only at
-compile time and does not introduce any dependencies for downstream projects. 
+The resulting Jar files are instrumented using [Cabe](https://github.com/xzel23/cabe).
 
 When you run your code with assertions disabled, virtually no overhead is introduced, as assertions are removed at
 JVM level.
 
 When running your code with exceptions enabled, parameters are checked for invalid null values and an AssertionError
 will be generated when null is passed for a `@NonNull` annotated parameter. The assertion message contains the name of
-the parameter if debug info is available.
--->
+the parameter.
 
 ## Logging
 
-- all internal logging is done through log4j-api instead of slf4j
-- introduced util-logging-slf4j as subproject of util-logging. Note that util-logging is not intended as a production
-  logging replacement. It is intended to provide utilities to capture and display log data in an application window.
+- all internal logging is done through log4j-api
 
 ## Changes
 
-### 13.2 (in progress)
+### 14
 
+- org.jspecify annotations are used in the code base; all modules annotated with `@NullMarked`.
+  That you may not pass `null` in any method or constructor parameter that is not explicitly
+  annotated as `@Nullable`.
+- module definitions have been reviewed.
 - change type parameter for IoUtil.closeAll() to `? extends AutoCloseable`
 - complete Javadoc
 - code cleanup
