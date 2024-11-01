@@ -26,6 +26,7 @@ open module com.dua3.utility.fx.web {
     exports com.dua3.utility.fx.web;
 
     requires com.dua3.utility.fx.controls;
+    requires javafx.base;
     requires javafx.web;
     requires jdk.jsobject;
     requires org.apache.logging.log4j;

@@ -44,5 +44,6 @@ open module com.dua3.utility.fx.icons {
 
     requires static org.jspecify;
     requires javafx.controls;
+    requires javafx.graphics;
     uses IconProvider;
 }

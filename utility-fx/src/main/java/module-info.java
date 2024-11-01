@@ -39,8 +39,9 @@ open module com.dua3.utility.fx {
     requires com.dua3.utility;
     requires static com.dua3.utility.logging;
     requires java.desktop;
-    requires static javafx.controls;
-    requires static javafx.graphics;
+    requires javafx.base;
+    requires javafx.controls;
+    requires javafx.graphics;
     requires org.apache.logging.log4j;
     requires static org.jspecify;
 }
