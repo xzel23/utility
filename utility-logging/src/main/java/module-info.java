@@ -20,7 +20,7 @@ import org.jspecify.annotations.NullMarked;
 open module com.dua3.utility.logging {
     exports com.dua3.utility.logging;
 
-    requires static org.jspecify;
+    requires org.jspecify;
     uses com.dua3.utility.logging.ILogEntryDispatcherFactory;
 
     requires org.apache.logging.log4j;

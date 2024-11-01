@@ -43,5 +43,5 @@ open module com.dua3.utility.fx {
     requires javafx.controls;
     requires javafx.graphics;
     requires org.apache.logging.log4j;
-    requires static org.jspecify;
+    requires org.jspecify;
 }

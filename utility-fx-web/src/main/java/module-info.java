@@ -30,4 +30,5 @@ open module com.dua3.utility.fx.web {
     requires javafx.web;
     requires jdk.jsobject;
     requires org.apache.logging.log4j;
-    requires static org.jspecify;}
+    requires org.jspecify;
+}

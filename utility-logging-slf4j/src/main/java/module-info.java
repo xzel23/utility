@@ -18,7 +18,7 @@ open module com.dua3.utility.logging.slf4j {
     provides SLF4JServiceProvider with LoggingServiceProviderSlf4j;
     provides ILogEntryDispatcherFactory with LogEntryDispatcherFactorySlf4j;
 
-    requires static org.jspecify;
+    requires org.jspecify;
     requires com.dua3.utility.logging;
     requires com.dua3.utility;
     requires org.slf4j;

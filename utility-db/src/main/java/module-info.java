@@ -7,7 +7,7 @@ import org.jspecify.annotations.NullMarked;
 open module com.dua3.utility.db {
     exports com.dua3.utility.db;
 
-    requires static org.jspecify;
+    requires org.jspecify;
     requires transitive java.sql;
 
     requires com.dua3.utility;
