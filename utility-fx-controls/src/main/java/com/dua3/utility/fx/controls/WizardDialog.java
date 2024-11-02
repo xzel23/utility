@@ -227,13 +227,15 @@ Pair<String, Page<?, ?>> current;
      * Wizard page information class.
      */
     public static class Page<D extends InputDialogPane<R>, R> {
-        private D pane;
-        private @Nullable 
-String next;
-        private @Nullable 
-R result;
-        private @Nullable 
-ResultHandler<? super R> resultHandler;
+        private final D pane;
+        private final ResultHandler<? super R> resultHandler;
+        private @Nullable String next;
+        private @Nullable R result;
+
+        Page(D pane, ResultHandler<? super R> resultHandler) {
+            this.pane = pane;
+            this.resultHandler = resultHandler;
+        }
 
         @Nullable String getNext() {
             return next;
@@ -245,11 +247,6 @@ ResultHandler<? super R> resultHandler;
 
         D getPane() {
             return pane;
-        }
-
-        void setPane(D pane, ResultHandler<? super R> resultHandler) {
-            this.pane = pane;
-            this.resultHandler = resultHandler;
         }
 
         boolean apply(ButtonType btn) {

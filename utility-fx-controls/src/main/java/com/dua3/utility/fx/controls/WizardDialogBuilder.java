@@ -39,11 +39,10 @@ public class WizardDialogBuilder {
      * @return the current instance of {@code WizardDialogBuilder}, for method chaining
      */
     public <D extends InputDialogPane<R>, B extends AbstractPaneBuilder<D, B, R>, R> WizardDialogBuilder page(String name, B builder) {
-        WizardDialog.Page<D, R> page = new WizardDialog.Page<>();
-        page.setNext(builder.next);
         D pane = builder.build();
         AbstractDialogPaneBuilder.ResultHandler<R> resultHandler = builder.getResultHandler();
-        page.setPane(pane, resultHandler);
+        WizardDialog.Page<D, R> page = new WizardDialog.Page<>(pane, resultHandler);
+        page.setNext(builder.next);
         pages.put(name, page);
 
         if (startPage == null) {

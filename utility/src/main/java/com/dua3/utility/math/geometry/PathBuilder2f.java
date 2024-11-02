@@ -8,14 +8,14 @@ import com.dua3.utility.lang.LangUtil;
 public class PathBuilder2f {
 
     private Vector2f pos = Vector2f.ORIGIN;
-    private Path2fImpl impl;
-    private boolean open;
+    private Path2fImpl impl = new Path2fImpl();
+    private boolean open = false;
 
     /**
      * Constructor.
      */
     PathBuilder2f() {
-        init();
+        // nothing to do
     }
 
     /**
