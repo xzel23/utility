@@ -15,12 +15,12 @@ import java.util.function.Predicate;
  *
  * @param <T> the element t type
  */
-public class FilterIterator<T> implements Iterator<T> {
+public class FilterIterator<T extends @Nullable Object> implements Iterator<T> {
 
     private final Iterator<? extends T> iterator;
     private final Predicate<? super T> predicate;
     private boolean done;
-    private @Nullable T current;
+    private T current;
 
     /**
      * Construct a new FilterIterator.

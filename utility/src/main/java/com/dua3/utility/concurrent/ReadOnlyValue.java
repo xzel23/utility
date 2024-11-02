@@ -1,5 +1,7 @@
 package com.dua3.utility.concurrent;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.function.BiConsumer;
 
@@ -8,7 +10,7 @@ import java.util.function.BiConsumer;
  *
  * @param <T> the type of the value
  */
-public interface ReadOnlyValue<T> {
+public interface ReadOnlyValue<T extends @Nullable Object> {
     /**
      * Retrieves the value of type T.
      *

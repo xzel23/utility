@@ -1,5 +1,7 @@
 package com.dua3.utility.io;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-final class StreamSupplier<V> {
+final class StreamSupplier<V extends @Nullable Object> {
 
     private static final StreamSupplier<Object> UNSUPPORTED = def(Object.class, StreamSupplier::inputUnsupported, StreamSupplier::outputUnsupported);
     private static final List<StreamSupplier<?>> streamSuppliers = List.of(

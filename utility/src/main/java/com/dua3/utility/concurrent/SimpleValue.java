@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
  *
  * @param <T> the type of the value
  */
-public class SimpleValue<T> implements Value<T> {
+public class SimpleValue<T extends @Nullable Object> implements Value<T> {
     private T v;
     private final transient List<BiConsumer<? super T, ? super T>> changeListeners = new ArrayList<>();
 
@@ -22,7 +22,7 @@ public class SimpleValue<T> implements Value<T> {
      *
      * @param initialValue the initial value of the {@code SimpleValue}
      */
-    public SimpleValue(@Nullable T initialValue) {
+    public SimpleValue(T initialValue) {
         this.v = initialValue;
     }
 
@@ -47,7 +47,7 @@ public class SimpleValue<T> implements Value<T> {
     }
 
     @Override
-    public void set(@Nullable T v) {
+    public void set(T v) {
         T oldV = this.v;
         this.v = v;
         changeListeners.forEach(listener -> listener.accept(oldV, v));

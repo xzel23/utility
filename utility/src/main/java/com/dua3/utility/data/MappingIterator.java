@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -9,7 +11,7 @@ import java.util.function.Function;
  * @param <T> the source iterator element type
  * @param <U> the target iterator element type
  */
-class MappingIterator<T, U> implements Iterator<U> {
+class MappingIterator<T extends @Nullable Object, U extends @Nullable Object> implements Iterator<U> {
     private final Iterator<? extends T> iterator;
     private final Function<? super T, ? extends U> mapping;
 

@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the option's argument type.
  */
-public final class SimpleOption<T> extends Option<T> {
+public final class SimpleOption<T extends @Nullable Object> extends Option<T> {
 
     private Supplier<? extends T> defaultValue = () -> null;
 

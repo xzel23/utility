@@ -28,7 +28,7 @@ import java.util.Set;
  *
  * @param <E> the element type
  */
-public class RingBuffer<E> implements Collection<E> {
+public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
 
     private E[] data;
     private int entries;
@@ -66,7 +66,7 @@ public class RingBuffer<E> implements Collection<E> {
      * @return true, if the buffer size increased as a result of this operation (in other words, false if an item
      *               previously contained in the buffer was replaced)
      */
-    public boolean put(@Nullable E item) {
+    public boolean put(E item) {
         if (entries < capacity()) {
             data[index(entries++)] = item;
             return true;
@@ -78,7 +78,7 @@ public class RingBuffer<E> implements Collection<E> {
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(@Nullable Object o) {
         throw new UnsupportedOperationException("remove() is not supported");
     }
 

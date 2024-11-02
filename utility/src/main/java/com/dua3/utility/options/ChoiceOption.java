@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the value type
  */
-public final class ChoiceOption<T> extends Option<T> {
+public final class ChoiceOption<T extends @Nullable Object> extends Option<T> {
 
     private final Supplier<? extends Collection<? extends T>> values;
     private Supplier<? extends @Nullable T> defaultValue = () -> null;
@@ -83,7 +83,7 @@ public final class ChoiceOption<T> extends Option<T> {
      * @param names       the option names
      * @return choice option
      */
-    public static <T> ChoiceOption<T> create(Function<String, ? extends T> valueMapper,
+    public static <T extends @Nullable Object> ChoiceOption<T> create(Function<String, ? extends T> valueMapper,
                                              Function<? super T, String> formatter,
                                              Supplier<? extends Collection<? extends T>> values,
                                              String... names) {

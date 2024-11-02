@@ -252,7 +252,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     private final String name;
     private final Map<String, Object> properties;
 
-    private Style(String name, Map<String, Object> args) {
+    private Style(String name, Map<String, @Nullable Object> args) {
         this.name = name;
         this.properties = Collections.unmodifiableMap(args);
     }
@@ -266,7 +266,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      */
     @SafeVarargs
     public static Style create(String styleName,
-                               Map.Entry<String, Object>... args) {
+                               Map.Entry<String, @Nullable Object>... args) {
         return create(styleName, Map.ofEntries(args));
     }
 
@@ -278,7 +278,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @return new instance
      */
     public static Style create(String styleName,
-                               Map<String, Object> args) {
+                               Map<String, @Nullable Object> args) {
         return new Style(styleName, new HashMap<>(args));
     }
 
@@ -302,7 +302,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param property the property name
      * @return the value of the property or {@code null} if no value was set
      */
-    public Object get(String property) {
+    public @Nullable Object get(String property) {
         return properties.get(property);
     }
 
@@ -313,7 +313,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param dflt     the default value
      * @return the value of the property or dflt if no value was set
      */
-    public Object getOrDefault(String property, Object dflt) {
+    public @Nullable Object getOrDefault(String property, @Nullable Object dflt) {
         return properties.getOrDefault(property, dflt);
     }
 
@@ -326,7 +326,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresent(String key, Consumer<T> action) throws ClassCastException {
+    public <T extends @Nullable Object> void ifPresent(String key, Consumer<T> action) throws ClassCastException {
         T value = (T) get(key);
         if (value != null) {
             action.accept(value);
@@ -343,7 +343,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresentOrElseGet(String key,
+    public <T extends @Nullable Object> void ifPresentOrElseGet(String key,
                                        Supplier<T> defaultSupplier,
                                        Consumer<? super T> action) {
         Object raw = get(key);
@@ -365,7 +365,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T> void ifPresentOrElse(String key,
+    public <T extends @Nullable Object> void ifPresentOrElse(String key,
                                     T defaultValue,
                                     Consumer<T> action) {
         Object raw = get(key);
@@ -432,7 +432,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     @Override
-    public Iterator<Map.Entry<String, Object>> iterator() {
+    public Iterator<Map.Entry<String, @Nullable Object>> iterator() {
         return properties.entrySet().iterator();
     }
 
@@ -441,7 +441,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      *
      * @return stream of entries
      */
-    public Stream<Map.Entry<String, Object>> stream() {
+    public Stream<Map.Entry<String, @Nullable Object>> stream() {
         return properties.entrySet().stream();
     }
 
@@ -450,7 +450,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      *
      * @param action the action to perform
      */
-    public void forEach(BiConsumer<String, Object> action) {
+    public void forEach(BiConsumer<String, @Nullable Object> action) {
         forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
     }
 }

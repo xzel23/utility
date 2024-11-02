@@ -7,13 +7,13 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <T> the type of the value
  */
-public interface Value<T> extends ReadOnlyValue<T> {
+public interface Value<T extends @Nullable Object> extends ReadOnlyValue<T> {
     /**
      * Sets the value of the method.
      *
      * @param v the value to be set
      */
-    void set(@Nullable T v);
+    void set(T v);
 
     /**
      * Creates a new Value object with the initial value.
@@ -22,7 +22,7 @@ public interface Value<T> extends ReadOnlyValue<T> {
      * @param <T> the type of the value
      * @return a new Value object with the initial value
      */
-    static <T> Value<T> create(@Nullable T initialValue) {
+    static <T> Value<T> create(T initialValue) {
         return new SimpleValue<>(initialValue);
     }
 
@@ -33,7 +33,7 @@ public interface Value<T> extends ReadOnlyValue<T> {
      * @param <T> the type of the value
      * @return a new ReadOnlyValue object with the initial value
      */
-    static <T> ReadOnlyValue<T> createReadOnly(@Nullable T initialValue) {
+    static <T> ReadOnlyValue<T> createReadOnly(T initialValue) {
         return create(initialValue);
     }
 }

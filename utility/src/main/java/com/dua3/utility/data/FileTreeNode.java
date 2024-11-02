@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 @SuppressWarnings("unchecked")
 public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
-    private final T parent;
+    private final @Nullable T parent;
     private final Path path;
     private final boolean lazy;
     private final List<Consumer<T>> refreshListeners = new ArrayList<>();

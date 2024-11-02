@@ -91,6 +91,8 @@ public final class IoUtil {
         // utility class
     }
 
+    private static record FileNameInfo(int idxStart, int idxEnd) {}
+
     /**
      * Extract the filename from a path given as a String. In addition to the system dependent
      * {@link File#separatorChar}, the forward slash '/' is always considered a separator.
@@ -99,8 +101,8 @@ public final class IoUtil {
      * @return the filename of the path's last element
      */
     public static String getFilename(String path) {
-        Pair<Integer, Integer> fi = getFilenameInfo(path);
-        return path.substring(fi.first(), fi.second());
+        FileNameInfo fi = getFilenameInfo(path);
+        return path.substring(fi.idxStart(), fi.idxEnd());
     }
 
     /**
@@ -109,7 +111,7 @@ public final class IoUtil {
      * @param path the path to get the filename for
      * @return pair with start, end indexes
      */
-    private static Pair<Integer, Integer> getFilenameInfo(CharSequence path) {
+    private static FileNameInfo getFilenameInfo(CharSequence path) {
         // trim trailing separators
         int end = path.length();
         while (end > 0 && isSeparatorChar(path.charAt(end - 1))) {
@@ -121,7 +123,7 @@ public final class IoUtil {
         while (start > 0 && !isSeparatorChar(path.charAt(start - 1))) {
             start--;
         }
-        return Pair.of(start, end);
+        return new FileNameInfo(start, end);
     }
 
     /**
@@ -204,12 +206,12 @@ public final class IoUtil {
      * @return filename without extension
      */
     public static String stripExtension(String path) {
-        Pair<Integer, Integer> fi = getFilenameInfo(path);
+        FileNameInfo fi = getFilenameInfo(path);
 
         // find dot
-        int pos = path.lastIndexOf('.', fi.second());
+        int pos = path.lastIndexOf('.', fi.idxEnd());
 
-        return pos < fi.first() ? path : path.substring(0, pos);
+        return pos < fi.idxStart() ? path : path.substring(0, pos);
     }
 
     /**
@@ -223,17 +225,17 @@ public final class IoUtil {
      */
     public static String replaceExtension(String path, String extension) {
         LangUtil.check(!path.isEmpty(), () -> new IllegalArgumentException("path must ot be empty"));
-        Pair<Integer, Integer> fi = getFilenameInfo(path);
+        FileNameInfo fi = getFilenameInfo(path);
 
         // find dot
-        int pos = path.lastIndexOf('.', fi.second());
+        int pos = path.lastIndexOf('.', fi.idxEnd());
 
-        if (pos < fi.first()) {
+        if (pos < fi.idxStart()) {
             // filename has no extension => insert extension
-            return path.substring(0, fi.second()) + '.' + extension + path.substring(fi.second());
+            return path.substring(0, fi.idxEnd()) + '.' + extension + path.substring(fi.idxEnd());
         } else {
             // filename has extension => replace extension
-            return path.substring(0, pos) + '.' + extension + path.substring(fi.second());
+            return path.substring(0, pos) + '.' + extension + path.substring(fi.idxEnd());
         }
     }
 

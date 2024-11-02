@@ -1,6 +1,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.lang.LangUtil;
+import org.jspecify.annotations.Nullable;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.function.IntFunction;
  * @param <T> the object type
  */
 @FunctionalInterface
-public interface Decoder<T> {
+public interface Decoder<T extends @Nullable Object> {
 
     /**
      * Decode a collection of objects.
@@ -27,7 +28,7 @@ public interface Decoder<T> {
      * @return the collection of decoded objects
      * @throws IOException if an error occurs
      */
-    static <T> Collection<T> decode(DataInputStream is, Decoder<? extends T> codec, IntFunction<? extends Collection<T>> collectionConstructor) throws IOException {
+    static <T extends @Nullable Object> Collection<T> decode(DataInputStream is, Decoder<? extends T> codec, IntFunction<? extends Collection<T>> collectionConstructor) throws IOException {
         int size = is.readInt();
         LangUtil.check(size >= 0, "invalid collection size: %d", size);
 

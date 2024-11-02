@@ -7,6 +7,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Objects;
  *
  * @param <T> target type of conversion
  */
-public abstract class AttributeBasedConverter<T> implements RichTextConverter<T> {
+public abstract class AttributeBasedConverter<T extends @Nullable Object> implements RichTextConverter<T> {
 
     /**
      * Factory method to create a compatible converter implementation instance for this converter.
@@ -48,18 +49,18 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
         /**
          * Store the initial attributes so that they can be restored at the end.
          */
-        private final Map<String, Object> initialAttributes;
+        private final Map<String, @Nullable Object> initialAttributes;
         /**
          * The current font used when appending text.
          */
-        private Map<String, Object> currentAttributes;
+        private Map<String, @Nullable Object> currentAttributes;
 
         /**
          * Create a new instance.
          *
          * @param defaultAttributes the default attributes to be used
          */
-        protected AttributeBasedConverterImpl(Map<String, Object> defaultAttributes) {
+        protected AttributeBasedConverterImpl(Map<String, @Nullable Object> defaultAttributes) {
             this.initialAttributes = defaultAttributes;
             // copy currentAttributes
             this.currentAttributes = new HashMap<>();
@@ -72,7 +73,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param run the {@link Run}
          * @return Map containing all attributes set by this run's styles
          */
-        protected static Map<String, Object> collectAttributes(Run run) {
+        protected static Map<String, @Nullable Object> collectAttributes(Run run) {
             Map<String, Object> styleAttributes = new HashMap<>();
             run.getStyles().forEach(style -> copyAttributes(style, styleAttributes));
             return styleAttributes;
@@ -85,8 +86,8 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          * @param sourceAttributes      the source entries
          * @param destinationAttributes the destination map
          */
-        private static void copyAttributes(Iterable<? extends Map.Entry<String, Object>> sourceAttributes,
-                                           Map<? super String, Object> destinationAttributes) {
+        private static void copyAttributes(Iterable<? extends Map.Entry<String, @Nullable Object>> sourceAttributes,
+                                           Map<? super String, @Nullable Object> destinationAttributes) {
             sourceAttributes.forEach(entry -> {
                 String attribute = entry.getKey();
                 Object value = entry.getValue();
@@ -114,7 +115,7 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          *
          * @param changedAttributes map of the changed attribute values
          */
-        protected abstract void apply(Map<String, Pair<Object, Object>> changedAttributes);
+        protected abstract void apply(Map<String, Pair<@Nullable Object, @Nullable Object>> changedAttributes);
 
         /**
          * Update style. There should be no need to override this method in implementations.
@@ -132,9 +133,9 @@ public abstract class AttributeBasedConverter<T> implements RichTextConverter<T>
          *
          * @param newAttributes map containing the changed attributes and their new values
          */
-        protected void handleAttributeChanges(Map<String, Object> newAttributes) {
+        protected void handleAttributeChanges(Map<String, @Nullable Object> newAttributes) {
             // determine attribute changes
-            Map<String, Pair<Object, Object>> changedAttributes = DataUtil.changes(currentAttributes, newAttributes);
+            Map<String, Pair<@Nullable Object, @Nullable Object>> changedAttributes = DataUtil.changes(currentAttributes, newAttributes);
             // apply attribute changes
             apply(changedAttributes);
             // update current attributes

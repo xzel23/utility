@@ -4,6 +4,7 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -55,7 +56,7 @@ public class Codecs {
      * @param <T>  the object type
      * @return the new codec
      */
-    public static <T> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<? extends T> dec) {
+    public static <T extends @Nullable Object> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<? extends T> dec) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -84,7 +85,7 @@ public class Codecs {
      * @param construct collection factory method
      * @return collection codec
      */
-    public static <T, C extends @NonNull Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
+    public static <T extends @Nullable Object, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -174,7 +175,7 @@ public class Codecs {
      * @param dec  the decoder for the class
      * @throws IllegalArgumentException if a codec is already registered for the class
      */
-    public <T> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
+    public <T extends @Nullable Object> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
         Object prev = codecs.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
         LangUtil.check(prev == null, "Codec already registered for class: " + cls);
     }
@@ -187,7 +188,7 @@ public class Codecs {
      * @return an Optional containing the codec, or an empty Optional if no codec is registered for the class
      */
     @SuppressWarnings("unchecked")
-    public <T> Optional<Codec<T>> get(Class<T> cls) {
+    public <T extends @Nullable Object> Optional<Codec<T>> get(Class<T> cls) {
         return Optional.ofNullable((Codec<T>) codecs.get(cls.getCanonicalName()));
     }
 

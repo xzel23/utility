@@ -1,5 +1,7 @@
 package com.dua3.utility.lang;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Function;
 
 /**
@@ -10,7 +12,7 @@ import java.util.function.Function;
  * @param <T> type of function argument
  * @param <R> type of function return value
  */
-public record NamedFunction<T, R>(String name, Function<T, R> f) implements Function<T, R> {
+public record NamedFunction<T extends @Nullable Object, R extends @Nullable Object>(String name, Function<T, R> f) implements Function<T, R> {
     @Override
     public R apply(T t) {
         return f.apply(t);

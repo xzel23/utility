@@ -23,6 +23,7 @@ public final class FontDef implements Cloneable {
     private static final Logger LOG = LogManager.getLogger(FontDef.class);
 
     private static final Predicate<String> IS_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?").asMatchPredicate();
+
     private @Nullable Color color;
     private @Nullable Float size;
     private @Nullable String family;
@@ -44,7 +45,7 @@ public final class FontDef implements Cloneable {
      * @param col the color
      * @return new FontDef instance
      */
-    public static FontDef color(Color col) {
+    public static FontDef color(@Nullable Color col) {
         FontDef fd = new FontDef();
         fd.setColor(col);
         return fd;
@@ -56,7 +57,7 @@ public final class FontDef implements Cloneable {
      * @param family the font family
      * @return new FontDef instance
      */
-    public static FontDef family(String family) {
+    public static FontDef family(@Nullable String family) {
         FontDef fd = new FontDef();
         fd.setFamily(family);
         return fd;
@@ -68,7 +69,7 @@ public final class FontDef implements Cloneable {
      * @param size the font size in points
      * @return new FontDef instance
      */
-    public static FontDef size(Float size) {
+    public static FontDef size(@Nullable Float size) {
         FontDef fd = new FontDef();
         fd.setSize(size);
         return fd;
@@ -205,11 +206,11 @@ public final class FontDef implements Cloneable {
         return fd;
     }
 
-    private static Color parseColor(String value) {
+    private static @Nullable Color parseColor(String value) {
         return value.equalsIgnoreCase("inherit") ? null : Color.valueOf(value);
     }
 
-    private static Boolean parseFontWeight(String value) {
+    private static @Nullable Boolean parseFontWeight(String value) {
         return switch (value.toLowerCase(Locale.ROOT)) {
             case "bold" -> Boolean.TRUE;
             case "normal" -> Boolean.FALSE;
@@ -218,7 +219,7 @@ public final class FontDef implements Cloneable {
         };
     }
 
-    private static Boolean parseFontStyle(String value) {
+    private static @Nullable Boolean parseFontStyle(String value) {
         return switch (value.toLowerCase(Locale.ROOT)) {
             case "italic", "oblique" -> Boolean.TRUE;
             case "normal" -> Boolean.FALSE;
@@ -227,7 +228,7 @@ public final class FontDef implements Cloneable {
         };
     }
 
-    private static Float parseFontSize(String sz) {
+    private static @Nullable Float parseFontSize(String sz) {
         sz = sz.strip().toLowerCase(Locale.ROOT);
 
         if (sz.equals("inherit")) {
@@ -253,7 +254,7 @@ public final class FontDef implements Cloneable {
     }
 
     // a little helper for the consumeIfDefined... methods
-    private static <T> boolean consumeIfDefined(@Nullable T v, Consumer<T> c) {
+    private static <T extends @Nullable Object> boolean consumeIfDefined(@Nullable T v, Consumer<T> c) {
         boolean run = v != null;
         if (run) {
             c.accept(v);
@@ -464,7 +465,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifColorDefined(Consumer<? super Color> c) {
+    public void ifColorDefined(Consumer<? super @Nullable Color> c) {
         consumeIfDefined(color, c);
     }
 
@@ -474,7 +475,7 @@ public final class FontDef implements Cloneable {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifSizeDefined(Consumer<? super Float> c) {
+    public boolean ifSizeDefined(Consumer<? super @Nullable Float> c) {
         return consumeIfDefined(size, c);
     }
 
@@ -484,7 +485,7 @@ public final class FontDef implements Cloneable {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifFamilyDefined(Consumer<? super String> c) {
+    public boolean ifFamilyDefined(Consumer<? super @Nullable String> c) {
         return consumeIfDefined(family, c);
     }
 
@@ -493,7 +494,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifBoldDefined(Consumer<? super Boolean> c) {
+    public void ifBoldDefined(Consumer<? super @Nullable Boolean> c) {
         consumeIfDefined(bold, c);
     }
 
@@ -502,7 +503,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifItalicDefined(Consumer<? super Boolean> c) {
+    public void ifItalicDefined(Consumer<? super @Nullable Boolean> c) {
         consumeIfDefined(italic, c);
     }
 
@@ -511,7 +512,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifUnderlineDefined(Consumer<? super Boolean> c) {
+    public void ifUnderlineDefined(Consumer<? super @Nullable Boolean> c) {
         consumeIfDefined(underline, c);
     }
 
@@ -520,7 +521,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifStrikeThroughDefined(Consumer<? super Boolean> c) {
+    public void ifStrikeThroughDefined(Consumer<? super @Nullable Boolean> c) {
         consumeIfDefined(strikeThrough, c);
     }
 

@@ -3,6 +3,7 @@ package com.dua3.utility.fx;
 import javafx.scene.Node;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -48,7 +49,7 @@ public final class FxRefresh {
     /**
      * The update thread, null if not running or stop requested.
      */
-    private volatile Thread updateThread;
+    private volatile @Nullable Thread updateThread;
 
     /**
      * Constructor.

@@ -3,6 +3,7 @@ package com.dua3.utility.lang;
 
 import com.dua3.utility.data.PeekIterator;
 import com.dua3.utility.io.IoUtil;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +42,7 @@ public final class StreamUtil {
      * @param <C> result stream generic item type
      * @return stream consisting of pairs od items created from items of either stream
      */
-    public static <A, B, C> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<? super A, ? super B, ? extends C> op) {
+    public static <A extends @Nullable Object, B extends @Nullable Object, C extends @Nullable Object> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<? super A, ? super B, ? extends C> op) {
         Iterator<A> i1 = a.iterator();
         Iterator<B> i2 = b.iterator();
         Iterable<C> i = () -> new Iterator<>() {
@@ -68,7 +69,7 @@ public final class StreamUtil {
      * @return the stream creating by concatenating elements from the argument streams
      */
     @SafeVarargs
-    public static <T> Stream<T> concat(Stream<T>... streams) {
+    public static <T extends @Nullable Object> Stream<T> concat(Stream<T>... streams) {
         return Stream.of(streams).flatMap(Function.identity()).onClose(IoUtil.composedClose(streams));
     }
 
@@ -82,7 +83,7 @@ public final class StreamUtil {
      * @return sorted stream containing the elements of the argument streams
      */
     @SafeVarargs
-    public static <T> Stream<T> merge(Comparator<? super T> comparator, Stream<T>... streams) {
+    public static <T extends @Nullable Object> Stream<T> merge(Comparator<? super T> comparator, Stream<T>... streams) {
         var iters = Arrays.stream(streams).map(Stream::iterator).toList();
         Iterable<T> i = () -> new MergeIterator<>(comparator, iters);
         Stream<T> stream = StreamSupport.stream(i.spliterator(), false);
@@ -98,7 +99,7 @@ public final class StreamUtil {
      * @return sorted stream containing the elements of the argument streams
      */
     @SafeVarargs
-    public static <T extends Comparable<T>> Stream<T> merge(Stream<T>... streams) {
+    public static <T extends @Nullable Comparable<T>> Stream<T> merge(Stream<T>... streams) {
         return merge(Comparator.naturalOrder(), streams);
     }
 
@@ -109,7 +110,7 @@ public final class StreamUtil {
      * @param <T>  the element type
      * @return stream of elements
      */
-    public static <T> Stream<T> stream(Iterator<T> iter) {
+    public static <T extends @Nullable Object> Stream<T> stream(Iterator<T> iter) {
         return stream(() -> iter);
     }
 
@@ -120,11 +121,11 @@ public final class StreamUtil {
      * @param <T>      the element type
      * @return stream of elements
      */
-    public static <T> Stream<T> stream(Iterable<T> iterable) {
+    public static <T extends @Nullable Object> Stream<T> stream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    private static class MergeIterator<T> implements Iterator<T> {
+    private static class MergeIterator<T extends @Nullable Object> implements Iterator<T> {
 
         private final Comparator<? super T> comparator;
         private final List<PeekIterator<T>> iters = new ArrayList<>();

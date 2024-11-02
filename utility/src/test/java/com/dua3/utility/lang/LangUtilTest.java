@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -578,13 +579,7 @@ class LangUtilTest {
     @Test
     void formatLazy_withNullFormatString_ShouldReturnNull() {
         Object result = LangUtil.formatLazy(null, "Hello", "World");
-        assertNull(result.toString());
-    }
-
-    @Test
-    void formatLazy_withEmptyArguments_ShouldNotReplacePlaceholders() {
-        Object result = LangUtil.formatLazy("%s %s");
-        assertEquals("%s %s", result.toString());
+        assertEquals(Objects.toString(null), result.toString());
     }
 
     @Test

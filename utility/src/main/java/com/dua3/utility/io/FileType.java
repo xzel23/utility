@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  *
  * @param <T> the type corresponding to the data contained in files of this {@link FileType} instance.
  */
-public abstract class FileType<T> implements Comparable<FileType<?>> {
+public abstract class FileType<T extends @Nullable Object> implements Comparable<FileType<?>> {
 
     /**
      * Set of defined file types.

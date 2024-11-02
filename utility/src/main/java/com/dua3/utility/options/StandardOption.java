@@ -1,6 +1,7 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.data.DataUtil;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.function.Function;
  *
  * @param <T> the option's argument type.
  */
-public final class StandardOption<T> extends Option<T> {
+public final class StandardOption<T extends @Nullable Object> extends Option<T> {
 
     /**
      * Construct new StandardOption instance.

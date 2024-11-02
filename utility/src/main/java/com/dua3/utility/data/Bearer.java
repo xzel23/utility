@@ -1,5 +1,7 @@
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -8,7 +10,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the generic data type
  */
-public interface Bearer<T> extends Consumer<T>, Supplier<T> {
+public interface Bearer<T extends @Nullable Object> extends Consumer<T>, Supplier<T> {
     /**
      * Create Bearer.
      *

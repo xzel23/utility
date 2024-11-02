@@ -63,7 +63,11 @@ public final class DbUtil {
     static {
         try {
             // load properties
-            Map<Object, Object> p = LangUtil.loadProperties(DbUtil.class.getResourceAsStream("jdbc_drivers.properties"));
+            String resource = "jdbc_drivers.properties";
+            Map<Object, Object> p = LangUtil.loadProperties(
+                    Objects.requireNonNull(DbUtil.class.getResourceAsStream(resource),
+                            () -> "could not load resource " + resource)
+            );
 
             // parse entries
             p.forEach((key1, value) -> {
@@ -129,7 +133,7 @@ public final class DbUtil {
      * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
     @SuppressWarnings("ChainOfInstanceofChecks")
-    public static LocalDate toLocalDate(@Nullable Object item) {
+    public static @Nullable LocalDate toLocalDate(@Nullable Object item) {
         if (item == null) {
             return null;
         }
@@ -154,7 +158,7 @@ public final class DbUtil {
      * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
     @SuppressWarnings("ChainOfInstanceofChecks")
-    public static LocalDateTime toLocalDateTime(@Nullable Object item) {
+    public static @Nullable LocalDateTime toLocalDateTime(@Nullable Object item) {
         if (item == null) {
             return null;
         }
@@ -178,7 +182,7 @@ public final class DbUtil {
      * @return LocalTime instance or {@code null}
      * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
-    public static LocalTime toLocalTime(@Nullable Object item) {
+    public static @Nullable LocalTime toLocalTime(@Nullable Object item) {
         if (item == null) {
             return null;
         }

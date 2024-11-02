@@ -22,7 +22,7 @@ import java.util.stream.Collector;
  * @param <T> the item type
  * @param <K> the key type
  */
-public class BatchCollector<T, K> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
+public class BatchCollector<T extends @Nullable Object, K extends @Nullable Object> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
     private final Function<? super T, ? extends K> keyMapper;
     private final K defaultKey;
 

@@ -92,7 +92,7 @@ public final class DataUtil {
      * @return the object converted to the target class
      */
     @SuppressWarnings({"unchecked", "ChainOfInstanceofChecks"}) // types are checked with isAssignable()
-    public static <T> T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
+    public static <T> @Nullable T convert(@Nullable Object value, Class<T> targetClass, boolean useConstructor) {
         // null -> null
         if (value == null) {
             return null;
@@ -523,7 +523,7 @@ public final class DataUtil {
      * @param <V> the value type
      * @return a new map that contains the changes as pairs (value in {@code a}, value in {@code b})
      */
-    public static <U, V> Map<U, Pair<V, V>> changes(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
+    public static <U, V extends @Nullable Object> Map<U, Pair<V, V>> changes(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
 

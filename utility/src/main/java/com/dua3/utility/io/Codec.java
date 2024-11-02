@@ -1,5 +1,7 @@
 package com.dua3.utility.io;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
@@ -8,7 +10,7 @@ import java.io.DataOutputStream;
  *
  * @param <T> the object type
  */
-public interface Codec<T> extends Encoder<T>, Decoder<T> {
+public interface Codec<T extends @Nullable Object> extends Encoder<T>, Decoder<T> {
 
     /**
      * The encoder name, usually corresponds to the object type.

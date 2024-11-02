@@ -22,7 +22,7 @@ public final class FileInputBuilder {
 
     private final FileDialogMode mode;
     private final List<FileChooser.ExtensionFilter> extensionFilters = new ArrayList<>();
-    private Supplier<Path> initialPath = () -> null;
+    private Supplier<@Nullable Path> initialPath = () -> null;
     private boolean existingOnly = true;
     private Function<Path, Optional<String>> validate;
     private @Nullable ObservableValue<Boolean> disabled;

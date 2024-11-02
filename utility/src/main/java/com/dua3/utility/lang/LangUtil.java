@@ -5,6 +5,7 @@
 
 package com.dua3.utility.lang;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.io.IoUtil;
 import org.apache.logging.log4j.LogManager;
@@ -124,7 +125,7 @@ public final class LangUtil {
      * @param arg the variable to ignore
      */
     @SuppressWarnings("EmptyMethod")
-    public static <T> void ignore(T arg) {
+    public static <T extends @Nullable Object> void ignore(T arg) {
         // nop
     }
 
@@ -133,13 +134,13 @@ public final class LangUtil {
      *
      * @param <T>  argument type
      * @param arg  first argument
-     * @param rest remaining arguments
+     * @param rest remaining arguments, must not contain {@code null} values
      * @return true, if {@code rest} contains at least one item that is equal
      * to
      * {@code arg}
      */
     @SafeVarargs
-    public static <T> boolean isOneOf(@Nullable T arg, T... rest) {
+    public static <T extends @Nullable Object> boolean isOneOf(T arg, @NonNull T... rest) {
         return List.of(rest).contains(arg);
     }
 
@@ -151,7 +152,7 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b
      */
-    public static <T> T orElse(@Nullable T a, @Nullable T b) {
+    public static <T extends @Nullable Object> T orElse(@Nullable T a, T b) {
         return a != null ? a : b;
     }
 
@@ -163,7 +164,7 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b.get()
      */
-    public static <T> T orElseGet(@Nullable T a, Supplier<? extends T> b) {
+    public static <T extends @Nullable Object> T orElseGet(@Nullable T a, Supplier<? extends T> b) {
         return a != null ? a : b.get();
     }
 
@@ -252,7 +253,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T, E> c) {
+    public static <T extends @Nullable Object, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T, E> c) {
         return arg -> {
             try {
                 c.accept(arg);
@@ -275,7 +276,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T, E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
+    public static <T extends @Nullable Object, E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
         return () -> {
             try {
                 return s.get();
@@ -300,7 +301,7 @@ public final class LangUtil {
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T, R, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<? super T, ? extends R, E> f) {
+    public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<? super T, ? extends R, E> f) {
         return arg -> {
             try {
                 return f.apply(arg);
@@ -386,7 +387,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalInt opt, IntFunction<? extends T> f) {
+    public static <T extends @Nullable Object> Optional<@NonNull T> map(OptionalInt opt, IntFunction<? extends T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));
     }
 
@@ -399,7 +400,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalLong opt, LongFunction<? extends T> f) {
+    public static <T extends @Nullable Object> Optional<@NonNull T> map(OptionalLong opt, LongFunction<? extends T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));
     }
 
@@ -412,7 +413,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Optional<T> map(OptionalDouble opt, DoubleFunction<? extends T> f) {
+    public static <T extends @Nullable Object> Optional<@NonNull T> map(OptionalDouble opt, DoubleFunction<? extends T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));
     }
 
@@ -424,7 +425,7 @@ public final class LangUtil {
      * @param s2  second stream
      * @return true, if and only if both streams are equal elementwise
      */
-    public static <T> boolean equals(Stream<T> s1, Stream<T> s2) {
+    public static <T extends @Nullable Object> boolean equals(Stream<T> s1, Stream<T> s2) {
         Iterator<T> iter1 = s1.iterator();
         Iterator<T> iter2 = s2.iterator();
         while (iter1.hasNext() && iter2.hasNext()) {
@@ -444,7 +445,7 @@ public final class LangUtil {
      * @param k        the key to lookup
      * @param consumer the consumer to consume the mapped value
      */
-    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, Consumer<? super V> consumer) {
+    public static <K, V extends @Nullable Object> void consumeIfPresent(Map<K, V> map, K k, Consumer<? super V> consumer) {
         V v = map.get(k);
         if (v != null) {
             consumer.accept(v);
@@ -460,7 +461,7 @@ public final class LangUtil {
      * @param k        the key to lookup
      * @param consumer the consumer to consume the mapped value
      */
-    public static <K, V> void consumeIfPresent(Map<K, V> map, K k, BiConsumer<? super K, ? super V> consumer) {
+    public static <K, V extends @Nullable Object> void consumeIfPresent(Map<K, V> map, K k, BiConsumer<? super K, ? super V> consumer) {
         V v = map.get(k);
         if (v != null) {
             consumer.accept(k, v);
@@ -476,7 +477,7 @@ public final class LangUtil {
      * @param supplier the Supplier
      * @return caching Supplier
      */
-    public static <T> Supplier<T> cache(Supplier<? extends T> supplier) {
+    public static <T extends @Nullable Object> Supplier<T> cache(Supplier<? extends T> supplier) {
         return new CachingSupplier<>(supplier, t -> {});
     }
 
@@ -716,7 +717,7 @@ public final class LangUtil {
      * @param <T>    the element type
      * @return a list that contains all items within the given range before and after each match
      */
-    public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after) {
+    public static <T extends @Nullable Object> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after) {
         return surroundingItems_(list, test, before, after, null);
     }
 
@@ -731,11 +732,11 @@ public final class LangUtil {
      * @param <T>         the element type
      * @return a list that contains all items within the given range before and after each match
      */
-    public static <T> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
+    public static <T extends @Nullable Object> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         return surroundingItems_(list, test, before, after, placeHolder);
     }
 
-    private static <T> List<T> surroundingItems_(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
+    private static <T extends @Nullable Object> List<T> surroundingItems_(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
         for (int i = 0; i < list.size(); i++) {
@@ -872,7 +873,7 @@ public final class LangUtil {
      * @param <T>       the generic argument type
      * @return one of the parameters whenTrue, whenFalse, otherwise depending on the value of b
      */
-    public static <T> T triStateSelect(@Nullable Boolean b, T whenTrue, T whenFalse, T otherwise) {
+    public static <T extends @Nullable Object> T triStateSelect(@Nullable Boolean b, T whenTrue, T whenFalse, T otherwise) {
         return b != null ? (b ? whenTrue : whenFalse) : otherwise;
     }
 
@@ -921,7 +922,7 @@ public final class LangUtil {
      * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface FunctionThrows<T, R, E extends Exception> {
+    public interface FunctionThrows<T extends @Nullable Object, R extends @Nullable Object, E extends Exception> {
         /**
          * Applies this function to the given argument.
          *
@@ -940,7 +941,7 @@ public final class LangUtil {
      * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface ConsumerThrows<T, E extends Exception> {
+    public interface ConsumerThrows<T extends @Nullable Object, E extends Exception> {
         /**
          * Performs this operation on the given argument.
          *
@@ -998,7 +999,7 @@ public final class LangUtil {
      * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface SupplierThrows<T, E extends Exception> {
+    public interface SupplierThrows<T extends @Nullable Object, E extends Exception> {
         /**
          * Gets a result.
          *
@@ -1013,7 +1014,7 @@ public final class LangUtil {
      *
      * @param <T> the base type
      */
-    public interface AutoCloseableSupplier<T> extends AutoCloseable, Supplier<T> {
+    public interface AutoCloseableSupplier<T extends @Nullable Object> extends AutoCloseable, Supplier<T> {
         @Override
         void close();
     }
@@ -1062,7 +1063,7 @@ public final class LangUtil {
         }
     }
 
-    private static class CachingSupplier<T> implements AutoCloseableSupplier<T> {
+    private static class CachingSupplier<T extends @Nullable Object> implements AutoCloseableSupplier<T> {
         private final Supplier<? extends T> supplier;
         private final Consumer<? super T> cleaner;
         private @Nullable T obj;
@@ -1101,7 +1102,7 @@ public final class LangUtil {
      * @param <U> the map's value typu
      * @return a function that returns the mapping of its input value
      */
-    public static <T, U> Function<T, U> asFunction(Map<? super T, ? extends U> map) {
+    public static <T, U extends @Nullable Object> Function<T, U> asFunction(Map<? super T, ? extends U> map) {
         return map::get;
     }
 
@@ -1115,7 +1116,7 @@ public final class LangUtil {
      * @param <V>          the type of the default value
      * @return a function that returns the mapping of its input value or {@code defaultValue} if no mapping exists
      */
-    public static <T, U, V extends U> Function<T, U> asFunction(Map<? super T, V> map, V defaultValue) {
+    public static <T extends @Nullable Object, U extends @Nullable Object, V extends U> Function<T, U> asFunction(Map<? super T, V> map, V defaultValue) {
         return t -> map.getOrDefault(t, defaultValue);
     }
 
@@ -1126,22 +1127,31 @@ public final class LangUtil {
      * Subsequent calls of {@code toString()} will return the same object.
      */
     private static class LazyFormatter {
-        private String s;
-        private Object[] args;
+        public static final String NULL_STRING = String.valueOf((Object) null);
+
+        private volatile @Nullable String s;
+        private volatile @Nullable Object[] args;
 
         public LazyFormatter(@Nullable String fmt, Object... args) {
-            this.s = fmt;
-            this.args = args;
+            if (fmt == null) {
+                this.s = NULL_STRING;
+                this.args = null;
+            } else {
+                this.s = fmt;
+                this.args = args;
+            }
         }
 
         @Override
         public String toString() {
-            Object[] argArray = args;
-            if (argArray != null) {
-                if (s != null && argArray.length != 0) {
-                    s = s.formatted(argArray);
+            if (args != null) {
+                synchronized (this) {
+                    if (args != null) {
+                        assert s != null;
+                        s = s.formatted(args);
+                        args = null;
+                    }
                 }
-                args = null;
             }
             return s;
         }

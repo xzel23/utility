@@ -13,7 +13,7 @@ import java.util.Collection;
  * @param <T> the object type
  */
 @FunctionalInterface
-public interface Encoder<T> {
+public interface Encoder<T extends @Nullable Object> {
 
     /**
      * Encode a collection of objects.

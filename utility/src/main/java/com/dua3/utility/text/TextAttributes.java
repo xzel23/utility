@@ -22,16 +22,16 @@ import java.util.TreeSet;
 /**
  * An immutable set of text attributes.
  */
-public final class TextAttributes extends AbstractMap<String, Object> {
+public final class TextAttributes extends AbstractMap<String, @Nullable Object> {
 
     /**
      * empty instance
      */
     private static final TextAttributes NONE = new TextAttributes(Collections.emptySortedSet());
-    private final SortedSet<Entry<String, Object>> entries;
+    private final SortedSet<Entry<String, @Nullable Object>> entries;
     private int hash;
 
-    private TextAttributes(SortedSet<Entry<String, Object>> entries) {
+    private TextAttributes(SortedSet<Entry<String, @Nullable Object>> entries) {
         this.entries = entries;
     }
 
@@ -62,7 +62,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @return TextAttributes instance
      */
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
-        SortedSet<Entry<String, Object>> entrySet = new TreeSet<>(Entry.comparingByKey());
+        SortedSet<Entry<String, @Nullable Object>> entrySet = new TreeSet<>(Entry.comparingByKey());
         for (Pair<String, ?> entry : entries) {
             entrySet.add(new SimpleEntry<>(entry.first(), entry.second()));
         }
@@ -75,8 +75,8 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @param map mapping from attributes to values
      * @return TextAttributes instance
      */
-    public static TextAttributes of(Map<String, Object> map) {
-        SortedSet<Map.Entry<String, Object>> entries = new TreeSet<>(Map.Entry.comparingByKey());
+    public static TextAttributes of(Map<String, @Nullable Object> map) {
+        SortedSet<Map.Entry<String, @Nullable Object>> entries = new TreeSet<>(Map.Entry.comparingByKey());
         entries.addAll(map.entrySet());
         return new TextAttributes(entries);
     }
@@ -87,7 +87,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
      * @param attributes {@link Map} holding TextAttribute values
      * @return FontDef instance
      */
-    public static FontDef getFontDef(Map<? super String, Object> attributes) {
+    public static FontDef getFontDef(Map<? super String, @Nullable Object> attributes) {
         Font font = (Font) attributes.get(Style.FONT);
         if (font != null) {
             return font.toFontDef();
@@ -105,7 +105,7 @@ public final class TextAttributes extends AbstractMap<String, Object> {
     }
 
     @Override
-    public Set<Entry<String, Object>> entrySet() {
+    public Set<Entry<String, @Nullable Object>> entrySet() {
         return entries;
     }
 

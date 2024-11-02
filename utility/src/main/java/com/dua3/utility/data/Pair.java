@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @param <T1> type of first member
  * @param <T2> type of second member
  */
-public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements Map.Entry<T1, T2> {
+public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 first, T2 second) implements Map.Entry<T1, T2> {
 
     /**
      * Add pairs to a map.
@@ -56,7 +56,7 @@ public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements M
      * @param <T2>   type of second member
      * @return a new Pair
      */
-    public static <T1, T2> Pair<T1, T2> of(@Nullable T1 first, @Nullable T2 second) {
+    public static <T1 extends @Nullable Object, T2 extends @Nullable Object> Pair<T1, T2> of(T1 first, T2 second) {
         return new Pair<>(first, second);
     }
 
@@ -68,7 +68,7 @@ public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements M
      * @param <T2>  type of second member
      * @return a new Pair
      */
-    public static <T1, T2> Pair<T1, T2> of(Map.Entry<? extends T1, ? extends T2> entry) {
+    public static <T1, T2 extends @Nullable Object> Pair<T1, T2> of(Map.Entry<? extends T1, ? extends T2> entry) {
         return new Pair<>(entry.getKey(), entry.getValue());
     }
 
@@ -82,7 +82,7 @@ public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements M
      * @return a new Pair
      */
     @SafeVarargs
-    public static <T1, T2> Pair<T1, T2[]> ofArray(T1 first, T2... second) {
+    public static <T1 extends @Nullable Object, T2 extends @Nullable Object> Pair<T1, T2[]> ofArray(T1 first, T2... second) {
         return new Pair<>(first, second);
     }
 
@@ -95,7 +95,7 @@ public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements M
      * @param f2   mapper for second component
      * @return Pair consisting of the mapped values of this pair
      */
-    public <U1, U2> Pair<U1, U2> map(Function<? super T1, ? extends U1> f1, Function<? super T2, ? extends U2> f2) {
+    public <U1 extends @Nullable Object, U2 extends @Nullable Object> Pair<U1, U2> map(Function<? super T1, ? extends U1> f1, Function<? super T2, ? extends U2> f2) {
         return of(f1.apply(first()), f2.apply(second()));
     }
 
@@ -106,7 +106,7 @@ public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements M
      * @param f   mapper for components
      * @return Pair consisting of the mapped values of this pair
      */
-    public <U> Pair<U, U> map(Function<Object, ? extends U> f) {
+    public <U extends @Nullable Object> Pair<U, U> map(Function<Object, ? extends U> f) {
         return of(f.apply(first()), f.apply(second()));
     }
 
@@ -117,7 +117,7 @@ public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements M
      * @param f   mapper for first component
      * @return Pair consisting of the mapped first and original second component of this pair
      */
-    public <U1> Pair<U1, T2> mapFirst(Function<? super T1, ? extends U1> f) {
+    public <U1 extends @Nullable Object> Pair<U1, T2> mapFirst(Function<? super T1, ? extends U1> f) {
         return of(f.apply(first()), second());
     }
 
@@ -128,7 +128,7 @@ public record Pair<T1, T2>(@Nullable T1 first, @Nullable T2 second) implements M
      * @param f   mapper for second component
      * @return Pair consisting of the original first and the mapped second component of this pair
      */
-    public <U2> Pair<T1, U2> mapSecond(Function<? super T2, ? extends U2> f) {
+    public <U2 extends @Nullable Object> Pair<T1, U2> mapSecond(Function<? super T2, ? extends U2> f) {
         return of(first(), f.apply(second()));
     }
 

@@ -3,6 +3,7 @@ package com.dua3.utility.lang;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -94,8 +95,10 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @return BuildInfo instance
      * @throws IllegalStateException if buildinfo could not be loaded
      */
-    public static BuildInfo create(Class<?> cls, String resource) {
-        return create(Objects.requireNonNull(cls.getResourceAsStream(resource), () -> "could not load resource: " + resource));
+    public static BuildInfo create(Class<?> cls, String resource) throws IOException {
+        try (InputStream in = Objects.requireNonNull(cls.getResourceAsStream(resource), () -> "could not load resource: " + resource)) {
+            return create(in);
+        }
     }
 
     private static Optional<String> group(Matcher m, String group) {

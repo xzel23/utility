@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
  *
  * @param <T> the element t type
  */
-public class PeekIterator<T> implements Iterator<T> {
+public class PeekIterator<T extends @Nullable Object> implements Iterator<T> {
 
     private final Iterator<? extends T> iterator;
     private boolean done;
