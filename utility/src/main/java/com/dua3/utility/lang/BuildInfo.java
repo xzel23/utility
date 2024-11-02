@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -72,22 +71,6 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     }
 
     /**
-     * Load properties from stream and return BuildInfo.
-     *
-     * @param in {@link InputStream} to read the build info properties from
-     * @return BuildInfo instance
-     * @throws IllegalStateException if buildinfo could not be loaded
-     */
-    public static BuildInfo create(InputStream in) {
-        try (in) {
-            return create(LangUtil.loadProperties(in));
-        } catch (Exception e) {
-            LOG.warn("could not load build properties", e);
-            throw new IllegalStateException("could not load build properties", e);
-        }
-    }
-
-    /**
      * Load properties from resource and return BuildInfo.
      *
      * @param cls      the class used to load the properties
@@ -96,8 +79,8 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @throws IllegalStateException if buildinfo could not be loaded
      */
     public static BuildInfo create(Class<?> cls, String resource) throws IOException {
-        try (InputStream in = Objects.requireNonNull(cls.getResourceAsStream(resource), () -> "could not load resource: " + resource)) {
-            return create(in);
+        try (InputStream in = cls.getResourceAsStream(resource)) {
+            return create(LangUtil.loadProperties(in));
         }
     }
 

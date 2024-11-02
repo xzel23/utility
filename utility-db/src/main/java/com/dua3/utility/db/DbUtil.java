@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
@@ -63,11 +64,10 @@ public final class DbUtil {
     static {
         try {
             // load properties
-            String resource = "jdbc_drivers.properties";
-            Map<Object, Object> p = LangUtil.loadProperties(
-                    Objects.requireNonNull(DbUtil.class.getResourceAsStream(resource),
-                            () -> "could not load resource " + resource)
-            );
+            Map<Object, Object> p;
+            try (InputStream in = DbUtil.class.getResourceAsStream("jdbc_drivers.properties")) {
+                p = LangUtil.loadProperties(in);
+            }
 
             // parse entries
             p.forEach((key1, value) -> {
