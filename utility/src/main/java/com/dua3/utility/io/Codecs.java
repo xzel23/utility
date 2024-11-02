@@ -3,6 +3,8 @@ package com.dua3.utility.io;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.LangUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -26,6 +28,7 @@ import java.util.function.Supplier;
  * Registered codecs for a class can be obtained by using {@link #get(Class)}.
  */
 public class Codecs {
+    private static final Logger LOG  = LogManager.getLogger(Codecs.class);
 
     private final Map<String, Codec<?>> codecs = new HashMap<>();
 
@@ -93,16 +96,25 @@ public class Codecs {
             }
 
             @Override
-            public void encode(DataOutputStream os, C collection) throws IOException {
-                os.writeInt(collection.size());
-                for (T item : collection) {
-                    codec.encode(os, item);
+            public void encode(DataOutputStream os, @Nullable C collection) throws IOException {
+                if (collection == null) {
+                    os.writeInt(Integer.MIN_VALUE);
+                } else {
+                    os.writeInt(collection.size());
+                    for (T item : collection) {
+                        codec.encode(os, item);
+                    }
                 }
             }
 
             @Override
-            public C decode(DataInputStream is) throws IOException {
+            public @Nullable C decode(DataInputStream is) throws IOException {
                 int n = is.readInt();
+
+                if (n == Integer.MIN_VALUE) {
+                    return null;
+                }
+
                 LangUtil.check(n >= 0, "negative size for collection: %d", n);
                 C collection = construct.apply(n);
                 for (int i = 0; i < n; i++) {
@@ -153,14 +165,20 @@ public class Codecs {
             }
 
             @Override
-            public void encode(DataOutputStream os, M map) throws IOException {
-                ENTRIES_CODEC.encode(os, map.entrySet());
+            public void encode(DataOutputStream os, @Nullable M map) throws IOException {
+                ENTRIES_CODEC.encode(os, map == null ? null : map.entrySet());
             }
 
             @Override
-            public M decode(DataInputStream is) throws IOException {
+            public @Nullable M decode(DataInputStream is) throws IOException {
+                Collection<Map.Entry<K, V>> decoded = ENTRIES_CODEC.decode(is);
+
+                if (decoded == null) {
+                    return null;
+                }
+
                 M map = construct.get();
-                ENTRIES_CODEC.decode(is).forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+                decoded.forEach(entry -> map.put(entry.getKey(), entry.getValue()));
                 return map;
             }
         };

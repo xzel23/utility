@@ -152,7 +152,7 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b
      */
-    public static <T extends @Nullable Object> T orElse(@Nullable T a, T b) {
+    public static <T extends @Nullable Object> T orElse(T a, T b) {
         return a != null ? a : b;
     }
 
@@ -164,7 +164,7 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b.get()
      */
-    public static <T extends @Nullable Object> T orElseGet(@Nullable T a, Supplier<? extends T> b) {
+    public static <T extends @Nullable Object> T orElseGet(T a, Supplier<? extends T> b) {
         return a != null ? a : b.get();
     }
 
@@ -253,7 +253,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
-    public static <T extends @Nullable Object, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<? super T, E> c) {
+    public static <T extends @Nullable Object, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<T, E> c) {
         return arg -> {
             try {
                 c.accept(arg);
@@ -301,7 +301,7 @@ public final class LangUtil {
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
-    public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<? super T, ? extends R, E> f) {
+    public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, R, E> f) {
         return arg -> {
             try {
                 return f.apply(arg);
@@ -477,7 +477,7 @@ public final class LangUtil {
      * @param supplier the Supplier
      * @return caching Supplier
      */
-    public static <T extends @Nullable Object> Supplier<T> cache(Supplier<? extends T> supplier) {
+    public static <T extends @Nullable Object> Supplier<T> cache(Supplier<T> supplier) {
         return new CachingSupplier<>(supplier, t -> {});
     }
 
@@ -1135,6 +1135,7 @@ public final class LangUtil {
         public LazyFormatter(@Nullable String fmt, Object... args) {
             if (fmt == null) {
                 this.s = NULL_STRING;
+                //noinspection DataFlowIssue - false positive
                 this.args = null;
             } else {
                 this.s = fmt;
@@ -1142,6 +1143,7 @@ public final class LangUtil {
             }
         }
 
+        @SuppressWarnings("DataFlowIssue") // false positive
         @Override
         public String toString() {
             if (args != null) {

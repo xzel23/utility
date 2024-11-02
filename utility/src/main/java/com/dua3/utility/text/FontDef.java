@@ -254,7 +254,7 @@ public final class FontDef implements Cloneable {
     }
 
     // a little helper for the consumeIfDefined... methods
-    private static <T extends @Nullable Object> boolean consumeIfDefined(@Nullable T v, Consumer<T> c) {
+    private static <T> boolean consumeIfDefined(@Nullable T v, Consumer<T> c) {
         boolean run = v != null;
         if (run) {
             c.accept(v);
@@ -465,7 +465,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifColorDefined(Consumer<? super @Nullable Color> c) {
+    public void ifColorDefined(Consumer<? super Color> c) {
         consumeIfDefined(color, c);
     }
 
@@ -475,7 +475,7 @@ public final class FontDef implements Cloneable {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifSizeDefined(Consumer<? super @Nullable Float> c) {
+    public boolean ifSizeDefined(Consumer<? super Float> c) {
         return consumeIfDefined(size, c);
     }
 
@@ -485,7 +485,7 @@ public final class FontDef implements Cloneable {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifFamilyDefined(Consumer<? super @Nullable String> c) {
+    public boolean ifFamilyDefined(Consumer<? super String> c) {
         return consumeIfDefined(family, c);
     }
 
@@ -494,7 +494,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifBoldDefined(Consumer<? super @Nullable Boolean> c) {
+    public void ifBoldDefined(Consumer<? super Boolean> c) {
         consumeIfDefined(bold, c);
     }
 
@@ -503,7 +503,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifItalicDefined(Consumer<? super @Nullable Boolean> c) {
+    public void ifItalicDefined(Consumer<? super Boolean> c) {
         consumeIfDefined(italic, c);
     }
 
@@ -512,7 +512,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifUnderlineDefined(Consumer<? super @Nullable Boolean> c) {
+    public void ifUnderlineDefined(Consumer<? super Boolean> c) {
         consumeIfDefined(underline, c);
     }
 
@@ -521,7 +521,7 @@ public final class FontDef implements Cloneable {
      *
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifStrikeThroughDefined(Consumer<? super @Nullable Boolean> c) {
+    public void ifStrikeThroughDefined(Consumer<? super Boolean> c) {
         consumeIfDefined(strikeThrough, c);
     }
 

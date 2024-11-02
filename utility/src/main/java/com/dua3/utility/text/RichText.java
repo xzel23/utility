@@ -555,7 +555,7 @@ public final class RichText
             }
 
             @Override
-            public Spliterator<RichText> trySplit() {
+            public @Nullable Spliterator<RichText> trySplit() {
                 return null;
             }
 

@@ -47,11 +47,11 @@ public class CsvReader extends CsvIo {
     private final RowBuilder rowBuilder;
     private final Pattern patternField;
     private final BufferedReader reader;
-    private final URI source;
+    private final @Nullable URI source;
     private int rowNumber;
     private int rowsRead;
     private int lineNumber;
-    private List<String> columnNames;
+    private @Nullable List<String> columnNames;
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
 
@@ -243,7 +243,7 @@ public class CsvReader extends CsvIo {
      *
      * @return the source URI
      */
-    private URI getSource() {
+    private @Nullable URI getSource() {
         return source;
     }
 

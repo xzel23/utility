@@ -1,5 +1,7 @@
 package com.dua3.utility.fx.controls;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +15,7 @@ public class WizardDialogBuilder {
 
     final LinkedHashMap<String, WizardDialog.Page<?, ?>> pages = new LinkedHashMap<>();
     private String title = "";
-    private String startPage = null;
+    private String startPage = "";
 
     WizardDialogBuilder() {}
 
@@ -45,7 +47,7 @@ public class WizardDialogBuilder {
         page.setNext(builder.next);
         pages.put(name, page);
 
-        if (startPage == null) {
+        if (startPage.isEmpty()) {
             setStartPage(name);
         }
 

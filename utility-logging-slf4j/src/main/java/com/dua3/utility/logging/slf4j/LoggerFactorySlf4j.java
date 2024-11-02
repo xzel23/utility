@@ -54,7 +54,7 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
     private final List<Pair<String, Level>> prefixes = new ArrayList<>();
     private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
 
-    private final LogEntryHandler defaultHandler;
+    private final @Nullable LogEntryHandler defaultHandler;
     private volatile LogEntryFilter filter = LogEntryFilter.ALL_PASS_FILTER;
 
     /**
@@ -183,7 +183,7 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
      *
      * @return the default log entry handler
      */
-    public LogEntryHandler getDefaultHandler() {
-        return defaultHandler;
+    public Optional<LogEntryHandler> getDefaultHandler() {
+        return Optional.ofNullable(defaultHandler);
     }
 }

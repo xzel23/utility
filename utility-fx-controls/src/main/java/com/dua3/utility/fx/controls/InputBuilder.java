@@ -286,7 +286,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items
     ) {
@@ -333,7 +333,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-    default <T> B radioList(
+    default <T extends @Nullable Object> B radioList(
             String id,
             String label,
             Supplier<T> dflt,

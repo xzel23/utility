@@ -1,5 +1,7 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
@@ -36,7 +38,7 @@ import java.util.function.UnaryOperator;
  *
  * @param <T> the type of the items contained in the ComboBox
  */
-public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T> {
+public class ComboBoxEx<T extends @Nullable Object> extends CustomControl<HBox> implements InputControl<T> {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     private @Nullable Comparator<? super T> comparator = null;
@@ -143,6 +145,11 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     }
 
     private void editItem() {
+        if (edit == null) {
+            LOG.warn("editing not supported");
+            return;
+        }
+
         int idx = comboBox.getSelectionModel().getSelectedIndex();
         if (idx >= 0) {
             T item = items.get(idx);
@@ -157,7 +164,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     }
 
     private void addItem() {
-        Optional.ofNullable(add.get()).ifPresent(item -> {
+        Optional.ofNullable(add).map(Supplier::get).ifPresent(item -> {
             items.add(item);
             comboBox.getSelectionModel().select(item);
             sortItems();
@@ -280,11 +287,11 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
 
     @Override
     public ReadOnlyBooleanProperty validProperty() {
-        return null; // FIXME
+        return new SimpleBooleanProperty(true);
     }
 
     @Override
     public ReadOnlyStringProperty errorProperty() {
-        return null; // FIXME
+        return new SimpleStringProperty("");
     }
 }

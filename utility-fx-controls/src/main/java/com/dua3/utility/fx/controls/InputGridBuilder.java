@@ -74,7 +74,7 @@ public class InputGridBuilder
 
         private final Node node;
 
-        private final Property<Void> value = new SimpleObjectProperty<>(null);
+        private final Property<Void> value = new SimpleObjectProperty<>();
         private final BooleanProperty valid = new SimpleBooleanProperty(true);
         private final ReadOnlyStringProperty error = new SimpleStringProperty("");
 
@@ -120,7 +120,7 @@ public class InputGridBuilder
 
     @Override
     public InputGridBuilder addNode(String id, @Nullable String label, Node node) {
-        Meta<Void> meta = new Meta<>(id, label, Void.class, null, new ControlWrapper(node));
+        Meta<Void> meta = new Meta<>(id, label, Void.class, () -> null, new ControlWrapper(node));
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, "Input with id '" + id + "' already defined");
         return this;
@@ -128,7 +128,7 @@ public class InputGridBuilder
 
     @Override
     public InputGridBuilder addNode(String id, Node node) {
-        Meta<Void> meta = new Meta<>(id, null, Void.class, null, new ControlWrapper(node));
+        Meta<Void> meta = new Meta<>(id, null, Void.class, () -> null, new ControlWrapper(node));
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, "Input with id '" + id + "' already defined");
         return this;

@@ -1,7 +1,5 @@
 package com.dua3.utility.text;
 
-import org.jspecify.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +8,7 @@ import java.util.List;
  *
  * @param <T> the conversion target type
  */
-public abstract class TagBasedConverter<T extends @Nullable Object> implements RichTextConverter<T> {
+public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
     /**
      * Create a converter for the given argument.

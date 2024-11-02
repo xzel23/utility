@@ -125,7 +125,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         options.forEach(entry -> hist.compute(entry.option, (k_, i_) -> i_ == null ? 1 : i_ + 1));
 
         allOptions.stream()
-                .map(option -> Pair.of(option, hist.getOrDefault(option, 0)))
+                .map(option -> Pair.ofNonNull(option, hist.getOrDefault(option, 0)))
                 .forEach(p -> {
                     Option<?> option = p.first();
                     int occurrences = p.second();

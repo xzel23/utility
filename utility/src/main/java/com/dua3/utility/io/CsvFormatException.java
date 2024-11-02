@@ -12,6 +12,8 @@
  */
 package com.dua3.utility.io;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.Serial;
 import java.net.URI;
@@ -25,7 +27,7 @@ public class CsvFormatException extends IOException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final URI source;
+    private final @Nullable URI source;
     private final int line;
 
     /**
@@ -35,7 +37,7 @@ public class CsvFormatException extends IOException {
      * @param source  a text describing the source (preferably the filename)
      * @param line    the line number of the CSV file where the error occurred
      */
-    public CsvFormatException(String message, URI source, int line) {
+    public CsvFormatException(String message, @Nullable URI source, int line) {
         super(message);
         this.source = source;
         this.line = line;

@@ -49,6 +49,8 @@ public interface AttributedCharacter {
      */
     @SuppressWarnings("unchecked")
     default List<Style> getStyles() {
-        return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
+        List<Style> list = (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
+        assert list != null;
+        return list;
     }
 }

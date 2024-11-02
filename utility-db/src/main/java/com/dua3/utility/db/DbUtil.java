@@ -65,8 +65,9 @@ public final class DbUtil {
         try {
             // load properties
             Map<Object, Object> p;
-            try (InputStream in = DbUtil.class.getResourceAsStream("jdbc_drivers.properties")) {
-                p = LangUtil.loadProperties(in);
+            String resource = "jdbc_drivers.properties";
+            try (InputStream in = DbUtil.class.getResourceAsStream(resource)) {
+                p = LangUtil.loadProperties(Objects.requireNonNull(in, "resource nott found: " + resource));
             }
 
             // parse entries
@@ -287,8 +288,7 @@ public final class DbUtil {
             throws SQLException {
         LangUtil.check(driver.acceptsURL(url), () -> new SQLException("URL not accepted by driver"));
 
-        JdbcDataSource ds = new JdbcDataSource();
-        ds.setDriver(driver);
+        JdbcDataSource ds = new JdbcDataSource(driver);
         ds.setUrl(url);
         ds.setUser(user);
         ds.setPassword(password);

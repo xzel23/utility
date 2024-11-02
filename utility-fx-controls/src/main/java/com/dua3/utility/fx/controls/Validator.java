@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
 public class Validator {
     private static final Logger LOG = LogManager.getLogger(Validator.class);
 
-    private final ResourceBundle resources;
+    private final @Nullable  ResourceBundle resources;
     private final LinkedHashMap<Control, List<Supplier<ValidationResult>>> controls = new LinkedHashMap<>();
     private final MapProperty<Control, ValidationResult> validationResultProperty = new SimpleMapProperty<>();
     private final BooleanProperty validProperty = new SimpleBooleanProperty();

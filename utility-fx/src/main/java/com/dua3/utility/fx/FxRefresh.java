@@ -60,10 +60,12 @@ public final class FxRefresh {
     private FxRefresh(String name, Runnable task) {
         this.name = name;
         this.task = task;
-        this.updateThread = new Thread(this::refreshLoop);
 
-        updateThread.setDaemon(true);
-        updateThread.start();
+        Thread thread = new Thread(this::refreshLoop);
+        thread.setDaemon(true);
+        this.updateThread = thread;
+
+        thread.start();
     }
 
     /**

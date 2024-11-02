@@ -56,7 +56,7 @@ public class LoggerSlf4j extends AbstractLogger {
     }
 
     @Override
-    protected String getFullyQualifiedCallerName() {
+    protected @Nullable String getFullyQualifiedCallerName() {
         return null;
     }
 

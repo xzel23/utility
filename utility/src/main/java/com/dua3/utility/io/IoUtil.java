@@ -6,7 +6,6 @@
 package com.dua3.utility.io;
 
 import org.jspecify.annotations.Nullable;
-import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
 import com.dua3.utility.text.TextUtil;
@@ -91,7 +90,7 @@ public final class IoUtil {
         // utility class
     }
 
-    private static record FileNameInfo(int idxStart, int idxEnd) {}
+    private record FileNameInfo(int idxStart, int idxEnd) {}
 
     /**
      * Extract the filename from a path given as a String. In addition to the system dependent
@@ -462,6 +461,7 @@ public final class IoUtil {
      */
     public static void deleteRecursive(Path path) throws IOException {
         try (Stream<Path> files = Files.walk(path, FileVisitOption.FOLLOW_LINKS)) {
+            //noinspection DataFlowIssue - false positive
             files
                     .sorted(Comparator.reverseOrder())
                     .forEach(LangUtil.uncheckedConsumer(Files::deleteIfExists));

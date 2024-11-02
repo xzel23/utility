@@ -28,6 +28,8 @@ import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.sql.Clob;
 import java.sql.JDBCType;
@@ -95,11 +97,14 @@ public final class FxDbUtil {
             int scale = meta.getScale(i);
 
             // define the formatting
-            Function<Object, String> format;
+            Function<@NonNull Object, @NonNull String> format;
             switch (sqlType) {
-                case DATE -> format = item -> DbUtil.toLocalDate(item).format(dateFormatter);
-                case TIMESTAMP -> format = item -> DbUtil.toLocalDateTime(item).format(timestampFormatter);
-                case TIME -> format = item -> DbUtil.toLocalDateTime(item).format(timeFormatter);
+                case DATE -> //noinspection DataFlowIssue - format is not called for null arguments
+                        format = item -> DbUtil.toLocalDate(item).format(dateFormatter);
+                case TIMESTAMP -> //noinspection DataFlowIssue - format is not called for null arguments
+                        format = item -> DbUtil.toLocalDateTime(item).format(timestampFormatter);
+                case TIME ->  //noinspection DataFlowIssue - format is not called for null arguments
+                        format = item -> DbUtil.toLocalDateTime(item).format(timeFormatter);
 
                 // numbers that have scale
                 case DECIMAL, NUMERIC -> {
@@ -121,7 +126,7 @@ public final class FxDbUtil {
             LOG.trace("column name: {} label: {} type: {} scale: {}", name, label, sqlType, scale);
 
             // CellValueFactory
-            Callback<CellDataFeatures<ObservableList<Object>, Object>, ObservableValue<Object>> cellValueFactory
+            Callback<CellDataFeatures<ObservableList<Object>, Object>, ObservableValue<@Nullable Object>> cellValueFactory
                     = param -> {
                 var list = param.getValue();
                 var x = idx < list.size() ? list.get(idx) : null;

@@ -523,7 +523,7 @@ public final class FxUtil {
      * @param <T> the type of the value stored in the Value object
      * @return an ObservableValue object that reflects changes in the Value object
      */
-    public static <T> ObservableValue<T> toObservableValue(Value<T> value) {
+    public static <T extends @Nullable Object> ObservableValue<T> toObservableValue(Value<T> value) {
         return new ObservableValue<>() {
             @Override
             public void addListener(ChangeListener<? super T> listener) {

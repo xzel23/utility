@@ -16,7 +16,7 @@ public final class LogUtil {
 
     private static final Logger LOG = LogManager.getLogger(LogUtil.class);
 
-    private @Nullable static LogEntryDispatcher globalDispatcher;
+    private static @Nullable LogEntryDispatcher globalDispatcher;
 
     private static synchronized void init() {
         if (globalDispatcher == null) {
@@ -60,6 +60,7 @@ public final class LogUtil {
      */
     public static LogEntryDispatcher getGlobalDispatcher() {
         assureInitialized();
+        assert globalDispatcher != null;
         return globalDispatcher;
     }
 }

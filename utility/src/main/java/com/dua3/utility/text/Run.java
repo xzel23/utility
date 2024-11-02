@@ -182,6 +182,7 @@ public final class Run implements AttributedCharSequence {
      */
     @SuppressWarnings("unchecked")
     public List<Style> getStyles() {
+        //noinspection DataFlowIssue - false positive
         return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 

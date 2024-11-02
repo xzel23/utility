@@ -1,5 +1,6 @@
 package com.dua3.utility.data;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -117,6 +118,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
 
     @Override
     public T parent() {
+        LangUtil.check(parent != null, "parent() called on root node");
         return parent;
     }
 

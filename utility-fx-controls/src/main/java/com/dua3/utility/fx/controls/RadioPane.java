@@ -28,7 +28,7 @@ import java.util.function.Function;
  *
  * @param <T> The type of items that will be represented as radio buttons.
  */
-public class RadioPane<T> extends VBox implements InputControl<T> {
+public class RadioPane<T extends @Nullable Object> extends VBox implements InputControl<T> {
 
     protected static final Logger LOG = LogManager.getLogger(RadioPane.class);
     private static final double SPACING = 4;
@@ -58,7 +58,7 @@ public class RadioPane<T> extends VBox implements InputControl<T> {
         }
 
         // update state when selected toggle changes
-        Property<T> property = new SimpleObjectProperty<>();
+        Property<@Nullable T> property = new SimpleObjectProperty<>();
         group.selectedToggleProperty().addListener((v, o, n) -> {
             Toggle toggle = group.getSelectedToggle();
             property.setValue(toggle != null ? (T) toggle.getUserData() : null);

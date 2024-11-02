@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 
@@ -250,7 +251,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     // -- instance fields and methods
 
     private final String name;
-    private final Map<String, Object> properties;
+    private final Map<String, @Nullable Object> properties;
 
     private Style(String name, Map<String, @Nullable Object> args) {
         this.name = name;
@@ -313,8 +314,9 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @param dflt     the default value
      * @return the value of the property or dflt if no value was set
      */
-    public @Nullable Object getOrDefault(String property, @Nullable Object dflt) {
-        return properties.getOrDefault(property, dflt);
+    public <T extends @Nullable Object> T getOrDefault(String property, T dflt) {
+        //noinspection unchecked
+        return (T) properties.getOrDefault(property, dflt);
     }
 
     /**
@@ -326,7 +328,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T extends @Nullable Object> void ifPresent(String key, Consumer<T> action) throws ClassCastException {
+    public <T extends @Nullable Object> void ifPresent(String key, Consumer<@NonNull T> action) throws ClassCastException {
         T value = (T) get(key);
         if (value != null) {
             action.accept(value);
@@ -366,11 +368,12 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      */
     @SuppressWarnings("unchecked")
     public <T extends @Nullable Object> void ifPresentOrElse(String key,
-                                    T defaultValue,
+                                    @Nullable T defaultValue,
                                     Consumer<T> action) {
         Object raw = get(key);
         try {
             T value = (T) raw;
+            //noinspection DataFlowIssue
             action.accept(value != null ? value : defaultValue);
         } catch (Exception e) {
             throw new IllegalStateException("error processing attribute '" + key + "' with value: " + raw, e);

@@ -121,7 +121,7 @@ public class NamedParameterStatement implements AutoCloseable {
         statement = connection.prepareStatement(parsedQuery);
     }
 
-    private static JDBCType getParameterType(ParameterMetaData meta, int index) {
+    private static @Nullable JDBCType getParameterType(ParameterMetaData meta, int index) {
         try {
             return JDBCType.valueOf(meta.getParameterType(index));
         } catch (SQLException e) {
@@ -281,7 +281,7 @@ public class NamedParameterStatement implements AutoCloseable {
         }
     }
 
-    private <T, U> void setWithObjectArg(SQLType type, String name, @Nullable T value, @Nullable U arg, SetParameterObject<T, U> setter) throws SQLException {
+    private <T, U> void setWithObjectArg(SQLType type, String name, @Nullable T value, @Nullable U arg, SetParameterObject<T, @Nullable U> setter) throws SQLException {
         if (value == null) {
             setNull(name, type);
         } else {
@@ -1152,7 +1152,7 @@ public class NamedParameterStatement implements AutoCloseable {
     public static class ParameterInfo {
         final String name;
         final List<Integer> indexes = new ArrayList<>();
-        JDBCType type;
+        @Nullable JDBCType type;
 
         ParameterInfo(String name) {
             this.name = name;

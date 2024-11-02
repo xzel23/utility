@@ -5,6 +5,7 @@
 
 package com.dua3.utility.swing;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
@@ -358,7 +359,7 @@ public final class SwingUtil {
 
     @SafeVarargs
     private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super Component, Integer> showDialog,
-                                                 Pair<String, String[]>... types) {
+                                                 Pair<@NonNull String, @NonNull String @NonNull[]>... types) {
         File file;
         try {
             file = current.toFile().getAbsoluteFile();
@@ -368,7 +369,7 @@ public final class SwingUtil {
         }
 
         JFileChooser jfc = new JFileChooser();
-        for (Pair<String, String[]> entry : types) {
+        for (var entry : types) {
             jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first(), entry.second()));
         }
 

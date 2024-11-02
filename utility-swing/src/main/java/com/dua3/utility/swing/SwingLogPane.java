@@ -40,6 +40,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -426,7 +427,7 @@ public class SwingLogPane extends JPanel {
         THROWABLE {
             @Override
             public String get(LogEntry entry) {
-                return entry.throwable().toString();
+                return Objects.toString(entry.throwable());
             }
         };
 

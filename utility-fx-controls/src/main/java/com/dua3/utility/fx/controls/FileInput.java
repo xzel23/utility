@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  * These properties are updated based on the path selected by the user and the
  * specified validation function.</p>
  */
-public class FileInput extends CustomControl<HBox> implements InputControl<Path> {
+public class FileInput extends CustomControl<HBox> implements InputControl<@Nullable Path> {
 
     private static final StringConverter<Path> PATH_CONVERTER = new PathConverter();
 
@@ -60,11 +60,11 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
         }
     }
 
-    private final ObjectProperty<Path> value = new SimpleObjectProperty<>();
+    private final ObjectProperty<@Nullable Path> value = new SimpleObjectProperty<>();
 
     private final FileDialogMode mode;
     private final FileChooser.ExtensionFilter[] filters;
-    private final Supplier<Path> dflt;
+    private final Supplier<@Nullable Path> dflt;
 
     private final StringProperty error = new SimpleStringProperty("");
     private final BooleanProperty valid = new SimpleBooleanProperty(true);
@@ -83,7 +83,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
             boolean existingOnly,
             Supplier<Path> dflt,
             Collection<FileChooser.ExtensionFilter> filters,
-            Function<Path, Optional<String>> validate) {
+            Function<@Nullable Path, Optional<String>> validate) {
         super(new HBox());
 
         getStyleClass().setAll("file-input");
@@ -208,7 +208,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
         };
     }
 
-    private Path getPath() {
+    private @Nullable Path getPath() {
         return value.get();
     }
 
@@ -223,7 +223,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<Path>
     }
 
     @Override
-    public Property<Path> valueProperty() {
+    public Property<@Nullable Path> valueProperty() {
         return value;
     }
 

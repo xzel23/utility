@@ -19,14 +19,16 @@ import java.util.regex.Pattern;
 public final class TextFieldBuilder {
 
     private static final Pattern INTEGER_PATTERN = Pattern.compile("\\d*|0");
-    private static final UnaryOperator<TextFormatter.Change> INTEGER_FILTER = change -> INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
+    @SuppressWarnings("DataFlowIssue") // should be Function<Change, @Nullable Change> but type is incompatible
+    private static final UnaryOperator<TextFormatter.@Nullable Change> INTEGER_FILTER = change -> INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
 
     private static TextFormatter<Integer> getIntegerTextFormatter(UnaryOperator<TextFormatter.Change> integerFilter) {
         return new TextFormatter<>(new IntegerStringConverter(), 0, integerFilter);
     }
 
     private static final Pattern SIGNED_INTEGER_PATTERN = Pattern.compile("-?([1-9]\\d*|0)?");
-    private static final UnaryOperator<TextFormatter.Change> SIGNED_INTEGER_FILTER = change -> SIGNED_INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
+    @SuppressWarnings("DataFlowIssue") // should be Function<Change, @Nullable Change> but type is incompatible
+    private static final UnaryOperator<TextFormatter.@Nullable Change> SIGNED_INTEGER_FILTER = change -> SIGNED_INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
 
     private @Nullable String text;
     private TextFieldType type = TextFieldType.TEXT;

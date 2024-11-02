@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the input result type
  */
-public class ChoiceInputControl<T> implements InputControl<T> {
+public class ChoiceInputControl<T extends @Nullable Object> implements InputControl<T> {
 
     private final ComboBox<ChoiceOption.Choice<T>> control;
     private final ChoiceOption<T> option;

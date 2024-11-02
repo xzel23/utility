@@ -30,7 +30,8 @@ public interface TreeNode<N extends TreeNode<? extends N>> {
     /**
      * Get this node's parent.
      *
-     * @return this node's parent node or {@code null} if this node is a root node
+     * @return this node's parent node
+     * @throws IllegalStateException if called on the root node
      */
     N parent();
 

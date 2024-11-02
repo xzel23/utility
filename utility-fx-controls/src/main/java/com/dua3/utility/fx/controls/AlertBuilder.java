@@ -36,7 +36,7 @@ public class AlertBuilder
     private ButtonType @Nullable[] buttons;
     private @Nullable ButtonType defaultButton;
 
-    AlertBuilder(AlertType type, Window parentWindow) {
+    AlertBuilder(AlertType type, @Nullable Window parentWindow) {
         super(parentWindow);
         setDialogSupplier(() -> new Alert(type));
     }

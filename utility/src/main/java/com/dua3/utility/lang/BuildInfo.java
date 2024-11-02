@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -80,7 +81,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      */
     public static BuildInfo create(Class<?> cls, String resource) throws IOException {
         try (InputStream in = cls.getResourceAsStream(resource)) {
-            return create(LangUtil.loadProperties(in));
+            return create(LangUtil.loadProperties(Objects.requireNonNull(in, () -> "resource not found: " + resource)));
         }
     }
 

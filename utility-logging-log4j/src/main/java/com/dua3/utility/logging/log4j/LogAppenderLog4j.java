@@ -121,8 +121,8 @@ public class LogAppenderLog4j extends AbstractAppender {
             @PluginElement("Filters") @Nullable Filter filter) {
 
         if (name == null) {
-            LOGGER.error("No name provided for {}", APPENDER_NAME);
-            return null;
+            LOGGER.warn("No name provided for {}", APPENDER_NAME);
+            name = "[unnamed]";
         }
         if (layout == null) {
             layout = PatternLayout.createDefaultLayout();

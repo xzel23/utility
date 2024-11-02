@@ -8,6 +8,7 @@ import org.slf4j.event.Level;
 import org.slf4j.spi.LocationAwareLogger;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -18,9 +19,9 @@ public final class LogEntrySlf4j implements LogEntry {
     private final Instant time;
     private final LogLevel level;
     private final String marker;
-    private Supplier<String> messageFormatter;
+    private @Nullable Supplier<String> messageFormatter;
     private @Nullable String formattedMessage;
-    private final Throwable throwable;
+    private final @Nullable Throwable throwable;
 
     /**
      * Creates a new instance of LogEntrySlf4j.
@@ -52,7 +53,7 @@ public final class LogEntrySlf4j implements LogEntry {
             formattedMessage = messageFormatter.get();
             messageFormatter = null;
         }
-        return formattedMessage;
+        return Objects.requireNonNullElse(formattedMessage, "");
     }
 
     @Override
@@ -106,7 +107,7 @@ public final class LogEntrySlf4j implements LogEntry {
      * @return the throwable associated with this log entry.
      */
     @Override
-    public Throwable throwable() {
+    public @Nullable Throwable throwable() {
         return throwable;
     }
 

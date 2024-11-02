@@ -28,28 +28,21 @@ public class JdbcDataSource implements DataSource {
     private @Nullable String url;
     private @Nullable PrintWriter logWriter;
     private int loginTimeout;
-    private @Nullable Driver driver;
+    private Driver driver;
 
     /**
      * Constructor.
+     *
+     * @param driver the driver
      */
-    public JdbcDataSource() {
-        // nop
+    public JdbcDataSource(Driver driver) {
+        this.driver = driver;
     }
 
     private void log(String message) {
         if (logWriter != null) {
             logWriter.format("%s%n", message);
         }
-    }
-
-    /**
-     * Set the JDBC driver for this instance.
-     *
-     * @param driver the driver
-     */
-    public void setDriver(Driver driver) {
-        this.driver = driver;
     }
 
     @Override

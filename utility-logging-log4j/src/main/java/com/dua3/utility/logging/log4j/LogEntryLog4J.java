@@ -5,8 +5,10 @@ import com.dua3.utility.logging.LogLevel;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.ReusableMessage;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -17,8 +19,8 @@ public final class LogEntryLog4J implements LogEntry {
     private final Instant time;
     private final LogLevel level;
     private final String marker;
-    private Supplier<String> messageFormatter;
-    private String formattedMessage;
+    private @Nullable Supplier<String> messageFormatter;
+    private @Nullable String formattedMessage;
     private final Throwable throwable;
 
     /**
@@ -58,7 +60,7 @@ public final class LogEntryLog4J implements LogEntry {
             formattedMessage = messageFormatter.get();
             messageFormatter = null;
         }
-        return formattedMessage;
+        return Objects.requireNonNullElse(formattedMessage, "");
     }
 
     @Override

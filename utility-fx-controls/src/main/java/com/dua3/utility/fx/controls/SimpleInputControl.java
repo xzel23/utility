@@ -5,6 +5,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.control.Control;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
  * @param <C> the type of the control, which must extend from Control
  * @param <R> the type of the value held by the input control
  */
-public class SimpleInputControl<C extends @NonNull Control, R> implements InputControl<R> {
+public class SimpleInputControl<C extends Control, R extends @Nullable Object> implements InputControl<R> {
 
     private final C control;
     private final State<R> state;

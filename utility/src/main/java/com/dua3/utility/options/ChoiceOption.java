@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 public final class ChoiceOption<T extends @Nullable Object> extends Option<T> {
 
     private final Supplier<? extends Collection<? extends T>> values;
-    private Supplier<? extends @Nullable T> defaultValue = () -> null;
+    private Supplier<? extends @Nullable T> defaultSupplier = () -> null;
 
     /**
      * Constructor.
@@ -143,17 +143,17 @@ public final class ChoiceOption<T extends @Nullable Object> extends Option<T> {
      * @return this option
      */
     public ChoiceOption<T> defaultValue(@Nullable T defaultValue) {
-        return defaultValue(() -> defaultValue);
+        return defaultSupplier(() -> defaultValue);
     }
 
     /**
      * Set default value.
      *
-     * @param defaultValue the default value
+     * @param defaultSupplier the default value
      * @return this option
      */
-    public ChoiceOption<T> defaultValue(Supplier<? extends T> defaultValue) {
-        this.defaultValue = defaultValue;
+    public ChoiceOption<T> defaultSupplier(Supplier<? extends @Nullable T> defaultSupplier) {
+        this.defaultSupplier = defaultSupplier;
         return this;
     }
 
@@ -179,7 +179,7 @@ public final class ChoiceOption<T extends @Nullable Object> extends Option<T> {
      * @return Optional holding the default value.
      */
     public Optional<T> getDefault() {
-        return Optional.ofNullable(defaultValue.get());
+        return Optional.ofNullable(defaultSupplier.get());
     }
 
     /**

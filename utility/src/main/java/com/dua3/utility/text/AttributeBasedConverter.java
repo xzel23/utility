@@ -18,7 +18,7 @@ import java.util.Objects;
  *
  * @param <T> target type of conversion
  */
-public abstract class AttributeBasedConverter<T extends @Nullable Object> implements RichTextConverter<T> {
+public abstract class AttributeBasedConverter<T> implements RichTextConverter<T> {
 
     /**
      * Factory method to create a compatible converter implementation instance for this converter.
@@ -124,7 +124,7 @@ public abstract class AttributeBasedConverter<T extends @Nullable Object> implem
          */
         protected void setStyle(Run run) {
             // collect this run's attribute
-            Map<String, Object> newAttributes = collectAttributes(run);
+            Map<String, @Nullable Object> newAttributes = collectAttributes(run);
             handleAttributeChanges(newAttributes);
         }
 

@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  */
 public final class SimpleOption<T extends @Nullable Object> extends Option<T> {
 
-    private Supplier<? extends T> defaultValue = () -> null;
+    private Supplier<? extends @Nullable T> defaultSupplier = () -> null;
 
     /**
      * Construct a new simple option with the given name(s).
@@ -93,17 +93,17 @@ public final class SimpleOption<T extends @Nullable Object> extends Option<T> {
      * @return this option
      */
     public SimpleOption<T> defaultValue(@Nullable T defaultValue) {
-        return defaultValue(() -> defaultValue);
+        return defaultSupplier(() -> defaultValue);
     }
 
     /**
      * Set default value.
      *
-     * @param defaultValue the default value
+     * @param defaultSupplier the default value
      * @return this option
      */
-    public SimpleOption<T> defaultValue(Supplier<? extends T> defaultValue) {
-        this.defaultValue = defaultValue;
+    public SimpleOption<T> defaultSupplier(Supplier<? extends T> defaultSupplier) {
+        this.defaultSupplier = defaultSupplier;
         return this;
     }
 
@@ -124,7 +124,7 @@ public final class SimpleOption<T extends @Nullable Object> extends Option<T> {
      */
     @Override
     public Optional<T> getDefault() {
-        return Optional.ofNullable(defaultValue.get());
+        return Optional.ofNullable(defaultSupplier.get());
     }
 
 }

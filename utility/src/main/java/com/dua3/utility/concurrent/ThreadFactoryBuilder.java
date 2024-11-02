@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * A builder class for creating customized ThreadFactory instances.
  */
 public class ThreadFactoryBuilder {
-    private ThreadGroup group = null;
+    private @Nullable ThreadGroup group = null;
     private long stackSize = 0;
     private String prefix = "";
     private boolean daemon = false;
@@ -93,7 +93,7 @@ public class ThreadFactoryBuilder {
     }
 
     private static class CustomThreadFactory implements ThreadFactory {
-        private final ThreadGroup group;
+        private final @Nullable ThreadGroup group;
         private final long stackSize;
         private final String prefix;
         private final boolean daemon;

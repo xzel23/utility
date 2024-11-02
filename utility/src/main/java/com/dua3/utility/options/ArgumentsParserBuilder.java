@@ -2,6 +2,7 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.lang.LangUtil;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -108,7 +109,7 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one
      * @return the created SimpleOption
      */
-    public <T> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
+    public <T extends @Nullable Object> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
         return simpleOption(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -120,7 +121,7 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one.
      * @return the created SimpleOption.
      */
-    public <T> SimpleOption<T> simpleOption(Function<String, ? extends T> mapper, String... names) {
+    public <T extends @Nullable Object> SimpleOption<T> simpleOption(Function<String, ? extends T> mapper, String... names) {
         return addOption(SimpleOption.create(mapper, names));
     }
 
@@ -144,7 +145,7 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one.
      * @return the created StandardOption.
      */
-    public <T> StandardOption<T> option(Class<? extends T> type, String... names) {
+    public <T extends @Nullable Object> StandardOption<T> option(Class<? extends T> type, String... names) {
         return option(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -156,7 +157,7 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one.
      * @return the created StandardOption.
      */
-    public <T> StandardOption<T> option(Function<String, ? extends T> mapper, String... names) {
+    public <T extends @Nullable Object> StandardOption<T> option(Function<String, ? extends T> mapper, String... names) {
         return addOption(StandardOption.create(mapper, names));
     }
 

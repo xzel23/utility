@@ -63,6 +63,19 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
     /**
      * Create a Pair.
      *
+     * @param first  the first member
+     * @param second the second member
+     * @param <T1>   type of first member
+     * @param <T2>   type of second member
+     * @return a new Pair
+     */
+    public static <T1, T2> Pair<T1, T2> ofNonNull(T1 first, T2 second) {
+        return new Pair<>(first, second);
+    }
+
+    /**
+     * Create a Pair.
+     *
      * @param entry a Map.Entry
      * @param <T1>  type of first member
      * @param <T2>  type of second member
@@ -106,7 +119,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @param f   mapper for components
      * @return Pair consisting of the mapped values of this pair
      */
-    public <U extends @Nullable Object> Pair<U, U> map(Function<Object, ? extends U> f) {
+    public <U extends @Nullable Object> Pair<U, U> map(Function<Object, ? extends @Nullable U> f) {
         return of(f.apply(first()), f.apply(second()));
     }
 

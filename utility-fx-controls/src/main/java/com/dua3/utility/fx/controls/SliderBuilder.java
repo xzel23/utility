@@ -4,6 +4,7 @@ import javafx.beans.property.Property;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiFunction;
 import java.util.function.DoubleConsumer;
@@ -168,7 +169,7 @@ public class SliderBuilder {
      * @param value the property to be bound bidirectionally with the slider's value property.
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
-    public SliderBuilder bindBidirectional(Property<Number> value) {
+    public SliderBuilder bindBidirectional(Property<@Nullable Number> value) {
         slider.valueProperty().bindBidirectional(value);
         return this;
     }

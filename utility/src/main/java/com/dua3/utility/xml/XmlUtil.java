@@ -64,6 +64,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -395,12 +396,15 @@ public final class XmlUtil {
                         writer.writeStartElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
                     }
                     // write namespaces and attributes in alphabetical order to obtain reproducible results
+                    //noinspection DataFlowIssue - false positive
                     StreamUtil.stream(se.getNamespaces())
                             .sorted(Comparator.comparing(Namespace::getPrefix))
                             .forEach(consume(ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));
                     StreamUtil.stream(se.getAttributes())
+                            .filter(Objects::nonNull)
                             .sorted(Comparator.comparing(Attribute::toString))
                             .forEach(consume(attr -> {
+                                //noinspection DataFlowIssue - false positive
                                 QName attrName = attr.getName();
                                 writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
                             }));
@@ -676,7 +680,7 @@ public final class XmlUtil {
         }
 
         @Override
-        public Spliterator<Node> trySplit() {
+        public @Nullable Spliterator<Node> trySplit() {
             return null;
         }
 

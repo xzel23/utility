@@ -5,6 +5,8 @@
 
 package com.dua3.utility.io;
 
+import org.jspecify.annotations.Nullable;
+
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;
 
@@ -17,12 +19,16 @@ import java.util.function.Supplier;
  */
 public final class SoftResource<T> {
 
-    private Supplier<? extends T> supplier;
+    public static final SoftReference<?> EMPTY_REFERENCE = new SoftReference<>(null);
+    public static final SoftResource<?> EMPTY_RESOURCE = new SoftResource<>(null);
+
+    private @Nullable Supplier<? extends @Nullable T> supplier;
     private SoftReference<T> ref;
 
-    private SoftResource(Supplier<? extends T> supplier) {
+    private SoftResource(@Nullable Supplier<? extends @Nullable T> supplier) {
         this.supplier = supplier;
-        this.ref = new SoftReference<>(null);
+        //noinspection unchecked
+        this.ref = (SoftReference<T>) EMPTY_REFERENCE;
     }
 
     /**
@@ -33,7 +39,7 @@ public final class SoftResource<T> {
      *                 invocation return equal instances
      * @return soft resource
      */
-    public static <T> SoftResource<T> of(Supplier<? extends T> supplier) {
+    public static <T> SoftResource<T> of(Supplier<? extends @Nullable T> supplier) {
         return new SoftResource<>(supplier);
     }
 
@@ -44,7 +50,8 @@ public final class SoftResource<T> {
      * @return empty soft resource
      */
     public static <T> SoftResource<T> emptyReference() {
-        return new SoftResource<>(null);
+        //noinspection unchecked
+        return (SoftResource<T>) EMPTY_RESOURCE;
     }
 
     /**
@@ -54,7 +61,7 @@ public final class SoftResource<T> {
      * if it has not yet been set or has been garbage collected, it will be
      * restored by invoking the supplier
      */
-    public T get() {
+    public @Nullable T get() {
         T obj = ref.get();
         if (obj == null && supplier != null) {
             obj = supplier.get();
@@ -63,6 +70,7 @@ public final class SoftResource<T> {
                 supplier = null;
             }
 
+            //noinspection DataFlowIssue - false positive
             ref = new SoftReference<>(obj);
         }
         return obj;
@@ -91,7 +99,7 @@ public final class SoftResource<T> {
     /**
      * Helper class to prevent the resource from being garbage collected.
      */
-    public static final class ResourceHolder<T> implements AutoCloseable {
+    public static final class ResourceHolder<T extends @Nullable Object> implements AutoCloseable {
         private final SoftResource<T> soft;
         private T strong;
 

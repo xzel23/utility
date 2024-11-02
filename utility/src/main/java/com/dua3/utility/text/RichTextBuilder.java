@@ -198,8 +198,8 @@ public class RichTextBuilder implements Appendable, ToRichText {
     @SuppressWarnings("unchecked")
     void appendRun(Run run) {
         // set attributes
-        Map<String, Object> attributes = split();
-        Map<String, Object> backup = new HashMap<>();
+        Map<String, @Nullable Object> attributes = split();
+        Map<String, @Nullable Object> backup = new HashMap<>();
         for (Entry<String, Object> entry : run.getAttributes().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();

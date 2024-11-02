@@ -1,5 +1,7 @@
 package com.dua3.utility.logging;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -51,7 +53,7 @@ public interface LogEntry {
      *
      * @return the throwable object associated with this LogEntry, or null if no throwable is present
      */
-    Throwable throwable();
+    @Nullable Throwable throwable();
 
     /**
      * Formats the log entry with the given prefix and suffix.

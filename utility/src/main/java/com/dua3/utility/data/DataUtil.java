@@ -63,7 +63,7 @@ public final class DataUtil {
      * @param <T>         target type
      * @return the object converted to the target class
      */
-    public static <T> T convert(@Nullable Object value, Class<T> targetClass) {
+    public static <T extends @Nullable Object> T convert(@Nullable Object value, Class<T> targetClass) {
         return convert(value, targetClass, false);
     }
 
@@ -314,7 +314,8 @@ public final class DataUtil {
      * @return array containing the converted elements
      */
     @SuppressWarnings("unchecked")
-    public static <T, U> U[] convertToArray(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
+    public static <T extends @Nullable Object, U extends @Nullable Object> U[] convertToArray(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
+        //noinspection DataFlowIssue - false positive
         return data.stream()
                 .map(obj -> convert(obj, targetClass, useConstructor))
                 .toArray(n -> (U[]) Array.newInstance(targetClass, n));
@@ -373,7 +374,8 @@ public final class DataUtil {
      * @param <U>            the element target type
      * @return list containing the converted elements
      */
-    public static <T, U> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
+    public static <T extends @Nullable Object, U extends @Nullable Object> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
+        //noinspection DataFlowIssue - false positive
         return data.stream()
                 .map(obj -> convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toList());

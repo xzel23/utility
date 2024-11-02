@@ -37,7 +37,7 @@ public final class IconUtil {
         return ServiceLoader.load(iconProviderClass)
                 .stream()
                 .peek(provider -> LOG.debug("found {} implementation: {}", iconProviderClass.getName(), provider.getClass().getName()))
-                .map(provider -> provider.get().forName(name))
+                .map(provider -> provider.get().forName(name).orElse(null))
                 .filter(Objects::nonNull)
                 .findFirst();
     }

@@ -53,7 +53,7 @@ public final class IoOptions {
                         "--locale")
                 .displayName("Locale")
                 .description("set locale")
-                .defaultValue(Locale::getDefault);
+                .defaultSupplier(Locale::getDefault);
     }
 
     /**

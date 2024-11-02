@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Function;
 
 /**
@@ -16,7 +18,7 @@ import java.util.function.Function;
  * @param ignoreItalic whether to ignore difference in italics
  */
 public record ComparisonSettings(
-        Function<String, String> fontMapper,
+        Function<@Nullable String, @Nullable String> fontMapper,
         boolean ignoreCase,
         boolean ignoreFontFamily,
         boolean ignoreFontSize,

@@ -38,6 +38,7 @@ public final class PlatformHelper {
     public static void runAndWait(Runnable action) {
         runAndWait(() -> {
             action.run();
+            //noinspection ReturnOfNull
             return null;
         });
     }

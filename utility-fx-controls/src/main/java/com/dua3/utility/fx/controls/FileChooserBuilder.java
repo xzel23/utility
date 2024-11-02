@@ -43,7 +43,7 @@ public class FileChooserBuilder {
     private Path initialDir = USER_HOME;
     private String initialFileName = "";
     private List<ExtensionFilter> filters = new ArrayList<>();
-    private ExtensionFilter selectedFilter = null;
+    private @Nullable ExtensionFilter selectedFilter = null;
 
     FileChooserBuilder() {
     }

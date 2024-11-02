@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -44,9 +46,9 @@ public class ComboBoxEx<T> extends JPanel {
     private final Function<T, String> format;
     private final DefaultComboBoxModel<T> model;
     private final JComboBox<T> comboBox;
-    private final JButton buttonEdit;
-    private final JButton buttonAdd;
-    private final JButton buttonRemove;
+    private final @Nullable JButton buttonEdit;
+    private final @Nullable JButton buttonAdd;
+    private final @Nullable JButton buttonRemove;
 
     /**
      * Constructs a ComboBoxEx with optional editing, adding, and removing functionality.
@@ -143,12 +145,23 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     private void updateButtonStates() {
-        buttonEdit.setEnabled(model.getSelectedItem() != null);
-        buttonAdd.setEnabled(true);
-        buttonRemove.setEnabled(model.getSize() > 1 && model.getSelectedItem() != null);
+        if (buttonEdit != null) {
+            buttonEdit.setEnabled(model.getSelectedItem() != null);
+        }
+        if (buttonAdd != null) {
+            buttonAdd.setEnabled(true);
+        }
+        if (buttonRemove != null) {
+            buttonRemove.setEnabled(model.getSize() > 1 && model.getSelectedItem() != null);
+        }
     }
 
     private void editItem() {
+        if (edit == null) {
+            LOG.warn("editing not supported");
+            return;
+        }
+
         int idx = comboBox.getSelectedIndex();
         if (idx >= 0) {
             T item = model.getElementAt(idx);
@@ -163,7 +176,7 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     private void addItem() {
-        Optional.ofNullable(add.get()).ifPresent(item -> {
+        Optional.ofNullable(add).map(Supplier::get).ifPresent(item -> {
             model.addElement(item);
             model.setSelectedItem(item);
             sortItems();

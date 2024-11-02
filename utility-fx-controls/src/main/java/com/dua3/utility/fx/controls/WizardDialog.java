@@ -18,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -106,6 +108,10 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
      * @throws IllegalStateException if any page refers to a 'next' page that does not exist
      */
     private void checkPages() {
+        if (pages == null) {
+            return;
+        }
+
         Set<String> pageNames = pages.keySet();
         for (Entry<String, Page<?, ?>> entry : pages.entrySet()) {
             String name = entry.getKey();
@@ -153,7 +159,7 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
     }
 
     private void setPage(String pageName) {
-        this.current = Pair.of(pageName, pages.get(pageName));
+        this.current = Pair.of(pageName, Objects.requireNonNull(pages, "pages not set").get(pageName));
 
         InputDialogPane<?> pane = current.second().pane;
         setDialogPane(pane);
@@ -217,8 +223,8 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
      *
      * @return the current wizard page as a {@link Page} object
      */
-    public Page<?, ?> getCurrentPage() {
-        return current.second();
+    public Optional<Page<?, ?>> getCurrentPage() {
+        return Optional.ofNullable(current).map(Pair::second);
     }
 
     /**

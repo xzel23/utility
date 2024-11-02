@@ -20,7 +20,7 @@ import java.util.Optional;
 public class SimpleNamespaceContext implements NamespaceContext {
     private final HashMap<String, String> nsToUri;
     private final HashMap<String, List<String>> uriToNs;
-    private final String defaultPrefix;
+    private final @Nullable String defaultPrefix;
 
     /**
      * Construct new instance with mappings.
@@ -73,7 +73,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
     }
 
     @Override
-    public String getPrefix(String namespaceURI) {
+    public @Nullable String getPrefix(String namespaceURI) {
         List<String> namespaces = uriToNs.get(namespaceURI);
         return namespaces == null || namespaces.isEmpty() ? null : namespaces.get(0);
     }

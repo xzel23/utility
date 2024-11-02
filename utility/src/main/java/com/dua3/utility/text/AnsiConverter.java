@@ -2,6 +2,7 @@ package com.dua3.utility.text;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -18,7 +19,7 @@ import java.util.function.BiFunction;
 public final class AnsiConverter extends AttributeBasedConverter<String> {
 
     private static final Map<String, Object> DEFAULT_ATTRIBUTES = new HashMap<>();
-    private final HashMap<String, BiFunction<Object, Object, String>> mappings = new HashMap<>();
+    private final HashMap<String, BiFunction<@Nullable Object, @Nullable Object, String>> mappings = new HashMap<>();
     private boolean reset;
     private boolean reverseVideo;
 
@@ -110,12 +111,12 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         }
 
         @Override
-        protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
-            Map<String, Object> attributes = new HashMap<>();
+        protected void apply(Map<String, Pair<@Nullable Object, @Nullable Object>> changedAttributes) {
+            Map<String, @Nullable Object> attributes = new HashMap<>();
             Deque<String> tags = new ArrayDeque<>();
             changedAttributes.forEach((attribute, values) -> {
                 attributes.put(attribute, values.second());
-                BiFunction<Object, Object, String> mapping = mappings.get(attribute);
+                BiFunction<@Nullable Object, @Nullable Object, String> mapping = mappings.get(attribute);
                 if (mapping != null) {
                     tags.push(mapping.apply(values.first(), values.second()));
                 }

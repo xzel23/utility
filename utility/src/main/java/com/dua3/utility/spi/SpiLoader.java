@@ -82,7 +82,7 @@ public final class SpiLoader<T> {
          */
         public SpiLoader<T> build() {
             Predicate<T> p = predicate != null ? predicate : t -> true;
-            Supplier<? extends T> d = defaultSupplier != null ? defaultSupplier : () -> null;
+            Supplier<? extends @Nullable T> d = defaultSupplier != null ? defaultSupplier : () -> null;
             ClassLoader c = cl != null ? cl : ClassLoader.getSystemClassLoader();
 
             return new SpiLoader<>(type, c, p, d);

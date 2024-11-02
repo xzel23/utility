@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class InputGrid extends GridPane {
     private static final String MARKER_OK = "";
 
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
-    private Collection<Meta<?>> data = null;
+    private Collection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
 
     /**
@@ -166,12 +167,12 @@ public class InputGrid extends GridPane {
      *
      * @param <T> the input's value type
      */
-    static final class Meta<T> {
+    static final class Meta<T extends @Nullable Object> {
         final String id;
         final Class<T> cls;
         final Supplier<? extends T> dflt;
         final InputControl<? super T> control;
-        final Label label;
+        final @Nullable Label label;
         final Label marker = new Label();
 
         Meta(String id, @Nullable String label, Class<T> cls, Supplier<? extends T> dflt, InputControl<? super T> control) {

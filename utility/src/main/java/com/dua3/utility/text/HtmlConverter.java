@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,7 +25,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * Value: the function that maps values to tags
      */
     private final Map<String, Function<Object, HtmlTag>> mappings = new HashMap<>();
-    private UnaryOperator<Map<String, Object>> refineStyleProperties = m -> m;
+    private UnaryOperator<Map<String, @Nullable Object>> refineStyleProperties = m -> m;
     /**
      * The default mapper used to generate tags for attributes without mapping.
      */
@@ -312,7 +314,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
-            Map<String, Object> properties = new LinkedHashMap<>();
+            Map<String, @Nullable Object> properties = new LinkedHashMap<>();
             for (Style style : styles) {
                 style.stream().forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
             }

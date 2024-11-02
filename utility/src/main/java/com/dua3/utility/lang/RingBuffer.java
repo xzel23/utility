@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * A ring buffer implementation.
@@ -30,7 +30,7 @@ import java.util.Set;
  */
 public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
 
-    private E[] data;
+    private @Nullable E[] data;
     private int entries;
     private int start;
 
@@ -41,7 +41,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
      */
     @SuppressWarnings("unchecked")
     public RingBuffer(int capacity) {
-        data = (E[]) new Object[capacity];
+        data = (@Nullable E[]) new Object[capacity];
         start = 0;
         entries = 0;
     }
@@ -53,7 +53,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
      * @return true
      */
     @Override
-    public boolean add(@Nullable E item) {
+    public boolean add(E item) {
         put(item);
         return true;
     }
@@ -84,7 +84,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return Set.of(toArray()).containsAll(c);
+        return new HashSet<>(this).containsAll(c);
     }
 
     /**
@@ -213,7 +213,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T[] toArray(T[] a) {
+    public <T> @Nullable T[] toArray(@Nullable T[] a) {
         if (a.length < entries) {
             a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
         }
@@ -306,6 +306,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
         int sz = toIndex - fromIndex;
         Objects.checkFromIndexSize(fromIndex, sz, len);
 
+        //noinspection NullableProblems
         return new AbstractList<>() {
             @Override
             public E get(int index) {
