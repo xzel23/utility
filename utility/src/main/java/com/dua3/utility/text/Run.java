@@ -23,8 +23,7 @@ public final class Run implements AttributedCharSequence {
     private final int length;
     private final TextAttributes attributes;
     private int hash;
-    private @Nullable 
-FontDef fd;
+    private @Nullable FontDef fd;
 
     /**
      * Construct a new Run.

@@ -20,8 +20,7 @@ public class FilterIterator<T> implements Iterator<T> {
     private final Iterator<? extends T> iterator;
     private final Predicate<? super T> predicate;
     private boolean done;
-    private @Nullable 
-T current;
+    private @Nullable T current;
 
     /**
      * Construct a new FilterIterator.

@@ -29,12 +29,9 @@ public final class SpiLoader<T> {
      */
     public static class LoaderBuilder<T> {
         private final Class<T> type;
-        private @Nullable 
-ClassLoader cl;
-        private @Nullable 
-Predicate<T> predicate;
-        private @Nullable 
-Supplier<? extends T> defaultSupplier;
+        private @Nullable ClassLoader cl;
+        private @Nullable Predicate<T> predicate;
+        private @Nullable Supplier<? extends T> defaultSupplier;
 
         private LoaderBuilder(Class<T> type) {
             this.type = type;

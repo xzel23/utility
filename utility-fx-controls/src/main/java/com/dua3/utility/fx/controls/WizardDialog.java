@@ -47,13 +47,11 @@ public class WizardDialog extends Dialog<Map<String, Object>> {
     /**
      * Map {@code <page-name> |-> <page-information>}.
      */
-    private @Nullable 
-Map<String, Page<?, ?>> pages;
+    private @Nullable Map<String, Page<?, ?>> pages;
     /**
      * The currently displayed page.
      */
-    private @Nullable 
-Pair<String, Page<?, ?>> current;
+    private @Nullable Pair<String, Page<?, ?>> current;
 
     /**
      * WizardDialog initializes a new dialog that handles the navigation and data collection

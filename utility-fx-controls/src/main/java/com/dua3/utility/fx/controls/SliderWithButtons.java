@@ -38,10 +38,8 @@ public class SliderWithButtons extends Region {
     private final Button btnIncrement;
     private final Button btnDecrement;
     private final List<Node> children = new ArrayList<>();
-    private @Nullable 
-TextField tfValue;
-    private @Nullable 
-Label label;
+    private @Nullable TextField tfValue;
+    private @Nullable Label label;
 
     /**
      * Constructor for SliderWithButtons. This class creates a slider

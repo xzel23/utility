@@ -31,8 +31,7 @@ public class Font {
     // lazily populated fields
     @Nullable  private String fontspec;
     private int hash;
-    private @Nullable 
-FontDef fd;
+    private @Nullable FontDef fd;
     private double spaceWidth = -1;
 
     /**

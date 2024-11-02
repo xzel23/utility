@@ -23,8 +23,7 @@ public class LoggerSlf4j extends AbstractLogger {
 
     private final List<? extends WeakReference<LogEntryHandler>> handlers;
     private final Map<Marker, Level> markerLevelMap = new HashMap<>();
-    private @Nullable 
-Level level;
+    private @Nullable Level level;
 
     /**
      * Constructs a new LoggerSlf4j instance with the specified name and handlers.

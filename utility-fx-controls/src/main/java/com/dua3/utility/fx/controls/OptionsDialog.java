@@ -31,8 +31,7 @@ import java.util.Collection;
  */
 public class OptionsDialog extends Dialog<Arguments> {
 
-    private @Nullable 
-OptionsPane optionPane;
+    private @Nullable OptionsPane optionPane;
 
     /**
      * Constructs an OptionsDialog with OK and Cancel buttons and a result converter.

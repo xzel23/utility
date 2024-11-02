@@ -1065,8 +1065,7 @@ public final class LangUtil {
     private static class CachingSupplier<T> implements AutoCloseableSupplier<T> {
         private final Supplier<? extends T> supplier;
         private final Consumer<? super T> cleaner;
-        private @Nullable 
-T obj;
+        private @Nullable T obj;
         private boolean initialized;
 
         CachingSupplier(Supplier<? extends T> supplier, Consumer<? super T> cleaner) {

@@ -25,8 +25,7 @@ public final class FileInputBuilder {
     private Supplier<Path> initialPath = () -> null;
     private boolean existingOnly = true;
     private Function<Path, Optional<String>> validate;
-    private @Nullable 
-ObservableValue<Boolean> disabled;
+    private @Nullable ObservableValue<Boolean> disabled;
 
     /**
      * Creates a new instance of FileInputBuilder with the specified file dialog mode.

@@ -17,8 +17,7 @@ public class PeekIterator<T> implements Iterator<T> {
 
     private final Iterator<? extends T> iterator;
     private boolean done;
-    private @Nullable 
-T current;
+    private @Nullable T current;
 
     /**
      * Construct a new PeekIterator.

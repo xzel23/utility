@@ -25,13 +25,10 @@ public class JdbcDataSource implements DataSource {
     private static final String USER = "user";
     private static final String PASSWORD = "password";
     private final Properties properties = new Properties();
-    private @Nullable 
-String url;
-    private @Nullable 
-PrintWriter logWriter;
+    private @Nullable String url;
+    private @Nullable PrintWriter logWriter;
     private int loginTimeout;
-    private @Nullable 
-Driver driver;
+    private @Nullable Driver driver;
 
     /**
      * Constructor.

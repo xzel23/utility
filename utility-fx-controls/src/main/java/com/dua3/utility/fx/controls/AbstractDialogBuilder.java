@@ -34,10 +34,8 @@ public abstract class AbstractDialogBuilder<D extends @NonNull Dialog<R>, B exte
         extends AbstractDialogPaneBuilder<D, B, R> {
 
     private final BiConsumer<D, String> titleSetter;
-    private @Nullable 
-final Window parentWindow;
-    private @Nullable 
-String title;
+    private @Nullable final Window parentWindow;
+    private @Nullable String title;
 
     protected AbstractDialogBuilder(@Nullable Window parentWindow) {
         super(Dialog::setHeaderText);

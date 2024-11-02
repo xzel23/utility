@@ -19,8 +19,7 @@ public final class LogEntrySlf4j implements LogEntry {
     private final LogLevel level;
     private final String marker;
     private Supplier<String> messageFormatter;
-    private @Nullable 
-String formattedMessage;
+    private @Nullable String formattedMessage;
     private final Throwable throwable;
 
     /**

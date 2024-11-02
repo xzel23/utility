@@ -23,20 +23,13 @@ public final class FontDef implements Cloneable {
     private static final Logger LOG = LogManager.getLogger(FontDef.class);
 
     private static final Predicate<String> IS_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?").asMatchPredicate();
-    private @Nullable 
-Color color;
-    private @Nullable 
-Float size;
-    private @Nullable 
-String family;
-    private @Nullable 
-Boolean bold;
-    private @Nullable 
-Boolean italic;
-    private @Nullable 
-Boolean underline;
-    private @Nullable 
-Boolean strikeThrough;
+    private @Nullable Color color;
+    private @Nullable Float size;
+    private @Nullable String family;
+    private @Nullable Boolean bold;
+    private @Nullable Boolean italic;
+    private @Nullable Boolean underline;
+    private @Nullable Boolean strikeThrough;
 
     /**
      * Default constructor that creates a {FontDe} instance without any properties set.

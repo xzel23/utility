@@ -58,8 +58,7 @@ public class FxLogPane extends BorderPane {
     private final TextArea details;
     private final TableView<LogEntry> tableView;
 
-    private @Nullable 
-volatile LogEntry selectedItem;
+    private @Nullable volatile LogEntry selectedItem;
 
     private boolean autoScroll = true;
 

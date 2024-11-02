@@ -43,14 +43,10 @@ public class AboutDialogBuilder {
     private String mailText = "";
     private String mailAddress = "";
 
-    private @Nullable 
-final Window parentWindow;
-    private @Nullable 
-URL css;
-    private @Nullable 
-Node graphic;
-    private @Nullable 
-Node expandableContent;
+    private final @Nullable Window parentWindow;
+    private @Nullable URL css;
+    private @Nullable Node graphic;
+    private @Nullable Node expandableContent;
 
     /**
      * Constructs a new AboutDialogBuilder with the specified parent window.

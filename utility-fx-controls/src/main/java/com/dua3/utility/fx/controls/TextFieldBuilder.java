@@ -28,11 +28,9 @@ public final class TextFieldBuilder {
     private static final Pattern SIGNED_INTEGER_PATTERN = Pattern.compile("-?([1-9]\\d*|0)?");
     private static final UnaryOperator<TextFormatter.Change> SIGNED_INTEGER_FILTER = change -> SIGNED_INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
 
-    private @Nullable 
-String text;
+    private @Nullable String text;
     private TextFieldType type = TextFieldType.TEXT;
-    private @Nullable 
-ObservableValue<Boolean> disabled;
+    private @Nullable ObservableValue<Boolean> disabled;
 
     TextFieldBuilder() {
     }

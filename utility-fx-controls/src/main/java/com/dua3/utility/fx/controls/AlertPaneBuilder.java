@@ -25,8 +25,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class AlertPaneBuilder
         extends AbstractPaneBuilder<InputDialogPane<Void>, AlertPaneBuilder, Void> {
-    private @Nullable 
-String text;
+    private @Nullable String text;
 
     AlertPaneBuilder(AlertType type) {
         setDialogSupplier(() -> createPane(type));
