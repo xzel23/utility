@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.InputStream;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -94,7 +95,7 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
      * @throws IllegalStateException if buildinfo could not be loaded
      */
     public static BuildInfo create(Class<?> cls, String resource) {
-        return create(cls.getResourceAsStream(resource));
+        return create(Objects.requireNonNull(cls.getResourceAsStream(resource), () -> "could not load resource: " + resource));
     }
 
     private static Optional<String> group(Matcher m, String group) {

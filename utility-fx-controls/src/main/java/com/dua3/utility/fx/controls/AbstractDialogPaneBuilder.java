@@ -33,7 +33,7 @@ public abstract class AbstractDialogPaneBuilder<D, B extends AbstractDialogPaneB
 
     private final BiConsumer<? super D, ? super String> headerSetter;
     private Supplier<? extends D> dialogSupplier;
-    private String header = null;
+    private @Nullable String header = null;
     private ResultHandler<R> resultHandler = (b, r) -> true;
 
     AbstractDialogPaneBuilder(

@@ -39,10 +39,10 @@ import java.util.function.UnaryOperator;
 public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T> {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
-    private Comparator<? super T> comparator = null;
-    private final UnaryOperator<T> edit;
-    private final Supplier<T> add;
-    private final BiPredicate<ComboBoxEx<T>, T> remove;
+    private @Nullable Comparator<? super T> comparator = null;
+    private final @Nullable UnaryOperator<T> edit;
+    private final @Nullable Supplier<T> add;
+    private final @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
     private final Function<T, String> format;
     private final ObservableList<T> items;
     private final ComboBox<T> comboBox;
@@ -113,7 +113,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
             this.remove = null;
         }
 
-        Callback<ListView<T>, ListCell<T>> cellFactory = new Callback<>() {
+        Callback<ListView<T>, @Nullable ListCell<T>> cellFactory = new Callback<>() {
 
             @Override
             public ListCell<T> call(@Nullable ListView<T> lv) {
@@ -280,11 +280,11 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
 
     @Override
     public ReadOnlyBooleanProperty validProperty() {
-        return null;
+        return null; // FIXME
     }
 
     @Override
     public ReadOnlyStringProperty errorProperty() {
-        return null;
+        return null; // FIXME
     }
 }

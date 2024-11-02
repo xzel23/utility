@@ -1,5 +1,7 @@
 package com.dua3.utility.math.geometry;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Optional;
 
 /**
@@ -232,7 +234,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
         return Optional.ofNullable(calculateInverse());
     }
 
-    private AffineTransformation2f calculateInverse() {
+    private @Nullable AffineTransformation2f calculateInverse() {
         float det = e * a - b * d;
         if (det == 0) {
             return null;

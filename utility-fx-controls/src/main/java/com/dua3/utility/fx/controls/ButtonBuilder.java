@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Tooltip;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -35,11 +36,11 @@ import java.util.function.Supplier;
  */
 public class ButtonBuilder<B extends ButtonBase> {
     private final Supplier<? extends B> factory;
-    private String text = null;
-    private Node graphic = null;
-    private String tooltip = null;
-    private EventHandler<ActionEvent> action = null;
-    private ObservableValue<Boolean> disabled = null;
+    private @Nullable String text = null;
+    private @Nullable Node graphic = null;
+    private @Nullable String tooltip = null;
+    private @Nullable EventHandler<ActionEvent> action = null;
+    private @Nullable ObservableValue<Boolean> disabled = null;
 
     /**
      * Constructor.

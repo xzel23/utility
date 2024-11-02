@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 public final class ChoiceOption<T> extends Option<T> {
 
     private final Supplier<? extends Collection<? extends T>> values;
-    private Supplier<? extends T> defaultValue = () -> null;
+    private Supplier<? extends @Nullable T> defaultValue = () -> null;
 
     /**
      * Constructor.
