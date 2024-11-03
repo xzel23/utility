@@ -158,6 +158,11 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     // -- define some default styles
 
     /**
+     * Empty style, not defining any attributes.
+     */
+    public static final Style EMPTY = create("");
+
+    /**
      * Default Sansserif font.
      */
     public static final Style SANS_SERIF = create("sans-serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SANS_SERIF));
