@@ -48,12 +48,12 @@ public enum StandardFontMapper implements Function<@Nullable String, @Nullable S
      */
     IGNORE_SUBSETS_AND_KNOWN_ALIASES(StandardFontMapper::removeSubsetTagAndReplaceKnownAliases);
 
-    private static String removeSubsetTagAndReplaceKnownAliases(String s) {
+    private static @Nullable String removeSubsetTagAndReplaceKnownAliases(@Nullable String s) {
         return replaceKnownAliases(removeSubsetTag(s));
     }
 
-    private static String replaceKnownAliases(String s) {
-        return switch (s) {
+    private static @Nullable String replaceKnownAliases(@Nullable String s) {
+        return s == null ? null : switch (s) {
             case "ArialMT" -> "Arial";
             case "TimesNewRomanPSMT", "Times-Roman" -> "Times New Roman";
             case "CourierNewPSMT" -> "Courier New";
@@ -63,8 +63,8 @@ public enum StandardFontMapper implements Function<@Nullable String, @Nullable S
 
     private static final Pattern PATTERN_SUBSET_TAG = Pattern.compile("^[A-Z]{6}\\+");
 
-    private static String removeSubsetTag(String s) {
-        return PATTERN_SUBSET_TAG.matcher(s).replaceFirst("");
+    private static @Nullable String removeSubsetTag(@Nullable String s) {
+        return s == null ? null : PATTERN_SUBSET_TAG.matcher(s).replaceFirst("");
     }
 
     private final Function<? super @Nullable String, @Nullable String> mapper;
