@@ -1,5 +1,7 @@
 package com.dua3.utility.text;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -7,7 +9,7 @@ import java.util.regex.Pattern;
  * Enum class with entries for standard font mappers. This class implements the
  * Function interface to provide a mapping from one font family name to another.
  */
-public enum StandardFontMapper implements Function<String, String> {
+public enum StandardFontMapper implements Function<@Nullable String, @Nullable String> {
     /**
      * Do not map the font family name.
      */
@@ -65,14 +67,14 @@ public enum StandardFontMapper implements Function<String, String> {
         return PATTERN_SUBSET_TAG.matcher(s).replaceFirst("");
     }
 
-    private final Function<? super String, String> mapper;
+    private final Function<? super @Nullable String, @Nullable String> mapper;
 
     StandardFontMapper(Function<? super String, String> mapper) {
         this.mapper = mapper;
     }
 
     @Override
-    public String apply(String s) {
+    public @Nullable String apply(@Nullable String s) {
         return mapper.apply(s);
     }
 }
