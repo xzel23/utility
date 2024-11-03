@@ -22,7 +22,7 @@ public interface Value<T extends @Nullable Object> extends ReadOnlyValue<T> {
      * @param <T> the type of the value
      * @return a new Value object with the initial value
      */
-    static <T> Value<T> create(T initialValue) {
+    static <T extends @Nullable Object> Value<T> create(T initialValue) {
         return new SimpleValue<>(initialValue);
     }
 
@@ -33,7 +33,7 @@ public interface Value<T extends @Nullable Object> extends ReadOnlyValue<T> {
      * @param <T> the type of the value
      * @return a new ReadOnlyValue object with the initial value
      */
-    static <T> ReadOnlyValue<T> createReadOnly(T initialValue) {
+    static <T extends @Nullable Object> ReadOnlyValue<T> createReadOnly(T initialValue) {
         return create(initialValue);
     }
 }
