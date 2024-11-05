@@ -1141,9 +1141,9 @@ public class NamedParameterStatement implements AutoCloseable {
     }
 
     @FunctionalInterface
-    private interface SetParameterObject<T, U> {
+    private interface SetParameterObject<T, U extends @Nullable Object> {
         @SuppressWarnings("RedundantThrows")
-        void accept(int idx, @Nullable T value, U arg) throws SQLException;
+        void accept(int idx, T value, U arg) throws SQLException;
     }
 
     /**

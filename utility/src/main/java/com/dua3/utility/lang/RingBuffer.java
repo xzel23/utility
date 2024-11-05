@@ -26,11 +26,11 @@ import java.util.Objects;
  * oldest element is removed and the new element appended to the collection.
  * Adding is O(1).
  *
- * @param <E> the element type
+ * @param <T> the element type
  */
-public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
+public class RingBuffer<T extends @Nullable Object> implements Collection<@Nullable T> {
 
-    private @Nullable E[] data;
+    private @Nullable T[] data;
     private int entries;
     private int start;
 
@@ -41,7 +41,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
      */
     @SuppressWarnings("unchecked")
     public RingBuffer(int capacity) {
-        data = (@Nullable E[]) new Object[capacity];
+        data = (@Nullable T[]) new Object[capacity];
         start = 0;
         entries = 0;
     }
@@ -53,7 +53,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
      * @return true
      */
     @Override
-    public boolean add(E item) {
+    public boolean add(T item) {
         put(item);
         return true;
     }
@@ -66,7 +66,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
      * @return true, if the buffer size increased as a result of this operation (in other words, false if an item
      *               previously contained in the buffer was replaced)
      */
-    public boolean put(E item) {
+    public boolean put(T item) {
         if (entries < capacity()) {
             data[index(entries++)] = item;
             return true;
@@ -94,12 +94,12 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
      * @return true, if the buffer changed as a result of this operation
      */
     @Override
-    public boolean addAll(Collection<? extends E> items) {
+    public boolean addAll(Collection<? extends @Nullable T> items) {
         if (items.isEmpty()) {
             return false;
         }
 
-        for (E item : items) {
+        for (T item : items) {
             if (entries < capacity()) {
                 data[index(entries++)] = item;
             } else {
@@ -145,7 +145,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
      * @param i index
      * @return the i-th element
      */
-    public E get(int i) {
+    public @Nullable T get(int i) {
         checkIndex(i);
         return data[index(i)];
     }
@@ -162,7 +162,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
 
     @Override
     public boolean contains(Object o) {
-        for (E item : this) {
+        for (T item : this) {
             if (Objects.equals(item, o)) {
                 return true;
             }
@@ -171,7 +171,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<T> iterator() {
         final int entries_ = entries;
         final int start_ = start;
 
@@ -192,7 +192,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
             }
 
             @Override
-            public E next() throws NoSuchElementException {
+            public T next() throws NoSuchElementException {
                 checkValid();
                 //noinspection NewExceptionWithoutArguments
                 LangUtil.check(idx < entries_, NoSuchElementException::new);
@@ -241,7 +241,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
     @SuppressWarnings("unchecked")
     public void setCapacity(int n) {
         if (n != capacity()) {
-            E[] dataNew = (E[]) new Object[n];
+            var dataNew = (@Nullable T[]) new Object[n];
             int itemsToCopy = Math.min(size(), n);
             int startIndex = Math.max(0, size() - n);
             for (int i = 0; i < itemsToCopy; i++) {
@@ -300,7 +300,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
      *                                   ({@code fromIndex < 0 || toIndex > size ||
      *                                   fromIndex > toIndex})
      */
-    public List<E> subList(int fromIndex, int toIndex) {
+    public List<T> subList(int fromIndex, int toIndex) {
         int len = size();
         Objects.checkFromToIndex(fromIndex, toIndex, len);
         int sz = toIndex - fromIndex;
@@ -309,7 +309,7 @@ public class RingBuffer<E extends @Nullable Object> implements Collection<E> {
         //noinspection NullableProblems
         return new AbstractList<>() {
             @Override
-            public E get(int index) {
+            public T get(int index) {
                 return RingBuffer.this.get(Objects.checkIndex(index, sz) + fromIndex);
             }
 

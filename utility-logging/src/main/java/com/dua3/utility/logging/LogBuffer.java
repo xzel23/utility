@@ -118,7 +118,9 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      */
     public LogEntry get(int i) {
         synchronized (buffer) {
-            return buffer.get(i);
+            LogEntry logEntry = buffer.get(i);
+            assert logEntry != null;
+            return logEntry;
         }
     }
 

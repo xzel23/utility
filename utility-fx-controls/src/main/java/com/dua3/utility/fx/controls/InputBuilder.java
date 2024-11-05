@@ -282,8 +282,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default <T> B comboBoxEx(
             String id,
             String label,
-            @Nullable UnaryOperator<T> edit,
-            @Nullable Supplier<T> add,
+            @Nullable UnaryOperator<@Nullable T> edit,
+            @Nullable Supplier<@Nullable T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
             Supplier<@Nullable T> dflt,
@@ -333,14 +333,14 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items the items to choose from
      * @return {@code this}
      */
-    default <T extends @Nullable Object> B radioList(
+    default <T> B radioList(
             String id,
             String label,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             Class<T> cls,
             Collection<T> items
     ) {
-        return radioList(id, label, dflt, cls, items, t -> t != null ? Optional.empty() : Optional.of("No option selected"));
+        return radioList(id, label, dflt, cls, items, (@Nullable T t) -> t != null ? Optional.empty() : Optional.of("No option selected"));
     }
 
     /**

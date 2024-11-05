@@ -175,7 +175,7 @@ public class InputGrid extends GridPane {
         final @Nullable Label label;
         final Label marker = new Label();
 
-        Meta(String id, @Nullable String label, Class<T> cls, Supplier<? extends T> dflt, InputControl<? super T> control) {
+        Meta(String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control) {
             this.id = id;
             this.label = label != null ? new Label(label) : null;
             this.cls = cls;

@@ -5,6 +5,7 @@
 
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
@@ -69,7 +70,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @param <T2>   type of second member
      * @return a new Pair
      */
-    public static <T1, T2> Pair<T1, T2> ofNonNull(T1 first, T2 second) {
+    public static <T1 extends @NonNull Object, T2 extends @NonNull Object> Pair<T1, T2> ofNonNull(T1 first, T2 second) {
         return new Pair<>(first, second);
     }
 

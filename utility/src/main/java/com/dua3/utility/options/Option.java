@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @param <T> the type of option values
  */
 @SuppressWarnings("MagicCharacter")
-public abstract class Option<T extends @Nullable Object> {
+public abstract class Option<T> {
     private final Function<String, ? extends T> mapper;
     private final Function<? super T, String> formatter;
 
@@ -250,7 +250,7 @@ public abstract class Option<T extends @Nullable Object> {
      * @param v the value
      * @return String representation of value
      */
-    public String format(T v) {
+    public String format(@Nullable T v) {
         return formatter.apply(v);
     }
 

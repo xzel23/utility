@@ -38,7 +38,7 @@ import java.util.function.UnaryOperator;
  *
  * @param <T> the type of the items contained in the ComboBox
  */
-public class ComboBoxEx<T extends @Nullable Object> extends CustomControl<HBox> implements InputControl<T> {
+public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T> {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     private @Nullable Comparator<? super T> comparator = null;
@@ -72,7 +72,7 @@ public class ComboBoxEx<T extends @Nullable Object> extends CustomControl<HBox> 
      * @param format  the function to format the items as strings
      * @param items   the initial items to populate the ComboBox (variadic parameter)
      */
-    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, Collection<T> items) {
+    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<@Nullable T, String> format, Collection<T> items) {
         super(new HBox());
         container.setAlignment(Pos.CENTER_LEFT);
 
@@ -115,10 +115,10 @@ public class ComboBoxEx<T extends @Nullable Object> extends CustomControl<HBox> 
             this.remove = null;
         }
 
-        Callback<ListView<T>, @Nullable ListCell<T>> cellFactory = new Callback<>() {
+        Callback<ListView<@Nullable T>, ListCell<@Nullable T>> cellFactory = new Callback<>() {
 
             @Override
-            public ListCell<T> call(@Nullable ListView<T> lv) {
+            public ListCell<@Nullable T> call(@Nullable ListView<T> lv) {
                 return new ListCell<>() {
 
                     @Override
@@ -140,6 +140,7 @@ public class ComboBoxEx<T extends @Nullable Object> extends CustomControl<HBox> 
             }
         };
 
+        //noinspection DataFlowIssue
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
     }
@@ -164,7 +165,7 @@ public class ComboBoxEx<T extends @Nullable Object> extends CustomControl<HBox> 
     }
 
     private void addItem() {
-        Optional.ofNullable(add).map(Supplier::get).ifPresent(item -> {
+        Optional.ofNullable(add).map(Supplier::get).ifPresent((T item) -> {
             items.add(item);
             comboBox.getSelectionModel().select(item);
             sortItems();
@@ -267,7 +268,7 @@ public class ComboBoxEx<T extends @Nullable Object> extends CustomControl<HBox> 
 
         Optional<T> selectedItem = getSelectedItem();
         items.sort(comparator);
-        selectedItem.ifPresent(item -> comboBox.selectionModelProperty().get().select(item));
+        selectedItem.ifPresent((T item) -> comboBox.selectionModelProperty().get().select(item));
     }
 
     @Override
@@ -276,7 +277,7 @@ public class ComboBoxEx<T extends @Nullable Object> extends CustomControl<HBox> 
     }
 
     @Override
-    public Property<T> valueProperty() {
+    public Property<@Nullable T> valueProperty() {
         return comboBox.valueProperty();
     }
 

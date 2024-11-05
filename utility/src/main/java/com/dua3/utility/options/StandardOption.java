@@ -13,7 +13,7 @@ import java.util.function.Function;
  *
  * @param <T> the option's argument type.
  */
-public final class StandardOption<T extends @Nullable Object> extends Option<T> {
+public final class StandardOption<T> extends Option<T> {
 
     /**
      * Construct new StandardOption instance.

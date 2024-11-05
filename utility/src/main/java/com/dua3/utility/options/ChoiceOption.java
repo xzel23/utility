@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the value type
  */
-public final class ChoiceOption<T extends @Nullable Object> extends Option<T> {
+public final class ChoiceOption<T> extends Option<T> {
 
     private final Supplier<? extends Collection<? extends T>> values;
     private Supplier<? extends @Nullable T> defaultSupplier = () -> null;

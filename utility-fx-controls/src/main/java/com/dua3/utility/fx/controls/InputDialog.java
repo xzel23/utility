@@ -16,6 +16,7 @@ package com.dua3.utility.fx.controls;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -24,7 +25,7 @@ import java.util.Map;
  * <p>
  * The dialog consists of labels and input controls laid out in a grid.
  */
-public class InputDialog extends Dialog<Map<String, Object>> {
+public class InputDialog extends Dialog<@Nullable Map<String, Object>> {
 
     /**
      * Constructs a new InputDialog instance.

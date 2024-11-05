@@ -112,7 +112,7 @@ public class DialogSample extends Application {
                         .chooseFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(new FileChooser.ExtensionFilter("all files", "*")))
                         .comboBoxEx("listEx",
                                 "edit items and choose one",
-                                s -> Dialogs.prompt(primaryStage).title("Edit item").defaultValue("%s", s).build().showAndWait().orElse(null),
+                                s -> Dialogs.prompt(primaryStage).title("Edit item").defaultValue("%s", Objects.requireNonNullElse(s, "")).build().showAndWait().orElse(null),
                                 () -> Dialogs.prompt(primaryStage).title("Edit item").build().showAndWait().orElse(null),
                                 (cb, item) -> true,
                                 Objects::toString,

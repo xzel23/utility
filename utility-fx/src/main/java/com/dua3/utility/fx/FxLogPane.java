@@ -56,7 +56,7 @@ public class FxLogPane extends BorderPane {
     private final LogBuffer logBuffer;
     private final Function<? super LogEntry, ? extends Color> colorize;
     private final TextArea details;
-    private final TableView<LogEntry> tableView;
+    private final TableView<@Nullable LogEntry> tableView;
 
     private volatile @Nullable LogEntry selectedItem;
 
@@ -78,7 +78,7 @@ public class FxLogPane extends BorderPane {
                 column.setMaxWidth(COLUMN_WIDTH_MAX);
             }
         }
-        column.setCellFactory(col -> new TableCell<>() {
+        column.setCellFactory(col -> new TableCell<LogEntry, @Nullable T>() {
             @Override
             protected void updateItem(@Nullable T item, boolean empty) {
                 super.updateItem(item, empty);

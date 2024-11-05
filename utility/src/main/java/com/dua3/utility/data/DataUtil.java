@@ -317,7 +317,7 @@ public final class DataUtil {
     public static <T extends @Nullable Object, U extends @Nullable Object> U[] convertToArray(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         //noinspection DataFlowIssue - false positive
         return data.stream()
-                .map(obj -> convert(obj, targetClass, useConstructor))
+                .map((T obj) -> convert(obj, targetClass, useConstructor))
                 .toArray(n -> (U[]) Array.newInstance(targetClass, n));
     }
 
@@ -377,7 +377,7 @@ public final class DataUtil {
     public static <T extends @Nullable Object, U extends @Nullable Object> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
         //noinspection DataFlowIssue - false positive
         return data.stream()
-                .map(obj -> convert(obj, targetClass, useConstructor))
+                .map((T obj) -> convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toList());
     }
 

@@ -109,7 +109,7 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one
      * @return the created SimpleOption
      */
-    public <T extends @Nullable Object> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
+    public <T> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
         return simpleOption(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -121,7 +121,7 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one.
      * @return the created SimpleOption.
      */
-    public <T extends @Nullable Object> SimpleOption<T> simpleOption(Function<String, ? extends T> mapper, String... names) {
+    public <T> SimpleOption<T> simpleOption(Function<@Nullable String, ? extends @Nullable T> mapper, String... names) {
         return addOption(SimpleOption.create(mapper, names));
     }
 
@@ -145,7 +145,7 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one.
      * @return the created StandardOption.
      */
-    public <T extends @Nullable Object> StandardOption<T> option(Class<? extends T> type, String... names) {
+    public <T> StandardOption<T> option(Class<? extends T> type, String... names) {
         return option(s -> DataUtil.convert(s, type, true), names);
     }
 
@@ -157,7 +157,7 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one.
      * @return the created StandardOption.
      */
-    public <T extends @Nullable Object> StandardOption<T> option(Function<String, ? extends T> mapper, String... names) {
+    public <T> StandardOption<T> option(Function<@Nullable String, ? extends @Nullable T> mapper, String... names) {
         return addOption(StandardOption.create(mapper, names));
     }
 

@@ -7,10 +7,12 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -18,12 +20,12 @@ import java.util.function.Supplier;
  *
  * @param <T> the input result type
  */
-public class ChoiceInputControl<T extends @Nullable Object> implements InputControl<T> {
+public class ChoiceInputControl<T> implements InputControl<T> {
 
-    private final ComboBox<ChoiceOption.Choice<T>> control;
+    private final ComboBox<ChoiceOption.Choice<@Nullable T>> control;
     private final ChoiceOption<T> option;
-    private final Supplier<? extends T> dfltValue;
-    private final Property<T> valueProperty;
+    private final Supplier<? extends @Nullable T> dfltValue;
+    private final Property<@Nullable T> valueProperty;
 
     /**
      * Constructs a ChoiceInputControl with the given options and default value supplier.
@@ -31,17 +33,18 @@ public class ChoiceInputControl<T extends @Nullable Object> implements InputCont
      * @param option the ChoiceOption containing possible values for the input control
      * @param dfltValue a Supplier that provides the default value for the input control
      */
-    public ChoiceInputControl(ChoiceOption<T> option, Supplier<? extends T> dfltValue) {
+    public ChoiceInputControl(ChoiceOption<T> option, Supplier<? extends @Nullable T> dfltValue) {
         this.option = option;
         this.dfltValue = dfltValue;
         this.control = new ComboBox<>();
         this.valueProperty = new SimpleObjectProperty<>();
 
         control.valueProperty().addListener((v, o, n) -> valueProperty.setValue(n == null ? null : n.value()));
-        valueProperty.addListener((v, o, n) -> control.getSelectionModel().select(n == null ? null : option.choice(n)));
+        //noinspection DataFlowIssue
+        valueProperty.addListener((ObservableValue<? extends @Nullable T> v, @Nullable T o, @Nullable T n) -> control.getSelectionModel().select(n == null ? null : option.choice(n)));
 
         control.getItems().setAll(option.choices());
-        control.getSelectionModel().select(option.choice(dfltValue.get()));
+        Optional.ofNullable(dfltValue.get()).ifPresent(dflt -> control.getSelectionModel().select(option.choice(dflt)));
     }
 
     @Override
@@ -50,7 +53,7 @@ public class ChoiceInputControl<T extends @Nullable Object> implements InputCont
     }
 
     @Override
-    public Property<T> valueProperty() {
+    public Property<@Nullable T> valueProperty() {
         return valueProperty;
     }
 

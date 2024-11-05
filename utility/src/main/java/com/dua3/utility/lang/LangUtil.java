@@ -164,7 +164,7 @@ public final class LangUtil {
      * @param <T> the type
      * @return a, if a != null, else b.get()
      */
-    public static <T extends @Nullable Object> T orElseGet(T a, Supplier<? extends T> b) {
+    public static <T> @Nullable T orElseGet(@Nullable T a, Supplier<? extends @Nullable T> b) {
         return a != null ? a : b.get();
     }
 
@@ -941,7 +941,7 @@ public final class LangUtil {
      * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface ConsumerThrows<T extends @Nullable Object, E extends Exception> {
+    public interface ConsumerThrows<T extends @Nullable Object, E extends @Nullable Exception> {
         /**
          * Performs this operation on the given argument.
          *
@@ -999,7 +999,7 @@ public final class LangUtil {
      * @param <E> the exception type
      */
     @FunctionalInterface
-    public interface SupplierThrows<T extends @Nullable Object, E extends Exception> {
+    public interface SupplierThrows<T extends @Nullable Object, E extends @Nullable Exception> {
         /**
          * Gets a result.
          *
@@ -1116,8 +1116,8 @@ public final class LangUtil {
      * @param <V>          the type of the default value
      * @return a function that returns the mapping of its input value or {@code defaultValue} if no mapping exists
      */
-    public static <T extends @Nullable Object, U extends @Nullable Object, V extends U> Function<T, U> asFunction(Map<? super T, V> map, V defaultValue) {
-        return t -> map.getOrDefault(t, defaultValue);
+    public static <T, U, V extends U> Function<@Nullable T, @Nullable U> asFunction(Map<? super T, @Nullable V> map, V defaultValue) {
+        return (T t) -> map.getOrDefault(t, defaultValue);
     }
 
     /**

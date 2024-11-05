@@ -25,6 +25,7 @@ import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -96,11 +97,11 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void set(Arguments arg) {
+    public void set(@Nullable Arguments arg) {
         for (var item : items.entrySet()) {
             Option option = item.getKey();
             InputControl control = item.getValue();
-            Stream<List<?>> stream = arg.stream(option);
+            Stream<List<?>> stream = Objects.requireNonNullElseGet(arg, Arguments::empty).stream(option);
             Optional<?> value = stream.filter(list -> !list.isEmpty())
                     .reduce((first, second) -> second)
                     .map(list -> list.get(list.size() - 1));
@@ -119,7 +120,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
         for (Option<?> option : optionSet) {
             Label label = new Label(option.displayName());
 
-            var control = createControl(values, option);
+            var control = createControl(Objects.requireNonNullElseGet(values, Arguments::empty), option);
             items.put(option, control);
 
             addToGrid(label, 0, row);
@@ -130,7 +131,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends @Nullable Object> InputControl<T> createControl(Arguments values, Option<T> option) {
+    private <T> InputControl<T> createControl(Arguments values, Option<T> option) {
         if (option instanceof ChoiceOption<T> co) {
             return new ChoiceInputControl<>(co, supplyDefault(co, values));
         } else if (option instanceof Flag f) {

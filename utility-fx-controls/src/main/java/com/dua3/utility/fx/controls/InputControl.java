@@ -37,9 +37,9 @@ import java.util.function.UnaryOperator;
 /**
  * Interface for an input field.
  *
- * @param <R> the input result type
+ * @param <T> the input result type
  */
-public interface InputControl<R> {
+public interface InputControl<T> {
     /**
      * Creates a {@link SimpleInputControl} for a TextField with String input.
      *
@@ -62,9 +62,9 @@ public interface InputControl<R> {
      * @param <T>       The type of the value.
      * @return A {@link SimpleInputControl} containing the {@link TextField} and associated properties.
      */
-    static <T> SimpleInputControl<TextField, T> stringInput(Supplier<T> dflt, Function<T, Optional<String>> validate, StringConverter<T> converter) {
+    static <T> SimpleInputControl<TextField, T> stringInput(Supplier<T> dflt, Function<@Nullable T, Optional<String>> validate, StringConverter<@Nullable T> converter) {
         TextField control = new TextField();
-        ObjectProperty<T> value = new SimpleObjectProperty<>();
+        ObjectProperty<@Nullable T> value = new SimpleObjectProperty<>();
         Bindings.bindBidirectional(control.textProperty(), value, converter);
         return new SimpleInputControl<>(control, value, dflt, validate);
     }
@@ -76,7 +76,7 @@ public interface InputControl<R> {
      * @param validate the {@link Function} to validate the integer input
      * @return a {@link SimpleInputControl} for integer input
      */
-    static SimpleInputControl<TextField, Integer> integerInput(Supplier<Integer> dflt, Function<Integer, Optional<String>> validate) {
+    static SimpleInputControl<TextField, Integer> integerInput(Supplier<@Nullable Integer> dflt, Function<@Nullable Integer, Optional<String>> validate) {
         TextField control = new TextField();
         StringProperty textProperty = control.textProperty();
         IntegerProperty value = new SimpleIntegerProperty();
@@ -91,7 +91,7 @@ public interface InputControl<R> {
      * @param validate the {@link Function} to validate the input value
      * @return a {@link SimpleInputControl} that manages a TextField for Decimal input
      */
-    static SimpleInputControl<TextField, Double> decimalInput(Supplier<Double> dflt, Function<Double, Optional<String>> validate) {
+    static SimpleInputControl<TextField, Double> decimalInput(Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
         TextField control = new TextField();
         StringProperty textProperty = control.textProperty();
         DoubleProperty value = new SimpleDoubleProperty();
@@ -107,7 +107,7 @@ public interface InputControl<R> {
      * @param validate a {@link Function} that takes a Boolean value and returns an {@link Optional} containing an error message if validation fails
      * @return a new instance of {@link SimpleInputControl} configured with a {@link CheckBox} and the provided parameters
      */
-    static SimpleInputControl<CheckBox, Boolean> checkBoxInput(Supplier<Boolean> dflt, String text, Function<Boolean, Optional<String>> validate) {
+    static SimpleInputControl<CheckBox, Boolean> checkBoxInput(Supplier<@Nullable Boolean> dflt, String text, Function<@Nullable Boolean, Optional<String>> validate) {
         CheckBox control = new CheckBox(text);
         BooleanProperty value = control.selectedProperty();
         return new SimpleInputControl<>(control, value.asObject(), dflt, validate);
@@ -181,7 +181,7 @@ public interface InputControl<R> {
      *
      * @return the current value
      */
-    default R get() {
+    default T get() {
         return valueProperty().getValue();
     }
 
@@ -190,14 +190,14 @@ public interface InputControl<R> {
      *
      * @return the property containing the current value
      */
-    Property<R> valueProperty();
+    Property<@Nullable T> valueProperty();
 
     /**
      * Set value.
      *
      * @param arg the value to set
      */
-    default void set(R arg) {
+    default void set(@Nullable T arg) {
         valueProperty().setValue(arg);
     }
 

@@ -29,7 +29,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * The default mapper used to generate tags for attributes without mapping.
      */
-    private BiFunction<? super String, Object, ? extends HtmlTag> defaultMapper = (attribute, value) -> HtmlTag.emptyTag();
+    private BiFunction<? super String, @Nullable Object, ? extends HtmlTag> defaultMapper = (attribute, value) -> HtmlTag.emptyTag();
     /**
      * Whether CSS output should be generated.
      */
@@ -281,8 +281,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param value     the attribute value
      * @return the tag
      */
-    public HtmlTag get(String attribute, Object value) {
-        Function<Object, HtmlTag> mapper = mappings.get(attribute);
+    public HtmlTag get(String attribute, @Nullable Object value) {
+        Function<@Nullable Object, HtmlTag> mapper = mappings.get(attribute);
         return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);
     }
 

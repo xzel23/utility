@@ -333,7 +333,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @throws ClassCastException if the property value does not match the requested type
      */
     @SuppressWarnings("unchecked")
-    public <T extends @Nullable Object> void ifPresent(String key, Consumer<@NonNull T> action) throws ClassCastException {
+    public <T extends @Nullable Object> void ifPresent(String key, Consumer<T> action) throws ClassCastException {
         T value = (T) get(key);
         if (value != null) {
             action.accept(value);
@@ -400,7 +400,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
         ifPresent(FONT_TYPE, fd::setFamily);
         ifPresent(FONT_SIZE, fd::setSize);
         ifPresent(COLOR, fd::setColor);
-        ifPresent(FONT_STYLE, v -> fd.setItalic(Objects.equals(v, FONT_STYLE_VALUE_ITALIC) || v.equals(FONT_STYLE_VALUE_OBLIQUE)));
+        ifPresent(FONT_STYLE, v -> fd.setItalic(Objects.equals(v, FONT_STYLE_VALUE_ITALIC) || Objects.equals(v, FONT_STYLE_VALUE_OBLIQUE)));
         ifPresent(FONT_WEIGHT, v -> fd.setBold(Objects.equals(v, FONT_WEIGHT_VALUE_BOLD)));
         ifPresent(TEXT_DECORATION_UNDERLINE, v -> fd.setUnderline(Objects.equals(v, TEXT_DECORATION_UNDERLINE_VALUE_LINE)));
         ifPresent(TEXT_DECORATION_LINE_THROUGH, v -> fd.setStrikeThrough(Objects.equals(v, TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)));

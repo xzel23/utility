@@ -24,7 +24,7 @@ import java.util.stream.Collector;
  */
 public class BatchCollector<T extends @Nullable Object, K> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
     private final Function<? super T, ? extends K> keyMapper;
-    private final K defaultKey;
+    private final @Nullable K defaultKey;
 
     /**
      * Constructor.
@@ -57,7 +57,7 @@ public class BatchCollector<T extends @Nullable Object, K> implements Collector<
 
     @Override
     public BiConsumer<Deque<Pair<K, List<T>>>, T> accumulator() {
-        return (accu, item) -> {
+        return (Deque<Pair<K, List<T>>> accu, T item) -> {
             K key = keyMapper.apply(item);
 
             List<T> bucket;
