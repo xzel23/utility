@@ -24,7 +24,6 @@ import java.util.stream.Collector;
  */
 public class BatchCollector<T extends @Nullable Object, K> implements Collector<T, Deque<Pair<K, List<T>>>, List<Pair<K, List<T>>>> {
     private final Function<? super T, ? extends K> keyMapper;
-    private final @Nullable K defaultKey;
 
     /**
      * Constructor.
@@ -32,7 +31,7 @@ public class BatchCollector<T extends @Nullable Object, K> implements Collector<
      * @param keyMapper mapping that maps each item to the grouping key
      */
     public BatchCollector(Function<? super T, ? extends K> keyMapper) {
-        this(keyMapper, null);
+        this.keyMapper = keyMapper;
     }
 
     /**
@@ -45,9 +44,8 @@ public class BatchCollector<T extends @Nullable Object, K> implements Collector<
      * @param keyMapper  the key mapper
      * @param defaultKey the default key
      */
-    public BatchCollector(Function<? super T, ? extends K> keyMapper, @Nullable K defaultKey) {
-        this.keyMapper = keyMapper;
-        this.defaultKey = defaultKey;
+    public BatchCollector(Function<? super T, ? extends @Nullable K> keyMapper, K defaultKey) {
+        this(t -> Objects.requireNonNullElse(keyMapper.apply(t), defaultKey));
     }
 
     @Override
@@ -63,7 +61,7 @@ public class BatchCollector<T extends @Nullable Object, K> implements Collector<
             List<T> bucket;
             if (accu.isEmpty() || (!Objects.equals(key, accu.peekLast().first()))) {
                 bucket = new ArrayList<>();
-                accu.addLast(Pair.of(key == null ? defaultKey : key, bucket));
+                accu.addLast(Pair.of(key, bucket));
             } else {
                 bucket = accu.peekLast().second();
             }
