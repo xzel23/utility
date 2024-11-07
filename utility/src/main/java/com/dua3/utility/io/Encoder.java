@@ -13,7 +13,7 @@ import java.util.Collection;
  * @param <T> the object type
  */
 @FunctionalInterface
-public interface Encoder<T extends @Nullable Object> {
+public interface Encoder<T> {
 
     /**
      * Encode a collection of objects.
@@ -44,7 +44,7 @@ public interface Encoder<T extends @Nullable Object> {
      * Write instance to stream, not throwing checked exceptions.
      *
      * @param os the {@link DataOutputStream} to write to
-     * @param t  the instance to write (or {@code null})
+     * @param t  the instance to write
      * @throws UncheckedIOException if an error occurs
      */
     default void encodeUnchecked(DataOutputStream os, T t) throws UncheckedIOException {

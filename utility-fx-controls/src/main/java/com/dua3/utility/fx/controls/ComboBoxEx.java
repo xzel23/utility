@@ -115,7 +115,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
             this.remove = null;
         }
 
-        Callback<ListView<@Nullable T>, ListCell<@Nullable T>> cellFactory = new Callback<>() {
+        Callback<@Nullable ListView<@Nullable T>, ListCell<@Nullable T>> cellFactory = new Callback<>() {
 
             @Override
             public ListCell<@Nullable T> call(@Nullable ListView<T> lv) {

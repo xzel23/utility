@@ -306,6 +306,7 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
         int sz = toIndex - fromIndex;
         Objects.checkFromIndexSize(fromIndex, sz, len);
 
+        //noinspection NullableProblems - false positive; T is @Nullable
         return new AbstractList<T>() {
             @Override
             public T get(int index) {

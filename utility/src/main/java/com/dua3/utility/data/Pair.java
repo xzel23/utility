@@ -120,7 +120,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @param f   mapper for components
      * @return Pair consisting of the mapped values of this pair
      */
-    public <U extends @Nullable Object> Pair<U, U> map(Function<Object, ? extends @Nullable U> f) {
+    public <U extends @Nullable Object> Pair<U, U> map(Function<@Nullable Object, ? extends @Nullable U> f) {
         return of(f.apply(first()), f.apply(second()));
     }
 

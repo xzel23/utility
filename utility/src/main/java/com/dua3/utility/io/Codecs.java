@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -59,7 +60,7 @@ public class Codecs {
      * @param <T>  the object type
      * @return the new codec
      */
-    public static <T extends @Nullable Object> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<? extends T> dec) {
+    public static <T> Codec<T> createCodec(String name, Encoder<? super T> enc, Decoder<? extends T> dec) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -88,7 +89,7 @@ public class Codecs {
      * @param construct collection factory method
      * @return collection codec
      */
-    public static <T extends @Nullable Object, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
+    public static <T, C extends Collection<T>> Codec<C> collectionCodec(String name, Codec<T> codec, IntFunction<? extends C> construct) {
         return new Codec<>() {
             @Override
             public String name() {
@@ -96,24 +97,16 @@ public class Codecs {
             }
 
             @Override
-            public void encode(DataOutputStream os, @Nullable C collection) throws IOException {
-                if (collection == null) {
-                    os.writeInt(Integer.MIN_VALUE);
-                } else {
-                    os.writeInt(collection.size());
-                    for (T item : collection) {
-                        codec.encode(os, item);
-                    }
+            public void encode(DataOutputStream os, C collection) throws IOException {
+                os.writeInt(collection.size());
+                for (T item : collection) {
+                    codec.encode(os, Objects.requireNonNull(item, "null values in collections are not supported"));
                 }
             }
 
             @Override
-            public @Nullable C decode(DataInputStream is) throws IOException {
+            public C decode(DataInputStream is) throws IOException {
                 int n = is.readInt();
-
-                if (n == Integer.MIN_VALUE) {
-                    return null;
-                }
 
                 LangUtil.check(n >= 0, "negative size for collection: %d", n);
                 C collection = construct.apply(n);
@@ -153,7 +146,7 @@ public class Codecs {
      * @param construct the map construction method
      * @return map codec
      */
-    public static <K, V, M extends @NonNull Map<K, V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
+    public static <K, V, M extends Map<K, V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
         final String name = Map.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">";
         final Codec<Map.Entry<K, V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
         final Codec<Collection<Map.Entry<K, V>>> ENTRIES_CODEC = collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
@@ -165,20 +158,14 @@ public class Codecs {
             }
 
             @Override
-            public void encode(DataOutputStream os, @Nullable M map) throws IOException {
-                ENTRIES_CODEC.encode(os, map == null ? null : map.entrySet());
+            public void encode(DataOutputStream os, M map) throws IOException {
+                ENTRIES_CODEC.encode(os, map.entrySet());
             }
 
             @Override
-            public @Nullable M decode(DataInputStream is) throws IOException {
-                Collection<Map.Entry<K, V>> decoded = ENTRIES_CODEC.decode(is);
-
-                if (decoded == null) {
-                    return null;
-                }
-
+            public M decode(DataInputStream is) throws IOException {
                 M map = construct.get();
-                decoded.forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+                ENTRIES_CODEC.decode(is).forEach(entry -> map.put(entry.getKey(), entry.getValue()));
                 return map;
             }
         };
@@ -206,7 +193,7 @@ public class Codecs {
      * @return an Optional containing the codec, or an empty Optional if no codec is registered for the class
      */
     @SuppressWarnings("unchecked")
-    public <T extends @Nullable Object> Optional<Codec<T>> get(Class<T> cls) {
+    public <T> Optional<Codec<T>> get(Class<T> cls) {
         return Optional.ofNullable((Codec<T>) codecs.get(cls.getCanonicalName()));
     }
 

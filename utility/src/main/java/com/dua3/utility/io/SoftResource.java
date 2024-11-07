@@ -67,9 +67,10 @@ public final class SoftResource<T> {
 
             if (obj == null) {
                 supplier = null;
+                ref = (SoftReference<T>) EMPTY_REFERENCE;
+            } else {
+                ref = new SoftReference<>(obj);
             }
-
-            ref = new SoftReference<>(obj);
         }
         return obj;
     }

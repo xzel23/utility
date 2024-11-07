@@ -42,7 +42,7 @@ public class ComboBoxEx<T> extends JPanel {
     private @Nullable Comparator<? super T> comparator;
     private final @Nullable UnaryOperator<T> edit;
     private final @Nullable Supplier<? extends T> add;
-    private final @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
+    private final @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
     private final Function<T, String> format;
     private final DefaultComboBoxModel<T> model;
     private final JComboBox<T> comboBox;

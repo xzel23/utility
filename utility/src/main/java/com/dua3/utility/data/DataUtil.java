@@ -375,6 +375,7 @@ public final class DataUtil {
      * @return list containing the converted elements
      */
     public static <T extends @Nullable Object, U extends @Nullable Object> List<U> convert(Collection<T> data, Class<U> targetClass, boolean useConstructor) {
+        //noinspection DataFlowIssue - false positive; T is @Nullable
         return data.stream()
                 .map((T obj) -> convert(obj, targetClass, useConstructor))
                 .collect(Collectors.toList());
