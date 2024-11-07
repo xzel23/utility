@@ -39,7 +39,8 @@ public class ChoiceInputControl<T> implements InputControl<T> {
         this.control = new ComboBox<>();
         this.valueProperty = new SimpleObjectProperty<>();
 
-        control.valueProperty().addListener((v, o, n) -> valueProperty.setValue(n == null ? null : n.value()));
+        //noinspection NullableProblems - false positive
+        control.valueProperty().addListener((ObservableValue<? extends ChoiceOption.Choice<T>> v, ChoiceOption.@Nullable Choice<T> o, ChoiceOption.@Nullable Choice<T> n) -> valueProperty.setValue(n == null ? null : n.value()));
         valueProperty.addListener((ObservableValue<? extends @Nullable T> v, @Nullable T o, @Nullable T n) -> {
                     if (n == null) {
                         control.getSelectionModel().clearSelection();

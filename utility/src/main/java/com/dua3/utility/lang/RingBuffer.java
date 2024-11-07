@@ -213,9 +213,9 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> @Nullable T[] toArray(@Nullable T[] a) {
+    public <U> @Nullable U[] toArray(@Nullable U[] a) {
         if (a.length < entries) {
-            a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
+            a = (U[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), entries);
         }
 
         // copy contents to array
@@ -307,7 +307,7 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
         Objects.checkFromIndexSize(fromIndex, sz, len);
 
         //noinspection NullableProblems - false positive; T is @Nullable
-        return new AbstractList<T>() {
+        return new AbstractList<>() {
             @Override
             public T get(int index) {
                 return RingBuffer.this.get(Objects.checkIndex(index, sz) + fromIndex);

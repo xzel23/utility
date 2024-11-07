@@ -1,5 +1,7 @@
 package com.dua3.utility.logging;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Interface for a factory that provides an instance of the LogEntryDispatcher.
  */
@@ -11,5 +13,5 @@ public interface ILogEntryDispatcherFactory {
      * NOTE: This method is called by the ServiceProvider and not intended to be called directly by user code.
      * @return The global LogEntryDispatcher instance.
      */
-    LogEntryDispatcher getDispatcher();
+    @Nullable LogEntryDispatcher getDispatcher();
 }

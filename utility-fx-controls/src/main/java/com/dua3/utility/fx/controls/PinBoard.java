@@ -5,7 +5,6 @@
 
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.data.Pair;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import javafx.beans.property.ObjectProperty;

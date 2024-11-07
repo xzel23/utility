@@ -597,8 +597,8 @@ public final class FxUtil {
      * @param newHandler  the new event handler to be added
      */
     private static void addHandler(
-            Supplier<? extends EventHandler<? super MouseEvent>> getHandler,
-            Consumer<EventHandler<? super MouseEvent>> setHandler,
+            Supplier<? extends @Nullable EventHandler<? super MouseEvent>> getHandler,
+            Consumer<@Nullable EventHandler<? super MouseEvent>> setHandler,
             EventHandler<? super MouseEvent> newHandler) {
         EventHandler<? super MouseEvent> currentHandler = getHandler.get();
         if (currentHandler == null) {

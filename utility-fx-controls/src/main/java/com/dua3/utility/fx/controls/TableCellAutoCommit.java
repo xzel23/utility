@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.beans.value.ObservableValue;
 import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -71,7 +72,8 @@ public class TableCellAutoCommit<S, T> extends TableCell<S, T> {
         setGraphic(textField);
         setContentDisplay(ContentDisplay.TEXT_ONLY);
 
-        itemProperty().addListener((observable, oldValue, newValue) -> {
+        //noinspection NullableProblems - false positive
+        itemProperty().addListener((ObservableValue<? extends T> observable, @Nullable T oldValue, @Nullable T newValue) -> {
             if (newValue == null) {
                 setText(null);
             } else {

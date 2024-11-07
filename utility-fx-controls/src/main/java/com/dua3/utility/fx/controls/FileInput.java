@@ -174,7 +174,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
      * @param existingOnly indicates whether only existing files or directories should be selectable
      * @return a function that takes a Path and returns an Optional containing an error message if validation fails, or an empty Optional if validation succeeds
      */
-    public static Function<Path, Optional<String>> defaultValidate(FileDialogMode mode, boolean existingOnly) {
+    public static Function<@Nullable Path, Optional<String>> defaultValidate(FileDialogMode mode, boolean existingOnly) {
         return p -> {
             if (p == null) {
                 return Optional.of("Nothing selected");

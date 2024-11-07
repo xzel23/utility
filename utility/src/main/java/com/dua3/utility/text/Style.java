@@ -5,7 +5,6 @@
 
 package com.dua3.utility.text;
 
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 

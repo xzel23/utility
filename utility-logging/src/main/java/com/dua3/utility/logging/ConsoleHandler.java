@@ -3,7 +3,6 @@ package com.dua3.utility.logging;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
-import org.jspecify.annotations.NonNull;
 
 import java.io.PrintStream;
 import java.util.EnumMap;

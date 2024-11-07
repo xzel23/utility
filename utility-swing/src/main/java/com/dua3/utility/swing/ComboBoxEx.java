@@ -1,6 +1,5 @@
 package com.dua3.utility.swing;
 
-import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +23,6 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;

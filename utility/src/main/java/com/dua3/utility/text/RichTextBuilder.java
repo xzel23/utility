@@ -230,7 +230,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
         // restore attributes
         attributes = split();
-        for (Entry<String, Object> entry : backup.entrySet()) {
+        for (Entry<String, @Nullable Object> entry : backup.entrySet()) {
             if (entry.getValue() == null) {
                 attributes.remove(entry.getKey());
             } else {

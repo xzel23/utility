@@ -43,9 +43,9 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
     private static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
     private static final int AVERAGE_SLEEP_MILLIS = 10;
     private static final int LOG_BUFFER_SIZE = 1000;
-    private final org.slf4j.Logger SLF4J_LOGGER = LoggerFactory.getLogger("SLF4J." + getClass().getName());
-    private final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + getClass().getName());
-    private final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
+    private final org.slf4j.Logger slf4JLogger = LoggerFactory.getLogger("SLF4J." + getClass().getName());
+    private final java.util.logging.Logger julLogger = java.util.logging.Logger.getLogger("JUL." + getClass().getName());
+    private final org.apache.logging.log4j.Logger log4JLogger = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
     private final AtomicInteger n = new AtomicInteger();
     private volatile boolean done;
 
@@ -184,32 +184,32 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                     switch (implementation) {
                         case 0 -> {
                             switch (levelInt) {
-                                case 0 -> SLF4J_LOGGER.trace(msg);
-                                case 1 -> SLF4J_LOGGER.debug(msg);
-                                case 2 -> SLF4J_LOGGER.info(msg);
-                                case 3 -> SLF4J_LOGGER.warn(msg);
-                                case 4 -> SLF4J_LOGGER.error(msg, generateThrowable(random));
+                                case 0 -> slf4JLogger.trace(msg);
+                                case 1 -> slf4JLogger.debug(msg);
+                                case 2 -> slf4JLogger.info(msg);
+                                case 3 -> slf4JLogger.warn(msg);
+                                case 4 -> slf4JLogger.error(msg, generateThrowable(random));
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
                         case 1 -> {
                             switch (levelInt) {
-                                case 0 -> JUL_LOGGER.finest(msg);
-                                case 1 -> JUL_LOGGER.finer(msg);
-                                case 2 -> JUL_LOGGER.fine(msg);
-                                case 3 -> JUL_LOGGER.info(msg);
-                                case 4 -> JUL_LOGGER.warning(msg);
-                                case 5 -> JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable(random));
+                                case 0 -> julLogger.finest(msg);
+                                case 1 -> julLogger.finer(msg);
+                                case 2 -> julLogger.fine(msg);
+                                case 3 -> julLogger.info(msg);
+                                case 4 -> julLogger.warning(msg);
+                                case 5 -> julLogger.log(java.util.logging.Level.SEVERE, msg, generateThrowable(random));
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
                         case 2 -> {
                             switch (levelInt) {
-                                case 0 -> LOG4J_LOGGER.trace(msg);
-                                case 1 -> LOG4J_LOGGER.debug(msg);
-                                case 2 -> LOG4J_LOGGER.info(msg);
-                                case 3 -> LOG4J_LOGGER.warn(msg);
-                                case 4 -> LOG4J_LOGGER.error(msg, generateThrowable(random));
+                                case 0 -> log4JLogger.trace(msg);
+                                case 1 -> log4JLogger.debug(msg);
+                                case 2 -> log4JLogger.info(msg);
+                                case 3 -> log4JLogger.warn(msg);
+                                case 4 -> log4JLogger.error(msg, generateThrowable(random));
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
