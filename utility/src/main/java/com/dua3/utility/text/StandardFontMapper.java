@@ -69,7 +69,7 @@ public enum StandardFontMapper implements Function<@Nullable String, @Nullable S
 
     private final Function<? super @Nullable String, @Nullable String> mapper;
 
-    StandardFontMapper(Function<? super String, String> mapper) {
+    StandardFontMapper(Function<? super @Nullable String, @Nullable String> mapper) {
         this.mapper = mapper;
     }
 

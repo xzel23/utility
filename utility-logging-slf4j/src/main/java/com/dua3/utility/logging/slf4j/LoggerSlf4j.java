@@ -32,7 +32,7 @@ public class LoggerSlf4j extends AbstractLogger {
      * @param handlers a list of handlers for processing log entries
      */
     public LoggerSlf4j(String name, List<? extends WeakReference<LogEntryHandler>> handlers) {
-        //noinspection AssignmentToSuperclassField: it is the only way to set the logger name
+        //noinspection AssignmentToSuperclassField - API restriction; it is the only way to set the logger name
         super.name = name;
         this.handlers = handlers;
     }

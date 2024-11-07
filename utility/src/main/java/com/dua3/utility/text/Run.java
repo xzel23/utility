@@ -138,7 +138,7 @@ public final class Run implements AttributedCharSequence {
         if (h == 0 && length > 0) {
             h = attributes.hashCode();
             for (int i = 0; i < length; i++) {
-                //noinspection CharUsedInArithmeticContext
+                //noinspection CharUsedInArithmeticContext - by design
                 h = 31 * h + charAt(i);
             }
             hash = h;
@@ -182,7 +182,7 @@ public final class Run implements AttributedCharSequence {
      */
     @SuppressWarnings("unchecked")
     public List<Style> getStyles() {
-        //noinspection DataFlowIssue - false positive
+        //noinspection DataFlowIssue - false positive, default value is non-null
         return (List<Style>) attributes().getOrDefault(RichText.ATTRIBUTE_NAME_STYLE_LIST, Collections.emptyList());
     }
 

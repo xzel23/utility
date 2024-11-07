@@ -411,7 +411,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default B chooseFile(
             String id,
             String label,
-            Supplier<Path> dflt,
+            Supplier<@Nullable Path> dflt,
             FileDialogMode mode,
             boolean existingOnly,
             Collection<FileChooser.ExtensionFilter> filter

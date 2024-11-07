@@ -461,7 +461,7 @@ public final class IoUtil {
      */
     public static void deleteRecursive(Path path) throws IOException {
         try (Stream<Path> files = Files.walk(path, FileVisitOption.FOLLOW_LINKS)) {
-            //noinspection DataFlowIssue - false positive
+            //noinspection DataFlowIssue - false positive; Stream elements are guaranteed to be non-null
             files
                     .sorted(Comparator.reverseOrder())
                     .forEach(LangUtil.uncheckedConsumer(Files::deleteIfExists));

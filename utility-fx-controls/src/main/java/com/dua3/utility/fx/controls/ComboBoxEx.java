@@ -140,7 +140,6 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
             }
         };
 
-        //noinspection DataFlowIssue
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
     }
@@ -224,6 +223,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
      * @return an Optional containing the selected item if one is selected, or an empty Optional if no item is selected
      */
     public Optional<T> getSelectedItem() {
+        //noinspection OptionalOfNullableMisuse - false positive; from reading the JavaFX source, the selected item might well be null
         return Optional.ofNullable(comboBox.getSelectionModel().getSelectedItem());
     }
 

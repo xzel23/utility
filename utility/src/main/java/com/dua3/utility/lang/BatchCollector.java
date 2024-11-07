@@ -68,7 +68,6 @@ public class BatchCollector<T extends @Nullable Object, K> implements Collector<
                 bucket = accu.peekLast().second();
             }
 
-            //noinspection DataFlowIssue
             bucket.add(item);
         };
     }

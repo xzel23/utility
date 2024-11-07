@@ -141,7 +141,7 @@ public class TableCellAutoCommit<S, T> extends TableCell<S, T> {
                 Platform.runLater(table::refresh);
             }
         }
-        //noinspection DataFlowIssue
+        //noinspection DataFlowIssue - false positive
         super.commitEdit(newValue);
         setContentDisplay(ContentDisplay.TEXT_ONLY);
     }

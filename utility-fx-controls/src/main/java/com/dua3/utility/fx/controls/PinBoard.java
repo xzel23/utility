@@ -125,11 +125,11 @@ public class PinBoard extends Control {
      *
      * @return a Pair containing the horizontal and vertical scroll positions
      */
-    public Pair<Double, Double> getScrollPosition() {
+    public ScrollPosition getScrollPosition() {
         if (getSkin() instanceof PinBoardSkin skin) {
             return skin.getScrollPosition();
         } else {
-            return Pair.of(0.0, 0.0);
+            return ScrollPosition.ORIGIN;
         }
     }
 
@@ -150,8 +150,10 @@ public class PinBoard extends Control {
      *
      * @param scrollPosition a Pair containing the horizontal and vertical scroll positions
      */
-    public void setScrollPosition(Pair<Double, Double> scrollPosition) {
-        setScrollPosition(scrollPosition.first(), scrollPosition.second());
+    public void setScrollPosition(ScrollPosition scrollPosition) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.setScrollPosition(scrollPosition);
+        }
     }
 
     /**

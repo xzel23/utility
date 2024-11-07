@@ -370,6 +370,7 @@ public final class SwingUtil {
 
         JFileChooser jfc = new JFileChooser();
         for (var entry : types) {
+            //noinspection DataFlowIssue - false positive; types is declared as NonNull String @NonNull[]
             jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first(), entry.second()));
         }
 

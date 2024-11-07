@@ -1,7 +1,6 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxRefresh;
-import com.dua3.utility.data.Pair;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
 import javafx.collections.ListChangeListener;
@@ -106,8 +105,12 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         super.dispose();
     }
 
-    public Pair<Double, Double> getScrollPosition() {
-        return Pair.of(scrollPane.getHvalue(), scrollPane.getVvalue());
+    public ScrollPosition getScrollPosition() {
+        return new ScrollPosition(scrollPane.getHvalue(), scrollPane.getVvalue());
+    }
+
+    public void setScrollPosition(ScrollPosition scrollPosition) {
+        setScrollPosition(scrollPosition.hValue(), scrollPosition.vValue());
     }
 
     public void setScrollPosition(double hValue, double vValue) {

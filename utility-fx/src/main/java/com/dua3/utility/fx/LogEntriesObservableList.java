@@ -74,7 +74,7 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
                     updateWriteLock.unlock();
                 }
                 try {
-                    //noinspection BusyWait
+                    //noinspection BusyWait - to avoid using up all CPU cycles when entries come in fast
                     Thread.sleep(REST_TIME_IN_MS);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();

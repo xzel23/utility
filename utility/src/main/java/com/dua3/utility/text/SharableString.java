@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
  * while enabling efficient sharing and subsequencing without copying
  * underlying character data.
  */
-public class SharableString implements CharSequence {
+public final class SharableString implements CharSequence {
 
     private final String base;
 
@@ -53,13 +53,6 @@ public class SharableString implements CharSequence {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof SharableString anotherString) {
-            //noinspection CallToSuspiciousStringMethod
-            return base.equals(anotherString.base);
-        }
-        return false;
+        return this == obj || (obj instanceof SharableString ss) && (ss.base.equals(base));
     }
 }

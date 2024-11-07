@@ -6,6 +6,7 @@ import com.dua3.utility.options.SimpleOption;
 import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -100,7 +101,9 @@ public class JdbcDriverInfo {
         this.link = link;
 
         Pair<String, List<SimpleOption<?>>> parsed = parseScheme(urlScheme);
+        //noinspection DataFlowIssue - fslse positive; both components are guaranteed to be non-null
         this.urlScheme = parsed.first();
+        //noinspection DataFlowIssue - fslse positive; both components are guaranteed to be non-null
         this.options = parsed.second();
     }
 
@@ -130,7 +133,7 @@ public class JdbcDriverInfo {
         // remove arguments from scheme
         String r = PATTERN_VAR.matcher(s).replaceAll("\\${${name}}");
 
-        return Pair.of(r, list);
+        return Pair.ofNonNull(r, list);
     }
 
     /**
@@ -160,7 +163,7 @@ public class JdbcDriverInfo {
 
     private static void addArgument(Map<? super String, String> arguments, String arg, String val) {
         String old = arguments.put(arg, val);
-        //noinspection VariableNotUsedInsideIf
+        //noinspection VariableNotUsedInsideIf - do not log the old and new values as these could contains sensitive information
         if (old != null) {
             LOG.warn("while parsing option string: multiple values for argument '{}'", arg);
         }

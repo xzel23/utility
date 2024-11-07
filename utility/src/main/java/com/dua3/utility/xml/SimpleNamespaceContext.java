@@ -53,7 +53,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
         if (defaultUri != null) {
             String prefix = "ns";
             for (int i = 1; nsToUri.containsKey(prefix); i++) {
-                //noinspection StringConcatenationMissingWhitespace
+                //noinspection StringConcatenationMissingWhitespace - by design
                 prefix = "ns" + i;
             }
             this.defaultPrefix = prefix;

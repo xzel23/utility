@@ -387,7 +387,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T extends @Nullable Object> Optional<@NonNull T> map(OptionalInt opt, IntFunction<? extends T> f) {
+    public static <T> Optional<T> map(OptionalInt opt, IntFunction<? extends @Nullable T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsInt()));
     }
 
@@ -400,7 +400,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T extends @Nullable Object> Optional<@NonNull T> map(OptionalLong opt, LongFunction<? extends T> f) {
+    public static <T> Optional<T> map(OptionalLong opt, LongFunction<? extends @Nullable T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsLong()));
     }
 
@@ -413,7 +413,7 @@ public final class LangUtil {
      * @return Optional holding the mapped value or Optional.empty()
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T extends @Nullable Object> Optional<@NonNull T> map(OptionalDouble opt, DoubleFunction<? extends T> f) {
+    public static <T> Optional<T> map(OptionalDouble opt, DoubleFunction<? extends @Nullable T> f) {
         return opt.isEmpty() ? Optional.empty() : Optional.ofNullable(f.apply(opt.getAsDouble()));
     }
 
@@ -425,9 +425,9 @@ public final class LangUtil {
      * @param s2  second stream
      * @return true, if and only if both streams are equal elementwise
      */
-    public static <T extends @Nullable Object> boolean equals(Stream<T> s1, Stream<T> s2) {
-        Iterator<T> iter1 = s1.iterator();
-        Iterator<T> iter2 = s2.iterator();
+    public static <T> boolean equals(Stream<@Nullable T> s1, Stream<@Nullable T> s2) {
+        Iterator<@Nullable T> iter1 = s1.iterator();
+        Iterator<@Nullable T> iter2 = s2.iterator();
         while (iter1.hasNext() && iter2.hasNext()) {
             if (!Objects.equals(iter1.next(), iter2.next())) {
                 return false;
@@ -1130,12 +1130,11 @@ public final class LangUtil {
         public static final String NULL_STRING = String.valueOf((Object) null);
 
         private volatile @Nullable String s;
-        private volatile @Nullable Object[] args;
+        private volatile @Nullable Object @Nullable[] args;
 
         public LazyFormatter(@Nullable String fmt, Object... args) {
             if (fmt == null) {
                 this.s = NULL_STRING;
-                //noinspection DataFlowIssue - false positive
                 this.args = null;
             } else {
                 this.s = fmt;
@@ -1680,7 +1679,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static int requireInInterval(int value, int min, int max, String fmt, Object... args) {
-        //noinspection RedundantCast
+        //noinspection RedundantCast - if casts are reoved, wrong overload is called
         return (int) requireInInterval((long) value, (long) min, (long) max, fmt, args);
     }
 
@@ -1694,7 +1693,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static short requireInInterval(short value, short min, short max) {
-        //noinspection RedundantCast
+        //noinspection RedundantCast - if casts are reoved, wrong overload is called
         return (short) requireInInterval((long) value, (long) min, (long) max);
     }
 
@@ -1711,7 +1710,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static short requireInInterval(short value, short min, short max, String fmt, Object... args) {
-        //noinspection RedundantCast
+        //noinspection RedundantCast - if casts are reoved, wrong overload is called
         return (short) requireInInterval((long) value, (long) min, (long) max, fmt, args);
     }
 }

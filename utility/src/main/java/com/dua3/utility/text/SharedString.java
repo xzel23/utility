@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
  * the {@link CharSequence} interface. This allows efficient sharing of substrings
  * without copying the underlying character data.
  */
-public class SharedString implements CharSequence {
+public final class SharedString implements CharSequence {
 
     private final String base;
     private final int start;
@@ -58,7 +58,7 @@ public class SharedString implements CharSequence {
         if (h == 0 && end != start) {
             int len = end - start;
             for (int i = 0; i < len; i++) {
-                //noinspection CharUsedInArithmeticContext
+                //noinspection CharUsedInArithmeticContext - by design
                 h = 31 * h + base.charAt(start + i);
             }
             hash = h;

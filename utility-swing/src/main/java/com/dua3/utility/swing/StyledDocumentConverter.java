@@ -10,6 +10,7 @@ import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.TextAttributes;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -167,8 +168,8 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
         }
 
         @Override
-        protected void apply(Map<String, Pair<Object, Object>> changedAttributes) {
-            Map<String, Object> attributes = new HashMap<>();
+        protected void apply(Map<String, Pair<@Nullable Object, @Nullable Object>> changedAttributes) {
+            Map<String, @Nullable Object> attributes = new HashMap<>();
             changedAttributes.forEach((attribute, values) -> attributes.put(attribute, values.second()));
             // apply the default font styles 
             currentFont = currentFont.deriveFont(TextAttributes.getFontDef(attributes));

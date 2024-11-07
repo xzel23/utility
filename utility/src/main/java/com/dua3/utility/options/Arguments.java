@@ -124,11 +124,12 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         Map<Option<?>, Integer> hist = new HashMap<>();
         options.forEach(entry -> hist.compute(entry.option, (k_, i_) -> i_ == null ? 1 : i_ + 1));
 
+        record OptionOccurences(Option<?> option, int occurrences) {}
         allOptions.stream()
-                .map(option -> Pair.ofNonNull(option, hist.getOrDefault(option, 0)))
-                .forEach(p -> {
-                    Option<?> option = p.first();
-                    int occurrences = p.second();
+                .map(option -> new OptionOccurences(option, hist.getOrDefault(option, 0)))
+                .forEach(oo -> {
+                    Option<?> option = oo.option();
+                    int occurrences = oo.occurrences();
 
                     int minOccurrences = option.minOccurrences();
                     int maxOccurrences = option.maxOccurrences();

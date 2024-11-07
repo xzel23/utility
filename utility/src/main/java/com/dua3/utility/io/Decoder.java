@@ -34,7 +34,6 @@ public interface Decoder<T extends @Nullable Object> {
 
         Collection<T> collection = collectionConstructor.apply(size);
         for (int i = 0; i < size; i++) {
-            //noinspection DataFlowIssue - false positive
             collection.add(codec.decode(is));
         }
 

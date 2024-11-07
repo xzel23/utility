@@ -49,9 +49,8 @@ public final class SoftResource<T> {
      * @param <T> the type of the resource
      * @return empty soft resource
      */
-    public static <T> SoftResource<T> emptyReference() {
-        //noinspection unchecked
-        return (SoftResource<T>) EMPTY_RESOURCE;
+    public static <T> SoftResource<@Nullable T> emptyReference() {
+        return (SoftResource<@Nullable T>) EMPTY_RESOURCE;
     }
 
     /**
@@ -70,7 +69,6 @@ public final class SoftResource<T> {
                 supplier = null;
             }
 
-            //noinspection DataFlowIssue - false positive
             ref = new SoftReference<>(obj);
         }
         return obj;

@@ -40,8 +40,13 @@ public class ChoiceInputControl<T> implements InputControl<T> {
         this.valueProperty = new SimpleObjectProperty<>();
 
         control.valueProperty().addListener((v, o, n) -> valueProperty.setValue(n == null ? null : n.value()));
-        //noinspection DataFlowIssue
-        valueProperty.addListener((ObservableValue<? extends @Nullable T> v, @Nullable T o, @Nullable T n) -> control.getSelectionModel().select(n == null ? null : option.choice(n)));
+        valueProperty.addListener((ObservableValue<? extends @Nullable T> v, @Nullable T o, @Nullable T n) -> {
+                    if (n == null) {
+                        control.getSelectionModel().clearSelection();
+                    } else {
+                        control.getSelectionModel().select(option.choice(n));
+                    }
+                });
 
         control.getItems().setAll(option.choices());
         Optional.ofNullable(dfltValue.get()).ifPresent(dflt -> control.getSelectionModel().select(option.choice(dflt)));

@@ -116,13 +116,12 @@ public class ComboBoxEx<T> extends JPanel {
 
         updateButtonStates();
 
-        ListCellRenderer<? super T> renderer = new BasicComboBoxRenderer() {
+        ListCellRenderer<? super @Nullable T> renderer = new BasicComboBoxRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, @Nullable Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 String text = "";
                 if (value != null) {
                     try {
-                        //noinspection unchecked
                         text = format.apply((T) value);
                     } catch (Exception e) {
                         LOG.warn("error during formatting", e);
@@ -184,7 +183,6 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     private void removeItem() {
-        //noinspection unchecked
         T item = (T) model.getSelectedItem();
         if (Optional.ofNullable(remove).orElse(ComboBoxEx::alwaysRemoveSelectedItem).test(this, item)) {
             model.removeElement(item);
@@ -221,7 +219,7 @@ public class ComboBoxEx<T> extends JPanel {
      * @return always returns true to indicate removal is allowed
      */
     @SuppressWarnings("SameReturnValue")
-    public static <T> boolean alwaysRemoveSelectedItem(ComboBoxEx<T> cb, T item) {
+    public static <T> boolean alwaysRemoveSelectedItem(ComboBoxEx<T> cb, @Nullable T item) {
         return true;
     }
 
@@ -231,8 +229,7 @@ public class ComboBoxEx<T> extends JPanel {
      * @return an Optional containing the selected item, or an empty Optional if no item is selected
      */
     public Optional<T> getSelectedItem() {
-        //noinspection unchecked
-        return Optional.ofNullable((T) comboBox.getSelectedItem());
+        return Optional.ofNullable((@Nullable T) comboBox.getSelectedItem());
     }
 
     /**

@@ -194,7 +194,7 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
             @Override
             public T next() throws NoSuchElementException {
                 checkValid();
-                //noinspection NewExceptionWithoutArguments
+                //noinspection NewExceptionWithoutArguments - the index is an internal detail that would be confusing int this context
                 LangUtil.check(idx < entries_, NoSuchElementException::new);
                 return get(idx++);
             }
@@ -306,8 +306,7 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
         int sz = toIndex - fromIndex;
         Objects.checkFromIndexSize(fromIndex, sz, len);
 
-        //noinspection NullableProblems
-        return new AbstractList<>() {
+        return new AbstractList<T>() {
             @Override
             public T get(int index) {
                 return RingBuffer.this.get(Objects.checkIndex(index, sz) + fromIndex);

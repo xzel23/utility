@@ -120,7 +120,6 @@ public class InputGridBuilder
 
     @Override
     public InputGridBuilder addNode(String id, @Nullable String label, Node node) {
-        //noinspection DataFlowIssue
         Meta<Void> meta = new Meta<>(id, label, Void.class, () -> null, new ControlWrapper(node));
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, "Input with id '" + id + "' already defined");
@@ -129,7 +128,6 @@ public class InputGridBuilder
 
     @Override
     public InputGridBuilder addNode(String id, Node node) {
-        //noinspection DataFlowIssue
         Meta<Void> meta = new Meta<>(id, null, Void.class, () -> null, new ControlWrapper(node));
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, "Input with id '" + id + "' already defined");

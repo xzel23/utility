@@ -64,6 +64,7 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
         SortedSet<Entry<String, @Nullable Object>> entrySet = new TreeSet<>(Entry.comparingByKey());
         for (Pair<String, ?> entry : entries) {
+            assert entry.first() != null;
             entrySet.add(new SimpleEntry<>(entry.first(), entry.second()));
         }
         return new TextAttributes(entrySet);

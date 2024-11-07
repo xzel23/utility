@@ -188,7 +188,7 @@ public final class ChoiceOption<T> extends Option<T> {
      *
      * @param <T> the value type
      */
-    public record Choice<T>(T value, String text) {
+    public record Choice<T extends @Nullable Object>(T value, String text) {
         @Override
         public String toString() {
             return text;

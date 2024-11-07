@@ -3,6 +3,7 @@ package com.dua3.utility.logging;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.AnsiCode;
+import org.jspecify.annotations.NonNull;
 
 import java.io.PrintStream;
 import java.util.EnumMap;
@@ -50,6 +51,7 @@ public final class ConsoleHandler implements LogEntryHandler {
     @Override
     public void handleEntry(LogEntry entry) {
         var colors = colorMap.get(entry.level());
+        //noinspection DataFlowIssue - false positive; both components are guaranteed to be non-null
         out.append(entry.format(colors.first(), colors.second()));
     }
 

@@ -396,7 +396,7 @@ public final class XmlUtil {
                         writer.writeStartElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
                     }
                     // write namespaces and attributes in alphabetical order to obtain reproducible results
-                    //noinspection DataFlowIssue - false positive
+                    //noinspection DataFlowIssue - false positive; getPrefix() returns "" for the default namespace
                     StreamUtil.stream(se.getNamespaces())
                             .sorted(Comparator.comparing(Namespace::getPrefix))
                             .forEach(consume(ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));

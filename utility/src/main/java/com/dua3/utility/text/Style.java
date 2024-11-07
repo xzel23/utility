@@ -320,7 +320,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @return the value of the property or dflt if no value was set
      */
     public <T extends @Nullable Object> T getOrDefault(String property, T dflt) {
-        //noinspection unchecked
+        //noinspection unchecked - by design
         return (T) properties.getOrDefault(property, dflt);
     }
 
@@ -378,7 +378,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
         Object raw = get(key);
         try {
             T value = (T) raw;
-            //noinspection DataFlowIssue
+            //noinspection DataFlowIssue - by design
             action.accept(value != null ? value : defaultValue);
         } catch (Exception e) {
             throw new IllegalStateException("error processing attribute '" + key + "' with value: " + raw, e);

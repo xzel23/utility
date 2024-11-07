@@ -334,7 +334,7 @@ public final class RichText
     private boolean checkAllRunsHaveTextAsBase() {
         boolean ok = true;
         for (Run run : run) {
-            //noinspection ObjectEquality
+            //noinspection ObjectEquality - we explicitly want to check for identity not equality
             ok = ok && (run.base() == text);
         }
         return ok;
@@ -650,7 +650,7 @@ public final class RichText
     }
 
     private static boolean isSimpleWhitespace(char ch) {
-        //noinspection CharacterComparison
+        //noinspection CharacterComparison - by design
         return ch <= ' ';
     }
 
@@ -736,7 +736,7 @@ public final class RichText
          *     the second is not the ascii digit or ascii letter.
          */
         char ch;
-        //noinspection CharacterComparison
+        //noinspection CharacterComparison - by design
         if (((regex.length() == 1 &&
                 ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
                 (regex.length() == 2 &&
