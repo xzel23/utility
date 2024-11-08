@@ -1,3 +1,5 @@
+import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
+
 // define project name and version
 rootProject.name = "dua3-utility"
 val projectVersion = "14-rc-1"
@@ -28,7 +30,17 @@ plugins {
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
-    val isSnapshot = projectVersion.endsWith("SNAPSHOT")
+    fun isDevelopmentVersion(versionString : String) : Boolean {
+        val v = versionString.toDefaultLowerCase()
+        val markers = listOf("snapshot", "alpha", "beta")
+        for (marker in markers) {
+            if (v.contains("-$marker") || v.contains(".$marker")) {
+                return true
+            }
+        }
+        return false
+    }
+    val isSnapshot = isDevelopmentVersion(projectVersion)
 
     versionCatalogs {
         create("libs") {
