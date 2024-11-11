@@ -21,7 +21,7 @@ public final class LogEntryLog4J implements LogEntry {
     private final String marker;
     private @Nullable Supplier<String> messageFormatter;
     private @Nullable String formattedMessage;
-    private final Throwable throwable;
+    private @Nullable final Throwable throwable;
 
     /**
      * Creates a new LogEntry object.
@@ -114,7 +114,7 @@ public final class LogEntryLog4J implements LogEntry {
      * @return the throwable associated with this log entry.
      */
     @Override
-    public Throwable throwable() {
+    public @Nullable Throwable throwable() {
         return throwable;
     }
 
