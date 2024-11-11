@@ -4,6 +4,7 @@ import com.dua3.utility.lang.LangUtil;
 import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,7 +52,7 @@ public final class PlatformHelper {
      * @return the result returned by action
      * @throws NullPointerException if {@code action} is {@code null}
      */
-    public static <T> T runAndWait(Supplier<T> action) {
+    public static <T extends @Nullable Object> T runAndWait(Supplier<T> action) {
         // run synchronously on JavaFX thread
         if (Platform.isFxApplicationThread()) {
             return action.get();
