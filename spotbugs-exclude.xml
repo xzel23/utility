@@ -8,6 +8,14 @@
             <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
         </Or>
     </Match>
+    <Match>
+        <!-- Bugs reported by SpotBugs for automatic injected null checks -->
+        <Or>
+            <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+            <Bug pattern="RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE"/>
+            <Bug pattern="SA_LOCAL_SELF_ASSIGNMENT" />
+        </Or>
+    </Match>
 
     <Match>
         <Class name="com.dua3.utility.fx.icons.IconView"/>
