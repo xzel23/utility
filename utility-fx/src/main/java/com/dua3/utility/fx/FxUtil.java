@@ -61,6 +61,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -356,7 +357,7 @@ public final class FxUtil {
         String fext = IoUtil.getExtension(filename).toLowerCase(Locale.ROOT);
         return filter.getExtensions().stream()
                 .map(ext -> PATTERN_FILENAME_AND_DOT.matcher(ext).replaceFirst("").toLowerCase(Locale.ROOT))
-                .anyMatch(ext -> Objects.equals(ext, fext));
+                .anyMatch(Predicate.isEqual(fext));
     }
 
     /**

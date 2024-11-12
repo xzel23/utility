@@ -241,7 +241,7 @@ public class AboutDialogBuilder {
         if (!mailText.isBlank()) {
             dlg.setEmailText(mailText);
         }
-        if (mailAddress != null) {
+        if (!mailAddress.isBlank()) {
             dlg.setEmailAddress(mailAddress);
         }
         if (expandableContent != null) {

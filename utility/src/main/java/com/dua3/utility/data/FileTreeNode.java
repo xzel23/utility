@@ -117,6 +117,11 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
     }
 
     @Override
+    public boolean isRoot() {
+        return parent == null;
+    }
+
+    @Override
     public T parent() {
         LangUtil.check(parent != null, "parent() called on root node");
         return parent;

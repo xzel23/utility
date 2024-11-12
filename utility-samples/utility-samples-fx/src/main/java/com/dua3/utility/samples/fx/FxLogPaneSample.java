@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 /**
  * This class demonstrates the use of {@link FxLogPane} to display log messages in a window at runtime.
  */
-@SuppressWarnings("ClassWithMultipleLoggers")
+@SuppressWarnings({"ClassWithMultipleLoggers", "UseOfSystemOutOrSystemErr"})
 public class FxLogPaneSample extends Application {
 
     static {

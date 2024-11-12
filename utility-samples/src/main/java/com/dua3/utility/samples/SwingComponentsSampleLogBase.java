@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  * It also sets up and manages the Swing UI components, including a ComboBox with custom objects,
  * a progress view, and a log pane.
  */
-@SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait", "NonConstantLogger"})
+@SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait", "NonConstantLogger", "UseOfSystemOutOrSystemErr"})
 public abstract class SwingComponentsSampleLogBase extends JFrame {
 
     private static final String TASK_INDETERMINATE_1 = "Indeterminate Task";

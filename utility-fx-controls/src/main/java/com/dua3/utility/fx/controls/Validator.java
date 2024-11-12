@@ -36,6 +36,7 @@ import java.util.MissingResourceException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -196,7 +197,7 @@ public class Validator {
      */
     public void validateAll() {
         Map<Control, ValidationResult> resultMap = new IdentityHashMap<>(controls.keySet().stream()
-                .collect(Collectors.toMap(control -> control, this::validate)));
+                .collect(Collectors.toMap(Function.identity(), this::validate)));
         validationResultProperty.set(FXCollections.observableMap(resultMap));
         validProperty.set(resultMap.values().stream().anyMatch(entry -> !entry.isOk()));
     }

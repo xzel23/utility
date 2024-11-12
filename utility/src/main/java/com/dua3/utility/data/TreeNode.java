@@ -23,9 +23,7 @@ public interface TreeNode<N extends TreeNode<? extends N>> {
      *
      * @return true if this  is a root node
      */
-    default boolean isRoot() {
-        return parent() == null;
-    }
+    boolean isRoot();
 
     /**
      * Get this node's parent.

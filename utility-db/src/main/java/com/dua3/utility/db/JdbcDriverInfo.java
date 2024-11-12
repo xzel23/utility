@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -179,7 +180,7 @@ public class JdbcDriverInfo {
         String type = arguments.getOrDefault(OPTION_TYPE, OPTION_TYPE_STRING);
         String dflt = arguments.get("default");
         return switch (type) {
-            case OPTION_TYPE_STRING -> SimpleOption.create(s -> s, name).description(name).defaultValue(dflt);
+            case OPTION_TYPE_STRING -> SimpleOption.create(Function.identity(), name).description(name).defaultValue(dflt);
             case OPTION_TYPE_PATH ->
                     SimpleOption.create(Paths::get, name).description(name).defaultValue(dflt == null ? null : Paths.get(dflt));
             case OPTION_TYPE_INTEGER ->

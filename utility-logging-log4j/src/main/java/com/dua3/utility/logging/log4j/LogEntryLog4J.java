@@ -21,7 +21,7 @@ public final class LogEntryLog4J implements LogEntry {
     private final String marker;
     private @Nullable Supplier<String> messageFormatter;
     private @Nullable String formattedMessage;
-    private @Nullable final Throwable throwable;
+    private final @Nullable Throwable throwable;
 
     /**
      * Creates a new LogEntry object.

@@ -102,8 +102,10 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
         String propertyConsoleStream = properties.getProperty(LOGGER_CONSOLE_STREAM, "").trim().toLowerCase(Locale.ROOT);
         final PrintStream stream = switch (propertyConsoleStream) {
             case "" -> null;
-            case "system.err" -> System.err;
-            case "system.out" -> System.out;
+            case "system.err" -> //noinspection UseOfSystemOutOrSystemErr
+                    System.err;
+            case "system.out" -> //noinspection UseOfSystemOutOrSystemErr
+                    System.out;
             default ->
                     throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_STREAM + ": '" + propertyConsoleStream + "'");
         };

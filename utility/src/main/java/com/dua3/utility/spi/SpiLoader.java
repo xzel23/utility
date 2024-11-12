@@ -92,7 +92,7 @@ public final class SpiLoader<T> {
     private final Class<T> type;
     private final ClassLoader cl;
     private final Predicate<? super T> predicate;
-    private final Supplier<? extends T> defaultSupplier;
+    private final Supplier<? extends @Nullable T> defaultSupplier;
 
     private SpiLoader(Class<T> type, ClassLoader cl, Predicate<? super T> p, Supplier<? extends T> d) {
         this.type = type;
