@@ -30,17 +30,11 @@ plugins {
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
-    fun isDevelopmentVersion(versionString : String) : Boolean {
-        val v = versionString.toDefaultLowerCase()
-        val markers = listOf("snapshot", "alpha", "beta")
-        for (marker in markers) {
-            if (v.contains("-$marker") || v.contains(".$marker")) {
-                return true
-            }
-        }
-        return false
+    val isSnapshot = projectVersion.toDefaultLowerCase().contains("snapshot")
+
+    if (isSnapshot) {
+        System.out.println("SNAPSHOT version detected, using local Maven repository")
     }
-    val isSnapshot = isDevelopmentVersion(projectVersion)
 
     versionCatalogs {
         create("libs") {
