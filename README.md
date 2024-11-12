@@ -172,13 +172,24 @@ the parameter.
 
 ### 14
 
+**NOTE:** starting with this release, for development builds of this library (i.e., builds that are neither
+release nor release candidate builds), return values of all methods returning a @NullMarked or @NonNull
+object (or derived) type are checked and will unconditionally throw an AssertionFailedError if the return
+value is found to be inconsistent.
+
+Any AssertionError you encounter (with a message "invalid return value") means that you have found a bug
+in the library and are asked to open an issue against the library.
+
+Release candidates and final releases will not contain any return value check.
+
+Changes:
 - org.jspecify annotations are used in the code base; all modules annotated with `@NullMarked`.
   That you may not pass `null` in any method or constructor parameter that is not explicitly
   annotated as `@Nullable`.
 - module definitions have been reviewed.
 - change type parameter for IoUtil.closeAll() to `? extends AutoCloseable`
 - complete Javadoc
-- code cleanup
+- code cleanup and bug fixes
 
 ### 13.1.2
 
