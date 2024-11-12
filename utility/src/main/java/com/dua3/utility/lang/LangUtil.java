@@ -254,7 +254,7 @@ public final class LangUtil {
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
     public static <T extends @Nullable Object, E extends Exception> Consumer<T> uncheckedConsumer(ConsumerThrows<T, E> c) {
-        return arg -> {
+        return (T arg) -> {
             try {
                 c.accept(arg);
             } catch (Exception e) {
@@ -302,7 +302,7 @@ public final class LangUtil {
      */
     @SuppressWarnings("ProhibitedExceptionThrown")
     public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, R, E> f) {
-        return arg -> {
+        return (T arg) -> {
             try {
                 return f.apply(arg);
             } catch (Exception e) {
@@ -478,7 +478,7 @@ public final class LangUtil {
      * @return caching Supplier
      */
     public static <T extends @Nullable Object> Supplier<T> cache(Supplier<T> supplier) {
-        return new CachingSupplier<>(supplier, t -> {});
+        return new CachingSupplier<>(supplier, (T t) -> {});
     }
 
     /**

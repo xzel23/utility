@@ -1,6 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -27,7 +26,9 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
 
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
-    protected final List<Pair<ButtonType, Consumer<InputDialogPane<R>>>> buttons = new ArrayList<>();
+    protected record ButtonDef<R>(ButtonType type, Consumer<InputDialogPane<R>> action) {}
+
+    protected final List<ButtonDef<R>> buttons = new ArrayList<>();
 
     /**
      * Initializes the input dialog pane, setting up necessary configurations
@@ -58,9 +59,9 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         ObservableList<ButtonType> bt = getButtonTypes();
         bt.clear();
         for (var b : buttons) {
-            bt.add(b.first());
-            Button btn = (Button) lookupButton(b.first());
-            btn.setOnAction(evt -> b.second().accept(this));
+            bt.add(b.type());
+            Button btn = (Button) lookupButton(b.type());
+            btn.setOnAction(evt -> b.action().accept(this));
         }
     }
 
