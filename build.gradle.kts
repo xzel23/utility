@@ -83,9 +83,9 @@ subprojects {
 
     cabe {
         if (isReleaseVersion) {
-            config.set(Configuration.StandardConfig.STANDARD.config())
+            config.set(Configuration.STANDARD)
         } else {
-            config.set(Configuration.StandardConfig.DEVELOPMENT.config())
+            config.set(Configuration.DEVELOPMENT)
         }
     }
 
