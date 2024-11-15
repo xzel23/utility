@@ -50,6 +50,7 @@ public final class SoftResource<T> {
      * @return empty soft resource
      */
     public static <T> SoftResource<@Nullable T> emptyReference() {
+        //noinspection unchecked
         return (SoftResource<@Nullable T>) EMPTY_RESOURCE;
     }
 
@@ -67,6 +68,7 @@ public final class SoftResource<T> {
 
             if (obj == null) {
                 supplier = null;
+                //noinspection unchecked
                 ref = (SoftReference<T>) EMPTY_REFERENCE;
             } else {
                 ref = new SoftReference<>(obj);
