@@ -181,7 +181,7 @@ public interface InputControl<T> {
      *
      * @return the current value
      */
-    default T get() {
+    default @Nullable T get() {
         return valueProperty().getValue();
     }
 

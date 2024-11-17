@@ -39,7 +39,7 @@ public class AlertPaneBuilder
             }
 
             @Override
-            public Void get() {
+            public @Nullable Void get() {
                 return null;
             }
         };

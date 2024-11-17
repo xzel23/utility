@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.function.Supplier;
  *
  * @param <R> the type of the result produced by the input dialog pane
  */
-public abstract class InputDialogPane<R> extends DialogPane implements Supplier<R> {
+public abstract class InputDialogPane<R> extends DialogPane implements Supplier<@Nullable R> {
 
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
