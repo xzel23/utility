@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -265,8 +266,8 @@ public final class Controls {
      * Get TextFieldBuilder for creating a TextField.
      * @return TextFieldBuilder instance
      */
-    public static TextFieldBuilder textField() {
-        return new TextFieldBuilder();
+    public static TextFieldBuilder textField(Locale locale) {
+        return new TextFieldBuilder(locale);
     }
 
     /**

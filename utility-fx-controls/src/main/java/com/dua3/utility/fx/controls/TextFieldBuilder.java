@@ -4,9 +4,13 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.util.converter.BigDecimalStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import org.jspecify.annotations.Nullable;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
@@ -19,22 +23,43 @@ import java.util.regex.Pattern;
 public final class TextFieldBuilder {
 
     private static final Pattern INTEGER_PATTERN = Pattern.compile("\\d*|0");
-    @SuppressWarnings("DataFlowIssue") // should be Function<Change, @Nullable Change> but type is incompatible
     private static final UnaryOperator<TextFormatter.@Nullable Change> INTEGER_FILTER = change -> INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
 
-    private static TextFormatter<Integer> getIntegerTextFormatter(UnaryOperator<TextFormatter.Change> integerFilter) {
-        return new TextFormatter<>(new IntegerStringConverter(), 0, integerFilter);
-    }
-
     private static final Pattern SIGNED_INTEGER_PATTERN = Pattern.compile("-?([1-9]\\d*|0)?");
-    @SuppressWarnings("DataFlowIssue") // should be Function<Change, @Nullable Change> but type is incompatible
     private static final UnaryOperator<TextFormatter.@Nullable Change> SIGNED_INTEGER_FILTER = change -> SIGNED_INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
 
+    private final Pattern floatPattern;
+    private final UnaryOperator<TextFormatter.@Nullable Change> floatFilter;
+
+    private static TextFormatter<Integer> getIntegerTextFormatter(UnaryOperator<TextFormatter.Change> filter) {
+        return new TextFormatter<>(new IntegerStringConverter(), 0, filter);
+    }
+
+    private TextFormatter<BigDecimal> getFloatTextFormatter(UnaryOperator<TextFormatter.Change> filter) {
+        return new TextFormatter<>(new BigDecimalStringConverter(), BigDecimal.ZERO, filter);
+    }
+
+    private final Locale locale;
     private @Nullable String text;
     private TextFieldType type = TextFieldType.TEXT;
     private @Nullable ObservableValue<Boolean> disabled;
 
-    TextFieldBuilder() {
+    TextFieldBuilder(Locale locale) {
+        this.locale = locale;
+
+        this.floatPattern = getFloatPattern();
+        this.floatFilter = change -> floatPattern.matcher(change.getControlNewText()).matches() ? change : null;
+    }
+
+    private Pattern getFloatPattern() {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+        char decimalSeparator = symbols.getDecimalSeparator();
+        char groupingSeparator = symbols.getGroupingSeparator();
+
+        String escapedDecimalSeparator = Pattern.quote(String.valueOf(decimalSeparator));
+        String escapedGroupingSeparator = Pattern.quote(String.valueOf(groupingSeparator));
+
+        return Pattern.compile("[+-]?([0-9" + escapedGroupingSeparator + "]*" + escapedDecimalSeparator + ")?[0-9]+");
     }
 
     /**
@@ -83,6 +108,7 @@ public final class TextFieldBuilder {
         switch (type) {
             case INTEGER -> tf.setTextFormatter(getIntegerTextFormatter(INTEGER_FILTER));
             case SIGNED_INTEGER -> tf.setTextFormatter(getIntegerTextFormatter(SIGNED_INTEGER_FILTER));
+            case FLOAT -> tf.setTextFormatter(getFloatTextFormatter(floatFilter));
             case TEXT -> {}
         }
 
