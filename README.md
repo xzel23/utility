@@ -190,6 +190,8 @@ Changes:
 - change type parameter for IoUtil.closeAll() to `? extends AutoCloseable`
 - complete Javadoc
 - code cleanup and bug fixes
+- XmlUtil.defaultInstance() and jaxpInstance() both return new instances for every invocation
+  because the returned instances are not thread safe
 
 ### 13.1.2
 

@@ -124,7 +124,11 @@ public final class XmlUtil {
      * @throws IllegalStateException if default instance could not be created
      */
     public static XmlUtil defaultInstance() {
-        return LazySingletonDefaultInstance.INSTANCE;
+        try {
+            return new XmlUtil(DocumentBuilderFactory.newDefaultNSInstance(), TransformerFactory.newDefaultInstance(), XPathFactory.newDefaultInstance());
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException("Could not create XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
+        }
     }
 
     /**
@@ -134,7 +138,11 @@ public final class XmlUtil {
      * @throws IllegalStateException if default instance could not be created
      */
     public static XmlUtil jaxpInstance() {
-        return LazySingletonJaxpInstance.INSTANCE;
+        try {
+            return new XmlUtil(DocumentBuilderFactory.newNSInstance(), TransformerFactory.newInstance(), XPathFactory.newInstance());
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException("Could not create XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
+        }
     }
 
     private static <T> Consumer<T> consume(LangUtil.ConsumerThrows<? super T, ? extends XMLStreamException> c) {
@@ -621,37 +629,6 @@ public final class XmlUtil {
         } catch (ParserConfigurationException e) {
             // this shouldn't happen since a DocumentBuilder has already been created in the constructor
             throw new IllegalStateException("DocumentBuilderFactory configuration error", e);
-        }
-    }
-
-    /*
-     * Lazily construct the default instance since it might pull in a lot of dependencies which is not desirable
-     * in case only a specialized version is needed.
-     */
-    private static class LazySingletonDefaultInstance {
-        private static final XmlUtil INSTANCE;
-
-        static {
-            try {
-                INSTANCE = new XmlUtil(DocumentBuilderFactory.newDefaultNSInstance(), TransformerFactory.newDefaultInstance(), XPathFactory.newDefaultInstance());
-            } catch (ParserConfigurationException e) {
-                throw new IllegalStateException(MESSAGE_COULD_NOT_CREATE_DEFAULT_XML_UTIL, e);
-            }
-        }
-    }
-
-    /*
-     * Lazily construct the instance using JAXP Lookup Mechanism for obtaining the different factories.
-     */
-    private static class LazySingletonJaxpInstance {
-        private static final XmlUtil INSTANCE;
-
-        static {
-            try {
-                INSTANCE = new XmlUtil(DocumentBuilderFactory.newNSInstance(), TransformerFactory.newInstance(), XPathFactory.newInstance());
-            } catch (ParserConfigurationException e) {
-                throw new IllegalStateException("Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.", e);
-            }
         }
     }
 
