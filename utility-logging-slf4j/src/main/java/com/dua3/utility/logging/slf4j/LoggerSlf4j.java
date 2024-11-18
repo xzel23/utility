@@ -61,7 +61,7 @@ public class LoggerSlf4j extends AbstractLogger {
     }
 
     @Override
-    protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object[] arguments, @Nullable Throwable throwable) {
+    protected void handleNormalizedLoggingCall(Level level, @Nullable Marker marker, String messagePattern, @Nullable Object @Nullable[] arguments, @Nullable Throwable throwable) {
         boolean cleanup = false;
         for (WeakReference<LogEntryHandler> ref : handlers) {
             LogEntryHandler handler = ref.get();
