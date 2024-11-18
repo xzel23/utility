@@ -104,8 +104,9 @@ public class DialogSample extends Application {
                         .header("This is an input dialog.")
                         .string("txt", "enter text", () -> "dflt")
                         .integer("integer", "enter number", () -> 0)
-                        .integer("integer from 4 to 7", "enter number", () -> 0,
+                        .integer("integer from 4 to 7", "enter number [4-7]", () -> 0,
                                 i -> i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
+                        .decimal("decimal", "decimal", () -> 0.0)
                         .comboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
                         .checkBox("bool", "Yes or No:", () -> false, "yes")
                         .chooseFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(new FileChooser.ExtensionFilter("all files", "*")))
