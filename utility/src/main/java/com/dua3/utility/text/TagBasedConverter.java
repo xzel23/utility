@@ -58,7 +58,7 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
                 // close styles ...
                 appendClosingTags(closingStyles);
-                currentStyles = currentStyles.subList(0, stylesToKeepOpen);
+                currentStyles = new ArrayList<>(currentStyles.subList(0, stylesToKeepOpen));
 
                 // ... then reopen the styles to keep
                 appendOpeningTags(reopeningStyles);
