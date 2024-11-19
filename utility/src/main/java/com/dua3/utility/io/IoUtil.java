@@ -613,7 +613,7 @@ public final class IoUtil {
      * @param closeables the {@link AutoCloseable} instances to close
      * @return Runnable instance that closes all passed arguments when run
      */
-    public static Runnable composedClose(AutoCloseable... closeables) {
+    public static Runnable composedClose(@Nullable AutoCloseable... closeables) {
         return () -> doCloseAll(Arrays.asList(closeables));
     }
 
@@ -624,7 +624,7 @@ public final class IoUtil {
      * @param closeables collection holding the {@link AutoCloseable} instances to close
      * @return Runnable instance that closes all passed arguments when run
      */
-    public static Runnable composedClose(Collection<AutoCloseable> closeables) {
+    public static Runnable composedClose(Collection<? extends @Nullable AutoCloseable> closeables) {
         return () -> doCloseAll(closeables);
     }
 
@@ -635,7 +635,7 @@ public final class IoUtil {
      * @throws IOException if an I/O error occurs during the closing of resources.
      */
     @SuppressWarnings("RedundantThrows")
-    public static void closeAll(AutoCloseable... closeables) throws IOException {
+    public static void closeAll(@Nullable AutoCloseable... closeables) throws IOException {
         doCloseAll(Arrays.asList(closeables));
     }
 
@@ -646,7 +646,7 @@ public final class IoUtil {
      * @throws IOException if an I/O error occurs during the closing of resources.
      */
     @SuppressWarnings("RedundantThrows")
-    public static void closeAll(Collection<? extends AutoCloseable> closeables) throws IOException {
+    public static void closeAll(Collection<? extends @Nullable AutoCloseable> closeables) throws IOException {
         doCloseAll(closeables);
     }
 
@@ -658,7 +658,7 @@ public final class IoUtil {
      *
      * @param closeables a collection of AutoCloseable objects to be closed
      */
-    private static void doCloseAll(Iterable<? extends AutoCloseable> closeables) {
+    private static void doCloseAll(Iterable<? extends @Nullable AutoCloseable> closeables) {
         Throwable t = null;
         for (AutoCloseable c : closeables) {
             try {
