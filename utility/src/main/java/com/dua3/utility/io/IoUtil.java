@@ -1079,27 +1079,11 @@ public final class IoUtil {
             }
             default -> {
                 tempDir = Files.createTempDirectory(prefix);
-                setTempFilePermissionsNonPosix(tempDir);
+                setTempPermissionsNonPosix(tempDir, true);
             }
         }
         LOG.trace("created temp directory {}", tempDir);
         return tempDir;
-    }
-
-    /**
-     * Sets the permissions for a temporary file or directory in a non-POSIX compliant file system.
-     * This method ensures that the directory is readable, writable, and executable by owner only.
-     *
-     * @param tempDir the path to the temporary directory whose permissions are to be set
-     */
-    private static void setTempFilePermissionsNonPosix(Path tempDir) {
-        File asFile = tempDir.toFile();
-        boolean isReadable = asFile.setReadable(true, true);
-        boolean isWriteable = asFile.setWritable(true, true);
-        boolean isExecutable = asFile.setExecutable(true, true);
-        if (!isReadable || !isWriteable || !isExecutable) {
-            LOG.warn("file permissions could not be set for {} on non-POSIX system", tempDir);
-        }
     }
 
     /**
@@ -1119,7 +1103,7 @@ public final class IoUtil {
             }
             default -> {
                 tempDir = Files.createTempDirectory(dir, prefix);
-                setTempFilePermissionsNonPosix(tempDir);
+                setTempPermissionsNonPosix(tempDir, true);
             }
         }
         LOG.trace("created temp directory {}", tempDir);
@@ -1151,6 +1135,33 @@ public final class IoUtil {
         Path tempDir = createSecureTempDirectory(dir, prefix);
         deleteRecursiveOnExit(tempDir);
         return tempDir;
+    }
+
+    /**
+     * Sets the permissions for a temporary file or directory in a non-POSIX compliant file system.
+     * This method ensures that the directory is readable, writable, and executable by owner only.
+     *
+     * @param tempDir the path to the temporary directory whose permissions are to be set
+     * @param isDirectory true indicates permissions should be set for a directory, not a file
+     */
+    private static void setTempPermissionsNonPosix(Path tempDir, boolean isDirectory) {
+        File asFile = tempDir.toFile();
+        String type = isDirectory ? "directory" : "file";
+        if (!asFile.setReadable(true, true)) {
+            LOG.warn("Failed to set the temp {} as readable for the owner only: {}", type, tempDir);
+        }
+        if (!asFile.setWritable(true, true)) {
+            LOG.warn("Failed to set the temp {} as writable for the owner only: {}", type, tempDir);
+        }
+        if (isDirectory) {
+            if (!asFile.setExecutable(true, true)) {
+                LOG.warn("Failed to set the temp {} as executable for the owner only: {}", type, tempDir);
+            }
+        } else {
+            if (!asFile.setExecutable(false)) {
+                LOG.warn("Failed to set the temp {} as not executable: {}", type, tempDir);
+            }
+        }
     }
 
     /**
