@@ -965,7 +965,7 @@ public final class RichText
      * @param s the ComparisonSettings to be used for the equality check
      * @return the BiPredicate that checks for equality based on the ComparisonSettings
      */
-    public static BiPredicate<RichText, RichText> equalizer(ComparisonSettings s) {
+    public static BiPredicate<@Nullable RichText, @Nullable RichText> equalizer(ComparisonSettings s) {
         return (a, b) -> {
             if (a == b) {
                 return true;
