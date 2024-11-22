@@ -45,7 +45,7 @@ dependencyResolutionManagement {
             plugin("spotbugs", "com.github.spotbugs").version("6.0.26")
             plugin("cabe", "com.dua3.cabe").version("3.0-rc")
 
-            version("log4j", "2.24.1")
+            version("log4j-bom", "2.24.2")
             version("slf4j", "2.0.16")
             version("ikonli", "12.3.1")
             version("jimfs", "1.3.0")
@@ -62,12 +62,13 @@ dependencyResolutionManagement {
 
             library("miglayout-swing", "com.miglayout", "miglayout-swing").versionRef("miglayout")
 
-            library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
-            library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
-            library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").versionRef("log4j")
-            library("log4j-jcl", "org.apache.logging.log4j", "log4j-jcl").versionRef("log4j")
-            library("log4j-slf4j2", "org.apache.logging.log4j", "log4j-slf4j2-impl").versionRef("log4j")
-            library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
+            library("log4j-bom", "org.apache.logging.log4j", "log4j-bom").versionRef("log4j-bom")
+            library("log4j-api", "org.apache.logging.log4j", "log4j-api").withoutVersion()
+            library("log4j-core", "org.apache.logging.log4j", "log4j-core").withoutVersion()
+            library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").withoutVersion()
+            library("log4j-jcl", "org.apache.logging.log4j", "log4j-jcl").withoutVersion()
+            library("log4j-slf4j2", "org.apache.logging.log4j", "log4j-slf4j2-impl").withoutVersion()
+            library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").withoutVersion()
 
             library("ikonli-fontawesome", "org.kordamp.ikonli", "ikonli-fontawesome-pack").versionRef("ikonli")
             library("ikonli-javafx", "org.kordamp.ikonli", "ikonli-javafx").versionRef("ikonli")
