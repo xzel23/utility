@@ -170,6 +170,14 @@ the parameter.
 
 ## Changes
 
+### 14.0.1
+
+- add missing @Nullable in RichText.equalizer()
+- update log4j to 2.24.2
+- use log4j-bom
+- improve logging in setTempFilePermissionsNonPosix();
+- update cabe to final release
+
 ### 14
 
 **NOTE:** starting with this release, for development builds of this library (i.e., builds that are neither
