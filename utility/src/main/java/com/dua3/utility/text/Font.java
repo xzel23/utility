@@ -117,10 +117,10 @@ public class Font {
      * @param <T>    object type
      * @param <U>    attribute type
      */
-    private static <T, U> void deltaHelper(T o1, T o2, Function<T, U> getter, Consumer<? super U> setter) {
-        U v1 = getter.apply(o1);
-        U v2 = getter.apply(o2);
-        if (!Objects.equals(v1, v2)) {
+    private static <T, U> void deltaHelper(@Nullable T o1, @Nullable T o2, Function<T, U> getter, Consumer<? super U> setter) {
+        U v1 = o1 == null ? null : getter.apply(o1);
+        U v2 = o2 == null ? null : getter.apply(o2);
+        if (!Objects.equals(v1, v2) && v2 != null) {
             setter.accept(v2);
         }
     }
@@ -132,7 +132,7 @@ public class Font {
      * @param f2 the second font
      * @return a {@link FontDef} instance that defines the changed values
      */
-    public static FontDef delta(Font f1, Font f2) {
+    public static FontDef delta(@Nullable Font f1, @Nullable Font f2) {
         FontDef fd = new FontDef();
 
         deltaHelper(f1, f2, Font::getFamily, fd::setFamily);
