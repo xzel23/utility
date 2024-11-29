@@ -170,6 +170,12 @@ the parameter.
 
 ## Changes
 
+### 14.1.0
+
+- BREAKING: when passing `null` as a non-nullable parameter, an `IllegalArgumentException` will be thrown
+  (used to throw `NullPointerException`)
+- Font.delta() now accepts null arguments
+
 ### 14.0.1
 
 - add missing @Nullable in RichText.equalizer()
