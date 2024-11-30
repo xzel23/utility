@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.icons;
 
+import javafx.beans.binding.Bindings;
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
 import javafx.css.StyleableIntegerProperty;
@@ -45,6 +46,7 @@ public class IconView extends Control {
     }
 
     private final StackPane pane;
+
     private final StyleableStringProperty iconIdentifier = new StyleableStringProperty(DEFAULT_ICON_IDENTIFIER) {
         @Override
         public CssMetaData<IconView, String> getCssMetaData() {
@@ -62,6 +64,7 @@ public class IconView extends Control {
         }
 
     };
+
     private final StyleableObjectProperty<Paint> iconColor = new StyleableObjectProperty<>(DEFAULT_ICON_COLOR) {
         @Override
         public CssMetaData<IconView, Paint> getCssMetaData() {
@@ -79,6 +82,7 @@ public class IconView extends Control {
         }
 
     };
+
     private final StyleableIntegerProperty iconSize = new StyleableIntegerProperty(DEFAULT_ICON_SIZE) {
         @Override
         public CssMetaData<IconView, Number> getCssMetaData() {
@@ -141,11 +145,11 @@ public class IconView extends Control {
             icon1 = IconUtil.emptyIcon();
         }
 
-        icon1.iconSizeProperty().bind(iconSize);
-        icon1.iconColorProperty().bind(iconColor);
-
         iconSize.set(size);
         iconColor.set(color);
+
+        Bindings.bindBidirectional(iconSize, icon1.iconSizeProperty());
+        Bindings.bindBidirectional(iconColor, icon1.iconColorProperty());
 
         pane.getChildren().setAll(icon1.node());
     }
