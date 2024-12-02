@@ -175,6 +175,7 @@ the parameter.
 - BREAKING: when passing `null` as a non-nullable parameter, an `IllegalArgumentException` will be thrown
   (used to throw `NullPointerException`)
 - Font.delta() now accepts null arguments
+- IconView icon size and color properties are now bound bidirectional to the properties of the underlying ikonli icon
 
 ### 14.0.1
 
