@@ -20,6 +20,8 @@ import java.util.function.Function;
 @SuppressWarnings("MagicCharacter")
 public class Font {
 
+    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
+
     private final Color color;
     private final float size;
     private final String family;
@@ -33,6 +35,7 @@ public class Font {
     private int hash;
     private @Nullable FontDef fd;
     private double spaceWidth = -1;
+    private double descent = Double.NaN;
 
     /**
      * Construct a new {@code Font}.
@@ -323,15 +326,27 @@ public class Font {
     }
 
     /**
-     * Get width of a space character in this font.
+     * Get the width of a space character in this font.
      *
-     * @return width of a single space character in this font
+     * @return the width of a single space character in this font
      */
     public double getSpaceWidth() {
         if (spaceWidth < 0) {
-            spaceWidth = TextUtil.getTextWidth(" ", this);
+            spaceWidth = FONT_UTIL.getTextWidth(" ", this);
         }
         return spaceWidth;
+    }
+
+    /**
+     * Get the descent of this font.
+     *
+     * @return the descent of this font
+     */
+    public double getDescent() {
+        if (Double.isNaN(descent)) {
+            descent = FONT_UTIL.getTextDimension("g", this).max().y();
+        }
+        return descent;
     }
 
     /**
