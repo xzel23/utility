@@ -20,17 +20,20 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.FontData;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
+import javafx.geometry.Bounds;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+import java.awt.FontMetrics;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -62,7 +65,7 @@ public class FxFontUtil implements FontUtil<Font> {
      * Public constructor. Needed fo SPI.
      */
     private FxFontUtil() {
-        defaultFont = FxUtil.convert(new Font(DEFAULT_FAMILY, DEFAULT_SIZE));
+        defaultFont = convert(new Font(DEFAULT_FAMILY, DEFAULT_SIZE));
     }
 
     /**
@@ -92,7 +95,48 @@ public class FxFontUtil implements FontUtil<Font> {
      * @return the converted com.dua3.utility.text.Font object
      */
     public com.dua3.utility.text.Font convert(Font font) {
-        return FxUtil.convert(font);
+        String style = font.getStyle().toLowerCase(Locale.ROOT);
+        FontData fontData = getFontData(font);
+        return new com.dua3.utility.text.Font(fontData, Color.BLACK);
+    }
+
+    private FontData getFontData(Font fxFont) {
+        String style = fxFont.getStyle().toLowerCase(Locale.ROOT);
+
+        FontDef fontDef = new FontDef();
+        fontDef.setFamily(fxFont.getFamily());
+        fontDef.setSize((float) fxFont.getSize());
+        fontDef.setBold(style.contains("bold"));
+        fontDef.setItalic(style.contains("italic") || style.contains("oblique"));
+        fontDef.setUnderline(style.contains("line-under"));
+        fontDef.setStrikeThrough(style.contains("line-through"));
+
+        Text text = new Text("Xg|█");
+        text.setFont(fxFont);
+        Bounds bounds = text.getBoundsInLocal();
+        float ascent = (float) text.getBaselineOffset();
+        float height = (float) bounds.getHeight();
+        float descent = ascent - height; // descent is negative!
+
+        text.setText(" ");
+        bounds = text.getBoundsInLocal();
+        float spaceWidth = (float) bounds.getWidth();
+
+        return new FontData(
+                Objects.requireNonNullElse(fontDef.getFamily(), DEFAULT_FAMILY),
+                Objects.requireNonNullElse(fontDef.getSize(), DEFAULT_SIZE),
+                Objects.requireNonNullElse(fontDef.getBold(), Boolean.FALSE),
+                Objects.requireNonNullElse(fontDef.getItalic(), Boolean.FALSE),
+                Objects.requireNonNullElse(fontDef.getUnderline(), Boolean.FALSE),
+                Objects.requireNonNullElse(fontDef.getStrikeThrough(), Boolean.FALSE),
+                fontDef,
+                fontDef.fontspec(),
+                fontDef.getCssStyle(),
+                ascent,
+                descent,
+                height,
+                spaceWidth
+        );
     }
 
     @Override

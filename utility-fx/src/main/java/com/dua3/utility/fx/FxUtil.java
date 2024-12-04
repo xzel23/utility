@@ -271,16 +271,7 @@ public final class FxUtil {
      * @return the JavaFX Font
      */
     public static Font convert(com.dua3.utility.text.Font font) {
-        if (font instanceof FxFontEmbedded fxf) {
-            return fxf.fxFont();
-        }
-
-        return Font.font(
-                font.getFamily(),
-                font.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                font.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                font.getSizeInPoints()
-        );
+        return FxFontUtil.getInstance().convert(font);
     }
 
     /**
@@ -290,16 +281,7 @@ public final class FxUtil {
      * @return the JavaFX Font
      */
     public static com.dua3.utility.text.Font convert(Font fxFont) {
-        String style = fxFont.getStyle().toLowerCase(Locale.ROOT);
-        return new com.dua3.utility.text.Font(
-                fxFont.getFamily(),
-                (float) fxFont.getSize(),
-                com.dua3.utility.data.Color.BLACK,
-                style.contains("bold"),
-                style.contains("italic") || style.contains("oblique"),
-                style.contains("line-through"),
-                style.contains("line-under")
-        );
+        return FxFontUtil.getInstance().convert(fxFont);
     }
 
     /**

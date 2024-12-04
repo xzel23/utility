@@ -37,6 +37,16 @@ public record FontData(
         double height,
         double spaceWidth
 ) {
+
+    public FontData {
+        assert !family.isEmpty() : "family is the empty string";
+        assert size >= 0 : "size is negative";
+        assert ascent >= 0 : "ascent is negative";
+        assert descent <= 0 : "descent is positive";
+        assert height >= ascent : "inconsistent height";
+        assert spaceWidth > 0 : "space width must be positive";
+    }
+
     /**
      * Test if two fonts are similar. This method is provided to be used when inheriting fonts because equals
      * also tests both instances to be of the exact same class.
