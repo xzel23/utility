@@ -60,7 +60,12 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
 
     private AwtFontUtil() {
         graphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics();
-        defaultFont = convert(getAwtFont(DEFAULT_FAMILY, DEFAULT_SIZE, false, false));
+
+        java.awt.Font awtFont = new java.awt.Font(DEFAULT_FAMILY, 0, Math.round(DEFAULT_SIZE));
+        FontData fontData = getFontData(awtFont);
+        awtFont2FontData.put(awtFont, fontData);
+        fontData2awtFont.put(fontData, awtFont);
+        defaultFont = new Font(fontData, Color.BLACK);
     } // utility class constructor
 
     /**

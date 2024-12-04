@@ -62,7 +62,7 @@ public class FxFontUtil implements FontUtil<Font> {
      * Public constructor. Needed fo SPI.
      */
     private FxFontUtil() {
-        defaultFont = convert(new Font(DEFAULT_FAMILY, DEFAULT_SIZE));
+        defaultFont = FxUtil.convert(new Font(DEFAULT_FAMILY, DEFAULT_SIZE));
     }
 
     /**
