@@ -77,10 +77,10 @@ public class HtmlConverterTest {
     @Test
     public void testFont() {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
-        Font times = FontUtil.getInstance().getFont("courier-12");
+        Font courier = FontUtil.getInstance().getFont("courier-12");
 
         Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
-        Style style2 = Style.create("style2", Map.entry(Style.FONT, times));
+        Style style2 = Style.create("style2", Map.entry(Style.FONT, courier));
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(style1);
@@ -91,7 +91,7 @@ public class HtmlConverterTest {
         builder.append(" too many fonts!");
         builder.pop(style1);
         RichText rt = builder.toRichText();
-        String expected = "<span style=\"color: #000000; font-size: 16.0pt; font-family: arial; font-weight: bold; font-style: normal;\">Don&apos;t <span style=\"color: #000000; font-size: 12.0pt; font-family: courier; font-weight: normal; font-style: normal;\">mix</span> too many fonts!</span>";
+        String expected = "<span style=\"font-family: arial; font-size: 16.0pt; font-weight: bold; font-style: normal; color: #000000;\">Don&apos;t <span style=\"font-family: courier; font-size: 12.0pt; font-weight: normal; font-style: normal; color: #000000;\">mix</span> too many fonts!</span>";
         String actual = HtmlConverter.create().convert(rt);
 
         assertEquals(expected, actual);

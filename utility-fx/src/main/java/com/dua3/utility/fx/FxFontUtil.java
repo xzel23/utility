@@ -110,8 +110,6 @@ public class FxFontUtil implements FontUtil<Font> {
      *         metrics like ascent, descent, height, and space width
      */
     public static FontData getFontData(Font fxFont) {
-        FontDef fontDef = getFontDef(fxFont);
-
         Text text = new Text("Xg|█");
         text.setFont(fxFont);
         Bounds bounds = text.getBoundsInLocal();
@@ -123,16 +121,14 @@ public class FxFontUtil implements FontUtil<Font> {
         bounds = text.getBoundsInLocal();
         float spaceWidth = (float) bounds.getWidth();
 
-        return new FontData(
-                Objects.requireNonNullElse(fontDef.getFamily(), DEFAULT_FAMILY),
-                Objects.requireNonNullElse(fontDef.getSize(), DEFAULT_SIZE),
-                Objects.requireNonNullElse(fontDef.getBold(), Boolean.FALSE),
-                Objects.requireNonNullElse(fontDef.getItalic(), Boolean.FALSE),
-                Objects.requireNonNullElse(fontDef.getUnderline(), Boolean.FALSE),
-                Objects.requireNonNullElse(fontDef.getStrikeThrough(), Boolean.FALSE),
-                fontDef,
-                fontDef.fontspec(),
-                fontDef.getCssStyle(),
+        String style = fxFont.getStyle();
+        return FontData.get(
+                fxFont.getFamily(),
+                (float) fxFont.getSize(),
+                style.contains("bold"),
+                style.contains("italic") || style.contains("oblique"),
+                style.contains("line-under"),
+                style.contains("line-through"),
                 ascent,
                 descent,
                 height,
@@ -259,16 +255,13 @@ public class FxFontUtil implements FontUtil<Font> {
                 Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic())
         ));
 
-        FontData fontData = new FontData(
+        FontData fontData = FontData.get(
                 baseFont.getFamily(),
                 baseFont.getSizeInPoints(),
                 baseFont.isBold(),
                 baseFont.isItalic(),
                 Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
                 Objects.requireNonNullElse(fontDef.getStrikeThrough(), font.isStrikeThrough()),
-                fontDef,
-                fontDef.fontspec(),
-                fontDef.getCssStyle(),
                 baseFont.getAscent(),
                 baseFont.getDescent(),
                 baseFont.getHeight(),

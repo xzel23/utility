@@ -238,35 +238,17 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
                 Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic())
         ));
 
-        try {
-            fontDef = fontDef.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
-        }
-
-        fontDef.setFamily(baseFont.getFamily());
-        fontDef.setSize(baseFont.getSizeInPoints());
-        fontDef.setBold(baseFont.isBold());
-        fontDef.setItalic(baseFont.isItalic());
-
         boolean underline = Objects.requireNonNullElse(fontDef.getUnderline(), baseFont.isUnderline());
         boolean strikeThrough = Objects.requireNonNullElse(fontDef.getStrikeThrough(), baseFont.isStrikeThrough());
         Color color = Objects.requireNonNullElse(fontDef.getColor(), baseFont.getColor());
 
-        fontDef.setUnderline(underline);
-        fontDef.setStrikeThrough(strikeThrough);
-        fontDef.setColor(color);
-
-        FontData fontData = new FontData(
+        FontData fontData = FontData.get(
                 baseFont.getFamily(),
                 baseFont.getSizeInPoints(),
                 baseFont.isBold(),
                 baseFont.isItalic(),
                 underline,
                 strikeThrough,
-                fontDef,
-                fontDef.fontspec(),
-                fontDef.getCssStyle(),
                 baseFont.getAscent(),
                 baseFont.getDescent(),
                 baseFont.getHeight(),
@@ -286,26 +268,17 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     }
 
     private FontData getFontData(java.awt.Font awtFont) {
-        FontDef fontDef = new FontDef();
-        fontDef.setFamily(awtFont.getName());
-        fontDef.setSize(awtFont.getSize2D());
-        fontDef.setBold(awtFont.isBold());
-        fontDef.setItalic(awtFont.isItalic());
-        fontDef.setUnderline(false);
-        fontDef.setStrikeThrough(false);
-
+        String family = awtFont.getName();
+        float size = awtFont.getSize2D();
+        boolean bold = awtFont.isBold();
         FontMetrics fontMetrics = graphics.getFontMetrics(awtFont);
-
-        return new FontData(
-                Objects.requireNonNullElse(fontDef.getFamily(), DEFAULT_FAMILY),
-                Objects.requireNonNullElse(fontDef.getSize(), DEFAULT_SIZE),
-                Objects.requireNonNullElse(fontDef.getBold(), Boolean.FALSE),
-                Objects.requireNonNullElse(fontDef.getItalic(), Boolean.FALSE),
-                Objects.requireNonNullElse(fontDef.getUnderline(), Boolean.FALSE),
-                Objects.requireNonNullElse(fontDef.getStrikeThrough(), Boolean.FALSE),
-                fontDef,
-                fontDef.fontspec(),
-                fontDef.getCssStyle(),
+        return FontData.get(
+                family,
+                size,
+                bold,
+                awtFont.isItalic(),
+                false,
+                false,
                 fontMetrics.getAscent(),
                 fontMetrics.getDescent(),
                 fontMetrics.getHeight(),

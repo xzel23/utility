@@ -118,7 +118,7 @@ class FontDefTest {
         fd.setBold(true);
         fd.setItalic(true);
 
-        String expected = "color: #ffffff; font-size: 14.0pt; font-family: Arial; font-weight: bold; font-style: italic;";
+        String expected = "font-family: Arial; font-size: 14.0pt; font-weight: bold; font-style: italic; color: #ffffff;";
         String actual = fd.getCssStyle();
 
         assertEquals(expected, actual);

@@ -235,7 +235,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         addMapping(Style.FONT, value -> {
             Font font = (Font) value;
             if (isUseCss()) {
-                return HtmlTag.tag("<span class=\"" + font + "\">", "</span>");
+                return HtmlTag.tag("<span class=\"" + font.fontspec() + "\">", "</span>");
             } else {
                 return HtmlTag.tag("<span style=\"" + font.getCssStyle() + "\">", "</span>");
             }

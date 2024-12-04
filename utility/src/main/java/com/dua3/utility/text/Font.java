@@ -109,15 +109,6 @@ public class Font {
         return fontData.underline();
     }
 
-    /**
-     * Get a description of the font.
-     *
-     * @return font description
-     */
-    public String fontspec() {
-        return fontData.fontspec();
-    }
-
     @Override
     public String toString() {
         return fontspec();
@@ -143,7 +134,16 @@ public class Font {
      * @return fontstyle definition
      */
     public String getCssStyle() {
-        return fontData.cssStyle();
+        return fontData.cssStyle() + " color: " + color.toCss() +";";
+    }
+
+    /**
+     * Get a description of the font.
+     *
+     * @return font description
+     */
+    public String fontspec() {
+        return fontData.fontspec()+ "-" + color.toCss();
     }
 
     /**
@@ -153,7 +153,7 @@ public class Font {
      */
     public FontDef toFontDef() {
         FontDef fontDef = fontData.fontDef();
-        fontDef.setColor(color);
+        fontDef.setColor(getColor());
         return fontDef;
     }
 

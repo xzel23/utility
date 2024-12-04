@@ -417,18 +417,19 @@ public final class FontDef implements Cloneable {
         boolean isUnderline = underline != null && underline;
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
         //noinspection StringConcatenationMissingWhitespace
-        String css = (color == null ? "" : " color: " + color + ";") +
-                (size == null ? "" : " font-size: " + size + "pt;") +
-                (family == null ? "" : " font-family: " + family + ";") +
-                (bold == null ? "" : " font-weight: " + (bold ? "bold" : "normal") + ";") +
-                (italic == null ? "" : " font-style: " + (italic ? "italic" : "normal") + ";") +
-                (isStrikeThrough || isUnderline
-                        ? " text-decoration:" +
-                        (isUnderline ? " underline" : "") +
-                        (isStrikeThrough ? " line-through" : "") +
-                        ";"
-                        : "");
-        return css.stripLeading();
+        String css =
+                (family == null ? "" : "font-family: " + family + "; ") +
+                        (size == null ? "" : "font-size: " + size + "pt; ") +
+                        (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + "; ") +
+                        (italic == null ? "" : "font-style: " + (italic ? "italic" : "normal") + "; ") +
+                        (isStrikeThrough || isUnderline
+                                ? "text-decoration:" +
+                                (isUnderline ? " underline" : "") +
+                                (isStrikeThrough ? " line-through" : "") +
+                                "; "
+                                : "") +
+                        (color == null ? "" : "color: " + color + ";");
+        return css.stripTrailing();
     }
 
     /**

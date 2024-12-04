@@ -44,6 +44,55 @@ public record FontData(
         assert descent >= 0 : "descent is negative";
         assert height >= ascent : "inconsistent height";
         assert spaceWidth > 0 : "space width must be positive";
+        assert fontDef != null : "fontDef is null";
+        assert fontDef.getFamily() != null : "fontDef.getFamily() is null";
+        assert fontDef.getSize() != null : "fontDef.getSize() is null";
+        assert fontDef.getBold() != null : "fontDef.getBold() is null";
+        assert fontDef.getItalic() != null : "fontDef.getItalic() is null";
+        assert fontDef.getUnderline() != null : "fontDef.getUnderline() is null";
+        assert fontDef.getStrikeThrough() != null : "fontDef.getStrikeThrough() is null";
+        assert fontDef.getColor() == null : "fontDef.getColor() must be null";
+
+        // remove color from fontspec
+        assert fontspec.endsWith("-*") : "unexpected fontspec: " + fontspec;
+        fontspec = fontspec.substring(0, fontspec.length()-2);
+    }
+
+    public static FontData get(
+            String family,
+            float size,
+            boolean bold,
+            boolean italic,
+            boolean underline,
+            boolean strikeThrough,
+            double ascent,
+            double descent,
+            double height,
+            double spaceWidth
+    ) {
+        FontDef fd = new FontDef();
+        fd.setSize(size);
+        fd.setFamily(family);
+        fd.setBold(bold);
+        fd.setItalic(italic);
+        fd.setUnderline(underline);
+        fd.setStrikeThrough(strikeThrough);
+
+        return new FontData(
+                family,
+                size,
+                bold,
+                italic,
+                underline,
+                strikeThrough,
+                fd,
+                fd.fontspec(),
+                fd.getCssStyle(),
+                ascent,
+                descent,
+                height,
+                spaceWidth
+        );
     }
 
     /**

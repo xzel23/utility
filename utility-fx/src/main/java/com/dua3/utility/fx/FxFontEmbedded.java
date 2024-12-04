@@ -23,25 +23,13 @@ public final class FxFontEmbedded extends Font {
     private static FontData prepareEmbeddedFontData(javafx.scene.text.Font fxFont, String family, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
         FontData fxFontData = FxFontUtil.getFontData(fxFont);
 
-        FontDef fontDef = new FontDef();
-        fontDef.setFamily(family);
-        fontDef.setSize(fxFontData.size());
-        fontDef.setBold(bold);
-        fontDef.setItalic(italic);
-        fontDef.setColor(color);
-        fontDef.setUnderline(underline);
-        fontDef.setStrikeThrough(strikeThrough);
-
-        return new FontData(
+        return FontData.get(
                 family,
                 fxFontData.size(),
                 bold,
                 italic,
                 underline,
                 strikeThrough,
-                fontDef,
-                fontDef.fontspec(),
-                fontDef.getCssStyle(),
                 fxFontData.ascent(),
                 fxFontData.descent(),
                 fxFontData.height(),
