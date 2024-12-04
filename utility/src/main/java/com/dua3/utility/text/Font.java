@@ -7,7 +7,6 @@ package com.dua3.utility.text;
 
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.lang.LangUtil;
 
 /**
  * Generic font class.

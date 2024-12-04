@@ -1,6 +1,5 @@
 package com.dua3.utility.swing;
 
-import com.dua3.utility.text.FontDef;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;

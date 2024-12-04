@@ -410,7 +410,7 @@ public class RichTextTest {
         RichText rt = builder.toRichText();
 
         StringBuilder sb = new StringBuilder();
-        rt.lines().forEach(s -> sb.append(s.toString()).append(";"));
+        rt.lines().forEach(s -> sb.append(s).append(";"));
         assertEquals("Hello w;or;ld!;", sb.toString());
     }
 
