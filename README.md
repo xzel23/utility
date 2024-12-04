@@ -170,6 +170,19 @@ the parameter.
 
 ## Changes
 
+### 14.2.0
+
+- BREAKING: font handling has been refactored for both AWT and JavaFX, the old Font constructors have been
+  deprecated and will be removed in a future release. To derive a font from a base font, use FontUtil as
+  Font.deriveFont() has been removed.
+
+  The Font class has been enhanced with methods to retrieve metric data like ascent, descent, and space width
+
+  Memory footprint should be reduced and performance increased for applications that dynamically allocate
+  Font instances
+
+- small fixes and improvements
+
 ### 14.1.0
 
 - BREAKING: when passing `null` as a non-nullable parameter, an `IllegalArgumentException` will be thrown
