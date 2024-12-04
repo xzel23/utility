@@ -41,9 +41,6 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     private static final String DEFAULT_FAMILY = "Arial";
     private static final float DEFAULT_SIZE = 10.0f;
 
-    private final Font defaultFont;
-    private final Graphics2D graphics;
-
     static {
         boolean isHeadless = GraphicsEnvironment.isHeadless();
         boolean isJavaAwtHeadless = Boolean.getBoolean("java.awt.headless");
@@ -53,6 +50,18 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         if (isJavaAwtHeadless) {
             LOG.info("headless mode is enabled");
         }
+    }
+
+    private final HashMap<FontData, java.awt.Font> fontData2awtFont = new HashMap<>();
+    private final HashMap<java.awt.Font, FontData> awtFont2FontData = new HashMap<>();
+
+    private final Font defaultFont;
+    private final Graphics2D graphics;
+
+    private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
+        int style = (bold ? java.awt.Font.BOLD : java.awt.Font.PLAIN)
+                | (italic ? java.awt.Font.ITALIC : java.awt.Font.PLAIN);
+        return new java.awt.Font(family, style, Math.round(size));
     }
 
     private static class SingletonHolder {
@@ -71,15 +80,6 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
      */
     public static AwtFontUtil getInstance() {
         return SingletonHolder.INSTANCE;
-    }
-
-    private final HashMap<FontData, java.awt.Font> fontData2awtFont = new HashMap<>();
-    private final HashMap<java.awt.Font, FontData> awtFont2FontData = new HashMap<>();
-
-    private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
-        int style = (bold ? java.awt.Font.BOLD : java.awt.Font.PLAIN)
-                | (italic ? java.awt.Font.ITALIC : java.awt.Font.PLAIN);
-        return new java.awt.Font(family, style, Math.round(size));
     }
 
     /**
@@ -222,6 +222,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
             java.awt.Font awtFont = awtFonts[0].deriveFont(font.getSizeInPoints());
             FontData loadedFont = getFontData(awtFont);
             fontData2awtFont.putIfAbsent(loadedFont, awtFont);
+            awtFont2FontData.putIfAbsent(awtFont, loadedFont);
             return font;
         } catch (FontFormatException e) {
             throw new IOException(e);

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +50,9 @@ public class FxFontUtil implements FontUtil<Font> {
     private static class SingletonHolder {
         private static final FxFontUtil INSTANCE = new FxFontUtil();
     }
+
+    private final HashMap<FontData, Font> fontData2fxFont = new HashMap<>();
+    private final HashMap<Font, FontData> fxFont2FontData = new HashMap<>();
 
     private final com.dua3.utility.text.Font defaultFont;
 
@@ -80,23 +84,20 @@ public class FxFontUtil implements FontUtil<Font> {
             return fxf.fxFont();
         }
 
-        return Font.font(
-                font.getFamily(),
-                font.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                font.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                font.getSizeInPoints()
-        );
+        Font fxFont = fontData2fxFont.computeIfAbsent(font.getFontData(), fd -> getFxFont(fd.family(), fd.size(), fd.bold(), fd.italic()));
+        fxFont2FontData.putIfAbsent(fxFont, font.getFontData());
+        return fxFont;
     }
 
     /**
      * Converts a JavaFX Font object to a com.dua3.utility.text.Font object.
      *
-     * @param font the JavaFX Font object to be converted
+     * @param fxFont the JavaFX Font object to be converted
      * @return the converted com.dua3.utility.text.Font object
      */
-    public com.dua3.utility.text.Font convert(Font font) {
-        String style = font.getStyle().toLowerCase(Locale.ROOT);
-        FontData fontData = getFontData(font);
+    public com.dua3.utility.text.Font convert(Font fxFont) {
+        FontData fontData = fxFont2FontData.computeIfAbsent(fxFont, this::getFontData);
+        fontData2fxFont.putIfAbsent(fontData, fxFont);
         return new com.dua3.utility.text.Font(fontData, Color.BLACK);
     }
 
