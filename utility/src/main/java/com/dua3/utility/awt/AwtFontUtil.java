@@ -269,7 +269,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
 
     private FontData getFontData(java.awt.Font awtFont) {
         FontDef fontDef = new FontDef();
-        fontDef.setFamily(awtFont.getFamily());
+        fontDef.setFamily(awtFont.getName());
         fontDef.setSize(awtFont.getSize2D());
         fontDef.setBold(awtFont.isBold());
         fontDef.setItalic(awtFont.isItalic());

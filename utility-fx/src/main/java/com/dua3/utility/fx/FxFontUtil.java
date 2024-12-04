@@ -116,7 +116,7 @@ public class FxFontUtil implements FontUtil<Font> {
         Bounds bounds = text.getBoundsInLocal();
         float ascent = (float) text.getBaselineOffset();
         float height = (float) bounds.getHeight();
-        float descent = ascent - height; // descent is negative!
+        float descent = height - ascent;
 
         text.setText(" ");
         bounds = text.getBoundsInLocal();

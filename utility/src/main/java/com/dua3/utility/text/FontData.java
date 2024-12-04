@@ -41,9 +41,18 @@ public record FontData(
         assert !family.isEmpty() : "family is the empty string";
         assert size >= 0 : "size is negative";
         assert ascent >= 0 : "ascent is negative";
-        assert descent <= 0 : "descent is positive";
+        assert descent >= 0 : "descent is negative";
         assert height >= ascent : "inconsistent height";
         assert spaceWidth > 0 : "space width must be positive";
+    }
+
+    /**
+     * Returns the negative value of the descent attribute for the font.
+     *
+     * @return the signed descent, which is the negative value of the descent.
+     */
+    public double descentSigned() {
+        return -descent;
     }
 
     /**
