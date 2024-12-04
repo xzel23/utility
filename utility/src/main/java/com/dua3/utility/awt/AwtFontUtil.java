@@ -20,12 +20,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for getting font properties through AWT. This class should normally not be used directly by user code
@@ -172,10 +173,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         private static final List<String> PROPORTIONAL_FONTS;
 
         static {
-            Map<String, Boolean> fonts = new HashMap<>();
-            Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
-                    .forEach(f -> fonts.put(f, isMonospaced(f)));
-            AVAILABLE_FONTS = Collections.unmodifiableMap(fonts);
+            AVAILABLE_FONTS = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()).collect(Collectors.toUnmodifiableMap(Function.identity(), AwtFontUtil::isMonospaced, (a, b) -> b));
             ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
             MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
             PROPORTIONAL_FONTS =  ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
@@ -212,7 +210,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     @Override
     public Font convert(java.awt.Font awtFont) {
         FontData fontData = awtFont2FontData.computeIfAbsent(awtFont, this::getFontData);
-        fontData2awtFont.computeIfAbsent(fontData, fd -> awtFont);
+        fontData2awtFont.putIfAbsent(fontData, awtFont);
         return new Font(fontData, Color.BLACK);
     }
 

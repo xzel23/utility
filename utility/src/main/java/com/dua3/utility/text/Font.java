@@ -12,7 +12,6 @@ import com.dua3.utility.lang.LangUtil;
 /**
  * Generic font class.
  */
-@SuppressWarnings("MagicCharacter")
 public class Font {
 
     private final FontData fontData;

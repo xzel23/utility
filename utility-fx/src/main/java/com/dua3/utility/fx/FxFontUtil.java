@@ -26,17 +26,17 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import java.awt.FontMetrics;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for working with fonts in JavaFX.
@@ -193,9 +193,7 @@ public class FxFontUtil implements FontUtil<Font> {
         private static final List<String> PROPORTIONAL_FONTS;
 
         static {
-            Map<String, Boolean> fonts = new HashMap<>();
-            Font.getFamilies().forEach(f -> fonts.put(f, isMonospaced(f)));
-            AVAILABLE_FONTS = Collections.unmodifiableMap(fonts);
+            AVAILABLE_FONTS = Font.getFamilies().stream().collect(Collectors.toUnmodifiableMap(Function.identity(), FxFontUtil::isMonospaced, (a, b) -> b));
             ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
             MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
             PROPORTIONAL_FONTS =  ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();

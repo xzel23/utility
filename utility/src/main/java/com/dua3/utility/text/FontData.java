@@ -21,7 +21,6 @@ import java.util.function.Function;
  * @param underline     if text should be displayed underlined
  * @param strikeThrough if text should be displayed strike-through
  */
-@SuppressWarnings("MagicCharacter")
 public record FontData(
         String family,
         float size,

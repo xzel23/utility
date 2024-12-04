@@ -42,8 +42,6 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.stage.FileChooser;
@@ -515,11 +513,9 @@ public final class FxUtil {
 
             @Override
             public void removeListener(ChangeListener<? super T> listener) {
-                List.copyOf(value.getChangeListeners()).forEach(changeListener -> {
-                    if (changeListener instanceof ChangeListenerAdapter<?> a && a.changeListener == listener) {
-                        value.removeChangeListener(changeListener);
-                    }
-                });
+                List.copyOf(value.getChangeListeners()).stream()
+                        .filter(changeListener -> changeListener instanceof ChangeListenerAdapter<?> a && a.changeListener == listener)
+                        .forEach(value::removeChangeListener);
             }
 
             @Override
@@ -534,11 +530,7 @@ public final class FxUtil {
 
             @Override
             public void removeListener(InvalidationListener listener) {
-                List.copyOf(value.getChangeListeners()).forEach(changeListener -> {
-                    if (changeListener instanceof InvalidationListenerAdapter<?> cla && cla.invalidationListener == listener) {
-                        value.removeChangeListener(changeListener);
-                    }
-                });
+                List.copyOf(value.getChangeListeners()).stream().filter(changeListener -> changeListener instanceof InvalidationListenerAdapter<?> cla && cla.invalidationListener == listener).forEach(value::removeChangeListener);
             }
         };
     }

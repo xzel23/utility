@@ -42,7 +42,6 @@ public final class StreamUtil {
      * @param <C> result stream generic item type
      * @return stream consisting of pairs od items created from items of either stream
      */
-    @SuppressWarnings("DataFlowIssue") // false positive about next() always returning non-null
     public static <A extends @Nullable Object, B extends @Nullable Object, C extends @Nullable Object> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<? super A, ? super B, ? extends C> op) {
         Iterator<A> i1 = a.iterator();
         Iterator<B> i2 = b.iterator();
