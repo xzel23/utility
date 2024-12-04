@@ -96,12 +96,12 @@ public class FxFontUtil implements FontUtil<Font> {
      * @return the converted com.dua3.utility.text.Font object
      */
     public com.dua3.utility.text.Font convert(Font fxFont) {
-        FontData fontData = fxFont2FontData.computeIfAbsent(fxFont, this::getFontData);
+        FontData fontData = fxFont2FontData.computeIfAbsent(fxFont, FxFontUtil::getFontData);
         fontData2fxFont.putIfAbsent(fontData, fxFont);
         return new com.dua3.utility.text.Font(fontData, Color.BLACK);
     }
 
-    private FontData getFontData(Font fxFont) {
+    public static FontData getFontData(Font fxFont) {
         String style = fxFont.getStyle().toLowerCase(Locale.ROOT);
 
         FontDef fontDef = new FontDef();

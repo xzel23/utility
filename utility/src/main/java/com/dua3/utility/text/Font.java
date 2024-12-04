@@ -218,11 +218,11 @@ public class Font {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (!(obj instanceof Font font)) {
+        if (obj==null || obj.getClass() != getClass()) {
             return false;
         }
-
-        return fontData.equals(font.fontData);
+        Font other = (Font) obj;
+        return fontData.equals(other.fontData) && color.equals(other.color);
     }
 
     /**
