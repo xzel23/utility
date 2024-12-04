@@ -172,9 +172,8 @@ the parameter.
 
 ### 14.2.0
 
-- BREAKING: font handling has been refactored for both AWT and JavaFX, the old Font constructors have been
-  deprecated and will be removed in a future release. To derive a font from a base font, use FontUtil as
-  Font.deriveFont() has been removed.
+- BREAKING: font handling has been refactored for both AWT and JavaFX. Use FontUtil to get Font instances.
+  To derive a font from a base font, use FontUtil as well.
 
   The Font class has been enhanced with methods to retrieve metric data like ascent, descent, and space width
 
