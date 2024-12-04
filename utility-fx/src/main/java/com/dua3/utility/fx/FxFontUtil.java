@@ -14,8 +14,11 @@
 
 package com.dua3.utility.fx;
 
+import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.text.FontData;
+import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -29,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -36,9 +40,14 @@ import java.util.function.Predicate;
  */
 public class FxFontUtil implements FontUtil<Font> {
 
+    private static final String DEFAULT_FAMILY = "SansSerif";
+    private static final float DEFAULT_SIZE = 10.0f;
+
     private static class SingletonHolder {
         private static final FxFontUtil INSTANCE = new FxFontUtil();
     }
+
+    private final com.dua3.utility.text.Font defaultFont;
 
     /**
      * Returns an instance of FxUtil.
@@ -53,6 +62,7 @@ public class FxFontUtil implements FontUtil<Font> {
      * Public constructor. Needed fo SPI.
      */
     private FxFontUtil() {
+        defaultFont = convert(new Font(DEFAULT_FAMILY, DEFAULT_SIZE));
     }
 
     /**
@@ -63,7 +73,16 @@ public class FxFontUtil implements FontUtil<Font> {
      */
     @Override
     public Font convert(com.dua3.utility.text.Font font) {
-        return FxUtil.convert(font);
+        if (font instanceof FxFontEmbedded fxf) {
+            return fxf.fxFont();
+        }
+
+        return Font.font(
+                font.getFamily(),
+                font.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                font.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                font.getSizeInPoints()
+        );
     }
 
     /**
@@ -162,6 +181,53 @@ public class FxFontUtil implements FontUtil<Font> {
         Font fxFont = Font.loadFont(in, font.getSizeInPoints());
         LangUtil.check(fxFont != null, () -> new IOException("no font loaded"));
         return new com.dua3.utility.fx.FxFontEmbedded(fxFont, font.getFamily(), font.getSizeInPoints(), font.getColor(), font.isBold(), font.isItalic(), font.isUnderline(), font.isStrikeThrough());
+    }
+
+    @Override
+    public com.dua3.utility.text.Font getDefaultFont() {
+        return defaultFont;
+    }
+
+    @Override
+    public com.dua3.utility.text.Font deriveFont(com.dua3.utility.text.Font font, FontDef fontDef) {
+        com.dua3.utility.text.Font baseFont = convert(getFxFont(
+                Objects.requireNonNullElse(fontDef.getFamily(), font.getFamily()),
+                Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints()),
+                Objects.requireNonNullElse(fontDef.getBold(), font.isBold()),
+                Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic())
+        ));
+
+        FontData fontData = new FontData(
+                baseFont.getFamily(),
+                baseFont.getSizeInPoints(),
+                baseFont.isBold(),
+                baseFont.isItalic(),
+                Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
+                Objects.requireNonNullElse(fontDef.getStrikeThrough(), font.isStrikeThrough()),
+                fontDef,
+                fontDef.fontspec(),
+                fontDef.getCssStyle(),
+                baseFont.getAscent(),
+                baseFont.getDescent(),
+                baseFont.getHeight(),
+                baseFont.getSpaceWidth()
+        );
+
+        Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
+
+        if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
+            return baseFont; // avoid creating unnecessary instance
+        } else {
+            return new com.dua3.utility.text.Font(fontData, color);
+        }
+    }
+
+    private static Font getFxFont(String family, float size, boolean bold, boolean italic) {
+        return Font.font(
+                family,
+                bold ? FontWeight.BOLD : FontWeight.NORMAL,
+                italic ? FontPosture.ITALIC : FontPosture.REGULAR,
+                size);
     }
 
 }

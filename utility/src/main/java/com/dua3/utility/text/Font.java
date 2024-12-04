@@ -9,11 +9,6 @@ import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 
-import java.util.Locale;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 /**
  * Generic font class.
  */
@@ -22,24 +17,20 @@ public class Font {
 
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
 
+    private final FontData fontData;
     private final Color color;
-    private final float size;
-    private final String family;
-    private final boolean bold;
-    private final boolean italic;
-    private final boolean underline;
-    private final boolean strikeThrough;
 
-    // lazily populated fields
-    @Nullable  private String fontspec;
-    private int hash;
-    private @Nullable FontDef fd;
-    private double spaceWidth = -1;
-    private double descent = Double.NaN;
+    public Font(FontData fontData, Color color) {
+        this.fontData = fontData;
+        this.color = color;
+    }
 
     /**
      * Construct a new {@code Font}.
+     *
+     * @deprecated use {@link FontUtil#getDefaultFont}
      */
+    @Deprecated
     public Font() {
         this("Helvetica", 10.0f, Color.BLACK, false, false, false, false);
     }
@@ -48,7 +39,10 @@ public class Font {
      * Construct a new {@code Font} from a fontspec string.
      *
      * @param fontspec the fontspec
+     *
+     * @deprecated use {@link FontUtil#getFont(String)}
      */
+    @Deprecated
     public Font(String fontspec) {
         this(new Font(), FontDef.parseFontspec(fontspec));
     }
@@ -63,16 +57,24 @@ public class Font {
      * @param italic        if text should be displayed in italics
      * @param underline     if text should be displayed underlined
      * @param strikeThrough if text should be displayed strike-through
+     *
+     * @deprecated use {@link FontUtil#getFont(FontDef)}
      */
+    @Deprecated
     public Font(String family, float size, Color color, boolean bold, boolean italic, boolean underline,
                 boolean strikeThrough) {
-        this.size = size;
-        this.bold = bold;
-        this.italic = italic;
-        this.underline = underline;
-        this.strikeThrough = strikeThrough;
-        this.family = family;
-        this.color = color;
+        FontDef fd = new FontDef();
+        fd.setFamily(family);
+        fd.setSize(size);
+        fd.setBold(bold);
+        fd.setItalic(italic);
+        fd.setUnderline(underline);
+        fd.setStrikeThrough(strikeThrough);
+        fd.setColor(color);
+
+        Font font = FONT_UTIL.getFont(fd);
+        this.fontData = font.fontData;
+        this.color = font.color;
     }
 
     /**
@@ -80,7 +82,8 @@ public class Font {
      * @param baseFont the base font
      * @param fd the font definition that contains the attributes to change when creating the new font.
      */
-    protected Font(Font baseFont, FontDef fd) {
+    @Deprecated
+    private Font(Font baseFont, FontDef fd) {
         this(
                 LangUtil.orElse(fd.getFamily(), baseFont.getFamily()),
                 LangUtil.orElse(fd.getSize(), baseFont.getSizeInPoints()),
@@ -101,52 +104,20 @@ public class Font {
      * @return true, if a and b have the same attributes
      */
     public static boolean similar(Font a, Font b) {
-        return b.size == a.size
-                && b.bold == a.bold
-                && b.italic == a.italic
-                && b.underline == a.underline
-                && b.strikeThrough == a.strikeThrough
-                && b.family.equals(a.family)
-                && b.color.equals(a.color);
-    }
-
-    /**
-     * Compare values and store changes.
-     *
-     * @param o1     first object
-     * @param o2     second object
-     * @param getter attribute getter
-     * @param setter attribute setter
-     * @param <T>    object type
-     * @param <U>    attribute type
-     */
-    private static <T, U> void deltaHelper(@Nullable T o1, @Nullable T o2, Function<T, U> getter, Consumer<? super U> setter) {
-        U v1 = o1 == null ? null : getter.apply(o1);
-        U v2 = o2 == null ? null : getter.apply(o2);
-        if (!Objects.equals(v1, v2) && v2 != null) {
-            setter.accept(v2);
-        }
+        return FontData.similar(a.fontData, b.fontData) && a.color.equals(b.color);
     }
 
     /**
      * Determine differences between two fonts.
      *
-     * @param f1 the first font
-     * @param f2 the second font
+     * @param a the first font
+     * @param b the second font
      * @return a {@link FontDef} instance that defines the changed values
      */
-    public static FontDef delta(@Nullable Font f1, @Nullable Font f2) {
-        FontDef fd = new FontDef();
-
-        deltaHelper(f1, f2, Font::getFamily, fd::setFamily);
-        deltaHelper(f1, f2, Font::getSizeInPoints, fd::setSize);
-        deltaHelper(f1, f2, Font::isBold, fd::setBold);
-        deltaHelper(f1, f2, Font::isItalic, fd::setItalic);
-        deltaHelper(f1, f2, Font::isUnderline, fd::setUnderline);
-        deltaHelper(f1, f2, Font::isStrikeThrough, fd::setStrikeThrough);
-        deltaHelper(f1, f2, Font::getColor, fd::setColor);
-
-        return fd;
+    public static FontDef delta(@Nullable Font a, @Nullable Font b) {
+        FontDef delta = FontData.delta(a == null ? null : a.fontData, b == null ? null : b.fontData);
+        FontData.deltaHelper(a, b, Font::getColor, delta::setColor);
+        return delta;
     }
 
     /**
@@ -159,9 +130,11 @@ public class Font {
      *
      * @param fd the {@link FontDef} describing the attributes to set
      * @return new Font instance
+     * @deprecated use {@link FontUtil#deriveFont(Font, FontDef)}
      */
+    @Deprecated
     public Font deriveFont(FontDef fd) {
-        return new Font(this, fd);
+        return FONT_UTIL.deriveFont(this, fd);
     }
 
     /**
@@ -179,7 +152,7 @@ public class Font {
      * @return the font family as {@code String}.
      */
     public String getFamily() {
-        return family;
+        return fontData.family();
     }
 
     /**
@@ -188,7 +161,7 @@ public class Font {
      * @return the font size in points.
      */
     public float getSizeInPoints() {
-        return size;
+        return fontData.size();
     }
 
     /**
@@ -197,7 +170,7 @@ public class Font {
      * @return true if font is bold.
      */
     public boolean isBold() {
-        return bold;
+        return fontData.bold();
     }
 
     /**
@@ -206,7 +179,7 @@ public class Font {
      * @return true if font is italic.
      */
     public boolean isItalic() {
-        return italic;
+        return fontData.italic();
     }
 
     /**
@@ -215,7 +188,7 @@ public class Font {
      * @return true if font is strike-through.
      */
     public boolean isStrikeThrough() {
-        return strikeThrough;
+        return fontData.strikeThrough();
     }
 
     /**
@@ -224,7 +197,7 @@ public class Font {
      * @return true if font is underline.
      */
     public boolean isUnderline() {
-        return underline;
+        return fontData.underline();
     }
 
     /**
@@ -233,32 +206,7 @@ public class Font {
      * @return font description
      */
     public String fontspec() {
-        if (fontspec == null) {
-            StringBuilder sb = new StringBuilder(32);
-
-            sb.append(getFamily());
-
-            if (isBold()) {
-                sb.append('-').append("bold");
-            }
-            if (isItalic()) {
-                sb.append('-').append("italic");
-            }
-            if (isUnderline()) {
-                sb.append('-').append("underline");
-            }
-            if (isStrikeThrough()) {
-                sb.append('-').append("strikethrough");
-            }
-            sb.append('-');
-            sb.append(getSizeInPoints());
-            sb.append('-');
-            sb.append(getColor().toCss());
-
-            fontspec = sb.toString();
-        }
-
-        return fontspec;
+        return fontData.fontspec();
     }
 
     @Override
@@ -266,23 +214,18 @@ public class Font {
         return fontspec();
     }
 
-    @SuppressWarnings({"boxing", "NonFinalFieldReferencedInHashCode"})
     @Override
     public int hashCode() {
-        int h = hash;
-        if (h == 0) {
-            hash = h = Objects.hash(family, size, bold, italic, underline, strikeThrough, color);
-        }
-        return h;
+        return fontData.hashCode();
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null || obj.getClass() != getClass() || obj.hashCode() != hashCode()) {
+        if (!(obj instanceof Font font)) {
             return false;
         }
 
-        return similar(this, (Font) obj);
+        return fontData.equals(font.fontData);
     }
 
     /**
@@ -291,19 +234,7 @@ public class Font {
      * @return fontstyle definition
      */
     public String getCssStyle() {
-        return String.format(Locale.ROOT, "color: %s; font-size: %spt; font-family: %s; font-weight: %s; font-style: %s;%s",
-                color,
-                size, /* use "%s" for size to avoid unnecessary zeros after decimal point */
-                family,
-                bold ? "bold" : "normal",
-                italic ? "italic" : "normal",
-                strikeThrough || underline
-                        ? "text-decoration:" +
-                        (underline ? " underline" : "") +
-                        (strikeThrough ? " line-through" : "") +
-                        ";"
-                        : ""
-        );
+        return fontData.cssStyle();
     }
 
     /**
@@ -312,29 +243,16 @@ public class Font {
      * @return FontDef instance describing this font
      */
     public FontDef toFontDef() {
-        if (fd == null) {
-            fd = new FontDef();
-            fd.setFamily(getFamily());
-            fd.setSize(getSizeInPoints());
-            fd.setBold(isBold());
-            fd.setItalic(isItalic());
-            fd.setUnderline(isUnderline());
-            fd.setStrikeThrough(isStrikeThrough());
-            fd.setColor(getColor());
-        }
-        return fd;
+        return fontData.fontDef();
     }
 
     /**
-     * Get the width of a space character in this font.
+     * Get the ascent of this font.
      *
-     * @return the width of a single space character in this font
+     * @return the ascent of this font
      */
-    public double getSpaceWidth() {
-        if (spaceWidth < 0) {
-            spaceWidth = FONT_UTIL.getTextWidth(" ", this);
-        }
-        return spaceWidth;
+    public double getAscent() {
+        return fontData.ascent();
     }
 
     /**
@@ -343,10 +261,25 @@ public class Font {
      * @return the descent of this font
      */
     public double getDescent() {
-        if (Double.isNaN(descent)) {
-            descent = FONT_UTIL.getTextDimension("g", this).max().y();
-        }
-        return descent;
+        return fontData.descent();
+    }
+
+    /**
+     * Get the height of this font.
+     *
+     * @return the height of this font
+     */
+    public double getHeight() {
+        return fontData.height();
+    }
+
+    /**
+     * Get the space width of this font.
+     *
+     * @return the space width of this font
+     */
+    public double getSpaceWidth() {
+        return fontData.spaceWidth();
     }
 
     /**
@@ -356,7 +289,7 @@ public class Font {
      * @return a copy of this font with the requested size, or this font, if the size matches
      */
     public Font withSize(float size) {
-        return size == this.size ? this : deriveFont(FontDef.size(size));
+        return size == getSizeInPoints() ? this : deriveFont(FontDef.size(size));
     }
 
     /**
@@ -366,7 +299,7 @@ public class Font {
      * @return a new Font instance that is scaled by the given factor, or this font if the scaling factor is 1
      */
     public Font scaled(float s) {
-        return s == 1 ? this : deriveFont(FontDef.size(s * size));
+        return s == 1 ? this : deriveFont(FontDef.size(s * getSizeInPoints()));
     }
 
     /**
@@ -376,7 +309,7 @@ public class Font {
      * @return a copy of this font with the bold attribute set to the requested value, or this font if values match
      */
     public Font withBold(boolean flag) {
-        return flag == bold ? this : deriveFont(FontDef.bold(flag));
+        return flag == isBold() ? this : deriveFont(FontDef.bold(flag));
     }
 
     /**
@@ -386,7 +319,7 @@ public class Font {
      * @return a copy of this font with the italic attribute set to the requested value, or this font if values match
      */
     public Font withItalic(boolean flag) {
-        return flag == italic ? this : deriveFont(FontDef.italic(flag));
+        return flag == isItalic() ? this : deriveFont(FontDef.italic(flag));
     }
 
     /**
@@ -396,7 +329,7 @@ public class Font {
      * @return a copy of this font with the underline attribute set to the requested value, or this font if values match
      */
     public Font withUnderline(boolean flag) {
-        return flag == underline ? this : deriveFont(FontDef.underline(flag));
+        return flag == isUnderline() ? this : deriveFont(FontDef.underline(flag));
     }
 
     /**
@@ -406,7 +339,7 @@ public class Font {
      * @return a copy of this font with the strike-through attribute set to the requested value, or this font if values match
      */
     public Font withStrikeThrough(boolean flag) {
-        return flag == strikeThrough ? this : deriveFont(FontDef.strikeThrough(flag));
+        return flag == isStrikeThrough() ? this : deriveFont(FontDef.strikeThrough(flag));
     }
 
     /**
@@ -416,7 +349,7 @@ public class Font {
      * @return a copy of this font with the family set to the requested value, or this font if values match
      */
     public Font withFamily(String family) {
-        return family.equals(this.family) ? this : deriveFont(FontDef.family(family));
+        return family.equals(this.getFamily()) ? this : deriveFont(FontDef.family(family));
     }
 
     /**
@@ -426,7 +359,10 @@ public class Font {
      * @return a copy of this font with the color set to the requested value, or this font if values match
      */
     public Font withColor(Color color) {
-        return color.equals(this.color) ? this : deriveFont(FontDef.color(color));
+        return color.equals(this.getColor()) ? this : deriveFont(FontDef.color(color));
     }
 
+    public FontData getFontData() {
+        return fontData;
+    }
 }

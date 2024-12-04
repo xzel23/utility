@@ -4,24 +4,27 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontData;
+import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.FontFormatException;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.WeakHashMap;
 import java.util.function.Predicate;
 
 /**
@@ -33,6 +36,12 @@ import java.util.function.Predicate;
 @SuppressWarnings("NumericCastThatLosesPrecision")
 public class AwtFontUtil implements FontUtil<java.awt.Font> {
     private static final Logger LOG = LogManager.getLogger(AwtFontUtil.class);
+
+    private static final String DEFAULT_FAMILY = "Arial";
+    private static final float DEFAULT_SIZE = 10.0f;
+
+    private final Font defaultFont;
+    private final Graphics2D graphics;
 
     static {
         boolean isHeadless = GraphicsEnvironment.isHeadless();
@@ -49,7 +58,10 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         private static final AwtFontUtil INSTANCE = new AwtFontUtil();
     }
 
-    private AwtFontUtil() {} // utility class constructor
+    private AwtFontUtil() {
+        graphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics();
+        defaultFont = convert(getAwtFont(DEFAULT_FAMILY, DEFAULT_SIZE, false, false));
+    } // utility class constructor
 
     /**
      * Retrieves an instance of the AwtFontUtil class.
@@ -60,7 +72,8 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         return SingletonHolder.INSTANCE;
     }
 
-    private final WeakHashMap<Font, java.awt.Font> fontMap = new WeakHashMap<>();
+    private final HashMap<FontData, java.awt.Font> fontData2awtFont = new HashMap<>();
+    private final HashMap<java.awt.Font, FontData> awtFont2FontData = new HashMap<>();
 
     private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
         int style = (bold ? java.awt.Font.BOLD : java.awt.Font.PLAIN)
@@ -142,13 +155,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     public List<Font> loadFonts(InputStream in) throws IOException {
         try {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
-            List<Font> fonts = new ArrayList<>(awtFonts.length);
-            for (var awtFont : awtFonts) {
-                Font font = new Font(awtFont.getFamily(), awtFont.getSize(), Color.BLACK, awtFont.isBold(), awtFont.isItalic(), false, false);
-                fontMap.putIfAbsent(font, awtFont);
-                fonts.add(font);
-            }
-            return Collections.unmodifiableList(fonts);
+            return Arrays.stream(awtFonts).map(this::convert).toList();
         } catch (FontFormatException e) {
             throw new IOException(e);
         }
@@ -197,14 +204,16 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
 
     @Override
     public java.awt.Font convert(Font font) {
-        return fontMap.computeIfAbsent(font,
-                fnt -> getAwtFont(
-                        font.getFamily(),
-                        font.getSizeInPoints(),
-                        font.isBold(),
-                        font.isItalic()
-                )
-        );
+        java.awt.Font awtFont = fontData2awtFont.computeIfAbsent(font.getFontData(), fd -> getAwtFont(fd.family(), fd.size(), fd.bold(), fd.italic()));
+        awtFont2FontData.putIfAbsent(awtFont, font.getFontData());
+        return awtFont;
+    }
+
+    @Override
+    public Font convert(java.awt.Font awtFont) {
+        FontData fontData = awtFont2FontData.computeIfAbsent(awtFont, this::getFontData);
+        fontData2awtFont.computeIfAbsent(fontData, fd -> awtFont);
+        return new Font(fontData, Color.BLACK);
     }
 
     @Override
@@ -213,12 +222,79 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
             java.awt.Font[] awtFonts = java.awt.Font.createFonts(in);
             LangUtil.check(awtFonts.length > 0, () -> new IOException("no font loaded"));
             java.awt.Font awtFont = awtFonts[0].deriveFont(font.getSizeInPoints());
-            Font loadedFont = new Font(font.getFamily(), font.getSizeInPoints(), font.getColor(), font.isBold(), font.isItalic(), font.isUnderline(), font.isStrikeThrough());
-            fontMap.putIfAbsent(loadedFont, awtFont);
+            FontData loadedFont = getFontData(awtFont);
+            fontData2awtFont.putIfAbsent(loadedFont, awtFont);
             return font;
         } catch (FontFormatException e) {
             throw new IOException(e);
         }
+    }
+
+    @Override
+    public Font deriveFont(Font font, FontDef fontDef) {
+        Font baseFont = convert(getAwtFont(
+                Objects.requireNonNullElse(fontDef.getFamily(), font.getFamily()),
+                Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints()),
+                Objects.requireNonNullElse(fontDef.getBold(), font.isBold()),
+                Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic())
+        ));
+
+        FontData fontData = new FontData(
+                baseFont.getFamily(),
+                baseFont.getSizeInPoints(),
+                baseFont.isBold(),
+                baseFont.isItalic(),
+                Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
+                Objects.requireNonNullElse(fontDef.getStrikeThrough(), font.isStrikeThrough()),
+                fontDef,
+                fontDef.fontspec(),
+                fontDef.getCssStyle(),
+                baseFont.getAscent(),
+                baseFont.getDescent(),
+                baseFont.getHeight(),
+                baseFont.getSpaceWidth()
+        );
+
+        Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
+
+        if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
+            return baseFont; // avoid creating unnecessary instance
+        } else {
+            return new Font(fontData, color);
+        }
+    }
+
+    @Override
+    public Font getDefaultFont() {
+        return defaultFont;
+    }
+
+    private FontData getFontData(java.awt.Font awtFont) {
+        FontDef fontDef = new FontDef();
+        fontDef.setFamily(awtFont.getFamily());
+        fontDef.setSize(awtFont.getSize2D());
+        fontDef.setBold(awtFont.isBold());
+        fontDef.setItalic(awtFont.isItalic());
+        fontDef.setUnderline(false);
+        fontDef.setStrikeThrough(false);
+
+        FontMetrics fontMetrics = graphics.getFontMetrics(awtFont);
+
+        return new FontData(
+                Objects.requireNonNullElse(fontDef.getFamily(), DEFAULT_FAMILY),
+                Objects.requireNonNullElse(fontDef.getSize(), DEFAULT_SIZE),
+                Objects.requireNonNullElse(fontDef.getBold(), Boolean.FALSE),
+                Objects.requireNonNullElse(fontDef.getItalic(), Boolean.FALSE),
+                Objects.requireNonNullElse(fontDef.getUnderline(), Boolean.FALSE),
+                Objects.requireNonNullElse(fontDef.getStrikeThrough(), Boolean.FALSE),
+                fontDef,
+                fontDef.fontspec(),
+                fontDef.getCssStyle(),
+                fontMetrics.getAscent(),
+                fontMetrics.getDescent(),
+                fontMetrics.getHeight(),
+                fontMetrics.stringWidth(" ")
+        );
     }
 
 }

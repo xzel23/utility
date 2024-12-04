@@ -43,6 +43,14 @@ public interface FontUtil<F> {
     F convert(Font font);
 
     /**
+     * Convert font.
+     *
+     * @param font the font implementation
+     * @return the font
+     */
+    Font convert(F font);
+
+    /**
      * Get text bounds.
      *
      * @param s the text
@@ -60,8 +68,6 @@ public interface FontUtil<F> {
      */
     default Rectangle2f getRichTextDimension(CharSequence s, Font f) {
         if (s instanceof ToRichText t) {
-            float w = 0;
-            float h = 0;
             return t.toRichText().lines()
                     .map(line ->
                             // determine bounding rectangle for current line
@@ -166,4 +172,39 @@ public interface FontUtil<F> {
         ALL
     }
 
+    /**
+     * Retrieves the default font used by the system or application.
+     *
+     * @return the default Font instance
+     */
+    Font getDefaultFont();
+
+    /**
+     * Retrieves a Font object by parsing a font specification string.
+     *
+     * @param fontspec the font specification string that defines the font's properties.
+     * @return a Font object derived from the default font with the specified characteristics.
+     */
+    default Font getFont(String fontspec) {
+        return getFont(FontDef.parseFontspec(fontspec));
+    }
+
+    /**
+     * Retrieves a Font object based on the given FontDef specification.
+     *
+     * @param fontDef the font definition that specifies the font's properties
+     * @return a Font object that matches the specified font definition
+     */
+    default Font getFont(FontDef fontDef) {
+        return deriveFont(getDefaultFont(), fontDef);
+    }
+
+    /**
+     * Derives a new Font object based on a given font and font definition specifications.
+     *
+     * @param font the original Font object to be used as a base for deriving the new font
+     * @param fontDef the font definition detailing the specific attributes to modify or apply
+     * @return a new Font object derived from the original font with modifications specified by the font definition
+     */
+    Font deriveFont(Font font, FontDef fontDef);
 }
