@@ -15,8 +15,6 @@ import com.dua3.utility.lang.LangUtil;
 @SuppressWarnings("MagicCharacter")
 public class Font {
 
-    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
-
     private final FontData fontData;
     private final Color color;
 
@@ -72,7 +70,7 @@ public class Font {
         fd.setStrikeThrough(strikeThrough);
         fd.setColor(color);
 
-        Font font = FONT_UTIL.getFont(fd);
+        Font font = FontUtil.getInstance().getFont(fd);
         this.fontData = font.fontData;
         this.color = font.color;
     }
@@ -134,7 +132,7 @@ public class Font {
      */
     @Deprecated
     public Font deriveFont(FontDef fd) {
-        return FONT_UTIL.deriveFont(this, fd);
+        return FontUtil.getInstance().deriveFont(this, fd);
     }
 
     /**
