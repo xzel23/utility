@@ -142,12 +142,12 @@ class FontDefTest {
 
     private static Stream<Font> fontArguments() {
         return Stream.of(
-                new Font("Arial", 12f, Color.BLACK, false, false, false, false),
-                new Font("Times", 17f, Color.DARKBLUE, true, false, false, false),
-                new Font("Arial", 12f, Color.BLACK, false, true, false, false),
-                new Font("Arial", 12f, Color.BLACK, false, false, true, false),
-                new Font("Arial", 12f, Color.BLACK, false, false, false, true),
-                new Font("Helvetica", 10f, Color.WHITE, true, true, true, true)
+                FontUtil.getInstance().getFont("Arial-12"),
+                FontUtil.getInstance().getFont("Times-17-bold").withColor(Color.DARKBLUE),
+                FontUtil.getInstance().getFont("Arial-12-underline"),
+                FontUtil.getInstance().getFont("Arial-12-strikethrough"),
+                FontUtil.getInstance().getFont("Arial-12-italic"),
+                FontUtil.getInstance().getFont("Helvetica-10-bold-underline-strikethrough-italic").withColor(Color.WHITE)
         );
     }
 }

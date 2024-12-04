@@ -101,16 +101,16 @@ public class FxFontUtil implements FontUtil<Font> {
         return new com.dua3.utility.text.Font(fontData, Color.BLACK);
     }
 
+    /**
+     * Extracts font data from a JavaFX Font object.
+     *
+     * @param fxFont the JavaFX Font object from which the font data is extracted
+     * @return a FontData object containing detailed information about the font, including its family, size,
+     *         style attributes such as bold, italic, underline, and strike-through, and additional
+     *         metrics like ascent, descent, height, and space width
+     */
     public static FontData getFontData(Font fxFont) {
-        String style = fxFont.getStyle().toLowerCase(Locale.ROOT);
-
-        FontDef fontDef = new FontDef();
-        fontDef.setFamily(fxFont.getFamily());
-        fontDef.setSize((float) fxFont.getSize());
-        fontDef.setBold(style.contains("bold"));
-        fontDef.setItalic(style.contains("italic") || style.contains("oblique"));
-        fontDef.setUnderline(style.contains("line-under"));
-        fontDef.setStrikeThrough(style.contains("line-through"));
+        FontDef fontDef = getFontDef(fxFont);
 
         Text text = new Text("Xg|█");
         text.setFont(fxFont);
@@ -138,6 +138,25 @@ public class FxFontUtil implements FontUtil<Font> {
                 height,
                 spaceWidth
         );
+    }
+
+    /**
+     * Extracts font characteristics from a JavaFX Font object and creates a corresponding FontDef object.
+     *
+     * @param fxFont the JavaFX Font object to be analyzed
+     * @return a FontDef object containing the extracted font properties such as family, size, bold,
+     *         italic, underline, and strikethrough
+     */
+    public static FontDef getFontDef(Font fxFont) {
+        String style = fxFont.getStyle().toLowerCase(Locale.ROOT);
+        FontDef fontDef = new FontDef();
+        fontDef.setFamily(fxFont.getFamily());
+        fontDef.setSize((float) fxFont.getSize());
+        fontDef.setBold(style.contains("bold"));
+        fontDef.setItalic(style.contains("italic") || style.contains("oblique"));
+        fontDef.setUnderline(style.contains("line-under"));
+        fontDef.setStrikeThrough(style.contains("line-through"));
+        return fontDef;
     }
 
     @Override

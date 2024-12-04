@@ -238,13 +238,32 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
                 Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic())
         ));
 
+        try {
+            fontDef = fontDef.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
+
+        fontDef.setFamily(baseFont.getFamily());
+        fontDef.setSize(baseFont.getSizeInPoints());
+        fontDef.setBold(baseFont.isBold());
+        fontDef.setItalic(baseFont.isItalic());
+
+        boolean underline = Objects.requireNonNullElse(fontDef.getUnderline(), baseFont.isUnderline());
+        boolean strikeThrough = Objects.requireNonNullElse(fontDef.getStrikeThrough(), baseFont.isStrikeThrough());
+        Color color = Objects.requireNonNullElse(fontDef.getColor(), baseFont.getColor());
+
+        fontDef.setUnderline(underline);
+        fontDef.setStrikeThrough(strikeThrough);
+        fontDef.setColor(color);
+
         FontData fontData = new FontData(
                 baseFont.getFamily(),
                 baseFont.getSizeInPoints(),
                 baseFont.isBold(),
                 baseFont.isItalic(),
-                Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
-                Objects.requireNonNullElse(fontDef.getStrikeThrough(), font.isStrikeThrough()),
+                underline,
+                strikeThrough,
                 fontDef,
                 fontDef.fontspec(),
                 fontDef.getCssStyle(),
@@ -253,8 +272,6 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
                 baseFont.getHeight(),
                 baseFont.getSpaceWidth()
         );
-
-        Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
 
         if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
             return baseFont; // avoid creating unnecessary instance

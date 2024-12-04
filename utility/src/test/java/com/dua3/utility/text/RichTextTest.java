@@ -155,9 +155,9 @@ public class RichTextTest {
         RichText serif = text.wrap(Style.SERIF);
         RichText sans = text.wrap(Style.SANS_SERIF);
         RichText texts = RichText.valueOf("texts");
-        RichText arial = text.wrap(Style.create("arial", Map.entry(Style.FONT, new Font("Arial-12"))));
-        RichText arialSubset = text.wrap(Style.create("AAAAAA+arial", Map.entry(Style.FONT, new Font("AAAAAA+Arial-12"))));
-        RichText helvetica = text.wrap(Style.create("arial", Map.entry(Style.FONT, new Font("Helvetica-12"))));
+        RichText arial = text.wrap(Style.create("arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("Arial-12"))));
+        RichText arialSubset = text.wrap(Style.create("AAAAAA+arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("AAAAAA+Arial-12"))));
+        RichText helvetica = text.wrap(Style.create("arial", Map.entry(Style.FONT, FontUtil.getInstance().getFont("Helvetica-12"))));
 
         BiPredicate<RichText, RichText> ignoreColor = RichText.equalizer(ComparisonSettings.builder().setIgnoreTextColor(true).build());
         assertTrue(ignoreColor.test(text, text.wrap(Style.RED)));

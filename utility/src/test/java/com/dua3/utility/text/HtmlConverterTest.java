@@ -76,8 +76,8 @@ public class HtmlConverterTest {
 
     @Test
     public void testFont() {
-        Font arial = new Font("arial-16-bold");
-        Font times = new Font("courier-12");
+        Font arial = FontUtil.getInstance().getFont("arial-16-bold");
+        Font times = FontUtil.getInstance().getFont("courier-12");
 
         Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
         Style style2 = Style.create("style2", Map.entry(Style.FONT, times));
@@ -99,8 +99,8 @@ public class HtmlConverterTest {
 
     @Test
     public void testFontCss() {
-        Font arial = new Font("arial-16-bold");
-        Font times = new Font("courier-12");
+        Font arial = FontUtil.getInstance().getFont("arial-16-bold");
+        Font times = FontUtil.getInstance().getFont("courier-12");
 
         Style style1 = Style.create("style1", Map.entry(Style.FONT, arial));
         Style style2 = Style.create("style2", Map.entry(Style.FONT, times));

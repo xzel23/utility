@@ -422,7 +422,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * @return if set, the font of this style, otherwise the resulting font of applying this style's {@link FontDef} to the supplied baseFont
      */
     public Font getFont(Font baseFont) {
-        return getFont().orElseGet(() -> baseFont.deriveFont(getFontDef()));
+        return getFont().orElseGet(() -> FontUtil.getInstance().deriveFont(baseFont, getFontDef()));
     }
 
     @Override

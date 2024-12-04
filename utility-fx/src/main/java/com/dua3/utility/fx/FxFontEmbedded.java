@@ -16,11 +16,11 @@ public final class FxFontEmbedded extends Font {
     private final javafx.scene.text.Font fxFont;
 
     FxFontEmbedded(javafx.scene.text.Font fxFont, String family, float size, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
-        super(prepareEmbeddedFontData(fxFont, family, size, color, bold, italic, underline, strikeThrough), color);
+        super(prepareEmbeddedFontData(fxFont, family, color, bold, italic, underline, strikeThrough), color);
         this.fxFont = fxFont;
     }
 
-    private static FontData prepareEmbeddedFontData(javafx.scene.text.Font fxFont, String family, float size, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
+    private static FontData prepareEmbeddedFontData(javafx.scene.text.Font fxFont, String family, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
         FontData fxFontData = FxFontUtil.getFontData(fxFont);
 
         FontDef fontDef = new FontDef();
@@ -56,10 +56,6 @@ public final class FxFontEmbedded extends Font {
      */
     public javafx.scene.text.Font fxFont() {
         return fxFont;
-    }
-
-    private static <T> boolean isNullOrEquals(@Nullable T a, @Nullable T b) {
-        return a == null || b == null || a.equals(b);
     }
 
     @Override

@@ -75,19 +75,6 @@ public final class FxUtil {
     private FxUtil() {}
 
     /**
-     * Convert JavaFX {@link Font} to {@link FontDef}.
-     *
-     * @param font the font
-     * @return the FontDef
-     */
-    public static FontDef toFontDef(Font font) {
-        FontDef fd = new FontDef();
-        fd.setFamily(font.getFamily());
-        fd.setSize((float) font.getSize());
-        return fd;
-    }
-
-    /**
      * Convert {@link com.dua3.utility.data.Color} to {@link Color}.
      *
      * @param color the color

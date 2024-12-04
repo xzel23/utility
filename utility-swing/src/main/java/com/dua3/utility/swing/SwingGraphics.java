@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.text.FontDef;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
@@ -53,8 +54,8 @@ public class SwingGraphics implements Graphics {
             LOG.debug("setting default font to awt dialog font with size 12");
             defaultFontAwt = new java.awt.Font(java.awt.Font.DIALOG, java.awt.Font.PLAIN, 12);
         }
-        DEFAULT_FONT = new Font(defaultFontAwt.getFamily(), defaultFontAwt.getSize(), Color.BLACK, false, false, false, false);
-        DEFAULT_FONT_AWT = AwtFontUtil.getInstance().convert(DEFAULT_FONT);
+        DEFAULT_FONT = AwtFontUtil.getInstance().convert(defaultFontAwt);
+        DEFAULT_FONT_AWT = defaultFontAwt;
     }
 
     @Override

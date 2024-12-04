@@ -234,8 +234,8 @@ public class TextUtilTest {
     }
 
     private static Object[][] textDimensionProvider() {
-        Font timesRomanBold12 = new Font("TimesRoman-bold-12");
-        Font timesRomanItalic18 = new Font("TimesRoman-italic-18");
+        Font timesRomanBold12 = FontUtil.getInstance().getFont("TimesRoman-bold-12");
+        Font timesRomanItalic18 = FontUtil.getInstance().getFont("TimesRoman-italic-18");
 
         return new Object[][]{
                 // Testing for empty string
@@ -257,7 +257,7 @@ public class TextUtilTest {
 
     @Test
     public void testGetTextDimensionRichtext() {
-        Font timesRoman12 = new Font("TimesRoman-12");
+        Font timesRoman12 = FontUtil.getInstance().getFont("TimesRoman-12");
 
         // if the text does not change the font, the result should match the result for the plain string
         RichText textHiJohn = new RichTextBuilder()

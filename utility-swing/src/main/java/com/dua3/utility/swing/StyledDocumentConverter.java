@@ -8,6 +8,7 @@ package com.dua3.utility.swing;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.text.AttributeBasedConverter;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.TextAttributes;
 import org.jspecify.annotations.Nullable;
@@ -32,7 +33,8 @@ import java.util.function.Function;
  */
 public final class StyledDocumentConverter extends AttributeBasedConverter<StyledDocument> {
 
-    private static final Font DEFAULT_FONT = new Font();
+    private static final Font DEFAULT_FONT = FontUtil.getInstance().getDefaultFont();
+
     private final SimpleAttributeSet defaultStyledAttributes = new SimpleAttributeSet();
     // some settings controlling the conversion
     private Font defaultFont = DEFAULT_FONT;
@@ -172,7 +174,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
             Map<String, @Nullable Object> attributes = new HashMap<>();
             changedAttributes.forEach((attribute, values) -> attributes.put(attribute, values.second()));
             // apply the default font styles 
-            currentFont = currentFont.deriveFont(TextAttributes.getFontDef(attributes));
+            currentFont = FontUtil.getInstance().deriveFont(currentFont, TextAttributes.getFontDef(attributes));
             currentAttributes = createAttributeSet(currentFont);
         }
 

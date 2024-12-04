@@ -335,7 +335,7 @@ public interface Graphics extends AutoCloseable {
             float lineBaseLine = 0.0f;
             boolean wrapAllowed = false;
             for (var run: splitLinePreservingWhitespace(line, wrap)) {
-                Font f = font.deriveFont(run.getFontDef());
+                Font f = fontUtil.deriveFont(font, run.getFontDef());
                 Rectangle2f tr = fontUtil.getTextDimension(run, f);
                 if (wrapAllowed && xAct + tr.width() > wrapWidth) {
                     if (!fragments.isEmpty() && TextUtil.isBlank(fragments.get(fragments.size() - 1).text())) {
