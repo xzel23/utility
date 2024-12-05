@@ -170,15 +170,15 @@ the parameter.
 
 ## Changes
 
-### 14.2.0
+### 15.0.0
 
 - BREAKING: font handling has been refactored for both AWT and JavaFX. Use FontUtil to get Font instances.
   To derive a font from a base font, use FontUtil as well.
 
   The Font class has been enhanced with methods to retrieve metric data like ascent, descent, and space width
 
-  Memory footprint should be reduced and performance increased for applications that dynamically allocate
-  Font instances
+  Memory footprint should be slightly reduced and performance increased for applications that dynamically allocate
+  Font instances.
 
 - small fixes and improvements
 
