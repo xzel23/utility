@@ -20,10 +20,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -52,8 +52,8 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         }
     }
 
-    private final HashMap<FontData, java.awt.Font> fontData2awtFont = new HashMap<>();
-    private final HashMap<java.awt.Font, FontData> awtFont2FontData = new HashMap<>();
+    private final Map<FontData, java.awt.Font> fontData2awtFont = new ConcurrentHashMap<>();
+    private final Map<java.awt.Font, FontData> awtFont2FontData = new ConcurrentHashMap<>();
 
     private final Font defaultFont;
     private final Graphics2D graphics;

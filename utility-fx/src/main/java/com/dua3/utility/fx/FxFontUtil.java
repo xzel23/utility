@@ -30,11 +30,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -51,8 +51,8 @@ public class FxFontUtil implements FontUtil<Font> {
         private static final FxFontUtil INSTANCE = new FxFontUtil();
     }
 
-    private final HashMap<FontData, Font> fontData2fxFont = new HashMap<>();
-    private final HashMap<Font, FontData> fxFont2FontData = new HashMap<>();
+    private final Map<FontData, Font> fontData2fxFont = new ConcurrentHashMap<>();
+    private final Map<Font, FontData> fxFont2FontData = new ConcurrentHashMap<>();
 
     private final com.dua3.utility.text.Font defaultFont;
 
