@@ -120,6 +120,7 @@ public class ComboBoxEx<T> extends JPanel {
                 String text = "";
                 if (value != null) {
                     try {
+                        //noinspection unchecked
                         text = format.apply((T) value);
                     } catch (Exception e) {
                         LOG.warn("error during formatting", e);
@@ -181,6 +182,7 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     private void removeItem() {
+        //noinspection unchecked
         T item = (T) model.getSelectedItem();
         if (Optional.ofNullable(remove).orElse(ComboBoxEx::alwaysRemoveSelectedItem).test(this, item)) {
             model.removeElement(item);
@@ -227,6 +229,7 @@ public class ComboBoxEx<T> extends JPanel {
      * @return an Optional containing the selected item, or an empty Optional if no item is selected
      */
     public Optional<T> getSelectedItem() {
+        //noinspection unchecked
         return Optional.ofNullable((@Nullable T) comboBox.getSelectedItem());
     }
 
