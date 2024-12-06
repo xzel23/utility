@@ -93,6 +93,9 @@ public final class TextFieldBuilder {
      * @return this instance
      */
     public TextFieldBuilder bindDisabled(ObservableBooleanValue disabled) {
+        if (this.disabled != null) {
+            throw new IllegalStateException("the disabled property has already been bound to a value");
+        }
         this.disabled = disabled;
         return this;
     }
