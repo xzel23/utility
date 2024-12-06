@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * It extends the ButtonBuilderBase by supporting to bind the button's selected state to a boolean property.
  */
 public class ToggleButtonBuilder extends ButtonBuilderBase<ToggleButton, ToggleButtonBuilder> {
-    private List<Property<Boolean>> selectedList = new ArrayList<>();
+    private final List<Property<Boolean>> selectedList = new ArrayList<>();
 
     /**
      * Constructor.

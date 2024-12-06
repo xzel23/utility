@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * It extends the ButtonBuilderBase by supporting to bind the checkbox's selected state to a boolean property.
  */
 public class CheckBoxButtonBuilder extends ButtonBuilderBase<CheckBox, CheckBoxButtonBuilder> {
-    private List<Property<Boolean>> selectedList = new ArrayList<>();
+    private final List<Property<Boolean>> selectedList = new ArrayList<>();
 
     /**
      * Constructor.

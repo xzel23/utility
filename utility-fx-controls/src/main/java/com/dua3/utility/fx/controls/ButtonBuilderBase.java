@@ -53,6 +53,7 @@ public class ButtonBuilderBase<B extends ButtonBase, BB extends ButtonBuilderBas
     }
 
     protected BB self() {
+        //noinspection unchecked
         return (BB) this;
     }
     
