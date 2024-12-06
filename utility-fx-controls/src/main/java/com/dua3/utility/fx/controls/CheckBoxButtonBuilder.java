@@ -3,8 +3,9 @@ package com.dua3.utility.fx.controls;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.scene.control.CheckBox;
-import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
  * It extends the ButtonBuilderBase by supporting to bind the checkbox's selected state to a boolean property.
  */
 public class CheckBoxButtonBuilder extends ButtonBuilderBase<CheckBox, CheckBoxButtonBuilder> {
-    private @Nullable Property<Boolean> selected = null;
+    private List<Property<Boolean>> selectedList = new ArrayList<>();
 
     /**
      * Constructor.
@@ -30,16 +31,14 @@ public class CheckBoxButtonBuilder extends ButtonBuilderBase<CheckBox, CheckBoxB
      * @return this CheckBoxBuilder instance
      */
     public CheckBoxButtonBuilder bindSelected(Property<Boolean> selected) {
-        this.selected = selected;
+        this.selectedList.add(selected);
         return self();
     }
 
     @Override
     public CheckBox build() {
         CheckBox button = super.build();
-        if (selected != null) {
-            Bindings.bindBidirectional(selected, button.selectedProperty());
-        }
+        selectedList.forEach(selected -> Bindings.bindBidirectional(selected, button.selectedProperty()));
         return button;
     }
 }
