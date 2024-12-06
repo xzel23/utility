@@ -50,8 +50,8 @@ public final class Controls {
      *
      * @return new ButtonBuilder
      */
-    public static ButtonBuilder<ToggleButton> toggleButton() {
-        return new ButtonBuilder<>(ToggleButton::new);
+    public static ToggleButtonBuilder toggleButton() {
+        return new ToggleButtonBuilder(ToggleButton::new);
     }
 
     /**
@@ -60,8 +60,8 @@ public final class Controls {
      * @param selected the initial selection state of the button
      * @return new ButtonBuilder
      */
-    public static ButtonBuilder<ToggleButton> toggleButton(boolean selected) {
-        return new ButtonBuilder<>(() -> {
+    public static ToggleButtonBuilder toggleButton(boolean selected) {
+        return new ToggleButtonBuilder(() -> {
             ToggleButton b = new ToggleButton();
             b.setSelected(selected);
             return b;
@@ -73,8 +73,8 @@ public final class Controls {
      *
      * @return new ButtonBuilder
      */
-    public static ButtonBuilder<CheckBox> checkbox() {
-        return new ButtonBuilder<>(CheckBox::new);
+    public static CheckBoxButtonBuilder checkbox() {
+        return new CheckBoxButtonBuilder(CheckBox::new);
     }
 
     /**
@@ -83,8 +83,8 @@ public final class Controls {
      * @param selected the initial selection state of the button
      * @return new ButtonBuilder
      */
-    public static ButtonBuilder<CheckBox> checkbox(boolean selected) {
-        return new ButtonBuilder<>(() -> {
+    public static CheckBoxButtonBuilder checkbox(boolean selected) {
+        return new CheckBoxButtonBuilder(() -> {
             CheckBox b = new CheckBox();
             b.setSelected(selected);
             return b;

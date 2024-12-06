@@ -170,6 +170,13 @@ the parameter.
 
 ## Changes
 
+### 15.0.1 (in progress)
+
+- added data.Converter interface
+- added fx.PropertyConverter class to convert properties to properties of different types
+- the Controls fluent builder interface supports bidirectional binding the selected state of ToggleButton and CheckBox
+  instances to boolean properties
+
 ### 15.0.0
 
 - BREAKING: font handling has been refactored for both AWT and JavaFX. Use FontUtil to get Font instances.
