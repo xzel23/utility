@@ -7,8 +7,10 @@ package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,11 +35,20 @@ public class PinBoard extends Control {
 
     final ObservableList<Item> items = FXCollections.observableArrayList();
     private final ObjectProperty<Rectangle2D> areaProperty = new SimpleObjectProperty<>(new Rectangle2D(0, 0, 0, 0));
+    private final BooleanProperty pannableProperty = new SimpleBooleanProperty(true);
 
     /**
      * Default constructor.
      */
     public PinBoard() {
+        skinProperty().addListener((v, o, n) -> {
+            if (o instanceof PinBoardSkin oldSkin) {
+                oldSkin.pannableProperty().unbind();
+            }
+            if (n instanceof PinBoardSkin newSkin) {
+                newSkin.pannableProperty().bind(pannableProperty);
+            }
+        });
     }
 
     /**
@@ -108,6 +119,10 @@ public class PinBoard extends Control {
      */
     public ReadOnlyObjectProperty<Rectangle2D> areaProperty() {
         return areaProperty;
+    }
+
+    public BooleanProperty pannableProperty() {
+        return pannableProperty;
     }
 
     /**

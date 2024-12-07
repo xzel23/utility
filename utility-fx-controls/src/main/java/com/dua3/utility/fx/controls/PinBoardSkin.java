@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.FxRefresh;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
+import javafx.beans.property.BooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
@@ -35,7 +36,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setPannable(true);
 
         getChildren().setAll(scrollPane);
 
@@ -195,5 +195,9 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     public void setVbarPolicy(ScrollPane.ScrollBarPolicy policy) {
         scrollPane.setVbarPolicy(policy);
+    }
+
+    public BooleanProperty pannableProperty() {
+        return scrollPane.pannableProperty();
     }
 }
