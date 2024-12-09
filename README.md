@@ -170,7 +170,11 @@ the parameter.
 
 ## Changes
 
-### 15.0.1 (in progress)
+### 15.0.2
+
+- fix AwtFontUtil.deriveFont() always returning font instances with black text color
+
+### 15.0.1
 
 - added data.Converter interface
 - added fx.PropertyConverter class to convert properties to properties of different types
