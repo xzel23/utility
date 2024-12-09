@@ -269,7 +269,6 @@ public class FxFontUtil implements FontUtil<Font> {
         );
 
         Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
-
         if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
             return baseFont; // avoid creating unnecessary instance
         } else {

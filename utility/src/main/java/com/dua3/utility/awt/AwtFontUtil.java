@@ -238,23 +238,20 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
                 Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic())
         ));
 
-        boolean underline = Objects.requireNonNullElse(fontDef.getUnderline(), baseFont.isUnderline());
-        boolean strikeThrough = Objects.requireNonNullElse(fontDef.getStrikeThrough(), baseFont.isStrikeThrough());
-        Color color = Objects.requireNonNullElse(fontDef.getColor(), baseFont.getColor());
-
         FontData fontData = FontData.get(
                 baseFont.getFamily(),
                 baseFont.getSizeInPoints(),
                 baseFont.isBold(),
                 baseFont.isItalic(),
-                underline,
-                strikeThrough,
+                Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
+                Objects.requireNonNullElse(fontDef.getStrikeThrough(), font.isStrikeThrough()),
                 baseFont.getAscent(),
                 baseFont.getDescent(),
                 baseFont.getHeight(),
                 baseFont.getSpaceWidth()
         );
 
+        Color color = Objects.requireNonNullElse(fontDef.getColor(), font.getColor());
         if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
             return baseFont; // avoid creating unnecessary instance
         } else {
