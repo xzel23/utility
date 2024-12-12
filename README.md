@@ -170,6 +170,10 @@ the parameter.
 
 ## Changes
 
+### 15.0.3 (in progress)
+
+- TextUtil.base64Decode() allows whitespace and linebreaks
+
 ### 15.0.2
 
 - fix AwtFontUtil.deriveFont() always returning font instances with black text color
