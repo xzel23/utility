@@ -697,7 +697,7 @@ public final class TextUtil {
      * @return the decoded data
      */
     public static byte[] base64Decode(String text) {
-        return Base64.getDecoder().decode(text);
+        return Base64.getMimeDecoder().decode(text);
     }
 
     /**
