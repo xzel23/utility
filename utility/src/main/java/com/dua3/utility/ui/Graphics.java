@@ -2,6 +2,8 @@ package com.dua3.utility.ui;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
+import com.dua3.utility.math.geometry.Arc2f;
+import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.Alignment;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -111,6 +114,20 @@ public interface Graphics extends AutoCloseable {
      * @param y2 the y-coordinate of the ending point
      */
     void strokeLine(float x1, float y1, float x2, float y2);
+
+    /**
+     * Strokes the outline of the specified path using the current stroke settings.
+     *
+     * @param path the path to be stroked
+     */
+    void strokePath(Path2f path);
+
+    /**
+     * Fills the specified path using the current fill color and settings.
+     *
+     * @param path the path to be filled
+     */
+    void fillPath(Path2f path);
 
     /**
      * Sets the stroke for drawing shapes. The stroke determines the color and width of the lines used to outline shapes.
@@ -463,4 +480,139 @@ public interface Graphics extends AutoCloseable {
 
     @Override
     void close();
+
+    static void approximateArc(Arc2f arc, Consumer<Vector2f[]> generateBezier) {
+        Vector2f p0 = arc.start();
+        Vector2f p1 = arc.end();
+
+        double rx = arc.rx();
+        double ry = arc.ry();
+        double alpha = arc.angle();
+        boolean largeArcFlag = arc.largeArc();
+        boolean sweepFlag = arc.sweep();
+
+        // Step 1: Transform to ellipse local coordinates
+        double[] transformedPoints = transformToLocalCoordinates(p0, p1, rx, ry, alpha, largeArcFlag, sweepFlag);
+        double cx = transformedPoints[0];
+        double cy = transformedPoints[1];
+        double startAngle = transformedPoints[2];
+        double sweepAngle = transformedPoints[3];
+
+        // Step 2: Adjust sweep angle based on flags
+        if (!sweepFlag) {
+            sweepAngle = -sweepAngle;
+        }
+        if (largeArcFlag && Math.abs(sweepAngle) < Math.PI) {
+            sweepAngle += 2 * Math.PI * (sweepAngle > 0 ? 1 : -1);
+        } else if (!largeArcFlag && Math.abs(sweepAngle) > Math.PI) {
+            sweepAngle -= 2 * Math.PI * (sweepAngle > 0 ? 1 : -1);
+        }
+
+        // Step 3: Divide the arc into smaller segments (if needed)
+        int segments = (int) Math.ceil(Math.abs(sweepAngle) / (Math.PI / 2.0));
+        double segmentAngle = sweepAngle / segments;
+
+        double currentAngle = startAngle;
+        for (int i = 0; i < segments; i++) {
+            double nextAngle = currentAngle + segmentAngle;
+
+            // Step 4: Calculate Bézier points for the segment
+            generateBezier.accept(calculateBezierPoints(cx, cy, rx, ry, currentAngle, nextAngle, alpha));
+
+            currentAngle = nextAngle;
+        }
+    }
+
+    private static double[] transformToLocalCoordinates(
+            Vector2f p0,
+            Vector2f p1,
+            double rx,
+            double ry,
+            double alpha,
+            boolean largeArc,
+            boolean sweep) {
+        double x = p0.x();
+        double y = p0.y();
+        double x1 = p1.x();
+        double y1 = p1.y();
+
+        // Rotate points to align with ellipse's axes
+        double cosAlpha = Math.cos(alpha);
+        double sinAlpha = Math.sin(alpha);
+
+        double xPrime = cosAlpha * (x1 - x) / 2 + sinAlpha * (y1 - y) / 2;
+        double yPrime = -sinAlpha * (x1 - x) / 2 + cosAlpha * (y1 - y) / 2;
+
+        // Adjust radii if needed
+        double scale = Math.sqrt((xPrime * xPrime) / (rx * rx) + (yPrime * yPrime) / (ry * ry));
+        if (scale > 1) {
+            rx *= scale;
+            ry *= scale;
+        }
+
+        // Compute center point of ellipse
+        double rx2 = rx * rx;
+        double ry2 = ry * ry;
+        double xPrime2 = xPrime * xPrime;
+        double yPrime2 = yPrime * yPrime;
+
+        double centerFactor = Math.sqrt(Math.abs((rx2 * ry2 - rx2 * yPrime2 - ry2 * xPrime2) /
+                (rx2 * yPrime2 + ry2 * xPrime2)));
+        double cxPrime = centerFactor * rx * yPrime / ry;
+        double cyPrime = centerFactor * -ry * xPrime / rx;
+
+        // Adjust center point based on flags
+        if (largeArc != sweep) {
+            cxPrime = -cxPrime;
+            cyPrime = -cyPrime;
+        }
+
+        // Transform center back to global coordinates
+        double cx = cosAlpha * cxPrime - sinAlpha * cyPrime + (x + x1) / 2;
+        double cy = sinAlpha * cxPrime + cosAlpha * cyPrime + (y + y1) / 2;
+
+        // Compute angles
+        double startAngle = Math.atan2((yPrime - cyPrime) / ry, (xPrime - cxPrime) / rx);
+        double endAngle = Math.atan2((-yPrime - cyPrime) / ry, (-xPrime - cxPrime) / rx);
+        double sweepAngle = endAngle - startAngle;
+
+        return new double[]{(float) cx, (float) cy, (float) startAngle, (float) sweepAngle};
+    }
+
+    private static Vector2f[] calculateBezierPoints(
+            double cx, double cy, double rx, double ry, double startAngle, double endAngle, double alpha) {
+
+        double cosAlpha = Math.cos(alpha);
+        double sinAlpha = Math.sin(alpha);
+
+        // Start and end points
+        double x0 = rx * Math.cos(startAngle);
+        double y0 = ry * Math.sin(startAngle);
+        double x1 = rx * Math.cos(endAngle);
+        double y1 = ry * Math.sin(endAngle);
+
+        // Tangent vectors at start and end
+        double k = (4.0 / 3.0) * Math.tan((endAngle - startAngle) / 4.0);
+        double x0T = -k * rx * Math.sin(startAngle);
+        double y0T = k * ry * Math.cos(startAngle);
+        double x1T = k * rx * Math.sin(endAngle);
+        double y1T = -k * ry * Math.cos(endAngle);
+
+        // Transform to global coordinates
+        return new Vector2f[]{
+                Vector2f.of(
+                        (float) (cosAlpha * (x0 + x0T) - sinAlpha * (y0 + y0T) + cx),
+                        (float) (sinAlpha * (x0 + x0T) + cosAlpha * (y0 + y0T) + cy)
+                ),
+                Vector2f.of(
+                        (float) (cosAlpha * (x1 + x1T) - sinAlpha * (y1 + y1T) + cx),
+                        (float) (sinAlpha * (x1 + x1T) + cosAlpha * (y1 + y1T) + cy)
+                ),
+                Vector2f.of(
+                        (float) (cosAlpha * x1 - sinAlpha * y1 + cx),
+                        (float) (sinAlpha * x1 + cosAlpha * y1 + cy)
+                )
+        };
+    }
+
 }

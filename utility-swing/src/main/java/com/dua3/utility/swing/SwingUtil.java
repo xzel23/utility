@@ -5,6 +5,14 @@
 
 package com.dua3.utility.swing;
 
+import com.dua3.utility.math.geometry.Arc2f;
+import com.dua3.utility.math.geometry.ClosePath2f;
+import com.dua3.utility.math.geometry.Curve2f;
+import com.dua3.utility.math.geometry.Line2f;
+import com.dua3.utility.math.geometry.MoveTo2f;
+import com.dua3.utility.math.geometry.Path2f;
+import com.dua3.utility.math.geometry.Vector2f;
+import com.dua3.utility.ui.Graphics;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
@@ -42,6 +50,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
@@ -302,6 +311,53 @@ public final class SwingUtil {
      */
     public static java.awt.Color toAwtColor(String s) {
         return toAwtColor(Color.valueOf(s));
+    }
+
+    /**
+     * Converts a {@link Path2f} object to a {@link Path2D}.
+     *
+     * @param path the Path2f object containing segments to be converted to a JavaFX Path
+     * @return a JavaFX Path object representing the equivalent structure of the input Path2f
+     * @throws IllegalArgumentException if an unsupported segment type or unsupported number of control points is encountered
+     */
+    public static Path2D convertToSwingPath(Path2f path) {
+        Path2D swingPath = new Path2D.Float();
+        path.segments().forEach(segment -> {
+            if (segment instanceof MoveTo2f s) {
+                swingPath.moveTo(s.end().x(), s.end().y());
+            } else if (segment instanceof Line2f s) {
+                swingPath.lineTo(s.end().x(), s.end().y());
+            } else if (segment instanceof Curve2f s) {
+                int n = s.numberOfControls();
+                switch (n) {
+                    case 3 -> swingPath.quadTo(
+                            s.control(1).x(), s.control(1).y(),
+                            s.control(2).x(), s.control(2).y()
+                    );
+                    case 4 -> swingPath.curveTo(
+                            s.control(1).x(), s.control(1).y(),
+                            s.control(2).x(), s.control(2).y(),
+                            s.control(3).x(), s.control(3).y()
+                    );
+                    default -> throw new IllegalArgumentException("Unsupported number of control points: " + n);
+                }
+            } else if (segment instanceof Arc2f s) {
+                Consumer<Vector2f[]> generateBezierSegment = points -> {
+                    assert points.length == 3;
+                    swingPath.curveTo(
+                            points[0].x(), points[0].y(),
+                            points[1].x(), points[1].y(),
+                            points[2].x(), points[2].y()
+                    );
+                };
+                Graphics.approximateArc(s, generateBezierSegment);
+            } else if (segment instanceof ClosePath2f c) {
+                swingPath.closePath();
+            } else {
+                throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+            }
+        });
+        return swingPath;
     }
 
     /**

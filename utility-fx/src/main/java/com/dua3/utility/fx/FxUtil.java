@@ -1,5 +1,7 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.math.geometry.ClosePath2f;
+import javafx.scene.shape.ClosePath;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.concurrent.Value;
 import com.dua3.utility.data.DataUtil;
@@ -689,6 +691,45 @@ public final class FxUtil {
      */
     public static Scale2f getDisplayScale(Window window) {
         return getDisplayScale(getScreen(window));
+    }
+
+    /**
+     * Converts a Path2f object to a JavaFX Path.
+     *
+     * @param path the Path2f object containing segments to be converted to a JavaFX Path
+     * @return a JavaFX Path object representing the equivalent structure of the input Path2f
+     * @throws IllegalArgumentException if an unsupported segment type or unsupported number of control points is encountered
+     */
+    public static javafx.scene.shape.Path convertToJavaFxPath(Path2f path) {
+        javafx.scene.shape.Path jfxPath = new javafx.scene.shape.Path();
+        path.segments().forEach(segment -> {
+            if (segment instanceof MoveTo2f s) {
+                jfxPath.getElements().add(new MoveTo(s.end().x(), s.end().y()));
+            } else if (segment instanceof Line2f s) {
+                jfxPath.getElements().add(new LineTo(s.end().x(), s.end().y()));
+            } else if (segment instanceof Curve2f s) {
+                int n = s.numberOfControls();
+                jfxPath.getElements().add(switch (n) {
+                    case 3 -> new QuadCurveTo(
+                            s.control(1).x(), s.control(1).y(),
+                            s.control(2).x(), s.control(2).y()
+                    );
+                    case 4 -> new CubicCurveTo(
+                            s.control(1).x(), s.control(1).y(),
+                            s.control(2).x(), s.control(2).y(),
+                            s.control(3).x(), s.control(3).y()
+                    );
+                    default -> throw new IllegalArgumentException("Unsupported number of control points: " + n);
+                });
+            } else if (segment instanceof Arc2f s) {
+                jfxPath.getElements().add(new ArcTo(s.rx(), s.ry(), s.angle(), s.control(1).x(), s.control(1).y(), false, false));
+            } else if (segment instanceof ClosePath2f c) {
+                jfxPath.getElements().add(new ClosePath());
+            } else {
+                throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+            }
+        });
+        return jfxPath;
     }
 
     /**

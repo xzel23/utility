@@ -1,5 +1,12 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.math.geometry.Arc2f;
+import com.dua3.utility.math.geometry.ClosePath2f;
+import com.dua3.utility.math.geometry.Curve2f;
+import com.dua3.utility.math.geometry.Line2f;
+import com.dua3.utility.math.geometry.MoveTo2f;
+import com.dua3.utility.math.geometry.Path2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
@@ -27,7 +34,7 @@ public class FxGraphics implements Graphics {
 
     private AffineTransformation2f transform = AffineTransformation2f.identity();
 
-    private float scale;
+    private final float scale;
     private javafx.scene.paint.Color textColor = javafx.scene.paint.Color.BLACK;
     private javafx.scene.text.Font font = DEFAULT_FONT_FX;
     private boolean isStrikeThrough = false;
@@ -107,6 +114,62 @@ public class FxGraphics implements Graphics {
         gc.setStroke(strokeColor);
         gc.setLineWidth(strokeWidth);
         gc.strokeLine(x1, y1, x2, y2);
+    }
+
+    @Override
+    public void strokePath(Path2f path) {
+        assert isDrawing : "instance has already been closed!";
+
+        gc.beginPath();
+        path(path);
+        gc.stroke();
+    }
+
+    @Override
+    public void fillPath(Path2f path) {
+        assert isDrawing : "instance has already been closed!";
+
+        gc.beginPath();
+        path(path);
+        gc.fill();
+    }
+
+    private void path(Path2f path) {
+        path.segments().forEach(segment -> {
+            if (segment instanceof MoveTo2f s) {
+                gc.moveTo(s.end().x(), s.end().y());
+            } else if (segment instanceof Line2f s) {
+                gc.lineTo(s.end().x(), s.end().y());
+            } else if (segment instanceof Curve2f s) {
+                int n = s.numberOfControls();
+                switch (n) {
+                    case 3 -> gc.quadraticCurveTo(
+                            s.control(1).x(), s.control(1).y(),
+                            s.control(2).x(), s.control(2).y()
+                    );
+                    case 4 -> gc.bezierCurveTo(
+                            s.control(1).x(), s.control(1).y(),
+                            s.control(2).x(), s.control(2).y(),
+                            s.control(3).x(), s.control(3).y()
+                    );
+                    default -> throw new IllegalArgumentException("Unsupported number of control points: " + n);
+                }
+            } else if (segment instanceof Arc2f s) {
+                Graphics.approximateArc(s, this::generateBezierSegment);
+            } else if (segment instanceof ClosePath2f c) {
+                gc.closePath();
+            } else {
+                throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+            }
+        });
+    }
+
+    private void generateBezierSegment(Vector2f[] points) {
+        gc.bezierCurveTo(
+                points[0].x(), points[0].y(),
+                points[1].x(), points[1].y(),
+                points[2].x(), points[2].y()
+        );
     }
 
     @Override

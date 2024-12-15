@@ -1,10 +1,6 @@
 package com.dua3.utility.samples.geom;
 
-import com.dua3.utility.math.geometry.Arc2f;
-import com.dua3.utility.math.geometry.ClosePath2f;
-import com.dua3.utility.math.geometry.Curve2f;
-import com.dua3.utility.math.geometry.Line2f;
-import com.dua3.utility.math.geometry.MoveTo2f;
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import javafx.application.Application;
@@ -13,8 +9,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcTo;
-import javafx.scene.shape.ClosePath;
-import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.HLineTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -48,7 +42,7 @@ public class ShapeFx extends Application {
         path1.setStrokeWidth(5.0f);
         root.getChildren().add(path1);
 
-        Path path2 = createPath();
+        Path path2 = FxUtil.convert(createPath());
         path2.setStroke(Paint.valueOf("lightgrey"));
         path2.setStrokeWidth(3.0f);
         root.getChildren().add(path2);
@@ -95,47 +89,13 @@ public class ShapeFx extends Application {
         return path;
     }
 
-    private static Path createPath() {
-        Path2f path = Path2f.builder()
+    private static Path2f createPath() {
+        return Path2f.builder()
                 .moveTo(Vector2f.of(0.0f, 0.0f))
                 .lineTo(Vector2f.of(70.0f, 0.0f))
                 .curveTo(Vector2f.of(100.0f, 0.0f), Vector2f.of(120.0f, 60.0f))
                 .lineTo(Vector2f.of(175.0f, 55.0f))
                 .arcTo(Vector2f.of(50.0f, 50.0f), Vector2f.of(50.0f, 50.0f), 0.0f, false, false)
                 .build();
-        return convertToJavaFxPath(path);
     }
-
-    private static Path convertToJavaFxPath(Path2f path) {
-        Path jfxPath = new Path();
-        path.segments().forEach(segment -> {
-            if (segment instanceof MoveTo2f s) {
-                jfxPath.getElements().add(new MoveTo(s.end().x(), s.end().y()));
-            } else if (segment instanceof Line2f s) {
-                jfxPath.getElements().add(new LineTo(s.end().x(), s.end().y()));
-            } else if (segment instanceof Curve2f s) {
-                int n = s.numberOfControls();
-                jfxPath.getElements().add(switch (n) {
-                    case 3 -> new QuadCurveTo(
-                            s.control(1).x(), s.control(1).y(),
-                            s.control(2).x(), s.control(2).y()
-                    );
-                    case 4 -> new CubicCurveTo(
-                            s.control(1).x(), s.control(1).y(),
-                            s.control(2).x(), s.control(2).y(),
-                            s.control(3).x(), s.control(3).y()
-                    );
-                    default -> throw new IllegalArgumentException("Unsupported number of control points: " + n);
-                });
-            } else if (segment instanceof Arc2f s) {
-                jfxPath.getElements().add(new ArcTo(s.rx(), s.ry(), s.angle(), s.control(1).x(), s.control(1).y(), false, false));
-            } else if (segment instanceof ClosePath2f c) {
-                jfxPath.getElements().add(new ClosePath());
-            } else {
-                throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
-            }
-        });
-        return jfxPath;
-    }
-
 }

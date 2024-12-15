@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
@@ -19,6 +20,7 @@ import java.awt.RenderingHints;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -233,6 +235,24 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
+    public void strokePath(Path2f path) {
+        assert isDrawing : "instance has been closed!";
+
+        g2d.setColor(strokeColor);
+        Path2D swingPath = SwingUtil.convertToSwingPath(path);
+        g2d.draw(swingPath);
+    }
+
+    @Override
+    public void fillPath(Path2f path) {
+        assert isDrawing : "instance has been closed!";
+
+        g2d.setColor(fillColor);
+        Path2D swingPath = SwingUtil.convertToSwingPath(path);
+        g2d.draw(swingPath);
+    }
+
+    @Override
     public void strokeRect(float x, float y, float width, float height) {
         assert isDrawing : "instance has been closed!";
 
@@ -263,7 +283,6 @@ public class SwingGraphics implements Graphics {
         as.addAttribute(TextAttribute.FONT, font, 0, text.length());
         as.addAttribute(TextAttribute.UNDERLINE, isUnderlined ? TextAttribute.UNDERLINE_ON : null, 0, text.length());
         as.addAttribute(TextAttribute.STRIKETHROUGH, isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, text.length());
-
         g2d.drawString(as.getIterator(), x, y);
     }
 
