@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Arc2f;
 import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.math.geometry.Curve2f;
@@ -17,6 +18,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The FxGraphics class implements the {@link Graphics} interface for rendering graphics in JavaFX based applications.
  */
@@ -29,19 +33,44 @@ public class FxGraphics implements Graphics {
     private final float width;
     private final float height;
     private final AffineTransformation2f parentTransform;
+    private final float scale;
 
     private boolean isDrawing = true;
 
-    private AffineTransformation2f transform = AffineTransformation2f.identity();
+    private static final class State implements Cloneable {
+        AffineTransformation2f transform = AffineTransformation2f.identity();
+        javafx.scene.paint.Color textColor = javafx.scene.paint.Color.BLACK;
+        javafx.scene.text.Font font = DEFAULT_FONT_FX;
+        boolean isStrikeThrough = false;
+        boolean isUnderline = false;
+        javafx.scene.paint.Paint strokeColor = javafx.scene.paint.Color.BLACK;
+        double strokeWidth = 1.0;
+        javafx.scene.paint.Color fillColor = javafx.scene.paint.Color.BLACK;
 
-    private final float scale;
-    private javafx.scene.paint.Color textColor = javafx.scene.paint.Color.BLACK;
-    private javafx.scene.text.Font font = DEFAULT_FONT_FX;
-    private boolean isStrikeThrough = false;
-    private boolean isUnderline = false;
-    private javafx.scene.paint.Paint strokeColor = javafx.scene.paint.Color.BLACK;
-    private double strokeWidth = 1.0;
-    private javafx.scene.paint.Color fillColor = javafx.scene.paint.Color.BLACK;
+        public State clone() throws CloneNotSupportedException {
+            return (State) super.clone();
+        }
+    }
+
+    private State state = new State();
+    private final List<State> savedState = new ArrayList<>();
+
+    @Override
+    public void save() {
+        try {
+            savedState.add(state.clone());
+            gc.save();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public void restore() {
+        LangUtil.check(!savedState.isEmpty(), "restore() called with no saved state!");
+        gc.restore();
+        state = savedState.remove(savedState.size() - 1);
+    }
 
     /**
      * Creates a new instance of FxGraphics with the given parameters.
@@ -80,7 +109,7 @@ public class FxGraphics implements Graphics {
     public Rectangle2f getTextDimension(CharSequence text) {
         assert isDrawing : "instance has already been closed!";
 
-        return FONT_UTIL.getTextDimension(text, font);
+        return FONT_UTIL.getTextDimension(text, state.font);
     }
 
     @Override
@@ -94,8 +123,8 @@ public class FxGraphics implements Graphics {
     public void strokeRect(float x, float y, float w, float h) {
         assert isDrawing : "instance has already been closed!";
 
-        gc.setStroke(strokeColor);
-        gc.setLineWidth(strokeWidth);
+        gc.setStroke(state.strokeColor);
+        gc.setLineWidth(state.strokeWidth);
         gc.strokeRect(x, y, w, h);
     }
 
@@ -103,7 +132,7 @@ public class FxGraphics implements Graphics {
     public void fillRect(float x, float y, float w, float h) {
         assert isDrawing : "instance has already been closed!";
 
-        gc.setFill(fillColor);
+        gc.setFill(state.fillColor);
         gc.fillRect(x, y, w, h);
     }
 
@@ -111,8 +140,8 @@ public class FxGraphics implements Graphics {
     public void strokeLine(float x1, float y1, float x2, float y2) {
         assert isDrawing : "instance has already been closed!";
 
-        gc.setStroke(strokeColor);
-        gc.setLineWidth(strokeWidth);
+        gc.setStroke(state.strokeColor);
+        gc.setLineWidth(state.strokeWidth);
         gc.strokeLine(x1, y1, x2, y2);
     }
 
@@ -132,6 +161,20 @@ public class FxGraphics implements Graphics {
         gc.beginPath();
         path(path);
         gc.fill();
+    }
+
+    @Override
+    public void clip(Path2f path) {
+        gc.beginPath();
+        path(path);
+        gc.clip();
+    }
+
+    @Override
+    public void clip(Rectangle2f r) {
+        gc.beginPath();
+        gc.rect(r.x(), r.y(), r.width(), r.height());
+        gc.clip();
     }
 
     private void path(Path2f path) {
@@ -176,22 +219,22 @@ public class FxGraphics implements Graphics {
     public void setStroke(Color c, float width) {
         assert isDrawing : "instance has already been closed!";
 
-        this.strokeColor = FxUtil.convert(c);
-        this.strokeWidth = width;
+        state.strokeColor = FxUtil.convert(c);
+        state.strokeWidth = width;
     }
 
     @Override
     public void setFill(Color c) {
         assert isDrawing : "instance has already been closed!";
 
-        this.fillColor = FxUtil.convert(c);
+        state.fillColor = FxUtil.convert(c);
     }
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
         assert isDrawing : "instance has already been closed!";
 
-        this.transform = t;
+        state.transform = t;
         gc.setTransform(FxUtil.convert(t.append(parentTransform)));
     }
 
@@ -199,43 +242,43 @@ public class FxGraphics implements Graphics {
     public AffineTransformation2f getTransformation() {
         assert isDrawing : "instance has already been closed!";
 
-        return transform;
+        return state.transform;
     }
 
     @Override
     public void setFont(Font font) {
         assert isDrawing : "instance has already been closed!";
 
-        this.textColor = FxUtil.convert(font.getColor());
-        this.font = FONT_UTIL.convert(font.scaled(scale));
-        this.isStrikeThrough = font.isStrikeThrough();
-        this.isUnderline = font.isUnderline();
+        state.textColor = FxUtil.convert(font.getColor());
+        state.font = FONT_UTIL.convert(font.scaled(scale));
+        state.isStrikeThrough = font.isStrikeThrough();
+        state.isUnderline = font.isUnderline();
     }
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
         assert isDrawing : "instance has already been closed!";
 
-        gc.setFont(font);
-        gc.setFill(textColor);
+        gc.setFont(state.font);
+        gc.setFill(state.textColor);
         gc.fillText(text.toString(), x, y);
 
-        if (isStrikeThrough || isUnderline) {
-            double strokeWidth = font.getSize() / 15.0f;
+        if (state.isStrikeThrough || state.isUnderline) {
+            double strokeWidth = state.font.getSize() / 15.0f;
 
             Text t = new Text(text.toString());
-            t.setFont(font);
+            t.setFont(state.font);
             Bounds r = t.getBoundsInLocal();
             double wStroke = r.getWidth();
 
-            gc.setStroke(textColor);
+            gc.setStroke(state.textColor);
             gc.setLineWidth(strokeWidth);
 
-            if (isUnderline) {
+            if (state.isUnderline) {
                 double yStroke = y + r.getMaxY() / 2.0f;
                 gc.strokeLine(x, yStroke, (double) x +wStroke, yStroke);
             }
-            if (isStrikeThrough) {
+            if (state.isStrikeThrough) {
                 double yStroke = y + r.getMinY() / 2.0f + r.getMaxY();
                 gc.strokeLine(x, yStroke, (double) x +wStroke, yStroke);
             }

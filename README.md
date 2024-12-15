@@ -170,9 +170,10 @@ the parameter.
 
 ## Changes
 
-### 15.0.3 (in progress)
+### 15.1.0 (in progress)
 
 - TextUtil.base64Decode() allows whitespace and linebreaks
+- Graphics.strokePath(), Graphics. fillPath
 
 ### 15.0.2
 

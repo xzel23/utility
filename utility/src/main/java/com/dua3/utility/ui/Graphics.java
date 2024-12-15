@@ -130,6 +130,30 @@ public interface Graphics extends AutoCloseable {
     void fillPath(Path2f path);
 
     /**
+     * Intersects the clip area with the specified path.
+     *
+     * @param path the path that determines the clipping area
+     */
+    void clip(Path2f path);
+
+    /**
+     * Intersects the clip area with the specified rectangle.
+     *
+     * @param r the rectangle to intersect the clip area with
+     */
+    void clip(Rectangle2f r);
+
+    /**
+     * Saves the current state.
+     */
+    void save();
+
+    /**
+     * Restores a previously saved state.
+     */
+    void restore();
+
+    /**
      * Sets the stroke for drawing shapes. The stroke determines the color and width of the lines used to outline shapes.
      *
      * @param c     the color of the stroke
