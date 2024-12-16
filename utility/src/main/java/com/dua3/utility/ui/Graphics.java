@@ -1,6 +1,7 @@
 package com.dua3.utility.ui;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Arc2f;
 import com.dua3.utility.math.geometry.Path2f;
@@ -64,6 +65,15 @@ public interface Graphics extends AutoCloseable {
     default void strokeRect(Rectangle2f r) {
         strokeRect(r.xMin(), r.yMin(), r.width(), r.height());
     }
+
+    /**
+     * Draws the specified image at the given coordinates.
+     *
+     * @param image The image to be drawn.
+     * @param x The x-coordinate of the top-left corner where the image will be drawn.
+     * @param y The y-coordinate of the top-left corner where the image will be drawn.
+     */
+    void drawImage(Image image, float x, float y);
 
     /**
      * Draws the outline of a rectangle with the specified dimensions and coordinates.
@@ -162,11 +172,47 @@ public interface Graphics extends AutoCloseable {
     void setStroke(Color c, float width);
 
     /**
+     * Sets the stroke color for drawing operations.
+     *
+     * @param c the color to be used for the stroke; must not be null
+     */
+    void setStrokeColor(Color c);
+
+    /**
+     * Sets the width for the stroke to be applied in drawing operations.
+     *
+     * @param width The stroke width to set, specified as a float value. It must be a positive number
+     *              representing the desired thickness of the stroke.
+     */
+    void setStrokeWidth(float width);
+
+    /**
+     * Retrieves the stroke color used for drawing shapes or lines.
+     *
+     * @return the current stroke color as a Color object.
+     */
+    Color getStrokeColor();
+
+    /**
+     * Retrieves the current stroke width value.
+     *
+     * @return the width of the stroke as a floating-point value
+     */
+    float getStrokeWidth();
+
+    /**
      * Sets the fill color for drawing operations.
      *
      * @param c the color to set as the fill color
      */
     void setFill(Color c);
+
+    /**
+     * Retrieves the fill color of a given object.
+     *
+     * @return the current fill color as a Color object.
+     */
+    Color getFill();
 
     /**
      * Sets the transformation for the graphics context.
@@ -181,6 +227,13 @@ public interface Graphics extends AutoCloseable {
      * @param f the font to set
      */
     void setFont(Font f);
+
+    /**
+     * Get the current font.
+     *
+     * @return the current font
+     */
+    Font getFont();
 
     /**
      * Draws the specified text at the given coordinates.
@@ -280,7 +333,6 @@ public interface Graphics extends AutoCloseable {
 
         drawText(text, tx, ty);
     }
-
 
     /**
      * Retrieves the affine transformation of the graphics object.

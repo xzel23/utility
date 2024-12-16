@@ -1,5 +1,7 @@
 package com.dua3.utility.swing;
 
+import com.dua3.utility.awt.AwtImageUtil;
+import com.dua3.utility.data.Image;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
@@ -35,6 +37,7 @@ import java.util.List;
 public class SwingGraphics implements Graphics {
     private static final Logger LOG = LogManager.getLogger(SwingGraphics.class);
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
+    private static final AwtImageUtil IMAGE_UTIL = AwtImageUtil.getInstance();
     private static final java.awt.Font DEFAULT_FONT_AWT;
     private static final Font DEFAULT_FONT;
 
@@ -73,10 +76,14 @@ public class SwingGraphics implements Graphics {
 
     private static final class State implements Cloneable {
         private AffineTransformation2f transform = AffineTransformation2f.IDENTITY;
-        private java.awt.Color strokeColor = java.awt.Color.BLACK;
-        private java.awt.Color fillColor = java.awt.Color.BLACK;
-        private java.awt.Font font = DEFAULT_FONT_AWT;
-        private java.awt.Color textColor = java.awt.Color.BLACK;
+        private Color strokeColor = Color.BLACK;
+        private java.awt.Color awtStrokeColor = java.awt.Color.BLACK;
+        private float strokeWidth = 1.0f;
+        private Color fillColor = Color.BLACK;
+        private java.awt.Color awtFillColor = java.awt.Color.BLACK;
+        private Font font = DEFAULT_FONT;
+        private java.awt.Font awtFont = DEFAULT_FONT_AWT;
+        private java.awt.Color awtTextColor = SwingUtil.toAwtColor(font.getColor());
         private boolean isUnderlined = false;
         private boolean isStrikeThrough = false;
         private Shape clip = null;
@@ -235,32 +242,70 @@ public class SwingGraphics implements Graphics {
     public void setFill(Color color) {
         assert isDrawing : "instance has been closed!";
 
-        state.fillColor = SwingUtil.toAwtColor(color);
+        state.awtFillColor = SwingUtil.toAwtColor(color);
     }
 
     @Override
-    public void setStroke(Color color, float width) {
+    public Color getFill() {
+        return state.fillColor;
+    }
+
+    @Override
+    public void setStroke(Color c, float width) {
         assert isDrawing : "instance has been closed!";
 
-        state.strokeColor = SwingUtil.toAwtColor(color);
-        g2d.setStroke(new BasicStroke(width));
+        state.strokeWidth = width;
+        state.strokeColor = c;
+        state.awtStrokeColor = SwingUtil.toAwtColor(state.strokeColor);
+        g2d.setStroke(new BasicStroke(state.strokeWidth));
+    }
+
+    @Override
+    public void setStrokeColor(Color c) {
+        assert isDrawing : "instance has been closed!";
+
+        state.strokeColor = c;
+        state.awtStrokeColor = SwingUtil.toAwtColor(state.strokeColor);
+    }
+
+    @Override
+    public void setStrokeWidth(float width) {
+        assert isDrawing : "instance has been closed!";
+
+        state.strokeWidth = width;
+        g2d.setStroke(new BasicStroke(state.strokeWidth));
+    }
+
+    @Override
+    public Color getStrokeColor() {
+        return state.strokeColor;
+    }
+
+    @Override
+    public float getStrokeWidth() {
+        return state.strokeWidth;
     }
 
     @Override
     public void setFont(Font font) {
         assert isDrawing : "instance has been closed!";
 
-        state.textColor = (SwingUtil.toAwtColor(font.getColor()));
+        state.awtTextColor = (SwingUtil.toAwtColor(font.getColor()));
         state.isUnderlined = font.isUnderline();
         state.isStrikeThrough = font.isStrikeThrough();
-        state.font = FONT_UTIL.convert(font);
+        state.awtFont = FONT_UTIL.convert(font);
+    }
+
+    @Override
+    public Font getFont() {
+        return state.font;
     }
 
     @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
         assert isDrawing : "instance has been closed!";
 
-        g2d.setColor(state.strokeColor);
+        g2d.setColor(state.awtStrokeColor);
         line.setLine(x1, y1, x2, y2);
         g2d.draw(line);
     }
@@ -269,7 +314,7 @@ public class SwingGraphics implements Graphics {
     public void strokePath(Path2f path) {
         assert isDrawing : "instance has been closed!";
 
-        g2d.setColor(state.strokeColor);
+        g2d.setColor(state.awtStrokeColor);
         Path2D swingPath = SwingUtil.convertToSwingPath(path);
         g2d.draw(swingPath);
     }
@@ -278,9 +323,20 @@ public class SwingGraphics implements Graphics {
     public void fillPath(Path2f path) {
         assert isDrawing : "instance has been closed!";
 
-        g2d.setColor(state.fillColor);
+        g2d.setColor(state.awtFillColor);
         Path2D swingPath = SwingUtil.convertToSwingPath(path);
         g2d.draw(swingPath);
+    }
+
+    @Override
+    public void drawImage(Image image, float x, float y) {
+        assert isDrawing : "instance has been closed!";
+
+        g2d.drawImage(
+                IMAGE_UTIL.convert(image).bufferedImage(),
+                g2d.getTransform(),
+                null
+        );
     }
 
     @Override
@@ -302,7 +358,7 @@ public class SwingGraphics implements Graphics {
     public void strokeRect(float x, float y, float width, float height) {
         assert isDrawing : "instance has been closed!";
 
-        g2d.setColor(state.strokeColor);
+        g2d.setColor(state.awtStrokeColor);
         rect.setRect(x, y, width, height);
         g2d.draw(rect);
     }
@@ -311,7 +367,7 @@ public class SwingGraphics implements Graphics {
     public void fillRect(float x, float y, float width, float height) {
         assert isDrawing : "instance has been closed!";
 
-        g2d.setColor(state.fillColor);
+        g2d.setColor(state.awtFillColor);
         rect.setRect(x, y, width, height);
         g2d.fill(rect);
     }
@@ -324,9 +380,9 @@ public class SwingGraphics implements Graphics {
             return;
         }
 
-        g2d.setColor(state.textColor);
+        g2d.setColor(state.awtTextColor);
         AttributedString as = new AttributedString(text.toString());
-        as.addAttribute(TextAttribute.FONT, state.font, 0, text.length());
+        as.addAttribute(TextAttribute.FONT, state.awtFont, 0, text.length());
         as.addAttribute(TextAttribute.UNDERLINE, state.isUnderlined ? TextAttribute.UNDERLINE_ON : null, 0, text.length());
         as.addAttribute(TextAttribute.STRIKETHROUGH, state.isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, text.length());
         g2d.drawString(as.getIterator(), x, y);
@@ -336,7 +392,7 @@ public class SwingGraphics implements Graphics {
     public Rectangle2f getTextDimension(CharSequence text) {
         assert isDrawing : "instance has been closed!";
 
-        return FONT_UTIL.getTextDimension(text, state.font);
+        return FONT_UTIL.getTextDimension(text, state.awtFont);
     }
 
     @Override
