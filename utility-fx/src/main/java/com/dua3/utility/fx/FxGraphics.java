@@ -1,7 +1,6 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.data.Image;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Arc2f;
 import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.math.geometry.Curve2f;
@@ -18,9 +17,6 @@ import com.dua3.utility.text.FontUtil;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Text;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The FxGraphics class implements the {@link Graphics} interface for rendering graphics in JavaFX based applications.
@@ -62,23 +58,14 @@ public class FxGraphics implements Graphics {
     }
 
     private State state = new State();
-    private final List<State> savedState = new ArrayList<>();
 
-    @Override
-    public void save() {
-        try {
-            savedState.add(state.clone());
-            gc.save();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
-        }
-    }
+    private void applyCurrentState() {
+        gc.setTransform(FxUtil.convert(state.transform.append(parentTransform)));
+        AffineTransformation2f transform = AffineTransformation2f.identity();
 
-    @Override
-    public void restore() {
-        LangUtil.check(!savedState.isEmpty(), "restore() called with no saved state!");
-        gc.restore();
-        state = savedState.remove(savedState.size() - 1);
+        gc.setFill(state.fxFillColor);
+        gc.setStroke(state.fxStrokeColor);
+        gc.setLineWidth(state.strokeWidth);
     }
 
     /**
@@ -94,6 +81,7 @@ public class FxGraphics implements Graphics {
         this.height = height;
         this.scale = 1.0f;
         this.parentTransform = FxUtil.convert(gc.getTransform());
+        gc.save();
     }
 
     @Override
@@ -191,6 +179,13 @@ public class FxGraphics implements Graphics {
         gc.beginPath();
         gc.rect(r.x(), r.y(), r.width(), r.height());
         gc.clip();
+    }
+
+    @Override
+    public void resetClip() {
+        gc.restore();
+        gc.save();
+        applyCurrentState();
     }
 
     private void path(Path2f path) {

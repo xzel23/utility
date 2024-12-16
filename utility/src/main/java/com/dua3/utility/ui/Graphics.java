@@ -154,14 +154,12 @@ public interface Graphics extends AutoCloseable {
     void clip(Rectangle2f r);
 
     /**
-     * Saves the current state.
+     * Resets the clipping area to the default state.
+     * This method clears any existing clipping boundaries that
+     * might have been set previously and restores the clip to
+     * encompass the entire drawing area.
      */
-    void save();
-
-    /**
-     * Restores a previously saved state.
-     */
-    void restore();
+    void resetClip();
 
     /**
      * Sets the stroke for drawing shapes. The stroke determines the color and width of the lines used to outline shapes.

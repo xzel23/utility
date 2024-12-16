@@ -102,23 +102,6 @@ public class SwingGraphics implements Graphics {
     private State state = new State();
     private final List<State> savedState = new ArrayList<>();
 
-    @Override
-    public void save() {
-        try {
-            state.clip = g2d.getClip();
-            savedState.add(state.clone());
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @Override
-    public void restore() {
-        LangUtil.check(!savedState.isEmpty(), "restore() called with no saved state!");
-        state = savedState.remove(savedState.size() - 1);
-        g2d.setClip(state.clip);
-    }
-
     /**
      * Constructor.
      *
@@ -352,6 +335,11 @@ public class SwingGraphics implements Graphics {
         path.lineTo(r.xMax(), r.yMax());
         path.closePath();
         g2d.setClip(path);
+    }
+
+    @Override
+    public void resetClip() {
+        g2d.setClip(null);
     }
 
     @Override
