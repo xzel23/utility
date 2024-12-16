@@ -248,18 +248,22 @@ public class FxFontUtil implements FontUtil<Font> {
 
     @Override
     public com.dua3.utility.text.Font deriveFont(com.dua3.utility.text.Font font, FontDef fontDef) {
+        String family = Objects.requireNonNullElse(fontDef.getFamily(), font.getFamily());
+        float size = Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints());
+        boolean bold = Objects.requireNonNullElse(fontDef.getBold(), font.isBold());
+        boolean italic = Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic());
         com.dua3.utility.text.Font baseFont = convert(getFxFont(
-                Objects.requireNonNullElse(fontDef.getFamily(), font.getFamily()),
-                Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints()),
-                Objects.requireNonNullElse(fontDef.getBold(), font.isBold()),
-                Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic())
+                family,
+                size,
+                bold,
+                italic
         ));
 
         FontData fontData = FontData.get(
-                baseFont.getFamily(),
-                baseFont.getSizeInPoints(),
-                baseFont.isBold(),
-                baseFont.isItalic(),
+                family,
+                size,
+                bold,
+                italic,
                 Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
                 Objects.requireNonNullElse(fontDef.getStrikeThrough(), font.isStrikeThrough()),
                 baseFont.getAscent(),

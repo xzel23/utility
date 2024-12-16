@@ -6,7 +6,6 @@ import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
@@ -19,7 +18,6 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -86,7 +84,6 @@ public class SwingGraphics implements Graphics {
         private java.awt.Color awtTextColor = SwingUtil.toAwtColor(font.getColor());
         private boolean isUnderlined = false;
         private boolean isStrikeThrough = false;
-        private Shape clip = null;
 
         public State clone() throws CloneNotSupportedException {
             return (State) super.clone();
@@ -124,10 +121,20 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
+    public float getWidth() {
+        return (float) parentBounds.getWidth();
+    }
+
+    @Override
+    public float getHeight() {
+        return (float) parentBounds.height;
+    }
+
+    @Override
     public Rectangle2f getBounds() {
         assert isDrawing : "instance has been closed!";
 
-        return convert(LangUtil.orElse(g2d.getClipBounds(), parentBounds));
+        return convert(parentBounds);
     }
 
     /**

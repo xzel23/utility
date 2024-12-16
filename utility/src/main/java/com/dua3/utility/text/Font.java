@@ -220,7 +220,7 @@ public class Font {
      * @return a copy of this font with the bold attribute set to the requested value, or this font if values match
      */
     public Font withBold(boolean flag) {
-        return flag == isBold() ? this :FontUtil.getInstance().deriveFont(this, FontDef.bold(flag));
+        return flag == isBold() ? this : FontUtil.getInstance().deriveFont(this, FontDef.bold(flag));
     }
 
     /**

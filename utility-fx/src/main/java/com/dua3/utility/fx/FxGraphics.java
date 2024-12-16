@@ -15,6 +15,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import javafx.geometry.Bounds;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Text;
 
@@ -69,6 +70,15 @@ public class FxGraphics implements Graphics {
     }
 
     /**
+     * Constructs an FxGraphics instance using the provided Canvas object.
+     *
+     * @param canvas the Canvas object used to initialize the graphics instance
+     */
+    public FxGraphics(Canvas canvas) {
+        this (canvas.getGraphicsContext2D(), (float) canvas.getWidth(), (float) canvas.getHeight());
+    }
+
+    /**
      * Creates a new instance of FxGraphics with the given parameters.
      *
      * @param gc      the GraphicsContext object
@@ -82,6 +92,16 @@ public class FxGraphics implements Graphics {
         this.scale = 1.0f;
         this.parentTransform = FxUtil.convert(gc.getTransform());
         gc.save();
+    }
+
+    @Override
+    public float getWidth() {
+        return width;
+    }
+
+    @Override
+    public float getHeight() {
+        return height;
     }
 
     @Override

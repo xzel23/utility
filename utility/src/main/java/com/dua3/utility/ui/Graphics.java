@@ -30,6 +30,20 @@ import java.util.function.Function;
 public interface Graphics extends AutoCloseable {
 
     /**
+     * Retrieves the width of an object. The width is typically measured in the object's respective unit.
+     *
+     * @return the width as a float value
+     */
+    float getWidth();
+
+    /**
+     * Retrieves the height value.
+     *
+     * @return the height as a float.
+     */
+    float getHeight();
+
+    /**
      * Retrieves the FontUtil compatible with this Graphics object.
      *
      * @return the FontUtil object
@@ -325,7 +339,7 @@ public interface Graphics extends AutoCloseable {
         ty = switch (vAnchor) {
             case TOP -> y - r.yMin();
             case BOTTOM -> y - r.yMax();
-            case BASELINE -> y + r.height() - r.y();
+            case BASELINE -> y;
             case MIDDLE -> y + r.height() / 2 - r.yMax();
         };
 
