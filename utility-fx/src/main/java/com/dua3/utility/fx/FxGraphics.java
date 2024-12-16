@@ -62,7 +62,6 @@ public class FxGraphics implements Graphics {
 
     private void applyCurrentState() {
         gc.setTransform(FxUtil.convert(state.transform.append(parentTransform)));
-        AffineTransformation2f transform = AffineTransformation2f.identity();
 
         gc.setFill(state.fxFillColor);
         gc.setStroke(state.fxStrokeColor);

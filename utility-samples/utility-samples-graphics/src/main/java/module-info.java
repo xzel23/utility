@@ -11,11 +11,14 @@ import org.jspecify.annotations.NullMarked;
  * <p>This module contains sample programs.
  */
 @NullMarked
-open module com.dua3.utility.samples.geom {
-    exports com.dua3.utility.samples.geom;
+open module com.dua3.utility.samples.graphics {
+    exports com.dua3.utility.samples.graphics;
+    exports com.dua3.utility.samples.graphics.slides;
 
     requires com.dua3.utility;
     requires com.dua3.utility.fx;
-    requires javafx.graphics;
     requires org.jspecify;
+    requires javafx.controls;
+    requires javafx.base;
+    requires javafx.graphics;
 }

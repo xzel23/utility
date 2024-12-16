@@ -1,4 +1,4 @@
-package com.dua3.utility.samples.geom;
+package com.dua3.utility.samples.fx;
 
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.math.geometry.Path2f;
@@ -23,7 +23,7 @@ import javafx.scene.shape.Path;
  */
 public class ShapeFx extends Application {
 
-/**
+    /**
      * The main entry point for the application.
      *
      * @param args the command line arguments

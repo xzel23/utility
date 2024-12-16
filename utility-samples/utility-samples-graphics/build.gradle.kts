@@ -6,7 +6,7 @@ plugins {
 
 // set main
 application {
-    mainClass.set("com.dua3.utility.samples.geom.Shape")
+    mainClass.set("com.dua3.utility.samples.graphics.FxGraphicsSample")
 }
 
 description = "samples"

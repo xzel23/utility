@@ -250,6 +250,9 @@ public interface Graphics extends AutoCloseable {
     /**
      * Draws the specified text at the given coordinates.
      *
+     * <p>This is equivalent to calling
+     * {@code drawText(text, x, y, HAnchor.LEFT, VAnchor.BASELINE)}
+     *
      * @param text the text to be drawn
      * @param x the x-coordinate of the starting point
      * @param y the y-coordinate of the starting point
@@ -357,15 +360,14 @@ public interface Graphics extends AutoCloseable {
      * Renders the given text within the specified bounding rectangle using the provided font,
      * alignment, and wrapping settings.
      *
-     * @param r the bounding rectangle to render the text into
-     * @param text the text to be rendered
-     * @param font the font to use for rendering the text
-     * @param hAlign the horizontal alignment of the text within the bounding rectangle
-     * @param vAlign the vertical alignment of the text within the bounding rectangle
+     * @param r        the bounding rectangle to render the text into
+     * @param text     the text to be rendered
+     * @param hAlign   the horizontal alignment of the text within the bounding rectangle
+     * @param vAlign   the vertical alignment of the text within the bounding rectangle
      * @param wrapping determines if text wrapping should be applied
      */
-    default void renderText(Rectangle2f r, RichText text, Font font, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping) {
-        FragmentedText fragments = generateFragments(text, r, font, hAlign, vAlign, wrapping);
+    default void renderText(Rectangle2f r, RichText text, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping) {
+        FragmentedText fragments = generateFragments(text, r, hAlign, vAlign, wrapping);
         renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), fragments.fragmentLines());
     }
 
@@ -405,15 +407,14 @@ public interface Graphics extends AutoCloseable {
      * text attributes (font, text decoration). For each line, a list of such fragments is generated and added
      * to the list of fragment lines (see {@link FragmentedText#fragmentLines()}).
      *
-     * @param text      the text
-     * @param r         the bounding rectangle to render the text into
-     * @param font      the default font
-     * @param hAlign    the horizontal alignment
-     * @param vAlign    thee vertical alignment
-     * @param wrap      if wrapping should be applied (
+     * @param text   the text
+     * @param r      the bounding rectangle to render the text into
+     * @param hAlign the horizontal alignment
+     * @param vAlign thee vertical alignment
+     * @param wrap   if wrapping should be applied (
      * @return the fragmented text as a {@link FragmentedText} instance
      */
-    private FragmentedText generateFragments(RichText text, Rectangle2f r, Font font, Alignment hAlign, VerticalAlignment vAlign, boolean wrap) {
+    private FragmentedText generateFragments(RichText text, Rectangle2f r, Alignment hAlign, VerticalAlignment vAlign, boolean wrap) {
         float wrapWidth = wrap ? r.width() : Float.MAX_VALUE;
 
         Function<RichText, RichText> trimLine = switch (hAlign) {
@@ -440,7 +441,7 @@ public interface Graphics extends AutoCloseable {
             float lineBaseLine = 0.0f;
             boolean wrapAllowed = false;
             for (var run: splitLinePreservingWhitespace(line, wrap)) {
-                Font f = fontUtil.deriveFont(font, run.getFontDef());
+                Font f = fontUtil.deriveFont(getFont(), run.getFontDef());
                 Rectangle2f tr = fontUtil.getTextDimension(run, f);
                 if (wrapAllowed && xAct + tr.width() > wrapWidth) {
                     if (!fragments.isEmpty() && TextUtil.isBlank(fragments.get(fragments.size() - 1).text())) {

@@ -19,7 +19,7 @@ include("utility-logging-slf4j")
 include("utility-logging-log4j")
 include("utility-samples:utility-samples-slf4j")
 include("utility-samples:utility-samples-log4j")
-include("utility-samples:utility-samples-geometry")
+include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
 
 // use the foojay-resolver-convention plugin to add JVM toolchain repository
@@ -45,7 +45,7 @@ dependencyResolutionManagement {
             plugin("spotbugs", "com.github.spotbugs").version("6.0.26")
             plugin("cabe", "com.dua3.cabe").version("3.0.1")
 
-            version("log4j-bom", "2.24.2")
+            version("log4j-bom", "2.24.3")
             version("slf4j", "2.0.16")
             version("ikonli", "12.3.1")
             version("jimfs", "1.3.0")
