@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
  */
 public class FxFontUtil implements FontUtil<Font> {
 
-    private static final String DEFAULT_FAMILY = "SansSerif";
-    private static final float DEFAULT_SIZE = 10.0f;
+    private static final String DEFAULT_FAMILY = "Verdana";
+    private static final float DEFAULT_SIZE = 12.0f;
 
     private static class SingletonHolder {
         private static final FxFontUtil INSTANCE = new FxFontUtil();

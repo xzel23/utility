@@ -1,13 +1,10 @@
 package com.dua3.utility.samples.fx;
 
-import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.HLineTo;
 import javafx.scene.shape.LineTo;
@@ -34,9 +31,27 @@ public class ShapeFx extends Application {
 
     @Override
     public void start(Stage stage) {
-        Pane root = new StackPane();
-        Scene scene = new Scene(root, 300, 200);
+        Pane root = new Pane();
+        Scene scene = new Scene(root, 300, 300);
 
+        Vector2f c = Vector2f.of(150,150);
+        float rMax = 100;
+        int segments = 16;
+        for (int i=0; i<=segments; i++) {
+            float r = rMax / 2 + rMax / 2 * i / segments;
+            float phi = (float) (2 * Math.PI * i / segments);
+
+            Vector2f start = c.add(Vector2f.of(r, 0));
+            Vector2f end = c.add(Vector2f.of((float) (r * Math.cos(phi)), (float) (r * Math.sin(phi))));
+
+            Path jfxPath = new Path(
+                    new MoveTo(start.x(), start.y()),
+                    new javafx.scene.shape.ArcTo(r, r, 0, end.x(), end.y(), i>=segments/2, i != segments)
+            );
+
+            root.getChildren().add(jfxPath);
+        }
+/*
         Path path1 = createJavaFXPath();
         path1.setStroke(Paint.valueOf("blue"));
         path1.setStrokeWidth(5.0f);
@@ -46,7 +61,7 @@ public class ShapeFx extends Application {
         path2.setStroke(Paint.valueOf("lightgrey"));
         path2.setStrokeWidth(3.0f);
         root.getChildren().add(path2);
-
+*/
         stage.setScene(scene);
         stage.setTitle("Shape");
         stage.show();

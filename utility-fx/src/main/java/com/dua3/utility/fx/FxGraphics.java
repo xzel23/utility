@@ -25,8 +25,8 @@ import javafx.scene.text.Text;
 public class FxGraphics implements Graphics {
     private static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
     private static final FxImageUtil IMAGE_UTIL = FxImageUtil.getInstance();
-    private static final javafx.scene.text.Font DEFAULT_FONT_FX = javafx.scene.text.Font.getDefault();
-    private static final Font DEFAULT_FONT = FONT_UTIL.convert(DEFAULT_FONT_FX);
+    private static final Font DEFAULT_FONT = FONT_UTIL.getDefaultFont();
+    private static final javafx.scene.text.Font DEFAULT_FONT_FX = FONT_UTIL.convert(DEFAULT_FONT);
 
     private final GraphicsContext gc;
     private final float width;
@@ -238,6 +238,12 @@ public class FxGraphics implements Graphics {
     }
 
     private void generateBezierSegment(Vector2f[] points) {
+/*
+        gc.lineTo(points[0].x(), points[0].y());
+        gc.lineTo(points[1].x(), points[1].y());
+        gc.lineTo(points[2].x(), points[2].y());
+ */
+
         gc.bezierCurveTo(
                 points[0].x(), points[0].y(),
                 points[1].x(), points[1].y(),

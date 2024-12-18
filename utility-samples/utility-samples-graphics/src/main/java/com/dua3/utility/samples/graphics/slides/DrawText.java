@@ -42,6 +42,7 @@ public class DrawText implements Slide {
         g.setFont(g.getDefaultFont().withBold(true));
         g.drawText("VAnchor:", x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
 
+        g.setFont(g.getDefaultFont());
         float r = 0.95f * w / 2;
         float cx = x + r;
         float cy = y + r;
@@ -81,6 +82,7 @@ public class DrawText implements Slide {
         g.setFont(g.getDefaultFont().withBold(true));
         g.drawText("HAnchor:", x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
 
+        g.setFont(g.getDefaultFont());
         float r = 0.95f * w / 2;
         float cx = x + r;
         float cy = y + r;

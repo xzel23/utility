@@ -40,6 +40,7 @@ public class RenderText implements Slide {
                 .toRichText();
 
         float margin = 10;
+        g.setFont(g.getDefaultFont().withSize(24));
         g.renderText(g.getBounds().addMargin(-margin), text, Alignment.LEFT, VerticalAlignment.TOP, true);
     }
 }

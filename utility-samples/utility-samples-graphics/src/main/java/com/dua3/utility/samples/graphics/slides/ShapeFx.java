@@ -20,15 +20,35 @@ public class ShapeFx implements Slide {
 
     @Override
     public void draw(Graphics g) {
-        g.setStroke(Color.BLUE, 5);
-        g.strokePath(createPath());
+        float r = (float) (0.95 * Math.min(g.getWidth(), g.getHeight()) / 2);
+        Vector2f c = g.getBounds().center();
+        Vector2f start = c.add(Vector2f.of(r, 0));
+        Vector2f end = c.add(Vector2f.of(0, -r));
+        Vector2f p = c.add(Vector2f.of((float) (r*Math.sin(Math.PI/4)), (float) -(r*Math.cos(Math.PI/4))));
 
-        g.setStroke(Color.LIGHTGRAY, 3);
-        g.strokePath(createPath());
+        drawPoint(g, c, Color.RED);
+        drawPoint(g, start, Color.RED);
+        drawPoint(g, end, Color.GREEN);
+        drawPoint(g, p, Color.GRAY);
 
+        g.setStroke(Color.BLUE, 3);
+        g.strokePath(createCircle(c, r));
     }
 
-    private static Path2f createPath() {
+    private void drawPoint(Graphics g, Vector2f p, Color color) {
+        g.setFill(color);
+        float size = 10;
+        g.fillRect(p.x() - size / 2, p.y() - size / 2, size, size);
+    }
+
+    private static Path2f createCircle(Vector2f c, float r) {
+        return Path2f.builder()
+                .moveTo(Vector2f.of(c.x() + r, c.y()))
+                .arcTo(Vector2f.of(c.x(), c.y() - r), Vector2f.of(r, r), 0, false, false)
+                .build();
+    }
+
+    private static Path2f createPath2() {
         return Path2f.builder()
                 .moveTo(Vector2f.of(0.0f, 0.0f))
                 .lineTo(Vector2f.of(70.0f, 0.0f))

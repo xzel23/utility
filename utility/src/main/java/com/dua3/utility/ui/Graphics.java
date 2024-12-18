@@ -570,7 +570,18 @@ public interface Graphics extends AutoCloseable {
     @Override
     void close();
 
-    static void approximateArc(Arc2f arc, Consumer<Vector2f[]> generateBezier) {
+    /**
+     * Approximates an elliptical arc using Bézier curves and processes each segment
+     * using the provided consumer function.
+     *
+     * @param arc the {@code Arc2f} object representing the elliptical arc to approximate,
+     *            containing the arc's start point, end point, radii, rotation angle,
+     *            and flags indicating large arc or sweep direction.
+     * @param generateBezierSegment a {@code Consumer<Vector2f[]>} that processes
+     *                              the generated Bézier segment points for each
+     *                              subdivided portion of the arc.
+     */
+    static void approximateArc(Arc2f arc, Consumer<Vector2f[]> generateBezierSegment) {
         Vector2f p0 = arc.start();
         Vector2f p1 = arc.end();
 
@@ -581,7 +592,9 @@ public interface Graphics extends AutoCloseable {
         boolean sweepFlag = arc.sweep();
 
         // Step 1: Transform to ellipse local coordinates
-        double[] transformedPoints = transformToLocalCoordinates(p0, p1, rx, ry, alpha, largeArcFlag, sweepFlag);
+        double[] transformedPoints = transformToLocalCoordinates
+                (p0.x(), p0.y(), p1.x(), p1.y(), rx, ry, alpha, largeArcFlag, sweepFlag
+                );
         double cx = transformedPoints[0];
         double cy = transformedPoints[1];
         double startAngle = transformedPoints[2];
@@ -591,7 +604,7 @@ public interface Graphics extends AutoCloseable {
         if (!sweepFlag) {
             sweepAngle = -sweepAngle;
         }
-        if (largeArcFlag && Math.abs(sweepAngle) < Math.PI) {
+        if (largeArcFlag && Math.abs(sweepAngle) < Math.PI - EPSILON) {
             sweepAngle += 2 * Math.PI * (sweepAngle > 0 ? 1 : -1);
         } else if (!largeArcFlag && Math.abs(sweepAngle) > Math.PI) {
             sweepAngle -= 2 * Math.PI * (sweepAngle > 0 ? 1 : -1);
@@ -606,24 +619,23 @@ public interface Graphics extends AutoCloseable {
             double nextAngle = currentAngle + segmentAngle;
 
             // Step 4: Calculate Bézier points for the segment
-            generateBezier.accept(calculateBezierPoints(cx, cy, rx, ry, currentAngle, nextAngle, alpha));
+            Vector2f[] t = calculateBezierPoints(cx, cy, rx, ry, currentAngle, nextAngle, alpha);
+            generateBezierSegment.accept(t);
 
             currentAngle = nextAngle;
         }
     }
 
     private static double[] transformToLocalCoordinates(
-            Vector2f p0,
-            Vector2f p1,
+            double x,
+            double y,
+            double x1,
+            double y1,
             double rx,
             double ry,
             double alpha,
             boolean largeArc,
             boolean sweep) {
-        double x = p0.x();
-        double y = p0.y();
-        double x1 = p1.x();
-        double y1 = p1.y();
 
         // Rotate points to align with ellipse's axes
         double cosAlpha = Math.cos(alpha);
@@ -634,6 +646,9 @@ public interface Graphics extends AutoCloseable {
 
         // Adjust radii if needed
         double scale = Math.sqrt((xPrime * xPrime) / (rx * rx) + (yPrime * yPrime) / (ry * ry));
+        if (scale == 0) {
+            return new double[]{(float) x - cosAlpha * rx, (float) y - sinAlpha * ry, 0, 0};
+        }
         if (scale > 1) {
             rx *= scale;
             ry *= scale;
@@ -648,7 +663,7 @@ public interface Graphics extends AutoCloseable {
         double centerFactor = Math.sqrt(Math.abs((rx2 * ry2 - rx2 * yPrime2 - ry2 * xPrime2) /
                 (rx2 * yPrime2 + ry2 * xPrime2)));
         double cxPrime = centerFactor * rx * yPrime / ry;
-        double cyPrime = centerFactor * -ry * xPrime / rx;
+        double cyPrime = centerFactor * ry * xPrime / rx;
 
         // Adjust center point based on flags
         if (largeArc != sweep) {
@@ -657,15 +672,39 @@ public interface Graphics extends AutoCloseable {
         }
 
         // Transform center back to global coordinates
-        double cx = cosAlpha * cxPrime - sinAlpha * cyPrime + (x + x1) / 2;
-        double cy = sinAlpha * cxPrime + cosAlpha * cyPrime + (y + y1) / 2;
+        double cx = (x + x1) / 2 + cosAlpha * cxPrime - sinAlpha * cyPrime;
+        double cy = (y + y1) / 2 - sinAlpha * cxPrime - cosAlpha * cyPrime;
 
         // Compute angles
-        double startAngle = Math.atan2((yPrime - cyPrime) / ry, (xPrime - cxPrime) / rx);
-        double endAngle = Math.atan2((-yPrime - cyPrime) / ry, (-xPrime - cxPrime) / rx);
+        // Transform start point into local coordinates
+        double startxLocal = cosAlpha * (x - cx) + sinAlpha * (y - cy);
+        double startyLocal = -sinAlpha * (x - cx) + cosAlpha * (y - cy);
+        double startAngle = atan2(startyLocal / ry, startxLocal / rx);
+
+        double endxLocal = cosAlpha * (x1 - cx) + sinAlpha * (y1 - cy);
+        double endyLocal = -sinAlpha * (x1 - cx) + cosAlpha * (y1 - cy);
+        double endAngle = atan2(endyLocal / ry, endxLocal / rx);
         double sweepAngle = endAngle - startAngle;
 
         return new double[]{(float) cx, (float) cy, (float) startAngle, (float) sweepAngle};
+    }
+
+    double EPSILON = 1.0E-6;
+
+    private static double atan2(double y, double x) {
+        if (x >= -EPSILON) {
+            x = Math.max(0, x);
+        }
+        if (y >= -EPSILON) {
+            y = Math.max(0, y);
+        }
+
+        double theta = Math.atan2(y, x);
+        if (theta < 0) {
+            theta += 2 * Math.PI;
+        }
+
+        return theta;
     }
 
     private static Vector2f[] calculateBezierPoints(
@@ -673,19 +712,23 @@ public interface Graphics extends AutoCloseable {
 
         double cosAlpha = Math.cos(alpha);
         double sinAlpha = Math.sin(alpha);
+        double cosStart = Math.cos(startAngle);
+        double sinStart = Math.sin(startAngle);
+        double cosEnd = Math.cos(endAngle);
+        double sinEnd = Math.sin(endAngle);
 
         // Start and end points
-        double x0 = rx * Math.cos(startAngle);
-        double y0 = ry * Math.sin(startAngle);
-        double x1 = rx * Math.cos(endAngle);
-        double y1 = ry * Math.sin(endAngle);
+        double x0 = rx * cosStart;
+        double y0 = ry * sinStart;
+        double x1 = rx * cosEnd;
+        double y1 = ry * sinEnd;
 
         // Tangent vectors at start and end
         double k = (4.0 / 3.0) * Math.tan((endAngle - startAngle) / 4.0);
-        double x0T = -k * rx * Math.sin(startAngle);
-        double y0T = k * ry * Math.cos(startAngle);
-        double x1T = k * rx * Math.sin(endAngle);
-        double y1T = -k * ry * Math.cos(endAngle);
+        double x0T = -k * rx * sinStart;
+        double y0T = k * ry * cosStart;
+        double x1T = k * rx * sinEnd;
+        double y1T = -k * ry * cosEnd;
 
         // Transform to global coordinates
         return new Vector2f[]{
