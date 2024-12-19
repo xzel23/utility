@@ -60,6 +60,23 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
+     * Create an affine transformation for a rotation around the origin.
+     * {@code (x,y) -> (x cos(alpha) - y sin(alpha), x sin(alpha) + y cos(alpha))}.
+     *
+     * @param alpha the angle in radians
+     * @return affine transformation (rotation)
+     */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public static AffineTransformation2f rotate(double alpha, Vector2f c) {
+        double sinAlpha = Math.sin(alpha);
+        double cosAlpha = Math.cos(alpha);
+        return new AffineTransformation2f(
+                (float) cosAlpha, (float) -sinAlpha, (float) (c.x() * (1 - cosAlpha) + c.y() * sinAlpha),
+                (float) sinAlpha, (float)  cosAlpha, (float) (c.y() * (1 - cosAlpha) - c.x() * sinAlpha)
+        );
+   }
+
+    /**
      * Create an affine transformation for a translation
      * {@code (x,y) -> (x+u,y+v)}.
      *
