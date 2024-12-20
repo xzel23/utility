@@ -4,5 +4,6 @@ import com.dua3.utility.ui.Graphics;
 
 public interface Slide {
     String title();
+
     void draw(Graphics g);
 }

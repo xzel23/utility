@@ -68,7 +68,7 @@ public class FxLogPane extends BorderPane {
         if (sampleTexts.length == 0) {
             column.setPrefWidth(COLUMN_WIDTH_LARGE);
             column.setMaxWidth(COLUMN_WIDTH_MAX);
-        }else {
+        } else {
             double w = 8 + Stream.of(sampleTexts).mapToDouble(FxLogPane::getDisplayWidth).max().orElse(200);
             column.setPrefWidth(w);
             if (fixedWidth) {
@@ -175,9 +175,9 @@ public class FxLogPane extends BorderPane {
             entries.setPredicate(new DefaultLogEntryFilter(level, predicateLoggerName, predicateContent));
         };
 
-        cbLogLevel.valueProperty().addListener((v,o,n) -> updateFilter.run());
-        tfLoggerName.textProperty().addListener((v,o,n) -> updateFilter.run());
-        tfMessageContent.textProperty().addListener((v,o,n) -> updateFilter.run());
+        cbLogLevel.valueProperty().addListener((v, o, n) -> updateFilter.run());
+        tfLoggerName.textProperty().addListener((v, o, n) -> updateFilter.run());
+        tfMessageContent.textProperty().addListener((v, o, n) -> updateFilter.run());
 
         cbLogLevel.setValue(LogLevel.INFO);
         tfLoggerName.clear();
@@ -323,7 +323,7 @@ public class FxLogPane extends BorderPane {
         if (autoScroll) {
             // scroll to bottom
             Platform.runLater(() -> {
-                tableView.scrollTo(tableView.getItems().size()-1);
+                tableView.scrollTo(tableView.getItems().size() - 1);
                 autoScroll = true;
             });
         }

@@ -1130,7 +1130,7 @@ public final class LangUtil {
         public static final String NULL_STRING = String.valueOf((Object) null);
 
         private volatile @Nullable String s;
-        private volatile @Nullable Object @Nullable[] args;
+        private volatile @Nullable Object @Nullable [] args;
 
         public LazyFormatter(@Nullable String fmt, Object... args) {
             if (fmt == null) {

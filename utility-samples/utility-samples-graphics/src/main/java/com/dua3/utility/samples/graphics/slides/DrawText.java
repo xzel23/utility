@@ -23,10 +23,10 @@ public class DrawText implements Slide {
         y += 40;
 
         // show VAnchor values
-        showVAnchors(g, x, y, w/2);
+        showVAnchors(g, x, y, w / 2);
 
         // show HAnchor values
-        showHAnchors(g, x + w/2 +margin, y, w/2);
+        showHAnchors(g, x + w / 2 + margin, y, w / 2);
     }
 
     /**

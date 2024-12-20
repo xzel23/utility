@@ -24,7 +24,7 @@ public class ShapeFx implements Slide {
         Vector2f c = g.getBounds().center();
         Vector2f start = c.add(Vector2f.of(r, 0));
         Vector2f end = c.add(Vector2f.of(0, -r));
-        Vector2f p = c.add(Vector2f.of((float) (r*Math.sin(Math.PI/4)), (float) -(r*Math.cos(Math.PI/4))));
+        Vector2f p = c.add(Vector2f.of((float) (r * Math.sin(Math.PI / 4)), (float) -(r * Math.cos(Math.PI / 4))));
 
         drawPoint(g, c, Color.RED);
         drawPoint(g, start, Color.RED);

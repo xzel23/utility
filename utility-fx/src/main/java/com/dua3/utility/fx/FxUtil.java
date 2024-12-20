@@ -667,7 +667,7 @@ public final class FxUtil {
      * @param <B>     the type of elements returned by the mapping function
      * @return a new ObservableList containing the mapped elements
      */
-    public static <A, B> ObservableList<B> map(ObservableList<A> list, Function<A,B> mapping) {
+    public static <A, B> ObservableList<B> map(ObservableList<A> list, Function<A, B> mapping) {
         return new MappedList<>(list, mapping);
     }
 

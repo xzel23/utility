@@ -17,7 +17,8 @@ import java.util.function.Function;
  * @param <T1> type of first member
  * @param <T2> type of second member
  */
-public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 first, T2 second) implements Map.Entry<T1, T2> {
+public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 first,
+                                                                             T2 second) implements Map.Entry<T1, T2> {
 
     /**
      * Add pairs to a map.

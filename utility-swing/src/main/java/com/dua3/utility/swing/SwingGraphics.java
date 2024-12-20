@@ -52,7 +52,8 @@ public class SwingGraphics implements Graphics {
                 defaultFontAwt = font;
                 LOG.debug("determined default font using UIManager: {}", defaultFontAwt);
             }
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                 InvocationTargetException e) {
             LOG.debug("UIManager class or UIManager.getFont() method is not available");
         }
         if (defaultFontAwt == null) {
@@ -178,7 +179,7 @@ public class SwingGraphics implements Graphics {
         int xMax = (int) Math.ceil(r.xMax());
         int yMin = (int) Math.floor(r.yMin());
         int yMax = (int) Math.ceil(r.yMax());
-        return new Rectangle(xMin, yMin, xMax-xMin, yMax-yMin);
+        return new Rectangle(xMin, yMin, xMax - xMin, yMax - yMin);
     }
 
     /**

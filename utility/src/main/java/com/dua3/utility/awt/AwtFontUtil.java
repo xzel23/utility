@@ -176,7 +176,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
             AVAILABLE_FONTS = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()).collect(Collectors.toUnmodifiableMap(Function.identity(), AwtFontUtil::isMonospaced, (a, b) -> b));
             ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
             MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
-            PROPORTIONAL_FONTS =  ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
+            PROPORTIONAL_FONTS = ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
         }
     }
 

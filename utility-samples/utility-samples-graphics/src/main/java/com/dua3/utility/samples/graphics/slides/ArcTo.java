@@ -22,11 +22,11 @@ public class ArcTo implements Slide {
     @Override
     public void draw(Graphics g) {
         int angles = 8;
-        for (int j=0; j<=angles; j++) {
+        for (int j = 0; j <= angles; j++) {
             float w = g.getBounds().width() / (angles + 1);
-            float rMax = w/2;
+            float rMax = w / 2;
             float beta = (float) (j * 2 * Math.PI / angles);
-            Vector2f c = Vector2f.of(w*(j+0.5f), w);
+            Vector2f c = Vector2f.of(w * (j + 0.5f), w);
             int segments = 16;
             for (int i = 0; i <= segments; i++) {
                 float r = rMax / 2 + rMax / 2 * i / segments;

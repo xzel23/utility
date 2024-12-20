@@ -135,7 +135,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
 
                     // check min occurrences
                     if (minOccurrences == 1) {
-                        LangUtil.check(minOccurrences <= occurrences,
+                        LangUtil.check(1 <= occurrences,
                                 () -> new OptionException(
                                         "missing required option '%s'".formatted(option.name()
                                         )));

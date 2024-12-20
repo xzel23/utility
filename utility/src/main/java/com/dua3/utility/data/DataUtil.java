@@ -566,7 +566,7 @@ public final class DataUtil {
      * @param <V> the value type
      * @return a new map that contains the changed mappings (k -> mapped value in b)
      */
-    public static <U, V> Map<U, V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b, Supplier<? extends Map<U,V>> mapFactory) {
+    public static <U, V> Map<U, V> diff(Map<? extends U, ? extends V> a, Map<? extends U, ? extends V> b, Supplier<? extends Map<U, V>> mapFactory) {
         Set<U> keys = new HashSet<>(a.keySet());
         keys.addAll(b.keySet());
 

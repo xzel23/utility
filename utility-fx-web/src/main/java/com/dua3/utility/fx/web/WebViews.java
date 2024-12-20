@@ -252,18 +252,18 @@ public final class WebViews {
             Predicate<? super MouseEvent> filterMouse
     ) implements EventDispatcher {
         @Override
-            public Event dispatchEvent(Event event, EventDispatchChain tail) {
-                if (event instanceof KeyEvent keyEvent) {
-                    if (filterKey.test(keyEvent)) {
-                        keyEvent.consume();
-                    }
+        public Event dispatchEvent(Event event, EventDispatchChain tail) {
+            if (event instanceof KeyEvent keyEvent) {
+                if (filterKey.test(keyEvent)) {
+                    keyEvent.consume();
                 }
-                if (event instanceof MouseEvent mouseEvent) {
-                    if (filterMouse.test(mouseEvent)) {
-                        event.consume();
-                    }
-                }
-                return originalDispatcher.dispatchEvent(event, tail);
             }
+            if (event instanceof MouseEvent mouseEvent) {
+                if (filterMouse.test(mouseEvent)) {
+                    event.consume();
+                }
+            }
+            return originalDispatcher.dispatchEvent(event, tail);
         }
+    }
 }

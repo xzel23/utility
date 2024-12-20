@@ -13,7 +13,7 @@
         <Or>
             <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
             <Bug pattern="RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE"/>
-            <Bug pattern="SA_LOCAL_SELF_ASSIGNMENT" />
+            <Bug pattern="SA_LOCAL_SELF_ASSIGNMENT"/>
         </Or>
     </Match>
 
@@ -58,7 +58,7 @@
             <Bug pattern="SE_BAD_FIELD_STORE"/>
             <!-- false positive -->
             <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE"/>
-            <Bug pattern="DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS" />
+            <Bug pattern="DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS"/>
         </Or>
     </Match>
 
@@ -72,7 +72,7 @@
 
     <Match>
         <Class name="com.dua3.utility.data.HSVColor"/>
-        <Bug pattern="FE_FLOATING_POINT_EQUALITY" />
+        <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
     </Match>
 
     <Match>

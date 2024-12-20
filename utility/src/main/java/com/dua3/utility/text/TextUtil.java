@@ -329,8 +329,8 @@ public final class TextUtil {
         float f = switch (unit) {
             case "pt" -> 1.0f;
             case "em" -> 12.0f;
-            case "px" -> 18.0f / 24.0f;
-            case "%" -> 12.0f / 100.0f;
+            case "px" -> 0.75f;
+            case "%" -> 0.12f;
             case "vw" -> {
                 LOG.warn("unit 'vw' unsupported, treating as 'em'");
                 yield 12.0f;

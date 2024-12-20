@@ -179,7 +179,7 @@ public class SwingLogPane extends JPanel {
 
                 boolean changed = newEntries.size() != selectedEntries.size();
                 if (!changed) {
-                    for (int i=0; i<newEntries.size(); i++) {
+                    for (int i = 0; i < newEntries.size(); i++) {
                         if (newEntries.get(i) != selectedEntries.get(i)) {
                             changed = true;
                             break;
@@ -193,8 +193,8 @@ public class SwingLogPane extends JPanel {
 
                 final String text;
                 Function<? super LogEntry, String> fmt = format;
-                StringBuilder sb = new StringBuilder(128*newEntries.size());
-                for (LogEntry entry: newEntries) {
+                StringBuilder sb = new StringBuilder(128 * newEntries.size());
+                for (LogEntry entry : newEntries) {
                     sb.append(fmt.apply(entry)).append("\n");
                 }
                 text = sb.toString();
@@ -320,7 +320,7 @@ public class SwingLogPane extends JPanel {
      * @param row the row index to scroll into view
      */
     public void scrollRowIntoView(int row) {
-        SwingUtilities.invokeLater(() ->  {
+        SwingUtilities.invokeLater(() -> {
             Rectangle rect = new Rectangle(table.getCellRect(row, 0, true));
             table.scrollRectToVisible(rect);
         });

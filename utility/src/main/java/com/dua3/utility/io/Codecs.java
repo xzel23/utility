@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  * Registered codecs for a class can be obtained by using {@link #get(Class)}.
  */
 public class Codecs {
-    private static final Logger LOG  = LogManager.getLogger(Codecs.class);
+    private static final Logger LOG = LogManager.getLogger(Codecs.class);
 
     private final Map<String, Codec<?>> codecs = new HashMap<>();
 

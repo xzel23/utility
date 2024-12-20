@@ -56,7 +56,7 @@ public class ButtonBuilderBase<B extends ButtonBase, BB extends ButtonBuilderBas
         //noinspection unchecked
         return (BB) this;
     }
-    
+
     /**
      * Set text for the button.
      *

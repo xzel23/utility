@@ -10,7 +10,7 @@ import java.util.function.Function;
  * @param <A> the type of the source object
  * @param <B> the type of the target object
  */
-public interface Converter<A,B> {
+public interface Converter<A, B> {
     /**
      * Provides a function to convert an object of type A to an object of type B.
      *
@@ -70,7 +70,7 @@ public interface Converter<A,B> {
  * @param <A> the source type
  * @param <B> the target type
  */
-record SimpleConverter<A,B>(Function<A,B> a2b, Function<B,A> b2a) implements Converter<A,B> {
+record SimpleConverter<A, B>(Function<A, B> a2b, Function<B, A> b2a) implements Converter<A, B> {
     @Override
     public Converter<B, A> inverse() {
         return new SimpleConverter<>(b2a, a2b);

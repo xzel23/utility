@@ -74,7 +74,7 @@ public class FxGraphics implements Graphics {
      * @param canvas the Canvas object used to initialize the graphics instance
      */
     public FxGraphics(Canvas canvas) {
-        this (canvas.getGraphicsContext2D(), (float) canvas.getWidth(), (float) canvas.getHeight());
+        this(canvas.getGraphicsContext2D(), (float) canvas.getWidth(), (float) canvas.getHeight());
     }
 
     /**
@@ -351,11 +351,11 @@ public class FxGraphics implements Graphics {
 
             if (state.isUnderline) {
                 double yStroke = y + r.getMaxY() / 2.0f;
-                gc.strokeLine(x, yStroke, (double) x +wStroke, yStroke);
+                gc.strokeLine(x, yStroke, (double) x + wStroke, yStroke);
             }
             if (state.isStrikeThrough) {
                 double yStroke = y + r.getMinY() / 2.0f + r.getMaxY();
-                gc.strokeLine(x, yStroke, (double) x +wStroke, yStroke);
+                gc.strokeLine(x, yStroke, (double) x + wStroke, yStroke);
             }
         }
     }

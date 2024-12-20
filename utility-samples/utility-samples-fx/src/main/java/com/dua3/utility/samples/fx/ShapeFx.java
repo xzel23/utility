@@ -34,10 +34,10 @@ public class ShapeFx extends Application {
         Pane root = new Pane();
         Scene scene = new Scene(root, 300, 300);
 
-        Vector2f c = Vector2f.of(150,150);
+        Vector2f c = Vector2f.of(150, 150);
         float rMax = 100;
         int segments = 16;
-        for (int i=0; i<=segments; i++) {
+        for (int i = 0; i <= segments; i++) {
             float r = rMax / 2 + rMax / 2 * i / segments;
             float phi = (float) (2 * Math.PI * i / segments);
 
@@ -46,7 +46,7 @@ public class ShapeFx extends Application {
 
             Path jfxPath = new Path(
                     new MoveTo(start.x(), start.y()),
-                    new javafx.scene.shape.ArcTo(r, r, 0, end.x(), end.y(), i>=segments/2, i != segments)
+                    new javafx.scene.shape.ArcTo(r, r, 0, end.x(), end.y(), i >= segments / 2, i != segments)
             );
 
             root.getChildren().add(jfxPath);

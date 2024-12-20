@@ -383,7 +383,7 @@ public interface Graphics extends AutoCloseable {
      * @param font the font
      * @param text the text
      */
-    record Fragment (float x, float y, float w, float h, float baseLine, Font font, CharSequence text) {}
+    record Fragment(float x, float y, float w, float h, float baseLine, Font font, CharSequence text) {}
 
     /**
      * Represents a fragmented text that can be rendered within a specified bounding rectangle.
@@ -429,7 +429,7 @@ public interface Graphics extends AutoCloseable {
         float textWidth = 0.0f;
         float textHeight = 0.0f;
         float baseLine = 0.0f;
-        for (RichText line: text.split("\n")) {
+        for (RichText line : text.split("\n")) {
             line = trimLine.apply(line);
 
             List<Fragment> fragments = new ArrayList<>();
@@ -440,7 +440,7 @@ public interface Graphics extends AutoCloseable {
             float lineWidth = 0.0f;
             float lineBaseLine = 0.0f;
             boolean wrapAllowed = false;
-            for (var run: splitLinePreservingWhitespace(line, wrap)) {
+            for (var run : splitLinePreservingWhitespace(line, wrap)) {
                 Font f = fontUtil.deriveFont(getFont(), run.getFontDef());
                 Rectangle2f tr = fontUtil.getTextDimension(run, f);
                 if (wrapAllowed && xAct + tr.width() > wrapWidth) {
@@ -494,10 +494,10 @@ public interface Graphics extends AutoCloseable {
     private void renderFragments(Rectangle2f cr, Alignment hAlign, VerticalAlignment vAlign, float textWidth, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
         float y = switch (vAlign) {
             case TOP, DISTRIBUTED -> cr.yMin();
-            case MIDDLE -> cr.yCenter() - textHeight /2;
+            case MIDDLE -> cr.yCenter() - textHeight / 2;
             case BOTTOM -> cr.yMax() - textHeight;
         };
-        float fillerHeight = vAlign == VerticalAlignment.DISTRIBUTED ?  (cr.height()- textHeight)/Math.max(1, fragmentLines.size()-1) : 0.0f;
+        float fillerHeight = vAlign == VerticalAlignment.DISTRIBUTED ? (cr.height() - textHeight) / Math.max(1, fragmentLines.size() - 1) : 0.0f;
 
         record LineStatistics(float text, float whiteSpace, int nSpace) {}
         for (int i = 0; i < fragmentLines.size(); i++) {
@@ -619,7 +619,7 @@ public interface Graphics extends AutoCloseable {
             }
             // solution is a straight line connecting the points
             Vector2f center = Vector2f.of((p0.x() + p1.x()) / 2, (p0.y() + p1.y()) / 2);
-            generateBezierSegment.accept(new Vector2f[]{p0, p1, p1});
+            generateBezierSegment.accept(new Vector2f[]{center, center, p1});
             return;
         }
 
@@ -646,7 +646,7 @@ public interface Graphics extends AutoCloseable {
         double tx = my;
         double ty = -mx;
         double slen2 = Math.min(1.0, mx * mx + my * my); // catch rounding errors (slen2 > 1 => NaN)
-        double factor = sign * Math.sqrt((1-slen2)/slen2);
+        double factor = sign * Math.sqrt((1 - slen2) / slen2);
         double cx = sx + factor * tx;
         double cy = sy + factor * ty;
 

@@ -1152,7 +1152,8 @@ public class NamedParameterStatement implements AutoCloseable {
     public static class ParameterInfo {
         final String name;
         final List<Integer> indexes = new ArrayList<>();
-        @Nullable JDBCType type;
+        @Nullable
+        JDBCType type;
 
         ParameterInfo(String name) {
             this.name = name;

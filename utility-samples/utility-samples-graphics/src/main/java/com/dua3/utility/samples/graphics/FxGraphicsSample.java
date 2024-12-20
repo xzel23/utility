@@ -36,7 +36,7 @@ public class FxGraphicsSample extends Application {
         float w = 1400;
         float h = 800;
         TabPane tabPane = new TabPane(
-            createSlides(w, h)
+                createSlides(w, h)
         );
 
         Scene scene = new Scene(tabPane);

@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  *
  * @param <B> the type of Button subclass to build
  */
-public class ButtonBuilder<B extends ButtonBase> extends ButtonBuilderBase<B, ButtonBuilder<B>>{
+public class ButtonBuilder<B extends ButtonBase> extends ButtonBuilderBase<B, ButtonBuilder<B>> {
 
     /**
      * Constructor.

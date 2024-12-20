@@ -350,8 +350,8 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      */
     @SuppressWarnings("unchecked")
     public <T extends @Nullable Object> void ifPresentOrElseGet(String key,
-                                       Supplier<T> defaultSupplier,
-                                       Consumer<? super T> action) {
+                                                                Supplier<T> defaultSupplier,
+                                                                Consumer<? super T> action) {
         Object raw = get(key);
         try {
             T value = (T) raw;
@@ -372,8 +372,8 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      */
     @SuppressWarnings("unchecked")
     public <T extends @Nullable Object> void ifPresentOrElse(String key,
-                                    @Nullable T defaultValue,
-                                    Consumer<T> action) {
+                                                             @Nullable T defaultValue,
+                                                             Consumer<T> action) {
         Object raw = get(key);
         try {
             T value = (T) raw;

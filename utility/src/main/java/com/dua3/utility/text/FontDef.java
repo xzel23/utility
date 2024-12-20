@@ -388,12 +388,12 @@ public final class FontDef implements Cloneable {
         }
         return other == this ||
                 Objects.equals(color, other.color) &&
-                Objects.equals(size, other.size) &&
-                Objects.equals(family, other.family) &&
-                Objects.equals(bold, other.bold) &&
-                Objects.equals(italic, other.italic) &&
-                Objects.equals(underline, other.underline) &&
-                Objects.equals(strikeThrough, other.strikeThrough);
+                        Objects.equals(size, other.size) &&
+                        Objects.equals(family, other.family) &&
+                        Objects.equals(bold, other.bold) &&
+                        Objects.equals(italic, other.italic) &&
+                        Objects.equals(underline, other.underline) &&
+                        Objects.equals(strikeThrough, other.strikeThrough);
     }
 
     @Override

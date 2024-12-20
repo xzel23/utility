@@ -84,9 +84,9 @@ public final class ChoiceOption<T> extends Option<T> {
      * @return choice option
      */
     public static <T extends @Nullable Object> ChoiceOption<T> create(Function<String, ? extends T> valueMapper,
-                                             Function<? super T, String> formatter,
-                                             Supplier<? extends Collection<? extends T>> values,
-                                             String... names) {
+                                                                      Function<? super T, String> formatter,
+                                                                      Supplier<? extends Collection<? extends T>> values,
+                                                                      String... names) {
         return new ChoiceOption<>(valueMapper, formatter, values, names);
     }
 

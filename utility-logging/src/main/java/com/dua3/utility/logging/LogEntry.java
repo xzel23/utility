@@ -53,7 +53,8 @@ public interface LogEntry {
      *
      * @return the throwable object associated with this LogEntry, or null if no throwable is present
      */
-    @Nullable Throwable throwable();
+    @Nullable
+    Throwable throwable();
 
     /**
      * Formats the log entry with the given prefix and suffix.

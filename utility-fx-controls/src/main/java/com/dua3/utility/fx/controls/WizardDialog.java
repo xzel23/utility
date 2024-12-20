@@ -244,7 +244,8 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
             this.resultHandler = resultHandler;
         }
 
-        @Nullable String getNext() {
+        @Nullable
+        String getNext() {
             return next;
         }
 

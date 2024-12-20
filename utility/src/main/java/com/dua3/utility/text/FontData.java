@@ -55,7 +55,7 @@ public record FontData(
 
         // remove color from fontspec
         assert fontspec.endsWith("-*") : "unexpected fontspec: " + fontspec;
-        fontspec = fontspec.substring(0, fontspec.length()-2);
+        fontspec = fontspec.substring(0, fontspec.length() - 2);
     }
 
     public static FontData get(

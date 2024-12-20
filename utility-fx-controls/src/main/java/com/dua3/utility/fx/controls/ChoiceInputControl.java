@@ -42,12 +42,12 @@ public class ChoiceInputControl<T> implements InputControl<T> {
         //noinspection NullableProblems - false positive
         control.valueProperty().addListener((ObservableValue<? extends ChoiceOption.Choice<T>> v, ChoiceOption.@Nullable Choice<T> o, ChoiceOption.@Nullable Choice<T> n) -> valueProperty.setValue(n == null ? null : n.value()));
         valueProperty.addListener((ObservableValue<? extends @Nullable T> v, @Nullable T o, @Nullable T n) -> {
-                    if (n == null) {
-                        control.getSelectionModel().clearSelection();
-                    } else {
-                        control.getSelectionModel().select(option.choice(n));
-                    }
-                });
+            if (n == null) {
+                control.getSelectionModel().clearSelection();
+            } else {
+                control.getSelectionModel().select(option.choice(n));
+            }
+        });
 
         control.getItems().setAll(option.choices());
         Optional.ofNullable(dfltValue.get()).ifPresent(dflt -> control.getSelectionModel().select(option.choice(dflt)));

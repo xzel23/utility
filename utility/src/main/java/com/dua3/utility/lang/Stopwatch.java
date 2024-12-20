@@ -330,7 +330,8 @@ public class Stopwatch {
 
     private static class LazyName {
         private final Supplier<String> name;
-        @Nullable String n;
+        @Nullable
+        String n;
 
         public LazyName(Supplier<String> name) {
             this.name = name;

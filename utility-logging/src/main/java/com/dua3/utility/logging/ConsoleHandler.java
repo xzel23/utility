@@ -17,19 +17,19 @@ public final class ConsoleHandler implements LogEntryHandler {
     private static final String NEWLINE = System.lineSeparator();
 
     private static final Map<LogLevel, Pair<String, String>> COLOR_MAP_COLORED = java.util.Map.of(
-        LogLevel.TRACE, Pair.of(AnsiCode.italic(true), AnsiCode.reset() + NEWLINE),
-        LogLevel.DEBUG, Pair.of("", NEWLINE),
-        LogLevel.INFO, Pair.of(AnsiCode.bold(true), NEWLINE),
-        LogLevel.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED) + AnsiCode.bold(true), AnsiCode.reset() + NEWLINE),
-        LogLevel.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED) + AnsiCode.bold(true), AnsiCode.reset() + NEWLINE)
+            LogLevel.TRACE, Pair.of(AnsiCode.italic(true), AnsiCode.reset() + NEWLINE),
+            LogLevel.DEBUG, Pair.of("", NEWLINE),
+            LogLevel.INFO, Pair.of(AnsiCode.bold(true), NEWLINE),
+            LogLevel.WARN, Pair.of(AnsiCode.fg(Color.ORANGERED) + AnsiCode.bold(true), AnsiCode.reset() + NEWLINE),
+            LogLevel.ERROR, Pair.of(AnsiCode.fg(Color.DARKRED) + AnsiCode.bold(true), AnsiCode.reset() + NEWLINE)
     );
 
     private static final Map<LogLevel, Pair<String, String>> COLOR_MAP_MONOCHROME = java.util.Map.of(
-        LogLevel.TRACE, Pair.of("", NEWLINE),
-        LogLevel.DEBUG, Pair.of("", NEWLINE),
-        LogLevel.INFO, Pair.of("", NEWLINE),
-        LogLevel.WARN, Pair.of("", NEWLINE),
-        LogLevel.ERROR, Pair.of("", NEWLINE)
+            LogLevel.TRACE, Pair.of("", NEWLINE),
+            LogLevel.DEBUG, Pair.of("", NEWLINE),
+            LogLevel.INFO, Pair.of("", NEWLINE),
+            LogLevel.WARN, Pair.of("", NEWLINE),
+            LogLevel.ERROR, Pair.of("", NEWLINE)
     );
 
     private final PrintStream out;

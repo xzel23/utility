@@ -13,5 +13,6 @@ public interface ILogEntryDispatcherFactory {
      * NOTE: This method is called by the ServiceProvider and not intended to be called directly by user code.
      * @return The global LogEntryDispatcher instance.
      */
-    @Nullable LogEntryDispatcher getDispatcher();
+    @Nullable
+    LogEntryDispatcher getDispatcher();
 }

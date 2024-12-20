@@ -121,7 +121,7 @@ public class Font {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj==null || obj.getClass() != getClass()) {
+        if (obj == null || obj.getClass() != getClass()) {
             return false;
         }
         Font other = (Font) obj;
@@ -134,7 +134,7 @@ public class Font {
      * @return fontstyle definition
      */
     public String getCssStyle() {
-        return fontData.cssStyle() + " color: " + color.toCss() +";";
+        return fontData.cssStyle() + " color: " + color.toCss() + ";";
     }
 
     /**
@@ -143,7 +143,7 @@ public class Font {
      * @return font description
      */
     public String fontspec() {
-        return fontData.fontspec()+ "-" + color.toCss();
+        return fontData.fontspec() + "-" + color.toCss();
     }
 
     /**
@@ -200,7 +200,7 @@ public class Font {
      * @return a copy of this font with the requested size, or this font, if the size matches
      */
     public Font withSize(float size) {
-        return size == getSizeInPoints() ? this :FontUtil.getInstance().deriveFont(this, FontDef.size(size));
+        return size == getSizeInPoints() ? this : FontUtil.getInstance().deriveFont(this, FontDef.size(size));
     }
 
     /**
@@ -210,7 +210,7 @@ public class Font {
      * @return a new Font instance that is scaled by the given factor, or this font if the scaling factor is 1
      */
     public Font scaled(float s) {
-        return s == 1 ? this :FontUtil.getInstance().deriveFont(this, FontDef.size(s * getSizeInPoints()));
+        return s == 1 ? this : FontUtil.getInstance().deriveFont(this, FontDef.size(s * getSizeInPoints()));
     }
 
     /**
@@ -230,7 +230,7 @@ public class Font {
      * @return a copy of this font with the italic attribute set to the requested value, or this font if values match
      */
     public Font withItalic(boolean flag) {
-        return flag == isItalic() ? this :FontUtil.getInstance().deriveFont(this, FontDef.italic(flag));
+        return flag == isItalic() ? this : FontUtil.getInstance().deriveFont(this, FontDef.italic(flag));
     }
 
     /**
@@ -240,7 +240,7 @@ public class Font {
      * @return a copy of this font with the underline attribute set to the requested value, or this font if values match
      */
     public Font withUnderline(boolean flag) {
-        return flag == isUnderline() ? this :FontUtil.getInstance().deriveFont(this, FontDef.underline(flag));
+        return flag == isUnderline() ? this : FontUtil.getInstance().deriveFont(this, FontDef.underline(flag));
     }
 
     /**
@@ -250,7 +250,7 @@ public class Font {
      * @return a copy of this font with the strike-through attribute set to the requested value, or this font if values match
      */
     public Font withStrikeThrough(boolean flag) {
-        return flag == isStrikeThrough() ? this :FontUtil.getInstance().deriveFont(this, FontDef.strikeThrough(flag));
+        return flag == isStrikeThrough() ? this : FontUtil.getInstance().deriveFont(this, FontDef.strikeThrough(flag));
     }
 
     /**
@@ -260,7 +260,7 @@ public class Font {
      * @return a copy of this font with the family set to the requested value, or this font if values match
      */
     public Font withFamily(String family) {
-        return family.equals(this.getFamily()) ? this :FontUtil.getInstance().deriveFont(this, FontDef.family(family));
+        return family.equals(this.getFamily()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.family(family));
     }
 
     /**
@@ -270,7 +270,7 @@ public class Font {
      * @return a copy of this font with the color set to the requested value, or this font if values match
      */
     public Font withColor(Color color) {
-        return color.equals(this.getColor()) ? this :FontUtil.getInstance().deriveFont(this, FontDef.color(color));
+        return color.equals(this.getColor()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.color(color));
     }
 
     public FontData getFontData() {

@@ -29,7 +29,7 @@ import java.util.function.Predicate;
  */
 public class PromptBuilder extends AbstractDialogBuilder<TextInputDialog, PromptBuilder, String> {
     private String defaultValue = "";
-    private Predicate<? super @Nullable String> validate = (@Nullable String s)-> s != null && !s.isEmpty();
+    private Predicate<? super @Nullable String> validate = (@Nullable String s) -> s != null && !s.isEmpty();
 
     PromptBuilder(@Nullable Window parentWindow) {
         super(parentWindow);

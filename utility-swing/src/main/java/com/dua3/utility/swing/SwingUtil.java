@@ -415,7 +415,7 @@ public final class SwingUtil {
 
     @SafeVarargs
     private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super Component, Integer> showDialog,
-                                                 Pair<@NonNull String, @NonNull String @NonNull[]>... types) {
+                                                 Pair<@NonNull String, @NonNull String @NonNull []>... types) {
         File file;
         try {
             file = current.toFile().getAbsoluteFile();

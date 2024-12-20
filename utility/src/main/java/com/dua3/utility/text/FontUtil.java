@@ -73,7 +73,7 @@ public interface FontUtil<F> {
                             // determine bounding rectangle for current line
                             line.runs().stream()
                                     .map(run -> getTextDimension(run, deriveFont(f, run.getFontDef())))
-                                    .reduce( (a, b) -> Rectangle2f.withCorners(
+                                    .reduce((a, b) -> Rectangle2f.withCorners(
                                                     Vector2f.of(
                                                             // A: x,y = left of first part, lowest border of both parts
                                                             a.xMin(),
@@ -88,7 +88,7 @@ public interface FontUtil<F> {
                                     )
                                     .orElseGet(() -> getTextDimension("", f))
                     )
-                    .reduce((a,b) -> new Rectangle2f(Math.min(a.xMin(), b.xMin()), Math.min(a.yMin(), b.yMin()), Math.max(a.width(), b.width()), a.height() + b.height()))
+                    .reduce((a, b) -> new Rectangle2f(Math.min(a.xMin(), b.xMin()), Math.min(a.yMin(), b.yMin()), Math.max(a.width(), b.width()), a.height() + b.height()))
                     .orElseGet(() -> getTextDimension("", f));
         } else {
             return getTextDimension(s, f);
