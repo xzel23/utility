@@ -153,6 +153,40 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
+    public void strokeEllipse(float x, float y, float rx, float ry, float angle) {
+        assert isDrawing : "instance has already been closed!";
+
+        Vector2f p0 = Vector2f.of(x + rx, y);
+        Vector2f p1 = Vector2f.of(x - rx, y);
+        Vector2f r = Vector2f.of(rx, ry);
+
+        gc.setStroke(state.fxStrokeColor);
+        strokePath(Path2f.builder()
+                .moveTo(p0)
+                .arcTo(p1, r, angle, false, true)
+                .arcTo(p0, r, angle, false, true)
+                .build()
+        );
+    }
+
+    @Override
+    public void fillEllipse(float x, float y, float rx, float ry, float angle) {
+        assert isDrawing : "instance has already been closed!";
+
+        Vector2f p0 = Vector2f.of(x + rx, y);
+        Vector2f p1 = Vector2f.of(x - rx, y);
+        Vector2f r = Vector2f.of(rx, ry);
+
+        gc.setFill(state.fxFillColor);
+        fillPath(Path2f.builder()
+                .moveTo(p0)
+                .arcTo(p1, r, angle, false, true)
+                .arcTo(p0, r, angle, false, true)
+                .build()
+        );
+    }
+
+    @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
         assert isDrawing : "instance has already been closed!";
 
@@ -228,13 +262,17 @@ public class FxGraphics implements Graphics {
                     default -> throw new IllegalArgumentException("Unsupported number of control points: " + n);
                 }
             } else if (segment instanceof Arc2f s) {
-                Graphics.approximateArc(s, this::generateBezierSegment);
+                Graphics.approximateArc(s, this::moveTo, this::generateBezierSegment);
             } else if (segment instanceof ClosePath2f c) {
                 gc.closePath();
             } else {
                 throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
             }
         });
+    }
+
+    private void moveTo(Vector2f p) {
+        gc.moveTo(p.x(), p.y());
     }
 
     private void generateBezierSegment(Vector2f[] points) {

@@ -350,7 +350,10 @@ public final class SwingUtil {
                             points[2].x(), points[2].y()
                     );
                 };
-                Graphics.approximateArc(s, generateBezierSegment);
+                Consumer<Vector2f> moveTo = p -> {
+                    swingPath.moveTo(p.x(), p.y());
+                };
+                Graphics.approximateArc(s, moveTo, generateBezierSegment);
             } else if (segment instanceof ClosePath2f c) {
                 swingPath.closePath();
             } else {

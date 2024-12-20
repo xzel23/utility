@@ -3,6 +3,7 @@ package com.dua3.utility.swing;
 import com.dua3.utility.awt.AwtImageUtil;
 import com.dua3.utility.data.Image;
 import com.dua3.utility.math.geometry.Path2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
@@ -366,6 +367,40 @@ public class SwingGraphics implements Graphics {
         g2d.setColor(state.awtFillColor);
         rect.setRect(x, y, width, height);
         g2d.fill(rect);
+    }
+
+    @Override
+    public void strokeEllipse(float x, float y, float rx, float ry, float angle) {
+        assert isDrawing : "instance has already been closed!";
+
+        Vector2f p0 = Vector2f.of(x + rx, y);
+        Vector2f p1 = Vector2f.of(x - rx, y);
+        Vector2f r = Vector2f.of(rx, ry);
+
+        g2d.setColor(state.awtStrokeColor);
+        strokePath(Path2f.builder()
+                .moveTo(p0)
+                .arcTo(p1, r, angle, false, true)
+                .arcTo(p0, r, angle, false, true)
+                .build()
+        );
+    }
+
+    @Override
+    public void fillEllipse(float x, float y, float rx, float ry, float angle) {
+        assert isDrawing : "instance has already been closed!";
+
+        Vector2f p0 = Vector2f.of(x + rx, y);
+        Vector2f p1 = Vector2f.of(x - rx, y);
+        Vector2f r = Vector2f.of(rx, ry);
+
+        g2d.setColor(state.awtFillColor);
+        fillPath(Path2f.builder()
+                .moveTo(p0)
+                .arcTo(p1, r, angle, false, true)
+                .arcTo(p0, r, angle, false, true)
+                .build()
+        );
     }
 
     @Override

@@ -119,6 +119,50 @@ public interface Graphics extends AutoCloseable {
     void fillRect(float x, float y, float w, float h);
 
     /**
+     * Draws the outline of a circle centered at the specified coordinates with the given radius.
+     *
+     * @param x The x-coordinate of the circle's center.
+     * @param y The y-coordinate of the circle's center.
+     * @param r The radius of the circle.
+     */
+    default void strokeCircle(float x, float y, float r) {
+        strokeEllipse(x, y, r, r, 0);
+    }
+
+    /**
+     * Draws the outline of an ellipse on the canvas with the specified center coordinates and radii.
+     *
+     * @param x  The x-coordinate of the center of the ellipse.
+     * @param y  The y-coordinate of the center of the ellipse.
+     * @param rx The horizontal radius (semi-major axis) of the ellipse.
+     * @param ry The vertical radius (semi-minor axis) of the ellipse.
+     * @param angle The rotation angle.
+     */
+    void strokeEllipse(float x, float y, float rx, float ry, float angle);
+
+    /**
+     * Fill a circle centered at the specified coordinates with the given radius.
+     *
+     * @param x The x-coordinate of the circle's center.
+     * @param y The y-coordinate of the circle's center.
+     * @param r The radius of the circle.
+     */
+    default void fillCircle(float x, float y, float r) {
+        fillEllipse(x, y, r, r, 0);
+    }
+
+    /**
+     * Fill an ellipse on the canvas with the specified center coordinates and radii.
+     *
+     * @param x  The x-coordinate of the center of the ellipse.
+     * @param y  The y-coordinate of the center of the ellipse.
+     * @param rx The horizontal radius (semi-major axis) of the ellipse.
+     * @param ry The vertical radius (semi-minor axis) of the ellipse.
+     * @param angle The rotation angle.
+     */
+    void fillEllipse(float x, float y, float rx, float ry, float angle);
+
+    /**
      * Draws a line between two specified points.
      *
      * @param a the starting point of the line
@@ -581,7 +625,7 @@ public interface Graphics extends AutoCloseable {
      *                              the generated Bézier segment points for each
      *                              subdivided portion of the arc.
      */
-    static void approximateArc(Arc2f arc, Consumer<Vector2f[]> generateBezierSegment) {
+    static void approximateArc(Arc2f arc, Consumer<Vector2f> moveTo, Consumer<Vector2f[]> generateBezierSegment) {
         approximateArc(
                 arc.start(),
                 arc.end(),
@@ -589,6 +633,7 @@ public interface Graphics extends AutoCloseable {
                 arc.angle(),
                 arc.largeArc(),
                 arc.sweep(),
+                moveTo,
                 generateBezierSegment
         );
     }
@@ -611,6 +656,7 @@ public interface Graphics extends AutoCloseable {
             float angle,
             boolean largeArc,
             boolean sweep,
+            Consumer<Vector2f> moveTo,
             Consumer<Vector2f[]> generateBezierSegment) {
         // 1. if either rx = 0 or ry = 0 the arc degenerates to a line
         if (r.x() == 0.0f || r.y() == 0.0f || p0.equals(p1)) {
@@ -672,6 +718,7 @@ public interface Graphics extends AutoCloseable {
         double sinCurrent = Math.sin(startAngle);
         double stepAngle = sweepAngle / segments;
         double f = (4.0 / 3.0) * Math.tan(stepAngle / 4.0);
+        moveTo.accept(MB.transform(Vector2f.of((float) (cosCurrent), (float) (sinCurrent))));
         for (int i = 0; i < segments; i++) {
             double nextAngle = startAngle + (i + 1) * sweepAngle / segments;
             double cosNext = Math.cos(nextAngle);

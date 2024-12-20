@@ -26,9 +26,11 @@ public class ArcTo implements Slide {
             float w = g.getBounds().width() / (angles + 1);
             float rMax = w / 2;
             float beta = (float) (j * 2 * Math.PI / angles);
+
+            // draw arc segments
             Vector2f c = Vector2f.of(w * (j + 0.5f), w);
             int segments = 16;
-            for (int i = 0; i <= segments; i++) {
+            for (int i = 0; i < segments; i++) {
                 float r = rMax / 2 + rMax / 2 * i / segments;
                 float rx = 0.95f * r;
                 float ry = 0.5f * r;
@@ -50,6 +52,14 @@ public class ArcTo implements Slide {
                 g.setStroke(Color.BLUE, 1);
                 g.strokePath(path);
             }
+
+            // draw ellipses
+            float angle = (float) (2 * Math.PI * j / angles);
+            c = Vector2f.of(w * (j + 0.5f), 2 * w);
+            g.setFill(Color.GRAY);
+            g.fillEllipse(c.x(), c.y(), rMax, rMax*0.75f, angle);
+            g.setStrokeColor(Color.BLACK);
+            g.strokeEllipse(c.x(), c.y(), rMax, rMax*0.75f, angle);
         }
     }
 
