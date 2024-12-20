@@ -1,6 +1,7 @@
 package com.dua3.utility.samples.graphics.slides;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.samples.graphics.Slide;
@@ -20,29 +21,35 @@ public class ArcTo implements Slide {
 
     @Override
     public void draw(Graphics g) {
-        float rMax = (float) (0.95 * Math.min(g.getWidth(), g.getHeight()) / 2);
+        int angles = 8;
+        for (int j=0; j<=angles; j++) {
+            float w = g.getBounds().width() / (angles + 1);
+            float rMax = w/2;
+            float beta = (float) (j * 2 * Math.PI / angles);
+            Vector2f c = Vector2f.of(w*(j+0.5f), w);
+            int segments = 16;
+            for (int i = 0; i <= segments; i++) {
+                float r = rMax / 2 + rMax / 2 * i / segments;
+                float rx = 0.95f * r;
+                float ry = 0.5f * r;
+                float phi = (float) (2 * Math.PI * i / segments);
 
-        Vector2f c = g.getBounds().center();
+                AffineTransformation2f t = AffineTransformation2f.rotate(beta, c);
+                Vector2f start = t.transform(c.add(Vector2f.of(rx, 0)));
+                Vector2f end = t.transform(c.add(Vector2f.of((float) (rx * Math.cos(phi)), (float) (ry * Math.sin(phi)))));
 
-        int segments = 16;
-        for (int i=0; i<=segments; i++) {
-            float r = rMax / 2 + rMax / 2 * i/segments;
-            float phi = (float) (2 * Math.PI * i / segments);
+                // draw the input points
+                drawPoint(g, c, Color.RED, 3);
+                drawPoint(g, start, Color.BLUE, 3);
+                drawPoint(g, end, Color.GREEN, 3);
 
-            Vector2f start = c.add(Vector2f.of(r, 0));
-            Vector2f end = c.add(Vector2f.of((float) (r * Math.cos(phi)), (float) (r * Math.sin(phi))));
-
-            // draw the input points
-            drawPoint(g, c, Color.RED, 10);
-            drawPoint(g, start, Color.BLUE, 10);
-            drawPoint(g, end, Color.GREEN, 10);
-
-            Path2f path = Path2f.builder()
-                    .moveTo(start)
-                    .arcTo(end, Vector2f.of(r, r), 0, i>=segments/2, i != segments)
-                    .build();
-            g.setStroke(Color.BLUE, 3);
-            g.strokePath(path);
+                Path2f path = Path2f.builder()
+                        .moveTo(start)
+                        .arcTo(end, Vector2f.of(rx, ry), beta, i >= segments / 2, i != segments)
+                        .build();
+                g.setStroke(Color.BLUE, 1);
+                g.strokePath(path);
+            }
         }
     }
 

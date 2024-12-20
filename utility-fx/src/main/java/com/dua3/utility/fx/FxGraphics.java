@@ -238,12 +238,6 @@ public class FxGraphics implements Graphics {
     }
 
     private void generateBezierSegment(Vector2f[] points) {
-/*
-        gc.lineTo(points[0].x(), points[0].y());
-        gc.lineTo(points[1].x(), points[1].y());
-        gc.lineTo(points[2].x(), points[2].y());
- */
-
         gc.bezierCurveTo(
                 points[0].x(), points[0].y(),
                 points[1].x(), points[1].y(),
