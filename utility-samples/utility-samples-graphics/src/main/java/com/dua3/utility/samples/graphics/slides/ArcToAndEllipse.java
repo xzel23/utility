@@ -7,16 +7,11 @@ import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.samples.graphics.Slide;
 import com.dua3.utility.ui.Graphics;
 
-/**
- * The ShapeFx class extends the JavaFX Application class to create and display a window
- * with two different paths drawn on a pane. The paths are created using different methods,
- * demonstrating the use of both JavaFX Path elements and a custom Path2f class with segmented paths.
- */
-public class ArcTo implements Slide {
+public class ArcToAndEllipse implements Slide {
 
     @Override
     public String title() {
-        return "ArcTo";
+        return "ArcTo(), strokeEllipse(), fillEllipse()";
     }
 
     @Override
@@ -70,7 +65,7 @@ public class ArcTo implements Slide {
         drawPoint(g, p0, Color.RED, 3);
         drawPoint(g, p1, Color.RED, 3);
         float angle = 0;
-/**/
+
         g.setStrokeColor(Color.BLACK);
         g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, false, true).build());
 

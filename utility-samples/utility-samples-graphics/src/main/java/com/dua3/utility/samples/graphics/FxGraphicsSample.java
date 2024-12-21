@@ -1,10 +1,9 @@
 package com.dua3.utility.samples.graphics;
 
 import com.dua3.utility.fx.FxGraphics;
-import com.dua3.utility.samples.graphics.slides.ArcTo;
+import com.dua3.utility.samples.graphics.slides.ArcToAndEllipse;
 import com.dua3.utility.samples.graphics.slides.DrawText;
 import com.dua3.utility.samples.graphics.slides.RenderText;
-import com.dua3.utility.samples.graphics.slides.ShapeFx;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -47,10 +46,9 @@ public class FxGraphicsSample extends Application {
 
     Tab[] createSlides(float w, float h) {
         return new Tab[]{
-                createSlide(ArcTo::new, w, h),
+                createSlide(ArcToAndEllipse::new, w, h),
                 createSlide(DrawText::new, w, h),
-                createSlide(RenderText::new, w, h),
-                createSlide(ShapeFx::new, w, h)
+                createSlide(RenderText::new, w, h)
         };
     }
 
