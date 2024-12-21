@@ -701,11 +701,13 @@ public interface Graphics extends AutoCloseable {
         // 4. generate Bézier curves
         double startAngle = Math.atan2(p0l.y() - cy, p0l.x() - cx);
         double endAngle = Math.atan2(p1l.y() - cl.y(), p1l.x() - cl.x());
-        if (endAngle < startAngle) {
-            endAngle += 2 * Math.PI;
+        double sweepAngle;
+        float sweepSign = sweep ? 1 : -1;
+        if (sweepSign * endAngle < sweepSign *startAngle) {
+            endAngle += sweepSign * 2 * Math.PI;
         }
-        double sweepAngle = endAngle - startAngle;
-        if (sweepAngle <= Math.PI == largeArc) {
+        sweepAngle = endAngle - startAngle;
+        if (sweepSign * sweepAngle <= Math.PI && largeArc) {
             sweepAngle = 2 * Math.PI - sweepAngle;
         }
 

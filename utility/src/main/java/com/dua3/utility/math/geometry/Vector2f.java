@@ -136,7 +136,44 @@ public record Vector2f(float x, float y) {
     }
 
     /**
-     * Calculate length of vector.
+     * Translates the vector by the specified amounts in the x and y directions.
+     *
+     * @param dx the amount to translate in the x-direction
+     * @param dy the amount to translate in the y-direction
+     * @return a new Vector2f object representing the translated vector
+     */
+    public Vector2f translate(float dx, float dy) {
+        return Vector2f.of(x() + dx, y() + dy);
+    }
+
+    /**
+     * Normalizes the vector to a unit vector by dividing each component by its length.
+     *
+     * @return a new Vector2f object representing the normalized vector
+     * @throws IllegalArgumentException if the vector has a length of zero
+     */
+    public Vector2f normalized() {
+        double l = length();
+        if (l == 0) {
+            throw new IllegalArgumentException("zero length vector");
+        }
+        return new Vector2f((float) (x / l), (float) (y / l));
+    }
+
+    /**
+     * Calculates the orthogonal vector based on the sweep direction.
+     *
+     * @param sweep a boolean indicating the sweep direction. If true, the orthogonal vector
+     *              is computed in a clockwise direction; otherwise, it is computed in a counterclockwise direction.
+     * @return a new {@code Vector2f} object representing the orthogonal vector.
+     */
+    public Vector2f orthogonal(boolean sweep) {
+        float sign = sweep ? -1 : 1;
+        return new Vector2f(- sign * y, sign * x);
+    }
+
+    /**
+     * Calculate the length of vector.
      *
      * @return the length
      */

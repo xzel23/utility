@@ -5,6 +5,7 @@ import com.dua3.utility.math.geometry.Vector2f;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.HLineTo;
 import javafx.scene.shape.LineTo;
@@ -32,8 +33,8 @@ public class ShapeFx extends Application {
     @Override
     public void start(Stage stage) {
         Pane root = new Pane();
-        Scene scene = new Scene(root, 300, 300);
-
+        Scene scene = new Scene(root, 700, 400);
+/*
         Vector2f c = Vector2f.of(150, 150);
         float rMax = 100;
         int segments = 16;
@@ -51,6 +52,7 @@ public class ShapeFx extends Application {
 
             root.getChildren().add(jfxPath);
         }
+ */
 /*
         Path path1 = createJavaFXPath();
         path1.setStroke(Paint.valueOf("blue"));
@@ -62,6 +64,45 @@ public class ShapeFx extends Application {
         path2.setStrokeWidth(3.0f);
         root.getChildren().add(path2);
 */
+        Vector2f c = Vector2f.of(350, 200);
+        Vector2f p0 = c.translate(0, -50);
+        Vector2f p1 = c.translate(0,  50);
+        Vector2f r = Vector2f.of(150, 100);
+
+        float angle = 0;
+
+        Path path0 = new Path(
+                new MoveTo(p0.x(), p0.y()),
+                new ArcTo(r.x(), r.y(), angle, p1.x(), p1.y(), false, true)
+        );
+        path0.setStroke(Paint.valueOf("black"));
+        path0.setStrokeWidth(1.0f);
+        root.getChildren().add(path0);
+
+        Path path1 = new Path(
+                new MoveTo(p0.x(), p0.y()),
+                new ArcTo(r.x(), r.y(), angle, p1.x(), p1.y(), true, true)
+        );
+        path1.setStroke(Paint.valueOf("blue"));
+        path1.setStrokeWidth(1.0f);
+        root.getChildren().add(path1);
+
+        Path path2 = new Path(
+                new MoveTo(p0.x(), p0.y()),
+                new ArcTo(r.x(), r.y(), angle, p1.x(), p1.y(), false, false)
+        );
+        path2.setStroke(Paint.valueOf("red"));
+        path2.setStrokeWidth(1.0f);
+        root.getChildren().add(path2);
+
+        Path path3 = new Path(
+                new MoveTo(p0.x(), p0.y()),
+                new ArcTo(r.x(), r.y(), angle, p1.x(), p1.y(), true, false)
+        );
+        path3.setStroke(Paint.valueOf("green"));
+        path3.setStrokeWidth(1.0f);
+        root.getChildren().add(path3);
+
         stage.setScene(scene);
         stage.setTitle("Shape");
         stage.show();

@@ -61,11 +61,32 @@ public class ArcTo implements Slide {
             g.setStrokeColor(Color.BLACK);
             g.strokeEllipse(c.x(), c.y(), rMax, rMax*0.75f, angle);
         }
+
+        Vector2f c = g.getBounds().center().translate(0, g.getBounds().height() / 8);
+        Vector2f p0 = c.translate(0, -50);
+        Vector2f p1 = c.translate(0,  50);
+        Vector2f r = Vector2f.of(150, 100);
+
+        drawPoint(g, p0, Color.RED, 3);
+        drawPoint(g, p1, Color.RED, 3);
+        float angle = 0;
+/**/
+        g.setStrokeColor(Color.BLACK);
+        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, false, true).build());
+
+        g.setStrokeColor(Color.BLUE);
+        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, true, true).build());
+
+        g.setStrokeColor(Color.RED);
+        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, false, false).build());
+
+        g.setStrokeColor(Color.GREEN);
+        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, true, false).build());
     }
 
     private void drawPoint(Graphics g, Vector2f p, Color color, float size) {
         g.setFill(color);
-        g.fillRect(p.x() - size / 2, p.y() - size / 2, size, size);
+        g.fillCircle(p.x(), p.y(), size);
     }
 
 }
