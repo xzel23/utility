@@ -11,19 +11,47 @@ public class ArcToAndEllipse implements Slide {
 
     @Override
     public String title() {
-        return "ArcTo(), strokeEllipse(), fillEllipse()";
+        return "arcTo(), strokeEllipse(), fillEllipse()";
     }
 
     @Override
     public void draw(Graphics g) {
         int angles = 8;
+
+        float w = g.getBounds().width() / (angles + 1);
+        float h = g.getBounds().height() / 3;
+
+        g.drawText("""
+                        Create Path2f instances that demonstrate the use of arcTo().
+                        
+                        Red dot: center of ellipse
+                        Blue dot: start of arc
+                        Green dot: end of arc
+                        """,
+                10, 10, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+
+        g.drawText("""
+                        Use Graphics.fillEllipse() and Graphics.strokeEllipse() to draw ellipses with varying rotation angles
+                        """,
+                10, h + 10, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+
+        g.drawText("""
+                        Demonstrate the result of using different values for the sweep and largeArc parameters of arcTo().
+                        
+                        Red dots: the start and end point of the arcs
+                        Black line: largeArc = false, sweep = true
+                        Blue line: largeArc = true, sweep = true
+                        Red line: largeArc = false, sweep = false
+                        Green line: largeArc = true, sweep = false
+                        """,
+                10, 2 * h + 10, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+
         for (int j = 0; j <= angles; j++) {
-            float w = g.getBounds().width() / (angles + 1);
             float rMax = w / 2;
             float beta = (float) (j * 2 * Math.PI / angles);
 
             // draw arc segments
-            Vector2f c = Vector2f.of(w * (j + 0.5f), w);
+            Vector2f c = Vector2f.of(w * (j + 0.5f), 0.5f * h);
             int segments = 16;
             for (int i = 0; i < segments; i++) {
                 float r = rMax / 2 + rMax / 2 * i / segments;
@@ -42,7 +70,7 @@ public class ArcToAndEllipse implements Slide {
 
                 Path2f path = Path2f.builder()
                         .moveTo(start)
-                        .arcTo(end, Vector2f.of(rx, ry), beta, i >= segments / 2, i != segments)
+                        .arcTo(end, Vector2f.of(rx, ry), beta, i >= segments / 2, true)
                         .build();
                 g.setStroke(Color.BLUE, 1);
                 g.strokePath(path);
@@ -50,16 +78,16 @@ public class ArcToAndEllipse implements Slide {
 
             // draw ellipses
             float angle = (float) (2 * Math.PI * j / angles);
-            c = Vector2f.of(w * (j + 0.5f), 2 * w);
+            c = Vector2f.of(w * (j + 0.5f), 1.5f * h);
             g.setFill(Color.GRAY);
-            g.fillEllipse(c.x(), c.y(), rMax, rMax*0.75f, angle);
+            g.fillEllipse(c.x(), c.y(), rMax, rMax * 0.75f, angle);
             g.setStrokeColor(Color.BLACK);
-            g.strokeEllipse(c.x(), c.y(), rMax, rMax*0.75f, angle);
+            g.strokeEllipse(c.x(), c.y(), rMax, rMax * 0.75f, angle);
         }
 
-        Vector2f c = g.getBounds().center().translate(0, g.getBounds().height() / 8);
+        Vector2f c = Vector2f.of(g.getBounds().xCenter(), 2.5f * h);
         Vector2f p0 = c.translate(0, -50);
-        Vector2f p1 = c.translate(0,  50);
+        Vector2f p1 = c.translate(0, 50);
         Vector2f r = Vector2f.of(150, 100);
 
         drawPoint(g, p0, Color.RED, 3);
@@ -67,16 +95,16 @@ public class ArcToAndEllipse implements Slide {
         float angle = 0;
 
         g.setStrokeColor(Color.BLACK);
-        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, false, true).build());
+        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1, r, angle, false, true).build());
 
         g.setStrokeColor(Color.BLUE);
-        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, true, true).build());
+        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1, r, angle, true, true).build());
 
         g.setStrokeColor(Color.RED);
-        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, false, false).build());
+        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1, r, angle, false, false).build());
 
         g.setStrokeColor(Color.GREEN);
-        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1,r, angle, true, false).build());
+        g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1, r, angle, true, false).build());
     }
 
     private void drawPoint(Graphics g, Vector2f p, Color color, float size) {
