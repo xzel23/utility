@@ -1,9 +1,12 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxRefresh;
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
@@ -105,6 +108,14 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         super.dispose();
     }
 
+    public DoubleProperty scrollHValueProperty() {
+        return scrollPane.hvalueProperty();
+    }
+
+    public DoubleProperty scrollVValueProperty() {
+        return scrollPane.vvalueProperty();
+    }
+
     public ScrollPosition getScrollPosition() {
         return new ScrollPosition(scrollPane.getHvalue(), scrollPane.getVvalue());
     }
@@ -138,6 +149,39 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Retrieves a list of items from the PinBoard that are visible within the current viewport.
+     *
+     * @return a list of PinBoard.Item objects that intersect with the viewport area.
+     */
+    public List<PinBoard.Item> getVisibleItems() {
+        List<PinBoard.Item> visibleItems = new ArrayList<>();
+        Rectangle2f b = getViewPortInBoardCoordinates();
+        List<PinBoard.Item> items = new ArrayList<>(getSkinnable().getItems());
+        for (PinBoard.Item item : items) {
+            Rectangle2f a = FxUtil.convert(item.area());
+            if (a.intersects(b)) {
+                visibleItems.add(item);
+            }
+        }
+        return visibleItems;
+    }
+
+    private Rectangle2f getBoardArea() {
+        return FxUtil.convert(getSkinnable().getArea());
+    }
+
+    private Rectangle2f getViewPortInBoardCoordinates() {
+        Bounds vp = scrollPane.getViewportBounds();
+        Rectangle2f boardArea = getBoardArea();
+        return new Rectangle2f(
+                (float) (boardArea.x() - vp.getMinX()),
+                (float) (boardArea.y() - vp.getMinY()),
+                (float) vp.getWidth(),
+                (float) vp.getHeight()
+        );
     }
 
     public void scrollTo(PinBoard.PositionInItem pos) {

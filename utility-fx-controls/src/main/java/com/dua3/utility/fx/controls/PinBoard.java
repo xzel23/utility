@@ -8,9 +8,11 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +25,7 @@ import javafx.scene.control.Skin;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -36,6 +39,8 @@ public class PinBoard extends Control {
     final ObservableList<Item> items = FXCollections.observableArrayList();
     private final ObjectProperty<Rectangle2D> areaProperty = new SimpleObjectProperty<>(new Rectangle2D(0, 0, 0, 0));
     private final BooleanProperty pannableProperty = new SimpleBooleanProperty(true);
+    private final DoubleProperty scrollHValueProperty = new SimpleDoubleProperty(0.0);
+    private final DoubleProperty scrollVValueProperty = new SimpleDoubleProperty(0.0);
 
     /**
      * Default constructor.
@@ -44,9 +49,13 @@ public class PinBoard extends Control {
         skinProperty().addListener((v, o, n) -> {
             if (o instanceof PinBoardSkin oldSkin) {
                 oldSkin.pannableProperty().unbind();
+                oldSkin.scrollHValueProperty().unbindBidirectional(scrollHValueProperty);
+                oldSkin.scrollVValueProperty().unbindBidirectional(scrollVValueProperty);
             }
             if (n instanceof PinBoardSkin newSkin) {
                 newSkin.pannableProperty().bind(pannableProperty);
+                newSkin.scrollHValueProperty().bindBidirectional(scrollHValueProperty);
+                newSkin.scrollVValueProperty().bindBidirectional(scrollVValueProperty);
             }
         });
     }
@@ -70,6 +79,41 @@ public class PinBoard extends Control {
     public void setVbarPolicy(ScrollPane.ScrollBarPolicy policy) {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.setVbarPolicy(policy);
+        }
+    }
+
+    /**
+     * Returns the property representing the horizontal scroll value of the PinBoard.
+     *
+     * @return The DoubleProperty representing the horizontal scroll value.
+     */
+    public DoubleProperty scrollHValuePropertyProperty() {
+        return scrollHValueProperty;
+    }
+
+    /**
+     * Returns the property representing the vertical scroll value of the PinBoard.
+     *
+     * @return The DoubleProperty representing the vertical scroll value.
+     */
+    public DoubleProperty scrollVValuePropertyProperty() {
+        return scrollVValueProperty;
+    }
+
+    /**
+     * Retrieves the list of currently visible items on the PinBoard.
+     * <p>
+     * The method checks whether the PinBoard is associated with a PinBoardSkin.
+     * If so, it delegates the call to the skin to retrieve the visible items.
+     * If no PinBoardSkin is associated, it returns an empty list.
+     *
+     * @return A list of visible items. If no skin is available, an empty list is returned.
+     */
+    public List<Item> getVisibleItems() {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            return skin.getVisibleItems();
+        } else {
+            return Collections.emptyList();
         }
     }
 

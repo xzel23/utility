@@ -193,13 +193,33 @@ public final class FxUtil {
     }
 
     /**
-     * Convert a {@link Rectangle2f} object to a JavaFX Rectangle object.
+     * Convert a {@link Rectangle2f} object to a JavaFX {@link javafx.scene.shape.Rectangle} object.
      *
      * @param r the {@link Rectangle2f} object to convert
      * @return the converted JavaFX Rectangle object
      */
     public static javafx.scene.shape.Rectangle convert(Rectangle2f r) {
         return new javafx.scene.shape.Rectangle(r.x(), r.y(), r.width(), r.height());
+    }
+
+    /**
+     * Convert a JavaFX {@link javafx.scene.shape.Rectangle} object to a {@link Rectangle2f} object.
+     *
+     * @param r the Rectangle object to convert
+     * @return the converted {@link Rectangle2f} object
+     */
+    public static Rectangle2f convert(Rectangle2D r) {
+        return new Rectangle2f((float) r.getMinX(), (float) r.getMinY(), (float) r.getWidth(), (float) r.getHeight());
+    }
+
+    /**
+     * Convert a JavaFX {@link Bounds} object to a {@link Rectangle2f} object.
+     *
+     * @param b the {@link Bounds} object to convert
+     * @return the converted {@link Rectangle2f} object
+     */
+    public static Rectangle2f convert(Bounds b) {
+        return new Rectangle2f((float) b.getMinX(), (float) b.getMinY(), (float) b.getWidth(), (float) b.getHeight());
     }
 
     /**

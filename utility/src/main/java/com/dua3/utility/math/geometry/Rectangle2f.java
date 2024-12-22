@@ -234,4 +234,24 @@ public record Rectangle2f(float x, float y, float width, float height) {
     public Rectangle2f addMargin(float mLeft, float mTop, float mRight, float mBottom) {
         return new Rectangle2f(x - mLeft, y - mTop, width + mLeft + mRight, height + mTop + mBottom);
     }
+
+    /**
+     * Determines if the specified point is contained within the rectangle.
+     *
+     * @param p the point to check, represented as a {@code Vector2f}
+     * @return {@code true} if the rectangle contains the point, otherwise {@code false}
+     */
+    public boolean contains(Vector2f p) {
+        return x <= p.x() && p.x() <= x + width && y <= p.y() && p.y() <= y + height;
+    }
+
+    /**
+     * Determines whether this rectangle intersects with the specified rectangle.
+     *
+     * @param r the rectangle to check for intersection
+     * @return {@code true} if this rectangle intersects with the specified rectangle, otherwise {@code false}
+     */
+    public boolean intersects(Rectangle2f r) {
+        return r.xMax() > xMin() && r.yMax() > yMin() && r.xMin() < xMax() && r.yMin() < yMax();
+    }
 }
