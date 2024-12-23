@@ -341,7 +341,7 @@ public final class XmlUtil {
      * @throws IOException if an I/O error occurs while writing the formatted XML to the writer
      */
     public void prettyPrint(Writer writer, Document document) throws IOException {
-        formatNode(writer, document, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + TextUtil.LINE_END_SYSTEM);
+        formatNode(writer, document, XML_DECLARATION);
         writer.flush();
     }
 
