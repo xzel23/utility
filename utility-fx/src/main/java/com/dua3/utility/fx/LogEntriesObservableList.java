@@ -49,15 +49,15 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
                     List<LogEntry> newData = Arrays.asList(buffer.toArray());
 
                     Platform.runLater(() -> {
-                        int newSz = newData.size();
-                        int oldSz = data.size();
-                        int removedRows = queuedRemoves.getAndSet(0);
-                        int remainingRows = oldSz - removedRows;
-                        int addedRows = newSz - remainingRows;
+                    int newSz = newData.size();
+                    int oldSz = data.size();
+                    int removedRows = queuedRemoves.getAndSet(0);
+                    int remainingRows = oldSz - removedRows;
+                    int addedRows = newSz - remainingRows;
 
                         try {
                             beginChange();
-                            List<LogEntry> removed = List.copyOf(data.subList(0, removedRows));
+                    List<LogEntry> removed = List.copyOf(data.subList(0, removedRows));
                             data = newData;
                             nextRemove(0, removed);
                             nextAdd(newSz - addedRows, newSz);
@@ -80,7 +80,7 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
                     Thread.currentThread().interrupt();
                 }
             }
-        }, "LogTableModel Update Thread");
+        }, "LogEntriesObservableList Update Thread");
         updateThread.setPriority(Thread.NORM_PRIORITY - 1);
         updateThread.setDaemon(true);
         updateThread.start();
