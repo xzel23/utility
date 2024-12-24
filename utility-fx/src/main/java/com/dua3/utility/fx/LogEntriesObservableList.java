@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 final class LogEntriesObservableList extends ObservableListBase<LogEntry> implements LogBuffer.LogBufferListener {
     private static final Logger LOG = LogManager.getLogger(LogEntriesObservableList.class);
 
-    private static final long REST_TIME_IN_MS = 10;
+    private static final long REST_TIME_IN_MS = 50;
 
     private volatile List<LogEntry> data = Collections.emptyList();
     private final AtomicLong totalAdded = new AtomicLong(0);
