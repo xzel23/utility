@@ -174,6 +174,7 @@ the parameter.
 
 - TextUtil.base64Decode() allows whitespace and linebreaks
 - Graphics.strokePath(), Graphics. fillPath
+- fix race condition in LogEntriesObservableList
 
 ### 15.0.2
 
