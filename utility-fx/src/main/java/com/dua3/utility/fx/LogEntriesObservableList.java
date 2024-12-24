@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -25,7 +25,8 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
     private static final long REST_TIME_IN_MS = 10;
 
     private volatile List<LogEntry> data = Collections.emptyList();
-    private final AtomicInteger queuedRemoves = new AtomicInteger();
+    private final AtomicLong totalAdded = new AtomicLong(0);
+    private final AtomicLong totalRemoved = new AtomicLong(0);
 
     private final ReadWriteLock updateLock = new ReentrantReadWriteLock();
     private final Lock updateWriteLock = updateLock.writeLock();
@@ -46,18 +47,25 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
                 try {
                     updatesAvailableCondition.await();
 
-                    List<LogEntry> newData = Arrays.asList(buffer.toArray());
-
                     Platform.runLater(() -> {
-                    int newSz = newData.size();
-                    int oldSz = data.size();
-                    int removedRows = queuedRemoves.getAndSet(0);
-                    int remainingRows = oldSz - removedRows;
-                    int addedRows = newSz - remainingRows;
-
                         try {
                             beginChange();
-                    List<LogEntry> removed = List.copyOf(data.subList(0, removedRows));
+                            LogBuffer.BufferState state = buffer.getBufferState();
+                            List<LogEntry> newData = Arrays.asList(state.entries());
+                            totalAdded.getAndSet(state.totalAdded());
+                            long ta = totalAdded.get();
+                            long trOld = totalRemoved.getAndSet(state.totalRemoved());
+                            long tr = totalRemoved.get();
+
+                            assert newData.size() == ta - tr;
+
+                            int newSz = newData.size();
+                            int oldSz = data.size();
+                            int removedRows = (int) Math.min(oldSz, (tr - trOld));
+                            int remainingRows = oldSz - removedRows;
+                            int addedRows = newSz - remainingRows;
+                            List<LogEntry> removed = List.copyOf(data.subList(0, removedRows));
+
                             data = newData;
                             nextRemove(0, removed);
                             nextAdd(newSz - addedRows, newSz);
@@ -102,7 +110,6 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
     public void entries(int removed, int added) {
         updateWriteLock.lock();
         try {
-            queuedRemoves.addAndGet(removed);
             updatesAvailableCondition.signalAll();
         } finally {
             updateWriteLock.unlock();
@@ -113,7 +120,6 @@ final class LogEntriesObservableList extends ObservableListBase<LogEntry> implem
     public void clear() {
         updateWriteLock.lock();
         try {
-            queuedRemoves.set(data.size());
             updatesAvailableCondition.signalAll();
         } finally {
             updateWriteLock.unlock();

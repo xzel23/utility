@@ -9,6 +9,7 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A log buffer class intended to provide a buffer for log messages to display in GUI applications.
@@ -22,6 +23,8 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
 
     private final RingBuffer<LogEntry> buffer;
     private final Collection<LogBufferListener> listeners = new ArrayList<>();
+    private final AtomicLong totalAdded = new AtomicLong(0);
+    private final AtomicLong totalRemoved = new AtomicLong(0);
 
     /**
      * Construct a new LogBuffer instance with default capacity.
@@ -81,6 +84,8 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
             int removed;
             synchronized (buffer) {
                 removed = buffer.put(entry) ? 0 : 1;
+                this.totalAdded.incrementAndGet();
+                this.totalRemoved.addAndGet(removed);
             }
             listeners.forEach(listener -> listener.entries(removed, 1));
         }
@@ -93,6 +98,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public void clear() {
         synchronized (listeners) {
             synchronized (buffer) {
+                totalRemoved.addAndGet(buffer.size());
                 buffer.clear();
             }
             listeners.forEach(LogBufferListener::clear);
@@ -107,6 +113,37 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public LogEntry[] toArray() {
         synchronized (buffer) {
             return buffer.toArray(LogEntry[]::new);
+        }
+    }
+
+    /**
+     * Represents the state of a buffer.
+     *
+     * This record is used to encapsulate the current state of a LogBuffer,
+     * including its entries, the total number of log entries that have been
+     * removed, and the total number of log entries that have been added.
+     *
+     * @param entries      the array of LogEntry objects currently in the buffer
+     * @param totalRemoved the total count of log entries that have been removed from the buffer
+     * @param totalAdded   the total count of log entries that have been added to the buffer
+     */
+    public record BufferState(LogEntry[] entries, long totalRemoved, long totalAdded) {}
+
+    /**
+     * Retrieves the current state of the buffer, encapsulating the entries within the buffer,
+     * the total number of entries removed, and the total number of entries added.
+     * This method is thread-safe as it synchronizes on the buffer while performing operations.
+     *
+     * @return a {@code BufferState} instance containing the current buffer entries,
+     *         total removed entries, and total added entries
+     */
+    public BufferState getBufferState() {
+        synchronized (buffer) {
+            LogEntry[] array = toArray();
+            long r = totalRemoved.get();
+            long a = totalAdded.get();
+            assert array.length == a - r;
+            return new BufferState(array, r, a);
         }
     }
 
