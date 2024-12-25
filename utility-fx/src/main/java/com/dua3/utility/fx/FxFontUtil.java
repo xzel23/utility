@@ -54,6 +54,9 @@ public class FxFontUtil implements FontUtil<Font> {
     private final Map<FontData, Font> fontData2fxFont = new ConcurrentHashMap<>();
     private final Map<Font, FontData> fxFont2FontData = new ConcurrentHashMap<>();
 
+    private record FxFontData(String family, FontWeight weight, FontPosture posture, double size) {}
+    private final Map<FxFontData, Font> fxFontData2fxFont = new ConcurrentHashMap<>();
+
     private final com.dua3.utility.text.Font defaultFont;
 
     /**
@@ -280,12 +283,14 @@ public class FxFontUtil implements FontUtil<Font> {
         }
     }
 
-    private static Font getFxFont(String family, float size, boolean bold, boolean italic) {
-        return Font.font(
+    private Font getFxFont(String family, float size, boolean bold, boolean italic) {
+        FxFontData fxf = new FxFontData(
                 family,
                 bold ? FontWeight.BOLD : FontWeight.NORMAL,
                 italic ? FontPosture.ITALIC : FontPosture.REGULAR,
                 size);
+
+        return fxFontData2fxFont.computeIfAbsent(fxf, k -> Font.font(fxf.family, fxf.weight(), fxf.posture(), fxf.size()));
     }
 
 }
