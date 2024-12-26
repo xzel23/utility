@@ -137,15 +137,14 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @return Optional containing the item at (x,y) and the coordinates relative to the item area
      */
     public Optional<PinBoard.PositionInItem> getPositionInItem(double xViewport, double yViewport) {
-        Rectangle2D vp = getViewPort();
-        double x = xViewport + vp.getMinX();
-        double y = yViewport + vp.getMinY();
-        Rectangle2D b = getSkinnable().getArea();
+        Rectangle2f vp =getViewPortInBoardCoordinates();
+        double x = xViewport + vp.xMin();
+        double y = yViewport + vp.yMin() ;
         List<PinBoard.Item> items = new ArrayList<>(getSkinnable().getItems());
         for (PinBoard.Item item : items) {
             Rectangle2D a = item.area();
             if (a.contains(x, y)) {
-                return Optional.of(new PinBoard.PositionInItem(item, x + b.getMinX() - a.getMinX(), y + b.getMinY() - a.getMinY()));
+                return Optional.of(new PinBoard.PositionInItem(item, x - a.getMinX(), y - a.getMinY()));
             }
         }
         return Optional.empty();
@@ -193,6 +192,15 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         scrollToBoardCoordinates(xBoard, yBoard);
     }
 
+    public void scrollIntoView(PinBoard.PositionInItem pos) {
+        LOG.debug("scrollIntoView({})", pos);
+
+        Rectangle2D area = pos.item().area();
+        double xBoard = area.getMinX() + pos.x();
+        double yBoard = area.getMinY() + pos.y();
+        scrollIntoViewInBoardCoordinates(xBoard, yBoard);
+    }
+
     /**
      * Scrolls the PinBoard upper left corner to the specified coordinates.
      *
@@ -216,6 +224,43 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         setScrollPosition(sx, sy);
     }
 
+    /**
+     * Scrolls the given position into view.
+     *
+     * @param xBoard The x-coordinate
+     * @param yBoard The y-coordinate
+     */
+    public void scrollIntoViewInBoardCoordinates(double xBoard, double yBoard) {
+        LOG.debug("scrollIntoViewInBoardCoordinates({}, {})", xBoard, yBoard);
+
+        Rectangle2D boardArea = getSkinnable().getArea();
+
+        if (boardArea.getWidth() == 0 || boardArea.getHeight() == 0) {
+            return;
+        }
+
+        Bounds viewportBounds = scrollPane.getViewportBounds();
+
+        Rectangle2f viewPortInBoardCoordinates = getViewPortInBoardCoordinates();
+        if (xBoard < viewPortInBoardCoordinates.x() || xBoard > viewPortInBoardCoordinates.x() + viewPortInBoardCoordinates.width()) {
+            scrollPane.setHvalue(calcScrollPosition(xBoard, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth()));
+        }
+        if (yBoard < viewPortInBoardCoordinates.y() || yBoard > viewPortInBoardCoordinates.y() + viewPortInBoardCoordinates.height()) {
+            scrollPane.setVvalue(calcScrollPosition(yBoard, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight()));
+        }
+    }
+
+    /**
+     * Calculates the scroll position of a content within a viewport. The scroll position is
+     * expressed as a value between 0 and 1, where 0 indicates the start of the scrollable range
+     * and 1 indicates the end of the scrollable range.
+     *
+     * @param c the position to scroll to
+     * @param tMin the minimum position of the scrollable content
+     * @param tMax the maximum position of the scrollable content
+     * @param viewableSize the size of the viewport
+     * @return a value between 0 and 1 representing the normalized scroll position
+     */
     private static double calcScrollPosition(double c, double tMin, double tMax, double viewableSize) {
         double totalSize = tMax - tMin;
         double scrollableSize = totalSize - viewableSize;

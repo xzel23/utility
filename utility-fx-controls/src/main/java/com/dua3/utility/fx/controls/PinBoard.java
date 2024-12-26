@@ -226,6 +226,17 @@ public class PinBoard extends Control {
     }
 
     /**
+     * Scrolls the PinBoard the specified position into view.
+     *
+     * @param pos the position
+     */
+    public void scrollIntoView(PositionInItem pos) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.scrollIntoView(pos);
+        }
+    }
+
+    /**
      * Get Item at point.
      *
      * @param x x-coordinate (relative to viewport)
