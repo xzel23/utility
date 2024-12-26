@@ -1,5 +1,6 @@
 package com.dua3.utility.samples.fx;
 
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import javafx.application.Application;
@@ -34,7 +35,7 @@ public class ShapeFx extends Application {
     public void start(Stage stage) {
         Pane root = new Pane();
         Scene scene = new Scene(root, 700, 400);
-/*
+
         Vector2f c = Vector2f.of(150, 150);
         float rMax = 100;
         int segments = 16;
@@ -52,8 +53,7 @@ public class ShapeFx extends Application {
 
             root.getChildren().add(jfxPath);
         }
- */
-/*
+
         Path path1 = createJavaFXPath();
         path1.setStroke(Paint.valueOf("blue"));
         path1.setStrokeWidth(5.0f);
@@ -63,8 +63,8 @@ public class ShapeFx extends Application {
         path2.setStroke(Paint.valueOf("lightgrey"));
         path2.setStrokeWidth(3.0f);
         root.getChildren().add(path2);
-*/
-        Vector2f c = Vector2f.of(350, 200);
+
+        c = Vector2f.of(350, 200);
         Vector2f p0 = c.translate(0, -50);
         Vector2f p1 = c.translate(0,  50);
         Vector2f r = Vector2f.of(150, 100);
@@ -79,7 +79,7 @@ public class ShapeFx extends Application {
         path0.setStrokeWidth(1.0f);
         root.getChildren().add(path0);
 
-        Path path1 = new Path(
+        path1 = new Path(
                 new MoveTo(p0.x(), p0.y()),
                 new ArcTo(r.x(), r.y(), angle, p1.x(), p1.y(), true, true)
         );
@@ -87,7 +87,7 @@ public class ShapeFx extends Application {
         path1.setStrokeWidth(1.0f);
         root.getChildren().add(path1);
 
-        Path path2 = new Path(
+        path2 = new Path(
                 new MoveTo(p0.x(), p0.y()),
                 new ArcTo(r.x(), r.y(), angle, p1.x(), p1.y(), false, false)
         );
