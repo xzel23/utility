@@ -165,6 +165,12 @@ public class PinBoard extends Control {
         return areaProperty;
     }
 
+    /**
+     * Returns the pannable property of the PinBoard.
+     * The pannable property determines whether the user can pan the content within the PinBoard.
+     *
+     * @return The BooleanProperty representing the pannable state of the PinBoard.
+     */
     public BooleanProperty pannableProperty() {
         return pannableProperty;
     }
@@ -233,6 +239,30 @@ public class PinBoard extends Control {
     public void scrollIntoView(PositionInItem pos) {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.scrollIntoView(pos);
+        }
+    }
+
+    /**
+     * Scrolls the PinBoard to the specified position within an item.
+     *
+     * @param x the x-position in board coordinates to scroll to
+     * @param y the y-position in board coordinates to scroll to
+     */
+    public void scrollTo(double x, double y) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.scrollTo(x, y);
+        }
+    }
+
+    /**
+     * Scrolls the PinBoard the specified position into view.
+     *
+     * @param x the x-position in board coordinates to scroll to
+     * @param y the y-position in board coordinates to scroll to
+     */
+    public void scrollIntoView(double x, double y) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.scrollIntoView(x, y);
         }
     }
 
@@ -348,5 +378,13 @@ public class PinBoard extends Control {
      * @param y The y-coordinate within the item.
      */
     public record PositionInItem(Item item, double x, double y) {}
+
+    /**
+     * The Position class represents a position on a PinBoard relative to the pin board's coordinate system.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     */
+    public record BoardPosition(double x, double y) {}
 }
 

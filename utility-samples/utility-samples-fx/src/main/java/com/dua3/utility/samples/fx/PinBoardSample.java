@@ -1,7 +1,12 @@
 package com.dua3.utility.samples.fx;
 
+import com.dua3.utility.fx.controls.Controls;
+import com.dua3.utility.fx.controls.Dialogs;
+import com.dua3.utility.fx.controls.InputPane;
 import com.dua3.utility.fx.controls.PinBoard;
 import javafx.application.Application;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -13,11 +18,19 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Formatter;
+import java.util.Random;
 
 public class PinBoardSample extends Application {
+
+    private static final Random RANDOM = new Random();
+    private final PinBoard pinBoard = new PinBoard();
+    private @Nullable InputPane input;
 
     /**
      * The main entry point for the application.
@@ -30,8 +43,8 @@ public class PinBoardSample extends Application {
 
     @Override
     public void start(Stage stage) {
+        pinBoard.clear();
 
-        PinBoard pinBoard = new PinBoard();
         for (int i = 0; i < 50; i++) {
             createItem(pinBoard, i);
         }
@@ -39,10 +52,23 @@ public class PinBoardSample extends Application {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 1000, 800);
         root.setCenter(pinBoard);
+
         TextArea textArea = new TextArea();
         textArea.setEditable(false);
         textArea.setPrefWidth(400);
-        root.setLeft(textArea);
+
+        BooleanProperty inputValid = new SimpleBooleanProperty(false);
+        input = Dialogs.inputPane()
+                .header("Input target coordinates.")
+                .decimal("x", "x", () -> 0.0)
+                .decimal("y", "y", () -> 0.0)
+                .node("buttons", new HBox(
+                        Controls.button().text("scrollTo()").action(this::scrollTo).build(),
+                        Controls.button().text("scrollIntoView()").action(this::scrollIntoView).build()
+                ))
+                .build();
+        inputValid.bind(input.validProperty());
+        root.setLeft(new VBox(textArea, input));
 
         pinBoard.addEventFilter(MouseEvent.MOUSE_MOVED,evt -> {
             Formatter text = new Formatter();
@@ -73,13 +99,26 @@ public class PinBoardSample extends Application {
         stage.show();
     }
 
+    private void scrollTo() {
+        pinBoard.scrollTo(getDoubleInput("x"), getDoubleInput("y"));
+    }
+
+    private void scrollIntoView() {
+        pinBoard.scrollIntoView(getDoubleInput("x"), getDoubleInput("y"));
+    }
+
+    double getDoubleInput(String name) {
+        var v = input.get().get(name);
+        return Double.parseDouble(String.valueOf(v));
+    }
+
     private void createItem(PinBoard pinBoard, int i) {
         int minWidth = 200;
         int maxWidth = 600;
-        int width = minWidth + (int) ((maxWidth - minWidth) * Math.random());
+        int width = RANDOM.nextInt(minWidth, maxWidth + 1);
         int minHeight = 200;
         int maxHeight = 600;
-        int height = minHeight + (int) ((maxHeight - minHeight) * Math.random());
+        int height = RANDOM.nextInt(minHeight, maxHeight + 1);
 
         String text = "Item " + i + "\n" +
                 "width: " + width + ", height: " + height + "\n";

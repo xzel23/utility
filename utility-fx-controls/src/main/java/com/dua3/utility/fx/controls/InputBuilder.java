@@ -442,4 +442,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Function<Path, Optional<String>> validate
     );
 
+    B node(String id, Node node);
+
+    B node(String id, String label, Node node);
 }

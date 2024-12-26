@@ -52,11 +52,13 @@ public class InputDialogBuilder
     private InputDialog createDialog() {
         InputDialog dlg = new InputDialog();
         InputPane dialogPane = pb.build();
+        pb.buttons().forEach(bd -> dialogPane.addButton(bd.type(), bd.resultHandler(), bd.action(), bd.enabled()));
         dialogPane.init();
 
-        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         final Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
-        okButton.disableProperty().bind(Bindings.not(dialogPane.validProperty()));
+        if (okButton != null) {
+            okButton.disableProperty().bind(Bindings.not(dialogPane.validProperty()));
+        }
 
         dlg.setDialogPane(dialogPane);
 
@@ -160,6 +162,18 @@ public class InputDialogBuilder
     @Override
     public InputDialogBuilder chooseFile(String id, String label, Supplier<Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<Path, Optional<String>> validate) {
         pb.chooseFile(id, label, dflt, mode, existingOnly, filter, validate);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder node(String id, Node node) {
+        pb.node(id, node);
+        return this;
+    }
+
+    @Override
+    public InputDialogBuilder node(String id, String label, Node node) {
+        pb.node(id, label, node);
         return this;
     }
 }

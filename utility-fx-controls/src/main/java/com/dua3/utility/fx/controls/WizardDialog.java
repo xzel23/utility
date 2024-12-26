@@ -1,21 +1,18 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.beans.binding.BooleanExpression;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.AbstractDialogPaneBuilder.ResultHandler;
 import com.dua3.utility.data.Pair;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanExpression;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -114,6 +111,7 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
         if (pages == null) {
             return;
         }
+        // get and translate result
 
         Set<String> pageNames = pages.keySet();
         for (Entry<String, Page<?, ?>> entry : pages.entrySet()) {
@@ -127,32 +125,36 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
                 throw new IllegalStateException(String.format("Page '%s': next page doesn't exist ['%s']", name, next));
             }
 
-            // prepare buttons
-            pane.initButtons();
-
             // cancel button
             if (isCancelable()) {
-                addButtonToDialogPane(page, ButtonType.CANCEL, p -> {}, null);
+                page.addButton(
+                        ButtonType.CANCEL,
+                        p -> {},
+                        null
+                );
             }
 
             // next button
             if (page.getNext() == null) {
-                addButtonToDialogPane(page, ButtonType.FINISH, p -> {}, pane.validProperty());
+                page.addButton(
+                        ButtonType.FINISH,
+                        p -> {},
+                        pane.validProperty()
+                );
             } else {
-                addButtonToDialogPane(
-                        page,
+                page.addButton(
                         ButtonType.NEXT,
                         p -> {
                             pageStack.add(Pair.of(name, page));
                             setPage(page.getNext());
                         },
-                        pane.validProperty());
+                        pane.validProperty()
+                );
             }
 
             // prev button
             if (isShowPreviousButton()) {
-                addButtonToDialogPane(
-                        page,
+                page.addButton(
                         ButtonType.PREVIOUS,
                         p -> setPage(pageStack.remove(pageStack.size() - 1).first()),
                         Bindings.isNotEmpty(pageStack)
@@ -183,35 +185,6 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
         return cancelable;
     }
 
-    private static void addButtonToDialogPane(
-            Page<?, ?> page,
-            ButtonType bt,
-            Consumer<? super InputDialogPane<?>> action,
-            @Nullable BooleanExpression enabled) {
-        InputDialogPane<?> pane = page.pane;
-        List<ButtonType> buttons = pane.getButtonTypes();
-
-        buttons.add(bt);
-        Button btn = (Button) pane.lookupButton(bt);
-
-        // it seems counter-intuitive to use an event filter instead of a handler, but
-        // when using an event handler, Dialog.close() is called before our own
-        // event handler.
-        btn.addEventFilter(ActionEvent.ACTION, evt -> {
-            // get and translate result
-            if (!page.apply(bt)) {
-                LOG.debug("Button {}: result conversion failed", bt);
-                evt.consume();
-            }
-
-            action.accept(page.getPane());
-        });
-
-        if (enabled != null) {
-            btn.disableProperty().bind(Bindings.not(enabled));
-        }
-    }
-
     /**
      * Check if a 'previous' ( or 'navigate-back') button should be displayed.
      *
@@ -235,13 +208,17 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
      */
     public static class Page<D extends InputDialogPane<R>, R> {
         private final D pane;
-        private final ResultHandler<? super R> resultHandler;
+        private final ResultHandler<R> resultHandler;
         private @Nullable String next;
         private @Nullable R result;
 
-        Page(D pane, ResultHandler<? super R> resultHandler) {
+        Page(D pane, ResultHandler<R> resultHandler) {
             this.pane = pane;
-            this.resultHandler = resultHandler;
+            this.resultHandler = (btn,result) -> {
+                boolean ok = resultHandler.handleResult(btn, result);
+                this.result = result;
+                return ok;
+            };
         }
 
         @Nullable
@@ -257,11 +234,8 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
             return pane;
         }
 
-        boolean apply(ButtonType btn) {
-            R r = pane.get();
-            boolean done = resultHandler.handleResult(btn, r);
-            this.result = done ? r : null;
-            return done;
+        public void addButton(ButtonType type, Consumer<InputDialogPane<R>> action, @Nullable BooleanExpression enabled) {
+            pane.addButton(type, resultHandler, action, enabled);
         }
     }
 

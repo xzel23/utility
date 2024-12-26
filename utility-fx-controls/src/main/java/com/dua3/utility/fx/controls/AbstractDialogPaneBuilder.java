@@ -14,9 +14,14 @@
 
 package com.dua3.utility.fx.controls;
 
+import javafx.beans.binding.BooleanExpression;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -31,10 +36,13 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractDialogPaneBuilder<D, B extends AbstractDialogPaneBuilder<D, B, R>, R> {
 
+    public static final BooleanExpression ALWAYS_TRUE = new ReadOnlyBooleanWrapper(true);
+
     private final BiConsumer<? super D, ? super String> headerSetter;
     private Supplier<? extends D> dialogSupplier;
     private @Nullable String header = null;
     private ResultHandler<R> resultHandler = (b, r) -> true;
+    private final List<InputDialogPane.ButtonDef<R>> buttons = new ArrayList<>();
 
     AbstractDialogPaneBuilder(
             BiConsumer<? super D, ? super String> headerSetter
@@ -116,5 +124,48 @@ public abstract class AbstractDialogPaneBuilder<D, B extends AbstractDialogPaneB
          * false otherwise
          */
         boolean handleResult(ButtonType btn, R result);
+    }
+
+    /**
+     * Adds a button definition to the dialog pane builder.
+     * This method attaches the specified button definition to the builder's list of buttons
+     * and returns the current builder instance for method chaining.
+     *
+     * @param button the button definition to be added, containing button type, result handler,
+     *               action to execute, and enablement state
+     * @return the current builder instance with the added button definition
+     */
+    protected B button(InputDialogPane.ButtonDef<R> button) {
+        this.buttons.add(button);
+        return (B) this;
+    }
+
+    /**
+     * Retrieves the list of button definitions associated with this dialog pane builder.
+     * If no button definitions have been explicitly provided, a default list containing
+     * "OK" and "Cancel" buttons is returned. The buttons are defined with their respective
+     * actions, result handlers, and enablement state.
+     *
+     * @return a list of button definitions for this dialog pane builder
+     */
+    protected List<InputDialogPane.ButtonDef<R>> buttons() {
+        if (buttons.isEmpty()) {
+            return List.of(
+                    new InputDialogPane.ButtonDef<>(
+                            ButtonType.CANCEL,
+                            (btn, r) -> true,
+                            dlg -> {},
+                            ALWAYS_TRUE
+                    ),
+                    new InputDialogPane.ButtonDef<>(
+                            ButtonType.OK,
+                            (btn,r) -> true,
+                            dlg -> {},
+                            ALWAYS_TRUE
+                    )
+            );
+        } else {
+            return Collections.unmodifiableList(buttons);
+        }
     }
 }

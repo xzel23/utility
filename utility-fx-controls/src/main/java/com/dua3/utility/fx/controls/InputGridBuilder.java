@@ -61,6 +61,7 @@ public class InputGridBuilder
         InputGrid grid = new InputGrid();
 
         grid.setContent(data.values(), columns);
+        grid.init();
 
         return grid;
     }
@@ -203,5 +204,13 @@ public class InputGridBuilder
         return add(id, label, Path.class, dflt, new FileInput(mode, existingOnly, dflt, filter, validate));
     }
 
+    @Override
+    public InputGridBuilder node(String id, Node node) {
+        return doAdd(id, null, Void.class, () -> null, new ControlWrapper(node));
+    }
 
+    @Override
+    public InputGridBuilder node(String id, String label, Node node) {
+        return doAdd(id, label, Void.class, () -> null, new ControlWrapper(node));
+    }
 }

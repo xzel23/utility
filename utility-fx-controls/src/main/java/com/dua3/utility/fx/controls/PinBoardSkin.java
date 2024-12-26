@@ -1,10 +1,8 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.fx.FxRefresh;
-import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.geometry.Rectangle2f;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ListChangeListener;
@@ -137,9 +135,9 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @return Optional containing the item at (x,y) and the coordinates relative to the item area
      */
     public Optional<PinBoard.PositionInItem> getPositionInItem(double xViewport, double yViewport) {
-        Rectangle2f vp =getViewPortInBoardCoordinates();
-        double x = xViewport + vp.xMin();
-        double y = yViewport + vp.yMin() ;
+        Rectangle2D vp =getViewPortInBoardCoordinates();
+        double x = xViewport + vp.getMinX();
+        double y = yViewport + vp.getMinY() ;
         List<PinBoard.Item> items = new ArrayList<>(getSkinnable().getItems());
         for (PinBoard.Item item : items) {
             Rectangle2D a = item.area();
@@ -157,10 +155,10 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      */
     public List<PinBoard.Item> getVisibleItems() {
         List<PinBoard.Item> visibleItems = new ArrayList<>();
-        Rectangle2f b = getViewPortInBoardCoordinates();
+        Rectangle2D b = getViewPortInBoardCoordinates();
         List<PinBoard.Item> items = new ArrayList<>(getSkinnable().getItems());
         for (PinBoard.Item item : items) {
-            Rectangle2f a = FxUtil.convert(item.area());
+            Rectangle2D a = item.area();
             if (a.intersects(b)) {
                 visibleItems.add(item);
             }
@@ -168,47 +166,96 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         return visibleItems;
     }
 
-    private Rectangle2f getBoardArea() {
-        return FxUtil.convert(getSkinnable().getArea());
-    }
-
-    private Rectangle2f getViewPortInBoardCoordinates() {
+    private Rectangle2D getViewPortInBoardCoordinates() {
         Bounds vp = scrollPane.getViewportBounds();
-        Rectangle2f boardArea = getBoardArea();
-        return new Rectangle2f(
-                (float) (boardArea.x() - vp.getMinX()),
-                (float) (boardArea.y() - vp.getMinY()),
-                (float) vp.getWidth(),
-                (float) vp.getHeight()
+        Rectangle2D boardArea = getSkinnable().getArea();
+        return new Rectangle2D(
+                (boardArea.getMinX() - vp.getMinX()),
+                (boardArea.getMinY() - vp.getMinY()),
+                vp.getWidth(),
+                vp.getHeight()
         );
     }
 
-    public void scrollTo(PinBoard.PositionInItem pos) {
-        LOG.debug("scrollTo({})", pos);
 
-        Rectangle2D area = pos.item().area();
-        double xBoard = area.getMinX() + pos.x();
-        double yBoard = area.getMinY() + pos.y();
-        scrollToBoardCoordinates(xBoard, yBoard);
-    }
-
-    public void scrollIntoView(PinBoard.PositionInItem pos) {
-        LOG.debug("scrollIntoView({})", pos);
-
-        Rectangle2D area = pos.item().area();
-        double xBoard = area.getMinX() + pos.x();
-        double yBoard = area.getMinY() + pos.y();
-        scrollIntoViewInBoardCoordinates(xBoard, yBoard);
+    /**
+     * Converts local coordinates relative to the PinBoard area into board coordinates.
+     *
+     * @param xLocal the x-coordinate in local space relative to the PinBoard area
+     * @param yLocal the y-coordinate in local space relative to the PinBoard area
+     * @return a {@link PinBoard.BoardPosition} object representing the corresponding coordinates on the board
+     */
+    public PinBoard.BoardPosition toBoardPosition(double xLocal, double yLocal) {
+        Rectangle2D area = getSkinnable().getArea();
+        return new PinBoard.BoardPosition(area.getMinX() + xLocal, area.getMinY() + yLocal);
     }
 
     /**
-     * Scrolls the PinBoard upper left corner to the specified coordinates.
+     * Converts a given {@link PinBoard.PositionInItem} to a {@link PinBoard.BoardPosition}.
      *
-     * @param xBoard The x-coordinate to scroll to
-     * @param yBoard The y-coordinate to scroll to
+     * @param pos the position relative to an item on the PinBoard, containing the item and its area
+     *            along with the x and y coordinates relative to the item.
+     * @return a {@link PinBoard.BoardPosition} representing the equivalent position on the board.
      */
-    public void scrollToBoardCoordinates(double xBoard, double yBoard) {
-        LOG.debug("scrollToBoardCoordinates({}, {})", xBoard, yBoard);
+    public PinBoard.BoardPosition toBoardPosition(PinBoard.PositionInItem pos) {
+        Rectangle2D area = pos.item().area();
+
+        double xBoard = area.getMinX() + pos.x();
+        double yBoard = area.getMinY() + pos.y();
+
+        return new PinBoard.BoardPosition(xBoard, yBoard);
+    }
+
+    /**
+     * Scrolls the PinBoard to the position specified by {@link PinBoard.PositionInItem}.
+     *
+     * @param pos the position within an item on the PinBoard. This includes the item information
+     *            and its coordinates, relative to its area on the board.
+     */
+    public void scrollTo(PinBoard.PositionInItem pos) {
+        scrollTo(toBoardPosition(pos));
+    }
+
+    /**
+     * Scrolls the specified position relative to an item into the visible area of the PinBoard.
+     * The method internally converts the given position to a board position and scrolls it into view.
+     *
+     * @param pos the position within an item on the PinBoard, which includes the item reference
+     *            and coordinates relative to the item area.
+     */
+    public void scrollIntoView(PinBoard.PositionInItem pos) {
+        scrollIntoView(toBoardPosition(pos));
+    }
+
+    /**
+     * Scrolls the view of the PinBoard to the specified board position.
+     *
+     * @param pos The {@link PinBoard.BoardPosition} specifying the target position
+     *            on the board to scroll to.
+     */
+    public void scrollTo(PinBoard.BoardPosition pos) {
+        scrollTo(pos.x(), pos.y());
+    }
+
+    /**
+     * Scrolls the PinBoard view to ensure that the specified board position
+     * is brought into the visible area.
+     *
+     * @param pos The position on the PinBoard to scroll into view, represented
+     *            as a {@link PinBoard.BoardPosition}.
+     */
+    public void scrollIntoView(PinBoard.BoardPosition pos) {
+        scrollIntoView(pos.x(), pos.y());
+    }
+
+    /**
+     * Scrolls the PinBoard upper left corner to the specified board coordinates.
+     *
+     * @param x The x-coordinate in <strong>local coordinates</strong> to scroll to
+     * @param y The y-coordinate in <strong>local coordinates</strong> to scroll to
+     */
+    public void scrollTo(double x, double y) {
+        LOG.debug("scrollTo({}, {})", x, y);
 
         Rectangle2D boardArea = getSkinnable().getArea();
 
@@ -218,8 +265,8 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         Bounds viewportBounds = scrollPane.getViewportBounds();
 
-        double sx = calcScrollPosition(xBoard, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth());
-        double sy = calcScrollPosition(yBoard, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight());
+        double sx = calcScrollPosition(x, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth());
+        double sy = calcScrollPosition(y, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight());
 
         setScrollPosition(sx, sy);
     }
@@ -230,7 +277,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param xBoard The x-coordinate
      * @param yBoard The y-coordinate
      */
-    public void scrollIntoViewInBoardCoordinates(double xBoard, double yBoard) {
+    public void scrollIntoView(double xBoard, double yBoard) {
         LOG.debug("scrollIntoViewInBoardCoordinates({}, {})", xBoard, yBoard);
 
         Rectangle2D boardArea = getSkinnable().getArea();
@@ -241,12 +288,16 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         Bounds viewportBounds = scrollPane.getViewportBounds();
 
-        Rectangle2f viewPortInBoardCoordinates = getViewPortInBoardCoordinates();
-        if (xBoard < viewPortInBoardCoordinates.x() || xBoard > viewPortInBoardCoordinates.x() + viewPortInBoardCoordinates.width()) {
+        Rectangle2D viewPortInBoardCoordinates = getViewPortInBoardCoordinates();
+        if (xBoard < viewPortInBoardCoordinates.getMinX()) {
             scrollPane.setHvalue(calcScrollPosition(xBoard, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth()));
+        } else if (xBoard > viewPortInBoardCoordinates.getMaxX()) {
+            scrollPane.setHvalue(calcScrollPosition(xBoard -viewportBounds.getWidth(), boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth()));
         }
-        if (yBoard < viewPortInBoardCoordinates.y() || yBoard > viewPortInBoardCoordinates.y() + viewPortInBoardCoordinates.height()) {
+        if (yBoard < viewPortInBoardCoordinates.getMinY()) {
             scrollPane.setVvalue(calcScrollPosition(yBoard, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight()));
+        } else if (yBoard > viewPortInBoardCoordinates.getMaxY()) {
+            scrollPane.setVvalue(calcScrollPosition(yBoard - viewportBounds.getHeight(), boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight()));
         }
     }
 

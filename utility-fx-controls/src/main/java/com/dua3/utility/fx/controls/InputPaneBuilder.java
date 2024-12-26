@@ -41,7 +41,11 @@ public class InputPaneBuilder
     private final InputGridBuilder pb = new InputGridBuilder();
 
     InputPaneBuilder() {
-        setDialogSupplier(() -> new InputPane(pb.build()));
+        setDialogSupplier(() -> {
+            InputPane inputPane = new InputPane(pb.build());
+            inputPane.init();
+            return inputPane;
+        });
     }
 
     @Override
@@ -144,4 +148,15 @@ public class InputPaneBuilder
         return this;
     }
 
+    @Override
+    public InputPaneBuilder node(String id, Node node) {
+        pb.node(id, node);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder node(String id, String label, Node node) {
+        pb.node(id, label, node);
+        return this;
+    }
 }

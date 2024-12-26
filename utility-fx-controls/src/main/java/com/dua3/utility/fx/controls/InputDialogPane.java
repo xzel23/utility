@@ -1,15 +1,19 @@
 package com.dua3.utility.fx.controls;
 
 import com.dua3.utility.lang.LangUtil;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -24,12 +28,18 @@ import java.util.function.Supplier;
  * @param <R> the type of the result produced by the input dialog pane
  */
 public abstract class InputDialogPane<R> extends DialogPane implements Supplier<@Nullable R> {
+    private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(InputDialogPane.class);
 
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
-    protected record ButtonDef<R>(ButtonType type, Consumer<InputDialogPane<R>> action) {}
+    protected record ButtonDef<R>(
+            ButtonType type,
+            AbstractDialogPaneBuilder.ResultHandler<R> resultHandler,
+            Consumer<InputDialogPane<R>> action,
+            BooleanExpression enabled
+    ) {}
 
-    protected final List<ButtonDef<R>> buttons = new ArrayList<>();
+    protected final List<ButtonDef<? super R>> buttons = new ArrayList<>();
 
     /**
      * Initializes the input dialog pane, setting up necessary configurations
@@ -51,18 +61,33 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         return valid;
     }
 
-    /**
-     * Initializes the buttons for the dialog pane based on the list of button types and their corresponding actions.
-     * This method clears any existing button types, then iterates over the list of button-action pairs, adding each
-     * button type to the observable list and setting their respective actions.
-     */
-    public void initButtons() {
+    void addButton(
+            ButtonType type,
+            AbstractDialogPaneBuilder.@Nullable ResultHandler<R> resultHandler,
+            Consumer<InputDialogPane<R>> action,
+            @Nullable BooleanExpression enabled
+    ) {
         ObservableList<ButtonType> bt = getButtonTypes();
-        bt.clear();
-        for (var b : buttons) {
-            bt.add(b.type());
-            Button btn = (Button) lookupButton(b.type());
-            btn.setOnAction(evt -> b.action().accept(this));
+
+        bt.add(type);
+        Button btn = (Button) lookupButton(type);
+
+        // it seems counter-intuitive to use an event filter instead of a handler, but
+        // when using an event handler, Dialog.close() is called before our own
+        // event handler.
+        btn.addEventFilter(ActionEvent.ACTION, evt -> {
+            if (resultHandler != null) {
+                boolean done = resultHandler.handleResult(type, get());
+                if (!done) {
+                    LOG.debug("Button {}: result conversion failed", bt);
+                    evt.consume();
+                }
+            }
+            action.accept(this);
+        });
+
+        if (enabled != null) {
+            btn.disableProperty().bind(Bindings.not(enabled));
         }
     }
 

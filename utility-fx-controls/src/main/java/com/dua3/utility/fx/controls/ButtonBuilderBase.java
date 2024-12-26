@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -114,11 +115,27 @@ public class ButtonBuilderBase<B extends ButtonBase, BB extends ButtonBuilderBas
 
     /**
      * Bind the button's disabled state to an {@link ObservableValue}.
+     *
+     * <p><strong>NOTE: </strong>Use either this method or {@link #bindEnabled(ObservableValue)}, not both.
+     *
      * @param disabled the value to bind the button's disableProperty to
      * @return this ButtonBuilder instance
      */
     public BB bindDisabled(ObservableValue<Boolean> disabled) {
         this.disabled = disabled;
+        return self();
+    }
+
+    /**
+     * Bind the button's enabled state to an {@link ObservableValue}.
+     *
+     * <p><strong>NOTE: </strong>Use either this method or {@link #bindDisabled(ObservableValue)}, not both.
+     *
+     * @param enabled the value to bind the button's disableProperty to
+     * @return this ButtonBuilder instance
+     */
+    public BB bindEnabled(ObservableValue<Boolean> enabled) {
+        this.disabled = Bindings.createBooleanBinding(() -> !enabled.getValue(), enabled);
         return self();
     }
 
