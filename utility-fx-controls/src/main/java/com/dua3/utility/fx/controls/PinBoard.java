@@ -255,6 +255,24 @@ public class PinBoard extends Control {
     }
 
     /**
+     * Scrolls the PinBoard to the specified position within an item.
+     *
+     * <p> The parameters {@code relativeXinVP} and  {@code relativeYinVP} are used to determine where the
+     * point (x,y) should end up in the viewport. For example, use 0.5 for {@code relativeXinVP} to center
+     * the point horizontally in the viewport.
+     *
+     * @param x The x-coordinate in <strong>local coordinates</strong> to scroll to
+     * @param y The y-coordinate in <strong>local coordinates</strong> to scroll to
+     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
+     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     */
+    public void scrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.scrollTo(x, y, relativeXinVP, relativeYinVP);
+        }
+    }
+
+    /**
      * Scrolls the PinBoard the specified position into view.
      *
      * @param x the x-position in board coordinates to scroll to

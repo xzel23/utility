@@ -62,8 +62,11 @@ public class PinBoardSample extends Application {
                 .header("Input target coordinates.")
                 .decimal("x", "x", () -> 0.0)
                 .decimal("y", "y", () -> 0.0)
+                .decimal("xrelvp", "x relative in VP", () -> 0.0)
+                .decimal("yrelvp", "y relative in VP", () -> 0.0)
                 .node("buttons", new HBox(
-                        Controls.button().text("scrollTo()").action(this::scrollTo).build(),
+                        Controls.button().text("scrollTo(x, y)").action(this::scrollTo).build(),
+                        Controls.button().text("scrollTo(x, y, xRelVP, yRelVP)").action(this::scrollToRelVP).build(),
                         Controls.button().text("scrollIntoView()").action(this::scrollIntoView).build()
                 ))
                 .build();
@@ -101,6 +104,15 @@ public class PinBoardSample extends Application {
 
     private void scrollTo() {
         pinBoard.scrollTo(getDoubleInput("x"), getDoubleInput("y"));
+    }
+
+    private void scrollToRelVP() {
+        pinBoard.scrollTo(
+                getDoubleInput("x"),
+                getDoubleInput("y"),
+                getDoubleInput("xrelvp"),
+                getDoubleInput("yrelvp")
+        );
     }
 
     private void scrollIntoView() {

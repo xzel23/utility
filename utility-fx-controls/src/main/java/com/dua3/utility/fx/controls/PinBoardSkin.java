@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.FxRefresh;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ListChangeListener;
@@ -255,7 +256,19 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param y The y-coordinate in <strong>local coordinates</strong> to scroll to
      */
     public void scrollTo(double x, double y) {
-        LOG.debug("scrollTo({}, {})", x, y);
+        scrollTo(x, y, 0, 0);
+    }
+
+    /**
+     * Scrolls the PinBoard upper left corner to the specified board coordinates.
+     *
+     * @param x The x-coordinate in <strong>local coordinates</strong> to scroll to
+     * @param y The y-coordinate in <strong>local coordinates</strong> to scroll to
+     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
+     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     */
+    public void scrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
+        LOG.debug("scrollTo({}, {}, {}, {})", x, y, relativeXinVP, relativeYinVP);
 
         Rectangle2D boardArea = getSkinnable().getArea();
 
@@ -265,8 +278,10 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         Bounds viewportBounds = scrollPane.getViewportBounds();
 
-        double sx = calcScrollPosition(x, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth());
-        double sy = calcScrollPosition(y, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight());
+        double tx = MathUtil.clamp(0.0, 1.0, relativeXinVP) * viewportBounds.getWidth();
+        double ty = MathUtil.clamp(0.0, 1.0, relativeYinVP) * viewportBounds.getHeight();
+        double sx = calcScrollPosition(x - tx, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth());
+        double sy = calcScrollPosition(y - ty, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight());
 
         setScrollPosition(sx, sy);
     }
