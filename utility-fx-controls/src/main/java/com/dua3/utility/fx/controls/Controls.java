@@ -1,5 +1,9 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.Property;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.scene.control.CheckMenuItem;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.icons.Icon;
 import com.dua3.utility.fx.icons.IconUtil;
@@ -298,8 +302,8 @@ public final class Controls {
      * @param items   the menu items
      * @return new menu
      */
-    public static Menu menu(@Nullable String text, MenuItem... items) {
-        return new Menu(text, null, items);
+    public static Menu menu(String text, MenuItem... items) {
+        return menu(text, null, items);
     }
 
     /**
@@ -311,7 +315,21 @@ public final class Controls {
      * @return new menu
      */
     public static Menu menu(@Nullable String text, @Nullable Node graphic, MenuItem... items) {
+        if (text == null && graphic == null) {
+            throw new IllegalArgumentException("text and graphic must not both be null");
+        }
         return new Menu(text, graphic, items);
+    }
+
+    /**
+     * Create new {@link MenuItem}.
+     *
+     * @param text   the text to show
+     * @param action the action to perform when the menu item is invoked
+     * @return new menu item
+     */
+    public static MenuItem menuItem(String text, Runnable action) {
+        return menuItem(text, null, action);
     }
 
     /**
@@ -323,21 +341,10 @@ public final class Controls {
      * @return new menu item
      */
     public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action) {
-        return menuItem(text, graphic, action, true);
-    }
-
-    /**
-     * Create new {@link MenuItem}.
-     *
-     * @param text    the text to show
-     * @param graphic the graphic to show before the text
-     * @param enabled the enabled state
-     * @param action  the action to perform when the menu item is invoked
-     * @return new menu item
-     */
-    public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action, boolean enabled) {
+        if (text == null && graphic == null) {
+            throw new IllegalArgumentException("text and graphic must not both be null");
+        }
         MenuItem mi = new MenuItem(text, graphic);
-        mi.setDisable(!enabled);
         mi.setOnAction(evt -> action.run());
         return mi;
     }
@@ -345,26 +352,119 @@ public final class Controls {
     /**
      * Create new {@link MenuItem}.
      *
-     * @param text   the text to show
-     * @param action the action to perform when the menu item is invoked
+     * @param text    the text to show
+     * @param enabled the property controlling the enabled state
+     * @param action  the action to perform when the menu item is invoked
      * @return new menu item
      */
-    public static MenuItem menuItem(@Nullable String text, Runnable action) {
-        return menuItem(text, action, true);
+    public static MenuItem menuItem(String text, Runnable action, ObservableBooleanValue enabled) {
+        return menuItem(text, null, action, enabled);
     }
 
     /**
      * Create new {@link MenuItem}.
      *
      * @param text    the text to show
-     * @param enabled the enabled state
+     * @param graphic the graphic to show before the text
+     * @param enabled the property controlling the enabled state
      * @param action  the action to perform when the menu item is invoked
      * @return new menu item
      */
-    public static MenuItem menuItem(@Nullable String text, Runnable action, boolean enabled) {
-        MenuItem mi = new MenuItem(text);
-        mi.setDisable(!enabled);
+    public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action, ObservableBooleanValue enabled) {
+        if (text == null && graphic == null) {
+            throw new IllegalArgumentException("text and graphic must not both be null");
+        }
+        MenuItem mi = new MenuItem(text, graphic);
+        mi.disableProperty().bind(Bindings.not(enabled));
         mi.setOnAction(evt -> action.run());
+        return mi;
+    }
+
+    /**
+     * Create new {@link CheckMenuItem}.
+     *
+     * @param text    the text to show
+     * @param action  the action to perform when the menu item is invoked
+     * @return new menu item
+     */
+    public static CheckMenuItem checkMenuItem(String text, Consumer<Boolean> action, boolean selected) {
+        return checkMenuItem(text, null, action, selected);
+    }
+
+    /**
+     * Create new {@link CheckMenuItem}.
+     *
+     * @param text    the text to show
+     * @param graphic the graphic to show before the text
+     * @param action  the action to perform when the menu item is invoked
+     * @return new menu item
+     */
+    public static CheckMenuItem checkMenuItem(@Nullable String text, @Nullable Node graphic, Consumer<Boolean> action, boolean selected) {
+        if (text == null && graphic == null) {
+            throw new IllegalArgumentException("text and graphic must not both be null");
+        }
+        CheckMenuItem mi = new CheckMenuItem(text, graphic);
+        mi.setOnAction(evt -> action.accept(mi.isSelected()));
+        mi.setSelected(selected);
+        return mi;
+    }
+
+    /**
+     * Create new {@link CheckMenuItem}.
+     *
+     * @param text    the text to show
+     * @param selected the property controlling the selected state
+     * @return new menu item
+     */
+    public static CheckMenuItem checkMenuItem(String text, Property<Boolean> selected) {
+        return checkMenuItem(text, null, selected);
+    }
+
+    /**
+     * Create new {@link CheckMenuItem}.
+     *
+     * @param text    the text to show
+     * @param graphic the graphic to show before the text
+     * @param selected the property controlling the selected state
+     * @return new menu item
+     */
+    public static CheckMenuItem checkMenuItem(@Nullable String text, @Nullable Node graphic, Property<Boolean> selected) {
+        if (text == null && graphic == null) {
+            throw new IllegalArgumentException("text and graphic must not both be null");
+        }
+        CheckMenuItem mi = new CheckMenuItem(text, graphic);
+        mi.selectedProperty().bindBidirectional(selected);
+        return mi;
+    }
+
+    /**
+     * Create new {@link CheckMenuItem}.
+     *
+     * @param text    the text to show
+     * @param selected the property controlling the selected state
+     * @param enabled the property controlling the enabled state
+     * @return new menu item
+     */
+    public static CheckMenuItem checkMenuItem(String text, Property<Boolean> selected, ObservableBooleanValue enabled) {
+        return checkMenuItem(text, null, selected, enabled);
+    }
+
+    /**
+     * Create new {@link CheckMenuItem}.
+     *
+     * @param text    the text to show
+     * @param graphic the graphic to show before the text
+     * @param selected the property controlling the selected state
+     * @param enabled the property controlling the enabled state
+     * @return new menu item
+     */
+    public static CheckMenuItem checkMenuItem(@Nullable String text, @Nullable Node graphic, Property<Boolean> selected, ObservableBooleanValue enabled) {
+        if (text == null && graphic == null) {
+            throw new IllegalArgumentException("text and graphic must not both be null");
+        }
+        CheckMenuItem mi = new CheckMenuItem(text, graphic);
+        mi.disableProperty().bind(Bindings.not(enabled));
+        mi.selectedProperty().bindBidirectional(selected);
         return mi;
     }
 
