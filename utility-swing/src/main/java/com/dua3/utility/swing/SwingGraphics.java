@@ -285,6 +285,7 @@ public class SwingGraphics implements Graphics {
         state.awtTextColor = (SwingUtil.toAwtColor(font.getColor()));
         state.isUnderlined = font.isUnderline();
         state.isStrikeThrough = font.isStrikeThrough();
+        state.font = font;
         state.awtFont = FONT_UTIL.convert(font);
     }
 
