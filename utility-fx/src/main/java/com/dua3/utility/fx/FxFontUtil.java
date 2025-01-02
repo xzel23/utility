@@ -16,11 +16,13 @@ package com.dua3.utility.fx;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.FontData;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 import javafx.geometry.Bounds;
+import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -44,8 +46,14 @@ import java.util.stream.Collectors;
  */
 public class FxFontUtil implements FontUtil<Font> {
 
-    private static final String DEFAULT_FAMILY = "Verdana";
-    private static final float DEFAULT_SIZE = 12.0f;
+    private static final String DEFAULT_FAMILY;
+    private static final float DEFAULT_SIZE;
+
+    static {
+        Font labelFont = new Label().getFont();
+        DEFAULT_FAMILY = Platform.isMacOS() ? "Verdana" : labelFont.getFamily();
+        DEFAULT_SIZE = (float) labelFont.getSize();
+    }
 
     private static class SingletonHolder {
         private static final FxFontUtil INSTANCE = new FxFontUtil();

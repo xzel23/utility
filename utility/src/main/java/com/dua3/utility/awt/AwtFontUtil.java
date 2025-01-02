@@ -10,6 +10,7 @@ import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.JLabel;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -38,8 +39,14 @@ import java.util.stream.Collectors;
 public class AwtFontUtil implements FontUtil<java.awt.Font> {
     private static final Logger LOG = LogManager.getLogger(AwtFontUtil.class);
 
-    private static final String DEFAULT_FAMILY = "Arial";
-    private static final float DEFAULT_SIZE = 10.0f;
+    private static final String DEFAULT_FAMILY;
+    private static final float DEFAULT_SIZE;
+
+    static {
+        java.awt.Font labelFont = new JLabel().getFont();
+        DEFAULT_FAMILY = labelFont.getFamily();
+        DEFAULT_SIZE = (float) labelFont.getSize();
+    }
 
     static {
         boolean isHeadless = GraphicsEnvironment.isHeadless();
