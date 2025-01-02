@@ -1,6 +1,8 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.math.geometry.ClosePath2f;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.shape.ClosePath;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.concurrent.Value;
@@ -765,5 +767,29 @@ public final class FxUtil {
         double height = window.getHeight();
         ObservableList<Screen> screens = Screen.getScreensForRectangle(minX, minY, width, height);
         return screens.isEmpty() ? Screen.getPrimary() : screens.get(0);
+    }
+
+    /**
+     * A constant ObservableBooleanValue that always holds the value {@code true}.
+     * This variable is immutable and can be reliably used wherever a constant
+     * boolean value of {@code true} is required in an observable context.
+     */
+    public static final ObservableBooleanValue TRUE = new SimpleBooleanProperty(true);
+
+    /**
+     * A static constant representing a boolean property with a fixed value of {@code false}.
+     * This property is immutable and can be used wherever an {@code ObservableBooleanValue}
+     * with a value of {@code false} is required.
+     */
+    public static final ObservableBooleanValue FALSE = new SimpleBooleanProperty(false);
+
+    /**
+     * Returns an ObservableBooleanValue that represents the specified boolean constant.
+     *
+     * @param b the boolean value to be wrapped as an ObservableBooleanValue
+     * @return an ObservableBooleanValue representing the specified boolean
+     */
+    public static ObservableBooleanValue constant(boolean b) {
+        return b ? TRUE : FALSE;
     }
 }
