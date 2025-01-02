@@ -22,7 +22,6 @@ import com.dua3.utility.text.FontData;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 import javafx.geometry.Bounds;
-import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -50,9 +49,11 @@ public class FxFontUtil implements FontUtil<Font> {
     private static final float DEFAULT_SIZE;
 
     static {
-        Font labelFont = new Label().getFont();
-        DEFAULT_FAMILY = Platform.isMacOS() ? "Verdana" : labelFont.getFamily();
-        DEFAULT_SIZE = (float) labelFont.getSize();
+        Font font = Font.getDefault();
+        // on macOS use Verdana instead of the default font because the default font
+        // does not support styling (bold, italics) in JavaFX..
+        DEFAULT_FAMILY = Platform.isMacOS() ? "Verdana" : font.getFamily();
+        DEFAULT_SIZE = (float) font.getSize();
     }
 
     private static class SingletonHolder {
