@@ -353,8 +353,8 @@ public final class Controls {
      * Create new {@link MenuItem}.
      *
      * @param text    the text to show
-     * @param enabled the property controlling the enabled state
      * @param action  the action to perform when the menu item is invoked
+     * @param enabled the property controlling the enabled state
      * @return new menu item
      */
     public static MenuItem menuItem(String text, Runnable action, ObservableBooleanValue enabled) {
@@ -364,10 +364,26 @@ public final class Controls {
     /**
      * Create new {@link MenuItem}.
      *
+     * <p><strong>NOTE: </strong> the {@code enabled} state is permanent. Use this method only for menus where the
+     * menu state will not be changed, for example, in context menus. If the state is dynamic, use the overload taking
+     * an {@link ObservableBooleanValue} instead.
+     *
+     * @param text    the text to show
+     * @param action  the action to perform when the menu item is invoked
+     * @param enabled the property controlling the enabled state
+     * @return new menu item
+     */
+    public static MenuItem menuItem(String text, Runnable action, boolean enabled) {
+        return menuItem(text, null, action, FxUtil.constant(enabled));
+    }
+
+    /**
+     * Create new {@link MenuItem}.
+     *
      * @param text    the text to show
      * @param graphic the graphic to show before the text
-     * @param enabled the property controlling the enabled state
      * @param action  the action to perform when the menu item is invoked
+     * @param enabled the property controlling the enabled state
      * @return new menu item
      */
     public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action, ObservableBooleanValue enabled) {
@@ -378,6 +394,23 @@ public final class Controls {
         mi.disableProperty().bind(Bindings.not(enabled));
         mi.setOnAction(evt -> action.run());
         return mi;
+    }
+
+    /**
+     * Create new {@link MenuItem}.
+     *
+     * <p><strong>NOTE: </strong> the {@code enabled} state is permanent. Use this method only for menus where the
+     * menu state will not be changed, for example, in context menus. If the state is dynamic, use the overload taking
+     * an {@link ObservableBooleanValue} instead.
+     *
+     * @param text    the text to show
+     * @param graphic the graphic to show before the text
+     * @param action  the action to perform when the menu item is invoked
+     * @param enabled the enabled state
+     * @return new menu item
+     */
+    public static MenuItem menuItem(@Nullable String text, @Nullable Node graphic, Runnable action, boolean enabled) {
+        return menuItem(text, graphic, action, FxUtil.constant(enabled));
     }
 
     /**
@@ -452,6 +485,22 @@ public final class Controls {
     /**
      * Create new {@link CheckMenuItem}.
      *
+     * <p><strong>NOTE: </strong> the {@code enabled} state is permanent. Use this method only for menus where the
+     * menu state will not be changed, for example, in context menus. If the state is dynamic, use the overload taking
+     * an {@link ObservableBooleanValue} instead.
+     *
+     * @param text    the text to show
+     * @param selected the property controlling the selected state
+     * @param enabled the enabled state
+     * @return new menu item
+     */
+    public static CheckMenuItem checkMenuItem(String text, Property<Boolean> selected, boolean enabled) {
+        return checkMenuItem(text, null, selected, FxUtil.constant(enabled));
+    }
+
+    /**
+     * Create new {@link CheckMenuItem}.
+     *
      * @param text    the text to show
      * @param graphic the graphic to show before the text
      * @param selected the property controlling the selected state
@@ -466,6 +515,23 @@ public final class Controls {
         mi.disableProperty().bind(Bindings.not(enabled));
         mi.selectedProperty().bindBidirectional(selected);
         return mi;
+    }
+
+    /**
+     * Create new {@link CheckMenuItem}.
+     *
+     * <p><strong>NOTE: </strong> the {@code enabled} state is permanent. Use this method only for menus where the
+     * menu state will not be changed, for example, in context menus. If the state is dynamic, use the overload taking
+     * an {@link ObservableBooleanValue} instead.
+     *
+     * @param text    the text to show
+     * @param graphic the graphic to show before the text
+     * @param selected the property controlling the selected state
+     * @param enabled the enabled state
+     * @return new menu item
+     */
+    public static CheckMenuItem checkMenuItem(@Nullable String text, @Nullable Node graphic, Property<Boolean> selected, boolean enabled) {
+        return checkMenuItem(text, graphic, selected, FxUtil.constant(enabled));
     }
 
     /**
