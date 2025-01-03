@@ -234,6 +234,7 @@ public class SwingGraphics implements Graphics {
     public void setFill(Color color) {
         assert isDrawing : "instance has been closed!";
 
+        state.fillColor = color;
         state.awtFillColor = SwingUtil.toAwtColor(color);
     }
 
