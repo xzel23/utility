@@ -28,7 +28,7 @@ import java.util.function.UnaryOperator;
 public interface InputBuilder<B extends InputBuilder<B>> {
 
     /**
-     * Add labeled input control.
+     * Add a labeled input control.
      *
      * @param <T>     the result type
      * @param id      the control's ID
@@ -47,7 +47,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add unlabeled input control.
+     * Add an unlabeled input control.
      *
      * @param <T>     the result type
      * @param id      the control's ID
@@ -64,7 +64,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add labeled input control.
+     * Add a labeled input control.
      *
      * @param id    the node's ID
      * @param label the label text
@@ -74,7 +74,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B addNode(String id, String label, Node node);
 
     /**
-     * Add unlabeled input control.
+     * Add an unlabeled input control.
      *
      * @param id   the node's ID
      * @param node the node
@@ -83,7 +83,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B addNode(String id, Node node);
 
     /**
-     * Set number of columns for layout (default is 1).
+     * Set the number of columns for layout (default is 1).
      *
      * @param columns the number of columns for laying out the input controls
      * @return {@code this}
@@ -91,7 +91,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B columns(int columns);
 
     /**
-     * Add labeled string input.
+     * Add a labeled string input.
      *
      * @param id    the ID
      * @param label the label text
@@ -107,7 +107,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
-     * Add labeled string input.
+     * Add a labeled string input.
      *
      * @param id       the ID
      * @param label    the label text
@@ -123,7 +123,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add labeled integer input.
+     * Add a labeled integer input.
      *
      * @param id    the ID
      * @param label the label text
@@ -139,7 +139,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
-     * Add labeled integer input.
+     * Add a labeled integer input.
      *
      * @param id       the ID
      * @param label    the label text
@@ -155,7 +155,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add labeled decimal input.
+     * Add a labeled decimal input.
      *
      * @param id    the ID
      * @param label the label text
@@ -171,7 +171,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
-     * Add labeled decimal input.
+     * Add a labeled decimal input.
      *
      * @param id       the ID
      * @param label    the label text
@@ -187,7 +187,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add labeled checkbox.
+     * Add a labeled checkbox.
      *
      * @param id    the ID
      * @param label the label text
@@ -223,7 +223,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add labeled combobox.
+     * Add a labeled combobox.
      *
      * @param <T>   the item type
      * @param id    the ID
@@ -323,7 +323,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add labeled list of radiobuttons.
+     * Add a labeled list of radiobuttons.
      *
      * @param <T>   the item type
      * @param id    the ID
@@ -365,7 +365,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add labeled pane with options.
+     * Add a labeled pane with options.
      *
      * @param id      the ID
      * @param label   the label text
@@ -381,7 +381,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add unlabeled pane with options.
+     * Add an unlabeled pane with options.
      * <p>
      * <em>Note to implementers:</em> Labels of the options should be aligned properly with labels of the input dialog.
      * </p>
@@ -398,7 +398,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     );
 
     /**
-     * Add File chooser.
+     * Add a file chooser.
      *
      * @param id     the ID
      * @param label  the label text
@@ -420,7 +420,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     }
 
     /**
-     * Opens a file chooser dialog to allow the user to select a file.
+     * Add a file chooser dialog to allow the user to select a file.
      *
      * @param id            The identifier for the file chooser dialog.
      * @param label         The label to display in the file chooser dialog.
@@ -430,7 +430,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param filter        The file filters to apply in the file chooser dialog.
      * @param validate      A function to perform additional validation on the selected file path.
      *                      It returns an optional error message if the validation fails.
-     * @return The selected file path wrapped in an instance of {@code B}.
+     * @return {@code this}
      */
     B chooseFile(
             String id,
@@ -442,7 +442,22 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Function<Path, Optional<String>> validate
     );
 
+    /**
+     * Add an unlabeled custom node to the grid.
+     *
+     * @param id the ID of the node
+     * @param node the node
+     * @return {@code this}
+     */
     B node(String id, Node node);
 
+    /**
+     * Add a labeled custom node to the grid.
+     *
+     * @param id the ID of the node
+     * @param label the label text
+     * @param node the node
+     * @return {@code this}
+     */
     B node(String id, String label, Node node);
 }
