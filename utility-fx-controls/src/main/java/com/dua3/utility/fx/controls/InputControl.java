@@ -25,7 +25,11 @@ import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 
 import java.nio.file.Path;
+import java.text.FieldPosition;
+import java.text.Format;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Optional;
@@ -80,7 +84,8 @@ public interface InputControl<T> {
         TextField control = new TextField();
         StringProperty textProperty = control.textProperty();
         IntegerProperty value = new SimpleIntegerProperty();
-        textProperty.bindBidirectional(value, NumberFormat.getIntegerInstance(Locale.getDefault()));
+        Format format = new FormatWithDefaultValue(NumberFormat.getIntegerInstance(Locale.getDefault()), dflt);
+        textProperty.bindBidirectional(value, format);
         return new SimpleInputControl<>(control, value.asObject(), dflt, validate);
     }
 
@@ -95,7 +100,8 @@ public interface InputControl<T> {
         TextField control = new TextField();
         StringProperty textProperty = control.textProperty();
         DoubleProperty value = new SimpleDoubleProperty();
-        textProperty.bindBidirectional(value, NumberFormat.getInstance(Locale.getDefault()));
+        Format format = new FormatWithDefaultValue(NumberFormat.getInstance(Locale.getDefault()), dflt);
+        textProperty.bindBidirectional(value, format);
         return new SimpleInputControl<>(control, value.asObject(), dflt, validate);
     }
 
@@ -363,3 +369,29 @@ public interface InputControl<T> {
         }
     }
 }
+
+class FormatWithDefaultValue extends Format {
+    Format baseFormat;
+    Supplier<?> defaultValue;
+
+    public FormatWithDefaultValue(Format baseFormat, Supplier<?> defaultValue) {
+        this.baseFormat = baseFormat;
+        this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+        return baseFormat.format(obj, toAppendTo, pos);
+    }
+
+    @Override
+    public Object parseObject(String source, ParsePosition pos) {
+        return source.isEmpty() ? defaultValue.get() : baseFormat.parseObject(source, pos);
+    }
+
+    @Override
+    public Object parseObject(String source) throws ParseException {
+        return source.isEmpty() ? defaultValue.get() : super.parseObject(source);
+    }
+}
+
