@@ -60,11 +60,13 @@ public class PinBoardSample extends Application {
         BooleanProperty inputValid = new SimpleBooleanProperty(false);
         input = Dialogs.inputPane()
                 .header("Input target coordinates.")
+                .integer("item", "item", () -> 0)
                 .decimal("x", "x", () -> 0.0)
                 .decimal("y", "y", () -> 0.0)
                 .decimal("xrelvp", "x relative in VP", () -> 0.0)
                 .decimal("yrelvp", "y relative in VP", () -> 0.0)
                 .node("buttons", new HBox(
+                        Controls.button().text("scrollToPositionInItem(item, x, y)").action(this::scrollToPositionInItem).build(),
                         Controls.button().text("scrollTo(x, y)").action(this::scrollTo).build(),
                         Controls.button().text("scrollTo(x, y, xRelVP, yRelVP)").action(this::scrollToRelVP).build(),
                         Controls.button().text("scrollIntoView()").action(this::scrollIntoView).build()
@@ -102,6 +104,15 @@ public class PinBoardSample extends Application {
         stage.show();
     }
 
+    private void scrollToPositionInItem() {
+        PinBoard.PositionInItem pos = new PinBoard.PositionInItem(
+                pinBoard.getItems().get(getIntegerInput("item")),
+                getDoubleInput("x"),
+                getDoubleInput("y")
+        );
+        pinBoard.scrollTo(pos);
+    }
+
     private void scrollTo() {
         pinBoard.scrollTo(getDoubleInput("x"), getDoubleInput("y"));
     }
@@ -121,7 +132,17 @@ public class PinBoardSample extends Application {
 
     double getDoubleInput(String name) {
         var v = input.get().get(name);
-        return Double.parseDouble(String.valueOf(v));
+        return Double.parseDouble(toNonEmptyString(v, "0.0"));
+    }
+
+    int getIntegerInput(String name) {
+        var v = input.get().get(name);
+        return Integer.parseInt(toNonEmptyString(v, "0"));
+    }
+
+    String toNonEmptyString(Object obj, String ifEmpty) {
+        String v = String.valueOf(obj);
+        return v.isBlank() ? ifEmpty : v;
     }
 
     private void createItem(PinBoard pinBoard, int i) {
