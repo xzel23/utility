@@ -245,6 +245,36 @@ public class PinBoard extends Control {
     }
 
     /**
+     * Scrolls the PinBoard the specified amount.
+     *
+     * @param deltaX the amount to scroll in horizontal direction
+     * @param deltaY the amount to scroll in vertical direction
+     */
+    public void scroll(double deltaX, double deltaY) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.scroll(deltaX, deltaY);
+        }
+    }
+
+    /**
+     * Scrolls the PinBoard horizontally by the specified amount.
+     *
+     * @param delta the amount to scroll in the horizontal direction
+     */
+    public void scrollHorizontal(double delta) {
+        scroll(delta, 0);
+    }
+
+    /**
+     * Scrolls the PinBoard vertically by the specified amount.
+     *
+     * @param delta the amount to scroll in the vertical direction
+     */
+    public void scrollVertical(double delta) {
+        scroll(0, delta);
+    }
+
+    /**
      * Scrolls the PinBoard the specified position into view.
      *
      * @param pos the position
