@@ -218,6 +218,19 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     }
 
     /**
+     * Scrolls the PinBoard to the position specified by {@link PinBoard.PositionInItem}.
+     *
+     * @param pos the position within an item on the PinBoard. This includes the item information
+     *            and its coordinates, relative to its area on the board.
+     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
+     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     */
+    public void scrollTo(PinBoard.PositionInItem pos, double relativeXinVP, double relativeYinVP) {
+        PinBoard.BoardPosition bp = toBoardPosition(pos);
+        scrollTo(bp.x(), bp.y(), relativeXinVP, relativeYinVP);
+    }
+
+    /**
      * Scrolls the specified position relative to an item into the visible area of the PinBoard.
      * The method internally converts the given position to a board position and scrolls it into view.
      *

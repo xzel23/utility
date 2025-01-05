@@ -232,6 +232,19 @@ public class PinBoard extends Control {
     }
 
     /**
+     * Scrolls the PinBoard to the specified position within an item.
+     *
+     * @param pos the position within an item to scroll to
+     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
+     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     */
+    public void scrollTo(PositionInItem pos, double relativeXinVP, double relativeYinVP) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.scrollTo(pos, relativeXinVP, relativeYinVP);
+        }
+    }
+
+    /**
      * Scrolls the PinBoard the specified position into view.
      *
      * @param pos the position
