@@ -17,6 +17,5 @@ open module com.dua3.utility.swing {
 
     requires com.dua3.utility;
     requires org.apache.logging.log4j;
-    requires javafx.graphics;
     requires java.desktop;
 }

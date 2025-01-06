@@ -60,7 +60,6 @@ open module com.dua3.utility {
     requires java.xml;
     requires static java.desktop;
     requires org.apache.logging.log4j;
-    requires javafx.controls;
 
     uses FileType;
     uses I18NProvider;
