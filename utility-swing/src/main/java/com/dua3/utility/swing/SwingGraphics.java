@@ -2,6 +2,7 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.awt.AwtImageUtil;
 import com.dua3.utility.data.Image;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.ui.Graphics;
@@ -124,19 +125,19 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public float getWidth() {
-        return (float) parentBounds.getWidth();
+        return (float) g2d.getClipBounds().getWidth();
     }
 
     @Override
     public float getHeight() {
-        return (float) parentBounds.height;
+        return (float) g2d.getClipBounds().getHeight();
     }
 
     @Override
     public Rectangle2f getBounds() {
         assert isDrawing : "instance has been closed!";
 
-        return convert(parentBounds);
+        return convert(LangUtil.orElse(g2d.getClipBounds(), parentBounds));
     }
 
     /**
