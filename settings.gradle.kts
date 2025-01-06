@@ -2,7 +2,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "15.1.0-rc3-SNAPSHOT"
+val projectVersion = "15.1.0"
 
 // define subprojects
 include("utility")
@@ -50,7 +50,7 @@ dependencyResolutionManagement {
             version("ikonli", "12.3.1")
             version("jimfs", "1.3.0")
             version("miglayout", "11.4.2")
-            version("mockito", "5.14.2")
+            version("mockito", "5.15.2")
             version("javafx", "22")
             version("jspecify", "1.0.0")
 

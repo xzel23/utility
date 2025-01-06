@@ -170,10 +170,11 @@ the parameter.
 
 ## Changes
 
-### 15.1.0 (in progress)
+### 15.1.0
 
 - TextUtil.base64Decode() allows whitespace and linebreaks
 - Graphics.strokePath(), Graphics.fillPath()
+- Graphics: many fixes, drawing arcs, circles, ellipses
 - PinBoardSkin add more scroll related methods and fix bugs
 - fix race condition in LogEntriesObservableList
 - bugfixes, code clean-ups, JavaDoc additions
