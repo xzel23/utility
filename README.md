@@ -170,6 +170,10 @@ the parameter.
 
 ## Changes
 
+### 15.1.1
+
+- add XmlUtil.parse(Reader)
+
 ### 15.1.0
 
 - TextUtil.base64Decode() allows whitespace and linebreaks

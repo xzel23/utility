@@ -205,6 +205,18 @@ public final class XmlUtil {
     }
 
     /**
+     * Read XML from an {@link InputStream} and parse it to {@link Document}.
+     *
+     * @param reader the {@link Reader} to read the XML from
+     * @return the parsed {@link Document}
+     * @throws IOException  in case of an I/O error
+     * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
+     */
+    public Document parse(Reader reader) throws IOException, SAXException {
+        return documentBuilder().parse(new InputSource(reader));
+    }
+
+    /**
      * Parse the content of {@code file} to {@link Document}.
      *
      * @param uri the URI to read the XML from
