@@ -42,7 +42,7 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.51.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.0.27")
+            plugin("spotbugs", "com.github.spotbugs").version("6.1.0")
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
 
             version("log4j-bom", "2.24.3")
