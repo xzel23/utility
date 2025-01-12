@@ -170,6 +170,10 @@ the parameter.
 
 ## Changes
 
+### 15.1.2
+
+- add logging of exceptions to PlatformHelper.runLater()
+
 ### 15.1.1
 
 - add XmlUtil.parse(Reader)

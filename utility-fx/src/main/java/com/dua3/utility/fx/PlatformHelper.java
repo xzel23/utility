@@ -1,6 +1,5 @@
 package com.dua3.utility.fx;
 
-import com.dua3.utility.lang.LangUtil;
 import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +37,11 @@ public final class PlatformHelper {
      */
     public static void runAndWait(Runnable action) {
         runAndWait(() -> {
-            action.run();
+            try {
+                action.run();
+            } catch (Exception e) {
+                LOG.warn( "unexpected exception in runAndWait: {}", e.getMessage(), e);
+            }
             //noinspection ReturnOfNull - by design
             return null;
         });
@@ -64,6 +67,8 @@ public final class PlatformHelper {
         Platform.runLater(() -> {
             try {
                 result.set(action.get());
+            } catch (Exception e) {
+                LOG.warn( "unexpected exception in runAndWait: {}", e.getMessage(), e);
             } finally {
                 doneLatch.countDown();
             }
@@ -88,7 +93,13 @@ public final class PlatformHelper {
      * @throws NullPointerException if {@code action} is {@code null}
      */
     public static void runLater(Runnable action) {
-        Platform.runLater(action);
+        Platform.runLater(() -> {
+            try {
+                action.run();
+            } catch (Exception e) {
+                LOG.warn( "unexpected exception in runLater: {}", e.getMessage(), e);
+            }
+        });
     }
 
     /**
@@ -96,7 +107,11 @@ public final class PlatformHelper {
      * Throws an exception if it is not.
      */
     public static void checkApplicationThread() {
-        LangUtil.check(Platform.isFxApplicationThread(), "not on FX Application Thread");
+        boolean isFxApplicationThread = Platform.isFxApplicationThread();
+        if (!isFxApplicationThread) {
+            LOG.error("not on FX Application Thread");
+            throw new IllegalStateException("not on FX Application Thread");
+        }
     }
 
 }
