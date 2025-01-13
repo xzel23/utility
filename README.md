@@ -173,6 +173,7 @@ the parameter.
 ### 15.1.2
 
 - add logging of exceptions to PlatformHelper.runLater()
+- add AutoLock class
 
 ### 15.1.1
 
