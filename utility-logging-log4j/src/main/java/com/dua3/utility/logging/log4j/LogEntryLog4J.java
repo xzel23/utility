@@ -22,6 +22,8 @@ public final class LogEntryLog4J implements LogEntry {
     private @Nullable Supplier<String> messageFormatter;
     private @Nullable String formattedMessage;
     private final @Nullable Throwable throwable;
+    private @Nullable StackTraceElement source;
+    private @Nullable String location;
 
     /**
      * Creates a new LogEntry object.
@@ -35,6 +37,7 @@ public final class LogEntryLog4J implements LogEntry {
         this.level = LogUtilLog4J.translate(event.getLevel());
         var marker = event.getMarker();
         this.marker = marker == null ? "" : marker.getName();
+        this.source = event.getSource();
         Message message = event.getMessage();
         if (message instanceof ReusableMessage rm) {
             // for reusable messages, the message must be formatted instantly
@@ -49,11 +52,6 @@ public final class LogEntryLog4J implements LogEntry {
         this.throwable = event.getThrown();
     }
 
-    /**
-     * Formats the message using MessageFormatter.basicArrayFormat.
-     *
-     * @return the formatted message as a string.
-     */
     @Override
     public String message() {
         if (messageFormatter != null) {
@@ -68,51 +66,35 @@ public final class LogEntryLog4J implements LogEntry {
         return format("", "");
     }
 
-    /**
-     * Returns the logger name.
-     *
-     * @return the name of the logger.
-     */
     @Override
     public String loggerName() {
         return loggerName;
     }
 
-    /**
-     * Returns the time when the log entry was created.
-     *
-     * @return the time when the log entry was created.
-     */
     @Override
     public Instant time() {
         return time;
     }
 
-    /**
-     * Returns the log level of the log entry.
-     *
-     * @return the log level of the log entry.
-     */
     @Override
     public LogLevel level() {
         return level;
     }
 
-    /**
-     * Returns the marker of the log entry.
-     *
-     * @return the marker of the log entry.
-     */
     @Override
     public String marker() {
         return marker;
     }
 
-    /**
-     * Returns the throwable associated with this log entry.
-     *
-     * @return the throwable associated with this log entry.
-     */
+    @Override
+    public @Nullable String location() {
+        if (source != null) {
+            location = source.getFileName() + ":" + source.getLineNumber() + " [" + source.getMethodName() + "]";
+            source = null;
+        }
+        return location;
+    }
+
     @Override
     public @Nullable Throwable throwable() {
         return throwable;

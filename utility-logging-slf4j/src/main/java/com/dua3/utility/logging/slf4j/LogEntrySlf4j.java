@@ -42,11 +42,6 @@ public final class LogEntrySlf4j implements LogEntry {
         this.throwable = throwable;
     }
 
-    /**
-     * Formats the message using MessageFormatter.basicArrayFormat.
-     *
-     * @return the formatted message as a string.
-     */
     @Override
     public String message() {
         if (messageFormatter != null) {
@@ -61,54 +56,34 @@ public final class LogEntrySlf4j implements LogEntry {
         return format("", "");
     }
 
-    /**
-     * Returns the logger name.
-     *
-     * @return the name of the logger.
-     */
     @Override
     public String loggerName() {
         return loggerName;
     }
 
-    /**
-     * Returns the time when the log entry was created.
-     *
-     * @return the time when the log entry was created.
-     */
     @Override
     public Instant time() {
         return time;
     }
 
-    /**
-     * Returns the log level of the log entry.
-     *
-     * @return the log level of the log entry.
-     */
     @Override
     public LogLevel level() {
         return level;
     }
 
-    /**
-     * Returns the marker of the log entry.
-     *
-     * @return the marker of the log entry.
-     */
     @Override
     public String marker() {
         return marker;
     }
 
-    /**
-     * Returns the throwable associated with this log entry.
-     *
-     * @return the throwable associated with this log entry.
-     */
     @Override
     public @Nullable Throwable throwable() {
         return throwable;
+    }
+
+    @Override
+    public @Nullable String location() {
+        return null;
     }
 
     /**

@@ -57,6 +57,14 @@ public interface LogEntry {
     Throwable throwable();
 
     /**
+     * Returns the location information if present.
+     *
+     * @return the location information, or null if no location is present
+     */
+    @Nullable
+    String location();
+
+    /**
      * Formats the log entry with the given prefix and suffix.
      *
      * @param prefix the prefix to prepend to the formatted entry
@@ -71,7 +79,11 @@ public interface LogEntry {
         sb.append(DateTimeFormatter.ISO_INSTANT.format(time()));
         sb.append(' ');
         sb.append(loggerName());
-        sb.append(' ');
+        sb.append('\n');
+        if (location() != null) {
+            sb.append(location());
+            sb.append('\n');
+        }
         sb.append(message());
         if (throwable() != null) {
             sb.append(System.lineSeparator());

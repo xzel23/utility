@@ -174,6 +174,7 @@ the parameter.
 
 - add logging of exceptions to PlatformHelper.runLater()
 - add AutoLock class
+- add location information to LogWindow/LogPane messages
 
 ### 15.1.1
 

@@ -92,7 +92,7 @@ public class AutoLock implements AutoCloseable {
         this.lock = lock;
         this.name = name;
 
-        LOG.trace("AutoLock({}): lock [{}]", name::get, () -> System.identityHashCode(this));
+        LOG.trace("AutoLock({}): lock [{}] - {}", name::get, () -> System.identityHashCode(this), lock::toString);
         lock.lock();
     }
 
