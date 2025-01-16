@@ -310,7 +310,7 @@ public interface Graphics extends AutoCloseable {
      * <p>The method first retrieves the inverse of the current transformation using {@link #getTransformation()} and
      * throws an exception if the transformation is not present. Then, it calculates the bounds of the graphics using
      * the {@link #getBounds()} method. Finally, it transforms the minimum and maximum coordinates of the bounds using
-     * the inverse transformation to obtain the bounds in the local coordinate space.</p>
+     * the inverse transformation to get the bounds in the local coordinate space.</p>
      *
      * @return the bounding rectangle in the local coordinate space
      * @throws NoSuchElementException if the inverse of the current transformation is not present
@@ -416,7 +416,7 @@ public interface Graphics extends AutoCloseable {
         ROTATE_AND_TRANSLATE_BLOCK,
         /**
          * Rotate each line independently. As a result, All lines of a left aligned text will start at the given
-         * x-coordinate (for rotation angles between -π/4 and π/4 (-45° amd 45°).
+         * x-coordinate (for rotation angles between -π/4 and π/4, or -45° and 45°).
          *
          * <p>For rotation with an absolute amount larger than π/4, the y-coordinate is used for alignment instead.
          */
@@ -645,7 +645,7 @@ public interface Graphics extends AutoCloseable {
             sx_h = 0.0f;
         } else {
             setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, Vector2f.of(cr.x(), cr.y()))));
-            switch ((int) (angle/MathUtil.PI_QUARTER)) {
+            switch ((int) (angle / MathUtil.PI_QUARTER)) {
                 case 0, 4 -> {
                     sx_y = (float) (Math.tan(angle));
                     sx_h = sx_y;
@@ -843,7 +843,7 @@ public interface Graphics extends AutoCloseable {
         double endAngle = Math.atan2(p1l.y() - cl.y(), p1l.x() - cl.x());
         double sweepAngle;
         float sweepSign = sweep ? 1 : -1;
-        if (sweepSign * endAngle < sweepSign *startAngle) {
+        if (sweepSign * endAngle < sweepSign * startAngle) {
             endAngle += sweepSign * 2 * Math.PI;
         }
         sweepAngle = endAngle - startAngle;
