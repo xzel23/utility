@@ -420,7 +420,19 @@ public interface Graphics extends AutoCloseable {
          *
          * <p>For rotation with an absolute amount larger than π/4, the y-coordinate is used for alignment instead.
          */
-        ROTATE_LINES
+        ROTATE_LINES,
+        /**
+         * Rotate each line independently. Align lines horizontally, i.e., all lines start at the same y-coordinate.
+         */
+        ROTATE_LINES_AND_ALIGN_HORIZONTALLY,
+        /**
+         * Rotate each line independently. Align lines vertically, i.e., all lines start at the same x-coordinate.
+         */
+        ROTATE_LINES_AND_ALIGN_VERTICALLY,
+        /**
+         * Rotate each line independently. Lines are aligned horizontally or vertically based on the given angle.
+         */
+        ROTATE_AND_ALIGN_LINES
     }
 
     /**
@@ -447,48 +459,50 @@ public interface Graphics extends AutoCloseable {
      * @param hAlign   the horizontal alignment of the text within the bounding rectangle
      * @param vAlign   the vertical alignment of the text within the bounding rectangle
      * @param wrapping determines if text wrapping should be applied
-     * @param rotation the rotatiion angle in radians
+     * @param angle the rotatiion angle in radians
      * @param mode     the {@link TextRotationMode} to use
      */
-    default void renderText(Rectangle2f r, RichText text, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping, double rotation, TextRotationMode mode) {
-        if (rotation == 0.0) {
+    default void renderText(Rectangle2f r, RichText text, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping, double angle, TextRotationMode mode) {
+        if (angle == 0.0) {
             // fast path when no rotation is applied
             renderText(r, text, hAlign, vAlign, wrapping);
             return;
         }
 
+        angle = MathUtil.normalizeRadians(angle);
+
         AffineTransformation2f t = getTransformation();
         FragmentedText fragments = generateFragments(text, r, hAlign, vAlign, wrapping);
         switch (mode) {
             case ROTATE_BLOCK -> {
-                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(rotation, Vector2f.of(r.x(), r.y()))));
+                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, Vector2f.of(r.x(), r.y()))));
                 renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), 0.0, fragments.fragmentLines());
             }
             case ROTATE_AND_TRANSLATE_BLOCK -> {
                 float tx;
                 float ty;
-                int quadrant = MathUtil.quadrantIndexRadians(rotation);
+                int quadrant = MathUtil.quadrantIndexRadians(angle);
 
                 switch (quadrant) {
                     case 0 -> {
-                        tx = (float) (Math.sin(rotation) * fragments.textHeight());
+                        tx = (float) (Math.sin(angle) * fragments.textHeight());
                         ty = 0;
                     }
                     case 1 -> {
-                        tx = (float) (Math.sin(rotation) * fragments.textHeight()
-                                - Math.cos(rotation) * fragments.textWidth()
+                        tx = (float) (Math.sin(angle) * fragments.textHeight()
+                                - Math.cos(angle) * fragments.textWidth()
                         );
-                        ty = (float) (-Math.cos(rotation) * fragments.textHeight());
+                        ty = (float) (-Math.cos(angle) * fragments.textHeight());
                     }
                     case 2 -> {
-                        tx = (float) (-Math.cos(rotation) * fragments.textWidth());
-                        ty = (float) (-Math.sin(rotation) * fragments.textWidth()
-                                - Math.cos(rotation) * fragments.textHeight()
+                        tx = (float) (-Math.cos(angle) * fragments.textWidth());
+                        ty = (float) (-Math.sin(angle) * fragments.textWidth()
+                                - Math.cos(angle) * fragments.textHeight()
                         );
                     }
                     case 3 -> {
                         tx = 0;
-                        ty = (float) (-Math.sin(rotation) * fragments.textWidth());
+                        ty = (float) (-Math.sin(angle) * fragments.textWidth());
                     }
                     default -> {
                         throw new IllegalStateException("invalid quadrant index: " + quadrant);
@@ -497,13 +511,13 @@ public interface Graphics extends AutoCloseable {
 
                 setTransformation(AffineTransformation2f.combine(
                         t,
-                        AffineTransformation2f.rotate(rotation, Vector2f.of(r.x(), r.y())),
+                        AffineTransformation2f.rotate(angle, Vector2f.of(r.x(), r.y())),
                         AffineTransformation2f.translate(tx, ty)
                 ));
                 renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), 0.0, fragments.fragmentLines());
             }
             case ROTATE_LINES -> {
-                renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), rotation, fragments.fragmentLines());
+                renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), angle, fragments.fragmentLines());
             }
         }
         setTransformation(t);
