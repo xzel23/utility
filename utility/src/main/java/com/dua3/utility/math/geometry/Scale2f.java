@@ -29,6 +29,27 @@ public record Scale2f(float sx, float sy) {
     }
 
     /**
+     * Creates a new {@code Scale2f} instance with specified scaling factors.
+     *
+     * @param sx the scaling factor for the x-axis
+     * @param sy the scaling factor for the y-axis
+     * @return a new {@code Scale2f} instance with the given scaling factors
+     */
+    public static Scale2f of(float sx, float sy) {
+        return new Scale2f(sx, sy);
+    }
+
+    /**
+     * Creates a new {@code Scale2f} object with the specified uniform scaling factor.
+     *
+     * @param s the scaling factor for both the x and y axes
+     * @return a new {@code Scale2f} object with the specified scaling factor applied to both axes
+     */
+    public static Scale2f of(float s) {
+        return new Scale2f(s);
+    }
+
+    /**
      * Multiplies the current scale by another scale.
      *
      * @param other the scale to multiply with

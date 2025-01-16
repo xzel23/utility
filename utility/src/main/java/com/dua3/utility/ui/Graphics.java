@@ -2,6 +2,7 @@ package com.dua3.utility.ui;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Image;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Arc2f;
 import com.dua3.utility.math.geometry.Path2f;
@@ -400,6 +401,28 @@ public interface Graphics extends AutoCloseable {
      */
     AffineTransformation2f getTransformation();
 
+    enum TextRotationMode {
+        /**
+         * Rotate the block of text as a whole, i.e., the text is rendered the same as with no rotation applied and
+         * then the whole block is rotated with the lower left corner as pivot. This means that when rotating
+         * counter-clockwise, the upper left corner will be left of the pivot's x-coordinate.
+         */
+        ROTATE_BLOCK,
+        /**
+         * Rotate the block of text as a whole, like with {@code ROTATE_BLOCK}, but translate the whole block of text
+         * so that the left most x-coordinate of the rotated rectangle containing the text will align with the given
+         * x-coordinate. Also apply a vertical translation accordingly.
+         */
+        ROTATE_AND_TRANSLATE_BLOCK,
+        /**
+         * Rotate each line independently. As a result, All lines of a left aligned text will start at the given
+         * x-coordinate (for rotation angles between -π/4 and π/4 (-45° amd 45°).
+         *
+         * <p>For rotation with an absolute amount larger than π/4, the y-coordinate is used for alignment instead.
+         */
+        ROTATE_LINES
+    }
+
     /**
      * Renders the given text within the specified bounding rectangle using the provided font,
      * alignment, and wrapping settings.
@@ -412,7 +435,78 @@ public interface Graphics extends AutoCloseable {
      */
     default void renderText(Rectangle2f r, RichText text, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping) {
         FragmentedText fragments = generateFragments(text, r, hAlign, vAlign, wrapping);
-        renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), fragments.fragmentLines());
+        renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), 0.0, fragments.fragmentLines());
+    }
+
+    /**
+     * Renders the given text within the specified bounding rectangle using the provided font,
+     * alignment, wrapping, and rotation settings.
+     *
+     * @param r        the bounding rectangle to render the text into
+     * @param text     the text to be rendered
+     * @param hAlign   the horizontal alignment of the text within the bounding rectangle
+     * @param vAlign   the vertical alignment of the text within the bounding rectangle
+     * @param wrapping determines if text wrapping should be applied
+     * @param rotation the rotatiion angle in radians
+     * @param mode     the {@link TextRotationMode} to use
+     */
+    default void renderText(Rectangle2f r, RichText text, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping, double rotation, TextRotationMode mode) {
+        if (rotation == 0.0) {
+            // fast path when no rotation is applied
+            renderText(r, text, hAlign, vAlign, wrapping);
+            return;
+        }
+
+        AffineTransformation2f t = getTransformation();
+        FragmentedText fragments = generateFragments(text, r, hAlign, vAlign, wrapping);
+        switch (mode) {
+            case ROTATE_BLOCK -> {
+                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(rotation, Vector2f.of(r.x(), r.y()))));
+                renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), 0.0, fragments.fragmentLines());
+            }
+            case ROTATE_AND_TRANSLATE_BLOCK -> {
+                float tx;
+                float ty;
+                int quadrant = MathUtil.quadrantIndexRadians(rotation);
+
+                switch (quadrant) {
+                    case 0 -> {
+                        tx = (float) (Math.sin(rotation) * fragments.textHeight());
+                        ty = 0;
+                    }
+                    case 1 -> {
+                        tx = (float) (Math.sin(rotation) * fragments.textHeight()
+                                - Math.cos(rotation) * fragments.textWidth()
+                        );
+                        ty = (float) (-Math.cos(rotation) * fragments.textHeight());
+                    }
+                    case 2 -> {
+                        tx = (float) (-Math.cos(rotation) * fragments.textWidth());
+                        ty = (float) (-Math.sin(rotation) * fragments.textWidth()
+                                - Math.cos(rotation) * fragments.textHeight()
+                        );
+                    }
+                    case 3 -> {
+                        tx = 0;
+                        ty = (float) (-Math.sin(rotation) * fragments.textWidth());
+                    }
+                    default -> {
+                        throw new IllegalStateException("invalid quadrant index: " + quadrant);
+                    }
+                }
+
+                setTransformation(AffineTransformation2f.combine(
+                        t,
+                        AffineTransformation2f.rotate(rotation, Vector2f.of(r.x(), r.y())),
+                        AffineTransformation2f.translate(tx, ty)
+                ));
+                renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), 0.0, fragments.fragmentLines());
+            }
+            case ROTATE_LINES -> {
+                renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), rotation, fragments.fragmentLines());
+            }
+        }
+        setTransformation(t);
     }
 
     /**
@@ -527,15 +621,53 @@ public interface Graphics extends AutoCloseable {
      * The method calculates the positioning of each fragment based on the alignment and distributes whitespace and remaining space accordingly.
      * The rendered text is drawn on the graphics context.
      *
-     * @param cr             the bounding rectangle within which the text fragments will be rendered
-     * @param hAlign         the horizontal alignment of the text within the bounding rectangle
-     * @param vAlign         the vertical alignment of the text within the bounding rectangle
-     * @param textWidth      the total width of the text fragments within a line
-     * @param textHeight     the total height of the text fragments within all lines
-     * @param baseLine       the baseline position of the text fragments
-     * @param fragmentLines  a list of fragment lines, where each line contains a list of fragments
+     * @param cr            the bounding rectangle within which the text fragments will be rendered
+     * @param hAlign        the horizontal alignment of the text within the bounding rectangle
+     * @param vAlign        the vertical alignment of the text within the bounding rectangle
+     * @param textWidth     the total width of the text fragments within a line
+     * @param textHeight    the total height of the text fragments within all lines
+     * @param baseLine      the baseline position of the text fragments
+     * @param angle         the angle in radians to rotate each line (must be normalized)
+     * @param fragmentLines a list of fragment lines, where each line contains a list of fragments
      */
-    private void renderFragments(Rectangle2f cr, Alignment hAlign, VerticalAlignment vAlign, float textWidth, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
+    private void renderFragments(Rectangle2f cr, Alignment hAlign, VerticalAlignment vAlign, float textWidth, float textHeight, float baseLine, double angle, List<List<Fragment>> fragmentLines) {
+        assert 0 <= angle && angle < MathUtil.TWO_PI : "invalid angle: " + angle;
+
+        //
+        Font font = getFont();
+        AffineTransformation2f t = getTransformation();
+
+        float sx_y;
+        float sx_h;
+
+        if (angle == 0.0) {
+            sx_y = 0.0f;
+            sx_h = 0.0f;
+        } else {
+            setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, Vector2f.of(cr.x(), cr.y()))));
+            switch ((int) (angle/MathUtil.PI_QUARTER)) {
+                case 0, 4 -> {
+                    sx_y = (float) (Math.tan(angle));
+                    sx_h = sx_y;
+                }
+                case 1, 5 -> {
+                    sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
+                    sx_h = 0;
+                }
+                case 2, 6 -> {
+                    sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
+                    sx_h = sx_y;
+                }
+                case 3, 7 -> {
+                    sx_y = (float) (Math.tan(angle));
+                    sx_h = 0;
+                }
+                default -> {
+                    throw new IllegalStateException("invalid octant");
+                }
+            }
+        }
+
         float y = switch (vAlign) {
             case TOP, DISTRIBUTED -> cr.yMin();
             case MIDDLE -> cr.yCenter() - textHeight / 2;
@@ -586,10 +718,18 @@ public interface Graphics extends AutoCloseable {
                     case LEFT -> { /* nothing to do */}
                 }
                 setFont(fragment.font);
-                drawText(fragment.text.toString(), x + fragment.x, y + fragment.y + baseLine);
+                float dy = fragment.y + baseLine;
+                drawText(
+                        fragment.text.toString(),
+                        x + fragment.x() + sx_y * fragment.y() + sx_h * fragment.h(),
+                        y + fragment.y() + baseLine
+                );
             }
             y += fillerHeight;
         }
+
+        setTransformation(t);
+        setFont(font);
     }
 
     /**

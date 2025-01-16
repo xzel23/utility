@@ -443,4 +443,140 @@ public final class MathUtil {
             case UNNECESSARY -> x -> x;
         };
     }
+
+    /**
+     * The mathematical constant π (pi), defined as the ratio of a circle's circumference
+     * to its diameter. This constant is widely used in mathematics, physics, and engineering.
+     * It has an approximate value of 3.141592653589793.
+     */
+    public static final double PI = Math.PI;
+
+    /**
+     * Represents the constant 2π (in degrees: 360°).
+     */
+    public static final double TWO_PI = 2.0 * Math.PI;
+
+    /**
+     * Represents the constant π/2 (in degrees: 90°).
+     */
+    public static final double PI_HALF = Math.PI / 2.0;
+
+    /**
+     * Represents the constant π/2 (in degrees: 45°).
+     */
+    public static final double PI_QUARTER = Math.PI / 4.0;
+
+    /**
+     * Represents the constant π/180 (in degrees: 1°).
+     */
+    public static final double PI_DIV_180 = Math.PI / 180.0;
+
+    /**
+     * Converts an angle measured in degrees to an equivalent angle measured in radians.
+     *
+     * @param alpha the angle in degrees
+     * @return the angle in radians
+     */
+    public static double rad(double alpha) {
+        return alpha * PI_DIV_180;
+    }
+
+    /**
+     * Converts an angle measured in degrees to an equivalent angle measured in radians.
+     *
+     * @param alpha the angle in degrees
+     * @return the angle in radians
+     */
+    public static float radf(float alpha) {
+        return (float) (alpha * PI_DIV_180);
+    }
+
+    /**
+     * Converts an angle from radians to degrees.
+     *
+     * @param phi the angle in radians
+     * @return the angle in degrees
+     */
+    public static double deg(double phi) {
+        return phi * 180.0 / PI_DIV_180;
+    }
+
+    /**
+     * Converts an angle from radians to degrees.
+     *
+     * @param phi the angle in radians
+     * @return the angle in degrees
+     */
+    public static float degf(float phi) {
+        return (float) (phi * 180.0 / PI_DIV_180);
+    }
+
+    /**
+     * Normalizes the given angle in radians to the range [0, 2π).
+     *
+     * @param phi the angle in radians to be normalized
+     * @return the normalized angle in radians within the range [0, 2π)
+     */
+    public static double normalizeRadians(double phi) {
+        phi = phi % MathUtil.TWO_PI;
+        if (phi < 0.0) {
+            phi += MathUtil.TWO_PI;
+        }
+        return phi;
+    }
+
+    /**
+     * Normalizes the given angle in radians to the range [0, 360).
+     *
+     * @param alpha the angle in degrees to be normalized
+     * @return the normalized angle in degrees within the range [0, 360)
+     */
+    public static double normalizeDegrees(double alpha) {
+        alpha = alpha % 360.0;
+        if (alpha < 0.0) {
+            alpha += 360.0;
+        }
+        return alpha;
+    }
+
+    /**
+     * Determines the quadrant number (1-based) of an angle given in radians.
+     *
+     * @param phi The angle in radians.
+     * @return The quadrant number (1 to 4) in which the given angle lies.
+     */
+    public static int quadrantRadians(double phi) {
+        return 1 + quadrantIndexRadians(phi);
+    }
+
+    /**
+     * Determines the quadrant index (0-based) of an angle given in radians.
+     *
+     * @param phi The angle in radians.
+     * @return The quadrant number (0 to 3) in which the given angle lies.
+     */
+    public static int quadrantIndexRadians(double phi) {
+        return (int) (normalizeRadians(phi) / PI_HALF);
+    }
+
+    /**
+     * Determines the quadrant number (1-based) of an angle given in degrees.
+     *
+     * @param alpha The angle in degrees.
+     * @return The quadrant number (1 to 4) in which the given angle lies.
+     */
+    public static int quadrantDegrees(double alpha) {
+        return 1 + quadrantIndexDegrees(alpha);
+    }
+
+    /**
+     * Determines the quadrant index (0-based) of an angle given in degrees.
+     *
+     * @param alpha The angle in degrees.
+     * @return The quadrant number (0 to 3) in which the given angle lies.
+     */
+    public static int quadrantIndexDegrees(double alpha) {
+        return (int) (normalizeDegrees(alpha) / 90.0);
+    }
+
 }

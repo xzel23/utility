@@ -5,6 +5,8 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.samples.graphics.Slide;
 import com.dua3.utility.ui.Graphics;
 
+import static com.dua3.utility.math.MathUtil.PI_QUARTER;
+
 public class DrawText implements Slide {
     @Override
     public String title() {
@@ -49,7 +51,7 @@ public class DrawText implements Slide {
         for (int i = 0; i < 8; i++) {
             AffineTransformation2f t = AffineTransformation2f.combine(
                     AffineTransformation2f.translate(-cx, -cy),
-                    AffineTransformation2f.rotate(i * Math.PI / 4),
+                    AffineTransformation2f.rotate(i * PI_QUARTER),
                     AffineTransformation2f.translate(cx, cy)
             );
 
@@ -89,7 +91,7 @@ public class DrawText implements Slide {
         for (int i = 0; i < 8; i++) {
             AffineTransformation2f t = AffineTransformation2f.combine(
                     AffineTransformation2f.translate(-cx, -cy),
-                    AffineTransformation2f.rotate(i * Math.PI / 4),
+                    AffineTransformation2f.rotate(i * PI_QUARTER),
                     AffineTransformation2f.translate(cx, cy)
             );
 

@@ -46,4 +46,27 @@ public record Dimension2f(float width, float height) {
     public Dimension2f scaled(float s) {
         return new Dimension2f(s * width, s * height);
     }
+
+    /**
+     * Returns a new {@code Dimension2f} object with a margin added to both width and height.
+     * The margin is added equally on both sides, effectively increasing the width and height
+     * by double the provided margin value.
+     *
+     * @param m the margin to be added to the width and height
+     * @return a new {@code Dimension2f} object with updated dimensions
+     */
+    public Dimension2f withMargin(float m) {
+        return new Dimension2f(width + 2 * m, height + 2 * m);
+    }
+
+    /**
+     * Adds a margin to the current width and height with separate margins for each direction.
+     *
+     * @param mx the margin to be added to the width
+     * @param my the margin to be added to the height
+     * @return a new {@code Dimension2f} object with the adjusted width and height
+     */
+    public Dimension2f withMargin(float mx, float my) {
+        return new Dimension2f(width + 2 * mx, height + 2 * my);
+    }
 }

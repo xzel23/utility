@@ -3,6 +3,7 @@ package com.dua3.utility.samples.graphics;
 import com.dua3.utility.fx.FxGraphics;
 import com.dua3.utility.samples.graphics.slides.ArcToAndEllipse;
 import com.dua3.utility.samples.graphics.slides.DrawText;
+import com.dua3.utility.samples.graphics.slides.RenderRotatedText;
 import com.dua3.utility.samples.graphics.slides.RenderText;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -32,8 +33,8 @@ public class FxGraphicsSample extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        float w = 1400;
-        float h = 800;
+        float w = 1600;
+        float h = 1000;
         TabPane tabPane = new TabPane(
                 createSlides(w, h)
         );
@@ -48,7 +49,8 @@ public class FxGraphicsSample extends Application {
         return new Tab[]{
                 createSlide(ArcToAndEllipse::new, w, h),
                 createSlide(DrawText::new, w, h),
-                createSlide(RenderText::new, w, h)
+                createSlide(RenderText::new, w, h),
+                createSlide(RenderRotatedText::new, w, h)
         };
     }
 
