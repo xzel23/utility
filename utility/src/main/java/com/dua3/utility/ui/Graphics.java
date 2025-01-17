@@ -415,24 +415,15 @@ public interface Graphics extends AutoCloseable {
          */
         ROTATE_AND_TRANSLATE_BLOCK,
         /**
-         * Rotate each line independently. As a result, All lines of a left aligned text will start at the given
-         * x-coordinate (for rotation angles between -π/4 and π/4, or -45° and 45°).
-         *
-         * <p>For rotation with an absolute amount larger than π/4, the y-coordinate is used for alignment instead.
-         */
-        ROTATE_LINES,
-        /**
          * Rotate each line independently. Align lines horizontally, i.e., all lines start at the same y-coordinate.
          */
-        ROTATE_LINES_AND_ALIGN_HORIZONTALLY,
-        /**
-         * Rotate each line independently. Align lines vertically, i.e., all lines start at the same x-coordinate.
-         */
-        ROTATE_LINES_AND_ALIGN_VERTICALLY,
-        /**
-         * Rotate each line independently. Lines are aligned horizontally or vertically based on the given angle.
-         */
-        ROTATE_AND_ALIGN_LINES
+        ROTATE_LINES,
+    }
+
+    enum AlignmentAxis {
+        AUTOMATIC,
+        X_AXIS,
+        Y_AXIS,
     }
 
     /**
@@ -447,23 +438,42 @@ public interface Graphics extends AutoCloseable {
      */
     default void renderText(Rectangle2f r, RichText text, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping) {
         FragmentedText fragments = generateFragments(text, r, hAlign, vAlign, wrapping);
-        renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), 0.0, fragments.fragmentLines());
+        renderFragments(
+                r,
+                hAlign,
+                vAlign,
+                fragments.textWidth(),
+                fragments.textHeight(),
+                fragments.baseLine(),
+                0.0,
+                AlignmentAxis.AUTOMATIC,
+                fragments.fragmentLines()
+        );
     }
 
     /**
      * Renders the given text within the specified bounding rectangle using the provided font,
      * alignment, wrapping, and rotation settings.
      *
-     * @param r        the bounding rectangle to render the text into
-     * @param text     the text to be rendered
-     * @param hAlign   the horizontal alignment of the text within the bounding rectangle
-     * @param vAlign   the vertical alignment of the text within the bounding rectangle
-     * @param wrapping determines if text wrapping should be applied
-     * @param angle the rotatiion angle in radians
-     * @param mode     the {@link TextRotationMode} to use
+     * @param r             the bounding rectangle to render the text into
+     * @param text          the text to be rendered
+     * @param hAlign        the horizontal alignment of the text within the bounding rectangle
+     * @param vAlign        the vertical alignment of the text within the bounding rectangle
+     * @param wrapping      determines if text wrapping should be applied
+     * @param angle         the rotatiion angle in radians
+     * @param mode          the {@link TextRotationMode} to use
+     * @param alignmentAxis the axis to align rotated text on
      */
-    default void renderText(Rectangle2f r, RichText text, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping, double angle, TextRotationMode mode) {
-        if (angle == 0.0) {
+    default void renderText(
+            Rectangle2f r,
+            RichText text,
+            Alignment hAlign,
+            VerticalAlignment vAlign,
+            boolean wrapping,
+            double angle,
+            TextRotationMode mode,
+            AlignmentAxis alignmentAxis) {
+        if (angle == 0.0 && (mode != TextRotationMode.ROTATE_LINES || alignmentAxis != AlignmentAxis.X_AXIS)) {
             // fast path when no rotation is applied
             renderText(r, text, hAlign, vAlign, wrapping);
             return;
@@ -476,7 +486,17 @@ public interface Graphics extends AutoCloseable {
         switch (mode) {
             case ROTATE_BLOCK -> {
                 setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, Vector2f.of(r.x(), r.y()))));
-                renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), 0.0, fragments.fragmentLines());
+                renderFragments(
+                        r,
+                        hAlign,
+                        vAlign,
+                        fragments.textWidth(),
+                        fragments.textHeight(),
+                        fragments.baseLine(),
+                        0.0,
+                        AlignmentAxis.AUTOMATIC,
+                        fragments.fragmentLines()
+                );
             }
             case ROTATE_AND_TRANSLATE_BLOCK -> {
                 float tx;
@@ -514,10 +534,30 @@ public interface Graphics extends AutoCloseable {
                         AffineTransformation2f.rotate(angle, Vector2f.of(r.x(), r.y())),
                         AffineTransformation2f.translate(tx, ty)
                 ));
-                renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), 0.0, fragments.fragmentLines());
+                renderFragments(
+                        r,
+                        hAlign,
+                        vAlign,
+                        fragments.textWidth(),
+                        fragments.textHeight(),
+                        fragments.baseLine(),
+                        0.0,
+                        AlignmentAxis.AUTOMATIC,
+                        fragments.fragmentLines()
+                );
             }
             case ROTATE_LINES -> {
-                renderFragments(r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), angle, fragments.fragmentLines());
+                renderFragments(
+                        r,
+                        hAlign,
+                        vAlign,
+                        fragments.textWidth(),
+                        fragments.textHeight(),
+                        fragments.baseLine(),
+                        angle,
+                        alignmentAxis,
+                        fragments.fragmentLines()
+                );
             }
         }
         setTransformation(t);
@@ -531,7 +571,7 @@ public interface Graphics extends AutoCloseable {
      * @param y the y-position
      * @param w the width
      * @param h the height
-     * @param baseLine the basline value (of the line the fragment belongs to
+     * @param baseLine the baseline value (of the line the fragment belongs to
      * @param font the font
      * @param text the text
      */
@@ -642,9 +682,20 @@ public interface Graphics extends AutoCloseable {
      * @param textHeight    the total height of the text fragments within all lines
      * @param baseLine      the baseline position of the text fragments
      * @param angle         the angle in radians to rotate each line (must be normalized)
+     * @param alignmentAxis the axis on which to align the text on
      * @param fragmentLines a list of fragment lines, where each line contains a list of fragments
      */
-    private void renderFragments(Rectangle2f cr, Alignment hAlign, VerticalAlignment vAlign, float textWidth, float textHeight, float baseLine, double angle, List<List<Fragment>> fragmentLines) {
+    private void renderFragments(
+            Rectangle2f cr,
+            Alignment hAlign,
+            VerticalAlignment vAlign,
+            float textWidth,
+            float textHeight,
+            float baseLine,
+            double angle,
+            AlignmentAxis alignmentAxis,
+            List<List<Fragment>> fragmentLines
+    ) {
         assert 0 <= angle && angle < MathUtil.TWO_PI : "invalid angle: " + angle;
 
         //
@@ -659,20 +710,26 @@ public interface Graphics extends AutoCloseable {
             sx_h = 0.0f;
         } else {
             setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, Vector2f.of(cr.x(), cr.y()))));
-            switch ((int) (angle / MathUtil.PI_QUARTER)) {
-                case 0, 4 -> {
+            int[] layoutCases = switch (alignmentAxis) {
+                case AUTOMATIC -> new int[]{0, 1, 2, 3};
+                case X_AXIS -> new int[]{1, 1, 2, 2};
+                case Y_AXIS -> new int[]{0, 0, 3, 3};
+            };
+            int layoutCase = layoutCases[(int) (angle / MathUtil.PI_QUARTER) % 4];
+            switch (layoutCase) {
+                case 0 -> {
                     sx_y = (float) (Math.tan(angle));
                     sx_h = sx_y;
                 }
-                case 1, 5 -> {
+                case 1 -> {
                     sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
                     sx_h = 0;
                 }
-                case 2, 6 -> {
+                case 2 -> {
                     sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
                     sx_h = sx_y;
                 }
-                case 3, 7 -> {
+                case 3 -> {
                     sx_y = (float) (Math.tan(angle));
                     sx_h = 0;
                 }

@@ -8,6 +8,7 @@ import com.dua3.utility.samples.graphics.slides.RenderText;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
@@ -50,7 +51,7 @@ public class FxGraphicsSample extends Application {
                 createSlide(ArcToAndEllipse::new, w, h),
                 createSlide(DrawText::new, w, h),
                 createSlide(RenderText::new, w, h),
-                createSlide(RenderRotatedText::new, w, h)
+                createBigSlide(RenderRotatedText::new, w, h)
         };
     }
 
@@ -60,6 +61,14 @@ public class FxGraphicsSample extends Application {
         FxGraphics g = new FxGraphics(canvas);
         slide.draw(g);
         return new Tab(slide.title(), canvas);
+    }
+
+    Tab createBigSlide(Supplier<Slide> factory, float w, float h) {
+        Slide slide = factory.get();
+        Canvas canvas = new Canvas(w, 2 * h);
+        FxGraphics g = new FxGraphics(canvas);
+        slide.draw(g);
+        return new Tab(slide.title(), new ScrollPane(canvas));
     }
 }
 

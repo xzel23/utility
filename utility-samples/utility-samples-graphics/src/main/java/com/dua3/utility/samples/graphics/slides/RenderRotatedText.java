@@ -17,25 +17,23 @@ import java.util.stream.DoubleStream;
 
 public class RenderRotatedText implements Slide {
 
-    private static RichText getText(Graphics.TextRotationMode mode, double rotation) {
-        return new RichTextBuilder()
-                .append("rotated text\n")
-                .append("using different modes\n")
-                .append("and angles\n")
-                .push(Style.BOLD)
-                .append("bold ")
-                .pop(Style.BOLD)
-                .push(Style.ITALIC)
-                .append("italic\n")
-                .pop(Style.ITALIC)
-                .push(Style.UNDERLINE)
-                .append("underline ")
-                .pop(Style.UNDERLINE)
-                .push(Style.LINE_THROUGH)
-                .append("line through")
-                .pop(Style.LINE_THROUGH)
-                .toRichText();
-    }
+    public static final RichText TEXT = new RichTextBuilder()
+            .append("rotated text\n")
+            .append("using different modes\n")
+            .append("and angles\n")
+            .push(Style.BOLD)
+            .append("bold ")
+            .pop(Style.BOLD)
+            .push(Style.ITALIC)
+            .append("italic\n")
+            .pop(Style.ITALIC)
+            .push(Style.UNDERLINE)
+            .append("underline ")
+            .pop(Style.UNDERLINE)
+            .push(Style.LINE_THROUGH)
+            .append("line through")
+            .pop(Style.LINE_THROUGH)
+            .toRichText();
 
     @Override
     public String title() {
@@ -52,7 +50,21 @@ public class RenderRotatedText implements Slide {
                 .map( v -> v + 10)
                 .toArray();
 
-        Graphics.TextRotationMode[] modes = Graphics.TextRotationMode.values();
+        record Mode(Graphics.TextRotationMode mode, Graphics.AlignmentAxis axis) {
+            @Override
+            public String toString() {
+                return mode == Graphics.TextRotationMode.ROTATE_LINES
+                        ? mode.name() + "[" + axis.name() + "]"
+                        : mode.name();
+            }
+        }
+        Mode[] modes = {
+                new Mode(Graphics.TextRotationMode.ROTATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC),
+                new Mode(Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC),
+                new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC),
+                new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.X_AXIS),
+                new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.Y_AXIS)
+        };
 
         float margin = 10.0f;
         Dimension2f tileDimension = g.getBounds().getDimension().withMargin(-margin).scaled(Scale2f.of(1.0f / angles.length, 1.0f / (modes.length + 1)));
@@ -78,7 +90,7 @@ public class RenderRotatedText implements Slide {
         for (int i=0; i<modes.length; i++) {
             float x = margin;
             float y = margin + (i + 0.8f) * tileHeight;
-            g.drawText(modes[i].name(), x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
+            g.drawText(modes[i].toString(), x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
         }
 
         for (int i=0; i<modes.length; i++) {
@@ -87,14 +99,15 @@ public class RenderRotatedText implements Slide {
                 float y = margin + (i + 1) * tileHeight;
                 double rotation = MathUtil.rad(angles[j]);
 
+                Rectangle2f r = Rectangle2f.of(x, y, tileWidth, tileHeight * 0.75f);
+
                 // draw pivot
                 g.setFill(Color.RED);
                 g.fillCircle(x, y, 3);
 
                 // draw axis
                 g.setStroke(Color.RED, 1);
-                g.strokeLine(x,y, x + tileWidth / 3, y);
-                g.strokeLine(x,y, x, y + tileWidth / 3);
+                g.strokeRect(r);
 
                 // draw rotated axis
                 g.setStroke(Color.BLUE, 1);
@@ -103,8 +116,16 @@ public class RenderRotatedText implements Slide {
                 g.strokeLine(x,y, x + dx, y + dy);
                 g.strokeLine(x,y, x - dy, y + dx);
 
-                Rectangle2f r = Rectangle2f.of(x, y, tileWidth, tileHeight);
-                g.renderText(r, getText(modes[i], angles[j]), Alignment.LEFT, VerticalAlignment.TOP, true, rotation, modes[i]);
+                g.renderText(
+                        r,
+                        TEXT,
+                        Alignment.LEFT,
+                        VerticalAlignment.TOP,
+                        true,
+                        rotation,
+                        modes[i].mode(),
+                        modes[i].axis()
+                );
             }
         }
     }
