@@ -1003,4 +1003,19 @@ public final class RichText
         };
     }
 
+    /**
+     * Calculates the baseline value based on the maximum descent of fonts within the runs of text.
+     *
+     * @param defaultFont the default font used as a fallback when deriving fonts from font definitions
+     * @return the maximum descent value among all derived fonts; returns 0.0 if no runs are present
+     */
+    public double getBaseline(Font defaultFont) {
+        return runs().stream()
+                .map(Run::getFontDef)
+                .map(fd -> FontUtil.getInstance().deriveFont(defaultFont, fd))
+                .mapToDouble(Font::getDescent)
+                .max()
+                .orElse(0.0);
+    }
+
 }
