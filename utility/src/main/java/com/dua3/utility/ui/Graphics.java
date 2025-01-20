@@ -5,6 +5,7 @@ import com.dua3.utility.data.Image;
 import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Arc2f;
+import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Vector2f;
@@ -447,7 +448,8 @@ public interface Graphics extends AutoCloseable {
                 fragments.baseLine(),
                 0.0,
                 AlignmentAxis.AUTOMATIC,
-                fragments.fragmentLines()
+                fragments,
+                getAnchor(fragments, HAnchor.LEFT, VAnchor.TOP)
         );
     }
 
@@ -459,8 +461,10 @@ public interface Graphics extends AutoCloseable {
      * @param text          the text to be rendered
      * @param hAlign        the horizontal alignment of the text within the bounding rectangle
      * @param vAlign        the vertical alignment of the text within the bounding rectangle
+     * @param hAnchor       the horizontal anchor setting
+     * @param vAnchor       the vertical anchor setting
      * @param wrapping      determines if text wrapping should be applied
-     * @param angle         the rotatiion angle in radians
+     * @param angle         the rotation angle in radians
      * @param mode          the {@link TextRotationMode} to use
      * @param alignmentAxis the axis to align rotated text on
      */
@@ -469,16 +473,12 @@ public interface Graphics extends AutoCloseable {
             RichText text,
             Alignment hAlign,
             VerticalAlignment vAlign,
+            HAnchor hAnchor,
+            VAnchor vAnchor,
             boolean wrapping,
             double angle,
             TextRotationMode mode,
             AlignmentAxis alignmentAxis) {
-        if (angle == 0.0 && (mode != TextRotationMode.ROTATE_LINES || alignmentAxis != AlignmentAxis.X_AXIS)) {
-            // fast path when no rotation is applied
-            renderText(r, text, hAlign, vAlign, wrapping);
-            return;
-        }
-
         angle = MathUtil.normalizeRadians(angle);
 
         AffineTransformation2f t = getTransformation();
@@ -495,7 +495,8 @@ public interface Graphics extends AutoCloseable {
                         fragments.baseLine(),
                         0.0,
                         AlignmentAxis.AUTOMATIC,
-                        fragments.fragmentLines()
+                        fragments,
+                        getAnchor(fragments, hAnchor, vAnchor)
                 );
             }
             case ROTATE_AND_TRANSLATE_BLOCK -> {
@@ -543,7 +544,8 @@ public interface Graphics extends AutoCloseable {
                         fragments.baseLine(),
                         0.0,
                         AlignmentAxis.AUTOMATIC,
-                        fragments.fragmentLines()
+                        fragments,
+                        Vector2f.ORIGIN
                 );
             }
             case ROTATE_LINES -> {
@@ -556,11 +558,28 @@ public interface Graphics extends AutoCloseable {
                         fragments.baseLine(),
                         angle,
                         alignmentAxis,
-                        fragments.fragmentLines()
+                        fragments,
+                        getAnchor(fragments, hAnchor, vAnchor)
                 );
             }
         }
         setTransformation(t);
+    }
+
+    private static Vector2f getAnchor(FragmentedText text, HAnchor hAnchor, VAnchor vAnchor) {
+        return Vector2f.of(
+                switch (hAnchor) {
+                    case LEFT -> 0;
+                    case RIGHT -> text.textWidth();
+                    case CENTER -> text.textWidth() / 2;
+                },
+                switch (vAnchor) {
+                    case TOP -> 0;
+                    case BOTTOM -> -text.textHeight();
+                    case MIDDLE -> -text.textHeight() / 2;
+                    case BASELINE -> -text.textHeight() + text.baseLine();
+                }
+        );
     }
 
     /**
@@ -585,19 +604,29 @@ public interface Graphics extends AutoCloseable {
      * based on whitespace characters and text decorations (font, text decoration). The class also stores the dimensions
      * and position of the text within the bounding rectangle.
      *
-     * @param fragmentLines a list of lines, where each line is represented by a list of Fragment objects
+     * @param lines a list of lines, where each line is represented by a list of Fragment objects
      * @param textWidth the width of the rendered text
      * @param textHeight the height of the rendered text
      * @param baseLine the baseline value of the line the fragment belongs to
      */
-    record FragmentedText(List<List<Fragment>> fragmentLines, float textWidth, float textHeight, float baseLine) {}
+    record FragmentedText(List<List<Fragment>> lines, float textWidth, float textHeight, float baseLine) {
+        /**
+         * Retrieves the dimensions of the text as a {@code Dimension2f} object.
+         * The dimensions are derived from the width and height of the rendered text.
+         *
+         * @return a {@code Dimension2f} object representing the width and height of the text
+         */
+        public Dimension2f getDimension() {
+            return Dimension2f.of(textWidth, textHeight);
+        }
+    }
 
     /**
      * Split text into fragments.
      *
      * <p>Split the text into fragments that are either whitespace or free of whitespace and have uniform
      * text attributes (font, text decoration). For each line, a list of such fragments is generated and added
-     * to the list of fragment lines (see {@link FragmentedText#fragmentLines()}).
+     * to the list of fragment lines (see {@link FragmentedText#lines()}).
      *
      * @param text   the text
      * @param r      the bounding rectangle to render the text into
@@ -652,14 +681,14 @@ public interface Graphics extends AutoCloseable {
                     lineWidth = tr.width();
                     lineHeight = tr.height();
                     wrapAllowed = false;
-                    lineBaseLine = -tr.yMin();
+                    lineBaseLine = tr.height() + tr.yMin();
                 } else {
                     wrapAllowed = wrap;
                     fragments.add(new Fragment(xAct, textHeight, tr.width(), tr.height(), lineBaseLine, f, run));
                     xAct += tr.width();
                     lineWidth += tr.width();
                     lineHeight = Math.max(lineHeight, tr.height());
-                    lineBaseLine = Math.max(lineBaseLine, -tr.yMin());
+                    lineBaseLine = Math.max(lineBaseLine, tr.height() + tr.yMin());
                 }
             }
             textWidth = Math.max(textWidth, lineWidth);
@@ -683,7 +712,8 @@ public interface Graphics extends AutoCloseable {
      * @param baseLine      the baseline position of the text fragments
      * @param angle         the angle in radians to rotate each line (must be normalized)
      * @param alignmentAxis the axis on which to align the text on
-     * @param fragmentLines a list of fragment lines, where each line contains a list of fragments
+     * @param text          a list of fragment lines, where each line contains a list of fragments
+     * @param anchor        the anchor for the text inside the text bounding box
      */
     private void renderFragments(
             Rectangle2f cr,
@@ -694,11 +724,12 @@ public interface Graphics extends AutoCloseable {
             float baseLine,
             double angle,
             AlignmentAxis alignmentAxis,
-            List<List<Fragment>> fragmentLines
+            FragmentedText text,
+            Vector2f anchor
     ) {
         assert 0 <= angle && angle < MathUtil.TWO_PI : "invalid angle: " + angle;
 
-        //
+        // get font and transformation
         Font font = getFont();
         AffineTransformation2f t = getTransformation();
 
@@ -741,14 +772,16 @@ public interface Graphics extends AutoCloseable {
 
         float y = switch (vAlign) {
             case TOP, DISTRIBUTED -> cr.yMin();
-            case MIDDLE -> cr.yCenter() - textHeight / 2;
-            case BOTTOM -> cr.yMax() - textHeight;
-        };
-        float fillerHeight = vAlign == VerticalAlignment.DISTRIBUTED ? (cr.height() - textHeight) / Math.max(1, fragmentLines.size() - 1) : 0.0f;
+            case MIDDLE -> cr.yCenter();
+            case BOTTOM -> cr.yMax();
+        } + anchor.y();
+
+        List<List<Fragment>> lines = text.lines;
+        float fillerHeight = vAlign == VerticalAlignment.DISTRIBUTED ? (cr.height() - textHeight) / Math.max(1, lines.size() - 1) : 0.0f;
 
         record LineStatistics(float text, float whiteSpace, int nSpace) {}
-        for (int i = 0; i < fragmentLines.size(); i++) {
-            List<Fragment> fragments = fragmentLines.get(i);
+        for (int i = 0; i < lines.size(); i++) {
+            List<Fragment> fragments = lines.get(i);
 
             // determine the number and size of whitespace and text fragments
             LineStatistics fi = fragments.stream().map(fragment -> {
@@ -762,39 +795,51 @@ public interface Graphics extends AutoCloseable {
             float totalSpace = fi.whiteSpace + spaceToDistribute;
 
             // when justify aligning text, use left alignment for the last line
-            boolean isLastLine = i == fragmentLines.size() - 1;
+            boolean isLastLine = i == lines.size() - 1;
             Alignment effectiveHAlign = (hAlign == Alignment.JUSTIFY && isLastLine) ? Alignment.LEFT : hAlign;
 
-            float x = cr.xMin();
+            float x = -anchor.x();
+            boolean firstFragmentOfLine = true;
             for (Fragment fragment : fragments) {
                 switch (effectiveHAlign) {
                     case JUSTIFY -> {
-                        // distribute the remaining space by evenly expanding existind whitespace
+                        // distribute the remaining space by evenly expanding existing whitespace
+                        if (firstFragmentOfLine) {
+                            x += cr.xMin();
+                        }
                         if (TextUtil.isBlank(fragment.text())) {
                             x += fragment.w() * (totalSpace / fi.whiteSpace() - 1);
                         }
                     }
                     case RIGHT -> {
-                        if (fragment.x() == 0.0f) {
+                        if (firstFragmentOfLine) {
                             // push everything to the right
-                            x += spaceToDistribute;
+                            x += cr.xMax();
                         }
                     }
                     case CENTER -> {
-                        if (fragment.x() == 0.0f) {
+                        if (firstFragmentOfLine) {
                             // push everything halfway right
-                            x += spaceToDistribute / 2.0f;
+                            x += cr.xCenter();
                         }
                     }
-                    case LEFT -> { /* nothing to do */}
+                    case LEFT -> {
+                        if (firstFragmentOfLine) {
+                            x += cr.xMin();
+                        }
+                    }
+                    default -> {
+                        throw new IllegalStateException("invalid alignment: " + effectiveHAlign);
+                    }
                 }
                 setFont(fragment.font);
                 float dy = fragment.y + baseLine;
                 drawText(
                         fragment.text.toString(),
                         x + fragment.x() + sx_y * fragment.y() + sx_h * fragment.h(),
-                        y + fragment.y() + baseLine
+                        y + fragment.y() + fragment.h() - baseLine
                 );
+                firstFragmentOfLine = false;
             }
             y += fillerHeight;
         }

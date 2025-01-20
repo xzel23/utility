@@ -5,6 +5,7 @@ import com.dua3.utility.samples.graphics.slides.ArcToAndEllipse;
 import com.dua3.utility.samples.graphics.slides.DrawText;
 import com.dua3.utility.samples.graphics.slides.RenderRotatedText;
 import com.dua3.utility.samples.graphics.slides.RenderText;
+import com.dua3.utility.ui.Graphics;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -13,6 +14,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -47,12 +50,18 @@ public class FxGraphicsSample extends Application {
     }
 
     Tab[] createSlides(float w, float h) {
-        return new Tab[]{
+        List<Tab> tabs = new ArrayList<>();
+        tabs.addAll(List.of (
                 createSlide(ArcToAndEllipse::new, w, h),
                 createSlide(DrawText::new, w, h),
-                createSlide(RenderText::new, w, h),
-                createBigSlide(RenderRotatedText::new, w, h)
-        };
+                createSlide(RenderText::new, w, h)
+        ));
+        for (Graphics.HAnchor hAnchor: Graphics.HAnchor.values()) {
+            for (Graphics.VAnchor vAnchor: Graphics.VAnchor.values()) {
+                tabs.add(createBigSlide(() -> new RenderRotatedText(hAnchor, vAnchor), w, h));
+            }
+        }
+        return tabs.toArray(Tab[]::new);
     }
 
     Tab createSlide(Supplier<Slide> factory, float w, float h) {
@@ -60,15 +69,23 @@ public class FxGraphicsSample extends Application {
         Canvas canvas = new Canvas(w, h);
         FxGraphics g = new FxGraphics(canvas);
         slide.draw(g);
-        return new Tab(slide.title(), canvas);
+        return new Tab(slide.title(), new ScrollPane(canvas));
     }
 
     Tab createBigSlide(Supplier<Slide> factory, float w, float h) {
-        Slide slide = factory.get();
-        Canvas canvas = new Canvas(w, 2 * h);
-        FxGraphics g = new FxGraphics(canvas);
-        slide.draw(g);
-        return new Tab(slide.title(), new ScrollPane(canvas));
+        Tab tab = new Tab(factory.get().title());
+        tab.setOnSelectionChanged(event -> {
+            if (tab.isSelected() && tab.getContent() == null) {
+                Slide slide = factory.get();
+                Canvas canvas = new Canvas(w, 2 * h);
+                FxGraphics g = new FxGraphics(canvas);
+                slide.draw(g);
+                tab.setContent(new ScrollPane(canvas));
+            } else if (!tab.isSelected() && tab.getContent() != null) {
+                tab.setContent(null);
+            }
+        });
+        return tab;
     }
 }
 

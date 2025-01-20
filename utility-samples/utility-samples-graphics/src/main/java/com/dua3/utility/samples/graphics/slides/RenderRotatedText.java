@@ -34,10 +34,17 @@ public class RenderRotatedText implements Slide {
             .append("line through")
             .pop(Style.LINE_THROUGH)
             .toRichText();
+    private final Graphics.HAnchor hAnchor;
+    private final Graphics.VAnchor vAnchor;
+
+    public RenderRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor) {
+        this.hAnchor = hAnchor;
+        this.vAnchor = vAnchor;
+    }
 
     @Override
     public String title() {
-        return "renderText() [2]";
+        return "renderText() [%s,%s]".formatted(hAnchor, vAnchor);
     }
 
     @Override
@@ -46,8 +53,9 @@ public class RenderRotatedText implements Slide {
     }
 
     public void drawText(Graphics g) {
-        double[] angles = DoubleStream.of(0, 45, 90, 135, 180, 225, 270, 315)
-                .map( v -> v + 10)
+        double delta = 10.0;
+        double[] angles = DoubleStream.of(-delta, 90.0 - delta, 0, 45, 90, 135, 180, 225, 270, 315)
+                .map( v -> v + delta)
                 .toArray();
 
         record Mode(Graphics.TextRotationMode mode, Graphics.AlignmentAxis axis) {
@@ -113,14 +121,16 @@ public class RenderRotatedText implements Slide {
                 g.setStroke(Color.BLUE, 1);
                 float dx = (float) (tileWidth / 3 * Math.cos(rotation));
                 float dy = (float) (tileWidth / 3 * Math.sin(rotation));
-                g.strokeLine(x,y, x + dx, y + dy);
-                g.strokeLine(x,y, x - dy, y + dx);
+                g.strokeLine(x, y, x + dx, y + dy);
+                g.strokeLine(x, y, x - dy, y + dx);
 
                 g.renderText(
                         r,
                         TEXT,
                         Alignment.LEFT,
                         VerticalAlignment.TOP,
+                        hAnchor,
+                        vAnchor,
                         true,
                         rotation,
                         modes[i].mode(),
