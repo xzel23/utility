@@ -190,4 +190,12 @@ public record Vector2f(float x, float y) {
         return Math.atan2(y(), x());
     }
 
+    /**
+     * Negates the vector by inverting the signs of its components.
+     *
+     * @return a new {@code Vector2f} object where each component's sign is opposite that of the original vector
+     */
+    public Vector2f negate() {
+        return Vector2f.of(-x, -y);
+    }
 }

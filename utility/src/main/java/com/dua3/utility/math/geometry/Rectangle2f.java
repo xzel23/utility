@@ -190,6 +190,16 @@ public record Rectangle2f(float x, float y, float width, float height) {
     }
 
     /**
+     * Translates the rectangle by the specified amounts in the x and y directions.
+     *
+     * @param t the translation vector
+     * @return a rectangle that is translated by t
+     */
+    public Rectangle2f translate(Vector2f t) {
+        return translate(t.x(), t.y());
+    }
+
+    /**
      * Adds a margin to the current rectangle, i.e., create a rectangle with the same center as this rectangle
      * but with borders pushed out by the amount given by {@code mx} and {@code my}. Use negative values to shrink the
      * rectangle.
@@ -254,4 +264,5 @@ public record Rectangle2f(float x, float y, float width, float height) {
     public boolean intersects(Rectangle2f r) {
         return r.xMax() > xMin() && r.yMax() > yMin() && r.xMin() < xMax() && r.yMin() < yMax();
     }
+
 }
