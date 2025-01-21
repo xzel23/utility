@@ -7,6 +7,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.samples.graphics.Slide;
 import com.dua3.utility.text.Alignment;
+import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Style;
@@ -96,12 +97,6 @@ public class RenderRotatedText implements Slide {
         }
 
         for (int i=0; i<modes.length; i++) {
-            float x = margin;
-            float y = margin + (i + 0.8f) * tileHeight;
-            g.drawText(modes[i].toString(), x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
-        }
-
-        for (int i=0; i<modes.length; i++) {
             for (int j = 0; j < angles.length; j++) {
                 float x = margin + (j + 0.25f) * tileWidth;
                 float y = margin + (i + 1) * tileHeight;
@@ -137,6 +132,15 @@ public class RenderRotatedText implements Slide {
                         modes[i].axis()
                 );
             }
+        }
+
+        for (int i=0; i<modes.length; i++) {
+            float x = margin;
+            float y = margin + (i + 0.8f) * tileHeight;
+            String labelText = modes[i].toString();
+            g.setFill(Color.WHITE);
+            g.fillRect(FontUtil.getInstance().getTextDimension(labelText, g.getFont()).moveTo(x, y).addMargin(2));
+            g.drawText(labelText, x, y, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP);
         }
     }
 }

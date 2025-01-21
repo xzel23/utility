@@ -265,4 +265,15 @@ public record Rectangle2f(float x, float y, float width, float height) {
         return r.xMax() > xMin() && r.yMax() > yMin() && r.xMin() < xMax() && r.yMin() < yMax();
     }
 
+    /**
+     * Creates a new rectangle by moving the top-left corner to the specified
+     * coordinates while preserving the current width and height.
+     *
+     * @param x the new x-coordinate for the top-left corner of the rectangle
+     * @param y the new y-coordinate for the top-left corner of the rectangle
+     * @return a new {@code Rectangle2f} instance with the updated position
+     */
+    public Rectangle2f moveTo(float x, float y) {
+        return new Rectangle2f(x, y, width, height);
+    }
 }
