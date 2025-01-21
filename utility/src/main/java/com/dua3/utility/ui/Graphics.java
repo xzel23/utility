@@ -75,14 +75,6 @@ public interface Graphics extends AutoCloseable {
     Rectangle2f getTextDimension(CharSequence text);
 
     /**
-     * Stroke rectangle.
-     * @param r the recatngle
-     */
-    default void strokeRect(Rectangle2f r) {
-        strokeRect(r.xMin(), r.yMin(), r.width(), r.height());
-    }
-
-    /**
      * Draws the specified image at the given coordinates.
      *
      * @param image The image to be drawn.
@@ -90,6 +82,24 @@ public interface Graphics extends AutoCloseable {
      * @param y The y-coordinate of the top-left corner where the image will be drawn.
      */
     void drawImage(Image image, float x, float y);
+
+    /**
+     * Draws the specified image at the given coordinates.
+     *
+     * @param image The image to be drawn.
+     * @param p The top-left corner where the image will be drawn.
+     */
+    default void drawImage(Image image, Vector2f p) {
+        drawImage(image, p.x(), p.y());
+    }
+
+    /**
+     * Stroke rectangle.
+     * @param r the rectangle
+     */
+    default void strokeRect(Rectangle2f r) {
+        strokeRect(r.xMin(), r.yMin(), r.width(), r.height());
+    }
 
     /**
      * Draws the outline of a rectangle with the specified dimensions and coordinates.
@@ -132,6 +142,16 @@ public interface Graphics extends AutoCloseable {
     }
 
     /**
+     * Draws the outline of a circle centered at the specified coordinates with the given radius.
+     *
+     * @param c the center of the circle
+     * @param r The radius of the circle.
+     */
+    default void strokeCircle(Vector2f c, float r) {
+        strokeEllipse(c.x(), c.y(), r, r, 0);
+    }
+
+    /**
      * Draws the outline of an ellipse on the canvas with the specified center coordinates and radii.
      *
      * @param x  The x-coordinate of the center of the ellipse.
@@ -151,6 +171,16 @@ public interface Graphics extends AutoCloseable {
      */
     default void fillCircle(float x, float y, float r) {
         fillEllipse(x, y, r, r, 0);
+    }
+
+    /**
+     * Fill a circle centered at the specified coordinates with the given radius.
+     *
+     * @param c The center of the circle.
+     * @param r The radius of the circle.
+     */
+    default void fillCircle(Vector2f c, float r) {
+        fillEllipse(c.x(), c.y(), r, r, 0);
     }
 
     /**
@@ -304,6 +334,16 @@ public interface Graphics extends AutoCloseable {
      * @param y the y-coordinate of the starting point
      */
     void drawText(CharSequence text, float x, float y);
+
+    /**
+     * Draws the specified text at the given position.
+     *
+     * @param text the text to be drawn
+     * @param p the starting point
+     */
+    default void drawText(CharSequence text, Vector2f p) {
+        drawText(text, p.x(), p.y());
+    }
 
     /**
      * Calculates the bounding rectangle of the graphics in the local coordinate space.

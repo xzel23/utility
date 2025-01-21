@@ -40,7 +40,7 @@ public class ArcToAndEllipse implements Slide {
         g.drawText("""
                         Demonstrate the result of using different values for the sweep and largeArc parameters of arcTo().
                         
-                        Red dots: the start and end point of the arcs
+                        Red circles: the start and end point of the arcs
                         Black line: largeArc = false, sweep = true
                         Blue line: largeArc = true, sweep = true
                         Red line: largeArc = false, sweep = false
@@ -81,9 +81,9 @@ public class ArcToAndEllipse implements Slide {
             // draw ellipses
             float angle = (float) (TWO_PI * j / angles);
             c = Vector2f.of(w * (j + 0.5f), 1.5f * h);
-            g.setFill(Color.GRAY);
+            g.setFill(Color.LIGHTGRAY);
             g.fillEllipse(c.x(), c.y(), rMax, rMax * 0.75f, angle);
-            g.setStrokeColor(Color.BLACK);
+            g.setStroke(Color.BLACK, 3);
             g.strokeEllipse(c.x(), c.y(), rMax, rMax * 0.75f, angle);
         }
 
@@ -92,10 +92,13 @@ public class ArcToAndEllipse implements Slide {
         Vector2f p1 = c.translate(0, 50);
         Vector2f r = Vector2f.of(150, 100);
 
-        drawPoint(g, p0, Color.RED, 3);
-        drawPoint(g, p1, Color.RED, 3);
+        g.setStroke(Color.RED, 1);
+        g.strokeCircle(p0, 5);
+        g.strokeCircle(p1, 5);
+
         float angle = 0;
 
+        g.setStrokeWidth(3);
         g.setStrokeColor(Color.BLACK);
         g.strokePath(Path2f.builder().moveTo(p0).arcTo(p1, r, angle, false, true).build());
 
