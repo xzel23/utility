@@ -60,7 +60,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     }
 
     /**
-     * Create an affine transformation for a rotation around the origin.
+     * Create an affine transformation for a rotation around the {@code c}.
      * {@code (x,y) -> (x cos(alpha) - y sin(alpha), x sin(alpha) + y cos(alpha))}.
      *
      * @param alpha the angle in radians
@@ -70,9 +70,10 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     public static AffineTransformation2f rotate(double alpha, Vector2f c) {
         double sinAlpha = Math.sin(alpha);
         double cosAlpha = Math.cos(alpha);
+        double oneMinusCosAlpha = 1 - cosAlpha;
         return new AffineTransformation2f(
-                (float) cosAlpha, (float) -sinAlpha, (float) (c.x() * (1 - cosAlpha) + c.y() * sinAlpha),
-                (float) sinAlpha, (float)  cosAlpha, (float) (c.y() * (1 - cosAlpha) - c.x() * sinAlpha)
+                (float) cosAlpha, (float) -sinAlpha, (float) (c.x() * oneMinusCosAlpha + c.y() * sinAlpha),
+                (float) sinAlpha, (float)  cosAlpha, (float) (c.y() * oneMinusCosAlpha - c.x() * sinAlpha)
         );
    }
 
