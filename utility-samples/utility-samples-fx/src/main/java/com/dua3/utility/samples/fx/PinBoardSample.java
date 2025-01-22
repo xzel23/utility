@@ -26,6 +26,12 @@ import org.jspecify.annotations.Nullable;
 import java.util.Formatter;
 import java.util.Random;
 
+/**
+ * A sample JavaFX application demonstrating the use of a PinBoard component.
+ * The application showcases various features such as pinning items to the board,
+ * scrolling to specific positions, and handling mouse events to display contextual
+ * information about the board's content.
+ */
 public class PinBoardSample extends Application {
 
     private static final Random RANDOM = new Random();
