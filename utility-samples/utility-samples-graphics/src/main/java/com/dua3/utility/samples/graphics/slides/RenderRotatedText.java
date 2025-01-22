@@ -134,7 +134,7 @@ public class RenderRotatedText implements Slide {
             }
         }
 
-        for (int i=0; i<modes.length; i++) {
+        for (int i = 0; i < modes.length; i++) {
             float x = margin;
             float y = margin + (i + 0.8f) * tileHeight;
             String labelText = modes[i].toString();

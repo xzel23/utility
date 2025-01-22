@@ -478,7 +478,7 @@ public interface Graphics extends AutoCloseable {
      * @param wrapping determines if text wrapping should be applied
      */
     default void renderText(Rectangle2f r, RichText text, Alignment hAlign, VerticalAlignment vAlign, boolean wrapping) {
-        FragmentedText fragments = generateFragments(text, r, hAlign, vAlign, wrapping);
+        FragmentedText fragments = generateFragments(text, hAlign, vAlign, wrapping ? r.width() : Float.MAX_VALUE);
         renderFragments(
                 r,
                 hAlign,
@@ -522,7 +522,7 @@ public interface Graphics extends AutoCloseable {
         angle = MathUtil.normalizeRadians(angle);
 
         AffineTransformation2f t = getTransformation();
-        FragmentedText fragments = generateFragments(text, r, hAlign, vAlign, wrapping);
+        FragmentedText fragments = generateFragments(text, hAlign, vAlign, wrapping ? r.width() : Float.MAX_VALUE);
         switch (mode) {
             case ROTATE_BLOCK -> {
                 setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, Vector2f.of(r.x(), r.y()))));
@@ -669,14 +669,13 @@ public interface Graphics extends AutoCloseable {
      * to the list of fragment lines (see {@link FragmentedText#lines()}).
      *
      * @param text   the text
-     * @param r      the bounding rectangle to render the text into
      * @param hAlign the horizontal alignment
      * @param vAlign thee vertical alignment
-     * @param wrap   if wrapping should be applied (
+     * @param width  the bounding rectangle to render the text into
      * @return the fragmented text as a {@link FragmentedText} instance
      */
-    private FragmentedText generateFragments(RichText text, Rectangle2f r, Alignment hAlign, VerticalAlignment vAlign, boolean wrap) {
-        float wrapWidth = wrap ? r.width() : Float.MAX_VALUE;
+    private FragmentedText generateFragments(RichText text, Alignment hAlign, VerticalAlignment vAlign, float width) {
+        boolean wrap = width != Float.MAX_VALUE;
 
         Function<RichText, RichText> trimLine = switch (hAlign) {
             case LEFT -> RichText::stripTrailing;
@@ -704,7 +703,7 @@ public interface Graphics extends AutoCloseable {
             for (var run : splitLinePreservingWhitespace(line, wrap)) {
                 Font f = fontUtil.deriveFont(getFont(), run.getFontDef());
                 Rectangle2f tr = fontUtil.getTextDimension(run, f);
-                if (wrapAllowed && xAct + tr.width() > wrapWidth) {
+                if (wrapAllowed && xAct + tr.width() > width) {
                     if (!fragments.isEmpty() && TextUtil.isBlank(fragments.get(fragments.size() - 1).text())) {
                         // remove trailing whitespace
                         fragments.remove(fragments.size() - 1);
