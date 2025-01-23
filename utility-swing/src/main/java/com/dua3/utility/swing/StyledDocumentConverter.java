@@ -49,7 +49,7 @@ public final class StyledDocumentConverter extends AttributeBasedConverter<Style
             StyleConstants.Italic, Font::isItalic,
             StyleConstants.Underline, Font::isUnderline,
             StyleConstants.StrikeThrough, Font::isStrikeThrough,
-            StyleConstants.Foreground, f -> SwingUtil.toAwtColor(f.getColor())
+            StyleConstants.Foreground, f -> SwingUtil.convert(f.getColor())
     );
 
     private StyledDocumentConverter() {

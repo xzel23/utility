@@ -87,5 +87,11 @@ public class FxGraphicsSample extends Application {
         });
         return tab;
     }
+
+    public static interface Slide {
+        String title();
+
+        void draw(Graphics g);
+    }
 }
 

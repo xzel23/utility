@@ -14,12 +14,14 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
+
 /**
  * Builder for Prompt Panes.
  * <p>
  * Provides a fluent interface to create Prompts.
  */
-public class PromptPaneBuilder extends AbstractPaneBuilder<PromptPane, PromptPaneBuilder, String> {
+public class PromptPaneBuilder extends PaneBuilder<PromptPane, PromptPaneBuilder, String> {
     PromptPaneBuilder() {
         setDialogSupplier(PromptPane::new);
     }

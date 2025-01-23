@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class InputPane extends InputDialogPane<Map<String, Object>> {
 
-    protected static final Logger LOG = LogManager.getLogger(InputPane.class);
+    private static final Logger LOG = LogManager.getLogger(InputPane.class);
 
     private final InputGrid inputGrid;
 

@@ -464,7 +464,7 @@ public class SwingLogPane extends JPanel {
 
             Object v;
             if (value instanceof LogEntry entry) {
-                color = SwingUtil.toAwtColor(colorize.apply(entry));
+                color = SwingUtil.convert(colorize.apply(entry));
                 v = f.get(entry);
             } else {
                 color = java.awt.Color.BLACK;

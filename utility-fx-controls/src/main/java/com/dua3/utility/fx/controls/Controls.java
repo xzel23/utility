@@ -3,7 +3,10 @@ package com.dua3.utility.fx.controls;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.icons.Icon;
 import com.dua3.utility.fx.icons.IconUtil;
@@ -160,7 +163,7 @@ public final class Controls {
     }
 
     /**
-     * Create a fixed minimum width label with the given text to prevent an ellipsis being display.
+     * Create a fixed minimum width label with the given text to prevent an ellipsis being displayed.
      *
      * @param text the text to display on the label
      * @return a new Label instance with fixed miimum width
@@ -535,6 +538,42 @@ public final class Controls {
     }
 
     /**
+     * Creates and returns a new instance of TextBuilder.
+     *
+     * @return a new instance of TextBuilder.
+     */
+    public static TextBuilder text(String text) {
+        return new TextBuilder(text);
+    }
+
+    /**
+     * Creates and returns a new instance of TextBuilder.
+     *
+     * @return a new instance of TextBuilder.
+     */
+    public static TextBuilder text(ObservableValue<String> text) {
+        return new TextBuilder(text);
+    }
+
+    /**
+     * Creates and returns a new instance of LabelBuilder.
+     *
+     * @return a new instance of LabelBuilder.
+     */
+    public static LabelBuilder label(String text) {
+        return new LabelBuilder(text);
+    }
+
+    /**
+     * Creates and returns a new instance of LabelBuilder.
+     *
+     * @return a new instance of LabelBuilder.
+     */
+    public static LabelBuilder label(ObservableValue<String> text) {
+        return new LabelBuilder(text);
+    }
+
+    /**
      * Sets the initial directory for a file or directory chooser.
      *
      * @param setInitialDirectory a Consumer to set the initial directory
@@ -553,5 +592,9 @@ public final class Controls {
                 LOG.warn("could not set initial directory", e);
             }
         }
+    }
+
+    public static Background background(Color color) {
+        return new Background(new BackgroundFill(FxUtil.convert(color), null, null));
     }
 }

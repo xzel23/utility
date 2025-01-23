@@ -16,7 +16,7 @@ import com.dua3.utility.ui.Graphics;
 
 import java.util.stream.DoubleStream;
 
-public class RenderRotatedText implements FxGraphicsSample.Slide {
+public class AnimateRotatedText implements FxGraphicsSample.Slide {
 
     public static final RichText TEXT = new RichTextBuilder()
             .append("rotated text\n")
@@ -38,7 +38,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
     private final Graphics.HAnchor hAnchor;
     private final Graphics.VAnchor vAnchor;
 
-    public RenderRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor) {
+    public AnimateRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor) {
         this.hAnchor = hAnchor;
         this.vAnchor = vAnchor;
     }

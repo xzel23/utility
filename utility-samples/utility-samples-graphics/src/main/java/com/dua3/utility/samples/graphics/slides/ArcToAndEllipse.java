@@ -4,12 +4,12 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
-import com.dua3.utility.samples.graphics.Slide;
+import com.dua3.utility.samples.graphics.FxGraphicsSample;
 import com.dua3.utility.ui.Graphics;
 
 import static com.dua3.utility.math.MathUtil.TWO_PI;
 
-public class ArcToAndEllipse implements Slide {
+public class ArcToAndEllipse implements FxGraphicsSample.Slide {
 
     @Override
     public String title() {

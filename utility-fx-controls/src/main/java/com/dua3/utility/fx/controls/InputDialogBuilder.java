@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
@@ -39,7 +40,7 @@ import java.util.function.UnaryOperator;
  * Provides a fluent interface to create Alerts.
  */
 public class InputDialogBuilder
-        extends AbstractDialogBuilder<InputDialog, InputDialogBuilder, Map<String, Object>>
+        extends DialogBuilder<InputDialog, InputDialogBuilder, Map<String, Object>>
         implements InputBuilder<InputDialogBuilder> {
 
     private final InputPaneBuilder pb = new InputPaneBuilder();

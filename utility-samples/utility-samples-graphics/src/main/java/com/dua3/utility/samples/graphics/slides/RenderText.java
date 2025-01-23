@@ -1,6 +1,6 @@
 package com.dua3.utility.samples.graphics.slides;
 
-import com.dua3.utility.samples.graphics.Slide;
+import com.dua3.utility.samples.graphics.FxGraphicsSample;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
@@ -8,7 +8,7 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 
-public class RenderText implements Slide {
+public class RenderText implements FxGraphicsSample.Slide {
     @Override
     public String title() {
         return "renderText()";

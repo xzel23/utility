@@ -1,5 +1,8 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
+import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -38,11 +41,11 @@ public class WizardDialogBuilder {
      * @param builder the builder used to create and configure the pane
      * @return the current instance of {@code WizardDialogBuilder}, for method chaining
      */
-    public <D extends InputDialogPane<R>, B extends AbstractPaneBuilder<D, B, R>, R> WizardDialogBuilder page(String name, B builder) {
+    public <D extends InputDialogPane<R>, B extends PaneBuilder<D, B, R>, R> WizardDialogBuilder page(String name, B builder) {
         D pane = builder.build();
-        AbstractDialogPaneBuilder.ResultHandler<R> resultHandler = builder.getResultHandler();
+        DialogPaneBuilder.ResultHandler<R> resultHandler = builder.getResultHandler();
         WizardDialog.Page<D, R> page = new WizardDialog.Page<>(pane, resultHandler);
-        page.setNext(builder.next);
+        page.setNext(builder.getNext().orElse(null));
         pages.put(name, page);
 
         if (startPage.isEmpty()) {

@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
@@ -27,7 +28,7 @@ import java.util.Collection;
  * <p>
  * Provides a fluent interface to create Alerts.
  */
-public class OptionsDialogBuilder extends AbstractDialogBuilder<OptionsDialog, OptionsDialogBuilder, Arguments> {
+public class OptionsDialogBuilder extends DialogBuilder<OptionsDialog, OptionsDialogBuilder, Arguments> {
 
     private Collection<Option<?>> options = new ArrayList<>();
     private Arguments currentValues = Arguments.empty();

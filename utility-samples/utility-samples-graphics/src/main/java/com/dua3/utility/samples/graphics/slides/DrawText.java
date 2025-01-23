@@ -2,12 +2,12 @@ package com.dua3.utility.samples.graphics.slides;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
-import com.dua3.utility.samples.graphics.Slide;
+import com.dua3.utility.samples.graphics.FxGraphicsSample;
 import com.dua3.utility.ui.Graphics;
 
 import static com.dua3.utility.math.MathUtil.PI_QUARTER;
 
-public class DrawText implements Slide {
+public class DrawText implements FxGraphicsSample.Slide {
     @Override
     public String title() {
         return "drawText()";

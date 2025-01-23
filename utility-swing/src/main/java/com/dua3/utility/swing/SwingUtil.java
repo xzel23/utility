@@ -287,7 +287,7 @@ public final class SwingUtil {
      * @param color java.awt.Color to be converted
      * @return Color
      */
-    public static Color toColor(java.awt.Color color) {
+    public static Color convert(java.awt.Color color) {
         return new RGBColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
@@ -297,20 +297,8 @@ public final class SwingUtil {
      * @param color Color to be converted
      * @return java.awt.Color
      */
-    public static java.awt.Color toAwtColor(Color color) {
+    public static java.awt.Color convert(Color color) {
         return new java.awt.Color(color.argb(), color.a() != 0xff);
-    }
-
-    /**
-     * Convert String to java.awt.Color.
-     *
-     * @param s String to be converted
-     * @return java.awt.Color
-     * @see Color#valueOf(String)
-     * @see #toAwtColor(Color)
-     */
-    public static java.awt.Color toAwtColor(String s) {
-        return toAwtColor(Color.valueOf(s));
     }
 
     /**

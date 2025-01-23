@@ -2,7 +2,7 @@ package com.dua3.utility.fx.controls;
 
 import javafx.beans.binding.BooleanExpression;
 import org.jspecify.annotations.Nullable;
-import com.dua3.utility.fx.controls.AbstractDialogPaneBuilder.ResultHandler;
+import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder.ResultHandler;
 import com.dua3.utility.data.Pair;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;

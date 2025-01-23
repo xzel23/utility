@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.dua3.utility.fx.controls;
+package com.dua3.utility.fx.controls.abstract_builders;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -30,14 +30,14 @@ import java.util.function.BiConsumer;
  * @param <B> the type of the builder class itself
  * @param <R> the type of the result returned by the dialog box
  */
-public abstract class AbstractDialogBuilder<D extends @NonNull Dialog<R>, B extends @NonNull AbstractDialogBuilder<D, B, R>, R>
-        extends AbstractDialogPaneBuilder<D, B, R> {
+public abstract class DialogBuilder<D extends @NonNull Dialog<R>, B extends @NonNull DialogBuilder<D, B, R>, R>
+        extends DialogPaneBuilder<D, B, R> {
 
     private final BiConsumer<D, String> titleSetter;
     private final @Nullable Window parentWindow;
     private @Nullable String title;
 
-    protected AbstractDialogBuilder(@Nullable Window parentWindow) {
+    protected DialogBuilder(@Nullable Window parentWindow) {
         super(Dialog::setHeaderText);
         this.parentWindow = parentWindow;
         this.titleSetter = Dialog::setTitle;

@@ -25,6 +25,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 open module com.dua3.utility.fx.controls {
     exports com.dua3.utility.fx.controls;
+    exports com.dua3.utility.fx.controls.abstract_builders;
 
     requires com.dua3.utility;
     requires com.dua3.utility.fx;

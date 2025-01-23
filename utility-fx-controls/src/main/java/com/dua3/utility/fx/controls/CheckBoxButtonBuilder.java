@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.ButtonBaseBuilder;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.scene.control.CheckBox;
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
  * with properties configured using a fluent API.
  * It extends the ButtonBuilderBase by supporting to bind the checkbox's selected state to a boolean property.
  */
-public class CheckBoxButtonBuilder extends ButtonBuilderBase<CheckBox, CheckBoxButtonBuilder> {
+public class CheckBoxButtonBuilder extends ButtonBaseBuilder<CheckBox, CheckBoxButtonBuilder> {
     private final List<Property<Boolean>> selectedList = new ArrayList<>();
 
     /**

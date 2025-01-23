@@ -29,10 +29,10 @@ public class FxGraphics implements Graphics {
     private static final javafx.scene.text.Font DEFAULT_FONT_FX = FONT_UTIL.convert(DEFAULT_FONT);
 
     private final GraphicsContext gc;
-    private final float width;
-    private final float height;
     private final AffineTransformation2f parentTransform;
     private final float scale;
+    private float width;
+    private float height;
 
     private boolean isDrawing = true;
 
@@ -126,6 +126,14 @@ public class FxGraphics implements Graphics {
         assert isDrawing : "instance has already been closed!";
 
         return FONT_UTIL.getTextDimension(text, state.font);
+    }
+
+    @Override
+    public void reset() {
+        width = (float) gc.getCanvas().getWidth();
+        height = (float) gc.getCanvas().getHeight();
+        gc.clearRect(0, 0, width, height);
+        isDrawing = true;
     }
 
     @Override

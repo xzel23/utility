@@ -84,7 +84,7 @@ public class SwingGraphics implements Graphics {
         private java.awt.Color awtFillColor = java.awt.Color.BLACK;
         private Font font = DEFAULT_FONT;
         private java.awt.Font awtFont = DEFAULT_FONT_AWT;
-        private java.awt.Color awtTextColor = SwingUtil.toAwtColor(font.getColor());
+        private java.awt.Color awtTextColor = SwingUtil.convert(font.getColor());
         private boolean isUnderlined = false;
         private boolean isStrikeThrough = false;
 
@@ -210,6 +210,18 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
+    public void reset() {
+        // ignore isDrawing for reset()
+        int w = parentBounds.width;
+        int h = parentBounds.height;
+        g2d.setBackground(SwingUtil.convert(Color.TRANSPARENT_WHITE));
+        g2d.clipRect(0, 0, w, h);
+        g2d.clearRect(0, 0, w, h);
+
+        isDrawing = true;
+    }
+
+    @Override
     public void setTransformation(AffineTransformation2f t) {
         assert isDrawing : "instance has been closed!";
 
@@ -236,7 +248,7 @@ public class SwingGraphics implements Graphics {
         assert isDrawing : "instance has been closed!";
 
         state.fillColor = color;
-        state.awtFillColor = SwingUtil.toAwtColor(color);
+        state.awtFillColor = SwingUtil.convert(color);
     }
 
     @Override
@@ -250,7 +262,7 @@ public class SwingGraphics implements Graphics {
 
         state.strokeWidth = width;
         state.strokeColor = c;
-        state.awtStrokeColor = SwingUtil.toAwtColor(state.strokeColor);
+        state.awtStrokeColor = SwingUtil.convert(state.strokeColor);
         g2d.setStroke(new BasicStroke(state.strokeWidth));
     }
 
@@ -259,7 +271,7 @@ public class SwingGraphics implements Graphics {
         assert isDrawing : "instance has been closed!";
 
         state.strokeColor = c;
-        state.awtStrokeColor = SwingUtil.toAwtColor(state.strokeColor);
+        state.awtStrokeColor = SwingUtil.convert(state.strokeColor);
     }
 
     @Override
@@ -284,7 +296,7 @@ public class SwingGraphics implements Graphics {
     public void setFont(Font font) {
         assert isDrawing : "instance has been closed!";
 
-        state.awtTextColor = (SwingUtil.toAwtColor(font.getColor()));
+        state.awtTextColor = (SwingUtil.convert(font.getColor()));
         state.isUnderlined = font.isUnderline();
         state.isStrikeThrough = font.isStrikeThrough();
         state.font = font;

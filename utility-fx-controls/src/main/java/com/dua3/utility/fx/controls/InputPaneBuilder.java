@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
@@ -35,7 +36,7 @@ import java.util.function.UnaryOperator;
  * Provides a fluent interface to create Alerts.
  */
 public class InputPaneBuilder
-        extends AbstractPaneBuilder<InputPane, InputPaneBuilder, Map<String, Object>>
+        extends PaneBuilder<InputPane, InputPaneBuilder, Map<String, Object>>
         implements InputBuilder<InputPaneBuilder> {
 
     private final InputGridBuilder pb = new InputGridBuilder();

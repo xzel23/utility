@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.DialogPaneBuilder;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
@@ -32,9 +33,9 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
 
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
-    protected record ButtonDef<R>(
+    public record ButtonDef<R>(
             ButtonType type,
-            AbstractDialogPaneBuilder.ResultHandler<R> resultHandler,
+            DialogPaneBuilder.ResultHandler<R> resultHandler,
             Consumer<InputDialogPane<R>> action,
             BooleanExpression enabled
     ) {}
@@ -61,9 +62,9 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         return valid;
     }
 
-    void addButton(
+    public void addButton(
             ButtonType type,
-            AbstractDialogPaneBuilder.@Nullable ResultHandler<R> resultHandler,
+            DialogPaneBuilder.@Nullable ResultHandler<R> resultHandler,
             Consumer<InputDialogPane<R>> action,
             @Nullable BooleanExpression enabled
     ) {

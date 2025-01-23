@@ -75,6 +75,11 @@ public interface Graphics extends AutoCloseable {
     Rectangle2f getTextDimension(CharSequence text);
 
     /**
+     * Resets the state of the object and clears it to a transparent color.
+     */
+    void reset();
+
+    /**
      * Draws the specified image at the given coordinates.
      *
      * @param image The image to be drawn.
@@ -486,6 +491,7 @@ public interface Graphics extends AutoCloseable {
                 fragments.textWidth(),
                 fragments.textHeight(),
                 fragments.baseLine(),
+                Rectangle2f.Corner.BOTTOM_LEFT,
                 0.0,
                 AlignmentAxis.AUTOMATIC,
                 fragments,
@@ -504,6 +510,7 @@ public interface Graphics extends AutoCloseable {
      * @param hAnchor       the horizontal anchor setting
      * @param vAnchor       the vertical anchor setting
      * @param wrapping      determines if text wrapping should be applied
+     * @param pivot         determines which of the rectangle corners to use as the center of rotation
      * @param angle         the rotation angle in radians
      * @param mode          the {@link TextRotationMode} to use
      * @param alignmentAxis the axis to align rotated text on
@@ -516,6 +523,7 @@ public interface Graphics extends AutoCloseable {
             HAnchor hAnchor,
             VAnchor vAnchor,
             boolean wrapping,
+            Rectangle2f.Corner pivot,
             double angle,
             TextRotationMode mode,
             AlignmentAxis alignmentAxis) {
@@ -525,7 +533,15 @@ public interface Graphics extends AutoCloseable {
         FragmentedText fragments = generateFragments(text, hAlign, vAlign, wrapping ? r.width() : Float.MAX_VALUE);
         switch (mode) {
             case ROTATE_BLOCK -> {
-                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, Vector2f.of(r.x(), r.y()))));
+                setTransformation(
+                        AffineTransformation2f.combine(
+                                t,
+                                AffineTransformation2f.rotate(
+                                        angle,
+                                        r.getCorner(pivot)
+                                )
+                        )
+                );
                 renderFragments(
                         r,
                         hAlign,
@@ -533,6 +549,7 @@ public interface Graphics extends AutoCloseable {
                         fragments.textWidth(),
                         fragments.textHeight(),
                         fragments.baseLine(),
+                        pivot,
                         0.0,
                         AlignmentAxis.AUTOMATIC,
                         fragments,
@@ -582,6 +599,7 @@ public interface Graphics extends AutoCloseable {
                         fragments.textWidth(),
                         fragments.textHeight(),
                         fragments.baseLine(),
+                        pivot,
                         0.0,
                         AlignmentAxis.AUTOMATIC,
                         fragments,
@@ -596,6 +614,7 @@ public interface Graphics extends AutoCloseable {
                         fragments.textWidth(),
                         fragments.textHeight(),
                         fragments.baseLine(),
+                        pivot,
                         angle,
                         alignmentAxis,
                         fragments,
@@ -749,6 +768,7 @@ public interface Graphics extends AutoCloseable {
      * @param textWidth     the total width of the text fragments within a line
      * @param textHeight    the total height of the text fragments within all lines
      * @param baseLine      the baseline position of the text fragments
+     * @param pivot         determines which of the rectangle corners to use as the center of rotation
      * @param angle         the angle in radians to rotate each line (must be normalized)
      * @param alignmentAxis the axis on which to align the text on
      * @param text          a list of fragment lines, where each line contains a list of fragments
@@ -761,6 +781,7 @@ public interface Graphics extends AutoCloseable {
             float textWidth,
             float textHeight,
             float baseLine,
+            Rectangle2f.Corner pivot,
             double angle,
             AlignmentAxis alignmentAxis,
             FragmentedText text,
@@ -779,7 +800,7 @@ public interface Graphics extends AutoCloseable {
             sx_y = 0.0f;
             sx_h = 0.0f;
         } else {
-            setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, Vector2f.of(cr.x(), cr.y()))));
+            setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, cr.getCorner(Rectangle2f.Corner.TOP_LEFT))));
             int[] layoutCases = switch (alignmentAxis) {
                 case AUTOMATIC -> new int[]{0, 1, 2, 3};
                 case X_AXIS -> new int[]{1, 1, 2, 2};

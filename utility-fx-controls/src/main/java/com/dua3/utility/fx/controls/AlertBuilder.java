@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -30,7 +31,7 @@ import java.util.Arrays;
  * Provides a fluent interface to create Alerts.
  */
 public class AlertBuilder
-        extends AbstractDialogBuilder<Alert, AlertBuilder, ButtonType> {
+        extends DialogBuilder<Alert, AlertBuilder, ButtonType> {
     private @Nullable String css = null;
     private @Nullable String text = null;
     private ButtonType @Nullable[] buttons;

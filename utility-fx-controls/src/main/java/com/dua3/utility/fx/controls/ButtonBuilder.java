@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.ButtonBaseBuilder;
 import javafx.scene.control.ButtonBase;
 
 import java.util.function.Supplier;
@@ -28,7 +29,7 @@ import java.util.function.Supplier;
  *
  * @param <B> the type of Button subclass to build
  */
-public class ButtonBuilder<B extends ButtonBase> extends ButtonBuilderBase<B, ButtonBuilder<B>> {
+public class ButtonBuilder<B extends ButtonBase> extends ButtonBaseBuilder<B, ButtonBuilder<B>> {
 
     /**
      * Constructor.

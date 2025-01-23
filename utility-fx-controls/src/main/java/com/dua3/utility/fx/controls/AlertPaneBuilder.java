@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.PaneBuilder;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DialogPane;
 import org.jspecify.annotations.Nullable;
@@ -24,7 +25,7 @@ import org.jspecify.annotations.Nullable;
  * Provides a fluent interface to create Alerts.
  */
 public class AlertPaneBuilder
-        extends AbstractPaneBuilder<InputDialogPane<Void>, AlertPaneBuilder, Void> {
+        extends PaneBuilder<InputDialogPane<Void>, AlertPaneBuilder, Void> {
     private @Nullable String text;
 
     AlertPaneBuilder(AlertType type) {

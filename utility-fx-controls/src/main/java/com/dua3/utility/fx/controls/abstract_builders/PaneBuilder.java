@@ -1,8 +1,9 @@
-package com.dua3.utility.fx.controls;
+package com.dua3.utility.fx.controls.abstract_builders;
 
 import javafx.scene.control.DialogPane;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -12,11 +13,11 @@ import java.util.function.Supplier;
  * @param <B> the type of the builder
  * @param <R> the result type
  */
-public class AbstractPaneBuilder<D extends DialogPane & Supplier<R>, B extends AbstractPaneBuilder<D, B, R>, R>
-        extends AbstractDialogPaneBuilder<D, B, R> {
-    @Nullable protected String next;
+public abstract class PaneBuilder<D extends DialogPane & Supplier<R>, B extends PaneBuilder<D, B, R>, R>
+        extends DialogPaneBuilder<D, B, R> {
+    private @Nullable String next;
 
-    protected AbstractPaneBuilder() {
+    protected PaneBuilder() {
         super(DialogPane::setHeaderText);
     }
 
@@ -32,4 +33,7 @@ public class AbstractPaneBuilder<D extends DialogPane & Supplier<R>, B extends A
         return (B) this;
     }
 
+    public Optional<String> getNext() {
+        return Optional.ofNullable(next);
+    }
 }

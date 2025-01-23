@@ -1,0 +1,169 @@
+package com.dua3.utility.samples.graphics;
+
+import com.dua3.utility.data.Color;
+import com.dua3.utility.fx.FxFontUtil;
+import com.dua3.utility.fx.FxGraphics;
+import com.dua3.utility.fx.controls.Controls;
+import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.text.Alignment;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.text.VerticalAlignment;
+import com.dua3.utility.ui.Graphics;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class FxTextRendering extends Application {
+
+    public static final RichText TEXT = new RichTextBuilder()
+            .append("rotated text\n")
+            .append("using different modes\n")
+            .append("and angles\n")
+            .push(Style.BOLD)
+            .append("bold ")
+            .pop(Style.BOLD)
+            .push(Style.ITALIC)
+            .append("italic\n")
+            .pop(Style.ITALIC)
+            .push(Style.UNDERLINE)
+            .append("underline ")
+            .pop(Style.UNDERLINE)
+            .push(Style.LINE_THROUGH)
+            .append("line through")
+            .pop(Style.LINE_THROUGH)
+            .toRichText();
+
+    private double rotationAngle = 0;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        float w = 1600.0f;
+        float h = 800.0f;
+
+        GridPane grid = new GridPane();
+        grid.setPrefSize(w, h);
+
+        float tileWidth = w / Graphics.HAnchor.values().length;
+        float tileHeight = h / Graphics.VAnchor.values().length;
+
+        List<Tile> tiles = new ArrayList<>();
+        for (var vAnchor : Graphics.VAnchor.values()) {
+            int i = vAnchor.ordinal();
+            for (var hAnchor : Graphics.HAnchor.values()) {
+                int j = hAnchor.ordinal();
+
+                Consumer<Graphics> renderer = g -> render(g, hAnchor, vAnchor, rotationAngle);
+                Tile tile = createTile(hAnchor, vAnchor, renderer);
+                tile.setPrefSize(tileWidth, tileHeight);
+                grid.add(tile, j, i);
+                tiles.add(tile);
+            }
+        }
+
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                for (Tile tile : tiles) {
+                    tile.redraw();
+                }
+                rotationAngle += 1;
+            }
+        };
+        timer.start();
+
+        primaryStage.setScene(new Scene(new ScrollPane(grid)));
+        primaryStage.setTitle("Rotating Triangle");
+        primaryStage.show();
+    }
+
+    private void render(Graphics g, Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, double rotationAngle) {
+        g.reset();
+
+        float width = g.getWidth();
+        float height = g.getHeight();
+
+        float centerX = width / 2;
+        float centerY = height / 2;
+        float size = width / 3;
+
+        Rectangle2f r = Rectangle2f.of(centerX, centerY, size, size);
+
+        // draw rectangle
+        g.setStroke(Color.BLUE, 1);
+        g.strokeRect(r);
+
+        // draw pivot
+        g.setFill(Color.RED);
+        g.fillCircle(centerX, centerY, 3);
+
+        // draw text
+        g.renderText(
+                r,
+                TEXT,
+                Alignment.LEFT,
+                VerticalAlignment.TOP,
+                hAnchor,
+                vAnchor,
+                true,
+                Rectangle2f.Corner.TOP_LEFT,
+                Math.toRadians(rotationAngle),
+                Graphics.TextRotationMode.ROTATE_BLOCK,
+                Graphics.AlignmentAxis.AUTOMATIC
+        );
+
+        g.close();
+    }
+
+    private Tile createTile(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, Consumer<Graphics> renderer) {
+        return new Tile("HAnchor: %s, VAnchor: %s".formatted(hAnchor, vAnchor), renderer);
+    }
+
+    class Tile extends BorderPane {
+        private static final Font font = FxFontUtil.getInstance().getDefaultFont();
+        private final Canvas canvas;
+        private final FxGraphics graphics;
+        private final Consumer<Graphics> renderer;
+
+        Tile(String title, Consumer<Graphics> renderer) {
+            this.canvas = new Canvas(50,50);
+            this.graphics = new FxGraphics(canvas);
+            this.renderer = renderer;
+
+            canvas.widthProperty().bind(widthProperty());
+            canvas.heightProperty().bind(heightProperty());
+
+            StackPane header = new StackPane(
+                    Controls.text(title)
+                            .font(font.withBold(true).withColor(Color.WHITE))
+                            .build()
+            );
+            header.setBackground(Controls.background(Color.DARKBLUE));
+            setTop(header);
+
+            setCenter(canvas);
+
+            redraw();
+        }
+
+        public void redraw() {
+            renderer.accept(graphics);
+        }
+    }
+}

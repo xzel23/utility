@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.data.Converter;
 import com.dua3.utility.math.geometry.ClosePath2f;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
@@ -71,6 +72,7 @@ import java.util.regex.Pattern;
  */
 public final class FxUtil {
     private static final Pattern PATTERN_FILENAME_AND_DOT = Pattern.compile("^\\*\\.");
+    private static final FxFontUtil FX_FONT_UTIL = FxFontUtil.getInstance();
 
     /**
      * Private constructor.
@@ -279,7 +281,7 @@ public final class FxUtil {
      * @return the JavaFX Font
      */
     public static Font convert(com.dua3.utility.text.Font font) {
-        return FxFontUtil.getInstance().convert(font);
+        return FX_FONT_UTIL.convert(font);
     }
 
     /**
@@ -289,7 +291,7 @@ public final class FxUtil {
      * @return the JavaFX Font
      */
     public static com.dua3.utility.text.Font convert(Font fxFont) {
-        return FxFontUtil.getInstance().convert(fxFont);
+        return FX_FONT_UTIL.convert(fxFont);
     }
 
     /**
@@ -791,5 +793,31 @@ public final class FxUtil {
      */
     public static ObservableBooleanValue constant(boolean b) {
         return b ? TRUE : FALSE;
+    }
+
+    /**
+     * Provides a converter between com.dua3.utility.text.Font and javafx.scene.text.Font.
+     *
+     * @return a Converter instance that can convert between com.dua3.utility.text.Font
+     *         and javafx.scene.text.Font.
+     */
+    public static Converter<com.dua3.utility.text.Font, javafx.scene.text.Font> fontConverter() {
+        return Converter.create(
+                FX_FONT_UTIL::convert,
+                FX_FONT_UTIL::convert
+        );
+    }
+
+    /**
+     * Creates and returns a converter between com.dua3.utility.data.Color and javafx.scene.paint.Color.
+     *
+     * @return a bidirectional converter that facilitates conversion between com.dua3.utility.data.Color
+     *         and javafx.scene.paint.Color.
+     */
+    public static Converter<com.dua3.utility.data.Color, Color> colorConverter() {
+        return Converter.create(
+                FxUtil::convert,
+                FxUtil::convert
+        );
     }
 }

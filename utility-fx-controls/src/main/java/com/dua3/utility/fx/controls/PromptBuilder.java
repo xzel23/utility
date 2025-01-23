@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.DialogBuilder;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
@@ -27,7 +28,7 @@ import java.util.function.Predicate;
  * <p>
  * Provides a fluent interface to create Alerts.
  */
-public class PromptBuilder extends AbstractDialogBuilder<TextInputDialog, PromptBuilder, String> {
+public class PromptBuilder extends DialogBuilder<TextInputDialog, PromptBuilder, String> {
     private String defaultValue = "";
     private Predicate<? super @Nullable String> validate = (@Nullable String s) -> s != null && !s.isEmpty();
 

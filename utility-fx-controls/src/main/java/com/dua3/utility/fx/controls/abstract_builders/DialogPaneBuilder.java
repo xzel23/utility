@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.dua3.utility.fx.controls;
+package com.dua3.utility.fx.controls.abstract_builders;
 
+import com.dua3.utility.fx.controls.InputDialogPane;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import org.jspecify.annotations.Nullable;
@@ -34,7 +35,7 @@ import java.util.function.Supplier;
  * @param <B> the type of the builder
  * @param <R> the result type
  */
-public abstract class AbstractDialogPaneBuilder<D, B extends AbstractDialogPaneBuilder<D, B, R>, R> {
+public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>, R> {
 
     public static final BooleanExpression ALWAYS_TRUE = new ReadOnlyBooleanWrapper(true);
 
@@ -44,7 +45,7 @@ public abstract class AbstractDialogPaneBuilder<D, B extends AbstractDialogPaneB
     private ResultHandler<R> resultHandler = (b, r) -> true;
     private final List<InputDialogPane.ButtonDef<R>> buttons = new ArrayList<>();
 
-    AbstractDialogPaneBuilder(
+    protected DialogPaneBuilder(
             BiConsumer<? super D, ? super String> headerSetter
     ) {
         this.dialogSupplier = () -> {throw new IllegalStateException("call setDialogSupplier() first");};
@@ -148,7 +149,7 @@ public abstract class AbstractDialogPaneBuilder<D, B extends AbstractDialogPaneB
      *
      * @return a list of button definitions for this dialog pane builder
      */
-    protected List<InputDialogPane.ButtonDef<R>> buttons() {
+    public List<InputDialogPane.ButtonDef<R>> buttons() {
         if (buttons.isEmpty()) {
             return List.of(
                     new InputDialogPane.ButtonDef<>(

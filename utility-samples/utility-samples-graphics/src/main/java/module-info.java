@@ -21,4 +21,5 @@ open module com.dua3.utility.samples.graphics {
     requires javafx.controls;
     requires javafx.base;
     requires javafx.graphics;
+    requires com.dua3.utility.fx.controls;
 }

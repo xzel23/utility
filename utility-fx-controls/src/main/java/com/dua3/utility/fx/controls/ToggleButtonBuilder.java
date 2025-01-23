@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.controls.abstract_builders.ButtonBaseBuilder;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.scene.control.ToggleButton;
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
  * with properties configured using a fluent API.
  * It extends the ButtonBuilderBase by supporting to bind the button's selected state to a boolean property.
  */
-public class ToggleButtonBuilder extends ButtonBuilderBase<ToggleButton, ToggleButtonBuilder> {
+public class ToggleButtonBuilder extends ButtonBaseBuilder<ToggleButton, ToggleButtonBuilder> {
     private final List<Property<Boolean>> selectedList = new ArrayList<>();
 
     /**
