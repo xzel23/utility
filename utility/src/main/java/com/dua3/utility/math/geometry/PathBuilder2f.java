@@ -82,6 +82,18 @@ public class PathBuilder2f {
     }
 
     /**
+     * Move relative.
+     * <br>
+     * <strong>NOTE:</strong> This implicitly starts a new path.
+     *
+     * @param v the offset vertex to the start of the new path
+     * @return this PathBuilder2f instance
+     */
+    public PathBuilder2f moveRel(Vector2f v) {
+        return moveTo(current().add(v));
+    }
+
+    /**
      * Add a line from the current position to a new position.
      *
      * @param v the new position
@@ -94,6 +106,17 @@ public class PathBuilder2f {
         int q = addVertex(v);
         impl.addSegment(new Line2f(impl, p, q));
         return this;
+    }
+
+    /**
+     * Adds a line segment to the path, starting from the current position
+     * and extending to the position defined by the relative offset vector.
+     *
+     * @param v the relative offset vector from the current position
+     * @return this PathBuilder2f instance
+     */
+    public PathBuilder2f lineRel(Vector2f v) {
+        return lineTo(current().add(v));
     }
 
     /**
@@ -113,6 +136,23 @@ public class PathBuilder2f {
         int c1 = addVertex(ep);
         impl.addSegment(new Arc2f(impl, c0, c1, r.x(), r.y(), angle, largeArc, sweep));
         return this;
+    }
+
+    /**
+     * Adds an arc segment to the path defined by a relative endpoint, radii, angle,
+     * and arc flags from the current position of the path.
+     *
+     * @param ep        the relative endpoint of the arc segment from the current position
+     * @param r         the radii of the arc segment on both x and y axes
+     * @param angle     the rotation angle of the arc segment in degrees
+     * @param largeArc  if true, the arc should be greater than or equal to 180 degrees,
+     *                  otherwise, it should be less than 180 degrees
+     * @param sweep     if true, the arc should be drawn in a "clockwise" direction,
+     *                  otherwise, it should be drawn in a "counterclockwise" direction
+     * @return this PathBuilder2f instance
+     */
+    public PathBuilder2f arcRel(Vector2f ep, Vector2f r, float angle, boolean largeArc, boolean sweep) {
+        return arcTo(current().add(ep), r, angle, largeArc, sweep);
     }
 
     /**

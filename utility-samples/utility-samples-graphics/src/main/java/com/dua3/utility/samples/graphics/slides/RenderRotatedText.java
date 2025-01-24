@@ -3,8 +3,8 @@ package com.dua3.utility.samples.graphics.slides;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
-import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.samples.graphics.FxGraphicsSample;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.FontUtil;
@@ -102,7 +102,8 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
                 float y = margin + (i + 1) * tileHeight;
                 double rotation = MathUtil.rad(angles[j]);
 
-                Rectangle2f r = Rectangle2f.of(x, y, tileWidth, tileHeight * 0.75f);
+                float w = tileWidth;
+                float h = tileHeight * 0.75f;
 
                 // draw pivot
                 g.setFill(Color.RED);
@@ -110,7 +111,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
 
                 // draw axis
                 g.setStroke(Color.RED, 1);
-                g.strokeRect(r);
+                g.strokeRect(x, y, w, h);
 
                 // draw rotated axis
                 g.setStroke(Color.BLUE, 1);
@@ -120,14 +121,13 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
                 g.strokeLine(x, y, x - dy, y + dx);
 
                 g.renderText(
-                        r,
+                        Vector2f.of(x, y),
                         TEXT,
+                        hAnchor, vAnchor,
                         Alignment.LEFT,
                         VerticalAlignment.TOP,
-                        hAnchor,
-                        vAnchor,
-                        true,
-                        Rectangle2f.Corner.TOP_LEFT,
+                        new Dimension2f(w, h),
+                        Vector2f.of(x, y),
                         rotation,
                         modes[i].mode(),
                         modes[i].axis()

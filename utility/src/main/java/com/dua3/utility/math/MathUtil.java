@@ -478,7 +478,7 @@ public final class MathUtil {
      * @return the angle in radians
      */
     public static double rad(double alpha) {
-        return alpha * PI_DIV_180;
+        return Math.toRadians(alpha);
     }
 
     /**
@@ -488,7 +488,7 @@ public final class MathUtil {
      * @return the angle in radians
      */
     public static float radf(float alpha) {
-        return (float) (alpha * PI_DIV_180);
+        return (float) Math.toRadians(alpha);
     }
 
     /**
@@ -498,7 +498,7 @@ public final class MathUtil {
      * @return the angle in degrees
      */
     public static double deg(double phi) {
-        return phi * 180.0 / PI_DIV_180;
+        return Math.toDegrees(phi);
     }
 
     /**
@@ -508,7 +508,7 @@ public final class MathUtil {
      * @return the angle in degrees
      */
     public static float degf(float phi) {
-        return (float) (phi * 180.0 / PI_DIV_180);
+        return (float) Math.toDegrees(phi);
     }
 
     /**
@@ -555,7 +555,8 @@ public final class MathUtil {
      * @param phi The angle in radians.
      * @return The quadrant number (0 to 3) in which the given angle lies.
      */
-    public static int quadrantIndexRadians(double phi) {
+    public static int
+    quadrantIndexRadians(double phi) {
         return (int) (normalizeRadians(phi) / PI_HALF);
     }
 

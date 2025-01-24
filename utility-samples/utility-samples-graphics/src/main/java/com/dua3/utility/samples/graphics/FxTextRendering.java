@@ -4,7 +4,8 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxGraphics;
 import com.dua3.utility.fx.controls.Controls;
-import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
@@ -58,6 +59,8 @@ public class FxTextRendering extends Application {
         float h = 800.0f;
 
         GridPane grid = new GridPane();
+        grid.setMinSize(w, h);
+        grid.setMaxSize(w, h);
         grid.setPrefSize(w, h);
 
         float tileWidth = w / Graphics.HAnchor.values().length;
@@ -103,11 +106,12 @@ public class FxTextRendering extends Application {
         float centerY = height / 2;
         float size = width / 3;
 
-        Rectangle2f r = Rectangle2f.of(centerX, centerY, size, size);
+        Vector2f pos = Vector2f.of(centerX, centerY);
+        Dimension2f dim = Dimension2f.of(size, size);
 
         // draw rectangle
         g.setStroke(Color.BLUE, 1);
-        g.strokeRect(r);
+        g.strokeRect(pos, dim);
 
         // draw pivot
         g.setFill(Color.RED);
@@ -115,14 +119,12 @@ public class FxTextRendering extends Application {
 
         // draw text
         g.renderText(
-                r,
+                pos,
                 TEXT,
-                Alignment.LEFT,
+                hAnchor, vAnchor, Alignment.LEFT,
                 VerticalAlignment.TOP,
-                hAnchor,
-                vAnchor,
-                true,
-                Rectangle2f.Corner.TOP_LEFT,
+                dim,
+                pos,
                 Math.toRadians(rotationAngle),
                 Graphics.TextRotationMode.ROTATE_BLOCK,
                 Graphics.AlignmentAxis.AUTOMATIC
