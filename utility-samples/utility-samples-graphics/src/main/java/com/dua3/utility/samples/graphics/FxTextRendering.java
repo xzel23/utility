@@ -4,6 +4,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxGraphics;
 import com.dua3.utility.fx.controls.Controls;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.Alignment;
@@ -31,8 +32,7 @@ public class FxTextRendering extends Application {
 
     public static final RichText TEXT = new RichTextBuilder()
             .append("rotated text\n")
-            .append("using different modes\n")
-            .append("and angles\n")
+            .append("using different modes and angles\n")
             .push(Style.BOLD)
             .append("bold ")
             .pop(Style.BOLD)
@@ -55,16 +55,13 @@ public class FxTextRendering extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        float w = 1600.0f;
-        float h = 800.0f;
+        float w = 600.0f;
+        float h = 600.0f;
 
         GridPane grid = new GridPane();
-        grid.setMinSize(w, h);
-        grid.setMaxSize(w, h);
-        grid.setPrefSize(w, h);
 
-        float tileWidth = w / Graphics.HAnchor.values().length;
-        float tileHeight = h / Graphics.VAnchor.values().length;
+        float tileWidth = w;
+        float tileHeight = h;
 
         List<Tile> tiles = new ArrayList<>();
         for (var vAnchor : Graphics.VAnchor.values()) {
@@ -74,19 +71,23 @@ public class FxTextRendering extends Application {
 
                 Consumer<Graphics> renderer = g -> render(g, hAnchor, vAnchor, rotationAngle);
                 Tile tile = createTile(hAnchor, vAnchor, renderer);
-                tile.setPrefSize(tileWidth, tileHeight);
+                tile.setMinSize(tileWidth, tileHeight);
                 grid.add(tile, j, i);
                 tiles.add(tile);
             }
         }
 
         AnimationTimer timer = new AnimationTimer() {
+
+            public static final int RPM = 4;
+            private static final double F_RPM = 1.0E-9 / 60;
+
             @Override
             public void handle(long now) {
                 for (Tile tile : tiles) {
                     tile.redraw();
                 }
-                rotationAngle += 1;
+                rotationAngle = 360 * ((RPM * now * F_RPM) % 1.0);
             }
         };
         timer.start();
@@ -117,17 +118,49 @@ public class FxTextRendering extends Application {
         g.setFill(Color.RED);
         g.fillCircle(centerX, centerY, 3);
 
-        // draw text
-        g.renderText(
-                pos,
-                TEXT,
-                hAnchor, vAnchor, Alignment.LEFT,
-                VerticalAlignment.TOP,
-                dim,
-                pos,
-                Math.toRadians(rotationAngle),
-                Graphics.TextRotationMode.ROTATE_BLOCK,
-                Graphics.AlignmentAxis.AUTOMATIC
+        double angle = Math.toRadians(rotationAngle);
+
+        Vector2f pivot = pos;
+
+        // ROTATE_BLOCK
+        Color color = Color.GREEN;
+
+        AffineTransformation2f M = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.rotate(angle, pivot));
+        M = AffineTransformation2f.combine(AffineTransformation2f.translate(pos), M);
+        g.setStroke(color, 1.0f);
+        g.strokePolygon(
+                M.transform(Vector2f.ORIGIN),
+                M.transform(Vector2f.ORIGIN.translate(dim.width(), 0)),
+                M.transform(Vector2f.ORIGIN.translate(dim.width(), dim.height())),
+                M.transform(Vector2f.ORIGIN.translate(0, dim.height()))
+        );
+
+        g.setFont(g.getFont().withColor(color));
+        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
+                pivot, angle, Graphics.TextRotationMode.ROTATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+        );
+
+        // ROTATE_AND_TRANSLATE_BLOCK
+        color = Color.BLUE;
+        M = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.translate(pivot));
+        g.setStroke(color, 1.0f);
+        g.strokePolygon(
+                M.transform(Vector2f.ORIGIN),
+                M.transform(Vector2f.ORIGIN.translate(dim.width(), 0)),
+                M.transform(Vector2f.ORIGIN.translate(dim.width(), dim.height())),
+                M.transform(Vector2f.ORIGIN.translate(0, dim.height()))
+        );
+
+        g.setFont(g.getFont().withColor(color));
+        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
+                pivot, angle, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+        );
+
+        // ROTATE_LINES
+        color = Color.BLACK;
+        g.setFont(g.getFont().withColor(color));
+        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
+                pivot, angle, Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         g.close();

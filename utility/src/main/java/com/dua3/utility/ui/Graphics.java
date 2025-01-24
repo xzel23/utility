@@ -692,15 +692,33 @@ public interface Graphics extends AutoCloseable {
      * @param textHeight the height of the rendered text
      * @param baseLine the baseline value of the line the fragment belongs to
      */
-    record FragmentedText(List<List<Fragment>> lines, float textWidth, float textHeight, float baseLine) {
+    record FragmentedText(
+            List<List<Fragment>> lines,
+            float textWidth,
+            float textHeight,
+            float baseLine,
+            float actualWidth,
+            float actualHeight) {
         /**
-         * Retrieves the dimensions of the text as a {@code Dimension2f} object.
-         * The dimensions are derived from the width and height of the rendered text.
+         * Retrieves the layout dimensions of the text as a {@code Dimension2f} object.
+         *
+         * <p>>The dimensions are the ones received as input for the layout operation.
          *
          * @return a {@code Dimension2f} object representing the width and height of the text
          */
-        public Dimension2f getDimension() {
+        public Dimension2f getLayoutDimension() {
             return Dimension2f.of(textWidth, textHeight);
+        }
+
+        /**
+         * Retrieves the actual dimensions of the text as a {@code Dimension2f} object.
+         *
+         * <p>The dimensions are the calculated values after laying out the text.
+         *
+         * @return a {@code Dimension2f} object representing the width and height of the text
+         */
+        public Dimension2f getActualDimension() {
+            return Dimension2f.of(actualWidth, actualHeight);
         }
     }
 
@@ -786,6 +804,7 @@ public interface Graphics extends AutoCloseable {
                     }
                     lineWidth = applyHAlign(fragments, hAlign, width, lineWidth, whitespace);
                     textWidth = Math.max(textWidth, lineWidth);
+
                     // start new line
                     fragments = new ArrayList<>();
                     fragmentLines.add(fragments);
@@ -803,13 +822,12 @@ public interface Graphics extends AutoCloseable {
                     fragments.add(new Fragment(xAct, textHeight, tr.width(), tr.height(), lineBaseLine, f, run));
                     xAct += tr.width();
                     lineWidth += tr.width();
-                    whitespace = TextUtil.isBlank(run) ? tr.width() : 0.0f;
+                    whitespace += TextUtil.isBlank(run) ? tr.width() : 0.0f;
                     lineHeight = Math.max(lineHeight, tr.height());
                     lineBaseLine = Math.max(lineBaseLine, tr.height() + tr.yMin());
                 }
             }
             lineWidth = applyHAlign(fragments, hAlign, width, lineWidth, whitespace);
-            textWidth = Math.max(textWidth, lineWidth);
             textWidth = Math.max(textWidth, lineWidth);
             textHeight += lineHeight;
             baseLine = lineBaseLine;
@@ -827,32 +845,40 @@ public interface Graphics extends AutoCloseable {
         // apply anchor and vertical alignment
         float tx = switch(hAnchor) {
             case LEFT -> 0.0f;
-            case RIGHT -> -textWidth;
-            case CENTER -> -textWidth/2.0f;
+            case RIGHT -> -width;
+            case CENTER -> -width/2.0f;
         };
         float ty = switch (vAnchor) {
-            case TOP -> - baseLine;
+            case TOP -> 0.0f;
             case MIDDLE -> -textHeight / 2.0f;
-            case BOTTOM -> -textHeight - baseLine;
-            case BASELINE -> -textHeight;
+            case BOTTOM -> -textHeight;
+            case BASELINE -> -textHeight + baseLine;
         };
 
         float verticalSpace = Math.max(0, height - textHeight);
         switch (vAlign) {
             case TOP -> translateFragments(fragmentLines, tx, ty);
-            case MIDDLE -> translateFragments(fragmentLines, tx, ty + verticalSpace/2.0f);
-            case BOTTOM -> translateFragments(fragmentLines, tx, ty + verticalSpace);
+            case MIDDLE -> translateFragments(fragmentLines, tx, ty - verticalSpace / 2.0f);
+            case BOTTOM -> translateFragments(fragmentLines, tx, ty - verticalSpace);
             case DISTRIBUTED -> {
                 int n = fragmentLines.size();
-                float k = Math.max(1.0f, n - 1);
+                float k = n > 1 ? verticalSpace / (n - 1) : 0.0f;
                 for (int i = 0; i < n; i++) {
-                    float dy = i * verticalSpace / k;
+                    float dy = i * k;
                     fragmentLines.get(i).replaceAll(fragment -> fragment.translate(tx, ty + dy));
                 }
+                textHeight += (n - 1) * k;
             }
         }
 
-        return new FragmentedText(fragmentLines, textWidth, textHeight, baseLine);
+        return new FragmentedText(
+                fragmentLines,
+                textWidth,
+                textHeight,
+                baseLine,
+                Math.max(textWidth, width),
+                Math.max(textHeight, height)
+        );
     }
 
     /**
