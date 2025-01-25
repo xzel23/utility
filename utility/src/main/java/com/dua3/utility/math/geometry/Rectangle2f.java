@@ -11,36 +11,6 @@ package com.dua3.utility.math.geometry;
 public record Rectangle2f(float x, float y, float width, float height) {
 
     /**
-     * Enumeration defining the corners and center of a rectangle.
-     *
-     * <p>This enum is used to specify the corners and the center point
-     * of a rectangle for operations or transformations related to
-     * the {@code Rectangle2f} class.
-     */
-    public enum Corner {
-        /**
-         * Represents the top-left corner of a rectangle.
-         */
-        TOP_LEFT,
-        /**
-         * Represents the top-right corner of a rectangle.
-         */
-        TOP_RIGHT,
-        /**
-         * Represents the bottom-left corner of a rectangle.
-         */
-        BOTTOM_LEFT,
-        /**
-         * Represents the bottom-right corner of a rectangle.
-         */
-        BOTTOM_RIGHT,
-        /**
-         * Represents the center point of a rectangle.
-         */
-        CENTER
-    }
-
-    /**
      * Constructor.
      *
      * @param x      the x-coordinate
@@ -305,21 +275,5 @@ public record Rectangle2f(float x, float y, float width, float height) {
      */
     public Rectangle2f moveTo(float x, float y) {
         return new Rectangle2f(x, y, width, height);
-    }
-
-    /**
-     * Retrieves the position of a specified corner of the rectangle.
-     *
-     * @param c the corner of the rectangle to retrieve
-     * @return a {@code Vector2f} representing the coordinates of the requested corner.
-     */
-    public Vector2f getCorner(Corner c) {
-        return switch (c) {
-            case TOP_LEFT -> new Vector2f(x, y);
-            case TOP_RIGHT -> new Vector2f(x + width, y);
-            case BOTTOM_LEFT -> new Vector2f(x, y + height);
-            case BOTTOM_RIGHT -> new Vector2f(x + width, y + height);
-            case CENTER -> new Vector2f((x + width) / 2, (y + height) / 2);
-        };
     }
 }

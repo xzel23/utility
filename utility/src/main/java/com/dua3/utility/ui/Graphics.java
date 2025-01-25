@@ -12,12 +12,14 @@ import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.VerticalAlignment;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+import java.util.function.DoubleBinaryOperator;
 
 /**
  * A generic interface defining drawing commands.
@@ -526,7 +528,6 @@ public interface Graphics extends AutoCloseable {
         renderFragments(
                 pos,
                 fragments,
-                pos,
                 0.0,
                 AlignmentAxis.AUTOMATIC
         );
@@ -536,17 +537,16 @@ public interface Graphics extends AutoCloseable {
      * Renders the given text within the specified bounding rectangle using the provided font,
      * alignment, wrapping, and rotation settings.
      *
-     * @param pos               the position
-     * @param text              the text to be rendered
-     * @param hAnchor           the horizontal anchor setting
-     * @param vAnchor           the vertical anchor setting
-     * @param hAlign            the horizontal alignment of the text within the bounding rectangle
-     * @param vAlign            the vertical alignment of the text within the bounding rectangle
-     * @param outputDimension   the dimension of the output area
-     * @param angle             the rotation angle in radians
-     * @param mode              the {@link TextRotationMode} to use
-     * @param alignmentAxis     the axis to align rotated text on
-     * @param pivot             determines which of the rectangle corners to use as the center of rotation
+     * @param pos             the position
+     * @param text            the text to be rendered
+     * @param hAnchor         the horizontal anchor setting
+     * @param vAnchor         the vertical anchor setting
+     * @param hAlign          the horizontal alignment of the text within the bounding rectangle
+     * @param vAlign          the vertical alignment of the text within the bounding rectangle
+     * @param outputDimension the dimension of the output area
+     * @param angle           the rotation angle in radians
+     * @param mode            the {@link TextRotationMode} to use
+     * @param alignmentAxis   the axis to align rotated text on
      */
     default void renderText(
             Vector2f pos,
@@ -556,7 +556,6 @@ public interface Graphics extends AutoCloseable {
             Alignment hAlign,
             VerticalAlignment vAlign,
             Dimension2f outputDimension,
-            Vector2f pivot,
             double angle,
             TextRotationMode mode,
             AlignmentAxis alignmentAxis) {
@@ -572,57 +571,27 @@ public interface Graphics extends AutoCloseable {
         switch (mode) {
             case ROTATE_BLOCK -> {
                 AffineTransformation2f t = getTransformation();
-                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, pivot)));
+                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, pos)));
                 renderFragments(
                         pos,
                         fragments,
-                        Vector2f.ORIGIN,
                         0.0,
                         AlignmentAxis.AUTOMATIC
                 );
                 setTransformation(t);
             }
             case ROTATE_AND_TRANSLATE_BLOCK -> {
-                float tx;
-                float ty;
-                int quadrant = MathUtil.quadrantIndexRadians(angle);
-
-                switch (quadrant) {
-                    case 0 -> {
-                        tx = (float) (Math.sin(angle) * fragments.height());
-                        ty = 0;
-                    }
-                    case 1 -> {
-                        tx = (float) (Math.sin(angle) * fragments.height()
-                                - Math.cos(angle) * fragments.width()
-                        );
-                        ty = (float) (-Math.cos(angle) * fragments.height());
-                    }
-                    case 2 -> {
-                        tx = (float) (-Math.cos(angle) * fragments.width());
-                        ty = (float) (-Math.sin(angle) * fragments.width()
-                                - Math.cos(angle) * fragments.height()
-                        );
-                    }
-                    case 3 -> {
-                        tx = 0;
-                        ty = (float) (-Math.sin(angle) * fragments.width());
-                    }
-                    default -> {
-                        throw new IllegalStateException("invalid quadrant index: " + quadrant);
-                    }
-                }
-
                 AffineTransformation2f t = getTransformation();
+                AffineTransformation2f R = AffineTransformation2f.rotate(angle, pos);
+                Vector2f tl = getBlockTranslation(AffineTransformation2f.rotate(angle), fragments, hAnchor, vAnchor);
                 setTransformation(AffineTransformation2f.combine(
                         t,
-                        AffineTransformation2f.rotate(angle, pivot),
-                        AffineTransformation2f.translate(tx, ty)
+                        R,
+                        AffineTransformation2f.translate(tl)
                 ));
                 renderFragments(
                         pos,
                         fragments,
-                        Vector2f.ORIGIN,
                         0.0,
                         AlignmentAxis.AUTOMATIC
                 );
@@ -632,7 +601,6 @@ public interface Graphics extends AutoCloseable {
                 renderFragments(
                         pos,
                         fragments,
-                        pivot,
                         angle,
                         alignmentAxis
                 );
@@ -640,22 +608,57 @@ public interface Graphics extends AutoCloseable {
         }
     }
 
-    private static Vector2f getAnchor(FragmentedText text, HAnchor hAnchor, VAnchor vAnchor) {
-        return Vector2f.of(
-                switch (hAnchor) {
-                    case LEFT -> 0;
-                    case RIGHT -> text.width();
-                    case CENTER -> text.width() / 2;
-                },
-                switch (vAnchor) {
-                    case TOP -> 0;
-                    case BOTTOM -> -text.height();
-                    case MIDDLE -> -text.height() / 2;
-                    case BASELINE -> -text.height() + text.baseLine();
-                }
-        );
-    }
+    /**
+     * Calculates the translation vector required to align a fragmented text block
+     * based on a specified horizontal and vertical anchor, after applying a given
+     * affine transformation to the block.
+     *
+     * @param M the affine transformation applied to the fragmented text.
+     * @param fragments the fragmented text containing geometric and structural data.
+     * @param hAnchor the horizontal anchor indicating alignment (e.g., LEFT, RIGHT, CENTER).
+     * @param vAnchor the vertical anchor indicating alignment (e.g., TOP, BOTTOM, MIDDLE, BASELINE).
+     * @return a {@link Vector2f} representing the computed translation to align the text block.
+     */
+    private static Vector2f getBlockTranslation(AffineTransformation2f M, FragmentedText fragments, HAnchor hAnchor, VAnchor vAnchor) {
+        Rectangle2f r = fragments.getTextRec();
+        DoubleBinaryOperator reduceX = switch (hAnchor) {
+            case LEFT -> Math::min;
+            case RIGHT -> Math::max;
+            case CENTER -> Double::sum;
+        };
+        DoubleBinaryOperator reduceY = switch (vAnchor) {
+            case TOP -> Math::min;
+            case BOTTOM, BASELINE -> Math::max;
+            case MIDDLE -> Double::sum;
+        };
 
+        List<Vector2f> corners = List.of(
+                M.transform(new Vector2f(r.x(), r.y())),
+                M.transform(new Vector2f(r.x() + r.width(), r.y())),
+                M.transform(new Vector2f(r.x(), r.y() + r.height())),
+                M.transform(new Vector2f(r.x() + r.width(), r.y() + r.height()))
+        );
+
+        float fx = hAnchor == HAnchor.CENTER ? 0.25f : 1.0f;
+        float fy = vAnchor == VAnchor.MIDDLE ? 0.25f : 1.0f;
+
+        float x = fx * (float) corners.stream().mapToDouble(Vector2f::x).reduce(reduceX).orElse(0.0);
+        float y = fy * (float) corners.stream().mapToDouble(Vector2f::y).reduce(reduceY).orElse(0.0);
+
+        float tx = switch (hAnchor) {
+            case LEFT -> -x;
+            case RIGHT -> fragments.width() - x;
+            case CENTER -> 0.5f * fragments.width() - x;
+        };
+
+        float ty = switch (vAnchor) {
+            case TOP -> -y;
+            case BOTTOM, BASELINE -> fragments.height() - y;
+            case MIDDLE -> 0.5f * fragments.height() - y;
+        };
+
+        return Vector2f.of(tx, ty);
+    }
 
     /**
      * Renders text fragments within the specified bounding rectangle. The text fragments are provided as a list of fragment lines.
@@ -665,18 +668,17 @@ public interface Graphics extends AutoCloseable {
      *
      * @param pos           the rendering position
      * @param text          a list of fragment lines, where each line contains a list of fragments
-     * @param pivot         determines which of the rectangle corners to use as the center of rotation
      * @param angle         the angle in radians to rotate each line (must be normalized)
      * @param alignmentAxis the axis on which to align the text on
      */
     private void renderFragments(
             Vector2f pos,
             FragmentedText text,
-            Vector2f pivot,
             double angle,
             AlignmentAxis alignmentAxis
     ) {
         assert 0 <= angle && angle < MathUtil.TWO_PI : "invalid angle: " + angle;
+        Vector2f pivot = pos;
 
         // get font and transformation
         Font font = getFont();

@@ -55,8 +55,8 @@ public class FxTextRendering extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        float w = 600.0f;
-        float h = 600.0f;
+        float w = 500.0f;
+        float h = 500.0f;
 
         GridPane grid = new GridPane();
 
@@ -137,7 +137,7 @@ public class FxTextRendering extends Application {
 
         g.setFont(g.getFont().withColor(color));
         g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
-                pivot, angle, Graphics.TextRotationMode.ROTATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+                angle, Graphics.TextRotationMode.ROTATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         // ROTATE_AND_TRANSLATE_BLOCK
@@ -153,14 +153,14 @@ public class FxTextRendering extends Application {
 
         g.setFont(g.getFont().withColor(color));
         g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
-                pivot, angle, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+                angle, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         // ROTATE_LINES
         color = Color.BLACK;
         g.setFont(g.getFont().withColor(color));
         g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
-                pivot, angle, Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC
+                angle, Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         g.close();
@@ -170,7 +170,7 @@ public class FxTextRendering extends Application {
         return new Tile("HAnchor: %s, VAnchor: %s".formatted(hAnchor, vAnchor), renderer);
     }
 
-    class Tile extends BorderPane {
+    public static class Tile extends BorderPane {
         private static final Font font = FxFontUtil.getInstance().getDefaultFont();
         private final Canvas canvas;
         private final FxGraphics graphics;

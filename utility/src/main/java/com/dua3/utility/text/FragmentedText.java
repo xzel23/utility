@@ -1,14 +1,8 @@
-package com.dua3.utility.ui;
+package com.dua3.utility.text;
 
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
-import com.dua3.utility.text.Alignment;
-import com.dua3.utility.text.Font;
-import com.dua3.utility.text.FontUtil;
-import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.Run;
-import com.dua3.utility.text.TextUtil;
-import com.dua3.utility.text.VerticalAlignment;
+import com.dua3.utility.ui.Graphics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +51,24 @@ public record FragmentedText(
      */
     public Dimension2f getActualDimension() {
         return Dimension2f.of(actualWidth, actualHeight);
+    }
+
+    /**
+     * Calculates the horizontal delta between the defined width and the actual width of the text.
+     *
+     * @return the difference between the defined width and the actual width of the text.
+     */
+    public float getHDelta() {
+        return width - actualWidth;
+    }
+
+    /**
+     * Calculates the vertical delta between the layout height and the actual height of the text.
+     *
+     * @return the difference between the layout height and the actual height of the text as a float
+     */
+    public float getVDelta() {
+        return height - actualHeight;
     }
 
     /**
@@ -213,11 +225,11 @@ public record FragmentedText(
 
         return new FragmentedText(
                 fragmentLines,
-                textWidth,
-                textHeight,
+                width,
+                height,
                 baseLine,
-                Math.max(textWidth, width),
-                Math.max(textHeight, height)
+                textWidth,
+                textHeight
         );
     }
 
@@ -291,7 +303,7 @@ public record FragmentedText(
         } else {
             Fragment first = line.get(0);
             Fragment last = line.get(line.size()-1);
-            return last.x() + last.w();
+            return last.x() + last.w() - first.x();
         }
     }
 
@@ -312,6 +324,32 @@ public record FragmentedText(
         return Arrays.stream(line.split("(?<=\\s)|(?=\\s)"))
                 .flatMap(part -> part.runs().stream())
                 .toList();
+    }
+
+    /**
+     * Retrieves the rectangle that bounds the text based on its position and actual dimensions.
+     *
+     * <p>This method calculates the bounding rectangle by determining the smallest x-coordinate,
+     * y-coordinate, and incorporating the actual width and height of the text. If no lines
+     * of text are present, it returns a rectangle with all dimensions set to zero.
+     *
+     * @return a {@code Rectangle2f} object representing the bounding box of the text.
+     */
+    public Rectangle2f getTextRec() {
+        if (lines.isEmpty()) {
+            return Rectangle2f.of(0, 0, 0, 0);
+        }
+
+        float y = lines.get(0).get(0).y();
+        float h = actualHeight;
+        float x = (float) lines.stream()
+                .filter(list -> !list.isEmpty())
+                .mapToDouble(line -> line.get(0).x())
+                .min()
+                .orElse(0.0);
+        float w = actualWidth;
+
+        return Rectangle2f.of(x, y, w, h);
     }
 
     /**
