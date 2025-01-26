@@ -118,14 +118,12 @@ public class FxTextRendering extends Application {
         g.setFill(Color.RED);
         g.fillCircle(centerX, centerY, 3);
 
-        double angle = Math.toRadians(rotationAngle);
-
-        Vector2f pivot = pos;
+        double phi = Math.toRadians(rotationAngle);
 
         // ROTATE_BLOCK
         Color color = Color.GREEN;
 
-        AffineTransformation2f M = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.rotate(angle, pivot));
+        AffineTransformation2f M = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.rotate(phi, pos));
         M = AffineTransformation2f.combine(AffineTransformation2f.translate(pos), M);
         g.setStroke(color, 1.0f);
         g.strokePolygon(
@@ -137,12 +135,12 @@ public class FxTextRendering extends Application {
 
         g.setFont(g.getFont().withColor(color));
         g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
-                angle, Graphics.TextRotationMode.ROTATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+                phi, Graphics.TextRotationMode.ROTATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         // ROTATE_AND_TRANSLATE_BLOCK
         color = Color.BLUE;
-        M = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.translate(pivot));
+        M = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.translate(pos));
         g.setStroke(color, 1.0f);
         g.strokePolygon(
                 M.transform(Vector2f.ORIGIN),
@@ -153,14 +151,14 @@ public class FxTextRendering extends Application {
 
         g.setFont(g.getFont().withColor(color));
         g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
-                angle, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+                phi, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         // ROTATE_LINES
         color = Color.BLACK;
         g.setFont(g.getFont().withColor(color));
         g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim,
-                angle, Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC
+                phi, Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         g.close();
@@ -177,7 +175,7 @@ public class FxTextRendering extends Application {
         private final Consumer<Graphics> renderer;
 
         Tile(String title, Consumer<Graphics> renderer) {
-            this.canvas = new Canvas(50,50);
+            this.canvas = new Canvas(50, 50);
             this.graphics = new FxGraphics(canvas);
             this.renderer = renderer;
 

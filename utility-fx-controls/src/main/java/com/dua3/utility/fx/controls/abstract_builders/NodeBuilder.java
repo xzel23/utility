@@ -58,8 +58,8 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
     /**
      * Binds the given {@link ObservableValue} to the specified {@link Property}.
      *
-     * This method ensures that the property is dynamically updated to reflect the value
-     * of the observable, if the observable is not null.
+     * <p>This method ensures that the property is dynamically updated to reflect the value
+     * of the {@link ObservableValue}, if it is not null.
      *
      * @param <T>      the type of the value to be bound
      * @param value    the {@link ObservableValue} to be bound to the property; may be null

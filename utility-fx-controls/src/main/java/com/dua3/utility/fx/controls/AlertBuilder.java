@@ -34,7 +34,7 @@ public class AlertBuilder
         extends DialogBuilder<Alert, AlertBuilder, ButtonType> {
     private @Nullable String css = null;
     private @Nullable String text = null;
-    private ButtonType @Nullable[] buttons;
+    private ButtonType @Nullable [] buttons;
     private @Nullable ButtonType defaultButton;
 
     AlertBuilder(AlertType type, @Nullable Window parentWindow) {

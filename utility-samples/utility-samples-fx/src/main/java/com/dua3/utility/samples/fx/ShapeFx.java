@@ -68,7 +68,7 @@ public class ShapeFx extends Application {
 
         c = Vector2f.of(350, 200);
         Vector2f p0 = c.translate(0, -50);
-        Vector2f p1 = c.translate(0,  50);
+        Vector2f p1 = c.translate(0, 50);
         Vector2f r = Vector2f.of(150, 100);
 
         float angle = 0;

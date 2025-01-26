@@ -96,7 +96,7 @@ public record FragmentedText(
      * @param vAlign            the vertical alignment setting
      * @param hAnchor           the horizontal anchor setting
      * @param vAnchor           the vertical anchor setting
-     * @return the fragmented text as a {@link FragmentedText} instance
+     * @return the fragmented text as a {@code FragmentedText} instance
      */
     public static FragmentedText generateFragments(
             RichText text,
@@ -187,10 +187,10 @@ public record FragmentedText(
         }
 
         // apply anchor and vertical alignment
-        float tx = switch(hAnchor) {
+        float tx = switch (hAnchor) {
             case LEFT -> 0.0f;
             case RIGHT -> -width;
-            case CENTER -> -width/2.0f;
+            case CENTER -> -width / 2.0f;
         };
         float ty = switch (vAnchor) {
             case TOP -> 0.0f;
@@ -244,7 +244,7 @@ public record FragmentedText(
             return;
         }
 
-        for (List<Fragment> line: fragmentLines) {
+        for (List<Fragment> line : fragmentLines) {
             line.replaceAll(fragment -> fragment.translate(dx, dy));
         }
     }
@@ -308,7 +308,7 @@ public record FragmentedText(
             return 0.0f;
         } else {
             Fragment first = line.get(0);
-            Fragment last = line.get(line.size()-1);
+            Fragment last = line.get(line.size() - 1);
             return last.x() + last.w() - first.x();
         }
     }
@@ -347,15 +347,13 @@ public record FragmentedText(
         }
 
         float y = lines.get(0).get(0).y();
-        float h = actualHeight;
         float x = (float) lines.stream()
                 .filter(list -> !list.isEmpty())
                 .mapToDouble(line -> line.get(0).x())
                 .min()
                 .orElse(0.0);
-        float w = actualWidth;
 
-        return Rectangle2f.of(x, y, w, h);
+        return Rectangle2f.of(x, y, actualWidth, actualHeight);
     }
 
     /**
@@ -370,7 +368,7 @@ public record FragmentedText(
      * @param font the font
      * @param text the text
      */
-    public static final record Fragment(float x, float y, float w, float h, float baseLine, Font font, CharSequence text) {
+    public record Fragment(float x, float y, float w, float h, float baseLine, Font font, CharSequence text) {
         Fragment translate(float dx, float dy) {
             return new Fragment(x + dx, y + dy, w, h, baseLine, font, text);
         }

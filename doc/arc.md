@@ -5,6 +5,7 @@ The arcTo() method is using a Bézier Spline base approximation. The approximati
 pixel on a 4K screen.
 
 Input parameter
+
 - `Vector2f p0`: start point
 - `Vector2f p1`: end point
 - `Vector2f r`: x- and y-radius
@@ -26,6 +27,7 @@ Implementation
 ### Rotate and sclae the coordinate system so that the ellipse becomes a circle
 
 Define the transformation matrix `M`:
+
 ```
     M = AffineTransformation.combine(
         AffineTransformation2f.rotate(-angle)

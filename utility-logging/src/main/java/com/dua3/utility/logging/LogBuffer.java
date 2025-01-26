@@ -119,7 +119,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     /**
      * Represents the state of a buffer.
      *
-     * This record is used to encapsulate the current state of a LogBuffer,
+     * <p>This record is used to encapsulate the current state of a LogBuffer,
      * including its entries, the total number of log entries that have been
      * removed, and the total number of log entries that have been added.
      *

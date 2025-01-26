@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
  * of the node type specified by the generic parameter {@code N}.
  */
 public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
-    private @Nullable ObservableValue<String> text = null;
+    private final ObservableValue<String> text;
     private @Nullable ObservableValue<Font> font = null;
     private @Nullable ObservableValue<? extends Paint> fill = null;
 
@@ -119,11 +119,11 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
     /**
      * Binds the {@link com.dua3.utility.text.Font} property of the {@link Text} node to the specified {@link ObservableValue}.
      *
-     * This allows the font property of the node to dynamically update whenever the value
+     * <p>This allows the font property of the node to dynamically update whenever the value
      * in the provided observable changes.
      *
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
-     * @return this {@link TextBuilder} instance for method chaining
+     * @return this {@code TextBuilder} instance for method chaining
      */
     public TextBuilder bindFontFx(ObservableValue<javafx.scene.text.Font> font) {
         this.font = font;
@@ -137,7 +137,7 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
      * in the provided observable changes.
      *
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
-     * @return this {@link TextBuilder} instance for method chaining
+     * @return this {@code TextBuilder} instance for method chaining
      */
     public TextBuilder bindFont(ObservableValue<com.dua3.utility.text.Font> font) {
         this.font = PropertyConverter.convertReadOnly(font, FxUtil.fontConverter());

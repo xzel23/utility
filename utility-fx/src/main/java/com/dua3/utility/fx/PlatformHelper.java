@@ -40,7 +40,7 @@ public final class PlatformHelper {
             try {
                 action.run();
             } catch (Exception e) {
-                LOG.warn( "unexpected exception in runAndWait: {}", e.getMessage(), e);
+                LOG.warn("unexpected exception in runAndWait: {}", e.getMessage(), e);
             }
             //noinspection ReturnOfNull - by design
             return null;
@@ -68,7 +68,7 @@ public final class PlatformHelper {
             try {
                 result.set(action.get());
             } catch (Exception e) {
-                LOG.warn( "unexpected exception in runAndWait: {}", e.getMessage(), e);
+                LOG.warn("unexpected exception in runAndWait: {}", e.getMessage(), e);
             } finally {
                 doneLatch.countDown();
             }
@@ -97,7 +97,7 @@ public final class PlatformHelper {
             try {
                 action.run();
             } catch (Exception e) {
-                LOG.warn( "unexpected exception in runLater: {}", e.getMessage(), e);
+                LOG.warn("unexpected exception in runLater: {}", e.getMessage(), e);
             }
         });
     }

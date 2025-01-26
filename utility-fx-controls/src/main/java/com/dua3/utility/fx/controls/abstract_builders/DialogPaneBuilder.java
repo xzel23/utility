@@ -138,6 +138,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
      */
     protected B button(InputDialogPane.ButtonDef<R> button) {
         this.buttons.add(button);
+        //noinspection unchecked
         return (B) this;
     }
 
@@ -160,7 +161,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
                     ),
                     new InputDialogPane.ButtonDef<>(
                             ButtonType.OK,
-                            (btn,r) -> true,
+                            (btn, r) -> true,
                             dlg -> {},
                             ALWAYS_TRUE
                     )

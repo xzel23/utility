@@ -64,6 +64,7 @@ public class FxFontUtil implements FontUtil<Font> {
     private final Map<Font, FontData> fxFont2FontData = new ConcurrentHashMap<>();
 
     private record FxFontData(String family, FontWeight weight, FontPosture posture, double size) {}
+
     private final Map<FxFontData, Font> fxFontData2fxFont = new ConcurrentHashMap<>();
 
     private final com.dua3.utility.text.Font defaultFont;

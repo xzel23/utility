@@ -56,7 +56,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
     public void drawText(Graphics g) {
         double delta = 10.0;
         double[] angles = DoubleStream.of(-delta, 90.0 - delta, 0, 45, 90, 135, 180, 225, 270, 315)
-                .map( v -> v + delta)
+                .map(v -> v + delta)
                 .toArray();
 
         record Mode(Graphics.TextRotationMode mode, Graphics.AlignmentAxis axis) {
@@ -88,7 +88,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
             float y = margin;
             double alpha = angles[j];
             g.drawText(
-                    alpha + "° (quad " + MathUtil.quadrantDegrees(alpha) + ", oct " + ((int) (1 + MathUtil.normalizeDegrees(alpha)/45.0)) + ")",
+                    alpha + "° (quad " + MathUtil.quadrantDegrees(alpha) + ", oct " + ((int) (1 + MathUtil.normalizeDegrees(alpha) / 45.0)) + ")",
                     x,
                     y,
                     Graphics.HAnchor.LEFT,
@@ -96,7 +96,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
             );
         }
 
-        for (int i=0; i<modes.length; i++) {
+        for (int i = 0; i < modes.length; i++) {
             for (int j = 0; j < angles.length; j++) {
                 float x = margin + (j + 0.25f) * tileWidth;
                 float y = margin + (i + 1) * tileHeight;

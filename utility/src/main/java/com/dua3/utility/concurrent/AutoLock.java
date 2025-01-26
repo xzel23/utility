@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * when the object is created and automatically released when the object
  * is closed.
  *
- * This class is useful for managing critical sections where the lock's state
+ * <p>This class is useful for managing critical sections where the lock's state
  * should be reliably controlled without manual intervention to avoid issues
  * such as deadlocks or forgotten unlocks.
  *

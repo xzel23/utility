@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.lang.LangUtil;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
@@ -93,9 +94,7 @@ public final class TextFieldBuilder {
      * @return this instance
      */
     public TextFieldBuilder bindDisabled(ObservableBooleanValue disabled) {
-        if (this.disabled != null) {
-            throw new IllegalStateException("the disabled property has already been bound to a value");
-        }
+        LangUtil.check(this.disabled == null, "the disabled property has already been bound to a value");
         this.disabled = disabled;
         return this;
     }

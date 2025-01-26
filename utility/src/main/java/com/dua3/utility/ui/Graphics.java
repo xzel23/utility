@@ -678,7 +678,6 @@ public interface Graphics extends AutoCloseable {
             AlignmentAxis alignmentAxis
     ) {
         assert 0 <= angle && angle < MathUtil.TWO_PI : "invalid angle: " + angle;
-        Vector2f pivot = pos;
 
         // get font and transformation
         Font font = getFont();
@@ -692,7 +691,7 @@ public interface Graphics extends AutoCloseable {
             sx_y = 0.0f;
             sx_h = 0.0f;
         } else {
-            setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pivot)));
+            setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos)));
             int[] layoutCases = switch (alignmentAxis) {
                 case AUTOMATIC -> new int[]{0, 1, 2, 3};
                 case X_AXIS -> new int[]{1, 1, 2, 2};
@@ -724,9 +723,7 @@ public interface Graphics extends AutoCloseable {
 
         List<List<FragmentedText.Fragment>> lines = text.lines();
 
-        for (int i = 0; i < lines.size(); i++) {
-            List<FragmentedText.Fragment> fragments = lines.get(i);
-
+        for (List<FragmentedText.Fragment> fragments : lines) {
             for (FragmentedText.Fragment fragment : fragments) {
                 setFont(fragment.font());
                 drawText(

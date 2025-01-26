@@ -214,7 +214,7 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
 
         Page(D pane, ResultHandler<R> resultHandler) {
             this.pane = pane;
-            this.resultHandler = (btn,result) -> {
+            this.resultHandler = (btn, result) -> {
                 boolean ok = resultHandler.handleResult(btn, result);
                 this.result = result;
                 return ok;

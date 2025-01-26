@@ -73,9 +73,9 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
         double oneMinusCosAlpha = 1 - cosAlpha;
         return new AffineTransformation2f(
                 (float) cosAlpha, (float) -sinAlpha, (float) (c.x() * oneMinusCosAlpha + c.y() * sinAlpha),
-                (float) sinAlpha, (float)  cosAlpha, (float) (c.y() * oneMinusCosAlpha - c.x() * sinAlpha)
+                (float) sinAlpha, (float) cosAlpha, (float) (c.y() * oneMinusCosAlpha - c.x() * sinAlpha)
         );
-   }
+    }
 
     /**
      * Create an affine transformation for a translation

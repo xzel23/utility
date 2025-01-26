@@ -136,9 +136,9 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @return Optional containing the item at (x,y) and the coordinates relative to the item area
      */
     public Optional<PinBoard.PositionInItem> getPositionInItem(double xViewport, double yViewport) {
-        Rectangle2D vp =getViewPortInBoardCoordinates();
+        Rectangle2D vp = getViewPortInBoardCoordinates();
         double x = xViewport + vp.getMinX();
-        double y = yViewport + vp.getMinY() ;
+        double y = yViewport + vp.getMinY();
         List<PinBoard.Item> items = new ArrayList<>(getSkinnable().getItems());
         for (PinBoard.Item item : items) {
             Rectangle2D a = item.area();
@@ -346,7 +346,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         if (xBoard < viewPortInBoardCoordinates.getMinX()) {
             scrollPane.setHvalue(calcScrollPosition(xBoard, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth()));
         } else if (xBoard > viewPortInBoardCoordinates.getMaxX()) {
-            scrollPane.setHvalue(calcScrollPosition(xBoard -viewportBounds.getWidth(), boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth()));
+            scrollPane.setHvalue(calcScrollPosition(xBoard - viewportBounds.getWidth(), boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth()));
         }
         if (yBoard < viewPortInBoardCoordinates.getMinY()) {
             scrollPane.setVvalue(calcScrollPosition(yBoard, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight()));

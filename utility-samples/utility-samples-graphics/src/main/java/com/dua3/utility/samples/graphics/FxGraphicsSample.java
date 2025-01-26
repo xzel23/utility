@@ -50,14 +50,13 @@ public class FxGraphicsSample extends Application {
     }
 
     Tab[] createSlides(float w, float h) {
-        List<Tab> tabs = new ArrayList<>();
-        tabs.addAll(List.of (
+        List<Tab> tabs = new ArrayList<>(List.of(
                 createSlide(ArcToAndEllipse::new, w, h),
                 createSlide(DrawText::new, w, h),
                 createSlide(RenderText::new, w, h)
         ));
-        for (Graphics.HAnchor hAnchor: Graphics.HAnchor.values()) {
-            for (Graphics.VAnchor vAnchor: Graphics.VAnchor.values()) {
+        for (Graphics.HAnchor hAnchor : Graphics.HAnchor.values()) {
+            for (Graphics.VAnchor vAnchor : Graphics.VAnchor.values()) {
                 tabs.add(createBigSlide(() -> new RenderRotatedText(hAnchor, vAnchor), w, h));
             }
         }
@@ -88,7 +87,7 @@ public class FxGraphicsSample extends Application {
         return tab;
     }
 
-    public static interface Slide {
+    public interface Slide {
         String title();
 
         void draw(Graphics g);

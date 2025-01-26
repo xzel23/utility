@@ -169,7 +169,7 @@ public record Vector2f(float x, float y) {
      */
     public Vector2f orthogonal(boolean sweep) {
         float sign = sweep ? -1 : 1;
-        return new Vector2f(- sign * y, sign * x);
+        return new Vector2f(-sign * y, sign * x);
     }
 
     /**

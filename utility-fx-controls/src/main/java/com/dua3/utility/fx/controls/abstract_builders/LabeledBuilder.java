@@ -119,7 +119,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
     /**
      * Binds the {@link Font} property of the {@link Text} node to the specified {@link ObservableValue}.
      *
-     * This allows the font property of the node to dynamically update whenever the value
+     * <p>This allows the font property of the node to dynamically update whenever the value
      * in the provided observable changes.
      *
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
