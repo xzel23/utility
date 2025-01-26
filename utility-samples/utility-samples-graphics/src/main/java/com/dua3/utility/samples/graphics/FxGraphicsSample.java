@@ -54,9 +54,13 @@ public class FxGraphicsSample extends Application {
                 createSlide(DrawText::new, w, h),
                 createSlide(RenderText::new, w, h)
         ));
+        double[] angles = {
+                0, 45, 90, -45, -90
+        };
+
         for (Graphics.HAnchor hAnchor : Graphics.HAnchor.values()) {
             for (Graphics.VAnchor vAnchor : Graphics.VAnchor.values()) {
-                tabs.add(createBigSlide(() -> new RenderRotatedText(hAnchor, vAnchor), w, h));
+                tabs.add(createBigSlide(() -> new RenderRotatedText(hAnchor, vAnchor, angles), w, h));
             }
         }
         return tabs.toArray(Tab[]::new);

@@ -14,8 +14,6 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 
-import java.util.stream.DoubleStream;
-
 public class RenderRotatedText implements FxGraphicsSample.Slide {
 
     public static final RichText TEXT = new RichTextBuilder()
@@ -37,10 +35,13 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
             .toRichText();
     private final Graphics.HAnchor hAnchor;
     private final Graphics.VAnchor vAnchor;
+    private double[] angles;
 
-    public RenderRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor) {
+
+    public RenderRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, double[] angles) {
         this.hAnchor = hAnchor;
         this.vAnchor = vAnchor;
+        this.angles  = angles;
     }
 
     @Override
@@ -54,11 +55,6 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
     }
 
     public void drawText(Graphics g) {
-        double delta = 10.0;
-        double[] angles = DoubleStream.of(-delta, 90.0 - delta, 0, 45, 90, 135, 180, 225, 270, 315)
-                .map(v -> v + delta)
-                .toArray();
-
         record Mode(Graphics.TextRotationMode mode, Graphics.AlignmentAxis axis) {
             @Override
             public String toString() {
