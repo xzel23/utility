@@ -17,7 +17,14 @@ public enum Alignment {
      */
     RIGHT,
     /**
+     * Align distributed.
+     */
+    DISTRIBUTE,
+    /**
      * Align justified.
+     *
+     * <p>When using justified alignment, all text is aligned distributed for all but the last line, which is left
+     * aligned.
      */
     JUSTIFY
 }

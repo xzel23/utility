@@ -796,7 +796,7 @@ public final class TextUtil {
             case LEFT -> s + padding(filler, width - len);
             case RIGHT -> padding(filler, width - len) + s;
             case CENTER -> padding(filler, (width - len) / 2) + s + padding(filler, width - len - (width - len) / 2);
-            case JUSTIFY -> {
+            case JUSTIFY, DISTRIBUTE -> {
                 int spaceToDistribute = Math.max(0, width - len);
                 if (spaceToDistribute == 0) {
                     yield s;

@@ -114,7 +114,7 @@ public record FragmentedText(
         Function<RichText, RichText> trimLine = switch (hAlign) {
             case LEFT -> RichText::stripTrailing;
             case RIGHT -> RichText::stripLeading;
-            case CENTER, JUSTIFY -> RichText::strip;
+            case CENTER, JUSTIFY, DISTRIBUTE -> RichText::strip;
         };
 
         // generate lists of chunks for each line
@@ -122,7 +122,9 @@ public record FragmentedText(
         float textWidth = 0.0f;
         float textHeight = 0.0f;
         float baseLine = 0.0f;
-        for (RichText line : text.split("\n")) {
+        RichText[] split = text.split("\n");
+        for (int i = 0; i < split.length; i++) {
+            RichText line = split[i];
             line = trimLine.apply(line);
 
             List<Fragment> fragments = new ArrayList<>();
@@ -135,12 +137,8 @@ public record FragmentedText(
             float whitespace = 0.0f;
             boolean wrapAllowed = false;
             List<Run> parts = splitLinePreservingWhitespace(line, wrap);
-            for (int i = 0; i < parts.size(); i++) {
-                var run = parts.get(i);
-
-                // when using JUSTIFY alignment, the last line
-                boolean isLastLine = i == parts.size() - 1;
-                Alignment effectiveHAlign = hAlign == Alignment.JUSTIFY && isLastLine ? Alignment.LEFT : hAlign;
+            for (int j = 0; j < parts.size(); j++) {
+                var run = parts.get(j);
 
                 Font f = fontUtil.deriveFont(font, run.getFontDef());
                 Rectangle2f tr = fontUtil.getTextDimension(run, f);
@@ -154,7 +152,8 @@ public record FragmentedText(
                         // skip leading whitespace after wrapped line
                         continue;
                     }
-                    lineWidth = applyHAlign(fragments, hAlign, width, lineWidth, whitespace);
+                    boolean isLastLine = j == parts.size() - 1;
+                    lineWidth = applyHAlign(fragments, hAlign, width, lineWidth, whitespace, isLastLine);
                     textWidth = Math.max(textWidth, lineWidth);
 
                     // start new line
@@ -179,19 +178,12 @@ public record FragmentedText(
                     lineBaseLine = Math.max(lineBaseLine, tr.height() + tr.yMin());
                 }
             }
-            lineWidth = applyHAlign(fragments, hAlign, width, lineWidth, whitespace);
+
+            boolean isLastLine = i == split.length - 1;
+            lineWidth = applyHAlign(fragments, hAlign, width, lineWidth, whitespace, isLastLine);
             textWidth = Math.max(textWidth, lineWidth);
             textHeight += lineHeight;
             baseLine = lineBaseLine;
-        }
-
-        // fix the x-position for justified layout (the last line should be left aligned)
-        if (hAlign == Alignment.JUSTIFY && !fragmentLines.isEmpty()) {
-            List<Fragment> lastLine = fragmentLines.get(fragmentLines.size() - 1);
-            if (!lastLine.isEmpty()) {
-                float dx = -lastLine.get(0).x();
-                lastLine.replaceAll(fragment -> fragment.translate(dx, 0));
-            }
         }
 
         // apply anchor and vertical alignment
@@ -233,6 +225,12 @@ public record FragmentedText(
         );
     }
 
+    private static Alignment getEffectiveHAlign(Alignment hAlign, boolean isLastLine) {
+        return hAlign == Alignment.JUSTIFY
+                ? (isLastLine ? Alignment.LEFT : Alignment.DISTRIBUTE)
+                : hAlign;
+    }
+
     /**
      * Translates all the fragments within the provided list of fragment lines by the specified
      * horizontal and vertical offsets. The method skips translation if both offsets are zero.
@@ -264,10 +262,17 @@ public record FragmentedText(
      * @param whitespace the amount of whitespace available for distribution in the line
      * @return the new width of the line after alignment adjustments
      */
-    private static float applyHAlign(List<Fragment> line, Alignment hAlign, float width, float lineWidth, float whitespace) {
+    private static float applyHAlign(
+            List<Fragment> line,
+            Alignment hAlign,
+            float width,
+            float lineWidth,
+            float whitespace,
+            boolean isLastLine) {
         float availableSpace = Math.max(0.0f, width - lineWidth);
         float f = whitespace > 0 ? 1.0f + availableSpace / whitespace : 1.0f;
-        switch (hAlign) {
+        Alignment effectiveHAlign = getEffectiveHAlign(hAlign, isLastLine);
+        switch (effectiveHAlign) {
             case LEFT -> {
                 // nothing to do
             }
@@ -277,7 +282,7 @@ public record FragmentedText(
             case CENTER -> {
                 line.replaceAll(fragment -> fragment.translate(availableSpace / 2.0f, 0.0f));
             }
-            case JUSTIFY -> {
+            case DISTRIBUTE -> {
                 // distribute the remaining space by evenly expanding existing whitespace
                 float x = 0.0f;
                 for (int i = 0; i < line.size(); i++) {
@@ -296,6 +301,7 @@ public record FragmentedText(
                     x += w;
                 }
             }
+            default -> throw new IllegalStateException(effectiveHAlign.name() + " is not allowed here");
         }
 
         if (line.isEmpty()) {
