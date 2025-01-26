@@ -30,7 +30,6 @@ public class FxGraphicsSample extends Application {
      *
      * @param args the command line arguments
      */
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         launch(args);
     }
