@@ -170,6 +170,17 @@ the parameter.
 
 ## Changes
 
+### 15.2.0
+
+- FragmentedText class added that calculates RichText layout for rendering
+- added some methods and overloads to the Graphics class
+- added some methods and overloads to geometry classes
+- added RichText.split(Pattern), RichText.split(Pattern, int)
+- fixes to code and Javadoc
+- JavaFX: added logging of warnings when exceptions are thrown during runLater() and runAndWait()
+- JavaFX: RichText rendering
+- added AutoLock class
+
 ### 15.1.2
 
 - add logging of exceptions to PlatformHelper.runLater()
