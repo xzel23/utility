@@ -725,6 +725,17 @@ public final class RichText
     }
 
     /**
+     * Split using a precompiled {@link Pattern}.
+     *
+     * @param pattern the pattern
+     *
+     * @see String#split(String)
+     */
+    public RichText[] split(Pattern pattern) {
+        return split(pattern, 0);
+    }
+
+    /**
      * @see String#split(String, int)
      */
     @SuppressWarnings("MissingJavadoc")
@@ -780,7 +791,20 @@ public final class RichText
         }
 
         // create a matcher and split using matcher
-        RichTextMatcher m = matcher(Pattern.compile(regex), this);
+        return split(Pattern.compile(regex), limit);
+    }
+
+    /**
+     * Split using a precompiled {@link Pattern}.
+     *
+     * @param pattern the pattern
+     * @param limit   the limite
+     *
+     * @see String#split(String, int)
+     */
+    public RichText[] split(Pattern pattern, int limit) {
+        // create a matcher and split using matcher
+        RichTextMatcher m = matcher(pattern, this);
         boolean unlimited = limit <= 0;
         List<RichText> result = new ArrayList<>();
         int index = 0;

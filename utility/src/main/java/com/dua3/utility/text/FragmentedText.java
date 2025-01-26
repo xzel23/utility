@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
  * Represents a fragmented text that can be rendered within a specified bounding rectangle.
@@ -31,6 +32,9 @@ public record FragmentedText(
         float baseLine,
         float actualWidth,
         float actualHeight) {
+    private static final Pattern PATTERN = Pattern.compile("(?<=\\s)|(?=\\s)");
+    public static final Pattern PATTERN_SPLIT_PRESERVE_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
+
     /**
      * Retrieves the layout dimensions of the text as a {@code Dimension2f} object.
      *
@@ -326,8 +330,7 @@ public record FragmentedText(
         if (!wrapping) {
             return line.runs();
         }
-// fixme use pattern
-        return Arrays.stream(line.split("(?<=\\s)|(?=\\s)"))
+        return Arrays.stream(line.split(PATTERN_SPLIT_PRESERVE_WHITESPACE))
                 .flatMap(part -> part.runs().stream())
                 .toList();
     }
