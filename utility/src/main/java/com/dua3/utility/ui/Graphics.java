@@ -710,7 +710,7 @@ public interface Graphics extends AutoCloseable {
      * @param angle         the angle in radians to rotate each line (must be normalized)
      * @param alignmentAxis the axis on which to align the text on
      */
-    private void renderFragments(
+    default void renderFragments(
             Vector2f pos,
             FragmentedText text,
             double angle,
