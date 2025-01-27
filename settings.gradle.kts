@@ -22,11 +22,6 @@ include("utility-samples:utility-samples-log4j")
 include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
 
-// use the foojay-resolver-convention plugin to add JVM toolchain repository
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
-
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
