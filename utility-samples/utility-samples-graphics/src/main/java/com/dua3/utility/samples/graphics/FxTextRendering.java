@@ -135,7 +135,7 @@ public class FxTextRendering extends Application {
 
         g.setFont(g.getFont().withColor(color));
         g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim, Graphics.TextWrapping.WRAP,
-                phi, Graphics.TextRotationMode.ROTATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+                phi, Graphics.TextRotationMode.ROTATE_OUTPUT_AREA, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         // ROTATE_AND_TRANSLATE_BLOCK
@@ -151,7 +151,7 @@ public class FxTextRendering extends Application {
 
         g.setFont(g.getFont().withColor(color));
         g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim, Graphics.TextWrapping.WRAP,
-                phi, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+                phi, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         // ROTATE_LINES

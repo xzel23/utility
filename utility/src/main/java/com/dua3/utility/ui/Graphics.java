@@ -481,17 +481,16 @@ public interface Graphics extends AutoCloseable {
      */
     enum TextRotationMode {
         /**
-         * Rotate the block of text as a whole, i.e., the text is rendered the same as with no rotation applied and
-         * then the whole block is rotated with the lower left corner as pivot. This means that when rotating
-         * counter-clockwise, the upper left corner will be left of the pivot's x-coordinate.
+         * Rotate the output area as a whole, i.e., the text is rendered the same as with no rotation applied and
+         * then the whole block is rotated with the anchor as pivot. This means that for example when rotating
+         * counter-clockwise with {@link HAnchor#LEFT} and {@link VAnchor#BOTTOM}, the upper left corner will be
+         * to the left left of the pivot's x-coordinate.
          */
-        ROTATE_BLOCK,
+        ROTATE_OUTPUT_AREA,
         /**
-         * Rotate the block of text as a whole, like with {@code ROTATE_BLOCK}, but translate the whole block of text
-         * so that the left most x-coordinate of the rotated rectangle containing the text will align with the given
-         * x-coordinate. Also apply a vertical translation accordingly.
+         * Rotate the text as a whole, then translate the text to be placed inside the output area
          */
-        ROTATE_AND_TRANSLATE_BLOCK,
+        ROTATE_AND_TRANSLATE,
         /**
          * Rotate each line independently. Align lines horizontally, i.e., all lines start at the same y-coordinate.
          */
@@ -609,7 +608,7 @@ public interface Graphics extends AutoCloseable {
         FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
 
         switch (mode) {
-            case ROTATE_BLOCK -> {
+            case ROTATE_OUTPUT_AREA -> {
                 AffineTransformation2f t = getTransformation();
                 setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, pos)));
                 renderFragments(
@@ -620,7 +619,7 @@ public interface Graphics extends AutoCloseable {
                 );
                 setTransformation(t);
             }
-            case ROTATE_AND_TRANSLATE_BLOCK -> {
+            case ROTATE_AND_TRANSLATE -> {
                 AffineTransformation2f t = getTransformation();
                 AffineTransformation2f R = AffineTransformation2f.rotate(angle, pos);
                 Vector2f tl = getBlockTranslation(AffineTransformation2f.rotate(angle), fragments, hAnchor, vAnchor);

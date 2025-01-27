@@ -68,8 +68,8 @@ public class AnimateRotatedText implements FxGraphicsSample.Slide {
             }
         }
         Mode[] modes = {
-                new Mode(Graphics.TextRotationMode.ROTATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC),
-                new Mode(Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC),
+                new Mode(Graphics.TextRotationMode.ROTATE_OUTPUT_AREA, Graphics.AlignmentAxis.AUTOMATIC),
+                new Mode(Graphics.TextRotationMode.ROTATE_AND_TRANSLATE, Graphics.AlignmentAxis.AUTOMATIC),
                 new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC),
                 new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.X_AXIS),
                 new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.Y_AXIS)
