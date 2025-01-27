@@ -554,7 +554,7 @@ public interface Graphics extends AutoCloseable {
 
         float wrapWidth = switch (wrapText) {
             case WRAP -> width;
-            case NO_WRAP -> 0;
+            case NO_WRAP -> FragmentedText.NO_WRAP;
         };
         FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
 
@@ -603,7 +603,7 @@ public interface Graphics extends AutoCloseable {
         // layout text
         float wrapWidth = switch (wrapText) {
             case WRAP -> width;
-            case NO_WRAP -> 0;
+            case NO_WRAP -> FragmentedText.NO_WRAP;
         };
         FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
 
