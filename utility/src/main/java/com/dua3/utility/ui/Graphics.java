@@ -476,6 +476,9 @@ public interface Graphics extends AutoCloseable {
      */
     AffineTransformation2f getTransformation();
 
+    /**
+     * Enum defining the supported text rotation modes.
+     */
     enum TextRotationMode {
         /**
          * Rotate the block of text as a whole, i.e., the text is rendered the same as with no rotation applied and
@@ -495,21 +498,48 @@ public interface Graphics extends AutoCloseable {
         ROTATE_LINES,
     }
 
+    /**
+     * Enum defining the different options to use with {@link TextRotationMode#ROTATE_LINES}
+     */
     enum AlignmentAxis {
+        /**
+         * The axis is chosen automatically depending on the rotation angle.
+         */
         AUTOMATIC,
+        /**
+         * The x-axis is used.
+         */
         X_AXIS,
+        /**
+         * The y-axis is used.
+         */
         Y_AXIS,
+    }
+
+    /**
+     * Enum defining the different text wrapping modes.
+     */
+    enum TextWrapping {
+        /**
+         * Wrap text when the current line width exceeds the output area width.
+         */
+        WRAP,
+        /**
+         * Do not wrap text.
+         */
+        NO_WRAP
     }
 
     /**
      * Renders the given text within the specified bounding rectangle using the provided font,
      * alignment, and wrapping settings.
      *
-     * @param pos               the rendering position
-     * @param text              the text to be rendered
-     * @param hAlign            the horizontal alignment of the text within the bounding rectangle
-     * @param vAlign            the vertical alignment of the text within the bounding rectangle
-     * @param outputDimension   the dimension of the output area
+     * @param pos             the rendering position
+     * @param text            the text to be rendered
+     * @param hAlign          the horizontal alignment of the text within the bounding rectangle
+     * @param vAlign          the vertical alignment of the text within the bounding rectangle
+     * @param outputDimension the dimension of the output area, used for layout
+     * @param wrapText        true, to apply automatic text wrapping
      */
     default void renderText(
             Vector2f pos,
@@ -518,12 +548,16 @@ public interface Graphics extends AutoCloseable {
             VAnchor vAnchor,
             Alignment hAlign,
             VerticalAlignment vAlign,
-            Dimension2f outputDimension
-    ) {
+            Dimension2f outputDimension,
+            TextWrapping wrapText) {
         float width = outputDimension.width();
         float height = outputDimension.height();
 
-        FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor);
+        float wrapWidth = switch (wrapText) {
+            case WRAP -> width;
+            case NO_WRAP -> 0;
+        };
+        FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
 
         renderFragments(
                 pos,
@@ -544,6 +578,7 @@ public interface Graphics extends AutoCloseable {
      * @param hAlign          the horizontal alignment of the text within the bounding rectangle
      * @param vAlign          the vertical alignment of the text within the bounding rectangle
      * @param outputDimension the dimension of the output area
+     * @param wrapText        true, to apply automatic text wrapping
      * @param angle           the rotation angle in radians
      * @param mode            the {@link TextRotationMode} to use
      * @param alignmentAxis   the axis to align rotated text on
@@ -556,6 +591,7 @@ public interface Graphics extends AutoCloseable {
             Alignment hAlign,
             VerticalAlignment vAlign,
             Dimension2f outputDimension,
+            TextWrapping wrapText,
             double angle,
             TextRotationMode mode,
             AlignmentAxis alignmentAxis) {
@@ -566,7 +602,11 @@ public interface Graphics extends AutoCloseable {
         float height = outputDimension.height();
 
         // layout text
-        FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor);
+        float wrapWidth = switch (wrapText) {
+            case WRAP -> width;
+            case NO_WRAP -> 0;
+        };
+        FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
 
         switch (mode) {
             case ROTATE_BLOCK -> {

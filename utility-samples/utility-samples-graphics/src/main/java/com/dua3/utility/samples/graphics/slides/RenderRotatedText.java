@@ -123,6 +123,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
                         Alignment.LEFT,
                         VerticalAlignment.TOP,
                         new Dimension2f(w, h),
+                        Graphics.TextWrapping.WRAP,
                         rotation,
                         modes[i].mode(),
                         modes[i].axis()

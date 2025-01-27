@@ -130,6 +130,7 @@ public class AnimateRotatedText implements FxGraphicsSample.Slide {
                         Alignment.LEFT,
                         VerticalAlignment.TOP,
                         dim,
+                        Graphics.TextWrapping.WRAP,
                         rotation,
                         modes[i].mode(),
                         modes[i].axis()

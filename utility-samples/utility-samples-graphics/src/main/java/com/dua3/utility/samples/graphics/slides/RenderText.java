@@ -50,7 +50,8 @@ public class RenderText implements FxGraphicsSample.Slide {
                 Graphics.VAnchor.TOP,
                 Alignment.LEFT,
                 VerticalAlignment.TOP,
-                r.getDimension()
+                r.getDimension(),
+                Graphics.TextWrapping.WRAP
         );
     }
 }

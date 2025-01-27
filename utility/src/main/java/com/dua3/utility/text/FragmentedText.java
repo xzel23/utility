@@ -32,8 +32,13 @@ public record FragmentedText(
         float baseLine,
         float actualWidth,
         float actualHeight) {
+    /**
+     * Value to pass for {@code wrapWidth} to disable automatic wrapping.
+     */
+    public static final float NO_WRAP = Float.MAX_VALUE;
+
     private static final Pattern PATTERN = Pattern.compile("(?<=\\s)|(?=\\s)");
-    public static final Pattern PATTERN_SPLIT_PRESERVE_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
+    private static final Pattern PATTERN_SPLIT_PRESERVE_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
 
     /**
      * Retrieves the layout dimensions of the text as a {@code Dimension2f} object.
@@ -91,15 +96,16 @@ public record FragmentedText(
      * <li>The anchor is applied so that when the text is rendered, it is displayed according to the anchor setting.
      * </ul>
      *
-     * @param text              the text
-     * @param fontUtil          the {@link FontUtil} to use for generating fonts
-     * @param font              the default {@link Font}
-     * @param width             the width at which to apply wrapping; pass NO_WRAP to disable wrapping
-     * @param height            the height of the output area; used for vertical alignment
-     * @param hAlign            the horizontal alignment setting
-     * @param vAlign            the vertical alignment setting
-     * @param hAnchor           the horizontal anchor setting
-     * @param vAnchor           the vertical anchor setting
+     * @param text      the text
+     * @param fontUtil  the {@link FontUtil} to use for generating fonts
+     * @param font      the default {@link Font}
+     * @param width     the height of the output area; used for horizontal alignment
+     * @param height    the height of the output area; used for vertical alignment
+     * @param hAlign    the horizontal alignment setting
+     * @param vAlign    the vertical alignment setting
+     * @param hAnchor   the horizontal anchor setting
+     * @param vAnchor   the vertical anchor setting
+     * @param wrapWidth the width at which to apply wrapping; pass NO_WRAP to disable wrapping
      * @return the fragmented text as a {@code FragmentedText} instance
      */
     public static FragmentedText generateFragments(
@@ -111,9 +117,9 @@ public record FragmentedText(
             Alignment hAlign,
             VerticalAlignment vAlign,
             Graphics.HAnchor hAnchor,
-            Graphics.VAnchor vAnchor
-    ) {
-        boolean wrap = width != Float.MAX_VALUE;
+            Graphics.VAnchor vAnchor,
+            float wrapWidth) {
+        boolean wrap = wrapWidth != Float.MAX_VALUE;
 
         Function<RichText, RichText> trimLine = switch (hAlign) {
             case LEFT -> RichText::stripTrailing;
@@ -146,7 +152,7 @@ public record FragmentedText(
 
                 Font f = fontUtil.deriveFont(font, run.getFontDef());
                 Rectangle2f tr = fontUtil.getTextDimension(run, f);
-                if (wrapAllowed && xAct + tr.width() > width) {
+                if (wrapAllowed && xAct + tr.width() > wrapWidth) {
                     if (!fragments.isEmpty() && TextUtil.isBlank(fragments.get(fragments.size() - 1).text())) {
                         // remove trailing whitespace
                         Fragment removed = fragments.remove(fragments.size() - 1);
@@ -277,15 +283,9 @@ public record FragmentedText(
         float f = whitespace > 0 ? 1.0f + availableSpace / whitespace : 1.0f;
         Alignment effectiveHAlign = getEffectiveHAlign(hAlign, isLastLine);
         switch (effectiveHAlign) {
-            case LEFT -> {
-                // nothing to do
-            }
-            case RIGHT -> {
-                line.replaceAll(fragment -> fragment.translate(availableSpace, 0.0f));
-            }
-            case CENTER -> {
-                line.replaceAll(fragment -> fragment.translate(availableSpace / 2.0f, 0.0f));
-            }
+            case LEFT -> {} // nothing to do
+            case RIGHT -> line.replaceAll(fragment -> fragment.translate(availableSpace, 0.0f));
+            case CENTER -> line.replaceAll(fragment -> fragment.translate(availableSpace / 2.0f, 0.0f));
             case DISTRIBUTE -> {
                 // distribute the remaining space by evenly expanding existing whitespace
                 float x = 0.0f;
