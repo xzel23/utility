@@ -125,12 +125,12 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public float getWidth() {
-        return (float) g2d.getClipBounds().getWidth();
+        return (float) parentBounds.getWidth();
     }
 
     @Override
     public float getHeight() {
-        return (float) g2d.getClipBounds().getHeight();
+        return (float) parentBounds.getHeight();
     }
 
     @Override
@@ -214,9 +214,9 @@ public class SwingGraphics implements Graphics {
         // ignore isDrawing for reset()
         int w = parentBounds.width;
         int h = parentBounds.height;
-        g2d.setBackground(SwingUtil.convert(Color.TRANSPARENT_WHITE));
         g2d.clipRect(0, 0, w, h);
-        g2d.clearRect(0, 0, w, h);
+        g2d.setColor(SwingUtil.convert(Color.TRANSPARENT_WHITE));
+        g2d.fillRect(0, 0, w, h);
 
         isDrawing = true;
     }
@@ -332,7 +332,7 @@ public class SwingGraphics implements Graphics {
 
         g2d.setColor(state.awtFillColor);
         Path2D swingPath = SwingUtil.convertToSwingPath(path);
-        g2d.draw(swingPath);
+        g2d.fill(swingPath);
     }
 
     @Override
@@ -427,11 +427,38 @@ public class SwingGraphics implements Graphics {
         }
 
         g2d.setColor(state.awtTextColor);
-        AttributedString as = new AttributedString(text.toString());
-        as.addAttribute(TextAttribute.FONT, state.awtFont, 0, text.length());
-        as.addAttribute(TextAttribute.UNDERLINE, state.isUnderlined ? TextAttribute.UNDERLINE_ON : null, 0, text.length());
-        as.addAttribute(TextAttribute.STRIKETHROUGH, state.isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, text.length());
-        g2d.drawString(as.getIterator(), x, y);
+
+        // Line height, derived from the font metric
+        float lineHeight = g2d.getFontMetrics(state.awtFont).getHeight();
+
+        int lineStart = 0;
+        float offsetY = 0;
+
+        for (int i = 0; i < text.length(); i++) {
+            char currentChar = text.charAt(i);
+            if (currentChar == '\n' || i == text.length() - 1) {
+                // Handle the last line when there is no trailing newline
+                int lineEnd = (currentChar == '\n') ? i : i + 1;
+
+                if (lineEnd > lineStart) {
+                    // Extract the line using subSequence
+                    CharSequence line = text.subSequence(lineStart, lineEnd);
+
+                    // Create AttributedString for the line
+                    AttributedString as = new AttributedString(line.toString()); // FIXME direct to AttributedCharacterIterator
+                    as.addAttribute(TextAttribute.FONT, state.awtFont, 0, line.length());
+                    as.addAttribute(TextAttribute.UNDERLINE, state.isUnderlined ? TextAttribute.UNDERLINE_ON : null, 0, line.length());
+                    as.addAttribute(TextAttribute.STRIKETHROUGH, state.isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, line.length());
+
+                    // Draw the line
+                    g2d.drawString(as.getIterator(), x, y + offsetY);
+                }
+
+                // Move to the next line
+                lineStart = i + 1; // Skip '\n'
+                offsetY += lineHeight;
+            }
+        }
     }
 
     @Override
