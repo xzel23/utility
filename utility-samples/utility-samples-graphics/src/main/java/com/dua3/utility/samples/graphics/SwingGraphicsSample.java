@@ -54,9 +54,4 @@ public class SwingGraphicsSample extends JFrame implements IGraphicsSample<JComp
 
         return panel;
     }
-
-    @Override
-    public JComponent createBigSlide(Supplier<Slide> factory, float w, float h) {
-        return createSlide(factory, w, h);
-    }
 }

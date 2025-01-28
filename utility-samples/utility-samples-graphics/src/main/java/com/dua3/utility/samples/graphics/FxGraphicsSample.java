@@ -4,7 +4,6 @@ import com.dua3.utility.fx.FxGraphics;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
@@ -44,24 +43,7 @@ public class FxGraphicsSample extends Application implements IGraphicsSample<Tab
         Canvas canvas = new Canvas(w, h);
         FxGraphics g = new FxGraphics(canvas);
         slide.draw(g);
-        return new Tab(slide.title(), new ScrollPane(canvas));
-    }
-
-    @Override
-    public Tab createBigSlide(Supplier<Slide> factory, float w, float h) {
-        Tab tab = new Tab(factory.get().title());
-        tab.setOnSelectionChanged(event -> {
-            if (tab.isSelected() && tab.getContent() == null) {
-                Slide slide = factory.get();
-                Canvas canvas = new Canvas(w, 2 * h);
-                FxGraphics g = new FxGraphics(canvas);
-                slide.draw(g);
-                tab.setContent(new ScrollPane(canvas));
-            } else if (!tab.isSelected() && tab.getContent() != null) {
-                tab.setContent(null);
-            }
-        });
-        return tab;
+        return new Tab(slide.title(), canvas);
     }
 
 }

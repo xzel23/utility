@@ -18,9 +18,9 @@ public interface IGraphicsSample<TAB> {
         default void draw(Graphics g) {
             g.setTransformation(
                     AffineTransformation2f.combine(
-                            g.getTransformation(),
-                            AffineTransformation2f.scale(0.5f),
-                            AffineTransformation2f.translate(TILE_WIDTH/4f, TILE_HEIGHT/4f)
+                            AffineTransformation2f.scale(0.9f),
+                            AffineTransformation2f.translate(TILE_WIDTH / 20.0f, TILE_HEIGHT / 20.0f),
+                            g.getTransformation()
                     )
             );
             drawContent(g);
@@ -46,13 +46,11 @@ public interface IGraphicsSample<TAB> {
 
         for (Graphics.HAnchor hAnchor : Graphics.HAnchor.values()) {
             for (Graphics.VAnchor vAnchor : Graphics.VAnchor.values()) {
-                tabs.add(createBigSlide(() -> new RenderRotatedText(hAnchor, vAnchor, angles), w, h));
+                tabs.add(createSlide(() -> new RenderRotatedText(hAnchor, vAnchor, angles), w, h));
             }
         }
         return tabs;
     }
 
     TAB createSlide(Supplier<Slide> factory, float w, float h);
-
-    TAB createBigSlide(Supplier<Slide> factory, float w, float h);
 }

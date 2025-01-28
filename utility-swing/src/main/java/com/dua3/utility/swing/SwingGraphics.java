@@ -2,7 +2,6 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.awt.AwtImageUtil;
 import com.dua3.utility.data.Image;
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.ui.Graphics;
@@ -97,7 +96,7 @@ public class SwingGraphics implements Graphics {
 
     private boolean isDrawing = true;
 
-    private State state = new State();
+    private State state;
     private final List<State> savedState = new ArrayList<>();
 
     /**
@@ -110,6 +109,7 @@ public class SwingGraphics implements Graphics {
         this.g2d = g2d;
         this.parentBounds = bounds;
         this.parentTransform = convert(g2d.getTransform());
+        this.state = new State();
     }
 
     @Override
@@ -126,7 +126,7 @@ public class SwingGraphics implements Graphics {
     public Rectangle2f getBounds() {
         assert isDrawing : "instance has been closed!";
 
-        return convert(LangUtil.orElse(g2d.getClipBounds(), parentBounds));
+        return convert(parentBounds);
     }
 
     /**
