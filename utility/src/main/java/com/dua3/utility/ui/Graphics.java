@@ -64,14 +64,6 @@ public interface Graphics extends AutoCloseable {
     Rectangle2f getBounds();
 
     /**
-     * Get text dimensions using the current font.
-     *
-     * @param text the text
-     * @return the text dimensions
-     */
-    Rectangle2f getTextDimension(CharSequence text);
-
-    /**
      * Resets the state of the object and clears it to a transparent color.
      */
     void reset();
@@ -449,7 +441,7 @@ public interface Graphics extends AutoCloseable {
      * @param vAnchor  the vertical anchor for the text position (TOP, BOTTOM, BASELINE, or MIDDLE)
      */
     default void drawText(CharSequence text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
-        Rectangle2f r = getTextDimension(text);
+        Rectangle2f r = getFontUtil().getTextDimension(text, getFont());
 
         float tx, ty;
 
@@ -740,56 +732,58 @@ public interface Graphics extends AutoCloseable {
         Font font = getFont();
         AffineTransformation2f t = getTransformation();
 
-        float sx_y;
-        float sx_h;
+        try {
+            float sx_y;
+            float sx_h;
 
-        if (angle == 0.0) {
-            setTransformation(AffineTransformation2f.combine(AffineTransformation2f.translate(pos), t));
-            sx_y = 0.0f;
-            sx_h = 0.0f;
-        } else {
-            setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos)));
-            int layoutCase = (int) (angle / MathUtil.PI_QUARTER) % 4;
-            switch (layoutCase) {
-                case 0 -> {
-                    sx_y = (float) (Math.tan(angle));
-                    sx_h = sx_y;
-                }
-                case 1 -> {
-                    sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
-                    sx_h = 0;
-                }
-                case 2 -> {
-                    sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
-                    sx_h = sx_y;
-                }
-                case 3 -> {
-                    sx_y = (float) (Math.tan(angle));
-                    sx_h = 0;
-                }
-                default -> {
-                    throw new IllegalStateException("invalid octant");
+            if (angle == 0.0) {
+                setTransformation(AffineTransformation2f.combine(AffineTransformation2f.translate(pos), t));
+                sx_y = 0.0f;
+                sx_h = 0.0f;
+            } else {
+                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos)));
+                int layoutCase = (int) (angle / MathUtil.PI_QUARTER) % 4;
+                switch (layoutCase) {
+                    case 0 -> {
+                        sx_y = (float) (Math.tan(angle));
+                        sx_h = sx_y;
+                    }
+                    case 1 -> {
+                        sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
+                        sx_h = 0;
+                    }
+                    case 2 -> {
+                        sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
+                        sx_h = sx_y;
+                    }
+                    case 3 -> {
+                        sx_y = (float) (Math.tan(angle));
+                        sx_h = 0;
+                    }
+                    default -> {
+                        throw new IllegalStateException("invalid octant");
+                    }
                 }
             }
-        }
 
-        List<List<FragmentedText.Fragment>> lines = text.lines();
+            List<List<FragmentedText.Fragment>> lines = text.lines();
 
-        for (List<FragmentedText.Fragment> fragments : lines) {
-            for (FragmentedText.Fragment fragment : fragments) {
-                setFont(fragment.font());
-                drawText(
-                        fragment.text().toString(),
-                        fragment.x() + sx_y * fragment.y() + sx_h * fragment.h(),
-                        fragment.y(),
-                        HAnchor.LEFT,
-                        VAnchor.TOP
-                );
+            for (List<FragmentedText.Fragment> fragments : lines) {
+                for (FragmentedText.Fragment fragment : fragments) {
+                    setFont(fragment.font());
+                    drawText(
+                            fragment.text().toString(),
+                            fragment.x() + sx_y * fragment.y() + sx_h * fragment.h(),
+                            fragment.y(),
+                            HAnchor.LEFT,
+                            VAnchor.TOP
+                    );
+                }
             }
+        } finally {
+            setTransformation(t);
+            setFont(font);
         }
-
-        setTransformation(t);
-        setFont(font);
     }
 
 

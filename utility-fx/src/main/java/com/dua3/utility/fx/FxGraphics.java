@@ -122,13 +122,6 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
-    public Rectangle2f getTextDimension(CharSequence text) {
-        assert isDrawing : "instance has already been closed!";
-
-        return FONT_UTIL.getTextDimension(text, state.font);
-    }
-
-    @Override
     public void reset() {
         width = (float) gc.getCanvas().getWidth();
         height = (float) gc.getCanvas().getHeight();

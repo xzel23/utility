@@ -451,13 +451,6 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
-    public Rectangle2f getTextDimension(CharSequence text) {
-        assert isDrawing : "instance has been closed!";
-
-        return FONT_UTIL.getTextDimension(text, state.awtFont);
-    }
-
-    @Override
     public FontUtil<?> getFontUtil() {
         assert isDrawing : "instance has been closed!";
 
