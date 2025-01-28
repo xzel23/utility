@@ -580,4 +580,45 @@ public final class MathUtil {
         return (int) (normalizeDegrees(alpha) / 90.0);
     }
 
+    /**
+     * Determines the octant number (1-based) of an angle given in radians.
+     *
+     * @param phi The angle in radians.
+     * @return The octant number (1 to 8) in which the given angle lies.
+     */
+    public static int octantRadians(double phi) {
+        return 1 + octantIndexRadians(phi);
+    }
+
+    /**
+     * Determines the octant index (0-based) of an angle given in radians.
+     *
+     * @param phi The angle in radians.
+     * @return The octant number (0 to 7) in which the given angle lies.
+     */
+    public static int
+    octantIndexRadians(double phi) {
+        return (int) (normalizeRadians(phi) / PI_QUARTER);
+    }
+
+    /**
+     * Determines the octant number (1-based) of an angle given in degrees.
+     *
+     * @param alpha The angle in degrees.
+     * @return The octant number (1 to 8) in which the given angle lies.
+     */
+    public static int octantDegrees(double alpha) {
+        return 1 + octantIndexDegrees(alpha);
+    }
+
+    /**
+     * Determines the octant index (0-based) of an angle given in degrees.
+     *
+     * @param alpha The angle in degrees.
+     * @return The octant number (0 to 7) in which the given angle lies.
+     */
+    public static int octantIndexDegrees(double alpha) {
+        return (int) (normalizeDegrees(alpha) / 45.0);
+    }
+
 }
