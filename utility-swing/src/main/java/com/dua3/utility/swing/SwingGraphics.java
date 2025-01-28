@@ -8,7 +8,6 @@ import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
@@ -19,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -112,15 +110,6 @@ public class SwingGraphics implements Graphics {
         this.g2d = g2d;
         this.parentBounds = bounds;
         this.parentTransform = convert(g2d.getTransform());
-
-        // macOS uses a system-wide setting, and quality seems to be slightly better when antialias is turned off
-        Object hintAntiAlias = Platform.isMacOS() ? RenderingHints.VALUE_TEXT_ANTIALIAS_OFF : RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
-
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, hintAntiAlias);
-        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
     }
 
     @Override

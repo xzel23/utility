@@ -44,6 +44,8 @@ public class SwingGraphicsSample extends JFrame implements IGraphicsSample<JComp
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g); // Clear panel before rendering
                 Graphics2D g2d = (Graphics2D) g;
+                SwingUtil.setRenderingQuality(g2d);
+
                 SwingGraphics swingGraphics = new SwingGraphics(g2d, g.getClipBounds());
                 slide.draw(swingGraphics);
             }
