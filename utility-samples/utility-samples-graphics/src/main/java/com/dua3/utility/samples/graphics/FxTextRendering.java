@@ -119,6 +119,7 @@ public class FxTextRendering extends Application {
         g.fillCircle(centerX, centerY, 3);
 
         double phi = Math.toRadians(rotationAngle);
+        Graphics.TextWrapping wrap = Graphics.TextWrapping.WRAP;
 
         // ROTATE_BLOCK
         Color color = Color.GREEN;
@@ -134,7 +135,7 @@ public class FxTextRendering extends Application {
         );
 
         g.setFont(g.getFont().withColor(color));
-        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim, Graphics.TextWrapping.WRAP,
+        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim, wrap,
                 phi, Graphics.TextRotationMode.ROTATE_OUTPUT_AREA, Graphics.AlignmentAxis.AUTOMATIC
         );
 
@@ -150,15 +151,15 @@ public class FxTextRendering extends Application {
         );
 
         g.setFont(g.getFont().withColor(color));
-        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim, Graphics.TextWrapping.WRAP,
+        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim, wrap,
                 phi, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         // ROTATE_LINES
         color = Color.BLACK;
         g.setFont(g.getFont().withColor(color));
-        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim, Graphics.TextWrapping.WRAP,
-                phi, Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC
+        g.renderText(pos, TEXT, hAnchor, vAnchor, Alignment.LEFT, VerticalAlignment.TOP, dim, wrap,
+                phi, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_LINES, Graphics.AlignmentAxis.AUTOMATIC
         );
 
         g.close();

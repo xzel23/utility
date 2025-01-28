@@ -265,6 +265,7 @@ public class FxFontUtil implements FontUtil<Font> {
         float size = Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints());
         boolean bold = Objects.requireNonNullElse(fontDef.getBold(), font.isBold());
         boolean italic = Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic());
+
         com.dua3.utility.text.Font baseFont = convert(getFxFont(
                 family,
                 size,

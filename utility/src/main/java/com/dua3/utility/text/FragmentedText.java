@@ -6,6 +6,7 @@ import com.dua3.utility.ui.Graphics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -39,6 +40,14 @@ public record FragmentedText(
 
     private static final Pattern PATTERN = Pattern.compile("(?<=\\s)|(?=\\s)");
     private static final Pattern PATTERN_SPLIT_PRESERVE_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
+    private  static final FragmentedText EMPTY_FRAGMENTED_TEXT = new FragmentedText(Collections.emptyList(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
+    /**
+     *
+     */
+    public static FragmentedText empty() {
+        return EMPTY_FRAGMENTED_TEXT;
+    }
 
     /**
      * Retrieves the layout dimensions of the text as a {@code Dimension2f} object.
@@ -345,7 +354,7 @@ public record FragmentedText(
      * @return a {@code Rectangle2f} object representing the bounding box of the text.
      */
     public Rectangle2f getTextRec() {
-        if (lines.isEmpty()) {
+        if (isEmpty()) {
             return Rectangle2f.of(0, 0, 0, 0);
         }
 
@@ -357,6 +366,15 @@ public record FragmentedText(
                 .orElse(0.0);
 
         return Rectangle2f.of(x, y, actualWidth, actualHeight);
+    }
+
+    /**
+     * Test if this {@code FragmentedText} is empty.
+     *
+     * @return true, if this text is empty.
+     */
+    public boolean isEmpty() {
+        return lines.isEmpty();
     }
 
     /**

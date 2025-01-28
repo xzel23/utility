@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":utility"))
     implementation(project(":utility-fx"))
     implementation(project(":utility-fx-controls"))
+    implementation(project(":utility-swing"))
     implementation(project(":utility-logging"))
     implementation(project(":utility-logging-log4j"))
     implementation(rootProject.libs.log4j.core)

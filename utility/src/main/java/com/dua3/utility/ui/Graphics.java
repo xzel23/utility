@@ -495,6 +495,10 @@ public interface Graphics extends AutoCloseable {
          * Rotate each line independently. Align lines horizontally, i.e., all lines start at the same y-coordinate.
          */
         ROTATE_LINES,
+        /**
+         * Rotate each line independently, then translate the rotated lines into the original output area.
+         */
+        ROTATE_AND_TRANSLATE_LINES,
     }
 
     /**
@@ -605,10 +609,10 @@ public interface Graphics extends AutoCloseable {
             case WRAP -> width;
             case NO_WRAP -> FragmentedText.NO_WRAP;
         };
-        FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
 
         switch (mode) {
             case ROTATE_OUTPUT_AREA -> {
+                FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
                 AffineTransformation2f t = getTransformation();
                 setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, pos)));
                 renderFragments(
@@ -622,6 +626,7 @@ public interface Graphics extends AutoCloseable {
             case ROTATE_AND_TRANSLATE -> {
                 AffineTransformation2f t = getTransformation();
                 AffineTransformation2f R = AffineTransformation2f.rotate(angle, pos);
+                FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
                 Vector2f tl = getBlockTranslation(AffineTransformation2f.rotate(angle), fragments, hAnchor, vAnchor);
                 setTransformation(AffineTransformation2f.combine(
                         t,
@@ -637,8 +642,48 @@ public interface Graphics extends AutoCloseable {
                 setTransformation(t);
             }
             case ROTATE_LINES -> {
+                FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
                 renderFragments(
                         pos,
+                        fragments,
+                        angle,
+                        alignmentAxis
+                );
+            }
+            case ROTATE_AND_TRANSLATE_LINES -> {
+                record OctantSettings(HAnchor hAnchor,
+                                      VAnchor vAnchor,
+                                      float fx,
+                                      float fy
+                ) {}
+
+                OctantSettings[] octs = {
+                        new OctantSettings(HAnchor.LEFT, VAnchor.TOP, 0, 0),
+                        new OctantSettings(HAnchor.LEFT, VAnchor.BOTTOM, 0, 0),
+                        new OctantSettings(HAnchor.LEFT, VAnchor.TOP, 1, 0),
+                        new OctantSettings(HAnchor.LEFT, VAnchor.BOTTOM, 1, 0),
+                        new OctantSettings(HAnchor.LEFT, VAnchor.TOP, 1, 1),
+                        new OctantSettings(HAnchor.LEFT, VAnchor.BOTTOM, 1, 1),
+                        new OctantSettings(HAnchor.LEFT, VAnchor.TOP, 0, 1),
+                        new OctantSettings(HAnchor.LEFT, VAnchor.BOTTOM, 0, 1),
+                };
+
+                OctantSettings oct = octs[MathUtil.octantIndexRadians(angle)];
+                FragmentedText fragments = FragmentedText.generateFragments(
+                        text,
+                        getFontUtil(),
+                        getFont(),
+                        width,
+                        height,
+                        Alignment.LEFT,
+                        VerticalAlignment.TOP,
+                        oct.hAnchor,
+                        oct.vAnchor,
+                        wrapWidth
+                );
+
+                renderFragments(
+                        Vector2f.of(pos.x() + oct.fx() * width, pos.y() + oct.fy() * height),
                         fragments,
                         angle,
                         alignmentAxis
@@ -710,7 +755,7 @@ public interface Graphics extends AutoCloseable {
      * @param angle         the angle in radians to rotate each line (must be normalized)
      * @param alignmentAxis the axis on which to align the text on
      */
-    default void renderFragments(
+    private void renderFragments(
             Vector2f pos,
             FragmentedText text,
             double angle,
