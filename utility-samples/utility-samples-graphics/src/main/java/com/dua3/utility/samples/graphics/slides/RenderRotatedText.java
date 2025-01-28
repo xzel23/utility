@@ -55,21 +55,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
     }
 
     public void drawText(Graphics g) {
-        record Mode(Graphics.TextRotationMode mode, Graphics.AlignmentAxis axis) {
-            @Override
-            public String toString() {
-                return mode == Graphics.TextRotationMode.ROTATE_LINES
-                        ? mode.name() + "[" + axis.name() + "]"
-                        : mode.name();
-            }
-        }
-        Mode[] modes = {
-                new Mode(Graphics.TextRotationMode.ROTATE_OUTPUT_AREA, Graphics.AlignmentAxis.AUTOMATIC),
-                new Mode(Graphics.TextRotationMode.ROTATE_AND_TRANSLATE, Graphics.AlignmentAxis.AUTOMATIC),
-                new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.AUTOMATIC),
-                new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.X_AXIS),
-                new Mode(Graphics.TextRotationMode.ROTATE_LINES, Graphics.AlignmentAxis.Y_AXIS)
-        };
+        Graphics.TextRotationMode[] modes = Graphics.TextRotationMode.values();
 
         float margin = 10.0f;
         Dimension2f tileDimension = g.getBounds().getDimension().withMargin(-margin).scaled(Scale2f.of(1.0f / angles.length, 1.0f / (modes.length + 1)));
@@ -125,8 +111,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
                         new Dimension2f(w, h),
                         Graphics.TextWrapping.WRAP,
                         rotation,
-                        modes[i].mode(),
-                        modes[i].axis()
+                        modes[i]
                 );
             }
         }

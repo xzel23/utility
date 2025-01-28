@@ -502,24 +502,6 @@ public interface Graphics extends AutoCloseable {
     }
 
     /**
-     * Enum defining the different options to use with {@link TextRotationMode#ROTATE_LINES}
-     */
-    enum AlignmentAxis {
-        /**
-         * The axis is chosen automatically depending on the rotation angle.
-         */
-        AUTOMATIC,
-        /**
-         * The x-axis is used.
-         */
-        X_AXIS,
-        /**
-         * The y-axis is used.
-         */
-        Y_AXIS,
-    }
-
-    /**
      * Enum defining the different text wrapping modes.
      */
     enum TextWrapping {
@@ -565,8 +547,7 @@ public interface Graphics extends AutoCloseable {
         renderFragments(
                 pos,
                 fragments,
-                0.0,
-                AlignmentAxis.AUTOMATIC
+                0.0
         );
     }
 
@@ -584,7 +565,6 @@ public interface Graphics extends AutoCloseable {
      * @param wrapText        true, to apply automatic text wrapping
      * @param angle           the rotation angle in radians
      * @param mode            the {@link TextRotationMode} to use
-     * @param alignmentAxis   the axis to align rotated text on
      */
     default void renderText(
             Vector2f pos,
@@ -596,8 +576,7 @@ public interface Graphics extends AutoCloseable {
             Dimension2f outputDimension,
             TextWrapping wrapText,
             double angle,
-            TextRotationMode mode,
-            AlignmentAxis alignmentAxis) {
+            TextRotationMode mode) {
         // normalize angle to the range [0, 2pi)
         angle = MathUtil.normalizeRadians(angle);
 
@@ -618,8 +597,7 @@ public interface Graphics extends AutoCloseable {
                 renderFragments(
                         pos,
                         fragments,
-                        0.0,
-                        AlignmentAxis.AUTOMATIC
+                        0.0
                 );
                 setTransformation(t);
             }
@@ -636,8 +614,7 @@ public interface Graphics extends AutoCloseable {
                 renderFragments(
                         pos,
                         fragments,
-                        0.0,
-                        AlignmentAxis.AUTOMATIC
+                        0.0
                 );
                 setTransformation(t);
             }
@@ -646,8 +623,7 @@ public interface Graphics extends AutoCloseable {
                 renderFragments(
                         pos,
                         fragments,
-                        angle,
-                        alignmentAxis
+                        angle
                 );
             }
             case ROTATE_AND_TRANSLATE_LINES -> {
@@ -685,8 +661,7 @@ public interface Graphics extends AutoCloseable {
                 renderFragments(
                         Vector2f.of(pos.x() + oct.fx() * width, pos.y() + oct.fy() * height),
                         fragments,
-                        angle,
-                        alignmentAxis
+                        angle
                 );
             }
         }
@@ -750,16 +725,14 @@ public interface Graphics extends AutoCloseable {
      * The method calculates the positioning of each fragment based on the alignment and distributes whitespace and remaining space accordingly.
      * The rendered text is drawn on the graphics context.
      *
-     * @param pos           the rendering position
-     * @param text          a list of fragment lines, where each line contains a list of fragments
-     * @param angle         the angle in radians to rotate each line (must be normalized)
-     * @param alignmentAxis the axis on which to align the text on
+     * @param pos   the rendering position
+     * @param text  a list of fragment lines, where each line contains a list of fragments
+     * @param angle the angle in radians to rotate each line (must be normalized)
      */
     private void renderFragments(
             Vector2f pos,
             FragmentedText text,
-            double angle,
-            AlignmentAxis alignmentAxis
+            double angle
     ) {
         assert 0 <= angle && angle < MathUtil.TWO_PI : "invalid angle: " + angle;
 
@@ -776,12 +749,7 @@ public interface Graphics extends AutoCloseable {
             sx_h = 0.0f;
         } else {
             setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos)));
-            int[] layoutCases = switch (alignmentAxis) {
-                case AUTOMATIC -> new int[]{0, 1, 2, 3};
-                case X_AXIS -> new int[]{1, 1, 2, 2};
-                case Y_AXIS -> new int[]{0, 0, 3, 3};
-            };
-            int layoutCase = layoutCases[(int) (angle / MathUtil.PI_QUARTER) % 4];
+            int layoutCase = (int) (angle / MathUtil.PI_QUARTER) % 4;
             switch (layoutCase) {
                 case 0 -> {
                     sx_y = (float) (Math.tan(angle));
