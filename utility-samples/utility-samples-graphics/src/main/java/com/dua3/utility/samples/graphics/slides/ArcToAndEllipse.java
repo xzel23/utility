@@ -17,7 +17,7 @@ public class ArcToAndEllipse implements FxGraphicsSample.Slide {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void drawContent(Graphics g) {
         int angles = 8;
 
         float w = g.getBounds().width() / (angles + 1);

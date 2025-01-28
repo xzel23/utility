@@ -50,7 +50,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void drawContent(Graphics g) {
         drawText(g);
     }
 

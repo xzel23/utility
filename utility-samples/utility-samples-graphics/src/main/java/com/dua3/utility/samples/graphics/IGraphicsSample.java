@@ -1,5 +1,6 @@
 package com.dua3.utility.samples.graphics;
 
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.samples.graphics.slides.ArcToAndEllipse;
 import com.dua3.utility.samples.graphics.slides.DrawText;
 import com.dua3.utility.samples.graphics.slides.RenderRotatedText;
@@ -14,7 +15,20 @@ public interface IGraphicsSample<TAB> {
     interface Slide {
         String title();
 
-        void draw(Graphics g);
+        default void draw(Graphics g) {
+            g.setTransformation(
+                    AffineTransformation2f.combine(
+                            g.getTransformation(),
+                            AffineTransformation2f.scale(0.5f),
+                            AffineTransformation2f.translate(TILE_WIDTH/4f, TILE_HEIGHT/4f)
+                    )
+            );
+            drawContent(g);
+        }
+
+        void drawContent(Graphics g);
+
+
     }
 
     int TILE_WIDTH = 1440;

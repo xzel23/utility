@@ -14,7 +14,7 @@ public class DrawText implements FxGraphicsSample.Slide {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void drawContent(Graphics g) {
         float w = g.getWidth();
         float margin = 10;
 
@@ -52,7 +52,8 @@ public class DrawText implements FxGraphicsSample.Slide {
             AffineTransformation2f t = AffineTransformation2f.combine(
                     AffineTransformation2f.translate(-cx, -cy),
                     AffineTransformation2f.rotate(i * PI_QUARTER),
-                    AffineTransformation2f.translate(cx, cy)
+                    AffineTransformation2f.translate(cx, cy),
+                    t0
             );
 
             g.setTransformation(t);
@@ -92,7 +93,8 @@ public class DrawText implements FxGraphicsSample.Slide {
             AffineTransformation2f t = AffineTransformation2f.combine(
                     AffineTransformation2f.translate(-cx, -cy),
                     AffineTransformation2f.rotate(i * PI_QUARTER),
-                    AffineTransformation2f.translate(cx, cy)
+                    AffineTransformation2f.translate(cx, cy),
+                    t0
             );
 
             g.setTransformation(t);

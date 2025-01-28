@@ -476,7 +476,7 @@ public interface Graphics extends AutoCloseable {
          * Rotate the output area as a whole, i.e., the text is rendered the same as with no rotation applied and
          * then the whole block is rotated with the anchor as pivot. This means that for example when rotating
          * counter-clockwise with {@link HAnchor#LEFT} and {@link VAnchor#BOTTOM}, the upper left corner will be
-         * to the left left of the pivot's x-coordinate.
+         * to the left of the pivot's x-coordinate.
          */
         ROTATE_OUTPUT_AREA,
         /**
@@ -585,7 +585,7 @@ public interface Graphics extends AutoCloseable {
             case ROTATE_OUTPUT_AREA -> {
                 FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
                 AffineTransformation2f t = getTransformation();
-                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.rotate(angle, pos)));
+                setTransformation(AffineTransformation2f.combine(AffineTransformation2f.rotate(angle, pos), t));
                 renderFragments(
                         pos,
                         fragments,
@@ -599,9 +599,9 @@ public interface Graphics extends AutoCloseable {
                 FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
                 Vector2f tl = getBlockTranslation(AffineTransformation2f.rotate(angle), fragments, hAnchor, vAnchor);
                 setTransformation(AffineTransformation2f.combine(
-                        t,
                         R,
-                        AffineTransformation2f.translate(tl)
+                        AffineTransformation2f.translate(tl),
+                        t
                 ));
                 renderFragments(
                         pos,
@@ -741,7 +741,7 @@ public interface Graphics extends AutoCloseable {
                 sx_y = 0.0f;
                 sx_h = 0.0f;
             } else {
-                setTransformation(AffineTransformation2f.combine(t, AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos)));
+                setTransformation(AffineTransformation2f.combine(AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos), t));
                 int layoutCase = (int) (angle / MathUtil.PI_QUARTER) % 4;
                 switch (layoutCase) {
                     case 0 -> {
