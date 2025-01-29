@@ -92,8 +92,8 @@ public final class XmlUtil {
             
             </xsl:stylesheet>
             """;
-    private static final Pattern PATTERN_BLANK_LINE = Pattern.compile("^\\s*\n");
-    private static final Pattern PATTERN_END_OF_LINE = Pattern.compile("\n$");
+    private static final Pattern PATTERN_BLANK_LINE = Pattern.compile("^\\s*\\R");
+    private static final Pattern PATTERN_END_OF_LINE = Pattern.compile("\\R$");
     private static final String MESSAGE_COULD_NOT_CREATE_DEFAULT_XML_UTIL = "Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.";
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
