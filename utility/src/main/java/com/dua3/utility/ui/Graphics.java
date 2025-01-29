@@ -422,7 +422,7 @@ public interface Graphics extends AutoCloseable {
      * @param y the x-coordinate of the point, specified in user coordinates
      * @return the point transformed to local coordinates as described above
      */
-    default Vector2f transformToLocal(float x, float y) {
+    default Vector2f inverseTransform(float x, float y) {
         return getInverseTransformation().transform(x, y);
     }
 
