@@ -17,7 +17,6 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.VerticalAlignment;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
 
@@ -29,14 +28,14 @@ import java.util.function.DoubleBinaryOperator;
 public interface Graphics extends AutoCloseable {
 
     /**
-     * Retrieves the width of an object. The width is typically measured in the object's respective unit.
+     * Get the width of this {@code Graphics} instance.
      *
      * @return the width as a float value
      */
     float getWidth();
 
     /**
-     * Retrieves the height value.
+     * Get the height of this {@code Graphics} instance.
      *
      * @return the height as a float.
      */
@@ -57,11 +56,13 @@ public interface Graphics extends AutoCloseable {
     Font getDefaultFont();
 
     /**
-     * Get bounds.
+     * Get the dimension (size) of this {code Graphics} instance in screen units.
      *
      * @return the bounding rectangle
      */
-    Rectangle2f getBounds();
+    default Dimension2f getDimension() {
+        return new Dimension2f(getWidth(), getHeight());
+    }
 
     /**
      * Resets the state of the object and clears it to a transparent color.
@@ -372,23 +373,67 @@ public interface Graphics extends AutoCloseable {
     }
 
     /**
-     * Calculates the bounding rectangle of the graphics in the local coordinate space.
+     * Calculates the transformation of a point.
      *
-     * <p>The method first retrieves the inverse of the current transformation using {@link #getTransformation()} and
-     * throws an exception if the transformation is not present. Then, it calculates the bounds of the graphics using
-     * the {@link #getBounds()} method. Finally, it transforms the minimum and maximum coordinates of the bounds using
-     * the inverse transformation to get the bounds in the local coordinate space.</p>
+     * <p>The transforms a point given in local coordinates to user coordinates.
      *
-     * @return the bounding rectangle in the local coordinate space
-     * @throws NoSuchElementException if the inverse of the current transformation is not present
+     * @param p the point to transform
+     * @return the point transformed to local coordinates as described above
      */
-    default Rectangle2f getBoundsInLocal() {
-        AffineTransformation2f ti = getTransformation().inverse().orElseThrow();
-        Rectangle2f bounds = getBounds();
-        return Rectangle2f.withCorners(
-                ti.transform(bounds.min()),
-                ti.transform(bounds.max())
-        );
+    default Vector2f tansform(Vector2f p) {
+        return getTransformation().transform(p);
+    }
+
+    /**
+     * Calculates the transformation of a point.
+     *
+     * <p>The transforms a point given in local coordinates to user coordinates.
+     *
+     * @param x the x-coordinate of the point
+     * @param y the x-coordinate of the point
+     * @return the point transformed to local coordinates as described above
+     */
+    default Vector2f transform(float x, float y) {
+        return getTransformation().transform(x, y);
+    }
+
+    /**
+     * Calculates the inverse transformation of a point.
+     *
+     * <p>The method applies the inverse transformation to convert a point in user coordinates
+     * back to local coordinates. In the resulting local space, (0, 0) represents the top-left
+     * corner of the output area, and the coordinates are measured in device units (e.g., pixels).
+     *
+     * @param p the point to transform, specified in user coordinates
+     * @return the point transformed to local coordinates as described above
+     */
+    default Vector2f inverseTransform(Vector2f p) {
+        return getInverseTransformation().transform(p);
+    }
+
+    /**
+     * Calculates the inverse transformation of a point.
+     *
+     * <p>The method applies the inverse transformation to convert a point in user coordinates
+     * back to local coordinates. In the resulting local space, (0, 0) represents the top-left
+     * corner of the output area, and the coordinates are measured in device units (e.g., pixels).
+     *
+     * @param x the x-coordinate of the point, specified in user coordinates
+     * @param y the x-coordinate of the point, specified in user coordinates
+     * @return the point transformed to local coordinates as described above
+     */
+    default Vector2f transformToLocal(float x, float y) {
+        return getInverseTransformation().transform(x, y);
+    }
+
+    /**
+     * Get the inverse transformation for this {@code Graphics} instance.
+     * @return the inverse of the current transformation
+     */
+    default AffineTransformation2f getInverseTransformation() {
+        return getTransformation()
+                .inverse()
+                .orElseThrow(()  -> new IllegalStateException("no inverse transformation available"));
     }
 
     /**

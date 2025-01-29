@@ -1,6 +1,7 @@
 package com.dua3.utility.samples.graphics.slides;
 
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.samples.graphics.FxGraphicsSample;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.RichText;
@@ -42,7 +43,7 @@ public class RenderText implements FxGraphicsSample.Slide {
 
         float margin = 10;
         g.setFont(g.getDefaultFont().withSize(24));
-        Rectangle2f r = g.getBounds().addMargin(-margin);
+        Rectangle2f r = Rectangle2f.of(Vector2f.ORIGIN, g.getDimension()).addMargin(-margin);
         g.renderText(
                 r.min(),
                 text,

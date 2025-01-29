@@ -55,7 +55,7 @@ public record Dimension2f(float width, float height) {
      * @param m the margin to be added to the width and height
      * @return a new {@code Dimension2f} object with updated dimensions
      */
-    public Dimension2f withMargin(float m) {
+    public Dimension2f addMargin(float m) {
         return new Dimension2f(width + 2 * m, height + 2 * m);
     }
 
@@ -66,7 +66,7 @@ public record Dimension2f(float width, float height) {
      * @param my the margin to be added to the height
      * @return a new {@code Dimension2f} object with the adjusted width and height
      */
-    public Dimension2f withMargin(float mx, float my) {
+    public Dimension2f addMargin(float mx, float my) {
         return new Dimension2f(width + 2 * mx, height + 2 * my);
     }
 }

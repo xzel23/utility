@@ -141,7 +141,7 @@ public record FragmentedText(
         float textWidth = 0.0f;
         float textHeight = 0.0f;
         float baseLine = 0.0f;
-        RichText[] split = text.split("\\R");
+        RichText[] split = text.split(TextUtil.PATTERN_LINE_END);
         for (int i = 0; i < split.length; i++) {
             RichText line = split[i];
             line = trimLine.apply(line);

@@ -57,6 +57,11 @@ public final class TextUtil {
      * Windows end-of-line sequence.
      */
     public static final String LINE_END_WINDOWS = "\r\n";
+    /**
+     * Pattern matching line ends (all types).
+     */
+    public static final Pattern PATTERN_LINE_END = Pattern.compile("\\R");
+
     private static final String TRANSFORM_REF_START = "${";
     private static final String TRANSFORM_REF_END = "}";
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();

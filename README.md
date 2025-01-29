@@ -170,8 +170,9 @@ the parameter.
 
 ## Changes
 
-### 15.2.0
+### 16.0.0
 
+- bump to major version because of a few breaking changes
 - FragmentedText class added that calculates RichText layout for rendering
 - added some methods and overloads to the Graphics class
 - added some methods and overloads to geometry classes

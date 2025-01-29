@@ -20,8 +20,8 @@ public class ArcToAndEllipse implements FxGraphicsSample.Slide {
     public void drawContent(Graphics g) {
         int angles = 8;
 
-        float w = g.getBounds().width() / (angles + 1);
-        float h = g.getBounds().height() / 3;
+        float w = g.getDimension().width() / (angles + 1);
+        float h = g.getDimension().height() / 3;
 
         g.drawText("""
                         Create Path2f instances that demonstrate the use of arcTo().
@@ -87,7 +87,7 @@ public class ArcToAndEllipse implements FxGraphicsSample.Slide {
             g.strokeEllipse(c.x(), c.y(), rMax, rMax * 0.75f, angle);
         }
 
-        Vector2f c = Vector2f.of(g.getBounds().xCenter(), 2.5f * h);
+        Vector2f c = Vector2f.of(g.getWidth() / 2.0f, 2.5f * h);
         Vector2f p0 = c.translate(0, -50);
         Vector2f p1 = c.translate(0, 50);
         Vector2f r = Vector2f.of(150, 100);

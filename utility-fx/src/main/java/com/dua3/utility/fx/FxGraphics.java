@@ -116,12 +116,6 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
-    public Rectangle2f getBounds() {
-        assert isDrawing : "instance has already been closed!";
-        return new Rectangle2f(0, 0, width, height);
-    }
-
-    @Override
     public void reset() {
         width = (float) gc.getCanvas().getWidth();
         height = (float) gc.getCanvas().getHeight();

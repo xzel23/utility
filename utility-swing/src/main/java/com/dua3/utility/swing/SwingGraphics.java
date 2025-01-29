@@ -122,13 +122,6 @@ public class SwingGraphics implements Graphics {
         return (float) parentBounds.getHeight();
     }
 
-    @Override
-    public Rectangle2f getBounds() {
-        assert isDrawing : "instance has been closed!";
-
-        return convert(parentBounds);
-    }
-
     /**
      * Convert a {@link Rectangle} object to a {@link Rectangle2f} object.
      *

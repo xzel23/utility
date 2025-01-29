@@ -58,7 +58,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
         Graphics.TextRotationMode[] modes = Graphics.TextRotationMode.values();
 
         float margin = 10.0f;
-        Dimension2f tileDimension = g.getBounds().getDimension().withMargin(-margin).scaled(Scale2f.of(1.0f / angles.length, 1.0f / (modes.length + 1)));
+        Dimension2f tileDimension = g.getDimension().addMargin(-margin).scaled(Scale2f.of(1.0f / angles.length, 1.0f / (modes.length + 1)));
         float tileWidth = tileDimension.width();
         float tileHeight = tileDimension.height();
 
