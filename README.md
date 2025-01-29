@@ -170,7 +170,7 @@ the parameter.
 
 ## Changes
 
-### 16.0.0
+### 16
 
 - bump to major version because of a few breaking changes
 - FragmentedText class added that calculates RichText layout for rendering
@@ -181,6 +181,8 @@ the parameter.
 - JavaFX: added logging of warnings when exceptions are thrown during runLater() and runAndWait()
 - JavaFX: RichText rendering
 - added AutoLock class
+- small fixes and improvements
+- many fixes and additions to both JavaFX and Swing rendering
 
 ### 15.1.2
 
