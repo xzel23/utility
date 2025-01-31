@@ -170,6 +170,12 @@ the parameter.
 
 ## Changes
 
+### 16.0.1
+
+- correct name of overloaded method to Graphics.inverseTransform() (was Graphics.transformToLocal())
+- support copying RichText to clipboard
+- fix HtmlConverter.useCss() ignoring the passed parameter
+
 ### 16
 
 - bump to major version because of a few breaking changes

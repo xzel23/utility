@@ -271,7 +271,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param flag true to enable CSS output
      */
     void setUseCss(boolean flag) {
-        this.useCss = true;
+        this.useCss = flag;
     }
 
     /**

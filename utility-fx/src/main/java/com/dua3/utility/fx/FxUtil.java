@@ -2,6 +2,8 @@ package com.dua3.utility.fx;
 
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.math.geometry.ClosePath2f;
+import com.dua3.utility.text.HtmlConverter;
+import com.dua3.utility.text.RichText;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.shape.ClosePath;
@@ -383,6 +385,19 @@ public final class FxUtil {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
         content.putString(s);
+        clipboard.setContent(content);
+    }
+
+    /**
+     * Copy text to clipboard.
+     *
+     * @param text the text
+     */
+    public static void copyToClipboard(RichText text) {
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        final ClipboardContent content = new ClipboardContent();
+        content.putString(text.toString());
+        content.putHtml(HtmlConverter.create(HtmlConverter.useCss(false)).convert(text));
         clipboard.setContent(content);
     }
 
