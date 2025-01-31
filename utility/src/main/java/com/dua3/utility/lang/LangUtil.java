@@ -5,7 +5,6 @@
 
 package com.dua3.utility.lang;
 
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.io.IoUtil;
 import org.apache.logging.log4j.LogManager;
@@ -140,8 +139,8 @@ public final class LangUtil {
      * {@code arg}
      */
     @SafeVarargs
-    public static <T extends @Nullable Object> boolean isOneOf(T arg, @NonNull T... rest) {
-        return List.of(rest).contains(arg);
+    public static <T extends @Nullable Object> boolean isOneOf(T arg, T... rest) {
+        return arg != null && List.of(rest).contains(arg);
     }
 
     /**
