@@ -175,6 +175,7 @@ the parameter.
 - correct name of overloaded method to Graphics.inverseTransform() (was Graphics.transformToLocal())
 - support copying RichText to clipboard
 - fix HtmlConverter.useCss() ignoring the passed parameter
+- add convenience methods Style.create(Font) and Style.create(Font, Color, Color) 
 
 ### 16
 

@@ -460,4 +460,24 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public void forEach(BiConsumer<String, @Nullable Object> action) {
         forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
     }
+
+    /**
+     * Create a style for the given font.
+     *
+     * @param font the font
+     * @return the created style
+     */
+    public static Style create(Font font) {
+        return create(font.fontspec(), Map.entry(FONT, font));
+    }
+
+    /**
+     * Create a style for the given font and colors.
+     *
+     * @param font the font
+     * @return the created style
+     */
+    public static Style create(Font font, Color foreground, Color background) {
+        return create(font.fontspec() + foreground.toCss() + background.toCss(), Map.of(FONT, font, COLOR, foreground, BACKGROUND_COLOR, background));
+    }
 }
