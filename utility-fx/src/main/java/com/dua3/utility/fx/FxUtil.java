@@ -62,6 +62,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -442,6 +443,53 @@ public final class FxUtil {
         List<File> files = paths.stream().map(Path::toAbsolutePath).map(Path::toFile).toList();
         content.putFiles(files);
         clipboard.setContent(content);
+    }
+
+    /**
+     * Retrieves a string from the system clipboard if available.
+     *
+     * @return an {@code Optional} containing the string from the clipboard if present,
+     *         or an empty {@code Optional} otherwise
+     */
+    public static Optional<String> getStringFromClipboard() {
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (clipboard.hasString()) {
+            return Optional.of(clipboard.getString());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Retrieves an image from the system clipboard if one is available.
+     *
+     * @return an {@code Optional} containing the image if the clipboard contains an image,
+     *         or an empty {@code Optional} if no image is present in the clipboard.
+     */
+    public static Optional<Image> getImageFromClipboard() {
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (clipboard.hasImage()) {
+            return Optional.of(FxImageUtil.getInstance().convert(clipboard.getImage()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Retrieves a collection of file paths from the system clipboard.
+     * If the clipboard contains files, their paths are returned as a collection.
+     * Otherwise, an empty collection is returned.
+     *
+     * @return A collection of file paths retrieved from the clipboard or an empty collection
+     *         if no files are present on the clipboard.
+     */
+    public static Collection<Path> getFilesFromClipboard() {
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (clipboard.hasFiles()) {
+            return DataUtil.convert(clipboard.getFiles(), File::toPath);
+        } else {
+            return List.of();
+        }
     }
 
     /**

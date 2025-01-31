@@ -173,7 +173,8 @@ the parameter.
 ### 16.0.1
 
 - correct name of overloaded method to Graphics.inverseTransform() (was Graphics.transformToLocal())
-- support copying RichText to clipboard
+- support copying RichText to to the clipboard (uses HTML format)
+- support getting texts (String), images and paths from the clipboard
 - fix HtmlConverter.useCss() ignoring the passed parameter
 - fix LangUtil.isOneOf(null, args...) throwing NPE (note that the remaining elements @NonNull)
 - add convenience methods Style.create(Font) and Style.create(Font, Color, Color) 
