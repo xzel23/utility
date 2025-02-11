@@ -38,7 +38,9 @@ public final class MathUtil {
      * <li>max, if arg &gt; max
      * <li>else arg
      * </ul>
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
      */
+    @Deprecated
     public static int clamp(int min, int max, int arg) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
         return arg < min ? min : Math.min(arg, max);
@@ -55,7 +57,9 @@ public final class MathUtil {
      * <li>max, if arg &gt; max
      * <li>else arg
      * </ul>
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
      */
+    @Deprecated
     public static long clamp(long min, long max, long arg) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
         return arg < min ? min : Math.min(arg, max);
@@ -72,7 +76,9 @@ public final class MathUtil {
      * <li>max, if arg &gt; max
      * <li>else arg
      * </ul>
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
      */
+    @Deprecated
     public static double clamp(double min, double max, double arg) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
         return arg < min ? min : Math.min(arg, max);
@@ -89,7 +95,9 @@ public final class MathUtil {
      * <li>max, if arg &gt; max
      * <li>else arg
      * </ul>
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
      */
+    @Deprecated
     public static float clamp(float min, float max, float arg) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
         return arg < min ? min : Math.min(arg, max);
@@ -108,7 +116,9 @@ public final class MathUtil {
      * <li>valueIfNaN, if arg is NaN
      * <li>else arg
      * </ul>
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
      */
+    @Deprecated
     public static double clamp(double min, double max, double arg, double valueIfNaN) {
         return Double.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
     }
@@ -126,7 +136,9 @@ public final class MathUtil {
      * <li>valueIfNaN, if arg is NaN
      * <li>else arg
      * </ul>
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
      */
+    @Deprecated
     public static float clamp(float min, float max, float arg, float valueIfNaN) {
         return Float.isNaN(arg) ? valueIfNaN : clamp(min, max, arg);
     }
