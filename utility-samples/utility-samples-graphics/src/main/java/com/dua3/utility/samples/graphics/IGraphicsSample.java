@@ -16,12 +16,9 @@ public interface IGraphicsSample<TAB> {
         String title();
 
         default void draw(Graphics g) {
-            g.setTransformation(
-                    AffineTransformation2f.combine(
-                            AffineTransformation2f.scale(0.9f),
-                            AffineTransformation2f.translate(TILE_WIDTH / 20.0f, TILE_HEIGHT / 20.0f),
-                            g.getTransformation()
-                    )
+            g.transform(
+                    AffineTransformation2f.scale(0.9f),
+                    AffineTransformation2f.translate(TILE_WIDTH / 20.0f, TILE_HEIGHT / 20.0f)
             );
             drawContent(g);
         }

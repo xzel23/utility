@@ -16,6 +16,7 @@ import com.dua3.utility.text.FragmentedText;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.VerticalAlignment;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
@@ -337,6 +338,38 @@ public interface Graphics extends AutoCloseable {
     void setTransformation(AffineTransformation2f t);
 
     /**
+     * Apply the given transformations to this {@code Graphics} instance.
+     *
+     * <p>These two are equivalent:
+     * <pre>
+     * {@code
+     *     AffineTransformation2f t = g.transform(t1, t2);
+     * }
+     * </pre>
+     * and
+     * <pre>
+     * {@code
+     *     AffineTransformation2f t = g.getTransformation();
+     *     setTransformation(AffineTransformation2f.combine(t1, t2, t);
+     * }
+     * </pre>
+     *
+     * @param t the transformation to add
+     * @return the transformation that was active before updating
+     */
+    default AffineTransformation2f transform(AffineTransformation2f... t) {
+        if (t.length == 0) {
+            return getTransformation();
+        }
+
+        AffineTransformation2f[] transformations = Arrays.copyOf(t, t.length + 1);
+        transformations[t.length] = getTransformation();
+        setTransformation(AffineTransformation2f.combine(transformations));
+
+        return transformations[t.length];
+    }
+
+    /**
      * Sets the font used for text rendering.
      *
      * @param f the font to set
@@ -629,8 +662,7 @@ public interface Graphics extends AutoCloseable {
         switch (mode) {
             case ROTATE_OUTPUT_AREA -> {
                 FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
-                AffineTransformation2f t = getTransformation();
-                setTransformation(AffineTransformation2f.combine(AffineTransformation2f.rotate(angle, pos), t));
+                AffineTransformation2f t = transform(AffineTransformation2f.rotate(angle, pos));
                 renderFragments(
                         pos,
                         fragments,
@@ -639,29 +671,16 @@ public interface Graphics extends AutoCloseable {
                 setTransformation(t);
             }
             case ROTATE_AND_TRANSLATE -> {
-                AffineTransformation2f t = getTransformation();
-                AffineTransformation2f R = AffineTransformation2f.rotate(angle, pos);
                 FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
                 Vector2f tl = getBlockTranslation(AffineTransformation2f.rotate(angle), fragments, hAnchor, vAnchor);
-                setTransformation(AffineTransformation2f.combine(
-                        R,
-                        AffineTransformation2f.translate(tl),
-                        t
-                ));
-                renderFragments(
-                        pos,
-                        fragments,
-                        0.0
-                );
+                AffineTransformation2f R = AffineTransformation2f.rotate(angle, pos);
+                AffineTransformation2f t = transform(R, AffineTransformation2f.translate(tl));
+                renderFragments(pos, fragments, 0.0);
                 setTransformation(t);
             }
             case ROTATE_LINES -> {
                 FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
-                renderFragments(
-                        pos,
-                        fragments,
-                        angle
-                );
+                renderFragments(pos, fragments, angle);
             }
             case ROTATE_AND_TRANSLATE_LINES -> {
                 record OctantSettings(HAnchor hAnchor,
@@ -782,11 +801,11 @@ public interface Graphics extends AutoCloseable {
             float sx_h;
 
             if (angle == 0.0) {
-                setTransformation(AffineTransformation2f.combine(AffineTransformation2f.translate(pos), t));
+                transform(AffineTransformation2f.translate(pos));
                 sx_y = 0.0f;
                 sx_h = 0.0f;
             } else {
-                setTransformation(AffineTransformation2f.combine(AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos), t));
+                transform(AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos));
                 int layoutCase = (int) (angle / MathUtil.PI_QUARTER) % 4;
                 switch (layoutCase) {
                     case 0 -> {
@@ -805,9 +824,7 @@ public interface Graphics extends AutoCloseable {
                         sx_y = (float) (Math.tan(angle));
                         sx_h = 0;
                     }
-                    default -> {
-                        throw new IllegalStateException("invalid octant");
-                    }
+                    default -> throw new IllegalStateException("invalid octant");
                 }
             }
 

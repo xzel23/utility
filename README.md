@@ -170,12 +170,13 @@ the parameter.
 
 ## Changes
 
-### 16.0.2
+### 16.0.2 (under development)
 
 - deprecated the MathUtil.clamp() methods as Math.clamp was added to the JDK.
   These methods will be removed once the base JDK changes to 21.
 - add a SystemInfo record to retrieve system information; run the DialogSample class and show details 
   in the About dialog of the application for example output
+- add Graphics.transform()
 
 ### 16.0.1
 
