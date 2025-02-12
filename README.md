@@ -170,6 +170,11 @@ the parameter.
 
 ## Changes
 
+### 16.0.2
+
+- deprecated the MathUtil.clamp() methods as Math.clamp was added to the JDK.
+  These methods will be removed once the base JDK changes to 21.
+
 ### 16.0.1
 
 - correct name of overloaded method to Graphics.inverseTransform() (was Graphics.transformToLocal())
