@@ -3,6 +3,7 @@ package com.dua3.utility.samples.fx;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.FileDialogMode;
+import com.dua3.utility.lang.SystemInfo;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -42,6 +43,7 @@ public class DialogSample extends Application {
                     .version("v 0.1")
                     .copyright("(c) 2021 Axel Howind")
                     .mail("info@example.com")
+                    .expandableContent(SystemInfo.getSystemInfo().formatted())
                     .showAndWait();
             System.out.println("About Dialog shown");
         }));
