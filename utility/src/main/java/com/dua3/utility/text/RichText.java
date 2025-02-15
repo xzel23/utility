@@ -990,14 +990,15 @@ public final class RichText
      * @return the BiPredicate that checks for equality based on the ComparisonSettings
      */
     public static BiPredicate<@Nullable RichText, @Nullable RichText> equalizer(ComparisonSettings s) {
+        BiPredicate<RichText, @Nullable RichText> compareText = s.ignoreCase()
+                ? RichText::equalsTextIgnoreCase
+                : RichText::equalsText;
+
         return (a, b) -> {
             if (a == b) {
                 return true;
             }
-            if (a == null || b == null) {
-                return false;
-            }
-            if (s.ignoreCase() && !a.equalsTextIgnoreCase(b) || !s.ignoreCase() && !a.equalsText(b)) {
+            if (a == null || !compareText.test(a, b)) {
                 return false;
             }
 
