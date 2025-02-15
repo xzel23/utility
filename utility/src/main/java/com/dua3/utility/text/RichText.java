@@ -422,7 +422,9 @@ public final class RichText
      * @return true, if this instance contains the same sequence of characters as {@code other}
      */
     public boolean equalsText(@Nullable CharSequence other) {
-        if (other == null || other.length() != length) {
+        if (other == null
+                || other.length() != length
+                || other instanceof RichText otherRichText && otherRichText.textHash() != textHash()) {
             return false;
         }
 
