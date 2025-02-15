@@ -342,7 +342,7 @@ public final class RichText
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (!(obj instanceof RichText other)) {
+        if (!(obj instanceof RichText other) || other.hashCode() != hashCode() || other.length != length) {
             return false;
         }
         return equals(other, Run::equals);
@@ -357,7 +357,7 @@ public final class RichText
      * runs using the supplied predicate
      */
     public boolean equals(@Nullable RichText other, BiPredicate<? super Run, ? super Run> runEquals) {
-        if (other == null || other.length != length || other.textHash() != textHash()) {
+        if (other == null || other.length != length) {
             return false;
         }
 
@@ -452,12 +452,13 @@ public final class RichText
     }
 
     private int textHash() {
-        int h = textHash;
+        int h = hash;
         if (h == 0 && length > 0) {
-            for (Run r : run) {
-                h = 17 * h + r.hashCode();
+            for (int i = 0; i < length; i++) {
+                //noinspection CharUsedInArithmeticContext - by design
+                h = 31 * h + text.charAt(start + i);
             }
-            textHash = h;
+            hash = h;
         }
         return h;
     }
@@ -468,9 +469,9 @@ public final class RichText
         int h = hash;
         if (h == 0 && length > 0) {
             for (Run r : run) {
-                h = 17 * h + r.hashCode();
+                h = 17 * h + r.attributes().hashCode();
             }
-            hash = h;
+            hash = h += textHash();
         }
         return h;
     }
