@@ -316,8 +316,8 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         Bounds viewportBounds = scrollPane.getViewportBounds();
 
-        double tx = Math.clamp(0.0, 1.0, relativeXinVP) * viewportBounds.getWidth();
-        double ty = Math.clamp(0.0, 1.0, relativeYinVP) * viewportBounds.getHeight();
+        double tx = Math.clamp(relativeXinVP, 0.0, 1.0) * viewportBounds.getWidth();
+        double ty = Math.clamp(relativeYinVP, 0.0, 1.0) * viewportBounds.getHeight();
         double sx = calcScrollPosition(x - tx, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth());
         double sy = calcScrollPosition(y - ty, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight());
 
