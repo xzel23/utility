@@ -3,7 +3,6 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.FxRefresh;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.MathUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ListChangeListener;
@@ -317,8 +316,8 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         Bounds viewportBounds = scrollPane.getViewportBounds();
 
-        double tx = MathUtil.clamp(0.0, 1.0, relativeXinVP) * viewportBounds.getWidth();
-        double ty = MathUtil.clamp(0.0, 1.0, relativeYinVP) * viewportBounds.getHeight();
+        double tx = Math.clamp(0.0, 1.0, relativeXinVP) * viewportBounds.getWidth();
+        double ty = Math.clamp(0.0, 1.0, relativeYinVP) * viewportBounds.getHeight();
         double sx = calcScrollPosition(x - tx, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth());
         double sy = calcScrollPosition(y - ty, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight());
 

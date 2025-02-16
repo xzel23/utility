@@ -25,7 +25,7 @@ Source code is available at https://github.com/xzel23/utility.
 
 ## Requirements
 
-- JDK 17 or later
+- JDK 17 or later, JDK 21 or later for JavaFX related modules
 
 ## Including the library
 
@@ -170,8 +170,9 @@ the parameter.
 
 ## Changes
 
-### 16.0.2
+### 16.1
 
+- Java 21 is required for compilation and JavaFX related modules; all other modules require Java 17+.
 - deprecated the MathUtil.clamp() methods as Math.clamp() was added to the JDK.
   These methods will be removed once the base JDK changes to 21.
 - add a SystemInfo record to retrieve system information; run the DialogSample class and show details 

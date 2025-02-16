@@ -238,30 +238,26 @@ public class FxGraphics implements Graphics {
 
     private void path(Path2f path) {
         path.segments().forEach(segment -> {
-            if (segment instanceof MoveTo2f s) {
-                gc.moveTo(s.end().x(), s.end().y());
-            } else if (segment instanceof Line2f s) {
-                gc.lineTo(s.end().x(), s.end().y());
-            } else if (segment instanceof Curve2f s) {
-                int n = s.numberOfControls();
-                switch (n) {
-                    case 3 -> gc.quadraticCurveTo(
-                            s.control(1).x(), s.control(1).y(),
-                            s.control(2).x(), s.control(2).y()
-                    );
-                    case 4 -> gc.bezierCurveTo(
-                            s.control(1).x(), s.control(1).y(),
-                            s.control(2).x(), s.control(2).y(),
-                            s.control(3).x(), s.control(3).y()
-                    );
-                    default -> throw new IllegalArgumentException("Unsupported number of control points: " + n);
+            switch (segment) {
+                case MoveTo2f s -> gc.moveTo(s.end().x(), s.end().y());
+                case Line2f s -> gc.lineTo(s.end().x(), s.end().y());
+                case Curve2f s -> {
+                    switch (s.numberOfControls()) {
+                        case 3 -> gc.quadraticCurveTo(
+                                s.control(1).x(), s.control(1).y(),
+                                s.control(2).x(), s.control(2).y()
+                        );
+                        case 4 -> gc.bezierCurveTo(
+                                s.control(1).x(), s.control(1).y(),
+                                s.control(2).x(), s.control(2).y(),
+                                s.control(3).x(), s.control(3).y()
+                        );
+                        default -> throw new IllegalArgumentException("Unsupported number of control points: " + s.numberOfControls());
+                    }
                 }
-            } else if (segment instanceof Arc2f s) {
-                Graphics.approximateArc(s, this::moveTo, this::generateBezierSegment);
-            } else if (segment instanceof ClosePath2f c) {
-                gc.closePath();
-            } else {
-                throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+                case Arc2f s -> Graphics.approximateArc(s, this::moveTo, this::generateBezierSegment);
+                case ClosePath2f s  -> gc.closePath();
+                default -> throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
             }
         });
     }

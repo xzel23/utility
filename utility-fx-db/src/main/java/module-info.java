@@ -33,10 +33,11 @@ import org.jspecify.annotations.NullMarked;
 open module com.dua3.utility.fx.db {
     exports com.dua3.utility.fx.db;
 
-    requires org.jspecify;
     requires com.dua3.utility.db;
     requires com.dua3.utility.fx;
+    requires java.sql;
     requires javafx.controls;
     requires javafx.graphics;
     requires org.apache.logging.log4j;
+    requires org.jspecify;
 }

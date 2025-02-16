@@ -258,15 +258,18 @@ public final class WebViews {
     ) implements EventDispatcher {
         @Override
         public Event dispatchEvent(Event event, EventDispatchChain tail) {
-            if (event instanceof KeyEvent keyEvent) {
-                if (filterKey.test(keyEvent)) {
-                    keyEvent.consume();
+            switch (event) {
+                case KeyEvent keyEvent -> {
+                    if (filterKey.test(keyEvent)) {
+                        keyEvent.consume();
+                    }
                 }
-            }
-            if (event instanceof MouseEvent mouseEvent) {
-                if (filterMouse.test(mouseEvent)) {
-                    event.consume();
+                case MouseEvent mouseEvent -> {
+                    if (filterMouse.test(mouseEvent)) {
+                        event.consume();
+                    }
                 }
+                default -> {}
             }
             return originalDispatcher.dispatchEvent(event, tail);
         }

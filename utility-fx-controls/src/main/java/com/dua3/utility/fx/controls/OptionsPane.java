@@ -132,24 +132,30 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     @SuppressWarnings("unchecked")
     private <T> InputControl<T> createControl(Arguments values, Option<T> option) {
-        if (option instanceof ChoiceOption<T> co) {
-            return new ChoiceInputControl<>(co, supplyDefault(co, values));
-        } else if (option instanceof Flag f) {
-            CheckBox checkBox = new CheckBox(f.displayName());
-            return (InputControl<T>) new SimpleInputControl<>(checkBox, checkBox.selectedProperty(), supplyDefault(f, values), nopValidator());
-        } else if (option instanceof SimpleOption<T> so) {
-            StringConverter<T> converter = new StringConverter<>() {
-                @Override
-                public String toString(T v) {
-                    return option.format(v);
-                }
+        switch (option) {
+            case ChoiceOption<T> co -> {
+                return new ChoiceInputControl<>(co, supplyDefault(co, values));
+            }
+            case Flag f -> {
+                CheckBox checkBox = new CheckBox(f.displayName());
+                return (InputControl<T>) new SimpleInputControl<>(checkBox, checkBox.selectedProperty(), supplyDefault(f, values), nopValidator());
+            }
+            case SimpleOption<T> so -> {
+                StringConverter<T> converter = new StringConverter<>() {
+                    @Override
+                    public String toString(T v) {
+                        return option.format(v);
+                    }
 
-                @Override
-                public T fromString(String s) {
-                    return option.map(s);
-                }
-            };
-            return InputControl.stringInput(supplyDefault(so, values), nopValidator(), converter);
+                    @Override
+                    public T fromString(String s) {
+                        return option.map(s);
+                    }
+                };
+                return InputControl.stringInput(supplyDefault(so, values), nopValidator(), converter);
+            }
+            case null, default -> {
+            }
         }
 
         throw new UnsupportedOperationException("unsupported input type: " + option.getClass().getName());
@@ -157,16 +163,12 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> T getValue(Option<T> option, Arguments values) {
-        if (option instanceof Flag flag) {
-            return (T) (Object) values.isSet(flag);
-        }
-        if (option instanceof SimpleOption so) {
-            return (T) values.get(so).orElse(so.getDefault());
-        }
-        if (option instanceof ChoiceOption co) {
-            return (T) values.get(co).orElse(co.getDefault());
-        }
-        throw new IllegalArgumentException("Unknown option type: " + option);
+        return switch (option) {
+            case Flag flag -> (T) (Object) values.isSet(flag);
+            case SimpleOption so -> (T) values.get(so).orElse(so.getDefault());
+            case ChoiceOption co -> (T) values.get(co).orElse(co.getDefault());
+            case null, default -> throw new IllegalArgumentException("Unknown option type: " + option);
+        };
     }
 
     private static <T> Function<T, Optional<String>> nopValidator() {

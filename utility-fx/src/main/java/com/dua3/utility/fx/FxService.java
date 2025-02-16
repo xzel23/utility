@@ -28,6 +28,13 @@ public abstract class FxService<T> extends Service<T> {
         return task;
     }
 
+    /**
+     * Creates and returns a custom task to be executed by the FxService.
+     * This method must be implemented by subclasses to define the specific behavior
+     * and logic of the task being performed by the service.
+     *
+     * @return a Task instance of type T representing the operation to be performed
+     */
     protected abstract Task<T> doCreateTask();
 
     private void updateTaskProgress(Task<T> task, double arg) {

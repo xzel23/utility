@@ -4,7 +4,15 @@ plugins {
     id("application")
 }
 
-// set main
+java {
+    toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
+    withJavadocJar()
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 application {
     mainClass.set("com.dua3.utility.samples.graphics.FxGraphicsSample")
 }
