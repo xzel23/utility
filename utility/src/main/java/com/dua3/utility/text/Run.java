@@ -123,7 +123,7 @@ public final class Run implements AttributedCharSequence {
     }
 
     /**
-     * Get style of this Run.
+     * Get the style of this Run.
      *
      * @return style of this Run
      */

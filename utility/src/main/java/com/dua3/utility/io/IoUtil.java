@@ -58,7 +58,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * Utility class for Input/Output.
  */
-@SuppressWarnings({"MagicCharacter", "LoggingSimilarMessage"})
+@SuppressWarnings({"MagicCharacter"})
 public final class IoUtil {
 
     private static final Logger LOG = LogManager.getLogger(IoUtil.class);

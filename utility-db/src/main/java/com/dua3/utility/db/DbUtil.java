@@ -183,6 +183,7 @@ public final class DbUtil {
      * @return LocalTime instance or {@code null}
      * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
+    @SuppressWarnings("ChainOfInstanceofChecks")
     public static @Nullable LocalTime toLocalTime(@Nullable Object item) {
         if (item == null) {
             return null;

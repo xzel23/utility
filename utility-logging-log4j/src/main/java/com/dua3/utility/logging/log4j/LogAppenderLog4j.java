@@ -156,11 +156,6 @@ public class LogAppenderLog4j extends AbstractAppender {
         }
     }
 
-    @Override
-    public void start() {
-        super.start();
-    }
-
     /**
      * Returns the LogEntryDispatcher associated with the LogAppenderLog4j instance.
      *

@@ -9,6 +9,9 @@ import java.util.stream.Stream;
 /**
  * Represents the result of a validation process performed on a Control.
  * Contains information about the control being validated, the level of validation result, and an optional message.
+ * @param control the control the result belongs to
+ * @param level the {@code Level}
+ * @param message the message
  */
 public record ValidationResult(Control control, Level level, String message) {
     /**
