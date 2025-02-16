@@ -178,6 +178,7 @@ the parameter.
 - add a SystemInfo record to retrieve system information; run the DialogSample class and show details 
   in the About dialog of the application for example output
 - add Graphics.transform()
+- RichText: Fixes and performance improvements
 
 ### 16.0.1
 
