@@ -20,19 +20,19 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          wget https://download.bell-sw.com/java/17.0.6+10/bellsoft-jdk17.0.6+10-linux-amd64-full.deb
-          sudo apt-get install -y ./bellsoft-jdk17.0.6+10-linux-amd64-full.deb
-          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java17-full-amd64/bin/java 1
-          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java17-full-amd64/bin/javac 1
-          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java17-full-amd64" >> $GITHUB_ENV
-          echo "/usr/lib/jvm/bellsoft-java17-full-amd64/bin" >> $GITHUB_PATH
+          wget https://download.bell-sw.com/java/21.0.6+10/bellsoft-jdk21.0.6+10-linux-amd64-full.deb
+          sudo apt-get install -y ./bellsoft-jdk21.0.6+10-linux-amd64-full.deb
+          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java21-full-amd64/bin/java 1
+          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java21-full-amd64/bin/javac 1
+          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64" >> $GITHUB_ENV
+          echo "/usr/lib/jvm/bellsoft-java21-full-amd64/bin" >> $GITHUB_PATH
 
       - name: Set up BellSoft Liberica Full JDK on Windows
         if: runner.os == 'Windows'
         run: |
-          $jdkPath = 'C:\Program Files\BellSoft\LibericaJDK-17'
-          Invoke-WebRequest -Uri "https://download.bell-sw.com/java/17.0.6+10/bellsoft-jdk17.0.6+10-windows-amd64-full.zip" -OutFile "bellsoft-jdk-17-windows-amd64-full.zip"
-          Expand-Archive -Path "bellsoft-jdk-17-windows-amd64-full.zip" -DestinationPath $jdkPath
+          $jdkPath = 'C:\Program Files\BellSoft\LibericaJDK-21'
+          Invoke-WebRequest -Uri "https://download.bell-sw.com/java/21.0.6+10/bellsoft-jdk21.0.6+10-windows-amd64-full.zip" -OutFile "bellsoft-jdk-21-windows-amd64-full.zip"
+          Expand-Archive -Path "bellsoft-jdk-21-windows-amd64-full.zip" -DestinationPath $jdkPath
           
           # Move extracted contents to the correct location
           $extractedFolder = Get-ChildItem -Path $jdkPath -Directory | Select-Object -First 1
@@ -64,12 +64,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          wget https://download.bell-sw.com/java/17.0.6+10/bellsoft-jdk17.0.6+10-linux-amd64-full.deb
-          sudo apt-get install -y ./bellsoft-jdk17.0.6+10-linux-amd64-full.deb
-          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java17-full-amd64/bin/java 1
-          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java17-full-amd64/bin/javac 1
-          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java17-full-amd64" >> $GITHUB_ENV
-          echo "/usr/lib/jvm/bellsoft-java17-full-amd64/bin" >> $GITHUB_PATH
+          wget https://download.bell-sw.com/java/21.0.6+10/bellsoft-jdk21.0.6+10-linux-amd64-full.deb
+          sudo apt-get install -y ./bellsoft-jdk21.0.6+10-linux-amd64-full.deb
+          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java21-full-amd64/bin/java 1
+          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java21-full-amd64/bin/javac 1
+          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64" >> $GITHUB_ENV
+          echo "/usr/lib/jvm/bellsoft-java21-full-amd64/bin" >> $GITHUB_PATH
 
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.1
