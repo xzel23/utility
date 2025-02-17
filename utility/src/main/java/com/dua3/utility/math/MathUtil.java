@@ -38,7 +38,7 @@ public final class MathUtil {
      * <li>max, if arg &gt; max
      * <li>else arg
      * </ul>
-     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead. Note that the order of arguments differs!
      */
     @Deprecated
     public static int clamp(int min, int max, int arg) {
@@ -57,7 +57,7 @@ public final class MathUtil {
      * <li>max, if arg &gt; max
      * <li>else arg
      * </ul>
-     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead. Note that the order of arguments differs!
      */
     @Deprecated
     public static long clamp(long min, long max, long arg) {
@@ -76,7 +76,7 @@ public final class MathUtil {
      * <li>max, if arg &gt; max
      * <li>else arg
      * </ul>
-     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead. Note that the order of arguments differs!
      */
     @Deprecated
     public static double clamp(double min, double max, double arg) {
@@ -95,7 +95,7 @@ public final class MathUtil {
      * <li>max, if arg &gt; max
      * <li>else arg
      * </ul>
-     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead. Note that the order of arguments differs!
      */
     @Deprecated
     public static float clamp(float min, float max, float arg) {
@@ -116,7 +116,7 @@ public final class MathUtil {
      * <li>valueIfNaN, if arg is NaN
      * <li>else arg
      * </ul>
-     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead. Note that the order of arguments differs!
      */
     @Deprecated
     public static double clamp(double min, double max, double arg, double valueIfNaN) {
@@ -136,7 +136,7 @@ public final class MathUtil {
      * <li>valueIfNaN, if arg is NaN
      * <li>else arg
      * </ul>
-     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead.
+     * @deprecated for Java 21 and later, use {@code Math.clamp()} instead. Note that the order of arguments differs!
      */
     @Deprecated
     public static float clamp(float min, float max, float arg, float valueIfNaN) {

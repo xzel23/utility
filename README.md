@@ -170,6 +170,10 @@ the parameter.
 
 ## Changes
 
+### 16.1.1
+
+- FIX: use correct argument order for Math.clamp in PinBoardSkin
+
 ### 16.1
 
 - Java 21 is required for compilation and JavaFX related modules; all other modules require Java 17+.
