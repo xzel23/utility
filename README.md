@@ -170,6 +170,11 @@ the parameter.
 
 ## Changes
 
+### 16.1.2
+
+- add classes CompressedBytes and CompressedCharacters
+- IOUtil.getInputStream() supports getting an InputStream from a Reader
+
 ### 16.1.1
 
 - FIX: use correct argument order for Math.clamp in PinBoardSkin

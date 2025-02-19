@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -21,7 +23,8 @@ final class StreamSupplier<V extends @Nullable Object> {
             def(URI.class, v -> IoUtil.toURL(v).openStream(), v -> Files.newOutputStream(IoUtil.toPath(v))),
             def(URL.class, URL::openStream, v -> Files.newOutputStream(IoUtil.toPath(v))),
             def(Path.class, Files::newInputStream, Files::newOutputStream),
-            def(File.class, v -> Files.newInputStream(v.toPath()), v -> Files.newOutputStream(v.toPath()))
+            def(File.class, v -> Files.newInputStream(v.toPath()), v -> Files.newOutputStream(v.toPath())),
+            def(Reader.class, StreamSupplier::readerToInputStream, StreamSupplier::outputUnsupported)
     );
     private final Class<V> clazz;
     private final InputStreamSupplier<V> iss;
@@ -43,6 +46,26 @@ final class StreamSupplier<V extends @Nullable Object> {
 
     private static <V> StreamSupplier<V> def(Class<V> clazz, InputStreamSupplier<V> iss, OutputStreamSupplier<V> oss) {
         return new StreamSupplier<>(clazz, iss, oss);
+    }
+
+    private static InputStream readerToInputStream(Reader reader) {
+        return new InputStream() {
+            private byte[] buffer = new byte[0];
+            private int bufferPos = 0;
+
+            @Override
+            public int read() throws IOException {
+                if (bufferPos >= buffer.length) {
+                    int character = reader.read();
+                    if (character == -1) {
+                        return -1;
+                    }
+                    buffer = String.valueOf((char) character).getBytes(StandardCharsets.UTF_8);
+                    bufferPos = 0;
+                }
+                return buffer[bufferPos++] & 0xFF;
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
