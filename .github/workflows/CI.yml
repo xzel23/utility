@@ -72,6 +72,6 @@ jobs:
           echo "/usr/lib/jvm/bellsoft-java21-full-amd64/bin" >> $GITHUB_PATH
 
       - name: 'Qodana Scan'
-        uses: JetBrains/qodana-action@v2024.1
+        uses: JetBrains/qodana-action@v2024.3.4
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
