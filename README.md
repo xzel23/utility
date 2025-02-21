@@ -170,6 +170,10 @@ the parameter.
 
 ## Changes
 
+### 16.1.3
+
+- CompressedCharacters.inputStream()
+
 ### 16.1.2
 
 - add classes CompressedBytes and CompressedCharacters

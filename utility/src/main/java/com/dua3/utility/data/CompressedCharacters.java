@@ -3,6 +3,7 @@ package com.dua3.utility.data;
 import com.dua3.utility.io.IoUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
@@ -80,5 +81,14 @@ public class CompressedCharacters {
      */
     public Reader toReader() {
         return new InputStreamReader(data.inputStream(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Converts the compressed character representation into an {@link InputStream}.
+     *
+     * @return an {@link InputStream} that provides the stream of bytes using the UTF-8 encoding
+     */
+    public InputStream inputStream() {
+        return data.inputStream();
     }
 }
