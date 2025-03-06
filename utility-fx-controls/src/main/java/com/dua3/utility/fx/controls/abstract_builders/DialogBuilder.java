@@ -37,6 +37,11 @@ public abstract class DialogBuilder<D extends @NonNull Dialog<R>, B extends @Non
     private final @Nullable Window parentWindow;
     private @Nullable String title;
 
+    /**
+     * Constructs a DialogBuilder with an optional parent window.
+     *
+     * @param parentWindow the parent window for the dialog, or {@code null} if no parent is specified
+     */
     protected DialogBuilder(@Nullable Window parentWindow) {
         super(Dialog::setHeaderText);
         this.parentWindow = parentWindow;

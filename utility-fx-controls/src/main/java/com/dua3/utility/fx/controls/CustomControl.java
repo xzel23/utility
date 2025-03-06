@@ -11,6 +11,11 @@ import javafx.scene.layout.Pane;
  */
 public class CustomControl<C extends Pane> extends Control {
 
+    /**
+     * The container holding child controls for the custom control.
+     * This is the root Node of the control hierarchy and provides layout capabilities
+     * and other properties inherited from its type.
+     */
     protected final C container;
 
     /**

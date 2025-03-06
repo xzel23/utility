@@ -23,6 +23,14 @@ public class SimpleInputControl<C extends Control, R extends @Nullable Object> i
     private final State<R> state;
     private final Supplier<? extends R> dflt;
 
+    /**
+     * Constructs a SimpleInputControl instance for managing an input control element and its state.
+     *
+     * @param control the control element of type C to be managed
+     * @param value the property representing the value held by the input control
+     * @param dflt a supplier that provides the default value for the control's state
+     * @param validate a function that validates the value and returns an optional error message
+     */
     protected SimpleInputControl(C control, Property<R> value, Supplier<? extends R> dflt, Function<R, Optional<String>> validate) {
         this.control = control;
         this.state = new State<>(value, dflt, validate);

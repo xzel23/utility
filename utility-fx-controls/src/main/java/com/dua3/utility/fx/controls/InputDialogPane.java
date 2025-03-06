@@ -31,8 +31,26 @@ import java.util.function.Supplier;
 public abstract class InputDialogPane<R> extends DialogPane implements Supplier<@Nullable R> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(InputDialogPane.class);
 
+    /**
+     * Represents a property that indicates whether the current state of the input dialog pane is valid.
+     * This property is used to enable or disable functionality (such as buttons) depending on the
+     * validation state of the input. It is initialized to {@code false} by default and can be updated
+     * based on the implementation's specific validation logic.
+     */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
 
+    /**
+     * Represents the definition of a button in an {@link InputDialogPane}.
+     * This class encapsulates the details required to configure a button,
+     * including its type, associated action, result handler, and enablement state.
+     *
+     * @param <R> the result type associated with the dialog
+     *
+     * @param type          the {@code ButtonType} representing the type of the button
+     * @param resultHandler a {@link DialogPaneBuilder.ResultHandler} to handle the result when the button is pressed
+     * @param action        a {@link Consumer} that specifies the action to be executed when the button is clicked
+     * @param enabled       a {@link BooleanExpression} indicating whether the button is enabled or disabled
+     */
     public record ButtonDef<R>(
             ButtonType type,
             DialogPaneBuilder.ResultHandler<R> resultHandler,
@@ -40,6 +58,17 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
             BooleanExpression enabled
     ) {}
 
+    /**
+     * A collection of button definitions used to configure actions and behavior
+     * within an {@link InputDialogPane}. Each item in this list represents a
+     * {@link ButtonDef} instance that specifies the type, action, result handling,
+     * and enablement state for a button.
+     *
+     * <p>This list is initialized as an empty {@link ArrayList} and is typically
+     * populated by invoking methods that define the buttons for the dialog pane.
+     * The order of buttons in this list reflects their intended arrangement
+     * within the dialog.
+     */
     protected final List<ButtonDef<? super R>> buttons = new ArrayList<>();
 
     /**
@@ -62,6 +91,19 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         return valid;
     }
 
+    /**
+     * Adds a button to the dialog pane with specified type, result handler, action,
+     * and enablement state. The button is configured to handle actions, execute
+     * specified logic, and optionally bind its enablement state to a BooleanExpression.
+     *
+     * @param type          the type of the button to add
+     * @param resultHandler an optional result handler to process the action associated
+     *                      with the button; can be null
+     * @param action        a consumer that performs an action on the InputDialogPane
+     *                      when the button is triggered
+     * @param enabled       an optional BooleanExpression that determines if the button
+     *                      should be enabled or disabled dynamically; can be null
+     */
     public void addButton(
             ButtonType type,
             DialogPaneBuilder.@Nullable ResultHandler<R> resultHandler,

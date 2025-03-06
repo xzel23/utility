@@ -41,6 +41,16 @@ public class InputGrid extends GridPane {
     private static final String MARKER_ERROR = "⚠";
     private static final String MARKER_OK = "";
 
+    /**
+     * A {@link BooleanProperty} representing the overall validity state of the input grid.
+     *
+     * <p>This field tracks whether the entire grid's input is valid. It is bound to the validity
+     * states of individual input controls within the grid. Updates to any control's state
+     * will be reflected in this property.
+     *
+     * <p>The initial value is {@code false}, indicating that the input grid is invalid until
+     * explicitly validated.
+     */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
     private Collection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;

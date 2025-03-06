@@ -30,7 +30,8 @@ import java.util.function.Function;
  */
 public class RadioPane<T> extends VBox implements InputControl<T> {
 
-    protected static final Logger LOG = LogManager.getLogger(RadioPane.class);
+    private static final Logger LOG = LogManager.getLogger(RadioPane.class);
+
     private static final double SPACING = 4;
     private final LinkedHashMap<T, RadioButton> items = new LinkedHashMap<>();
     private final ToggleGroup group;

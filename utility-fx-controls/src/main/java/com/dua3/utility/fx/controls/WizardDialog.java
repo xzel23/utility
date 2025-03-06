@@ -204,7 +204,12 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
     }
 
     /**
-     * Wizard page information class.
+     * Represents a single page within the wizard dialog. Each page consists of an input dialog pane
+     * and a result handler to process its content. Pages can also define a navigation flow by
+     * specifying the next page to proceed to.
+     *
+     * @param <D> the type of the input dialog pane used in the page, extending {@link InputDialogPane}
+     * @param <R> the result type produced by the input dialog pane
      */
     public static class Page<D extends InputDialogPane<R>, R> {
         private final D pane;
@@ -234,6 +239,18 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
             return pane;
         }
 
+        /**
+         * Adds a button to the current page of the wizard dialog. This method delegates
+         * the button creation and configuration to the underlying input dialog pane,
+         * associating the button with a specific type, an action to execute, and an
+         * optional enablement state.
+         *
+         * @param type    the type of the button to add, specifying its purpose and behavior
+         * @param action  a consumer that performs an action on the {@code InputDialogPane}
+         *                when the button is triggered
+         * @param enabled an optional {@code BooleanExpression} that determines whether the
+         *                button is enabled or disabled dynamically; can be null
+         */
         public void addButton(ButtonType type, Consumer<InputDialogPane<R>> action, @Nullable BooleanExpression enabled) {
             pane.addButton(type, resultHandler, action, enabled);
         }

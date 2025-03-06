@@ -24,6 +24,8 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
 
     /**
      * Constructs a new instance of the ControlBuilder class using the specified factory.
+     *
+     * @param text the text
      */
     protected TextBuilder(String text) {
         super(Text::new);
@@ -32,6 +34,8 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
 
     /**
      * Constructs a new instance of the ControlBuilder class using the specified factory.
+     *
+     * @param text the text
      */
     protected TextBuilder(ObservableValue<String> text) {
         super(Text::new);

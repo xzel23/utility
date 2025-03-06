@@ -37,6 +37,11 @@ import java.util.function.Supplier;
  */
 public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>, R> {
 
+    /**
+     * A constant that represents a boolean expression which always evaluates to true.
+     * This can be used in scenarios where an always-true condition is required,
+     * commonly for default or unconditional bindings in JavaFX applications.
+     */
     public static final BooleanExpression ALWAYS_TRUE = new ReadOnlyBooleanWrapper(true);
 
     private final BiConsumer<? super D, ? super String> headerSetter;
@@ -45,6 +50,13 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
     private ResultHandler<R> resultHandler = (b, r) -> true;
     private final List<InputDialogPane.ButtonDef<R>> buttons = new ArrayList<>();
 
+    /**
+     * Constructs an instance of DialogPaneBuilder with the specified header setter.
+     * The header setter is used to configure the header text of the dialog.
+     *
+     * @param headerSetter a {@code BiConsumer} used to set the header text for the dialog.
+     *                     The first parameter is the dialog instance, and the second parameter is the header text.
+     */
     protected DialogPaneBuilder(
             BiConsumer<? super D, ? super String> headerSetter
     ) {
@@ -52,6 +64,13 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
         this.headerSetter = headerSetter;
     }
 
+    /**
+     * Sets the supplier that provides instances of the dialog type.
+     * The supplied {@link Supplier} is responsible for creating specific instances of the dialog
+     * whenever required by this dialog pane builder.
+     *
+     * @param dialogSupplier the supplier that provides instances of the dialog type {@code D}
+     */
     protected final void setDialogSupplier(Supplier<? extends D> dialogSupplier) {
         this.dialogSupplier = dialogSupplier;
     }
@@ -69,6 +88,17 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
         return dlg;
     }
 
+    /**
+     * Applies the given {@link BiConsumer} to the specified inputs if both inputs are non-null.
+     * This utility method ensures that the consumer is only executed when both provided arguments
+     * are non-null, avoiding potential {@code NullPointerException}.
+     *
+     * @param <C>      the type of the first input
+     * @param <D>      the type of the second input
+     * @param consumer the {@link BiConsumer} to execute if both inputs are non-null
+     * @param a        the first input, may be null
+     * @param b        the second input, may be null
+     */
     protected static <C, D> void applyIfNotNull(BiConsumer<C, D> consumer, @Nullable C a, @Nullable D b) {
         if (a != null && b != null) {
             consumer.accept(a, b);

@@ -16,6 +16,9 @@ public abstract class FxService<T> extends Service<T> {
 
     private final List<FxTaskTracker> taskTrackers = new ArrayList<>();
 
+    /**
+     * Constructs an instance of FxService.
+     */
     protected FxService() {
     }
 

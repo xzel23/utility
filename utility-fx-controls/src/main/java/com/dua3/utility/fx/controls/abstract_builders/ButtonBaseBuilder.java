@@ -10,6 +10,13 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
+/**
+ * An abstract base builder class for creating instances of ButtonBase subclasses.
+ * Provides a fluent API for configuring properties such as actions and bindings for the button.
+ *
+ * @param <B>  the type of ButtonBase subclass to build
+ * @param <BB> the type of the builder subclass
+ */
 public abstract class ButtonBaseBuilder<B extends ButtonBase, BB extends ButtonBaseBuilder<B, BB>> extends LabeledBuilder<B, BB> {
     private @Nullable ObservableValue<EventHandler<ActionEvent>> action;
 

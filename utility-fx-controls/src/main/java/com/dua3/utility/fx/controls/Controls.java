@@ -271,6 +271,7 @@ public final class Controls {
 
     /**
      * Get TextFieldBuilder for creating a TextField.
+     * @param locale the locale to use
      * @return TextFieldBuilder instance
      */
     public static TextFieldBuilder textField(Locale locale) {
@@ -419,8 +420,9 @@ public final class Controls {
     /**
      * Create new {@link CheckMenuItem}.
      *
-     * @param text    the text to show
-     * @param action  the action to perform when the menu item is invoked
+     * @param text      the text to show
+     * @param action    the action to perform when the menu item is invoked
+     * @param selected  flag indicating the selected state
      * @return new menu item
      */
     public static CheckMenuItem checkMenuItem(String text, Consumer<Boolean> action, boolean selected) {
@@ -433,6 +435,7 @@ public final class Controls {
      * @param text    the text to show
      * @param graphic the graphic to show before the text
      * @param action  the action to perform when the menu item is invoked
+     * @param selected  flag indicating the selected state
      * @return new menu item
      */
     public static CheckMenuItem checkMenuItem(@Nullable String text, @Nullable Node graphic, Consumer<Boolean> action, boolean selected) {
@@ -540,6 +543,7 @@ public final class Controls {
     /**
      * Creates and returns a new instance of TextBuilder.
      *
+     * @param text the text
      * @return a new instance of TextBuilder.
      */
     public static TextBuilder text(String text) {
@@ -549,6 +553,7 @@ public final class Controls {
     /**
      * Creates and returns a new instance of TextBuilder.
      *
+     * @param text the text
      * @return a new instance of TextBuilder.
      */
     public static TextBuilder text(ObservableValue<String> text) {
@@ -558,6 +563,7 @@ public final class Controls {
     /**
      * Creates and returns a new instance of LabelBuilder.
      *
+     * @param text the text
      * @return a new instance of LabelBuilder.
      */
     public static LabelBuilder label(String text) {
@@ -567,6 +573,7 @@ public final class Controls {
     /**
      * Creates and returns a new instance of LabelBuilder.
      *
+     * @param text the text
      * @return a new instance of LabelBuilder.
      */
     public static LabelBuilder label(ObservableValue<String> text) {
@@ -594,6 +601,12 @@ public final class Controls {
         }
     }
 
+    /**
+     * Creates a Background object based on the given Color.
+     *
+     * @param color the Color to be used for the Background
+     * @return a new Background object with the specified Color
+     */
     public static Background background(Color color) {
         return new Background(new BackgroundFill(FxUtil.convert(color), null, null));
     }

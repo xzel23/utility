@@ -22,6 +22,8 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
 
     /**
      * Constructs a new instance of the ControlBuilder class using the specified factory.
+     *
+     * @param text the label text
      */
     protected LabelBuilder(String text) {
         super(Label::new);
@@ -30,6 +32,8 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
 
     /**
      * Constructs a new instance of the ControlBuilder class using the specified factory.
+     *
+     * @param text the label text
      */
     protected LabelBuilder(ObservableValue<String> text) {
         super(Label::new);
