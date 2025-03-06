@@ -172,7 +172,9 @@ the parameter.
 
 ### 16.1.3
 
+- declare I18N.mergeBundle() public
 - CompressedCharacters.inputStream()
+- documentation fixes and additions
 
 ### 16.1.2
 
