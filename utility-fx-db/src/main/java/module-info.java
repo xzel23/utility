@@ -26,7 +26,7 @@ import org.jspecify.annotations.NullMarked;
  *   <li>Requires the module {@code org.apache.logging.log4j} for logging purposes.</li>
  *   <li>Requires the module {@code javafx.controls} for JavaFX controls.</li>
  *   <li>Requires the module {@code javafx.graphics} for JavaFX graphics.</li>
- *   <li>Requires the module {@code com.dua3.cabe.annotations} for the custom annotations used in this module.</li>
+ *   <li>Requires the module {@code org.jspecify} for the annotations used in this module.</li>
  * </ul>
  */
 @NullMarked

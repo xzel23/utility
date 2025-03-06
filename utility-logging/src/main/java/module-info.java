@@ -9,9 +9,9 @@ import org.jspecify.annotations.NullMarked;
  * The com.dua3.utility.logging module is responsible for providing utilities related to logging.
  * It exports the com.dua3.utility.logging package which contains classes and interfaces related to logging.
  * <p>
- * The module requires the com.dua3.cabe.annotations package at compile time.
+ * The module requires the org.jspecify module for annotations.
  * <p>
- * It uses the com.dua3.utility.logging.ILogEntryDispatcherFactory service to obtain an instance of the
+ * It uses the com.dua3.utility.logging.ILogEntryDispatcherFactory service to get an instance of the
  * LogEntryDispatcher.
  * <p>
  * The module also requires the org.apache.logging.log4j and com.dua3.utility packages at runtime.

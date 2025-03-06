@@ -14,7 +14,7 @@ import org.jspecify.annotations.NullMarked;
  * <li>org.apache.logging.log4j: Required for logging.
  * <li>javafx.controls: Required for JavaFX controls.
  * <li>javafx.graphics: Required for JavaFX graphics.
- * <li>com.dua3.cabe.annotations: Required for annotations.
+ * <li>org.jspecify.annotations: Required for annotations.
  * </ul>
  * <p>
  * This module uses the services provided by IconProvider implementations to offer icons.

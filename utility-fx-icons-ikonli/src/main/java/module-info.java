@@ -18,7 +18,7 @@ import com.dua3.utility.fx.icons.ikonli.IkonliIconProvider;
  * This module also uses the interface org.kordamp.ikonli.IkonHandler and provides an implementation
  * of the com.dua3.fx.icons.IconProvider interface with the class com.dua3.fx.icons.ikonli.IkonliIconProvider.
  * <p>
- * This module has a dependency on the {@code com.dua3.cabe.annotations} module for the use of null check injection
+ * This module has a dependency on the {@code org.jspecify} module for the use of null check injection
  * into the compiled classes.
  */
 @NullMarked

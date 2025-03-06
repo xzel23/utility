@@ -29,7 +29,7 @@ import org.jspecify.annotations.NullMarked;
  * </ul>
  * This module requires the following modules:
  * <ul>
- * <li>requires static com.dua3.cabe.annotations: A static requirement for the com.dua3.cabe.annotations module.
+ * <li>requires org.jspecify: annotations.
  * <li>requires java.xml: A requirement for the java.xml module.
  * <li>requires org.apache.logging.log4j: A requirement for the org.apache.logging.log4j module.
  * </ul>

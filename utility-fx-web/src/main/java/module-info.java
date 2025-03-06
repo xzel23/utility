@@ -19,7 +19,7 @@ import org.jspecify.annotations.NullMarked;
  * <p>
  * This module exports the package {@code com.dua3.fx.web} and opens it for reflection.
  * It requires the modules {@code com.dua3.fx.controls}, {@code javafx.web}, {@code jdk.jsobject},
- * {@code org.apache.logging.log4j}, and {@code com.dua3.cabe.annotations}.
+ * {@code org.apache.logging.log4j}, and {@code org.jspecify}.
  */
 @NullMarked
 open module com.dua3.utility.fx.web {

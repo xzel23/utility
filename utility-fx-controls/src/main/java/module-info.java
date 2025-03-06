@@ -19,7 +19,7 @@ import org.jspecify.annotations.NullMarked;
  * It also requires the {@code com.dua3.utility} module for utility classes, and the {@code java.desktop} module
  * for desktop application development purposes.
  * <p>
- * This module has a dependency on the {@code com.dua3.cabe.annotations} module for the use of null check injection
+ * This module has a dependency on the {@code org.jspecify} module for the use of null check injection
  * into the compiled classes.
  */
 @NullMarked

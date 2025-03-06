@@ -23,7 +23,7 @@ import org.jspecify.annotations.NullMarked;
  *   <li>{@code java.prefs}</li>
  *   <li>{@code javafx.controls}</li>
  *   <li>{@code org.apache.logging.log4j}</li>
- *   <li>{@code com.dua3.cabe.annotations}</li>
+ *   <li>{@code org.jspecify}</li>
  * </ul>
  */
 @NullMarked
