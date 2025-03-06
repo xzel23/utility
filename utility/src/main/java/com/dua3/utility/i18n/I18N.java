@@ -88,6 +88,51 @@ public class I18N {
     }
 
     /**
+     * Creates an instance of the I18N class.
+     *
+     * @param baseName The base name of the resource bundle.
+     * @param locale   The locale to be used for localization.
+     * @return An instance of the I18N class.
+     */
+    public static I18N create(String baseName, Locale locale) {
+        LOG.debug("creating instance for {} with requested locale {}", baseName, locale);
+        ResourceBundle bundle = getResourceBundle(baseName, locale);
+        return new I18N(bundle);
+    }
+
+    /**
+     * Retrieves a ResourceBundle for the given base name and locale. If the requested locale is not available,
+     * logs a message and falls back to the closest matching locale or the default bundle.
+     *
+     * @param baseName The base name of the resource bundle.
+     * @param locale   The requested locale for which the resource bundle is sought.
+     * @return The ResourceBundle corresponding to the given base name and locale.
+     */
+    public static ResourceBundle getResourceBundle(String baseName, Locale locale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
+        Locale bundleLocale = bundle.getLocale();
+        if (!Objects.equals(locale, bundleLocale)) {
+            String bundleLocaleName = String.valueOf(bundleLocale);
+            if (!bundleLocaleName.isEmpty()) {
+                LOG.info("requested locale {} not available, falling back to {}", locale, bundleLocaleName);
+            } else {
+                LOG.warn("requested locale {} not available, falling back to the default bundle", locale);
+            }
+        }
+        return bundle;
+    }
+
+    /**
+     * Creates an instance of the I18N class with the provided resource bundle.
+     *
+     * @param bundle The resource bundle to use.
+     * @return An instance of the I18N class.
+     */
+    public static I18N create(ResourceBundle bundle) {
+        return new I18N(bundle);
+    }
+
+    /**
      * Creates an instance of the I18N class with the provided resource bundle.
      *
      * @param bundle The resource bundle to use.
@@ -98,11 +143,22 @@ public class I18N {
     }
 
     /**
+     * Merges a resource bundle identified by its base name and locale into the internal bundleMap.
+     *
+     * @param baseName The base name of the resource bundle.
+     * @param locale   The locale associated with the resource bundle.
+     */
+    public void mergeBundle(String baseName, Locale locale) {
+        mergeBundle(getResourceBundle(baseName, locale));
+    }
+
+    /**
      * Merges the given resource bundle into the internal bundleMap.
      *
      * @param bundle The resource bundle to merge.
      */
     public void mergeBundle(ResourceBundle bundle) {
+        LOG.debug("merging resource bundle {}", bundle.getBaseBundleName() + "_" + bundle.getLocale());
         Enumeration<String> keys = bundle.getKeys();
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
@@ -150,38 +206,6 @@ public class I18N {
             mergeBundle(newBundle);
             return newBundle;
         }));
-    }
-
-    /**
-     * Creates an instance of the I18N class.
-     *
-     * @param baseName The base name of the resource bundle.
-     * @param locale   The locale to be used for localization.
-     * @return An instance of the I18N class.
-     */
-    public static I18N create(String baseName, Locale locale) {
-        LOG.debug("creating instance for {} with requested locale {}", baseName, locale);
-        ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
-        Locale bundleLocale = bundle.getLocale();
-        if (!Objects.equals(locale, bundleLocale)) {
-            String bundleLocaleName = String.valueOf(bundleLocale);
-            if (!bundleLocaleName.isEmpty()) {
-                LOG.info("requested locale {} not available, falling back to {}", locale, bundleLocaleName);
-            } else {
-                LOG.warn("requested locale {} not available, falling back to the default bundle", locale);
-            }
-        }
-        return new I18N(bundle);
-    }
-
-    /**
-     * Creates an instance of the I18N class with the provided resource bundle.
-     *
-     * @param bundle The resource bundle to use.
-     * @return An instance of the I18N class.
-     */
-    public static I18N create(ResourceBundle bundle) {
-        return new I18N(bundle);
     }
 
     /**
