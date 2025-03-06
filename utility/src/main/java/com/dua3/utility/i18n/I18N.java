@@ -102,7 +102,7 @@ public class I18N {
      *
      * @param bundle The resource bundle to merge.
      */
-    private void mergeBundle(ResourceBundle bundle) {
+    public void mergeBundle(ResourceBundle bundle) {
         Enumeration<String> keys = bundle.getKeys();
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
