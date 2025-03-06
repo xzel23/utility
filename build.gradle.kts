@@ -203,6 +203,7 @@ subprojects {
 
     // === SPOTBUGS ===
     spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
+    spotbugs.toolVersion.set("4.9.2")
 
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
         reports.create("html") {
