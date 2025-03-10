@@ -170,6 +170,11 @@ the parameter.
 
 ## Changes
 
+### 16.1.4
+
+- add namespace related methods to XmlUtil
+- add more XmlUtil unit tests
+
 ### 16.1.3
 
 - declare I18N.mergeBundle() public
