@@ -8,6 +8,7 @@ import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -61,10 +62,14 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -644,12 +649,238 @@ public final class XmlUtil {
         }
     }
 
+    /**
+     * Collects all namespace declarations from the given XML element and its descendants.
+     *
+     * @param element The root XML element for which namespaces need to be collected.
+     * @return A map containing namespace prefixes as keys and their corresponding URIs as values.
+     */
+    public static Map<String, String> collectNamespaces(Element element) {
+        Map<String, String> namespaceMap = new HashMap<>();
+        collectNamespaces(element, namespaceMap);
+        return namespaceMap;
+    }
+
+    /**
+     * Collects namespaces from the specified XML element and its descendants,
+     * adding them to the provided namespace map. This method processes namespace
+     * declarations, attributes with namespaces, and the element's own namespace.
+     *
+     * @param element The XML element from which namespaces are to be collected.
+     * @param namespaceMap A map where the namespaces will be stored. Keys are the
+     *                     namespace URIs, and values are the corresponding prefixes.
+     */
+    private static void collectNamespaces(Element element, Map<String, String> namespaceMap) {
+        // Process this element's namespace
+        String nsUri = element.getNamespaceURI();
+        if (nsUri != null && !nsUri.isEmpty() && !namespaceMap.containsKey(nsUri)) {
+            // Store with original prefix, but we'll normalize later
+            String prefix = element.getPrefix() != null ? element.getPrefix() : "";
+            namespaceMap.put(prefix, nsUri);
+        }
+
+        // Process attributes with namespaces
+        NamedNodeMap attrs = element.getAttributes();
+        for (int i = 0; i < attrs.getLength(); i++) {
+            Node attr = attrs.item(i);
+
+            // Attribute namespace
+            String attrNsUri = attr.getNamespaceURI();
+            if (attrNsUri != null && !attrNsUri.isEmpty() &&
+                    !attrNsUri.equals("http://www.w3.org/2000/xmlns/") &&
+                    !namespaceMap.containsValue(attrNsUri)) {
+                String prefix = attr.getPrefix() != null ? attr.getPrefix() : "";
+                namespaceMap.put(prefix, attrNsUri);
+            }
+
+            // Namespace declarations
+            if (attr.getNodeName().startsWith("xmlns:")) {
+                String uri = attr.getNodeValue();
+                if (!namespaceMap.containsValue(uri)) {
+                    String declaredPrefix = attr.getNodeName().substring(6); // Remove "xmlns:"
+                    namespaceMap.put(declaredPrefix, uri);
+                }
+            } else if (attr.getNodeName().equals("xmlns")) {
+                String uri = attr.getNodeValue();
+                if (!namespaceMap.containsValue(uri)) {
+                    namespaceMap.put("", uri);
+                }
+            }
+        }
+
+        // Process child elements recursively
+        NodeList childNodes = element.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                collectNamespaces((Element) child, namespaceMap);
+            }
+        }
+    }
+
+    /**
+     * A record that encapsulates an XML Document along with its associated NamespaceContext.
+     * This allows management and usage of namespaces within the given XML Document.
+     *
+     * @param document         The XML Document instance being encapsulated.
+     * @param namespaceContext The NamespaceContext associated with the document, enabling
+     *                         resolution of XML namespace prefixes and URIs.
+     */
+    public record DocumentWithNamespace(Document document, NamespaceContext namespaceContext) {
+        public DocumentWithNamespace of(Document document) {
+            return new DocumentWithNamespace(document, new SimpleNamespaceContext(collectNamespaces(document.getDocumentElement())));
+        }
+    }
+
+    /**
+     * Normalizes the namespaces of the given documents by creating a consistent namespace mapping.
+     *
+     * @param documents one or more documents to normalize. Each document should be a valid XML document.
+     *        Documents with null document elements will be skipped in the process.
+     * @return a list of DocumentWithNamespace objects representing the normalized documents with unified namespaces.
+     */
+    public static List<DocumentWithNamespace> normalizeDocumentNameSpaces(Document... documents) {
+        // collect all namespace URIs
+        Set<String> namespaceUris = new HashSet<>();
+        for (Document document : documents) {
+            if (document.getDocumentElement() == null) {
+                continue;
+            }
+            namespaceUris.addAll(collectNamespaces(document.getDocumentElement()).values());
+        }
+
+        // create namespace map
+        Map<String,String> nsMap = new HashMap<>();
+        namespaceUris.forEach(nsUrl -> nsMap.put("ns" + (1 + nsMap.size()), nsUrl));
+        SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext(nsMap);
+
+        // create normalized Documents
+        List<DocumentWithNamespace> normalizedDocuments = new ArrayList<>(documents.length);
+        for (Document doc: documents) {
+            normalizedDocuments.add(normalizeDocument(doc, namespaceContext));
+        }
+
+        return normalizedDocuments;
+    }
+
+    /**
+     * Normalizes a given XML document by ensuring consistent namespace usage and
+     * returns a wrapped document along with its associated namespace context.
+     *
+     * @param doc the original XML document to be normalized
+     * @param namespaceContext the namespace context containing namespace mappings that
+     *                         will be applied during the normalization process
+     * @return a DocumentWithNamespace object containing the normalized document and
+     *         its associated namespace context
+     */
+    private static DocumentWithNamespace normalizeDocument(Document doc, SimpleNamespaceContext namespaceContext) {
+        try {
+            // Create a new document
+            Document newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+
+            // Copy the original document and normalize namespaces
+            Element root = doc.getDocumentElement();
+
+            // Copy with normalized namespaces
+            Element newRoot = copyElementWithNormalizedNamespaces(root, newDoc, namespaceContext);
+            newDoc.appendChild(newRoot);
+
+            return new DocumentWithNamespace(newDoc, namespaceContext);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to normalize document", e);
+        }
+    }
+
+    /**
+     * Copies an XML {@code Element}, normalizing its namespaces and attributes. Creates a new
+     * {@code Element} in the given {@code Document}, with namespaces resolved using the
+     * provided {@code SimpleNamespaceContext}.
+     *
+     * This method ensures that:
+     * - The created element's namespace prefix corresponds to the normalized mapping provided by
+     *   the {@code SimpleNamespaceContext}.
+     * - Attributes, except for namespace declarations, are copied appropriately to the new element.
+     * - Child nodes, including other elements, text, and CDATA, are recursively copied.
+     * - Root-level namespace declarations are applied if the element is the root of the original document.
+     *
+     * @param original the original {@code Element} to be copied
+     * @param newDoc the target {@code Document} in which the new {@code Element} will be created
+     * @param namespaceContext the {@code SimpleNamespaceContext} to resolve normalized namespace prefixes and URIs
+     * @return the new {@code Element} created in the specified {@code Document}
+     */
+    private static Element copyElementWithNormalizedNamespaces(Element original, Document newDoc, SimpleNamespaceContext namespaceContext) {
+        String nsUri = original.getNamespaceURI();
+        Element newElement;
+
+        if (nsUri != null && !nsUri.isEmpty()) {
+            String normalizedPrefix = namespaceContext.getPrefix(nsUri);
+            newElement = newDoc.createElementNS(nsUri, normalizedPrefix + ":" + original.getLocalName());
+        } else {
+            newElement = newDoc.createElement(original.getNodeName());
+        }
+
+        // Copy attributes
+        NamedNodeMap attributes = original.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node attr = attributes.item(i);
+            // Skip xmlns attributes as we'll define them at the root
+            if (attr.getNodeName().startsWith("xmlns:") || attr.getNodeName().equals("xmlns")) {
+                continue;
+            }
+
+            String attrNsUri = attr.getNamespaceURI();
+            if (attrNsUri != null && !attrNsUri.isEmpty()) {
+                String normalizedPrefix = namespaceContext.getPrefix(attrNsUri);
+                newElement.setAttributeNS(attrNsUri,
+                        normalizedPrefix + ":" + attr.getLocalName(),
+                        attr.getNodeValue());
+            } else {
+                newElement.setAttribute(attr.getNodeName(), attr.getNodeValue());
+            }
+        }
+
+        // Declare all namespaces at the root level
+        if (original == original.getOwnerDocument().getDocumentElement()) {
+            for (String prefix: namespaceContext.getPrefixes()) {
+                String uri = namespaceContext.getNamespaceURI(prefix);
+                newElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + prefix, uri);
+            }
+        }
+
+        // Copy text content and child elements
+        NodeList childNodes = original.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                newElement.appendChild(copyElementWithNormalizedNamespaces((Element)child, newDoc, namespaceContext));
+            } else if (child.getNodeType() == Node.TEXT_NODE || child.getNodeType() == Node.CDATA_SECTION_NODE) {
+                newElement.appendChild(newDoc.importNode(child, true));
+            }
+        }
+
+        return newElement;
+    }
+
+    /**
+     * A custom runtime exception that wraps an {@link XMLStreamException}.
+     * This class is used to rethrow checked {@code XMLStreamException} as an
+     * unchecked {@code RuntimeException}.
+     */
     private static class WrappedXMLStreamException extends RuntimeException {
         WrappedXMLStreamException(XMLStreamException e) {
             super(e);
         }
     }
 
+    /**
+     * A {@code Spliterator} implementation for iterating over a {@code NodeList}.
+     * This class allows traversing the elements in a {@code NodeList} in a sequential
+     * and ordered manner, providing support for the {@link Spliterator} interface.
+     * <p>
+     * The spliterator provides characteristics such as immutability, non-null elements,
+     * ordering, and a fixed size, ensuring predictable traversal behavior.
+     */
     private static class NodeSpliterator implements Spliterator<Node> {
         private final NodeList nodes;
         int idx;

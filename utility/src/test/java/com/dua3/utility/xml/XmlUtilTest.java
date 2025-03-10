@@ -5,14 +5,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
+import java.io.ByteArrayOutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class XmlUtilTest {
 
@@ -197,5 +211,169 @@ class XmlUtilTest {
         String expected5 = "United States";
         String actual5 = xpath.evaluate("//d:Country[@ShortName='US']/@Name", document);
         assertEquals(expected5, actual5);
+    }
+
+    @Test
+    void jaxpInstance() {
+        XmlUtil xmlUtil = XmlUtil.jaxpInstance();
+        assertNotNull(xmlUtil);
+    }
+
+    @Test
+    void parseReader() throws Exception {
+        try (Reader reader = new StringReader(XML)) {
+            Document document = XML_UTIL.parse(reader);
+            assertNotNull(document);
+        }
+    }
+
+    @Test
+    void testDocumentBuilder() {
+        assertNotNull(XML_UTIL.documentBuilder());
+    }
+
+    @Test
+    void testFormat() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        String formatted = XML_UTIL.format(document);
+        assertNotNull(formatted);
+    }
+
+    @Test
+    void testXpathWithDefaultNamespace() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        XPath xpath = XML_UTIL.xpath("https://www.dua3.com/countries");
+        assertNotNull(xpath);
+    }
+
+    @Test
+    void testXpathWithNamespaceContext() throws Exception {
+        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        NamespaceContext ctx = new SimpleNamespaceContext("https://www.dua3.com/countries");
+        XPath xpath = XML_UTIL.xpath(ctx);
+        assertNotNull(xpath);
+    }
+
+    @Test
+    void testXpathWithNamespaceMap() throws Exception {
+        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        Map<String, String> nsMap = new HashMap<>();
+        nsMap.put("c", "https://www.dua3.com/countries");
+        nsMap.put("d", "https://www.dua3.com/other_countries");
+        XPath xpath = XML_UTIL.xpath(nsMap, "https://www.dua3.com/default");
+        assertNotNull(xpath);
+    }
+
+    @Test
+    void testPrettyPrintWriterDocument() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        StringWriter writer = new StringWriter();
+        XML_UTIL.prettyPrint(writer, document);
+        String result = writer.toString();
+        assertNotNull(result);
+        assertTrue(result.contains("Canada"));
+    }
+
+    @Test
+    void testPrettyPrintWriterString() throws Exception {
+        StringWriter writer = new StringWriter();
+        XML_UTIL.prettyPrint(writer, XML);
+        String result = writer.toString();
+        assertNotNull(result);
+        assertTrue(result.contains("Canada"));
+    }
+
+    @Test
+    void testPrettyPrintOutputStream() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        XML_UTIL.prettyPrint(out, document);
+        String result = out.toString(StandardCharsets.UTF_8);
+        assertNotNull(result);
+        assertTrue(result.contains("Canada"));
+    }
+
+    @Test
+    void testPrettyPrintOutputStreamString() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        XML_UTIL.prettyPrint(out, XML);
+        String result = out.toString(StandardCharsets.UTF_8);
+        assertNotNull(result);
+        assertTrue(result.contains("Canada"));
+    }
+
+    @Test
+    void testFormatOutputStream() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        XML_UTIL.format(out, document);
+        String result = out.toString(StandardCharsets.UTF_8);
+        assertNotNull(result);
+        assertTrue(result.contains("Canada"));
+    }
+
+    @Test
+    void testFormatOutputStreamWithCharset() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        XML_UTIL.format(out, document, StandardCharsets.UTF_8);
+        String result = out.toString(StandardCharsets.UTF_8);
+        assertNotNull(result);
+        assertTrue(result.contains("Canada"));
+    }
+
+    @Test
+    void testFormatWriter() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        StringWriter writer = new StringWriter();
+        XML_UTIL.format(writer, document);
+        String result = writer.toString();
+        assertNotNull(result);
+        assertTrue(result.contains("Canada"));
+    }
+
+    @Test
+    void testFormatWriterWithCharset() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        StringWriter writer = new StringWriter();
+        XML_UTIL.format(writer, document, StandardCharsets.UTF_8);
+        String result = writer.toString();
+        assertNotNull(result);
+        assertTrue(result.contains("Canada"));
+    }
+
+    @Test
+    void testChildren() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        Node root = document.getDocumentElement();
+        long count = XML_UTIL.children(root).count();
+        assertTrue(count > 0);
+    }
+
+    @Test
+    void testNodeStream() throws Exception {
+        Document document = XML_UTIL.parse(XML);
+        NodeList nodeList = document.getChildNodes();
+        long count = XML_UTIL.nodeStream(nodeList).count();
+        assertTrue(count > 0);
+    }
+
+    @Test
+    void testCollectNamespaces() throws Exception {
+        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        Element root = document.getDocumentElement();
+        Map<String, String> namespaces = XmlUtil.collectNamespaces(root);
+        assertFalse(namespaces.isEmpty());
+        assertTrue(namespaces.containsValue("https://www.dua3.com/countries"));
+    }
+
+    @Test
+    void testNormalizeDocumentNameSpaces() throws Exception {
+        Document document1 = XML_UTIL.parse(XML);
+        Document document2 = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        List<XmlUtil.DocumentWithNamespace> normalized = XmlUtil.normalizeDocumentNameSpaces(document1, document2);
+        assertEquals(2, normalized.size());
+        assertNotNull(normalized.get(0).document());
+        assertNotNull(normalized.get(0).namespaceContext());
     }
 }
