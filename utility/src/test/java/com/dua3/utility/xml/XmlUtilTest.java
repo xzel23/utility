@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class XmlUtilTest {
@@ -49,6 +50,8 @@ class XmlUtilTest {
                 </Country>
             </Countries>
             """;
+
+    private static final String UNINDENTED_XML = XML.indent(Integer.MIN_VALUE);
 
     private static final String XML_WITH_COMMENT = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -88,6 +91,41 @@ class XmlUtilTest {
                         <d:Province Name="Alabama"/>
                     </d:Provinces>
                 </d:Country>
+            </Countries>
+            """;
+
+    private static final String EXPECTED_FORMATTED_XML = """
+            <Countries>
+                <Country LongName="Canada" ShortName="CA">
+                    <Provinces>
+                        <Province Name="Alberta"/>
+                        <Province Name="Manitoba"/>
+                    </Provinces>
+                </Country>
+                <Country LongName="United States" ShortName="US">
+                    <Provinces>
+                        <Province Name="Alaska"/>
+                        <Province Name="Alabama"/>
+                    </Provinces>
+                </Country>
+            </Countries>
+            """;
+
+    private static final String EXPECTED_PRETTY_PRINTED_XML = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <Countries>
+                <Country LongName="Canada" ShortName="CA">
+                    <Provinces>
+                        <Province Name="Alberta"/>
+                        <Province Name="Manitoba"/>
+                    </Provinces>
+                </Country>
+                <Country LongName="United States" ShortName="US">
+                    <Provinces>
+                        <Province Name="Alaska"/>
+                        <Province Name="Alabama"/>
+                    </Provinces>
+                </Country>
             </Countries>
             """;
 
@@ -244,14 +282,26 @@ class XmlUtilTest {
         Document document = XML_UTIL.parse(XML);
         XPath xpath = XML_UTIL.xpath("https://www.dua3.com/countries");
         assertNotNull(xpath);
+
+        // Select an element from the document and verify the result
+        String expected = "Canada";
+        String actual = xpath.evaluate("//Country[@ShortName='CA']/@LongName", document);
+        assertEquals(expected, actual);
     }
 
     @Test
     void testXpathWithNamespaceContext() throws Exception {
         Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
-        NamespaceContext ctx = new SimpleNamespaceContext("https://www.dua3.com/countries");
+        Map<String, String> nsMap = new HashMap<>();
+        nsMap.put("c", "https://www.dua3.com/countries");
+        NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
         XPath xpath = XML_UTIL.xpath(ctx);
         assertNotNull(xpath);
+
+        // Select an element from the document and verify the result
+        String expected = "Canada";
+        String actual = xpath.evaluate("//c:Country[@ShortName='CA']/@LongName", document);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -262,100 +312,123 @@ class XmlUtilTest {
         nsMap.put("d", "https://www.dua3.com/other_countries");
         XPath xpath = XML_UTIL.xpath(nsMap, "https://www.dua3.com/default");
         assertNotNull(xpath);
+
+        // Select elements from the document and verify the results
+        // Test with c namespace
+        String expected1 = "Canada";
+        String actual1 = xpath.evaluate("//c:Country[@ShortName='CA']/@LongName", document);
+        assertEquals(expected1, actual1);
+
+        // Test with d namespace
+        String expected2 = "United States";
+        String actual2 = xpath.evaluate("//d:Country[@ShortName='US']/@Name", document);
+        assertEquals(expected2, actual2);
     }
 
     @Test
     void testPrettyPrintWriterDocument() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XML_UTIL.parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
         XML_UTIL.prettyPrint(writer, document);
         String result = writer.toString();
-        assertNotNull(result);
-        assertTrue(result.contains("Canada"));
+        assertEquals(EXPECTED_PRETTY_PRINTED_XML, result);
     }
 
     @Test
     void testPrettyPrintWriterString() throws Exception {
         StringWriter writer = new StringWriter();
-        XML_UTIL.prettyPrint(writer, XML);
+        XML_UTIL.prettyPrint(writer, UNINDENTED_XML);
         String result = writer.toString();
-        assertNotNull(result);
-        assertTrue(result.contains("Canada"));
+        assertEquals(EXPECTED_PRETTY_PRINTED_XML, result);
     }
 
     @Test
     void testPrettyPrintOutputStream() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XML_UTIL.parse(UNINDENTED_XML);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XML_UTIL.prettyPrint(out, document);
         String result = out.toString(StandardCharsets.UTF_8);
-        assertNotNull(result);
-        assertTrue(result.contains("Canada"));
+        assertEquals(EXPECTED_PRETTY_PRINTED_XML, result);
     }
 
     @Test
     void testPrettyPrintOutputStreamString() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XML_UTIL.prettyPrint(out, XML);
+        XML_UTIL.prettyPrint(out, UNINDENTED_XML);
         String result = out.toString(StandardCharsets.UTF_8);
-        assertNotNull(result);
-        assertTrue(result.contains("Canada"));
+        assertEquals(EXPECTED_PRETTY_PRINTED_XML, result);
     }
 
     @Test
     void testFormatOutputStream() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XML_UTIL.parse(UNINDENTED_XML);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XML_UTIL.format(out, document);
         String result = out.toString(StandardCharsets.UTF_8);
-        assertNotNull(result);
-        assertTrue(result.contains("Canada"));
+        assertEquals(EXPECTED_FORMATTED_XML, result);
     }
 
     @Test
     void testFormatOutputStreamWithCharset() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XML_UTIL.parse(UNINDENTED_XML);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XML_UTIL.format(out, document, StandardCharsets.UTF_8);
         String result = out.toString(StandardCharsets.UTF_8);
-        assertNotNull(result);
-        assertTrue(result.contains("Canada"));
+        assertEquals(EXPECTED_FORMATTED_XML, result);
     }
 
     @Test
     void testFormatWriter() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XML_UTIL.parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
         XML_UTIL.format(writer, document);
         String result = writer.toString();
-        assertNotNull(result);
-        assertTrue(result.contains("Canada"));
+        assertEquals(EXPECTED_FORMATTED_XML, result);
     }
 
     @Test
     void testFormatWriterWithCharset() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XML_UTIL.parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
         XML_UTIL.format(writer, document, StandardCharsets.UTF_8);
         String result = writer.toString();
-        assertNotNull(result);
-        assertTrue(result.contains("Canada"));
+        assertEquals(EXPECTED_FORMATTED_XML, result);
     }
 
     @Test
     void testChildren() throws Exception {
         Document document = XML_UTIL.parse(XML);
         Node root = document.getDocumentElement();
-        long count = XML_UTIL.children(root).count();
-        assertTrue(count > 0);
+
+        // Define expected tag names for children of the root element
+        List<String> expectedTagNames = List.of("Country", "Country");
+
+        // Collect actual tag names from the children stream, filtering out non-element nodes
+        List<String> actualTagNames = XML_UTIL.children(root)
+                .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
+                .map(Node::getNodeName)
+                .collect(Collectors.toList());
+
+        // Compare actual tag names with expected tag names
+        assertEquals(expectedTagNames, actualTagNames);
     }
 
     @Test
     void testNodeStream() throws Exception {
         Document document = XML_UTIL.parse(XML);
         NodeList nodeList = document.getChildNodes();
-        long count = XML_UTIL.nodeStream(nodeList).count();
-        assertTrue(count > 0);
+
+        // Define expected tag names for child nodes of the document
+        List<String> expectedTagNames = List.of("Countries");
+
+        // Collect actual tag names from the node stream, filtering out non-element nodes
+        List<String> actualTagNames = XML_UTIL.nodeStream(nodeList)
+                .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
+                .map(Node::getNodeName)
+                .collect(Collectors.toList());
+
+        // Compare actual tag names with expected tag names
+        assertEquals(expectedTagNames, actualTagNames);
     }
 
     @Test
@@ -364,16 +437,96 @@ class XmlUtilTest {
         Element root = document.getDocumentElement();
         Map<String, String> namespaces = XmlUtil.collectNamespaces(root);
         assertFalse(namespaces.isEmpty());
-        assertTrue(namespaces.containsValue("https://www.dua3.com/countries"));
+
+        // Verify all expected namespaces are present
+        assertEquals(2, namespaces.size());
+        assertEquals("https://www.dua3.com/countries", namespaces.get("c"));
+        assertEquals("https://www.dua3.com/other_countries", namespaces.get("d"));
     }
 
     @Test
     void testNormalizeDocumentNameSpaces() throws Exception {
-        Document document1 = XML_UTIL.parse(XML);
-        Document document2 = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        Document document1 = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        Document document2 = XML_UTIL.parse(XML_EXAMPLE);
         List<XmlUtil.DocumentWithNamespace> normalized = XmlUtil.normalizeDocumentNameSpaces(document1, document2);
+
+        // Verify basic structure
         assertEquals(2, normalized.size());
         assertNotNull(normalized.get(0).document());
         assertNotNull(normalized.get(0).namespaceContext());
+        assertNotNull(normalized.get(1).document());
+        assertNotNull(normalized.get(1).namespaceContext());
+
+        // Verify that both documents use the same namespace context (same namespace keys)
+        assertSame(normalized.get(0).namespaceContext(), normalized.get(1).namespaceContext(), 
+                  "Both documents should use the same namespace context");
+
+        // Verify the full contents of the first normalized document (XML_WITH_NAMESPACES)
+        Document normalizedDoc1 = normalized.get(0).document();
+        Element root1 = normalizedDoc1.getDocumentElement();
+        assertEquals("Countries", root1.getNodeName());
+
+        // Check that namespace prefixes are normalized
+        NodeList countries1 = root1.getChildNodes();
+        int elementCount1 = 0;
+        for (int i = 0; i < countries1.getLength(); i++) {
+            if (countries1.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element country = (Element) countries1.item(i);
+                elementCount1++;
+
+                // Check that namespaces are properly applied
+                assertNotNull(country.getNamespaceURI());
+                if (country.getAttribute("ShortName").equals("CA")) {
+                    assertEquals("https://www.dua3.com/countries", country.getNamespaceURI());
+
+                    // Navigate through the document structure to find the Province element with Name="Alberta"
+                    NodeList provinces = country.getChildNodes();
+                    for (int j = 0; j < provinces.getLength(); j++) {
+                        Node provincesNode = provinces.item(j);
+                        if (provincesNode.getNodeType() == Node.ELEMENT_NODE) {
+                            NodeList provinceNodes = provincesNode.getChildNodes();
+                            for (int k = 0; k < provinceNodes.getLength(); k++) {
+                                Node provinceNode = provinceNodes.item(k);
+                                if (provinceNode.getNodeType() == Node.ELEMENT_NODE) {
+                                    Element province = (Element) provinceNode;
+                                    if (province.getAttribute("Name").equals("Alberta")) {
+                                        // Found the Alberta province
+                                        assertEquals("Alberta", province.getAttribute("Name"));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (country.getAttribute("ShortName").equals("US")) {
+                    assertEquals("https://www.dua3.com/other_countries", country.getNamespaceURI());
+                }
+            }
+        }
+        assertEquals(2, elementCount1);
+
+        // Verify the full contents of the second normalized document (XML_EXAMPLE)
+        Document normalizedDoc2 = normalized.get(1).document();
+        Element root2 = normalizedDoc2.getDocumentElement();
+
+        // Check namespace URI instead of relying on the prefix
+        assertEquals("http://www.w3.org/1999/XSL/Transform", root2.getNamespaceURI());
+        assertEquals("stylesheet", root2.getLocalName());
+
+        // Check that the template element exists and has the correct attributes
+        NodeList templates = root2.getElementsByTagName("*");
+        boolean foundTemplate = false;
+        for (int i = 0; i < templates.getLength(); i++) {
+            Node node = templates.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE &&
+                    node.getLocalName().equals("template") &&
+                    node.getNamespaceURI().equals("http://www.w3.org/1999/XSL/Transform")) {
+                foundTemplate = true;
+                Element template = (Element) node;
+                assertEquals("/", template.getAttribute("match"));
+                break;
+            }
+        }
+        assertTrue(foundTemplate, "Template element not found in normalized document");
     }
 }
