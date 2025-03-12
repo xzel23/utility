@@ -104,7 +104,6 @@ public class MathUtilTest {
      */
     @Test
     public void testPow10() {
-
         assertEquals(0.01, MathUtil.pow10(-2), 1.0e-15);
         assertEquals(0.1, MathUtil.pow10(-1), 1.0e-15);
         assertEquals(1.0, MathUtil.pow10(0), 1.0e-15);

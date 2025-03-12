@@ -132,15 +132,15 @@ Add this to your `build.gradle` to include a `build.properties` file in your JAR
     def generateBuildInfo = tasks.register('generateBuildInfo') {
         // do not cache the buildinfo
         outputs.upToDateWhen { false }
-    
+
         // create build.properties
         doLast {
             def resourcesDir = sourceSets.main.output.resourcesDir
             resourcesDir.mkdirs()
-    
+
             def buildTime = OffsetDateTime.now().atZoneSameInstant(ZoneId.of("UTC"))
             def contents = "build.time=${buildTime}\nbuild.version=${version}\n"
-    
+
             def file = new File(resourcesDir, "build.properties")
             file.text = contents
         }
@@ -164,6 +164,22 @@ When running your code with exceptions enabled, parameters are checked for inval
 will be generated when null is passed for a `@NonNull` annotated parameter. The assertion message contains the name of
 the parameter.
 
+## Benchmarks
+
+The project includes JMH (Java Microbenchmark Harness) benchmarks to measure the performance of various utility methods.
+
+### Running the benchmarks
+
+To run the benchmarks, use the following Gradle command from the project root:
+
+```
+./gradlew jmh
+```
+
+This will execute all benchmark tests and generate a results file at `utility/build/results/jmh/results.txt`.
+
+You can customize the benchmark execution by modifying the JMH configuration in the `utility/build.gradle.kts` file.
+
 ## Logging
 
 - all internal logging is done through log4j-api
@@ -173,6 +189,9 @@ the parameter.
 ### 16.1.5
 
 - added some jmh benchmarks
+- performance improvements
+- add more MathUtil unit tests
+- added missing package-info.java
 
 ### 16.1.4
 
