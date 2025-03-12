@@ -170,6 +170,10 @@ the parameter.
 
 ## Changes
 
+### 16.1.5
+
+- added some jmh benchmarks
+
 ### 16.1.4
 
 - add namespace related methods to XmlUtil
