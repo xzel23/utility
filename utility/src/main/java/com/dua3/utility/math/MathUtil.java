@@ -324,18 +324,30 @@ public final class MathUtil {
      * @return 10 raised to the power of i
      */
     public static double pow10(int i) {
-        if (i == Integer.MIN_VALUE) {
-            // -Integer.MIN_VALUE will overflow
-            return 1.0 / (10 * pow10(Integer.MAX_VALUE));
-        } else if (i < 0) {
-            return 1.0 / pow10(-i);
-        }
-
-        double result = 1.0;
-        while (i-- > 0) {
-            result *= 10.0;
-        }
-        return result;
+        return switch (i) {
+            case -10 -> 0.00000000001;
+            case -9 -> 0.0000000001;
+            case -8 -> 0.000000001;
+            case -7 -> 0.00000001;
+            case -6 -> 0.0000001;
+            case -5 -> 0.000001;
+            case -4 -> 0.0001;
+            case -3 -> 0.001;
+            case -2 -> 0.01;
+            case -1 -> 0.1;
+            case 0 -> 1.0;
+            case 1 -> 10.0;
+            case 2 -> 100.0;
+            case 3 -> 1000.0;
+            case 4 -> 10000.0;
+            case 5 -> 100000.0;
+            case 6 -> 1000000.0;
+            case 7 -> 10000000.0;
+            case 8 -> 100000000.0;
+            case 9 -> 1000000000.0;
+            case 10 -> 10000000000.0;
+            default -> Math.pow(10.0, i);
+        };
     }
 
     /**
@@ -367,14 +379,7 @@ public final class MathUtil {
             return x;
         }
 
-        int m = Math.abs(n);
-        long f = 1;
-        while (m > 0) {
-            f *= 10;
-            m--;
-        }
-
-        double scale = n >= 0 ? f : 1.0 / f;
+        double scale = pow10(n);
         return Math.round(x * scale) / scale;
     }
 

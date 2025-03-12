@@ -36,7 +36,6 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Text related utility class.
@@ -361,7 +360,7 @@ public final class TextUtil {
         OfInt iter1 = a.chars().iterator();
         OfInt iter2 = b.chars().iterator();
         while (iter1.hasNext() && iter2.hasNext()) {
-            if (!Objects.equals(iter1.next(), iter2.next())) {
+            if (iter1.nextInt() == iter2.nextInt()) {
                 return false;
             }
         }
@@ -486,10 +485,12 @@ public final class TextUtil {
      */
     public static int indexOf(CharSequence haystack, int needle, int fromIndex) {
         final int haystackLength = haystack.length();
-        return IntStream.range(fromIndex, haystackLength)
-                .filter(pos -> haystack.charAt(pos) == needle)
-                .findFirst()
-                .orElse(-1);
+        for (int i = fromIndex; i < haystackLength; i++) {
+            if (haystack.charAt(i) == needle) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
