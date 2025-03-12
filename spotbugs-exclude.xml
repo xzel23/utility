@@ -5,6 +5,7 @@
         <Or>
             <!-- this inspection is triggered when using AssertThrows in JUnit tests -->
             <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+            <Bug pattern="CNT_ROUGH_CONSTANT_VALUE"/>
         </Or>
     </Match>
     <Match>
@@ -237,5 +238,4 @@
         <Class name="com.dua3.utility.io.IoUtilTest" method="glob_absoluteBase_absolutePattern"/>
         <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
     </Match>
-
 </FindBugsFilter>
