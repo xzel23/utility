@@ -1,11 +1,9 @@
 description = "Java utilities (core)"
 
 plugins {
-    // other plugins...
-    id("me.champeau.jmh") version "0.7.3"
+    alias(libs.plugins.jmh)
 }
 
-// Add JMH configuration if you need to customize settings
 jmh {
     // Common settings for JMH benchmarks
     warmupIterations = 2
