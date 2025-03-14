@@ -186,6 +186,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 16.1.6
+
+- fix a runtime error when utility-log4j is used in a jlink application
+
 ### 16.1.5
 
 - added some jmh benchmarks
