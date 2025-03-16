@@ -186,6 +186,12 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 16.2.0 (in progress)
+
+- BREAKING Font(FontData, Color) has been declared protected; it was not intended to be called directly from user code
+- cache Font instances
+- improve performance
+
 ### 16.1.6
 
 - fix a runtime error when utility-log4j is used in a jlink application
