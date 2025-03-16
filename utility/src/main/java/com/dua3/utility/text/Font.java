@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.ObjectCache;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 
@@ -13,12 +14,17 @@ import com.dua3.utility.data.Color;
  */
 public class Font {
 
+    private static final ObjectCache fontCache = new ObjectCache();
     private final FontData fontData;
     private final Color color;
 
-    public Font(FontData fontData, Color color) {
+    protected Font(FontData fontData, Color color) {
         this.fontData = fontData;
         this.color = color;
+    }
+
+    public static Font getFont(FontData fontData, Color color) {
+        return fontCache.get(new Font(fontData, color));
     }
 
     /**

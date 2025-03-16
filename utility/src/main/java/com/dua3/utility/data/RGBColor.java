@@ -17,6 +17,7 @@ public final class RGBColor implements Color {
     static final int SHIFT_B = 0;
     static final int SHIFT_G = 8;
     static final int SHIFT_R = 16;
+
     /**
      * This color's ARGB value.
      */
@@ -167,10 +168,7 @@ public final class RGBColor implements Color {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (!(obj instanceof RGBColor other)) {
-            return false;
-        }
-        return other.argb == argb;
+        return obj instanceof RGBColor other && other.argb == argb;
     }
 
     /**

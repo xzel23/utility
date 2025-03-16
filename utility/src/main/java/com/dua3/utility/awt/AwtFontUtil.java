@@ -218,7 +218,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     public Font convert(java.awt.Font awtFont) {
         FontData fontData = awtFont2FontData.computeIfAbsent(awtFont, this::getFontData);
         fontData2awtFont.putIfAbsent(fontData, awtFont);
-        return new Font(fontData, Color.BLACK);
+        return Font.getFont(fontData, Color.BLACK);
     }
 
     @Override
@@ -267,7 +267,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
             return baseFont; // avoid creating unnecessary instance
         } else {
-            return new Font(fontData, color);
+            return Font.getFont(fontData, color);
         }
     }
 

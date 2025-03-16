@@ -111,7 +111,7 @@ public class FxFontUtil implements FontUtil<Font> {
     public com.dua3.utility.text.Font convert(Font fxFont) {
         FontData fontData = fxFont2FontData.computeIfAbsent(fxFont, FxFontUtil::getFontData);
         fontData2fxFont.putIfAbsent(fontData, fxFont);
-        return new com.dua3.utility.text.Font(fontData, Color.BLACK);
+        return com.dua3.utility.text.Font.getFont(fontData, Color.BLACK);
     }
 
     /**
@@ -290,7 +290,7 @@ public class FxFontUtil implements FontUtil<Font> {
         if (fontData.equals(baseFont.getFontData()) && color.equals(baseFont.getColor())) {
             return baseFont; // avoid creating unnecessary instance
         } else {
-            return new com.dua3.utility.text.Font(fontData, color);
+            return com.dua3.utility.text.Font.getFont(fontData, color);
         }
     }
 

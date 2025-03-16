@@ -9,7 +9,7 @@ import java.util.stream.DoubleStream;
  * @param h     the hue in the range [0 .. 360]
  * @param s     the saturation value [0 .. 1]
  * @param v     the brightness value [0 .. 1]
- * @param alpha the alpha value  [0 .. 1]
+ * @param alpha the alpha value [0 .. 1]
  */
 public record HSVColor(float h, float s, float v, float alpha) implements Color {
 

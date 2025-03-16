@@ -52,10 +52,7 @@ public final class FxFontEmbedded extends Font {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        return ((FxFontEmbedded) obj).fxFont.equals(fxFont);
+        return obj instanceof FxFontEmbedded ffe && ffe.fxFont.equals(fxFont) && super.equals(ffe);
     }
 
 }
