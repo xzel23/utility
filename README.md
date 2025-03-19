@@ -186,11 +186,12 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
-### 16.2.0 (in progress)
+### 16.2.0
 
 - BREAKING Font(FontData, Color) has been declared protected; it was not intended to be called directly from user code
 - cache Font instances
 - improve performance
+- fix title not displayed centered in AbdoutDialog
 
 ### 16.1.6
 
