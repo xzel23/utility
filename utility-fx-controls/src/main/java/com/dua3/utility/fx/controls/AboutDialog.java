@@ -14,6 +14,7 @@
 
 package com.dua3.utility.fx.controls;
 
+import javafx.geometry.Pos;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -84,6 +85,7 @@ public class AboutDialog extends Dialog<Void> {
         VBox vBox = new VBox();
         vBox.setMaxHeight(Double.NEGATIVE_INFINITY);
         vBox.setMaxWidth(Double.POSITIVE_INFINITY);
+        vBox.setAlignment(Pos.CENTER);
 
         lTitle = new Label("name");
         lTitle.setId("title");
