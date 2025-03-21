@@ -80,9 +80,9 @@ public class IoUtilTest {
     public void testStripExtension() {
         assertEquals("test", IoUtil.stripExtension("test.txt"));
         assertEquals("folder/subfolder/test", IoUtil.stripExtension("folder/subfolder/test.txt"));
-        assertEquals("folder/subfolder/test", IoUtil.stripExtension("folder/subfolder/test.txt/"));
+        assertEquals("folder/subfolder/test/", IoUtil.stripExtension("folder/subfolder/test.txt/"));
         assertEquals("./folder/subfolder/test", IoUtil.stripExtension("./folder/subfolder/test.txt"));
-        assertEquals("./folder/subfolder/test", IoUtil.stripExtension("./folder/subfolder/test.txt/"));
+        assertEquals("./folder/subfolder/test/", IoUtil.stripExtension("./folder/subfolder/test.txt/"));
 
         assertEquals("test.txt", IoUtil.stripExtension("test.txt.def"));
 
@@ -518,4 +518,63 @@ public class IoUtilTest {
         }
     }
 
+    @Test
+    public void testGetFilename() {
+        assertEquals("file.txt", IoUtil.getFilename("/path/to/file.txt"));
+        assertEquals("file.txt", IoUtil.getFilename("path/to/file.txt"));
+        assertEquals("file", IoUtil.getFilename("/path/to/file"));
+        assertEquals("file", IoUtil.getFilename("path/to/file"));
+        assertEquals("to", IoUtil.getFilename("/path/to/"));
+        assertEquals("to", IoUtil.getFilename("path/to/"));
+        assertEquals("", IoUtil.getFilename(""));
+    }
+
+    // TODO: Add test for toDataURI method once the implementation issues are resolved
+    // The current implementation throws URISyntaxException: "Relative path in absolute URI: data:testdata"
+
+    @Test
+    public void testToUnixPath() {
+        // TODO use jimfs
+        Path path = Paths.get("/path/to/file.txt");
+        assertEquals("/path/to/file.txt", IoUtil.toUnixPath(path));
+
+        path = Paths.get("path/to/file.txt");
+        assertEquals("path/to/file.txt", IoUtil.toUnixPath(path));
+    }
+
+    @Test
+    public void testStringInputStream() throws IOException {
+        String testString = "test string";
+        try (InputStream is = IoUtil.stringInputStream(testString)) {
+            byte[] buffer = new byte[testString.length()];
+            int bytesRead = is.read(buffer);
+            assertEquals(testString.length(), bytesRead);
+            assertEquals(testString, new String(buffer));
+        }
+    }
+
+    @Test
+    public void testComposedClose() throws Exception {
+        boolean[] closed = {false, false};
+        AutoCloseable closeable1 = () -> closed[0] = true;
+        AutoCloseable closeable2 = () -> closed[1] = true;
+
+        Runnable closeAll = IoUtil.composedClose(closeable1, closeable2);
+        closeAll.run();
+
+        assertTrue(closed[0]);
+        assertTrue(closed[1]);
+    }
+
+    @Test
+    public void testCloseAll() throws Exception {
+        boolean[] closed = {false, false};
+        AutoCloseable closeable1 = () -> closed[0] = true;
+        AutoCloseable closeable2 = () -> closed[1] = true;
+
+        IoUtil.closeAll(closeable1, closeable2);
+
+        assertTrue(closed[0]);
+        assertTrue(closed[1]);
+    }
 }

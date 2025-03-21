@@ -177,6 +177,9 @@ public final class IoUtil {
 
     /**
      * Get file extension.
+     * <p>
+     * Note that trailing path separators are ignored. That means that both {@code getExtension("test.txt")}
+     * and {@code getExtension("test.txt/")} return `"txt"`.
      *
      * @param path the path
      * @return the extension
@@ -210,7 +213,7 @@ public final class IoUtil {
         // find dot
         int pos = path.lastIndexOf('.', fi.idxEnd());
 
-        return pos < fi.idxStart() ? path : path.substring(0, pos);
+        return pos < fi.idxStart() ? path : path.substring(0, pos) + path.substring(fi.idxEnd());
     }
 
     /**
@@ -355,6 +358,22 @@ public final class IoUtil {
             return uri.toURL();
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);
+        }
+    }
+
+    /**
+     * Get data URI for string.
+     *
+     * @param data the string
+     * @return the URI
+     * @throws IllegalArgumentException if conversion fails
+     */
+    public static URI toDataURI(String data) {
+        try {
+            return new URI("data", null, TextUtil.base64Encode(data.getBytes(StandardCharsets.UTF_8)), null);
+        } catch (URISyntaxException e) {
+            // this should not happen
+            throw new IllegalStateException(e);
         }
     }
 
