@@ -378,7 +378,7 @@ public final class IoUtil {
     }
 
     /**
-     * Get Path for URI.
+     * Convert {@link URI} to {@link Path}.
      *
      * @param uri the URI
      * @return the Path
@@ -420,15 +420,37 @@ public final class IoUtil {
      * @return the path as a string with path components separated by forward slashes
      */
     public static String toUnixPath(Path path) {
-        String sep = "";
+        FileSystem fs = path.getFileSystem();
+        String separator = fs.getSeparator();
+
+        if (separator.equals("/")) {
+            return path.toString();
+        }
+
         StringBuilder sb = new StringBuilder();
         Path root = path.getRoot();
+        String sep = "";
         if (root != null) {
-            sb.append(root.toString().replace("\\", sep));
+            String rootStr = root.toString();
+            if (rootStr.endsWith(separator)) {
+                rootStr = rootStr.substring(0, rootStr.length() - 1);
+            }
+            if (!rootStr.isEmpty() && rootStr.charAt(rootStr.length() - 1) == ':') {
+                rootStr = rootStr.substring(0, rootStr.length() - 1);
+                rootStr = rootStr.replace(separator, "/");
+                if (!rootStr.startsWith(separator)) {
+                    rootStr = "/" + rootStr;
+                }
+                sb.append(rootStr);
+                sep = "/";
+            } else {
+                sb.append(root.toString().replace(separator, "/"));
+                sep = "/";
+            }
         }
         for (Path p : path) {
             sb.append(sep);
-            sb.append(p);
+            sb.append(p.toString().replace(separator, "\\" + separator));
             sep = "/";
         }
         return sb.toString();

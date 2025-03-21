@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -532,14 +533,20 @@ public class IoUtilTest {
     // TODO: Add test for toDataURI method once the implementation issues are resolved
     // The current implementation throws URISyntaxException: "Relative path in absolute URI: data:testdata"
 
-    @Test
-    public void testToUnixPath() {
-        // TODO use jimfs
-        Path path = Paths.get("/path/to/file.txt");
-        assertEquals("/path/to/file.txt", IoUtil.toUnixPath(path));
+    @ParameterizedTest
+    @MethodSource("jimFsConfigurations")
+    public void testToUnixPath(Configuration configuration) throws Exception {
 
-        path = Paths.get("path/to/file.txt");
-        assertEquals("path/to/file.txt", IoUtil.toUnixPath(path));
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            Path dir = Files.createDirectories(fs.getPath(normalize(configuration, "/foo")));
+
+            String prefix = configuration.toString().toLowerCase(Locale.ROOT).contains("windows") ? "/c/" : "/";
+            assertEquals(prefix + "foo", IoUtil.toUnixPath(dir));
+
+            Path file = Files.createFile(fs.getPath(normalize(configuration, "/foo/file.txt")));
+            assertEquals(prefix + "foo/file.txt", IoUtil.toUnixPath(file));
+            assertEquals("foo/file.txt", IoUtil.toUnixPath(dir.getParent().relativize(file)));
+        }
     }
 
     @Test
