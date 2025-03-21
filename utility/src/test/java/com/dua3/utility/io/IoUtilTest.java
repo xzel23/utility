@@ -530,9 +530,6 @@ public class IoUtilTest {
         assertEquals("", IoUtil.getFilename(""));
     }
 
-    // TODO: Add test for toDataURI method once the implementation issues are resolved
-    // The current implementation throws URISyntaxException: "Relative path in absolute URI: data:testdata"
-
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     public void testToUnixPath(Configuration configuration) throws Exception {

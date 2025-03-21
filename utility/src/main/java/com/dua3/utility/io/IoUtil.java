@@ -362,22 +362,6 @@ public final class IoUtil {
     }
 
     /**
-     * Get data URI for string.
-     *
-     * @param data the string
-     * @return the URI
-     * @throws IllegalArgumentException if conversion fails
-     */
-    public static URI toDataURI(String data) {
-        try {
-            return new URI("data", null, TextUtil.base64Encode(data.getBytes(StandardCharsets.UTF_8)), null);
-        } catch (URISyntaxException e) {
-            // this should not happen
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
      * Convert {@link URI} to {@link Path}.
      *
      * @param uri the URI
