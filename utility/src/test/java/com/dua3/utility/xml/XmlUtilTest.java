@@ -1,6 +1,7 @@
 package com.dua3.utility.xml;
 
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -382,7 +383,7 @@ class XmlUtilTest {
         Document document = XML_UTIL.parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
         XML_UTIL.format(writer, document);
-        String result = writer.toString();
+        String result = TextUtil.normalizeLineEnds(writer.toString());
         assertEquals(EXPECTED_FORMATTED_XML, result);
     }
 
@@ -391,7 +392,7 @@ class XmlUtilTest {
         Document document = XML_UTIL.parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
         XML_UTIL.format(writer, document, StandardCharsets.UTF_8);
-        String result = writer.toString();
+        String result = TextUtil.normalizeLineEnds(writer.toString());
         assertEquals(EXPECTED_FORMATTED_XML, result);
     }
 
