@@ -186,6 +186,8 @@ public final class ChoiceOption<T> extends Option<T> {
      * A Choice is for a {@link ChoiceOption}, basically an object holding a combination of a value and its
      * string representation for a selectable value in a choice option.
      *
+     * @param value the value to use
+     * @param text the text to show
      * @param <T> the value type
      */
     public record Choice<T extends @Nullable Object>(T value, String text) {

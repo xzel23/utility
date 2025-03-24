@@ -99,6 +99,7 @@ public final class SoftResource<T> {
 
     /**
      * Helper class to prevent the resource from being garbage collected.
+     * @param <T> the generic resource type
      */
     public static final class ResourceHolder<T extends @Nullable Object> implements AutoCloseable {
         private final SoftResource<T> soft;
