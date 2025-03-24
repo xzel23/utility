@@ -64,7 +64,10 @@ public final class TextUtil {
     private static final String TRANSFORM_REF_START = "${";
     private static final String TRANSFORM_REF_END = "}";
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
-    private static final Predicate<String> IS_NEWLINE_TERMINATED = Pattern.compile(".*\\R$").asMatchPredicate();
+    private static final Predicate<String> IS_NEWLINE_TERMINATED = s -> !s.isEmpty() && switch (s.charAt(s.length() - 1)) {
+        case '\r', '\n', '\u0085', '\u2028', '\u2029' -> true;
+        default -> false;
+    };
     private static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]+").asMatchPredicate().negate();
     private static final Pattern PATTERN_SPLIT_PRESERVING_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
 
