@@ -190,6 +190,7 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 - fix TextUtil.setLineEnds() and toXXXLineEnds() not appending the trailing line end
 - fix TextUtil tests failing on windows due to different line end characters
+- add TextUtil.isNewlineTerminated(), TextUtil.setLineEnds()
 
 ### 16.2.0
 

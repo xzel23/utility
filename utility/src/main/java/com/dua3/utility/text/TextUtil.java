@@ -64,10 +64,7 @@ public final class TextUtil {
     private static final String TRANSFORM_REF_START = "${";
     private static final String TRANSFORM_REF_END = "}";
     private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
-    private static final Predicate<String> IS_NEWLINE_TERMINATED = s -> !s.isEmpty() && switch (s.charAt(s.length() - 1)) {
-        case '\r', '\n', '\u0085', '\u2028', '\u2029' -> true;
-        default -> false;
-    };
+
     private static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]+").asMatchPredicate().negate();
     private static final Pattern PATTERN_SPLIT_PRESERVING_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
 
@@ -399,6 +396,20 @@ public final class TextUtil {
      */
     public static int indexOfFirst(CharSequence seq, String chars) {
         return indexOfFirst(seq, chars.toCharArray());
+    }
+
+    /**
+     * Checks if the given string ends with a newline character.
+     * Newline characters considered are '\r', '\n', '\u0085', '\u2028', and '\u2029'.
+     *
+     * @param s the string to check for newline termination
+     * @return true if the string ends with a newline character, false otherwise
+     */
+    public static boolean isNewlineTerminated(String s) {
+        return !s.isEmpty() && switch (s.charAt(s.length() - 1)) {
+            case '\r', '\n', '\u0085', '\u2028', '\u2029' -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -924,9 +935,17 @@ public final class TextUtil {
         return setLineEnds(s, LINE_END_SYSTEM);
     }
 
-    private static String setLineEnds(String s, String lineEnd) {
-        boolean isNewlineTerminated = IS_NEWLINE_TERMINATED.test(s);
-        return s.lines().collect(Collectors.joining(lineEnd, "", isNewlineTerminated ? lineEnd : ""));
+    /**
+     * Adjusts the line endings of a given string by replacing the current line terminators
+     * with the specified line end sequence. If the input string is newline-terminated,
+     * the specified line end sequence will also terminate the result.
+     *
+     * @param s the input string whose line endings are to be modified
+     * @param lineEnd the desired line ending sequence to apply
+     * @return a string with the adjusted line endings
+     */
+    public static String setLineEnds(String s, String lineEnd) {
+        return s.lines().collect(Collectors.joining(lineEnd, "", isNewlineTerminated(s) ? lineEnd : ""));
     }
 
     /**
