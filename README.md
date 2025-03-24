@@ -191,6 +191,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - fix TextUtil.setLineEnds() and toXXXLineEnds() not appending the trailing line end
 - fix TextUtil tests failing on windows due to different line end characters
 - add TextUtil.isNewlineTerminated(), TextUtil.setLineEnds()
+- fix PredefinedDateTimeFormatTest failing depending on the used Java version due to changes in chinese date and time formatting
+- make the qodana scan run again
 
 ### 16.2.0
 
