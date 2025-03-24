@@ -64,6 +64,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
+          # JDK 17
+          wget https://github.com/bell-sw/Liberica/releases/download/17.0.14%2B11/bellsoft-jdk17.0.14+11-linux-aarch64-crac.deb
+          sudo apt-get install -y ./bellsoft-jdk17.0.14+11-linux-aarch64-crac.deb
+          # Bellsoft Liberica 21 is needed for JavaFX packages
           wget https://download.bell-sw.com/java/21.0.6+10/bellsoft-jdk21.0.6+10-linux-amd64-full.deb
           sudo apt-get install -y ./bellsoft-jdk21.0.6+10-linux-amd64-full.deb
           sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java21-full-amd64/bin/java 1
