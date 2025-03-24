@@ -186,6 +186,11 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 16.2.1
+
+- fix TextUtil.setLineEnds() and toXXXLineEnds() not appending the trailing line end
+- fix TextUtil tests failing on windows due to different line end characters
+
 ### 16.2.0
 
 - BREAKING Font(FontData, Color) has been declared protected; it was not intended to be called directly from user code

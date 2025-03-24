@@ -332,7 +332,7 @@ class XmlUtilTest {
         StringWriter writer = new StringWriter();
         XML_UTIL.prettyPrint(writer, document);
         String result = writer.toString();
-        assertEquals(EXPECTED_PRETTY_PRINTED_XML, result);
+        assertLinesMatch(EXPECTED_PRETTY_PRINTED_XML.lines(), result.lines());
     }
 
     @Test
@@ -340,7 +340,7 @@ class XmlUtilTest {
         StringWriter writer = new StringWriter();
         XML_UTIL.prettyPrint(writer, UNINDENTED_XML);
         String result = writer.toString();
-        assertEquals(EXPECTED_PRETTY_PRINTED_XML, result);
+        assertLinesMatch(EXPECTED_PRETTY_PRINTED_XML.lines(), result.lines());
     }
 
     @Test
@@ -349,7 +349,7 @@ class XmlUtilTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XML_UTIL.prettyPrint(out, document);
         String result = out.toString(StandardCharsets.UTF_8);
-        assertEquals(EXPECTED_PRETTY_PRINTED_XML, result);
+        assertLinesMatch(EXPECTED_PRETTY_PRINTED_XML.lines(), result.lines());
     }
 
     @Test
@@ -357,7 +357,7 @@ class XmlUtilTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XML_UTIL.prettyPrint(out, UNINDENTED_XML);
         String result = out.toString(StandardCharsets.UTF_8);
-        assertEquals(EXPECTED_PRETTY_PRINTED_XML, result);
+        assertLinesMatch(EXPECTED_PRETTY_PRINTED_XML.lines(), result.lines());
     }
 
     @Test
@@ -366,7 +366,7 @@ class XmlUtilTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XML_UTIL.format(out, document);
         String result = out.toString(StandardCharsets.UTF_8);
-        assertEquals(EXPECTED_FORMATTED_XML, result);
+        assertLinesMatch(EXPECTED_FORMATTED_XML.lines(), result.lines());
     }
 
     @Test
@@ -375,7 +375,7 @@ class XmlUtilTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XML_UTIL.format(out, document, StandardCharsets.UTF_8);
         String result = out.toString(StandardCharsets.UTF_8);
-        assertEquals(EXPECTED_FORMATTED_XML, result);
+        assertLinesMatch(EXPECTED_FORMATTED_XML.lines(), result.lines());
     }
 
     @Test
@@ -383,8 +383,8 @@ class XmlUtilTest {
         Document document = XML_UTIL.parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
         XML_UTIL.format(writer, document);
-        String result = TextUtil.normalizeLineEnds(writer.toString());
-        assertEquals(EXPECTED_FORMATTED_XML, result);
+        String result = writer.toString();
+        assertLinesMatch(EXPECTED_FORMATTED_XML.lines(), result.lines());
     }
 
     @Test
@@ -393,7 +393,7 @@ class XmlUtilTest {
         StringWriter writer = new StringWriter();
         XML_UTIL.format(writer, document, StandardCharsets.UTF_8);
         String result = TextUtil.normalizeLineEnds(writer.toString());
-        assertEquals(EXPECTED_FORMATTED_XML, result);
+        assertLinesMatch(EXPECTED_FORMATTED_XML.lines(), result.lines());
     }
 
     @Test
