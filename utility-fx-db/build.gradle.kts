@@ -1,7 +1,7 @@
 description = "JavaFX utilities (database)"
 
 java {
-    version = JavaVersion.VERSION_21
+    version = JavaVersion.VERSION_21.toString()
     withJavadocJar()
     withSourcesJar()
 

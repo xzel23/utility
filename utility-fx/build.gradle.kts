@@ -1,7 +1,7 @@
 project.description = "Java utilities (JavaFX)"
 
 java {
-    version = JavaVersion.VERSION_21
+    version = JavaVersion.VERSION_21.toString()
     withJavadocJar()
     withSourcesJar()
 
