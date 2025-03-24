@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -550,10 +551,8 @@ public class IoUtilTest {
     public void testStringInputStream() throws IOException {
         String testString = "test string";
         try (InputStream is = IoUtil.stringInputStream(testString)) {
-            byte[] buffer = new byte[testString.length()];
-            int bytesRead = is.read(buffer);
-            assertEquals(testString.length(), bytesRead);
-            assertEquals(testString, new String(buffer));
+            byte[] buffer = is.readAllBytes();
+            assertEquals(testString, new String(buffer, StandardCharsets.UTF_8));
         }
     }
 
