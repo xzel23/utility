@@ -5,7 +5,7 @@ plugins {
 }
 
 java {
-    toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
+    version = JavaVersion.VERSION_21
     withJavadocJar()
     withSourcesJar()
 

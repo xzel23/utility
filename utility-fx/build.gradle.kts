@@ -1,7 +1,7 @@
 project.description = "Java utilities (JavaFX)"
 
 java {
-    toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
+    version = JavaVersion.VERSION_21
     withJavadocJar()
     withSourcesJar()
 
