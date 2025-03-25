@@ -186,17 +186,17 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
-### 16.2.2
+### 17.0.0
 
 - fix target compatibility not being set in modules
-
-### 16.2.1
-
+- fix compilation on Windows ARM
 - fix TextUtil.setLineEnds() and toXXXLineEnds() not appending the trailing line end
 - fix TextUtil tests failing on windows due to different line end characters
 - add TextUtil.isNewlineTerminated(), TextUtil.setLineEnds()
 - fix PredefinedDateTimeFormatTest failing depending on the used Java version due to changes in chinese date and time formatting
 - make the qodana scan run again
+- Javadoc corrections and additions
+- SwingUtil.setRenderingQuality() has been renamed to setRenderingQualityHigh()
 
 ### 16.2.0
 
