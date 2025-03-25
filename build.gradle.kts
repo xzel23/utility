@@ -76,7 +76,10 @@ subprojects {
     apply(plugin = "com.dua3.cabe")
 
     java {
-        version = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = targetCompatibility
+        version = targetCompatibility.toString()
+
         withJavadocJar()
         withSourcesJar()
     }

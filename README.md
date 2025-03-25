@@ -186,6 +186,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 16.2.2
+
+- fix target compatibility not being set in modules
+
 ### 16.2.1
 
 - fix TextUtil.setLineEnds() and toXXXLineEnds() not appending the trailing line end
