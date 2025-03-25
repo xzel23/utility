@@ -26,6 +26,14 @@ Source code is available at https://github.com/xzel23/utility.
 ## Requirements
 
 - JDK 17 or later, JDK 21 or later for JavaFX related modules
+- To build the library, JDK 21 **with a properly configured JavaFX installation** is needed.
+
+The requirement to have JavaFX installed and configured correctly on the system is because
+both the Gradle JavaFX plugin and the Foojay toolchain resolver plugin do not yet fully support
+Windows on ARM.
+
+The easiest way to build is to use either Azul Zulu JDK FX or BellSoft Liberica Full JDK
+distributions (the minimum version for both is 21).
 
 ## Including the library
 
