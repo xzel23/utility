@@ -31,14 +31,44 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
         private List<Style> currentStyles = new ArrayList<>();
 
+        /**
+         * Appends opening tags corresponding to the provided styles. The implementation of this method
+         * should generate and append the appropriate tag representations based on the given list of styles.
+         *
+         * @param openingStyles the list of styles for which opening tags should be appended
+         */
         protected abstract void appendOpeningTags(List<Style> openingStyles);
 
+        /**
+         * Appends the required closing tags corresponding to the given list of styles.
+         * This method ensures that the associated tags for the specified styles are properly
+         * closed, maintaining the integrity of the output format.
+         *
+         * @param closingStyles the list of styles for which the closing tags need to be appended
+         */
         protected abstract void appendClosingTags(List<Style> closingStyles);
 
+        /**
+         * Appends the given character sequence to the current conversion process.
+         *
+         * @param s the {@code CharSequence} to append
+         */
         protected abstract void appendChars(CharSequence s);
 
+        /**
+         * Retrieves the current result of the conversion process or related operation.
+         *
+         * @return the result of type T produced by the implementation
+         */
         protected abstract T get();
 
+        /**
+         * Appends the content of the given {@link RichText} to the current conversion,
+         * managing the styles and ensuring proper nested tagging.
+         *
+         * @param text the rich text content to be appended
+         * @return the current instance of {@code TagBasedConverterImpl<T>} after appending the given rich text
+         */
         protected TagBasedConverterImpl<T> append(RichText text) {
             List<Style> openStyles = new ArrayList<>();
             for (Run run : text) {

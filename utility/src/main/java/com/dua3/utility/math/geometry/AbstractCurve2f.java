@@ -64,6 +64,11 @@ public abstract class AbstractCurve2f extends Segment2f {
         return sb.toString();
     }
 
+    /**
+     * Appends the string representation of control points to the provided {@code StringBuilder}.
+     *
+     * @param sb the {@code StringBuilder} to which the control points' string representation will be appended
+     */
     protected void appendControlPoints(StringBuilder sb) {
         String sep = "";
         for (int control : controls) {

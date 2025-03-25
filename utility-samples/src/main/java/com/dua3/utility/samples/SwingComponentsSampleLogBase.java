@@ -66,6 +66,14 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         });
     }
 
+    /**
+     * Constructs a new instance of SwingComponentsSampleLogBase.
+     * <p>
+     * This constructor initializes the frame layout using the MigLayout manager,
+     * defines the minimum size of the frame, and sets its initial size. Additionally,
+     * it calls the {@code init()} method to set up the frame's components and
+     * functionalities.
+     */
     protected SwingComponentsSampleLogBase() {
         setLayout(new MigLayout("fill", "[grow,fill]", "[][][grow,fill]"));
         setMinimumSize(new Dimension(400, 400));

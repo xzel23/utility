@@ -586,15 +586,16 @@ public interface Graphics extends AutoCloseable {
     }
 
     /**
-     * Renders the given text within the specified bounding rectangle using the provided font,
-     * alignment, and wrapping settings.
+     * Renders the given text at the specified position with alignment, anchoring, and wrapping options.
      *
-     * @param pos             the rendering position
-     * @param text            the text to be rendered
-     * @param hAlign          the horizontal alignment of the text within the bounding rectangle
-     * @param vAlign          the vertical alignment of the text within the bounding rectangle
-     * @param outputDimension the dimension of the output area, used for layout
-     * @param wrapText        true, to apply automatic text wrapping
+     * @param pos the position where the text should be rendered, represented as a 2D vector
+     * @param text the rich text object containing the text and its formatting details
+     * @param hAnchor the horizontal anchoring reference for positioning the text
+     * @param vAnchor the vertical anchoring reference for positioning the text
+     * @param hAlign the horizontal alignment of the text within its bounds
+     * @param vAlign the vertical alignment of the text within its bounds
+     * @param outputDimension the dimension representing the maximum width and height available for rendering
+     * @param wrapText the text wrapping mode, which determines how the text should wrap within the available width
      */
     default void renderText(
             Vector2f pos,
@@ -859,6 +860,7 @@ public interface Graphics extends AutoCloseable {
      * @param arc the {@code Arc2f} object representing the elliptical arc to approximate,
      *            containing the arc's start point, end point, radii, rotation angle,
      *            and flags indicating large arc or sweep direction.
+     * @param moveTo                a {@code Consumer<Vector2f>} that processes the starting point of the arc.
      * @param generateBezierSegment a {@code Consumer<Vector2f[]>} that processes
      *                              the generated Bézier segment points for each
      *                              subdivided portion of the arc.
@@ -877,15 +879,19 @@ public interface Graphics extends AutoCloseable {
     }
 
     /**
-     * Approximates an elliptical arc with cubic Bézier curves and generates Bézier segments using the provided consumer.
+     * Approximates an elliptical arc using Bézier curves. This method converts the arc parameters
+     * into one or more quadratic Bézier curves that closely match the arc.
      *
-     * @param p0 The starting point of the arc.
-     * @param p1 The ending point of the arc.
-     * @param r The radii of the ellipse, with `r.x` representing the x-radius and `r.y` representing the y-radius.
-     * @param angle The rotation angle of the ellipse’s axes in radians.
-     * @param largeArc A flag indicating whether the larger arc spanning more than 180 degrees should be chosen.
-     * @param sweep A flag indicating whether the arc should be drawn in a clockwise direction.
-     * @param generateBezierSegment A consumer to process each Bézier segment, with each segment represented by an array of control points.
+     * @param p0 the starting point of the arc
+     * @param p1 the ending point of the arc
+     * @param r the radii of the ellipse (x-axis and y-axis radii)
+     * @param angle the rotation of the ellipse in radians
+     * @param largeArc a boolean indicating whether to draw the larger arc segment
+     * @param sweep a boolean indicating the direction of the arc sweep (clockwise or counter-clockwise)
+     * @param moveTo a consumer to handle the initial move-to operation for the starting point
+     * @param generateBezierSegment a consumer to process the generated Bézier segments for the arc
+     * @throws IllegalArgumentException if the parameters do not define a valid arc (e.g., the distance between points
+     *         is too great for the provided radii or arc degenerates to a line)
      */
     static void approximateArc(
             Vector2f p0,

@@ -74,7 +74,17 @@ public class ArgumentsDialog extends JDialog {
      */
     public static class ArgumentsPanel extends JPanel {
         /**
-         * Represents an input for an option in a graphical user interface.
+         * Represents an input component that consists of an {@link Option}, a UI {@link JComponent},
+         * and getter and setter functionality for parameter management.
+         * <p>
+         * This record is used to encapsulate the association between an option and its corresponding
+         * input component, along with the necessary operations to retrieve and update its parameters.
+         *
+         * @param option       The {@link Option} object to be associated with the input component.
+         * @param component    The {@link JComponent} that serves as the UI component for the input.
+         * @param getParameter A {@link Supplier} that provides a list of parameter values for the option.
+         * @param setParameter A {@link Consumer} that allows setting a collection of parameter values
+         *                     for the option.
          */
         public record OptionInput(Option<?> option, JComponent component, Supplier<List<String>> getParameter,
                                   Consumer<Collection<String>> setParameter) {

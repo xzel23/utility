@@ -16,6 +16,16 @@ import com.dua3.utility.ui.Graphics;
 
 import java.util.stream.DoubleStream;
 
+/**
+ * The AnimateRotatedText class demonstrates the rendering of rotated text using
+ * different modes and angles. It implements the FxGraphicsSample.Slide interface
+ * to provide a graphical slide with rotated text animations. The class supports
+ * variable text rotation modes, displaying content with different anchors and alignments.
+ * <p>
+ * This class generates graphical illustrations of rotated text in varying quadrants,
+ * octants, and text rotation modes by drawing tiles representing text at specified
+ * angles and orientations.
+ */
 public class AnimateRotatedText implements FxGraphicsSample.Slide {
 
     public static final RichText TEXT = new RichTextBuilder()
@@ -38,6 +48,12 @@ public class AnimateRotatedText implements FxGraphicsSample.Slide {
     private final Graphics.HAnchor hAnchor;
     private final Graphics.VAnchor vAnchor;
 
+    /**
+     * Constructs an instance of AnimateRotatedText with specified horizontal and vertical anchor alignments.
+     *
+     * @param hAnchor the horizontal anchor alignment
+     * @param vAnchor the vertical anchor alignment
+     */
     public AnimateRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor) {
         this.hAnchor = hAnchor;
         this.vAnchor = vAnchor;
@@ -53,6 +69,13 @@ public class AnimateRotatedText implements FxGraphicsSample.Slide {
         drawText(g);
     }
 
+    /**
+     * Renders text with various angles and rotation modes in a graphical context.
+     * This method demonstrates text rotation and alignment by drawing text at
+     * specified angles and showing rotation effects with different modes.
+     *
+     * @param g the {@link Graphics} context used for rendering text and shapes
+     */
     public void drawText(Graphics g) {
         double delta = 10.0;
         double[] angles = DoubleStream.of(-delta, 90.0 - delta, 0, 45, 90, 135, 180, 225, 270, 315)

@@ -174,6 +174,8 @@ public class CsvReader extends CsvIo {
     }
 
     /**
+     * Get the column name.
+     *
      * @param columnNr the column number
      * @return name of column or columnNr as String if no name was set
      */
@@ -186,53 +188,67 @@ public class CsvReader extends CsvIo {
     }
 
     /**
-     * @return the ignoreExcessFields
+     * Indicates whether excess fields in the CSV data should be ignored during parsing.
+     *
+     * @return true if excess fields are ignored; false otherwise
      */
     public boolean getIgnoreExcessFields() {
         return ignoreExcessFields;
     }
 
     /**
-     * @param ignoreExcessFields the ignoreExcessFields to set
+     * Configures whether excess fields in the CSV data should be ignored during parsing.
+     *
+     * @param ignoreExcessFields a boolean value indicating if excess fields should be ignored.
+     *                           If true, excess fields are ignored; if false, an exception
+     *                           or error may occur during parsing when excess fields are encountered.
      */
     public void setIgnoreExcessFields(boolean ignoreExcessFields) {
         this.ignoreExcessFields = ignoreExcessFields;
     }
 
     /**
-     * @return the ignoreMissingFields
+     * Indicates whether missing fields in the CSV data should be ignored during parsing.
+     *
+     * @return true if missing fields are ignored; false otherwise
      */
     public boolean getIgnoreMissingFields() {
         return ignoreMissingFields;
     }
 
     /**
-     * @param ignoreMissingFields the ignoreMissingFields to set
+     * Configures whether missing fields in the CSV data should be ignored during parsing.
+     *
+     * @param ignoreMissingFields a boolean value indicating if missing fields should be ignored.
+     *                            If true, missing fields are ignored; if false, an exception or
+     *                            error may occur during parsing when missing fields are encountered.
      */
     public void setIgnoreMissingFields(boolean ignoreMissingFields) {
         this.ignoreMissingFields = ignoreMissingFields;
     }
 
     /**
-     * @return the lineNumber
+     * Returns the current line number being processed in the CSV reader.
+     *
+     * @return the line number
      */
     public int getLineNumber() {
         return lineNumber;
     }
 
     /**
-     * Returns the row number.
+     * Retrieves the current row number being processed in the CSV reader.
      *
-     * @return the row number
+     * @return the current row number
      */
     public int getRowNumber() {
         return rowNumber;
     }
 
     /**
-     * Returns the number of rows read.
+     * Returns the total number of rows read by the CSV reader.
      *
-     * @return the number of rows read
+     * @return the total count of rows read
      */
     public int getRowsRead() {
         return rowsRead;
@@ -275,7 +291,7 @@ public class CsvReader extends CsvIo {
     }
 
     /**
-     * Reads the column names from the file.
+     * Read the column names from the file.
      *
      * @throws IOException if an I/O error occurs
      */
@@ -286,7 +302,7 @@ public class CsvReader extends CsvIo {
     }
 
     /**
-     * read a single row of CSV data.
+     * Read a single row of CSV data.
      *
      * @return number of fields in row or -1 when end of input is
      * reached
@@ -390,7 +406,9 @@ public class CsvReader extends CsvIo {
     }
 
     /**
-     * @param columnNames the columnNames to set
+     * Sets the column names for the CSV reader.
+     *
+     * @param columnNames the list of column names to be used
      */
     public void setColumnNames(List<String> columnNames) {
         this.columnNames = columnNames;

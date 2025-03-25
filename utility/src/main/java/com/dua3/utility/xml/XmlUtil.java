@@ -727,6 +727,13 @@ public final class XmlUtil {
      *                         resolution of XML namespace prefixes and URIs.
      */
     public record DocumentWithNamespace(Document document, NamespaceContext namespaceContext) {
+        /**
+         * Creates a new instance of {@code DocumentWithNamespace} from the given {@link Document}.
+         * The method initializes the namespace context based on the namespaces declared in the document.
+         *
+         * @param document The XML document to encapsulate along with its namespace context.
+         * @return A {@code DocumentWithNamespace} instance encapsulating the provided document and its namespace context.
+         */
         public DocumentWithNamespace of(Document document) {
             return new DocumentWithNamespace(document, new SimpleNamespaceContext(collectNamespaces(document.getDocumentElement())));
         }

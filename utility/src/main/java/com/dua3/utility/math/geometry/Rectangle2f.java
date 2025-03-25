@@ -7,6 +7,11 @@ package com.dua3.utility.math.geometry;
 
 /**
  * Immutable rectangle with float coordinates.
+ *
+ * @param x      the x-coordinate of the top-left corner of the rectangle
+ * @param y      the y-coordinate of the top-left corner of the rectangle
+ * @param width  the width of the rectangle (must be >= 0)
+ * @param height the height of the rectangle (must be >= 0)
  */
 public record Rectangle2f(float x, float y, float width, float height) {
 

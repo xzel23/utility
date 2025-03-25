@@ -19,7 +19,18 @@ import java.util.function.Supplier;
  */
 public final class SoftResource<T> {
 
+    /**
+     * A static final SoftReference holding a null reference.
+     * Represents an empty soft reference that can be reused to avoid unnecessary
+     * allocations of empty references. This is helpful in scenarios where a common
+     * empty reference is required or when representing the absence of a value.
+     */
     public static final SoftReference<?> EMPTY_REFERENCE = new SoftReference<>(null);
+    /**
+     * A constant representing an empty soft resource.
+     * This instance is created with a null supplier and serves as a predefined empty resource
+     * to avoid unnecessary instantiations of empty resources for generic use cases.
+     */
     public static final SoftResource<?> EMPTY_RESOURCE = new SoftResource<>(null);
 
     private @Nullable Supplier<? extends @Nullable T> supplier;

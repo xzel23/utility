@@ -284,98 +284,133 @@ public final class FontDef implements Cloneable {
     }
 
     /**
-     * @return the bold
+     * Retrieves the bold property of the FontDef instance.
+     *
+     * @return a Boolean indicating whether the bold attribute is set.
+     *         It returns {@code true} if bold is enabled, {@code false} if disabled,
+     *         or {@code null} if the bold attribute is not defined.
      */
     public @Nullable Boolean getBold() {
         return bold;
     }
 
     /**
-     * @param bold the bold to set
+     * Sets the bold property of the font definition.
+     *
+     * @param bold the value to set for the bold property. It can be true, false, or null to represent
+     *             bold, non-bold, or unspecified respectively.
      */
     public void setBold(@Nullable Boolean bold) {
         this.bold = bold;
     }
 
     /**
-     * @return the color
+     * Retrieves the color attribute associated with this instance.
+     *
+     * @return the color attribute, or null if no color is defined
      */
     public @Nullable Color getColor() {
         return color;
     }
 
     /**
-     * @param color the color to set
+     * Sets the color attribute of the FontDef instance.
+     *
+     * @param color the color to set, which can be null
      */
     public void setColor(@Nullable Color color) {
         this.color = color;
     }
 
     /**
-     * @return the family
+     * Retrieves the font family value of this instance.
+     *
+     * @return the font family as a string, or null if no family is defined
      */
     public @Nullable String getFamily() {
         return family;
     }
 
     /**
-     * @param family the family to set
+     * Sets the font family for the FontDef instance.
+     *
+     * @param family the font family to set. Can be null if no font family is specified.
      */
     public void setFamily(@Nullable String family) {
         this.family = family;
     }
 
     /**
-     * @return the italic
+     * Retrieves the italic property of this FontDef instance.
+     *
+     * @return a Boolean indicating whether the italic property is set,
+     *         or null if the italic property is undefined.
      */
     public @Nullable Boolean getItalic() {
         return italic;
     }
 
     /**
-     * @param italic the italic to set
+     * Sets the italic property of the font definition.
+     *
+     * @param italic the value to set for the italic property. It can be null to indicate that the property is undefined.
      */
     public void setItalic(@Nullable Boolean italic) {
         this.italic = italic;
     }
 
     /**
-     * @return the size in points
+     * Retrieves the size attribute of this FontDef instance.
+     *
+     * @return the size of the font as a Float, or null if the size is not set
      */
     public @Nullable Float getSize() {
         return size;
     }
 
     /**
-     * @param size the size in points to set
+     * Sets the size of the font.
+     *
+     * @param size the font size in points. Can be null if the size is not defined.
      */
     public void setSize(@Nullable Float size) {
         this.size = size;
     }
 
     /**
-     * @return the strikeThrough
+     * Retrieves the value of the strike-through property of the font definition.
+     *
+     * @return the strike-through state, or null if it is not defined
      */
     public @Nullable Boolean getStrikeThrough() {
         return strikeThrough;
     }
 
     /**
-     * @param strikeThrough the strikeThrough to set
+     * Sets the strike-through property for the font.
+     *
+     * @param strikeThrough a Boolean value indicating whether the font
+     *                       should have a strike-through effect.
+     *                       If {@code null}, the strike-through property
+     *                       will not be explicitly set.
      */
     public void setStrikeThrough(@Nullable Boolean strikeThrough) {
         this.strikeThrough = strikeThrough;
     }
 
     /**
-     * @return the underline
+     * Retrieves the current value of the underline property for this FontDef instance.
+     *
+     * @return the underline property, which may be true, false, or null if not explicitly set
      */
     public @Nullable Boolean getUnderline() {
         return underline;
     }
 
     /**
-     * @param underline the underline to set
+     * Sets the underline attribute for the font.
+     *
+     * @param underline the underline attribute to set, or null to unset it
      */
     public void setUnderline(@Nullable Boolean underline) {
         this.underline = underline;

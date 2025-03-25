@@ -312,11 +312,13 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     /**
-     * Get a property's value.
+     * Retrieves the value associated with the specified property, or returns the provided default value
+     * if the property is not set.
      *
-     * @param property the property name
-     * @param dflt     the default value
-     * @return the value of the property or dflt if no value was set
+     * @param <T>    the type of the property value
+     * @param property the name of the property to retrieve
+     * @param dflt     the default value to return if the property is not set
+     * @return the value of the property if set, otherwise the provided default value
      */
     public <T extends @Nullable Object> T getOrDefault(String property, T dflt) {
         //noinspection unchecked - by design
@@ -472,10 +474,12 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     /**
-     * Create a style for the given font and colors.
+     * Creates a new style with the specified font, foreground color, and background color.
      *
-     * @param font the font
-     * @return the created style
+     * @param font the font to be used in the style
+     * @param foreground the foreground color of the style
+     * @param background the background color of the style
+     * @return a new Style instance configured with the specified font, foreground color, and background color
      */
     public static Style create(Font font, Color foreground, Color background) {
         return create(font.fontspec() + foreground.toCss() + background.toCss(), Map.of(FONT, font, COLOR, foreground, BACKGROUND_COLOR, background));

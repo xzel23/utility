@@ -9,6 +9,29 @@ import com.dua3.utility.ui.Graphics;
 
 import static com.dua3.utility.math.MathUtil.TWO_PI;
 
+/**
+ * The ArcToAndEllipse class implements the FxGraphicsSample.Slide interface and demonstrates the
+ * use of graphical drawing methods such as `arcTo`, `fillEllipse`, and `strokeEllipse`.
+ * This class provides a visual showcase of these methods by rendering various graphical elements
+ * such as paths, ellipses, arcs, and labeled text.
+ * <p>
+ * The key features demonstrated by this slide include:
+ * - Drawing {@link Path2f} instances with arcs created using `arcTo`, with different combinations
+ *   of sweep and largeArc parameters.
+ * - Displaying the start, end, and center points of arcs using colored dots.
+ * - Drawing ellipses with customizable rotation angles using `fillEllipse` and `strokeEllipse`.
+ * - Annotating the graphical elements with explanatory text to describe their characteristics.
+ * <p>
+ * The class organizes its content into three sections:
+ * 1. Demonstrations of arc parameters with red, blue, green dots indicating center, start, and
+ *    end of arcs respectively.
+ * 2. Examples of ellipses drawn with rotation, filled, and stroked with different angle values.
+ * 3. An explanation of arc behaviors using varying combinations of the `largeArc` and `sweep` parameters.
+ * <p>
+ * The drawing operations rely on a `Graphics` instance, which provides methods for rendering
+ * graphical primitives, as well as colors and transformations. The arcs, ellipses, and text
+ * are positioned dynamically based on the slide dimensions.
+ */
 public class ArcToAndEllipse implements FxGraphicsSample.Slide {
 
     @Override

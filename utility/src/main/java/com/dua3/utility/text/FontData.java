@@ -12,14 +12,21 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Font data record}.
+ * Represents font data, containing attributes and metrics for a specific font style.
  *
- * @param family        the font family
+ * @param family        the name of the font family
  * @param size          the font size in points
- * @param bold          if text should be displayed in bold letters
- * @param italic        if text should be displayed in italics
- * @param underline     if text should be displayed underlined
- * @param strikeThrough if text should be displayed strike-through
+ * @param bold          whether the font style is bold
+ * @param italic        whether the font style is italicized
+ * @param underline     whether the font style includes an underline
+ * @param strikeThrough whether the font style includes a strike-through
+ * @param fontDef       the {@link FontDef} object defining extended font properties
+ * @param fontspec      the font specification string without color information
+ * @param cssStyle      the CSS representation of the font's style
+ * @param ascent        the distance above the baseline for the highest ascender
+ * @param descent       the distance below the baseline for the lowest descender
+ * @param height        the overall height of the font, including ascent and descent
+ * @param spaceWidth    the width of the space character in the font
  */
 public record FontData(
         String family,
@@ -37,6 +44,24 @@ public record FontData(
         double spaceWidth
 ) {
 
+    /**
+     * Represents font data and its associated properties, such as family, size,
+     * style attributes, and metrics.
+     *
+     * @param family       the font family name; must not be empty
+     * @param size         the font size; must be non-negative
+     * @param bold         whether the font is bold
+     * @param italic       whether the font is italic
+     * @param underline    whether the font is underlined
+     * @param strikeThrough whether the font is strike-through
+     * @param fontDef      the associated {@link FontDef} object; must not be null and have valid attributes
+     * @param fontspec     the font specification string; must not end with "-*"
+     * @param cssStyle     the CSS style representation of the font
+     * @param ascent       the ascent metric of the font; must be non-negative
+     * @param descent      the descent metric of the font; must be non-negative
+     * @param height       the total height of the font; must be greater than or equal to ascent
+     * @param spaceWidth   the width of the space character; must be positive
+     */
     public FontData {
         assert !family.isEmpty() : "family is the empty string";
         assert size >= 0 : "size is negative";
@@ -58,6 +83,21 @@ public record FontData(
         fontspec = fontspec.substring(0, fontspec.length() - 2);
     }
 
+    /**
+     * Creates and returns a new instance of {@code FontData} with the specified attributes and metrics.
+     *
+     * @param family        the font family name; must not be empty
+     * @param size          the font size; must be non-negative
+     * @param bold          whether the font is bold
+     * @param italic        whether the font is italic
+     * @param underline     whether the font is underlined
+     * @param strikeThrough whether the font is strike-through
+     * @param ascent        the ascent metric of the font; must be non-negative
+     * @param descent       the descent metric of the font; must be non-negative
+     * @param height        the total height of the font; must be greater than or equal to ascent
+     * @param spaceWidth    the width of the space character; must be positive
+     * @return a new instance of {@code FontData} containing the specified attributes and metrics
+     */
     public static FontData get(
             String family,
             float size,
@@ -142,12 +182,12 @@ public record FontData(
     /**
      * Compare values and store changes.
      *
+     * @param <T>    object type
+     * @param <U>    attribute type
      * @param o1     first object
      * @param o2     second object
      * @param getter attribute getter
      * @param setter attribute setter
-     * @param <T>    object type
-     * @param <U>    attribute type
      */
     static <T, U> void deltaHelper(@Nullable T o1, @Nullable T o2, Function<T, U> getter, Consumer<? super U> setter) {
         U v1 = o1 == null ? null : getter.apply(o1);

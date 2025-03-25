@@ -13,7 +13,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Build information record.
+ * A record class representing build information, including build time and version components.
+ *
+ * @param buildTime  the build timestamp
+ * @param major      the major version
+ * @param minor      the minor version
+ * @param patchLevel the patch level of the version
+ * @param separator  the separator used between version components
+ * @param suffix     the suffix associated with this version
  */
 public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patchLevel, String separator,
                         String suffix) {
@@ -74,10 +81,12 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     /**
      * Load properties from resource and return BuildInfo.
      *
-     * @param cls      the class used to load the properties
-     * @param resource name of the resource file
+     * @param cls      the class used to load the properties; typically the class whose package
+     *                 contains the resource
+     * @param resource the name of the resource file to load the build information from
      * @return BuildInfo instance
-     * @throws IllegalStateException if buildinfo could not be loaded
+     * @throws IOException if buildinfo could not be loaded due to an I/O error
+     * @throws IllegalStateException if buildinfo could not be loaded due an invalid resource
      */
     public static BuildInfo create(Class<?> cls, String resource) throws IOException {
         try (InputStream in = cls.getResourceAsStream(resource)) {

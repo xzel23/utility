@@ -18,11 +18,24 @@ public class Font {
     private final FontData fontData;
     private final Color color;
 
+    /**
+     * Constructor to create a Font instance with given font data and color.
+     *
+     * @param fontData The font data specifying the font's typeface, size, and style.
+     * @param color The color of the font. It defines the text color associated with the font.
+     */
     protected Font(FontData fontData, Color color) {
         this.fontData = fontData;
         this.color = color;
     }
 
+    /**
+     * Retrieves a Font instance from the cache based on the specified font data and color.
+     *
+     * @param fontData The font data specifying the font's typeface, size, and style.
+     * @param color The color of the font, defining the text color associated with it.
+     * @return A Font instance matching the provided font data and color from the cache.
+     */
     public static Font getFont(FontData fontData, Color color) {
         return fontCache.get(new Font(fontData, color));
     }
@@ -279,6 +292,11 @@ public class Font {
         return color.equals(this.getColor()) ? this : FontUtil.getInstance().deriveFont(this, FontDef.color(color));
     }
 
+    /**
+     * Retrieves the font data associated with this font instance.
+     *
+     * @return the FontData object containing information about the font's typeface, size, and style.
+     */
     public FontData getFontData() {
         return fontData;
     }

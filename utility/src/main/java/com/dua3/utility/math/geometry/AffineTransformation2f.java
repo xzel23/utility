@@ -13,6 +13,13 @@ import java.util.Optional;
  *     0 0 1
  * }
  * </pre>.
+ *
+ * @param a Scaling factor for the x-axis.
+ * @param b Shearing factor for the x-axis, affecting horizontal skew relative to the y-axis.
+ * @param c Translation component for the x-coordinate.
+ * @param d Shearing factor for the y-axis, affecting vertical skew relative to the x-axis.
+ * @param e Scaling factor for the y-axis.
+ * @param f Translation component for the y-coordinate.
  */
 public record AffineTransformation2f(float a, float b, float c, float d, float e, float f) {
 
@@ -64,6 +71,7 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
      * {@code (x,y) -> (x cos(alpha) - y sin(alpha), x sin(alpha) + y cos(alpha))}.
      *
      * @param alpha the angle in radians
+     * @param c     the center of rotation as a vector (translation parameters for x- and y-coordinates)
      * @return affine transformation (rotation)
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")

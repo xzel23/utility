@@ -43,7 +43,9 @@ public record FragmentedText(
     private  static final FragmentedText EMPTY_FRAGMENTED_TEXT = new FragmentedText(Collections.emptyList(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
     /**
+     * Returns an empty instance of {@code FragmentedText}.
      *
+     * @return an empty {@code FragmentedText} object.
      */
     public static FragmentedText empty() {
         return EMPTY_FRAGMENTED_TEXT;

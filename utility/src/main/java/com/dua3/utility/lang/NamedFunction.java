@@ -11,6 +11,8 @@ import java.util.function.Function;
  *
  * @param <T> type of function argument
  * @param <R> type of function return value
+ * @param name the name of the function
+ * @param f the implemented function
  */
 public record NamedFunction<T extends @Nullable Object, R extends @Nullable Object>(String name,
                                                                                     Function<@Nullable T, @Nullable R> f) implements Function<@Nullable T, @Nullable R> {

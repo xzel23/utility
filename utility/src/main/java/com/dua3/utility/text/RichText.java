@@ -720,6 +720,10 @@ public final class RichText
     }
 
     /**
+     * Splits this RichText into an array of RichText objects based on the provided regular expression.
+     *
+     * @param regex the regular expression to use as a delimiter for splitting this RichText
+     * @return an array of RichText objects computed by splitting this RichText around matches of the given regular expression
      * @see String#split(String)
      */
     @SuppressWarnings("MissingJavadoc")
@@ -728,10 +732,10 @@ public final class RichText
     }
 
     /**
-     * Split using a precompiled {@link Pattern}.
+     * Splits the current RichText into an array of RichText instances based on the provided pattern.
      *
-     * @param pattern the pattern
-     *
+     * @param pattern the regular expression pattern used to split the RichText. It determines the boundaries for splitting.
+     * @return an array of RichText objects resulting from splitting the current RichText based on the given pattern.
      * @see String#split(String)
      */
     public RichText[] split(Pattern pattern) {
@@ -739,7 +743,19 @@ public final class RichText
     }
 
     /**
-     * @see String#split(String, int)
+     * Splits the current RichText object into an array of RichText objects based on
+     * the given regular expression and limit.
+     * <p>
+     * The method splits the text into segments using the provided regular expression
+     * as the delimiter. The maximum number of resulting segments can be controlled
+     * by the limit parameter.
+     *
+     * @param regex the regular expression used to determine the boundaries for splitting
+     * @param limit the maximum number of segments to include in the result; if the limit is zero
+     *              or negative, the method will include all segments, including trailing empty strings
+     *              if any
+     * @return an array of RichText objects resulting from the split operation
+     * @see String#split(String,int)
      */
     @SuppressWarnings("MissingJavadoc")
     public RichText[] split(String regex, int limit) {
@@ -798,11 +814,11 @@ public final class RichText
     }
 
     /**
-     * Split using a precompiled {@link Pattern}.
+     * Splits the current text into an array of RichText objects based on the given pattern and limit.
      *
-     * @param pattern the pattern
-     * @param limit   the limite
-     *
+     * @param pattern the regular expression pattern used to define delimiters for splitting the text
+     * @param limit the maximum number of elements in the result array; if limit is less than or equal to zero, splits are unlimited
+     * @return an array of RichText objects, split from the current text based on the specified pattern and limit
      * @see String#split(String, int)
      */
     public RichText[] split(Pattern pattern, int limit) {
@@ -850,6 +866,12 @@ public final class RichText
     }
 
     /**
+     * Replaces the first substring of this RichText that matches the given regular expression
+     * with the specified replacement RichText.
+     *
+     * @param regex the regular expression to which this RichText is to be matched
+     * @param replacement the RichText to be used as a replacement for the first match
+     * @return a new RichText with the first matching substring replaced by the replacement RichText
      * @see String#replaceFirst(String, String)
      */
     @SuppressWarnings("MissingJavadoc")
@@ -858,6 +880,12 @@ public final class RichText
     }
 
     /**
+     * Replaces the first substring of this RichText object that matches the given
+     * regular expression with the specified replacement string.
+     *
+     * @param regex the regular expression to which the substring should match
+     * @param replacement the string to replace the first matching substring
+     * @return a new RichText object with the first matching substring replaced
      * @see String#replaceFirst(String, String)
      */
     @SuppressWarnings("MissingJavadoc")
@@ -866,6 +894,13 @@ public final class RichText
     }
 
     /**
+     * Replaces each substring of this RichText that matches the given regular expression
+     * with the specified RichText replacement.
+     *
+     * @param regex the regular expression to which this RichText is matched
+     * @param replacement the RichText to be substituted for each match
+     * @return a new RichText resulting from replacing all occurrences of the pattern
+     *         with the specified replacement
      * @see String#replaceAll(String, String)
      */
     @SuppressWarnings("MissingJavadoc")
@@ -874,6 +909,12 @@ public final class RichText
     }
 
     /**
+     * Replaces every occurrence of the specified regular expression
+     * in the text with the given replacement string.
+     *
+     * @param regex the regular expression to be matched
+     * @param replacement the string to replace each match
+     * @return a new RichText object with the replacements made
      * @see String#replaceAll(String, String)
      */
     @SuppressWarnings("MissingJavadoc")
@@ -898,6 +939,7 @@ public final class RichText
      * @param ch  the character
      * @param off the starting position
      * @return the position where the char was found or -1 if not found
+     * @see String#indexOf(int, int)
      */
     public int indexOf(char ch, int off) {
         return TextUtil.indexOf(this, ch, off);
@@ -908,6 +950,7 @@ public final class RichText
      *
      * @param s the text to find
      * @return the first index, where s is found within this instance
+     * @see String#indexOf(String)
      */
     public int indexOf(CharSequence s) {
         return TextUtil.indexOf(this, s);
@@ -919,6 +962,7 @@ public final class RichText
      * @param s         the text to find
      * @param fromIndex the starting position
      * @return the first index, where s is found within this instance
+     * @see String#indexOf(String, int)
      */
     public int indexOf(CharSequence s, int fromIndex) {
         return TextUtil.indexOf(this, s, fromIndex);
@@ -929,6 +973,7 @@ public final class RichText
      *
      * @param s the sequence to test
      * @return true, if this instance starts with s
+     * @see String#startsWith(String)
      */
     public boolean startsWith(CharSequence s) {
         return TextUtil.startsWith(this, s);
@@ -939,6 +984,7 @@ public final class RichText
      *
      * @param s the sequence to search for
      * @return true, if s is contained
+     * @see String#contains(CharSequence)
      */
     public boolean contains(CharSequence s) {
         return indexOf(s) >= 0;

@@ -7,6 +7,11 @@ import com.dua3.utility.ui.Graphics;
 
 import static com.dua3.utility.math.MathUtil.PI_QUARTER;
 
+/**
+ * The DrawText class implements the Slide interface and demonstrates the use of the drawText method
+ * within a graphical context. It renders text with various horizontal and vertical alignment options
+ * (HAnchor and VAnchor) using the com.dua3.utility.ui.Graphics API.
+ */
 public class DrawText implements FxGraphicsSample.Slide {
     @Override
     public String title() {

@@ -23,7 +23,24 @@ public class RichTextJoiner implements Collector<RichText, RichTextJoiner.Accumu
     final Consumer<RichTextBuilder> appendSuffix;
     final IntUnaryOperator calculateSupplementaryLength;
 
+    /**
+     * A record representing an accumulation type used within a context requiring text and counter aggregation.
+     * This class encapsulates a list of RichText instances and an AtomicInteger counter.
+     * <p>
+     * The primary use case involves combining or accumulating textual data alongside a numeric counter value.
+     * It provides a default constructor that initializes the list of texts as empty and the counter to zero.
+     * <p>
+     * Immutable and thread-safe due to its design with immutable list and AtomicInteger.
+     *
+     * @param texts the list of RichText objects to be accumulated
+     * @param counter the AtomicInteger counter accompanying the accumulated text
+     */
     public record AccumulationType(List<RichText> texts, AtomicInteger counter) {
+        /**
+         * Default constructor for the AccumulationType record.
+         * Initializes the texts list as an empty ArrayList and the counter as an AtomicInteger with an initial value of 0.
+         * This constructor serves as a convenient way to create a new AccumulationType instance with default, empty values.
+         */
         public AccumulationType() {
             this(new ArrayList<>(), new AtomicInteger(0));
         }

@@ -2,6 +2,9 @@ package com.dua3.utility.math.geometry;
 
 /**
  * An immutable 2-dimensional dimension using float coordinates.
+ *
+ * @param width  the width (>= 0)
+ * @param height the height (>= 0)
  */
 public record Dimension2f(float width, float height) {
 

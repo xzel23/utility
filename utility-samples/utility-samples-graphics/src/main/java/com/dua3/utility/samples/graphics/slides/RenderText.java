@@ -10,6 +10,11 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 
+/**
+ * The RenderText class implements the FxGraphicsSample.Slide interface and demonstrates
+ * how to render stylized text using the graphical rendering framework. It defines the
+ * specific slide content to display styled text on a canvas.
+ */
 public class RenderText implements FxGraphicsSample.Slide {
     @Override
     public String title() {

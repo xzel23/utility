@@ -7,6 +7,9 @@ package com.dua3.utility.math.geometry;
 
 /**
  * An immutable 2-dimensional vector using float coordinates.
+ *
+ * @param x the x-coordinate
+ * @param y the y-coordinate
  */
 public record Vector2f(float x, float y) {
 

@@ -75,6 +75,9 @@ public class RichTextMatcher implements MatchResult {
     }
 
     /**
+     * Attempts to find the next occurrence of the pattern within the input sequence.
+     *
+     * @return true if the pattern is found within the input sequence, false otherwise
      * See {@link Matcher#find()}.
      */
     @SuppressWarnings("MissingJavadoc")
@@ -83,6 +86,11 @@ public class RichTextMatcher implements MatchResult {
     }
 
     /**
+     * Attempts to find the next occurrence of the pattern within the input sequence,
+     * starting at the specified position.
+     *
+     * @param start the position in the input sequence to start searching for the pattern
+     * @return true if the pattern is found starting from the specified position, false otherwise
      * See {@link Matcher#find(int)}.
      */
     @SuppressWarnings("MissingJavadoc")
@@ -91,6 +99,10 @@ public class RichTextMatcher implements MatchResult {
     }
 
     /**
+     * Replaces the first occurrence of the pattern in the input sequence with the specified replacement.
+     *
+     * @param replacement the sequence to be substituted for the first match
+     * @return a new {@code RichText} instance with the first occurrence of the pattern replaced
      * See {@link Matcher#replaceFirst(String)}.
      */
     @SuppressWarnings("MissingJavadoc")
@@ -99,6 +111,10 @@ public class RichTextMatcher implements MatchResult {
     }
 
     /**
+     * Replaces all occurrences of the pattern in the input sequence with the specified replacement.
+     *
+     * @param replacement the sequence to be substituted for each match
+     * @return a new {@code RichText} instance with all occurrences of the pattern replaced
      * See {@link Matcher#replaceAll(String)}.
      */
     @SuppressWarnings("MissingJavadoc")

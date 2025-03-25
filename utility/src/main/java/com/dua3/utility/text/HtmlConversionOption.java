@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 
 /**
  * Options controlling the conversion process.
+ *
+ * @param action the action that applies this option to a {@link HtmlConverter}
  */
 public record HtmlConversionOption(Consumer<? super HtmlConverter> action) {
 

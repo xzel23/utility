@@ -28,6 +28,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * FxTextRendering is a JavaFX application that demonstrates rendering text with
+ * various styles, alignments, rotations, and effects. The application visualizes
+ * text transformations like rotation and alignment in a grid layout using a variety
+ * of customization options for rendering graphics.
+ * <p>
+ * The application showcases different combinations of horizontal and vertical
+ * anchors, and utilizes text rotation modes for visual effects.
+ * <p>
+ * It uses rich text styles, including bold, italic, underline, and line-through,
+ * and applies them to displayed text. The text rendering is demonstrated with
+ * rotating graphics and dynamically updated angles using animation.
+ */
 public class FxTextRendering extends Application {
 
     public static final RichText TEXT = new RichTextBuilder()

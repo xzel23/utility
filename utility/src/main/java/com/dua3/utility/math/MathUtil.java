@@ -15,7 +15,11 @@ import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * @author axel
+ * MathUtil is a utility class that provides various static methods for mathematical calculations
+ * and operations. These methods include range clamping, root finding, GCD calculation, logarithmic
+ * operations, rounding, and others. It also contains mathematical constants.
+ *
+ * <p>This class cannot be instantiated and should be used purely as a utility class.
  */
 public final class MathUtil {
 

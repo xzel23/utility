@@ -16,6 +16,8 @@ import java.util.function.Function;
  *
  * @param <T1> type of first member
  * @param <T2> type of second member
+ * @param first  the first member
+ * @param second the second member
  */
 public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 first,
                                                                              T2 second) implements Map.Entry<T1, T2> {
@@ -52,10 +54,10 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
     /**
      * Create a Pair.
      *
-     * @param first  the first member
-     * @param second the second member
      * @param <T1>   type of first member
      * @param <T2>   type of second member
+     * @param first  the first member
+     * @param second the second member
      * @return a new Pair
      */
     public static <T1 extends @Nullable Object, T2 extends @Nullable Object> Pair<T1, T2> of(T1 first, T2 second) {
@@ -65,10 +67,10 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
     /**
      * Create a Pair.
      *
-     * @param first  the first member
-     * @param second the second member
      * @param <T1>   type of first member
      * @param <T2>   type of second member
+     * @param first  the first member
+     * @param second the second member
      * @return a new Pair
      */
     public static <T1 extends @NonNull Object, T2 extends @NonNull Object> Pair<T1, T2> ofNonNull(T1 first, T2 second) {
@@ -78,9 +80,9 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
     /**
      * Create a Pair.
      *
-     * @param entry a Map.Entry
      * @param <T1>  type of first member
      * @param <T2>  type of second member
+     * @param entry a Map.Entry
      * @return a new Pair
      */
     public static <T1, T2 extends @Nullable Object> Pair<T1, T2> of(Map.Entry<? extends T1, ? extends T2> entry) {
@@ -160,7 +162,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
     /**
      * Required for implementing the Map.Entry interface. DO NOT USE!
      * @param value new value to be stored in this entry
-     * @return nothing
+     * @return nothing, method always throws
      * @throws UnsupportedOperationException when called
      */
     @Override

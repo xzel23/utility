@@ -14,6 +14,11 @@ import com.dua3.utility.text.Style;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 
+/**
+ * The RenderRotatedText class implements the Slide interface to demonstrate the rendering
+ * of rotated text with various modes and angles. This class renders styled and formatted
+ * text content while applying different rotations and anchoring options.
+ */
 public class RenderRotatedText implements FxGraphicsSample.Slide {
 
     public static final RichText TEXT = new RichTextBuilder()

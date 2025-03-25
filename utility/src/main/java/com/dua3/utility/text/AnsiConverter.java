@@ -94,6 +94,11 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
         return new AnsiConverterImpl(text);
     }
 
+    /**
+     * Implementation of an ANSI conversion utility for rich text to ANSI formatted text.
+     * This class extends the {@code AttributeBasedConverterImpl<String>} to facilitate
+     * conversion of text with style attributes into ANSI escape code formatted text.
+     */
     protected class AnsiConverterImpl extends AttributeBasedConverterImpl<String> {
 
         private final StringBuilder buffer;
@@ -132,6 +137,14 @@ public final class AnsiConverter extends AttributeBasedConverter<String> {
             buffer.append(s);
         }
 
+        /**
+         * Applies font changes to the ANSI conversion buffer based on the given font definition.
+         * This method appends the appropriate ANSI escape codes to the buffer for each defined
+         * font style present in the FontDef object.
+         *
+         * @param changes an object representing the font definition containing attributes such as
+         *                color, bold, underline, strike-through, and italic.
+         */
         protected void applyFontChanges(FontDef changes) {
             changes.ifColorDefined(c -> buffer.append(AnsiCode.fg(c)));
             changes.ifBoldDefined(c -> buffer.append(AnsiCode.bold(c)));

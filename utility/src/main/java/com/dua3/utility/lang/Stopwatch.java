@@ -312,11 +312,23 @@ public class Stopwatch {
     public static class AutoCloseableStopWatch extends Stopwatch implements AutoCloseable {
         private final Consumer<? super Stopwatch> onClose;
 
+        /**
+         * Constructs an AutoCloseableStopWatch with the given name and a Consumer invoked upon closing.
+         *
+         * @param name the name of the stopwatch.
+         * @param onClose a Consumer that is executed when the stopwatch is closed.
+         */
         protected AutoCloseableStopWatch(String name, Consumer<? super Stopwatch> onClose) {
             super(name);
             this.onClose = onClose;
         }
 
+        /**
+         * Constructs an AutoCloseableStopWatch with the given name supplier and a Consumer invoked upon closing.
+         *
+         * @param name a Supplier that provides the name of the stopwatch.
+         * @param onClose a Consumer that is executed when the stopwatch is closed.
+         */
         protected AutoCloseableStopWatch(Supplier<String> name, Consumer<? super Stopwatch> onClose) {
             super(name);
             this.onClose = onClose;
