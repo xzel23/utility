@@ -78,7 +78,6 @@ subprojects {
     java {
         targetCompatibility = JavaVersion.VERSION_17
         sourceCompatibility = targetCompatibility
-        version = targetCompatibility.toString()
 
         withJavadocJar()
         withSourcesJar()
