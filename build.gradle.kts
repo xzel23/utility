@@ -129,6 +129,7 @@ subprojects {
 
     tasks.compileJava {
         options.encoding = "UTF-8"
+        options.compilerArgs.add("-Xlint:deprecation")
         options.javaModuleVersion.set(provider { project.version as String })
     }
 
