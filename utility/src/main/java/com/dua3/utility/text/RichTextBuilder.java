@@ -8,11 +8,9 @@ package com.dua3.utility.text;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,7 +31,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer;
     private final SortedMap<Integer, Map<String, Object>> parts;
-    private final Deque<AttributeChange> openedAttributes = new ArrayDeque<>();
+    private final List<AttributeChange> openedAttributes = new ArrayList<>();
 
     /**
      * Construct a new empty builder.
@@ -248,7 +246,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      */
     public RichTextBuilder push(String name, Object value) {
         Object previousValue = split().put(name, value);
-        openedAttributes.push(new AttributeChange(name, previousValue, value));
+        openedAttributes.add(new AttributeChange(name, previousValue, value));
         return this;
     }
 
@@ -259,7 +257,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
      * @return this instance
      */
     public RichTextBuilder pop(String name) {
-        AttributeChange change = openedAttributes.pop();
+        AttributeChange change = openedAttributes.removeLast();
         LangUtil.check(name.equals(change.name()), "name does not match: \"%s\", expected \"%s\"", name, change.name());
         Map<String, Object> attributes = split();
         if (change.previousValue() == null) {
