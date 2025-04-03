@@ -31,7 +31,7 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer;
     private final SortedMap<Integer, Map<String, Object>> parts;
-    private final List<AttributeChange> openedAttributes = new ArrayList<>();
+    private final List<AttributeChange> openedAttributes = new ArrayList<>(16);
 
     /**
      * Construct a new empty builder.
