@@ -222,7 +222,7 @@ public final class DataUtil {
         if (targetClass == URL.class) {
             if (sourceClass == String.class) {
                 try {
-                    return (T) new URL(value.toString());
+                    return (T) URI.create(value.toString()).toURL();
                 } catch (MalformedURLException e) {
                     throw new ConversionException(sourceClass, targetClass, e);
                 }
