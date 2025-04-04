@@ -36,6 +36,12 @@ public final class NetUtil {
                     throw new UnsupportedOperationException("openConnection() is not supported");
                 }
             };
+            // NOTE: The URL constructor used here was deprecated in Java 20.
+            //       It should be replaced by using a static factory method:
+            //           VOID_URL = URL.of(URI.create("null"), handler)
+            //       The static factory method was introduced with JDK 20, so
+            //       we need to keep using the deprecated constructor until
+            //       the base JDK is updated to 21.
             VOID_URL = new URL("null", "", 0, "", handler);
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
