@@ -12,7 +12,7 @@ import org.jspecify.annotations.NullMarked;
 /**
  * The com.dua3.utility module provides utility classes for various purposes, such as
  * concurrent programming, data manipulation, I/O operations, language utilities,
- * mathematical operations, options handling, text manipulation, and XML processing.
+ * mathematical operations, option handling, text manipulation, and XML processing.
  * <p>
  * This module exports the following packages:
  * <ul>

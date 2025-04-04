@@ -119,6 +119,15 @@ subprojects {
                     implementation(rootProject.libs.jimfs)
                     implementation(rootProject.libs.mockito)
                 }
+
+                targets {
+                    all {
+                        testTask {
+                            // Use headless mode for AWT in unit tests
+                            jvmArgs("-Djava.awt.headless=true")
+                        }
+                    }
+                }
             }
         }
     }

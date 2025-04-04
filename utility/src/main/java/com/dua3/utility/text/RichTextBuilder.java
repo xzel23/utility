@@ -18,20 +18,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
 
 /**
  * A builder class for rich text data.
  * <p>
  * A rich text is created by appending strings to the builder using the
- * {@link #append(CharSequence)}
- *
- * @author axel
+ * {@link #append(CharSequence)}.
+ * <p>
+ * Attributes can be set manipulated by using {@link #push(String, Object)}/{@link #pop(String)},
+ * {@link #push(Style)}/{@link #pop(Style)} or {@link #compose(String, BiFunction)}/{@link #decompose(String)}
+ * pairs of methods.
  */
 public class RichTextBuilder implements Appendable, ToRichText {
 
     private final StringBuilder buffer;
     private final SortedMap<Integer, Map<String, Object>> parts;
     private final List<AttributeChange> openedAttributes = new ArrayList<>(16);
+    private final List<AttributeChange> openedCompositions = new ArrayList<>(16);
 
     /**
      * Construct a new empty builder.
@@ -239,6 +243,8 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     /**
      * Push attribute. Remove the attribute again by calling {@link #pop(String)}.
+     * <p>
+     * If the attribute is already present, its value is overwritten.
      *
      * @param name  attribute name
      * @param value attribute value
@@ -252,13 +258,55 @@ public class RichTextBuilder implements Appendable, ToRichText {
 
     /**
      * Pop attribute that has been set using {@link #push(String, Object)}.
+     * <p>
+     * The value the attribute had before calling {push()} is restored; if the attribute was created new,
+     * it is removed.
      *
      * @param name attribute name
      * @return this instance
      */
     public RichTextBuilder pop(String name) {
         AttributeChange change = openedAttributes.removeLast();
-        LangUtil.check(name.equals(change.name()), "name does not match: \"%s\", expected \"%s\"", name, change.name());
+        LangUtil.check(name.equals(change.name()), "attribute name does not match: \"%s\", expected \"%s\"", name, change.name());
+        Map<String, Object> attributes = split();
+        if (change.previousValue() == null) {
+            attributes.remove(name);
+        } else {
+            attributes.put(name, change.previousValue());
+        }
+        return this;
+    }
+
+    /**
+     * Compose new attribute value. Remove the attribute again by calling {@link #decompose(String)}.
+     *
+     * @param name  attribute name
+     * @param composer function that computes the new value from the current value
+     * @return this RichTextBuilder instance
+     */
+    public RichTextBuilder compose(String name, BiFunction<String, @Nullable Object, @Nullable Object> composer) {
+        Map<String, Object> currentAttributes = split();
+        Object previousValue = currentAttributes.get(name);
+        Object value = composer.apply(name, previousValue);
+        if (value == null) {
+            currentAttributes.remove(name);
+        } else {
+            currentAttributes.put(name, value);
+        }
+        openedCompositions.add(new AttributeChange(name, previousValue, value));
+        return this;
+    }
+
+    /**
+     * Reverts the change made by a previous {@link #compose(String, BiFunction)} call.
+     * Restores the attribute to the oldValue it had before the {@code compose()} call.
+     *
+     * @param name  attribute name
+     * @return this RichTextBuilder instance
+     */
+    public RichTextBuilder decompose(String name) {
+        AttributeChange change = openedCompositions.removeLast();
+        LangUtil.check(name.equals(change.name()), "composition name does not match: \"%s\", expected \"%s\"", name, change.name());
         Map<String, Object> attributes = split();
         if (change.previousValue() == null) {
             attributes.remove(name);

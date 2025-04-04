@@ -18,18 +18,34 @@ import java.util.function.UnaryOperator;
  */
 public final class HtmlConverter extends TagBasedConverter<String> {
 
+
     /**
-     * The mappings of this converter.
+     * The style mappings of this converter.
+     * <p>
+     * Key: the style name
+     * Value: the function that maps the style name to tags
+     */
+    private final Map<String, Function<Object, HtmlTag>> styleMappings = new HashMap<>();
+    private UnaryOperator<Map<String, @Nullable Object>> refineStyleProperties = m -> m;
+
+    /**
+     * The default mapper used to generate tags for style names without mapping.
+     */
+    private BiFunction<? super String, @Nullable Object, ? extends HtmlTag> defaultStyleMapper = (styleName, value) -> HtmlTag.emptyTag();
+
+    /**
+     * The attribute mappings of this converter.
      * <p>
      * Key: the attribute name
-     * Value: the function that maps values to tags
+     * Value: the function that maps the attribute name to tags
      */
-    private final Map<String, Function<Object, HtmlTag>> mappings = new HashMap<>();
-    private UnaryOperator<Map<String, @Nullable Object>> refineStyleProperties = m -> m;
+    private final Map<String, Function<AttributeChange, HtmlTag>> attributeMappings = new HashMap<>();
+
     /**
      * The default mapper used to generate tags for attributes without mapping.
      */
-    private BiFunction<? super String, @Nullable Object, ? extends HtmlTag> defaultMapper = (attribute, value) -> HtmlTag.emptyTag();
+    private Function<AttributeChange, ? extends HtmlTag> defaultAttributeMapper = (attributeChange) -> HtmlTag.emptyTag();
+
     /**
      * Whether CSS output should be generated.
      */
@@ -61,7 +77,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
+     * Set the mapper for a specific style. If the style is already mapped, the mappers are combined.
      *
      * @param attribute the attribute
      * @param mapper    the mapper
@@ -75,23 +91,23 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
      *
-     * @param attribute the attribute
+     * @param styleName the attribute
      * @param mapper    the mapper
      * @return the option tp use
      */
-    public static HtmlConversionOption replaceMapping(String attribute,
+    public static HtmlConversionOption replaceMapping(String styleName,
                                                       Function<Object, HtmlTag> mapper) {
-        return new HtmlConversionOption(c -> c.mappings.put(attribute, mapper));
+        return new HtmlConversionOption(c -> c.styleMappings.put(styleName, mapper));
     }
 
     /**
-     * Set the default mapper which is called when no mapper is registered for the attribute.
+     * Set the default mapper which is called when no mapper is registered for the style name.
      *
      * @param mapper the mapper to set as the default mapper
      * @return HtmlConversionOption that sets the default mapper
      */
     public static HtmlConversionOption defaultMapper(BiFunction<String, Object, HtmlTag> mapper) {
-        return new HtmlConversionOption(c -> c.setDefaultMapper(mapper));
+        return new HtmlConversionOption(c -> c.setDefaultStyleMapper(mapper));
     }
 
     /**
@@ -102,6 +118,17 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      */
     public static HtmlConversionOption refineStyleProperties(UnaryOperator<Map<String, Object>> refineStyleProperties) {
         return new HtmlConversionOption(c -> c.setRefineStyleProperties(refineStyleProperties));
+    }
+
+    /**
+     * Set the mapper for a specific attribute. If the attribute is already mapped, the mappers are combined.
+     *
+     * @param attribute the attribute
+     * @param mapper    the mapper
+     * @return the option tp use
+     */
+    public static HtmlConversionOption mapAttribute(String attribute, Function<AttributeChange, HtmlTag> mapper) {
+        return new HtmlConversionOption(c -> c.addAttributeMapping(attribute, mapper));
     }
 
     /**
@@ -130,22 +157,12 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @param m2 the second mapper
      * @return the new mapper
      */
-    private static Function<Object, HtmlTag> combineMappers(Function<Object, ? extends HtmlTag> m1,
-                                                            Function<Object, ? extends HtmlTag> m2) {
+    private static <T> Function<T, HtmlTag> combineMappers(Function<T, ? extends HtmlTag> m1,
+                                                           Function<T, ? extends HtmlTag> m2) {
         return value -> {
             HtmlTag oldTag = m1.apply(value);
             HtmlTag newTag = m2.apply(value);
-            return new HtmlTag() {
-                @Override
-                public String open() {
-                    return newTag.open() + oldTag.open();
-                }
-
-                @Override
-                public String close() {
-                    return oldTag.close() + newTag.close();
-                }
-            };
+            return HtmlTag.combineTags(newTag, oldTag);
         };
     }
 
@@ -242,18 +259,32 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         });
     }
 
-    void setDefaultMapper(BiFunction<? super String, Object, ? extends HtmlTag> defaultMapper) {
-        this.defaultMapper = defaultMapper;
+    void setDefaultStyleMapper(BiFunction<? super String, Object, ? extends HtmlTag> defaultStyleMapper) {
+        this.defaultStyleMapper = defaultStyleMapper;
+    }
+
+    void setDefaultAttributeMapper(Function<AttributeChange, ? extends HtmlTag> defaultAttributeMapper) {
+        this.defaultAttributeMapper = defaultAttributeMapper;
     }
 
     /**
-     * Add mapper for an attribute.
+     * Add a mapper that maps a style name to the corresponding tags.
      *
-     * @param attribute the attribute
+     * @param styleName the style name
      * @param mapper    the mapper
      */
-    void addMapping(String attribute, Function<Object, HtmlTag> mapper) {
-        mappings.merge(attribute, mapper, HtmlConverter::combineMappers);
+    void addMapping(String styleName, Function<Object, HtmlTag> mapper) {
+        styleMappings.merge(styleName, mapper, HtmlConverter::combineMappers);
+    }
+
+    /**
+     * Add a mapper that maps an attribute to the corresponding tags.
+     *
+     * @param attribute the attribute name
+     * @param mapper    the mapper
+     */
+    void addAttributeMapping(String attribute, Function<AttributeChange, HtmlTag> mapper) {
+        attributeMappings.merge(attribute, mapper, HtmlConverter::combineMappers);
     }
 
     /**
@@ -275,15 +306,27 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     }
 
     /**
-     * Get tag for attribute value.
+     * Get tag for style name.
      *
-     * @param attribute the attribute
-     * @param value     the attribute value
+     * @param styleName the style name
+     * @param value     the value
      * @return the tag
      */
-    public HtmlTag get(String attribute, @Nullable Object value) {
-        Function<@Nullable Object, HtmlTag> mapper = mappings.get(attribute);
-        return mapper != null ? mapper.apply(value) : defaultMapper.apply(attribute, value);
+    public HtmlTag get(String styleName, @Nullable Object value) {
+        Function<@Nullable Object, HtmlTag> mapper = styleMappings.get(styleName);
+        return mapper != null ? mapper.apply(value) : defaultStyleMapper.apply(styleName, value);
+    }
+
+    /**
+     * Get tag for attribute.
+     *
+     * @param attributeChange the attribute change
+     * @return the tag
+     */
+    public HtmlTag getTagForAttributeChange(AttributeChange attributeChange) {
+        String attribute = attributeChange.attribute();
+        Function<AttributeChange, HtmlTag> mapper = attributeMappings.get(attribute);
+        return mapper != null ? mapper.apply(attributeChange) : defaultAttributeMapper.apply(attributeChange);
     }
 
     private class HtmlConverterImpl extends TagBasedConverterImpl<String> {
@@ -296,19 +339,88 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         }
 
         @Override
-        protected void appendOpeningTags(List<Style> styles) {
+        protected Collection<String> relevantAttributes() {
+            return attributeMappings.keySet();
+        }
+
+        @Override
+        protected void appendOpeningTagsForStyles(List<Style> styles) {
             List<HtmlTag> tags = getTags(styles);
             //noinspection ForLoopReplaceableByForEach - for symmetry with #appendClosingTags
             for (int i = 0; i < tags.size(); i++) {
-                buffer.append(tags.get(i).open());
+                appendOpeningTag(tags.get(i));
             }
         }
 
         @Override
-        protected void appendClosingTags(List<Style> styles) {
+        protected void appendClosingTagsForStyles(List<Style> styles) {
             List<HtmlTag> tags = getTags(styles);
             for (int i = tags.size() - 1; i >= 0; i--) {
-                buffer.append(tags.get(i).close());
+                appendClosingTag(tags.get(i));
+            }
+        }
+
+        @Override
+        protected void appendOpeningTagsForAttributes(List<AttributeChange> attributeChanges) {
+            super.appendOpeningTagsForAttributes(attributeChanges);
+            appendAttributeTags(attributeChanges, HtmlTag.TagType.OPEN_TAG);
+        }
+
+        @Override
+        protected void appendClosingTagsForAttributes(List<AttributeChange> attributeChanges) {
+            super.appendOpeningTagsForAttributes(attributeChanges);
+            appendAttributeTags(attributeChanges, HtmlTag.TagType.CLOSE_TAG);
+        }
+
+        private void appendOpeningTag(HtmlTag tag) {
+            String tagString = tag.open();
+            if (tagString.isEmpty()) {
+                return;
+            }
+
+            if (tag.formattingHint().linebreakBeforeTag()) {
+                breakLine();
+            }
+            buffer.append(tagString);
+            if (tag.formattingHint().linebreakAfterTag()) {
+                breakLine();
+            }
+        }
+
+        private void appendClosingTag(HtmlTag tag) {
+            String tagString = tag.close();
+            if (tagString.isEmpty()) {
+                return;
+            }
+
+            if (tag.formattingHint().linebreakAfterTag()) {
+                breakLine();
+            }
+            buffer.append(tagString);
+            if (tag.formattingHint().linebreakBeforeTag()) {
+                breakLine();
+            }
+        }
+
+        private void breakLine() {
+            if (buffer.isEmpty()) {
+                return;
+            }
+
+            char c = buffer.charAt(buffer.length() - 1);
+            if (c != '\n' && c != '\r') {
+                buffer.append('\n');
+            }
+        }
+
+        private void appendAttributeTags(List<AttributeChange> AttributeChanges, HtmlTag.TagType type) {
+            for (AttributeChange av : AttributeChanges) {
+                HtmlTag tag = getTagForAttributeChange(av);
+                if (type == HtmlTag.TagType.OPEN_TAG) {
+                    appendOpeningTag(tag);
+                } else {
+                    appendClosingTag(tag);
+                }
             }
         }
 
@@ -324,7 +436,16 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         @Override
         protected void appendChars(CharSequence s) {
-            TextUtil.appendHtmlEscapedCharacters(buffer, s);
+            buffer.ensureCapacity(buffer.length() + s.length());
+            int idx = 0;
+            while (idx < s.length()) {
+                int idxFound = TextUtil.indexOf(s, RichText.SPLIT_MARKER, idx);
+                if (idxFound == -1) {
+                    idxFound = s.length();
+                }
+                TextUtil.appendHtmlEscapedCharacters(buffer, s.subSequence(idx, idxFound));
+                idx = idxFound + 1;
+            }
         }
 
         @Override

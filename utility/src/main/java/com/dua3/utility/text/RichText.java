@@ -32,6 +32,24 @@ import java.util.stream.StreamSupport;
 public final class RichText
         implements Iterable<Run>, AttributedCharSequence, ToRichText {
 
+    /**
+     * A character used as a delimiter or marker to insert where subsequent text segment should not be
+     * joined into a single one.
+     * <p>
+     * When two texts both marked to have italic style are joined, the {@code RichTextBuilder} class
+     * will not detect the attribute change and for example when converted to HTML, the result of the
+     * joined texts will not be "&lt;i&gt;some text &lt;/i&gt;&lt;i&gt;other text&lt;/i&gt;" but instead
+     * "&lt;i&gt;some text other text&lt;i&gt;".
+     * <p>
+     * For attributes that merely control text appearance, this is usually the desired result. But to
+     * prevent two paragraphs to be joined into a single one, at least one character must come between
+     * both texts so that the change can be detected. A SPLIT_MARKER can thus be inserted to make sure
+     * the paragraphs are not joined.
+     * <p>
+     * The {@link HtmlConverter} class for example automatically removes SPLIT_MARKER from the output.
+     */
+    public static final char SPLIT_MARKER = '\u0000';
+
     static final String ATTRIBUTE_NAME_STYLE_LIST = "__styles";
 
     private static final RichText EMPTY_TEXT = valueOf("");
