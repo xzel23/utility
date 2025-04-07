@@ -15,18 +15,12 @@ public interface ToRichText {
      *
      * @return RichText presentation of the object
      */
-    default RichText toRichText() {
-        RichTextBuilder builder = new RichTextBuilder();
-        appendTo(builder);
-        return builder.toRichText();
-    }
+    RichText toRichText();
 
     /**
      * Append this object's rich text representation to a buffer.
      *
      * @param builder the builder
      */
-    default void appendTo(RichTextBuilder builder) {
-        builder.append(toString());
-    }
+    void appendTo(RichTextBuilder builder);
 }

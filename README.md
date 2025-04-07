@@ -194,6 +194,12 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 17.1.0
+
+- BREAKING: ToRichText.appendTo() and ToRichText.toRichText() default implementations have been removed
+- RichTextBuilder internal stack has been change from ArrayDeque to ArrayList
+- HtmlConverter refactorings
+
 ### 17.0.0
 
 - fix target compatibility not being set in modules
