@@ -116,15 +116,15 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
                 List<AttributeChange> attributesToClose = new ArrayList<>();
                 List<AttributeChange> attributesToOpen = new ArrayList<>();
                 Collection<String> relevantAttributes = relevantAttributes();
-                for (String attribute: relevantAttributes) {
+                for (String attribute : relevantAttributes) {
                     Object oldValue = currentAttributes.get(attribute);
                     Object newValue = run.attributes().get(attribute);
                     if (!Objects.equals(oldValue, newValue)) {
                         if (oldValue != null) {
-                            attributesToClose.add (new AttributeChange(attribute, oldValue, newValue));
+                            attributesToClose.add(new AttributeChange(attribute, oldValue, newValue));
                         }
                         if (newValue != null) {
-                            attributesToOpen.add (new AttributeChange(attribute, oldValue, newValue));
+                            attributesToOpen.add(new AttributeChange(attribute, oldValue, newValue));
                         }
                     }
                 }

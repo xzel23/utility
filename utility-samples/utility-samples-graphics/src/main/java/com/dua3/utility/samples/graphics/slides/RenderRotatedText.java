@@ -40,7 +40,7 @@ public class RenderRotatedText implements FxGraphicsSample.Slide {
             .toRichText();
     private final Graphics.HAnchor hAnchor;
     private final Graphics.VAnchor vAnchor;
-    private double[] angles;
+    private final double[] angles;
 
 
     public RenderRotatedText(Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, double[] angles) {

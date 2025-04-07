@@ -58,7 +58,7 @@ public class FxGraphics implements Graphics {
         }
     }
 
-    private State state = new State();
+    private final State state = new State();
 
     private void applyCurrentState() {
         gc.setTransform(FxUtil.convert(state.transform.append(parentTransform)));
@@ -252,12 +252,14 @@ public class FxGraphics implements Graphics {
                                 s.control(2).x(), s.control(2).y(),
                                 s.control(3).x(), s.control(3).y()
                         );
-                        default -> throw new IllegalArgumentException("Unsupported number of control points: " + s.numberOfControls());
+                        default ->
+                                throw new IllegalArgumentException("Unsupported number of control points: " + s.numberOfControls());
                     }
                 }
                 case Arc2f s -> Graphics.approximateArc(s, this::moveTo, this::generateBezierSegment);
-                case ClosePath2f s  -> gc.closePath();
-                default -> throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+                case ClosePath2f s -> gc.closePath();
+                default ->
+                        throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
             }
         });
     }

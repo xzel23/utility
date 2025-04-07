@@ -200,9 +200,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
                     buffer = result.newBuffer();
                     currentLines = result.newLines();
                 }
-                case WORD -> {
-                    buffer = handleWordChunk(maxWidth, bufferLength, isHardWrap, bufferFactory, readBuffer, currentLines, buffer, chunk);
-                }
+                case WORD -> buffer = handleWordChunk(maxWidth, bufferLength, isHardWrap, bufferFactory, readBuffer, currentLines, buffer, chunk);
                 case WHITESPACE -> buffer.append(spaceChar);
             }
         }

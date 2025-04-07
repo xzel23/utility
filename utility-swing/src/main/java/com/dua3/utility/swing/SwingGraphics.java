@@ -96,7 +96,7 @@ public class SwingGraphics implements Graphics {
 
     private boolean isDrawing = true;
 
-    private State state;
+    private final State state;
     private final List<State> savedState = new ArrayList<>();
 
     /**

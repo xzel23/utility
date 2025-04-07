@@ -757,13 +757,13 @@ public final class XmlUtil {
         }
 
         // create namespace map
-        Map<String,String> nsMap = new HashMap<>();
+        Map<String, String> nsMap = new HashMap<>();
         namespaceUris.forEach(nsUrl -> nsMap.put("ns" + (1 + nsMap.size()), nsUrl));
         SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext(nsMap);
 
         // create normalized Documents
         List<DocumentWithNamespace> normalizedDocuments = new ArrayList<>(documents.length);
-        for (Document doc: documents) {
+        for (Document doc : documents) {
             normalizedDocuments.add(normalizeDocument(doc, namespaceContext));
         }
 
@@ -802,7 +802,7 @@ public final class XmlUtil {
      * Copies an XML {@code Element}, normalizing its namespaces and attributes. Creates a new
      * {@code Element} in the given {@code Document}, with namespaces resolved using the
      * provided {@code SimpleNamespaceContext}.
-     *
+     * <p>
      * This method ensures that:
      * - The created element's namespace prefix corresponds to the normalized mapping provided by
      *   the {@code SimpleNamespaceContext}.
@@ -848,7 +848,7 @@ public final class XmlUtil {
 
         // Declare all namespaces at the root level
         if (original == original.getOwnerDocument().getDocumentElement()) {
-            for (String prefix: namespaceContext.getPrefixes()) {
+            for (String prefix : namespaceContext.getPrefixes()) {
                 String uri = namespaceContext.getNamespaceURI(prefix);
                 newElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + prefix, uri);
             }
@@ -860,7 +860,7 @@ public final class XmlUtil {
             Node child = childNodes.item(i);
 
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                newElement.appendChild(copyElementWithNormalizedNamespaces((Element)child, newDoc, namespaceContext));
+                newElement.appendChild(copyElementWithNormalizedNamespaces((Element) child, newDoc, namespaceContext));
             } else if (child.getNodeType() == Node.TEXT_NODE || child.getNodeType() == Node.CDATA_SECTION_NODE) {
                 newElement.appendChild(newDoc.importNode(child, true));
             }

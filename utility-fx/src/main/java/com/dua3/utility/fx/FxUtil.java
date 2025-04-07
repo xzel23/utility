@@ -192,7 +192,8 @@ public final class FxUtil {
                         s.control(1).x(), s.control(1).y(),
                         false, false)
                 );
-                default -> throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+                default ->
+                        throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
             }
         });
         return jfxPath;
@@ -813,7 +814,8 @@ public final class FxUtil {
                         false, false
                 ));
                 case ClosePath2f s -> jfxPath.getElements().add(new ClosePath());
-                default -> throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+                default ->
+                        throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
             }
         });
         return jfxPath;

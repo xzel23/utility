@@ -744,7 +744,6 @@ public final class RichText
      * @return an array of RichText objects computed by splitting this RichText around matches of the given regular expression
      * @see String#split(String)
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText[] split(String regex) {
         return split(regex, 0);
     }
@@ -773,9 +772,8 @@ public final class RichText
      *              or negative, the method will include all segments, including trailing empty strings
      *              if any
      * @return an array of RichText objects resulting from the split operation
-     * @see String#split(String,int)
+     * @see String#split(String, int)
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText[] split(String regex, int limit) {
         /* fastpath if the regex is a
          * (1) one-char String and this character is not one of the
@@ -892,7 +890,6 @@ public final class RichText
      * @return a new RichText with the first matching substring replaced by the replacement RichText
      * @see String#replaceFirst(String, String)
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText replaceFirst(String regex, RichText replacement) {
         return matcher(Pattern.compile(regex), this).replaceFirst(replacement);
     }
@@ -906,7 +903,6 @@ public final class RichText
      * @return a new RichText object with the first matching substring replaced
      * @see String#replaceFirst(String, String)
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText replaceFirst(String regex, String replacement) {
         return matcher(Pattern.compile(regex), this).replaceFirst(replacement);
     }
@@ -921,7 +917,6 @@ public final class RichText
      *         with the specified replacement
      * @see String#replaceAll(String, String)
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText replaceAll(String regex, RichText replacement) {
         return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }
@@ -935,7 +930,6 @@ public final class RichText
      * @return a new RichText object with the replacements made
      * @see String#replaceAll(String, String)
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText replaceAll(String regex, String replacement) {
         return matcher(Pattern.compile(regex), this).replaceAll(replacement);
     }

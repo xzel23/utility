@@ -19,7 +19,7 @@ public abstract class PaneBuilder<D extends DialogPane & Supplier<R>, B extends 
 
     /**
      * Constructs an instance of the PaneBuilder class.
-     *
+     * <p>
      * This constructor initializes the builder by associating it with a header setter
      * that configures the header text of the dialog pane.
      * The constructor must be called by subclasses to initialize the base class.

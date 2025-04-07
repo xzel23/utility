@@ -28,7 +28,7 @@ public class JdbcDataSource implements DataSource {
     private @Nullable String url;
     private @Nullable PrintWriter logWriter;
     private int loginTimeout;
-    private Driver driver;
+    private final Driver driver;
 
     /**
      * Constructor.

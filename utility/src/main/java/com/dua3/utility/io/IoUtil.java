@@ -58,7 +58,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * Utility class for Input/Output.
  */
-@SuppressWarnings({"MagicCharacter"})
+@SuppressWarnings("MagicCharacter")
 public final class IoUtil {
 
     private static final Logger LOG = LogManager.getLogger(IoUtil.class);
@@ -1131,7 +1131,7 @@ public final class IoUtil {
                 setTempPermissionsNonPosix(tempDir, true);
             }
         }
-        LOG.trace("created temp directory {}", tempDir);
+        LOG.trace("created secure temp directory {}", tempDir);
         return tempDir;
     }
 

@@ -40,7 +40,7 @@ public record FragmentedText(
 
     private static final Pattern PATTERN = Pattern.compile("(?<=\\s)|(?=\\s)");
     private static final Pattern PATTERN_SPLIT_PRESERVE_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
-    private  static final FragmentedText EMPTY_FRAGMENTED_TEXT = new FragmentedText(Collections.emptyList(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    private static final FragmentedText EMPTY_FRAGMENTED_TEXT = new FragmentedText(Collections.emptyList(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
     /**
      * Returns an empty instance of {@code FragmentedText}.

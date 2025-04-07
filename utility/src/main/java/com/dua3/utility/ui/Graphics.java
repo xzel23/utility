@@ -466,7 +466,7 @@ public interface Graphics extends AutoCloseable {
     default AffineTransformation2f getInverseTransformation() {
         return getTransformation()
                 .inverse()
-                .orElseThrow(()  -> new IllegalStateException("no inverse transformation available"));
+                .orElseThrow(() -> new IllegalStateException("no inverse transformation available"));
     }
 
     /**

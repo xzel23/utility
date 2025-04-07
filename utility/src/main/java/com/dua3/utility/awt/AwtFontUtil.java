@@ -180,10 +180,16 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         private static final List<String> PROPORTIONAL_FONTS;
 
         static {
-            AVAILABLE_FONTS = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()).collect(Collectors.toUnmodifiableMap(Function.identity(), AwtFontUtil::isMonospaced, (a, b) -> b));
+            AVAILABLE_FONTS = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()).collect(Collectors.toUnmodifiableMap(Function.identity(), FontList::isMonospaced, (a, b) -> b));
             ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
             MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
             PROPORTIONAL_FONTS = ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
+        }
+
+        private static boolean isMonospaced(String family) {
+            java.awt.Font font = new java.awt.Font(family, java.awt.Font.PLAIN, 14);
+            FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
+            return Objects.equals(font.getStringBounds("1 l", frc), font.getStringBounds("M_W", frc));
         }
     }
 
@@ -194,12 +200,6 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
             case MONOSPACED -> FontList.MONOSPACE_FONTS;
             case PROPORTIONAL -> FontList.PROPORTIONAL_FONTS;
         };
-    }
-
-    private static boolean isMonospaced(String family) {
-        java.awt.Font font = new java.awt.Font(family, java.awt.Font.PLAIN, 14);
-        FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
-        return Objects.equals(font.getStringBounds("1 l", frc), font.getStringBounds("M_W", frc));
     }
 
     @Override

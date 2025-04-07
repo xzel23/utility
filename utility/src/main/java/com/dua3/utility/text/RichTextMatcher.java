@@ -80,7 +80,6 @@ public class RichTextMatcher implements MatchResult {
      * @return true if the pattern is found within the input sequence, false otherwise
      * See {@link Matcher#find()}.
      */
-    @SuppressWarnings("MissingJavadoc")
     public boolean find() {
         return matcher.find();
     }
@@ -93,7 +92,6 @@ public class RichTextMatcher implements MatchResult {
      * @return true if the pattern is found starting from the specified position, false otherwise
      * See {@link Matcher#find(int)}.
      */
-    @SuppressWarnings("MissingJavadoc")
     public boolean find(int start) {
         return matcher.find(start);
     }
@@ -117,7 +115,6 @@ public class RichTextMatcher implements MatchResult {
      * @return a new {@code RichText} instance with all occurrences of the pattern replaced
      * See {@link Matcher#replaceAll(String)}.
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText replaceAll(CharSequence replacement) {
         return replace(replacement, Integer.MAX_VALUE);
     }

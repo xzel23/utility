@@ -151,36 +151,12 @@ final class EmptyHtmlTag implements HtmlTag {
 /**
  * Represents a simple HTML tag with predefined opening and closing tags and
  * an option to place the tags on an extra line.
- *
+ * <p>
  * This class implements the {@link HtmlTag} interface, providing basic functionality
  * for handling HTML tags such as retrieving the opening and closing tags, and determining
  * whether the tag should be placed on an extra line.
  */
-final class SimpleHtmlTag implements HtmlTag {
-    private final String open;
-    private final String close;
-    private final FormattingHint formattingHint;
-
-    public SimpleHtmlTag(String open, String close, FormattingHint formattingHint) {
-        this.open = open;
-        this.close = close;
-        this.formattingHint = formattingHint;
-    }
-
-    @Override
-    public String open() {
-        return open;
-    }
-
-    @Override
-    public String close() {
-        return close;
-    }
-
-    @Override
-    public FormattingHint formattingHint() {
-        return formattingHint;
-    }
+record SimpleHtmlTag(String open, String close, FormattingHint formattingHint) implements HtmlTag {
 
     @Override
     public String toString() {

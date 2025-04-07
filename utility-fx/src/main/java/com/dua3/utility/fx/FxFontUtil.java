@@ -222,10 +222,19 @@ public class FxFontUtil implements FontUtil<Font> {
         private static final List<String> PROPORTIONAL_FONTS;
 
         static {
-            AVAILABLE_FONTS = Font.getFamilies().stream().collect(Collectors.toUnmodifiableMap(Function.identity(), FxFontUtil::isMonospaced, (a, b) -> b));
+            AVAILABLE_FONTS = Font.getFamilies().stream().collect(Collectors.toUnmodifiableMap(Function.identity(), FontList::isMonospaced, (a, b) -> b));
             ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
             MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
             PROPORTIONAL_FONTS = ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
+        }
+
+        private static boolean isMonospaced(String family) {
+            Font font = Font.font(family, FontWeight.NORMAL, FontPosture.REGULAR, 14.0d);
+            Text thin = new Text("1 l");
+            Text thick = new Text("M_W");
+            thin.setFont(font);
+            thick.setFont(font);
+            return thin.getLayoutBounds().getWidth() == thick.getLayoutBounds().getWidth();
         }
     }
 
@@ -236,15 +245,6 @@ public class FxFontUtil implements FontUtil<Font> {
             case MONOSPACED -> FontList.MONOSPACE_FONTS;
             case PROPORTIONAL -> FontList.PROPORTIONAL_FONTS;
         };
-    }
-
-    private static boolean isMonospaced(String family) {
-        Font font = Font.font(family, FontWeight.NORMAL, FontPosture.REGULAR, 14.0d);
-        Text thin = new Text("1 l");
-        Text thick = new Text("M_W");
-        thin.setFont(font);
-        thick.setFont(font);
-        return thin.getLayoutBounds().getWidth() == thick.getLayoutBounds().getWidth();
     }
 
     @Override
