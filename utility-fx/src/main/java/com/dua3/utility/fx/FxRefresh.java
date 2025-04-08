@@ -116,8 +116,9 @@ public final class FxRefresh {
      */
     public synchronized void stop() {
         LOG.debug("[{}] stopping", name);
-        this.updateThread = null;
         setActive(false);
+        this.updateThread = null;
+        signal();
     }
 
     /**
@@ -254,6 +255,9 @@ public final class FxRefresh {
      */
     public void refresh() {
         LOG.debug("[{}] refresh requested", name);
+        if (updateThread == null) {
+            return;
+        }
         lock.lock();
         try {
             long revision = requestedRevision.incrementAndGet();
