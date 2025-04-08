@@ -417,18 +417,16 @@ public final class FontDef implements Cloneable {
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
-        if (!(o instanceof FontDef other)) {
-            return false;
-        }
-        return other == this ||
-                Objects.equals(color, other.color) &&
-                        Objects.equals(size, other.size) &&
-                        Objects.equals(family, other.family) &&
-                        Objects.equals(bold, other.bold) &&
-                        Objects.equals(italic, other.italic) &&
-                        Objects.equals(underline, other.underline) &&
-                        Objects.equals(strikeThrough, other.strikeThrough);
+    public boolean equals(Object obj) {
+        return obj == this
+                || (obj instanceof FontDef other)
+                && Objects.equals(size, other.size)
+                && Objects.equals(family, other.family)
+                && Objects.equals(color, other.color)
+                && Objects.equals(bold, other.bold)
+                && Objects.equals(italic, other.italic)
+                && Objects.equals(underline, other.underline)
+                && Objects.equals(strikeThrough, other.strikeThrough);
     }
 
     @Override
