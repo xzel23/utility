@@ -194,6 +194,11 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 17.1.1
+
+- FxRefresh: skip refreshs if the refresher has been stopped
+- small refactorings
+
 ### 17.1.0
 
 - BREAKING: ToRichText.appendTo() and ToRichText.toRichText() default implementations have been removed
