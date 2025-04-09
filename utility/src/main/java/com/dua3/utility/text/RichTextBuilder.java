@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 /**
@@ -33,7 +34,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     private record PositionAttributes(int pos, Map<String, Object> attributes) {}
 
     private final StringBuilder buffer;
-    private final List<PositionAttributes> parts;
+    private final List<@Nullable PositionAttributes> parts;
     private final List<AttributeChange> openedAttributes = new ArrayList<>(16);
     private final List<AttributeChange> openedCompositions = new ArrayList<>(16);
 
@@ -139,45 +140,32 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         return runs;
     }
 
+    /**
+     * Combine subsequent runs sharing the same attributes.
+     */
     private void normalize() {
-        // combine subsequent runs sharing the same attributes
-        if (parts.isEmpty()) {
-            return;
-        }
-
-        boolean first = true;
-        List<Integer> indicesToRemove = new ArrayList<>();
-        int lastPos = -1;
-        Map<String, Object> lastAttributes = Collections.emptyMap();
-
-        for (int i = 0; i < parts.size(); i++) {
-            PositionAttributes entry = parts.get(i);
-            int pos = entry.pos();
-            Map<String, Object> attributes = entry.attributes();
-
-            if (!first) {
-                if (pos == lastPos) {
-                    indicesToRemove.add(i - 1);
-                }
-                if (attributes.equals(lastAttributes)) {
-                    indicesToRemove.add(i);
-                }
-            }
-
-            lastAttributes = attributes;
-            lastPos = pos;
-            first = false;
-        }
-
-        // Remove entries from highest index to lowest to avoid shifting issues
-        for (int i = indicesToRemove.size() - 1; i >= 0; i--) {
-            parts.remove(indicesToRemove.get(i).intValue());
-        }
-
         // always remove a trailing empty run if it exists
         if (parts.size() > 1 && parts.getLast().pos() == length()) {
             parts.removeLast();
         }
+
+        // if there's only a single run, there's nothing to do.
+        int size = parts.size();
+        if (size <= 1) {
+            return;
+        }
+
+        Map<String, Object> lastAttributes = parts.getFirst().attributes();
+        for (int i = 1; i < size; i++) {
+            Map<String, Object> attributes = parts.get(i).attributes();
+            if (attributes.equals(lastAttributes)) {
+                parts.set(i, null);
+            }
+            lastAttributes = attributes;
+        }
+
+        // Remove entries
+        parts.removeIf(Objects::isNull);
     }
 
     @Override
@@ -237,8 +225,9 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
             PositionAttributes part = parts.get(i);
             parts.set(i, new PositionAttributes(part.pos() - 1, part.attributes()));
         }
-        if (i > 0 && parts.get(i).pos() == parts.get(i - 1).pos()) {
-            parts.remove(i - 1);
+        // if the character was part of a run with length 1, remove the now empty run
+        if (i + 1 < parts.size() && parts.get(i).pos() == parts.get(i + 1).pos()) {
+            parts.remove(i);
         }
 
         return this;
