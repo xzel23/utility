@@ -30,7 +30,7 @@ import java.util.function.BiFunction;
  * {@link #push(Style)}/{@link #pop(Style)} or {@link #compose(String, BiFunction)}/{@link #decompose(String)}
  * pairs of methods.
  */
-public class RichTextBuilder implements Appendable, ToRichText {
+public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
     private final StringBuilder buffer;
     private final SortedMap<Integer, Map<String, Object>> parts;
@@ -195,6 +195,16 @@ public class RichTextBuilder implements Appendable, ToRichText {
      */
     public int length() {
         return buffer.length();
+    }
+
+    @Override
+    public char charAt(int index) {
+        return buffer.charAt(index);
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return buffer.subSequence(start, end);
     }
 
     @SuppressWarnings("unchecked")

@@ -194,6 +194,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 17.1.2
+
+- RichTextBuilder implements CharSequence
+
 ### 17.1.1
 
 - FxRefresh: skip refreshs if the refresher has been stopped
