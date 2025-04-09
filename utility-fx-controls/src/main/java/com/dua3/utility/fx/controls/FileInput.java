@@ -81,7 +81,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
     public FileInput(
             FileDialogMode mode,
             boolean existingOnly,
-            Supplier<Path> dflt,
+            Supplier<@Nullable Path> dflt,
             Collection<FileChooser.ExtensionFilter> filters,
             Function<@Nullable Path, Optional<String>> validate) {
         super(new HBox());

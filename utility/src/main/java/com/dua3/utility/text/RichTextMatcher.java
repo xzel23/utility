@@ -103,7 +103,6 @@ public class RichTextMatcher implements MatchResult {
      * @return a new {@code RichText} instance with the first occurrence of the pattern replaced
      * See {@link Matcher#replaceFirst(String)}.
      */
-    @SuppressWarnings("MissingJavadoc")
     public RichText replaceFirst(CharSequence replacement) {
         return replace(replacement, 1);
     }

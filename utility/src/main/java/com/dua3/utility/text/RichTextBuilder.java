@@ -31,7 +31,7 @@ import java.util.function.BiFunction;
 public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
     private record PositionAttributes(int pos, Map<String, Object> attributes) {}
-    
+
     private final StringBuilder buffer;
     private final List<PositionAttributes> parts;
     private final List<AttributeChange> openedAttributes = new ArrayList<>(16);
