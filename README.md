@@ -197,6 +197,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 ### 17.1.2
 
 - RichTextBuilder implements CharSequence
+- RichTextBuilder.deleteCharAt()
+- Refactored RichTextBuilder to use less memory and perform better
 
 ### 17.1.1
 
