@@ -207,6 +207,32 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         return buffer.subSequence(start, end);
     }
 
+    public RichTextBuilder deleteCharAt(int index) {
+        // remove character from buffer
+        buffer.deleteCharAt(index);
+
+        // create new parts map with updated indices
+        SortedMap<Integer, Map<String, Object>> newParts = new TreeMap<>();
+
+        // copy entries before deletion point as-is
+        newParts.putAll(parts.headMap(index));
+
+        // merge entries at deletion point if they exist
+        if (parts.containsKey(index) && !parts.containsKey(index + 1)) {
+            newParts.put(index, parts.get(index));
+        }
+
+        // shift remaining entries back by 1
+        parts.tailMap(index + 1).forEach((pos, attrs) -> {
+                newParts.put(pos - 1, attrs);
+        });
+
+        parts.clear();
+        parts.putAll(newParts);
+
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     void appendRun(Run run) {
         // set attributes

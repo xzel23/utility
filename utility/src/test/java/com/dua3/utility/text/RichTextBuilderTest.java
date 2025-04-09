@@ -19,6 +19,81 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RichTextBuilderTest {
 
     @Test
+    public void testDeleteCharAtMiddle() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello World");
+        builder.deleteCharAt(5);
+        RichText rt = builder.toRichText();
+
+        assertEquals(RichText.valueOf("HelloWorld"), rt);
+    }
+
+    @Test
+    public void testDeleteCharAtStart() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello");
+        builder.deleteCharAt(0);
+        RichText rt = builder.toRichText();
+
+        assertEquals(RichText.valueOf("ello"), rt);
+    }
+
+    @Test
+    public void testDeleteCharAtEnd() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("World!");
+        builder.deleteCharAt(builder.length() - 1);
+        RichText rt = builder.toRichText();
+
+        assertEquals(RichText.valueOf("World"), rt);
+    }
+
+    @Test
+    public void testDeleteCharAtWithAttributes() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.push(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC);
+        builder.append("A");
+        builder.pop(Style.FONT_STYLE);
+        builder.append("B");
+        builder.deleteCharAt(0);
+        RichText rt = builder.toRichText();
+
+        assertEquals(RichText.valueOf("B"), rt);
+    }
+
+    @Test
+    public void testDeleteCharAtWithAttributes2() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.push(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC);
+        builder.append("A");
+        builder.pop(Style.FONT_STYLE);
+
+        builder.push(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE);
+        builder.append("B");
+        builder.pop(Style.TEXT_DECORATION_UNDERLINE);
+
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("C");
+        builder.pop(Style.FONT_WEIGHT);
+
+        builder.deleteCharAt(1);
+        RichText actual = builder.toRichText();
+
+        RichTextBuilder builder2 = new RichTextBuilder();
+        builder2.push(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC);
+        builder2.append("A");
+        builder2.pop(Style.FONT_STYLE);
+
+        builder2.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder2.append("C");
+        builder2.pop(Style.FONT_WEIGHT);
+
+        RichText expected = builder2.toRichText();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void testWithAttributes() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
