@@ -16,8 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.function.BiFunction;
 
 /**
@@ -32,8 +30,10 @@ import java.util.function.BiFunction;
  */
 public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
+    private record PositionAttributes(int pos, Map<String, Object> attributes) {}
+    
     private final StringBuilder buffer;
-    private final SortedMap<Integer, Map<String, Object>> parts;
+    private final List<PositionAttributes> parts;
     private final List<AttributeChange> openedAttributes = new ArrayList<>(16);
     private final List<AttributeChange> openedCompositions = new ArrayList<>(16);
 
@@ -51,9 +51,9 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      */
     public RichTextBuilder(int capacity) {
         this.buffer = new StringBuilder(capacity);
-        this.parts = new TreeMap<>();
+        this.parts = new ArrayList<>(16);
 
-        parts.put(0, new HashMap<>());
+        parts.add(new PositionAttributes(0, new HashMap<>()));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * @return value of the property
      */
     public Object get(String property) {
-        return parts.get(parts.lastKey()).get(property);
+        return parts.getLast().attributes().get(property);
     }
 
     /**
@@ -100,7 +100,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * @return value of the property
      */
     public Object getOrDefault(String property, Object defaultValue) {
-        return parts.get(parts.lastKey()).getOrDefault(property, defaultValue);
+        return parts.getLast().attributes().getOrDefault(property, defaultValue);
     }
 
     /**
@@ -121,10 +121,10 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         Run[] runs = new Run[parts.size()];
 
         int runIdx = 0;
-        int start = parts.firstKey();
-        Map<String, Object> attributes = parts.get(start);
-        for (Map.Entry<Integer, Map<String, Object>> e : parts.entrySet()) {
-            int end = e.getKey();
+        int start = parts.getFirst().pos();
+        Map<String, Object> attributes = parts.getFirst().attributes();
+        for (PositionAttributes part : parts) {
+            int end = part.pos;
             int runLength = end - start;
 
             if (runLength == 0) {
@@ -133,7 +133,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
             runs[runIdx++] = new Run(text, start, end - start, TextAttributes.of(attributes));
             start = end;
-            attributes = e.getValue();
+            attributes = part.attributes();
         }
         runs[runIdx] = new Run(text, start, text.length() - start, TextAttributes.of(attributes));
         return runs;
@@ -141,27 +141,42 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
     private void normalize() {
         // combine subsequent runs sharing the same attributes
-        boolean first = true;
-        List<Integer> keysToRemove = new ArrayList<>();
-        Map<String, Object> lastAttributes = Collections.emptyMap();
-        for (Entry<Integer, Map<String, Object>> entry : parts.entrySet()) {
-            Integer pos = entry.getKey();
-            Map<String, Object> attributes = entry.getValue();
+        if (parts.isEmpty()) {
+            return;
+        }
 
-            if (!first && attributes.equals(lastAttributes)) {
-                keysToRemove.add(pos);
+        boolean first = true;
+        List<Integer> indicesToRemove = new ArrayList<>();
+        int lastPos = -1;
+        Map<String, Object> lastAttributes = Collections.emptyMap();
+
+        for (int i = 0; i < parts.size(); i++) {
+            PositionAttributes entry = parts.get(i);
+            int pos = entry.pos();
+            Map<String, Object> attributes = entry.attributes();
+
+            if (!first) {
+                if (pos == lastPos) {
+                    indicesToRemove.add(i - 1);
+                }
+                if (attributes.equals(lastAttributes)) {
+                    indicesToRemove.add(i);
+                }
             }
 
             lastAttributes = attributes;
+            lastPos = pos;
             first = false;
         }
 
-        // remove splits
-        keysToRemove.forEach(parts::remove);
+        // Remove entries from highest index to lowest to avoid shifting issues
+        for (int i = indicesToRemove.size() - 1; i >= 0; i--) {
+            parts.remove(indicesToRemove.get(i).intValue());
+        }
 
         // always remove a trailing empty run if it exists
-        if (parts.size() > 1) {
-            parts.remove(length());
+        if (parts.size() > 1 && parts.getLast().pos() == length()) {
+            parts.removeLast();
         }
     }
 
@@ -212,16 +227,19 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         buffer.deleteCharAt(index);
 
         // fastpath when all parts can be retained 
-        if (parts.lastKey() < index) {
+        if (parts.getLast().pos() < index) {
             return this;
         }
-                
-        // update parts starting at index + 1
-        SortedMap<Integer, Map<String, Object>> oldTail = parts.tailMap(index + 1);
-        Map<Integer, Map<String, Object>> tailMap = Map.copyOf(oldTail);
-        oldTail.clear();
 
-        tailMap.forEach((pos, attrs) -> parts.put(pos - 1, attrs));
+        // update parts starting at index + 1 (in reverse order)
+        int i;
+        for (i = parts.size() - 1; i > 0 && parts.get(i).pos() > index; i--) {
+            PositionAttributes part = parts.get(i);
+            parts.set(i, new PositionAttributes(part.pos() - 1, part.attributes()));
+        }
+        if (i > 0 && parts.get(i).pos() == parts.get(i - 1).pos()) {
+            parts.remove(i - 1);
+        }
 
         return this;
     }
@@ -372,13 +390,16 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     }
 
     private Map<String, Object> split() {
-        return parts.computeIfAbsent(length(), pos -> new HashMap<>(parts.get(parts.lastKey())));
+        if (parts.getLast().pos() < length()) {
+            parts.add(new PositionAttributes(length(), new HashMap<>(parts.getLast().attributes())));
+        }
+        return parts.getLast().attributes;
     }
 
     @SuppressWarnings("unchecked")
     void apply(Style style) {
-        for (Map<String, Object> attributes : parts.values()) {
-            List<Style> styles = (List<Style>) attributes.computeIfAbsent(RichText.ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
+        for (PositionAttributes part : parts) {
+            List<Style> styles = (List<Style>) part.attributes().computeIfAbsent(RichText.ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
             styles.add(0, style); // add the style at the first position!
         }
     }
