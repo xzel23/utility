@@ -199,6 +199,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - add Counter and Histogram classes
 - precalculate Font hash
 - small refactorings
+- fix SimpleValue.removeChangeListener
+- simplify HSVColor constructor
 
 ### 17.1.2
 
