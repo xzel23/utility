@@ -818,7 +818,7 @@ public final class RichText
             // Construct result
             int resultSize = list.size();
             if (limit == 0) {
-                while (resultSize > 0 && list.get(resultSize - 1).isEmpty()) {
+                while (resultSize > 0 && list.getLast().isEmpty()) {
                     resultSize--;
                 }
             }
