@@ -196,6 +196,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ### 17.1.3
 
+- IMPORTANT: last release may not run correctly on Java 17, please upgrade to 17.1.3+
+- add forbiddenapis plugin and set correct release when compiling
 - add Counter and Histogram classes
 - precalculate Font hash
 - small refactorings
