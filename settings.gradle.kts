@@ -47,8 +47,9 @@ dependencyResolutionManagement {
             version("ikonli", "12.3.1")
             version("jimfs", "1.3.0")
             version("miglayout", "11.4.2")
-            version("mockito", "5.16.1")
+            version("mockito", "5.17.0")
             version("javafx", "22")
+            version("jmh", "1.37")
             version("jspecify", "1.0.0")
 
             library("jspecify", "org.jspecify", "jspecify").versionRef("jspecify")

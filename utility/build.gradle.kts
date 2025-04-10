@@ -5,7 +5,7 @@ plugins {
 }
 
 jmh {
-    // Common settings for JMH benchmarks
+    jmhVersion = rootProject.libs.versions.jmh
     warmupIterations = 2
     iterations = 5
     fork = 1
