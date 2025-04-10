@@ -194,6 +194,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 17.1.3
+
+- add Counter and Histogram classes
+
 ### 17.1.2
 
 - RichTextBuilder implements CharSequence
