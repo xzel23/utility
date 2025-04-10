@@ -40,6 +40,7 @@ dependencyResolutionManagement {
             plugin("spotbugs", "com.github.spotbugs").version("6.1.7")
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
+            plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
 
             version("log4j-bom", "2.24.3")
             version("slf4j", "2.0.17")
