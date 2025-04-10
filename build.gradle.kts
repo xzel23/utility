@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
     alias(libs.plugins.cabe)
+    alias(libs.plugins.forbiddenapis)
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -74,6 +75,7 @@ subprojects {
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "com.dua3.cabe")
+    apply(plugin = "de.thetaphi.forbiddenapis")
 
     java {
         targetCompatibility = JavaVersion.VERSION_21
@@ -140,6 +142,7 @@ subprojects {
         options.encoding = "UTF-8"
         options.compilerArgs.add("-Xlint:deprecation")
         options.javaModuleVersion.set(provider { project.version as String })
+        options.release.set(java.targetCompatibility.majorVersion.toInt())
     }
 
     tasks.compileTestJava {
@@ -216,6 +219,12 @@ subprojects {
     // === SPOTBUGS ===
     spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
     spotbugs.toolVersion.set("4.9.3")
+
+    // === FORBIDDEN APIS ===
+    forbiddenApis {
+        bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
+        ignoreFailures = false
+    }
 
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
         reports.create("html") {
