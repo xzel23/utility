@@ -194,6 +194,11 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.0.0
+
+- NetUtil class removed: this utility class has become obsolete with the introduction of new methods in the URL/URI classes.
+- MathUtil.clamp() removed. Use Math.clamp() introduced in Java 21 instead. Note the different argument order.
+
 ### 17.1.3
 
 - IMPORTANT: last release may not run correctly on Java 17, please upgrade to 17.1.3+

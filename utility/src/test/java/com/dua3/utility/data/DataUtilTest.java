@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DataUtilTest {
 
     @Test
-    void testConvert() throws IOException {
+    void testConvert() throws IOException, URISyntaxException {
         // Object to String
         assertEquals("123", DataUtil.convert(123, String.class));
 
@@ -81,13 +82,13 @@ class DataUtilTest {
 
         // String, URL, Path, File to URI
         assertEquals(URI.create("http://www.dua3.com"), DataUtil.convert("http://www.dua3.com", URI.class));
-        assertEquals(URI.create("http://www.dua3.com"), DataUtil.convert(new URL("http://www.dua3.com"), URI.class));
+        assertEquals(URI.create("http://www.dua3.com"), DataUtil.convert(new URI("http://www.dua3.com").toURL(), URI.class));
         assertEquals(Paths.get(".").toUri(), DataUtil.convert(Paths.get("."), URI.class));
         assertEquals(new File(".").toURI(), DataUtil.convert(new File("."), URI.class));
 
         // String, URI, Path, File to URL
-        assertEquals(new URL("http://www.dua3.com"), DataUtil.convert("http://www.dua3.com", URL.class));
-        assertEquals(new URL("http://www.dua3.com"), DataUtil.convert(URI.create("http://www.dua3.com"), URL.class));
+        assertEquals(new URI("http://www.dua3.com").toURL(), DataUtil.convert("http://www.dua3.com", URL.class));
+        assertEquals(new URI("http://www.dua3.com").toURL(), DataUtil.convert(URI.create("http://www.dua3.com"), URL.class));
         assertEquals(Paths.get(".").toUri().toURL(), DataUtil.convert(Paths.get("."), URL.class));
         assertEquals(new File(".").toURI().toURL(), DataUtil.convert(new File("."), URL.class));
 
