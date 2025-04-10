@@ -38,7 +38,7 @@ public class SimpleValue<T extends @Nullable Object> implements Value<T> {
 
     @Override
     public void removeChangeListener(BiConsumer<? super T, ? super T> listener) {
-        changeListeners.add(listener);
+        changeListeners.remove(listener);
     }
 
     @Override
