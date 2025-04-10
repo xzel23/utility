@@ -16,7 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.function.BiFunction;
 
 /**
@@ -34,7 +33,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     private record PositionAttributes(int pos, Map<String, Object> attributes) {}
 
     private final StringBuilder buffer;
-    private final List<@Nullable PositionAttributes> parts;
+    private final List<PositionAttributes> parts;
     private final List<AttributeChange> openedAttributes = new ArrayList<>(16);
     private final List<AttributeChange> openedCompositions = new ArrayList<>(16);
 
@@ -144,11 +143,6 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * Combine subsequent runs sharing the same attributes.
      */
     private void normalize() {
-        // always remove a trailing empty run if it exists
-        if (parts.size() > 1 && parts.getLast().pos() == length()) {
-            parts.removeLast();
-        }
-
         // if there's only a single run, there's nothing to do.
         int size = parts.size();
         if (size <= 1) {
@@ -156,16 +150,24 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         }
 
         Map<String, Object> lastAttributes = parts.getFirst().attributes();
-        for (int i = 1; i < size; i++) {
-            Map<String, Object> attributes = parts.get(i).attributes();
-            if (attributes.equals(lastAttributes)) {
-                parts.set(i, null);
+        int writeIndex = 1;
+        for (int readIndex = 1; readIndex < size; readIndex++) {
+            Map<String, Object> attributes = parts.get(readIndex).attributes();
+            if (!attributes.equals(lastAttributes)) {
+                parts.set(writeIndex++, parts.get(readIndex));
+                lastAttributes = attributes;
             }
-            lastAttributes = attributes;
         }
 
-        // Remove entries
-        parts.removeIf(Objects::isNull);
+        // Bulk remove remaining elements
+        while (parts.size() > writeIndex) {
+            parts.removeLast();
+        }
+
+        // always remove a trailing empty run if it exists
+        if (parts.size() > 1 && parts.getLast().pos() == length()) {
+            parts.removeLast();
+        }
     }
 
     @Override
