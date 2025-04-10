@@ -17,6 +17,7 @@ public class Font {
     private static final ObjectCache fontCache = new ObjectCache();
     private final FontData fontData;
     private final Color color;
+    private final int hash;
 
     /**
      * Constructor to create a Font instance with given font data and color.
@@ -27,6 +28,7 @@ public class Font {
     protected Font(FontData fontData, Color color) {
         this.fontData = fontData;
         this.color = color;
+        this.hash = fontData.hashCode() + 17 * color.hashCode();
     }
 
     /**
@@ -49,7 +51,7 @@ public class Font {
      * @return true, if a and b have the same attributes
      */
     public static boolean similar(Font a, Font b) {
-        return FontData.similar(a.fontData, b.fontData) && a.color.equals(b.color);
+        return a.hash == b.hash && FontData.similar(a.fontData, b.fontData) && a.color.equals(b.color);
     }
 
     /**
@@ -135,7 +137,7 @@ public class Font {
 
     @Override
     public int hashCode() {
-        return fontData.hashCode();
+        return hash;
     }
 
     @Override
@@ -143,8 +145,11 @@ public class Font {
         if (obj == null || obj.getClass() != getClass()) {
             return false;
         }
+        if (this == obj) {
+            return true;
+        }
         Font other = (Font) obj;
-        return fontData.equals(other.fontData) && color.equals(other.color);
+        return hash == other.hash && fontData.equals(other.fontData) && color.equals(other.color);
     }
 
     /**
