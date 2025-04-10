@@ -89,7 +89,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * @return value of the property
      */
     public Object get(String property) {
-        return parts.getLast().attributes().get(property);
+        return parts.get(parts.size() - 1).attributes().get(property);
     }
 
     /**
@@ -100,7 +100,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * @return value of the property
      */
     public Object getOrDefault(String property, Object defaultValue) {
-        return parts.getLast().attributes().getOrDefault(property, defaultValue);
+        return parts.get(parts.size() - 1).attributes().getOrDefault(property, defaultValue);
     }
 
     /**
@@ -121,8 +121,8 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         Run[] runs = new Run[parts.size()];
 
         int runIdx = 0;
-        int start = parts.getFirst().pos();
-        Map<String, Object> attributes = parts.getFirst().attributes();
+        int start = parts.get(0).pos();
+        Map<String, Object> attributes = parts.get(0).attributes();
         for (PositionAttributes part : parts) {
             int end = part.pos;
             int runLength = end - start;
@@ -149,7 +149,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
             return;
         }
 
-        Map<String, Object> lastAttributes = parts.getFirst().attributes();
+        Map<String, Object> lastAttributes = parts.get(0).attributes();
         int writeIndex = 1;
         for (int readIndex = 1; readIndex < size; readIndex++) {
             Map<String, Object> attributes = parts.get(readIndex).attributes();
@@ -161,12 +161,12 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
         // Bulk remove remaining elements
         while (parts.size() > writeIndex) {
-            parts.removeLast();
+            parts.remove(parts.size() - 1);
         }
 
         // always remove a trailing empty run if it exists
-        if (parts.size() > 1 && parts.getLast().pos() == length()) {
-            parts.removeLast();
+        if (parts.size() > 1 && parts.get(parts.size() - 1).pos() == length()) {
+            parts.remove(parts.size() - 1);
         }
     }
 
@@ -217,7 +217,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         buffer.deleteCharAt(index);
 
         // fastpath when all parts can be retained 
-        if (parts.getLast().pos() < index) {
+        if (parts.get(parts.size() - 1).pos() < index) {
             return this;
         }
 
@@ -304,7 +304,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * @return this instance
      */
     public RichTextBuilder pop(String name) {
-        AttributeChange change = openedAttributes.removeLast();
+        AttributeChange change = openedAttributes.remove(openedAttributes.size() - 1);
         LangUtil.check(name.equals(change.name()), "attribute name does not match: \"%s\", expected \"%s\"", name, change.name());
         Map<String, Object> attributes = split();
         if (change.previousValue() == null) {
@@ -343,7 +343,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * @return this RichTextBuilder instance
      */
     public RichTextBuilder decompose(String name) {
-        AttributeChange change = openedCompositions.removeLast();
+        AttributeChange change = openedCompositions.remove(openedCompositions.size() - 1);
         LangUtil.check(name.equals(change.name()), "composition name does not match: \"%s\", expected \"%s\"", name, change.name());
         Map<String, Object> attributes = split();
         if (change.previousValue() == null) {
@@ -381,10 +381,10 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     }
 
     private Map<String, Object> split() {
-        if (parts.getLast().pos() < length()) {
-            parts.add(new PositionAttributes(length(), new HashMap<>(parts.getLast().attributes())));
+        if (parts.get(parts.size() - 1).pos() < length()) {
+            parts.add(new PositionAttributes(length(), new HashMap<>(parts.get(parts.size() - 1).attributes())));
         }
-        return parts.getLast().attributes;
+        return parts.get(parts.size() - 1).attributes;
     }
 
     @SuppressWarnings("unchecked")
