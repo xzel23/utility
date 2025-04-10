@@ -44,20 +44,6 @@ public class MathUtilBenchmark {
     }
 
     @Benchmark
-    public void clamp_int(Blackhole blackhole) {
-        blackhole.consume(MathUtil.clamp(0, 100, 50));
-        blackhole.consume(MathUtil.clamp(0, 100, -10));
-        blackhole.consume(MathUtil.clamp(0, 100, 200));
-    }
-
-    @Benchmark
-    public void clamp_double(Blackhole blackhole) {
-        blackhole.consume(MathUtil.clamp(0.0, 100.0, 50.5));
-        blackhole.consume(MathUtil.clamp(0.0, 100.0, -10.5));
-        blackhole.consume(MathUtil.clamp(0.0, 100.0, 200.5));
-    }
-
-    @Benchmark
     public void findRoot(Blackhole blackhole) {
         // Find the root of x^2 - 4 = 0 (should be 2)
         blackhole.consume(MathUtil.findRoot(testFunction, 1.0, 3.0, 1e-10));

@@ -2,7 +2,6 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.concurrent.ProgressView;
-import com.dua3.utility.math.MathUtil;
 
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -134,7 +133,7 @@ public class SwingProgressView<T> extends JPanel implements ProgressTracker<T> {
                     pb.setIndeterminate(false);
                     pb.setMaximum(MAX);
                     //noinspection NumericCastThatLosesPrecision
-                    pb.setValue((int) (MathUtil.clamp(0, MAX, percentDone * MAX) + 0.5));
+                    pb.setValue((int) (Math.clamp(percentDone * MAX, 0, MAX) + 0.5));
                 }
             });
         }

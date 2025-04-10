@@ -7,7 +7,6 @@ package com.dua3.utility.text;
 
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -838,7 +837,7 @@ public final class TextUtil {
                 for (String fragment : fragments) {
                     if (fragment.isBlank() && used < spaceToDistribute) {
                         double ideal = (processedSpaces + fragment.length()) * fBlank - (processedSpaces + used);
-                        int nChars = (int) MathUtil.clamp(1, 1 + spaceToDistribute - used, Math.round(ideal));
+                        int nChars = (int) Math.clamp(Math.round(ideal), 1, (long) (1 + spaceToDistribute - used));
                         String blank = padding(filler, nChars);
                         processedSpaces += fragment.length();
                         used += blank.length() - fragment.length();

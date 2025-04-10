@@ -7,7 +7,6 @@ import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.LogUtil;
-import com.dua3.utility.math.MathUtil;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -357,7 +356,7 @@ public class SwingLogPane extends JPanel {
      * @param proportionalLocation the proportional location
      */
     public void setDividerLocation(double proportionalLocation) {
-        this.dividerLocation = MathUtil.clamp(0.0, 1.0, proportionalLocation);
+        this.dividerLocation = Math.clamp(proportionalLocation, 0.0, 1.0);
         splitPane.setDividerLocation(dividerLocation);
     }
 
