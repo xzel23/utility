@@ -135,16 +135,12 @@ public final class DbUtil {
      */
     @SuppressWarnings("ChainOfInstanceofChecks")
     public static @Nullable LocalDate toLocalDate(@Nullable Object item) {
-        if (item == null) {
-            return null;
-        }
-        if (item instanceof LocalDate localDate) {
-            return localDate;
-        }
-        if (item instanceof java.sql.Date date) {
-            return date.toLocalDate();
-        }
-        throw new IllegalStateException(item.getClass().getName() + " cannot be converted to LocalDate");
+        return switch (item) {
+            case null -> null;
+            case LocalDate localDate -> localDate;
+            case java.sql.Date date -> date.toLocalDate();
+            default -> throw new IllegalStateException(item.getClass().getName() + " cannot be converted to LocalDate");
+        };
     }
 
     /**
@@ -160,16 +156,13 @@ public final class DbUtil {
      */
     @SuppressWarnings("ChainOfInstanceofChecks")
     public static @Nullable LocalDateTime toLocalDateTime(@Nullable Object item) {
-        if (item == null) {
-            return null;
-        }
-        if (item instanceof LocalDateTime localDateTime) {
-            return localDateTime;
-        }
-        if (item instanceof java.sql.Timestamp timestamp) {
-            return timestamp.toLocalDateTime();
-        }
-        throw new IllegalStateException(item.getClass().getName() + " cannot be converted to LocalDateTime");
+        return switch (item) {
+            case null -> null;
+            case LocalDateTime localDateTime -> localDateTime;
+            case java.sql.Timestamp timestamp -> timestamp.toLocalDateTime();
+            default ->
+                    throw new IllegalStateException(item.getClass().getName() + " cannot be converted to LocalDateTime");
+        };
     }
 
     /**
@@ -185,16 +178,12 @@ public final class DbUtil {
      */
     @SuppressWarnings("ChainOfInstanceofChecks")
     public static @Nullable LocalTime toLocalTime(@Nullable Object item) {
-        if (item == null) {
-            return null;
-        }
-        if (item instanceof LocalTime localTime) {
-            return localTime;
-        }
-        if (item instanceof java.sql.Time time) {
-            return time.toLocalTime();
-        }
-        throw new IllegalStateException(item.getClass().getName() + " cannot be converted to LocalTime");
+        return switch (item) {
+            case null -> null;
+            case LocalTime localTime -> localTime;
+            case java.sql.Time time -> time.toLocalTime();
+            default -> throw new IllegalStateException(item.getClass().getName() + " cannot be converted to LocalTime");
+        };
     }
 
     /**

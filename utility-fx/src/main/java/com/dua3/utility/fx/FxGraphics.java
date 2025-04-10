@@ -382,11 +382,11 @@ public class FxGraphics implements Graphics {
 
             if (state.isUnderline) {
                 double yStroke = y + r.getMaxY() / 2.0f;
-                gc.strokeLine(x, yStroke, (double) x + wStroke, yStroke);
+                gc.strokeLine(x, yStroke, x + wStroke, yStroke);
             }
             if (state.isStrikeThrough) {
                 double yStroke = y + r.getMinY() / 2.0f + r.getMaxY();
-                gc.strokeLine(x, yStroke, (double) x + wStroke, yStroke);
+                gc.strokeLine(x, yStroke, x + wStroke, yStroke);
             }
         }
     }

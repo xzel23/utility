@@ -391,7 +391,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     void apply(Style style) {
         for (PositionAttributes part : parts) {
             List<Style> styles = (List<Style>) part.attributes().computeIfAbsent(RichText.ATTRIBUTE_NAME_STYLE_LIST, k -> new ArrayList<>());
-            styles.add(0, style); // add the style at the first position!
+            styles.addFirst(style); // add the style at the first position!
         }
     }
 

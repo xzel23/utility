@@ -164,9 +164,9 @@ public record FragmentedText(
                 Font f = fontUtil.deriveFont(font, run.getFontDef());
                 Rectangle2f tr = fontUtil.getTextDimension(run, f);
                 if (wrapAllowed && xAct + tr.width() > wrapWidth) {
-                    if (!fragments.isEmpty() && TextUtil.isBlank(fragments.get(fragments.size() - 1).text())) {
+                    if (!fragments.isEmpty() && TextUtil.isBlank(fragments.getLast().text())) {
                         // remove trailing whitespace
-                        Fragment removed = fragments.remove(fragments.size() - 1);
+                        Fragment removed = fragments.removeLast();
                         whitespace -= removed.w();
                         assert whitespace >= 0.0f : "whitespace must be non-negative after removing trailing whitespace";
                     } else if (TextUtil.isBlank(run)) {
@@ -322,8 +322,8 @@ public record FragmentedText(
         if (line.isEmpty()) {
             return 0.0f;
         } else {
-            Fragment first = line.get(0);
-            Fragment last = line.get(line.size() - 1);
+            Fragment first = line.getFirst();
+            Fragment last = line.getLast();
             return last.x() + last.w() - first.x();
         }
     }
@@ -360,10 +360,10 @@ public record FragmentedText(
             return Rectangle2f.of(0, 0, 0, 0);
         }
 
-        float y = lines.get(0).get(0).y();
+        float y = lines.getFirst().getFirst().y();
         float x = (float) lines.stream()
                 .filter(list -> !list.isEmpty())
-                .mapToDouble(line -> line.get(0).x())
+                .mapToDouble(line -> line.getFirst().x())
                 .min()
                 .orElse(0.0);
 

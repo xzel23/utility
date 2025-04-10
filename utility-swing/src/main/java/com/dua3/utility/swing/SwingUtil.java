@@ -313,38 +313,38 @@ public final class SwingUtil {
     public static Path2D convertToSwingPath(Path2f path) {
         Path2D swingPath = new Path2D.Float();
         path.segments().forEach(segment -> {
-            if (segment instanceof MoveTo2f s) {
-                swingPath.moveTo(s.end().x(), s.end().y());
-            } else if (segment instanceof Line2f s) {
-                swingPath.lineTo(s.end().x(), s.end().y());
-            } else if (segment instanceof Curve2f s) {
-                int n = s.numberOfControls();
-                switch (n) {
-                    case 3 -> swingPath.quadTo(
-                            s.control(1).x(), s.control(1).y(),
-                            s.control(2).x(), s.control(2).y()
-                    );
-                    case 4 -> swingPath.curveTo(
-                            s.control(1).x(), s.control(1).y(),
-                            s.control(2).x(), s.control(2).y(),
-                            s.control(3).x(), s.control(3).y()
-                    );
-                    default -> throw new IllegalArgumentException("Unsupported number of control points: " + n);
+            switch (segment) {
+                case MoveTo2f s -> swingPath.moveTo(s.end().x(), s.end().y());
+                case Line2f s -> swingPath.lineTo(s.end().x(), s.end().y());
+                case Curve2f s -> {
+                    int n = s.numberOfControls();
+                    switch (n) {
+                        case 3 -> swingPath.quadTo(
+                                s.control(1).x(), s.control(1).y(),
+                                s.control(2).x(), s.control(2).y()
+                        );
+                        case 4 -> swingPath.curveTo(
+                                s.control(1).x(), s.control(1).y(),
+                                s.control(2).x(), s.control(2).y(),
+                                s.control(3).x(), s.control(3).y()
+                        );
+                        default -> throw new IllegalArgumentException("Unsupported number of control points: " + n);
+                    }
                 }
-            } else if (segment instanceof Arc2f s) {
-                Consumer<Vector2f[]> generateBezierSegment = points -> {
-                    assert points.length == 3;
-                    swingPath.curveTo(
-                            points[0].x(), points[0].y(),
-                            points[1].x(), points[1].y(),
-                            points[2].x(), points[2].y()
-                    );
-                };
-                Graphics.approximateArc(s, p -> swingPath.moveTo(p.x(), p.y()), generateBezierSegment);
-            } else if (segment instanceof ClosePath2f c) {
-                swingPath.closePath();
-            } else {
-                throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+                case Arc2f s -> {
+                    Consumer<Vector2f[]> generateBezierSegment = points -> {
+                        assert points.length == 3;
+                        swingPath.curveTo(
+                                points[0].x(), points[0].y(),
+                                points[1].x(), points[1].y(),
+                                points[2].x(), points[2].y()
+                        );
+                    };
+                    Graphics.approximateArc(s, p -> swingPath.moveTo(p.x(), p.y()), generateBezierSegment);
+                }
+                case ClosePath2f c -> swingPath.closePath();
+                default ->
+                        throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
             }
         });
         return swingPath;

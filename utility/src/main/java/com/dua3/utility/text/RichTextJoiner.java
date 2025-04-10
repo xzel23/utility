@@ -135,7 +135,7 @@ public class RichTextJoiner implements Collector<RichText, RichTextJoiner.Accumu
 
             // append prefix and first item
             appendPrefix.accept(rtb);
-            rtb.append(accu.texts().get(0));
+            rtb.append(accu.texts().getFirst());
 
             // append remaining items separated by delimiter
             List<RichText> first = accu.texts();

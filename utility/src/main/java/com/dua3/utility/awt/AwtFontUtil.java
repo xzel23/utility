@@ -45,7 +45,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     static {
         java.awt.Font labelFont = new JLabel().getFont();
         DEFAULT_FAMILY = labelFont.getFamily();
-        DEFAULT_SIZE = (float) labelFont.getSize();
+        DEFAULT_SIZE = labelFont.getSize();
     }
 
     static {

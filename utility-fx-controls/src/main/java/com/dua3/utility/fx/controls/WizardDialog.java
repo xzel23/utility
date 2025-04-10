@@ -156,7 +156,7 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
             if (isShowPreviousButton()) {
                 page.addButton(
                         ButtonType.PREVIOUS,
-                        p -> setPage(pageStack.remove(pageStack.size() - 1).first()),
+                        p -> setPage(pageStack.removeLast().first()),
                         Bindings.isNotEmpty(pageStack)
                 );
             }

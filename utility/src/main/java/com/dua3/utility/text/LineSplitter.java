@@ -205,8 +205,8 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
             }
         }
 
-        if (!paragraphs.isEmpty() && paragraphs.get(paragraphs.size() - 1).isEmpty()) {
-            paragraphs.remove(paragraphs.size() - 1);
+        if (!paragraphs.isEmpty() && paragraphs.getLast().isEmpty()) {
+            paragraphs.removeLast();
         }
         return paragraphs;
     }
