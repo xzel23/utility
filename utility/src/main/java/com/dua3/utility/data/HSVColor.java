@@ -1,8 +1,5 @@
 package com.dua3.utility.data;
 
-import java.util.DoubleSummaryStatistics;
-import java.util.stream.DoubleStream;
-
 /**
  * {@link Color} implementation that uses the HSV (hue, saturation, value) color model.
  *
@@ -26,10 +23,8 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
         float g = ((argb >> 8) & 0xff) / 255.0f;
         float b = (argb & 0xff) / 255.0f;
 
-        DoubleSummaryStatistics is = DoubleStream.of(r, g, b).summaryStatistics();
-
-        float min = (float) is.getMin();
-        float max = (float) is.getMax();
+        float min = Math.min(Math.min(r, g), b);
+        float max = Math.max(Math.max(r, g), b);
 
         float h;
         if (min == max) {
