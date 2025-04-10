@@ -197,6 +197,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 ### 17.1.3
 
 - add Counter and Histogram classes
+- precalculate Font hash
+- small refactorings
 
 ### 17.1.2
 
