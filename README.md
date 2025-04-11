@@ -25,8 +25,9 @@ Source code is available at https://github.com/xzel23/utility.
 
 ## Requirements
 
-- JDK 17 or later, JDK 21 or later for JavaFX related modules
-- To build the library, JDK 21 **with a properly configured JavaFX installation** is needed.
+- JDK 21 or later, version 17 of the library requires JDK 17 or later (except for for JavaFX related modules that already require at least Java 21).
+- Version 17 that still supports Java 17 will receive important bugfix updates until the next LTS release (Java 25) is released.
+- To build the library, JDK 21+ **with a properly configured JavaFX installation** is needed.
 
 The requirement to have JavaFX installed and configured correctly on the system is because
 both the Gradle JavaFX plugin and the Foojay toolchain resolver plugin do not yet fully support
@@ -194,7 +195,7 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
-### 18.0.0
+### 18.0.0 (Java 21)
 
 IMPORTANT: The minimum Java version is 21. The following functionality has been removed as
 it is now provided directly by JDK classes:
@@ -202,7 +203,6 @@ it is now provided directly by JDK classes:
 - NetUtil removed: this utility class has become obsolete with the introduction of new methods in the URL/URI classes.
 - ThreadFactoryBuilder removed: As of JDK 21, use Thread.ofPlatform().factory().
 - MathUtil.clamp() removed. Use Math.clamp() introduced in Java 21 instead. Note the different argument order.
-
 
 ### 17.1.3
 
