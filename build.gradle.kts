@@ -151,7 +151,7 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
-    tasks.withType<Javadoc> {
+    tasks.javadoc {
         options.encoding = "UTF-8"
     }
 
