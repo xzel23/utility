@@ -21,6 +21,7 @@ plugins {
     alias(libs.plugins.spotbugs)
     alias(libs.plugins.cabe)
     alias(libs.plugins.forbiddenapis)
+    alias(libs.plugins.jmh)
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -76,6 +77,7 @@ subprojects {
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "com.dua3.cabe")
     apply(plugin = "de.thetaphi.forbiddenapis")
+    apply(plugin = "me.champeau.jmh")
 
     java {
         targetCompatibility = JavaVersion.VERSION_21
@@ -216,15 +218,23 @@ subprojects {
         sign(publishing.publications["maven"])
     }
 
-    // === SPOTBUGS ===
-    spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
-    spotbugs.toolVersion.set("4.9.3")
+    // === JMH ===
+    jmh {
+        jmhVersion = rootProject.libs.versions.jmh
+        warmupIterations = 2
+        iterations = 5
+        fork = 1
+    }
 
     // === FORBIDDEN APIS ===
     forbiddenApis {
         bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
         ignoreFailures = false
     }
+
+    // === SPOTBUGS ===
+    spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
+    spotbugs.toolVersion.set("4.9.3")
 
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
         reports.create("html") {
