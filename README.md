@@ -196,8 +196,13 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ### 18.0.0
 
-- NetUtil class removed: this utility class has become obsolete with the introduction of new methods in the URL/URI classes.
+IMPORTANT: The minimum Java version is 21. The following functionality has been removed as
+it is now provided directly by JDK classes:
+
+- NetUtil removed: this utility class has become obsolete with the introduction of new methods in the URL/URI classes.
+- ThreadFactoryBuilder removed: As of JDK 21, use Thread.ofPlatform().factory().
 - MathUtil.clamp() removed. Use Math.clamp() introduced in Java 21 instead. Note the different argument order.
+
 
 ### 17.1.3
 
