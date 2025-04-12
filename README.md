@@ -195,6 +195,13 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.0.1
+
+- Chnages to the HtmlConverter class to track the current font; needed for eliding unnecessary font definitions
+- code refactored to use Java 21 features
+- code cleanups
+- Javadoc additions and corrections
+
 ### 18.0.0 (Java 21)
 
 IMPORTANT: The minimum Java version is 21. The following functionality has been removed as
