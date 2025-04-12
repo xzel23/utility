@@ -157,7 +157,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @return an {@link HtmlConversionOption} that applies the header style mapping during conversion
      */
     public static HtmlConversionOption headerStyleMapper(IntFunction<HeaderStyle> getHeaderStyle) {
-        return new HtmlConversionOption( c -> c.setGetHeaderStyle(getHeaderStyle));
+        return new HtmlConversionOption(c -> c.setGetHeaderStyle(getHeaderStyle));
     }
 
     /**

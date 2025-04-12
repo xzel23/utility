@@ -200,7 +200,8 @@ final class EmptyHtmlTag implements HtmlTag {
  * for handling HTML tags such as retrieving the opening and closing tags, and determining
  * whether the tag should be placed on an extra line.
  */
-record SimpleHtmlTag(String open, String close, FormattingHint formattingHint, OptionalInt headerChange) implements HtmlTag {
+record SimpleHtmlTag(String open, String close, FormattingHint formattingHint,
+                     OptionalInt headerChange) implements HtmlTag {
     public SimpleHtmlTag(String open, String close, FormattingHint formattingHint) {
         this(open, close, formattingHint, OptionalInt.empty());
     }

@@ -426,11 +426,10 @@ public final class IoUtil {
                     rootStr = "/" + rootStr;
                 }
                 sb.append(rootStr);
-                sep = "/";
             } else {
                 sb.append(root.toString().replace(separator, "/"));
-                sep = "/";
             }
+            sep = "/";
         }
         for (Path p : path) {
             sb.append(sep);

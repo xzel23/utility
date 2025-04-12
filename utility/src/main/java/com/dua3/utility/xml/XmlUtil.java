@@ -734,7 +734,7 @@ public final class XmlUtil {
          * @param document The XML document to encapsulate along with its namespace context.
          * @return A {@code DocumentWithNamespace} instance encapsulating the provided document and its namespace context.
          */
-        public DocumentWithNamespace of(Document document) {
+        public static DocumentWithNamespace of(Document document) {
             return new DocumentWithNamespace(document, new SimpleNamespaceContext(collectNamespaces(document.getDocumentElement())));
         }
     }

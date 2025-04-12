@@ -47,7 +47,7 @@ public final class Counter implements Comparable<Counter> {
     void add(long n) {
         value += n;
     }
-    
+
     /**
      * Subtracts the specified value from the current value of this counter.
      *
@@ -56,7 +56,7 @@ public final class Counter implements Comparable<Counter> {
     void subtract(long n) {
         value -= n;
     }
-    
+
     /**
      * Compares this Counter instance with the specified Counter instance for order.
      * The comparison is based on the numerical value of the counters.
