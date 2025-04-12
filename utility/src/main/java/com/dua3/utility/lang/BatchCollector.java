@@ -44,7 +44,11 @@ public class BatchCollector<T extends @Nullable Object, K> implements Collector<
     private final Function<? super T, ? extends K> keyMapper;
 
     /**
-     * Constructor.
+     * Create a new BatchCollector.
+     * <p>
+     * For each item in the stream, a key is determined by applying the keyMapper.
+     * If the generated key equals the last item's key, the item is added to the current batch.
+     * If not, a new batch is created and the item added.
      *
      * @param keyMapper mapping that maps each item to the grouping key
      */
@@ -53,11 +57,9 @@ public class BatchCollector<T extends @Nullable Object, K> implements Collector<
     }
 
     /**
-     * Create a new BatchCollector.
+     * Create a new BatchCollector that uses a default key value for items where the key mapper returns {@code null}.
      * <p>
-     * For each item in the stream, a key is determined by applying the keyMapper. If the generated key is null, or
-     * equals the last item's key, the item is added to the current batch. If not, a new batch is created and the
-     * item added.
+     * Use this constructor if the {@code keymapper} might return {@code null}.
      *
      * @param keyMapper  the key mapper
      * @param defaultKey the default key
