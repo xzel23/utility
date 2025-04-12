@@ -230,13 +230,11 @@ public final class LangUtil {
      * @return RuntimeException, UncheckedIOException, or WrappedException depending on the type of e
      */
     private static RuntimeException wrapException(Exception e) {
-        if (e instanceof RuntimeException re) {
-            return re;
-        }
-        if (e instanceof IOException ioe) {
-            return new UncheckedIOException(ioe);
-        }
-        return new WrappedException(e);
+        return switch (e) {
+            case RuntimeException re -> re;
+            case IOException ioe -> new UncheckedIOException(ioe);
+            case null, default -> new WrappedException(e);
+        };
     }
 
     /**

@@ -833,7 +833,7 @@ public final class FxUtil {
         double width = window.getWidth();
         double height = window.getHeight();
         ObservableList<Screen> screens = Screen.getScreensForRectangle(minX, minY, width, height);
-        return screens.isEmpty() ? Screen.getPrimary() : screens.get(0);
+        return screens.isEmpty() ? Screen.getPrimary() : screens.getFirst();
     }
 
     /**

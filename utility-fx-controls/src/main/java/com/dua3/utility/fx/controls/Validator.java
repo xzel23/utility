@@ -112,15 +112,19 @@ public class Validator {
     private List<Supplier<ValidationResult>> createRuleList(Control control) {
         control.setFocusTraversable(true);
         ChangeListener<Object> changeListener = (v, o, n) -> validateNode(control);
-        if (control instanceof InputControl<?> c) {
-            c.valueProperty().addListener(changeListener);
-            disposeList.add(() -> c.valueProperty().removeListener(changeListener));
-        } else if (control instanceof TextInputControl c) {
-            c.textProperty().addListener(changeListener);
-            disposeList.add(() -> c.textProperty().removeListener(changeListener));
-        } else {
-            control.focusedProperty().addListener((v, o, n) -> validateNode(control));
-            disposeList.add(() -> control.focusedProperty().removeListener(changeListener));
+        switch (control) {
+            case InputControl<?> c -> {
+                c.valueProperty().addListener(changeListener);
+                disposeList.add(() -> c.valueProperty().removeListener(changeListener));
+            }
+            case TextInputControl c -> {
+                c.textProperty().addListener(changeListener);
+                disposeList.add(() -> c.textProperty().removeListener(changeListener));
+            }
+            default -> {
+                control.focusedProperty().addListener((v, o, n) -> validateNode(control));
+                disposeList.add(() -> control.focusedProperty().removeListener(changeListener));
+            }
         }
         return new ArrayList<>();
     }

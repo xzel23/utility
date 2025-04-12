@@ -31,7 +31,7 @@ public class Histogram<T> {
      * represented by instances of the {@link Counter} class.
      * This map serves as the underlying storage for maintaining the histogram's data.
      */
-    private Map<T, Counter> map;
+    private final Map<T, Counter> map;
 
     /**
      * Constructs a {@code Histogram} instance using the provided map for internal storage.

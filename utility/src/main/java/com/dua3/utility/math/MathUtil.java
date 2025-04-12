@@ -423,9 +423,9 @@ public final class MathUtil {
      * @return the normalized angle in radians within the range [0, 2π)
      */
     public static double normalizeRadians(double phi) {
-        phi = phi % MathUtil.TWO_PI;
+        phi = phi % TWO_PI;
         if (phi < 0.0) {
-            phi += MathUtil.TWO_PI;
+            phi += TWO_PI;
         }
         return phi;
     }

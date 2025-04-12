@@ -146,7 +146,7 @@ public record Vector2f(float x, float y) {
      * @return a new Vector2f object representing the translated vector
      */
     public Vector2f translate(float dx, float dy) {
-        return Vector2f.of(x() + dx, y() + dy);
+        return of(x() + dx, y() + dy);
     }
 
     /**

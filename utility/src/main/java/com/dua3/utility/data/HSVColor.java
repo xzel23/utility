@@ -16,7 +16,6 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
      * @param argb the packed ARGB value
      * @return color instance
      */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static HSVColor valueOf(int argb) {
         float a = ((argb >> 24) & 0xff) / 255.0f;
         float r = ((argb >> 16) & 0xff) / 255.0f;

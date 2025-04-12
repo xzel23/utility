@@ -68,7 +68,7 @@ public interface HtmlTag {
 
     static HtmlTag combineTags(HtmlTag... tags) {
         return switch (tags.length) {
-            case 0 -> HtmlTag.emptyTag();
+            case 0 -> emptyTag();
             case 1 -> tags[0];
             default -> new CompoundHtmlTag(tags);
         };

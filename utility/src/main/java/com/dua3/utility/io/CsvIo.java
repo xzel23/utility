@@ -111,18 +111,13 @@ public abstract class CsvIo implements AutoCloseable {
      */
     @SuppressWarnings("ChainOfInstanceofChecks")
     protected String format(@Nullable Object obj) {
-        final String text;
-        if (obj instanceof Number n) {
-            text = numberFormat.format(n);
-        } else if (obj instanceof LocalDateTime ldt) {
-            text = ldt.format(dateTimeFormatter);
-        } else if (obj instanceof LocalDate ld) {
-            text = ld.format(dateFormatter);
-        } else if (obj instanceof LocalTime lt) {
-            text = lt.format(timeFormatter);
-        } else {
-            text = Objects.toString(obj, "");
-        }
+        final String text = switch (obj) {
+            case Number n -> numberFormat.format(n);
+            case LocalDateTime ldt -> ldt.format(dateTimeFormatter);
+            case LocalDate ld -> ld.format(dateFormatter);
+            case LocalTime lt -> lt.format(timeFormatter);
+            case null, default -> Objects.toString(obj, "");
+        };
         return quoteIfNeeded(text);
     }
 

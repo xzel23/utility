@@ -220,7 +220,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * if neither is provided
      */
     public <T> Optional<T> get(SimpleOption<T> option) {
-        return stream(option).findFirst().map(list -> list.get(0)).or(option::getDefault);
+        return stream(option).findFirst().map(list -> list.getFirst()).or(option::getDefault);
     }
 
     /**
@@ -243,7 +243,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return the option's value
      */
     public <T> Optional<T> get(ChoiceOption<T> option) {
-        return stream(option).findFirst().map(list -> list.get(0)).or(option::getDefault);
+        return stream(option).findFirst().map(list -> list.getFirst()).or(option::getDefault);
     }
 
     /**
@@ -299,7 +299,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param <T>    the parameter type
      */
     public <T> void ifPresent(SimpleOption<T> option, Consumer<? super T> action) {
-        stream(option).map(list -> list.get(0)).forEach(action);
+        stream(option).map(list -> list.getFirst()).forEach(action);
     }
 
     /**

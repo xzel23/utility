@@ -133,7 +133,6 @@ public final class DbUtil {
      * @return LocalDate instance or {@code null}
      * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
-    @SuppressWarnings("ChainOfInstanceofChecks")
     public static @Nullable LocalDate toLocalDate(@Nullable Object item) {
         return switch (item) {
             case null -> null;
@@ -154,7 +153,6 @@ public final class DbUtil {
      * @return LocalDateTime instance or {@code null}
      * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
-    @SuppressWarnings("ChainOfInstanceofChecks")
     public static @Nullable LocalDateTime toLocalDateTime(@Nullable Object item) {
         return switch (item) {
             case null -> null;
@@ -176,7 +174,6 @@ public final class DbUtil {
      * @return LocalTime instance or {@code null}
      * @throws IllegalStateException if {@code item} is neither {@code null} nor of the supported types
      */
-    @SuppressWarnings("ChainOfInstanceofChecks")
     public static @Nullable LocalTime toLocalTime(@Nullable Object item) {
         return switch (item) {
             case null -> null;

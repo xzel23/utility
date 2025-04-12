@@ -108,7 +108,7 @@ public class RadioPane<T> extends VBox implements InputControl<T> {
 
         Toggle t = group.getSelectedToggle();
         if (t == null) {
-            t = group.getToggles().get(0);
+            t = group.getToggles().getFirst();
 
         }
 

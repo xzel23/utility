@@ -75,7 +75,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
     @Override
     public @Nullable String getPrefix(String namespaceURI) {
         List<String> namespaces = uriToNs.get(namespaceURI);
-        return namespaces == null || namespaces.isEmpty() ? null : namespaces.get(0);
+        return namespaces == null || namespaces.isEmpty() ? null : namespaces.getFirst();
     }
 
     @Override
