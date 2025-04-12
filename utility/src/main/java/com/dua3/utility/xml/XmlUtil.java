@@ -407,82 +407,88 @@ public final class XmlUtil {
             while (reader.hasNext()) {
                 XMLEvent event = reader.nextEvent();
 
-                if (event instanceof StartElement se) {
-                    skipWhitespace(reader);
-                    writeIndentation(writer, level);
-                    hasChildren = false;
-                    level++;
-                    QName seName = se.getName();
-                    if (reader.peek().isEndElement() && reader.next() instanceof EndElement) {
-                        writer.writeEmptyElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
-                        level--;
-                        hasChildren = true;
-                    } else {
-                        writer.writeStartElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
-                    }
-                    // write namespaces and attributes in alphabetical order to obtain reproducible results
-                    //noinspection DataFlowIssue - false positive; getPrefix() returns "" for the default namespace
-                    StreamUtil.stream(se.getNamespaces())
-                            .sorted(Comparator.comparing(Namespace::getPrefix))
-                            .forEach(consume(ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));
-                    StreamUtil.stream(se.getAttributes())
-                            .filter(Objects::nonNull)
-                            .sorted(Comparator.comparing(Attribute::toString))
-                            .forEach(consume(attr -> {
-                                //noinspection DataFlowIssue - false positive
-                                QName attrName = attr.getName();
-                                writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
-                            }));
-                } else if (event instanceof EndElement) {
-                    level--;
-                    if (hasChildren) {
+                switch (event) {
+                    case StartElement se -> {
+                        skipWhitespace(reader);
                         writeIndentation(writer, level);
+                        hasChildren = false;
+                        level++;
+                        QName seName = se.getName();
+                        if (reader.peek().isEndElement() && reader.next() instanceof EndElement) {
+                            writer.writeEmptyElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
+                            level--;
+                            hasChildren = true;
+                        } else {
+                            writer.writeStartElement(seName.getPrefix(), seName.getLocalPart(), seName.getNamespaceURI());
+                        }
+                        // write namespaces and attributes in alphabetical order to obtain reproducible results
+                        //noinspection DataFlowIssue - false positive; getPrefix() returns "" for the default namespace
+                        StreamUtil.stream(se.getNamespaces())
+                                .sorted(Comparator.comparing(Namespace::getPrefix))
+                                .forEach(consume(ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI())));
+                        StreamUtil.stream(se.getAttributes())
+                                .filter(Objects::nonNull)
+                                .sorted(Comparator.comparing(Attribute::toString))
+                                .forEach(consume(attr -> {
+                                    //noinspection DataFlowIssue - false positive
+                                    QName attrName = attr.getName();
+                                    writer.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(), attr.getValue());
+                                }));
                     }
-                    writer.writeEndElement();
-                    hasChildren = true;
-                } else if (event.getEventType() == XMLStreamConstants.SPACE) {
-                    // do nothing - skip whitespace
-                } else if (event instanceof ProcessingInstruction pi) {
-                    skipWhitespace(reader);
-                    writeIndentation(writer, level);
-                    writer.writeProcessingInstruction(pi.getTarget(), pi.getData());
-                    hasChildren = true;
-                } else if (event instanceof Characters ch) {
-                    if (ch.isCData()) {
-                        writer.writeCData(ch.getData());
-                    } else {
-                        writer.writeCharacters(ch.getData());
+                    case EndElement endElement -> {
+                        level--;
+                        if (hasChildren) {
+                            writeIndentation(writer, level);
+                        }
+                        writer.writeEndElement();
+                        hasChildren = true;
                     }
-                } else if (event instanceof Comment co) {
-                    writeIndentation(writer, level);
-                    String text = co.getText();
-                    if (text.contains("\n")) {
-                        // multi line comment
-                        writer.writeComment(
-                                PATTERN_END_OF_LINE.matcher(PATTERN_BLANK_LINE.matcher(text.indent(indentation(level) + 1)).replaceFirst("\n")).replaceFirst("\n" + " ".repeat(indentation(level)))
-                        );
-                    } else {
-                        // single line comment
-                        writer.writeComment(text);
+                    case XMLEvent xmlEvent when xmlEvent.getEventType()  == XMLStreamConstants.SPACE -> {
+                        // do nothing - skip whitespace
+                    }
+                    case ProcessingInstruction pi -> {
+                        skipWhitespace(reader);
+                        writeIndentation(writer, level);
+                        writer.writeProcessingInstruction(pi.getTarget(), pi.getData());
+                        hasChildren = true;
+                    }
+                    case Characters ch -> {
+                        if (ch.isCData()) {
+                            writer.writeCData(ch.getData());
+                        } else {
+                            writer.writeCharacters(ch.getData());
+                        }
+                    }
+                    case Comment co -> {
+                        writeIndentation(writer, level);
+                        String text = co.getText();
+                        if (text.contains("\n")) {
+                            // multi line comment
+                            writer.writeComment(
+                                    PATTERN_END_OF_LINE.matcher(PATTERN_BLANK_LINE.matcher(text.indent(indentation(level) + 1)).replaceFirst("\n")).replaceFirst("\n" + " ".repeat(indentation(level)))
+                            );
+                        } else {
+                            // single line comment
+                            writer.writeComment(text);
+                            writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
+                        }
+                    }
+                    case StartDocument sd -> {
+                        writer.writeStartDocument(StandardCharsets.UTF_8.name(), sd.getVersion());
                         writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
                     }
-                } else if (event instanceof StartDocument sd) {
-                    writer.writeStartDocument(StandardCharsets.UTF_8.name(), sd.getVersion());
-                    writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
-                } else if (event instanceof EndDocument) {
-                    writer.writeEndDocument();
-                    writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
-                } else if (event instanceof EntityReference er) {
-                    writer.writeEntityRef(er.getName());
-                } else if (event instanceof Namespace ns) {
-                    writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI());
-                } else if (event instanceof Attribute at) {
-                    QName qName = at.getName();
-                    writer.writeAttribute(qName.getPrefix(), qName.getNamespaceURI(), qName.getLocalPart(), at.getValue());
-                } else if (event instanceof DTD dtd) {
-                    writer.writeDTD(dtd.getDocumentTypeDeclaration());
-                } else {
-                    LOG.trace("ignoring element: {}", event);
+                    case EndDocument endDocument -> {
+                        writer.writeEndDocument();
+                        writer.writeCharacters(TextUtil.LINE_END_SYSTEM);
+                    }
+                    case EntityReference er -> writer.writeEntityRef(er.getName());
+                    case Namespace ns -> writer.writeNamespace(ns.getPrefix(), ns.getNamespaceURI());
+                    case Attribute at -> {
+                        QName qName = at.getName();
+                        writer.writeAttribute(qName.getPrefix(), qName.getNamespaceURI(), qName.getLocalPart(), at.getValue());
+                    }
+                    case DTD dtd -> writer.writeDTD(dtd.getDocumentTypeDeclaration());
+                    case null, default -> LOG.trace("ignoring element: {}", event);
                 }
             }
             writer.flush();
