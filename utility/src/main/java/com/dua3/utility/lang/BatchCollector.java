@@ -22,7 +22,7 @@ import java.util.stream.Collector;
  * Example:
  * This code collects strings based on their length and places them in buckets.
  * <pre><code>
- *     BatchCollector<String, Integer> bc = new BatchCollector<>(s -> s != null ? s.length() : null);
+ *     BatchCollector&lt;String, Integer&gt; bc = new BatchCollector&lt;&gt;(s -> s != null ? s.length() : null);
  *     var result = Stream.of("one", "two", "three", "four", "five", "six").collect(bc);
  * </code></pre>
  * The result will be a {@code List<Integer, Pair<Integer, List<String>>} equal to this one:
