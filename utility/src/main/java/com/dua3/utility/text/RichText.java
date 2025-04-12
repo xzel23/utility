@@ -593,11 +593,11 @@ public final class RichText
     }
 
     /**
-     * Get a sub range of this instance.
+     * Get a subrange of this instance.
      *
      * @param start begin index (inclusive)
      * @param end   end index (exclusive)
-     * @return RichText instance of the sub range
+     * @return RichText instance of the subrange
      */
     @Override
     public RichText subSequence(int start, int end) {
@@ -631,10 +631,10 @@ public final class RichText
     }
 
     /**
-     * Get a sub range of this instance.
+     * Get a subrange of this instance.
      *
      * @param start start index (inclusive)
-     * @return RichText instance of the sub range from beginIndex to the end
+     * @return RichText instance of the subrange from beginIndex to the end
      */
     public RichText subSequence(int start) {
         return subSequence(start, length());
@@ -793,10 +793,10 @@ public final class RichText
                 (ch < Character.MIN_HIGH_SURROGATE || ch > Character.MAX_LOW_SURROGATE)) {
             int off = 0;
             int next;
-            boolean limited = limit > 0;
+            boolean unlimited = limit <= 0;
             List<RichText> list = new ArrayList<>();
             while ((next = indexOf(ch, off)) != -1) {
-                if (!limited || list.size() < limit - 1) {
+                if (unlimited || list.size() < limit - 1) {
                     list.add(subSequence(off, next));
                     off = next + 1;
                 } else {    // last one
@@ -811,8 +811,8 @@ public final class RichText
             if (off == 0)
                 return new RichText[]{this};
 
-            // Add remaining segment
-            if (!limited || list.size() < limit)
+            // Add the remaining segment
+            if (unlimited || list.size() < limit)
                 list.add(subSequence(off, length()));
 
             // Construct result
@@ -1062,6 +1062,9 @@ public final class RichText
             if (a == null || !compareText.test(a, b)) {
                 return false;
             }
+
+            // b cannot be null: if b were null, above test a == null || !compareText.test(a, b) would be true
+            assert b != null;
 
             for (int idx = 0; idx < a.length(); ) {
                 Run runA = a.runAt(idx);
