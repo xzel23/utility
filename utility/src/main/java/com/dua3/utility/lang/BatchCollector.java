@@ -18,6 +18,24 @@ import java.util.stream.Collector;
 
 /**
  * A collector that puts subsequent items into batches. A new batch is started by generating a new batch key.
+ * <p>
+ * Example:
+ * This code collects strings based on their length and places them in buckets.
+ * <pre><code>
+ *     BatchCollector<String, Integer> bc = new BatchCollector<>(s -> s != null ? s.length() : null);
+ *     var result = Stream.of("one", "two", "three", "four", "five", "six").collect(bc);
+ * </code></pre>
+ * The result will be a {@code List<Integer, Pair<Integer, List<String>>} equal to this one:
+ * <pre><code>
+ *     List.of(
+ *         Pair.of(3, List.of("one", "two"),
+ *         Pair.of(5, List.of("three"),
+ *         Pair.of(4, List.of("four", "five"),
+ *         Pair.of(3, List.of("six")
+ *     )
+ * </code></pre>
+ * <p>
+ * Note: For Java 24+, have a look at stream gatherers (JEP 461, JEP 485) that might be a better fit for your use case.
  *
  * @param <T> the item type
  * @param <K> the key type
