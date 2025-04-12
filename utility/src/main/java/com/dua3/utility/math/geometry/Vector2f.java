@@ -199,6 +199,6 @@ public record Vector2f(float x, float y) {
      * @return a new {@code Vector2f} object where each component's sign is opposite that of the original vector
      */
     public Vector2f negate() {
-        return Vector2f.of(-x, -y);
+        return of(-x, -y);
     }
 }

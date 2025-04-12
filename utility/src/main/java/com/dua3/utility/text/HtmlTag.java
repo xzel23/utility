@@ -28,14 +28,35 @@ public interface HtmlTag {
             this.linebreakAfterTag = linebreakAfterTag;
         }
 
+        /**
+         * Checks if a line break should appear before the tag based on the current formatting hint configuration.
+         *
+         * @return true if a line break is configured to appear before the tag, false otherwise
+         */
         public boolean linebreakBeforeTag() {
             return linebreakBeforeTag;
         }
 
+        /**
+         * Checks if a line break should appear after a tag based on the current formatting hint configuration.
+         *
+         * @return true if a line break is configured to appear after the tag, false otherwise
+         */
         public boolean linebreakAfterTag() {
             return linebreakAfterTag;
         }
 
+        /**
+         * Returns the appropriate {@code FormattingHint} value based on the provided
+         * boolean flags indicating line break preferences.
+         *
+         * @param linebreakBeforeTag a boolean flag indicating if a line break should
+         *                           appear before the tag
+         * @param linebreakAfterTag  a boolean flag indicating if a line break should
+         *                           appear after the tag
+         * @return the corresponding {@code FormattingHint} value that matches the given
+         *         line break configuration
+         */
         public static FormattingHint from(boolean linebreakBeforeTag, boolean linebreakAfterTag) {
             if (linebreakBeforeTag) {
                 return linebreakAfterTag ? LINE_BREAK_BEFORE_AND_AFTER_TAG : LINE_BREAK_BEFORE_TAG;
@@ -56,6 +77,16 @@ public interface HtmlTag {
         return tag(open, close, FormattingHint.NO_LINE_BREAK);
     }
 
+    /**
+     * Creates an HTML header tag with the specified opening and closing tag texts, and a header level.
+     * The header level indicates the importance of the header (e.g., h1, h2, etc.).
+     *
+     * @param open  the text for the opening tag
+     * @param close the text for the closing tag
+     * @param level an {@link OptionalInt} specifying the header level;
+     *              if the header level is not defined, provide an empty {@link OptionalInt}
+     * @return a new {@code HtmlTag} instance representing the header tag with the given parameters
+     */
     static HtmlTag headerTag(String open, String close, OptionalInt level) {
         return new SimpleHtmlTag(open, close, FormattingHint.LINE_BREAK_BEFORE_TAG, level);
     }

@@ -15,6 +15,13 @@ import java.util.Objects;
  */
 public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
+    /**
+     * Represents a change made to an attribute, capturing its old value and new value.
+     *
+     * @param attribute the name of the attribute that has changed
+     * @param oldValue the previous value of the attribute; null if the attribute was not previously set
+     * @param newValue the new value of the attribute; null if the attribute has been removed
+     */
     public record AttributeChange(String attribute, @Nullable Object oldValue, @Nullable Object newValue) {}
 
     /**

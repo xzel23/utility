@@ -212,6 +212,13 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         return buffer.subSequence(start, end);
     }
 
+    /**
+     * Deletes the character at the specified index in the text being built and updates internal structures
+     * to maintain the consistency of text positions and attributes.
+     *
+     * @param index the index of the character to delete, starting from 0; must be within the range of the current text
+     * @return this RichTextBuilder instance after the specified character has been deleted
+     */
     public RichTextBuilder deleteCharAt(int index) {
         // remove character from buffer
         buffer.deleteCharAt(index);
