@@ -11,13 +11,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.UnaryOperator;
 
 /**
  * A {@link RichTextConverter} that converts {@link RichText} to HTML.
  */
 public final class HtmlConverter extends TagBasedConverter<String> {
-
 
     /**
      * The style mappings of this converter.
@@ -32,6 +32,23 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * The default mapper used to generate tags for style names without mapping.
      */
     private BiFunction<? super String, @Nullable Object, ? extends HtmlTag> defaultStyleMapper = (styleName, value) -> HtmlTag.emptyTag();
+
+    /**
+     * The base font used for HTML conversion. This font serves as the starting point
+     * for defining text appearance in the generated HTML, ensuring consistency across
+     * converted content. All font-related styles in the HTML are derived or adjusted
+     * based on this base font.
+     */
+    private Font baseFont;
+    /**
+     * The default font currently being used for converting text to HTML.
+     * <p>
+     * This field is updated whenever a headline starts with a "&lt;hx&gt;"
+     * or ends with a "&lt;/hx&gt;" tag where x is the header level. The field
+     * is used to avoid inserting unwanted spans that only define the font style
+     * that is already defined by the document's CSS rules.
+     */
+    private Font currentDefaultFont;
 
     /**
      * The attribute mappings of this converter.
@@ -55,6 +72,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * Constructor.
      */
     private HtmlConverter() {
+        baseFont = FontUtil.getInstance().getFont("Helvetica-12");
+        currentDefaultFont = baseFont;
     }
 
     /**
@@ -129,6 +148,14 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      */
     public static HtmlConversionOption mapAttribute(String attribute, Function<AttributeChange, HtmlTag> mapper) {
         return new HtmlConversionOption(c -> c.addAttributeMapping(attribute, mapper));
+    }
+
+    public static HtmlConversionOption headerStyleMapper(IntFunction<HeaderStyle> getHeaderStyle) {
+        return new HtmlConversionOption( c -> c.setGetHeaderStyle(getHeaderStyle));
+    }
+
+    private void setGetHeaderStyle(IntFunction<HeaderStyle> getHeaderStyle) {
+        this.getHeaderStyle = getHeaderStyle;
     }
 
     /**
@@ -211,8 +238,20 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         return create(List.of(options));
     }
 
+    @Override
+    public String convert(RichText text) {
+        currentDefaultFont = getHeaderStyle.apply(0).text().getFont(baseFont);
+        return super.convert(text);
+    }
+
     private void setRefineStyleProperties(UnaryOperator<Map<String, Object>> refineStyleProperties) {
         this.refineStyleProperties = refineStyleProperties;
+    }
+
+    private IntFunction<HeaderStyle> getHeaderStyle = level -> HeaderStyle.EMPTY;
+
+    public record HeaderStyle(int level, Style header, Style text) {
+        static final HeaderStyle EMPTY = new HeaderStyle(0, Style.EMPTY, Style.EMPTY);
     }
 
     @Override
@@ -381,7 +420,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             if (tag.formattingHint().linebreakBeforeTag()) {
                 breakLine();
             }
+
+            tag.headerChange().ifPresent(level -> currentDefaultFont = getHeaderStyle.apply(level).header().getFont(baseFont));
+
             buffer.append(tagString);
+
             if (tag.formattingHint().linebreakAfterTag()) {
                 breakLine();
             }
@@ -396,7 +439,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             if (tag.formattingHint().linebreakAfterTag()) {
                 breakLine();
             }
+
             buffer.append(tagString);
+
+            tag.headerChange().ifPresent(level -> currentDefaultFont = getHeaderStyle.apply(level).text().getFont(baseFont));
+
             if (tag.formattingHint().linebreakBeforeTag()) {
                 breakLine();
             }
@@ -428,7 +475,11 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String, @Nullable Object> properties = new LinkedHashMap<>();
             for (Style style : styles) {
-                style.stream().forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
+                // filter out font unnecessary font changes
+                boolean keepFont = style.getFont().map(font -> !font.equals(currentDefaultFont)).orElse(true);
+                style.stream()
+                        .filter(entry -> keepFont || !entry.getKey().equals(Style.FONT))
+                        .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
             }
             refineStyleProperties.apply(properties).entrySet().stream().map(e -> HtmlConverter.this.get(e.getKey(), e.getValue())).forEach(tags::add);
             return tags;

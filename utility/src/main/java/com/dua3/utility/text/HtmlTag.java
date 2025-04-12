@@ -2,6 +2,8 @@ package com.dua3.utility.text;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.OptionalInt;
+
 /**
  * Represents an HTML tag.
  */
@@ -47,6 +49,10 @@ public interface HtmlTag {
      */
     static HtmlTag tag(String open, String close) {
         return tag(open, close, FormattingHint.NO_LINE_BREAK);
+    }
+
+    static HtmlTag headerTag(String open, String close, OptionalInt level) {
+        return new SimpleHtmlTag(open, close, FormattingHint.LINE_BREAK_BEFORE_TAG, level);
     }
 
     /**
@@ -113,6 +119,8 @@ public interface HtmlTag {
     enum TagType {
         OPEN_TAG, CLOSE_TAG
     }
+
+    OptionalInt headerChange();
 }
 
 /**
@@ -146,6 +154,11 @@ final class EmptyHtmlTag implements HtmlTag {
     public String toString() {
         return "";
     }
+
+    @Override
+    public OptionalInt headerChange() {
+        return OptionalInt.empty();
+    }
 }
 
 /**
@@ -156,7 +169,10 @@ final class EmptyHtmlTag implements HtmlTag {
  * for handling HTML tags such as retrieving the opening and closing tags, and determining
  * whether the tag should be placed on an extra line.
  */
-record SimpleHtmlTag(String open, String close, FormattingHint formattingHint) implements HtmlTag {
+record SimpleHtmlTag(String open, String close, FormattingHint formattingHint, OptionalInt headerChange) implements HtmlTag {
+    public SimpleHtmlTag(String open, String close, FormattingHint formattingHint) {
+        this(open, close, formattingHint, OptionalInt.empty());
+    }
 
     @Override
     public String toString() {
@@ -177,6 +193,7 @@ final class CompoundHtmlTag implements HtmlTag {
     private final HtmlTag[] tags;
     private volatile @Nullable String open = null;
     private volatile @Nullable String close = null;
+    private volatile int headerChange = -1;
 
     public CompoundHtmlTag(HtmlTag... tags) {this.tags = tags;}
 
@@ -199,6 +216,7 @@ final class CompoundHtmlTag implements HtmlTag {
                 }
             }
         }
+        assert open != null; // should never happen
         return open;
     }
 
@@ -216,7 +234,24 @@ final class CompoundHtmlTag implements HtmlTag {
                 }
             }
         }
+        assert close != null; // should never happen
         return close;
+    }
+
+    @Override
+    public OptionalInt headerChange() {
+        if (headerChange < 0) {
+            synchronized (this) {
+                if (headerChange < 0) {
+                    int change = 0;
+                    for (HtmlTag tag : tags) {
+                        change = tag.headerChange().orElse(change);
+                    }
+                    headerChange = change;
+                }
+            }
+        }
+        return OptionalInt.of(headerChange);
     }
 
     @Override
