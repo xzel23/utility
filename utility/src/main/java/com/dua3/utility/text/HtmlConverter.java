@@ -150,10 +150,22 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         return new HtmlConversionOption(c -> c.addAttributeMapping(attribute, mapper));
     }
 
+    /**
+     * Sets the header style mapping function for the HTML conversion process.
+     *
+     * @param getHeaderStyle the function to map header levels to corresponding {@link HeaderStyle} objects
+     * @return an {@link HtmlConversionOption} that applies the header style mapping during conversion
+     */
     public static HtmlConversionOption headerStyleMapper(IntFunction<HeaderStyle> getHeaderStyle) {
         return new HtmlConversionOption( c -> c.setGetHeaderStyle(getHeaderStyle));
     }
 
+    /**
+     * Sets the function used to map header levels to corresponding {@link HeaderStyle} objects
+     * for the HTML conversion process.
+     *
+     * @param getHeaderStyle the function that maps an integer header level to a {@link HeaderStyle} object
+     */
     private void setGetHeaderStyle(IntFunction<HeaderStyle> getHeaderStyle) {
         this.getHeaderStyle = getHeaderStyle;
     }
@@ -250,6 +262,15 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
     private IntFunction<HeaderStyle> getHeaderStyle = level -> HeaderStyle.EMPTY;
 
+    /**
+     * Represents the style configuration for a header in the HTML conversion process.
+     * This record encapsulates the header level, the style applied to the header itself,
+     * and the style applied to the associated text.
+     *
+     * @param level the level of the header (e.g., 1 for h1, 2 for h2, etc.)
+     * @param header the {@link Style} applied specifically to the header
+     * @param text the {@link Style} applied to the text following the header
+     */
     public record HeaderStyle(int level, Style header, Style text) {
         static final HeaderStyle EMPTY = new HeaderStyle(0, Style.EMPTY, Style.EMPTY);
     }

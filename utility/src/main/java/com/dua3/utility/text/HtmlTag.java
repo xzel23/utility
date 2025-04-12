@@ -9,6 +9,11 @@ import java.util.OptionalInt;
  */
 public interface HtmlTag {
 
+    /**
+     * Represents formatting hints for handling line breaks around tags.
+     * This enum provides predefined combinations of whether line breaks should appear
+     * before or after a specific tag in the context of text processing or rendering.
+     */
     enum FormattingHint {
         NO_LINE_BREAK(false, false),
         LINE_BREAK_AFTER_TAG(false, true),
@@ -56,16 +61,27 @@ public interface HtmlTag {
     }
 
     /**
-     * Create a new simple tag.
+     * Creates a new HTML tag with the specified opening and closing tags and a formatting hint.
      *
-     * @param open  text of the opening tag
-     * @param close text of the closing tag
-     * @return the new tag
+     * @param open            the text for the opening tag
+     * @param close           the text for the closing tag
+     * @param formattingHint  the {@link FormattingHint} to specify whether line breaks are allowed
+     *                        before or after the tag
+     * @return the newly created HTML tag as an instance of {@code HtmlTag}
      */
     static HtmlTag tag(String open, String close, FormattingHint formattingHint) {
         return new SimpleHtmlTag(open, close, formattingHint);
     }
 
+    /**
+     * Combines multiple {@code HtmlTag} instances into a single {@link HtmlTag}.
+     * If no tags are provided, the method returns an empty tag.
+     * If exactly one tag is provided, it is returned as is.
+     * If multiple tags are provided, they are combined into a compound tag.
+     *
+     * @param tags an array of {@code HtmlTag} instances to be combined
+     * @return a single {@code HtmlTag} that represents the combination of the input tags
+     */
     static HtmlTag combineTags(HtmlTag... tags) {
         return switch (tags.length) {
             case 0 -> emptyTag();
@@ -97,6 +113,13 @@ public interface HtmlTag {
      */
     String close();
 
+    /**
+     * Retrieves the {@link FormattingHint} associated with this HTML tag.
+     * The formatting hint specifies whether line breaks are allowed
+     * before and/or after the tag in text processing or rendering.
+     *
+     * @return the {@link FormattingHint} indicating line break preferences for the tag
+     */
     FormattingHint formattingHint();
 
     /**
@@ -120,6 +143,14 @@ public interface HtmlTag {
         OPEN_TAG, CLOSE_TAG
     }
 
+    /**
+     * Retrieves the header level associated with the tag, if available.
+     * A header level is typically used to represent hierarchical importance
+     * of a section in HTML (e.g., h1, h2, etc.).
+     *
+     * @return an {@link OptionalInt} containing the header level
+     *         if it is defined; otherwise, an empty {@link OptionalInt}.
+     */
     OptionalInt headerChange();
 }
 
