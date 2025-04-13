@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  * This class is an implementation of the ILogEntryDispatcherFactory interface.
  * It provides the functionality to create a SLF4J LogEntryDispatcher instance.
  */
-public class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactory {
+public final class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactory {
 
     private static class SingletonHolder {
         private static final LoggerFactorySlf4j INSTANCE = initInstance();
@@ -23,6 +23,14 @@ public class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactor
             }
         }
     }
+
+    /**
+     * Default constructor for the class LogEntryDispatcherFactorySlf4j.
+     * <p>
+     * This constructor initializes an instance of the factory, which is used to create and retrieve
+     * LogEntryDispatcher instances based on the SLF4J logging framework.
+     */
+    public LogEntryDispatcherFactorySlf4j() {}
 
     /**
      * Retrieves the instance of the LoggerFactorySlf4j class, which is a singleton implementation of the ILoggerFactory interface and LogEntryDispatcher interface.

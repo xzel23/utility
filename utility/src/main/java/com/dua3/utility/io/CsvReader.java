@@ -443,6 +443,11 @@ public class CsvReader extends CsvIo {
 
         private final List<String> row = new ArrayList<>();
 
+        /**
+         * Constructs a new instance of ListRowBuilder.
+         */
+        public ListRowBuilder() {}
+
         @Override
         public void add(String value) {
             row.add(value);

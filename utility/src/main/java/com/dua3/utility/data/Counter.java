@@ -17,6 +17,13 @@ public final class Counter implements Comparable<Counter> {
     private long value;
 
     /**
+     * Constructs a new {@code Counter} instance with an initial value of 0.
+     */
+    public Counter() {
+        this.value = 0;
+    }
+
+    /**
      * Retrieves the current value of the Counter.
      *
      * @return the current numerical value stored in this Counter instance

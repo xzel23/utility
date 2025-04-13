@@ -16,6 +16,11 @@ import java.util.Objects;
 public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
 
     /**
+     * Constructs a new instance of {@code TagBasedConverter}.
+     */
+    protected TagBasedConverter() {}
+
+    /**
      * Represents a change made to an attribute, capturing its old value and new value.
      *
      * @param attribute the name of the attribute that has changed
@@ -44,6 +49,11 @@ public abstract class TagBasedConverter<T> implements RichTextConverter<T> {
     protected abstract static class TagBasedConverterImpl<T> {
 
         private List<Style> currentStyles = new ArrayList<>();
+
+        /**
+         * Constructs an instance of {@code TagBasedConverterImpl}.
+         */
+        protected TagBasedConverterImpl() {}
 
         /**
          * Get the list of attributes that are mapped to tags

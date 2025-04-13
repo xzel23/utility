@@ -21,6 +21,11 @@ import java.util.Objects;
 public abstract class AttributeBasedConverter<T> implements RichTextConverter<T> {
 
     /**
+     * Constructor for the {@code AttributeBasedConverter} class.
+     */
+    protected AttributeBasedConverter() {}
+
+    /**
      * Factory method to create a compatible converter implementation instance for this converter.
      *
      * @param text the text to be converted
