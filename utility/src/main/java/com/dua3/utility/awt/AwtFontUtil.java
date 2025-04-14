@@ -71,7 +71,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
         return new java.awt.Font(family, style, Math.round(size));
     }
 
-    private static class SingletonHolder {
+    private static final class SingletonHolder {
         private static final AwtFontUtil INSTANCE = new AwtFontUtil();
     }
 

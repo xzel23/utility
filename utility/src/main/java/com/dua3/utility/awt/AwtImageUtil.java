@@ -12,7 +12,7 @@ import java.io.InputStream;
  */
 public final class AwtImageUtil implements ImageUtil<AwtImage> {
 
-    private static class SingletonHolder {
+    private static final class SingletonHolder {
         private static final AwtImageUtil INSTANCE = new AwtImageUtil();
     }
 

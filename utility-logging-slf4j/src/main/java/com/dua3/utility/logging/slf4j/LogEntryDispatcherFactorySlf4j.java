@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcherFactory {
 
-    private static class SingletonHolder {
+    private static final class SingletonHolder {
         private static final LoggerFactorySlf4j INSTANCE = initInstance();
 
         private static LoggerFactorySlf4j initInstance() {

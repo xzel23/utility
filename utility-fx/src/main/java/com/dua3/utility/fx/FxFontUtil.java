@@ -56,7 +56,7 @@ public class FxFontUtil implements FontUtil<Font> {
         DEFAULT_SIZE = (float) font.getSize();
     }
 
-    private static class SingletonHolder {
+    private static final class SingletonHolder {
         private static final FxFontUtil INSTANCE = new FxFontUtil();
     }
 

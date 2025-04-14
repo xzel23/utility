@@ -13,7 +13,7 @@ import java.io.InputStream;
  */
 public final class FxImageUtil implements ImageUtil<Image> {
 
-    private static class SingletonHolder {
+    private static final class SingletonHolder {
         private static final FxImageUtil INSTANCE = new FxImageUtil();
     }
 
