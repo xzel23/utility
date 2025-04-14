@@ -51,6 +51,7 @@ dependencyResolutionManagement {
             version("javafx", "22")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
+            version("spotbugs", "4.9.3")
 
             library("jspecify", "org.jspecify", "jspecify").versionRef("jspecify")
 
