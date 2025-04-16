@@ -13,6 +13,13 @@ import org.slf4j.spi.SLF4JServiceProvider;
  */
 public class LoggingServiceProviderSlf4j implements SLF4JServiceProvider {
 
+    /**
+     * Constructor, called by SPI
+     */
+    public LoggingServiceProviderSlf4j() {
+        // nothing to do
+    }
+
     private final LoggerFactorySlf4j loggerFactory = new LoggerFactorySlf4j();
     private final IMarkerFactory markerFactory = new BasicMarkerFactory();
     private final MDCAdapter mdcAdapter = new NOPMDCAdapter();

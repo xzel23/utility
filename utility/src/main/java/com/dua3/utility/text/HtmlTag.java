@@ -15,9 +15,25 @@ public interface HtmlTag {
      * before or after a specific tag in the context of text processing or rendering.
      */
     enum FormattingHint {
+        /**
+         * Formatting hint indicating that no line breaks should be applied
+         * neither before nor after the associated tag.
+         */
         NO_LINE_BREAK(false, false),
+        /**
+         * Formatting hint indicating that a line break should be applied
+         * after the associated tag.
+         */
         LINE_BREAK_AFTER_TAG(false, true),
+        /**
+         * Formatting hint indicating that a line break should be applied
+         * before the associated tag.
+         */
         LINE_BREAK_BEFORE_TAG(true, false),
+        /**
+         * Formatting hint indicating that a line break should be applied
+         * both before and after the associated tag.
+         */
         LINE_BREAK_BEFORE_AND_AFTER_TAG(true, true);
 
         private final boolean linebreakBeforeTag;
@@ -171,7 +187,14 @@ public interface HtmlTag {
      * The tag can either be an opening tag or a closing tag.
      */
     enum TagType {
-        OPEN_TAG, CLOSE_TAG
+        /**
+         * Identifies an opening HTML tag.
+         */
+        OPEN_TAG,
+        /**
+         * Identifies a closing HTML tag.
+         */
+        CLOSE_TAG
     }
 
     /**

@@ -622,7 +622,13 @@ public final class DataUtil {
      * Exception thrown when data conversion fails.
      */
     public static class ConversionException extends IllegalArgumentException {
+        /**
+         * The name of the source class.
+         */
         private final String sourceClassName;
+        /**
+         * The name of the target class.
+         */
         private final String targetClassName;
 
         ConversionException(Class<?> sourceClass, Class<?> targetClass, Throwable cause) {

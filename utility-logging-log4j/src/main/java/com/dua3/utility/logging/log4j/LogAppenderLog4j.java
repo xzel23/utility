@@ -55,6 +55,13 @@ public class LogAppenderLog4j extends AbstractAppender {
     public class LogEntryDispatcherLog4J implements LogEntryDispatcher {
         private volatile LogEntryFilter filter = LogEntryFilter.ALL_PASS_FILTER;
 
+        /**
+         * Constructor.
+         */
+        public LogEntryDispatcherLog4J() {
+            // nothing to do
+        }
+
         @Override
         public void addLogEntryHandler(LogEntryHandler handler) {
             handlers.add(new WeakReference<>(handler));

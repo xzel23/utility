@@ -7,6 +7,7 @@ import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.io.NotSerializableException;
 import java.io.Serial;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -144,9 +145,25 @@ public class LoggerSlf4j extends AbstractLogger {
         this.level = level;
     }
 
+    /**
+     * Read an instance from an {@link java.io.ObjectInputStream}.
+     * <p>
+     * <strong>This method is unimplemented and will throw a {@link java.io.NotSerializableException}!</strong>
+     *
+     * @param in the ObjectInputStream instance used for reading the object during deserialization
+     * @throws NotSerializableException always thrown to prevent deserialization of the object
+     */
     @Serial
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {throw new java.io.NotSerializableException("com.dua3.utility.logging.slf4j.LoggerSlf4j");}
+    private void readObject(java.io.ObjectInputStream in) throws NotSerializableException {throw new NotSerializableException("com.dua3.utility.logging.slf4j.LoggerSlf4j");}
 
+    /**
+     * Write an instance to a {@link java.io.ObjectInputStream}.
+     * <p>
+     * <strong>This method is unimplemented and will throw a {@link java.io.NotSerializableException}!</strong>
+     *
+     * @param out the ObjectOutputStream to which the object should be written
+     * @throws NotSerializableException always thrown to prevent serialization of the object
+     */
     @Serial
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {throw new java.io.NotSerializableException("com.dua3.utility.logging.slf4j.LoggerSlf4j");}
+    private void writeObject(java.io.ObjectOutputStream out) throws NotSerializableException {throw new NotSerializableException("com.dua3.utility.logging.slf4j.LoggerSlf4j");}
 }

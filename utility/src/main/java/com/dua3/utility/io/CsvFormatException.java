@@ -27,7 +27,13 @@ public class CsvFormatException extends IOException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The {@link URI} of the CSV source that caused the exception, if available.
+     */
     private final @Nullable URI source;
+    /**
+     * The number of the line in the input data that caused the exception.
+     */
     private final int line;
 
     /**

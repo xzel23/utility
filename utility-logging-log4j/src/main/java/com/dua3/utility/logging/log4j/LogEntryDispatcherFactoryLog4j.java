@@ -11,6 +11,13 @@ public class LogEntryDispatcherFactoryLog4j implements ILogEntryDispatcherFactor
         LogUtilLog4J.updateLoggers();
     }
 
+    /**
+     * Constructor, called by SPI.
+     */
+    public LogEntryDispatcherFactoryLog4j() {
+        // nothing to do
+    }
+
     @Override
     public LogEntryDispatcher getDispatcher() {
         return LogUtilLog4J.GLOBAL_APPENDER.dispatcher();

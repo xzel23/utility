@@ -197,6 +197,14 @@ public record FontData(
         }
     }
 
+    /**
+     * Get a clone of this {@code FontData} instance's {@link FontDef}.
+     * <p>
+     * {@code FontData} is immutable, but the contained {@code FontDef} is not.
+     * By returning a clone, we can assert that this object's state will not change.
+     *
+     * @return clone of this {@code FontData} instance's {@link FontDef} member
+     */
     @Override
     public FontDef fontDef() {
         try {

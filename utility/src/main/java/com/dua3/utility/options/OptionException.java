@@ -28,7 +28,13 @@ public class OptionException extends IllegalStateException {
      * Exception thrown when a parameter argument's String value could not be converted to the target type.
      */
     public static class ParameterConversionException extends OptionException {
+        /**
+         * The {@link Option} whose parameter could not be converted to the target tape.
+         */
         private final Option<?> option;
+        /**
+         * The string value of the parameter that could not be converted.
+         */
         private final String parameter;
 
         /**
