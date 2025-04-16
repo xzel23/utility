@@ -198,6 +198,7 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 ### 18.1.1
 
 - declare LangUtil.wrapException() public
+- FileType.getExtensionPatterns()
 - code cleanup
 
 ### 18.1.0

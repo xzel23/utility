@@ -277,12 +277,27 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     /**
-     * Get list of file extensions.
+     * Get the list of file extensions.
+     * <p>
+     * Note: This method returns the list <strong>without</strong> leading "*.".
+     * <p>
+     * See also {@link #getExtensionPatterns()}
      *
      * @return the list of file extensions for this file type
      */
     public List<String> getExtensions() {
         return extensions;
+    }
+
+    /**
+     * Get the list of file extensions.
+     * <p>
+     * Note: This method returns the list of extension patterns, i.e., without a leading "*.".
+     *
+     * @return the list of file extensions for this file type
+     */
+    public List<String> getExtensionPatterns() {
+        return extensions.stream().map(s -> "*." + s).toList();
     }
 
     /**
