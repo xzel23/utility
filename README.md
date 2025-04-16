@@ -195,7 +195,12 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
-### 18.0.1
+### 18.1.1
+
+- declare LangUtil.wrapException() public
+- code cleanup
+
+### 18.1.0
 
 - Chnages to the HtmlConverter class to track the current font; needed for eliding unnecessary font definitions
 - code refactored to use Java 21 features

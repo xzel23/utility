@@ -229,7 +229,7 @@ public final class LangUtil {
      * @param e the exception
      * @return RuntimeException, UncheckedIOException, or WrappedException depending on the type of e
      */
-    private static RuntimeException wrapException(Exception e) {
+    public static RuntimeException wrapException(Exception e) {
         return switch (e) {
             case RuntimeException re -> re;
             case IOException ioe -> new UncheckedIOException(ioe);
