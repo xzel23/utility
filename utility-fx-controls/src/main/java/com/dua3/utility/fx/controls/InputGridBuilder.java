@@ -112,7 +112,7 @@ public class InputGridBuilder
         return doAdd(id, null, type, dflt, control);
     }
 
-    private <T> InputGridBuilder doAdd(String id, @Nullable String label, Class<T> type, Supplier<T> dflt, InputControl<T> control) {
+    private <T> InputGridBuilder doAdd(String id, @Nullable String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
         Meta<T> meta = new Meta<>(id, label, type, dflt, control);
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, "Input with id '" + id + "' already defined");

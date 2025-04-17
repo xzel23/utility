@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import java.util.Objects;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
@@ -139,7 +140,7 @@ class DecorationPane extends AnchorPane {
      * @return the scene's DecorationPane
      */
     private static DecorationPane getDecorationPane(Scene scene) {
-        Parent sceneRoot = scene.getRoot();
+        Parent sceneRoot = Objects.requireNonNull(scene.getRoot(), "scene has no root");
 
         if (sceneRoot instanceof DecorationPane) {
             return (DecorationPane) sceneRoot;
