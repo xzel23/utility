@@ -15,7 +15,15 @@ import java.util.function.Function;
  * to convert a property to a different type and to create read-only properties with
  * conversions applied.
  */
-public class PropertyConverter {
+public final class PropertyConverter {
+
+    /**
+     * Private constructor for utility class.
+     */
+    private PropertyConverter() {
+        // utility class!
+    }
+
     /**
      * Converts a property of one type to another type using the provided converter,
      * maintaining bidirectional synchronization between the original and converted properties.
