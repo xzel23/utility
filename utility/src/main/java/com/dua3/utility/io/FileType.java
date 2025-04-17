@@ -52,8 +52,26 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     private final String name;
     private final Class<? extends T> cls;
+    private final Class<? super T> clsWriteable;
     private final OpenMode mode;
     private final List<String> extensions; // unmodifiable!
+
+    /**
+     * Constructor.
+     *
+     * @param name       the file type name
+     * @param mode       the {@link OpenMode} supported by files of this file type
+     * @param cls the implementing class
+     * @param clsWriteable the implementing class
+     * @param extensions list of extensions used by files of this file type (i.e. "txt", "xls")
+     */
+    protected FileType(String name, OpenMode mode, Class<? extends T> cls, Class<? super T> clsWriteable, String... extensions) {
+        this.name = name;
+        this.mode = mode;
+        this.cls = cls;
+        this.clsWriteable = clsWriteable;
+        this.extensions = List.of(extensions);
+    }
 
     /**
      * Constructor.
@@ -63,11 +81,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param cls        the implementing class
      * @param extensions list of extensions used by files of this file type (i.e. "txt", "xls")
      */
-    protected FileType(String name, OpenMode mode, Class<? extends T> cls, String... extensions) {
-        this.name = name;
-        this.mode = mode;
-        this.cls = cls;
-        this.extensions = List.of(extensions);
+    protected FileType(String name, OpenMode mode, Class<T> cls, String... extensions) {
+        this(name, mode, cls, cls, extensions);
     }
 
     /**
@@ -197,7 +212,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      */
     public static <T> Optional<FileType<? super T>> writerForType(Class<T> cls) {
         return FILE_TYPES.stream()
-                .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getDocumentClass().isAssignableFrom(cls))
+                .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getWriteableClass().isAssignableFrom(cls))
                 .findFirst()
                 .map(t -> (FileType<? super T>) t);
     }
@@ -211,7 +226,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      */
     public static <T> List<FileType<? super T>> allWritersForType(Class<T> cls) {
         return FILE_TYPES.stream()
-                .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getDocumentClass().isAssignableFrom(cls))
+                .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getWriteableClass().isAssignableFrom(cls))
                 .map( t -> (FileType<? super T>) t)
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -355,7 +370,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
                 /* either reading is not requested or files of this type must be assignable to cls */
                 .filter(t -> !mode.isIncluded(OpenMode.READ) || cls.isAssignableFrom(t.getDocumentClass()))
                 /* either writing is not requested or the document must be assignable to this type's document type */
-                .filter(t -> !mode.isIncluded(OpenMode.WRITE) || t.getDocumentClass().isAssignableFrom(cls))
+                .filter(t -> !mode.isIncluded(OpenMode.WRITE) || t.getWriteableClass().isAssignableFrom(cls))
                 /* add the generic parameter */
                 .map(t -> (FileType<T>) t)
                 /* make it a list */
@@ -385,6 +400,15 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      */
     public Class<? extends T> getDocumentClass() {
         return cls;
+    }
+
+    /**
+     * Get type of documents that can be written by this file type.
+     *
+     * @return the document type
+     */
+    public Class<? super T> getWriteableClass() {
+        return clsWriteable;
     }
 
     /**

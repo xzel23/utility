@@ -329,11 +329,16 @@ public final class Dialogs {
      * @param stage          The parent {@link Stage} for the file chooser dialog.
      * @param object         The object to be saved to a file.
      * @param defaultFileType The default file type to preselect in the file chooser, or {@code null} if no default is specified.
+     * @param defaultPath    The default path to preselect in the file chooser, or {@code null} if no default is specified.
      * @return {@code true} if the object was successfully saved to a file; {@code false} if the user canceled the operation.
      * @throws IOException If an I/O error occurs during file saving.
      * @throws UnsupportedFileTypeException If the type of the file cannot be determined or is unsupported.
      */
-    public static <T> boolean saveToFile(Stage stage, T object, @Nullable FileType<? extends T> defaultFileType) throws IOException {
+    public static <T> boolean saveToFile(
+            Stage stage, T object,
+            @Nullable FileType<? extends T> defaultFileType,
+            @Nullable Path defaultPath
+    ) throws IOException {
         FileChooser fileChooser = new FileChooser();
 
         @SuppressWarnings("unchecked")
@@ -353,6 +358,18 @@ public final class Dialogs {
         );
         fileChooser.setSelectedExtensionFilter(types.get(defaultFileType));
 
+        if (defaultPath != null) {
+            Path filename = defaultPath.getFileName();
+            if (filename != null) {
+                fileChooser.setInitialFileName(filename.toString());
+            }
+
+            Path parentPath = defaultPath.getParent();
+            if (parentPath != null) {
+                fileChooser.setInitialDirectory(parentPath.toFile());
+            }
+        }
+
         File selectedFile = fileChooser.showSaveDialog(stage);
 
         if (selectedFile == null) {
@@ -368,7 +385,7 @@ public final class Dialogs {
         if (fileType.isEmpty()) {
             fileType = types.keySet().stream()
                     .filter(ft -> ft.isSupported(OpenMode.WRITE))
-                    .filter(ft -> type.isAssignableFrom(ft.getDocumentClass()))
+                    .filter(ft -> type.isAssignableFrom(ft.getWriteableClass()))
                     .findFirst();
         }
 
