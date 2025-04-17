@@ -25,7 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -43,7 +43,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Set of defined file types.
      */
-    private static final Set<FileType<?>> FILE_TYPES = new HashSet<>();
+    private static final Set<FileType<?>> FILE_TYPES = new LinkedHashSet<>();
 
     // Load FileType  implementations
     static {
@@ -71,7 +71,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     /**
-     * Add file type to set of available file types.
+     * Add a file type to the set of available file types.
      *
      * @param ft  the type to add
      * @param <T> the file type's document type
@@ -93,8 +93,12 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Query file type by extension.
      *
+     * <p>
+     * Returns an {@link Optional} with the first matching file type or an empty {@code Optional}
+     * if no matching file type was found
+     *
      * @param ext the extension (case-sensitive)
-     * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
+     * @return an {@code Optional} holding the file type or an empty {@code Optional} if no matching file type was found
      */
     public static Optional<FileType<?>> forExtension(String ext) {
         for (FileType<?> t : FILE_TYPES) {
@@ -106,10 +110,117 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     /**
+     * Query file type by extension.
+     *
+     * @param mode the mode to query for
+     * @param ext the extension (case-sensitive)
+     * @return an {@link Optional} holding the file type or an empty {@code Optional} if no matching file type was found
+     */
+    public static Optional<FileType<?>> forExtension(OpenMode mode, String ext) {
+        for (FileType<?> t : FILE_TYPES) {
+            if (!t.isCompound() && t.extensions.contains(ext) && t.isSupported(mode)) {
+                return Optional.of(t);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Query file types by extension.
+     *
+     * <p>
+     * Returns an unmodifiable {@link List} with all matching file types for the extension.
+     *
+     * @param ext the extension (case-sensitive)
+     * @return an unmodifiable {@link List} that contains the matching file types
+     */
+    public static List<FileType<?>> allForExtension(String ext) {
+        return FILE_TYPES.stream()
+                .filter(t -> !t.isCompound() && t.extensions.contains(ext))
+                .toList();
+    }
+
+    /**
+     * Query file types by extension.
+     *
+     * <p>
+     * Returns an unmodifiable {@link List} with all matching file types for the extension.
+     *
+     * @param mode the mode to query for
+     * @param ext the extension (case-sensitive)
+     * @return an unmodifiable {@link List} that contains the matching file types
+     */
+    public static List<FileType<?>> allForExtension(OpenMode mode, String ext) {
+        return FILE_TYPES.stream()
+                .filter(t -> !t.isCompound() && t.extensions.contains(ext) && t.isSupported(mode))
+                .toList();
+    }
+
+    /**
+     * Retrieves the first file type that can read the given document class.
+     *
+     * @param <T> the type of the document class to find the file type for
+     * @param cls the class of the document type to look for
+     * @return an {@link Optional} containing the first matching file type, or an empty {@code Optional}
+     * if no matching file type is found
+     */
+    public static <T> Optional<FileType<? extends T>> readerForType(Class<T> cls) {
+        return FILE_TYPES.stream()
+                .filter(t -> !t.isCompound() && t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
+                .findFirst()
+                .map( t -> (FileType<? extends T>) t);
+    }
+
+    /**
+     * Retrieves the list of file types that can read the given document class.
+     * <p>
+     * This method does not filter out compound file types.
+     *
+     * @param <T> the type of the document class to find the file type for
+     * @param cls the class of the document type to look for
+     * @return an unmodifiable {@link List} containing the matching file types
+     */
+    public static <T> List<FileType<? extends T>> allReadersForType(Class<T> cls) {
+        return FILE_TYPES.stream()
+                .filter(t -> t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
+                .map( t -> (FileType<? extends T>) t)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * Retrieves the first file type that can write the given document class.
+     *
+     * @param <T> the type of the document class to find the file type for
+     * @param cls the class of the document type to look for
+     * @return an {@link Optional} containing the first matching file type, or an empty {@code Optional}
+     * if no matching file type is found
+     */
+    public static <T> Optional<FileType<? super T>> writerForType(Class<T> cls) {
+        return FILE_TYPES.stream()
+                .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getDocumentClass().isAssignableFrom(cls))
+                .findFirst()
+                .map(t -> (FileType<? super T>) t);
+    }
+
+    /**
+     * Retrieves the list of file types that can write the given document class.
+     *
+     * @param <T> the type of the document class to find the file type for
+     * @param cls the class of the document type to look for
+     * @return an unmodifiable {@link List} containing the matching file types
+     */
+    public static <T> List<FileType<? super T>> allWritersForType(Class<T> cls) {
+        return FILE_TYPES.stream()
+                .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getDocumentClass().isAssignableFrom(cls))
+                .map( t -> (FileType<? super T>) t)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
      * Query file type by URI.
      *
      * @param uri the URI
-     * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
+     * @return an {@link Optional} holding the file type or an empty {@code Optional} if no matching file type was found
      */
     public static Optional<FileType<?>> forUri(URI uri) {
         return forExtension(IoUtil.getExtension(uri));
@@ -123,7 +234,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param uri the URI
      * @param cls the class
      * @param <T> the generic type of this filetype's data
-     * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
+     * @return an {@link Optional} holding the file type or an empty {@code Optional} if no matching file type was found
      */
     public static <T> Optional<FileType<T>> forUri(URI uri, Class<T> cls) {
         return forFileName(uri.getSchemeSpecificPart(), cls);
@@ -137,7 +248,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param path the path
      * @param cls  the class
      * @param <T>  the generic type of this filetype's data
-     * @return an {@link Optional} holding the file type or an empty {@link Optional} if no matching file type was found
+     * @return an {@link Optional} holding the file type or an empty {@code Optional} if no matching file type was found
      */
     public static <T> Optional<FileType<T>> forPath(Path path, Class<T> cls) {
         return forFileName(String.valueOf(path.getFileName()), cls);
@@ -160,7 +271,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param uri the URI to read from
      * @param cls the class
      * @param <T> the generic class parameter
-     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     * @return an {@link Optional} holding the data read or an empty {@code Optional} if the file type could not be
      * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
@@ -176,7 +287,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param cls     the class
      * @param options the options to use
      * @param <T>     the generic class parameter
-     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     * @return an {@link Optional} holding the data read or an empty {@code Optional} if the file type could not be
      * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
@@ -192,7 +303,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param path the path to read from
      * @param cls  the class
      * @param <T>  the generic class parameter
-     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     * @return an {@link Optional} holding the data read or an empty {@code Optional} if the file type could not be
      * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
@@ -208,7 +319,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @param cls  the class
      * @param options the options to use
      * @param <T>  the generic class parameter
-     * @return an {@link Optional} holding the data read or an empty {@link Optional} if the file type could not be
+     * @return an {@link Optional} holding the data read or an empty {@code Optional} if the file type could not be
      * determined
      * @throws IOException if the file type could be determined but an error occurred while reading
      */
@@ -431,7 +542,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Get optional settings for this file type
      *
-     * @return optional settings for file type
+     * @return optional settings for this file type
      */
     @SuppressWarnings("MethodMayBeStatic")
     public Collection<Option<?>> getSettings() {
