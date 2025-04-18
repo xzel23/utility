@@ -233,7 +233,7 @@ public final class LangUtil {
         return switch (e) {
             case RuntimeException re -> re;
             case IOException ioe -> new UncheckedIOException(ioe);
-            case null, default -> new WrappedException(e);
+            default -> new WrappedException(e);
         };
     }
 
@@ -276,7 +276,7 @@ public final class LangUtil {
     public static <T extends @Nullable Object, E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
         return () -> {
             try {
-                return s.get();
+                return (T) s.get(); // the cast to T silences a false positive nullability warning
             } catch (Exception e) {
                 throw wrapException(e);
             }
