@@ -65,7 +65,7 @@ public class BatchCollector<T extends @Nullable Object, K> implements Collector<
      * @param defaultKey the default key
      */
     public BatchCollector(Function<? super T, ? extends @Nullable K> keyMapper, K defaultKey) {
-        this(t -> Objects.requireNonNullElse(keyMapper.apply(t), defaultKey));
+        this((T t) -> Objects.requireNonNullElse(keyMapper.apply(t), defaultKey));
     }
 
     @Override
