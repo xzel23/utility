@@ -301,7 +301,7 @@ public final class LangUtil {
     public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, R, E> f) {
         return (T arg) -> {
             try {
-                return f.apply(arg);
+                return (R) f.apply(arg); // the cast to R silences a false positive nullability warning
             } catch (Exception e) {
                 throw wrapException(e);
             }
