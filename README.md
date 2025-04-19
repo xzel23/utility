@@ -195,6 +195,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.2.0
+
+- added StreamGatherUtil (only available in Java 24+)
+
 ### 18.1.2
 
 - declare LangUtil.wrapException() public

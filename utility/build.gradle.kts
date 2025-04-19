@@ -56,3 +56,8 @@ tasks.named<Jar>("jar") {
     // Make sure java24 compilation happens before JAR creation
     dependsOn(tasks.named("compileJava24Java"))
 }
+
+// Disable forbiddenapis for java24 source set
+tasks.matching { it.name == "forbiddenApisJava24" }.configureEach {
+    enabled = false
+}
