@@ -44,7 +44,7 @@ dependencyResolutionManagement {
 
             version("log4j-bom", "2.24.3")
             version("slf4j", "2.0.17")
-            version("ikonli", "12.3.1")
+            version("ikonli", "12.4.0")
             version("jimfs", "1.3.0")
             version("miglayout", "11.4.2")
             version("mockito", "5.17.0")
