@@ -198,6 +198,7 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 ### 18.2.0
 
 - added StreamGatherUtil (only available in Java 24+)
+- updated ikonli to 12.4.0
 
 ### 18.1.2
 
