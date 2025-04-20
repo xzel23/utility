@@ -12,16 +12,44 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("HttpUrlsUsage")
 class DataUtilTest {
+
+    @Test
+    void testIsSortedNaturalOrder() {
+        assertTrue(DataUtil.isSorted(List.of(1, 2, 3, 4, 5))); // Sorted in ascending order
+        assertFalse(DataUtil.isSorted(List.of(1, 3, 2, 5, 4))); // Not sorted
+    }
+
+    @Test
+    void testIsSortedWithComparator() {
+        // Custom comparator (descending order)
+        assertTrue(DataUtil.isSorted(List.of(5, 4, 3, 2, 1), Comparator.reverseOrder()));
+        assertFalse(DataUtil.isSorted(List.of(5, 1, 4, 2, 3), Comparator.reverseOrder()));
+    }
+
+    @Test
+    void testIsSortedEmptyOrSingleElement() {
+        assertTrue(DataUtil.isSorted(List.<Integer>of())); // Empty collection
+        assertTrue(DataUtil.isSorted(List.of(42))); // Single element
+    }
+
+    @Test
+    void testIsSortedEdgeCases() {
+        assertTrue(DataUtil.isSorted(List.of(1, 1, 1, 1))); // All elements equal
+        assertFalse(DataUtil.isSorted(List.of(2, 1, 1, 2))); // Multiple occurrences unordered
+    }
 
     @Test
     void testConvert() throws IOException, URISyntaxException {

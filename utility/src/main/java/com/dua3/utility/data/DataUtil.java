@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -653,4 +655,44 @@ public final class DataUtil {
         }
     }
 
+    /**
+     * Determines if the elements within the given collection are sorted in natural order.
+     * <p>
+     * This method has a time complexity of O(n) for collections that do not implement {@link SortedSet}
+     * and use the natural order.
+     * Its main purpose is to be used in assertions on method parameters that have to be sorted.
+     *
+     * @param <T> the type of elements in the collection, which must extend Comparable
+     * @param collection the collection to check for sorted order
+     * @return {@code true} if the collection is sorted in natural order, {@code false} otherwise
+     */
+    public static <T extends Comparable<T>> boolean isSorted(Collection<T> collection) {
+        return switch (collection) {
+            case SortedSet<?> ss when ss.comparator() == null -> true;
+            default -> isSorted(collection, Comparator.naturalOrder());
+        };
+    }
+
+    /**
+     * Determines if the given collection is sorted according to the order defined by the provided comparator.
+     * <p>
+     * This method has a time complexity of O(n). Its main purpose is to be used in assertions on method
+     * parameters that have to be sorted.
+     *
+     * @param <T> the type of objects in the collection
+     * @param collection the collection of elements to check for sorting
+     * @param comparator the comparator used to define the sorting order
+     * @return {@code true} if the collection is sorted in the order defined by the comparator,
+     *         otherwise {@code false}
+     */
+    public static <T> boolean isSorted(Collection<T> collection, Comparator<T> comparator) {
+        T last = null;
+        for (T t : collection) {
+            if (last != null && comparator.compare(last, t) > 0) {
+                return false;
+            }
+            last = t;
+        }
+        return true;
+    }
 }
