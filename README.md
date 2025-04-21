@@ -199,7 +199,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 - added StreamGatherUtil (only available in Java 24+)
 - updated ikonli to 12.4.0
-- DadaUtil.isSorted()
+- DataUtil.isSorted()
+- RichText.isBlank()
 
 ### 18.1.2
 

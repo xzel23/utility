@@ -504,6 +504,16 @@ public final class RichText
         return length() == 0;
     }
 
+    /**
+     * Test if blank.
+     *
+     * @return {@code true} if this instance is empty or contains only whitespace characters,
+     *         {@code false} otherwise
+     */
+    public boolean isBlank() {
+        return length() == 0 || TextUtil.isBlank(this);
+    }
+
     @Override
     public Iterator<Run> iterator() {
         return Arrays.stream(run).iterator();
