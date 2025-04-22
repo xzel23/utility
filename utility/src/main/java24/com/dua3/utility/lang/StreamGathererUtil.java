@@ -11,6 +11,8 @@ import java.util.stream.Gatherer;
  * Utility class providing functionalities for processing and grouping elements of a stream
  * based on defined predicates and actions. The utility methods in this class simplify
  * the task of grouping consecutive elements in a stream.
+ * <p>
+ * <strong>This class is only available when using language level 24+!</strong>
  */
 public final class StreamGathererUtil {
 
