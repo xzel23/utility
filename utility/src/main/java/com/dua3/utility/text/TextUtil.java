@@ -667,6 +667,7 @@ public final class TextUtil {
         MessageDigest md = MessageDigest.getInstance(algorithm);
         try (DigestInputStream dis = new DigestInputStream(in, md)) {
             byte[] buffer = new byte[2048];
+            //noinspection StatementWithEmptyBody
             while (dis.read(buffer) != -1) {
                 // Reading data here to advance the stream, digest is updated automatically by DigestInputStream
             }

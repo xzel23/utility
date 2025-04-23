@@ -42,7 +42,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     private @Nullable Comparator<? super T> comparator = null;
-    private final @Nullable UnaryOperator<T> edit;
+    private final @Nullable Function<T, @Nullable T> edit;
     private final @Nullable Supplier<T> add;
     private final @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
     private final Function<T, String> format;
@@ -72,7 +72,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
      * @param format  the function to format the items as strings
      * @param items   the initial items to populate the ComboBox (variadic parameter)
      */
-    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<@Nullable T, String> format, Collection<T> items) {
+    public ComboBoxEx(@Nullable Function<T, @Nullable T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<@Nullable T, String> format, Collection<T> items) {
         super(new HBox());
         container.setAlignment(Pos.CENTER_LEFT);
 

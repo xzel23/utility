@@ -489,6 +489,7 @@ public final class SwingUtil {
      * @return new JScrollPane
      */
     public static JScrollPane createJScrollPane(int unitIncrement, int vsbPolicy, int hsbPolicy) {
+        @SuppressWarnings("MagicConstant")
         JScrollPane jsp = new JScrollPane(vsbPolicy, hsbPolicy);
         setUnitIncrement(jsp, unitIncrement);
         return jsp;

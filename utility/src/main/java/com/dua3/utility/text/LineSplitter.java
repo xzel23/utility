@@ -150,6 +150,7 @@ class LineSplitter<S extends CharSequence, R extends Appendable> {
     private Chunk<S> readChunk() {
         int start = pos;
         ChunkType type = type(current());
+        //noinspection StatementWithEmptyBody
         while (type(get()) == type) {
             // continue looping until type changes
         }

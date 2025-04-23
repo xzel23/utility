@@ -24,6 +24,7 @@ import javafx.stage.Window;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
@@ -216,6 +217,7 @@ public final class Dialogs {
      * suitable for a given operation or are not supported by the application.
      */
     public static class UnsupportedFileTypeException extends IOException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**

@@ -26,6 +26,10 @@ public class RenderText implements FxGraphicsSample.Slide {
         drawText(g);
     }
 
+    /**
+     * Draw styled text on a {@link Graphics}.
+     * @param g the Graphics instance used for drawing
+     */
     public void drawText(Graphics g) {
         RichText text = new RichTextBuilder()
                 .push(Style.BLACK)

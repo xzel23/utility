@@ -21,6 +21,9 @@ import com.dua3.utility.ui.Graphics;
  */
 public class RenderRotatedText implements FxGraphicsSample.Slide {
 
+    /**
+     *  The RichText instance containing the text to be rendered.
+     */
     public static final RichText TEXT = new RichTextBuilder()
             .append("rotated text\n")
             .append("using different modes\n")
