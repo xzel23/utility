@@ -40,7 +40,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $jdk21Path = 'C:\Program Files\BellSoft\LibericaJDK-21'
-          Invoke-WebRequest -Uri "https://download.bell-sw.com/java/21.0.7+10/bellsoft-jdk21.0.7+9-windows-amd64-full.zip" -OutFile "bellsoft-jdk-21-windows-amd64-full.zip"
+          Invoke-WebRequest -Uri "https://download.bell-sw.com/java/21.0.7+9/bellsoft-jdk21.0.7+9-windows-amd64-full.zip" -OutFile "bellsoft-jdk-21-windows-amd64-full.zip"
           Expand-Archive -Path "bellsoft-jdk-21-windows-amd64-full.zip" -DestinationPath $jdk21Path
           
           $extractedFolder = Get-ChildItem -Path $jdk21Path -Directory | Select-Object -First 1
