@@ -1084,11 +1084,11 @@ public final class RichText
                 FontDef fdb = runB.getFontDef();
 
                 if (!s.ignoreFontSize() && !Objects.equals(fda.getSize(), fdb.getSize())
+                        || !s.ignoreFontWeight() && !Objects.equals(fda.getBold(), fdb.getBold())
+                        || !s.ignoreItalic() && !Objects.equals(fda.getItalic(), fdb.getItalic())
                         || !s.ignoreTextColor() && !Objects.equals(fda.getColor(), fdb.getColor())
                         || !s.ignoreUnderline() && !Objects.equals(fda.getUnderline(), fdb.getUnderline())
                         || !s.ignoreStrikeThrough() && !Objects.equals(fda.getStrikeThrough(), fdb.getStrikeThrough())
-                        || !s.ignoreFontWeight() && !Objects.equals(fda.getBold(), fdb.getBold())
-                        || !s.ignoreItalic() && !Objects.equals(fda.getItalic(), fdb.getItalic())
                         || !s.ignoreFontFamily() && !Objects.equals(s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
                     return false;
                 }
