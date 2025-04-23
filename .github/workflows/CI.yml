@@ -20,12 +20,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          wget https://download.bell-sw.com/java/21.0.6+10/bellsoft-jdk21.0.6+10-linux-amd64-full.deb
-          sudo apt-get install -y ./bellsoft-jdk21.0.6+10-linux-amd64-full.deb
+
+          # install Liberica 21 for compilation of the base sources
+          wget https://download.bell-sw.com/java/21.0.7+9/bellsoft-jdk21.0.7+9-linux-amd64-full.deb
+          sudo apt-get install -y ./bellsoft-jdk21.0.7+9-linux-amd64-full.deb
+
+          # install Liberica 24 for compilation of multi-release sources
+          # Liberica 24 cannot be used for all because JavaFX 24 needs JDK 22+ and compilations fails with release 21
+          wget https://download.bell-sw.com/java/24.0.1+11/bellsoft-jdk24.0.1+11-linux-amd64.deb
+          sudo apt-get install -y ./bellsoft-jdk24.0.1+11-linux-amd64.deb
+          
+          # set Liberica 21 as the standard compiler
           sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java21-full-amd64/bin/java 1
           sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java21-full-amd64/bin/javac 1
           echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64" >> $GITHUB_ENV
-          echo "/usr/lib/jvm/bellsoft-java21-full-amd64/bin" >> $GITHUB_PATH
+          echo "/usr/lib/jvm/bellsoft-java21-full-amd64/bin:/usr/lib/jvm/bellsoft-java24-amd64/bin" >> $GITHUB_PATH
 
       - name: Set up BellSoft Liberica Full JDK on Windows
         if: runner.os == 'Windows'
