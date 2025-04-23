@@ -69,7 +69,6 @@ public record FontData(
         assert descent >= 0 : "descent is negative";
         assert height >= ascent : "inconsistent height";
         assert spaceWidth > 0 : "space width must be positive";
-        assert fontDef != null : "fontDef is null";
         assert fontDef.getFamily() != null : "fontDef.getFamily() is null";
         assert fontDef.getSize() != null : "fontDef.getSize() is null";
         assert fontDef.getBold() != null : "fontDef.getBold() is null";

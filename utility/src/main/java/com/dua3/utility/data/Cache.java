@@ -73,7 +73,6 @@ public class Cache<K, V> {
                 item = weak == null ? null : weak.get();
                 if (item == null) {
                     item = compute.apply(key);
-                    assert item != null;
                     Reference<V> ref = newReference.apply(item);
                     CLEANER.register(item, () -> items.remove(key));
                     items.put(key, ref);
