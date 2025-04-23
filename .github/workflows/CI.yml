@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up BellSoft Liberica Full JDK on Ubuntu
+      - name: Set up BellSoft Liberica Full JDK 21 and BellSoft Liberica 24 on Ubuntu
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -36,21 +36,29 @@ jobs:
           echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64" >> $GITHUB_ENV
           echo "/usr/lib/jvm/bellsoft-java21-full-amd64/bin:/usr/lib/jvm/bellsoft-java24-amd64/bin" >> $GITHUB_PATH
 
-      - name: Set up BellSoft Liberica Full JDK on Windows
+      - name: Set up BellSoft Liberica Full JDK 21 and BellSoft Liberica 24 on Windows
         if: runner.os == 'Windows'
         run: |
-          $jdkPath = 'C:\Program Files\BellSoft\LibericaJDK-21'
-          Invoke-WebRequest -Uri "https://download.bell-sw.com/java/21.0.6+10/bellsoft-jdk21.0.6+10-windows-amd64-full.zip" -OutFile "bellsoft-jdk-21-windows-amd64-full.zip"
-          Expand-Archive -Path "bellsoft-jdk-21-windows-amd64-full.zip" -DestinationPath $jdkPath
+          $jdk21Path = 'C:\Program Files\BellSoft\LibericaJDK-21'
+          Invoke-WebRequest -Uri "https://download.bell-sw.com/java/21.0.7+10/bellsoft-jdk21.0.7+9-windows-amd64-full.zip" -OutFile "bellsoft-jdk-21-windows-amd64-full.zip"
+          Expand-Archive -Path "bellsoft-jdk-21-windows-amd64-full.zip" -DestinationPath $jdk21Path
           
-          # Move extracted contents to the correct location
-          $extractedFolder = Get-ChildItem -Path $jdkPath -Directory | Select-Object -First 1
-          Get-ChildItem -Path (Join-Path -Path $extractedFolder.FullName -ChildPath "*") | Move-Item -Destination $jdkPath
+          $extractedFolder = Get-ChildItem -Path $jdk21Path -Directory | Select-Object -First 1
+          Get-ChildItem -Path (Join-Path -Path $extractedFolder.FullName -ChildPath "*") | Move-Item -Destination $jdk21Path
+          Remove-Item -Recurse -Force $extractedFolder.FullName
+          
+          $jdk24Path = 'C:\Program Files\BellSoft\LibericaJDK-24'
+          Invoke-WebRequest -Uri "https://download.bell-sw.com/java/24.0.1+11/bellsoft-jdk24.0.1+11-windows-amd64-full.zip" -OutFile "bellsoft-jdk-24-windows-amd64-full.zip"
+          Expand-Archive -Path "bellsoft-jdk-24-windows-amd64-full.zip" -DestinationPath $jdk24Path
+          
+          $extractedFolder = Get-ChildItem -Path $jdk24Path -Directory | Select-Object -First 1
+          Get-ChildItem -Path (Join-Path -Path $extractedFolder.FullName -ChildPath "*") | Move-Item -Destination $jdk24Path
           Remove-Item -Recurse -Force $extractedFolder.FullName
           
           # Update JAVA_HOME and PATH
-          echo "JAVA_HOME=$jdkPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "$jdkPath\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "JAVA_HOME=$jdk21Path" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "$jdk21Path\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "$jdk24Path\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -74,12 +82,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wget
           # Bellsoft Liberica 21 is needed for JavaFX packages
-          wget https://download.bell-sw.com/java/21.0.6+10/bellsoft-jdk21.0.6+10-linux-amd64-full.deb
-          sudo apt-get install -y ./bellsoft-jdk21.0.6+10-linux-amd64-full.deb
-          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java21-full-amd64/bin/java 1
-          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java21-full-amd64/bin/javac 1
-          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64" >> $GITHUB_ENV
-          echo "/usr/lib/jvm/bellsoft-java21-full-amd64/bin" >> $GITHUB_PATH
+          wget https://download.bell-sw.com/java/24.0.1+11/bellsoft-jdk24.0.1+11-linux-amd64-full.deb
+          sudo apt-get install -y ./bellsoft-jdk24.0.1+11-linux-amd64-full.deb
+          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java24-full-amd64/bin/java 1
+          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java24-full-amd64/bin/javac 1
+          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java24-full-amd64" >> $GITHUB_ENV
+          echo "/usr/lib/jvm/bellsoft-java24-full-amd64/bin" >> $GITHUB_PATH
 
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.3.4
