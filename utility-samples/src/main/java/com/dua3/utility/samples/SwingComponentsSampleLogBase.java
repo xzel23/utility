@@ -43,10 +43,29 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
     private static final String TASK_INDETERMINATE_2 = "Another Indeterminate Task";
     private static final int AVERAGE_SLEEP_MILLIS = 10;
     private static final int LOG_BUFFER_SIZE = 1000;
+
+    /**
+     * The SLF4J logger.
+     */
     private final org.slf4j.Logger slf4JLogger = LoggerFactory.getLogger("SLF4J." + getClass().getName());
+    /**
+     * The JUL logger.
+     */
     private final java.util.logging.Logger julLogger = java.util.logging.Logger.getLogger("JUL." + getClass().getName());
+
+    /**
+     * The Log4J2 logger.
+     */
     private final org.apache.logging.log4j.Logger log4JLogger = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
+
+    /**
+     * An AtomicInteger to count the number of messages sent to the various logging frameworks.
+     */
     private final AtomicInteger n = new AtomicInteger();
+
+    /**
+     * A flag to indicate that the application should terminate.
+     */
     private volatile boolean done;
 
     /**

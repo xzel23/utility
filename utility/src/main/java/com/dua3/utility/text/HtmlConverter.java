@@ -442,7 +442,10 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 breakLine();
             }
 
-            tag.headerChange().ifPresent(level -> currentDefaultFont = getHeaderStyle.apply(level).header().getFont(baseFont));
+            int headerLevel = tag.headerChange();
+            if (headerLevel >= 0) {
+                currentDefaultFont = getHeaderStyle.apply(headerLevel).header().getFont(baseFont);
+            }
 
             buffer.append(tagString);
 
@@ -463,7 +466,10 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
             buffer.append(tagString);
 
-            tag.headerChange().ifPresent(level -> currentDefaultFont = getHeaderStyle.apply(level).text().getFont(baseFont));
+            int headerLevel = tag.headerChange();
+            if (headerLevel >= 0) {
+                currentDefaultFont = getHeaderStyle.apply(headerLevel).text().getFont(baseFont);
+            }
 
             if (tag.formattingHint().linebreakBeforeTag()) {
                 breakLine();

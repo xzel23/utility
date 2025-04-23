@@ -100,10 +100,10 @@ public interface HtmlTag {
      * @param open  the text for the opening tag
      * @param close the text for the closing tag
      * @param level an {@link OptionalInt} specifying the header level;
-     *              if the header level is not defined, provide an empty {@link OptionalInt}
+     *              if the header level is not defined, use -1
      * @return a new {@code HtmlTag} instance representing the header tag with the given parameters
      */
-    static HtmlTag headerTag(String open, String close, OptionalInt level) {
+    static HtmlTag headerTag(String open, String close, int level) {
         return new SimpleHtmlTag(open, close, FormattingHint.LINE_BREAK_BEFORE_TAG, level);
     }
 
@@ -205,7 +205,7 @@ public interface HtmlTag {
      * @return an {@link OptionalInt} containing the header level
      *         if it is defined; otherwise, an empty {@link OptionalInt}.
      */
-    OptionalInt headerChange();
+    int headerChange();
 }
 
 /**
@@ -241,8 +241,8 @@ final class EmptyHtmlTag implements HtmlTag {
     }
 
     @Override
-    public OptionalInt headerChange() {
-        return OptionalInt.empty();
+    public int headerChange() {
+        return -1;
     }
 }
 
@@ -255,9 +255,9 @@ final class EmptyHtmlTag implements HtmlTag {
  * whether the tag should be placed on an extra line.
  */
 record SimpleHtmlTag(String open, String close, FormattingHint formattingHint,
-                     OptionalInt headerChange) implements HtmlTag {
+                     int headerChange) implements HtmlTag {
     public SimpleHtmlTag(String open, String close, FormattingHint formattingHint) {
-        this(open, close, formattingHint, OptionalInt.empty());
+        this(open, close, formattingHint, 0);
     }
 
     @Override
@@ -325,19 +325,22 @@ final class CompoundHtmlTag implements HtmlTag {
     }
 
     @Override
-    public OptionalInt headerChange() {
+    public int headerChange() {
         if (headerChange < 0) {
             synchronized (this) {
                 if (headerChange < 0) {
                     int change = 0;
                     for (HtmlTag tag : tags) {
-                        change = tag.headerChange().orElse(change);
+                        int tagHeaderChange = tag.headerChange();
+                        if (tagHeaderChange >= 0) {
+                            change = tagHeaderChange;
+                        }
                     }
                     headerChange = change;
                 }
             }
         }
-        return OptionalInt.of(headerChange);
+        return headerChange;
     }
 
     @Override

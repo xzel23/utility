@@ -34,7 +34,13 @@ public class FileInput extends JPanel {
      * Select files or directories.
      */
     public static final SelectionMode SELECT_FILE_OR_DIRECTORY = SelectionMode.SELECT_FILE_OR_DIRECTORY;
+    /**
+     * The text input for the file path.
+     */
     private final JTextField textField;
+    /**
+     * The {@link SelectionMode} for the file selection dialog.
+     */
     private final SelectionMode mode;
 
     /**

@@ -217,6 +217,10 @@ public final class Dialogs {
      */
     public static class UnsupportedFileTypeException extends IOException {
         private static final long serialVersionUID = 1L;
+
+        /**
+         * The file path associated with the exception, if available.
+         */
         private final @Nullable Path path;
 
         /**
