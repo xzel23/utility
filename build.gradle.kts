@@ -153,7 +153,10 @@ subprojects {
     }
 
     tasks.javadoc {
-        options.encoding = "UTF-8"
+        (options as StandardJavadocDocletOptions).apply {
+            encoding = "UTF-8"
+            addStringOption("Xdoclint:all,-missing/private")
+        }
     }
 
     // === publication: MAVEN = == >
