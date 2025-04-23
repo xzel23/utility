@@ -68,7 +68,7 @@ public class Cache<K, V> {
 
         if (item == null) {
             synchronized (lock) {
-                // Check again within synchronized block
+                // Check again within the synchronized block
                 weak = items.get(key);
                 item = weak == null ? null : weak.get();
                 if (item == null) {
