@@ -80,6 +80,10 @@ subprojects {
     apply(plugin = "me.champeau.jmh")
 
     java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21)) // Beispiel: Java 21
+        }
+
         targetCompatibility = JavaVersion.VERSION_21
         sourceCompatibility = targetCompatibility
 

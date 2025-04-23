@@ -22,6 +22,20 @@ include("utility-samples:utility-samples-log4j")
 include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver") version "0.10.0"
+}
+
+toolchainManagement {
+    jvm {
+        javaRepositories {
+            repository("foojay") {
+                resolverClass.set(org.gradle.toolchains.foojay.FoojayToolchainResolver::class.java)
+            }
+        }
+    }
+}
+
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
@@ -41,6 +55,7 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
+            plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
 
             version("log4j-bom", "2.24.3")
             version("slf4j", "2.0.17")
