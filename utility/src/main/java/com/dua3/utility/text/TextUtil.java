@@ -380,7 +380,7 @@ public final class TextUtil {
      *               locale-specific rules used by the comparator.
      * @return a comparator that compares strings lexicographically based on the specified locale.
      */
-    static Comparator<@Nullable String> lexicographicComparator(Locale locale) {
+    public static Comparator<@Nullable String> lexicographicComparator(Locale locale) {
         Collator collator = Collator.getInstance(Locale.getDefault());
         collator.setStrength(Collator.SECONDARY);
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
