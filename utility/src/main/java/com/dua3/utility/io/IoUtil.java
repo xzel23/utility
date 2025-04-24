@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -881,6 +882,49 @@ public final class IoUtil {
             throw new UncheckedIOException(new IOException(path + " is not a sibling of " + root));
         }
         return relativizedPath;
+    }
+
+    /**
+     * Creates a comparator that performs lexicographic comparison of {@link Path} instances
+     * based on the specified locale. The comparison considers the roots of the paths, followed
+     * by their individual path segments, in a lexicographic order determined by the given locale.
+     * Paths that are {@code null} are considered less than non-null paths.
+     * <p>
+     * Note: The returned Comparator is not threadsafe.
+     *
+     * @param locale the locale to be used for lexicographic comparison of path names. Must not be null.
+     * @return a comparator that compares {@link Path} objects lexicographically based on their root
+     *         and individual path segments, using the provided locale for ordering.
+     */
+    public static Comparator<@Nullable Path> lexicalPathComparator(Locale locale) {
+        Comparator<String> comparator = TextUtil.lexicographicComparator(locale);
+
+        return (p1, p2) -> {
+            if (p1 == null || p2 == null) {
+                return p1 == null ? p2 == null ? 0 : -1 : 1;
+            }
+
+            String root1 = p1.getRoot() != null ? p1.getRoot().toString() : "";
+            String root2 = p2.getRoot() != null ? p2.getRoot().toString() : "";
+            int c = comparator.compare(root1, root2);
+            if (c != 0) {
+                return c;
+            }
+
+            int nc1 = p1.getNameCount();
+            int nc2 = p2.getNameCount();
+            int n = Math.min(nc1, nc2);
+            for (int i = 0; i < n; i++) {
+                String p1n = p1.getName(i).toString();
+                String p2n = p2.getName(i).toString();
+                c = comparator.compare(p1n, p2n);
+                if (c != 0) {
+                    return c;
+                }
+            }
+
+            return Integer.compare(nc1, nc2);
+        };
     }
 
     /**
