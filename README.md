@@ -195,6 +195,14 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.3.0
+
+- POSSIBLY BREAKING: HtmlTag.headerChange() now returns int instead of OptionalInt and the static factory methods have also
+  been changed accordingly. This should not be a problem for most since while part of the public API, the methods
+  should in general not be used directly, but from the HtmlConverter class.
+- Fixed the Qodana scan during CI build which broke due to Java 24 code being included in the multi-release JAR.
+- some code cleanup and Javadoc additions
+
 ### 18.2.0
 
 - added StreamGatherUtil (only available in Java 24+)
