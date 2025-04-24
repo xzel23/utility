@@ -19,8 +19,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Locale;
@@ -364,6 +366,36 @@ public final class TextUtil {
             }
         }
         return !iter1.hasNext() && !iter2.hasNext();
+    }
+
+    /**
+     * Creates a lexicographic comparator for strings based on the specified locale.
+     * The comparator first uses locale-specific rules for comparison and then falls back
+     * to natural string order if the locale-specific comparison deems the strings equivalent.
+     * Null values are considered less than non-null values.
+     * <p>
+     * Note: The returned Comparator is not threadsafe.
+     *
+     * @param locale the locale to be used for sorting strings. It determines the
+     *               locale-specific rules used by the comparator.
+     * @return a comparator that compares strings lexicographically based on the specified locale.
+     */
+    static Comparator<@Nullable String> lexicographicComparator(Locale locale) {
+        Collator collator = Collator.getInstance(Locale.getDefault());
+        collator.setStrength(Collator.SECONDARY);
+        collator.setDecomposition(Collator.FULL_DECOMPOSITION);
+
+        return (a, b) -> {
+            if (a == null || b == null) {
+                return a == null ? b == null ? 0 : -1 : 1;
+            }
+
+            int c = collator.compare(a, b);
+            if (c == 0) {
+                c = a.compareTo(b);
+            }
+            return c;
+        };
     }
 
     /**

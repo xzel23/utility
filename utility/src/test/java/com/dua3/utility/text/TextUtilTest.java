@@ -15,14 +15,22 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import static com.dua3.utility.text.TextUtil.*;
-
+import static com.dua3.utility.text.TextUtil.align;
+import static com.dua3.utility.text.TextUtil.decodeFontSize;
+import static com.dua3.utility.text.TextUtil.escapeHTML;
+import static com.dua3.utility.text.TextUtil.getRichTextDimension;
+import static com.dua3.utility.text.TextUtil.getTextDimension;
+import static com.dua3.utility.text.TextUtil.nonEmptyOr;
+import static com.dua3.utility.text.TextUtil.transform;
+import static com.dua3.utility.text.TextUtil.wrap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -312,5 +320,29 @@ public class TextUtilTest {
     void testToStringWithEmptyValueIfNull() {
         String result = TextUtil.toString(null, "");
         assertEquals("", result, "Expected toString() of null to be an empty string");
+    }
+
+    @Test
+    void testLexicographicComparatorWithDefaultLocale() {
+        Comparator<String> comparator = TextUtil.lexicographicComparator(Locale.getDefault());
+        assertTrue(comparator.compare("apple", "banana") < 0, "Expected 'apple' to come before 'banana'");
+        assertTrue(comparator.compare("banana", "apple") > 0, "Expected 'banana' to come after 'apple'");
+        assertEquals(0, comparator.compare("apple", "apple"), "Expected 'apple' to be equal to 'apple'");
+    }
+
+    @Test
+    void testLexicographicComparatorWithCustomLocale() {
+        Comparator<String> comparator = TextUtil.lexicographicComparator(Locale.FRENCH);
+        assertTrue(comparator.compare("éclair", "ete") < 0, "Expected 'éclair' to come before 'ete' in French locale");
+        assertTrue(comparator.compare("été", "éclair") > 0, "Expected 'été' to come after 'éclair' in French locale");
+        assertEquals(0, comparator.compare("été", "été"), "Expected 'été' to be equal to 'été'");
+    }
+
+    @Test
+    void testLexicographicComparatorWithNullValues() {
+        Comparator<String> comparator = TextUtil.lexicographicComparator(Locale.getDefault());
+        assertTrue(comparator.compare(null, "apple") < 0, "Expected null to come before 'apple'");
+        assertTrue(comparator.compare("apple", null) > 0, "Expected 'apple' to come after null");
+        assertEquals(0, comparator.compare(null, null), "Expected null to be equal to null");
     }
 }

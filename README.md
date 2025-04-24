@@ -201,6 +201,7 @@ You can customize the benchmark execution by modifying the JMH configuration in 
   been changed accordingly. This should not be a problem for most since while part of the public API, the methods
   should in general not be used directly, but from the HtmlConverter class.
 - Fixed the Qodana scan during CI build which broke due to Java 24 code being included in the multi-release JAR.
+- TextUtil.lexicographicalComparator()
 - some code cleanup and Javadoc additions
 
 ### 18.2.0
