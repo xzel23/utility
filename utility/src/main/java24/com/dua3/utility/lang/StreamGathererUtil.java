@@ -89,7 +89,7 @@ public final class StreamGathererUtil {
      * Represents actions that can be taken when filtering and grouping stream elements into groups.
      * These actions dictate how each element in the stream should be handled during grouping:
      * whether it should be ignored, dropped, added to the current group, or used to start a new group.
-     *
+     * <p>
      * The possible actions are:
      * <ul>
      * <li>IGNORE: The element is completely ignored, i. e., it is not part of any group and does

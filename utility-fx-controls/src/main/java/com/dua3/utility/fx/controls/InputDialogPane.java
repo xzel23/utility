@@ -99,7 +99,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
     }
 
     /**
-     * Adds a button to the dialog pane with specified type, result handler, action,
+     * Adds a button to the dialog pane with the specified type, result handler, action,
      * and enablement state. The button is configured to handle actions, execute
      * specified logic, and optionally bind its enablement state to a BooleanExpression.
      *
