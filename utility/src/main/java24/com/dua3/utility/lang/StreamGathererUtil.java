@@ -37,7 +37,8 @@ public final class StreamGathererUtil {
      *                      and returns the updated group
      * @return a Gatherer that processes the stream into groups of consecutive elements based on the predicate
      */
-    public static <T, U> Gatherer<T, ?, U> groupConsecutive(
+    public static <T, U> Gatherer<T, ?, U>
+    groupConsecutive(
             Predicate<? super T> predicate,
             Supplier<? extends U> groupSupplier,
             BiFunction<? super U, ? super T, ? extends U> accumulator
@@ -134,7 +135,8 @@ public final class StreamGathererUtil {
      * @return a Gatherer that processes the stream into groups of consecutive elements based on the action
      * returned by the predicate
      */
-    public static <T, U> Gatherer<T, ?, U> filterAndGroupConsecutive(
+    public static <T, U> Gatherer<T, ?, U>
+    filterAndGroupConsecutive(
             BiFunction<? super @Nullable T, ? super T, GroupingGathererAction> actionSelector,
             Supplier<? extends U> groupSupplier,
             BiFunction<? super U, ? super T, ? extends U> accumulator
@@ -202,10 +204,12 @@ public final class StreamGathererUtil {
      * @return a {@link Gatherer.Integrator} that processes the input elements by
      *         filtering, mapping, and applying the conditions
      */
-    private static <T extends @Nullable Object, U extends @Nullable Object> Gatherer.Integrator<Void, T, U> mapAndFilterIntegrator(
+    private static <T extends @Nullable Object, U extends @Nullable Object> Gatherer.Integrator<Void, T, U>
+    mapAndFilterIntegrator(
             Predicate<? super T> preCondition,
             Function<? super T, ? extends U> mapper,
-            Predicate<? super U> postCondition) {
+            Predicate<? super U> postCondition
+    ) {
         return Gatherer.Integrator.ofGreedy((state, element, downstream) -> {
             if (preCondition.test(element)) {
                 U mapped = mapper.apply(element);
@@ -229,7 +233,12 @@ public final class StreamGathererUtil {
      * @param postCondition a predicate that must evaluate to true for a mapped element to be included in the result
      * @return a Gatherer that processes the stream by mapping and filtering elements based on the given conditions
      */
-    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U> mapAndFilter(Predicate<? super T> preCondition, Function<? super T, ? extends U> mapper, Predicate<? super U> postCondition) {
+    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U>
+    mapAndFilter(
+            Predicate<? super T> preCondition,
+            Function<? super T, ? extends U> mapper,
+            Predicate<? super U> postCondition
+    ) {
         Gatherer.Integrator<Void, T, U> integrator;
         return Gatherer.ofSequential(mapAndFilterIntegrator(preCondition, mapper, postCondition));
     }
@@ -244,7 +253,11 @@ public final class StreamGathererUtil {
      * @param mapper       a function to transform the filtered elements into a new form
      * @return a Gatherer that allows sequential processing of filtered and mapped elements
      */
-    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U> filterAndMap(Predicate<? super T> preCondition, Function<? super T, ? extends U> mapper) {
+    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U>
+    filterAndMap(
+            Predicate<? super T> preCondition,
+            Function<? super T, ? extends U> mapper
+    ) {
         Gatherer.Integrator<Void, T, U> integrator;
         return Gatherer.ofSequential(mapAndFilterIntegrator(preCondition, mapper, _ -> true));
     }
@@ -260,7 +273,11 @@ public final class StreamGathererUtil {
      * @param postCondition a predicate to filter the transformed elements; only elements satisfying this predicate will be included
      * @return a Gatherer to process the stream by applying the mapping function and filtering based on the post-condition
      */
-    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U> mapAndFilter(Function<? super T, ? extends U> mapper, Predicate<? super U> postCondition) {
+    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U>
+    mapAndFilter(
+            Function<? super T, ? extends U> mapper,
+            Predicate<? super U> postCondition
+    ) {
         Gatherer.Integrator<Void, T, U> integrator;
         return Gatherer.ofSequential(mapAndFilterIntegrator(_ -> true, mapper, postCondition));
     }
