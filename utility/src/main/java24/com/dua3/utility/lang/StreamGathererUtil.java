@@ -3,6 +3,7 @@ package com.dua3.utility.lang;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Gatherer;
@@ -185,4 +186,83 @@ public final class StreamGathererUtil {
                 }
         );
     }
+
+    /**
+     * Creates a {@link Gatherer.Integrator} that filters and maps elements from a stream
+     * based on the provided predicates and mapping function.
+     *
+     * @param <T>           the type of input elements to be processed
+     * @param <U>           the type of output elements after mapping
+     * @param preCondition  a predicate that determines whether the input element
+     *                      should be processed
+     * @param mapper        a function that maps the input element of type {@code T}
+     *                      to an output element of type {@code U}
+     * @param postCondition a predicate that determines whether the mapped output
+     *                      element should be emitted downstream
+     * @return a {@link Gatherer.Integrator} that processes the input elements by
+     *         filtering, mapping, and applying the conditions
+     */
+    private static <T extends @Nullable Object, U extends @Nullable Object> Gatherer.Integrator<Void, T, U> mapAndFilterIntegrator(
+            Predicate<? super T> preCondition,
+            Function<? super T, ? extends U> mapper,
+            Predicate<? super U> postCondition) {
+        return Gatherer.Integrator.ofGreedy((state, element, downstream) -> {
+            if (preCondition.test(element)) {
+                U mapped = mapper.apply(element);
+                if (postCondition.test(mapped)) {
+                    downstream.push(mapped);
+                }
+            }
+            return true;
+        });
+    }
+
+    /**
+     * Applies a mapping function to elements of a stream, filters them based on
+     * a pre-condition and a post-condition, and processes the resulting elements
+     * using a Gatherer.
+     *
+     * @param <T>           the type of input elements in the stream, which can be nullable
+     * @param <U>           the type of output elements after mapping, which can be nullable
+     * @param preCondition  a predicate that must evaluate to true for an element to be processed further
+     * @param mapper        a function to map each input element to an output element
+     * @param postCondition a predicate that must evaluate to true for a mapped element to be included in the result
+     * @return a Gatherer that processes the stream by mapping and filtering elements based on the given conditions
+     */
+    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U> mapAndFilter(Predicate<? super T> preCondition, Function<? super T, ? extends U> mapper, Predicate<? super U> postCondition) {
+        Gatherer.Integrator<Void, T, U> integrator;
+        return Gatherer.ofSequential(mapAndFilterIntegrator(preCondition, mapper, postCondition));
+    }
+
+    /**
+     * Applies a pre-condition to filter elements, then maps them using the provided function.
+     * Only elements that satisfy the pre-condition are processed by the mapper.
+     *
+     * @param <T>         the type of the input elements
+     * @param <U>         the type of the output elements after mapping
+     * @param preCondition a predicate to filter elements before mapping
+     * @param mapper       a function to transform the filtered elements into a new form
+     * @return a Gatherer that allows sequential processing of filtered and mapped elements
+     */
+    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U> filterAndMap(Predicate<? super T> preCondition, Function<? super T, ? extends U> mapper) {
+        Gatherer.Integrator<Void, T, U> integrator;
+        return Gatherer.ofSequential(mapAndFilterIntegrator(preCondition, mapper, _ -> true));
+    }
+
+    /**
+     * Transforms and filters elements of a stream using the provided mapping function and post-condition predicate.
+     * The transformation is applied to each element, followed by the filtering condition to determine if the
+     * transformed element should be included in the final results.
+     *
+     * @param <T>          the type of input elements in the stream
+     * @param <U>          the type of resulting elements after transformation
+     * @param mapper       a function to transform elements of type T into elements of type U
+     * @param postCondition a predicate to filter the transformed elements; only elements satisfying this predicate will be included
+     * @return a Gatherer to process the stream by applying the mapping function and filtering based on the post-condition
+     */
+    public static <T extends @Nullable Object, U extends @Nullable Object> Gatherer<T, ?, U> mapAndFilter(Function<? super T, ? extends U> mapper, Predicate<? super U> postCondition) {
+        Gatherer.Integrator<Void, T, U> integrator;
+        return Gatherer.ofSequential(mapAndFilterIntegrator(_ -> true, mapper, postCondition));
+    }
+
 }

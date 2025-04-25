@@ -203,6 +203,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - Fixed the Qodana scan during CI build which broke due to Java 24 code being included in the multi-release JAR.
 - TextUtil.lexicographicalComparator()
 - IoUtil.lexicalPathComparator()
+- StreamGatherUtil.mapAndFilter()
+- add unit tests for Java 24 code
 - some code cleanup and Javadoc additions
 
 ### 18.2.0
