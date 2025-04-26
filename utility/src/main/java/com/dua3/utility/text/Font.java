@@ -72,7 +72,7 @@ public class Font {
      *
      * @return the text color.
      */
-    public Color getColor() {
+    public final Color getColor() {
         return color;
     }
 
@@ -81,7 +81,7 @@ public class Font {
      *
      * @return the font family as {@code String}.
      */
-    public String getFamily() {
+    public final String getFamily() {
         return fontData.family();
     }
 
@@ -90,7 +90,7 @@ public class Font {
      *
      * @return the font size in points.
      */
-    public float getSizeInPoints() {
+    public final float getSizeInPoints() {
         return fontData.size();
     }
 
@@ -99,7 +99,7 @@ public class Font {
      *
      * @return true if font is bold.
      */
-    public boolean isBold() {
+    public final boolean isBold() {
         return fontData.bold();
     }
 
@@ -108,7 +108,7 @@ public class Font {
      *
      * @return true if font is italic.
      */
-    public boolean isItalic() {
+    public final boolean isItalic() {
         return fontData.italic();
     }
 
@@ -117,7 +117,7 @@ public class Font {
      *
      * @return true if font is strike-through.
      */
-    public boolean isStrikeThrough() {
+    public final boolean isStrikeThrough() {
         return fontData.strikeThrough();
     }
 
@@ -126,7 +126,7 @@ public class Font {
      *
      * @return true if font is underline.
      */
-    public boolean isUnderline() {
+    public final boolean isUnderline() {
         return fontData.underline();
     }
 
@@ -157,7 +157,7 @@ public class Font {
      *
      * @return fontstyle definition
      */
-    public String getCssStyle() {
+    public final String getCssStyle() {
         return fontData.cssStyle() + " color: " + color.toCss() + ";";
     }
 
@@ -166,7 +166,7 @@ public class Font {
      *
      * @return font description
      */
-    public String fontspec() {
+    public final String fontspec() {
         return fontData.fontspec() + "-" + color.toCss();
     }
 
@@ -175,7 +175,7 @@ public class Font {
      *
      * @return FontDef instance describing this font
      */
-    public FontDef toFontDef() {
+    public final FontDef toFontDef() {
         FontDef fontDef = fontData.fontDef();
         fontDef.setColor(getColor());
         return fontDef;
@@ -186,7 +186,7 @@ public class Font {
      *
      * @return the ascent of this font
      */
-    public double getAscent() {
+    public final double getAscent() {
         return fontData.ascent();
     }
 
@@ -195,7 +195,7 @@ public class Font {
      *
      * @return the descent of this font
      */
-    public double getDescent() {
+    public final double getDescent() {
         return fontData.descent();
     }
 
@@ -204,7 +204,7 @@ public class Font {
      *
      * @return the height of this font
      */
-    public double getHeight() {
+    public final double getHeight() {
         return fontData.height();
     }
 
@@ -213,7 +213,7 @@ public class Font {
      *
      * @return the space width of this font
      */
-    public double getSpaceWidth() {
+    public final double getSpaceWidth() {
         return fontData.spaceWidth();
     }
 
@@ -302,7 +302,7 @@ public class Font {
      *
      * @return the FontData object containing information about the font's typeface, size, and style.
      */
-    public FontData getFontData() {
+    public final FontData getFontData() {
         return fontData;
     }
 }
