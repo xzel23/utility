@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -70,7 +69,7 @@ public final class StreamUtil {
      */
     @SafeVarargs
     public static <T extends @Nullable Object> Stream<T> concat(Stream<T>... streams) {
-        return Stream.of(streams).flatMap(Function.identity()).onClose(IoUtil.composedClose(streams));
+        return Stream.of(streams).<T>mapMulti(Stream::forEach);
     }
 
     /**

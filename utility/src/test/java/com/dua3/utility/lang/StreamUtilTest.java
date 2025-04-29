@@ -57,6 +57,43 @@ class StreamUtilTest {
     }
 
     @Test
+    void concatEmptyStreams() {
+        List<Integer> actual = StreamUtil.concat(
+                Stream.<Integer>of(),
+                Stream.<Integer>of()
+        ).toList();
+
+        List<Integer> expected = List.of();
+
+        Assertions.assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    void concatEmptyAndNonEmptyStream() {
+        List<Integer> actual = StreamUtil.concat(
+                Stream.<Integer>of(),
+                Stream.of(1, 3, 5)
+        ).toList();
+
+        List<Integer> expected = List.of(1, 3, 5);
+
+        Assertions.assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    void concatStreamsOrderVerification() {
+        List<Integer> actual = StreamUtil.concat(
+                Stream.of(1, 2),
+                Stream.of(3, 4),
+                Stream.of(5, 6)
+        ).toList();
+
+        List<Integer> expected = List.of(1, 2, 3, 4, 5, 6);
+
+        Assertions.assertIterableEquals(expected, actual);
+    }
+
+    @Test
     void concatSingleStream() {
         List<Integer> actual = StreamUtil.concat(
                 Stream.of(1, 3, 5)
