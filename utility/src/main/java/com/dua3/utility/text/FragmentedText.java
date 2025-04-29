@@ -342,7 +342,7 @@ public record FragmentedText(
             return line.runs();
         }
         return Arrays.stream(line.split(PATTERN_SPLIT_PRESERVE_WHITESPACE))
-                .flatMap(part -> part.runs().stream())
+                .<Run>mapMulti((part, downstream) -> part.runs().forEach(downstream))
                 .toList();
     }
 
