@@ -75,14 +75,15 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         // populate pane with nodes of visible items
         List<Node> nodes = new ArrayList<>(board.items) // copy list to avoid concurrent modification
                 .stream()
-                .filter(item -> item.area().intersects(viewportInLocal))
-                .map(item -> {
-                    LOG.debug("item is visible: {}", item.name());
-                    Rectangle2D itemArea = item.area();
-                    Node node = item.nodeBuilder().get();
-                    node.setTranslateX(dx + itemArea.getMinX());
-                    node.setTranslateY(dy + itemArea.getMinY());
-                    return node;
+                .<Node>mapMulti((item, downstream) -> {
+                    if (item.area().intersects(viewportInLocal)) {
+                        LOG.debug("item is visible: {}", item.name());
+                        Rectangle2D itemArea = item.area();
+                        Node node = item.nodeBuilder().get();
+                        node.setTranslateX(dx + itemArea.getMinX());
+                        node.setTranslateY(dy + itemArea.getMinY());
+                        downstream.accept(node);
+                    }
                 })
                 .toList();
 
