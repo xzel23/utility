@@ -195,6 +195,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.3.1
+
+- code cleanups and performance improvements
+
 ### 18.3.0
 
 - POSSIBLY BREAKING: HtmlTag.headerChange() now returns int instead of OptionalInt and the static factory methods have also
