@@ -32,7 +32,7 @@ public final class FxImageUtil implements ImageUtil<Image> {
 
     @Override
     public FxImage load(InputStream inputStream) {
-        return new FxImage(new Image(inputStream));
+        return new FxStandardImage(new Image(inputStream));
     }
 
     @Override
@@ -40,19 +40,28 @@ public final class FxImageUtil implements ImageUtil<Image> {
         WritableImage wr = new WritableImage(w, h);
         PixelWriter pw = wr.getPixelWriter();
         pw.setPixels(0, 0, w, h, PixelFormat.getIntArgbInstance(), argb, 0, w);
-        return new FxImage(wr);
+        return new FxStandardImage(wr);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public FxBufferedImage createBufferedImage(int w, int h) {
+        return new FxBufferedImage(w, h);
     }
 
     @Override
     public Image convert(com.dua3.utility.data.Image img) {
-        if (!(img instanceof FxImage)) {
+        if (!(img instanceof FxImage fxImage)) {
             throw new UnsupportedOperationException("unsupported image class: " + img.getClass());
         }
-        return ((FxImage) img).fxImage();
+        return fxImage.fxImage();
     }
 
     @Override
     public FxImage convert(Image img) {
-        return new FxImage(img);
+        if (img instanceof FxImage fxImage) {
+            return fxImage;
+        }
+        return new FxStandardImage(img);
     }
 }

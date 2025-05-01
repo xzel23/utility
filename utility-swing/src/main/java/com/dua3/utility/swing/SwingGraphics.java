@@ -322,7 +322,7 @@ public class SwingGraphics implements Graphics {
         assert isDrawing : "instance has been closed!";
 
         g2d.drawImage(
-                IMAGE_UTIL.convert(image).bufferedImage(),
+                IMAGE_UTIL.convert(image),
                 g2d.getTransform(),
                 null
         );

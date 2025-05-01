@@ -195,6 +195,31 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.4.0
+
+- This version brings many changes for image handling.
+
+  BREAKING CHANGES
+  - The pixel format has been changed from INT_ARGB to INT_ARGB_PRE. This was
+    necessary to be able to share the image data between JavaFX and AWT implementations.
+  - AwtImage.bufferedImage() was removed as AwtImage is now derived from BufferedImae.
+    Pass the AwtImage instance directly whenever a BufferedImage is needed.
+
+  DESCRIPTION OF THE CHANGES
+
+  A new MutableImage interface has been introduced. The getBuffer() method returns a
+  low-level ImageBuffer instance that writes directly through to the pixel data.
+  
+  To create a MutableImage, use ImageUtil.createBufferedImage(). The returned instance
+  is a subclass of java.awt.BufferedImage in both the AWT and JavaFX implementations.
+  This makes it possible to use libraries that work directly on java.awt.BufferedImage
+  in both the JavaFX and AWT implementations.
+
+  FxImage has been changed to an interface. FxImageUtil.create() will now return an
+  instance of FxStandardImage whereas FxImageUtil will return an FxImage instance that
+  can be directly passed as a BufferedImage to code that works on BufferedImage instances.
+  Any changes made to the image data will write directly through to the JavaFX image.
+
 ### 18.3.1
 
 - code cleanups and performance improvements

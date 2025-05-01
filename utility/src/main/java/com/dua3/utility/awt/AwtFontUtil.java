@@ -76,7 +76,7 @@ public class AwtFontUtil implements FontUtil<java.awt.Font> {
     }
 
     private AwtFontUtil() {
-        graphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics();
+        graphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE).createGraphics();
         defaultFont = convert(getAwtFont(DEFAULT_FAMILY, DEFAULT_SIZE, false, false));
     } // utility class constructor
 

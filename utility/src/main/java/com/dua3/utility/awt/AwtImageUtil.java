@@ -18,7 +18,7 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
 
     /**
      * Private constructor to prevent direct instantiation of the AwtImageUtil class.
-     *
+     * <p>
      * Use {@link #getInstance()} to access the singleton instance of AwtImageUtil.
      */
     private AwtImageUtil() {}
@@ -42,12 +42,19 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
         return AwtImage.create(w, h, data);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public AwtImage createBufferedImage(int w, int h) {
+        return AwtImage.create(w, h);
+    }
+
     @Override
     public AwtImage convert(com.dua3.utility.data.Image img) {
         if (img instanceof AwtImage awtImage) {
             return awtImage;
+        } else {
+            return AwtImage.create(img.width(), img.height(), img.getArgb());
         }
-        throw new UnsupportedOperationException("unsupported image class: " + img.getClass());
     }
 
     @Override
@@ -62,6 +69,12 @@ public final class AwtImageUtil implements ImageUtil<AwtImage> {
      * @return the converted AwtImage
      */
     public AwtImage convert(BufferedImage img) {
-        return new AwtImage(img);
+        if (img instanceof AwtImage awtImage) {
+            return awtImage;
+        } else {
+            AwtImage awtImage = AwtImage.create(img.getWidth(), img.getHeight());
+            awtImage.getGraphics().drawImage(img, 0, 0, null);
+            return awtImage;
+        }
     }
 }

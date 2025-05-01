@@ -3,6 +3,7 @@ package com.dua3.utility.data;
 import com.dua3.utility.awt.AwtImageUtil;
 import com.dua3.utility.spi.SpiLoader;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -50,6 +51,16 @@ public interface ImageUtil<I> {
     Image create(int w, int h, int[] data);
 
     /**
+     * Create an empty {@link BufferedImage}.
+     *
+     * @param <BI> the generic type of the {@link BufferedImage} subclass that is returned
+     * @param w the image width
+     * @param h the image height
+     * @return new {@link BufferedImage}
+     */
+    <BI extends BufferedImage & Image> BI createBufferedImage(int w, int h);
+
+    /**
      * Convert {@link Image} instance to underlying implementation.
      *
      * @param img the image
@@ -65,4 +76,23 @@ public interface ImageUtil<I> {
      */
     Image convert(I img);
 
+    /**
+     * Convert {@link Image} to {@link ImageBuffer}.
+     *
+     * @param img the image
+     * @return the ARGBImage
+     */
+    default ImageBuffer toImageBuffer(Image img) {
+        return new ImageBuffer(img.getArgb(), img.width(), img.height());
+    }
+
+    /**
+     * Convert {@link ImageBuffer} to {@link Image}.
+     *
+     * @param img the ARGBImage
+     * @return the image
+     */
+    default Image fromImageBuffer(ImageBuffer img) {
+        return create(img.width(), img.height(), img.getArgb());
+    }
 }
