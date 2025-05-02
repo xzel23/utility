@@ -10,20 +10,20 @@ import org.slf4j.helpers.MessageFormatter;
 import java.io.NotSerializableException;
 import java.io.Serial;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class represents a logger implementation using the SLF4J logging framework. It extends the AbstractLogger class.
  * <p>
  * It is used to forward SLF4J log messages to applications.
+ * <p>
+ * Note that SLF4J markers are not supported by this implementation, i.e., markers in logging calls are ignored and
+ * logging is done as though the marker was not present.
  */
 public class LoggerSlf4j extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
     private final List<? extends WeakReference<LogEntryHandler>> handlers;
-    private final Map<Marker, Level> markerLevelMap = new HashMap<>();
     private @Nullable Level level;
 
     /**
@@ -77,54 +77,79 @@ public class LoggerSlf4j extends AbstractLogger {
         }
     }
 
+    /**
+     * Determines if the specified logging level is enabled for this logger.
+     * The method compares the logger's current level with the provided level, returning true
+     * if the current level is less than or equal to the specified level.
+     *
+     * @param level the logging level to check
+     * @return true if the provided logging level is enabled, false otherwise
+     */
+    public boolean isEnabled(Level level) {
+        return getLevel().toInt() <= level.toInt();
+    }
+
+    /**
+     * Determines whether logging is enabled for the specified level and marker.
+     * <p>
+     * Note that SLF4J markers are ignored by this implementation.
+     *
+     * @param marker the marker to filter log messages; may be null to indicate no filtering based on markers
+     * @param level  the logging level to check against
+     * @return true if the current logging level is less than or equal to the specified level, false otherwise
+     */
+    public boolean isEnabled(@Nullable Marker marker, Level level) {
+        return isEnabled(level);
+    }
+
     @Override
     public boolean isTraceEnabled() {
-        return getLevel().toInt() <= Level.TRACE.toInt();
+        return isEnabled(Level.TRACE);
     }
 
     @Override
     public boolean isTraceEnabled(@Nullable Marker marker) {
-        return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.TRACE.toInt();
+        return isEnabled(marker, Level.TRACE);
     }
 
     @Override
     public boolean isDebugEnabled() {
-        return getLevel().toInt() <= Level.DEBUG.toInt();
+        return isEnabled(Level.DEBUG);
     }
 
     @Override
     public boolean isDebugEnabled(@Nullable Marker marker) {
-        return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.DEBUG.toInt();
+        return isEnabled(marker, Level.DEBUG);
     }
 
     @Override
     public boolean isInfoEnabled() {
-        return getLevel().toInt() <= Level.INFO.toInt();
+        return isEnabled(Level.INFO);
     }
 
     @Override
     public boolean isInfoEnabled(@Nullable Marker marker) {
-        return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.INFO.toInt();
+        return isEnabled(marker, Level.INFO);
     }
 
     @Override
     public boolean isWarnEnabled() {
-        return getLevel().toInt() <= Level.WARN.toInt();
+        return isEnabled(Level.WARN);
     }
 
     @Override
     public boolean isWarnEnabled(@Nullable Marker marker) {
-        return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.WARN.toInt();
+        return isEnabled(marker, Level.WARN);
     }
 
     @Override
     public boolean isErrorEnabled() {
-        return getLevel().toInt() <= Level.ERROR.toInt();
+        return isEnabled(Level.ERROR);
     }
 
     @Override
     public boolean isErrorEnabled(@Nullable Marker marker) {
-        return markerLevelMap.getOrDefault(marker, getLevel()).toInt() <= Level.ERROR.toInt();
+        return isEnabled(marker, Level.ERROR);
     }
 
     /**
