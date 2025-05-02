@@ -1616,9 +1616,8 @@ public final class LangUtil {
      * @return the given value
      * @throws IllegalArgumentException if the value is not within the interval
      */
-    @SuppressWarnings("RedundantCast")
     public static float requireInInterval(float value, float min, float max, String fmt, Object... args) {
-        return (float) requireInInterval((double) value, (double) min, (double) max, fmt, args);
+        return (float) requireInInterval(value, min, (double) max, fmt, args);
     }
 
     /**
@@ -1663,7 +1662,7 @@ public final class LangUtil {
      */
     @SuppressWarnings("RedundantCast")
     public static int requireInInterval(int value, int min, int max) {
-        return (int) requireInInterval((long) value, (long) min, (long) max);
+        return (int) requireInInterval(value, min, (long) max);
     }
 
     /**
@@ -1679,8 +1678,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static int requireInInterval(int value, int min, int max, String fmt, Object... args) {
-        //noinspection RedundantCast - if casts are reoved, wrong overload is called
-        return (int) requireInInterval((long) value, (long) min, (long) max, fmt, args);
+        return (int) requireInInterval(value, min, (long) max, fmt, args);
     }
 
     /**
@@ -1693,8 +1691,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static short requireInInterval(short value, short min, short max) {
-        //noinspection RedundantCast - if casts are reoved, wrong overload is called
-        return (short) requireInInterval((long) value, (long) min, (long) max);
+        return (short) requireInInterval(value, min, (long) max);
     }
 
     /**
@@ -1710,8 +1707,7 @@ public final class LangUtil {
      * @throws IllegalArgumentException if the value is outside the interval
      */
     public static short requireInInterval(short value, short min, short max, String fmt, Object... args) {
-        //noinspection RedundantCast - if casts are reoved, wrong overload is called
-        return (short) requireInInterval((long) value, (long) min, (long) max, fmt, args);
+        return (short) requireInInterval(value, min, (long) max, fmt, args);
     }
 
     /**
