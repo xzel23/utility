@@ -198,8 +198,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 ### 18.4.1
 
 - add RichText.runStream()
+- LangUtil: add constants for empty arrays of primitive types
 - code cleanup and performance improvements
-- LangUtil provides constants for empty arrays of primitive types
 - removed the unused markerLevelMap from LoggerSlf4j
 
 ### 18.4.0
