@@ -2,11 +2,27 @@ package com.dua3.utility.data;
 
 import java.util.Arrays;
 
+/**
+ * ImageBuffer represents an implementation of the Image interface.
+ * This class allows for manipulation of image data stored in a one-dimensional array.
+ * Each pixel's color is encoded as an ARGB value.
+ * <p>
+ * The class provides methods for accessing and modifying individual pixels, drawing
+ * horizontal and vertical lines, and filling rectangular areas with a specific color.
+ * <p>
+ * Note that premultiplied alpha is used throughout the library.
+ */
 public class ImageBuffer implements Image {
     private final int[] data;
     private final int width;
     private final int height;
 
+    /**
+     * Construct a new instance.
+     * @param data      the pixel data to use; no copy is created, the class manipulates the data directly
+     * @param width     the width in pixels
+     * @param height    the height in pixels
+     */
     public ImageBuffer(int[] data, int width, int height) {
         this.data = data;
         this.width = width;
@@ -36,7 +52,7 @@ public class ImageBuffer implements Image {
      */
     public final int get(int x, int y) {
         assert x >= 0 && x < width && y >= 0 && y < height;
-        return data[y*width+x];
+        return data[y * width + x];
     }
 
     /**
@@ -47,7 +63,7 @@ public class ImageBuffer implements Image {
      */
     public final void set(int x, int y, int argb) {
         assert x >= 0 && x < width && y >= 0 && y < height;
-        data[y*width+x] = argb;
+        data[y * width + x] = argb;
     }
 
     /**
@@ -59,7 +75,7 @@ public class ImageBuffer implements Image {
      */
     public final void hline(int x, int y, int w, int argb) {
         assert x >= 0 && x + w <= width && y >= 0 && y < height && w >= 0;
-        Arrays.fill(data, y*width+x, y*width+x+w, argb);
+        Arrays.fill(data, y * width + x, y * width + x + w, argb);
     }
 
     /**
@@ -71,8 +87,8 @@ public class ImageBuffer implements Image {
      */
     public final void vline(int x, int y, int h, int argb) {
         assert x >= 0 && x < width && y >= 0 && y + h <= height && h >= 0;
-        for (int y0=y; y0<y+h; y0++) {
-            data[y0*width+x] = argb;
+        for (int y0 = y; y0 < y + h; y0++) {
+            data[y0 * width + x] = argb;
         }
     }
 
@@ -85,7 +101,7 @@ public class ImageBuffer implements Image {
      * @param argb the color as ARGB value
      */
     public void fill(int x, int y, int w, int h, int argb) {
-        for (int y0=y; y0<y+h; y0++) {
+        for (int y0 = y; y0 < y + h; y0++) {
             hline(x, y0, w, argb);
         }
     }
