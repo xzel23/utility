@@ -1713,4 +1713,33 @@ public final class LangUtil {
         //noinspection RedundantCast - if casts are reoved, wrong overload is called
         return (short) requireInInterval((long) value, (long) min, (long) max, fmt, args);
     }
+
+    /**
+     * A constant representing an empty byte array.
+     */
+    public static final byte[] EMPTY_BYTE_ARRAY = {};
+    /**
+     * A constant representing an empty array of characters.
+     */
+    public static final char[] EMPTY_CHAR_ARRAY = {};
+    /**
+     * A constant representing an empty array of type {@code short}.
+     */
+    public static final short[] EMPTY_SHORT_ARRAY = {};
+    /**
+     * An immutable empty array of integers.
+     */
+    public static final int[] EMPTY_INT_ARRAY = {};
+    /**
+     * Represents a statically defined empty array of long type.
+     */
+    public static final long[] EMPTY_LONG_ARRAY = {};
+    /**
+     * A constant representing an empty array of floats.
+     */
+    public static final float[] EMPTY_FLOAT_ARRAY = {};
+    /**
+     * A constant representing an empty array of doubles.
+     */
+    public static final double[] EMPTY_DOUBLE_ARRAY = {};
 }

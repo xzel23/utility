@@ -1,6 +1,7 @@
 package com.dua3.utility.fx;
 
 import com.dua3.utility.data.Converter;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
@@ -728,7 +729,7 @@ public final class FxUtil {
 
                 @Override
                 protected int[] getPermutation() {
-                    return new int[0];
+                    return LangUtil.EMPTY_INT_ARRAY;
                 }
             };
             fireChange(changeA);

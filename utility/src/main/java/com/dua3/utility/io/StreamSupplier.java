@@ -1,5 +1,6 @@
 package com.dua3.utility.io;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -50,7 +51,7 @@ final class StreamSupplier<V extends @Nullable Object> {
 
     private static InputStream readerToInputStream(Reader reader) {
         return new InputStream() {
-            private byte[] buffer = new byte[0];
+            private byte[] buffer = LangUtil.EMPTY_BYTE_ARRAY;
             private int bufferPos = 0;
 
             @Override

@@ -21,7 +21,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
 
     private final LogBuffer buffer;
     @SuppressWarnings("VolatileArrayField")
-    private volatile LogEntry[] data = new LogEntry[0];
+    private volatile LogEntry[] data = {};
     private final AtomicInteger queuedRemoves = new AtomicInteger();
 
     private final ReadWriteLock updateLock = new ReentrantReadWriteLock();

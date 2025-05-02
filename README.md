@@ -198,7 +198,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 ### 18.4.1
 
 - add RichText.runStream()
-- code cleanups and performance improvements
+- code cleanup and performance improvements
+- LangUtil provides constants for empty arrays of primitive types
 
 ### 18.4.0
 

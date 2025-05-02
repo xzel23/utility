@@ -56,9 +56,11 @@ public final class I18N {
         I18N i18n;
         if (!serviceIterator.hasNext()) {
             ResourceBundle bundle = new ListResourceBundle() {
+                private static final Object[][] EMPTY_CONTENT = {};
+
                 @Override
                 protected Object[][] getContents() {
-                    return new Object[0][];
+                    return EMPTY_CONTENT;
                 }
             };
             i18n = create(bundle);
