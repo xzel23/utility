@@ -55,7 +55,7 @@ public class AwtImage extends BufferedImage implements MutableImage {
         WritableRaster raster = Raster.createWritableRaster(sampleModel, dataBuffer, null);
 
         // Create the BufferedImage
-        return new AwtImage(data, colorModel, raster, false, null);
+        return new AwtImage(data, colorModel, raster);
     }
 
     /**
@@ -92,7 +92,7 @@ public class AwtImage extends BufferedImage implements MutableImage {
         }
     }
 
-    private AwtImage(int[] data, DirectColorModel colorModel, WritableRaster raster, boolean b, Object o) {
+    private AwtImage(int[] data, DirectColorModel colorModel, WritableRaster raster) {
         super(colorModel, raster, true, null);
         this.data = data;
     }
