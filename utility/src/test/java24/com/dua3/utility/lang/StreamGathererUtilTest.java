@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -114,7 +115,6 @@ public class StreamGathererUtilTest {
     @Test
     void testGroupConsecutive_EmptyInput() {
         // Initialize test data
-        List<Integer> input = List.of();
         Predicate<Integer> predicate = n -> n > 0;
         Supplier<List<Integer>> groupSupplier = ArrayList::new;
         BiFunction<List<Integer>, Integer, List<Integer>> accumulator = (group, element) -> {
@@ -123,7 +123,7 @@ public class StreamGathererUtilTest {
         };
 
         // Use groupConsecutive
-        List<List<Integer>> result = input.stream()
+        List<List<Integer>> result = Stream.<Integer>empty()
                 .gather(StreamGathererUtil.groupConsecutive(predicate, groupSupplier, accumulator))
                 .toList();
 
