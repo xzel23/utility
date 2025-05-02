@@ -71,7 +71,7 @@ public interface FontUtil<F> {
             return t.toRichText().lines()
                     .map(line ->
                             // determine bounding rectangle for current line
-                            line.runs().stream()
+                            line.runStream()
                                     .map(run -> getTextDimension(run, deriveFont(f, run.getFontDef())))
                                     .reduce((a, b) -> Rectangle2f.withCorners(
                                                     Vector2f.of(
