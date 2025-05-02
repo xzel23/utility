@@ -546,7 +546,7 @@ public final class RichText
     @Override
     public void appendTo(RichTextBuilder builder) {
         builder.ensureCapacity(builder.length() + length());
-        stream().forEach(builder::appendRun);
+        forEach(builder::appendRun);
     }
 
     @Override

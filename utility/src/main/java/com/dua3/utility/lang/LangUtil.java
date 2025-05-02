@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -359,7 +358,9 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <K, V> void putAllIfAbsent(Map<? super K, ? super V> map, Map.Entry<K, V>... items) {
-        Arrays.stream(items).forEach(item -> map.putIfAbsent(item.getKey(), item.getValue()));
+        for (var item : items) {
+            map.putIfAbsent(item.getKey(), item.getValue());
+        }
     }
 
     /**
@@ -372,7 +373,9 @@ public final class LangUtil {
      */
     @SafeVarargs
     public static <K, V> void putAll(Map<? super K, ? super V> map, Map.Entry<K, V>... items) {
-        Arrays.stream(items).forEach(item -> map.put(item.getKey(), item.getValue()));
+        for (Map.Entry<K, V> item : items) {
+            map.put(item.getKey(), item.getValue());
+        }
     }
 
     /**
