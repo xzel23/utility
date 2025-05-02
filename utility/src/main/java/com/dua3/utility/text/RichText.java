@@ -1060,7 +1060,7 @@ public final class RichText
      * @return stream of runs
      */
     public Stream<Run> runStream() {
-        return Stream.of(run);
+        return Arrays.stream(run);
     }
 
     /**
