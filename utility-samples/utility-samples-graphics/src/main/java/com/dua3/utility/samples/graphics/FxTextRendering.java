@@ -106,7 +106,7 @@ public class FxTextRendering extends Application {
         timer.start();
 
         primaryStage.setScene(new Scene(new ScrollPane(grid)));
-        primaryStage.setTitle("Rotating Triangle");
+        primaryStage.setTitle("Rotating Text");
         primaryStage.show();
     }
 
