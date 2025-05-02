@@ -10,6 +10,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Test cases for StreamGathererUtil.
+ */
 public class StreamGathererUtilTest {
 
     /**
