@@ -22,7 +22,7 @@ import java.util.Iterator;
  * A class that represents an image using the Swing BufferedImage API.
  * It implements the Image interface.
  */
-public class AwtImage extends BufferedImage implements MutableImage {
+public final class AwtImage extends BufferedImage implements MutableImage {
 
     private final int[] data;
 

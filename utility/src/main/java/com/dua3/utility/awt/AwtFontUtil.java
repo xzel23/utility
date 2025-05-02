@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * See usage of {@link FontUtil} in {@link com.dua3.utility.text.TextUtil} for details.
  */
 @SuppressWarnings("NumericCastThatLosesPrecision")
-public class AwtFontUtil implements FontUtil<java.awt.Font> {
+public final class AwtFontUtil implements FontUtil<java.awt.Font> {
     private static final Logger LOG = LogManager.getLogger(AwtFontUtil.class);
 
     private static final String DEFAULT_FAMILY;

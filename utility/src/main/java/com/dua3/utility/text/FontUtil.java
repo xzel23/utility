@@ -29,6 +29,8 @@ public interface FontUtil<F> {
                     .build()
                     .load()
                     .get();
+
+            private SingletonHolder() {}
         }
 
         return SingletonHolder.INSTANCE;

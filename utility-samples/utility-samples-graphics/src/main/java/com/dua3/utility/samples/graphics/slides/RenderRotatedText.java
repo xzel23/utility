@@ -6,6 +6,7 @@ import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.samples.graphics.FxGraphicsSample;
+import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
@@ -19,7 +20,7 @@ import com.dua3.utility.ui.Graphics;
  * of rotated text with various modes and angles. This class renders styled and formatted
  * text content while applying different rotations and anchoring options.
  */
-public class RenderRotatedText implements FxGraphicsSample.Slide {
+public class RenderRotatedText implements IGraphicsSample.Slide {
 
     /**
      *  The RichText instance containing the text to be rendered.

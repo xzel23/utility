@@ -303,6 +303,7 @@ final class CompoundHtmlTag implements HtmlTag {
             }
         }
         assert open != null; // should never happen
+        //noinspection DataFlowIssue
         return open;
     }
 
@@ -321,6 +322,7 @@ final class CompoundHtmlTag implements HtmlTag {
             }
         }
         assert close != null; // should never happen
+        //noinspection DataFlowIssue
         return close;
     }
 

@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 @SuppressWarnings("MagicCharacter")
-class LineSplitter<S extends CharSequence, R extends Appendable> {
+final class LineSplitter<S extends CharSequence, R extends Appendable> {
     private final S seq;
 
     /** The current codepoint. */

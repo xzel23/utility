@@ -1,18 +1,18 @@
 package com.dua3.utility.samples.graphics.slides;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.samples.graphics.FxGraphicsSample;
+import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.ui.Graphics;
-
-import static com.dua3.utility.math.MathUtil.PI_QUARTER;
 
 /**
  * The DrawText class implements the Slide interface and demonstrates the use of the drawText method
  * within a graphical context. It renders text with various horizontal and vertical alignment options
  * (HAnchor and VAnchor) using the com.dua3.utility.ui.Graphics API.
  */
-public class DrawText implements FxGraphicsSample.Slide {
+public class DrawText implements IGraphicsSample.Slide {
     @Override
     public String title() {
         return "drawText()";
@@ -56,7 +56,7 @@ public class DrawText implements FxGraphicsSample.Slide {
         for (int i = 0; i < 8; i++) {
             AffineTransformation2f t = AffineTransformation2f.combine(
                     AffineTransformation2f.translate(-cx, -cy),
-                    AffineTransformation2f.rotate(i * PI_QUARTER),
+                    AffineTransformation2f.rotate(i * MathUtil.PI_QUARTER),
                     AffineTransformation2f.translate(cx, cy),
                     t0
             );
@@ -97,7 +97,7 @@ public class DrawText implements FxGraphicsSample.Slide {
         for (int i = 0; i < 8; i++) {
             AffineTransformation2f t = AffineTransformation2f.combine(
                     AffineTransformation2f.translate(-cx, -cy),
-                    AffineTransformation2f.rotate(i * PI_QUARTER),
+                    AffineTransformation2f.rotate(i * MathUtil.PI_QUARTER),
                     AffineTransformation2f.translate(cx, cy),
                     t0
             );

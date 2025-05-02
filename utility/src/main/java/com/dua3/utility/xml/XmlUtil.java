@@ -764,6 +764,7 @@ public final class XmlUtil {
 
         // create namespace map
         Map<String, String> nsMap = new HashMap<>();
+        //noinspection StringConcatenationMissingWhitespace
         namespaceUris.forEach(nsUrl -> nsMap.put("ns" + (1 + nsMap.size()), nsUrl));
         SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext(nsMap);
 

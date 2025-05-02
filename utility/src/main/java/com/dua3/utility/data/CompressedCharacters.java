@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
  * a compressed format in memory, allowing for decompression on demand. It supports
  * compressing data from both a {@code CharSequence} and a {@code Reader}.
  */
-public class CompressedCharacters {
+public final class CompressedCharacters {
     private final CompressedBytes data;
 
     /**

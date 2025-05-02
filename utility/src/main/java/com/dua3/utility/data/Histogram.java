@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of items to be stored in the histogram
  */
-public class Histogram<T> {
+public final class Histogram<T> {
 
     /**
      * A constant Counter instance with a value of zero.

@@ -1,6 +1,7 @@
 package com.dua3.utility.samples.fx;
 
 import com.dua3.utility.fx.FxUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import javafx.application.Application;
@@ -14,8 +15,6 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.stage.Stage;
 import javafx.scene.shape.Path;
-
-import static com.dua3.utility.math.MathUtil.TWO_PI;
 
 /**
  * The ShapeFx class extends the JavaFX Application class to create and display a window
@@ -43,7 +42,7 @@ public class ShapeFx extends Application {
         int segments = 16;
         for (int i = 0; i <= segments; i++) {
             float r = rMax / 2 + rMax / 2 * i / segments;
-            float phi = (float) (TWO_PI * i / segments);
+            float phi = (float) (MathUtil.TWO_PI * i / segments);
 
             Vector2f start = c.add(Vector2f.of(r, 0));
             Vector2f end = c.add(Vector2f.of((float) (r * Math.cos(phi)), (float) (r * Math.sin(phi))));

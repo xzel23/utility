@@ -26,6 +26,8 @@ public interface ImageUtil<I> {
                     .build()
                     .load()
                     .get();
+
+            private SingletonHolder() {}
         }
 
         return SingletonHolder.INSTANCE;

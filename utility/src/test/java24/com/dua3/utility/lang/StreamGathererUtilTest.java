@@ -1,5 +1,6 @@
 package com.dua3.utility.lang;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,8 +9,6 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamGathererUtilTest {
 
@@ -35,8 +34,8 @@ public class StreamGathererUtilTest {
                 .toList();
 
         // Verify results
-        assertEquals(1, result.size());
-        assertEquals(List.of(1, 2, 3, 4), result.get(0));
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(List.of(1, 2, 3, 4), result.getFirst());
     }
 
     @Test
@@ -56,11 +55,11 @@ public class StreamGathererUtilTest {
                 .toList();
 
         // Verify results
-        assertEquals(4, result.size());
-        assertEquals(List.of(1), result.get(0));
-        assertEquals(List.of(2), result.get(1));
-        assertEquals(List.of(3), result.get(2));
-        assertEquals(List.of(4), result.get(3));
+        Assertions.assertEquals(4, result.size());
+        Assertions.assertEquals(List.of(1), result.get(0));
+        Assertions.assertEquals(List.of(2), result.get(1));
+        Assertions.assertEquals(List.of(3), result.get(2));
+        Assertions.assertEquals(List.of(4), result.get(3));
     }
 
     @Test
@@ -80,10 +79,10 @@ public class StreamGathererUtilTest {
                 .toList();
 
         // Verify results
-        assertEquals(3, result.size());
-        assertEquals(List.of(1, 2), result.get(0));
-        assertEquals(List.of(-1, -2), result.get(1));
-        assertEquals(List.of(3, 4), result.get(2));
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals(List.of(1, 2), result.get(0));
+        Assertions.assertEquals(List.of(-1, -2), result.get(1));
+        Assertions.assertEquals(List.of(3, 4), result.get(2));
     }
 
     @Test
@@ -103,13 +102,13 @@ public class StreamGathererUtilTest {
                 .toList();
 
         // Verify results
-        assertEquals(6, result.size());
-        assertEquals(List.of(1), result.get(0));
-        assertEquals(List.of(-1), result.get(1));
-        assertEquals(List.of(2), result.get(2));
-        assertEquals(List.of(-2), result.get(3));
-        assertEquals(List.of(3), result.get(4));
-        assertEquals(List.of(-3), result.get(5));
+        Assertions.assertEquals(6, result.size());
+        Assertions.assertEquals(List.of(1), result.get(0));
+        Assertions.assertEquals(List.of(-1), result.get(1));
+        Assertions.assertEquals(List.of(2), result.get(2));
+        Assertions.assertEquals(List.of(-2), result.get(3));
+        Assertions.assertEquals(List.of(3), result.get(4));
+        Assertions.assertEquals(List.of(-3), result.get(5));
     }
 
     @Test
@@ -128,6 +127,6 @@ public class StreamGathererUtilTest {
                 .toList();
 
         // Verify results
-        assertEquals(0, result.size());
+        Assertions.assertEquals(0, result.size());
     }
 }

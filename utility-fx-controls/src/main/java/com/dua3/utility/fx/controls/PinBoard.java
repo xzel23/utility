@@ -47,6 +47,7 @@ public class PinBoard extends Control {
      */
     public PinBoard() {
         skinProperty().addListener((v, o, n) -> {
+            //noinspection ChainOfInstanceofChecks
             if (o instanceof PinBoardSkin oldSkin) {
                 oldSkin.pannableProperty().unbind();
                 oldSkin.scrollHValueProperty().unbindBidirectional(scrollHValueProperty);

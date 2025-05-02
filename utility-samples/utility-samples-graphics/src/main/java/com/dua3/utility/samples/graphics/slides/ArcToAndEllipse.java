@@ -1,13 +1,13 @@
 package com.dua3.utility.samples.graphics.slides;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.samples.graphics.FxGraphicsSample;
+import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.ui.Graphics;
-
-import static com.dua3.utility.math.MathUtil.TWO_PI;
 
 /**
  * The ArcToAndEllipse class implements the FxGraphicsSample.Slide interface and demonstrates the
@@ -32,7 +32,7 @@ import static com.dua3.utility.math.MathUtil.TWO_PI;
  * graphical primitives, as well as colors and transformations. The arcs, ellipses, and text
  * are positioned dynamically based on the slide dimensions.
  */
-public class ArcToAndEllipse implements FxGraphicsSample.Slide {
+public class ArcToAndEllipse implements IGraphicsSample.Slide {
 
     @Override
     public String title() {
@@ -82,7 +82,7 @@ public class ArcToAndEllipse implements FxGraphicsSample.Slide {
                 float r = rMax / 2 + rMax / 2 * i / segments;
                 float rx = 0.95f * r;
                 float ry = 0.5f * r;
-                float phi = (float) (TWO_PI * i / segments);
+                float phi = (float) (MathUtil.TWO_PI * i / segments);
 
                 AffineTransformation2f t = AffineTransformation2f.rotate(beta, c);
                 Vector2f start = t.transform(c.add(Vector2f.of(rx, 0)));
@@ -102,7 +102,7 @@ public class ArcToAndEllipse implements FxGraphicsSample.Slide {
             }
 
             // draw ellipses
-            float angle = (float) (TWO_PI * j / angles);
+            float angle = (float) (MathUtil.TWO_PI * j / angles);
             c = Vector2f.of(w * (j + 0.5f), 1.5f * h);
             g.setFill(Color.LIGHTGRAY);
             g.fillEllipse(c.x(), c.y(), rMax, rMax * 0.75f, angle);

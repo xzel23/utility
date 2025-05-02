@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * Utility class for working with fonts in JavaFX.
  */
-public class FxFontUtil implements FontUtil<Font> {
+public final class FxFontUtil implements FontUtil<Font> {
 
     private static final String DEFAULT_FAMILY;
     private static final float DEFAULT_SIZE;

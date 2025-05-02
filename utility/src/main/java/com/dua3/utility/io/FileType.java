@@ -180,6 +180,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * if no matching file type is found
      */
     public static <T> Optional<FileType<? extends T>> readerForType(Class<T> cls) {
+        //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
                 .findFirst()
@@ -196,6 +197,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return an unmodifiable {@link List} containing the matching file types
      */
     public static <T> List<FileType<? extends T>> allReadersForType(Class<T> cls) {
+        //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> t.isSupported(OpenMode.READ) && cls.isAssignableFrom(t.getDocumentClass()))
                 .map( t -> (FileType<? extends T>) t)
@@ -211,6 +213,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * if no matching file type is found
      */
     public static <T> Optional<FileType<? super T>> writerForType(Class<T> cls) {
+        //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getWriteableClass().isAssignableFrom(cls))
                 .findFirst()
@@ -225,6 +228,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return an unmodifiable {@link List} containing the matching file types
      */
     public static <T> List<FileType<? super T>> allWritersForType(Class<T> cls) {
+        //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getWriteableClass().isAssignableFrom(cls))
                 .map( t -> (FileType<? super T>) t)

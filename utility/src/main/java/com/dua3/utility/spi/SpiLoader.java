@@ -27,7 +27,7 @@ public final class SpiLoader<T> {
      *
      * @param <T> the type of instances to be loaded by SpiLoader.
      */
-    public static class LoaderBuilder<T> {
+    public static final class LoaderBuilder<T> {
         private final Class<T> type;
         private @Nullable ClassLoader cl;
         private @Nullable Predicate<T> predicate;

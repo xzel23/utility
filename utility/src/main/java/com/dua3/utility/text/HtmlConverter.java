@@ -39,7 +39,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * converted content. All font-related styles in the HTML are derived or adjusted
      * based on this base font.
      */
-    private Font baseFont;
+    private final Font baseFont;
     /**
      * The default font currently being used for converting text to HTML.
      * <p>

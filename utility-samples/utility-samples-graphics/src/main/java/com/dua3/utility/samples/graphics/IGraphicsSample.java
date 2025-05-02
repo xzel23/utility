@@ -19,6 +19,7 @@ import java.util.function.Supplier;
  * @param <TAB> The type of container used to hold the rendered graphical content,
  *              such as a JComponent in Swing or a Tab in JavaFX.
  */
+@FunctionalInterface
 public interface IGraphicsSample<TAB> {
     /**
      * The Slide interface represents a component that can render graphical content

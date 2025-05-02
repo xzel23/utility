@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  * remains locked until the {@link #close()} method is called, either explicitly
  * or implicitly (e.g., via a try-with-resources statement).</p>
  */
-public class AutoLock implements AutoCloseable {
+public final class AutoLock implements AutoCloseable {
     private static final Logger LOG = LogManager.getLogger(AutoLock.class);
 
     private final Lock lock;

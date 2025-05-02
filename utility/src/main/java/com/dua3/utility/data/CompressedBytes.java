@@ -24,7 +24,7 @@ import java.util.zip.InflaterInputStream;
  * than the original data, the data is stored uncompressed. The first byte of the internal array is set to 0 if
  * the data is stored uncompressed, 1 otherwise.
  */
-public class CompressedBytes {
+public final class CompressedBytes {
     private static final Logger LOG = LogManager.getLogger(CompressedBytes.class);
 
     private final byte[] data;

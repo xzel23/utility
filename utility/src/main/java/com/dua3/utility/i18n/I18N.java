@@ -40,7 +40,7 @@ import java.util.function.Function;
  * The application should implement the {@link I18NProvider} interface to announce the I18N instance to libraries.
  * Once initialised, libraries can get the instance using {@link I18N#getInstance()} and merge their own bundles.
  */
-public class I18N {
+public final class I18N {
     private static final Logger LOG = LogManager.getLogger(I18N.class);
 
     private final ResourceBundle mainBundle;

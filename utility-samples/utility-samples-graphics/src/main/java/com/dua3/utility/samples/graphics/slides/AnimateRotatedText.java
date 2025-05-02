@@ -5,7 +5,7 @@ import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.math.geometry.Vector2f;
-import com.dua3.utility.samples.graphics.FxGraphicsSample;
+import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
@@ -26,7 +26,7 @@ import java.util.stream.DoubleStream;
  * octants, and text rotation modes by drawing tiles representing text at specified
  * angles and orientations.
  */
-public class AnimateRotatedText implements FxGraphicsSample.Slide {
+public class AnimateRotatedText implements IGraphicsSample.Slide {
 
     public static final RichText TEXT = new RichTextBuilder()
             .append("rotated text\n")

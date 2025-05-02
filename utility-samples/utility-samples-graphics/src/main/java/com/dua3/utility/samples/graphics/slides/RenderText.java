@@ -3,6 +3,7 @@ package com.dua3.utility.samples.graphics.slides;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.samples.graphics.FxGraphicsSample;
+import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
@@ -15,7 +16,7 @@ import com.dua3.utility.ui.Graphics;
  * how to render stylized text using the graphical rendering framework. It defines the
  * specific slide content to display styled text on a canvas.
  */
-public class RenderText implements FxGraphicsSample.Slide {
+public class RenderText implements IGraphicsSample.Slide {
     @Override
     public String title() {
         return "renderText()";
