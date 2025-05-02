@@ -3,7 +3,6 @@ package com.dua3.utility.samples.graphics.slides;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
-import com.dua3.utility.samples.graphics.FxGraphicsSample;
 import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.ui.Graphics;
 

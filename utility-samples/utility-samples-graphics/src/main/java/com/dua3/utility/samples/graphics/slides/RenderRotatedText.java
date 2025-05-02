@@ -5,7 +5,6 @@ import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.math.geometry.Vector2f;
-import com.dua3.utility.samples.graphics.FxGraphicsSample;
 import com.dua3.utility.samples.graphics.IGraphicsSample;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.FontUtil;
