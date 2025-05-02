@@ -1055,6 +1055,15 @@ public final class RichText
     }
 
     /**
+     * Get a stream containing the runs of this instance.
+     *
+     * @return stream of runs
+     */
+    public Stream<Run> runStream() {
+        return Stream.of(run);
+    }
+
+    /**
      * Returns a BiPredicate that checks whether two RichText objects are equal based on the provided ComparisonSettings.
      *
      * @param s the ComparisonSettings to be used for the equality check
@@ -1109,10 +1118,9 @@ public final class RichText
      * @return the maximum descent value among all derived fonts; returns 0.0 if no runs are present
      */
     public double getBaseline(Font defaultFont) {
-        return runs().stream()
-                .map(Run::getFontDef)
-                .map(fd -> FontUtil.getInstance().deriveFont(defaultFont, fd))
-                .mapToDouble(Font::getDescent)
+        final FontUtil<?> fu = FontUtil.getInstance();
+        return runStream()
+                .mapToDouble(r -> fu.deriveFont(defaultFont, r.getFontDef()).getDescent())
                 .max()
                 .orElse(0.0);
     }
