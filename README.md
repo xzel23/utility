@@ -195,6 +195,11 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.4.1
+
+- add RichText.runStream()
+- code cleanups and performance improvements
+
 ### 18.4.0
 
 - This version brings many changes for image handling.
