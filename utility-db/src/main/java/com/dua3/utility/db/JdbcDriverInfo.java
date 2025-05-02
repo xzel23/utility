@@ -101,9 +101,7 @@ public class JdbcDriverInfo {
         this.link = link;
 
         Pair<String, List<SimpleOption<?>>> parsed = parseScheme(urlScheme);
-        //noinspection DataFlowIssue - fslse positive; both components are guaranteed to be non-null
         this.urlScheme = parsed.first();
-        //noinspection DataFlowIssue - fslse positive; both components are guaranteed to be non-null
         this.options = parsed.second();
     }
 

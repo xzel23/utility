@@ -42,7 +42,6 @@ public final class PlatformHelper {
             } catch (Exception e) {
                 LOG.warn("unexpected exception in runAndWait: {}", e.getMessage(), e);
             }
-            //noinspection ReturnOfNull - by design
             return null;
         });
     }

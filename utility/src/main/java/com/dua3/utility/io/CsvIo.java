@@ -109,7 +109,6 @@ public abstract class CsvIo implements AutoCloseable {
      * @param obj the object to be formatted
      * @return the formatted string
      */
-    @SuppressWarnings("ChainOfInstanceofChecks")
     protected String format(@Nullable Object obj) {
         final String text = switch (obj) {
             case Number n -> numberFormat.format(n);
