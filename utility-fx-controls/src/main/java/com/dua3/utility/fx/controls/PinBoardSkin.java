@@ -60,35 +60,40 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     private void updateNodes() {
         LOG.trace("updateNodes()");
 
-        PlatformHelper.checkApplicationThread();
+        refresher.setActive(false);
+        try {
+            PlatformHelper.checkApplicationThread();
 
-        PinBoard board = getSkinnable();
+            PinBoard board = getSkinnable();
 
-        Rectangle2D viewPort = getViewPort();
-        Rectangle2D boardArea = board.getArea();
+            Rectangle2D viewPort = getViewPort();
+            Rectangle2D boardArea = board.getArea();
 
-        double dx = Math.max(0, viewPort.getWidth() - boardArea.getWidth()) / 2.0 - boardArea.getMinX();
-        double dy = Math.max(0, viewPort.getHeight() - boardArea.getHeight()) / 2.0 - boardArea.getMinY();
+            double dx = Math.max(0, viewPort.getWidth() - boardArea.getWidth()) / 2.0 - boardArea.getMinX();
+            double dy = Math.max(0, viewPort.getHeight() - boardArea.getHeight()) / 2.0 - boardArea.getMinY();
 
-        Rectangle2D viewportInLocal = new Rectangle2D(viewPort.getMinX() + boardArea.getMinX(), viewPort.getMinY() + boardArea.getMinY(), viewPort.getWidth(), viewPort.getHeight());
+            Rectangle2D viewportInLocal = new Rectangle2D(viewPort.getMinX() + boardArea.getMinX(), viewPort.getMinY() + boardArea.getMinY(), viewPort.getWidth(), viewPort.getHeight());
 
-        // populate the pane with nodes of visible items
-        List<Node> nodes = new ArrayList<>(board.items) // copy list to avoid concurrent modification
-                .stream()
-                .<Node>mapMulti((item, downstream) -> {
-                    if (item.area().intersects(viewportInLocal)) {
-                        LOG.debug("item is visible: {}", item::name);
-                        Rectangle2D itemArea = item.area();
-                        Node node = item.nodeBuilder().get();
-                        node.setTranslateX(dx + itemArea.getMinX());
-                        node.setTranslateY(dy + itemArea.getMinY());
-                        downstream.accept(node);
-                    }
-                })
-                .toList();
+            // populate the pane with nodes of visible items
+            List<Node> nodes = new ArrayList<>(board.items) // copy list to avoid concurrent modification
+                    .stream()
+                    .<Node>mapMulti((item, downstream) -> {
+                        if (item.area().intersects(viewportInLocal)) {
+                            LOG.debug("item is visible: {}", item::name);
+                            Rectangle2D itemArea = item.area();
+                            Node node = item.nodeBuilder().get();
+                            node.setTranslateX(dx + itemArea.getMinX());
+                            node.setTranslateY(dy + itemArea.getMinY());
+                            downstream.accept(node);
+                        }
+                    })
+                    .toList();
 
-        pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
-        pane.getChildren().setAll(nodes);
+            pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
+            pane.getChildren().setAll(nodes);
+        } finally {
+            refresher.setActive(true);
+        }
     }
 
     void refresh() {
