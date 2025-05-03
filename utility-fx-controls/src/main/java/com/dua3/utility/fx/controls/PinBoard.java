@@ -66,7 +66,7 @@ public class PinBoard extends Control {
      *
      * @param policy the scrollbar policy to set
      */
-    public void setHbarPolicy(ScrollPane.ScrollBarPolicy policy) {
+    public void setHBarPolicy(ScrollPane.ScrollBarPolicy policy) {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.setHbarPolicy(policy);
         }
@@ -77,7 +77,7 @@ public class PinBoard extends Control {
      *
      * @param policy the ScrollBarPolicy to set
      */
-    public void setVbarPolicy(ScrollPane.ScrollBarPolicy policy) {
+    public void setVBarPolicy(ScrollPane.ScrollBarPolicy policy) {
         if (getSkin() instanceof PinBoardSkin skin) {
             skin.setVbarPolicy(policy);
         }
@@ -119,13 +119,26 @@ public class PinBoard extends Control {
     }
 
     /**
-     * Clears the PinBoard by removing all items and resetting the area property.
+     * Clears the PinBoard by removing all items and refreshes the skin.
      * This method must be called from the JavaFX Application Thread.
      */
     public void clear() {
+        clear(true);
+    }
+
+    /**
+     * Clears the PinBoard by removing all items and optionally refreshes the skin.
+     * This method must be called from the JavaFX Application Thread.
+     *
+     * @param refresh flag indicating whether to refresh the skin
+     */
+    public void clear(boolean refresh) {
         PlatformHelper.checkApplicationThread();
         items.clear();
-        areaProperty.set(new Rectangle2D(0, 0, 0, 0));
+        areaProperty.set(Rectangle2D.EMPTY);
+        if (refresh) {
+            refresh();
+        }
     }
 
     /**
@@ -362,11 +375,15 @@ public class PinBoard extends Control {
      * @param dimension    item dimension
      */
     public void pinBottom(String name, Supplier<Node> nodeSupplier, Dimension2D dimension) {
+        pinBottom(name, nodeSupplier, dimension, true);
+    }
+
+    public void pinBottom(String name, Supplier<Node> nodeSupplier, Dimension2D dimension, boolean refresh) {
         Rectangle2D boardArea = getArea();
         double xCenter = (boardArea.getMaxX() + boardArea.getMinX()) / 2.0;
         double y = boardArea.getMaxY();
         Rectangle2D area = new Rectangle2D(xCenter - dimension.getWidth() / 2, y, dimension.getWidth(), dimension.getHeight());
-        pin(new Item(name, area, nodeSupplier));
+        pin(new Item(name, area, nodeSupplier), refresh);
     }
 
     /**
@@ -379,35 +396,78 @@ public class PinBoard extends Control {
     }
 
     /**
-     * Pins the given item or collection of items to the PinBoard.
+     * Pins the given item or collection of items to the PinBoard and refreshes the layout.
      *
      * @param item The item to be pinned. Can be a single item or a collection of items to be pinned together.
      */
     public void pin(Item item) {
-        pin(Collections.singleton(item));
+        pin(Collections.singleton(item), true);
     }
 
     /**
-     * Pins the given collection of items to the PinBoard.
+     * Pins the given item or collection of items to the PinBoard and optionally refreshes the layout.
+     *
+     * @param item The item to be pinned. Can be a single item or a collection of items to be pinned together.
+     * @param refresh flag indicating whether the skin should be refreshed after pinning
+     */
+    public void pin(Item item, boolean refresh) {
+        pin(Collections.singleton(item), refresh);
+    }
+
+    /**
+     * Pins the given collection of items to the PinBoard and refreshes the skin.
      *
      * @param itemsToPin The collection of items to be pinned.
      */
     public void pin(Collection<Item> itemsToPin) {
+        pin(itemsToPin, true);
+    }
+
+    /**
+     * Pins the given collection of items to the PinBoard and optionally refreshes the skin.
+     *
+     * @param itemsToPin The collection of items to be pinned.
+     * @param refresh flag indicating whether the skin should be refreshed after pinning
+     */
+    public void pin(Collection<Item> itemsToPin, boolean refresh) {
         PlatformHelper.checkApplicationThread();
 
         if (itemsToPin.isEmpty()) {
             return;
         }
-
+        updateArea(itemsToPin);
         items.addAll(itemsToPin);
 
-        itemsToPin.stream()
+        if (refresh) {
+            refresh();
+        }
+    }
+
+    /**
+     * Sets the content to the given collection of items to the PinBoard and refreshes the skin.
+     *
+     * @param itemsToPin The collection of items to be pinned.
+     */
+    public void set(Collection<Item> itemsToPin) {
+        PlatformHelper.checkApplicationThread();
+        updateArea(itemsToPin);
+        items.setAll(itemsToPin);
+        refresh();
+    }
+
+    /**
+     * Re-calculates the content area after items are added.
+     * @param addedItems collection of the items added
+     */
+    private void updateArea(Collection<Item> addedItems) {
+        Rectangle2D area = items.isEmpty() ? Rectangle2D.EMPTY : getArea();
+        addedItems.stream()
                 .map(Item::area)
                 .reduce(FxUtil::union)
                 .map(r -> FxUtil.union(getArea(), r))
                 .ifPresent(r -> {
                     if (!r.equals(getArea())) {
-                        areaProperty.set(r);
+                        areaProperty.set(FxUtil.union(area, r));
                     }
                 });
     }
