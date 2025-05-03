@@ -535,10 +535,18 @@ public final class FxUtil {
      * @return minimal rectangle containing both r1 and r2
      */
     public static Rectangle2D union(Rectangle2D r1, Rectangle2D r2) {
+        if (r1.getWidth() == 0 && r1.getHeight() == 0) {
+            return r2;
+        }
+        if (r2.getWidth() == 0 && r2.getHeight() == 0) {
+            return r1;
+        }
+
         var xMin = Math.min(r1.getMinX(), r2.getMinX());
         var yMin = Math.min(r1.getMinY(), r2.getMinY());
         var xMax = Math.max(r1.getMaxX(), r2.getMaxX());
         var yMax = Math.max(r1.getMaxY(), r2.getMaxY());
+
         return new Rectangle2D(xMin, yMin, xMax - xMin, yMax - yMin);
     }
 
