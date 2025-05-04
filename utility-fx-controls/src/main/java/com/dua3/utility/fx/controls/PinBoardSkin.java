@@ -55,6 +55,9 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         scrollPane.heightProperty().addListener((e) -> refresh());
         scrollPane.viewportBoundsProperty().addListener((v, o, n) -> refresh());
 
+        setDisplayScale(pinBoard.getDisplayScale());
+        pinBoard.displayScaleProperty().addListener((v, o, n) -> setDisplayScale(n.doubleValue()));
+
         // enable/disable refresher
         refresher.setActive(true);
     }
@@ -401,7 +404,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         return scrollPane.pannableProperty();
     }
 
-    public void setDisplayScale(double scale) {
+    private void setDisplayScale(double scale) {
         ScrollPosition oldPos = getScrollPosition();
         Rectangle2D boardArea = getSkinnable().getArea();
         Rectangle2D viewportBefore = getViewPortInBoardCoordinates();

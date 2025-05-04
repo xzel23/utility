@@ -41,6 +41,7 @@ public class PinBoard extends Control {
     private final BooleanProperty pannableProperty = new SimpleBooleanProperty(true);
     private final DoubleProperty scrollHValueProperty = new SimpleDoubleProperty(0.0);
     private final DoubleProperty scrollVValueProperty = new SimpleDoubleProperty(0.0);
+    private final DoubleProperty displayScaleProperty = new SimpleDoubleProperty(1.0);
 
     /**
      * Default constructor.
@@ -472,10 +473,17 @@ public class PinBoard extends Control {
                 });
     }
 
+    public DoubleProperty displayScaleProperty() {
+        return displayScaleProperty;
+    }
+
     public void setDisplayScale(double scale) {
-        if (getSkin() instanceof PinBoardSkin skin) {
-            skin.setDisplayScale(scale);
-        }
+        displayScaleProperty.set(scale);
+    }
+
+
+    public Double getDisplayScale() {
+        return displayScaleProperty.get();
     }
 
     @Override
@@ -484,10 +492,6 @@ public class PinBoard extends Control {
                 "area=" + areaProperty.get() +
                 ", items=" + items +
                 '}';
-    }
-
-    public Double getDisplayScale() {
-        return getSkin() instanceof PinBoardSkin skin ? skin.getDisplayScale() : 1.0;
     }
 
     /**
