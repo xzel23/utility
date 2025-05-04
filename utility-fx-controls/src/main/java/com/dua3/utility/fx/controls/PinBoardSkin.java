@@ -64,6 +64,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     private void updateNodes() {
         LOG.trace("updateNodes()");
+        PlatformHelper.checkApplicationThread();
 
         refresher.setActive(false);
         try {
@@ -71,7 +72,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
             PinBoard board = getSkinnable();
             Rectangle2D boardArea = board.getArea();
-            pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
 
             Rectangle2D viewPort = getViewPort();
             Rectangle2D viewportInLocal = getViewPortInBoardCoordinates();
@@ -94,6 +94,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
                     })
                     .toList();
 
+            pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
             pane.getChildren().setAll(visibleNodes);
         } finally {
             refresher.setActive(true);
@@ -422,8 +423,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         double hValue = (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth());
         double vValue = (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight());
-
-        setScrollPosition(hValue, vValue);
 
         pane.setScaleX(scale);
         pane.setScaleY(scale);
