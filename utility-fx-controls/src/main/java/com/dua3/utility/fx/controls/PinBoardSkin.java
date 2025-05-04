@@ -67,9 +67,10 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             PlatformHelper.checkApplicationThread();
 
             PinBoard board = getSkinnable();
+            Rectangle2D boardArea = board.getArea();
+            pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
 
             Rectangle2D viewPort = getViewPort();
-            Rectangle2D boardArea = board.getArea();
 
             double dx = Math.max(0, viewPort.getWidth() - boardArea.getWidth()) / 2.0 - boardArea.getMinX();
             double dy = Math.max(0, viewPort.getHeight() - boardArea.getHeight()) / 2.0 - boardArea.getMinY();
@@ -77,7 +78,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             Rectangle2D viewportInLocal = getViewPortInBoardCoordinates();
 
             // populate the pane with nodes of visible items
-            List<Node> nodes = new ArrayList<>(board.items) // copy list to avoid concurrent modification
+            List<Node> visibleNodes = board.items
                     .stream()
                     .<Node>mapMulti((item, downstream) -> {
                         if (item.area().intersects(viewportInLocal)) {
@@ -91,8 +92,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
                     })
                     .toList();
 
-            pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
-            pane.getChildren().setAll(nodes);
+            pane.getChildren().setAll(visibleNodes);
         } finally {
             refresher.setActive(true);
         }
@@ -410,13 +410,21 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         double oldX = boardArea.getMinX() + oldPos.hValue() * Math.max(0, boardArea.getWidth() - viewportBefore.getWidth());
         double oldY = boardArea.getMinY() + oldPos.vValue() * Math.max(0, boardArea.getHeight() - viewportBefore.getHeight());
 
-        pane.setScaleX(scale);
-        pane.setScaleY(scale);
-
-        Rectangle2D viewportAfter = getViewPortInBoardCoordinates();
+        Bounds vp = scrollPane.getViewportBounds();
+        Rectangle2D viewportAfter = new Rectangle2D(
+                (boardArea.getMinX() - vp.getMinX() / scale),
+                (boardArea.getMinY() - vp.getMinY() / scale),
+                vp.getWidth() / scale,
+                vp.getHeight() / scale
+        );
 
         double hValue = (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth());
         double vValue = (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight());
+
+        setScrollPosition(hValue, vValue);
+
+        pane.setScaleX(scale);
+        pane.setScaleY(scale);
 
         setScrollPosition(hValue, vValue);
 
