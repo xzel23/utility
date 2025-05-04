@@ -10,6 +10,7 @@ import com.dua3.utility.fx.PlatformHelper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -25,9 +26,9 @@ import javafx.scene.control.Skin;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 
 /**
@@ -37,6 +38,9 @@ import java.util.function.Supplier;
 public class PinBoard extends Control {
 
     final ObservableList<Item> items = FXCollections.observableArrayList();
+    final ObservableList<Item> visibleItems = FXCollections.observableArrayList();
+    final ReadOnlyListWrapper<Item> readOnlyVisibleItems = new ReadOnlyListWrapper<>(visibleItems);
+
     private final ObjectProperty<Rectangle2D> areaProperty = new SimpleObjectProperty<>(new Rectangle2D(0, 0, 0, 0));
     private final BooleanProperty pannableProperty = new SimpleBooleanProperty(true);
     private final DoubleProperty scrollHValueProperty = new SimpleDoubleProperty(0.0);
@@ -111,12 +115,8 @@ public class PinBoard extends Control {
      *
      * @return A list of visible items. If no skin is available, an empty list is returned.
      */
-    public List<Item> getVisibleItems() {
-        if (getSkin() instanceof PinBoardSkin skin) {
-            return skin.getVisibleItems();
-        } else {
-            return Collections.emptyList();
-        }
+    public ReadOnlyListWrapper<Item> getVisibleItems() {
+        return readOnlyVisibleItems;
     }
 
     /**
@@ -144,15 +144,10 @@ public class PinBoard extends Control {
 
     /**
      * Refreshes the PinBoard skin.
-     * <p>
-     * This method is used to refresh the visual representation of the PinBoard. It checks if the skin associated
-     * with the PinBoard is an instance of PinBoardSkin and then calls the {@link PinBoardSkin#refresh()} method
-     * to update the nodes displayed on the board.
-     * </p>
      */
     public void refresh() {
         if (getSkin() instanceof PinBoardSkin skin) {
-            skin.refresh();
+            skin.refresh(UnaryOperator.identity());
         }
     }
 

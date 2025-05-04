@@ -5,7 +5,9 @@ import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -19,14 +21,18 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.UnaryOperator;
 
 class PinBoardSkin extends SkinBase<PinBoard> {
 
     private static final Logger LOG = LogManager.getLogger(PinBoardSkin.class);
-    private final FxRefresh refresher;
-    private final AnchorPane pane = new AnchorPane();
-    private final Group group = new Group(pane);
-    private final ScrollPane scrollPane = new ScrollPane(group);
+
+    final FxRefresh refresher;
+    final AnchorPane pane = new AnchorPane();
+    final Group group = new Group(pane);
+    final ScrollPane scrollPane = new ScrollPane(group);
+    final ObservableList<PinBoard.Item> visibleItems = FXCollections.observableArrayList();
 
     PinBoardSkin(PinBoard pinBoard) {
         super(pinBoard);
@@ -42,11 +48,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         getChildren().setAll(scrollPane);
 
-        pinBoard.areaProperty().addListener((v, o, n) -> {
-            pane.setMinWidth(n.getWidth());
-            pane.setMinHeight(n.getHeight());
-        });
-
         pinBoard.getItems().addListener((ListChangeListener.Change<?> c) -> refresh());
         pane.layoutBoundsProperty().addListener((o) -> refresh());
         scrollPane.hvalueProperty().addListener((h) -> refresh());
@@ -55,12 +56,19 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         scrollPane.heightProperty().addListener((e) -> refresh());
         scrollPane.viewportBoundsProperty().addListener((v, o, n) -> refresh());
 
-        setDisplayScale(pinBoard.getDisplayScale());
-        pinBoard.displayScaleProperty().addListener((v, o, n) -> setDisplayScale(n.doubleValue()));
+        pinBoard.displayScaleProperty().addListener((v, o, n) ->
+                refresh(u -> u.withScale(n.doubleValue()))
+        );
+        pinBoard.areaProperty().addListener((v, o, n) ->
+                refresh(u -> u.withArea(n))
+        );
 
         // enable/disable refresher
         refresher.setActive(true);
+        refresh(u -> u.withScale(pinBoard.getDisplayScale()));
     }
+
+    private final AtomicReference<PinBoardUpdates> updates = new AtomicReference<>(PinBoardUpdates.EMPTY_UPDATES);
 
     private void updateNodes() {
         LOG.trace("updateNodes()");
@@ -68,7 +76,10 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         refresher.setActive(false);
         try {
-            PlatformHelper.checkApplicationThread();
+            PinBoardUpdates u = updates.getAndSet(PinBoardUpdates.EMPTY_UPDATES);
+
+            u.applyBoardArea(this);
+            u.applyDisplayScale(this);
 
             PinBoard board = getSkinnable();
             Rectangle2D boardArea = board.getArea();
@@ -80,28 +91,34 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             double dy = Math.max(0, viewportInLocal.getHeight() - boardArea.getHeight()) / 2.0 - boardArea.getMinY();
 
             // populate the pane with nodes of visible items
-            List<Node> visibleNodes = board.items
-                    .stream()
-                    .<Node>mapMulti((item, downstream) -> {
-                        if (item.area().intersects(viewportInLocal)) {
-                            LOG.debug("item is visible: {}", item::name);
-                            Rectangle2D itemArea = item.area();
-                            Node node = item.nodeBuilder().get();
-                            node.setTranslateX(dx + itemArea.getMinX());
-                            node.setTranslateY(dy + itemArea.getMinY());
-                            downstream.accept(node);
-                        }
-                    })
-                    .toList();
+            List<PinBoard.Item> visibleItems = new ArrayList<>();
+            List<Node> visibleNodes = new ArrayList<>();
+            board.items.forEach(item -> {
+                if (item.area().intersects(viewportInLocal)) {
+                    LOG.debug("item is visible: {}", item::name);
+                    Rectangle2D itemArea = item.area();
+                    Node node = item.nodeBuilder().get();
+                    node.setTranslateX(dx + itemArea.getMinX());
+                    node.setTranslateY(dy + itemArea.getMinY());
+                    visibleItems.add(item);
+                    visibleNodes.add(node);
+                }
+            });
 
             pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
             pane.getChildren().setAll(visibleNodes);
+            board.visibleItems.setAll(visibleItems);
         } finally {
             refresher.setActive(true);
         }
     }
 
     void refresh() {
+        refresh(UnaryOperator.identity());
+    }
+
+    void refresh(UnaryOperator<PinBoardUpdates> update) {
+        updates.updateAndGet(update);
         refresher.refresh();
     }
 
@@ -148,7 +165,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         Rectangle2D vp = getViewPortInBoardCoordinates();
         double x = xViewport + vp.getMinX();
         double y = yViewport + vp.getMinY();
-        List<PinBoard.Item> items = new ArrayList<>(getSkinnable().getItems());
+        List<PinBoard.Item> items = List.copyOf(getSkinnable().visibleItems);
         for (PinBoard.Item item : items) {
             Rectangle2D a = item.area();
             if (a.contains(x, y)) {
@@ -158,25 +175,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         return Optional.empty();
     }
 
-    /**
-     * Retrieves a list of items from the PinBoard that are visible within the current viewport.
-     *
-     * @return a list of PinBoard.Item objects that intersect with the viewport area.
-     */
-    public List<PinBoard.Item> getVisibleItems() {
-        List<PinBoard.Item> visibleItems = new ArrayList<>();
-        Rectangle2D b = getViewPortInBoardCoordinates();
-        List<PinBoard.Item> items = new ArrayList<>(getSkinnable().getItems());
-        for (PinBoard.Item item : items) {
-            Rectangle2D a = item.area();
-            if (a.intersects(b)) {
-                visibleItems.add(item);
-            }
-        }
-        return visibleItems;
-    }
-
-    private Rectangle2D getViewPortInBoardCoordinates() {
+    Rectangle2D getViewPortInBoardCoordinates() {
         Bounds vp = scrollPane.getViewportBounds();
         double scale = Math.max(1.0E-8, getDisplayScale());
         Rectangle2D boardArea = getSkinnable().getArea();
@@ -403,40 +402,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     public BooleanProperty pannableProperty() {
         return scrollPane.pannableProperty();
-    }
-
-    /**
-     * Sets the display scale of the PinBoard. This method adjusts the scaling of the content,
-     * recalculates viewport dimensions, and maintains the current scroll positions relative to the content.
-     *
-     * @param scale the new scale factor to apply to the PinBoard. Must be a positive value,
-     *              where values greater than 1 represent zooming in, and values less than 1 represent zooming out.
-     */
-    private void setDisplayScale(double scale) {
-        ScrollPosition oldPos = getScrollPosition();
-        Rectangle2D boardArea = getSkinnable().getArea();
-        Rectangle2D viewportBefore = getViewPortInBoardCoordinates();
-
-        double oldX = boardArea.getMinX() + oldPos.hValue() * Math.max(0, boardArea.getWidth() - viewportBefore.getWidth());
-        double oldY = boardArea.getMinY() + oldPos.vValue() * Math.max(0, boardArea.getHeight() - viewportBefore.getHeight());
-
-        Bounds vp = scrollPane.getViewportBounds();
-        Rectangle2D viewportAfter = new Rectangle2D(
-                (boardArea.getMinX() - vp.getMinX() / scale),
-                (boardArea.getMinY() - vp.getMinY() / scale),
-                vp.getWidth() / scale,
-                vp.getHeight() / scale
-        );
-
-        double hValue = (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth());
-        double vValue = (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight());
-
-        pane.setScaleX(scale);
-        pane.setScaleY(scale);
-
-        setScrollPosition(hValue, vValue);
-
-        refresh();
     }
 
     /**
