@@ -97,6 +97,7 @@ public final class PropertyConverter {
      * @param <V> the type of ObservableValue containing the original value
      * @param value the property whose value is to be converted
      * @param converter the converter used to convert the property's value from type A to type String
+     * @return a {@link ReadOnlyStringProperty} bound to the argument {@code value}
      */
     public static <A, V extends ObservableValue<A>> ReadOnlyStringProperty convertToStringReadOnly(V value, Function<A, String> converter) {
         StringProperty convertedProperty = new SimpleStringProperty(converter.apply(value.getValue()));
@@ -112,6 +113,7 @@ public final class PropertyConverter {
      * @param <V> the type of ObservableValue containing the original value
      * @param value the property whose value is to be converted
      * @param converter the converter used to convert the property's value from type A to type String
+     * @return a {@link ReadOnlyDoubleProperty} bound to the argument {@code value}
      */
     public static <A, V extends ObservableValue<A>> ReadOnlyDoubleProperty convertToDoubleReadOnly(V value, Function<A, Double> converter) {
         DoubleProperty convertedProperty = new SimpleDoubleProperty(converter.apply(value.getValue()));
