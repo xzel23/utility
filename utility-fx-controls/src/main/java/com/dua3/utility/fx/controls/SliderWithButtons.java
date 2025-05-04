@@ -329,14 +329,29 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
         return PropertyConverter.convert(slider.valueProperty());
     }
 
+    /**
+     * Gets the value property of the slider as a DoubleProperty.
+     *
+     * @return the DoubleProperty representing the slider's current value.
+     */
     public DoubleProperty valueAsDoubleProperty() {
         return slider.valueProperty();
     }
 
+    /**
+     * Sets the default value for the slider.
+     *
+     * @param dflt the default value to set for the slider.
+     */
     public void setDefault(double dflt) {
         this.defaultSupplier = () -> dflt;
     }
 
+    /**
+     * Sets the default value supplier for the slider.
+     *
+     * @param dflt the default value supplier to set for the slider.
+     */
     public void setDefault(Supplier<Double> dflt) {
         this.defaultSupplier = dflt;
     }

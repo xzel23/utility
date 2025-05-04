@@ -187,11 +187,23 @@ public class SliderBuilder {
         return this;
     }
 
+    /**
+     * Sets the default value of the slider.
+     *
+     * @param dflt the default value to set
+     * @return this instance of {@code SliderBuilder} for method chaining.
+     */
     public SliderBuilder setDefault(double dflt) {
         slider.setDefault(dflt);
         return this;
     }
 
+    /**
+     * Sets the default value supplier of the slider.
+     *
+     * @param dflt the default value to set
+     * @return this instance of {@code SliderBuilder} for method chaining.
+     */
     public SliderBuilder setDefault(Supplier<Double> dflt) {
         slider.setDefault(dflt);
         return this;
