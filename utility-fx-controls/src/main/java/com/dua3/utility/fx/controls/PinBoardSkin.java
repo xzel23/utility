@@ -8,6 +8,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SkinBase;
@@ -24,7 +25,8 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     private static final Logger LOG = LogManager.getLogger(PinBoardSkin.class);
     private final FxRefresh refresher;
     private final AnchorPane pane = new AnchorPane();
-    private final ScrollPane scrollPane = new ScrollPane(pane);
+    private final Group group = new Group(pane);
+    private final ScrollPane scrollPane = new ScrollPane(group);
 
     PinBoardSkin(PinBoard pinBoard) {
         super(pinBoard);
@@ -72,7 +74,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             double dx = Math.max(0, viewPort.getWidth() - boardArea.getWidth()) / 2.0 - boardArea.getMinX();
             double dy = Math.max(0, viewPort.getHeight() - boardArea.getHeight()) / 2.0 - boardArea.getMinY();
 
-            Rectangle2D viewportInLocal = new Rectangle2D(viewPort.getMinX() + boardArea.getMinX(), viewPort.getMinY() + boardArea.getMinY(), viewPort.getWidth(), viewPort.getHeight());
+            Rectangle2D viewportInLocal = getViewPortInBoardCoordinates();
 
             // populate the pane with nodes of visible items
             List<Node> nodes = new ArrayList<>(board.items) // copy list to avoid concurrent modification
@@ -173,12 +175,13 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     private Rectangle2D getViewPortInBoardCoordinates() {
         Bounds vp = scrollPane.getViewportBounds();
+        double scale = Math.max(1.0E-8, getDisplayScale());
         Rectangle2D boardArea = getSkinnable().getArea();
         return new Rectangle2D(
-                (boardArea.getMinX() - vp.getMinX()),
-                (boardArea.getMinY() - vp.getMinY()),
-                vp.getWidth(),
-                vp.getHeight()
+                (boardArea.getMinX() - vp.getMinX() / scale),
+                (boardArea.getMinY() - vp.getMinY() / scale),
+                vp.getWidth() / scale,
+                vp.getHeight() / scale
         );
     }
 
@@ -397,5 +400,15 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     public BooleanProperty pannableProperty() {
         return scrollPane.pannableProperty();
+    }
+
+    public void setDisplayScale(double scale) {
+        pane.setScaleX(scale);
+        pane.setScaleY(scale);
+        refresh();
+    }
+
+    public Double getDisplayScale() {
+        return pane.getScaleX();
     }
 }

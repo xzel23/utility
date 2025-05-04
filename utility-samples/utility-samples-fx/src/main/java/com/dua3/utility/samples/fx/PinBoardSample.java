@@ -51,7 +51,7 @@ public class PinBoardSample extends Application {
     public void start(Stage stage) {
         pinBoard.clear();
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 5; i++) {
             createItem(pinBoard, i);
         }
 
@@ -77,6 +77,7 @@ public class PinBoardSample extends Application {
                         Controls.button().text("scrollTo(x, y, xRelVP, yRelVP)").action(this::scrollToRelVP).build(),
                         Controls.button().text("scrollIntoView()").action(this::scrollIntoView).build()
                 ))
+                .add("Scale", Double.class, () -> 1.0, Controls.slider().min(0.25).max(2.0).setDefault(pinBoard::getDisplayScale).onChange(pinBoard::setDisplayScale).build())
                 .build();
         inputValid.bind(input.validProperty());
         root.setLeft(new VBox(textArea, input));

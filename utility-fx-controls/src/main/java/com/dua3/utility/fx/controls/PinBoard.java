@@ -472,12 +472,22 @@ public class PinBoard extends Control {
                 });
     }
 
+    public void setDisplayScale(double scale) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            skin.setDisplayScale(scale);
+        }
+    }
+
     @Override
     public String toString() {
         return "PinBoard{" +
                 "area=" + areaProperty.get() +
                 ", items=" + items +
                 '}';
+    }
+
+    public Double getDisplayScale() {
+        return getSkin() instanceof PinBoardSkin skin ? skin.getDisplayScale() : 1.0;
     }
 
     /**
