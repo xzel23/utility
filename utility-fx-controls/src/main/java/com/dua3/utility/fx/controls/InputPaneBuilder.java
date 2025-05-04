@@ -132,6 +132,12 @@ public class InputPaneBuilder
     }
 
     @Override
+    public InputPaneBuilder slider(String id, String label, Supplier<Double> dflt, double min, double max) {
+        pb.slider(id, label, dflt, min, max);
+        return this;
+    }
+
+    @Override
     public InputPaneBuilder options(String id, String label, Supplier<Arguments> dflt, Supplier<Collection<Option<?>>> options) {
         pb.options(id, label, dflt, options);
         return this;

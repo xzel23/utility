@@ -190,6 +190,11 @@ public class InputGridBuilder
     }
 
     @Override
+    public InputGridBuilder slider(String id, String label, Supplier<Double> dflt, double min, double max) {
+        return add(id, label, Double.class, dflt, Controls.slider().min(min).max(max).setDefault(dflt).build());
+    }
+
+    @Override
     public InputGridBuilder options(String id, String label, Supplier<Arguments> dflt, Supplier<Collection<Option<?>>> options) {
         return add(id, label, Arguments.class, dflt, new OptionsPane(options, dflt));
     }

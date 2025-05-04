@@ -2,9 +2,15 @@ package com.dua3.utility.fx;
 
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 
 import java.util.function.Function;
@@ -81,5 +87,52 @@ public final class PropertyConverter {
         value.addListener((obs, oldValue, newValue) -> convertedProperty.setValue(converter.apply(newValue)));
 
         return convertedProperty;
+    }
+
+    /**
+     * Converts a given property of type A to a read-only property of type String using the specified converter.
+     * The conversion is automatically applied whenever the original property's value changes.
+     *
+     * @param <A> the type of the value held by the input property
+     * @param <V> the type of ObservableValue containing the original value
+     * @param value the property whose value is to be converted
+     * @param converter the converter used to convert the property's value from type A to type String
+     */
+    public static <A, V extends ObservableValue<A>> ReadOnlyStringProperty convertToStringReadOnly(V value, Function<A, String> converter) {
+        StringProperty convertedProperty = new SimpleStringProperty(converter.apply(value.getValue()));
+        value.addListener((obs, oldValue, newValue) -> convertedProperty.setValue(converter.apply(newValue)));
+        return convertedProperty;
+    }
+
+    /**
+     * Converts a given property of type A to a read-only property of type Double using the specified converter.
+     * The conversion is automatically applied whenever the original property's value changes.
+     *
+     * @param <A> the type of the value held by the input property
+     * @param <V> the type of ObservableValue containing the original value
+     * @param value the property whose value is to be converted
+     * @param converter the converter used to convert the property's value from type A to type String
+     */
+    public static <A, V extends ObservableValue<A>> ReadOnlyDoubleProperty convertToDoubleReadOnly(V value, Function<A, Double> converter) {
+        DoubleProperty convertedProperty = new SimpleDoubleProperty(converter.apply(value.getValue()));
+        value.addListener((obs, oldValue, newValue) -> convertedProperty.setValue(converter.apply(newValue)));
+        return convertedProperty;
+    }
+
+    /**
+     * Converts a given {@code DoubleProperty} to a {@code Property<Double>} by performing a type-safe cast.
+     * This method addresses the type mismatch caused by the Java type system where
+     * {@code DoubleProperty} extends {@code Property<Number>} rather than {@code Property<Double>}.
+     *
+     * @param property the {@code DoubleProperty} to be converted
+     * @return the {@code Property<Double>} representation of the given {@code DoubleProperty}
+     */
+    public static Property<Double> convert(DoubleProperty property) {
+        // Explanation
+        //	- DoubleProperty extends Property<Number>, not Property<Double>, due to Java’s type system and generics erasure.
+        //	- So a direct cast to Property<Double> needs a bridge cast (via Property<?>) to avoid compiler errors.
+        //	- This is safe in practice because a DoubleProperty always holds a Double.
+        //noinspection unchecked
+        return (Property<Double>) (Property<?>) property;
     }
 }

@@ -7,12 +7,14 @@ import javafx.scene.Node;
 
 import java.util.function.BiFunction;
 import java.util.function.DoubleConsumer;
+import java.util.function.Supplier;
 
 /**
  * A builder class for constructing a {@code SliderWithButtons} instance with various configuration options.
  */
 public class SliderBuilder {
     private final SliderWithButtons slider;
+    private boolean valueSet = false;
 
     SliderBuilder(SliderWithButtons.Mode mode, BiFunction<Double, Double, String> formatter) {
         slider = new SliderWithButtons(mode, formatter);
@@ -60,6 +62,7 @@ public class SliderBuilder {
      */
     public SliderBuilder value(double value) {
         slider.setValue(value);
+        valueSet = true;
         return this;
     }
 
@@ -147,7 +150,7 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder onChange(DoubleConsumer onChange) {
-        slider.valueProperty().addListener((v, o, n) -> onChange.accept(n.doubleValue()));
+        slider.valueProperty().addListener((v, o, n) -> onChange.accept(n));
         return this;
     }
 
@@ -158,7 +161,7 @@ public class SliderBuilder {
      * @return this instance of {@code SliderBuilder} for method chaining.
      */
     public SliderBuilder bind(Property<Number> value) {
-        slider.valueProperty().bindBidirectional(value);
+        slider.valueAsDoubleProperty().bindBidirectional(value);
         return this;
     }
 
@@ -184,12 +187,26 @@ public class SliderBuilder {
         return this;
     }
 
+    public SliderBuilder setDefault(double dflt) {
+        slider.setDefault(dflt);
+        return this;
+    }
+
+    public SliderBuilder setDefault(Supplier<Double> dflt) {
+        slider.setDefault(dflt);
+        return this;
+    }
+
     /**
      * Builds the configured {@code SliderWithButtons} instance.
      *
      * @return the built {@code SliderWithButtons} instance.
      */
     public SliderWithButtons build() {
+        if (!valueSet) {
+            slider.reset();
+        }
         return slider;
     }
+
 }

@@ -212,7 +212,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt      the default value of the checkbox
      * @param text      the text to display next to the checkbox
      * @param validate  a function that takes a Boolean value and returns an optional validation message
-     * @return the created checkbox
+     * @return {@code this}
      */
     B checkBox(
             String id,
@@ -253,7 +253,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items    the collection of items to populate the comboBox
      * @param validate the function to validate the selected item in the comboBox
      * @param <T>      the type of the comboBox items
-     * @return the comboBox widget
+     * @return {@code this}
      */
     <T> B comboBox(
             String id,
@@ -277,7 +277,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param dflt the supplier of the default value
      * @param cls the result class of the combo box items
      * @param items the collection of items to choose from
-     * @return the InputBuilder instance
+     * @return {@code this}
      */
     default <T> B comboBoxEx(
             String id,
@@ -307,7 +307,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param cls        the class of objects in the combo box
      * @param items      the collection of items to populate the combo box
      * @param validate   a function to validate the items in the combo box and return an optional error message
-     * @return a custom combo box with the specified parameters
+     * @return {@code this}
      */
     <T> B comboBoxEx(
             String id,
@@ -353,7 +353,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param items     a collection of items for the radio list
      * @param validate  a function to validate the selected item, returning an optional error message
      * @param <T>       the type of items in the radio list
-     * @return a radio list component
+     * @return {@code this}
      */
     <T> B radioList(
             String id,
@@ -362,6 +362,24 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             Class<T> cls,
             Collection<T> items,
             Function<T, Optional<String>> validate
+    );
+
+    /**
+     * Creates a slider component.
+     *
+     * @param id    the ID of the radio list
+     * @param label the label text for the radio list
+     * @param dflt  a supplier that provides the default value for the radio list
+     * @param min   the minimum value
+     * @param max   the maximum value
+     * @return {@code this}
+     */
+    B slider(
+            String id,
+            String label,
+            Supplier<Double> dflt,
+            double min,
+            double max
     );
 
     /**

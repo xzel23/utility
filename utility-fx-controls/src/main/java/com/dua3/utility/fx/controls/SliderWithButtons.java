@@ -1,9 +1,14 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.PropertyConverter;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -23,13 +28,14 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
  * A custom UI component that combines a slider with increment and decrement buttons.
  * It supports various display modes, which can include a value label and text input field.
  */
-public class SliderWithButtons extends Region {
+public class SliderWithButtons extends Region implements InputControl<Double> {
 
     private static final Pattern PATTERN_DIGIT = Pattern.compile("\\d");
     private final Mode mode;
@@ -40,6 +46,8 @@ public class SliderWithButtons extends Region {
     private final List<Node> children = new ArrayList<>();
     private @Nullable TextField tfValue;
     private @Nullable Label label;
+
+    private Supplier<Double> defaultSupplier = this::getMin;
 
     /**
      * Constructor for SliderWithButtons. This class creates a slider
@@ -307,13 +315,51 @@ public class SliderWithButtons extends Region {
         slider.setBlockIncrement(value);
     }
 
+    @Override
+    public Node node() {
+        return slider;
+    }
+
     /**
      * Gets the value property of the slider.
      *
      * @return the DoubleProperty representing the slider's current value.
      */
-    public DoubleProperty valueProperty() {
+    public Property<Double> valueProperty() {
+        return PropertyConverter.convert(slider.valueProperty());
+    }
+
+    public DoubleProperty valueAsDoubleProperty() {
         return slider.valueProperty();
+    }
+
+    public void setDefault(double dflt) {
+        this.defaultSupplier = () -> dflt;
+    }
+
+    public void setDefault(Supplier<Double> dflt) {
+        this.defaultSupplier = dflt;
+    }
+
+    @Override
+    public void reset() {
+        slider.setValue(Math.clamp(defaultSupplier.get(), getMin(), getMax()));
+    }
+
+    @Override
+    public ReadOnlyBooleanProperty validProperty() {
+        SimpleBooleanProperty property = new SimpleBooleanProperty();
+        property.bind(
+                slider.valueProperty()
+                        .greaterThanOrEqualTo(minProperty())
+                        .and(slider.valueProperty().lessThanOrEqualTo(maxProperty()))
+                        .asObject());
+        return property;
+    }
+
+    @Override
+    public ReadOnlyStringProperty errorProperty() {
+        return PropertyConverter.convertToStringReadOnly(validProperty(), valid -> valid ? null : "Value out of range");
     }
 
     /**
