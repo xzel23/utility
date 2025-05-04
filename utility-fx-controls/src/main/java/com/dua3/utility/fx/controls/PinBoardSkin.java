@@ -405,6 +405,13 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         return scrollPane.pannableProperty();
     }
 
+    /**
+     * Sets the display scale of the PinBoard. This method adjusts the scaling of the content,
+     * recalculates viewport dimensions, and maintains the current scroll positions relative to the content.
+     *
+     * @param scale the new scale factor to apply to the PinBoard. Must be a positive value,
+     *              where values greater than 1 represent zooming in, and values less than 1 represent zooming out.
+     */
     private void setDisplayScale(double scale) {
         ScrollPosition oldPos = getScrollPosition();
         Rectangle2D boardArea = getSkinnable().getArea();
@@ -431,7 +438,13 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         refresh();
     }
-    public Double getDisplayScale() {
+
+    /**
+     * Get the current display scale.
+     *
+     * @return the current display scale
+     */
+    private double getDisplayScale() {
         return pane.getScaleX();
     }
 }

@@ -379,6 +379,14 @@ public class PinBoard extends Control {
         pinBottom(name, nodeSupplier, dimension, true);
     }
 
+    /**
+     * Add item at the bottom, centered horizontally.
+     *
+     * @param name         item name
+     * @param nodeSupplier supplier (factory) for item node
+     * @param dimension    item dimension
+     * @param refresh      {@code true} to refresh skin after adding item
+     */
     public void pinBottom(String name, Supplier<Node> nodeSupplier, Dimension2D dimension, boolean refresh) {
         Rectangle2D boardArea = getArea();
         double xCenter = (boardArea.getMaxX() + boardArea.getMinX()) / 2.0;
@@ -473,16 +481,33 @@ public class PinBoard extends Control {
                 });
     }
 
+    /**
+     * Returns the display scale property of the application.
+     * This property represents the current scaling factor for the display.
+     *
+     * @return the display scale property as a DoubleProperty
+     */
     public DoubleProperty displayScaleProperty() {
         return displayScaleProperty;
     }
 
+    /**
+     * Sets the display scale of the component.
+     *
+     * @param scale the new scale value to set for the display.
+     *              This value determines the magnification or reduction applied to the component's display.
+     */
     public void setDisplayScale(double scale) {
         displayScaleProperty.set(scale);
     }
 
 
-    public Double getDisplayScale() {
+    /**
+     * Retrieves the current value of the display scale.
+     *
+     * @return the value of the display scale as a Double
+     */
+    public double getDisplayScale() {
         return displayScaleProperty.get();
     }
 
