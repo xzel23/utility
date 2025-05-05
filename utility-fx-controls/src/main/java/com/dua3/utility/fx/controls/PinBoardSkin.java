@@ -170,8 +170,9 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      */
     public Optional<PinBoard.PositionInItem> getPositionInItem(double xViewport, double yViewport) {
         Rectangle2D vp = getViewPortInBoardCoordinates();
-        double x = xViewport + vp.getMinX();
-        double y = yViewport + vp.getMinY();
+        double scale = Math.max(1.0E-8, getDisplayScale());
+        double x = xViewport / scale + vp.getMinX();
+        double y = yViewport / scale + vp.getMinY();
         List<PinBoard.Item> items = List.copyOf(getSkinnable().visibleItems);
         for (PinBoard.Item item : items) {
             Rectangle2D a = item.area();
