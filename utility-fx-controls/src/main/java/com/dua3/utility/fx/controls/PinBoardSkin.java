@@ -187,7 +187,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     private Rectangle2D getViewPortInBoardCoordinates() {
         Bounds vp = scrollPane.getViewportBounds();
-        double scale = Math.max(1.0E-8, getDisplayScale());
+        double scale = getDisplayScale();
         Rectangle2D boardArea = getSkinnable().getArea();
         return new Rectangle2D(
                 (boardArea.getMinX() - vp.getMinX() / scale),
