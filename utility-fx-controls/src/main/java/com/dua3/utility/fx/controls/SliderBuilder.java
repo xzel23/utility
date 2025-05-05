@@ -122,6 +122,26 @@ public class SliderBuilder {
     }
 
     /**
+     * Set the major tick unit
+     * @param value the major tick unit as a double
+     * @return this instance of {@code SliderBuilder} for method chaining.
+     */
+    public SliderBuilder majorTickUnit(double value) {
+        slider.setMajorTickUnit(value);
+        return this;
+    }
+
+    /**
+     * Set to {@code true} to snap to tick marks.
+     * @param value {@code true} to snap to tick marks
+     * @return this instance of {@code SliderBuilder} for method chaining.
+     */
+    public SliderBuilder snapToTicks(boolean value) {
+        slider.setSnapToTicks(value);
+        return this;
+    }
+
+    /**
      * Configures whether to show the tick labels on the slider.
      *
      * @param value true to show tick labels, false to hide them.

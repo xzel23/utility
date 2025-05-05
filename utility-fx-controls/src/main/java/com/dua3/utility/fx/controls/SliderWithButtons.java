@@ -287,6 +287,33 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
     }
 
     /**
+     * Retrieves the major tick unit for the slider.
+     *
+     * @param value set the major tick unit value
+     */
+    public void setMajorTickUnit(double value) {
+        slider.setMajorTickUnit(value);
+    }
+
+    /**
+     * Sets whether the slider should snap to the closest tick mark.
+     *
+     * @param value true to snap to the closest tick mark, false to not snap
+     */
+    public void setSnapToTicks(boolean value) {
+        slider.setSnapToTicks(value);
+    }
+
+    /**
+     * Retrieves whether the slider will snap to the closest tick mark.
+     *
+     * @return true if the slider snaps to the closest tick mark, false otherwise
+     */
+    public boolean isSnapToTicks() {
+        return slider.isSnapToTicks();
+    }
+
+    /**
      * Retrieves the number of minor tick marks to be displayed on the slider.
      *
      * @return the number of minor tick marks as a double.
