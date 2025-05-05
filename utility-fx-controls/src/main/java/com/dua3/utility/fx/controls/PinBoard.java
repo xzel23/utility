@@ -293,8 +293,8 @@ public class PinBoard extends Control {
     /**
      * Scrolls the PinBoard to the specified position within an item.
      *
-     * <p> The parameters {@code relativeXinVP} and  {@code relativeYinVP} are used to determine where the
-     * point (x,y) should end up in the viewport. For example, use 0.5 for {@code relativeXinVP} to center
+     * <p> The parameters {@code dxBoard} and  {@code dyBoard} are used to determine where the
+     * point (x,y) should end up in the viewport. For example, use 0.5 for {@code dxBoard} to center
      * the point horizontally in the viewport.
      *
      * @param x The x-coordinate in <strong>local coordinates</strong> to scroll to

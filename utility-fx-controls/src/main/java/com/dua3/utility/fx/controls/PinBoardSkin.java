@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
@@ -33,6 +34,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     final Group group = new Group(pane);
     final ScrollPane scrollPane = new ScrollPane(group);
     final ObservableList<PinBoard.Item> visibleItems = FXCollections.observableArrayList();
+    final AtomicBoolean isUpdating = new AtomicBoolean(false);
 
     PinBoardSkin(PinBoard pinBoard) {
         super(pinBoard);
@@ -75,11 +77,11 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         PlatformHelper.checkApplicationThread();
 
         refresher.setActive(false);
+        isUpdating.set(true);
         try {
             PinBoardUpdates u = updates.getAndSet(PinBoardUpdates.EMPTY_UPDATES);
 
-            u.applyBoardArea(this);
-            u.applyDisplayScale(this);
+            u.apply(this);
 
             PinBoard board = getSkinnable();
             Rectangle2D boardArea = board.getArea();
@@ -109,6 +111,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             pane.getChildren().setAll(visibleNodes);
             board.visibleItems.setAll(visibleItems);
         } finally {
+            isUpdating.set(false);
             refresher.setActive(true);
         }
     }
@@ -123,7 +126,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     }
 
     private Rectangle2D getViewPort() {
-        Bounds vpBounds = scrollPane.getViewportBounds();
+        Bounds vpBounds = getViewportBounds();
         return new Rectangle2D(-vpBounds.getMinX(), -vpBounds.getMinY(), vpBounds.getWidth(), vpBounds.getHeight());
     }
 
@@ -150,8 +153,12 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     }
 
     public void setScrollPosition(double hValue, double vValue) {
-        scrollPane.setHvalue(hValue);
-        scrollPane.setVvalue(vValue);
+        if (hValue != scrollPane.getHvalue()) {
+            scrollPane.setHvalue(hValue);
+        }
+        if (vValue != scrollPane.getVvalue()) {
+            scrollPane.setVvalue(vValue);
+        }
     }
 
     /**
@@ -176,7 +183,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     }
 
     Rectangle2D getViewPortInBoardCoordinates() {
-        Bounds vp = scrollPane.getViewportBounds();
+        Bounds vp = getViewportBounds();
         double scale = Math.max(1.0E-8, getDisplayScale());
         Rectangle2D boardArea = getSkinnable().getArea();
         return new Rectangle2D(
@@ -187,18 +194,10 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         );
     }
 
-
-    /**
-     * Converts local coordinates relative to the PinBoard area into board coordinates.
-     *
-     * @param xLocal the x-coordinate in local space relative to the PinBoard area
-     * @param yLocal the y-coordinate in local space relative to the PinBoard area
-     * @return a {@link PinBoard.BoardPosition} object representing the corresponding coordinates on the board
-     */
-    public PinBoard.BoardPosition toBoardPosition(double xLocal, double yLocal) {
-        Rectangle2D area = getSkinnable().getArea();
-        return new PinBoard.BoardPosition(area.getMinX() + xLocal, area.getMinY() + yLocal);
+    Bounds getViewportBounds() {
+        return scrollPane.getViewportBounds();
     }
+
 
     /**
      * Converts a given {@link PinBoard.PositionInItem} to a {@link PinBoard.BoardPosition}.
@@ -226,7 +225,15 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
      */
     public void scrollTo(PinBoard.PositionInItem pos, double relativeXinVP, double relativeYinVP) {
-        scrollTo(toBoardPosition(pos), relativeXinVP, relativeYinVP);
+        refresh(u -> u.withScrollTarget(
+                        new PinBoardUpdates.ScrollTarget(
+                                pos,
+                                null,
+                                relativeXinVP, relativeYinVP,
+                                0, 0
+                        )
+                )
+        );
     }
 
     /**
@@ -239,7 +246,15 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
      */
     public void scrollTo(PinBoard.BoardPosition pos, double relativeXinVP, double relativeYinVP) {
-        scrollTo(pos.x(), pos.y(), relativeXinVP, relativeYinVP);
+        refresh(u -> u.withScrollTarget(
+                        new PinBoardUpdates.ScrollTarget(
+                                null,
+                                pos,
+                                relativeXinVP, relativeYinVP,
+                                0, 0
+                        )
+                )
+        );
     }
 
     /**
@@ -249,22 +264,14 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param deltaY the vertical scroll offset to apply
      */
     public void scroll(double deltaX, double deltaY) {
-        ScrollPosition pos = getScrollPosition();
-        Rectangle2D area = getSkinnable().getArea();
-        Bounds vpBounds = scrollPane.getViewportBounds();
-
-        double spWidth = scrollPane.getHmax() - scrollPane.getHmin();
-        double spHeight = scrollPane.getVmax() - scrollPane.getVmin();
-
-        double scWidth = area.getWidth() - vpBounds.getWidth();
-        double scHeight = area.getHeight() - vpBounds.getHeight();
-
-        double factorH = spWidth / scWidth;
-        double factorV = spHeight / scHeight;
-
-        setScrollPosition(
-                pos.hValue() - deltaX * factorH,
-                pos.vValue() - deltaY * factorV
+        refresh(u -> u.withScrollTarget(
+                        new PinBoardUpdates.ScrollTarget(
+                                null,
+                                null,
+                                0, 0,
+                                deltaX, deltaY
+                        )
+                )
         );
     }
 
@@ -298,7 +305,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
      * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
      */
-    private void scrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
+    private void doScrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
         LOG.debug("scrollTo({}, {}, {}, {})", x, y, relativeXinVP, relativeYinVP);
 
         Rectangle2D boardArea = getSkinnable().getArea();
@@ -307,7 +314,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             return;
         }
 
-        Bounds viewportBounds = scrollPane.getViewportBounds();
+        Bounds viewportBounds = getViewportBounds();
 
         double tx = Math.clamp(relativeXinVP, 0.0, 1.0) * viewportBounds.getWidth();
         double ty = Math.clamp(relativeYinVP, 0.0, 1.0) * viewportBounds.getHeight();
@@ -332,7 +339,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             return;
         }
 
-        Bounds viewportBounds = scrollPane.getViewportBounds();
+        Bounds viewportBounds = getViewportBounds();
 
         Rectangle2D viewPortInBoardCoordinates = getViewPortInBoardCoordinates();
         if (xBoard < viewPortInBoardCoordinates.getMinX()) {

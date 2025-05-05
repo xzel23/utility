@@ -6,56 +6,90 @@ import org.jspecify.annotations.Nullable;
 
 record PinBoardUpdates(
         @Nullable Double scale,
-        @Nullable Rectangle2D boardArea
+        @Nullable Rectangle2D boardArea,
+        @Nullable ScrollTarget scrollTarget
 ) {
-    static final PinBoardUpdates EMPTY_UPDATES = new PinBoardUpdates(null, null);
+    static final PinBoardUpdates EMPTY_UPDATES = new PinBoardUpdates(null, null, null);
 
     public PinBoardUpdates withScale(double scale) {
-        return new PinBoardUpdates(scale, boardArea);
+        return new PinBoardUpdates(scale, boardArea, scrollTarget);
     }
 
     public PinBoardUpdates withArea(Rectangle2D boardArea) {
-        return new PinBoardUpdates(scale, boardArea);
+        return new PinBoardUpdates(scale, boardArea, scrollTarget);
     }
 
-    /**
-     * Sets the display scale of the PinBoard. This method adjusts the scaling of the content,
-     * recalculates viewport dimensions, and maintains the current scroll positions relative to the content.
-     */
-    void applyDisplayScale(PinBoardSkin target) {
-        if (scale == null) {
-            return;
+    public PinBoardUpdates withScrollTarget(ScrollTarget scrollTarget) {
+        if (this.scrollTarget == null || scrollTarget.itemPos != null || scrollTarget.boardPos != null) {
+            // if no scroll target is set, or the new one is an item or board position, use the new one
+            return new PinBoardUpdates(scale, boardArea, scrollTarget);
         }
-
-        ScrollPosition oldPos = target.getScrollPosition();
-        Rectangle2D boardArea = target.getSkinnable().getArea();
-        Rectangle2D viewportBefore = target.getViewPortInBoardCoordinates();
-
-        double oldX = boardArea.getMinX() + oldPos.hValue() * Math.max(0, boardArea.getWidth() - viewportBefore.getWidth());
-        double oldY = boardArea.getMinY() + oldPos.vValue() * Math.max(0, boardArea.getHeight() - viewportBefore.getHeight());
-
-        Bounds vp = target.scrollPane.getViewportBounds();
-        Rectangle2D viewportAfter = new Rectangle2D(
-                (boardArea.getMinX() - vp.getMinX() / scale),
-                (boardArea.getMinY() - vp.getMinY() / scale),
-                vp.getWidth() / scale,
-                vp.getHeight() / scale
+        // if the new one is only a translation, apply it to the current one
+        ScrollTarget merged = new ScrollTarget(
+                this.scrollTarget.itemPos,
+                this.scrollTarget.boardPos,
+                this.scrollTarget.dxBoard,
+                this.scrollTarget.dyBoard,
+                this.scrollTarget.dxVP + scrollTarget.dxVP,
+                this.scrollTarget.dyBoard + scrollTarget.dyVP
         );
-
-        double hValue = (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth());
-        double vValue = (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight());
-
-        target.pane.setScaleX(scale);
-        target.pane.setScaleY(scale);
-
-        target.setScrollPosition(hValue, vValue);
+        return new PinBoardUpdates(scale, boardArea, scrollTarget);
     }
 
-    void applyBoardArea(PinBoardSkin target) {
-        if (boardArea == null) {
+    record ScrollTarget(
+            PinBoard.@Nullable PositionInItem itemPos,
+            PinBoard.@Nullable BoardPosition boardPos,
+            double dxBoard, double dyBoard,
+            double dxVP, double dyVP
+    ) {}
+
+    void apply(PinBoardSkin skin) {
+        if (this == EMPTY_UPDATES) {
             return;
         }
 
-        target.pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
+        Rectangle2D vpBoard = skin.getViewPortInBoardCoordinates();
+        PinBoard.BoardPosition bpBefore = new PinBoard.BoardPosition(vpBoard.getMinX(), vpBoard.getMinY());
+        PinBoard.BoardPosition bp = bpBefore;
+
+        double oldScale = skin.pane.getScaleX();
+        double newScale = oldScale;
+
+        // apply area change
+        if (boardArea != null) {
+            skin.pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
+        }
+
+        // apply scaling
+        if (scale != null) {
+            newScale = scale;
+            skin.pane.setScaleX(scale);
+            skin.pane.setScaleY(scale);
+        }
+
+        // apply scroll
+        if (scrollTarget != null) {
+            if (scrollTarget.itemPos != null) {
+                bp = skin.toBoardPosition(scrollTarget.itemPos);
+            } else if (scrollTarget.boardPos != null) {
+                bp = scrollTarget.boardPos;
+            }
+
+            bp = new PinBoard.BoardPosition(
+                    bp.x() + scrollTarget.dxBoard + scrollTarget.dxVP / oldScale,
+                    bp.y() + scrollTarget.dyBoard + scrollTarget.dxVP / oldScale
+            );
+        }
+
+        Bounds bounds = skin.getViewportBounds();
+        Rectangle2D area = skin.getSkinnable().getArea();
+
+        double divX = Math.max(0, (area.getWidth() - bounds.getWidth() / newScale));
+        double hvalue = divX > 1.0E-8 ? (bp.x() - area.getMinX()) / divX : 0.0;
+
+        double divY = Math.max(0, (area.getHeight() - bounds.getHeight() / newScale));
+        double vvalue = divY > 1.0E-8 ? (bp.y() - area.getMinY()) / divY : 0.0;
+
+        skin.setScrollPosition(hvalue, vvalue);
     }
 }
