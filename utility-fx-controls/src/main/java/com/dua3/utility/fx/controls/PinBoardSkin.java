@@ -169,18 +169,23 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @return Optional containing the item at (x,y) and the coordinates relative to the item area
      */
     public Optional<PinBoard.PositionInItem> getPositionInItem(double xViewport, double yViewport) {
+        PinBoard.BoardPosition pos = getPositionInBoard(xViewport, yViewport);
+        List<PinBoard.Item> items = List.copyOf(getSkinnable().visibleItems);
+        for (PinBoard.Item item : items) {
+            Rectangle2D a = item.area();
+            if (a.contains(pos.x(), pos.y())) {
+                return Optional.of(new PinBoard.PositionInItem(item, pos.x() - a.getMinX(), pos.y() - a.getMinY()));
+            }
+        }
+        return Optional.empty();
+    }
+
+    public PinBoard.BoardPosition getPositionInBoard(double xViewport, double yViewport) {
         Rectangle2D vp = getViewPortInBoardCoordinates();
         double scale = Math.max(1.0E-8, getDisplayScale());
         double x = xViewport / scale + vp.getMinX();
         double y = yViewport / scale + vp.getMinY();
-        List<PinBoard.Item> items = List.copyOf(getSkinnable().visibleItems);
-        for (PinBoard.Item item : items) {
-            Rectangle2D a = item.area();
-            if (a.contains(x, y)) {
-                return Optional.of(new PinBoard.PositionInItem(item, x - a.getMinX(), y - a.getMinY()));
-            }
-        }
-        return Optional.empty();
+        return new PinBoard.BoardPosition(x, y);
     }
 
     Rectangle2D getViewPortInBoardCoordinates() {
@@ -400,7 +405,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      *
      * @return the current display scale
      */
-    private double getDisplayScale() {
+    double getDisplayScale() {
         return pane.getScaleX();
     }
 }
