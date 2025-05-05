@@ -1,6 +1,5 @@
 package com.dua3.utility.fx.controls;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import org.jspecify.annotations.Nullable;
 
@@ -49,45 +48,60 @@ record PinBoardUpdates(
         }
 
         PinBoard.BoardPosition bp = skin.getPositionInBoard(0, 0);
-
-        double oldScale = skin.getDisplayScale();
-        double newScale = oldScale;
+        Rectangle2D vpBoard = skin.getViewPortInBoardCoordinates();
+        double vpWidth = skin.getViewportBounds().getWidth();
+        double vpHeight = skin.getViewportBounds().getHeight();
+        Rectangle2D board = skin.getSkinnable().getArea();
+        double displayScale = skin.getDisplayScale();
 
         // apply area change
         if (boardArea != null) {
             skin.pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
+            board = boardArea;
         }
 
         // apply scaling
         if (scale != null) {
-            newScale = scale;
-            skin.pane.setScaleX(newScale);
-            skin.pane.setScaleY(newScale);
+            double newScale = scale;
+            if (newScale != displayScale) {
+                skin.pane.setScaleX(newScale);
+                skin.pane.setScaleY(newScale);
+                displayScale = newScale;
+            }
         }
 
         // apply scroll
         if (scrollTarget != null) {
             if (scrollTarget.itemPos != null) {
-                bp = skin.toBoardPosition(scrollTarget.itemPos);
+                Rectangle2D itemArea = scrollTarget.itemPos.item().area();
+
+                double xBoard = itemArea.getMinX() + scrollTarget.itemPos.x();
+                double yBoard = itemArea.getMinY() + scrollTarget.itemPos.y();
+
+                bp = new PinBoard.BoardPosition(xBoard, yBoard);
             } else if (scrollTarget.boardPos != null) {
                 bp = scrollTarget.boardPos;
             }
 
             bp = new PinBoard.BoardPosition(
-                    bp.x() + scrollTarget.dxBoard + scrollTarget.dxVP / oldScale,
-                    bp.y() + scrollTarget.dyBoard + scrollTarget.dxVP / oldScale
+                    bp.x() + scrollTarget.dxBoard + scrollTarget.dxVP / displayScale,
+                    bp.y() + scrollTarget.dyBoard + scrollTarget.dxVP / displayScale
             );
         }
 
-        Bounds bounds = skin.getViewportBounds();
-        Rectangle2D area = skin.getSkinnable().getArea();
+        doScroll(skin, board, vpWidth, vpHeight, displayScale, bp);
+    }
 
-        double divX = Math.max(0, (area.getWidth() - bounds.getWidth() / newScale));
-        double hvalue = divX > 1.0E-8 ? (bp.x() - area.getMinX()) / divX : 0.0;
-
-        double divY = Math.max(0, (area.getHeight() - bounds.getHeight() / newScale));
-        double vvalue = divY > 1.0E-8 ? (bp.y() - area.getMinY()) / divY : 0.0;
-
+    private static void doScroll(
+            PinBoardSkin skin,
+            Rectangle2D board,
+            double vpWidth,
+            double vpHeight,
+            double displayScale,
+            PinBoard.BoardPosition bp
+    ) {
+        double hvalue = Math.clamp((bp.x() - board.getMinX()) / (board.getWidth() - vpWidth / displayScale), 0.0, 1.0);
+        double vvalue = Math.clamp((bp.y() - board.getMinY()) / (board.getHeight() - vpHeight / displayScale), 0.0, 1.0);
         skin.setScrollPosition(hvalue, vvalue);
     }
 }
