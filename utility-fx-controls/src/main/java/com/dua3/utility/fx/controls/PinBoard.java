@@ -228,6 +228,15 @@ public class PinBoard extends Control {
         }
     }
 
+    /**
+     * Scrolls the PinBoard to the specified position within an item.
+     *
+     * @param item the item
+     * @param x the x-coordinate inside the item
+     * @param y the y-coordinate inside the item
+     * @param dxVP x-offset in pixels
+     * @param dyVP y-offset in pixels
+     */
     public void scrollTo(Item item, double x, double y, double dxVP, double dyVP) {
         scrollTo(new PositionInItem(item, x, y), dxVP, dyVP);
     }

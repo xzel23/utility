@@ -79,7 +79,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             PinBoard board = getSkinnable();
             Rectangle2D boardArea = board.getArea();
 
-            Rectangle2D viewPort = getViewPort();
             Rectangle2D viewportInLocal = getViewPortInBoardCoordinates();
 
             double dx = Math.max(0, viewportInLocal.getWidth() - boardArea.getWidth()) / 2.0 - boardArea.getMinX();
