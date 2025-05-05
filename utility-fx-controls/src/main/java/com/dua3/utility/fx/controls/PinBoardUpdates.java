@@ -48,11 +48,9 @@ record PinBoardUpdates(
             return;
         }
 
-        Rectangle2D vpBoard = skin.getViewPortInBoardCoordinates();
-        PinBoard.BoardPosition bpBefore = new PinBoard.BoardPosition(vpBoard.getMinX(), vpBoard.getMinY());
-        PinBoard.BoardPosition bp = bpBefore;
+        PinBoard.BoardPosition bp = skin.getPositionInBoard(0, 0);
 
-        double oldScale = skin.pane.getScaleX();
+        double oldScale = skin.getDisplayScale();
         double newScale = oldScale;
 
         // apply area change
@@ -63,8 +61,8 @@ record PinBoardUpdates(
         // apply scaling
         if (scale != null) {
             newScale = scale;
-            skin.pane.setScaleX(scale);
-            skin.pane.setScaleY(scale);
+            skin.pane.setScaleX(newScale);
+            skin.pane.setScaleY(newScale);
         }
 
         // apply scroll
