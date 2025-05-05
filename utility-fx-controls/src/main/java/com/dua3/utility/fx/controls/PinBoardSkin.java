@@ -163,28 +163,10 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     public PinBoard.BoardPosition getPositionInBoard(double xViewport, double yViewport) {
         Rectangle2D vp = getViewPortInBoardCoordinates();
-        double scale = Math.max(1.0E-8, getDisplayScale());
+        double scale = getDisplayScale();
         double x = xViewport / scale + vp.getMinX();
         double y = yViewport / scale + vp.getMinY();
         return new PinBoard.BoardPosition(x, y);
-    }
-
-    /**
-     * Retrieves a list of items from the PinBoard that are visible within the current viewport.
-     *
-     * @return a list of PinBoard.Item objects that intersect with the viewport area.
-     */
-    public List<PinBoard.Item> getVisibleItems() {
-        List<PinBoard.Item> visibleItems = new ArrayList<>();
-        Rectangle2D b = getViewPortInBoardCoordinates();
-        List<PinBoard.Item> items = new ArrayList<>(getSkinnable().getItems());
-        for (PinBoard.Item item : items) {
-            Rectangle2D a = item.area();
-            if (a.intersects(b)) {
-                visibleItems.add(item);
-            }
-        }
-        return visibleItems;
     }
 
     private Rectangle2D getViewPortInBoardCoordinates() {
@@ -199,18 +181,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         );
     }
 
-
-    /**
-     * Converts local coordinates relative to the PinBoard area into board coordinates.
-     *
-     * @param xLocal the x-coordinate in local space relative to the PinBoard area
-     * @param yLocal the y-coordinate in local space relative to the PinBoard area
-     * @return a {@link PinBoard.BoardPosition} object representing the corresponding coordinates on the board
-     */
-    public PinBoard.BoardPosition toBoardPosition(double xLocal, double yLocal) {
-        Rectangle2D area = getSkinnable().getArea();
-        return new PinBoard.BoardPosition(area.getMinX() + xLocal, area.getMinY() + yLocal);
-    }
 
     /**
      * Converts a given {@link PinBoard.PositionInItem} to a {@link PinBoard.BoardPosition}.
@@ -233,12 +203,12 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      *
      * @param pos the position within an item on the PinBoard. This includes the item information
      *            and its coordinates, relative to its area on the board.
-     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
-     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     * @param dxVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
+     * @param dyVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
      */
-    public void scrollTo(PinBoard.PositionInItem pos, double relativeXinVP, double relativeYinVP) {
+    public void scrollTo(PinBoard.PositionInItem pos, double dxVP, double dyVP) {
         PinBoard.BoardPosition bp = toBoardPosition(pos);
-        scrollTo(bp.x(), bp.y(), relativeXinVP, relativeYinVP);
+        scrollTo(bp.x(), bp.y(), dxVP, dyVP);
     }
 
     /**
@@ -304,11 +274,11 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      *
      * @param x The x-coordinate in <strong>local coordinates</strong> to scroll to
      * @param y The y-coordinate in <strong>local coordinates</strong> to scroll to
-     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
-     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     * @param dxVP x-offset in pixels
+     * @param dyVP y-offset in pixels
      */
-    public void scrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
-        LOG.debug("scrollTo({}, {}, {}, {})", x, y, relativeXinVP, relativeYinVP);
+    public void scrollTo(double x, double y, double dxVP, double dyVP) {
+        LOG.debug("scrollTo({}, {}, {}, {})", x, y, dxVP, dyVP);
 
         Rectangle2D boardArea = getSkinnable().getArea();
 
@@ -318,10 +288,8 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         Bounds viewportBounds = scrollPane.getViewportBounds();
 
-        double tx = Math.clamp(relativeXinVP, 0.0, 1.0) * viewportBounds.getWidth();
-        double ty = Math.clamp(relativeYinVP, 0.0, 1.0) * viewportBounds.getHeight();
-        double sx = calcScrollPosition(x - tx, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth());
-        double sy = calcScrollPosition(y - ty, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight());
+        double sx = calcScrollPosition(x - dxVP, boardArea.getMinX(), boardArea.getMaxX(), viewportBounds.getWidth());
+        double sy = calcScrollPosition(y - dyVP, boardArea.getMinY(), boardArea.getMaxY(), viewportBounds.getHeight());
 
         setScrollPosition(sx, sy);
     }

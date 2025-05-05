@@ -228,20 +228,20 @@ public class PinBoard extends Control {
         }
     }
 
-    public void scrollTo(Item item, double x, double y, double relativeXinVP, double relativeYinVP) {
-        scrollTo(new PositionInItem(item, x, y), relativeXinVP, relativeYinVP);
+    public void scrollTo(Item item, double x, double y, double dxVP, double dyVP) {
+        scrollTo(new PositionInItem(item, x, y), dxVP, dyVP);
     }
 
     /**
      * Scrolls the PinBoard to the specified position within an item.
      *
      * @param pos the position within an item to scroll to
-     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
-     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     * @param dxVP x-offset in pixels
+     * @param dyVP y-offset in pixels
      */
-    public void scrollTo(PositionInItem pos, double relativeXinVP, double relativeYinVP) {
+    public void scrollTo(PositionInItem pos, double dxVP, double dyVP) {
         if (getSkin() instanceof PinBoardSkin skin) {
-            skin.scrollTo(pos, relativeXinVP, relativeYinVP);
+            skin.scrollTo(pos, dxVP, dyVP);
         }
     }
 
@@ -297,12 +297,12 @@ public class PinBoard extends Control {
      *
      * @param x The x-coordinate in <strong>local coordinates</strong> to scroll to
      * @param y The y-coordinate in <strong>local coordinates</strong> to scroll to
-     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
-     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     * @param dxVP x-offset in pixels
+     * @param dyVP x-offset in pixels
      */
-    public void scrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
+    public void scrollTo(double x, double y, double dxVP, double dyVP) {
         if (getSkin() instanceof PinBoardSkin skin) {
-            skin.scrollTo(new BoardPosition(x, y), relativeXinVP, relativeYinVP);
+            skin.scrollTo(new BoardPosition(x, y), dxVP, dyVP);
         }
     }
 
