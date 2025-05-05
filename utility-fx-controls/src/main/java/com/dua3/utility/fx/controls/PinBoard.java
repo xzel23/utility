@@ -147,7 +147,7 @@ public class PinBoard extends Control {
      */
     public void refresh() {
         if (getSkin() instanceof PinBoardSkin skin) {
-            skin.refresh(UnaryOperator.identity());
+            skin.refresh();
         }
     }
 
