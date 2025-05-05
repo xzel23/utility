@@ -28,8 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-
 
 /**
  * A JavaFX component where items can be pinned at a position.

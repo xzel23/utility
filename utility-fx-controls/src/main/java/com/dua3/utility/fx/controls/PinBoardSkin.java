@@ -5,7 +5,9 @@ import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -27,6 +29,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     private final AnchorPane pane = new AnchorPane();
     private final Group group = new Group(pane);
     private final ScrollPane scrollPane = new ScrollPane(group);
+    private final ObservableList<PinBoard.Item> visibleItems = FXCollections.observableArrayList();
 
     PinBoardSkin(PinBoard pinBoard) {
         super(pinBoard);
@@ -42,9 +45,10 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         getChildren().setAll(scrollPane);
 
+        Rectangle2D boarArea = pinBoard.getArea();
+        pane.setMinSize(boarArea.getWidth(), boarArea.getHeight());
         pinBoard.areaProperty().addListener((v, o, n) -> {
-            pane.setMinWidth(n.getWidth());
-            pane.setMinHeight(n.getHeight());
+            pane.setMinSize(n.getWidth(), n.getHeight());
         });
 
         pinBoard.getItems().addListener((ListChangeListener.Change<?> c) -> refresh());
@@ -80,22 +84,21 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             double dy = Math.max(0, viewportInLocal.getHeight() - boardArea.getHeight()) / 2.0 - boardArea.getMinY();
 
             // populate the pane with nodes of visible items
-            List<Node> visibleNodes = board.items
-                    .stream()
-                    .<Node>mapMulti((item, downstream) -> {
-                        if (item.area().intersects(viewportInLocal)) {
-                            LOG.debug("item is visible: {}", item::name);
-                            Rectangle2D itemArea = item.area();
-                            Node node = item.nodeBuilder().get();
-                            node.setTranslateX(dx + itemArea.getMinX());
-                            node.setTranslateY(dy + itemArea.getMinY());
-                            downstream.accept(node);
-                        }
-                    })
-                    .toList();
+            List<PinBoard.Item> visibleItems = new ArrayList<>();
+            List<Node> visibleNodes = new ArrayList<>();
+            board.items.forEach(item -> {
+                if (item.area().intersects(viewportInLocal)) {
+                    Rectangle2D itemArea = item.area();
+                    Node node = item.nodeBuilder().get();
+                    node.setTranslateX(dx + itemArea.getMinX());
+                    node.setTranslateY(dy + itemArea.getMinY());
+                    visibleItems.add(item);
+                    visibleNodes.add(node);
+                }
+            });
 
-            pane.setMinSize(boardArea.getWidth(), boardArea.getHeight());
             pane.getChildren().setAll(visibleNodes);
+            board.visibleItems.setAll(visibleItems);
         } finally {
             refresher.setActive(true);
         }
