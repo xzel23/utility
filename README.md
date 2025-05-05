@@ -195,10 +195,13 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
-### 18.4.2
+### 18.5.0
 
+- BREAKING: PinBoard interpretation of the additional parameters to some of the scrolling methods
+  was changed from a viewport relative offset to an absolute offset in pixel
 - PinBoard: introduce a display scale to zoom the pinboard contents; several fixes to the PinBoard class
-- SliderWithButtons implements InputControl
+- PinBoard: optimized rendering to remove flickering when changing scale
+- SliderWithButtons: implements InputControl; support for setting ticks
 - InputPaneBuilder.slider()
 - added some conversion methods to better support StringProperty and DoubleProperty
 
