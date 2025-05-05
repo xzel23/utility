@@ -51,7 +51,7 @@ public class PinBoardSample extends Application {
     public void start(Stage stage) {
         pinBoard.clear();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 500; i++) {
             createItem(pinBoard, i);
         }
 
@@ -62,6 +62,7 @@ public class PinBoardSample extends Application {
         TextArea textArea = new TextArea();
         textArea.setEditable(false);
         textArea.setPrefWidth(400);
+        textArea.setPrefHeight(400);
 
         BooleanProperty inputValid = new SimpleBooleanProperty(false);
         input = Dialogs.inputPane()
@@ -87,6 +88,8 @@ public class PinBoardSample extends Application {
                 int x = (int) evt.getX();
                 int y = (int) evt.getY();
                 text.format("Mouse position: (%d,%d)", x, y);
+
+                text.format("\nvisible items: %s%n", pinBoard.getVisibleItems().size());
 
                 pinBoard.getItemAt(evt.getX(), evt.getY()).ifPresentOrElse(item -> {
                             text.format("\n\ngetItemAt(%d, %d):\n%s", x, y, item.name());
