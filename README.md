@@ -195,6 +195,13 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.4.2
+
+- PinBoard: introduce a display scale to zoom the pinboard contents; several fixes to the PinBoard class
+- SliderWithButtons implements InputControl
+- InputPaneBuilder.slider()
+- added some conversion methods to better support StringProperty and DoubleProperty
+
 ### 18.4.1
 
 - add RichText.runStream()
