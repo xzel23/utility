@@ -230,15 +230,8 @@ public class PinBoard extends Control {
         }
     }
 
-    /**
-     * Scrolls the PinBoard to the specified position within an item.
-     *
-     * @param pos the position within an item to scroll to
-     */
-    public void scrollTo(PositionInItem pos) {
-        if (getSkin() instanceof PinBoardSkin skin) {
-            skin.scrollTo(pos);
-        }
+    public void scrollTo(Item item, double x, double y, double relativeXinVP, double relativeYinVP) {
+        scrollTo(new PositionInItem(item, x, y), relativeXinVP, relativeYinVP);
     }
 
     /**
@@ -285,25 +278,15 @@ public class PinBoard extends Control {
     }
 
     /**
-     * Scrolls the PinBoard the specified position into view.
+     * Scrolls the PinBoard so that the point (x, y) in the item becomes visible.
      *
-     * @param pos the position
+     * @param item the item
+     * @param x the x-coordinate inside the item
+     * @param y the y-coordinate inside the item
      */
-    public void scrollIntoView(PositionInItem pos) {
+    public void scrollIntoView(Item item, double x, double y) {
         if (getSkin() instanceof PinBoardSkin skin) {
-            skin.scrollIntoView(pos);
-        }
-    }
-
-    /**
-     * Scrolls the PinBoard to the specified position within an item.
-     *
-     * @param x the x-position in board coordinates to scroll to
-     * @param y the y-position in board coordinates to scroll to
-     */
-    public void scrollTo(double x, double y) {
-        if (getSkin() instanceof PinBoardSkin skin) {
-            skin.scrollTo(x, y);
+            skin.scrollIntoView(new PositionInItem(item, x, y));
         }
     }
 
@@ -321,7 +304,7 @@ public class PinBoard extends Control {
      */
     public void scrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
         if (getSkin() instanceof PinBoardSkin skin) {
-            skin.scrollTo(x, y, relativeXinVP, relativeYinVP);
+            skin.scrollTo(new BoardPosition(x, y), relativeXinVP, relativeYinVP);
         }
     }
 
@@ -333,7 +316,7 @@ public class PinBoard extends Control {
      */
     public void scrollIntoView(double x, double y) {
         if (getSkin() instanceof PinBoardSkin skin) {
-            skin.scrollIntoView(x, y);
+            skin.scrollIntoView(new BoardPosition(x, y));
         }
     }
 

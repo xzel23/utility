@@ -117,11 +117,11 @@ public class PinBoardSample extends Application {
                 getDoubleInput("x"),
                 getDoubleInput("y")
         );
-        pinBoard.scrollTo(pos);
+        pinBoard.scrollTo(pos, 0, 0);
     }
 
     private void scrollTo() {
-        pinBoard.scrollTo(getDoubleInput("x"), getDoubleInput("y"));
+        pinBoard.scrollTo(getDoubleInput("x"), getDoubleInput("y"), 0, 0);
     }
 
     private void scrollToRelVP() {

@@ -217,17 +217,8 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     }
 
     /**
-     * Scrolls the PinBoard to the position specified by {@link PinBoard.PositionInItem}.
-     *
-     * @param pos the position within an item on the PinBoard. This includes the item information
-     *            and its coordinates, relative to its area on the board.
-     */
-    public void scrollTo(PinBoard.PositionInItem pos) {
-        scrollTo(toBoardPosition(pos));
-    }
-
-    /**
-     * Scrolls the PinBoard to the position specified by {@link PinBoard.PositionInItem}.
+     * Scrolls the PinBoard to the position specified by {@link PinBoard.PositionInItem} with a relative translation
+     * in viewport coordinates.
      *
      * @param pos the position within an item on the PinBoard. This includes the item information
      *            and its coordinates, relative to its area on the board.
@@ -235,8 +226,20 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
      */
     public void scrollTo(PinBoard.PositionInItem pos, double relativeXinVP, double relativeYinVP) {
-        PinBoard.BoardPosition bp = toBoardPosition(pos);
-        scrollTo(bp.x(), bp.y(), relativeXinVP, relativeYinVP);
+        scrollTo(toBoardPosition(pos), relativeXinVP, relativeYinVP);
+    }
+
+    /**
+     * Scrolls the PinBoard to the position specified by {@link PinBoard.BoardPosition} translation
+     * in viewport coordinates.
+     *
+     * @param pos the position within an item on the PinBoard. This includes the item information
+     *            and its coordinates, relative to its area on the board.
+     * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
+     * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
+     */
+    public void scrollTo(PinBoard.BoardPosition pos, double relativeXinVP, double relativeYinVP) {
+        scrollTo(pos.x(), pos.y(), relativeXinVP, relativeYinVP);
     }
 
     /**
@@ -277,16 +280,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     }
 
     /**
-     * Scrolls the view of the PinBoard to the specified board position.
-     *
-     * @param pos The {@link PinBoard.BoardPosition} specifying the target position
-     *            on the board to scroll to.
-     */
-    public void scrollTo(PinBoard.BoardPosition pos) {
-        scrollTo(pos.x(), pos.y());
-    }
-
-    /**
      * Scrolls the PinBoard view to ensure that the specified board position
      * is brought into the visible area.
      *
@@ -302,20 +295,10 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      *
      * @param x The x-coordinate in <strong>local coordinates</strong> to scroll to
      * @param y The y-coordinate in <strong>local coordinates</strong> to scroll to
-     */
-    public void scrollTo(double x, double y) {
-        scrollTo(x, y, 0, 0);
-    }
-
-    /**
-     * Scrolls the PinBoard upper left corner to the specified board coordinates.
-     *
-     * @param x The x-coordinate in <strong>local coordinates</strong> to scroll to
-     * @param y The y-coordinate in <strong>local coordinates</strong> to scroll to
      * @param relativeXinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 left, 1 right
      * @param relativeYinVP the relative position inside the viewport, a value between 0 and 1, i.e., 0 top, 1 bottom
      */
-    public void scrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
+    private void scrollTo(double x, double y, double relativeXinVP, double relativeYinVP) {
         LOG.debug("scrollTo({}, {}, {}, {})", x, y, relativeXinVP, relativeYinVP);
 
         Rectangle2D boardArea = getSkinnable().getArea();
