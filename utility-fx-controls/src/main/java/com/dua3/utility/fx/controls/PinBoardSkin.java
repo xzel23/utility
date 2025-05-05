@@ -3,6 +3,7 @@ package com.dua3.utility.fx.controls;
 import com.dua3.utility.fx.FxRefresh;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.FXCollections;
@@ -42,6 +43,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setCache(false);
 
         getChildren().setAll(scrollPane);
 
@@ -402,30 +404,37 @@ class PinBoardSkin extends SkinBase<PinBoard> {
      *              where values greater than 1 represent zooming in, and values less than 1 represent zooming out.
      */
     private void setDisplayScale(double scale) {
-        ScrollPosition oldPos = getScrollPosition();
-        Rectangle2D boardArea = getSkinnable().getArea();
-        Rectangle2D viewportBefore = getViewPortInBoardCoordinates();
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                ScrollPosition oldPos = getScrollPosition();
+                Rectangle2D boardArea = getSkinnable().getArea();
+                Rectangle2D viewportBefore = getViewPortInBoardCoordinates();
 
-        double oldX = boardArea.getMinX() + oldPos.hValue() * Math.max(0, boardArea.getWidth() - viewportBefore.getWidth());
-        double oldY = boardArea.getMinY() + oldPos.vValue() * Math.max(0, boardArea.getHeight() - viewportBefore.getHeight());
+                double oldX = boardArea.getMinX() + oldPos.hValue() * Math.max(0, boardArea.getWidth() - viewportBefore.getWidth());
+                double oldY = boardArea.getMinY() + oldPos.vValue() * Math.max(0, boardArea.getHeight() - viewportBefore.getHeight());
 
-        Bounds vp = scrollPane.getViewportBounds();
-        Rectangle2D viewportAfter = new Rectangle2D(
-                (boardArea.getMinX() - vp.getMinX() / scale),
-                (boardArea.getMinY() - vp.getMinY() / scale),
-                vp.getWidth() / scale,
-                vp.getHeight() / scale
-        );
+                Bounds vp = scrollPane.getViewportBounds();
+                Rectangle2D viewportAfter = new Rectangle2D(
+                        (boardArea.getMinX() - vp.getMinX() / scale),
+                        (boardArea.getMinY() - vp.getMinY() / scale),
+                        vp.getWidth() / scale,
+                        vp.getHeight() / scale
+                );
 
-        double hValue = (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth());
-        double vValue = (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight());
+                double hValue = (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth());
+                double vValue = (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight());
 
-        pane.setScaleX(scale);
-        pane.setScaleY(scale);
+                pane.setScaleX(scale);
+                pane.setScaleY(scale);
 
-        setScrollPosition(hValue, vValue);
+                setScrollPosition(hValue, vValue);
 
-        refresh();
+                refresh();
+
+                stop();
+            }
+        }.start();
     }
 
     /**
