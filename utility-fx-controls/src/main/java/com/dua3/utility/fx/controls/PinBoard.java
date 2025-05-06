@@ -354,6 +354,36 @@ public class PinBoard extends Control {
     }
 
     /**
+     * Get board position at point from viewport coordinates.
+     *
+     * @param xVP x-coordinate
+     * @param yVP y-coordinate
+     * @return board position at (x,y)
+     */
+    public BoardPosition getPositionInBoard(double xVP, double yVP) {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            return skin.getPositionInBoard(xVP, yVP);
+        } else {
+            return BoardPosition.ORIGIN;
+        }
+    }
+
+    /**
+     * Calculates the viewport dimensions in the context of the board coordinates
+     * with respect to the current display scale and board area.
+     *
+     * @return A {@link Rectangle2D} representing the viewport position and size
+     *         (width and height) in the board's coordinate system.
+     */
+    public Rectangle2D getViewPortInBoardCoordinates() {
+        if (getSkin() instanceof PinBoardSkin skin) {
+            return skin.getViewPortInBoardCoordinates();
+        } else {
+            return Rectangle2D.EMPTY;
+        }
+    }
+
+    /**
      * Add item at the bottom, centered horizontally.
      *
      * @param name         item name
@@ -531,6 +561,8 @@ public class PinBoard extends Control {
      * @param x The x-coordinate.
      * @param y The y-coordinate.
      */
-    public record BoardPosition(double x, double y) {}
+    public record BoardPosition(double x, double y) {
+        public static final BoardPosition ORIGIN = new BoardPosition(0, 0);
+    }
 }
 

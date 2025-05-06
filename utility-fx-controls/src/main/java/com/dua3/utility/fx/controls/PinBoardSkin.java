@@ -160,15 +160,29 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         return Optional.empty();
     }
 
-    public PinBoard.BoardPosition getPositionInBoard(double xViewport, double yViewport) {
+    /**
+     * Get board position at point from viewport coordinates.
+     *
+     * @param xVP x-coordinate
+     * @param yVP y-coordinate
+     * @return board position at (x,y)
+     */
+    public PinBoard.BoardPosition getPositionInBoard(double xVP, double yVP) {
         Rectangle2D vp = getViewPortInBoardCoordinates();
         double scale = getDisplayScale();
-        double x = xViewport / scale + vp.getMinX();
-        double y = yViewport / scale + vp.getMinY();
+        double x = xVP / scale + vp.getMinX();
+        double y = yVP / scale + vp.getMinY();
         return new PinBoard.BoardPosition(x, y);
     }
 
-    private Rectangle2D getViewPortInBoardCoordinates() {
+    /**
+     * Calculates the viewport dimensions in the context of the board coordinates
+     * with respect to the current display scale and board area.
+     *
+     * @return A {@link Rectangle2D} representing the viewport position and size
+     *         (width and height) in the board's coordinate system.
+     */
+    public Rectangle2D getViewPortInBoardCoordinates() {
         Bounds vp = scrollPane.getViewportBounds();
         double scale = getDisplayScale();
         Rectangle2D boardArea = getSkinnable().getArea();
@@ -179,7 +193,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
                 vp.getHeight() / scale
         );
     }
-
 
     /**
      * Converts a given {@link PinBoard.PositionInItem} to a {@link PinBoard.BoardPosition}.
