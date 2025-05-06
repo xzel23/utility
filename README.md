@@ -195,6 +195,12 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.5.1
+
+- fix PinBoard.scroll() units when scale != 1
+- PinBoard.getViewPortInBoardCoordinates()
+- PinBoard.getPositionInBoard()
+
 ### 18.5.0
 
 - BREAKING: PinBoard interpretation of the additional parameters to some of the scrolling methods
