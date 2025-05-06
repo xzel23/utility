@@ -255,14 +255,14 @@ public class PinBoard extends Control {
     }
 
     /**
-     * Scrolls the PinBoard the specified amount.
+     * Adjusts the scroll position of the PinBoard by the specified horizontal and vertical deltas.
      *
-     * @param deltaX the amount to scroll in horizontal direction
-     * @param deltaY the amount to scroll in vertical direction
+     * @param dxBoard the horizontal scroll offset to apply in board units
+     * @param dyBoard the vertical scroll offset to apply in board units
      */
-    public void scroll(double deltaX, double deltaY) {
+    public void scroll(double dxBoard, double dyBoard) {
         if (getSkin() instanceof PinBoardSkin skin) {
-            skin.scroll(deltaX, deltaY);
+            skin.scroll(dxBoard, dyBoard);
         }
     }
 

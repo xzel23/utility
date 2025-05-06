@@ -213,13 +213,13 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     /**
      * Adjusts the scroll position of the PinBoard by the specified horizontal and vertical deltas.
      *
-     * @param deltaX the horizontal scroll offset to apply
-     * @param deltaY the vertical scroll offset to apply
+     * @param dxBoard the horizontal scroll offset to apply in board units
+     * @param dyBoard the vertical scroll offset to apply in board units
      */
-    public void scroll(double deltaX, double deltaY) {
+    public void scroll(double dxBoard, double dyBoard) {
         ScrollPosition pos = getScrollPosition();
         Rectangle2D area = getSkinnable().getArea();
-        Bounds vpBounds = scrollPane.getViewportBounds();
+        Rectangle2D vpBounds = getViewPortInBoardCoordinates();
 
         double spWidth = scrollPane.getHmax() - scrollPane.getHmin();
         double spHeight = scrollPane.getVmax() - scrollPane.getVmin();
@@ -231,8 +231,8 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         double factorV = spHeight / scHeight;
 
         setScrollPosition(
-                pos.hValue() - deltaX * factorH,
-                pos.vValue() - deltaY * factorV
+                pos.hValue() - dxBoard * factorH,
+                pos.vValue() - dyBoard * factorV
         );
     }
 
