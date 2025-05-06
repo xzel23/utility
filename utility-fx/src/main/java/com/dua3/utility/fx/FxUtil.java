@@ -5,9 +5,12 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.shape.ClosePath;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.concurrent.Value;
 import com.dua3.utility.data.DataUtil;
@@ -66,6 +69,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.LongConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -74,6 +78,8 @@ import java.util.regex.Pattern;
  * JavaFX utility class.
  */
 public final class FxUtil {
+    private static final Logger LOG = LogManager.getLogger(FxUtil.class);
+
     private static final Pattern PATTERN_FILENAME_AND_DOT = Pattern.compile("^\\*\\.");
     private static final FxFontUtil FX_FONT_UTIL = FxFontUtil.getInstance();
 
@@ -893,5 +899,52 @@ public final class FxUtil {
                 FxUtil::convert,
                 FxUtil::convert
         );
+    }
+
+    /**
+     * Schedules a task to be executed on the next frame of the JavaFX application thread.
+     * The provided action will be invoked with the timestamp of the frame in nanoseconds.
+     * <p>
+     * The task is run when the next frame is rendered. Use it to avoid flickering when making updates to the UI.
+     *
+     * @param action a {@code LongConsumer} representing the task to be executed. The input to the consumer
+     *               is the timestamp of the frame in nanoseconds.
+     */
+    public static void runOnNextFrame(LongConsumer action) {
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                try {
+                    action.accept(now);
+                } catch (Exception e) {
+                    LOG.warn("runOnNextFrame(LongConsumer): error executing task", e);
+                } finally {
+                    stop();
+                }
+            }
+        }.start();
+    }
+
+    /**
+     * Schedules the provided action to execute on the next frame using an AnimationTimer.
+     * The action will run once, and the timer will stop immediately afterward.
+     * <p>
+     * The task is run when the next frame is rendered. Use it to avoid flickering when making updates to the UI.
+     *
+     * @param action the Runnable task to be executed on the next frame
+     */
+    public static void runOnNextFrame(Runnable action) {
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                try {
+                    action.run();
+                } catch (Exception e) {
+                    LOG.warn("runOnNextFrame(Runnable): error executing task", e);
+                } finally {
+                    stop();
+                }
+            }
+        }.start();
     }
 }

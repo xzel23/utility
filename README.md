@@ -195,6 +195,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.5.2
+
+- FxUtil.runOnNextFrame()
+
 ### 18.5.1
 
 - fix PinBoard.scroll() units when scale != 1
