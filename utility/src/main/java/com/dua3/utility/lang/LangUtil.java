@@ -39,6 +39,7 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Properties;
+import java.util.SortedSet;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -1738,4 +1739,37 @@ public final class LangUtil {
      * A constant representing an empty array of doubles.
      */
     public static final double[] EMPTY_DOUBLE_ARRAY = {};
+
+    /**
+     * Creates an unmodifiable view of the list passed. The returned list does not allow
+     * modification operations such as adding, removing, or updating elements, and is a fixed-size list.
+     * <p>
+     * The returned List uses less memory than {@code Collections.asUnmodifiableList(ArraysAsList(elements))}.
+     *
+     * @param <T> the type of elements in the list
+     * @param elements the elements to be included in the unmodifiable list
+     * @return an unmodifiable list containing the provided elements
+     */
+    @SafeVarargs
+    public static <T> List<T> asUnmodifiableList(T... elements) {
+        return new UnmodifiableArrayListWrapper<>(elements);
+    }
+
+    /**
+     * Returns an unmodifiable {@link ImmutableSortedListSet} containing the specified elements.
+     * The elements are sorted according to their natural ordering as defined by
+     * the {@link Comparable} interface.
+     * <p>
+     * The returned instance implements both the {@link List} and {@link SortedSet} interfaces.
+     * It uses less memory than a {@link java.util.TreeSet}.
+     *
+     * @param <T> the type of elements that extends {@link Comparable} to ensure natural ordering
+     * @param elements the elements to be included in the unmodifiable sorted set
+     * @return an unmodifiable {@link SortedSet} containing the specified elements, sorted in their natural order
+     */
+    @SafeVarargs
+    public static <T extends Comparable<T>> ImmutableSortedListSet<T> asUnmodifiableSortedListSet(T... elements) {
+        return ImmutableListBackedSortedSet.of(elements);
+    }
+
 }
