@@ -197,6 +197,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ### 18.5.2
 
+- LangUtil: added two new methods, LangUtil.asUnmodifiableSortedListSet() and LangUtil.asUnmodifiableList(),
+  and the implementing classes
+- TextAttributes storage has been changed from a TreeMap to a custom SortedSet implementation (s.a.) backed by
+  a sorted array, greatly reducing memory consumption (in my tests up to 80% less). This change is transparent.
 - FxUtil.runOnNextFrame()
 
 ### 18.5.1
