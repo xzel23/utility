@@ -5,34 +5,46 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.data.Pair;
 
 import java.util.AbstractMap;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * An immutable set of text attributes.
  */
 public final class TextAttributes extends AbstractMap<String, @Nullable Object> {
 
+    record Entry(String getKey, @Nullable Object getValue) implements Map.Entry<String, @Nullable Object>, Comparable<Entry> {
+        @Override
+        public @Nullable Object setValue(@Nullable Object value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int compareTo(Entry o) {
+            return getKey().compareTo(o.getKey());
+        }
+    }
+
     /**
      * empty instance
      */
-    private static final TextAttributes NONE = new TextAttributes(Collections.emptySortedSet());
-    private final SortedSet<Entry<String, @Nullable Object>> entries;
+    private static final TextAttributes NONE = new TextAttributes(new Entry[0]);
+    private final SortedSet<Entry> entries;
     private int hash;
+    private @Nullable FontDef fontDef;
 
-    private TextAttributes(SortedSet<Entry<String, @Nullable Object>> entries) {
-        this.entries = entries;
+    private TextAttributes(Entry[] entries) {
+        this.entries = LangUtil.asUnmodifiableSortedListSet(entries);
     }
 
     /**
@@ -52,7 +64,13 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
      */
     @SafeVarargs
     public static TextAttributes of(Pair<String, ?>... entries) {
-        return of(List.of(entries));
+        Entry[] entries_ = new Entry[entries.length];
+        for (int i = 0; i < entries.length; i++) {
+            Pair<String, ?> entry = entries[i];
+            assert entry.first() != null;
+            entries_[i] = new Entry(entry.first(), entry.second());
+        }
+        return new TextAttributes(entries_);
     }
 
     /**
@@ -62,12 +80,9 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
      * @return TextAttributes instance
      */
     public static TextAttributes of(Iterable<Pair<String, ?>> entries) {
-        SortedSet<Entry<String, @Nullable Object>> entrySet = new TreeSet<>(Entry.comparingByKey());
-        for (Pair<String, ?> entry : entries) {
-            assert entry.first() != null;
-            entrySet.add(new SimpleEntry<>(entry.first(), entry.second()));
-        }
-        return new TextAttributes(entrySet);
+        List<Entry> entryList = new ArrayList<>();
+        entries.forEach(entry -> entryList.addLast(new Entry(entry.first(), entry.second())));
+        return new TextAttributes(entryList.toArray(Entry[]::new));
     }
 
     /**
@@ -77,9 +92,31 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
      * @return TextAttributes instance
      */
     public static TextAttributes of(Map<String, @Nullable Object> map) {
-        SortedSet<Map.Entry<String, @Nullable Object>> entries = new TreeSet<>(Map.Entry.comparingByKey());
-        entries.addAll(map.entrySet());
-        return new TextAttributes(entries);
+        List<Entry> entries = new ArrayList<>(map.size());
+        map.forEach((k, v) -> entries.addLast(new Entry(k,v)));
+        return new TextAttributes(entries.toArray(Entry[]::new));
+    }
+
+    /**
+     * Retrieves the {@link FontDef} associated with this instance. If the font definition is not
+     * already present, it initializes it using an internal method and caches it for future use.
+     * The returned {@link FontDef} is a cloned instance to ensure immutability of the original.
+     *
+     * @return a clone of the current {@link FontDef} instance associated with this object
+     * @throws IllegalStateException if the cloning process fails unexpectedly
+     */
+    public FontDef getFontDef() {
+        FontDef fd = fontDef;
+        if (fd == null) {
+            fd = getFontDefInternal(this);
+            fontDef = fd;
+        }
+        try {
+            return fd.clone();
+        } catch (CloneNotSupportedException e) {
+            // this should not happen
+            throw new IllegalStateException();
+        }
     }
 
     /**
@@ -89,6 +126,13 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
      * @return FontDef instance
      */
     public static FontDef getFontDef(Map<? super String, @Nullable Object> attributes) {
+        if (attributes instanceof TextAttributes ta) {
+            return ta.getFontDef();
+        }
+        return getFontDefInternal(attributes);
+    }
+
+    private static FontDef getFontDefInternal(Map<? super String, @Nullable Object> attributes) {
         Font font = (Font) attributes.get(Style.FONT);
         if (font != null) {
             return font.toFontDef();
@@ -106,8 +150,9 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
     }
 
     @Override
-    public Set<Entry<String, @Nullable Object>> entrySet() {
-        return entries;
+    public SortedSet<Map.Entry<String, @Nullable Object>> entrySet() {
+        //noinspection rawtypes
+        return (SortedSet) entries;
     }
 
     @Override
