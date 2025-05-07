@@ -195,11 +195,15 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
-### 18.5.2
+### 18.6.0
+
+This version is all about reducing memory consumption. The new classes are used internally by RichText and
+RichTextBuilder but can be universally used. Large RichText instances (several million characters, each having
+different attributes), memory usage went down by 50% without noticeable impact on runtime performance.
 
 - LangUtil: added two new methods, LangUtil.asUnmodifiableSortedListSet() and LangUtil.asUnmodifiableList(),
   and the implementing classes that offer memory efficient Set and Map implementations
-- LangUtil.isOfKnownImmutableType
+- LangUtil.isOfKnownImmutableType()
 - TextAttributes storage has been changed from a TreeMap to a custom SortedSet implementation (s.a.) backed by
   a sorted array, greatly reducing memory consumption (in tests up to 80%). This change is transparent.
 - FxUtil.runOnNextFrame()
@@ -207,7 +211,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - ImmutableSortedMap as a memory efficient Map implementation for immutable maps
 - CompactableSortedMap to provide a mutable map that can be compacted to an ImmutableSortedMap to reduce memory
   consumption and will be restored to a standard Map when mutated
-- RichTextBuilder now uses CompactableSortedMap to reduce memory consumption when large RichText instances are created
+- RichTextBuilder now internally uses CompactableSortedMap to reduce memory consumption when large RichText instances
+  are created.
 
 ### 18.5.1
 
