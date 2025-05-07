@@ -5,6 +5,9 @@
 
 package com.dua3.utility.lang;
 
+import com.dua3.utility.data.Color;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontData;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.io.IoUtil;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +28,16 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Period;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -40,6 +53,7 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Properties;
 import java.util.SortedSet;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -49,6 +63,7 @@ import java.util.function.IntFunction;
 import java.util.function.LongFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -1661,7 +1676,6 @@ public final class LangUtil {
      * @return the given value
      * @throws IllegalArgumentException if the value is outside the interval
      */
-    @SuppressWarnings("RedundantCast")
     public static int requireInInterval(int value, int min, int max) {
         return (int) requireInInterval(value, min, (long) max);
     }
@@ -1770,6 +1784,42 @@ public final class LangUtil {
     @SafeVarargs
     public static <T extends Comparable<T>> ImmutableSortedListSet<T> asUnmodifiableSortedListSet(T... elements) {
         return ImmutableListBackedSortedSet.of(elements);
+    }
+
+    /**
+     * Determines if the given object is of a known immutable type.
+     * Immutable types are types whose state cannot be modified after they are created.
+     *
+     * @param obj the object to evaluate, which may be null
+     * @return true if the object is of a known immutable type, false otherwise
+     */
+    public static boolean isOfKnownImmutableType(@Nullable Object obj) {
+        return switch (obj) {
+            case Character ignored -> true;
+            case String ignored -> true;
+            case Number ignored -> true;
+            case Boolean ignored -> true;
+            case LocalDateTime ignored -> true;
+            case LocalDate ignored -> true;
+            case LocalTime ignored -> true;
+            case Duration ignored -> true;
+            case Instant ignored -> true;
+            case OffsetDateTime ignored -> true;
+            case OffsetTime ignored -> true;
+            case DateTimeFormatter ignored -> true;
+            case Period ignored -> true;
+            case ZonedDateTime ignored -> true;
+            case UUID ignored -> true;
+            case Enum<?> ignored -> true;
+            case Color ignored -> true;
+            case FontData ignored -> true;
+            case Font ignored -> true;
+            case Path ignored -> true;
+            case URI ignored -> true;
+            case Locale ignored -> true;
+            case Pattern ignored -> true;
+            case null, default -> false;
+        };
     }
 
 }
