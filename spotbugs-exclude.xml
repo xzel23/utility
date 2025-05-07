@@ -26,7 +26,10 @@
     </Match>
 
     <Match>
+        <Or>
         <Class name="com.dua3.utility.math.geometry.Scale2f"/>
+        <Class name="com.dua3.utility.lang.ImmutableSortedMap"/>
+        </Or>
         <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
     </Match>
 

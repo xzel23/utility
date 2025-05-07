@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.CompactableSortedMap;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 
@@ -30,12 +31,13 @@ import java.util.function.BiFunction;
  */
 public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
 
-    private record PositionAttributes(int pos, Map<String, Object> attributes) {}
+    private record PositionAttributes(int pos, CompactableSortedMap<String, Object> attributes) {}
 
     private final StringBuilder buffer;
     private final List<PositionAttributes> parts;
     private final List<AttributeChange> openedAttributes = new ArrayList<>(16);
     private final List<AttributeChange> openedCompositions = new ArrayList<>(16);
+    private int modificationCount = 0;
 
     /**
      * Construct a new empty builder.
@@ -53,7 +55,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
         this.buffer = new StringBuilder(capacity);
         this.parts = new ArrayList<>(16);
 
-        parts.add(new PositionAttributes(0, new HashMap<>()));
+        parts.add(new PositionAttributes(0, new CompactableSortedMap<>()));
     }
 
     @Override
@@ -143,6 +145,8 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * Combine subsequent runs sharing the same attributes.
      */
     private void normalize() {
+        compactParts();
+
         // if there's only a single run, there's nothing to do.
         int size = parts.size();
         if (size <= 1) {
@@ -388,10 +392,17 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
     }
 
     private Map<String, Object> split() {
+        if (modificationCount++ % 10_000 == 0) {
+            compactParts();
+        }
         if (parts.getLast().pos() < length()) {
-            parts.add(new PositionAttributes(length(), new HashMap<>(parts.getLast().attributes())));
+            parts.add(new PositionAttributes(length(), new CompactableSortedMap<>(parts.getLast().attributes())));
         }
         return parts.getLast().attributes;
+    }
+
+    private void compactParts() {
+        parts.forEach(part -> part.attributes().compact());
     }
 
     @SuppressWarnings("unchecked")

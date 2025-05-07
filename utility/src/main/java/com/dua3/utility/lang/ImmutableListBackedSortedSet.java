@@ -37,8 +37,19 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
      *
      * @param elements the array of elements to initialize the sorted set with
      */
-    private ImmutableListBackedSortedSet(T[] elements) {
+    ImmutableListBackedSortedSet(T[] elements) {
         this.elements = elements;
+        assert elementsAreSortedAndUniwue() : "elements are not sorted or not unique";
+    }
+
+    private boolean elementsAreSortedAndUniwue() {
+        for (int i = 1; i < elements.length; i++) {
+            //noinspection unchecked
+            if (((Comparable<T>) elements[i - 1]).compareTo(elements[i]) >= 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @SuppressWarnings("NonFinalFieldReferencedInHashCode")
@@ -100,7 +111,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     }
 
     @Override
-    public ImmutableSortedListSet<T> subSet(T fromElement, T toElement) {
+    public ImmutableListBackedSortedSet<T> subSet(T fromElement, T toElement) {
         int start = getIndex(fromElement);
         int end = getIndex(toElement);
         if (start < 0) {
@@ -112,7 +123,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         if (start >= end) {
             if (start == end) {
                 //noinspection unchecked
-                return (ImmutableSortedListSet<T>) EMPTY_SET;
+                return (ImmutableListBackedSortedSet<T>) EMPTY_SET;
             }
             throw new IllegalArgumentException("fromElement > toElement");
         }

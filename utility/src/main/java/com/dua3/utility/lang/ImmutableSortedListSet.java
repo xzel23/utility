@@ -76,4 +76,10 @@ public interface ImmutableSortedListSet<T> extends List<T>, SortedSet<T> {
     default Spliterator<T> spliterator() {
         return List.super.spliterator();
     }
+
+    @Override
+    ImmutableSortedListSet<T> subSet(T fromElement, T toElement);
+
+    @Override
+    List<T> subList(int fromIndex, int toIndex);
 }
