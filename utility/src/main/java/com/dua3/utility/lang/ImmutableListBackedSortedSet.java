@@ -29,6 +29,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     private static final ImmutableListBackedSortedSet<?> EMPTY_SET = of();
 
     private final T[] elements;
+    private int hash;
 
     /**
      * Constructs an instance of {@code ImmutableListBackedSortedSet} with the given array
@@ -38,6 +39,26 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
      */
     private ImmutableListBackedSortedSet(T[] elements) {
         this.elements = elements;
+    }
+
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
+    @Override
+    public int hashCode() {
+        int h = hash;
+        if (h == 0) {
+            h = 37 * (1 + this.size()); // make sure an empty collection does not have hash 0
+            for (T element : elements) {
+                // only use the value when it is immutable
+                h = h * 11 + (LangUtil.isOfKnownImmutableType(element) ? Objects.hashCode(element) : 0);
+            }
+            hash = h;
+        }
+        return h;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ImmutableSortedListSet<?> && o.hashCode() == hashCode() && super.equals(o);
     }
 
     /**
@@ -248,6 +269,16 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         private ReversedImmutableSortedListSet(ImmutableListBackedSortedSet<T> original, List<T> elementList) {
             this.original = original;
             this.elementList = elementList;
+        }
+
+        @Override
+        public int hashCode() {
+            return -original.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof ReversedImmutableSortedListSet<?> && o.hashCode() == hashCode() && super.equals(o);
         }
 
         @Override

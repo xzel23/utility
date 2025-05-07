@@ -165,7 +165,18 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
     public int hashCode() {
         int h = hash;
         if (h == 0) {
-            hash = super.hashCode();
+            for (var entry : entrySet()) {
+                // only use the value when it is immutable
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                int h2 = key.hashCode();
+                if (LangUtil.isOfKnownImmutableType(value)) {
+                    h2 += 97 * value.hashCode();
+                }
+                h = h * 11 + h2;
+            }
+            hash = h;
         }
         return h;
     }
