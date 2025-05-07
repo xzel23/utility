@@ -163,7 +163,7 @@ public final class RichText
      * @return RichText.valueOf(String.valueOf ( obj))
      */
     public static RichText valueOf(Object obj, Style... styles) {
-        return valueOf(String.valueOf(obj), List.of(styles));
+        return valueOf(String.valueOf(obj), Arrays.asList(styles));
     }
 
     /**
