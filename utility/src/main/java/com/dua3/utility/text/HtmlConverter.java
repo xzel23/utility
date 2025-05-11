@@ -1,5 +1,6 @@
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
@@ -502,7 +504,6 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             return switch (key) {
                 case Style.FONT_FAMILY,
                      Style.FONT_SIZE,
-                     Style.FONT_CLASS,
                      Style.FONT_WEIGHT,
                      Style.FONT_STYLE,
                      Style.TEXT_DECORATION_UNDERLINE,
@@ -513,25 +514,56 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             };
         }
 
+        private static boolean isOnlyTextStyleChanged(FontDef fd) {
+            return fd.getFamilies() == null && fd.getSize() == null && fd.getColor() == null;
+        }
+
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String, @Nullable Object> properties = new LinkedHashMap<>();
+            Predicate<Map.Entry<String, Object>> attributeFilter;
             for (Style style : styles) {
-                if (style.get(Style.FONT) == null) {
+                String fontClass = (String) style.get(Style.FONT_CLASS);
+                List<String> fontFamilies = (List<String>) style.get(Style.FONT_FAMILY);
+                Font font = (Font) style.get(Style.FONT);
+
+                boolean ignoreFontFamily = fontClass != null
+                        && LangUtil.isOneOf(fontFamilies,
+                        Style.FONT_FAMILY_VALUE_MONOSPACED,
+                        Style.FONT_FAMILY_VALUE_SANS_SERIF,
+                        Style.FONT_FAMILY_VALUE_SERIF
+                );
+
+                if (font == null) {
                     FontDef fd = style.getFontDef();
-                    if (!fd.isEmpty()) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("<span style='");
-                        sb.append(fd.getCssStyle());
-                        sb.append("'>");
-                        tags.add(HtmlTag.tag(sb.toString(), "</span>"));
+                    if (ignoreFontFamily) {
+                        fd.setFamilies(null);
                     }
+                    if (!fd.isEmpty() && !isOnlyTextStyleChanged(fd)) {
+                        if (!Objects.equals(currentDefaultFont, FontUtil.getInstance().deriveFont(currentDefaultFont, fd))) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("<span style='");
+                            sb.append(fd.getCssStyle());
+                            sb.append("'>");
+                            tags.add(HtmlTag.tag(sb.toString(), "</span>"));
+                        }
+
+                        // filter out all font-related attributes, they are handled by the generated span tag above
+                        attributeFilter = entry -> !isFontRelated(entry.getKey());
+                    } else {
+                        // let font attributes through
+                        attributeFilter = entry -> true;
+                    }
+                } else {
+                    // filter out all font-related attributes except FONT itself
+                    attributeFilter = entry -> !isFontRelated(entry.getKey());
                 }
 
                 // filter out font unnecessary font changes
-                boolean keepFont = style.getFont().map(font -> !font.equals(currentDefaultFont)).orElse(true);
+                boolean keepFont = style.getFont().map(f -> !f.equals(currentDefaultFont)).orElse(true);
                 style.stream()
-                        .filter(entry -> !isFontRelated(entry.getKey()))
+                        .filter(attributeFilter)
+                        .filter(entry -> !ignoreFontFamily || !entry.getKey().equals(Style.FONT_FAMILY))
                         .filter(entry -> keepFont || !entry.getKey().equals(Style.FONT))
                         .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
             }

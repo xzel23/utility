@@ -32,7 +32,6 @@ import java.util.Optional;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
