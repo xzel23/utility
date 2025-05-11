@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FontDefTest {
@@ -86,8 +88,65 @@ class FontDefTest {
         assertEquals(10.5f, fd.getSize()); // 14px = 10.5pt
         assertEquals(Color.WHITE, fd.getColor());
         assertEquals("Arial", fd.getFamily());
+        assertEquals(List.of("Arial"), fd.getFamilies());
         assertTrue(fd.getBold());
         assertTrue(fd.getItalic());
+    }
+
+    @Test
+    public void testParseCssFontDef_quoted() {
+        String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: \"Times New Roman\"; font-weight: bold; font-style: italic; }";
+
+        FontDef fd = FontDef.parseCssFontDef(fontdef);
+
+        assertEquals(10.5f, fd.getSize()); // 14px = 10.5pt
+        assertEquals(Color.WHITE, fd.getColor());
+        assertEquals("Times New Roman", fd.getFamily());
+        assertEquals(List.of("Times New Roman"), fd.getFamilies());
+        assertTrue(fd.getBold());
+        assertTrue(fd.getItalic());
+    }
+
+    @Test
+    public void testParseCssFontDef_multipleFamilies() {
+        String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial, Helvetica, SansSerif; font-weight: bold; font-style: italic; }";
+
+        FontDef fd = FontDef.parseCssFontDef(fontdef);
+
+        assertEquals(10.5f, fd.getSize()); // 14px = 10.5pt
+        assertEquals(Color.WHITE, fd.getColor());
+        assertEquals("Arial", fd.getFamily());
+        assertEquals(List.of("Arial", "Helvetica", "SansSerif"), fd.getFamilies());
+        assertTrue(fd.getBold());
+        assertTrue(fd.getItalic());
+    }
+
+    @Test
+    public void testParseCssFontDef_inherit() {
+        String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: inherit; font-weight: bold; font-style: italic; }";
+
+        FontDef fd = FontDef.parseCssFontDef(fontdef);
+
+        assertEquals(10.5f, fd.getSize()); // 14px = 10.5pt
+        assertEquals(Color.WHITE, fd.getColor());
+        assertNull(fd.getFamily());
+        assertNull(fd.getFamilies());
+        assertTrue(fd.getBold());
+        assertTrue(fd.getItalic());
+    }
+
+    @Test
+    public void testParseCssFontDef_inheritAfterFamily() {
+        String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial, inherit; font-weight: bold; font-style: italic; }";
+
+        assertThrows(IllegalArgumentException.class, () -> FontDef.parseCssFontDef(fontdef));
+    }
+
+    @Test
+    public void testParseCssFontDef_inheritBeforeFamily() {
+        String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: inherit, inherit; font-weight: bold; font-style: italic; }";
+
+        assertThrows(IllegalArgumentException.class, () -> FontDef.parseCssFontDef(fontdef));
     }
 
     @Test
@@ -96,7 +155,7 @@ class FontDefTest {
 
         fd.setSize(14.0f);
         fd.setColor(Color.WHITE);
-        fd.setFamily("Arial");
+        fd.setFamily("Arial, Helvetica, SansSerif");
         fd.setBold(true);
         fd.setItalic(true);
 

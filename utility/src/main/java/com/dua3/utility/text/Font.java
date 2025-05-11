@@ -6,8 +6,9 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.data.ObjectCache;
-import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
+import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Generic font class.
@@ -82,7 +83,24 @@ public class Font {
      * @return the font family as {@code String}.
      */
     public final String getFamily() {
-        return fontData.family();
+        return fontData.families().getFirst();
+    }
+
+    /**
+     * Get list of font families.
+     * @return the list of font families
+     */
+    public final List<String> getFamilies() {
+        return fontData.families();
+    }
+
+    /**
+     * Get the type (monospaced or proportional) for this font.
+     *
+     * @return the spacing as a {@link FontType} constant
+     */
+    public FontType getType() {
+        return fontData.monospaced() ? FontType.MONOSPACED : FontType.PROPORTIONAL;
     }
 
     /**

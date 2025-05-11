@@ -64,10 +64,10 @@ public final class TextUtil {
 
     private static final String TRANSFORM_REF_START = "${";
     private static final String TRANSFORM_REF_END = "}";
-    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
 
-    private static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]+").asMatchPredicate().negate();
     private static final Pattern PATTERN_SPLIT_PRESERVING_WHITESPACE = Pattern.compile("(?<=\\s)|(?=\\s)");
+
+    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
 
     private TextUtil() {
         // nop: utility class
@@ -322,28 +322,7 @@ public final class TextUtil {
      * @return font size in pt
      */
     public static float decodeFontSize(String s) {
-        s = s.strip().toLowerCase(Locale.ROOT);
-
-        int idxUnit = s.length();
-        while (idxUnit > 0 && !Character.isDigit(s.charAt(idxUnit - 1))) {
-            idxUnit--;
-        }
-        String unit = s.substring(idxUnit).strip();
-        String number = s.substring(0, idxUnit).strip();
-
-        float f = switch (unit) {
-            case "pt" -> 1.0f;
-            case "em" -> 12.0f;
-            case "px" -> 0.75f;
-            case "%" -> 0.12f;
-            case "vw" -> {
-                LOG.warn("unit 'vw' unsupported, treating as 'em'");
-                yield 12.0f;
-            }
-            default -> throw new IllegalArgumentException("invalid value for font-size: " + s);
-        };
-
-        return f * Float.parseFloat(number);
+        return InternalUtil.decodeFontSize(s);
     }
 
     /**
@@ -987,14 +966,7 @@ public final class TextUtil {
      * @return the quoted string
      */
     public static String quote(String text) {
-        return "\"" +
-                text.replace("\"", "\\\"")
-                        .replace("\n", "\\n")
-                        .replace("\r", "\\r")
-                        .replace("\t", "\\t")
-                        .replace("\b", "\\b")
-                        .replace("\f", "\\f")
-                + "\"";
+        return InternalUtil.quote(text);
     }
 
     /**
@@ -1004,7 +976,7 @@ public final class TextUtil {
      * @return the quoted string if needed, otherwise the original string
      */
     public static String quoteIfNeeded(String text) {
-        return IS_QUOTING_NEEDED.test(text) ? quote(text) : text;
+        return InternalUtil.quoteIfNeeded(text);
     }
 
     /**

@@ -8,6 +8,7 @@ import com.dua3.utility.spi.SpiLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.SequencedCollection;
 
 /**
  * Interface for Font handling utility classes. The concrete implementation is automatically chosen at runtime
@@ -135,14 +136,14 @@ public interface FontUtil<F> {
      * @param types the font types to return
      * @return list of font families
      */
-    List<String> getFamilies(FontTypes types);
+    SequencedCollection<String> getFamilies(FontTypes types);
 
     /**
      * Get a list of the available font families.
      *
      * @return list of font families
      */
-    default List<String> getFamilies() {
+    default SequencedCollection<String> getFamilies() {
         return getFamilies(FontTypes.ALL);
     }
 

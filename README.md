@@ -195,6 +195,21 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 18.7.0
+
+- BREAKING: This version has some breaking changes to the Font classes:
+  - The font classes now have a `families` Attribute of type `List<String>` instead of
+    a single `family` attribute of type `String`. This was necessary to support alternative
+    font families (like in CSS).
+  - new method Font.getType() returns either `FontType.MONOSPACED` or `FontType.Proportional`.
+  - `Style.FONT_TYPE` was replaced by `Style.FONT_CLASS` and `Style.FONT_FAMILY`
+  - added assertions to check for valid attribute types
+- Changes to the FontUtil implementations; if a JavaFX or AWT font is requested, the different
+  families are tested for availability on the system and th first available one is used to
+  instantiate the platform font. You can add one of "serif", "sans-serif", and "monospaced"
+  at the end of the family list (these are always available) to make sure a matching fallback
+  font is selected.
+
 ### 18.6.0
 
 This version is all about reducing memory consumption. The new classes are used internally by RichText and

@@ -7,15 +7,20 @@ package com.dua3.utility.text;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.SequencedCollection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * Represents font data, containing attributes and metrics for a specific font style.
  *
- * @param family        the name of the font family
+ * @param families      the list of font family names;
+ *                      it is always guaranteed to contain at least one entry with the family name at index 0
+ *                      and alternative names following
  * @param size          the font size in points
+ * @param monospaced    if the font is monospaced
  * @param bold          whether the font style is bold
  * @param italic        whether the font style is italicized
  * @param underline     whether the font style includes an underline
@@ -29,8 +34,9 @@ import java.util.function.Function;
  * @param spaceWidth    the width of the space character in the font
  */
 public record FontData(
-        String family,
+        List<String> families,
         float size,
+        boolean monospaced,
         boolean bold,
         boolean italic,
         boolean underline,
@@ -45,25 +51,10 @@ public record FontData(
 ) {
 
     /**
-     * Represents font data and its associated properties, such as family, size,
-     * style attributes, and metrics.
-     *
-     * @param family       the font family name; must not be empty
-     * @param size         the font size; must be non-negative
-     * @param bold         whether the font is bold
-     * @param italic       whether the font is italic
-     * @param underline    whether the font is underlined
-     * @param strikeThrough whether the font is strike-through
-     * @param fontDef      the associated {@link FontDef} object; must not be null and have valid attributes
-     * @param fontspec     the font specification string; must not end with "-*"
-     * @param cssStyle     the CSS style representation of the font
-     * @param ascent       the ascent metric of the font; must be non-negative
-     * @param descent      the descent metric of the font; must be non-negative
-     * @param height       the total height of the font; must be greater than or equal to ascent
-     * @param spaceWidth   the width of the space character; must be positive
+     * Constructor.
      */
     public FontData {
-        assert !family.isEmpty() : "family is the empty string";
+        assert !families.isEmpty() : "family is the empty string";
         assert size >= 0 : "size is negative";
         assert ascent >= 0 : "ascent is negative";
         assert descent >= 0 : "descent is negative";
@@ -77,6 +68,9 @@ public record FontData(
         assert fontDef.getStrikeThrough() != null : "fontDef.getStrikeThrough() is null";
         assert fontDef.getColor() == null : "fontDef.getColor() must be null";
 
+        // copy families to an immutable list
+        families = List.copyOf(families);
+
         // remove color from fontspec
         assert fontspec.endsWith("-*") : "unexpected fontspec: " + fontspec;
         fontspec = fontspec.substring(0, fontspec.length() - 2);
@@ -85,8 +79,9 @@ public record FontData(
     /**
      * Creates and returns a new instance of {@code FontData} with the specified attributes and metrics.
      *
-     * @param family        the font family name; must not be empty
+     * @param family        the list of font family names; must not be empty
      * @param size          the font size; must be non-negative
+     * @param monospaced    whether the font is monospaced
      * @param bold          whether the font is bold
      * @param italic        whether the font is italic
      * @param underline     whether the font is underlined
@@ -100,6 +95,43 @@ public record FontData(
     public static FontData get(
             String family,
             float size,
+            boolean monospaced,
+            boolean bold,
+            boolean italic,
+            boolean underline,
+            boolean strikeThrough,
+            double ascent,
+            double descent,
+            double height,
+            double spaceWidth
+    ) {
+        List<String> families = com.dua3.utility.text.FontDef.parseFontFamilies(family, false);
+        if (families == null) {
+            throw new IllegalArgumentException("invalid value for families: " + family);
+        }
+        return get(families, size, monospaced, bold, italic, underline, strikeThrough, ascent, descent, height, spaceWidth);
+    }
+
+    /**
+     * Creates and returns a new instance of {@code FontData} with the specified attributes and metrics.
+     *
+     * @param families      the list of font family names; must not be empty
+     * @param size          the font size; must be non-negative
+     * @param monospaced    if the font is monospaced
+     * @param bold          whether the font is bold
+     * @param italic        whether the font is italic
+     * @param underline     whether the font is underlined
+     * @param strikeThrough whether the font is strike-through
+     * @param ascent        the ascent metric of the font; must be non-negative
+     * @param descent       the descent metric of the font; must be non-negative
+     * @param height        the total height of the font; must be greater than or equal to ascent
+     * @param spaceWidth    the width of the space character; must be positive
+     * @return a new instance of {@code FontData} containing the specified attributes and metrics
+     */
+    public static FontData get(
+            SequencedCollection<String> families,
+            float size,
+            boolean monospaced,
             boolean bold,
             boolean italic,
             boolean underline,
@@ -110,16 +142,18 @@ public record FontData(
             double spaceWidth
     ) {
         FontDef fd = new FontDef();
+        fd.setFamilies(families);
         fd.setSize(size);
-        fd.setFamily(family);
+        fd.setType(monospaced ? FontType.MONOSPACED : FontType.PROPORTIONAL);
         fd.setBold(bold);
         fd.setItalic(italic);
         fd.setUnderline(underline);
         fd.setStrikeThrough(strikeThrough);
 
         return new FontData(
-                family,
+                List.copyOf(families),
                 size,
+                monospaced,
                 bold,
                 italic,
                 underline,
@@ -157,7 +191,7 @@ public record FontData(
                 && b.italic == a.italic
                 && b.underline == a.underline
                 && b.strikeThrough == a.strikeThrough
-                && b.family.equals(a.family);
+                && b.families().equals(a.families());
     }
 
     /**
@@ -169,7 +203,7 @@ public record FontData(
      */
     public static FontDef delta(@Nullable FontData f1, @Nullable FontData f2) {
         FontDef fd = new FontDef();
-        deltaHelper(f1, f2, FontData::family, fd::setFamily);
+        deltaHelper(f1, f2, FontData::families, fd::setFamilies);
         deltaHelper(f1, f2, FontData::size, fd::setSize);
         deltaHelper(f1, f2, FontData::bold, fd::setBold);
         deltaHelper(f1, f2, FontData::italic, fd::setItalic);
@@ -218,4 +252,14 @@ public record FontData(
     public String toString() {
         return fontspec();
     }
+
+    /**
+     * Get the font family name.
+     *
+     * @return the font family name
+     */
+    public String family() {
+        return families.getFirst();
+    }
+
 }

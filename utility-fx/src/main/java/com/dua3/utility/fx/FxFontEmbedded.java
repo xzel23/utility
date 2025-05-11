@@ -5,6 +5,7 @@ import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -14,17 +15,19 @@ public final class FxFontEmbedded extends Font {
 
     private final javafx.scene.text.Font fxFont;
 
-    FxFontEmbedded(javafx.scene.text.Font fxFont, String family, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
-        super(prepareEmbeddedFontData(fxFont, family, color, bold, italic, underline, strikeThrough), color);
+    FxFontEmbedded(javafx.scene.text.Font fxFont, List<String> families, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
+        super(prepareEmbeddedFontData(fxFont, families, color, bold, italic, underline, strikeThrough), color);
         this.fxFont = fxFont;
     }
 
-    private static FontData prepareEmbeddedFontData(javafx.scene.text.Font fxFont, String family, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
+    private static FontData prepareEmbeddedFontData(javafx.scene.text.Font fxFont, List<String> families, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
         FontData fxFontData = FxFontUtil.getFontData(fxFont);
 
+        boolean monospaced;
         return FontData.get(
-                family,
+                families,
                 fxFontData.size(),
+                fxFontData.monospaced(),
                 bold,
                 italic,
                 underline,

@@ -290,20 +290,20 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         addSimpleMapping(Style.TEXT_DECORATION_UNDERLINE, Style.TEXT_DECORATION_UNDERLINE_VALUE_LINE, HtmlTag.tag("<u>", "</u>"));
         addSimpleMapping(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE, HtmlTag.tag("<strike>", "</strike>"));
 
-        addMapping(Style.FONT_TYPE, value -> {
+        addMapping(Style.FONT_CLASS, value -> {
             if (isUseCss()) {
                 return switch (value.toString()) {
-                    case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<span class=\"monospace\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SANS_SERIF -> HtmlTag.tag("<span class=\"sans-serif\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span class=\"serif\">", "</span>");
+                    case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<span class='monospace'>", "</span>");
+                    case Style.FONT_CLASS_VALUE_SANS_SERIF -> HtmlTag.tag("<span class='sans-serif'>", "</span>");
+                    case Style.FONT_CLASS_VALUE_SERIF -> HtmlTag.tag("<span class='serif'>", "</span>");
                     default -> HtmlTag.emptyTag();
                 };
             } else {
                 return switch (value.toString()) {
-                    case Style.FONT_TYPE_VALUE_MONOSPACE -> HtmlTag.tag("<code>", "</code>");
-                    case Style.FONT_TYPE_VALUE_SANS_SERIF ->
-                            HtmlTag.tag("<span style=\"font-family: sans-serif\">", "</span>");
-                    case Style.FONT_TYPE_VALUE_SERIF -> HtmlTag.tag("<span style=\"font-family: serif\">", "</span>");
+                    case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<code>", "</code>");
+                    case Style.FONT_CLASS_VALUE_SANS_SERIF ->
+                            HtmlTag.tag("<span style='font-family: sans-serif'>", "</span>");
+                    case Style.FONT_CLASS_VALUE_SERIF -> HtmlTag.tag("<span style='font-family: serif'>", "</span>");
                     default -> HtmlTag.emptyTag();
                 };
             }
@@ -312,9 +312,9 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         addMapping(Style.FONT, value -> {
             Font font = (Font) value;
             if (isUseCss()) {
-                return HtmlTag.tag("<span class=\"" + font.fontspec() + "\">", "</span>");
+                return HtmlTag.tag("<span class='" + font.fontspec() + "'>", "</span>");
             } else {
-                return HtmlTag.tag("<span style=\"" + font.getCssStyle() + "\">", "</span>");
+                return HtmlTag.tag("<span style='" + font.getCssStyle() + "'>", "</span>");
             }
         });
     }
@@ -498,13 +498,40 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             }
         }
 
+        private static boolean isFontRelated(String key) {
+            return switch (key) {
+                case Style.FONT_FAMILY,
+                     Style.FONT_SIZE,
+                     Style.FONT_CLASS,
+                     Style.FONT_WEIGHT,
+                     Style.FONT_STYLE,
+                     Style.TEXT_DECORATION_UNDERLINE,
+                     Style.TEXT_DECORATION_LINE_THROUGH,
+                     Style.FONT_VARIANT,
+                     Style.COLOR -> true;
+                default -> false;
+            };
+        }
+
         private List<HtmlTag> getTags(List<Style> styles) {
             List<HtmlTag> tags = new ArrayList<>();
             Map<String, @Nullable Object> properties = new LinkedHashMap<>();
             for (Style style : styles) {
+                if (style.get(Style.FONT) == null) {
+                    FontDef fd = style.getFontDef();
+                    if (!fd.isEmpty()) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("<span style='");
+                        sb.append(fd.getCssStyle());
+                        sb.append("'>");
+                        tags.add(HtmlTag.tag(sb.toString(), "</span>"));
+                    }
+                }
+
                 // filter out font unnecessary font changes
                 boolean keepFont = style.getFont().map(font -> !font.equals(currentDefaultFont)).orElse(true);
                 style.stream()
+                        .filter(entry -> !isFontRelated(entry.getKey()))
                         .filter(entry -> keepFont || !entry.getKey().equals(Style.FONT))
                         .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
             }

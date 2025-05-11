@@ -8,9 +8,11 @@ package com.dua3.utility.text;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,21 +34,38 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public static final String FONT = "font";
 
     /**
-     * property name for the font family
+     * property name for the font families
      */
-    public static final String FONT_TYPE = "font-type";
+    public static final String FONT_FAMILY  = "font-family";
     /**
-     * Constant representing the sans-serif font type.
+     * Constant representing the commonly used sans-serif font families.
      */
-    public static final String FONT_TYPE_VALUE_SANS_SERIF = "sans-serif";
+    public static final List<String> FONT_FAMILY_VALUE_SANS_SERIF = List.of("Helvetica", "Arial", "Noto Sans", "liberation Sans", "sans-serif");
     /**
-     * Constant representing the serif font type.
+     * Constant representing the commonly used serif font families.
      */
-    public static final String FONT_TYPE_VALUE_SERIF = "serif";
+    public static final List<String> FONT_FAMILY_VALUE_SERIF = List.of("Times New Roman", "Georgia", "Noto Serif", "Liberation Serif", "serif");
     /**
-     * Constant representing the value for monospace font type.
+     * Constant representing the commonly used monospace font families.
      */
-    public static final String FONT_TYPE_VALUE_MONOSPACE = "monospace";
+    public static final List<String> FONT_FAMILY_VALUE_MONOSPACED = List.of("Courier New", "Consolas", "Monaco", "Liberation Mono", "monospace");
+
+    /**
+     * property name for the font class.
+     */
+    public static final String FONT_CLASS = "font-class";
+    /**
+     * Constant representing the value for monospace font class.
+     */
+    public static final String FONT_CLASS_VALUE_MONOSPACE = "monospace";
+    /**
+     * Constant representing the value for serif font class.
+     */
+    public static final String FONT_CLASS_VALUE_SERIF = "serif";
+    /**
+     * Constant representing the value for sansserif font class.
+     */
+    public static final String FONT_CLASS_VALUE_SANS_SERIF = "sans-serif";
 
     /**
      * property name for the font style
@@ -164,15 +183,24 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     /**
      * Default Sansserif font.
      */
-    public static final Style SANS_SERIF = create("sans-serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SANS_SERIF));
+    public static final Style SANS_SERIF = create("sans-serif",
+            Map.entry(FONT_FAMILY, FONT_FAMILY_VALUE_SANS_SERIF),
+            Map.entry(FONT_CLASS, FONT_CLASS_VALUE_SANS_SERIF)
+    );
     /**
      * Default Serif font.
      */
-    public static final Style SERIF = create("serif", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_SERIF));
+    public static final Style SERIF = create("serif",
+            Map.entry(FONT_FAMILY, FONT_FAMILY_VALUE_SERIF),
+            Map.entry(FONT_CLASS, FONT_CLASS_VALUE_SERIF)
+    );
     /**
      * Default Monospace font.
      */
-    public static final Style MONOSPACE = create("monospace", Map.entry(FONT_TYPE, FONT_TYPE_VALUE_MONOSPACE));
+    public static final Style MONOSPACE = create("monospace",
+            Map.entry(FONT_FAMILY, FONT_FAMILY_VALUE_MONOSPACED),
+            Map.entry(FONT_CLASS, FONT_CLASS_VALUE_MONOSPACE)
+    );
 
     /**
      * Bold style.
@@ -272,7 +300,24 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     @SafeVarargs
     public static Style create(String styleName,
                                Map.Entry<String, @Nullable Object>... args) {
+        assert(Arrays.stream(args).allMatch(Style::checkTypes)) : "invalid style arguments for style: " + styleName + " - " + Arrays.toString(args);
         return create(styleName, Map.ofEntries(args));
+    }
+
+    private static boolean checkTypes(Map.Entry<String, ?> e) {
+        return switch (e.getKey()) {
+            case FONT -> e.getValue() instanceof Font;
+            case FONT_FAMILY -> e.getValue() instanceof List;
+            case FONT_CLASS -> e.getValue() instanceof String;
+            case FONT_SIZE -> e.getValue() instanceof Number;
+            case FONT_STYLE -> e.getValue() instanceof String;
+            case FONT_WEIGHT -> e.getValue() instanceof String;
+            case TEXT_DECORATION_UNDERLINE -> e.getValue() instanceof Boolean;
+            case TEXT_DECORATION_LINE_THROUGH -> e.getValue() instanceof Boolean;
+            case COLOR -> e.getValue() instanceof Color;
+            case BACKGROUND_COLOR -> e.getValue() instanceof Color;
+            default -> true;
+        };
     }
 
     /**
@@ -342,7 +387,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     }
 
     /**
-     * Consume value of a property.
+     * Consume the value of a property.
      *
      * @param key             the property
      * @param action          the consumer
@@ -398,7 +443,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
         }
 
         FontDef fd = new FontDef();
-        ifPresent(FONT_TYPE, fd::setFamily);
+        ifPresent(FONT_FAMILY, fd::setFamilies);
         ifPresent(FONT_SIZE, fd::setSize);
         ifPresent(COLOR, fd::setColor);
         ifPresent(FONT_STYLE, v -> fd.setItalic(Objects.equals(v, FONT_STYLE_VALUE_ITALIC) || Objects.equals(v, FONT_STYLE_VALUE_OBLIQUE)));

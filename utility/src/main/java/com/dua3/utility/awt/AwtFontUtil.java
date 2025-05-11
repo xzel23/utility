@@ -6,6 +6,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontData;
 import com.dua3.utility.text.FontDef;
+import com.dua3.utility.text.FontType;
 import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,7 +66,8 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
     private final Font defaultFont;
     private final Graphics2D graphics;
 
-    private static java.awt.Font getAwtFont(String family, float size, boolean bold, boolean italic) {
+    private static java.awt.Font getAwtFont(List<String> families, float size, boolean bold, boolean italic) {
+        String family = families.stream().filter(FontList.ALL_FONTS::contains).findFirst().orElse(families.getFirst());
         int style = (bold ? java.awt.Font.BOLD : java.awt.Font.PLAIN)
                 | (italic ? java.awt.Font.ITALIC : java.awt.Font.PLAIN);
         return new java.awt.Font(family, style, Math.round(size));
@@ -77,7 +79,7 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
 
     private AwtFontUtil() {
         graphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE).createGraphics();
-        defaultFont = convert(getAwtFont(DEFAULT_FAMILY, DEFAULT_SIZE, false, false));
+        defaultFont = convert(getAwtFont(List.of(DEFAULT_FAMILY), DEFAULT_SIZE, false, false));
     } // utility class constructor
 
     /**
@@ -180,7 +182,9 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
         private static final List<String> PROPORTIONAL_FONTS;
 
         static {
-            AVAILABLE_FONTS = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()).collect(Collectors.toUnmodifiableMap(Function.identity(), FontList::isMonospaced, (a, b) -> b));
+            AVAILABLE_FONTS = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment()
+                    .getAvailableFontFamilyNames())
+                    .collect(Collectors.toUnmodifiableMap(Function.identity(), FontList::isMonospaced, (a, b) -> b));
             ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
             MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
             PROPORTIONAL_FONTS = ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
@@ -188,9 +192,13 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
 
         private static boolean isMonospaced(String family) {
             java.awt.Font font = new java.awt.Font(family, java.awt.Font.PLAIN, 14);
-            FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
-            return Objects.equals(font.getStringBounds("1 l", frc), font.getStringBounds("M_W", frc));
+            return AwtFontUtil.isMonospaced(font);
         }
+    }
+
+    private static boolean isMonospaced(java.awt.Font font) {
+        FontRenderContext frc = new FontRenderContext(font.getTransform(), false, true);
+        return Objects.equals(font.getStringBounds("1 l", frc), font.getStringBounds("M_W", frc));
     }
 
     @Override
@@ -209,7 +217,7 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
 
     @Override
     public java.awt.Font convert(Font font) {
-        java.awt.Font awtFont = fontData2awtFont.computeIfAbsent(font.getFontData(), fd -> getAwtFont(fd.family(), fd.size(), fd.bold(), fd.italic()));
+        java.awt.Font awtFont = fontData2awtFont.computeIfAbsent(font.getFontData(), fd -> getAwtFont(fd.families(), fd.size(), fd.bold(), fd.italic()));
         awtFont2FontData.putIfAbsent(awtFont, font.getFontData());
         return awtFont;
     }
@@ -238,21 +246,22 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
 
     @Override
     public Font deriveFont(Font font, FontDef fontDef) {
-        String family = Objects.requireNonNullElse(fontDef.getFamily(), font.getFamily());
+        List<String> families = Objects.requireNonNullElse(fontDef.getFamilies(), font.getFamilies());
         float size = Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints());
         boolean bold = Objects.requireNonNullElse(fontDef.getBold(), font.isBold());
         boolean italic = Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic());
 
         Font baseFont = convert(getAwtFont(
-                family,
+                families,
                 size,
                 bold,
                 italic
         ));
 
         FontData fontData = FontData.get(
-                family,
+                families,
                 size,
+                baseFont.getType() == FontType.MONOSPACED,
                 bold,
                 italic,
                 Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
@@ -280,10 +289,12 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
         String family = awtFont.getName();
         float size = awtFont.getSize2D();
         boolean bold = awtFont.isBold();
+        boolean monospaced = isMonospaced(awtFont);
         FontMetrics fontMetrics = graphics.getFontMetrics(awtFont);
         return FontData.get(
-                family,
+                List.of(family),
                 size,
+                monospaced,
                 bold,
                 awtFont.isItalic(),
                 false,

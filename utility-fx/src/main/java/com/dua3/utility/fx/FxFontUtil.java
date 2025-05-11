@@ -20,6 +20,7 @@ import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.FontData;
 import com.dua3.utility.text.FontDef;
+import com.dua3.utility.text.FontType;
 import com.dua3.utility.text.FontUtil;
 import javafx.geometry.Bounds;
 import javafx.scene.text.Font;
@@ -31,10 +32,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SequencedCollection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -97,7 +100,7 @@ public final class FxFontUtil implements FontUtil<Font> {
             return fxf.fxFont();
         }
 
-        Font fxFont = fontData2fxFont.computeIfAbsent(font.getFontData(), fd -> getFxFont(fd.family(), fd.size(), fd.bold(), fd.italic()));
+        Font fxFont = fontData2fxFont.computeIfAbsent(font.getFontData(), fd -> getFxFont(fd.families(), fd.size(), fd.bold(), fd.italic()));
         fxFont2FontData.putIfAbsent(fxFont, font.getFontData());
         return fxFont;
     }
@@ -129,6 +132,7 @@ public final class FxFontUtil implements FontUtil<Font> {
         float ascent = (float) text.getBaselineOffset();
         float height = (float) bounds.getHeight();
         float descent = height - ascent;
+        boolean monospaced = isMonospaced(fxFont);
 
         text.setText(" ");
         bounds = text.getBoundsInLocal();
@@ -136,8 +140,9 @@ public final class FxFontUtil implements FontUtil<Font> {
 
         String style = fxFont.getStyle();
         return FontData.get(
-                fxFont.getFamily(),
+                List.of(fxFont.getFamily()),
                 (float) fxFont.getSize(),
+                monospaced,
                 style.contains("bold"),
                 style.contains("italic") || style.contains("oblique"),
                 style.contains("line-under"),
@@ -159,7 +164,7 @@ public final class FxFontUtil implements FontUtil<Font> {
     public static FontDef getFontDef(Font fxFont) {
         String style = fxFont.getStyle().toLowerCase(Locale.ROOT);
         FontDef fontDef = new FontDef();
-        fontDef.setFamily(fxFont.getFamily());
+        fontDef.setFamilies(List.of(fxFont.getFamily()));
         fontDef.setSize((float) fxFont.getSize());
         fontDef.setBold(style.contains("bold"));
         fontDef.setItalic(style.contains("italic") || style.contains("oblique"));
@@ -215,31 +220,35 @@ public final class FxFontUtil implements FontUtil<Font> {
         // map containing all known font families as keys, with mapping family -> monospaced
         private static final Map<String, Boolean> AVAILABLE_FONTS;
         // alphabetically sorted list of all know font families
-        private static final List<String> ALL_FONTS;
+        private static final LinkedHashSet<String> ALL_FONTS;
         // alphabetically sorted list of all know monospaced font families
-        private static final List<String> MONOSPACE_FONTS;
+        private static final LinkedHashSet<String> MONOSPACE_FONTS;
         // alphabetically sorted list of all know proportional font families
-        private static final List<String> PROPORTIONAL_FONTS;
+        private static final LinkedHashSet<String> PROPORTIONAL_FONTS;
 
         static {
             AVAILABLE_FONTS = Font.getFamilies().stream().collect(Collectors.toUnmodifiableMap(Function.identity(), FontList::isMonospaced, (a, b) -> b));
-            ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().toList();
-            MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).toList();
-            PROPORTIONAL_FONTS = ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).toList();
+            ALL_FONTS = AVAILABLE_FONTS.keySet().stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+            MONOSPACE_FONTS = ALL_FONTS.stream().filter(AVAILABLE_FONTS::get).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+            PROPORTIONAL_FONTS = ALL_FONTS.stream().filter(Predicate.not(AVAILABLE_FONTS::get)).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
         }
 
         private static boolean isMonospaced(String family) {
             Font font = Font.font(family, FontWeight.NORMAL, FontPosture.REGULAR, 14.0d);
-            Text thin = new Text("1 l");
-            Text thick = new Text("M_W");
-            thin.setFont(font);
-            thick.setFont(font);
-            return thin.getLayoutBounds().getWidth() == thick.getLayoutBounds().getWidth();
+            return FxFontUtil.isMonospaced(font);
         }
     }
 
+    private static boolean isMonospaced(Font font) {
+        Text thin = new Text("1 l");
+        Text thick = new Text("M_W");
+        thin.setFont(font);
+        thick.setFont(font);
+        return thin.getLayoutBounds().getWidth() == thick.getLayoutBounds().getWidth();
+    }
+
     @Override
-    public List<String> getFamilies(FontTypes types) {
+    public SequencedCollection<String> getFamilies(FontTypes types) {
         return switch (types) {
             case ALL -> FontList.ALL_FONTS;
             case MONOSPACED -> FontList.MONOSPACE_FONTS;
@@ -251,7 +260,7 @@ public final class FxFontUtil implements FontUtil<Font> {
     public com.dua3.utility.text.Font loadFontAs(InputStream in, com.dua3.utility.text.Font font) throws IOException {
         Font fxFont = Font.loadFont(in, font.getSizeInPoints());
         LangUtil.check(fxFont != null, () -> new IOException("no font loaded"));
-        return new com.dua3.utility.fx.FxFontEmbedded(fxFont, font.getFamily(), font.getColor(), font.isBold(), font.isItalic(), font.isUnderline(), font.isStrikeThrough());
+        return new com.dua3.utility.fx.FxFontEmbedded(fxFont, font.getFamilies(), font.getColor(), font.isBold(), font.isItalic(), font.isUnderline(), font.isStrikeThrough());
     }
 
     @Override
@@ -261,21 +270,22 @@ public final class FxFontUtil implements FontUtil<Font> {
 
     @Override
     public com.dua3.utility.text.Font deriveFont(com.dua3.utility.text.Font font, FontDef fontDef) {
-        String family = Objects.requireNonNullElse(fontDef.getFamily(), font.getFamily());
+        List<String> families = Objects.requireNonNullElse(fontDef.getFamilies(), font.getFamilies());
         float size = Objects.requireNonNullElse(fontDef.getSize(), font.getSizeInPoints());
         boolean bold = Objects.requireNonNullElse(fontDef.getBold(), font.isBold());
         boolean italic = Objects.requireNonNullElse(fontDef.getItalic(), font.isItalic());
 
         com.dua3.utility.text.Font baseFont = convert(getFxFont(
-                family,
+                families,
                 size,
                 bold,
                 italic
         ));
 
         FontData fontData = FontData.get(
-                family,
+                families,
                 size,
+                baseFont.getType() == FontType.MONOSPACED,
                 bold,
                 italic,
                 Objects.requireNonNullElse(fontDef.getUnderline(), font.isUnderline()),
@@ -294,7 +304,8 @@ public final class FxFontUtil implements FontUtil<Font> {
         }
     }
 
-    private Font getFxFont(String family, float size, boolean bold, boolean italic) {
+    private Font getFxFont(List<String> families, float size, boolean bold, boolean italic) {
+        String family = families.stream().filter(FontList.ALL_FONTS::contains).findFirst().orElse(families.getFirst());
         FxFontData fxf = new FxFontData(
                 family,
                 bold ? FontWeight.BOLD : FontWeight.NORMAL,

@@ -7,11 +7,15 @@ import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.SequencedCollection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A mutable class holding font attributes to help create immutable font
@@ -26,11 +30,12 @@ public final class FontDef implements Cloneable {
 
     private @Nullable Color color;
     private @Nullable Float size;
-    private @Nullable String family;
+    private @Nullable List<String> families;
     private @Nullable Boolean bold;
     private @Nullable Boolean italic;
     private @Nullable Boolean underline;
     private @Nullable Boolean strikeThrough;
+    private @Nullable FontType type;
 
     /**
      * Default constructor that creates a {FontDe} instance without any properties set.
@@ -52,19 +57,29 @@ public final class FontDef implements Cloneable {
     }
 
     /**
+     * Create a {@code FontDef} instance with only the font family attribute set.
+     *
+     * @param families the font family
+     * @return new FontDef instance
+     */
+    public static FontDef families(@Nullable List<String> families) {
+        FontDef fd = new FontDef();
+        fd.setFamilies(families == null || families.isEmpty() ? null : List.copyOf(families));
+        return fd;
+    }
+
+    /**
      * Create FontDef instance with only the font family attribute set.
      *
      * @param family the font family
      * @return new FontDef instance
      */
     public static FontDef family(@Nullable String family) {
-        FontDef fd = new FontDef();
-        fd.setFamily(family);
-        return fd;
+        return families(parseFontFamilies(family, false));
     }
 
     /**
-     * Create FontDef instance with only the font size set.
+     * Create a FontDef instance with only the font size set.
      *
      * @param size the font size in points
      * @return new FontDef instance
@@ -196,7 +211,7 @@ public final class FontDef implements Cloneable {
             switch (attribute) {
                 case "color" -> fd.setColor(parseColor(value));
                 case "font-size" -> fd.setSize(parseFontSize(value));
-                case "font-family" -> fd.setFamily(value);
+                case "font-family" -> fd.setFamilies(parseFontFamilies(value, true));
                 case "font-weight" -> fd.setBold(parseFontWeight(value));
                 case "font-style" -> fd.setItalic(parseFontStyle(value));
                 default -> LOG.warn("unknown font attribute: {}", attribute);
@@ -235,7 +250,89 @@ public final class FontDef implements Cloneable {
             return null;
         }
 
-        return TextUtil.decodeFontSize(sz);
+        return InternalUtil.decodeFontSize(sz);
+    }
+
+    static @Nullable List<String> parseFontFamilies(@Nullable String s, boolean strict) {
+        if (s == null || s.isBlank()) {
+            return null;
+        }
+
+        if (!s.contains(",") && !s.contains("\"")) {
+            // allow spaces in non-strict mode only
+            String family = s.strip();
+            LangUtil.check(!strict || s.indexOf(' ') < 0, () -> new IllegalArgumentException("invalid font declaration: " + s));
+            return s.equals("inherit") ? null : List.of(s);
+        }
+
+        int idx = 0;
+        int end = s.length();
+
+        List<String> families = new ArrayList<>();
+        while (idx < end) {
+            // skip whitespace
+            while (idx < end && Character.isWhitespace(s.charAt(idx))) {
+                idx++;
+            }
+
+            int partStart = idx;
+            if (partStart < end) {
+                int partEnd;
+                char c = s.charAt(idx);
+                String part;
+                if (c == '"') {
+                    // read quoted family name
+
+                    // move after quote
+                    idx++;
+                    partStart++;
+                    while (idx < end && (c = s.charAt(idx)) != '"') {
+                        idx++;
+                    }
+                    if (idx == end) {
+                        throw new IllegalArgumentException("unmatched quote in argument: " + s);
+                    }
+
+                    // get current family name
+                    part = s.substring(partStart, idx);
+
+                    // move to character after quote
+                    if (idx < end) {
+                        c = s.charAt(idx++);
+                    }
+                } else {
+                    // read unquoted family name
+                    while (idx < end && !Character.isWhitespace(c = s.charAt(idx)) && c != ',' && c != ';') {
+                        idx++;
+                    }
+                    part = s.substring(partStart, idx);
+                }
+                families.add(part);
+
+                // skip whitespace
+                while (idx < end && Character.isWhitespace(s.charAt(idx))) {
+                    idx++;
+                }
+
+                // read comma
+                if (idx < end) {
+                    if (s.charAt(idx) == ',') {
+                        idx++;
+                    } else {
+                        throw new IllegalArgumentException("invalid font declaration: " + s);
+                    }
+                }
+            }
+        }
+
+        // "inherit" is treated the same as not present and it must not be combined
+        int idxInherit = families.indexOf("inherit");
+        if (idxInherit >= 0) {
+            LangUtil.check(families.size() == 1, () -> new IllegalArgumentException("'inherit' must not be combined: " + s));
+            return null;
+        }
+
+        return families.isEmpty() ? null : families;
     }
 
     private static Pair<String, String> parseCssRule(String rule) {
@@ -272,7 +369,7 @@ public final class FontDef implements Cloneable {
      * @return String representation of this instance
      */
     public String fontspec() {
-        return Objects.requireNonNullElse(family, "*") +
+        return Objects.requireNonNullElse(getFamily(), "*") +
                 LangUtil.triStateSelect(bold, "-bold", "-regular", "-*") +
                 LangUtil.triStateSelect(italic, "-italic", "-normal", "-*") +
                 LangUtil.triStateSelect(underline, "-underline", "-none", "-*") +
@@ -325,17 +422,35 @@ public final class FontDef implements Cloneable {
      *
      * @return the font family as a string, or null if no family is defined
      */
-    public @Nullable String getFamily() {
-        return family;
+    public @Nullable List<String> getFamilies() {
+        return families;
     }
 
     /**
-     * Sets the font family for the FontDef instance.
+     * Retrieves the font family value of this instance.
      *
-     * @param family the font family to set. Can be null if no font family is specified.
+     * @return the font family as a string, or null if no family is defined
+     */
+    public @Nullable String getFamily() {
+        return families == null ? null : families.getFirst();
+    }
+
+    /**
+     * Sets the font family names for the FontDef instance.
+     *
+     * @param families the font family names to set. Can be null if no font family is specified.
+     */
+    public void setFamilies(@Nullable SequencedCollection<String> families) {
+        this.families = families == null || families.isEmpty() ? null : List.copyOf(families);
+    }
+
+    /**
+     * Sets the font family names for the FontDef instance.
+     *
+     * @param family the font family names to set. Can be null if no font family is specified.
      */
     public void setFamily(@Nullable String family) {
-        this.family = family;
+        this.families = family == null ? null : parseFontFamilies(family, false);
     }
 
     /**
@@ -414,12 +529,32 @@ public final class FontDef implements Cloneable {
         this.underline = underline;
     }
 
+    /**
+     * Retrieves the current value of the type property for this FontDef instance.
+     *
+     * @return the type property
+     */
+    public @Nullable FontType getType() {
+        return type;
+    }
+
+    /**
+     * Sets the type attribute for the font.
+     *
+     * @param type the type attribute to set, or null to unset it
+     */
+    public void setType(@Nullable FontType type) {
+        this.type = type;
+    }
+
     @Override
     public boolean equals(Object obj) {
+        //noinspection EqualsCalledOnEnumConstant
         return obj == this
                 || (obj instanceof FontDef other)
                 && Objects.equals(size, other.size)
-                && Objects.equals(family, other.family)
+                && Objects.equals(type, other.type)
+                && Objects.equals(families, other.families)
                 && Objects.equals(color, other.color)
                 && Objects.equals(bold, other.bold)
                 && Objects.equals(italic, other.italic)
@@ -429,7 +564,7 @@ public final class FontDef implements Cloneable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(color, size, family, bold, italic, underline, strikeThrough);
+        return Objects.hash(color, size, type, families, bold, italic, underline, strikeThrough);
     }
 
     @Override
@@ -449,7 +584,9 @@ public final class FontDef implements Cloneable {
         boolean isStrikeThrough = strikeThrough != null && strikeThrough;
         //noinspection StringConcatenationMissingWhitespace
         String css =
-                (family == null ? "" : "font-family: " + family + "; ") +
+                (families == null ? "" : "font-family: " + families.stream()
+                        .map(InternalUtil::quoteIfNeeded)
+                        .collect(Collectors.joining(", ")) + "; ") +
                         (size == null ? "" : "font-size: " + size + "pt; ") +
                         (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + "; ") +
                         (italic == null ? "" : "font-style: " + (italic ? "italic" : "normal") + "; ") +
@@ -472,11 +609,13 @@ public final class FontDef implements Cloneable {
     public boolean matches(Font font) {
         return nullOrEquals(color, font.getColor())
                 && nullOrEquals(size, font.getSizeInPoints())
-                && nullOrEquals(family, font.getFamily())
+                && nullOrEquals(getFamily(), font.getFamily())
                 && nullOrEquals(bold, font.isBold())
                 && nullOrEquals(italic, font.isItalic())
                 && nullOrEquals(underline, font.isUnderline())
-                && nullOrEquals(strikeThrough, font.isStrikeThrough());
+                && nullOrEquals(strikeThrough, font.isStrikeThrough()
+                && nullOrEquals(type, font.getType())
+        );
     }
 
     /**
@@ -487,7 +626,8 @@ public final class FontDef implements Cloneable {
     public void merge(FontDef delta) {
         if (delta.color != null) this.color = delta.color;
         if (delta.size != null) this.size = delta.size;
-        if (delta.family != null) this.family = delta.family;
+        if (delta.type != null) this.type = delta.type;
+        if (delta.families != null) this.families = delta.families;
         if (delta.bold != null) this.bold = delta.bold;
         if (delta.italic != null) this.italic = delta.italic;
         if (delta.underline != null) this.underline = delta.underline;
@@ -519,8 +659,8 @@ public final class FontDef implements Cloneable {
      * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifFamilyDefined(Consumer<? super String> c) {
-        return consumeIfDefined(family, c);
+    public boolean ifFamiliesDefined(Consumer<List<String>> c) {
+        return consumeIfDefined(families, c);
     }
 
     /**
@@ -560,6 +700,15 @@ public final class FontDef implements Cloneable {
     }
 
     /**
+     * Run action if a value for the type property is defined.
+     *
+     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     */
+    public void ifTypeDefined(Consumer<? super FontType> c) {
+        consumeIfDefined(type, c);
+    }
+
+    /**
      * Test if this instance holds no data.
      *
      * @return true, if none of the attributes is set
@@ -567,7 +716,8 @@ public final class FontDef implements Cloneable {
     public boolean isEmpty() {
         return color == null
                 && size == null
-                && family == null
+                && type == null
+                && families == null
                 && bold == null
                 && italic == null
                 && underline == null
@@ -578,4 +728,5 @@ public final class FontDef implements Cloneable {
     public FontDef clone() throws CloneNotSupportedException {
         return (FontDef) super.clone();
     }
+
 }
