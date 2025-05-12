@@ -104,7 +104,7 @@ public class TextAttributesTest {
     public void testToFontDef(TextAttributes ta) {
         FontDef fd = TextAttributes.getFontDef(ta);
         assertNotNull(fd);
-        assertEquals(ta.get(Style.FONT_TYPE), fd.getFamily());
+        assertEquals(ta.get(Style.FONT_FAMILIES), fd.getFamilies());
         assertEquals(ta.get(Style.FONT_SIZE), fd.getSize());
         assertEquals(ta.get(Style.COLOR), fd.getColor());
         assertEquals(Optional.ofNullable(ta.get(Style.FONT_WEIGHT)).map(s -> s.equals(Style.FONT_WEIGHT_VALUE_BOLD)).orElse(null), fd.getBold());
@@ -116,8 +116,8 @@ public class TextAttributesTest {
     private static Stream<TextAttributes> textAttributesArguments() {
         return Stream.of(
                 TextAttributes.none(),
-                TextAttributes.of(Pair.of(Style.FONT_TYPE, "Arial")),
-                TextAttributes.of(Pair.of(Style.FONT_SIZE, 17f)),
+                TextAttributes.of(Pair.of(Style.FONT_FAMILIES, List.of("Arial"))),
+                TextAttributes.of(Pair.of(Style.FONT_SIZE, 17.0f)),
                 TextAttributes.of(Pair.of(Style.COLOR, Color.BLUE)),
                 TextAttributes.of(Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD)),
                 TextAttributes.of(Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_NORMAL)),
@@ -127,7 +127,7 @@ public class TextAttributesTest {
                 TextAttributes.of(Pair.of(Style.TEXT_DECORATION_LINE_THROUGH, Style.TEXT_DECORATION_LINE_THROUGH_VALUE_LINE)),
                 TextAttributes.of(Pair.of(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC)),
                 TextAttributes.of(Pair.of(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_NORMAL)),
-                TextAttributes.of(Pair.of(Style.FONT_TYPE, "Arial"),
+                TextAttributes.of(Pair.of(Style.FONT_FAMILIES, List.of("Arial")),
                         Pair.of(Style.FONT_SIZE, 17f),
                         Pair.of(Style.COLOR, Color.BLUE),
                         Pair.of(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD),

@@ -13,6 +13,7 @@ import com.dua3.utility.data.Pair;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,6 +45,7 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
     private @Nullable FontDef fontDef;
 
     private TextAttributes(Entry[] entries) {
+        assert Arrays.stream(entries).allMatch(Style::checkTypes) : "invalid attribute types";
         this.entries = LangUtil.asUnmodifiableSortedListSet(entries);
     }
 
@@ -139,7 +141,8 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
         }
 
         FontDef fd = new FontDef();
-        DataUtil.ifPresent(attributes, Style.FONT_FAMILY, v -> fd.setFamily((String) v));
+        //noinspection unchecked
+        DataUtil.ifPresent(attributes, Style.FONT_FAMILIES, v -> fd.setFamilies((List<String>) v));
         DataUtil.ifPresent(attributes, Style.FONT_SIZE, v -> fd.setSize((Float) v));
         DataUtil.ifPresent(attributes, Style.COLOR, v -> fd.setColor((Color) v));
         DataUtil.ifPresent(attributes, Style.FONT_WEIGHT, v -> fd.setBold(Objects.equals(v, Style.FONT_WEIGHT_VALUE_BOLD)));

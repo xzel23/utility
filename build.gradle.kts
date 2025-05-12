@@ -131,8 +131,8 @@ subprojects {
                 targets {
                     all {
                         testTask {
-                            // Use headless mode for AWT in unit tests
-                            jvmArgs("-Djava.awt.headless=true")
+                            // enable assertions and use headless mode for AWT in unit tests
+                            jvmArgs("-ea", "-Djava.awt.headless=true")
                         }
                     }
                 }

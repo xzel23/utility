@@ -502,7 +502,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
 
         private static boolean isFontRelated(String key) {
             return switch (key) {
-                case Style.FONT_FAMILY,
+                case Style.FONT_FAMILIES,
                      Style.FONT_SIZE,
                      Style.FONT_WEIGHT,
                      Style.FONT_STYLE,
@@ -524,14 +524,14 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             Predicate<Map.Entry<String, Object>> attributeFilter;
             for (Style style : styles) {
                 String fontClass = (String) style.get(Style.FONT_CLASS);
-                List<String> fontFamilies = (List<String>) style.get(Style.FONT_FAMILY);
+                List<String> fontFamilies = (List<String>) style.get(Style.FONT_FAMILIES);
                 Font font = (Font) style.get(Style.FONT);
 
                 boolean ignoreFontFamily = fontClass != null
                         && LangUtil.isOneOf(fontFamilies,
-                        Style.FONT_FAMILY_VALUE_MONOSPACED,
-                        Style.FONT_FAMILY_VALUE_SANS_SERIF,
-                        Style.FONT_FAMILY_VALUE_SERIF
+                        Style.FONT_FAMILIES_VALUE_MONOSPACED,
+                        Style.FONT_FAMILIES_VALUE_SANS_SERIF,
+                        Style.FONT_FAMILIES_VALUE_SERIF
                 );
 
                 if (font == null) {
@@ -563,7 +563,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                 boolean keepFont = style.getFont().map(f -> !f.equals(currentDefaultFont)).orElse(true);
                 style.stream()
                         .filter(attributeFilter)
-                        .filter(entry -> !ignoreFontFamily || !entry.getKey().equals(Style.FONT_FAMILY))
+                        .filter(entry -> !ignoreFontFamily || !entry.getKey().equals(Style.FONT_FAMILIES))
                         .filter(entry -> keepFont || !entry.getKey().equals(Style.FONT))
                         .forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
             }

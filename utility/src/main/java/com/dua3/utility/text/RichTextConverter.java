@@ -19,7 +19,7 @@ public interface RichTextConverter<T> {
      * @param font  the font
      */
     static void putFontProperties(Map<? super String, @Nullable Object> props, Font font) {
-        props.put(Style.FONT_FAMILY, font.getFamilies());
+        props.put(Style.FONT_FAMILIES, font.getFamilies());
         String fontClass = font.getType() == FontType.MONOSPACED ? Style.FONT_CLASS_VALUE_MONOSPACE
                 : font.getFamily().equals("serif") ? Style.FONT_CLASS_VALUE_SERIF
                 : font.getFamily().equals("sans-serif") ? Style.FONT_CLASS_VALUE_SANS_SERIF

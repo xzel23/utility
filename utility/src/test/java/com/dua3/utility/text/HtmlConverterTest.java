@@ -51,9 +51,9 @@ public class HtmlConverterTest {
 
     @Test
     public void testSettingFontFamily() {
-        Style sans = Style.create("sans", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SANS_SERIF));
-        Style serif = Style.create("serif", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_SERIF));
-        Style mono = Style.create("mono", Map.entry(Style.FONT_TYPE, Style.FONT_TYPE_VALUE_MONOSPACE));
+        Style sans = Style.create("sans", Map.entry(Style.FONT_CLASS, Style.FONT_CLASS_VALUE_SANS_SERIF));
+        Style serif = Style.create("serif", Map.entry(Style.FONT_CLASS, Style.FONT_CLASS_VALUE_SERIF));
+        Style mono = Style.create("mono", Map.entry(Style.FONT_CLASS, Style.FONT_CLASS_VALUE_MONOSPACE));
 
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(sans);
@@ -68,7 +68,7 @@ public class HtmlConverterTest {
         builder.append(".");
         builder.pop(sans);
         RichText rt = builder.toRichText();
-        String expected = "<span style=\"font-family: sans-serif\">Keyboard input is shown in a <code>monospaced</code> typeface, direct speech is shown in a font with <span style=\"font-family: serif\">serifs</span>.</span>";
+        String expected = "<span style='font-family: sans-serif'>Keyboard input is shown in a <code>monospaced</code> typeface, direct speech is shown in a font with <span style='font-family: serif'>serifs</span>.</span>";
         String actual = HtmlConverter.create().convert(rt);
 
         assertEquals(expected, actual);
@@ -91,7 +91,7 @@ public class HtmlConverterTest {
         builder.append(" too many fonts!");
         builder.pop(style1);
         RichText rt = builder.toRichText();
-        String expected = "<span style=\"font-family: arial; font-size: 16.0pt; font-weight: bold; font-style: normal; color: #000000;\">Don&apos;t <span style=\"font-family: courier; font-size: 12.0pt; font-weight: normal; font-style: normal; color: #000000;\">mix</span> too many fonts!</span>";
+        String expected = "<span style='font-family: arial; font-size: 16.0pt; font-weight: bold; font-style: normal; color: #000000;'>Don&apos;t <span style='font-family: courier; font-size: 12.0pt; font-weight: normal; font-style: normal; color: #000000;'>mix</span> too many fonts!</span>";
         String actual = HtmlConverter.create().convert(rt);
 
         assertEquals(expected, actual);
@@ -114,7 +114,7 @@ public class HtmlConverterTest {
         builder.append(" too many fonts!");
         builder.pop(style1);
         RichText rt = builder.toRichText();
-        String expected = "<span class=\"arial-bold-normal-none-no_line-16.0-#000000\">Don&apos;t <span class=\"courier-regular-normal-none-no_line-12.0-#000000\">mix</span> too many fonts!</span>";
+        String expected = "<span class='arial-bold-normal-none-no_line-16.0-#000000'>Don&apos;t <span class='courier-regular-normal-none-no_line-12.0-#000000'>mix</span> too many fonts!</span>";
         String actual = HtmlConverter.create(HtmlConverter.useCss(true)).convert(rt);
 
         assertEquals(expected, actual);
