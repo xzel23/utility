@@ -37,8 +37,8 @@ dependencies {
     }
 
     // Explicitly add JUnit dependencies for testJava24
-    "testJava24Implementation"("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    "testJava24RuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    "testJava24Implementation"("org.junit.jupiter:junit-jupiter-api:5.12.2")
+    "testJava24RuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.12.2")
 }
 
 
