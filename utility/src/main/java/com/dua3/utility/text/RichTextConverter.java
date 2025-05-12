@@ -13,7 +13,7 @@ import java.util.Map;
 public interface RichTextConverter<T> {
 
     /**
-     * A font properties of to map.
+     * Add font properties of to a properties map.
      *
      * @param props the property map
      * @param font  the font
