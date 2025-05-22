@@ -175,7 +175,7 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
 
                 int h2 = key.hashCode();
                 if (LangUtil.isOfKnownImmutableType(value)) {
-                    h2 += 97 * value.hashCode();
+                    h2 += 97 * (value == null ? 0 : value.hashCode());
                 }
                 h = h * 11 + h2;
             }
