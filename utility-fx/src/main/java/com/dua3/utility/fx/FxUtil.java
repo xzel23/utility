@@ -548,10 +548,10 @@ public final class FxUtil {
             return r1;
         }
 
-        var xMin = Math.min(r1.getMinX(), r2.getMinX());
-        var yMin = Math.min(r1.getMinY(), r2.getMinY());
-        var xMax = Math.max(r1.getMaxX(), r2.getMaxX());
-        var yMax = Math.max(r1.getMaxY(), r2.getMaxY());
+        double xMin = Math.min(r1.getMinX(), r2.getMinX());
+        double yMin = Math.min(r1.getMinY(), r2.getMinY());
+        double xMax = Math.max(r1.getMaxX(), r2.getMaxX());
+        double yMax = Math.max(r1.getMaxY(), r2.getMaxY());
 
         return new Rectangle2D(xMin, yMin, xMax - xMin, yMax - yMin);
     }
