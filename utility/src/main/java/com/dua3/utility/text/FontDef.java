@@ -286,7 +286,7 @@ public final class FontDef implements Cloneable {
                     // move after quote
                     idx++;
                     partStart++;
-                    while (idx < end && (c = s.charAt(idx)) != '"') {
+                    while (idx < end && s.charAt(idx) != '"') {
                         idx++;
                     }
                     if (idx == end) {
@@ -297,9 +297,7 @@ public final class FontDef implements Cloneable {
                     part = s.substring(partStart, idx);
 
                     // move to character after quote
-                    if (idx < end) {
-                        c = s.charAt(idx++);
-                    }
+                    idx++;
                 } else {
                     // read unquoted family name
                     while (idx < end && !Character.isWhitespace(c = s.charAt(idx)) && c != ',' && c != ';') {
