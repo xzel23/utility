@@ -341,7 +341,7 @@ public final class FontDef implements Cloneable {
         String attribute = rule.substring(0, splitIdx).strip();
         String value = rule.substring(splitIdx + 1).strip();
 
-        return Pair.of(attribute, value);
+        return Pair.ofNonNull(attribute, value);
     }
 
     private static boolean nullOrEquals(@Nullable Object a, @Nullable Object b) {
