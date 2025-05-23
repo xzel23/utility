@@ -36,7 +36,7 @@ public final class TextFieldBuilder {
         return new TextFormatter<>(new IntegerStringConverter(), 0, filter);
     }
 
-    private TextFormatter<BigDecimal> getFloatTextFormatter(UnaryOperator<TextFormatter.Change> filter) {
+    private static TextFormatter<BigDecimal> getFloatTextFormatter(UnaryOperator<TextFormatter.Change> filter) {
         return new TextFormatter<>(new BigDecimalStringConverter(), BigDecimal.ZERO, filter);
     }
 
