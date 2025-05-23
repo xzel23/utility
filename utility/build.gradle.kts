@@ -77,12 +77,12 @@ tasks.named<JavaCompile>("compileTestJava24Java") {
     options.compilerArgs.add("--enable-preview")
 }
 
-// Make sure java24 compilation happens after main compilation
+// Make sure the java24 compilation happens after the main compilation
 tasks.named("compileJava24Java") {
     dependsOn(tasks.compileJava)
 }
 
-// Make sure testJava24 compilation happens after java24 compilation
+// Make sure the testJava24 compilation happens after the java24 compilation
 tasks.named("compileTestJava24Java") {
     dependsOn(tasks.named("compileJava24Java"))
     dependsOn(tasks.compileTestJava)
@@ -112,7 +112,7 @@ tasks.test {
     dependsOn(testJava24)
 }
 
-// Configure JAR task to include Java 24 classes as a multi-release JAR
+// Configure the JAR task to include Java 24 classes as a multi-release JAR
 tasks.named<Jar>("jar") {
     // Include Java 24 classes in the JAR
     from(sourceSets.getByName("java24").output) {
