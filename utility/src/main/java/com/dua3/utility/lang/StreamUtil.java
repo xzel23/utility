@@ -39,7 +39,7 @@ public final class StreamUtil {
      * @param <A> first stream generic item type
      * @param <B> second stream generic item type
      * @param <C> result stream generic item type
-     * @return stream consisting of pairs od items created from items of either stream
+     * @return stream consisting of the pairs of items created from items of either stream
      */
     public static <A extends @Nullable Object, B extends @Nullable Object, C extends @Nullable Object> Stream<C> zip(Stream<A> a, Stream<B> b, BiFunction<? super A, ? super B, ? extends C> op) {
         Iterator<A> i1 = a.iterator();
