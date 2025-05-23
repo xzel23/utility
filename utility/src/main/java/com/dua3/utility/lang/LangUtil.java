@@ -288,6 +288,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
+    @SuppressWarnings({"OverlyBroadCatchBlock", "ProhibitedExceptionThrown"})
     public static <T extends @Nullable Object, E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
         return () -> {
             try {
@@ -312,7 +313,7 @@ public final class LangUtil {
      * @throws UncheckedIOException if {@link IOException} is thrown during execution of the argument passed
      * @throws WrappedException     if any other type of Exception is thrown during execution of the argument passed
      */
-    @SuppressWarnings("ProhibitedExceptionThrown")
+    @SuppressWarnings({"OverlyBroadCatchBlock", "ProhibitedExceptionThrown"})
     public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, R, E> f) {
         return (T arg) -> {
             try {
