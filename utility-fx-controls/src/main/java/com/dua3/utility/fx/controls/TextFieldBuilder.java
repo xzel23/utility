@@ -24,10 +24,10 @@ import java.util.regex.Pattern;
 public final class TextFieldBuilder {
 
     private static final Pattern INTEGER_PATTERN = Pattern.compile("\\d*|0");
-    private static final UnaryOperator<TextFormatter.@Nullable Change> INTEGER_FILTER = change -> INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
+    private static final UnaryOperator<TextFormatter.@Nullable Change> INTEGER_FILTER = change -> change != null && INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
 
     private static final Pattern SIGNED_INTEGER_PATTERN = Pattern.compile("-?([1-9]\\d*|0)?");
-    private static final UnaryOperator<TextFormatter.@Nullable Change> SIGNED_INTEGER_FILTER = change -> SIGNED_INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
+    private static final UnaryOperator<TextFormatter.@Nullable Change> SIGNED_INTEGER_FILTER = change -> change != null && SIGNED_INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
 
     private final Pattern floatPattern;
     private final UnaryOperator<TextFormatter.@Nullable Change> floatFilter;
