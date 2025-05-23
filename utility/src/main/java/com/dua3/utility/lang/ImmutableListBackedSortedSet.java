@@ -221,9 +221,9 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         return elements.clone();
     }
 
+    @SuppressWarnings({"unchecked", "SuspiciousSystemArraycopy"})
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        @SuppressWarnings("unchecked")
         T1[] r = a.length >= elements.length ? a :
                 (T1[])java.lang.reflect.Array
                         .newInstance(a.getClass().getComponentType(), elements.length);
