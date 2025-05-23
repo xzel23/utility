@@ -562,6 +562,9 @@ public class PinBoard extends Control {
      * @param y The y-coordinate.
      */
     public record BoardPosition(double x, double y) {
+        /**
+         * A constant for the origin with coordinates (0, 0).
+         */
         public static final BoardPosition ORIGIN = new BoardPosition(0, 0);
     }
 }
