@@ -21,19 +21,19 @@ import java.util.stream.Collector;
  * <p>
  * Example:
  * This code collects strings based on their length and places them in buckets.
- * <pre><code>
- *     BatchCollector&lt;String, Integer&gt; bc = new BatchCollector&lt;&gt;(s -> s != null ? s.length() : null);
+ * <pre>{@code
+ *     BatchCollector<String, Integer> bc = new BatchCollector<>(s -> s != null ? s.length() : null);
  *     var result = Stream.of("one", "two", "three", "four", "five", "six").collect(bc);
- * </code></pre>
+ * }</pre>
  * The result will be a {@code List<Integer, Pair<Integer, List<String>>} equal to this one:
- * <pre><code>
+ * <pre>{@code
  *     List.of(
  *         Pair.of(3, List.of("one", "two"),
  *         Pair.of(5, List.of("three"),
  *         Pair.of(4, List.of("four", "five"),
  *         Pair.of(3, List.of("six")
  *     )
- * </code></pre>
+ * }</pre>
  * <p>
  * Note: For Java 24+, have a look at stream gatherers (JEP 461, JEP 485) that might be a better fit for your use case.
  *
