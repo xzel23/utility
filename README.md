@@ -195,6 +195,13 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 19.0.1
+
+- fix: always return an array of the same type as the argument in ImmutableListBackedSortedSet.toArray(T[])
+- fix: NPE in TextAttributes.hashCode() when an attribute value is null
+- fix some minor issues and Qodana warnings
+- code cleanup
+
 ### 19.0.0
 
 - BREAKING: This version has some breaking changes to the Font classes:
