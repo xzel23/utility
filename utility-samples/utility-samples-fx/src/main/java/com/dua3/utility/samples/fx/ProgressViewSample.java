@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
  */
 public class ProgressViewSample extends Application {
 
-    ExecutorService pool = Executors.newFixedThreadPool(3,
+    final ExecutorService pool = Executors.newFixedThreadPool(3,
             Thread.ofVirtual().name("sample-").factory()
     );
 
