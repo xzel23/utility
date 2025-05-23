@@ -9,6 +9,8 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.spi.StandardLevel;
 
+import java.util.regex.Pattern;
+
 /**
  * A utility class for creating and managing Log4j appenders.
  * <p>
@@ -30,6 +32,7 @@ public final class LogUtilLog4J {
     // NOTE: do not use logging in this class as it interferes with LogManager creation!
 
     static final LogAppenderLog4j GLOBAL_APPENDER = new LogAppenderLog4j(LogAppenderLog4j.class.getSimpleName() + "@global", null, null, false);
+    private static final Pattern PATTERN_VALID_CLASS_NAME = Pattern.compile("^([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*(\\.[a-zA-Z_$][a-zA-Z\\d_$]*)*$");
 
     private LogUtilLog4J() {
     }
@@ -143,7 +146,7 @@ public final class LogUtilLog4J {
     // DO NOT MOVE TO LANGUTIL OR CALL LANGUTIL METHODS!!!
     // LANGUTIL INSTANTIATES A LOGGER BUT INITIALISATION MOST BE DONE BEFORE FIRST LOGGER IS INSTANTIATED!
     public static boolean isClassOnClasspath(String className) {
-        if (!className.matches("^([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*(\\.[a-zA-Z_$][a-zA-Z\\d_$]*)*$")) {
+        if (!PATTERN_VALID_CLASS_NAME.matcher(className).matches()) {
             return false;
         }
 
