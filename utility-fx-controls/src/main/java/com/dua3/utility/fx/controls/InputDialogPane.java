@@ -113,7 +113,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
      */
     public void addButton(
             ButtonType type,
-            DialogPaneBuilder.@Nullable ResultHandler<R> resultHandler,
+            DialogPaneBuilder.@Nullable ResultHandler<@Nullable R> resultHandler,
             Consumer<InputDialogPane<R>> action,
             @Nullable BooleanExpression enabled
     ) {

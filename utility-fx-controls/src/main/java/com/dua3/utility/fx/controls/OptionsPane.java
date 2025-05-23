@@ -154,7 +154,7 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
                 };
                 return InputControl.stringInput(supplyDefault(so, values), nopValidator(), converter);
             }
-            case null, default -> {
+            default -> {
             }
         }
 

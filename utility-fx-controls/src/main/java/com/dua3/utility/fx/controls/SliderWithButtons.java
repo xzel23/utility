@@ -401,7 +401,7 @@ public class SliderWithButtons extends Region implements InputControl<Double> {
 
     @Override
     public ReadOnlyStringProperty errorProperty() {
-        return PropertyConverter.convertToStringReadOnly(validProperty(), valid -> valid ? null : "Value out of range");
+        return PropertyConverter.convertToStringReadOnly(validProperty(), valid -> valid ? "" : "Value out of range");
     }
 
     /**

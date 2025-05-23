@@ -90,7 +90,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
      * @param property the property
      * @return value of the property
      */
-    public Object get(String property) {
+    public @Nullable Object get(String property) {
         return parts.getLast().attributes().get(property);
     }
 
