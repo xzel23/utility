@@ -171,6 +171,7 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
         map = ImmutableSortedMap.emptyMap();
     }
 
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         // the hash has to be calculated manually because implementations may use different algorithms
@@ -182,6 +183,7 @@ public final class CompactableSortedMap<K extends Comparable<K>, V extends @Null
         return 0;
     }
 
+    @SuppressWarnings("NonFinalFieldReferenceInEquals")
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof CompactableSortedMap<?, ?> other) || other.size() != size()) {

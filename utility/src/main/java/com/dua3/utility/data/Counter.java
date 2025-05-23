@@ -73,6 +73,7 @@ public final class Counter implements Comparable<Counter> {
      *         Counter is less than, equal to, or greater than the value
      *         of the specified Counter, respectively
      */
+    @SuppressWarnings("CompareToUsesNonFinalVariable")
     @Override
     public int compareTo(Counter o) {
         return Long.compare(value, o.value);
@@ -85,6 +86,7 @@ public final class Counter implements Comparable<Counter> {
      * @param obj the object to be compared for equality with this Counter
      * @return true if the specified object is equal to this Counter, false otherwise
      */
+    @SuppressWarnings("NonFinalFieldReferenceInEquals")
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof Counter c) && (value == c.value);
@@ -95,6 +97,7 @@ public final class Counter implements Comparable<Counter> {
      *
      * @return the hash code computed from the value of this counter
      */
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     @Override
     public int hashCode() {
         return Long.hashCode(value);
