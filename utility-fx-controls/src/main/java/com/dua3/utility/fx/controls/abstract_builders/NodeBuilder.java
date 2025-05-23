@@ -49,7 +49,7 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      * @param value the value to be applied; can be null
      * @param setter the consumer to which the value is applied if not null
      */
-    protected final <T> void apply(@Nullable T value, Consumer<T> setter) {
+    protected static <T> void apply(@Nullable T value, Consumer<T> setter) {
         if (value != null) {
             setter.accept(value);
         }
@@ -66,7 +66,7 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      * @param property the {@link Property} to bind the observable value to
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected final <T> void apply(@Nullable ObservableValue<? extends T> value, Property<? super T> property) {
+    protected static <T> void apply(@Nullable ObservableValue<? extends T> value, Property<? super T> property) {
         if (value != null) {
             if (value instanceof Property valueProperty) {
                 property.bindBidirectional(valueProperty);
