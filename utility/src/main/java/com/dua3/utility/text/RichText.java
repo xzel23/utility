@@ -65,8 +65,8 @@ public final class RichText
     private final int[] runStart;
     private final Run[] run;
     // calculate the hashCode on demand
-    private transient int textHash;
-    private transient int hash;
+    private transient int textHash = 0;
+    private transient int hash = 0;
 
     RichText(Run... runs) {
         this.run = Arrays.copyOf(runs, runs.length);
@@ -570,7 +570,7 @@ public final class RichText
      */
     private Spliterator<RichText> lineSpliterator() {
         return new Spliterator<>() {
-            private int idx;
+            private int idx = 0;
 
             @Override
             public boolean tryAdvance(Consumer<? super RichText> action) {
