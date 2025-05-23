@@ -223,15 +223,16 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        if (elements.length <= a.length) {
-            // elements fit
-            System.arraycopy(elements, 0, a, 0, elements.length);
-            Arrays.fill(a, elements.length, a.length, null);
-            return a;
-        } else {
-            //noinspection unchecked
-            return (T1[]) Arrays.copyOf(elements, elements.length, a.getClass());
-        }
+        @SuppressWarnings("unchecked")
+        T1[] r = a.length >= elements.length ? a :
+                (T1[])java.lang.reflect.Array
+                        .newInstance(a.getClass().getComponentType(), elements.length);
+
+        int n = Math.min(elements.length, r.length);
+        System.arraycopy(elements, 0, r, 0, n);
+        Arrays.fill(r, elements.length, r.length, null);
+
+        return r;
     }
 
     @Override
