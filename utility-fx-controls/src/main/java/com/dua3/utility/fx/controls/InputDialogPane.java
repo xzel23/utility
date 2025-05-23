@@ -7,6 +7,7 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -115,7 +116,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
             ButtonType type,
             DialogPaneBuilder.@Nullable ResultHandler<@Nullable R> resultHandler,
             Consumer<InputDialogPane<R>> action,
-            @Nullable BooleanExpression enabled
+            @Nullable ObservableBooleanValue enabled
     ) {
         ObservableList<ButtonType> bt = getButtonTypes();
 
@@ -127,8 +128,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
         // event handler.
         btn.addEventFilter(ActionEvent.ACTION, evt -> {
             if (resultHandler != null) {
-                boolean done = resultHandler.handleResult(type, get());
-                if (!done) {
+                if (!resultHandler.handleResult(type, get())) {
                     LOG.debug("Button {}: result conversion failed", bt);
                     evt.consume();
                 }
