@@ -114,11 +114,13 @@ public final class FxRefresh {
     /**
      * Stop the refresher.
      */
-    public synchronized void stop() {
+    public void stop() {
         LOG.debug("[{}] stopping", name);
-        setActive(false);
-        this.updateThread = null;
-        signal();
+        synchronized (this) {
+            setActive(false);
+            this.updateThread = null;
+            signal();
+        }
     }
 
     /**
@@ -234,14 +236,16 @@ public final class FxRefresh {
     }
 
     /**
-     * Set active state.
+     * Set the active state.
      *
      * @param flag whether to activate or deactivate the refresher
      */
-    public synchronized void setActive(boolean flag) {
+    public void setActive(boolean flag) {
         LOG.debug("[{}] setActive({})", name, flag);
-        active.set(flag);
-        signal();
+        synchronized (this) {
+            active.set(flag);
+            signal();
+        }
     }
 
     /**
