@@ -50,6 +50,7 @@ public final class ConsoleHandler implements LogEntryHandler {
     @Override
     public void handleEntry(LogEntry entry) {
         var colors = colorMap.get(entry.level());
+        assert colors.first() != null && colors.second() != null;
         out.append(entry.format(colors.first(), colors.second()));
     }
 

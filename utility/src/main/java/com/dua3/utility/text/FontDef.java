@@ -204,6 +204,7 @@ public final class FontDef implements Cloneable {
             }
 
             Pair<String, String> pair = parseCssRule(rule);
+            assert pair.first() != null && pair.second() != null;
 
             String attribute = pair.first().toLowerCase(Locale.ROOT);
             String value = pair.second().strip();
