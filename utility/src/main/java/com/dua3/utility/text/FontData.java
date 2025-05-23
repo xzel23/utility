@@ -50,9 +50,7 @@ public record FontData(
         double spaceWidth
 ) {
 
-    /**
-     * Constructor.
-     */
+    @SuppressWarnings("MissingJavadoc")
     public FontData {
         assert !families.isEmpty() : "family is the empty string";
         assert size >= 0 : "size is negative";
