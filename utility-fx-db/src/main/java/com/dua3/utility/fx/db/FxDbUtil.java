@@ -129,7 +129,7 @@ public final class FxDbUtil {
             Callback<CellDataFeatures<ObservableList<Object>, Object>, ObservableValue<@Nullable Object>> cellValueFactory
                     = param -> {
                 var list = param.getValue();
-                var x = idx < list.size() ? list.get(idx) : null;
+                Object x = idx < list.size() ? list.get(idx) : null;
                 return new ReadOnlyObjectWrapper<>(x);
             };
 
