@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedCollection;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -52,13 +53,14 @@ public class InputGrid extends GridPane {
      * explicitly validated.
      */
     protected final BooleanProperty valid = new SimpleBooleanProperty(false);
-    private Collection<Meta<?>> data = Collections.emptyList();
+    private SequencedCollection<Meta<?>> data = Collections.emptyList();
     private int columns = 1;
 
     /**
      * Constructs a new instance of the InputGrid class.
      */
     public InputGrid() {
+        // nothing to do
     }
 
     /**
@@ -83,7 +85,7 @@ public class InputGrid extends GridPane {
         return result;
     }
 
-    void setContent(Collection<Meta<?>> data, int columns) {
+    void setContent(SequencedCollection<Meta<?>> data, int columns) {
         this.data = data;
         this.columns = columns;
     }
@@ -107,7 +109,8 @@ public class InputGrid extends GridPane {
         // create grid with input controls
         Insets insets = new Insets(2);
         Insets markerInsets = new Insets(0);
-        int r = 0, c = 0;
+        int r = 0;
+        int c = 0;
         for (var entry : data) {
             // add label and control
             int gridX = 3 * c;
@@ -138,7 +141,7 @@ public class InputGrid extends GridPane {
             }
         }
 
-        // valid state is true if all inputs are valid
+        // the valid state is true if all inputs are valid
         valid.bind(Bindings.createBooleanBinding(
                 () -> controls.stream().allMatch(control -> {
                     boolean v = control.isValid();
@@ -148,10 +151,9 @@ public class InputGrid extends GridPane {
                 controls.stream().flatMap(control -> Stream.of(control.valueProperty(), control.validProperty())).toArray(ObservableValue[]::new)
         ));
 
-        // todo: request focus once to do what?
-        for (var entry : data) {
-            entry.control.node().requestFocus();
-            break;
+        // request focus for the first control
+        if (!data.isEmpty()) {
+            data.getFirst().control.node().requestFocus();
         }
     }
 

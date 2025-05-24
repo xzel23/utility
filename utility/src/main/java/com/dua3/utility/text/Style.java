@@ -37,23 +37,6 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     public static final String FONT = "font";
 
     /**
-     * property name for the font families
-     */
-    public static final String FONT_FAMILIES = "font-family";
-    /**
-     * Constant representing the commonly used sans-serif font families.
-     */
-    public static final List<String> FONT_FAMILIES_VALUE_SANS_SERIF = List.of("Helvetica", "Arial", "Noto Sans", "liberation Sans", "sans-serif");
-    /**
-     * Constant representing the commonly used serif font families.
-     */
-    public static final List<String> FONT_FAMILIES_VALUE_SERIF = List.of("Times New Roman", "Georgia", "Noto Serif", "Liberation Serif", "serif");
-    /**
-     * Constant representing the commonly used monospace font families.
-     */
-    public static final List<String> FONT_FAMILIES_VALUE_MONOSPACED = List.of("Courier New", "Consolas", "Monaco", "Liberation Mono", "monospace");
-
-    /**
      * property name for the font class.
      */
     public static final String FONT_CLASS = "font-class";
@@ -69,6 +52,23 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      * Constant representing the value for sansserif font class.
      */
     public static final String FONT_CLASS_VALUE_SANS_SERIF = "sans-serif";
+
+    /**
+     * property name for the font families
+     */
+    public static final String FONT_FAMILIES = "font-family";
+    /**
+     * Constant representing the commonly used sans-serif font families.
+     */
+    public static final List<String> FONT_FAMILIES_VALUE_SANS_SERIF = List.of("Helvetica", "Arial", "Noto Sans", "liberation Sans", FONT_CLASS_VALUE_SANS_SERIF);
+    /**
+     * Constant representing the commonly used serif font families.
+     */
+    public static final List<String> FONT_FAMILIES_VALUE_SERIF = List.of("Times New Roman", "Georgia", "Noto Serif", "Liberation Serif", FONT_CLASS_VALUE_SERIF);
+    /**
+     * Constant representing the commonly used monospace font families.
+     */
+    public static final List<String> FONT_FAMILIES_VALUE_MONOSPACED = List.of("Courier New", "Consolas", "Monaco", "Liberation Mono", FONT_CLASS_VALUE_MONOSPACE);
 
     /**
      * property name for the font style
@@ -186,21 +186,21 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
     /**
      * Default Sansserif font.
      */
-    public static final Style SANS_SERIF = create("sans-serif",
+    public static final Style SANS_SERIF = create(FONT_CLASS_VALUE_SANS_SERIF,
             Map.entry(FONT_FAMILIES, FONT_FAMILIES_VALUE_SANS_SERIF),
             Map.entry(FONT_CLASS, FONT_CLASS_VALUE_SANS_SERIF)
     );
     /**
      * Default Serif font.
      */
-    public static final Style SERIF = create("serif",
+    public static final Style SERIF = create(FONT_CLASS_VALUE_SERIF,
             Map.entry(FONT_FAMILIES, FONT_FAMILIES_VALUE_SERIF),
             Map.entry(FONT_CLASS, FONT_CLASS_VALUE_SERIF)
     );
     /**
      * Default Monospace font.
      */
-    public static final Style MONOSPACE = create("monospace",
+    public static final Style MONOSPACE = create(FONT_CLASS_VALUE_MONOSPACE,
             Map.entry(FONT_FAMILIES, FONT_FAMILIES_VALUE_MONOSPACED),
             Map.entry(FONT_CLASS, FONT_CLASS_VALUE_MONOSPACE)
     );

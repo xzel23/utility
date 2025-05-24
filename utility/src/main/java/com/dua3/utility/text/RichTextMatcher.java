@@ -125,7 +125,8 @@ public class RichTextMatcher implements MatchResult {
         }
 
         RichTextBuilder rtb = new RichTextBuilder(text.length() + replacement.length());
-        int off, i;
+        int off;
+        int i;
         for (off = 0, i = 0; i++ < maxOccurrences && found; off = end(), found = find()) {
             if (replacement instanceof ToRichText trt) {
                 rtb.append(text.subSequence(off, start())).append(trt.toRichText());

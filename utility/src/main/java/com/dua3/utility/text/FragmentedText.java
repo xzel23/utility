@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 /**
@@ -132,7 +132,7 @@ public record FragmentedText(
             float wrapWidth) {
         boolean wrap = wrapWidth != Float.MAX_VALUE;
 
-        Function<RichText, RichText> trimLine = switch (hAlign) {
+        UnaryOperator<RichText> trimLine = switch (hAlign) {
             case LEFT -> RichText::stripTrailing;
             case RIGHT -> RichText::stripLeading;
             case CENTER, JUSTIFY, DISTRIBUTE -> RichText::strip;
@@ -294,7 +294,7 @@ public record FragmentedText(
         float f = whitespace > 0 ? 1.0f + availableSpace / whitespace : 1.0f;
         Alignment effectiveHAlign = getEffectiveHAlign(hAlign, isLastLine);
         switch (effectiveHAlign) {
-            case LEFT -> {} // nothing to do
+            case LEFT -> { /* nothing to do */ }
             case RIGHT -> line.replaceAll(fragment -> fragment.translate(availableSpace, 0.0f));
             case CENTER -> line.replaceAll(fragment -> fragment.translate(availableSpace / 2.0f, 0.0f));
             case DISTRIBUTE -> {

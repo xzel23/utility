@@ -264,7 +264,7 @@ public class RichTextBuilder implements Appendable, ToRichText, CharSequence {
                     } else {
                         Collection<Style> oldStyles = (Collection<Style>) oldValue;
                         Collection<Style> newStyles = (Collection<Style>) value;
-                        LinkedHashSet<Style> styles = new LinkedHashSet<>(oldStyles.size() + newStyles.size());
+                        LinkedHashSet<Style> styles = LinkedHashSet.newLinkedHashSet(oldStyles.size() + newStyles.size());
                         styles.addAll(oldStyles);
                         styles.addAll(newStyles);
                         return new ArrayList<>(styles);

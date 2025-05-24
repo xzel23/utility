@@ -60,7 +60,7 @@ public class InputGridBuilder
     public InputGrid build() {
         InputGrid grid = new InputGrid();
 
-        grid.setContent(data.values(), columns);
+        grid.setContent(data.sequencedValues(), columns);
         grid.init();
 
         return grid;

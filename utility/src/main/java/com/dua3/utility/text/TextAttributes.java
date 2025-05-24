@@ -66,13 +66,13 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
      */
     @SafeVarargs
     public static TextAttributes of(Pair<String, ?>... entries) {
-        Entry[] entries_ = new Entry[entries.length];
+        Entry[] entryArray = new Entry[entries.length];
         for (int i = 0; i < entries.length; i++) {
             Pair<String, ?> entry = entries[i];
             assert entry.first() != null;
-            entries_[i] = new Entry(entry.first(), entry.second());
+            entryArray[i] = new Entry(entry.first(), entry.second());
         }
-        return new TextAttributes(entries_);
+        return new TextAttributes(entryArray);
     }
 
     /**

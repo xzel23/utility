@@ -281,7 +281,7 @@ final class CompoundHtmlTag implements HtmlTag {
     private volatile @Nullable String close = null;
     private volatile int headerChange = -1;
 
-    public CompoundHtmlTag(HtmlTag... tags) {this.tags = tags;}
+    CompoundHtmlTag(HtmlTag... tags) {this.tags = tags;}
 
     @Override
     public String open() {
