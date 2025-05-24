@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -59,7 +59,6 @@ public class FxLogPaneSample extends Application {
     private void startLoggingThreads() {
         // start threads
         final int numberOfImplementations = 4;
-        Random random = new Random();
         for (final int implementation : IntStream.range(0, numberOfImplementations).toArray()) {
             Thread thread = new Thread(() -> {
                 try {
@@ -70,7 +69,7 @@ public class FxLogPaneSample extends Application {
 
                 while (true) {
                     if (AVERAGE_SLEEP_MILLIS > 0) {
-                        long wait = random.nextLong(2 * AVERAGE_SLEEP_MILLIS * numberOfImplementations);
+                        long wait = ThreadLocalRandom.current().nextLong(2L * AVERAGE_SLEEP_MILLIS * numberOfImplementations);
                         try {
                             Thread.sleep(wait);
                         } catch (InterruptedException e) {
@@ -85,7 +84,7 @@ public class FxLogPaneSample extends Application {
                         default -> 5;
                     };
 
-                    int levelInt = random.nextInt(bound);
+                    int levelInt = ThreadLocalRandom.current().nextInt(bound);
                     LogLevel level = LogLevel.values()[implementation == 1 || implementation == 3 ? Math.max(0, levelInt - 1) : levelInt];
 
                     String msg = "Message #%d, imp %s, original integer level %d, level %s".formatted(nr, implementation, levelInt, level);
@@ -97,7 +96,7 @@ public class FxLogPaneSample extends Application {
                                 case 1 -> SLF4J_LOGGER.debug(msg);
                                 case 2 -> SLF4J_LOGGER.info(msg);
                                 case 3 -> SLF4J_LOGGER.warn(msg);
-                                case 4 -> SLF4J_LOGGER.error(msg, generateThrowable(random));
+                                case 4 -> SLF4J_LOGGER.error(msg, generateThrowable());
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
@@ -109,7 +108,7 @@ public class FxLogPaneSample extends Application {
                                 case 3 -> JUL_LOGGER.info(msg);
                                 case 4 -> JUL_LOGGER.warning(msg);
                                 case 5 ->
-                                        JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable(random));
+                                        JUL_LOGGER.log(java.util.logging.Level.SEVERE, msg, generateThrowable());
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
@@ -119,7 +118,7 @@ public class FxLogPaneSample extends Application {
                                 case 1 -> LOG4J_LOGGER.debug(msg);
                                 case 2 -> LOG4J_LOGGER.info(msg);
                                 case 3 -> LOG4J_LOGGER.warn(msg);
-                                case 4 -> LOG4J_LOGGER.error(msg, generateThrowable(random));
+                                case 4 -> LOG4J_LOGGER.error(msg, generateThrowable());
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
@@ -130,10 +129,11 @@ public class FxLogPaneSample extends Application {
                                 case 2 -> JCL_LOGGER.info(msg);
                                 case 3 -> JCL_LOGGER.warn(msg);
                                 case 4 -> JCL_LOGGER.error(msg);
-                                case 5 -> JCL_LOGGER.fatal(msg, generateThrowable(random));
+                                case 5 -> JCL_LOGGER.fatal(msg, generateThrowable());
                                 default -> throw new IllegalStateException("integer out of range");
                             }
                         }
+                        default -> throw new IllegalStateException("integer out of range");
                     }
 
                     int current = n.get();
@@ -149,8 +149,8 @@ public class FxLogPaneSample extends Application {
         }
     }
 
-    private IllegalStateException generateThrowable(Random random) {
-        if (random.nextBoolean()) {
+    private IllegalStateException generateThrowable() {
+        if (ThreadLocalRandom.current().nextBoolean()) {
             return new IllegalStateException("Why?", new UnsupportedOperationException("Because of me!"));
         } else {
             return new IllegalStateException("What happened?");
