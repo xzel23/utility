@@ -48,9 +48,9 @@ public class JdbcDriverInfo {
     public static final String OPTION_TYPE_DOUBLE = "double";
     private static final Logger LOG = LogManager.getLogger(JdbcDriverInfo.class);
     private static final String PATTERN_VAR_START = "\\$\\{";
-    private static final String PATTERN_VAR_NAME = "(?<name>\\p{Alpha}(\\p{Alnum}|_)*)";
-    private static final String PATTERN_VAR_ARG_1 = "(:((?<arg1>\\p{Alpha}(\\p{Alnum}|_)*)=(?<value1>[^,}]*)))";
-    private static final String PATTERN_VAR_ARG_N = "(,((?<argn>\\p{Alpha}(\\p{Alnum}|_)*)=(?<valuen>[^,}]*)))";
+    private static final String PATTERN_VAR_NAME = "(?<name>\\p{Alpha}[\\p{Alnum}_]*)";
+    private static final String PATTERN_VAR_ARG_1 = "(:((?<arg1>\\p{Alpha}[\\p{Alnum}_]*)=(?<value1>[^,}]*)))";
+    private static final String PATTERN_VAR_ARG_N = "(,((?<argn>\\p{Alpha}[\\p{Alnum}_]*)=(?<valuen>[^,}]*)))";
     private static final String PATTERN_VAR_REMAINING_ARGS = "(?<remainingargs>" + PATTERN_VAR_ARG_N + "*)";
     private static final String PATTERN_VAR_END = "\\}";
     private static final Pattern PATTERN_VAR = Pattern.compile(
