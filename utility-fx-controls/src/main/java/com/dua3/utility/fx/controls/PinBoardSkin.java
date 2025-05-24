@@ -30,7 +30,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
     private final AnchorPane pane = new AnchorPane();
     private final Group group = new Group(pane);
     private final ScrollPane scrollPane = new ScrollPane(group);
-    private final ObservableList<PinBoard.Item> visibleItems = FXCollections.observableArrayList();
 
     PinBoardSkin(PinBoard pinBoard) {
         super(pinBoard);
