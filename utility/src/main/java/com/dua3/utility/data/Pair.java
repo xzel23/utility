@@ -86,7 +86,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @param <T2>  type of second member
      * @param entry a Map.Entry
      * @return a new Pair
-     * @throws NullPointerException, if {@code entry.getKey() == null}
+     * @throws NullPointerException if {@code entry.getKey() == null}
      */
     public static <T1, T2 extends @Nullable Object> Pair<T1, T2> of(Map.Entry<? extends T1, ? extends T2> entry) {
         return new Pair<>(Objects.requireNonNull(entry.getKey()), entry.getValue());
