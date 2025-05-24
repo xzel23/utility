@@ -127,7 +127,32 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @param totalRemoved the total count of log entries that have been removed from the buffer
      * @param totalAdded   the total count of log entries that have been added to the buffer
      */
-    public record BufferState(LogEntry[] entries, long totalRemoved, long totalAdded) {}
+    public record BufferState(LogEntry[] entries, long totalRemoved, long totalAdded) {
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof BufferState other)) {
+                return false;
+            }
+            return totalRemoved == other.totalRemoved
+                    && totalAdded == other.totalAdded
+                    && java.util.Arrays.equals(entries, other.entries);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = java.util.Arrays.hashCode(entries);
+            result = 31 * result + Long.hashCode(totalRemoved);
+            result = 17 * result + Long.hashCode(totalAdded);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "BufferState[entries=" + java.util.Arrays.toString(entries) +
+                    ", totalRemoved=" + totalRemoved +
+                    ", totalAdded=" + totalAdded + "]";
+        }
+    }
 
     /**
      * Retrieves the current state of the buffer, encapsulating the entries within the buffer,
