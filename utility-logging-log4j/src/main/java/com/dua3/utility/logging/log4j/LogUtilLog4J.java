@@ -32,7 +32,7 @@ public final class LogUtilLog4J {
     // NOTE: do not use logging in this class as it interferes with LogManager creation!
 
     static final LogAppenderLog4j GLOBAL_APPENDER = new LogAppenderLog4j(LogAppenderLog4j.class.getSimpleName() + "@global", null, null, false);
-    private static final Pattern PATTERN_VALID_CLASS_NAME = Pattern.compile("^([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*(\\.[a-zA-Z_$][a-zA-Z\\d_$]*)*$");
+    private static final Pattern PATTERN_VALID_CLASS_NAME = Pattern.compile("^([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*+[a-zA-Z_$][a-zA-Z\\d_$]*(\\.[a-zA-Z_$][a-zA-Z\\d_$]*)*+$");
 
     private LogUtilLog4J() {
     }
