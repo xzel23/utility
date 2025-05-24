@@ -49,9 +49,9 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         Rectangle2D boarArea = pinBoard.getArea();
         pane.setMinSize(boarArea.getWidth(), boarArea.getHeight());
-        pinBoard.areaProperty().addListener((v, o, n) -> {
-            pane.setMinSize(n.getWidth(), n.getHeight());
-        });
+        pinBoard.areaProperty().addListener((v, o, n) ->
+                pane.setMinSize(n.getWidth(), n.getHeight())
+        );
 
         pinBoard.getItems().addListener((ListChangeListener.Change<?> c) -> refresh());
         pane.layoutBoundsProperty().addListener((o) -> refresh());
