@@ -22,6 +22,8 @@ public record SystemInfo(
         String javafxVersion
 ) {
 
+    private static final String UNKNOWN = "Unknown";
+
     /**
      * Static method to retrieve system information and return an instance of SystemInfo.
      *
@@ -29,17 +31,17 @@ public record SystemInfo(
      */
     public static SystemInfo getSystemInfo() {
         // Retrieve Operating System Information
-        String osName = System.getProperty("os.name", "Unknown");
-        String osVersion = System.getProperty("os.version", "Unknown");
-        String osArch = System.getProperty("os.arch", "Unknown");
+        String osName = System.getProperty("os.name", UNKNOWN);
+        String osVersion = System.getProperty("os.version", UNKNOWN);
+        String osArch = System.getProperty("os.arch", UNKNOWN);
 
         // Retrieve JDK Information
-        String javaVersion = System.getProperty("java.version", "Unknown");
-        String javaVendor = System.getProperty("java.vendor", "Unknown");
-        String javaHome = System.getProperty("java.home", "Unknown");
+        String javaVersion = System.getProperty("java.version", UNKNOWN);
+        String javaVendor = System.getProperty("java.vendor", UNKNOWN);
+        String javaHome = System.getProperty("java.home", UNKNOWN);
 
         // Retrieve JavaFX version (if available)
-        String javafxVersion = System.getProperty("javafx.runtime.version", "Unknown");
+        String javafxVersion = System.getProperty("javafx.runtime.version", UNKNOWN);
 
         // Return a SystemInfo instance with retrieved values
         return new SystemInfo(osName, osVersion, osArch, javaVersion, javaVendor, javaHome, javafxVersion);

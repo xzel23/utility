@@ -35,6 +35,7 @@ public enum Platform {
                     case ' ', '\t', '\\', '"' -> {
                         return true;
                     }
+                    default -> { /* do nothing */ }
                 }
             }
             return false;

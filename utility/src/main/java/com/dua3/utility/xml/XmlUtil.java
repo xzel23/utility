@@ -99,7 +99,9 @@ public final class XmlUtil {
             """;
     private static final Pattern PATTERN_BLANK_LINE = Pattern.compile("^\\s*\\R");
     private static final Pattern PATTERN_END_OF_LINE = Pattern.compile("\\R$");
-    private static final String MESSAGE_COULD_NOT_CREATE_DEFAULT_XML_UTIL = "Could not create default XmlUtil. Check documentation of javax.xml.transform.TransformerFactory and related classes for details.";
+    private static final String XMLNS = "xmlns";
+    public static final String XMLNS_SCHEME = "xmlns:";
+
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
     private final XPathFactory xPathFactory;
@@ -628,10 +630,10 @@ public final class XmlUtil {
                     String key = item.getNodeName();
                     String value = item.getTextContent();
 
-                    if (key.equals("xmlns") && defaultUri == null) {
+                    if (key.equals(XMLNS) && defaultUri == null) {
                         defaultUri = value;
-                    } else if (key.startsWith("xmlns:")) {
-                        String ns = key.substring("xmlns:".length());
+                    } else if (key.startsWith(XMLNS_SCHEME)) {
+                        String ns = key.substring(XMLNS_SCHEME.length());
                         nsToUri.putIfAbsent(ns, value);
                     }
                 }
@@ -700,13 +702,13 @@ public final class XmlUtil {
             }
 
             // Namespace declarations
-            if (attr.getNodeName().startsWith("xmlns:")) {
+            if (attr.getNodeName().startsWith(XMLNS_SCHEME)) {
                 String uri = attr.getNodeValue();
                 if (!namespaceMap.containsValue(uri)) {
                     String declaredPrefix = attr.getNodeName().substring(6); // Remove "xmlns:"
                     namespaceMap.put(declaredPrefix, uri);
                 }
-            } else if (attr.getNodeName().equals("xmlns")) {
+            } else if (attr.getNodeName().equals(XMLNS)) {
                 String uri = attr.getNodeValue();
                 if (!namespaceMap.containsValue(uri)) {
                     namespaceMap.put("", uri);
@@ -801,7 +803,7 @@ public final class XmlUtil {
 
             return new DocumentWithNamespace(newDoc, namespaceContext);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to normalize document", e);
+            throw new IllegalStateException("Failed to normalize document", e);
         }
     }
 
@@ -838,7 +840,7 @@ public final class XmlUtil {
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attr = attributes.item(i);
             // Skip xmlns attributes as we'll define them at the root
-            if (attr.getNodeName().startsWith("xmlns:") || attr.getNodeName().equals("xmlns")) {
+            if (attr.getNodeName().startsWith(XMLNS_SCHEME) || attr.getNodeName().equals(XMLNS)) {
                 continue;
             }
 
@@ -857,7 +859,7 @@ public final class XmlUtil {
         if (original == original.getOwnerDocument().getDocumentElement()) {
             for (String prefix : namespaceContext.getPrefixes()) {
                 String uri = namespaceContext.getNamespaceURI(prefix);
-                newElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + prefix, uri);
+                newElement.setAttributeNS("http://www.w3.org/2000/xmlns/", XMLNS_SCHEME + prefix, uri);
             }
         }
 

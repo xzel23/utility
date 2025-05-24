@@ -116,7 +116,7 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         List<Entry<K,V>> entries = new ArrayList<>(map.size());
         map.forEach((k, v) -> entries.add(new Entry<>(k, v)));
         //noinspection unchecked
-        return (Entry<K,V>[]) entries.toArray(Entry[]::new);
+        return entries.toArray(Entry[]::new);
     }
 
     @Override
@@ -248,9 +248,9 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public SortedSet<Map.Entry<K,V>> entrySet() {
+    public SortedSet<Map.Entry<K, V>> entrySet() {
         Entry[] entries = new Entry[keys.length];
-        for (int i=0; i<keys.length; i++) {
+        for (int i = 0; i < keys.length; i++) {
             entries[i] = new Entry<>((K) keys[i], values[i]);
         }
         SortedSet entrySet = new ImmutableListBackedSortedSet<>(entries);

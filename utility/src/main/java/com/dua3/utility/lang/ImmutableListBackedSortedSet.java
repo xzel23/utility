@@ -156,18 +156,12 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
 
     @Override
     public T first() {
-        if (elements.length == 0) {
-            throw new NoSuchElementException("the collection is empty");
-        }
-        return elements[0];
+        return getFirst();
     }
 
     @Override
     public T last() {
-        if (elements.length == 0) {
-            throw new NoSuchElementException("the collection is empty");
-        }
-        return elements[elements.length - 1];
+        return getLast();
     }
 
     @Override

@@ -1149,7 +1149,7 @@ public final class LangUtil {
         private volatile @Nullable String s;
         private volatile @Nullable Object @Nullable [] args;
 
-        public LazyFormatter(@Nullable String fmt, Object... args) {
+        private LazyFormatter(@Nullable String fmt, Object... args) {
             if (fmt == null) {
                 this.s = NULL_STRING;
                 this.args = null;
