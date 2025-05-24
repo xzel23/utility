@@ -43,7 +43,7 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
             implements Map.Entry<K, V>, Comparable<Entry<K, V>> {
         @Override
         public @Nullable Object setValue(@Nullable Object value) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("the collection is immutable");
         }
 
         @Override
