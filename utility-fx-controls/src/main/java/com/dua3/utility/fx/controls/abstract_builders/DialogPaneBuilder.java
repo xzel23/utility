@@ -154,7 +154,7 @@ public abstract class DialogPaneBuilder<D, B extends DialogPaneBuilder<D, B, R>,
          * @return true, if it's ok to proceed (the current page should be left)
          * false otherwise
          */
-        boolean handleResult(ButtonType btn, R result);
+        boolean handleResult(ButtonType btn, @Nullable R result);
     }
 
     /**
