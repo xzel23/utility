@@ -195,7 +195,7 @@ public final class DbUtil {
      * @throws SQLException           if a driver class was found and loaded but
      *                                could not be instantiated
      */
-    public static Optional<? extends java.sql.Driver> loadDriver(URL... urls)
+    public static Optional<java.sql.Driver> loadDriver(URL... urls)
             throws ClassNotFoundException, SQLException {
         LOG.debug("loadDriver() - URLs: {}", (Object) urls);
         return loadDriver(new URLClassLoader(urls));
@@ -218,7 +218,7 @@ public final class DbUtil {
      * @throws SQLException           if a driver class was found and loaded but
      *                                could not be instantiated
      */
-    public static Optional<? extends java.sql.Driver> loadDriver(ClassLoader loader)
+    public static Optional<java.sql.Driver> loadDriver(ClassLoader loader)
             throws ClassNotFoundException, SQLException {
         final String RESOURCE_PATH_TO_DRIVER_INFO = "META-INF/services/java.sql.Driver";
 
@@ -321,23 +321,31 @@ public final class DbUtil {
      * @return stream of objects created from the result set items
      * @param <T> stream item type
      */
-    public static <T> Stream<T> stream(ResultSet rs, Function<? super ResultSet, ? extends T> mapper, AutoCloseable... closeables) {
+    public static <T> Stream<T> stream(ResultSet rs, Function<? super ResultSet, ? extends T> mapper, AutoCloseable... closeables) throws SQLException {
         UncheckedCloser closer = rs::close;
         for (AutoCloseable closeable : closeables) {
             closer = closer.nest(closeable);
         }
-        return StreamSupport.stream(new Spliterators.AbstractSpliterator<T>(
-                Long.MAX_VALUE, Spliterator.ORDERED) {
-            @Override
-            public boolean tryAdvance(Consumer<? super T> action) {
-                try {
-                    if (!rs.next()) return false;
-                    action.accept(mapper.apply(rs));
-                    return true;
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+        try {
+            return StreamSupport.stream(new Spliterators.AbstractSpliterator<T>(
+                    Long.MAX_VALUE, Spliterator.ORDERED) {
+                @Override
+                public boolean tryAdvance(Consumer<? super T> action) {
+                    try {
+                        if (!rs.next()) return false;
+                        action.accept(mapper.apply(rs));
+                        return true;
+                    } catch (SQLException ex) {
+                        throw new WrappedException(ex);
+                    }
                 }
+            }, false).onClose(closer::doClose);
+        } catch (WrappedException e) {
+            switch (e.getCause()) {
+                case SQLException sqlEx -> throw sqlEx;
+                case IOException ioEx -> throw new UncheckedIOException(ioEx);
+                default -> throw e;
             }
-        }, false).onClose(closer::doClose);
+        }
     }
 }
