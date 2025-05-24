@@ -328,7 +328,11 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             return elementList.toArray(a);
         }
 
-        @SuppressWarnings("SlowListContainsAll") // 'original' is both a List and  Set
+        // suppress the IntelliJ/Qodana warning about using List.containsAll().
+        // The implementation uses O(log(n)) lookup, not O(n), and also also the
+        // whole point of the class is to reduce memory consumption and GC load,
+        // so introducing a temporary Set would be counter-productive.
+        @SuppressWarnings("SlowListContainsAll")
         @Override
         public boolean containsAll(Collection<?> c) {
             return original.containsAll(c);
