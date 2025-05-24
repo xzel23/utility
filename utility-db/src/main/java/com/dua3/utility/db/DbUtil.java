@@ -5,6 +5,7 @@
 
 package com.dua3.utility.db;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.io.CsvReader;
 import com.dua3.utility.io.CsvReader.ListRowBuilder;
@@ -248,15 +249,26 @@ public final class DbUtil {
 
             LOG.debug("loaded driver class: {}", driverClass.getName());
 
-            try {
-                Driver driver = driverClass.getConstructor().newInstance();
-                return Optional.of(driver);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                     | InvocationTargetException | SecurityException e) {
-                throw new SQLException("could instantiate driver", e);
-            }
+            return getDriver(driverClass);
         } catch (IOException e) {
             throw new ClassNotFoundException("IOException while trying to load driver", e);
+        }
+    }
+
+    /**
+     * Instantiates and returns an instance of the given JDBC driver class.
+     *
+     * @param driverClass the class of the JDBC driver to be instantiated
+     * @return an {@code Optional} containing the instantiated driver, or an empty {@code Optional} if an error occurs
+     * @throws SQLException if the driver class cannot be instantiated due to reflection-related issues
+     */
+    private static Optional<Driver> getDriver(Class<? extends Driver> driverClass) throws SQLException {
+        try {
+            Driver driver = driverClass.getConstructor().newInstance();
+            return Optional.of(driver);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
+                 | InvocationTargetException | SecurityException e) {
+            throw new SQLException("could instantiate driver", e);
         }
     }
 
