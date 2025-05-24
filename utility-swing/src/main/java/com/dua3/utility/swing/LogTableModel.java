@@ -18,10 +18,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
     private static final Logger LOG = LogManager.getLogger(LogTableModel.class);
+    public static final LogEntry[] EMPTY_LOG_ENTRIES = {};
 
     private final LogBuffer buffer;
     @SuppressWarnings("VolatileArrayField")
-    private volatile LogEntry[] data = {};
+    private volatile LogEntry[] data = EMPTY_LOG_ENTRIES;
     private final AtomicInteger queuedRemoves = new AtomicInteger();
 
     private final ReadWriteLock updateLock = new ReentrantReadWriteLock();
