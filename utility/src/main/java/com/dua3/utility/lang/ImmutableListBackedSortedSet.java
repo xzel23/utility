@@ -140,7 +140,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             //noinspection unchecked
             return (ImmutableSortedListSet<T>) EMPTY_SET;
         }
-        return new ImmutableListBackedSortedSet<T>(Arrays.copyOfRange(elements, 0, end));
+        return new ImmutableListBackedSortedSet<>(Arrays.copyOfRange(elements, 0, end));
     }
 
     @Override

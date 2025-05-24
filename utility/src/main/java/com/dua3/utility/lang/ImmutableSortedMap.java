@@ -77,7 +77,7 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
      * @param map the map to copy
      */
     public ImmutableSortedMap(Map<K, V> map) {
-        this(getArrayOfEntries(map), map instanceof SortedMap sm && sm.comparator() == Comparator.naturalOrder());
+        this(getArrayOfEntries(map), map instanceof SortedMap<?,?> sm && sm.comparator() == Comparator.naturalOrder());
     }
 
     private ImmutableSortedMap(Map.Entry<K, V>[] entries, boolean isSorted) {
