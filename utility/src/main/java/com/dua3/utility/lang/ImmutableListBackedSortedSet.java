@@ -328,6 +328,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             return elementList.toArray(a);
         }
 
+        @SuppressWarnings("SlowListContainsAll") // 'original' is both a List and  Set
         @Override
         public boolean containsAll(Collection<?> c) {
             return original.containsAll(c);
