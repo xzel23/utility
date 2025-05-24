@@ -65,8 +65,8 @@ public final class RichText
     private final int[] runStart;
     private final Run[] run;
     // calculate the hashCode on demand
-    private transient int textHash = 0;
-    private transient int hash = 0;
+    private int textHash = 0;
+    private int hash = 0;
 
     RichText(Run... runs) {
         this.run = Arrays.copyOf(runs, runs.length);
@@ -220,7 +220,7 @@ public final class RichText
             return false;
         }
 
-        assert a.length == b.length : "a and b should have same length since textEquals() returned true";
+        assert a.length == b.length : "a and b should have the same length since textEquals() returned true";
 
         for (int idx = 0; idx < a.length(); ) {
             Run runA = a.runAt(idx);
@@ -422,8 +422,7 @@ public final class RichText
                 if (pos_ >= runStart[2]) return 2;
             case 2:
                 if (pos_ >= runStart[1]) return 1;
-            case 1:
-            case 0:
+            case 0, 1:
                 return 0;
             default:
                 // if pos is not contained in the array, binarySearch will return -insert position -1,
@@ -470,13 +469,13 @@ public final class RichText
     }
 
     private int textHash() {
-        int h = hash;
+        int h = textHash;
         if (h == 0 && length > 0) {
             for (int i = 0; i < length; i++) {
                 //noinspection CharUsedInArithmeticContext - by design
                 h = 31 * h + text.charAt(start + i);
             }
-            hash = h;
+            textHash = h;
         }
         return h;
     }
@@ -810,7 +809,6 @@ public final class RichText
                     list.add(subSequence(off, next));
                     off = next + 1;
                 } else {    // last one
-                    //assert (list.size() == limit - 1);
                     int last = length();
                     list.add(subSequence(off, last));
                     off = last;
