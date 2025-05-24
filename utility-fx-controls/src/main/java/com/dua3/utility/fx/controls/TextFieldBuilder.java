@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 public final class TextFieldBuilder {
 
-    private static final Pattern INTEGER_PATTERN = Pattern.compile("\\d*|0");
+    private static final Pattern INTEGER_PATTERN = Pattern.compile("[1-9]\\d*|0");
     private static final UnaryOperator<TextFormatter.@Nullable Change> INTEGER_FILTER = change -> change != null && INTEGER_PATTERN.matcher(change.getControlNewText()).matches() ? change : null;
 
     private static final Pattern SIGNED_INTEGER_PATTERN = Pattern.compile("-?([1-9]\\d*|0)?");
@@ -111,7 +111,7 @@ public final class TextFieldBuilder {
             case INTEGER -> tf.setTextFormatter(getIntegerTextFormatter(INTEGER_FILTER));
             case SIGNED_INTEGER -> tf.setTextFormatter(getIntegerTextFormatter(SIGNED_INTEGER_FILTER));
             case FLOAT -> tf.setTextFormatter(getFloatTextFormatter(floatFilter));
-            case TEXT -> {}
+            case TEXT -> { /* do nothing */ }
         }
 
         if (text != null) {
