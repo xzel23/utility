@@ -25,11 +25,10 @@ import java.util.SortedSet;
  */
 public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends AbstractList<T> implements ImmutableSortedListSet<T> {
 
-    @SuppressWarnings("unchecked")
     private static final ImmutableListBackedSortedSet<?> EMPTY_SET = of();
 
     private final T[] elements;
-    private int hash;
+    private int hash = 0;
 
     /**
      * Constructs an instance of {@code ImmutableListBackedSortedSet} with the given array
@@ -39,13 +38,12 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
      */
     ImmutableListBackedSortedSet(T[] elements) {
         this.elements = elements;
-        assert elementsAreSortedAndUniwue() : "elements are not sorted or not unique";
+        assert elementsAreSortedAndUnique() : "elements are not sorted or not unique";
     }
 
-    private boolean elementsAreSortedAndUniwue() {
+    private boolean elementsAreSortedAndUnique() {
         for (int i = 1; i < elements.length; i++) {
-            //noinspection unchecked
-            if (((Comparable<T>) elements[i - 1]).compareTo(elements[i]) >= 0) {
+            if (elements[i - 1].compareTo(elements[i]) >= 0) {
                 return false;
             }
         }
@@ -57,7 +55,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     public int hashCode() {
         int h = hash;
         if (h == 0) {
-            h = 37 * (1 + this.size()); // make sure an empty collection does not have hash 0
+            h = 37 * (1 + size()); // make sure an empty collection does not have hash 0
             for (T element : elements) {
                 // only use the value when it is immutable
                 h = h * 11 + (LangUtil.isOfKnownImmutableType(element) ? Objects.hashCode(element) : 0);
@@ -159,7 +157,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     @Override
     public T first() {
         if (elements.length == 0) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("the collection is empty");
         }
         return elements[0];
     }
@@ -167,7 +165,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     @Override
     public T last() {
         if (elements.length == 0) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("the collection is empty");
         }
         return elements[elements.length - 1];
     }
@@ -254,7 +252,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     @Override
     public T getFirst() {
         if (elements.length == 0) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("the collection is empty");
         }
         return elements[0];
     }
@@ -262,7 +260,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
     @Override
     public T getLast() {
         if (elements.length == 0) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("the collection is empty");
         }
         return elements[elements.length - 1];
     }
@@ -289,8 +287,8 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         }
 
         @Override
-        public boolean equals(Object o) {
-            return o instanceof ReversedImmutableSortedListSet<?> && o.hashCode() == hashCode() && super.equals(o);
+        public boolean equals(Object obj) {
+            return obj instanceof ReversedImmutableSortedListSet<?> && obj.hashCode() == hashCode() && super.equals(obj);
         }
 
         @Override
@@ -350,17 +348,17 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
 
         @Override
         public T set(int index, T element) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("the collection is immutable");
         }
 
         @Override
         public void add(int index, T element) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("the collection is immutable");
         }
 
         @Override
         public T remove(int index) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("the collection is immutable");
         }
 
         @Override
