@@ -188,7 +188,7 @@ public final class FxDbUtil {
 
     private static String toString(Clob clob) {
         try {
-            return clob.getSubString(1L, (int) Math.min(Integer.MAX_VALUE, clob.length()));
+            return clob.getSubString(1L, Math.toIntExact(Math.min(Integer.MAX_VALUE, clob.length())));
         } catch (SQLException e) {
             LOG.warn("could not convert Clob to String", e);
             return ERROR_TEXT;
