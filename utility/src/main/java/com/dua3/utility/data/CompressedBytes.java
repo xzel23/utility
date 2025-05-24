@@ -1,5 +1,6 @@
 package com.dua3.utility.data;
 
+import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -97,29 +98,36 @@ public final class CompressedBytes {
      * @throws IllegalStateException if an I/O error occurs during compression
      */
     private CompressedBytes(byte[] data, boolean isCompressed) {
+        if (isCompressed) {
+            LangUtil.check(data.length > 0, "compressed data cannot have length 0");
+            this.data = data;
+            return;
+        }
+
         if (data.length > Integer.MAX_VALUE - 5) {
             throw new IllegalArgumentException("data is too large");
         }
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
+
+        byte[] compressedData;
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             bos.write(1); // add marker for compressed data
-            dos.write(data);
-            dos.close();
-
-            byte[] compressedData = bos.toByteArray();
-
-            if (compressedData.length < data.length) {
-                this.data = compressedData;
-            } else {
-                this.data = new byte[data.length + 1];
-                // marker for uncompressed data
-                this.data[0] = 0;
-                System.arraycopy(data, 0, this.data, 1, data.length);
+            try (DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
+                dos.write(data);
             }
-            logCompressionRatio(data.length);
+            compressedData = bos.toByteArray();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+
+        if (compressedData.length < data.length) {
+            this.data = compressedData;
+        } else {
+            this.data = new byte[data.length + 1];
+            // marker for uncompressed data, should be initialized to zero anyway
+            assert this.data[0] == 0 : "unexpected uninitialized marker";
+            System.arraycopy(data, 0, this.data, 1, data.length);
+        }
+        logCompressionRatio(data.length);
     }
 
     /**
@@ -130,11 +138,12 @@ public final class CompressedBytes {
      * @throws IllegalStateException if an I/O error occurs during compression
      */
     private CompressedBytes(InputStream in) {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             bos.write(1); // add marker for compressed data
-            long nBytes = in.transferTo(dos) + 1;
-            dos.close();
+            long nBytes;
+            try (DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
+                nBytes = in.transferTo(dos) + 1;
+            }
             this.data = bos.toByteArray();
             logCompressionRatio(nBytes);
         } catch (IOException e) {
