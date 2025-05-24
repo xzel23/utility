@@ -9,6 +9,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -72,6 +73,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @param first  the first member
      * @param second the second member
      * @return a new Pair
+     * @throws NullPointerException if any parameter is {@code null}
      */
     public static <T1 extends @NonNull Object, T2 extends @NonNull Object> Pair<T1, T2> ofNonNull(T1 first, T2 second) {
         return new Pair<>(first, second);
@@ -84,9 +86,10 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @param <T2>  type of second member
      * @param entry a Map.Entry
      * @return a new Pair
+     * @throws NullPointerException, if {@code entry.getKey() == null}
      */
     public static <T1, T2 extends @Nullable Object> Pair<T1, T2> of(Map.Entry<? extends T1, ? extends T2> entry) {
-        return new Pair<>(entry.getKey(), entry.getValue());
+        return new Pair<>(Objects.requireNonNull(entry.getKey()), entry.getValue());
     }
 
     /**
@@ -96,7 +99,7 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      * @param second the remaining members
      * @param <T1>   type of first member
      * @param <T2>   type of remaining members
-     * @return a new Pair
+     * @return a new {@code Pair<T1,T2>}
      */
     @SafeVarargs
     public static <T1 extends @Nullable Object, T2 extends @Nullable Object> Pair<T1, T2[]> ofArray(T1 first, T2... second) {
@@ -108,8 +111,8 @@ public record Pair<T1 extends @Nullable Object, T2 extends @Nullable Object>(T1 
      *
      * @param <U1> the result's first component type
      * @param <U2> the result's second component type
-     * @param f1   mapper for first component
-     * @param f2   mapper for second component
+     * @param f1   mapper for the first component
+     * @param f2   mapper for the second component
      * @return Pair consisting of the mapped values of this pair
      */
     public <U1 extends @Nullable Object, U2 extends @Nullable Object> Pair<U1, U2> map(Function<? super T1, ? extends U1> f1, Function<? super T2, ? extends U2> f2) {
