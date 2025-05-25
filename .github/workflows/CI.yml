@@ -18,6 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: 'Cache JDKs'
+        if: runner.os == 'Linux'
         id: cache-jdks
         uses: actions/cache@v4
         with:
