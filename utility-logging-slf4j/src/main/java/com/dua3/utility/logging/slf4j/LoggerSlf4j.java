@@ -21,6 +21,9 @@ import java.util.List;
  * logging is done as though the marker was not present.
  */
 public class LoggerSlf4j extends AbstractLogger {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private static Level defaultLevel = Level.INFO;
 
     private final transient List<? extends WeakReference<LogEntryHandler>> handlers;
