@@ -58,6 +58,7 @@ dependencyResolutionManagement {
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
+            plugin("sonar", "org.sonarqube").version("6.2.0.5505")
 
             version("log4j-bom", "2.24.3")
             version("slf4j", "2.0.17")
