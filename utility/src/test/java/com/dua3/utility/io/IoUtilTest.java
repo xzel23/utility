@@ -51,7 +51,7 @@ public class IoUtilTest {
      * Test getting extension for a Path.
      */
     @Test
-    public void testGetExtension() {
+    void testGetExtension() {
         Path path = Paths.get("folder", "text.txt");
         String expected = "txt";
         String actual = IoUtil.getExtension(path);
@@ -59,7 +59,7 @@ public class IoUtilTest {
     }
 
     @Test
-    public void testGetExtensionStringArg() {
+    void testGetExtensionStringArg() {
         assertEquals("txt", IoUtil.getExtension("test.txt"));
         assertEquals("txt", IoUtil.getExtension("folder/subfolder/test.txt"));
         assertEquals("txt", IoUtil.getExtension("folder/subfolder/test.txt/"));
@@ -79,7 +79,7 @@ public class IoUtilTest {
     }
 
     @Test
-    public void testStripExtension() {
+    void testStripExtension() {
         assertEquals("test", IoUtil.stripExtension("test.txt"));
         assertEquals("folder/subfolder/test", IoUtil.stripExtension("folder/subfolder/test.txt"));
         assertEquals("folder/subfolder/test/", IoUtil.stripExtension("folder/subfolder/test.txt/"));
@@ -99,7 +99,7 @@ public class IoUtilTest {
     }
 
     @Test
-    public void testReplaceExtension() {
+    void testReplaceExtension() {
         assertEquals("test.xyz", IoUtil.replaceExtension("test.txt", "xyz"));
         assertEquals("folder/subfolder/test.xyz", IoUtil.replaceExtension("folder/subfolder/test.txt", "xyz"));
         assertEquals("folder/subfolder/test.xyz/", IoUtil.replaceExtension("folder/subfolder/test.txt/", "xyz"));
@@ -123,7 +123,7 @@ public class IoUtilTest {
      * Test replaceExtension with valid input.
      */
     @Test
-    public void testReplaceExtensionValidInput() {
+    void testReplaceExtensionValidInput() {
         String path = "/Users/tester/desktop/file.txt";
         String extension = "docx";
         String expected = "/Users/tester/desktop/file.docx";
@@ -135,7 +135,7 @@ public class IoUtilTest {
      * Test replaceExtension with empty extension.
      */
     @Test
-    public void testReplaceExtensionEmptyExtension() {
+    void testReplaceExtensionEmptyExtension() {
         String path = "/Users/tester/desktop/file.txt";
         String extension = "";
         String expected = "/Users/tester/desktop/file.";
@@ -147,7 +147,7 @@ public class IoUtilTest {
      * Test replaceExtension with non-existing extension.
      */
     @Test
-    public void testReplaceExtensionNonExistingExtension() {
+    void testReplaceExtensionNonExistingExtension() {
         String path = "/Users/tester/desktop/file";
         String extension = "txt";
         String expected = "/Users/tester/desktop/file.txt";
@@ -159,7 +159,7 @@ public class IoUtilTest {
      * Test replaceExtension with empty path.
      */
     @Test
-    public void testReplaceExtensionEmptyPath() {
+    void testReplaceExtensionEmptyPath() {
         String path = "";
         String extension = "docx";
 
@@ -184,10 +184,8 @@ public class IoUtilTest {
      * @return the normalized patern
      */
     private static String getPattern(Configuration configuration, String pattern) {
-        if (configuration.equals(Configuration.windows())) {
-            if (pattern.startsWith("/")) {
-                pattern = "c:" + pattern;
-            }
+        if (configuration.equals(Configuration.windows()) && pattern.startsWith("/")) {
+            pattern = "c:" + pattern;
         }
         return pattern;
     }
@@ -521,7 +519,7 @@ public class IoUtilTest {
     }
 
     @Test
-    public void testGetFilename() {
+    void testGetFilename() {
         assertEquals("file.txt", IoUtil.getFilename("/path/to/file.txt"));
         assertEquals("file.txt", IoUtil.getFilename("path/to/file.txt"));
         assertEquals("file", IoUtil.getFilename("/path/to/file"));
@@ -533,7 +531,7 @@ public class IoUtilTest {
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
-    public void testToUnixPath(Configuration configuration) throws Exception {
+    void testToUnixPath(Configuration configuration) throws Exception {
 
         try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
             Path dir = Files.createDirectories(fs.getPath(normalize(configuration, "/foo")));
@@ -548,7 +546,7 @@ public class IoUtilTest {
     }
 
     @Test
-    public void testStringInputStream() throws IOException {
+    void testStringInputStream() throws IOException {
         String testString = "test string";
         try (InputStream is = IoUtil.stringInputStream(testString)) {
             byte[] buffer = is.readAllBytes();
@@ -557,7 +555,7 @@ public class IoUtilTest {
     }
 
     @Test
-    public void testComposedClose() throws Exception {
+    void testComposedClose() throws Exception {
         boolean[] closed = {false, false};
         AutoCloseable closeable1 = () -> closed[0] = true;
         AutoCloseable closeable2 = () -> closed[1] = true;
@@ -570,7 +568,7 @@ public class IoUtilTest {
     }
 
     @Test
-    public void testCloseAll() throws Exception {
+    void testCloseAll() throws Exception {
         boolean[] closed = {false, false};
         AutoCloseable closeable1 = () -> closed[0] = true;
         AutoCloseable closeable2 = () -> closed[1] = true;
