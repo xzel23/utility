@@ -195,11 +195,16 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
-### 19.0.1
+### 19.1.0
 
 - fix: always return an array of the same type as the argument in ImmutableListBackedSortedSet.toArray(T[])
 - fix: NPE in TextAttributes.hashCode() when an attribute value is null
 - fix some minor issues and Qodana warnings
+- fix: possible inconsistent hash values for RichText
+- fix: possible XXE in XmlUtil.prettyPrint()
+- fix: possible exponential runtime for evaluating regex in Jdbc support classes
+- added coverage and Sonarcloud scanning in additionto Qodana to CI
+- small fixes and imrpovements
 - code cleanup
 
 ### 19.0.0
