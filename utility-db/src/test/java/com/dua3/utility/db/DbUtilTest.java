@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /**
  * Test the FileSystemView class.
  */
-public class DbUtilTest {
+class DbUtilTest {
 
     @Test
     void testGetDrivers() {

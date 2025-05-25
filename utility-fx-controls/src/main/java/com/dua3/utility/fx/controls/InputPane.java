@@ -1,8 +1,6 @@
 package com.dua3.utility.fx.controls;
 
 import javafx.scene.Node;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
 import java.util.Map;

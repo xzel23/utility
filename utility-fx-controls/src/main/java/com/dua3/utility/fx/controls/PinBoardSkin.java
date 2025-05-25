@@ -6,9 +6,7 @@ import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -53,11 +51,11 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         );
 
         pinBoard.getItems().addListener((ListChangeListener.Change<?> c) -> refresh());
-        pane.layoutBoundsProperty().addListener((o) -> refresh());
-        scrollPane.hvalueProperty().addListener((h) -> refresh());
-        scrollPane.vvalueProperty().addListener((v) -> refresh());
-        scrollPane.widthProperty().addListener((e) -> refresh());
-        scrollPane.heightProperty().addListener((e) -> refresh());
+        pane.layoutBoundsProperty().addListener(o -> refresh());
+        scrollPane.hvalueProperty().addListener(h -> refresh());
+        scrollPane.vvalueProperty().addListener(v -> refresh());
+        scrollPane.widthProperty().addListener(e -> refresh());
+        scrollPane.heightProperty().addListener(e -> refresh());
         scrollPane.viewportBoundsProperty().addListener((v, o, n) -> refresh());
 
         setDisplayScale(pinBoard.getDisplayScale());
@@ -106,11 +104,6 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     void refresh() {
         refresher.refresh();
-    }
-
-    private Rectangle2D getViewPort() {
-        Bounds vpBounds = scrollPane.getViewportBounds();
-        return new Rectangle2D(-vpBounds.getMinX(), -vpBounds.getMinY(), vpBounds.getWidth(), vpBounds.getHeight());
     }
 
     @Override
