@@ -229,21 +229,16 @@ public record FontData(
     }
 
     /**
-     * Get a clone of this {@code FontData} instance's {@link FontDef}.
+     * Get a copy of this {@code FontData} instance's {@link FontDef}.
      * <p>
      * {@code FontData} is immutable, but the contained {@code FontDef} is not.
-     * By returning a clone, we can assert that this object's state will not change.
+     * By returning a copy, we can assert that this object's state will not change.
      *
-     * @return clone of this {@code FontData} instance's {@link FontDef} member
+     * @return copy of this {@code FontData} instance's {@link FontDef} member
      */
     @Override
     public FontDef fontDef() {
-        try {
-            return fontDef.clone();
-        } catch (CloneNotSupportedException e) {
-            // cannot happen
-            throw new IllegalStateException(e);
-        }
+        return fontDef.copy();
     }
 
     @Override

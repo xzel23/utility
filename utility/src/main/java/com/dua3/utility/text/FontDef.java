@@ -22,11 +22,12 @@ import java.util.stream.Collectors;
  * instances.
  */
 @SuppressWarnings({"NonFinalFieldReferenceInEquals", "NonFinalFieldReferencedInHashCode", "MagicCharacter"})
-public final class FontDef implements Cloneable {
+public final class FontDef {
 
     private static final Logger LOG = LogManager.getLogger(FontDef.class);
 
     private static final Predicate<String> IS_FONT_SIZE = Pattern.compile("\\d+(\\.\\d*)?").asMatchPredicate();
+    private static final String INHERIT = "inherit";
 
     private @Nullable Color color;
     private @Nullable Float size;
@@ -223,14 +224,14 @@ public final class FontDef implements Cloneable {
     }
 
     private static @Nullable Color parseColor(String value) {
-        return value.equalsIgnoreCase("inherit") ? null : Color.valueOf(value);
+        return value.equalsIgnoreCase(INHERIT) ? null : Color.valueOf(value);
     }
 
     private static @Nullable Boolean parseFontWeight(String value) {
         return switch (value.toLowerCase(Locale.ROOT)) {
             case "bold" -> Boolean.TRUE;
             case "normal" -> Boolean.FALSE;
-            case "inherit" -> null;
+            case INHERIT -> null;
             default -> throw new IllegalArgumentException("invalid value for font-weight: " + value);
         };
     }
@@ -239,7 +240,7 @@ public final class FontDef implements Cloneable {
         return switch (value.toLowerCase(Locale.ROOT)) {
             case "italic", "oblique" -> Boolean.TRUE;
             case "normal" -> Boolean.FALSE;
-            case "inherit" -> null;
+            case INHERIT -> null;
             default -> throw new IllegalArgumentException("invalid value for font-style: " + value);
         };
     }
@@ -247,7 +248,7 @@ public final class FontDef implements Cloneable {
     private static @Nullable Float parseFontSize(String sz) {
         sz = sz.strip().toLowerCase(Locale.ROOT);
 
-        if (sz.equals("inherit")) {
+        if (sz.equals(INHERIT)) {
             return null;
         }
 
@@ -262,8 +263,8 @@ public final class FontDef implements Cloneable {
         if (!s.contains(",") && !s.contains("\"")) {
             // allow spaces in non-strict mode only
             String family = s.strip();
-            LangUtil.check(!strict || s.indexOf(' ') < 0, () -> new IllegalArgumentException("invalid font declaration: " + s));
-            return s.equals("inherit") ? null : List.of(s);
+            LangUtil.check(!strict || family.indexOf(' ') < 0, () -> new IllegalArgumentException("invalid font declaration: " + s));
+            return s.equals(INHERIT) ? null : List.of(family);
         }
 
         int idx = 0;
@@ -278,7 +279,6 @@ public final class FontDef implements Cloneable {
 
             int partStart = idx;
             if (partStart < end) {
-                int partEnd;
                 char c = s.charAt(idx);
                 String part;
                 if (c == '"') {
@@ -325,7 +325,7 @@ public final class FontDef implements Cloneable {
         }
 
         // "inherit" is treated the same as not present and it must not be combined
-        int idxInherit = families.indexOf("inherit");
+        int idxInherit = families.indexOf(INHERIT);
         if (idxInherit >= 0) {
             LangUtil.check(families.size() == 1, () -> new IllegalArgumentException("'inherit' must not be combined: " + s));
             return null;
@@ -723,9 +723,22 @@ public final class FontDef implements Cloneable {
                 && strikeThrough == null;
     }
 
-    @Override
-    public FontDef clone() throws CloneNotSupportedException {
-        return (FontDef) super.clone();
+    /**
+     * Creates and returns a deep copy of this FontDef instance.
+     *
+     * @return a new FontDef instance with deep copies of all fields
+     */
+    public FontDef copy() {
+        FontDef copy = new FontDef();
+        copy.color = color;
+        copy.size = size;
+        copy.families = families == null ? null : List.copyOf(families);
+        copy.bold = bold;
+        copy.italic = italic;
+        copy.underline = underline;
+        copy.strikeThrough = strikeThrough;
+        copy.type = type;
+        return copy;
     }
 
 }
