@@ -253,8 +253,7 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
         for (int i = 0; i < keys.length; i++) {
             entries[i] = new Entry<>((K) keys[i], values[i]);
         }
-        SortedSet entrySet = new ImmutableListBackedSortedSet<>(entries);
-        return (SortedSet<Map.Entry<K,V>>) entrySet;
+        return new ImmutableListBackedSortedSet(entries);
     }
 
     @Override
