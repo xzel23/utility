@@ -116,12 +116,7 @@ public final class TextAttributes extends AbstractMap<String, @Nullable Object> 
             fd = getFontDefInternal(this);
             fontDef = fd;
         }
-        try {
-            return fd.clone();
-        } catch (CloneNotSupportedException e) {
-            // this should not happen
-            throw new IllegalStateException();
-        }
+        return fd.copy();
     }
 
     /**

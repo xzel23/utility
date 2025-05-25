@@ -3,8 +3,6 @@ package com.dua3.utility.swing;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.Option;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.jspecify.annotations.Nullable;
 
 import javax.swing.Box;
@@ -42,7 +40,6 @@ import java.util.function.Supplier;
  */
 public class ArgumentsDialog extends JDialog {
 
-    private static final Logger LOG = LogManager.getLogger(ArgumentsDialog.class);
     private final ArgumentsPanel panel;
 
     /**
@@ -164,7 +161,6 @@ public class ArgumentsDialog extends JDialog {
         public Arguments getArguments() {
             List<? extends Arguments.Entry<?>> parsedOptions = inputs.values().stream()
                     .map(oi -> {
-                        var option = oi.option();
                         var entry = Arguments.createEntry(oi.option);
                         oi.getParameter().get().forEach(entry::addParameter);
                         return entry;
