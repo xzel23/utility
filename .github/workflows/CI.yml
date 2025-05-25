@@ -110,7 +110,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
-          ./gradlew sonarqube
+          ./gradlew sonar
           -Dsonar.projectKey=xzel23_utility
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
