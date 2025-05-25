@@ -25,8 +25,6 @@ import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The SwingGraphics class implements the {@link Graphics} interface for rendering graphics in swing based applications.
@@ -37,6 +35,7 @@ public class SwingGraphics implements Graphics {
     private static final AwtImageUtil IMAGE_UTIL = AwtImageUtil.getInstance();
     private static final java.awt.Font DEFAULT_FONT_AWT;
     private static final Font DEFAULT_FONT;
+    private static final String INSTANCE_HAS_ALREADY_BEEN_CLOSED = "instance has already been closed!";
 
     // determine default font
     static {
@@ -72,7 +71,7 @@ public class SwingGraphics implements Graphics {
     private final Rectangle parentBounds;
     private final AffineTransformation2f parentTransform;
 
-    private static final class State implements Cloneable {
+    private static final class State {
         private AffineTransformation2f transform = AffineTransformation2f.IDENTITY;
         private Color strokeColor = Color.BLACK;
         private java.awt.Color awtStrokeColor = java.awt.Color.BLACK;
@@ -84,10 +83,6 @@ public class SwingGraphics implements Graphics {
         private java.awt.Color awtTextColor = SwingUtil.convert(font.getColor());
         private boolean isUnderlined = false;
         private boolean isStrikeThrough = false;
-
-        public State clone() throws CloneNotSupportedException {
-            return (State) super.clone();
-        }
     }
 
     private final Line2D.Float line = new Line2D.Float();
@@ -97,7 +92,6 @@ public class SwingGraphics implements Graphics {
     private boolean isDrawing = true;
 
     private final State state;
-    private final List<State> savedState = new ArrayList<>();
 
     /**
      * Constructor.
@@ -129,7 +123,7 @@ public class SwingGraphics implements Graphics {
      * @return a {@link Rectangle2f} object with the same position and size as the input
      */
     public Rectangle2f convert(Rectangle r) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         return Rectangle2f.of(r.x, r.y, r.width, r.height);
     }
@@ -183,7 +177,7 @@ public class SwingGraphics implements Graphics {
      * @return the converted affine transformation
      */
     public AffineTransformation2f convert(AffineTransform t) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         t.getMatrix(double6);
         return new AffineTransformation2f(
@@ -205,7 +199,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.transform = t;
         g2d.setTransform(convert(t.append(parentTransform)));
@@ -213,21 +207,21 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public AffineTransformation2f getTransformation() {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         return state.transform;
     }
 
     @Override
     public void close() {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         isDrawing = false;
     }
 
     @Override
     public void setFill(Color color) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.fillColor = color;
         state.awtFillColor = SwingUtil.convert(color);
@@ -240,7 +234,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void setStroke(Color c, float width) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.strokeWidth = width;
         state.strokeColor = c;
@@ -250,7 +244,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void setStrokeColor(Color c) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.strokeColor = c;
         state.awtStrokeColor = SwingUtil.convert(state.strokeColor);
@@ -258,7 +252,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void setStrokeWidth(float width) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.strokeWidth = width;
         g2d.setStroke(new BasicStroke(state.strokeWidth));
@@ -276,7 +270,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void setFont(Font font) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.awtTextColor = (SwingUtil.convert(font.getColor()));
         state.isUnderlined = font.isUnderline();
@@ -292,7 +286,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         g2d.setColor(state.awtStrokeColor);
         line.setLine(x1, y1, x2, y2);
@@ -301,7 +295,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void strokePath(Path2f path) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         g2d.setColor(state.awtStrokeColor);
         Path2D swingPath = SwingUtil.convertToSwingPath(path);
@@ -310,7 +304,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void fillPath(Path2f path) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         g2d.setColor(state.awtFillColor);
         Path2D swingPath = SwingUtil.convertToSwingPath(path);
@@ -319,7 +313,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void drawImage(Image image, float x, float y) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         g2d.drawImage(
                 IMAGE_UTIL.convert(image),
@@ -350,7 +344,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void strokeRect(float x, float y, float width, float height) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         g2d.setColor(state.awtStrokeColor);
         rect.setRect(x, y, width, height);
@@ -359,7 +353,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         g2d.setColor(state.awtFillColor);
         rect.setRect(x, y, width, height);
@@ -368,7 +362,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void strokeEllipse(float x, float y, float rx, float ry, float angle) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         Vector2f p0 = Vector2f.of(x + rx, y);
         Vector2f p1 = Vector2f.of(x - rx, y);
@@ -385,7 +379,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void fillEllipse(float x, float y, float rx, float ry, float angle) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         Vector2f p0 = Vector2f.of(x + rx, y);
         Vector2f p1 = Vector2f.of(x - rx, y);
@@ -402,7 +396,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         if (text.isEmpty()) {
             return;
@@ -445,7 +439,7 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public FontUtil<?> getFontUtil() {
-        assert isDrawing : "instance has been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         return FONT_UTIL;
     }
