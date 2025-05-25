@@ -7,14 +7,16 @@ on:
 
 jobs:
   build-and-analyze:
-    runs-on: ubuntu-latest
+    matrix:
+      os: [ ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 'Set up BellSoft Liberica Full JDK 21'
+      - name: 'Set up BellSoft Liberica Full JDK 21 and BellSoft Liberica 24 on Linux'
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -61,6 +63,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: 'Create Qodana config'
+        if: runner.os == 'Linux'
         run: |
           cat > qodana.yaml << 'EOF'
           version: "1.0"
@@ -74,17 +77,20 @@ jobs:
           EOF
 
       - name: 'Qodana Scan'
+        if: runner.os == 'Linux'
         uses: JetBrains/qodana-action@v2025.1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
       - name: 'Cache SonarCloud packages'
+        if: runner.os == 'Linux'
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: 'Sonar Scan'
+        if: runner.os == 'Linux'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
