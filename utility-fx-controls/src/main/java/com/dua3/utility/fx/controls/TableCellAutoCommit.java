@@ -58,7 +58,7 @@ public class TableCellAutoCommit<S, T> extends TableCell<S, T> {
      * @return A callback that creates an EditCell for a TableColumn.
      */
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(StringConverter<T> converter) {
-        return (list) -> new TableCellAutoCommit<>(converter);
+        return list -> new TableCellAutoCommit<>(converter);
     }
 
     /**
@@ -104,7 +104,7 @@ public class TableCellAutoCommit<S, T> extends TableCell<S, T> {
                     getTableView().getSelectionModel().selectBelowCell();
                     event.consume();
                 }
-                default -> {}
+                default -> { /* nothing to do */ }
             }
         });
 
