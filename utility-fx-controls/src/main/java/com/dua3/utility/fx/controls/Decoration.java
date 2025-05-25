@@ -142,8 +142,8 @@ class DecorationPane extends AnchorPane {
     private static DecorationPane getDecorationPane(Scene scene) {
         Parent sceneRoot = Objects.requireNonNull(scene.getRoot(), "scene has no root");
 
-        if (sceneRoot instanceof DecorationPane) {
-            return (DecorationPane) sceneRoot;
+        if (sceneRoot instanceof DecorationPane dp) {
+            return dp;
         }
 
         DecorationPane decorationPane = new DecorationPane(sceneRoot);

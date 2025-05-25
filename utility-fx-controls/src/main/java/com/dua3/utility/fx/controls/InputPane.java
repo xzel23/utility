@@ -34,8 +34,8 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
     @Override
     public Map<String, Object> get() {
         Node content = getContent();
-        if (content instanceof InputGrid) {
-            return ((InputGrid) content).get();
+        if (content instanceof InputGrid inputGrid) {
+            return inputGrid.get();
         } else {
             return Collections.emptyMap();
         }

@@ -179,8 +179,8 @@ public final class FxDbUtil {
     private static Object getObject(ResultSet rs, int i) throws SQLException {
         Object obj = rs.getObject(i);
 
-        if (obj instanceof Clob) {
-            obj = toString((Clob) obj);
+        if (obj instanceof Clob clob) {
+            obj = toString(clob);
         }
 
         return obj;
