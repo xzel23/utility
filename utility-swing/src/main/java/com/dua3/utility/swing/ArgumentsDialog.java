@@ -202,7 +202,7 @@ public class ArgumentsDialog extends JDialog {
         return Optional.ofNullable(dlg.arguments);
     }
 
-    private @Nullable Arguments arguments;
+    private transient @Nullable Arguments arguments;
 
     private void dialogClosed() {
         arguments = panel.getArguments();

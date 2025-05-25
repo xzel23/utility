@@ -23,7 +23,7 @@ import java.util.List;
 public class LoggerSlf4j extends AbstractLogger {
     private static Level defaultLevel = Level.INFO;
 
-    private final List<? extends WeakReference<LogEntryHandler>> handlers;
+    private final transient List<? extends WeakReference<LogEntryHandler>> handlers;
     private @Nullable Level level;
 
     /**
