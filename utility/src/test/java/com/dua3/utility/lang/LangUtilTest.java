@@ -388,7 +388,6 @@ class LangUtilTest {
 
     @Test
     void testOrElseGet() {
-        Object a = "a";
         assertSame(null, LangUtil.orElse(null, null));
         assertEquals("b", LangUtil.orElseGet(null, () -> "b"));
         assertEquals("a", LangUtil.orElseGet("a", () -> "b"));
