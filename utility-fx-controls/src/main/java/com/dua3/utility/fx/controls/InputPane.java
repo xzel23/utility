@@ -14,8 +14,6 @@ import java.util.Map;
  */
 public class InputPane extends InputDialogPane<Map<String, Object>> {
 
-    private static final Logger LOG = LogManager.getLogger(InputPane.class);
-
     private final InputGrid inputGrid;
 
     /**
@@ -34,8 +32,8 @@ public class InputPane extends InputDialogPane<Map<String, Object>> {
     @Override
     public Map<String, Object> get() {
         Node content = getContent();
-        if (content instanceof InputGrid inputGrid) {
-            return inputGrid.get();
+        if (content instanceof InputGrid ig) {
+            return ig.get();
         } else {
             return Collections.emptyMap();
         }
