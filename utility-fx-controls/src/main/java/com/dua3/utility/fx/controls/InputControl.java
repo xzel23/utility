@@ -149,13 +149,13 @@ public interface InputControl<T> {
      */
     static <T> SimpleInputControl<ComboBoxEx<T>, T> comboBoxExInput(
             Collection<T> choices,
-            Supplier<T> dflt,
+            Supplier<@Nullable T> dflt,
             @Nullable UnaryOperator<T> edit,
             @Nullable Supplier<T> add,
             @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
             Function<T, String> format,
             Function<T, Optional<String>> validate) {
-        ComboBoxEx<T> control = new ComboBoxEx<>(edit, add, remove, format, FXCollections.observableArrayList(choices));
+        ComboBoxEx<T> control = new ComboBoxEx<>(edit, add, remove, dflt, format, FXCollections.observableArrayList(choices));
         Property<T> value = control.valueProperty();
         return new SimpleInputControl<>(control, value, dflt, validate);
     }

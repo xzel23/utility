@@ -45,6 +45,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     private final @Nullable Function<T, @Nullable T> edit;
     private final @Nullable Supplier<T> add;
     private final @Nullable BiPredicate<ComboBoxEx<T>, T> remove;
+    private final Supplier<@Nullable T> dflt;
     private final Function<T, String> format;
     private final ObservableList<T> items;
     private final ComboBox<T> comboBox;
@@ -52,27 +53,42 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
     /**
      * Constructs a ComboBoxEx with the specified edit, add, remove, format, and items.
      *
-     * @param edit    the unary operator to perform editing on the selected item (nullable)
-     * @param add     the supplier to provide a new item to add (nullable)
-     * @param remove  the bi-predicate to determine if an item should be removed (nullable)
-     * @param format  the function to format the items as strings
-     * @param items   the initial items to populate the ComboBox (variadic parameter)
+     * @param edit   the unary operator to perform editing on the selected item (nullable)
+     * @param add    the supplier to provide a new item to add (nullable)
+     * @param remove the bi-predicate to determine if an item should be removed (nullable)
+     * @param dflt   the supplier for the default value
+     * @param format the function to format the items as strings
+     * @param items  the initial items to populate the ComboBox (variadic parameter)
      */
     @SafeVarargs
-    public ComboBoxEx(@Nullable UnaryOperator<T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<T, String> format, T... items) {
-        this(edit, add, remove, format, Arrays.asList(items));
+    public ComboBoxEx(
+            @Nullable UnaryOperator<T> edit,
+            @Nullable Supplier<T> add,
+            @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            @Nullable Supplier<@Nullable T> dflt,
+            Function<T, String> format,
+            T... items
+    ) {
+        this(edit, add, remove, dflt, format, Arrays.asList(items));
     }
 
     /**
      * Constructs a ComboBoxEx with the specified edit, add, remove, format, and items.
      *
-     * @param edit    the unary operator to perform editing on the selected item (nullable)
-     * @param add     the supplier to provide a new item to add (nullable)
-     * @param remove  the bi-predicate to determine if an item should be removed (nullable)
-     * @param format  the function to format the items as strings
-     * @param items   the initial items to populate the ComboBox (variadic parameter)
+     * @param edit   the unary operator to perform editing on the selected item (nullable)
+     * @param add    the supplier to provide a new item to add (nullable)
+     * @param remove the bi-predicate to determine if an item should be removed (nullable)
+     * @param dflt   the supplier for the default value
+     * @param format the function to format the items as strings
+     * @param items  the initial items to populate the ComboBox (variadic parameter)
      */
-    public ComboBoxEx(@Nullable Function<T, @Nullable T> edit, @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove, Function<@Nullable T, String> format, Collection<T> items) {
+    public ComboBoxEx(
+            @Nullable Function<T, @Nullable T> edit,
+            @Nullable Supplier<T> add, @Nullable BiPredicate<ComboBoxEx<T>, T> remove,
+            @Nullable Supplier<@Nullable T> dflt,
+            Function<@Nullable T, String> format,
+            Collection<T> items
+    ) {
         super(new HBox());
         container.setAlignment(Pos.CENTER_LEFT);
 
@@ -80,6 +96,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
 
         this.format = format;
         this.items = FXCollections.observableArrayList(List.copyOf(items));
+        this.dflt = dflt != null ? dflt : () -> null;
 
         this.comboBox = new ComboBox<>(this.items);
         ObservableList<Node> children = container.getChildren();
@@ -142,6 +159,8 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
 
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
+
+        valueProperty().setValue(this.dflt.get());
     }
 
     private void editItem() {
@@ -283,7 +302,7 @@ public class ComboBoxEx<T> extends CustomControl<HBox> implements InputControl<T
 
     @Override
     public void reset() {
-
+        valueProperty().setValue(dflt.get());
     }
 
     @Override
