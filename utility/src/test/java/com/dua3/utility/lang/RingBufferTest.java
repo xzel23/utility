@@ -13,8 +13,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("ConstantConditions")
 class RingBufferTest {
@@ -47,26 +47,11 @@ class RingBufferTest {
     @Test
     void testGet() {
         buffer.clear();
-        try {
-            System.out.println(buffer.get(0));
-            fail("IndexOutOfBoundsException not thrown.");
-        } catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
-            // nop
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.get(0));
         buffer.add("Test1");
         assertEquals("Test1", buffer.get(0));
-        try {
-            System.out.println(buffer.get(1));
-            fail("IndexOutOfBoundsException not thrown.");
-        } catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
-            // nop
-        }
-        try {
-            System.out.println(buffer.get(-1));
-            fail("IndexOutOfBoundsException not thrown.");
-        } catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
-            // nop
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.get(1));
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.get(-1));
         buffer.add("Test2");
         buffer.add("Test3");
         assertEquals("Test2", buffer.get(1));
