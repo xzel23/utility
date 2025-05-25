@@ -17,6 +17,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 'Cache JDKs'
+        id: cache-jdks
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.os == 'Linux' && '/usr/lib/jvm/bellsoft-java21-full-amd64' || 'C:\Program Files\BellSoft\LibericaJDK-21' }}
+            ${{ runner.os == 'Linux' && '/usr/lib/jvm/bellsoft-java24-full-amd64' || 'C:\Program Files\BellSoft\LibericaJDK-24' }}
+          key: ${{ runner.os }}-liberica-jdk-21-24-${{ hashFiles('.github/workflows/CI.yml') }}
+
       - name: 'Set up BellSoft Liberica Full JDK 21 and BellSoft Liberica 24 on Linux'
         if: runner.os == 'Linux'
         run: |
