@@ -223,7 +223,7 @@ public final class Dialogs {
         /**
          * The file path associated with the exception, if available.
          */
-        private final @Nullable Path path;
+        private final transient @Nullable Path path;
 
         /**
          * Constructs a new UnsupportedFileTypeException with a specified detail message.
