@@ -21,6 +21,8 @@ import java.util.function.UnaryOperator;
  */
 public final class HtmlConverter extends TagBasedConverter<String> {
 
+    private static final String SPAN_CLOSE = "</span>";
+
     /**
      * The style mappings of this converter.
      * <p>
@@ -63,7 +65,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
     /**
      * The default mapper used to generate tags for attributes without mapping.
      */
-    private Function<AttributeChange, ? extends HtmlTag> defaultAttributeMapper = (attributeChange) -> HtmlTag.emptyTag();
+    private Function<AttributeChange, ? extends HtmlTag> defaultAttributeMapper = attributeChange -> HtmlTag.emptyTag();
 
     /**
      * Whether CSS output should be generated.
@@ -295,17 +297,17 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         addMapping(Style.FONT_CLASS, value -> {
             if (isUseCss()) {
                 return switch (value.toString()) {
-                    case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<span class='monospace'>", "</span>");
-                    case Style.FONT_CLASS_VALUE_SANS_SERIF -> HtmlTag.tag("<span class='sans-serif'>", "</span>");
-                    case Style.FONT_CLASS_VALUE_SERIF -> HtmlTag.tag("<span class='serif'>", "</span>");
+                    case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<span class='monospace'>", SPAN_CLOSE);
+                    case Style.FONT_CLASS_VALUE_SANS_SERIF -> HtmlTag.tag("<span class='sans-serif'>", SPAN_CLOSE);
+                    case Style.FONT_CLASS_VALUE_SERIF -> HtmlTag.tag("<span class='serif'>", SPAN_CLOSE);
                     default -> HtmlTag.emptyTag();
                 };
             } else {
                 return switch (value.toString()) {
                     case Style.FONT_CLASS_VALUE_MONOSPACE -> HtmlTag.tag("<code>", "</code>");
                     case Style.FONT_CLASS_VALUE_SANS_SERIF ->
-                            HtmlTag.tag("<span style='font-family: sans-serif'>", "</span>");
-                    case Style.FONT_CLASS_VALUE_SERIF -> HtmlTag.tag("<span style='font-family: serif'>", "</span>");
+                            HtmlTag.tag("<span style='font-family: sans-serif'>", SPAN_CLOSE);
+                    case Style.FONT_CLASS_VALUE_SERIF -> HtmlTag.tag("<span style='font-family: serif'>", SPAN_CLOSE);
                     default -> HtmlTag.emptyTag();
                 };
             }
@@ -314,9 +316,9 @@ public final class HtmlConverter extends TagBasedConverter<String> {
         addMapping(Style.FONT, value -> {
             Font font = (Font) value;
             if (isUseCss()) {
-                return HtmlTag.tag("<span class='" + font.fontspec() + "'>", "</span>");
+                return HtmlTag.tag("<span class='" + font.fontspec() + "'>", SPAN_CLOSE);
             } else {
-                return HtmlTag.tag("<span style='" + font.getCssStyle() + "'>", "</span>");
+                return HtmlTag.tag("<span style='" + font.getCssStyle() + "'>", SPAN_CLOSE);
             }
         });
     }
@@ -489,8 +491,8 @@ public final class HtmlConverter extends TagBasedConverter<String> {
             }
         }
 
-        private void appendAttributeTags(List<AttributeChange> AttributeChanges, HtmlTag.TagType type) {
-            for (AttributeChange av : AttributeChanges) {
+        private void appendAttributeTags(List<AttributeChange> attributeChanges, HtmlTag.TagType type) {
+            for (AttributeChange av : attributeChanges) {
                 HtmlTag tag = getTagForAttributeChange(av);
                 if (type == HtmlTag.TagType.OPEN_TAG) {
                     appendOpeningTag(tag);
@@ -545,7 +547,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
                             sb.append("<span style='");
                             sb.append(fd.getCssStyle());
                             sb.append("'>");
-                            tags.add(HtmlTag.tag(sb.toString(), "</span>"));
+                            tags.add(HtmlTag.tag(sb.toString(), SPAN_CLOSE));
                         }
 
                         // filter out all font-related attributes, they are handled by the generated span tag above

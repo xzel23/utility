@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 public class ChoiceInputControl<T> implements InputControl<T> {
 
     private final ComboBox<ChoiceOption.Choice<@Nullable T>> control;
-    private final ChoiceOption<T> option;
     private final Supplier<? extends @Nullable T> dfltValue;
     private final Property<@Nullable T> valueProperty;
 
@@ -34,7 +33,6 @@ public class ChoiceInputControl<T> implements InputControl<T> {
      * @param dfltValue a Supplier that provides the default value for the input control
      */
     public ChoiceInputControl(ChoiceOption<T> option, Supplier<? extends @Nullable T> dfltValue) {
-        this.option = option;
         this.dfltValue = dfltValue;
         this.control = new ComboBox<>();
         this.valueProperty = new SimpleObjectProperty<>();

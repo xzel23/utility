@@ -513,7 +513,7 @@ class LangUtilTest {
     void testCache() {
         // Create a supplier that supplies a new string "test" and a Consumer that does nothing
         AtomicReference<String> value = new AtomicReference<>("test");
-        Supplier<String> supplier = () -> value.get();
+        Supplier<String> supplier = value::get;
         Consumer<String> consumer = (String s) -> value.set(null);
 
         LangUtil.AutoCloseableSupplier<String> cS = LangUtil.cache(supplier, consumer);
