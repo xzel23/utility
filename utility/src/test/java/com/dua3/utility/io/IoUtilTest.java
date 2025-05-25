@@ -11,6 +11,7 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
@@ -120,41 +121,26 @@ public class IoUtilTest {
 
 
     /**
-     * Test replaceExtension with valid input.
+     * Test replaceExtension with various inputs.
+     *
+     * @return stream of test arguments: path, extension, expected result
      */
-    @Test
-    void testReplaceExtensionValidInput() {
-        String path = "/Users/tester/desktop/file.txt";
-        String extension = "docx";
-        String expected = "/Users/tester/desktop/file.docx";
-
-        assertEquals(expected, IoUtil.replaceExtension(path, extension));
+    private static Stream<Arguments> replaceExtensionTestCases() {
+        return Stream.of(
+                Arguments.of("/Users/tester/desktop/file.txt", "docx", "/Users/tester/desktop/file.docx"),
+                Arguments.of("/Users/tester/desktop/file.txt", "", "/Users/tester/desktop/file."),
+                Arguments.of("/Users/tester/desktop/file", "txt", "/Users/tester/desktop/file.txt")
+        );
     }
 
     /**
-     * Test replaceExtension with empty extension.
+     * Test replaceExtension with various inputs.
      */
-    @Test
-    void testReplaceExtensionEmptyExtension() {
-        String path = "/Users/tester/desktop/file.txt";
-        String extension = "";
-        String expected = "/Users/tester/desktop/file.";
-
+    @ParameterizedTest
+    @MethodSource("replaceExtensionTestCases")
+    void testReplaceExtension(String path, String extension, String expected) {
         assertEquals(expected, IoUtil.replaceExtension(path, extension));
     }
-
-    /**
-     * Test replaceExtension with non-existing extension.
-     */
-    @Test
-    void testReplaceExtensionNonExistingExtension() {
-        String path = "/Users/tester/desktop/file";
-        String extension = "txt";
-        String expected = "/Users/tester/desktop/file.txt";
-
-        assertEquals(expected, IoUtil.replaceExtension(path, extension));
-    }
-
     /**
      * Test replaceExtension with empty path.
      */
@@ -497,7 +483,7 @@ public class IoUtilTest {
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
-    public void toUriPathArgument_AbsolutePath(Configuration configuration) throws Exception {
+    void toUriPathArgument_AbsolutePath(Configuration configuration) throws Exception {
         try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
             Path filePath = fs.getPath(normalize(configuration, "/test/path"));
 
@@ -508,7 +494,7 @@ public class IoUtilTest {
 
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
-    public void toUriPathArgument_RelativePath(Configuration configuration) throws Exception {
+    void toUriPathArgument_RelativePath(Configuration configuration) throws Exception {
         try (FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix())) {
             Path filePath = fileSystem.getPath("test/path");
 
@@ -555,7 +541,7 @@ public class IoUtilTest {
     }
 
     @Test
-    void testComposedClose() throws Exception {
+    void testComposedClose() {
         boolean[] closed = {false, false};
         AutoCloseable closeable1 = () -> closed[0] = true;
         AutoCloseable closeable2 = () -> closed[1] = true;
