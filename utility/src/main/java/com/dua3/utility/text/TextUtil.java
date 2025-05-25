@@ -8,8 +8,6 @@ package com.dua3.utility.text;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,8 +39,6 @@ import java.util.stream.Collectors;
  * Text related utility class.
  */
 public final class TextUtil {
-
-    private static final Logger LOG = LogManager.getLogger(TextUtil.class);
 
     /**
      * The current system's end-of-line sequence.
