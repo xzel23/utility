@@ -51,6 +51,9 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
      */
     public static final String LOGGER_CONSOLE_COLORED = "logger.console.colored";
 
+    private static final String SYSTEM_OUT = "system.out";
+    private static final String SYSTEM_ERR = "system.err";
+
     private final List<Pair<String, Level>> prefixes = new ArrayList<>();
     private final List<WeakReference<LogEntryHandler>> handlers = new ArrayList<>();
 
@@ -102,9 +105,9 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
         String propertyConsoleStream = properties.getProperty(LOGGER_CONSOLE_STREAM, "").trim().toLowerCase(Locale.ROOT);
         final PrintStream stream = switch (propertyConsoleStream) {
             case "" -> null;
-            case "system.err" -> //noinspection UseOfSystemOutOrSystemErr
+            case SYSTEM_ERR -> //noinspection UseOfSystemOutOrSystemErr
                     System.err;
-            case "system.out" -> //noinspection UseOfSystemOutOrSystemErr
+            case SYSTEM_OUT -> //noinspection UseOfSystemOutOrSystemErr
                     System.out;
             default ->
                     throw new IllegalArgumentException("invalid value for property " + LOGGER_CONSOLE_STREAM + ": '" + propertyConsoleStream + "'");
@@ -129,12 +132,12 @@ public class LoggerFactorySlf4j implements ILoggerFactory, LogEntryDispatcher {
         Properties properties = new Properties();
         try (InputStream in = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             if (in == null) {
-                properties.setProperty(LOGGER_CONSOLE_STREAM, "system.out");
+                properties.setProperty(LOGGER_CONSOLE_STREAM, SYSTEM_OUT);
             } else {
                 properties.load(in);
             }
         } catch (IOException e) {
-            properties.setProperty(LOGGER_CONSOLE_STREAM, "system.out");
+            properties.setProperty(LOGGER_CONSOLE_STREAM, SYSTEM_OUT);
             e.printStackTrace(System.err);
         }
         return properties;

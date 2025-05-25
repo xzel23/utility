@@ -46,6 +46,7 @@ import java.util.function.UnaryOperator;
 public class InputGridBuilder
         implements InputBuilder<InputGridBuilder> {
 
+    private static final String INPUT_WITH_ID_ALREADY_DEFINED = "Input with id '%s' already defined";
     private final LinkedHashMap<String, InputGrid.Meta<?>> data = new LinkedHashMap<>();
     private int columns = 1;
 
@@ -115,7 +116,7 @@ public class InputGridBuilder
     private <T> InputGridBuilder doAdd(String id, @Nullable String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
         Meta<T> meta = new Meta<>(id, label, type, dflt, control);
         Meta<?> prev = data.put(id, meta);
-        LangUtil.check(prev == null, "Input with id '" + id + "' already defined");
+        LangUtil.check(prev == null, INPUT_WITH_ID_ALREADY_DEFINED, id);
         return this;
     }
 
@@ -124,7 +125,7 @@ public class InputGridBuilder
         //noinspection DataFlowIssue - false positive; parameter is defined as Supplier<T extends @Nullable Object>
         Meta<Void> meta = new Meta<>(id, label, Void.class, () -> null, new ControlWrapper(node));
         Meta<?> prev = data.put(id, meta);
-        LangUtil.check(prev == null, "Input with id '" + id + "' already defined");
+        LangUtil.check(prev == null, INPUT_WITH_ID_ALREADY_DEFINED, id);
         return this;
     }
 
@@ -133,7 +134,7 @@ public class InputGridBuilder
         //noinspection DataFlowIssue - false positive; parameter is defined as Supplier<T extends @Nullable Object>
         Meta<Void> meta = new Meta<>(id, null, Void.class, () -> null, new ControlWrapper(node));
         Meta<?> prev = data.put(id, meta);
-        LangUtil.check(prev == null, "Input with id '" + id + "' already defined");
+        LangUtil.check(prev == null, INPUT_WITH_ID_ALREADY_DEFINED, id);
         return this;
     }
 

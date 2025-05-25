@@ -208,11 +208,7 @@ public class FxLogPane extends BorderPane {
 
         tfSearchText.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                if (event.isShiftDown()) {
-                    searchAction.accept(tfSearchText.getText(), true);
-                } else {
-                    searchAction.accept(tfSearchText.getText(), false);
-                }
+                searchAction.accept(tfSearchText.getText(), event.isShiftDown());
             }
         });
 
@@ -282,13 +278,13 @@ public class FxLogPane extends BorderPane {
     }
 
     private void selectLogEntry(LogEntry logEntry) {
-        assert Platform.isFxApplicationThread() : "not on FX Application Thread";
+        PlatformHelper.checkApplicationThread();
         tableView.getSelectionModel().select(logEntry);
         tableView.scrollTo(logEntry);
     }
 
     private void onScrollEvent(ScrollEvent evt) {
-        assert Platform.isFxApplicationThread() : "not on FX Application Thread";
+        PlatformHelper.checkApplicationThread();
         if (autoScroll) {
             // disable autoscroll when manually scrolling
             autoScroll = false;
@@ -308,18 +304,18 @@ public class FxLogPane extends BorderPane {
     }
 
     private boolean isSelectionEmpty() {
-        assert Platform.isFxApplicationThread() : "not on FX Application Thread";
+        PlatformHelper.checkApplicationThread();
         return selectedItem == null;
     }
 
     private void clearSelection() {
-        assert Platform.isFxApplicationThread() : "not on FX Application Thread";
+        PlatformHelper.checkApplicationThread();
         tableView.getSelectionModel().clearSelection();
         selectedItem = null;
     }
 
     private void onEntries(ListChangeListener.Change<? extends LogEntry> change) {
-        assert Platform.isFxApplicationThread() : "not on FX Application Thread";
+        PlatformHelper.checkApplicationThread();
         if (autoScroll) {
             // scroll to bottom
             Platform.runLater(() -> {
@@ -334,7 +330,7 @@ public class FxLogPane extends BorderPane {
     }
 
     private boolean isScrolledToBottom() {
-        assert Platform.isFxApplicationThread() : "not on FX Application Thread";
+        PlatformHelper.checkApplicationThread();
         return getScrollBar(Orientation.VERTICAL).map(sb -> {
                     double max = sb.getMax();
                     double current = sb.getValue();
