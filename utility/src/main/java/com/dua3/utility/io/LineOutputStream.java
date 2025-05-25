@@ -73,6 +73,37 @@ public class LineOutputStream extends OutputStream {
         }
     }
 
+    @Override
+    public void write(byte[] b) throws IOException {
+        write(b, 0, b.length);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        synchronized (lock) {
+            int start = off;
+            int end = off + len;
+            for (int i = off; i < end; i++) {
+                if (b[i] == '\n') {
+                    // Ensure capacity and copy bytes up to line end
+                    int segLen = i - start + 1;
+                    ensureCapacity(count + segLen);
+                    System.arraycopy(b, start, buf, count, segLen);
+                    count += segLen;
+                    flushLine();
+                    start = i + 1;
+                }
+            }
+            // Copy any remaining bytes
+            if (start < end) {
+                int segLen = end - start;
+                ensureCapacity(count + segLen);
+                System.arraycopy(b, start, buf, count, segLen);
+                count += segLen;
+            }
+        }
+    }
+
     private void ensureCapacity(int minCapacity) {
         int oldCapacity = buf.length;
 
