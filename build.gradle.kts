@@ -24,6 +24,7 @@ plugins {
     alias(libs.plugins.cabe)
     alias(libs.plugins.forbiddenapis)
     alias(libs.plugins.jmh)
+    alias(libs.plugins.sonar)
 }
 
 /////////////////////////////////////////////////////////////////////////////
