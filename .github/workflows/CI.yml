@@ -7,8 +7,9 @@ on:
 
 jobs:
   build-and-analyze:
-    matrix:
-      os: [ ubuntu-latest, windows-latest ]
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
