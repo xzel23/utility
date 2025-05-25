@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class ArgumentsParserTest {
+class ArgumentsParserTest {
 
     @Test
     void testFlag() {

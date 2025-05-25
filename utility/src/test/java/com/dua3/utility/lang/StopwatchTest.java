@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This file contains test cases for the Stopwatch class
  * It tests both duration methods: elapsed and elapsedSplit.
  */
-public class StopwatchTest {
+class StopwatchTest {
 
     // A helper function to imitate a delay in the testing environment
     static void delay(long millis) {

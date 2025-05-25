@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit test for NamedFunction class.
  */
-public class NamedFunctionTest {
+class NamedFunctionTest {
 
     /**
      * Test to verify the apply() method of NamedFunction works correctly.

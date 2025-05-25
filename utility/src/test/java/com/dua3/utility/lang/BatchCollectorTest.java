@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * This is a test class for the BatchCollector class.
  * It aims to tests the functionality of the methods within the BatchCollector class.
  */
-public class BatchCollectorTest {
+class BatchCollectorTest {
 
     /**
      * This test is for testing the functionality of BatchCollector when generating grouping.

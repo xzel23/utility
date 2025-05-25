@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test class for SortedSet implementations.
  * This class tests all methods of the SortedSet interface using parameterized tests.
  */
-public class SortedSetTest {
+class SortedSetTest {
 
     /**
      * Provides a stream of factory methods that create SortedSet instances.

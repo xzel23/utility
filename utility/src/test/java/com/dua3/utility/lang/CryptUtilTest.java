@@ -12,7 +12,7 @@ import java.util.HexFormat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CryptUtilTest {
+class CryptUtilTest {
 
     private static final int[] KEY_LENGTHS = {128, 192, 256};
 

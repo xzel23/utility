@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test the FileSystemView class.
  */
-public class IoUtilTest {
+class IoUtilTest {
 
     /**
      * The filesystem configurations to use in tests.

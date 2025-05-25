@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 /**
  * Test cases for StreamGathererUtil.
  */
-public class StreamGathererUtilTest {
+class StreamGathererUtilTest {
 
     /**
      * Tests for the groupConsecutive method in StreamGathererUtil.

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * {@link RichTextBuilder} unit test.
  */
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-public class RichTextBuilderTest {
+class RichTextBuilderTest {
 
     @Test
     void testDeleteCharAtMiddle() {

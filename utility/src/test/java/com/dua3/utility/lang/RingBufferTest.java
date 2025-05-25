@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("ConstantConditions")
-public class RingBufferTest {
+class RingBufferTest {
 
     private static final int CAPACITY = 10;
     private final RingBuffer<Object> buffer = new RingBuffer<>(CAPACITY);

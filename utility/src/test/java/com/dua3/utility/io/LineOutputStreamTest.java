@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests for the LineOutputStream class.
  */
-public class LineOutputStreamTest {
+class LineOutputStreamTest {
 
     @Test
     void testWrite_UnixLineEnd() throws IOException {

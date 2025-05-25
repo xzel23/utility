@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AnsiCodeTest {
+class AnsiCodeTest {
 
     @Test
     void testStyles() {

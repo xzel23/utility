@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A math utility class.
  */
 @SuppressWarnings("BoundedWildcard")
-public class MathUtilTest {
+class MathUtilTest {
 
     private static void checkRounding(Map<RoundingMode, DoubleUnaryOperator> operations, double x, double xUP, double xDOWN, double xCEILING, double xFLOOR, double xHALF_UP, double xHALF_DOWN, double xHALF_EVEN) {
         assertEquals(xUP, operations.get(RoundingMode.UP).applyAsDouble(x));

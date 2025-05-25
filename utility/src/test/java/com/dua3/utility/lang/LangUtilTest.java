@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -459,14 +458,14 @@ class LangUtilTest {
     }
 
     @Test
-    public void isBetweenComparable() {
+    void isBetweenComparable() {
         assertTrue(LangUtil.isBetween("b", "a", "c"));
         assertFalse(LangUtil.isBetween("z", "a", "y"));
         assertThrows(IllegalArgumentException.class, () -> LangUtil.isBetween("b", "z", "a"));
     }
 
     @Test
-    public void formatStackTrace_ShouldReturnText() {
+    void formatStackTrace_ShouldReturnText() {
         Exception sampleException = new Exception("SampleException");
         assertFalse(LangUtil.formatStackTrace(sampleException).isEmpty());
     }

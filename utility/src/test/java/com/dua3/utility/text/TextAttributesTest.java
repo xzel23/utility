@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test class for TextAttributes
  * Testing the 'of' methods in the TextAttributes class
  */
-public class TextAttributesTest {
+class TextAttributesTest {
 
     /**
      * Test the of method with Pair array as parameter

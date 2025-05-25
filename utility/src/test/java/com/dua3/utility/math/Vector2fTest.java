@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Vector2fTest class tests the functionality of the method angle in the math utility class Vector2f.
  * For the simplicity of the tests, we are considering pi as 3.14.
  */
-public class Vector2fTest {
+class Vector2fTest {
 
     /**
      * Test the angle method when both vectors are on the axes.

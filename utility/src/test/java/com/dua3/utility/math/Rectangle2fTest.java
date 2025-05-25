@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test class for Rectangle2f.java
  */
-public class Rectangle2fTest {
+class Rectangle2fTest {
 
     /**
      * Test for withCorners() method

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test the FileSystemView class.
  */
-public class FileSystemViewTest {
+class FileSystemViewTest {
 
     private static void testClassHelper(Class<?> clazz) throws IOException {
         try (FileSystemView fsv = FileSystemView.forClass(clazz)) {

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
  * `HSVColorTest` is used to test the functionality of `HSVColor` class.
  * Specifically, this test focuses on the `valueOf` method, which converts an ARGB integer to `HSVColor`.
  */
-public class HSVColorTest {
+class HSVColorTest {
 
     /**
      * This test providing a ARGB color value and validating if returned `HSVColor` instance has the correct values.
