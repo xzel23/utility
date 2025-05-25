@@ -203,6 +203,7 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - fix: possible inconsistent hash values for RichText
 - fix: possible XXE in XmlUtil.prettyPrint()
 - fix: possible exponential runtime for evaluating regex in Jdbc support classes
+- FontDef is not Cloneable anymore, FontDef.copy() was introduced instead
 - added coverage and Sonarcloud scanning in additionto Qodana to CI
 - small fixes and imrpovements
 - code cleanup
