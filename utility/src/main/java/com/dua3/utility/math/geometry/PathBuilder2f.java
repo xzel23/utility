@@ -7,7 +7,7 @@ import com.dua3.utility.lang.LangUtil;
  */
 public class PathBuilder2f {
 
-    private Vector2f pos = Vector2f.ORIGIN;
+    private static final String NO_CURRENT_PATH = "no current path";
     private Path2fImpl impl = new Path2fImpl();
     private boolean open = false;
 
@@ -30,7 +30,6 @@ public class PathBuilder2f {
      * Add a new vertex.
      */
     private int addVertex(Vector2f v) {
-        pos = v;
         impl.addVertex(v);
         return currentIndex();
     }
@@ -100,7 +99,7 @@ public class PathBuilder2f {
      * @return this instance
      */
     public PathBuilder2f lineTo(Vector2f v) {
-        LangUtil.check(open, "no current path");
+        LangUtil.check(open, NO_CURRENT_PATH);
 
         int p = currentIndex();
         int q = addVertex(v);
@@ -130,7 +129,7 @@ public class PathBuilder2f {
      * @return this PathBuilder2f instance
      */
     public PathBuilder2f arcTo(Vector2f ep, Vector2f r, float angle, boolean largeArc, boolean sweep) {
-        LangUtil.check(open, "no current path");
+        LangUtil.check(open, NO_CURRENT_PATH);
 
         int c0 = currentIndex();
         int c1 = addVertex(ep);
@@ -165,7 +164,7 @@ public class PathBuilder2f {
      * @return this instance
      */
     public PathBuilder2f curveTo(Vector2f cp, Vector2f ep) {
-        LangUtil.check(open, "no current path");
+        LangUtil.check(open, NO_CURRENT_PATH);
 
         int c0 = currentIndex();
         int c1 = addVertex(cp);
@@ -185,7 +184,7 @@ public class PathBuilder2f {
      * @return this instance
      */
     public PathBuilder2f curveTo(Vector2f cp1, Vector2f cp2, Vector2f ep) {
-        LangUtil.check(open, "no current path");
+        LangUtil.check(open, NO_CURRENT_PATH);
 
         int c0 = currentIndex();
         int c1 = addVertex(cp1);
@@ -208,10 +207,9 @@ public class PathBuilder2f {
      * @return this instance
      */
     public PathBuilder2f closePath() {
-        LangUtil.check(open, "no current path");
+        LangUtil.check(open, NO_CURRENT_PATH);
 
         impl.addSegment(new ClosePath2f(impl, currentIndex(), 0));
-        pos = vertex(0);
         close();
 
         return this;
