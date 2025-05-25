@@ -58,7 +58,7 @@ public final class FileSystemView implements AutoCloseable {
     private final String name;
     private final CleanUp cleanup;
 
-    private static final Pattern PATTERN_JAR = Pattern.compile("^jar:(file:.*)!.*$");
+    private static final Pattern PATTERN_JAR = Pattern.compile("^jar:(file:/[^!]+)!.*$");
 
     private FileSystemView(Path root, CleanUp cleanup, String name) {
         this.cleanup = cleanup;
