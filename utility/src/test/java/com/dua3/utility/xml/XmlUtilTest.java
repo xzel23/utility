@@ -408,7 +408,7 @@ class XmlUtilTest {
         List<String> actualTagNames = XML_UTIL.children(root)
                 .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
                 .map(Node::getNodeName)
-                .collect(Collectors.toList());
+                .toList();
 
         // Compare actual tag names with expected tag names
         assertEquals(expectedTagNames, actualTagNames);
@@ -426,7 +426,7 @@ class XmlUtilTest {
         List<String> actualTagNames = XML_UTIL.nodeStream(nodeList)
                 .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
                 .map(Node::getNodeName)
-                .collect(Collectors.toList());
+                .toList();
 
         // Compare actual tag names with expected tag names
         assertEquals(expectedTagNames, actualTagNames);
