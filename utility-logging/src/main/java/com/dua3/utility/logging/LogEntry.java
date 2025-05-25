@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * The LogEntry interface represents a log entry with various properties such as message, logger name, time, level, marker, and throwable.
+ * <p>
+ * Note: Implementing classes should be immutable!
  */
 @SuppressWarnings("MagicCharacter")
 public interface LogEntry {
