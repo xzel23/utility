@@ -3,8 +3,6 @@ package com.dua3.utility.io;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.LangUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.io.DataInput;
@@ -28,9 +26,7 @@ import java.util.function.Supplier;
  * Registered codecs for a class can be obtained by using {@link #get(Class)}.
  */
 public class Codecs {
-    private static final Logger LOG = LogManager.getLogger(Codecs.class);
-
-    private final Map<String, Codec<?>> codecs = new HashMap<>();
+    private final Map<String, Codec<?>> repository = new HashMap<>();
 
     /**
      * Constructor.
@@ -147,8 +143,8 @@ public class Codecs {
      */
     public static <K, V, M extends Map<K, V>> Codec<M> mapCodec(Codec<K> codecK, Codec<V> codecV, Supplier<? extends M> construct) {
         final String name = Map.class.getCanonicalName() + "<" + codecK.name() + "," + codecV.name() + ">";
-        final Codec<Map.Entry<K, V>> ENTRY_CODEC = mapEntryCodec(codecK, codecV);
-        final Codec<Collection<Map.Entry<K, V>>> ENTRIES_CODEC = collectionCodec("entrySet", ENTRY_CODEC, ArrayList::new);
+        final Codec<Map.Entry<K, V>> entryCodec = mapEntryCodec(codecK, codecV);
+        final Codec<Collection<Map.Entry<K, V>>> entriesCodec = collectionCodec("entrySet", entryCodec, ArrayList::new);
 
         return new Codec<>() {
             @Override
@@ -158,13 +154,13 @@ public class Codecs {
 
             @Override
             public void encode(DataOutputStream os, M map) throws IOException {
-                ENTRIES_CODEC.encode(os, map.entrySet());
+                entriesCodec.encode(os, map.entrySet());
             }
 
             @Override
             public M decode(DataInputStream is) throws IOException {
                 M map = construct.get();
-                ENTRIES_CODEC.decode(is).forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+                entriesCodec.decode(is).forEach(entry -> map.put(entry.getKey(), entry.getValue()));
                 return map;
             }
         };
@@ -180,7 +176,7 @@ public class Codecs {
      * @throws IllegalArgumentException if a codec is already registered for the class
      */
     public <T extends @Nullable Object> void registerCodec(Class<T> cls, Encoder<? super T> enc, Decoder<? extends T> dec) {
-        Object prev = codecs.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
+        Object prev = repository.putIfAbsent(cls.getCanonicalName(), createCodec(cls.getCanonicalName(), enc, dec));
         LangUtil.check(prev == null, "Codec already registered for class: " + cls);
     }
 
@@ -193,7 +189,7 @@ public class Codecs {
      */
     @SuppressWarnings("unchecked")
     public <T> Optional<Codec<T>> get(Class<T> cls) {
-        return Optional.ofNullable((Codec<T>) codecs.get(cls.getCanonicalName()));
+        return Optional.ofNullable((Codec<T>) repository.get(cls.getCanonicalName()));
     }
 
 }

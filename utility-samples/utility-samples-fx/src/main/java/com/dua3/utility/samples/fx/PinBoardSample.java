@@ -89,20 +89,20 @@ public class PinBoardSample extends Application {
                 int y = (int) evt.getY();
                 text.format("Mouse position: (%d,%d)", x, y);
 
-                text.format("\nvisible items: %s%n", pinBoard.getVisibleItems().size());
+                text.format("%nvisible items: %s%n", pinBoard.getVisibleItems().size());
 
                 pinBoard.getItemAt(evt.getX(), evt.getY()).ifPresentOrElse(item -> {
-                            text.format("\n\ngetItemAt(%d, %d):\n%s", x, y, item.name());
-                            text.format("\n\narea:\n%s", item.area());
+                            text.format("%n%ngetItemAt(%d, %d):%n%s", x, y, item.name());
+                            text.format("%n%narea:%n%s", item.area());
                         },
-                        () -> text.format("\n\ngetItemAt(%d, %d):\n-", x, y)
+                        () -> text.format("%n%ngetItemAt(%d, %d):%n-", x, y)
                 );
 
                 pinBoard.getPositionInItem(evt.getX(), evt.getY()).ifPresentOrElse(pii -> {
-                            text.format("\n\ngetPositionInItem(%d, %d):\n%s", x, y, pii.item().name());
-                            text.format("\nposition in item: (%f, %f)", pii.x(), pii.y());
+                            text.format("%n%ngetPositionInItem(%d, %d):%n%s", x, y, pii.item().name());
+                            text.format("%nposition in item: (%f, %f)", pii.x(), pii.y());
                         },
-                        () -> text.format("\n\ngetPositionInItem(%d, %d):\n-", x, y)
+                        () -> text.format("%n%ngetPositionInItem(%d, %d):%n-", x, y)
                 );
 
                 textArea.setText(text.toString());
