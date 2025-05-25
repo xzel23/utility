@@ -53,6 +53,7 @@ public class SwingLogPane extends JPanel {
             new Column(LogEntryField.LEVEL, -"ERROR".length(), true),
             new Column(LogEntryField.MESSAGE, 80, false)
     };
+    private static final String ESCAPE = "escape";
 
     private final LogBuffer buffer;
     private final JTable table;
@@ -208,8 +209,8 @@ public class SwingLogPane extends JPanel {
         table.setRowSorter(tableRowSorter);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        table.getActionMap().put("escape", SwingUtil.createAction("escape", this::handleEscapeKey));
-        table.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "escape");
+        table.getActionMap().put(ESCAPE, SwingUtil.createAction(ESCAPE, this::handleEscapeKey));
+        table.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, ESCAPE);
 
         // prepare the ScrollPanes
         this.scrollPaneTable = new JScrollPane(table);
@@ -220,19 +221,19 @@ public class SwingLogPane extends JPanel {
         splitPane.setDividerLocation(dividerLocation);
 
         final JScrollBar tableScroller = scrollPaneTable.getVerticalScrollBar();
-        model.addTableModelListener(evt -> {
-            // handle scrolling
-            SwingUtilities.invokeLater(() -> {
-                // if scroll position is on the last row and no row is selected, automatically scroll down when rows are inserted
-                if (table.getSelectedRowCount() == 0 && tableScroller.getValue() >= tableScroller.getMaximum() - tableScroller.getVisibleAmount() - 3 * table.getRowHeight()) {
-                    // scroll to last row
-                    boolean selectionEmpty = table.getSelectedRow() < 0;
-                    if (selectionEmpty) {
-                        scrollRowIntoView(model.getRowCount());
+        model.addTableModelListener(evt ->
+                // handle scrolling
+                SwingUtilities.invokeLater(() -> {
+                    // if scroll position is on the last row and no row is selected, automatically scroll down when rows are inserted
+                    if (table.getSelectedRowCount() == 0 && tableScroller.getValue() >= tableScroller.getMaximum() - tableScroller.getVisibleAmount() - 3 * table.getRowHeight()) {
+                        // scroll to last row
+                        boolean selectionEmpty = table.getSelectedRow() < 0;
+                        if (selectionEmpty) {
+                            scrollRowIntoView(model.getRowCount());
+                        }
                     }
-                }
-            });
-        });
+                })
+        );
 
         // create toolbar
         JToolBar toolBar = new JToolBar(SwingConstants.HORIZONTAL);

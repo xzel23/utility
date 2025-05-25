@@ -30,7 +30,9 @@ public final class LogEntryDispatcherFactorySlf4j implements ILogEntryDispatcher
      * This constructor initializes an instance of the factory, which is used to create and retrieve
      * LogEntryDispatcher instances based on the SLF4J logging framework.
      */
-    public LogEntryDispatcherFactorySlf4j() {}
+    public LogEntryDispatcherFactorySlf4j() {
+        // nothing to do here
+    }
 
     /**
      * Retrieves the instance of the LoggerFactorySlf4j class, which is a singleton implementation of the ILoggerFactory interface and LogEntryDispatcher interface.

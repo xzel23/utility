@@ -46,5 +46,6 @@ public class LoggingServiceProviderSlf4j implements SLF4JServiceProvider {
 
     @Override
     public void initialize() {
+        // nothing to do
     }
 }
