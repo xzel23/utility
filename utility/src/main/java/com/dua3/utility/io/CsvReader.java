@@ -446,7 +446,9 @@ public class CsvReader extends CsvIo {
         /**
          * Constructs a new instance of ListRowBuilder.
          */
-        public ListRowBuilder() {}
+        public ListRowBuilder() {
+            // nothing to do
+        }
 
         @Override
         public void add(String value) {
