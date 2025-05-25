@@ -18,6 +18,7 @@ plugins {
     id("version-catalog")
     id("signing")
     id("idea")
+    id("jacoco")
     alias(libs.plugins.versions)
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
@@ -75,6 +76,7 @@ subprojects {
     apply(plugin = "version-catalog")
     apply(plugin = "signing")
     apply(plugin = "idea")
+    apply(plugin = "jacoco")
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "com.github.spotbugs")
@@ -99,6 +101,27 @@ subprojects {
             config.set(Configuration.parse("publicApi=THROW_IAE:privateApi=ASSERT"))
         } else {
             config.set(Configuration.DEVELOPMENT)
+        }
+    }
+
+    // JaCoCo
+    tasks.withType<JacocoReport> {
+        reports {
+            xml.required.set(true)
+            html.required.set(false)
+        }
+    }
+
+    // Configure test task to use JaCoCo
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        finalizedBy(tasks.jacocoTestReport)
+    }
+
+    // Sonar
+    sonar {
+        properties {
+            property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
         }
     }
 

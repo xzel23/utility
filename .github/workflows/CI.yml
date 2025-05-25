@@ -59,7 +59,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: 'Execute Gradle build'
-        run: ./gradlew build
+        run: ./gradlew build jacocoTestReport
         id: compile
         continue-on-error: false
 
@@ -99,3 +99,5 @@ jobs:
           -Dsonar.projectKey=xzel23_utility
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/test/jacocoTestReport.xml
+
