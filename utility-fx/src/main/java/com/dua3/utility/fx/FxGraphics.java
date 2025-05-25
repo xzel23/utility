@@ -27,6 +27,9 @@ public class FxGraphics implements Graphics {
     private static final FxImageUtil IMAGE_UTIL = FxImageUtil.getInstance();
     private static final Font DEFAULT_FONT = FONT_UTIL.getDefaultFont();
     private static final javafx.scene.text.Font DEFAULT_FONT_FX = FONT_UTIL.convert(DEFAULT_FONT);
+    private static final String INSTANCE_HAS_ALREADY_BEEN_CLOSED = "instance has already been closed!";
+    private static final String UNSUPPORTED_NUMBER_OF_CONTROL_POINTS = "Unsupported number of control points: ";
+    private static final String UNSUPPORTED_SEGMENT_TYPE = "Unsupported segment type: ";
 
     private final GraphicsContext gc;
     private final AffineTransformation2f parentTransform;
@@ -36,7 +39,7 @@ public class FxGraphics implements Graphics {
 
     private boolean isDrawing = true;
 
-    private static final class State implements Cloneable {
+    private static final class State {
         AffineTransformation2f transform = AffineTransformation2f.identity();
 
         Font font = DEFAULT_FONT;
@@ -52,10 +55,6 @@ public class FxGraphics implements Graphics {
 
         Color fillColor = Color.BLACK;
         javafx.scene.paint.Color fxFillColor = javafx.scene.paint.Color.BLACK;
-
-        public State clone() throws CloneNotSupportedException {
-            return (State) super.clone();
-        }
     }
 
     private final State state = new State();
@@ -105,7 +104,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public FontUtil<?> getFontUtil() {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         return FONT_UTIL;
     }
@@ -125,14 +124,14 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void close() {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         isDrawing = false;
     }
 
     @Override
     public void strokeRect(float x, float y, float w, float h) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         gc.setStroke(state.fxStrokeColor);
         gc.setLineWidth(state.strokeWidth);
@@ -141,7 +140,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void fillRect(float x, float y, float w, float h) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         gc.setFill(state.fxFillColor);
         gc.fillRect(x, y, w, h);
@@ -149,7 +148,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void strokeEllipse(float x, float y, float rx, float ry, float angle) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         Vector2f p0 = Vector2f.of(x + rx, y);
         Vector2f p1 = Vector2f.of(x - rx, y);
@@ -166,7 +165,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void fillEllipse(float x, float y, float rx, float ry, float angle) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         Vector2f p0 = Vector2f.of(x + rx, y);
         Vector2f p1 = Vector2f.of(x - rx, y);
@@ -183,7 +182,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         gc.setStroke(state.fxStrokeColor);
         gc.setLineWidth(state.strokeWidth);
@@ -192,7 +191,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void strokePath(Path2f path) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         gc.beginPath();
         path(path);
@@ -201,7 +200,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void fillPath(Path2f path) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         gc.beginPath();
         path(path);
@@ -210,7 +209,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void drawImage(Image image, float x, float y) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         gc.drawImage(IMAGE_UTIL.convert(image), x, y);
     }
@@ -253,13 +252,13 @@ public class FxGraphics implements Graphics {
                                 s.control(3).x(), s.control(3).y()
                         );
                         default ->
-                                throw new IllegalArgumentException("Unsupported number of control points: " + s.numberOfControls());
+                                throw new IllegalArgumentException(UNSUPPORTED_NUMBER_OF_CONTROL_POINTS + s.numberOfControls());
                     }
                 }
                 case Arc2f s -> Graphics.approximateArc(s, this::moveTo, this::generateBezierSegment);
                 case ClosePath2f s -> gc.closePath();
                 default ->
-                        throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
+                        throw new IllegalArgumentException(UNSUPPORTED_SEGMENT_TYPE + segment.getClass().getName());
             }
         });
     }
@@ -278,7 +277,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void setStroke(Color c, float width) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.strokeColor = c;
         state.fxStrokeColor = FxUtil.convert(state.strokeColor);
@@ -290,7 +289,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void setStrokeColor(Color c) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.strokeColor = c;
         state.fxStrokeColor = FxUtil.convert(state.strokeColor);
@@ -300,7 +299,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void setStrokeWidth(float width) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.strokeWidth = width;
         gc.setLineWidth(state.strokeWidth);
@@ -318,7 +317,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void setFill(Color c) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.fillColor = c;
         state.fxFillColor = FxUtil.convert(state.fillColor);
@@ -332,7 +331,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.transform = t;
         gc.setTransform(FxUtil.convert(t.append(parentTransform)));
@@ -340,14 +339,14 @@ public class FxGraphics implements Graphics {
 
     @Override
     public AffineTransformation2f getTransformation() {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         return state.transform;
     }
 
     @Override
     public void setFont(Font font) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         state.fxTextColor = FxUtil.convert(font.getColor());
         state.font = font;
@@ -363,7 +362,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
-        assert isDrawing : "instance has already been closed!";
+        assert isDrawing : INSTANCE_HAS_ALREADY_BEEN_CLOSED;
 
         gc.setFont(state.fxFont);
         gc.setFill(state.fxTextColor);

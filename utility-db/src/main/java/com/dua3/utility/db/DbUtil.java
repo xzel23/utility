@@ -331,6 +331,7 @@ public final class DbUtil {
      * @param closeables additional {@link AutoCloseable} instances to close when the stream is closed
      * @return stream of objects created from the result set items
      * @param <T> stream item type
+     * @throws SQLException if an SQL exception occurrs
      */
     public static <T> Stream<T> stream(ResultSet rs, Function<? super ResultSet, ? extends T> mapper, AutoCloseable... closeables) throws SQLException {
         UncheckedCloser closer = rs::close;
