@@ -54,6 +54,7 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
      * @param font the {@link com.dua3.utility.text.Font} to set for the text node
      * @return this TextBuilder instance for fluent method chaining
      */
+    @Override
     public LabelBuilder font(javafx.scene.text.Font font) {
         this.font = new SimpleObjectProperty<>(font);
         return self();
@@ -65,6 +66,7 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
      * @param font the {@link com.dua3.utility.text.Font} to set for the text node
      * @return this TextBuilder instance for fluent method chaining
      */
+    @Override
     public LabelBuilder font(com.dua3.utility.text.Font font) {
         this.font = new SimpleObjectProperty<>(FxFontUtil.getInstance().convert(font));
         return self();
@@ -93,6 +95,7 @@ public class LabelBuilder extends LabeledBuilder<Label, LabelBuilder> {
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
      * @return this {@link TextBuilder} instance for method chaining
      */
+    @Override
     public LabelBuilder bindFont(ObservableValue<com.dua3.utility.text.Font> font) {
         this.font = PropertyConverter.convertReadOnly(font, FxUtil.fontConverter());
         return self();

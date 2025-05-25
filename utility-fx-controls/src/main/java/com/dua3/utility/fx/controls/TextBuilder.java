@@ -57,6 +57,7 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
      * @param fill the {@link Paint} to be used as the fill for the shape
      * @return this builder instance
      */
+    @Override
     public TextBuilder fill(Paint fill) {
         this.fill = new SimpleObjectProperty<>(fill);
         return self();
@@ -68,6 +69,7 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
      * @param fill the {@link Paint} to be used as the fill for the shape
      * @return this builder instance
      */
+    @Override
     public TextBuilder fill(Color fill) {
         this.fill = new SimpleObjectProperty<>(FxUtil.convert(fill));
         return self();
@@ -80,6 +82,7 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
      * @param fill the {@link ObservableValue} representing the fill value to be bound
      * @return this instance of the builder
      */
+    @Override
     public TextBuilder bindFillFx(ObservableValue<Paint> fill) {
         this.fill = fill;
         return self();
@@ -92,6 +95,7 @@ public class TextBuilder extends ShapeBuilder<Text, TextBuilder> {
      * @param fill the {@link ObservableValue} representing the fill value to be bound
      * @return this instance of the builder
      */
+    @Override
     public TextBuilder bindFill(ObservableValue<Color> fill) {
         this.fill = PropertyConverter.convertReadOnly(fill, FxUtil.colorConverter());
         return self();

@@ -34,6 +34,7 @@ public abstract class ButtonBaseBuilder<B extends ButtonBase, BB extends ButtonB
      *
      * @return new button instance
      */
+    @Override
     public B build() {
         B node = super.build();
         apply(action, node.onActionProperty());
@@ -41,7 +42,7 @@ public abstract class ButtonBaseBuilder<B extends ButtonBase, BB extends ButtonB
     }
 
     /**
-     * Set event handler for the button.
+     * Set the event handler for the button.
      *
      * @param action the {@link EventHandler}
      * @return this ButtonBaseBuilder instance
@@ -52,7 +53,7 @@ public abstract class ButtonBaseBuilder<B extends ButtonBase, BB extends ButtonB
     }
 
     /**
-     * Set action for the button.
+     * Set the action for the button.
      *
      * @param action the action to perform when pressed
      * @return this ButtonBaseBuilder instance
@@ -67,18 +68,7 @@ public abstract class ButtonBaseBuilder<B extends ButtonBase, BB extends ButtonB
      * @param action the action to perform when pressed
      * @return this ButtonBaseBuilder instance
      */
-    public BB bindAction(EventHandler<ActionEvent> action) {
-        this.action = new SimpleObjectProperty<>(action);
-        return self();
-    }
-
-    /**
-     * Set action for the button.
-     *
-     * @param action the action to perform when pressed
-     * @return this ButtonBaseBuilder instance
-     */
-    public BB bindAction(ObservableValue<Runnable> action) {
+    public BB bindAction(ObservableValue<? extends Runnable> action) {
         this.action = PropertyConverter.convertReadOnly(action, r -> event -> r.run());
         return self();
     }

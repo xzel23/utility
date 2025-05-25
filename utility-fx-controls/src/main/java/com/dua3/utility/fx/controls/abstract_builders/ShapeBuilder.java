@@ -36,6 +36,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      *
      * @return new Control instance
      */
+    @Override
     public N build() {
         N node = super.build();
         apply(fill, node.fillProperty());

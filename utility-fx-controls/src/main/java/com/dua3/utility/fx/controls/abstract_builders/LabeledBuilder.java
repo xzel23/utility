@@ -42,6 +42,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      *
      * @return the new Labeled instance
      */
+    @Override
     public N build() {
         N node = super.build();
         apply(text, node.textProperty());

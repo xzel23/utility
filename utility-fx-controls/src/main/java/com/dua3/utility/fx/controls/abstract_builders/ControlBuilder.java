@@ -32,6 +32,7 @@ public abstract class ControlBuilder<N extends Control, NN extends ControlBuilde
      *
      * @return new Control instance
      */
+    @Override
     public N build() {
         N node = super.build();
         apply(tooltip, t -> {
