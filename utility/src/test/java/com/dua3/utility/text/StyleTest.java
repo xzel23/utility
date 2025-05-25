@@ -11,7 +11,7 @@ public class StyleTest {
 
     @SuppressWarnings("StringBufferReplaceableByString")
     @Test
-    public void testEquals() {
+    void testEquals() {
         Style s1 = Style.create("style",
                 Map.entry(Style.FONT_CLASS, Style.FONT_CLASS_VALUE_MONOSPACE),
                 Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));

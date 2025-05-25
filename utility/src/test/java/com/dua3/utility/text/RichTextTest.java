@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RichTextTest {
 
     @Test
-    public void testValueOf() {
+    void testValueOf() {
         String s = "hello world!";
         RichText text = RichText.valueOf(s);
 
@@ -42,7 +42,7 @@ public class RichTextTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         // tests all sorts if equals comparisons
         String s = "hello world!";
         RichText a = RichText.valueOf(s);
@@ -98,7 +98,7 @@ public class RichTextTest {
     }
 
     @Test
-    public void testEqualsWithHashCollision() {
+    void testEqualsWithHashCollision() {
         RichText a = RichText.valueOf("FB");
         RichText b = RichText.valueOf("Ea");
 
@@ -107,13 +107,13 @@ public class RichTextTest {
     }
 
     @Test
-    public void testisEmpty() {
+    void testisEmpty() {
         assertTrue(RichText.emptyText().isEmpty());
         assertFalse(RichText.valueOf(".").isEmpty());
     }
 
     @Test
-    public void testEqualsText() {
+    void testEqualsText() {
         // tests all sorts if equals comparisons
         RichText text = RichText.valueOf("text");
 
@@ -146,7 +146,7 @@ public class RichTextTest {
     }
 
     @Test
-    public void testEqualizer() {
+    void testEqualizer() {
         // tests all sorts if equals comparisons
         RichText text = RichText.valueOf("text");
         RichText upper = RichText.valueOf("TEXT");
@@ -253,7 +253,7 @@ public class RichTextTest {
     }
 
     @Test
-    public void testSubSequence() {
+    void testSubSequence() {
         String s = "Hello world! We need a longer text to reach all case labels in runIndex()!";
 
         RichTextBuilder builder = new RichTextBuilder();
@@ -300,7 +300,7 @@ public class RichTextTest {
     }
 
     @Test
-    public void testSubsequenceRegression() {
+    void testSubsequenceRegression() {
         Style style1 = Style.create("style1", Map.entry("attr", "1"));
         Style style2 = Style.create("style2", Map.entry("attr", "2"));
         Style style3 = Style.create("style3", Map.entry("attr", "3"));
@@ -345,7 +345,7 @@ public class RichTextTest {
 
     @ParameterizedTest
     @MethodSource("provideTestDataReplaceAll")
-    public void testReplaceAll(TestDataReplace testData) {
+    void testReplaceAll(TestDataReplace testData) {
         RichText expected = RichText.valueOf(testData.replaceAll());
         RichText actual = RichText.valueOf(testData.input()).replaceAll(testData.regex(), RichText.valueOf(testData.replacement()));
         assertEquals(expected, actual);
@@ -353,7 +353,7 @@ public class RichTextTest {
 
     @ParameterizedTest
     @MethodSource("provideTestDataReplaceAll")
-    public void testReplaceAllStringArgument(TestDataReplace testData) {
+    void testReplaceAllStringArgument(TestDataReplace testData) {
         RichText expected = RichText.valueOf(testData.replaceAll());
         RichText actual = RichText.valueOf(testData.input()).replaceAll(testData.regex(), testData.replacement());
         assertEquals(expected, actual);
@@ -361,7 +361,7 @@ public class RichTextTest {
 
     @ParameterizedTest
     @MethodSource("provideTestDataReplaceAll")
-    public void testReplaceFirst(TestDataReplace testData) {
+    void testReplaceFirst(TestDataReplace testData) {
         RichText expected = RichText.valueOf(testData.replaceFirst());
         RichText actual = RichText.valueOf(testData.input()).replaceFirst(testData.regex(), RichText.valueOf(testData.replacement()));
         assertEquals(expected, actual);
@@ -369,38 +369,38 @@ public class RichTextTest {
 
     @ParameterizedTest
     @MethodSource("provideTestDataReplaceAll")
-    public void testReplaceFirstStringArgument(TestDataReplace testData) {
+    void testReplaceFirstStringArgument(TestDataReplace testData) {
         RichText expected = RichText.valueOf(testData.replaceFirst());
         RichText actual = RichText.valueOf(testData.input()).replaceFirst(testData.regex(), testData.replacement());
         assertEquals(expected, actual);
     }
 
     @Test // not a parameterized test because it expects an exception
-    public void testReplaceAll_MalformedRegex() {
+    void testReplaceAll_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceAll("[ol", RichText.valueOf("!")));
     }
 
     @Test // not a parameterized test because it expects an exception
-    public void testReplaceAllStringArgument_MalformedRegex() {
+    void testReplaceAllStringArgument_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceAll("[ol", "!"));
     }
 
     @Test // not a parameterized test because it expects an exception
-    public void testReplaceFirst_MalformedRegex() {
+    void testReplaceFirst_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceFirst("[ol", RichText.valueOf("!")));
     }
 
     @Test // not a parameterized test because it expects an exception
-    public void testReplaceFirstStringArgument_MalformedRegex() {
+    void testReplaceFirstStringArgument_MalformedRegex() {
         RichText input = RichText.valueOf("Hello, world!");
         Assertions.assertThrows(PatternSyntaxException.class, () -> input.replaceFirst("[ol", "!"));
     }
 
     @Test
-    public void testLines() {
+    void testLines() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
         builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
@@ -415,7 +415,7 @@ public class RichTextTest {
     }
 
     @Test
-    public void testAttributedChars() {
+    void testAttributedChars() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
         builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
@@ -440,7 +440,7 @@ public class RichTextTest {
 
     // regression: java.lang.IndexOutOfBoundsException was thrown when iterating over attributed chars of a subSequence
     @Test
-    public void testAttributedCharsOfSubString() {
+    void testAttributedCharsOfSubString() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("I said: Hello ");
         builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
@@ -467,7 +467,7 @@ public class RichTextTest {
 
     // Test that Runs containing same text and attributes but with different offsets to the same base compare equal.
     @Test
-    public void testRunEquals() {
+    void testRunEquals() {
         RichText txt = RichText.valueOf("1 2 3");
         RichText a = txt.subSequence(1, 2);
         RichText b = txt.subSequence(3, 4);
@@ -477,7 +477,7 @@ public class RichTextTest {
     }
 
     @Test
-    public void testJoiner() {
+    void testJoiner() {
         RichText actual = Stream.of("This", "should", "be", "easy").map(RichText::valueOf).collect(RichText.joiner(" "));
         RichText expected = RichText.valueOf("This should be easy");
         assertEquals(expected, actual);

@@ -15,7 +15,7 @@ public class NamedFunctionTest {
      * Test to verify the apply() method of NamedFunction works correctly.
      */
     @Test
-    public void testApply() {
+    void testApply() {
         Function<String, Integer> f = Integer::parseInt;
         NamedFunction<String, Integer> nf = new NamedFunction<>("TestFunction", f);
 
@@ -28,7 +28,7 @@ public class NamedFunctionTest {
      * Test to verify the toString() method of NamedFunction returns the given name.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         Function<String, Integer> f = Integer::parseInt;
         NamedFunction<String, Integer> nf = new NamedFunction<>("TestFunction", f);
 

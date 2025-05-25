@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FilterIteratorTest {
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         List<Integer> items = List.of();
 
         @SuppressWarnings("RedundantOperationOnEmptyContainer")
@@ -21,7 +21,7 @@ class FilterIteratorTest {
     }
 
     @Test
-    public void testAllMatching() {
+    void testAllMatching() {
         List<Integer> items = List.of(1, 2, 3);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i -> true);
@@ -35,7 +35,7 @@ class FilterIteratorTest {
     }
 
     @Test
-    public void testNonMatching() {
+    void testNonMatching() {
         List<Integer> items = List.of(1, 2, 3);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i -> false);
@@ -44,7 +44,7 @@ class FilterIteratorTest {
 
 
     @Test
-    public void testSomeMatchingFirstNonMatching() {
+    void testSomeMatchingFirstNonMatching() {
         List<Integer> items = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i -> i % 3 == 0);
@@ -58,7 +58,7 @@ class FilterIteratorTest {
     }
 
     @Test
-    public void testSomeMatchingFirstMatching() {
+    void testSomeMatchingFirstMatching() {
         List<Integer> items = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i -> (i & 1) == 1);
@@ -76,7 +76,7 @@ class FilterIteratorTest {
     }
 
     @Test
-    public void testSomeMatchingLastMatching() {
+    void testSomeMatchingLastMatching() {
         List<Integer> items = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
         Iterator<Integer> fi = new FilterIterator<>(items.iterator(), i -> i % 2 == 0);

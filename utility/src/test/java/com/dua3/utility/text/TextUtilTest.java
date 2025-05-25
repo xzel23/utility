@@ -88,7 +88,7 @@ public class TextUtilTest {
     }
 
     @Test
-    public void testTransformWithMapArgument() {
+    void testTransformWithMapArgument() {
         String template = "Hello ${NAME}.";
 
         String expected = "Hello Axel.";
@@ -101,7 +101,7 @@ public class TextUtilTest {
 
     @ParameterizedTest
     @MethodSource("generateTestDataAlign")
-    public void testAlign(TestDataAlign data) {
+    void testAlign(TestDataAlign data) {
         if (data.fill() == null) {
             assertEquals(data.expected(), align(data.text(), data.width(), data.align()));
         } else {
@@ -256,7 +256,7 @@ public class TextUtilTest {
     @SuppressWarnings("unchecked")
     @ParameterizedTest
     @MethodSource("textDimensionProvider")
-    public void testGetTextDimension(CharSequence text, Font font, Object expected) {
+    void testGetTextDimension(CharSequence text, Font font, Object expected) {
         if (expected instanceof Dimension2f)
             assertEquals(expected, getTextDimension(text, font));
         else if (expected instanceof Class<?> && Exception.class.isAssignableFrom((Class<?>) expected))
@@ -264,7 +264,7 @@ public class TextUtilTest {
     }
 
     @Test
-    public void testGetTextDimensionRichtext() {
+    void testGetTextDimensionRichtext() {
         Font timesRoman12 = FontUtil.getInstance().getFont("TimesRoman-12");
 
         // if the text does not change the font, the result should match the result for the plain string

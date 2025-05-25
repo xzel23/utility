@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HtmlConverterTest {
 
     @Test
-    public void testEmbeddedStyle() {
+    void testEmbeddedStyle() {
         Style bold = Style.create("bold", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
 
         RichTextBuilder builder = new RichTextBuilder();
@@ -33,7 +33,7 @@ public class HtmlConverterTest {
     }
 
     @Test
-    public void testTrailingStyle() {
+    void testTrailingStyle() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
         builder.push(Style.BOLD);
@@ -50,7 +50,7 @@ public class HtmlConverterTest {
     }
 
     @Test
-    public void testSettingFontFamily() {
+    void testSettingFontFamily() {
         Style sans = Style.create("sans", Map.entry(Style.FONT_CLASS, Style.FONT_CLASS_VALUE_SANS_SERIF));
         Style serif = Style.create("serif", Map.entry(Style.FONT_CLASS, Style.FONT_CLASS_VALUE_SERIF));
         Style mono = Style.create("mono", Map.entry(Style.FONT_CLASS, Style.FONT_CLASS_VALUE_MONOSPACE));
@@ -75,7 +75,7 @@ public class HtmlConverterTest {
     }
 
     @Test
-    public void testFont() {
+    void testFont() {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
         Font courier = FontUtil.getInstance().getFont("courier-12");
 
@@ -98,7 +98,7 @@ public class HtmlConverterTest {
     }
 
     @Test
-    public void testFontCss() {
+    void testFontCss() {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
         Font times = FontUtil.getInstance().getFont("courier-12");
 

@@ -23,7 +23,7 @@ public class RingBufferTest {
     private final RingBuffer<Object> buffer = new RingBuffer<>(CAPACITY);
 
     @Test
-    public void testAddAndGet() {
+    void testAddAndGet() {
         for (int i = 0; i < 2 * CAPACITY; i++) {
             assertEquals(Math.min(CAPACITY, i), buffer.size());
             buffer.add("test " + i);
@@ -36,7 +36,7 @@ public class RingBufferTest {
     }
 
     @Test
-    public void testCapacity() {
+    void testCapacity() {
         assertEquals(CAPACITY, buffer.capacity());
         for (int i = 0; i < 2 * CAPACITY; i++) {
             buffer.add("test " + i);
@@ -45,7 +45,7 @@ public class RingBufferTest {
     }
 
     @Test
-    public void testGet() {
+    void testGet() {
         buffer.clear();
         try {
             System.out.println(buffer.get(0));
@@ -74,7 +74,7 @@ public class RingBufferTest {
     }
 
     @Test
-    public void testIsEmpty() {
+    void testIsEmpty() {
         buffer.clear();
         assertTrue(buffer.isEmpty());
         buffer.add("Test");
@@ -84,7 +84,7 @@ public class RingBufferTest {
     }
 
     @Test
-    public void testSetCapacity() {
+    void testSetCapacity() {
         for (int i = 0; i < 2 * CAPACITY; i++) {
             buffer.add("test " + i);
         }
@@ -115,7 +115,7 @@ public class RingBufferTest {
     }
 
     @Test
-    public void testSize() {
+    void testSize() {
         for (int i = 0; i < 2 * CAPACITY; i++) {
             assertEquals(Math.min(CAPACITY, i), buffer.size());
             buffer.add("test " + i);
@@ -123,7 +123,7 @@ public class RingBufferTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         buffer.clear();
         assertEquals("[]", buffer.toString());
         buffer.add("Test1");
@@ -135,7 +135,7 @@ public class RingBufferTest {
     }
 
     @Test
-    public void testSubList() {
+    void testSubList() {
         buffer.clear();
 
         // test with a partially filled buffer

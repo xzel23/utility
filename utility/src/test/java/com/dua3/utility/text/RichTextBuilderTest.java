@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RichTextBuilderTest {
 
     @Test
-    public void testDeleteCharAtMiddle() {
+    void testDeleteCharAtMiddle() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello World");
         builder.deleteCharAt(5);
@@ -29,7 +29,7 @@ public class RichTextBuilderTest {
     }
 
     @Test
-    public void testDeleteCharAtStart() {
+    void testDeleteCharAtStart() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello");
         builder.deleteCharAt(0);
@@ -39,7 +39,7 @@ public class RichTextBuilderTest {
     }
 
     @Test
-    public void testDeleteCharAtEnd() {
+    void testDeleteCharAtEnd() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("World!");
         builder.deleteCharAt(builder.length() - 1);
@@ -49,7 +49,7 @@ public class RichTextBuilderTest {
     }
 
     @Test
-    public void testDeleteCharAtWithAttributes() {
+    void testDeleteCharAtWithAttributes() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC);
         builder.append("A");
@@ -62,7 +62,7 @@ public class RichTextBuilderTest {
     }
 
     @Test
-    public void testDeleteCharAtWithAttributes2() {
+    void testDeleteCharAtWithAttributes2() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC);
         builder.append("A");
@@ -94,7 +94,7 @@ public class RichTextBuilderTest {
     }
 
     @Test
-    public void testDeleteCharAtWithAttributes3() {
+    void testDeleteCharAtWithAttributes3() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.push(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC);
         builder.append("A");
@@ -130,7 +130,7 @@ public class RichTextBuilderTest {
     }
 
     @Test
-    public void testWithAttributes() {
+    void testWithAttributes() {
         RichTextBuilder builder = new RichTextBuilder();
         builder.append("Hello ");
         builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
@@ -144,7 +144,7 @@ public class RichTextBuilderTest {
     }
 
     @Test
-    public void testNormalizing() {
+    void testNormalizing() {
         // make sure subsequent runs possessing the same attributes are joined, but runs with differing attributes are retained
         Style style = Style.create("bold", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
         RichTextBuilder builder = new RichTextBuilder();
@@ -164,7 +164,7 @@ public class RichTextBuilderTest {
     }
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         RichTextBuilder builder = new RichTextBuilder();
         RichText rt = builder.toRichText();
         assertEquals(rt, RichText.emptyText());

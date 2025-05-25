@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BuildInfoTest {
 
     @Test
-    public void testMajorOnly() {
+    void testMajorOnly() {
         BuildInfo bi = BuildInfo.create("1", ZonedDateTime.now().toString());
         assertEquals(1, bi.major());
         assertEquals(0, bi.minor());
@@ -19,7 +19,7 @@ class BuildInfoTest {
     }
 
     @Test
-    public void testMajorMinor() {
+    void testMajorMinor() {
         BuildInfo bi = BuildInfo.create("1.2", ZonedDateTime.now().toString());
         assertEquals(1, bi.major());
         assertEquals(2, bi.minor());
@@ -29,7 +29,7 @@ class BuildInfoTest {
     }
 
     @Test
-    public void testMajorMinorPatch() {
+    void testMajorMinorPatch() {
         BuildInfo bi = BuildInfo.create("1.2.3", ZonedDateTime.now().toString());
         assertEquals(1, bi.major());
         assertEquals(2, bi.minor());
@@ -39,7 +39,7 @@ class BuildInfoTest {
     }
 
     @Test
-    public void testMajorMinorPatchSuffix() {
+    void testMajorMinorPatchSuffix() {
         BuildInfo bi = BuildInfo.create("1.2.3a", ZonedDateTime.now().toString());
         assertEquals(1, bi.major());
         assertEquals(2, bi.minor());
@@ -49,7 +49,7 @@ class BuildInfoTest {
     }
 
     @Test
-    public void testMajorMinorPatchDashSuffix() {
+    void testMajorMinorPatchDashSuffix() {
         BuildInfo bi = BuildInfo.create("1.2.3-SNAPSHOT", ZonedDateTime.now().toString());
         assertEquals(1, bi.major());
         assertEquals(2, bi.minor());

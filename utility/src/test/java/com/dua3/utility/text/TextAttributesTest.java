@@ -101,7 +101,7 @@ public class TextAttributesTest {
 
     @ParameterizedTest
     @MethodSource("textAttributesArguments")
-    public void testToFontDef(TextAttributes ta) {
+    void testToFontDef(TextAttributes ta) {
         FontDef fd = TextAttributes.getFontDef(ta);
         assertNotNull(fd);
         assertEquals(ta.get(Style.FONT_FAMILIES), fd.getFamilies());

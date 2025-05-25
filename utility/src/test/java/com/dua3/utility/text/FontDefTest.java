@@ -80,7 +80,7 @@ class FontDefTest {
     }
 
     @Test
-    public void testParseCssFontDef() {
+    void testParseCssFontDef() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
@@ -94,7 +94,7 @@ class FontDefTest {
     }
 
     @Test
-    public void testParseCssFontDef_quoted() {
+    void testParseCssFontDef_quoted() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: \"Times New Roman\"; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
@@ -108,7 +108,7 @@ class FontDefTest {
     }
 
     @Test
-    public void testParseCssFontDef_multipleFamilies() {
+    void testParseCssFontDef_multipleFamilies() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial, Helvetica, SansSerif; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
@@ -122,7 +122,7 @@ class FontDefTest {
     }
 
     @Test
-    public void testParseCssFontDef_inherit() {
+    void testParseCssFontDef_inherit() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: inherit; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
@@ -136,21 +136,21 @@ class FontDefTest {
     }
 
     @Test
-    public void testParseCssFontDef_inheritAfterFamily() {
+    void testParseCssFontDef_inheritAfterFamily() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial, inherit; font-weight: bold; font-style: italic; }";
 
         assertThrows(IllegalArgumentException.class, () -> FontDef.parseCssFontDef(fontdef));
     }
 
     @Test
-    public void testParseCssFontDef_inheritBeforeFamily() {
+    void testParseCssFontDef_inheritBeforeFamily() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: inherit, inherit; font-weight: bold; font-style: italic; }";
 
         assertThrows(IllegalArgumentException.class, () -> FontDef.parseCssFontDef(fontdef));
     }
 
     @Test
-    public void testFontspec() {
+    void testFontspec() {
         FontDef fd = new FontDef();
 
         fd.setSize(14.0f);
@@ -185,7 +185,7 @@ class FontDefTest {
 
     @ParameterizedTest
     @MethodSource("fontArguments")
-    public void testToFontDef(Font font) {
+    void testToFontDef(Font font) {
         // Test with a Font set
         FontDef fd = font.toFontDef();
         assertNotNull(fd);

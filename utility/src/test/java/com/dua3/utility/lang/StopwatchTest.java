@@ -81,7 +81,7 @@ public class StopwatchTest {
     // This test case validates the functionality of the close() method in the AutoCloseableStopWatch class.
 
     @Test
-    public void testAutoCloseableStopWatchClose() {
+    void testAutoCloseableStopWatchClose() {
         AtomicBoolean closed = new AtomicBoolean(false);
         Stopwatch.AutoCloseableStopWatch stopWatch = new Stopwatch.AutoCloseableStopWatch("stopWatch", sw -> closed.set(true));
 
@@ -92,7 +92,7 @@ public class StopwatchTest {
 
     // This test case ensures that the correct name is recorded while creating a new AutoCloseableStopWatch instance.
     @Test
-    public void testAutoCloseableStopWatchConstructor_withName() {
+    void testAutoCloseableStopWatchConstructor_withName() {
         String expectedName = "StopwatchUnderTest";
         try (Stopwatch.AutoCloseableStopWatch stopWatch = Stopwatch.create(expectedName, sw -> {})) {
             assertEquals(expectedName, stopWatch.getName(), "Expected the Stopwatch name to match the one supplied in the constructor.");
@@ -101,7 +101,7 @@ public class StopwatchTest {
     // This test case ensures that the correct name is recorded while creating a new AutoCloseableStopWatch instance.
 
     @Test
-    public void testAutoCloseableStopWatchConstructor_withNameSupplier() {
+    void testAutoCloseableStopWatchConstructor_withNameSupplier() {
         String expectedName = "StopwatchUnderTest";
         try (Stopwatch.AutoCloseableStopWatch stopWatch = Stopwatch.create(() -> expectedName, sw -> {})) {
             assertEquals(expectedName, stopWatch.getName(), "Expected the Stopwatch name to match the one supplied in the constructor.");
@@ -109,35 +109,35 @@ public class StopwatchTest {
     }
 
     @Test
-    public void testStandardFormat() {
+    void testStandardFormat() {
         Duration duration = Duration.of(2, ChronoUnit.HOURS).plusMinutes(23).plusSeconds(18).plus(456, ChronoUnit.MILLIS);
         String result = Stopwatch.Format.STANDARD.format(duration);
         assertEquals("2:23:18.456", result);
     }
 
     @Test
-    public void testHoursMinutesSecondsMillisFormat() {
+    void testHoursMinutesSecondsMillisFormat() {
         Duration duration = Duration.of(1, ChronoUnit.HOURS).plusMinutes(10).plusSeconds(45).plus(123, ChronoUnit.MILLIS);
         String result = Stopwatch.Format.HOURS_MINUTES_SECONDS_MILLIS.format(duration);
         assertEquals("1:10:45.123", result);
     }
 
     @Test
-    public void testMinutesSecondsMillisFormat() {
+    void testMinutesSecondsMillisFormat() {
         Duration duration = Duration.of(40, ChronoUnit.MINUTES).plusSeconds(30).plus(220, ChronoUnit.MILLIS);
         String result = Stopwatch.Format.MINUTES_SECONDS_MILLIS.format(duration);
         assertEquals("40m:30.220s", result);
     }
 
     @Test
-    public void testSecondsMillisFormat() {
+    void testSecondsMillisFormat() {
         Duration duration = Duration.of(90, ChronoUnit.SECONDS).plus(220, ChronoUnit.MILLIS);
         String result = Stopwatch.Format.SECONDS_MILLIS.format(duration);
         assertEquals("90.220s", result);
     }
 
     @Test
-    public void testMillisFormat() {
+    void testMillisFormat() {
         Duration duration = Duration.of(1000, ChronoUnit.MILLIS);
         String result = Stopwatch.Format.MILLIS.format(duration);
         assertEquals("1000.000ms", result);

@@ -6,14 +6,13 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
+  build-and-analyze:
+    runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout code'
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 'Set up BellSoft Liberica Full JDK 21'
         if: runner.os == 'Linux'
@@ -53,27 +52,6 @@ jobs:
         run: ./gradlew build
         id: compile
         continue-on-error: false
-
-  analysis:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 'Set up BellSoft Liberica Full JDK'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          # for analysis, we only need JDK 24
-          wget https://download.bell-sw.com/java/24.0.1+11/bellsoft-jdk24.0.1+11-linux-amd64-full.deb
-          sudo apt-get install -y ./bellsoft-jdk24.0.1+11-linux-amd64-full.deb
-          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java24-full-amd64/bin/java 1
-          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java24-full-amd64/bin/javac 1
-          echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java24-full-amd64" >> $GITHUB_ENV
-          echo "/usr/lib/jvm/bellsoft-java24-full-amd64/bin" >> $GITHUB_PATH
 
       - name: 'Cache Maven packages'
         uses: actions/cache@v4

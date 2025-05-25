@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AnsiCodeTest {
 
     @Test
-    public void testStyles() {
+    void testStyles() {
         String actual =
                 String.format(Locale.ROOT, "This is %sbold%s text\n", AnsiCode.bold(true), AnsiCode.bold(false))
                         + String.format(Locale.ROOT, "This is %sunderlined%s text\n", AnsiCode.underline(true), AnsiCode.underline(false))

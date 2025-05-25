@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ArgumentsParserTest {
 
     @Test
-    public void testFlag() {
+    void testFlag() {
         // create the parser
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testFlag")
@@ -67,7 +67,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testChoiceOption() {
+    void testChoiceOption() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testChoiceOption")
                 .description("Unit test for passing choices on the command line.");
@@ -115,7 +115,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testChoiceOptionRequired() {
+    void testChoiceOptionRequired() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testChoiceOptionRequired")
                 .description("Unit test for passing choices on the command line.");
@@ -154,7 +154,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testSimpleOption() {
+    void testSimpleOption() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testSimpleOption")
                 .description("Unit test for passing simple options on the command line.");
@@ -203,7 +203,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testSimpleOptionRequired() {
+    void testSimpleOptionRequired() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testSimpleOptionRequired")
                 .description("Unit test for passing simple options on the command line.");
@@ -246,7 +246,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testPositionalArgs1() {
+    void testPositionalArgs1() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testPositionalArgs1")
                 .description("Unit test for passing positional arguments on the command line.");
@@ -272,7 +272,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testPositionalArgs2() {
+    void testPositionalArgs2() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testPositionalArgs2")
                 .description("Unit test for passing positional arguments on the command line.")
@@ -304,7 +304,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testOptionHandler() {
+    void testOptionHandler() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testOptionHandler")
                 .description("Unit test for option handling.");
@@ -321,7 +321,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testStandardOptionOccurrences() {
+    void testStandardOptionOccurrences() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testSimpleOption")
                 .description("Unit test for passing simple options on the command line.");
@@ -441,7 +441,7 @@ public class ArgumentsParserTest {
     }
 
     @Test
-    public void testStandardOptionArity() {
+    void testStandardOptionArity() {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testStandardOptionArity")
                 .description("Unit test for testing opzion arity on the command line.")

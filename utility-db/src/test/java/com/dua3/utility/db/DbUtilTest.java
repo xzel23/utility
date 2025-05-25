@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class DbUtilTest {
 
     @Test
-    public void testGetDrivers() {
+    void testGetDrivers() {
         Collection<JdbcDriverInfo> drivers = DbUtil.getJdbcDrivers();
         for (JdbcDriverInfo d : drivers) {
             System.out.println(d);

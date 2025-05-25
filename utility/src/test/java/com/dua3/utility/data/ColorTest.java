@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ColorTest {
 
     @Test
-    public void testToStringAndValueOfWithHex() {
+    void testToStringAndValueOfWithHex() {
         for (Color c : Color.values()) {
             String hex = c.toCss();
             assertTrue(hex.matches("#[a-f0-9]{6,8}"));
@@ -43,7 +43,7 @@ public class ColorTest {
     }
 
     @Test
-    public void testValueOfWithName() {
+    void testValueOfWithName() {
         for (Map.Entry<String, Color> entry : Color.palette().entrySet()) {
             String name = entry.getKey();
             Color expected = entry.getValue();
@@ -54,7 +54,7 @@ public class ColorTest {
     }
 
     @Test
-    public void testValueOfWithRgb() {
+    void testValueOfWithRgb() {
         for (Color c : Color.values()) {
             RGBColor rgb = c.toRGBColor();
 
@@ -72,7 +72,7 @@ public class ColorTest {
     }
 
     @Test
-    public void testValueOfWithRgba() {
+    void testValueOfWithRgba() {
         for (Color c : Color.values()) {
             RGBColor rgb = c.toRGBColor();
 

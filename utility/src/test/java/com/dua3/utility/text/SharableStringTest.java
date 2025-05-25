@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SharableStringTest {
 
     @Test
-    public void testEqualsAndHashCode() {
+    void testEqualsAndHashCode() {
         String original = "0123456789abcdefghijklmnopqrstuvwxyz";
         SharableString sharable = new SharableString(original);
 
@@ -21,7 +21,7 @@ public class SharableStringTest {
     }
 
     @Test
-    public void testSubSequence() {
+    void testSubSequence() {
         String original = "0123456789abcdefghijklmnopqrstuvwxyz";
         SharableString sharable = new SharableString(original);
 
@@ -29,7 +29,7 @@ public class SharableStringTest {
     }
 
     @Test
-    public void testSharedSubSequence() {
+    void testSharedSubSequence() {
         String original = "0123456789abcdefghijklmnopqrstuvwxyz";
         String original_sub1 = original.substring(5, 15);
         String original_sub2 = original_sub1.substring(2, 8);

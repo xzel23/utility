@@ -41,7 +41,7 @@ public class FileSystemViewTest {
      * @throws IOException if resource could not be loaded
      */
     @Test
-    public void testClass() throws IOException {
+    void testClass() throws IOException {
         // at least when run from within eclipse (and probably other IDEs as well)
         // *.class is loaded from the file
         // system
@@ -56,7 +56,7 @@ public class FileSystemViewTest {
      * @throws IOException if resource could not be loaded
      */
     @Test
-    public void testJarClass() throws IOException {
+    void testJarClass() throws IOException {
         // org.junit.Assert should be loaded from rt.jar, so this tests the jar
         // functionality
         testClassHelper(org.junit.jupiter.api.Test.class);

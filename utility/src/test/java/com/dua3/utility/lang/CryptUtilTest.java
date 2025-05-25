@@ -23,7 +23,7 @@ public class CryptUtilTest {
     };
 
     @Test
-    public void testTextEncryption() throws GeneralSecurityException {
+    void testTextEncryption() throws GeneralSecurityException {
         for (int keyLength : KEY_LENGTHS) {
             System.out.format("Testing encryption with key length %d bits%n", keyLength);
 
