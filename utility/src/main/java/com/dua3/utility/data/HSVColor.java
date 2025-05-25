@@ -32,10 +32,8 @@ public record HSVColor(float h, float s, float v, float alpha) implements Color 
             h = 60.0f * (0.0f + (g - b) / (max - min));
         } else if (max == g) {
             h = 60.0f * (2.0f + (b - r) / (max - min));
-        } else if (max == b) {
+        } else { // max == b
             h = 60.0f * (4.0f + (r - g) / (max - min));
-        } else {
-            throw new IllegalStateException("color conversion error");
         }
 
         if (h < 0) {
