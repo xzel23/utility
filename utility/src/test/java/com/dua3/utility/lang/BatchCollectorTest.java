@@ -18,7 +18,7 @@ class BatchCollectorTest {
      * This test is for testing the functionality of BatchCollector when generating grouping.
      */
     @Test
-    public void batchCollector_groupingGenerationTest() {
+    void batchCollector_groupingGenerationTest() {
         BatchCollector<String, Integer> bc = new BatchCollector<>(s -> s != null ? s.length() : null);
         var result = Stream.of("one", "two", "three", "four", "five", "six").collect(bc);
 
@@ -37,7 +37,7 @@ class BatchCollectorTest {
      * This test is for testing the functionality of BatchCollector when generating grouping with default key.
      */
     @Test
-    public void batchCollector_defaultKeyGroupingGenerationTest() {
+    void batchCollector_defaultKeyGroupingGenerationTest() {
         BatchCollector<String, Integer> bc = new BatchCollector<>(s -> s != null ? s.length() : null, 0);
         var result = Stream.of("one", "two", "three", "four", "five", "six", null).collect(bc);
 
