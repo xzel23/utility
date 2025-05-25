@@ -401,6 +401,9 @@ public final class XmlUtil {
              StringWriter out = new StringWriter(xml.length() * 6 / 5)) {
 
             XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+            xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+            xmlInputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
             XMLEventReader reader = xmlInputFactory.createXMLEventReader(in);
 
             XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
