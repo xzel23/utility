@@ -22,6 +22,13 @@ import java.util.Optional;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class DialogSample extends Application {
 
+    private static final String ANSWER = "Answer: ";
+    private static final String NO_ANSWER = "No answer";
+
+    private static void println(Object o) {
+        System.out.println(o);
+    }
+
     /**
      * The main entry point for the application.
      *
@@ -45,7 +52,7 @@ public class DialogSample extends Application {
                     .mail("info@example.com")
                     .expandableContent(SystemInfo.getSystemInfo().formatted())
                     .showAndWait();
-            System.out.println("About Dialog shown");
+            println("About Dialog shown");
         }));
 
         // Confirmation
@@ -55,7 +62,7 @@ public class DialogSample extends Application {
                         .header("Good for you!")
                         .text("You've decided to clean the elevator.")
                         .showAndWait()
-                        .ifPresentOrElse(answer -> System.out.println("Answer: " + answer), () -> System.out.println("No answer"))
+                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
         ));
 
         // Information
@@ -66,7 +73,7 @@ public class DialogSample extends Application {
                     .text("To clean and service the electromagnetic coils in the bottom, " +
                             "it is necessary to jettison the access plate in the floor.")
                     .showAndWait();
-            System.out.println("Info Dialog shown");
+            println("Info Dialog shown");
         }));
 
         // Warning
@@ -77,7 +84,7 @@ public class DialogSample extends Application {
                     .text("Automatic charges will now blow the explosive bolts in the floor plate unit. " +
                             "The plate will disengage from the floor in 5 seconds.")
                     .showAndWait();
-            System.out.println("Warning Dialog shown");
+            println("Warning Dialog shown");
         }));
 
         // Error
@@ -87,7 +94,7 @@ public class DialogSample extends Application {
                     .header("Please leave the elevator immediately")
                     .text("5-4-3-2-1...")
                     .showAndWait();
-            System.out.println("Error Dialog shown");
+            println("Error Dialog shown");
         }));
 
         // Prompt
@@ -96,7 +103,7 @@ public class DialogSample extends Application {
                         .title("Prompt")
                         .header("This is a prompt dialog.")
                         .showAndWait()
-                        .ifPresentOrElse(answer -> System.out.println("Answer: " + answer), () -> System.out.println("No answer"))
+                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
         ));
 
         // Input
@@ -123,7 +130,7 @@ public class DialogSample extends Application {
                                 String.class,
                                 List.of("1", "2", "3"))
                         .showAndWait()
-                        .ifPresentOrElse(answer -> System.out.println("Answer: " + answer), () -> System.out.println("No answer"))
+                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
         ));
 
         // Options
@@ -133,7 +140,7 @@ public class DialogSample extends Application {
                         .title("Options")
                         .header("This is an options dialog.")
                         .showAndWait()
-                        .ifPresentOrElse(answer -> System.out.println("Answer: " + answer), () -> System.out.println("No answer"))
+                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
         ));
 
         // Wizard
@@ -156,7 +163,7 @@ public class DialogSample extends Application {
                                         .radioList("rdbms", "Database", () -> null, String.class, List.of("H2", "PostgreSQL", "MySQL"))
                         )
                         .showAndWait()
-                        .ifPresentOrElse(answer -> System.out.println("Answer: " + answer), () -> System.out.println("No answer"))
+                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
         ));
 
         StackPane root = new StackPane(container);
