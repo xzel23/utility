@@ -12,10 +12,10 @@ jobs:
         os: [ ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout code
+      - name: 'Checkout code'
         uses: actions/checkout@v4
 
-      - name: Set up BellSoft Liberica Full JDK 21
+      - name: 'Set up BellSoft Liberica Full JDK 21'
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -31,7 +31,7 @@ jobs:
           echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64" >> $GITHUB_ENV
           echo "/usr/lib/jvm/bellsoft-java21-full-amd64/bin:/usr/lib/jvm/bellsoft-java24-amd64/bin" >> $GITHUB_PATH
 
-      - name: Set up BellSoft Liberica Full JDK 21 and BellSoft Liberica 24 on Windows
+      - name: 'Set up BellSoft Liberica Full JDK 21 and BellSoft Liberica 24 on Windows'
         if: runner.os == 'Windows'
         run: |
           $jdkPath = 'C:\Program Files\BellSoft\LibericaJDK-21'
@@ -46,10 +46,10 @@ jobs:
           echo "JAVA_HOME=$jdkPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "$jdkPath\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Setup Gradle
+      - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Execute Gradle build
+      - name: 'Execute Gradle build'
         run: ./gradlew build
         id: compile
         continue-on-error: false
@@ -63,7 +63,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up BellSoft Liberica Full JDK
+      - name: 'Set up BellSoft Liberica Full JDK'
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
@@ -75,14 +75,14 @@ jobs:
           echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java24-full-amd64" >> $GITHUB_ENV
           echo "/usr/lib/jvm/bellsoft-java24-full-amd64/bin" >> $GITHUB_PATH
 
-      - name: Cache Maven packages
+      - name: 'Cache Maven packages'
         uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Create Qodana config
+      - name: 'Create Qodana config'
         run: |
           cat > qodana.yaml << 'EOF'
           version: "1.0"
@@ -100,13 +100,13 @@ jobs:
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
-      - name: Cache SonarCloud packages
+      - name: 'Cache SonarCloud packages'
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Build and analyze
+      - name: 'Sonar Scan'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
