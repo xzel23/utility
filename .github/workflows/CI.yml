@@ -54,7 +54,7 @@ jobs:
         id: compile
         continue-on-error: false
 
-  qodana:
+  analysis:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -67,13 +67,20 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          # Bellsoft Liberica 21 is needed for JavaFX packages
+          # for analysis, we only need JDK 24
           wget https://download.bell-sw.com/java/24.0.1+11/bellsoft-jdk24.0.1+11-linux-amd64-full.deb
           sudo apt-get install -y ./bellsoft-jdk24.0.1+11-linux-amd64-full.deb
           sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/bellsoft-java24-full-amd64/bin/java 1
           sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/bellsoft-java24-full-amd64/bin/javac 1
           echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java24-full-amd64" >> $GITHUB_ENV
           echo "/usr/lib/jvm/bellsoft-java24-full-amd64/bin" >> $GITHUB_PATH
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       - name: Create Qodana config
         run: |
@@ -92,3 +99,19 @@ jobs:
         uses: JetBrains/qodana-action@v2025.1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          mvn -B verify
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.projectKey=xzel23_utility
+          -Dsonar.organization=xzel23
+          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
