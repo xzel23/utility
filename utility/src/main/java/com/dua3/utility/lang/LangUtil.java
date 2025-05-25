@@ -292,7 +292,7 @@ public final class LangUtil {
     public static <T extends @Nullable Object, E extends Exception> Supplier<T> uncheckedSupplier(SupplierThrows<? extends T, E> s) {
         return () -> {
             try {
-                return (T) s.get(); // the cast to T silences a false positive nullability warning
+                return s.get();
             } catch (Exception e) {
                 throw wrapException(e);
             }
@@ -317,7 +317,7 @@ public final class LangUtil {
     public static <T extends @Nullable Object, R extends @Nullable Object, E extends Exception> Function<T, R> uncheckedFunction(FunctionThrows<T, R, E> f) {
         return (T arg) -> {
             try {
-                return (R) f.apply(arg); // the cast to R silences a false positive nullability warning
+                return f.apply(arg);
             } catch (Exception e) {
                 throw wrapException(e);
             }
@@ -735,7 +735,7 @@ public final class LangUtil {
      * @return a list that contains all items within the given range before and after each match
      */
     public static <T extends @Nullable Object> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after) {
-        return surroundingItems_(list, test, before, after, null);
+        return surroundingItemsInternal(list, test, before, after, null);
     }
 
     /**
@@ -750,10 +750,10 @@ public final class LangUtil {
      * @return a list that contains all items within the given range before and after each match
      */
     public static <T extends @Nullable Object> List<T> surroundingItems(List<? extends T> list, Predicate<? super T> test, int before, int after, BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
-        return surroundingItems_(list, test, before, after, placeHolder);
+        return surroundingItemsInternal(list, test, before, after, placeHolder);
     }
 
-    private static <T extends @Nullable Object> List<T> surroundingItems_(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
+    private static <T extends @Nullable Object> List<T> surroundingItemsInternal(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
         for (int i = 0; i < list.size(); i++) {
