@@ -96,12 +96,12 @@ class ArgumentsDialogTest extends AssertJSwingJUnitTestCase {
         assertTrue(args.get(testOption).isPresent(), "Option should be set in arguments");
         assertEquals("test value", args.get(testOption).get(), "Option value should match input");
 
-        // Simulate clicking the OK button by calling the OK action directly
-        GuiActionRunner.execute(() -> okClicks[0]++);
+        // Simulate clicking the OK button
+        SwingTestUtil.clickButton(panel, "OK");
         assertEquals(1, okClicks[0], "OK action should have been called once");
 
-        // Simulate clicking the Cancel button by calling the Cancel action directly
-        GuiActionRunner.execute(() -> cancelClicks[0]++);
+        // Simulate clicking the Cancel button
+        SwingTestUtil.clickButton(panel, "Cancel");
         assertEquals(1, cancelClicks[0], "Cancel action should have been called once");
 
         System.out.println("[DEBUG_LOG] testDialogCreation completed");
@@ -246,8 +246,8 @@ class ArgumentsDialogTest extends AssertJSwingJUnitTestCase {
             () -> cancelClicks[0]++   // Cancel action
         );
 
-        // Simulate clicking the OK button by calling the OK action directly
-        GuiActionRunner.execute(() -> okClicks[0]++);
+        // Simulate clicking the OK button
+        SwingTestUtil.clickButton(panel, "OK");
 
         // Verify the OK action was called
         assertEquals(1, okClicks[0], "OK action should have been called once");
@@ -275,8 +275,8 @@ class ArgumentsDialogTest extends AssertJSwingJUnitTestCase {
             () -> cancelClicks[0]++   // Cancel action
         );
 
-        // Simulate clicking the Cancel button by calling the Cancel action directly
-        GuiActionRunner.execute(() -> cancelClicks[0]++);
+        // Simulate clicking the Cancel button
+        SwingTestUtil.clickButton(panel, "Cancel");
 
         // Verify the Cancel action was called
         assertEquals(0, okClicks[0], "OK action should not have been called");
