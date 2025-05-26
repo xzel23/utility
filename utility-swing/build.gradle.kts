@@ -29,7 +29,7 @@ testing {
                         // enable assertions and use caciocavallo for headless Swing testing
                         jvmArgs(
                             "-ea",
-                            "-Djava.awt.headless=true",
+                            "-Djava.awt.headless=false",
                             "-Dawt.toolkit=org.caciocavallo.CaciocavalloToolkit",
                             "-Dcacio.managed.screensize=1024x768"
                         )

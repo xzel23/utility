@@ -37,6 +37,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -207,7 +208,7 @@ public final class SwingUtil {
      * On macOS, the global menubar is also enabled.
      */
     public static void setNativeLookAndFeel() {
-        setNativeLookAndFeel_(null);
+        setNativeLookAndFeelInternal(null);
     }
 
     /**
@@ -217,10 +218,10 @@ public final class SwingUtil {
      * @param applicationName the application name to set
      */
     public static void setNativeLookAndFeel(String applicationName) {
-        setNativeLookAndFeel_(applicationName);
+        setNativeLookAndFeelInternal(applicationName);
     }
 
-    private static void setNativeLookAndFeel_(@Nullable String applicationName) {
+    private static void setNativeLookAndFeelInternal(@Nullable String applicationName) {
         if (Platform.isMacOS()) {
             if (applicationName != null) {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", applicationName);
@@ -530,61 +531,11 @@ public final class SwingUtil {
      * @param exceptionHandler handler to call when an exception is caught
      */
     public static void addDropFilesSupport(JComponent component, Consumer<? super Collection<File>> action, Predicate<? super Collection<File>> test, Consumer<? super Exception> exceptionHandler) {
-        component.setDropTarget(new DropTarget() {
-            @Override
-            public synchronized void dragEnter(DropTargetDragEvent evt) {
-                try {
-                    if (test.test(getFiles(evt.getTransferable()))) {
-                        evt.acceptDrag(DnDConstants.ACTION_COPY);
-                    } else {
-                        evt.rejectDrag();
-                    }
-                } catch (Exception e) {
-                    LOG.warn("exception on drag enter", e);
-                    evt.rejectDrag();
-                }
-                super.dragEnter(evt);
-            }
-
-            @Override
-            public synchronized void dragOver(DropTargetDragEvent evt) {
-                try {
-                    if (test.test(getFiles(evt.getTransferable()))) {
-                        evt.acceptDrag(DnDConstants.ACTION_COPY);
-                    } else {
-                        evt.rejectDrag();
-                    }
-                } catch (Exception e) {
-                    LOG.warn("exception on drag over", e);
-                    evt.rejectDrag();
-                }
-                super.dragOver(evt);
-            }
-
-            @Override
-            public synchronized void drop(DropTargetDropEvent evt) {
-                try {
-                    evt.acceptDrop(DnDConstants.ACTION_COPY);
-                    Collection<File> files = getFiles(evt.getTransferable());
-                    if (test.test(files)) {
-                        action.accept(files);
-                    }
-                } catch (Exception e) {
-                    LOG.warn("exception on drop", e);
-                }
-            }
-
-            @SuppressWarnings("unchecked")
-            private Collection<File> getFiles(Transferable transferable) {
-                try {
-                    return (Collection<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-                } catch (UnsupportedFlavorException | IOException e) {
-                    LOG.warn("exception getting data", e);
-                    exceptionHandler.accept(e);
-                    return Collections.emptyList();
-                }
-            }
-        });
+        if (GraphicsEnvironment.isHeadless()) {
+            LOG.warn("addDropFilesSupport(): cannot add drop support in headless mode");
+            return;
+        }
+        component.setDropTarget(new SwingDropFilesTarget(test, action, exceptionHandler));
     }
 
     /**
@@ -594,8 +545,7 @@ public final class SwingUtil {
      * @param action    the action to perform when text is dropped
      */
     public static void addDropTextSupport(JComponent component, Consumer<? super String> action) {
-        addDropTextSupport(component, action, text -> !text.isEmpty(), e -> {
-        });
+        addDropTextSupport(component, action, text -> !text.isEmpty(), e -> {});
     }
 
     /**
@@ -607,62 +557,12 @@ public final class SwingUtil {
      * @param exceptionHandler handler to call when an exception is caught
      */
     public static void addDropTextSupport(JComponent component, Consumer<? super String> action, Predicate<? super String> test, Consumer<? super Exception> exceptionHandler) {
-        component.setDropTarget(new DropTarget() {
-            @Override
-            public synchronized void dragEnter(DropTargetDragEvent evt) {
-                try {
-                    if (test.test(getText(evt.getTransferable()))) {
-                        evt.acceptDrag(DnDConstants.ACTION_COPY);
-                    } else {
-                        evt.rejectDrag();
-                    }
-                } catch (Exception e) {
-                    LOG.warn("exception on drag enter", e);
-                    evt.rejectDrag();
-                }
+        if (GraphicsEnvironment.isHeadless()) {
+            LOG.warn("addDropTextSupport(): cannot add drop support in headless mode");
+            return;
+        }
 
-                super.dragEnter(evt);
-            }
-
-            @Override
-            public synchronized void dragOver(DropTargetDragEvent evt) {
-                try {
-                    if (evt.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor) && test.test(getText(evt.getTransferable()))) {
-                        evt.acceptDrag(DnDConstants.ACTION_COPY);
-                    } else {
-                        evt.rejectDrag();
-                    }
-                } catch (Exception e) {
-                    LOG.warn("exception on drag over", e);
-                    evt.rejectDrag();
-                }
-
-                super.dragOver(evt);
-            }
-
-            @Override
-            public synchronized void drop(DropTargetDropEvent evt) {
-                try {
-                    evt.acceptDrop(DnDConstants.ACTION_COPY);
-                    String text = getText(evt.getTransferable());
-                    if (test.test(text)) {
-                        action.accept(text);
-                    }
-                } catch (Exception e) {
-                    LOG.warn("exception on drop", e);
-                }
-            }
-
-            private String getText(Transferable transferable) {
-                try {
-                    return (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                } catch (UnsupportedFlavorException | IOException e) {
-                    LOG.warn("exception getting data", e);
-                    exceptionHandler.accept(e);
-                    return "";
-                }
-            }
-        });
+        component.setDropTarget(new SwingDropTextTarget(test, action, exceptionHandler));
     }
 
     /**
@@ -678,5 +578,142 @@ public final class SwingUtil {
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
         g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    }
+
+    private static class SwingDropFilesTarget extends DropTarget {
+        private final Predicate<? super Collection<File>> test;
+        private final Consumer<? super Collection<File>> action;
+        private final Consumer<? super Exception> exceptionHandler;
+
+        public SwingDropFilesTarget(Predicate<? super Collection<File>> test, Consumer<? super Collection<File>> action, Consumer<? super Exception> exceptionHandler) throws HeadlessException {
+            this.test = test;
+            this.action = action;
+            this.exceptionHandler = exceptionHandler;
+        }
+
+        @Override
+        public synchronized void dragEnter(DropTargetDragEvent evt) {
+            try {
+                if (test.test(getFiles(evt.getTransferable()))) {
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                } else {
+                    evt.rejectDrag();
+                }
+            } catch (Exception e) {
+                LOG.warn("exception on drag enter", e);
+                evt.rejectDrag();
+            }
+            super.dragEnter(evt);
+        }
+
+        @Override
+        public synchronized void dragOver(DropTargetDragEvent evt) {
+            try {
+                if (test.test(getFiles(evt.getTransferable()))) {
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                } else {
+                    evt.rejectDrag();
+                }
+            } catch (Exception e) {
+                LOG.warn("exception on drag over", e);
+                evt.rejectDrag();
+            }
+            super.dragOver(evt);
+        }
+
+        @Override
+        public synchronized void drop(DropTargetDropEvent evt) {
+            try {
+                evt.acceptDrop(DnDConstants.ACTION_COPY);
+                Collection<File> files = getFiles(evt.getTransferable());
+                if (test.test(files)) {
+                    action.accept(files);
+                }
+            } catch (Exception e) {
+                LOG.warn("exception on drop", e);
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        private Collection<File> getFiles(Transferable transferable) {
+            try {
+                return (Collection<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+            } catch (UnsupportedFlavorException | IOException e) {
+                LOG.warn("exception getting data", e);
+                exceptionHandler.accept(e);
+                return Collections.emptyList();
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {throw new java.io.NotSerializableException("com.dua3.utility.swing.SwingUtil.SwingDropTarget");}
+
+        private void writeObject(java.io.ObjectOutputStream out) throws IOException {throw new java.io.NotSerializableException("com.dua3.utility.swing.SwingUtil.SwingDropTarget");}
+    }
+
+    private static class SwingDropTextTarget extends DropTarget {
+        private final transient Predicate<? super String> test;
+        private final transient Consumer<? super String> action;
+        private final transient Consumer<? super Exception> exceptionHandler;
+
+        public SwingDropTextTarget(Predicate<? super String> test, Consumer<? super String> action, Consumer<? super Exception> exceptionHandler) throws HeadlessException {
+            this.test = test;
+            this.action = action;
+            this.exceptionHandler = exceptionHandler;
+        }
+
+        @Override
+        public synchronized void dragEnter(DropTargetDragEvent evt) {
+            try {
+                if (test.test(getText(evt.getTransferable()))) {
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                } else {
+                    evt.rejectDrag();
+                }
+            } catch (Exception e) {
+                LOG.warn("exception on drag enter", e);
+                evt.rejectDrag();
+            }
+
+            super.dragEnter(evt);
+        }
+
+        @Override
+        public synchronized void dragOver(DropTargetDragEvent evt) {
+            try {
+                if (evt.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor) && test.test(getText(evt.getTransferable()))) {
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                } else {
+                    evt.rejectDrag();
+                }
+            } catch (Exception e) {
+                LOG.warn("exception on drag over", e);
+                evt.rejectDrag();
+            }
+
+            super.dragOver(evt);
+        }
+
+        @Override
+        public synchronized void drop(DropTargetDropEvent evt) {
+            try {
+                evt.acceptDrop(DnDConstants.ACTION_COPY);
+                String text = getText(evt.getTransferable());
+                if (test.test(text)) {
+                    action.accept(text);
+                }
+            } catch (Exception e) {
+                LOG.warn("exception on drop", e);
+            }
+        }
+
+        private String getText(Transferable transferable) {
+            try {
+                return (String) transferable.getTransferData(DataFlavor.stringFlavor);
+            } catch (UnsupportedFlavorException | IOException e) {
+                LOG.warn("exception getting data", e);
+                exceptionHandler.accept(e);
+                return "";
+            }
+        }
     }
 }
