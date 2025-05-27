@@ -4,55 +4,69 @@ import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.SimpleOption;
 import org.assertj.swing.edt.GuiActionRunner;
-import org.assertj.swing.fixture.FrameFixture;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * Utility class for Swing tests.
- */
-public final class SwingTestUtil {
-
-    private SwingTestUtil() {
-        // Utility class, no instances
-    }
+public class SwingTestUtil {
 
     /**
-     * Sets up the Caciocavallo toolkit for headless testing.
+     * Sets up the Caciocavallo toolkit for headless Swing testing.
+     * This must be called before any AWT/Swing components are created.
      */
     public static void setupCaciocavallo() {
-        // Ensure we're using caciocavallo for headless testing
-        System.setProperty("java.awt.headless", "true");
-        System.setProperty("awt.toolkit", "org.caciocavallo.CaciocavalloToolkit");
-        System.setProperty("cacio.managed.screensize", "1024x768");
+        // Set system properties if they haven't been set by JVM arguments
+        if (System.getProperty("awt.toolkit") == null) {
+            System.setProperty("awt.toolkit", "org.caciocavallo.CaciocavalloToolkit");
+        }
+        if (System.getProperty("cacio.managed.screensize") == null) {
+            System.setProperty("cacio.managed.screensize", "1024x768");
+        }
 
-        // Print debug information
-        System.out.println("[DEBUG_LOG] Headless mode: " + GraphicsEnvironment.isHeadless());
-        System.out.println("[DEBUG_LOG] AWT Toolkit: " + System.getProperty("awt.toolkit"));
+        // Force AWT to initialize with our toolkit
+        try {
+            Toolkit.getDefaultToolkit();
+
+            // Verify we're using the right toolkit
+            String toolkitClass = Toolkit.getDefaultToolkit().getClass().getName();
+            System.out.println("Using toolkit: " + toolkitClass);
+
+            // Ensure we have some screen devices available
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice[] screens = ge.getScreenDevices();
+            System.out.println("Available screens: " + screens.length);
+        } catch (Exception e) {
+            System.err.println("Failed to initialize Caciocavallo toolkit: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Creates a test frame for use in Swing tests.
-     *
-     * @return a new JFrame for testing
+     * Creates a test frame that can be used in headless testing.
      */
     public static JFrame createTestFrame() {
-        return GuiActionRunner.execute(() -> {
-            JFrame f = new JFrame("Test Frame");
-            f.setSize(400, 200);
-            // Add a dummy component to make sure the frame is properly initialized
-            f.getContentPane().add(new JTextField("Test"));
-            return f;
-        });
+        final JFrame[] frame = new JFrame[1];
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                frame[0] = new JFrame("Test Frame");
+                frame[0].setSize(800, 600);
+                // Don't actually make it visible if in headless mode
+                if (!GraphicsEnvironment.isHeadless()) {
+                    frame[0].setVisible(true);
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            throw new RuntimeException("Error creating test frame", e);
+        }
+        return frame[0];
     }
 
     /**
@@ -116,8 +130,8 @@ public final class SwingTestUtil {
      */
     public static ArgumentsDialog.ArgumentsPanel createArgumentsPanel(
             ArgumentsParser parser, Runnable onOk, Runnable onCancel) {
-        return GuiActionRunner.execute(() -> 
-            new ArgumentsDialog.ArgumentsPanel(parser, onOk, onCancel)
+        return GuiActionRunner.execute(() ->
+                new ArgumentsDialog.ArgumentsPanel(parser, onOk, onCancel)
         );
     }
 

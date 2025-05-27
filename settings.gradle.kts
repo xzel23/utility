@@ -70,6 +70,7 @@ dependencyResolutionManagement {
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
             version("spotbugs", "4.9.3")
+            version("junit4", "4.13.2")
             version("assertj-core", "3.27.3")
             version("assertj-swing-junit", "3.17.1")
             version("caciocavallo","1.18")
@@ -96,6 +97,7 @@ dependencyResolutionManagement {
             library("jimfs", "com.google.jimfs", "jimfs").versionRef("jimfs")
             library("mockito", "org.mockito", "mockito-core").versionRef("mockito")
 
+            library("junit4", "junit", "junit").versionRef("junit4")
             library(
                 "assertj-core",
                 "org.assertj",
