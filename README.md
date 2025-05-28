@@ -27,7 +27,9 @@ Source code is available at https://github.com/xzel23/utility.
 
 - JDK 21 or later, version 17 of the library requires JDK 17 or later (except for for JavaFX related modules that already require at least Java 21).
 - Version 17 that still supports Java 17 will receive important bugfix updates until the next LTS release (Java 25) is released.
-- To build the library, JDK 21+ **with a properly configured JavaFX installation** is needed.
+- To build the library, JDK 21+ **with a properly configured JavaFX installation** is needed. The StreamGathererUtil 
+  class is compiled using a Java 24 toolchain. **Building on Windows ARM is not supported** due to the incomplete 
+  Gradle support for that platform (details: https://github.com/gradle/gradle/issues/21703).
 
 The requirement to have JavaFX installed and configured correctly on the system is because
 both the Gradle JavaFX plugin and the Foojay toolchain resolver plugin do not yet fully support
@@ -68,7 +70,7 @@ Replace `${utility_version}` with the current version.
 
 ## Logging
 
-**As of version 12.0.0, logging changed from SLF4J to Log4J-API!**
+**Log4J-API** is used for logging.
 
 You can use whatever logging implementation you want, for configuration refer to the Log4J documentation. You can also
 look at the swing samples that use a SwingLogPane and route all logging output regardless of source (Log4J, SLF4J, JUL)
@@ -189,10 +191,6 @@ This will execute all benchmark tests and generate a results file at `utility/bu
 
 You can customize the benchmark execution by modifying the JMH configuration in the `utility/build.gradle.kts` file.
 
-## Logging
-
-- all internal logging is done through log4j-api
-
 ## Changes
 
 ### 19.1.0
@@ -207,6 +205,7 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - added coverage and Sonarcloud scanning in additionto Qodana to CI
 - small fixes and imrpovements
 - code cleanup
+- started adding swing unit tests
 
 ### 19.0.0
 
