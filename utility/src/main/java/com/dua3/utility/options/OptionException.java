@@ -31,7 +31,8 @@ public class OptionException extends IllegalStateException {
         /**
          * The {@link Option} whose parameter could not be converted to the target tape.
          */
-        private final Option<?> option;
+        private final transient Option<?> option;
+
         /**
          * The string value of the parameter that could not be converted.
          */
