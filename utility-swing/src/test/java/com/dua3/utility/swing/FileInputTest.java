@@ -1,6 +1,6 @@
-
 package com.dua3.utility.swing;
 
+import com.dua3.utility.lang.Platform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +57,8 @@ class FileInputTest {
     @Test
     void testGetSetPath() {
         // Create FileInput with an initial path
-        Path initialPath = Paths.get("/initial/path");
+        String initialPathString = Platform.isWindows() ? "d:/initial/path" : "/initial/path";
+        Path initialPath = Paths.get(initialPathString);
         FileInput testInput = new FileInput(FileInput.SELECT_FILE, initialPath, 20);
 
         // Verify the initial path
@@ -67,7 +68,8 @@ class FileInputTest {
         assertEquals(initialPath, path.get(), "Path should match the initial path");
 
         // Set a new path
-        Path newPath = Paths.get("/new/test/path");
+        String newPathString = Platform.isWindows() ? "d:/new/test/path" : "/new/test/path";
+        Path newPath = Paths.get(newPathString);
         testInput.setPath(newPath);
 
         // Verify the new path
@@ -77,7 +79,8 @@ class FileInputTest {
         assertEquals(newPath, path.get(), "Path should match the new path");
 
         // Test programmatic text setting by accessing the text field directly
-        Path anotherPath = Paths.get("/another/test/path");
+        String anotherPathString = Platform.isWindows() ? "d:/another/test/path" : "/another/test/path";
+        Path anotherPath = Paths.get(anotherPathString);
         JTextField textField = findTextFieldInComponent(testInput);
         textField.setText(anotherPath.toString());
 
@@ -135,7 +138,7 @@ class FileInputTest {
     @Test
     void testGetText() {
         // Create FileInput with a specific initial path
-        String initialPathString = "/test/path";
+        String initialPathString = Platform.isWindows() ? "d:/test/path" : "/test/path";
         Path initialPath = Paths.get(initialPathString);
         FileInput testInput = new FileInput(FileInput.SELECT_FILE, initialPath, 20);
 
@@ -157,7 +160,8 @@ class FileInputTest {
     @Test
     void testPathValidation() {
         // Test valid paths
-        fileInput.setPath(Paths.get("/valid/path"));
+        String validPath = Platform.isWindows() ? "d:/valid/path" : "/valid/path";
+        fileInput.setPath(Paths.get(validPath));
         assertTrue(fileInput.getPath().isPresent(), "Valid path should be present");
 
         fileInput.setPath(Paths.get("."));
@@ -201,13 +205,13 @@ class FileInputTest {
         String[] validPaths = {
                 ".",
                 "..",
-                "/",
-                "/usr/local",
+                Platform.isWindows() ? "d:/" : "/",
+                Platform.isWindows() ? "d:/usr/local" : "/usr/local",
                 "relative/path",
                 "../relative/path",
                 "file.txt",
                 "folder/file.txt",
-                "/absolute/path/file.ext"
+                Platform.isWindows() ? "d:/absolute/path/file.ext" : "/absolute/path/file.ext"
         };
 
         for (String pathStr : validPaths) {
@@ -222,8 +226,8 @@ class FileInputTest {
                 assertEquals(pathStr, fileInput.getText(),
                         "getText should match path string for: " + pathStr);
             } catch (InvalidPathException e) {
-                // Some paths might be invalid on certain platforms, skip them
-                System.out.println("Skipping invalid path for this platform: " + pathStr);
+                // Some paths might be invalid on certain Platforms, skip them
+                System.out.println("Skipping invalid path for this Platform: " + pathStr);
             }
         }
     }
