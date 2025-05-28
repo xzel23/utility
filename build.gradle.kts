@@ -85,12 +85,17 @@ subprojects {
     apply(plugin = "me.champeau.jmh")
 
     java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21)) // Beispiel: Java 21
-        }
+        val isWindowsArm = org.gradle.internal.os.OperatingSystem.current().isWindows &&
+                System.getProperty("os.arch").contains("aarch64")
 
-        targetCompatibility = JavaVersion.VERSION_21
-        sourceCompatibility = targetCompatibility
+        if (!isWindowsArm) {
+            toolchain {
+                languageVersion.set(JavaLanguageVersion.of(21)) // Beispiel: Java 21
+            }
+
+            targetCompatibility = JavaVersion.VERSION_21
+            sourceCompatibility = targetCompatibility
+        }
 
         withJavadocJar()
         withSourcesJar()
