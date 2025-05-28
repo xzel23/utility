@@ -18,6 +18,11 @@
     </Match>
 
     <Match>
+        <Class name="com.dua3.utility.swing.FileInputTest"/>
+        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+    </Match>
+
+    <Match>
         <Class name="com.dua3.utility.fx.icons.IconView"/>
         <Or>
             <Bug pattern="MS_EXPOSE_REP"/>
