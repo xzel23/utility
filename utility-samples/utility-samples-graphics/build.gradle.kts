@@ -4,14 +4,6 @@ plugins {
     id("application")
 }
 
-java {
-    targetCompatibility = JavaVersion.VERSION_21
-    sourceCompatibility = targetCompatibility
-
-    withJavadocJar()
-    withSourcesJar()
-}
-
 application {
     mainClass.set("com.dua3.utility.samples.graphics.FxGraphicsSample")
 }
