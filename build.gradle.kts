@@ -143,24 +143,22 @@ subprojects {
         }
     }
 
-    if (!project.path.startsWith(":utility-swing")) {
-        testing {
-            suites {
-                val test by getting(JvmTestSuite::class) {
-                    useJUnitJupiter()
+    testing {
+        suites {
+            val test by getting(JvmTestSuite::class) {
+                useJUnitJupiter()
 
-                    dependencies {
-                        implementation(rootProject.libs.log4j.core)
-                        implementation(rootProject.libs.jimfs)
-                        implementation(rootProject.libs.mockito)
-                    }
+                dependencies {
+                    implementation(rootProject.libs.log4j.core)
+                    implementation(rootProject.libs.jimfs)
+                    implementation(rootProject.libs.mockito)
+                }
 
-                    targets {
-                        all {
-                            testTask {
-                                // enable assertions and use headless mode for AWT in unit tests
-                                jvmArgs("-ea", "-Djava.awt.headless=true")
-                            }
+                targets {
+                    all {
+                        testTask {
+                            // enable assertions and use headless mode for AWT in unit tests
+                            jvmArgs("-ea", "-Djava.awt.headless=true")
                         }
                     }
                 }

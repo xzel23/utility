@@ -1,16 +1,15 @@
+
 package com.dua3.utility.swing;
 
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.SimpleOption;
-import org.assertj.swing.edt.GuiActionRunner;
 
 import javax.swing.*;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
+import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,54 +18,39 @@ import java.util.function.Consumer;
 public class SwingTestUtil {
 
     /**
-     * Sets up the Caciocavallo toolkit for headless Swing testing.
-     * This must be called before any AWT/Swing components are created.
-     */
-    public static void setupCaciocavallo() {
-        // Set system properties if they haven't been set by JVM arguments
-        if (System.getProperty("awt.toolkit") == null) {
-            System.setProperty("awt.toolkit", "org.caciocavallo.CaciocavalloToolkit");
-        }
-        if (System.getProperty("cacio.managed.screensize") == null) {
-            System.setProperty("cacio.managed.screensize", "1024x768");
-        }
-
-        // Force AWT to initialize with our toolkit
-        try {
-            Toolkit.getDefaultToolkit();
-
-            // Verify we're using the right toolkit
-            String toolkitClass = Toolkit.getDefaultToolkit().getClass().getName();
-            System.out.println("Using toolkit: " + toolkitClass);
-
-            // Ensure we have some screen devices available
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice[] screens = ge.getScreenDevices();
-            System.out.println("Available screens: " + screens.length);
-        } catch (Exception e) {
-            System.err.println("Failed to initialize Caciocavallo toolkit: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Creates a test frame that can be used in headless testing.
+     * In headless mode, returns null since no window is needed for panel testing.
      */
     public static JFrame createTestFrame() {
+        if (GraphicsEnvironment.isHeadless()) {
+            // In headless mode, return null - no frame needed for panel testing
+            return null;
+        }
+
+        // In non-headless mode, create a real frame
         final JFrame[] frame = new JFrame[1];
         try {
             SwingUtilities.invokeAndWait(() -> {
                 frame[0] = new JFrame("Test Frame");
                 frame[0].setSize(800, 600);
-                // Don't actually make it visible if in headless mode
-                if (!GraphicsEnvironment.isHeadless()) {
-                    frame[0].setVisible(true);
-                }
+                frame[0].setVisible(true);
             });
         } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException("Error creating test frame", e);
         }
         return frame[0];
+    }
+
+    /**
+     * Creates a mock Window that can be used in headless testing.
+     * In headless mode, returns null since no window is needed for panel testing.
+     */
+    public static Window createMockWindow() {
+        if (GraphicsEnvironment.isHeadless()) {
+            // In headless mode, return null - no window needed for panel testing
+            return null;
+        }
+        return createTestFrame();
     }
 
     /**
@@ -122,6 +106,7 @@ public class SwingTestUtil {
 
     /**
      * Creates an ArgumentsPanel for testing.
+     * This works in headless mode since ArgumentsPanel doesn't require a parent window.
      *
      * @param parser the ArgumentsParser to use
      * @param onOk the action to perform when OK is clicked
@@ -130,9 +115,7 @@ public class SwingTestUtil {
      */
     public static ArgumentsDialog.ArgumentsPanel createArgumentsPanel(
             ArgumentsParser parser, Runnable onOk, Runnable onCancel) {
-        return GuiActionRunner.execute(() ->
-                new ArgumentsDialog.ArgumentsPanel(parser, onOk, onCancel)
-        );
+        return new ArgumentsDialog.ArgumentsPanel(parser, onOk, onCancel);
     }
 
     /**
@@ -180,13 +163,11 @@ public class SwingTestUtil {
      * @param buttonText the text of the button to click
      */
     public static void clickButton(ArgumentsDialog.ArgumentsPanel panel, String buttonText) {
-        GuiActionRunner.execute(() -> {
-            JButton button = findButtonByText(panel, buttonText);
-            if (button != null) {
-                button.doClick();
-            } else {
-                throw new IllegalArgumentException("Button with text '" + buttonText + "' not found");
-            }
-        });
+        JButton button = findButtonByText(panel, buttonText);
+        if (button != null) {
+            button.doClick();
+        } else {
+            throw new IllegalArgumentException("Button with text '" + buttonText + "' not found");
+        }
     }
 }
