@@ -205,8 +205,8 @@ class FileInputTest {
         String[] validPaths = {
                 ".",
                 "..",
-                Platform.isWindows() ? "d:/" : "/",
-                Platform.isWindows() ? "d:/usr/local" : "/usr/local",
+                Platform.isWindows() ? "d:\\" : "/",
+                Platform.isWindows() ? "d:\\usr\\local" : "/usr/local",
                 "relative/path",
                 "../relative/path",
                 "file.txt",
