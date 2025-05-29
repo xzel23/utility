@@ -57,8 +57,15 @@ public class ArgumentsParser {
      * @param positionalArgDisplayName    the display name for positional arguments
      * @param validationOverridingOptions options that disable validation when present
      */
-    ArgumentsParser(String name, String description, String argsDescription, Map<String, Option<?>> options,
-                    int minPositionalArgs, int maxPositionalArgs, String positionalArgDisplayName, Option<?>[] validationOverridingOptions) {
+    ArgumentsParser(
+            String name,
+            String description,
+            String argsDescription,
+            Map<String, Option<?>> options,
+            int minPositionalArgs,
+            int maxPositionalArgs,
+            String positionalArgDisplayName,
+            Option<?>[] validationOverridingOptions) {
         this.name = name;
         this.description = description;
         this.argsDescription = argsDescription;
@@ -98,7 +105,7 @@ public class ArgumentsParser {
 
             // check for positional marker
             if (arg.equals(POSITIONAL_MARKER)) {
-                LangUtil.check(positionalArgs.isEmpty(), () -> new OptionException("positional args found before positional marker '" + POSITIONAL_MARKER + "'"));
+                LangUtil.check(positionalArgs.isEmpty(), () -> new ArgumentsException("positional args found before positional marker '" + POSITIONAL_MARKER + "'"));
                 remainingAllPositional = true;
                 continue;
             }
@@ -287,7 +294,7 @@ public class ArgumentsParser {
         } else {
             int optionalCount = max - min;
             switch (optionalCount) {
-                case 0 -> {}
+                case 0 -> { /* do nothing */ }
                 case 1 -> argText += " [<%s%d>]".formatted(arg, min + 1);
                 default -> argText += " [... <%1$s%2$d>]".formatted(arg, min + optionalCount);
             }

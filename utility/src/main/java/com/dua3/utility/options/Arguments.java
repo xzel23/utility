@@ -37,7 +37,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param options  the options to set
      * @param args the arguments
      */
-    public Arguments(Collection<? extends Entry<?>> options, Collection<String> args) {
+    public Arguments(Collection<Entry<?>> options, Collection<String> args) {
         this(options, args, 0, Integer.MAX_VALUE);
     }
 
@@ -50,7 +50,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param maxArgs the maximum argument count
      */
     public Arguments(
-            Collection<? extends Entry<?>> options,
+            Collection<Entry<?>> options,
             Collection<String> args,
             int minArgs,
             int maxArgs
@@ -93,10 +93,16 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      */
     @SafeVarargs
     public static <T> Entry<T> createEntry(Option<T> option, T... args) {
+        LangUtil.check(
+                option.minArity() >= args.length && args.length <= option.maxArity(),
+                () -> new OptionException(option, "The option '%s' requires %d to %d arguments, but %d were given".formatted(option.name(), option.minArity(), option.maxArity(), args.length))
+        );
+
         Entry<T> entry = new Entry<>(option);
         for (var arg : args) {
             entry.addArg(arg);
         }
+        
         return entry;
     }
 
@@ -121,7 +127,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     ) {
         // check occurrences
         Map<Option<?>, Integer> hist = new HashMap<>();
-        options.forEach(entry -> hist.compute(entry.option, (k_, i_) -> i_ == null ? 1 : i_ + 1));
+        options.forEach(entry -> hist.compute(entry.option, (opt, i) -> i == null ? 1 : i + 1));
 
         record OptionOccurences(Option<?> option, int occurrences) {}
         allOptions.stream()
@@ -137,11 +143,13 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
                     if (minOccurrences == 1) {
                         LangUtil.check(1 <= occurrences,
                                 () -> new OptionException(
+                                        option,
                                         "missing required option '%s'".formatted(option.name()
                                         )));
                     } else {
                         LangUtil.check(minOccurrences <= occurrences,
                                 () -> new OptionException(
+                                        option,
                                         "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
                                                 option.name(), minOccurrences, occurrences
                                         )));
@@ -150,6 +158,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
                     // check max occurrences
                     LangUtil.check(maxOccurrences >= occurrences,
                             () -> new OptionException(
+                                    option,
                                     "option '%s' must be specified at most %d time(s), but was %d times".formatted(
                                             option.name(), maxOccurrences, occurrences
                                     )));
@@ -162,6 +171,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
             LangUtil.check(
                     option.minArity() <= nParams,
                     () -> new OptionException(
+                            option,
                             "option '%s' must have at least %d parameters, but has only %d".formatted(
                                     option.name(),
                                     option.minArity(),
@@ -172,6 +182,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
             LangUtil.check(
                     nParams <= option.maxArity(),
                     () -> new OptionException(
+                            option,
                             "option '%s' must have at most %d parameters, but has %d".formatted(
                                     option.name(),
                                     option.maxArity(),
@@ -182,11 +193,11 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         });
 
         if (args.size() < minArgs) {
-            throw new OptionException("missing argument (at least " + minArgs + " arguments must be given)");
+            throw new ArgumentsException("missing argument (at least " + minArgs + " arguments must be given)");
         }
 
         if (args.size() > maxArgs) {
-            throw new OptionException("too many arguments (at most " + maxArgs + " arguments can be given)");
+            throw new ArgumentsException("too many arguments (at most " + maxArgs + " arguments can be given)");
         }
     }
 
@@ -208,7 +219,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @throws OptionException if neither is set
      */
     public <T> T getOrThrow(SimpleOption<T> option) {
-        return get(option).orElseThrow(() -> new OptionException("missing required option: " + option.name()));
+        return get(option).orElseThrow(() -> new OptionException(option, "missing required option: " + option.name()));
     }
 
     /**
@@ -232,7 +243,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @throws OptionException if neither is set
      */
     public <T> T getOrThrow(ChoiceOption<T> option) {
-        return get(option).orElseThrow(() -> new OptionException("missing required option: " + option.name()));
+        return get(option).orElseThrow(() -> new OptionException(option, "missing required option: " + option.name()));
     }
 
     /**

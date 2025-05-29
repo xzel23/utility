@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Represents a dialog that allows users to input arguments for a command-line program.
@@ -159,13 +160,13 @@ public class ArgumentsDialog extends JDialog {
          * @return the generated Arguments object
          */
         public Arguments getArguments() {
-            List<? extends Arguments.Entry<?>> parsedOptions = inputs.values().stream()
+            List<Arguments.Entry<?>> parsedOptions = inputs.values().stream()
                     .map(oi -> {
-                        var entry = Arguments.createEntry(oi.option);
+                        Arguments.Entry<?> entry = Arguments.createEntry(oi.option);
                         oi.getParameter().get().forEach(entry::addParameter);
                         return entry;
                     })
-                    .toList();
+                    .collect(Collectors.toUnmodifiableList());
             return new Arguments(parsedOptions, Collections.emptyList());
         }
     }

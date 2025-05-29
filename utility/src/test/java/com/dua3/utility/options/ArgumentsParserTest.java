@@ -292,10 +292,10 @@ class ArgumentsParserTest {
         assertEquals(expected, cmd.help());
 
         // min arity is 1!
-        assertThrows(OptionException.class, cmd::parse);
+        assertThrows(ArgumentsException.class, cmd::parse);
 
         // max arity is 3!
-        assertThrows(OptionException.class, () -> cmd.parse("abc", "def", "ghi", "jkl"));
+        assertThrows(ArgumentsException.class, () -> cmd.parse("abc", "def", "ghi", "jkl"));
 
         // these are all valid
         assertEquals(List.of("abc"), cmd.parse("abc").positionalArgs());
@@ -454,12 +454,12 @@ class ArgumentsParserTest {
         assertEquals(List.of(Collections.emptyList()), cmd.parse("--at-most-two-args").stream(optionAtMostTwoArgs).toList());
         assertEquals(List.of(List.of("A")), cmd.parse("--at-most-two-args", "A").stream(optionAtMostTwoArgs).toList());
         assertEquals(List.of(List.of("A", "B")), cmd.parse("--at-most-two-args", "A", "B").stream(optionAtMostTwoArgs).toList());
-        assertThrows(OptionException.class, () -> cmd.parse("--at-most-two-args", "A", "B", "C"));
+        assertThrows(ArgumentsException.class, () -> cmd.parse("--at-most-two-args", "A", "B", "C"));
 
         assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args"));
         assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args", "A"));
         assertEquals(List.of(List.of("A", "B")), cmd.parse("--exactly-two-args", "A", "B").stream(optionExactlyTwoArgs).toList());
-        assertThrows(OptionException.class, () -> cmd.parse("--exactly-two-args", "A", "B", "C"));
+        assertThrows(ArgumentsException.class, () -> cmd.parse("--exactly-two-args", "A", "B", "C"));
 
         assertThrows(OptionException.class, () -> cmd.parse("--two-or-more-args"));
         assertThrows(OptionException.class, () -> cmd.parse("--two-or-more-args", "A"));

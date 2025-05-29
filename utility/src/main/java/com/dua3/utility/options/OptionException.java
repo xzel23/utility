@@ -4,14 +4,20 @@ package com.dua3.utility.options;
  * Exception class to throw when command line arguments and/or values for configuration options do not match the
  * allowed values defined by the option/parser.
  */
-public class OptionException extends IllegalStateException {
+public class OptionException extends ArgumentsException {
+    /**
+     * The {@link Option} whose parameter could not be converted to the target tape.
+     */
+    private final transient Option<?> option;
+
     /**
      * Constructor.
      *
      * @param msg exception message
      */
-    public OptionException(String msg) {
+    public OptionException(Option<?> option, String msg) {
         super(msg);
+        this.option = option;
     }
 
     /**
@@ -20,19 +26,24 @@ public class OptionException extends IllegalStateException {
      * @param msg exception message
      * @param e   cause
      */
-    public OptionException(String msg, Exception e) {
+    public OptionException(Option<?> option, String msg, Exception e) {
         super(msg, e);
+        this.option = option;
+    }
+
+    /**
+     * Retrieves the option this exception belongs to.
+     *
+     * @return the option this exception belongs to
+     */
+    public Option<?> getOption() {
+        return option;
     }
 
     /**
      * Exception thrown when a parameter argument's String value could not be converted to the target type.
      */
     public static class ParameterConversionException extends OptionException {
-        /**
-         * The {@link Option} whose parameter could not be converted to the target tape.
-         */
-        private final transient Option<?> option;
-
         /**
          * The string value of the parameter that could not be converted.
          */
@@ -46,8 +57,7 @@ public class OptionException extends IllegalStateException {
          * @param e         the parent exception
          */
         public ParameterConversionException(Option<?> option, String parameter, Exception e) {
-            super("invalid value passed to " + option.name() + ": " + parameter, e);
-            this.option = option;
+            super(option, "invalid value passed to " + option.name() + ": " + parameter, e);
             this.parameter = parameter;
         }
 
@@ -58,18 +68,8 @@ public class OptionException extends IllegalStateException {
          * @param parameter the parameter value as String
          */
         public ParameterConversionException(Option<?> option, String parameter) {
-            super("invalid value passed to " + option.name() + ": " + parameter);
-            this.option = option;
+            super(option, "invalid value passed to " + option.name() + ": " + parameter);
             this.parameter = parameter;
-        }
-
-        /**
-         * Retrieves the option this exception belongs to.
-         *
-         * @return the option this exception belongs to
-         */
-        public Option<?> getOption() {
-            return option;
         }
 
         /**
