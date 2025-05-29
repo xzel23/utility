@@ -12,6 +12,7 @@
  */
 package com.dua3.utility.io;
 
+import com.dua3.utility.options.Flag;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +39,7 @@ import java.util.regex.Pattern;
  * <p>
  * This class extends the CsvIo class and provides methods for reading CSV data from various sources.
  */
-public class CsvReader extends CsvIo {
+public final class CsvReader extends CsvIo {
 
     // the UNICODE codepoint for the UTF-8 BOM
     private static final int UTF8_BOM = 0xfeff;
@@ -55,6 +57,10 @@ public class CsvReader extends CsvIo {
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
 
+    public static final Flag READ_COLUMN_NAMES = Flag.create("--read-column-names");
+    public static final Flag IGNORE_EXCESSIVE_FIELDS = Flag.create("--ignore-excessive-fields");
+    public static final Flag IGNORE_MISSING_FIELDS = Flag.create("--ignore-missing-fields");
+
     /**
      * A utility class for reading CSV files.
      *
@@ -71,8 +77,8 @@ public class CsvReader extends CsvIo {
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;
-        this.ignoreExcessFields = false;
-        this.ignoreMissingFields = false;
+        this.ignoreExcessFields = options.isSet(IGNORE_EXCESSIVE_FIELDS);
+        this.ignoreMissingFields = options.isSet(IGNORE_MISSING_FIELDS);
         this.source = source;
 
         // remove optional UTF-8 BOM from content
@@ -97,6 +103,10 @@ public class CsvReader extends CsvIo {
 
         // create a pattern for matching of csv fields
         patternField = Pattern.compile(generateFieldRegex(sep, del));
+
+        if (options.isSet(READ_COLUMN_NAMES)) {
+            readColumnNames();
+        }
     }
 
     private static String generateFieldRegex(String sep, String del) {
@@ -185,6 +195,16 @@ public class CsvReader extends CsvIo {
         } else {
             return Integer.toString(columnNr);
         }
+    }
+
+    /**
+     * Retrieves an unmodifiable list of column names defined for the CSV reader.
+     * If no column names were read, an empty list is returned.
+     *
+     * @return an unmodifiable {@code List<String>} of column names.
+     */
+    public List<String> getColumnNames() {
+        return columnNames == null ? Collections.emptyList() : Collections.unmodifiableList(columnNames);
     }
 
     /**
@@ -399,7 +419,7 @@ public class CsvReader extends CsvIo {
      * @param rowsToRead number of rows to be read
      * @return number of rows read
      * @throws IOException        if an error occurs during reading
-     * @throws CsvFormatException if the data read can not be correctly interpreted
+     * @throws CsvFormatException if the data read cannot be correctly interpreted
      */
     public int readSome(int rowsToRead) throws IOException {
         return rowsToRead > 0 ? readRows(rowsToRead) : 0;
@@ -441,13 +461,23 @@ public class CsvReader extends CsvIo {
      */
     public static class ListRowBuilder implements RowBuilder {
 
+        public static final Consumer<List<String>> EMPTY_CONSUMER = row -> {};
+
+        private final Consumer<List<String>> onRowRead;
         private final List<String> row = new ArrayList<>();
 
         /**
          * Constructs a new instance of ListRowBuilder.
          */
         public ListRowBuilder() {
-            // nothing to do
+            this(EMPTY_CONSUMER);
+        }
+
+        /**
+         * Constructs a new instance of ListRowBuilder.
+         */
+        public ListRowBuilder(Consumer<List<String>> onRowRead) {
+            this.onRowRead = onRowRead;
         }
 
         @Override
@@ -457,7 +487,7 @@ public class CsvReader extends CsvIo {
 
         @Override
         public void endRow() {
-            // nop
+            onRowRead.accept(List.copyOf(row));
         }
 
         /**
@@ -471,7 +501,7 @@ public class CsvReader extends CsvIo {
 
         @Override
         public void startRow() {
-            assert row.isEmpty() : "row ist not empty";
+            row.clear();
         }
     }
 
