@@ -138,7 +138,7 @@ class FileInputTest {
     @Test
     void testGetText() {
         // Create FileInput with a specific initial path
-        String initialPathString = Platform.isWindows() ? "d:/test/path" : "/test/path";
+        String initialPathString = Platform.isWindows() ? "d:\\test\\path" : "/test/path";
         Path initialPath = Paths.get(initialPathString);
         FileInput testInput = new FileInput(FileInput.SELECT_FILE, initialPath, 20);
 
@@ -217,6 +217,8 @@ class FileInputTest {
         for (String pathStr : validPaths) {
             try {
                 Path path = Paths.get(pathStr);
+                pathStr = path.toString(); // this automatically replaces '/' with the system path separator
+
                 fileInput.setPath(path);
 
                 Optional<Path> retrievedPath = fileInput.getPath();
