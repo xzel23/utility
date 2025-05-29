@@ -38,9 +38,11 @@ Windows on ARM.
 The easiest way to build is to use either Azul Zulu JDK FX or BellSoft Liberica Full JDK
 distributions (the minimum version for both is 21).
 
-## Including the library
+## Using the library
 
-Binaries are available on Maven Central Repository.
+The Binaries are available on Maven Central Repository.
+
+Java 21+ is needed for the current Version, for Java 17 projects, use version 17.x of the library.
 
 ### Maven
 
@@ -203,9 +205,11 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - fix: possible exponential runtime for evaluating regex in Jdbc support classes
 - FontDef is not Cloneable anymore, FontDef.copy() was introduced instead
 - added coverage and Sonarcloud scanning in additionto Qodana to CI
+- added more unit tests
 - small fixes and imrpovements
 - code cleanup
 - started adding swing unit tests
+- updated Gradle wrapper, plugins, dependencies
 
 ### 19.0.0
 
@@ -439,7 +443,7 @@ it is now provided directly by JDK classes:
 
 - correct name of overloaded method to Graphics.inverseTransform() (was Graphics.transformToLocal())
 - support copying RichText to to the clipboard (uses HTML format)
-- support getting texts (String), images and paths from the clipboard
+- support getting texts (String), images, and paths from the clipboard
 - fix HtmlConverter.useCss() ignoring the passed parameter
 - fix LangUtil.isOneOf(null, args...) throwing NPE (note that the remaining elements @NonNull)
 - add convenience methods Style.create(Font) and Style.create(Font, Color, Color) 
