@@ -197,6 +197,11 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ### 19.1.0
 
+- POSSIBLY BREAKING: OptionException constructors all take the causing Option as first Argument and
+  OptionException is derived from the new class ArgumentsException. In cases where the number of free
+  arguments (i.e., arguments that do not belong to any option) does not match the definition of the
+  ArgumentsParser, an ArgumentsException instead of an OptionException is thrown.
+- Added flags to configure CsvReader, see the unit test for examples.
 - fix: always return an array of the same type as the argument in ImmutableListBackedSortedSet.toArray(T[])
 - fix: NPE in TextAttributes.hashCode() when an attribute value is null
 - fix some minor issues and Qodana warnings
@@ -204,11 +209,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - fix: possible XXE in XmlUtil.prettyPrint()
 - fix: possible exponential runtime for evaluating regex in Jdbc support classes
 - FontDef is not Cloneable anymore, FontDef.copy() was introduced instead
-- added coverage and Sonarcloud scanning in additionto Qodana to CI
-- added more unit tests
-- small fixes and imrpovements
+- added coverage and Sonarcloud scanning in addition to Qodana to CI
+- added more unit tests, including some tests for swing classes
+- small fixes and improvements
 - code cleanup
-- started adding swing unit tests
 - updated Gradle wrapper, plugins, dependencies
 
 ### 19.0.0
