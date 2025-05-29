@@ -57,8 +57,26 @@ public final class CsvReader extends CsvIo {
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
 
+    /**
+     * A flag that determines whether the CSV reader should read column names from the CSV data.
+     * <p>
+     * When set, the reader will attempt to parse and interpret the first row of the CSV file as
+     * column names.
+     */
     public static final Flag READ_COLUMN_NAMES = Flag.create("--read-column-names");
+    /**
+     * Specifies a flag to ignore excessive fields in CSV data during parsing.
+     * If enabled, fields beyond the expected number in a CSV row are ignored without raising an error.
+     * This is useful when dealing with unexpected data formats or when strict validation is not required.
+     */
     public static final Flag IGNORE_EXCESSIVE_FIELDS = Flag.create("--ignore-excessive-fields");
+    /**
+     * A flag indicating whether missing fields in the CSV data should be ignored during parsing.
+     * When this flag is set, missing fields in the CSV input will not raise errors or exceptions.
+     * <p>
+     * This can be useful when dealing with files where some rows may have fewer fields
+     * than specified or expected.
+     */
     public static final Flag IGNORE_MISSING_FIELDS = Flag.create("--ignore-missing-fields");
 
     /**
@@ -475,6 +493,8 @@ public final class CsvReader extends CsvIo {
 
         /**
          * Constructs a new instance of ListRowBuilder.
+         *
+         * @param onRowRead consumer that is called for each row that is read
          */
         public ListRowBuilder(Consumer<List<String>> onRowRead) {
             this.onRowRead = onRowRead;

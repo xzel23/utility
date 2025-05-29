@@ -13,6 +13,7 @@ public class OptionException extends ArgumentsException {
     /**
      * Constructor.
      *
+     * @param option the option that caused the exception
      * @param msg exception message
      */
     public OptionException(Option<?> option, String msg) {
@@ -23,6 +24,7 @@ public class OptionException extends ArgumentsException {
     /**
      * Constructor.
      *
+     * @param option the option that caused the exception
      * @param msg exception message
      * @param e   cause
      */
@@ -32,9 +34,9 @@ public class OptionException extends ArgumentsException {
     }
 
     /**
-     * Retrieves the option this exception belongs to.
+     * Retrieves the option that caused this exception.
      *
-     * @return the option this exception belongs to
+     * @return the option that caused this exception
      */
     public Option<?> getOption() {
         return option;
