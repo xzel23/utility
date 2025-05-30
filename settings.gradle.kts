@@ -61,17 +61,18 @@ dependencyResolutionManagement {
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
 
-            version("log4j-bom", "2.24.3")
-            version("slf4j", "2.0.17")
+            version("h2database", "2.3.232")
             version("ikonli", "12.4.0")
-            version("jimfs", "1.3.0")
-            version("miglayout", "11.4.2")
-            version("mockito", "5.18.0")
             version("javafx", "22")
+            version("jimfs", "1.3.0")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
-            version("spotbugs", "4.9.3")
             version("junit4", "4.13.2")
+            version("log4j-bom", "2.24.3")
+            version("miglayout", "11.4.2")
+            version("mockito", "5.18.0")
+            version("slf4j", "2.0.17")
+            version("spotbugs", "4.9.3")
 
             library("jspecify", "org.jspecify", "jspecify").versionRef("jspecify")
 
@@ -96,6 +97,7 @@ dependencyResolutionManagement {
             library("mockito", "org.mockito", "mockito-core").versionRef("mockito")
 
             library("junit4", "junit", "junit").versionRef("junit4")
+            library("h2", "com.h2database", "h2").versionRef("h2database")
         }
     }
 
