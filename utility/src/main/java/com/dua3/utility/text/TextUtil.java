@@ -335,7 +335,7 @@ public final class TextUtil {
         OfInt iter1 = a.chars().iterator();
         OfInt iter2 = b.chars().iterator();
         while (iter1.hasNext() && iter2.hasNext()) {
-            if (iter1.nextInt() == iter2.nextInt()) {
+            if (iter1.nextInt() != iter2.nextInt()) {
                 return false;
             }
         }
@@ -733,7 +733,7 @@ public final class TextUtil {
      * @return value in points
      */
     public static double mm2pt(double mm) {
-        return mm * 72 / 25.4;
+        return mm * 72.0 / 25.4;
     }
 
     /**
@@ -743,7 +743,7 @@ public final class TextUtil {
      * @return value in points
      */
     public static double pt2mm(double pt) {
-        return pt * 25.4 / 72;
+        return pt * 25.4 / 72.0;
     }
 
     /**
