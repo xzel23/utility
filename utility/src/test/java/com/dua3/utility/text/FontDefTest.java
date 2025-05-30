@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,6 +34,44 @@ class FontDefTest {
         Color col = Color.valueOf("red");
         FontDef fontDef = FontDef.color(col);
         assertEquals(fontDef.getColor(), col);
+    }
+
+    @Test
+    void testColorWithValidColor() {
+        Color expectedColor = Color.BLUE;
+        FontDef fontDef = FontDef.color(expectedColor);
+        assertEquals(expectedColor, fontDef.getColor());
+    }
+
+    @Test
+    void testColorWithNull() {
+        FontDef fontDef = FontDef.color(null);
+        assertNull(fontDef.getColor());
+    }
+
+    @Test
+    void testColorWithOnlyColorSet() {
+        Color expectedColor = Color.GREEN;
+        FontDef fontDef = FontDef.color(expectedColor);
+        assertEquals(expectedColor, fontDef.getColor());
+        assertNull(fontDef.getSize());
+        assertNull(fontDef.getFamily());
+        assertNull(fontDef.getBold());
+        assertNull(fontDef.getItalic());
+        assertNull(fontDef.getStrikeThrough());
+        assertFalse(fontDef.isEmpty());
+    }
+
+    @Test
+    void testColor_null() {
+        FontDef fontDef = FontDef.color(null);
+        assertNull(fontDef.getColor());
+    }
+
+    @Test
+    void testColor_validColor() {
+        FontDef fontDef = FontDef.color(Color.RED);
+        assertEquals(Color.RED, fontDef.getColor());
     }
 
     @Test
