@@ -195,6 +195,12 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 19.1.1
+
+- fix TextUtil.contentEquals() always returning false for non-empty strings
+- fix TextUtil.quoteIfNeeded() quoting the empty string
+- increased unit test coverage
+
 ### 19.1.0
 
 - POSSIBLY BREAKING: OptionException constructors all take the causing Option as first Argument and
