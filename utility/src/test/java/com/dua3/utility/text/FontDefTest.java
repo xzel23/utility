@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FontDefTest {
     @Test
-    void testConstructor() {
+    void testNewInstance() {
         FontDef fontDef = new FontDef();
         assertNull(fontDef.getBold());
         assertNull(fontDef.getColor());
@@ -30,27 +30,27 @@ class FontDefTest {
     }
 
     @Test
-    void testColor() {
+    void testCreateWithBasicColor() {
         Color col = Color.valueOf("red");
         FontDef fontDef = FontDef.color(col);
         assertEquals(fontDef.getColor(), col);
     }
 
     @Test
-    void testColorWithValidColor() {
+    void testCreateWithValidColor() {
         Color expectedColor = Color.BLUE;
         FontDef fontDef = FontDef.color(expectedColor);
         assertEquals(expectedColor, fontDef.getColor());
     }
 
     @Test
-    void testColorWithNull() {
+    void testCreateWithNullColor() {
         FontDef fontDef = FontDef.color(null);
         assertNull(fontDef.getColor());
     }
 
     @Test
-    void testColorWithOnlyColorSet() {
+    void testCreateWithOnlyColorSet() {
         Color expectedColor = Color.GREEN;
         FontDef fontDef = FontDef.color(expectedColor);
         assertEquals(expectedColor, fontDef.getColor());
@@ -63,40 +63,34 @@ class FontDefTest {
     }
 
     @Test
-    void testColor_null() {
-        FontDef fontDef = FontDef.color(null);
-        assertNull(fontDef.getColor());
-    }
-
-    @Test
-    void testColor_validColor() {
+    void testCreateWithRedColor() {
         FontDef fontDef = FontDef.color(Color.RED);
         assertEquals(Color.RED, fontDef.getColor());
     }
 
     @Test
-    void testFamily() {
+    void testCreateWithFamily() {
         String family = "Times New Roman";
         FontDef fontDef = FontDef.family(family);
         assertEquals(family, fontDef.getFamily());
     }
 
     @Test
-    void testSize() {
+    void testCreateWithSize() {
         Float size = 12.0f;
         FontDef fontDef = FontDef.size(size);
         assertEquals(size, fontDef.getSize());
     }
 
     @Test
-    void testBold() {
+    void testCreateWithBold() {
         boolean bold = true;
         FontDef fontDef = FontDef.bold(bold);
         assertEquals(bold, fontDef.getBold());
     }
 
     @Test
-    void parseFontspec() {
+    void testParseFontspec() {
         String fontspec = "TimesNewRoman-bold-italic-12-red";
         FontDef result = FontDef.parseFontspec(fontspec);
         assertEquals("TimesNewRoman", result.getFamily());
@@ -107,19 +101,19 @@ class FontDefTest {
     }
 
     @Test
-    void parseFontspecThrowsIllegalArgumentExceptionWhenColorInvalid() {
+    void testParseFontspecWithInvalidColor() {
         String fontspec = "TimesNewRoman-bold-italic-12-undefinedColor";
         Assertions.assertThrows(IllegalArgumentException.class, () -> FontDef.parseFontspec(fontspec));
     }
 
     @Test
-    void parseFontspecThrowsIllegalArgumentExceptionWhenSizeInvalid() {
+    void testParseFontspecWithInvalidSize() {
         String fontspec = "TimesNewRoman-bold-italic-undefinedSize-red";
         Assertions.assertThrows(IllegalArgumentException.class, () -> FontDef.parseFontspec(fontspec));
     }
 
     @Test
-    void testParseCssFontDef() {
+    void testParseCssBasic() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
@@ -133,7 +127,7 @@ class FontDefTest {
     }
 
     @Test
-    void testParseCssFontDef_quoted() {
+    void testParseCssWithQuotedFont() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: \"Times New Roman\"; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
@@ -147,7 +141,7 @@ class FontDefTest {
     }
 
     @Test
-    void testParseCssFontDef_multipleFamilies() {
+    void testParseCssWithMultipleFamilies() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial, Helvetica, SansSerif; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
@@ -161,7 +155,7 @@ class FontDefTest {
     }
 
     @Test
-    void testParseCssFontDef_inherit() {
+    void testParseCssWithInherit() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: inherit; font-weight: bold; font-style: italic; }";
 
         FontDef fd = FontDef.parseCssFontDef(fontdef);
@@ -175,21 +169,21 @@ class FontDefTest {
     }
 
     @Test
-    void testParseCssFontDef_inheritAfterFamily() {
+    void testParseCssWithInheritAfterFamily() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: Arial, inherit; font-weight: bold; font-style: italic; }";
 
         assertThrows(IllegalArgumentException.class, () -> FontDef.parseCssFontDef(fontdef));
     }
 
     @Test
-    void testParseCssFontDef_inheritBeforeFamily() {
+    void testParseCssWithInheritBeforeFamily() {
         String fontdef = "{ font-size: 14px; color: #FFFFFF; font-family: inherit, inherit; font-weight: bold; font-style: italic; }";
 
         assertThrows(IllegalArgumentException.class, () -> FontDef.parseCssFontDef(fontdef));
     }
 
     @Test
-    void testFontspec() {
+    void testGenerateFontspec() {
         FontDef fd = new FontDef();
 
         fd.setSize(14.0f);
@@ -207,7 +201,7 @@ class FontDefTest {
     }
 
     @Test
-    void getCssStyle() {
+    void testGenerateCssStyle() {
         FontDef fd = new FontDef();
 
         fd.setSize(14.0f);
@@ -224,7 +218,7 @@ class FontDefTest {
 
     @ParameterizedTest
     @MethodSource("fontArguments")
-    void testToFontDef(Font font) {
+    void testConvertFontToFontDef(Font font) {
         // Test with a Font set
         FontDef fd = font.toFontDef();
         assertNotNull(fd);
