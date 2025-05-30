@@ -9,12 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
 import java.math.BigDecimal;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.JDBCType;
@@ -537,7 +533,7 @@ class NamedParameterStatementTest {
     @Test
     void testSetBytes() throws SQLException {
         String sql = "INSERT INTO test_table (id, blob_val) VALUES (:id, :blobVal)";
-        byte[] bytes = "test bytes".getBytes();
+        byte[] bytes = "test bytes".getBytes(StandardCharsets.UTF_8);
 
         try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
             stmt.setInt("id", 16);
