@@ -14,23 +14,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static com.dua3.utility.text.TextUtil.align;
-import static com.dua3.utility.text.TextUtil.decodeFontSize;
-import static com.dua3.utility.text.TextUtil.escapeHTML;
-import static com.dua3.utility.text.TextUtil.getRichTextDimension;
-import static com.dua3.utility.text.TextUtil.getTextDimension;
-import static com.dua3.utility.text.TextUtil.nonEmptyOr;
-import static com.dua3.utility.text.TextUtil.transform;
-import static com.dua3.utility.text.TextUtil.wrap;
+import static com.dua3.utility.text.TextUtil.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -344,5 +345,363 @@ class TextUtilTest {
         assertTrue(comparator.compare(null, "apple") < 0, "Expected null to come before 'apple'");
         assertTrue(comparator.compare("apple", null) > 0, "Expected 'apple' to come after null");
         assertEquals(0, comparator.compare(null, null), "Expected null to be equal to null");
+    }
+
+    @Test
+    void testAppendHtmlEscapedCharacters() {
+        StringBuilder sb = new StringBuilder();
+        appendHtmlEscapedCharacters(sb, "<div>Test & 'Quote' \"DoubleQuote\"</div>");
+        assertEquals("&lt;div&gt;Test &amp; &apos;Quote&apos; &quot;DoubleQuote&quot;&lt;/div&gt;", sb.toString());
+
+        // Test with empty string
+        sb = new StringBuilder();
+        appendHtmlEscapedCharacters(sb, "");
+        assertEquals("", sb.toString());
+
+        // Test with non-ASCII characters
+        sb = new StringBuilder();
+        appendHtmlEscapedCharacters(sb, "Café");
+        assertEquals("Caf&#233;", sb.toString());
+    }
+
+    @Test
+    void testEscape() {
+        // Test with special characters
+        assertEquals("\\\"Hello\\\"", escape("\"Hello\""));
+        assertEquals("\\\\backslash", escape("\\backslash"));
+        assertEquals("Tab\\tNewline\\n", escape("Tab\tNewline\n"));
+        assertEquals("Carriage\\rReturn", escape("Carriage\rReturn"));
+        assertEquals("Form\\fFeed", escape("Form\fFeed"));
+        assertEquals("Backspace\\b", escape("Backspace\b"));
+        assertEquals("\\'Single Quote\\'", escape("'Single Quote'"));
+
+        // Test with null character
+        assertEquals("Null\\u0000Character", escape("Null\0Character"));
+
+        // Test with non-ASCII characters
+        assertEquals("Café", escape("Café"));
+
+        // Test with empty string
+        assertEquals("", escape(""));
+    }
+
+    @Test
+    void testContentEquals() {
+        // Test with equal content
+        assertTrue(contentEquals("test", "test"));
+        assertTrue(contentEquals(new StringBuilder("test"), "test"));
+
+        // Test with different content
+        assertTrue(!contentEquals("test", "Test"));
+        assertTrue(!contentEquals("test", "test1"));
+
+        // Test with empty strings
+        assertTrue(contentEquals("", ""));
+    }
+
+    @Test
+    void testContains() {
+        // Test with substring present
+        assertTrue(contains("Hello World", "World"));
+        assertTrue(contains("Hello World", "Hello"));
+        assertTrue(contains("Hello World", "o W"));
+
+        // Test with substring not present
+        assertTrue(!contains("Hello World", "world"));
+        assertTrue(!contains("Hello World", "Hello  World"));
+
+        // Test with empty strings
+        assertTrue(contains("Hello", ""));
+        assertTrue(!contains("", "Hello"));
+    }
+
+    @Test
+    void testContainsNoneOf() {
+        // Test with no matching characters
+        assertTrue(containsNoneOf("Hello", "xyz"));
+        assertTrue(containsNoneOf("12345", "abcde"));
+
+        // Test with matching characters
+        assertTrue(!containsNoneOf("Hello", "lo"));
+        assertTrue(!containsNoneOf("12345", "56"));
+
+        // Test with empty strings
+        assertTrue(containsNoneOf("", "xyz"));
+        assertTrue(containsNoneOf("Hello", ""));
+    }
+
+    @Test
+    void testContainsAnyOf() {
+        // Test with matching characters
+        assertTrue(containsAnyOf("Hello", "lo"));
+        assertTrue(containsAnyOf("12345", "56"));
+
+        // Test with no matching characters
+        assertTrue(!containsAnyOf("Hello", "xyz"));
+        assertTrue(!containsAnyOf("12345", "abcde"));
+
+        // Test with empty strings
+        assertTrue(!containsAnyOf("", "xyz"));
+        assertTrue(!containsAnyOf("Hello", ""));
+    }
+
+    @Test
+    void testIndexOf() {
+        // Test indexOf(CharSequence, int)
+        assertEquals(1, indexOf("Hello", 'e'));
+        assertEquals(-1, indexOf("Hello", 'x'));
+
+        // Test indexOf(CharSequence, CharSequence)
+        assertEquals(0, indexOf("Hello", "He"));
+        assertEquals(3, indexOf("Hello", "lo"));
+        assertEquals(-1, indexOf("Hello", "hi"));
+
+        // Test indexOf(CharSequence, int, int)
+        assertEquals(2, indexOf("Hello", 'l', 0));
+        assertEquals(3, indexOf("Hello", 'l', 3));
+        assertEquals(4, indexOf("Hello", 'o', 0));
+        assertEquals(-1, indexOf("Hello", 'e', 2));
+
+        // Test indexOf(CharSequence, CharSequence, int)
+        assertEquals(0, indexOf("Hello", "He", 0));
+        assertEquals(3, indexOf("Hello", "lo", 0));
+        assertEquals(-1, indexOf("Hello", "He", 1));
+        assertEquals(-1, indexOf("Hello", "hi", 0));
+    }
+
+    @Test
+    void testStartsWith() {
+        // Test with matching prefix
+        assertTrue(startsWith("Hello", "He"));
+        assertTrue(startsWith("Hello", "Hello"));
+
+        // Test with non-matching prefix
+        assertTrue(!startsWith("Hello", "he"));
+        assertTrue(!startsWith("Hello", "Hello World"));
+
+        // Test with empty strings
+        assertTrue(startsWith("Hello", ""));
+        assertTrue(!startsWith("", "Hello"));
+    }
+
+    @Test
+    void testGroupMatch() {
+        // Test with matching group
+        Pattern pattern = Pattern.compile("(?<prefix>\\w+):(?<value>\\w+)");
+        String input = "key:value";
+        Matcher matcher = pattern.matcher(input);
+        assertTrue(matcher.matches());
+
+        Optional<CharSequence> prefix = group(matcher, input, "prefix");
+        Optional<CharSequence> value = group(matcher, input, "value");
+
+        assertTrue(prefix.isPresent());
+        assertEquals("key", prefix.get().toString());
+
+        assertTrue(value.isPresent());
+        assertEquals("value", value.get().toString());
+    }
+
+    @Test
+    void testGroupNoMatch() {
+        // Test with matching group
+        Pattern pattern = Pattern.compile("(?<prefix>\\w+):(?<value>\\w+)?");
+        String input = "key:";
+        Matcher matcher = pattern.matcher(input);
+        assertTrue(matcher.matches());
+
+        Optional<CharSequence> prefix = group(matcher, input, "prefix");
+        Optional<CharSequence> value = group(matcher, input, "value");
+
+        assertTrue(prefix.isPresent());
+        assertEquals("key", prefix.get().toString());
+
+        assertTrue(value.isEmpty());
+    }
+
+    @Test
+    void testGroupNonExisting() {
+        // Test with matching group
+        Pattern pattern = Pattern.compile("(?<prefix>\\w+):(?<value>\\w+)");
+        String input = "key:value";
+        Matcher matcher = pattern.matcher(input);
+        assertTrue(matcher.matches());
+
+        // Test with non-existing group
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> group(matcher, input, "nonexistent"),
+                "should throw IllegalStateException for non-existing group"
+        );
+    }
+
+    @Test
+    void testGetMD5String() throws IOException {
+        // Test with string input
+        String input = "Hello, World!";
+        String md5 = getMD5String(input);
+        assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5);
+
+        // Test with byte array input
+        byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
+        String md5Bytes = getMD5String(bytes);
+        assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5Bytes);
+
+        // Test with InputStream input
+        try (InputStream is = new ByteArrayInputStream(bytes)) {
+            String md5Stream = getMD5String(is);
+            assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5Stream);
+        }
+    }
+
+    @Test
+    void testGetMD5() throws IOException {
+        // Test with string input
+        String input = "Hello, World!";
+        byte[] md5 = getMD5(input);
+
+        // Test with byte array input
+        byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
+        byte[] md5Bytes = getMD5(bytes);
+        assertArrayEquals(md5, md5Bytes);
+
+        // Test with InputStream input
+        try (InputStream is = new ByteArrayInputStream(bytes)) {
+            byte[] md5Stream = getMD5(is);
+            assertArrayEquals(md5, md5Stream);
+        }
+    }
+
+    @Test
+    void testGetDigest() throws NoSuchAlgorithmException, IOException {
+        // Test with byte array input
+        String input = "Hello, World!";
+        byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
+
+        byte[] sha256 = getDigest("SHA-256", bytes);
+        assertEquals(32, sha256.length); // SHA-256 produces 32 bytes
+
+        // Test with InputStream input
+        try (InputStream is = new ByteArrayInputStream(bytes)) {
+            byte[] sha256Stream = getDigest("SHA-256", is);
+            assertArrayEquals(sha256, sha256Stream);
+        }
+    }
+
+    @Test
+    void testGetDigestString() throws NoSuchAlgorithmException, IOException {
+        // Test with byte array input
+        String input = "Hello, World!";
+        byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
+
+        String sha256 = getDigestString("SHA-256", bytes);
+        assertEquals(64, sha256.length()); // SHA-256 hex string is 64 characters
+
+        // Test with InputStream input
+        try (InputStream is = new ByteArrayInputStream(bytes)) {
+            String sha256Stream = getDigestString("SHA-256", is);
+            assertEquals(sha256, sha256Stream);
+        }
+    }
+
+    @Test
+    void testGenerateMailToLink() {
+        // Test with simple email and subject
+        String link = generateMailToLink("test@example.com", "Test Subject");
+        assertEquals("mailto:test@example.com?subject=Test%20Subject", link);
+
+        // Test with email and subject containing special characters
+        link = generateMailToLink("test@example.com", "Test & Subject");
+        assertEquals("mailto:test@example.com?subject=Test%20%26%20Subject", link);
+    }
+
+    @Test
+    void testLineEndConversions() {
+        // Test text with mixed line endings
+        String mixedText = "Line1\r\nLine2\nLine3\rLine4";
+
+        // Test toUnixLineEnds
+        String unixText = toUnixLineEnds(mixedText);
+        assertEquals("Line1\nLine2\nLine3\nLine4", unixText);
+
+        // Test toWindowsLineEnds
+        String windowsText = toWindowsLineEnds(mixedText);
+        assertEquals("Line1\r\nLine2\r\nLine3\r\nLine4", windowsText);
+
+        // Test setLineEnds with custom line ending
+        String customText = setLineEnds(mixedText, "|");
+        assertEquals("Line1|Line2|Line3|Line4", customText);
+    }
+
+    @Test
+    void testQuote() {
+        // Test with simple string
+        assertEquals("\"Hello\"", quote("Hello"));
+
+        // Test with string containing quotes
+        assertEquals("\"Hello \\\"World\\\"\"", quote("Hello \"World\""));
+
+        // Test with string containing special characters
+        assertEquals("\"Tab\\tNewline\\n\"", quote("Tab\tNewline\n"));
+
+        // Test with empty string
+        assertEquals("\"\"", quote(""));
+    }
+
+    @Test
+    void testQuoteIfNeeded() {
+        // Test with string that needs quoting
+        assertEquals("\"Hello World\"", quoteIfNeeded("Hello World"));
+
+        // Test with string that doesn't need quoting
+        assertEquals("Hello", quoteIfNeeded("Hello"));
+
+        // Test with empty string
+        assertEquals("", quoteIfNeeded(""));
+    }
+
+    @Test
+    void testJoinQuotedIfNeeded() {
+        // Test with list of strings
+        List<String> list = List.of("Hello", "World", "Test");
+        assertEquals("Hello, World, Test", joinQuotedIfNeeded(list));
+
+        // Test with list containing strings that need quoting
+        list = List.of("Hello", "World Test", "End");
+        assertEquals("Hello, \"World Test\", End", joinQuotedIfNeeded(list));
+
+        // Test with custom delimiter
+        assertEquals("Hello|\"World Test\"|End", joinQuotedIfNeeded(list, "|"));
+
+        // Test with empty list
+        assertEquals("", joinQuotedIfNeeded(List.of()));
+    }
+
+    @Test
+    void testJoinQuoted() {
+        // Test with list of strings
+        List<String> list = List.of("Hello", "World", "Test");
+        assertEquals("\"Hello\", \"World\", \"Test\"", joinQuoted(list));
+
+        // Test with custom delimiter
+        assertEquals("\"Hello\"|\"World\"|\"Test\"", joinQuoted(list, "|"));
+
+        // Test with empty list
+        assertEquals("", joinQuoted(List.of()));
+    }
+
+    @Test
+    void testIsBlank() {
+        // Test with blank strings
+        assertTrue(isBlank(""));
+        assertTrue(isBlank(" "));
+        assertTrue(isBlank("\t"));
+        assertTrue(isBlank("\n"));
+        assertTrue(isBlank(" \t\n\r"));
+
+        // Test with non-blank strings
+        assertTrue(!isBlank("a"));
+        assertTrue(!isBlank(" a "));
+        assertTrue(!isBlank("\ta\n"));
     }
 }
