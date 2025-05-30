@@ -381,9 +381,32 @@ class TextUtilTest {
 
         // Test with non-ASCII characters
         assertEquals("Café", escape("Café"));
+        assertEquals("你好!", escape("你好!"));
 
         // Test with empty string
         assertEquals("", escape(""));
+    }
+
+    @Test
+    void testEscapeASCII() {
+        // Test with special characters
+        assertEquals("\\\"Hello\\\"", escapeASCII("\"Hello\""));
+        assertEquals("\\\\backslash", escapeASCII("\\backslash"));
+        assertEquals("Tab\\tNewline\\n", escapeASCII("Tab\tNewline\n"));
+        assertEquals("Carriage\\rReturn", escapeASCII("Carriage\rReturn"));
+        assertEquals("Form\\fFeed", escapeASCII("Form\fFeed"));
+        assertEquals("Backspace\\b", escapeASCII("Backspace\b"));
+        assertEquals("\\'Single Quote\\'", escapeASCII("'Single Quote'"));
+
+        // Test with null character
+        assertEquals("Null\\u0000Character", escapeASCII("Null\0Character"));
+
+        // Test with non-ASCII characters
+        assertEquals("Caf\\u00E9", escapeASCII("Café"));
+        assertEquals("\\u4F60\\u597D!", escapeASCII("你好!"));
+
+        // Test with empty string
+        assertEquals("", escapeASCII(""));
     }
 
     @Test

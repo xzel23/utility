@@ -161,6 +161,7 @@ public final class TextUtil {
      *
      * @param seq the string
      * @return the escaped string
+     * See also {@link #escapeASCII(CharSequence)}
      */
     public static String escape(CharSequence seq) {
         StringBuilder out = new StringBuilder(16 + seq.length() * 11 / 10);
@@ -192,6 +193,39 @@ public final class TextUtil {
                     // escape all remaining characters
                     default -> out.append("\\u").append(String.format(Locale.ROOT, "%04X", (int) c));
                 }
+            }
+        }
+        return out.toString();
+    }
+
+    /**
+     * Backslash-escape a string to ASCII-only representation.
+     *
+     * @param seq the string
+     * @return the escaped string
+     * See also {@link #escape(CharSequence)}
+     */
+    public static String escapeASCII(CharSequence seq) {
+        StringBuilder out = new StringBuilder(16 + seq.length() * 11 / 10);
+        for (int i = 0; i < seq.length(); i++) {
+            char c = seq.charAt(i);
+            if (c < 127) {
+                // ASCII characters
+                switch (c) {
+                    case '\0' -> out.append("\\u0000"); // "\0" might be ambiguous if followed by digits
+                    case '\\' -> out.append("\\\\");
+                    case '\t' -> out.append("\\t");
+                    case '\b' -> out.append("\\b");
+                    case '\n' -> out.append("\\n");
+                    case '\r' -> out.append("\\r");
+                    case '\f' -> out.append("\\f");
+                    case '\'' -> out.append("\\'");
+                    case '\"' -> out.append("\\\"");
+                    default -> out.append(c);
+                }
+            } else {
+                // non-ASCII characters
+                out.append("\\u").append(String.format(Locale.ROOT, "%04X", (int) c));
             }
         }
         return out.toString();
