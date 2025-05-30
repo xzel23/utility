@@ -111,15 +111,17 @@ class JdbcDataSourceTest {
         assertSame(printWriter, dataSource.getLogWriter());
 
         // Test that log messages are written to the log writer
-        dataSource.getConnection();
-        assertTrue(stringWriter.toString().contains("getConnection()"));
+        try (Connection connection = dataSource.getConnection()) {
+            assertTrue(stringWriter.toString().contains("getConnection()"));
+        }
 
         stringWriter = new StringWriter();
         printWriter = new PrintWriter(stringWriter);
         dataSource.setLogWriter(printWriter);
 
-        dataSource.getConnection(TEST_USER, TEST_PASSWORD);
-        assertTrue(stringWriter.toString().contains("getConnection(username, password)"));
+        try (Connection connection = dataSource.getConnection(TEST_USER, TEST_PASSWORD)) {
+            assertTrue(stringWriter.toString().contains("getConnection(username, password)"));
+        }
     }
 
     @Test
