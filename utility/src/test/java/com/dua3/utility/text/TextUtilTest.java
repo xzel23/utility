@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.AbstractMap;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -703,5 +704,130 @@ class TextUtilTest {
         assertTrue(!isBlank("a"));
         assertTrue(!isBlank(" a "));
         assertTrue(!isBlank("\ta\n"));
+    }
+
+    @Test
+    void testAppendHtmlEscapedCharactersGeneric() throws IOException {
+        // Test with a custom Appendable implementation
+        class TestAppendable implements Appendable {
+            private final StringBuilder sb = new StringBuilder();
+
+            @Override
+            public Appendable append(CharSequence csq) throws IOException {
+                sb.append(csq);
+                return this;
+            }
+
+            @Override
+            public Appendable append(CharSequence csq, int start, int end) throws IOException {
+                sb.append(csq, start, end);
+                return this;
+            }
+
+            @Override
+            public Appendable append(char c) throws IOException {
+                sb.append(c);
+                return this;
+            }
+
+            @Override
+            public String toString() {
+                return sb.toString();
+            }
+        }
+
+        // Test with HTML special characters
+        TestAppendable app = new TestAppendable();
+        appendHtmlEscapedCharacters(app, "<div>Test & 'Quote' \"DoubleQuote\"</div>");
+        assertEquals("&lt;div&gt;Test &amp; &apos;Quote&apos; &quot;DoubleQuote&quot;&lt;/div&gt;", app.toString());
+
+        // Test with empty string
+        app = new TestAppendable();
+        appendHtmlEscapedCharacters(app, "");
+        assertEquals("", app.toString());
+
+        // Test with non-ASCII characters
+        app = new TestAppendable();
+        appendHtmlEscapedCharacters(app, "Café");
+        assertEquals("Caf&#233;", app.toString());
+
+        // Test with null character
+        app = new TestAppendable();
+        appendHtmlEscapedCharacters(app, "\0");
+        assertEquals("&#0;", app.toString());
+    }
+
+    @Test
+    void testTransformWithMapEntries() {
+        // Test with varargs Map.Entry
+        String template = "Hello ${NAME}, welcome to ${PLACE}!";
+
+        Map.Entry<String, String> entry1 = Map.entry("NAME", "John");
+        Map.Entry<String, String> entry2 = Map.entry("PLACE", "Wonderland");
+
+        String result = transform(template, entry1, entry2);
+        assertEquals("Hello John, welcome to Wonderland!", result);
+
+        // Test with single entry
+        template = "Hello ${NAME}!";
+        result = transform(template, Map.entry("NAME", "Alice"));
+        assertEquals("Hello Alice!", result);
+
+        // Test with non-existent placeholder
+        template = "Hello ${NAME}, how are you ${MOOD}?";
+        result = transform(template, Map.entry("NAME", "Bob"));
+        assertEquals("Hello Bob, how are you MOOD?", result);
+
+        // Test with empty template
+        template = "";
+        result = transform(template, Map.entry("NAME", "Charlie"));
+        assertEquals("", result);
+
+        // Test with null value using AbstractMap.SimpleEntry which allows null values
+        template = "Hello ${NAME}!";
+        result = transform(template, new AbstractMap.SimpleEntry<>("NAME", null));
+        assertEquals("Hello null!", result);
+    }
+
+    @Test
+    void testContainsNoneOfWithCharArray() {
+        // Test with no matching characters
+        assertTrue(containsNoneOf("Hello", 'x', 'y', 'z'));
+        assertTrue(containsNoneOf("12345", 'a', 'b', 'c'));
+
+        // Test with matching characters
+        assertTrue(!containsNoneOf("Hello", 'l', 'o', 'z'));
+        assertTrue(!containsNoneOf("12345", '3', '6', '9'));
+
+        // Test with empty string
+        assertTrue(containsNoneOf("", 'a', 'b', 'c'));
+
+        // Test with empty char array
+        assertTrue(containsNoneOf("Hello"));
+
+        // Test with single character
+        assertTrue(containsNoneOf("a", 'b'));
+        assertTrue(!containsNoneOf("a", 'a'));
+    }
+
+    @Test
+    void testContainsAnyOfWithCharArray() {
+        // Test with matching characters
+        assertTrue(containsAnyOf("Hello", 'l', 'o', 'z'));
+        assertTrue(containsAnyOf("12345", '3', '6', '9'));
+
+        // Test with no matching characters
+        assertTrue(!containsAnyOf("Hello", 'x', 'y', 'z'));
+        assertTrue(!containsAnyOf("12345", 'a', 'b', 'c'));
+
+        // Test with empty string
+        assertTrue(!containsAnyOf("", 'a', 'b', 'c'));
+
+        // Test with empty char array
+        assertTrue(!containsAnyOf("Hello"));
+
+        // Test with single character
+        assertTrue(!containsAnyOf("a", 'b'));
+        assertTrue(containsAnyOf("a", 'a'));
     }
 }
