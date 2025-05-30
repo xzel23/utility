@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 final class InternalUtil {
     private static final Logger LOG = LogManager.getLogger(InternalUtil.class);
 
-    static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]+").asMatchPredicate().negate();
+    static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]*").asMatchPredicate().negate();
 
     private InternalUtil() {
         // utility class
