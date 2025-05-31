@@ -26,6 +26,7 @@ import java.util.SortedSet;
 public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends AbstractList<T> implements ImmutableSortedListSet<T> {
 
     private static final ImmutableListBackedSortedSet<?> EMPTY_SET = of();
+    private static final ImmutableSortedListSet<?> EMPTY_SET_REVERSED = EMPTY_SET.reversed();
 
     private final T[] elements;
     private int hash = 0;
@@ -388,21 +389,48 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
 
         @Override
         public ImmutableSortedListSet<T> subSet(T fromElement, T toElement) {
-            return original.subSet(toElement, fromElement).reversed();
+            int start = original.getIndex(toElement);
+            if (start == 0) {
+                //noinspection unchecked
+                return (ImmutableSortedListSet<T>) EMPTY_SET_REVERSED;
+            } else if (start < 0) {
+                start = -start - 1;
+            } else if (start + 1 == size()) {
+                // nothing to do: start = size() - 1
+            } else if (start + 1 < size()) {
+                start++;
+            }
+            int end = original.getIndex(fromElement);
+            if (end >= 0) {
+                end++;
+            } else {
+                end = -end - 1;
+            }
+
+            if (end == size()) {
+                return original.tailSet(original.get(start)).reversed();
+            } else {
+                return original.subSet(original.get(start), original.get(end)).reversed();
+            }
         }
 
         @Override
         public ImmutableSortedListSet<T> headSet(T toElement) {
             int start = original.getIndex(toElement);
-            if (start == 0) {
+            if (start <= 0) {
+                start = -start - 1;
+            } else {
+                start++;
+            }
+
+            if (start < 0) {
+                return this;
+            } else if (start < size()) {
+                return original.tailSet(original.get(start)).reversed();
+            } else {
                 //noinspection unchecked
                 return (ImmutableSortedListSet<T>) EMPTY_SET_REVERSED;
-            } else if (start > 0) {
-                start--;
-            } else {
-                start = -start - 1;
             }
-            return original.tailSet(original.get(start)).reversed();
         }
 
         @Override
@@ -415,7 +443,12 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             } else {
                 end = -end - 1;
             }
-            return original.headSet(original.get(end)).reversed();
+
+            if (end == size()) {
+                return this;
+            } else {
+                return original.headSet(original.get(end)).reversed();
+            }
         }
 
         @Override
