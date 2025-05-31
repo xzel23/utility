@@ -72,12 +72,13 @@ class CsvWriterTest {
         }
         
         // Define expected output
-        String expected = "Nr.,Name,Age,Address\r\n" +
-                "1,John,34,Street 1\r\n" +
-                "2,Jane,23,\"c/o John\nStreet 2, upstairs\"\r\n" +
-                "3,\"Peter, aka \"\"Pete\"\"\",17,Street 3\r\n" +
-                "4,Jon Doe\r\n";
-        
+        String expected = """
+                Nr.,Name,Age,Address\r
+                1,John,34,Street 1\r
+                2,Jane,23,"c/o John\nStreet 2, upstairs"\r
+                3,"Peter, aka ""Pete""\",17,Street 3\r
+                4,Jon Doe\r
+                """;
         // Verify output
         assertEquals(expected, stringWriter.toString());
     }
