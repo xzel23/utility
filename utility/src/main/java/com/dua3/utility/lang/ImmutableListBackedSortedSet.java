@@ -26,7 +26,6 @@ import java.util.SortedSet;
 public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends AbstractList<T> implements ImmutableSortedListSet<T> {
 
     private static final ImmutableListBackedSortedSet<?> EMPTY_SET = of();
-    private static final ImmutableSortedListSet<?> EMPTY_SET_REVERSED = EMPTY_SET.reversed();
 
     private final T[] elements;
     private int hash = 0;
