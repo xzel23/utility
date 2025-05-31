@@ -23,7 +23,6 @@ public final class FxFontEmbedded extends Font {
     private static FontData prepareEmbeddedFontData(javafx.scene.text.Font fxFont, List<String> families, Color color, boolean bold, boolean italic, boolean underline, boolean strikeThrough) {
         FontData fxFontData = FxFontUtil.getFontData(fxFont);
 
-        boolean monospaced;
         return FontData.get(
                 families,
                 fxFontData.size(),
