@@ -191,7 +191,7 @@ public final class ImmutableSortedMap<K extends Comparable<K>, V extends @Nullab
 
     @Override
     public boolean containsKey(Object key) {
-        return keyIndex(keys) >= 0;
+        return keyIndex(key) >= 0;
     }
 
     @Override
