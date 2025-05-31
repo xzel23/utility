@@ -490,4 +490,108 @@ class ImmutableListBackedSortedSetTest {
         assertEquals(expectedTailSet3.size(), tailSet3.size());
         assertEquals(new TreeSet<>(expectedTailSet3), new TreeSet<>(tailSet3));
     }
+
+    @Test
+    void testBoundaryElementsSubHeadTailSet() {
+        // Create a set with some elements
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+
+        // Create a TreeSet with the same elements for comparison
+        TreeSet<Integer> treeSet = new TreeSet<>(Arrays.asList(10, 20, 30, 40, 50));
+
+        // Test subSet with fromElement equal to the first element
+        SortedSet<Integer> subSet1 = set.subSet(10, 30);
+        SortedSet<Integer> expectedSubSet1 = treeSet.subSet(10, 30);
+        assertEquals(expectedSubSet1.size(), subSet1.size());
+        assertEquals(new TreeSet<>(expectedSubSet1), new TreeSet<>(subSet1));
+
+        // Test subSet with toElement equal to last element
+        SortedSet<Integer> subSet2 = set.subSet(30, 50);
+        SortedSet<Integer> expectedSubSet2 = treeSet.subSet(30, 50);
+        assertEquals(expectedSubSet2.size(), subSet2.size());
+        assertEquals(new TreeSet<>(expectedSubSet2), new TreeSet<>(subSet2));
+
+        // Test subSet with fromElement equal to first element and toElement equal to last element
+        SortedSet<Integer> subSet3 = set.subSet(10, 50);
+        SortedSet<Integer> expectedSubSet3 = treeSet.subSet(10, 50);
+        assertEquals(expectedSubSet3.size(), subSet3.size());
+        assertEquals(new TreeSet<>(expectedSubSet3), new TreeSet<>(subSet3));
+
+        // Test headSet with toElement equal to first element
+        SortedSet<Integer> headSet1 = set.headSet(10);
+        SortedSet<Integer> expectedHeadSet1 = treeSet.headSet(10);
+        assertEquals(expectedHeadSet1.size(), headSet1.size());
+        assertEquals(new TreeSet<>(expectedHeadSet1), new TreeSet<>(headSet1));
+
+        // Test headSet with toElement equal to last element
+        SortedSet<Integer> headSet2 = set.headSet(50);
+        SortedSet<Integer> expectedHeadSet2 = treeSet.headSet(50);
+        assertEquals(expectedHeadSet2.size(), headSet2.size());
+        assertEquals(new TreeSet<>(expectedHeadSet2), new TreeSet<>(headSet2));
+
+        // Test tailSet with fromElement equal to first element
+        SortedSet<Integer> tailSet1 = set.tailSet(10);
+        SortedSet<Integer> expectedTailSet1 = treeSet.tailSet(10);
+        assertEquals(expectedTailSet1.size(), tailSet1.size());
+        assertEquals(new TreeSet<>(expectedTailSet1), new TreeSet<>(tailSet1));
+
+        // Test tailSet with fromElement equal to last element
+        SortedSet<Integer> tailSet2 = set.tailSet(50);
+        SortedSet<Integer> expectedTailSet2 = treeSet.tailSet(50);
+        assertEquals(expectedTailSet2.size(), tailSet2.size());
+        assertEquals(new TreeSet<>(expectedTailSet2), new TreeSet<>(tailSet2));
+    }
+
+    @Test
+    void testReversedBoundaryElementsSubHeadTailSet() {
+        // Create a set with some elements and its reversed view
+        ImmutableListBackedSortedSet<Integer> set = ImmutableListBackedSortedSet.of(10, 20, 30, 40, 50);
+        ImmutableSortedListSet<Integer> reversedSet = set.reversed();
+
+        // Create a TreeSet with the same elements and its reversed view for comparison
+        TreeSet<Integer> treeSet = new TreeSet<>(Arrays.asList(10, 20, 30, 40, 50));
+        TreeSet<Integer> reversedTreeSet = new TreeSet<>(treeSet.descendingSet());
+
+        // Test subSet with fromElement equal to first element (50 in reversed set)
+        SortedSet<Integer> subSet1 = reversedSet.subSet(50, 30);
+        SortedSet<Integer> expectedSubSet1 = reversedTreeSet.subSet(50, 30);
+        assertEquals(expectedSubSet1.size(), subSet1.size());
+        assertEquals(new TreeSet<>(expectedSubSet1), new TreeSet<>(subSet1));
+
+        // Test subSet with toElement equal to last element (10 in reversed set)
+        SortedSet<Integer> subSet2 = reversedSet.subSet(30, 10);
+        SortedSet<Integer> expectedSubSet2 = reversedTreeSet.subSet(30, 10);
+        assertEquals(expectedSubSet2.size(), subSet2.size());
+        assertEquals(new TreeSet<>(expectedSubSet2), new TreeSet<>(subSet2));
+
+        // Test subSet with fromElement equal to first element and toElement equal to last element
+        SortedSet<Integer> subSet3 = reversedSet.subSet(50, 10);
+        SortedSet<Integer> expectedSubSet3 = reversedTreeSet.subSet(50, 10);
+        assertEquals(expectedSubSet3.size(), subSet3.size());
+        assertEquals(new TreeSet<>(expectedSubSet3), new TreeSet<>(subSet3));
+
+        // Test headSet with toElement equal to first element (50 in reversed set)
+        SortedSet<Integer> headSet1 = reversedSet.headSet(50);
+        SortedSet<Integer> expectedHeadSet1 = reversedTreeSet.headSet(50);
+        assertEquals(expectedHeadSet1.size(), headSet1.size());
+        assertEquals(new TreeSet<>(expectedHeadSet1), new TreeSet<>(headSet1));
+
+        // Test headSet with toElement equal to last element (10 in reversed set)
+        SortedSet<Integer> headSet2 = reversedSet.headSet(10);
+        SortedSet<Integer> expectedHeadSet2 = reversedTreeSet.headSet(10);
+        assertEquals(expectedHeadSet2.size(), headSet2.size());
+        assertEquals(new TreeSet<>(expectedHeadSet2), new TreeSet<>(headSet2));
+
+        // Test tailSet with fromElement equal to first element (50 in reversed set)
+        SortedSet<Integer> tailSet1 = reversedSet.tailSet(50);
+        SortedSet<Integer> expectedTailSet1 = reversedTreeSet.tailSet(50);
+        assertEquals(expectedTailSet1.size(), tailSet1.size());
+        assertEquals(new TreeSet<>(expectedTailSet1), new TreeSet<>(tailSet1));
+
+        // Test tailSet with fromElement equal to last element (10 in reversed set)
+        SortedSet<Integer> tailSet2 = reversedSet.tailSet(10);
+        SortedSet<Integer> expectedTailSet2 = reversedTreeSet.tailSet(10);
+        assertEquals(expectedTailSet2.size(), tailSet2.size());
+        assertEquals(new TreeSet<>(expectedTailSet2), new TreeSet<>(tailSet2));
+    }
 }

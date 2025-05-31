@@ -350,4 +350,75 @@ class ImmutableSortedMapTest {
             assertEquals(expectedTailMap3.get(key), tailMap3.get(key));
         }
     }
+
+    @Test
+    void testBoundaryKeysSubHeadTailMap() {
+        // Create a map with some entries
+        ImmutableSortedMap<String, Integer> map = new ImmutableSortedMap<>(
+                Map.of("b", 2, "d", 4, "f", 6, "h", 8, "j", 10));
+
+        // Create a TreeMap with the same entries for comparison
+        TreeMap<String, Integer> treeMap = new TreeMap<>();
+        treeMap.put("b", 2);
+        treeMap.put("d", 4);
+        treeMap.put("f", 6);
+        treeMap.put("h", 8);
+        treeMap.put("j", 10);
+
+        // Test subMap with fromKey equal to first key
+        SortedMap<String, Integer> subMap1 = map.subMap("b", "f");
+        SortedMap<String, Integer> expectedSubMap1 = treeMap.subMap("b", "f");
+        assertEquals(expectedSubMap1.size(), subMap1.size());
+        for (String key : expectedSubMap1.keySet()) {
+            assertEquals(expectedSubMap1.get(key), subMap1.get(key));
+        }
+
+        // Test subMap with toKey equal to last key
+        SortedMap<String, Integer> subMap2 = map.subMap("f", "j");
+        SortedMap<String, Integer> expectedSubMap2 = treeMap.subMap("f", "j");
+        assertEquals(expectedSubMap2.size(), subMap2.size());
+        for (String key : expectedSubMap2.keySet()) {
+            assertEquals(expectedSubMap2.get(key), subMap2.get(key));
+        }
+
+        // Test subMap with fromKey equal to first key and toKey equal to last key
+        SortedMap<String, Integer> subMap3 = map.subMap("b", "j");
+        SortedMap<String, Integer> expectedSubMap3 = treeMap.subMap("b", "j");
+        assertEquals(expectedSubMap3.size(), subMap3.size());
+        for (String key : expectedSubMap3.keySet()) {
+            assertEquals(expectedSubMap3.get(key), subMap3.get(key));
+        }
+
+        // Test headMap with toKey equal to first key
+        SortedMap<String, Integer> headMap1 = map.headMap("b");
+        SortedMap<String, Integer> expectedHeadMap1 = treeMap.headMap("b");
+        assertEquals(expectedHeadMap1.size(), headMap1.size());
+        for (String key : expectedHeadMap1.keySet()) {
+            assertEquals(expectedHeadMap1.get(key), headMap1.get(key));
+        }
+
+        // Test headMap with toKey equal to last key
+        SortedMap<String, Integer> headMap2 = map.headMap("j");
+        SortedMap<String, Integer> expectedHeadMap2 = treeMap.headMap("j");
+        assertEquals(expectedHeadMap2.size(), headMap2.size());
+        for (String key : expectedHeadMap2.keySet()) {
+            assertEquals(expectedHeadMap2.get(key), headMap2.get(key));
+        }
+
+        // Test tailMap with fromKey equal to first key
+        SortedMap<String, Integer> tailMap1 = map.tailMap("b");
+        SortedMap<String, Integer> expectedTailMap1 = treeMap.tailMap("b");
+        assertEquals(expectedTailMap1.size(), tailMap1.size());
+        for (String key : expectedTailMap1.keySet()) {
+            assertEquals(expectedTailMap1.get(key), tailMap1.get(key));
+        }
+
+        // Test tailMap with fromKey equal to last key
+        SortedMap<String, Integer> tailMap2 = map.tailMap("j");
+        SortedMap<String, Integer> expectedTailMap2 = treeMap.tailMap("j");
+        assertEquals(expectedTailMap2.size(), tailMap2.size());
+        for (String key : expectedTailMap2.keySet()) {
+            assertEquals(expectedTailMap2.get(key), tailMap2.get(key));
+        }
+    }
 }

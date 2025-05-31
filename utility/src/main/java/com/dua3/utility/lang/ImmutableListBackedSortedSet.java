@@ -390,10 +390,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         @Override
         public ImmutableSortedListSet<T> subSet(T fromElement, T toElement) {
             int start = original.getIndex(toElement);
-            if (start == 0) {
-                //noinspection unchecked
-                return (ImmutableSortedListSet<T>) EMPTY_SET_REVERSED;
-            } else if (start < 0) {
+            if (start < 0) {
                 start = -start - 1;
             } else if (start + 1 == size()) {
                 // nothing to do: start = size() - 1
@@ -417,7 +414,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         @Override
         public ImmutableSortedListSet<T> headSet(T toElement) {
             int start = original.getIndex(toElement);
-            if (start <= 0) {
+            if (start < 0) {
                 start = -start - 1;
             } else {
                 start++;
@@ -436,9 +433,7 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
         @Override
         public SortedSet<T> tailSet(T fromElement) {
             int end = original.getIndex(fromElement);
-            if (end == 0) {
-                return this;
-            } else if (end > 0) {
+            if (end >= 0) {
                 end++;
             } else {
                 end = -end - 1;
