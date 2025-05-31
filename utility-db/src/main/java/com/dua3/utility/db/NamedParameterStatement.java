@@ -281,16 +281,6 @@ public class NamedParameterStatement implements AutoCloseable {
         }
     }
 
-    private <T, U> void setWithObjectArg(SQLType type, String name, @Nullable T value, @Nullable U arg, SetParameterObject<T, @Nullable U> setter) throws SQLException {
-        if (value == null) {
-            setNull(name, type);
-        } else {
-            for (int idx : getIndexes(name)) {
-                setter.accept(idx, value, arg);
-            }
-        }
-    }
-
     /**
      * Set a parameter.
      *
@@ -1138,12 +1128,6 @@ public class NamedParameterStatement implements AutoCloseable {
     @FunctionalInterface
     private interface SetParameterLong<T> {
         void accept(int idx, @Nullable T value, long arg) throws SQLException;
-    }
-
-    @FunctionalInterface
-    private interface SetParameterObject<T, U extends @Nullable Object> {
-        @SuppressWarnings("RedundantThrows")
-        void accept(int idx, T value, U arg) throws SQLException;
     }
 
     /**
