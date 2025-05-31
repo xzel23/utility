@@ -107,7 +107,7 @@ public class FileTreeNode<T extends FileTreeNode<T>> implements TreeNode<T> {
                         }
                         return child;
                     })
-                    .collect(Collectors.toList());
+                    .toList();
         }
     }
 
