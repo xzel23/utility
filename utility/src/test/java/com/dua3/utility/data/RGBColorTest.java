@@ -120,36 +120,28 @@ class RGBColorTest {
         RGBColor color = new RGBColor(100, 150, 200);
         
         // Get brighter color
-        Color brighterColor = color.brighter();
-        
-        // Test that it's an RGBColor
-        assertTrue(brighterColor instanceof RGBColor);
-        RGBColor brighterRGB = (RGBColor) brighterColor;
+        RGBColor brighterColor = color.brighter();
         
         // Test that components are brighter
-        assertTrue(brighterRGB.r() > color.r());
-        assertTrue(brighterRGB.g() > color.g());
-        assertTrue(brighterRGB.b() > color.b());
-        assertEquals(color.a(), brighterRGB.a()); // Alpha should remain the same
+        assertTrue(brighterColor.r() > color.r());
+        assertTrue(brighterColor.g() > color.g());
+        assertTrue(brighterColor.b() > color.b());
+        assertEquals(color.a(), brighterColor.a()); // Alpha should remain the same
     }
 
     @Test
     void testDarker() {
         // Create a color
         RGBColor color = new RGBColor(100, 150, 200);
-        
+
         // Get darker color
-        Color darkerColor = color.darker();
-        
-        // Test that it's an RGBColor
-        assertTrue(darkerColor instanceof RGBColor);
-        RGBColor darkerRGB = (RGBColor) darkerColor;
-        
+        RGBColor darkerColor = color.darker();
+
         // Test that components are darker
-        assertTrue(darkerRGB.r() < color.r());
-        assertTrue(darkerRGB.g() < color.g());
-        assertTrue(darkerRGB.b() < color.b());
-        assertEquals(color.a(), darkerRGB.a()); // Alpha should remain the same
+        assertTrue(darkerColor.r() < color.r());
+        assertTrue(darkerColor.g() < color.g());
+        assertTrue(darkerColor.b() < color.b());
+        assertEquals(color.a(), darkerColor.a()); // Alpha should remain the same
     }
 
     @Test

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -131,9 +132,10 @@ class CompressedBytesTest {
         Arrays.fill(compressibleData, (byte) 0); // Highly compressible data
 
         // Initialize some test data that won't be compressed efficiently
+        Random random = new Random();
         byte[] randomData = new byte[100];
         for (int i = 0; i < randomData.length; i++) {
-            randomData[i] = (byte) (Math.random() * 256);
+            randomData[i] = (byte) random.nextInt(256);
         }
 
         // Compress the data

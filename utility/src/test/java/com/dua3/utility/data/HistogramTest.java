@@ -35,8 +35,8 @@ class HistogramTest {
         Histogram<String> histogram = Histogram.createIdentityBased();
 
         // Add some items
-        String apple1 = new String("apple");
-        String apple2 = new String("apple");
+        String apple1 = new StringBuilder("apple").toString();
+        String apple2 = new StringBuilder("apple").toString();
         String banana = "banana";
 
         histogram.add(apple1);
