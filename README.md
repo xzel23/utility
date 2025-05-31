@@ -197,8 +197,10 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ### 19.1.1
 
-- fix TextUtil.contentEquals() always returning false for non-empty strings
-- fix TextUtil.quoteIfNeeded() quoting the empty string
+- fix: ClassCastException in ImmutableSortedMap.containsKey()
+- fix: wrong results for subSet(), headSet(), tailSet() obtained from reversed instances of ImmutableListBackedSortedSet
+- fix: TextUtil.contentEquals() always returns false for non-empty strings
+- fix: TextUtil.quoteIfNeeded() quoting the empty string
 - increased unit test coverage
 
 ### 19.1.0
