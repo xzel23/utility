@@ -313,7 +313,7 @@ class ArgumentsDialogTest {
 
         // Test invalid integer input - the panel should handle this gracefully
         intField.setText("not-a-number");
-        assertThrows(OptionException.class, () -> panel.getArguments(), "Should throw OptionException");
+        assertThrows(OptionException.class, panel::getArguments, "Should throw OptionException");
     }
 
     /**
