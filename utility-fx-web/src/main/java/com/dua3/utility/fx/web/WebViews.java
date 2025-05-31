@@ -259,17 +259,9 @@ public final class WebViews {
         @Override
         public Event dispatchEvent(Event event, EventDispatchChain tail) {
             switch (event) {
-                case KeyEvent keyEvent -> {
-                    if (filterKey.test(keyEvent)) {
-                        keyEvent.consume();
-                    }
-                }
-                case MouseEvent mouseEvent -> {
-                    if (filterMouse.test(mouseEvent)) {
-                        event.consume();
-                    }
-                }
-                default -> {}
+                case KeyEvent keyEvent when filterKey.test(keyEvent) -> keyEvent.consume();
+                case MouseEvent mouseEvent when filterMouse.test(mouseEvent) -> event.consume();
+                default -> { /* do nothing */ }
             }
             return originalDispatcher.dispatchEvent(event, tail);
         }
