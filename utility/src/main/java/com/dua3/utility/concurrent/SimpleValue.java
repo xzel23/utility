@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
  */
 public class SimpleValue<T extends @Nullable Object> implements Value<T> {
     private T v;
-    private final transient List<BiConsumer<? super T, ? super T>> changeListeners = new ArrayList<>();
+    private final List<BiConsumer<? super T, ? super T>> changeListeners = new ArrayList<>();
 
     /**
      * Initializes a new instance of the {@code SimpleValue} class.
