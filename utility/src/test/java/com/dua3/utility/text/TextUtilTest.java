@@ -383,6 +383,9 @@ class TextUtilTest {
         assertEquals("Café", escape("Café"));
         assertEquals("你好!", escape("你好!"));
 
+        // Test with character not belonging to any of the above classes
+        assertEquals("\\u2603", escapeASCII("☃"));
+
         // Test with empty string
         assertEquals("", escape(""));
     }
