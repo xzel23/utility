@@ -154,11 +154,8 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
                 };
                 return InputControl.stringInput(supplyDefault(so, values), nopValidator(), converter);
             }
-            default -> {
-            }
+            default -> throw new UnsupportedOperationException("unsupported input type: " + option.getClass().getName());
         }
-
-        throw new UnsupportedOperationException("unsupported input type: " + option.getClass().getName());
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
