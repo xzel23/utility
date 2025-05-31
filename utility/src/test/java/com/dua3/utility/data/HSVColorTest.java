@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * `HSVColorTest` is used to test the functionality of `HSVColor` class.
- * Specifically, this test focuses on the `valueOf` method, which converts an ARGB integer to `HSVColor`.
  */
 class HSVColorTest {
 
@@ -31,5 +30,93 @@ class HSVColorTest {
 
         // Alpha should be ~1 for above ARGB value where alpha component is 255
         Assertions.assertEquals(1, hsvColor.alpha(), "Alpha doesn't match with the expected value");
+    }
+
+    @Test
+    void testA() {
+        HSVColor color = new HSVColor(180, 0.5f, 0.8f, 0.75f);
+        Assertions.assertEquals(191, color.a(), "Alpha component doesn't match expected value");
+    }
+
+    @Test
+    void testIsOpaque() {
+        HSVColor opaqueColor = new HSVColor(180, 0.5f, 0.8f, 1.0f);
+        HSVColor semiTransparentColor = new HSVColor(180, 0.5f, 0.8f, 0.5f);
+
+        Assertions.assertTrue(opaqueColor.isOpaque(), "Color with alpha=1.0 should be opaque");
+        Assertions.assertFalse(semiTransparentColor.isOpaque(), "Color with alpha=0.5 should not be opaque");
+    }
+
+    @Test
+    void testIsTransparent() {
+        HSVColor transparentColor = new HSVColor(180, 0.5f, 0.8f, 0.0f);
+        HSVColor semiTransparentColor = new HSVColor(180, 0.5f, 0.8f, 0.5f);
+
+        Assertions.assertTrue(transparentColor.isTransparent(), "Color with alpha=0.0 should be transparent");
+        Assertions.assertFalse(semiTransparentColor.isTransparent(), "Color with alpha=0.5 should not be transparent");
+    }
+
+    @Test
+    void testToHSVColor() {
+        HSVColor color = new HSVColor(180, 0.5f, 0.8f, 0.75f);
+        HSVColor result = color.toHSVColor();
+
+        Assertions.assertSame(color, result, "toHSVColor should return the same instance");
+    }
+
+    @Test
+    void testArgb() {
+        // Test with a known color
+        HSVColor color = new HSVColor(120, 1.0f, 1.0f, 1.0f); // Pure green in HSV
+        int argb = color.argb();
+
+        // Extract components
+        int a = (argb >> 24) & 0xff;
+        int r = (argb >> 16) & 0xff;
+        int g = (argb >> 8) & 0xff;
+        int b = argb & 0xff;
+
+        Assertions.assertEquals(255, a, "Alpha component doesn't match");
+        Assertions.assertEquals(0, r, "Red component doesn't match");
+        Assertions.assertEquals(255, g, "Green component doesn't match");
+        Assertions.assertEquals(0, b, "Blue component doesn't match");
+    }
+
+    @Test
+    void testBrighter() {
+        HSVColor color = new HSVColor(180, 0.5f, 0.4f, 0.75f);
+        Color brighterColor = color.brighter();
+
+        Assertions.assertTrue(brighterColor instanceof HSVColor, "Brighter color should be an HSVColor");
+        HSVColor brighterHSV = (HSVColor) brighterColor;
+
+        Assertions.assertEquals(color.h(), brighterHSV.h(), "Hue should remain the same");
+        Assertions.assertEquals(color.s(), brighterHSV.s(), "Saturation should remain the same");
+        Assertions.assertTrue(brighterHSV.v() > color.v(), "Value should increase");
+        Assertions.assertEquals(color.alpha(), brighterHSV.alpha(), "Alpha should remain the same");
+    }
+
+    @Test
+    void testDarker() {
+        HSVColor color = new HSVColor(180, 0.5f, 0.8f, 0.75f);
+        Color darkerColor = color.darker();
+
+        Assertions.assertTrue(darkerColor instanceof HSVColor, "Darker color should be an HSVColor");
+        HSVColor darkerHSV = (HSVColor) darkerColor;
+
+        Assertions.assertEquals(color.h(), darkerHSV.h(), "Hue should remain the same");
+        Assertions.assertEquals(color.s(), darkerHSV.s(), "Saturation should remain the same");
+        Assertions.assertTrue(darkerHSV.v() < color.v(), "Value should decrease");
+        Assertions.assertEquals(color.alpha(), darkerHSV.alpha(), "Alpha should remain the same");
+    }
+
+    @Test
+    void testToString() {
+        HSVColor color = new HSVColor(180, 0.5f, 0.8f, 0.75f);
+        String str = color.toString();
+
+        Assertions.assertNotNull(str, "toString should not return null");
+        Assertions.assertFalse(str.isEmpty(), "toString should not return empty string");
+        Assertions.assertEquals(color.toCss(), str, "toString should return the same as toCss");
     }
 }

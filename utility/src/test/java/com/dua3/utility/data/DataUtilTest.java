@@ -13,8 +13,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -161,5 +169,242 @@ class DataUtilTest {
     @Test
     void testCollectArray_Iterator() {
         assertArrayEquals(new Integer[]{1, 2, 3}, DataUtil.collectArray(List.of(1, 2, 3).iterator()));
+    }
+
+    @Test
+    void testFilter() {
+        // Create a list and get its iterator
+        List<Integer> numbers = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        Iterator<Integer> iterator = numbers.iterator();
+
+        // Create a predicate for even numbers
+        Predicate<Integer> isEven = n -> n % 2 == 0;
+
+        // Filter the iterator
+        Iterator<Integer> filteredIterator = DataUtil.filter(iterator, isEven);
+
+        // Collect the filtered items
+        List<Integer> filteredNumbers = new ArrayList<>();
+        filteredIterator.forEachRemaining(filteredNumbers::add);
+
+        // Verify the filtered list contains only even numbers
+        assertEquals(List.of(2, 4, 6, 8, 10), filteredNumbers);
+    }
+
+    @Test
+    void testMap() {
+        // Create a list and get its iterator
+        List<String> strings = List.of("1", "2", "3", "4", "5");
+        Iterator<String> iterator = strings.iterator();
+
+        // Create a mapping function to convert strings to integers
+        Function<String, Integer> stringToInt = Integer::valueOf;
+
+        // Map the iterator
+        Iterator<Integer> mappedIterator = DataUtil.map(iterator, stringToInt);
+
+        // Collect the mapped items
+        List<Integer> mappedNumbers = new ArrayList<>();
+        mappedIterator.forEachRemaining(mappedNumbers::add);
+
+        // Verify the mapped list contains the correct integers
+        assertEquals(List.of(1, 2, 3, 4, 5), mappedNumbers);
+    }
+
+    @Test
+    void testAsFunction() {
+        // Create a map
+        Map<String, Integer> map = new HashMap<>();
+        map.put("one", 1);
+        map.put("two", 2);
+        map.put("three", 3);
+
+        // Create a default value
+        Integer defaultValue = -1;
+
+        // Convert the map to a function
+        Function<String, Integer> function = DataUtil.asFunction(map, defaultValue);
+
+        // Test the function with keys in the map
+        assertEquals(1, function.apply("one"));
+        assertEquals(2, function.apply("two"));
+        assertEquals(3, function.apply("three"));
+
+        // Test the function with a key not in the map
+        assertEquals(defaultValue, function.apply("four"));
+    }
+
+    @Test
+    void testChanges() {
+        // Create two maps
+        Map<String, Integer> mapA = new HashMap<>();
+        mapA.put("one", 1);
+        mapA.put("two", 2);
+        mapA.put("three", 3);
+
+        Map<String, Integer> mapB = new HashMap<>();
+        mapB.put("one", 1);  // Same as in mapA
+        mapB.put("two", 20); // Different from mapA
+        mapB.put("four", 4); // Not in mapA
+
+        // Compute changes
+        Map<String, Pair<Integer, Integer>> changes = DataUtil.changes(mapA, mapB);
+
+        // Verify changes
+        assertEquals(3, changes.size());
+
+        // "one" should not be in changes as it's the same in both maps
+        assertFalse(changes.containsKey("one"));
+
+        // "two" should have changed from 2 to 20
+        assertTrue(changes.containsKey("two"));
+        assertEquals(Pair.of(2, 20), changes.get("two"));
+
+        // "three" should have changed from 3 to null
+        assertTrue(changes.containsKey("three"));
+        assertEquals(Pair.of(3, null), changes.get("three"));
+
+        // "four" should have changed from null to 4
+        assertTrue(changes.containsKey("four"));
+        assertEquals(Pair.of(null, 4), changes.get("four"));
+    }
+
+    @Test
+    void testDiff() {
+        // Create two maps
+        Map<String, Integer> mapA = new HashMap<>();
+        mapA.put("one", 1);
+        mapA.put("two", 2);
+        mapA.put("three", 3);
+
+        Map<String, Integer> mapB = new HashMap<>();
+        mapB.put("one", 1);  // Same as in mapA
+        mapB.put("two", 20); // Different from mapA
+        mapB.put("four", 4); // Not in mapA
+
+        // Compute diff
+        Map<String, Integer> diff = DataUtil.diff(mapA, mapB);
+
+        // Verify diff
+        assertEquals(3, diff.size());
+
+        // "one" should not be in diff as it's the same in both maps
+        assertFalse(diff.containsKey("one"));
+
+        // "two" should have the value from mapB
+        assertTrue(diff.containsKey("two"));
+        assertEquals(Integer.valueOf(20), diff.get("two"));
+
+        // "three" should have null as it's not in mapB
+        assertTrue(diff.containsKey("three"));
+        assertNull(diff.get("three"));
+
+        // "four" should have the value from mapB
+        assertTrue(diff.containsKey("four"));
+        assertEquals(Integer.valueOf(4), diff.get("four"));
+    }
+
+    @Test
+    void testDiffWithMapFactory() {
+        // Create two maps
+        Map<String, Integer> mapA = new HashMap<>();
+        mapA.put("one", 1);
+        mapA.put("two", 2);
+
+        Map<String, Integer> mapB = new HashMap<>();
+        mapB.put("one", 1);
+        mapB.put("two", 20);
+
+        // Compute diff with TreeMap factory
+        Map<String, Integer> diff = DataUtil.diff(mapA, mapB, TreeMap::new);
+
+        // Verify diff is a TreeMap
+        assertTrue(diff instanceof TreeMap);
+
+        // Verify diff content
+        assertEquals(1, diff.size());
+        assertEquals(Integer.valueOf(20), diff.get("two"));
+    }
+
+    @Test
+    void testIfPresent() {
+        // Create a map
+        Map<String, Integer> map = new HashMap<>();
+        map.put("one", 1);
+        map.put("two", 2);
+        map.put("null", null);
+
+        // Test ifPresent with key in map
+        AtomicBoolean called = new AtomicBoolean(false);
+        Consumer<Integer> action = value -> called.set(true);
+
+        DataUtil.ifPresent(map, "one", action);
+        assertTrue(called.get());
+
+        // Test ifPresent with key not in map
+        called.set(false);
+        DataUtil.ifPresent(map, "three", action);
+        assertFalse(called.get());
+
+        // Test ifPresent with key mapped to null
+        called.set(false);
+        DataUtil.ifPresent(map, "null", action);
+        assertTrue(called.get());
+    }
+
+    @Test
+    void testIfMapped() {
+        // Create a map
+        Map<String, Integer> map = new HashMap<>();
+        map.put("one", 1);
+        map.put("two", 2);
+        map.put("null", null);
+
+        // Test ifMapped with key mapped to non-null value
+        AtomicBoolean called = new AtomicBoolean(false);
+        Consumer<Integer> action = value -> called.set(true);
+
+        boolean result = DataUtil.ifMapped(map, "one", action);
+        assertTrue(result);
+        assertTrue(called.get());
+
+        // Test ifMapped with key not in map
+        called.set(false);
+        result = DataUtil.ifMapped(map, "three", action);
+        assertFalse(result);
+        assertFalse(called.get());
+
+        // Test ifMapped with key mapped to null
+        called.set(false);
+        result = DataUtil.ifMapped(map, "null", action);
+        assertFalse(result);
+        assertFalse(called.get());
+    }
+
+    @Test
+    void testConversionException() {
+        // Test ConversionException constructor with cause
+        Exception cause = new Exception("Test cause");
+        DataUtil.ConversionException exception1 = new DataUtil.ConversionException(String.class, Integer.class, cause);
+
+        assertTrue(exception1.getMessage().contains(String.class.getName()));
+        assertTrue(exception1.getMessage().contains(Integer.class.getName()));
+        assertEquals(cause, exception1.getCause());
+
+        // Test ConversionException constructor with message
+        String message = "Test message";
+        DataUtil.ConversionException exception2 = new DataUtil.ConversionException(String.class, Integer.class, message);
+
+        assertTrue(exception2.getMessage().contains(message));
+        assertTrue(exception2.getMessage().contains(String.class.getName()));
+        assertTrue(exception2.getMessage().contains(Integer.class.getName()));
+
+        // Test ConversionException constructor with message and cause
+        DataUtil.ConversionException exception3 = new DataUtil.ConversionException(String.class, Integer.class, message, cause);
+
+        assertTrue(exception3.getMessage().contains(message));
+        assertTrue(exception3.getMessage().contains(String.class.getName()));
+        assertTrue(exception3.getMessage().contains(Integer.class.getName()));
+        assertEquals(cause, exception3.getCause());
     }
 }
