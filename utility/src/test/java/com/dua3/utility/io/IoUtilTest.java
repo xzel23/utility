@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -717,34 +716,34 @@ class IoUtilTest {
     @Test
     void testGetInputStream() throws Exception {
         // Test with InputStream
-        InputStream originalStream = new ByteArrayInputStream("test".getBytes());
+        InputStream originalStream = new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8));
         InputStream resultStream = IoUtil.getInputStream(originalStream);
         assertEquals(originalStream, resultStream);
 
         // Test with Path
         Path tempFile = Files.createTempFile("input-test", ".txt");
         try {
-            Files.write(tempFile, "test".getBytes());
+            Files.write(tempFile, "test".getBytes(StandardCharsets.UTF_8));
             try (InputStream is = IoUtil.getInputStream(tempFile)) {
-                assertEquals("test", new String(is.readAllBytes()));
+                assertEquals("test", new String(is.readAllBytes(), StandardCharsets.UTF_8));
             }
 
             // Test with File
             File file = tempFile.toFile();
             try (InputStream is = IoUtil.getInputStream(file)) {
-                assertEquals("test", new String(is.readAllBytes()));
+                assertEquals("test", new String(is.readAllBytes(), StandardCharsets.UTF_8));
             }
 
             // Test with URI
             URI uri = tempFile.toUri();
             try (InputStream is = IoUtil.getInputStream(uri)) {
-                assertEquals("test", new String(is.readAllBytes()));
+                assertEquals("test", new String(is.readAllBytes(), StandardCharsets.UTF_8));
             }
 
             // Test with URL
             URL url = tempFile.toUri().toURL();
             try (InputStream is = IoUtil.getInputStream(url)) {
-                assertEquals("test", new String(is.readAllBytes()));
+                assertEquals("test", new String(is.readAllBytes(), StandardCharsets.UTF_8));
             }
 
             // Test with null
@@ -767,34 +766,34 @@ class IoUtilTest {
         Path tempFile = Files.createTempFile("output-test", ".txt");
         try {
             try (OutputStream os = IoUtil.getOutputStream(tempFile)) {
-                os.write("test".getBytes());
+                os.write("test".getBytes(StandardCharsets.UTF_8));
             }
             assertEquals("test", Files.readString(tempFile));
 
             // Test with File
             File file = tempFile.toFile();
             try (OutputStream os = IoUtil.getOutputStream(file)) {
-                os.write("file-test".getBytes());
+                os.write("file-test".getBytes(StandardCharsets.UTF_8));
             }
             assertEquals("file-test", Files.readString(tempFile));
 
             // Test with URI
             URI uri = tempFile.toUri();
             try (OutputStream os = IoUtil.getOutputStream(uri)) {
-                os.write("uri-test".getBytes());
+                os.write("uri-test".getBytes(StandardCharsets.UTF_8));
             }
             assertEquals("uri-test", Files.readString(tempFile));
 
             // Test with URL
             URL url = tempFile.toUri().toURL();
             try (OutputStream os = IoUtil.getOutputStream(url)) {
-                os.write("url-test".getBytes());
+                os.write("url-test".getBytes(StandardCharsets.UTF_8));
             }
             assertEquals("url-test", Files.readString(tempFile));
 
             // Test with null
             OutputStream nullStream = IoUtil.getOutputStream(null);
-            nullStream.write("this should be discarded".getBytes());
+            nullStream.write("this should be discarded".getBytes(StandardCharsets.UTF_8));
             assertEquals("url-test", Files.readString(tempFile)); // Content should not change
 
         } finally {
@@ -899,7 +898,7 @@ class IoUtilTest {
 
             // Write to the streams after redirection is closed
             ByteArrayOutputStream testOut = new ByteArrayOutputStream();
-            PrintStream testPrintStream = new PrintStream(testOut);
+            PrintStream testPrintStream = new PrintStream(testOut, false, StandardCharsets.UTF_8);
 
             PrintStream oldOut = System.out;
             System.setOut(testPrintStream);
@@ -909,7 +908,7 @@ class IoUtilTest {
             // Verify that the streams were properly reset
             assertEquals(originalOut, System.out);
             assertEquals(originalErr, System.err);
-            assertEquals("Test after redirection" + System.lineSeparator(), testOut.toString());
+            assertEquals("Test after redirection" + System.lineSeparator(), testOut.toString(StandardCharsets.UTF_8));
         } finally {
             Files.deleteIfExists(tempFile);
         }
