@@ -19,6 +19,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
      * Value to pass to {@link ProgressIndicator#update(double)} for an indeterminate progress.
      */
     public static final double PROGRESS_INDETERMINATE = Double.NaN;
+
     private final Function<? super T, ? extends ProgressIndicator> createProgressIndicator;
     private final Map<T, TaskRecord> tasks = Collections.synchronizedMap(new LinkedHashMap<>());
 
@@ -51,6 +52,19 @@ public class ProgressView<T> implements ProgressTracker<T> {
         });
     }
 
+    /**
+     * Determines whether the progress is in an indeterminate state.
+     *
+     * @param percentDone the progress value to check as a percentage.
+     *                    Typically, should be a value between 0 and 100, but
+     *                    may also be {@code #PROGRESS_INDETERMINATE} to indicate indeterminate progress.
+     * @return {@code true} if the progress is indeterminate,
+     *         {@code false} otherwise.
+     */
+    public static boolean isIndeterminate(double percentDone) {
+        return Double.isNaN(percentDone);
+    }
+
     @Override
     public void schedule(T task) {
         // getTaskRecord() will enter an entry for the task if it is not yet present
@@ -60,7 +74,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
     @Override
     public void start(T task) {
         TaskRecord r = getTaskRecord(task);
-        r.state = State.RUNNING;
+        r.setState(State.RUNNING);
         update(task, 0, 0);
     }
 
@@ -68,14 +82,14 @@ public class ProgressView<T> implements ProgressTracker<T> {
     public void pause(T task) {
         TaskRecord r = getTaskRecord(task);
         LangUtil.check(r.state == State.SCHEDULED, "task not scheduled: %s (%s)", task, r.state);
-        r.state = State.PAUSED;
+        r.setState(State.PAUSED);
     }
 
     @Override
     public void abort(T task) {
         TaskRecord r = getTaskRecord(task);
         LangUtil.check(!r.state.isTerminal(), "task already completed: %s (%s)", task, r.state);
-        r.state = State.ABORTED;
+        r.finish(State.ABORTED);
     }
 
     @Override
@@ -96,7 +110,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
 
     @Override
     public void update(T task, double percentDone) {
-        assert 0 <= percentDone && percentDone <= 1.0 : "invalid arguments for '" + task + "': percentDone=" + percentDone;
+        assert isIndeterminate(percentDone) || 0 <= percentDone && percentDone <= 1.0 : "invalid arguments for '" + task + "': percentDone=" + percentDone;
         getTaskRecord(task).update(percentDone);
     }
 
@@ -129,7 +143,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
 
     private static class TaskRecord {
         private final ProgressIndicator progressIndicator;
-        State state = State.SCHEDULED;
+        private State state = State.SCHEDULED;
 
         TaskRecord(ProgressIndicator progressIndicator) {
             this.progressIndicator = progressIndicator;
@@ -140,11 +154,16 @@ public class ProgressView<T> implements ProgressTracker<T> {
         }
 
         public void finish(State s) {
+            setState(s);
             progressIndicator.finish(s);
         }
 
         public void update(double percentDone) {
             progressIndicator.update(percentDone);
+        }
+
+        private void setState(State s) {
+            this.state = s;
         }
     }
 
