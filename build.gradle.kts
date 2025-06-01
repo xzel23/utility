@@ -166,7 +166,14 @@ subprojects {
                     all {
                         testTask {
                             // enable assertions and use headless mode for AWT in unit tests
-                            jvmArgs("-ea", "-Djava.awt.headless=true")
+                            jvmArgs(
+                                "-ea",
+                                "-Djava.awt.headless=true",
+                                "-Dprism.order=sw",
+                                "-Dsun.java2d.d3d=false",
+                                "-Dsun.java2d.opengl=false",
+                                "-Dsun.java2d.pmoffscreen=false"
+                            )
                         }
                     }
                 }
