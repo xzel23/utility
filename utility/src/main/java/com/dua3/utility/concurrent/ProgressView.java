@@ -1,6 +1,8 @@
 package com.dua3.utility.concurrent;
 
 import com.dua3.utility.lang.LangUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -14,6 +16,7 @@ import java.util.function.Function;
  * @param <T> the type of the tasks being tracked
  */
 public class ProgressView<T> implements ProgressTracker<T> {
+    private static final Logger LOG = LogManager.getLogger(ProgressView.class);
 
     /**
      * Value to pass to {@link ProgressIndicator#update(double)} for an indeterminate progress.
@@ -41,7 +44,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
     @SafeVarargs
     public final void addTasks(T... tasks) {
         for (T task : tasks) {
-            getTaskRecord(task);
+            schedule(task);
         }
     }
 
@@ -68,7 +71,13 @@ public class ProgressView<T> implements ProgressTracker<T> {
     @Override
     public void schedule(T task) {
         // getTaskRecord() will enter an entry for the task if it is not yet present
-        getTaskRecord(task);
+        State s = getTaskRecord(task).getState();
+
+        if (s != State.SCHEDULED) {
+            LOG.warn("task {} already in state {}", task, s);
+        } else {
+            LOG.debug("scheduled task {}", task);
+        }
     }
 
     @Override
@@ -76,20 +85,31 @@ public class ProgressView<T> implements ProgressTracker<T> {
         TaskRecord r = getTaskRecord(task);
         r.setState(State.RUNNING);
         update(task, 0, 0);
+        LOG.debug("started task {}", task);
     }
 
     @Override
     public void pause(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(r.state == State.SCHEDULED, "task not scheduled: %s (%s)", task, r.state);
-        r.setState(State.PAUSED);
+        State s = r.getState();
+        if (s != State.SCHEDULED && s != State.RUNNING) {
+            LOG.warn("task {} cannot be paused in state {}", task, s);
+        } else {
+            r.pause();
+            LOG.debug("paused task {}", task);
+        }
     }
 
     @Override
     public void abort(T task) {
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(!r.state.isTerminal(), "task already completed: %s (%s)", task, r.state);
-        r.finish(State.ABORTED);
+        State s = r.getState();
+        if (r.state.isTerminal()) {
+            LOG.warn("task {} cannot be aborted in state {}", task, s);
+        } else {
+            r.finish(State.ABORTED);
+            LOG.debug("aborted task {}", task);
+        }
     }
 
     @Override
@@ -97,21 +117,38 @@ public class ProgressView<T> implements ProgressTracker<T> {
         LangUtil.check(s.isTerminal(), "not a terminal state: %s", s);
 
         TaskRecord r = getTaskRecord(task);
-        LangUtil.check(!r.state.isTerminal(), "task already terminated: %s (%s)", task, r.state);
-
-        r.finish(s);
+        State oldState = r.getState();
+        if (oldState.isTerminal()) {
+            LOG.warn("task {} already finished with state {}", task, oldState);
+        } else {
+            r.finish(s);
+            LOG.debug("finished task {} with state {}", task, s);
+        }
     }
 
     @Override
     public void update(T task, int total, int done) {
-        assert 0 <= done && done <= total : "invalid arguments for '" + task + "': done=" + done + ", total=" + total;
-        getTaskRecord(task).update(done, total);
+        if (done < 0 || done > total) {
+            LOG.warn("invalid arguments for task {}: done={}, total={}", task, done, total);
+            done = Math.clamp(done, 0, total);
+        }
+        getTaskRecord(task).update(total, done);
+        LOG.trace("task {} updated: {}/{}", task, done, total);
     }
 
     @Override
     public void update(T task, double percentDone) {
-        assert isIndeterminate(percentDone) || 0 <= percentDone && percentDone <= 1.0 : "invalid arguments for '" + task + "': percentDone=" + percentDone;
+        boolean indeterminate = isIndeterminate(percentDone);
+        if (!indeterminate && !(0 <= percentDone && percentDone <= 1.0)) {
+            LOG.warn("invalid argument for task {}: percentDone={}", task, percentDone);
+            percentDone = Math.clamp(percentDone, 0.0, 1.0);
+        }
         getTaskRecord(task).update(percentDone);
+        if (indeterminate) {
+            LOG.trace("task {} updated: indeterminate", task);
+        } else {
+            LOG.trace("task {} updated: {}%%", task, (int) (percentDone * 100));
+        }
     }
 
     /**
@@ -126,12 +163,20 @@ public class ProgressView<T> implements ProgressTracker<T> {
         void finish(State s);
 
         /**
+         * Pauses the task. This is a default no-operation implementation, intended
+         * to be overridden by concrete implementations if custom behavior is needed.
+         */
+        default void pause() {
+            // do nothing
+        }
+
+        /**
          * Update task progress.
          *
-         * @param done  number of finished steps
          * @param total total number of steps
+         * @param done  number of finished steps
          */
-        void update(int done, int total);
+        void update(int total, int done);
 
         /**
          * Update task progress.
@@ -149,8 +194,13 @@ public class ProgressView<T> implements ProgressTracker<T> {
             this.progressIndicator = progressIndicator;
         }
 
-        public void update(int done, int total) {
-            progressIndicator.update(done, total);
+        public void update(int total, int done) {
+            progressIndicator.update(total, done);
+        }
+
+        public void pause() {
+            setState(State.PAUSED);
+            progressIndicator.pause();
         }
 
         public void finish(State s) {
@@ -164,6 +214,10 @@ public class ProgressView<T> implements ProgressTracker<T> {
 
         private void setState(State s) {
             this.state = s;
+        }
+
+        public State getState() {
+            return state;
         }
     }
 
