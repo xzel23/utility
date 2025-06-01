@@ -10,6 +10,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.VerticalAlignment;
@@ -333,7 +334,7 @@ class SwingGraphicsTest {
      */
     void testTextRenderingMethods() {
         // Test drawText with CharSequence, float x, float y
-        Font font = graphics.getDefaultFont().withSize(16).withColor(Color.BLACK);
+        Font font = FontUtil.getInstance().getFont("Arial-10");
         graphics.setFont(font);
         graphics.drawText("Test drawText with x, y", 100, 100);
 
@@ -438,7 +439,7 @@ class SwingGraphicsTest {
 
         // Add a title to the image
         graphics.setTransformation(AffineTransformation2f.IDENTITY);
-        Font titleFont = graphics.getDefaultFont().withSize(32).withColor(Color.BLACK);
+        Font titleFont = FontUtil.getInstance().getFont("arial-20");
         graphics.setFont(titleFont);
         graphics.drawText("SwingGraphics Test - All Methods", IMAGE_HEIGHT / 2.0f, 30, HAnchor.CENTER, VAnchor.TOP);
 
