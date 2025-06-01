@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -447,9 +448,9 @@ class RichTextTest {
         builder.append("world");
         builder.pop(Style.FONT_WEIGHT);
         builder.append("!");
-        RichText rt_ = builder.toRichText();
+        RichText text = builder.toRichText();
 
-        RichText rt = rt_.subSequence(8);
+        RichText rt = text.subSequence(8);
 
         // test extracting the characters using attributedCharAt()
         String s = rt.toString();
@@ -655,5 +656,197 @@ class RichTextTest {
         RichText b = RichText.valueOf(obj, styles);
         assertNotEquals(a, b, "error in equals()");
         assertTrue(a.equalsTextAndFont(b), "error in textAndFontEquals()");
+    }
+
+    @Test
+    void testIsBlank() {
+        // Test with empty text
+        assertTrue(RichText.emptyText().isBlank());
+
+        // Test with whitespace only
+        assertTrue(RichText.valueOf("   ").isBlank());
+        assertTrue(RichText.valueOf("\t\n\r").isBlank());
+
+        // Test with non-blank text
+        assertFalse(RichText.valueOf("Hello").isBlank());
+        assertFalse(RichText.valueOf("   Hello   ").isBlank());
+    }
+
+    @Test
+    void testIndexOfChar() {
+        RichText text = RichText.valueOf("Hello world");
+
+        // Test indexOf(int ch)
+        assertEquals(0, text.indexOf('H'));
+        assertEquals(1, text.indexOf('e'));
+        assertEquals(4, text.indexOf('o'));
+        assertEquals(-1, text.indexOf('z'));
+
+        // Test indexOf(char ch, int off)
+        assertEquals(7, text.indexOf('o', 5));
+        assertEquals(-1, text.indexOf('H', 1));
+        assertEquals(4, text.indexOf('o', 0));
+        assertEquals(4, text.indexOf('o', 4));
+        assertEquals(-1, text.indexOf('o', 11));
+    }
+
+    @Test
+    void testIndexOfCharSequence() {
+        RichText text = RichText.valueOf("Hello world, Hello universe");
+
+        // Test indexOf(CharSequence s)
+        assertEquals(0, text.indexOf("Hello"));
+        assertEquals(6, text.indexOf("world"));
+        assertEquals(-1, text.indexOf("goodbye"));
+
+        // Test indexOf(CharSequence s, int fromIndex)
+        assertEquals(13, text.indexOf("Hello", 1));
+        assertEquals(-1, text.indexOf("world", 8));
+        assertEquals(6, text.indexOf("world", 6));
+        assertEquals(-1, text.indexOf("Hello", 14));
+    }
+
+    @Test
+    void testStartsWith() {
+        RichText text = RichText.valueOf("Hello world");
+
+        assertTrue(text.startsWith("Hello"));
+        assertTrue(text.startsWith("H"));
+        assertTrue(text.startsWith(""));
+        assertFalse(text.startsWith("hello")); // case sensitive
+        assertFalse(text.startsWith("world"));
+    }
+
+    @Test
+    void testContains() {
+        RichText text = RichText.valueOf("Hello world");
+
+        assertTrue(text.contains("Hello"));
+        assertTrue(text.contains("world"));
+        assertTrue(text.contains("lo wo"));
+        assertTrue(text.contains(""));
+        assertFalse(text.contains("goodbye"));
+        assertFalse(text.contains("World")); // case sensitive
+    }
+
+    @Test
+    void testApplyStyle() {
+        RichText original = RichText.valueOf("Hello");
+        RichText styled = original.apply(Style.BOLD);
+
+        // Check that the text is the same
+        assertEquals("Hello", styled.toString());
+
+        // Check that the style was applied
+        List<Style> styles = styled.stylesAt(0);
+        assertTrue(styles.contains(Style.BOLD));
+
+        // Apply another style
+        RichText doubleStyled = styled.apply(Style.ITALIC);
+
+        // Check that both styles are applied
+        styles = doubleStyled.stylesAt(0);
+        assertTrue(styles.contains(Style.BOLD));
+        assertTrue(styles.contains(Style.ITALIC));
+    }
+
+    @Test
+    void testStylesAt() {
+        // Create text with different styles
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.push(Style.BOLD);
+        builder.append("world");
+        builder.pop(Style.BOLD);
+        builder.append("!");
+        RichText text = builder.toRichText();
+
+        // Check styles at different positions
+        List<Style> stylesAtStart = text.stylesAt(0);
+        List<Style> stylesInMiddle = text.stylesAt(7);
+        List<Style> stylesAtEnd = text.stylesAt(11);
+
+        assertTrue(stylesAtStart.isEmpty() || !stylesAtStart.contains(Style.BOLD));
+        assertTrue(stylesInMiddle.contains(Style.BOLD));
+        assertTrue(stylesAtEnd.isEmpty() || !stylesAtEnd.contains(Style.BOLD));
+    }
+
+    @Test
+    void testRunAt() {
+        // Create text with different styles
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.push(Style.BOLD);
+        builder.append("world");
+        builder.pop(Style.BOLD);
+        builder.append("!");
+        RichText text = builder.toRichText();
+
+        // Check runs at different positions
+        Run runAtStart = text.runAt(0);
+        Run runInMiddle = text.runAt(7);
+        Run runAtEnd = text.runAt(11);
+
+        assertEquals("Hello ", runAtStart.toString());
+        assertEquals("world", runInMiddle.toString());
+        assertEquals("!", runAtEnd.toString());
+
+        assertTrue(runInMiddle.getStyles().contains(Style.BOLD));
+        assertFalse(runAtStart.getStyles().contains(Style.BOLD));
+        assertFalse(runAtEnd.getStyles().contains(Style.BOLD));
+    }
+
+    @Test
+    void testRuns() {
+        // Create text with different styles
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.push(Style.BOLD);
+        builder.append("world");
+        builder.pop(Style.BOLD);
+        builder.append("!");
+        RichText text = builder.toRichText();
+
+        // Get all runs
+        List<Run> runs = text.runs();
+
+        // Check number of runs
+        assertEquals(3, runs.size());
+
+        // Check content of runs
+        assertEquals("Hello ", runs.get(0).toString());
+        assertEquals("world", runs.get(1).toString());
+        assertEquals("!", runs.get(2).toString());
+
+        // Check styles of runs
+        assertFalse(runs.get(0).getStyles().contains(Style.BOLD));
+        assertTrue(runs.get(1).getStyles().contains(Style.BOLD));
+        assertFalse(runs.get(2).getStyles().contains(Style.BOLD));
+    }
+
+    @Test
+    void testRunStream() {
+        // Create text with different styles
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello ");
+        builder.push(Style.BOLD);
+        builder.append("world");
+        builder.pop(Style.BOLD);
+        builder.append("!");
+        RichText text = builder.toRichText();
+
+        // Count runs using stream
+        long count = text.runStream().count();
+        assertEquals(3, count);
+
+        // Check if any run has BOLD style
+        boolean hasBold = text.runStream()
+                .anyMatch(run -> run.getStyles().contains(Style.BOLD));
+        assertTrue(hasBold);
+
+        // Check if all runs have BOLD style
+        boolean allBold = text.runStream()
+                .allMatch(run -> run.getStyles().contains(Style.BOLD));
+        assertFalse(allBold);
     }
 }

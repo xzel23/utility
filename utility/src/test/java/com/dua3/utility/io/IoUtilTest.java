@@ -14,8 +14,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
@@ -24,14 +29,18 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -99,38 +108,36 @@ class IoUtilTest {
         assertEquals("../test", IoUtil.stripExtension("../test"));
     }
 
-    @Test
-    void testReplaceExtension() {
-        assertEquals("test.xyz", IoUtil.replaceExtension("test.txt", "xyz"));
-        assertEquals("folder/subfolder/test.xyz", IoUtil.replaceExtension("folder/subfolder/test.txt", "xyz"));
-        assertEquals("folder/subfolder/test.xyz/", IoUtil.replaceExtension("folder/subfolder/test.txt/", "xyz"));
-        assertEquals("./folder/subfolder/test.xyz", IoUtil.replaceExtension("./folder/subfolder/test.txt", "xyz"));
-        assertEquals("./folder/subfolder/test.xyz/", IoUtil.replaceExtension("./folder/subfolder/test.txt/", "xyz"));
-
-        assertEquals("test.txt.abc", IoUtil.replaceExtension("test.txt.def", "abc"));
-
-        assertEquals("test.xyz", IoUtil.replaceExtension("test", "xyz"));
-        assertEquals("folder/subfolder/test.xyz", IoUtil.replaceExtension("folder/subfolder/test", "xyz"));
-        assertEquals("folder/subfolder/test.xyz/", IoUtil.replaceExtension("folder/subfolder/test/", "xyz"));
-        assertEquals("./folder/subfolder/test.xyz", IoUtil.replaceExtension("./folder/subfolder/test", "xyz"));
-        assertEquals("./folder/subfolder/test.xyz/", IoUtil.replaceExtension("./folder/subfolder/test/", "xyz"));
-        assertEquals("/test.xyz", IoUtil.replaceExtension("/test", "xyz"));
-        assertEquals("./test.xyz", IoUtil.replaceExtension("./test", "xyz"));
-        assertEquals("../test.xyz", IoUtil.replaceExtension("../test", "xyz"));
+    private static Stream<Arguments> replaceExtensionTestCases() {
+        return Stream.of(
+                Arguments.of("/Users/tester/desktop/file.txt", "docx", "/Users/tester/desktop/file.docx"),
+                Arguments.of("/Users/tester/desktop/file.txt", "", "/Users/tester/desktop/file."),
+                Arguments.of("/Users/tester/desktop/file", "txt", "/Users/tester/desktop/file.txt"),
+                Arguments.of("test.txt", "xyz", "test.xyz"),
+                Arguments.of("folder/subfolder/test.txt", "xyz", "folder/subfolder/test.xyz"),
+                Arguments.of("folder/subfolder/test.txt/", "xyz", "folder/subfolder/test.xyz/"),
+                Arguments.of("./folder/subfolder/test.txt", "xyz", "./folder/subfolder/test.xyz"),
+                Arguments.of("./folder/subfolder/test.txt/", "xyz", "./folder/subfolder/test.xyz/"),
+                Arguments.of("test.txt.def", "abc", "test.txt.abc"),
+                Arguments.of("test", "xyz", "test.xyz"),
+                Arguments.of("folder/subfolder/test", "xyz", "folder/subfolder/test.xyz"),
+                Arguments.of("folder/subfolder/test/", "xyz", "folder/subfolder/test.xyz/"),
+                Arguments.of("./folder/subfolder/test", "xyz", "./folder/subfolder/test.xyz"),
+                Arguments.of("./folder/subfolder/test/", "xyz", "./folder/subfolder/test.xyz/"),
+                Arguments.of("/test", "xyz", "/test.xyz"),
+                Arguments.of("./test", "xyz", "./test.xyz"),
+                Arguments.of("../test", "xyz", "../test.xyz")
+        );
     }
 
 
     /**
      * Test replaceExtension with various inputs.
-     *
-     * @return stream of test arguments: path, extension, expected result
      */
-    private static Stream<Arguments> replaceExtensionTestCases() {
-        return Stream.of(
-                Arguments.of("/Users/tester/desktop/file.txt", "docx", "/Users/tester/desktop/file.docx"),
-                Arguments.of("/Users/tester/desktop/file.txt", "", "/Users/tester/desktop/file."),
-                Arguments.of("/Users/tester/desktop/file", "txt", "/Users/tester/desktop/file.txt")
-        );
+    @ParameterizedTest
+    @MethodSource("replaceExtensionTestCases")
+    void testReplaceExtensionStringArg(String path, String extension, String expected) {
+        assertEquals(expected, IoUtil.replaceExtension(path, extension));
     }
 
     /**
@@ -138,9 +145,10 @@ class IoUtilTest {
      */
     @ParameterizedTest
     @MethodSource("replaceExtensionTestCases")
-    void testReplaceExtension(String path, String extension, String expected) {
-        assertEquals(expected, IoUtil.replaceExtension(path, extension));
+    void testReplaceExtensionPathArg(String path, String extension, String expected) {
+        assertEquals(Paths.get(expected), IoUtil.replaceExtension(Paths.get(path), extension));
     }
+
     /**
      * Test replaceExtension with empty path.
      */
@@ -563,5 +571,347 @@ class IoUtilTest {
 
         assertTrue(closed[0]);
         assertTrue(closed[1]);
+    }
+
+    @Test
+    void testLines() {
+        String content = "Line 1\nLine 2\nLine 3";
+        InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+
+        List<String> lines = IoUtil.lines(inputStream, StandardCharsets.UTF_8).toList();
+
+        assertEquals(3, lines.size());
+        assertEquals("Line 1", lines.get(0));
+        assertEquals("Line 2", lines.get(1));
+        assertEquals("Line 3", lines.get(2));
+    }
+
+    @Test
+    void testToURLFromPath() throws Exception {
+        Path tempFile = Files.createTempFile("test", ".txt");
+        try {
+            URL url = IoUtil.toURL(tempFile);
+            assertEquals(tempFile.toUri().toURL(), url);
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testToURLFromURI() throws Exception {
+        URI uri = new URI("https://example.com");
+        URL url = IoUtil.toURL(uri);
+        assertEquals(uri.toURL(), url);
+    }
+
+    @Test
+    void testToPathFromURI() throws Exception {
+        Path tempFile = Files.createTempFile("test", ".txt");
+        try {
+            URI uri = tempFile.toUri();
+            Path path = IoUtil.toPath(uri);
+            assertEquals(tempFile.toAbsolutePath(), path.toAbsolutePath());
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testToPathFromURL() throws Exception {
+        Path tempFile = Files.createTempFile("test", ".txt");
+        try {
+            URL url = tempFile.toUri().toURL();
+            Path path = IoUtil.toPath(url);
+            assertEquals(tempFile.toAbsolutePath(), path.toAbsolutePath());
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testToPathFromString() {
+        String pathStr = "/tmp/test.txt";
+        Path path = IoUtil.toPath(pathStr);
+        assertEquals(Paths.get(pathStr), path);
+    }
+
+    @Test
+    void testToPathFromStringURI() throws Exception {
+        URI uri = new URI("file:///tmp/test.txt");
+        String uriStr = uri.toString();
+        Path path = IoUtil.toPath(uriStr);
+        assertEquals(Paths.get(uri), path);
+    }
+
+    @Test
+    void testIsURI() {
+        // This is testing a private method through its public usage in toURI and toPath
+        // URI strings should be handled differently than regular path strings
+
+        // Test with a URI string
+        String uriStr = "file:///tmp/test.txt";
+        Path pathFromURI = IoUtil.toPath(uriStr);
+        assertEquals(Paths.get(URI.create(uriStr)), pathFromURI);
+
+        // Test with a regular path string
+        String pathStr = "/tmp/test.txt";
+        Path pathFromStr = IoUtil.toPath(pathStr);
+        assertEquals(Paths.get(pathStr), pathFromStr);
+    }
+
+    @Test
+    void testDeleteRecursive() throws Exception {
+        // Create a temporary directory with some files and subdirectories
+        Path tempDir = Files.createTempDirectory("delete-test");
+        Path subDir = Files.createDirectory(tempDir.resolve("subdir"));
+        Path file1 = Files.createFile(tempDir.resolve("file1.txt"));
+        Path file2 = Files.createFile(subDir.resolve("file2.txt"));
+
+        // Verify the files and directories exist
+        assertTrue(Files.exists(tempDir));
+        assertTrue(Files.exists(subDir));
+        assertTrue(Files.exists(file1));
+        assertTrue(Files.exists(file2));
+
+        // Delete the directory recursively
+        IoUtil.deleteRecursive(tempDir);
+
+        // Verify everything is gone
+        assertDoesNotThrow(() -> {
+            assertFalse(Files.exists(file2));
+            assertFalse(Files.exists(file1));
+            assertFalse(Files.exists(subDir));
+            assertFalse(Files.exists(tempDir));
+        });
+    }
+
+    @Test
+    void testLoadText() throws Exception {
+        // Create a temporary file with some content
+        Path tempFile = Files.createTempFile("load-test", ".txt");
+        String content = "Test content with some unicode: 你好, 世界!";
+        Files.write(tempFile, content.getBytes(StandardCharsets.UTF_8));
+
+        try {
+            // Test with UTF-8
+            String loadedText = IoUtil.loadText(tempFile, charset -> assertEquals(StandardCharsets.UTF_8, charset));
+            assertEquals(content, loadedText);
+
+            // Test with different charsets
+            Files.write(tempFile, content.getBytes(StandardCharsets.ISO_8859_1));
+            String loadedText2 = IoUtil.loadText(tempFile, charset -> {}, StandardCharsets.ISO_8859_1);
+            // The content will be different due to encoding differences
+            assertNotEquals(content, loadedText2);
+
+            // Test with multiple charsets
+            Files.write(tempFile, content.getBytes(StandardCharsets.UTF_16));
+            String loadedText3 = IoUtil.loadText(tempFile, charset -> {},
+                    StandardCharsets.UTF_8, StandardCharsets.UTF_16, StandardCharsets.ISO_8859_1);
+            // Should detect UTF-16
+            assertEquals(content, loadedText3);
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testGetInputStream() throws Exception {
+        // Test with InputStream
+        InputStream originalStream = new ByteArrayInputStream("test".getBytes());
+        InputStream resultStream = IoUtil.getInputStream(originalStream);
+        assertEquals(originalStream, resultStream);
+
+        // Test with Path
+        Path tempFile = Files.createTempFile("input-test", ".txt");
+        try {
+            Files.write(tempFile, "test".getBytes());
+            try (InputStream is = IoUtil.getInputStream(tempFile)) {
+                assertEquals("test", new String(is.readAllBytes()));
+            }
+
+            // Test with File
+            File file = tempFile.toFile();
+            try (InputStream is = IoUtil.getInputStream(file)) {
+                assertEquals("test", new String(is.readAllBytes()));
+            }
+
+            // Test with URI
+            URI uri = tempFile.toUri();
+            try (InputStream is = IoUtil.getInputStream(uri)) {
+                assertEquals("test", new String(is.readAllBytes()));
+            }
+
+            // Test with URL
+            URL url = tempFile.toUri().toURL();
+            try (InputStream is = IoUtil.getInputStream(url)) {
+                assertEquals("test", new String(is.readAllBytes()));
+            }
+
+            // Test with null
+            InputStream nullStream = IoUtil.getInputStream(null);
+            assertEquals(0, nullStream.available());
+
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testGetOutputStream() throws Exception {
+        // Test with OutputStream
+        ByteArrayOutputStream originalStream = new ByteArrayOutputStream();
+        OutputStream resultStream = IoUtil.getOutputStream(originalStream);
+        assertEquals(originalStream, resultStream);
+
+        // Test with Path
+        Path tempFile = Files.createTempFile("output-test", ".txt");
+        try {
+            try (OutputStream os = IoUtil.getOutputStream(tempFile)) {
+                os.write("test".getBytes());
+            }
+            assertEquals("test", Files.readString(tempFile));
+
+            // Test with File
+            File file = tempFile.toFile();
+            try (OutputStream os = IoUtil.getOutputStream(file)) {
+                os.write("file-test".getBytes());
+            }
+            assertEquals("file-test", Files.readString(tempFile));
+
+            // Test with URI
+            URI uri = tempFile.toUri();
+            try (OutputStream os = IoUtil.getOutputStream(uri)) {
+                os.write("uri-test".getBytes());
+            }
+            assertEquals("uri-test", Files.readString(tempFile));
+
+            // Test with URL
+            URL url = tempFile.toUri().toURL();
+            try (OutputStream os = IoUtil.getOutputStream(url)) {
+                os.write("url-test".getBytes());
+            }
+            assertEquals("url-test", Files.readString(tempFile));
+
+            // Test with null
+            OutputStream nullStream = IoUtil.getOutputStream(null);
+            nullStream.write("this should be discarded".getBytes());
+            assertEquals("url-test", Files.readString(tempFile)); // Content should not change
+
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("localeProvider")
+    void testLexicalPathComparator(Locale locale) {
+        Path path1 = Paths.get("/a/b/c");
+        Path path2 = Paths.get("/a/b/d");
+        Path path3 = Paths.get("/a/c");
+        Path path4 = Paths.get("/a/b");
+
+        Comparator<Path> comparator = IoUtil.lexicalPathComparator(locale);
+
+        assertTrue(comparator.compare(path1, path2) < 0);
+        assertTrue(comparator.compare(path2, path1) > 0);
+        assertEquals(0, comparator.compare(path1, path1));
+        assertTrue(comparator.compare(path1, path3) < 0);
+        assertTrue(comparator.compare(path3, path2) > 0);
+        assertTrue(comparator.compare(path1, path4) > 0);
+        assertTrue(comparator.compare(path4, path2) < 0);
+
+        // Test with null values
+        assertTrue(comparator.compare(null, path1) < 0);
+        assertTrue(comparator.compare(path1, null) > 0);
+        assertEquals(0, comparator.compare(null, null));
+    }
+
+    static Stream<Locale> localeProvider() {
+        return Stream.of(
+                Locale.US,
+                Locale.FRANCE,
+                Locale.JAPAN,
+                Locale.GERMANY,
+                Locale.of("th") // Thai locale has different collation rules
+        );
+    }
+
+    @Test
+    void testCreateSecureTempDirectory() throws Exception {
+        // Test with prefix
+        Path tempDir = IoUtil.createSecureTempDirectory("test-prefix");
+        try {
+            assertTrue(Files.exists(tempDir));
+            assertTrue(Files.isDirectory(tempDir));
+            assertTrue(tempDir.getFileName().toString().startsWith("test-prefix"));
+
+            // Check permissions - this is platform dependent, so we just verify it exists
+            assertTrue(Files.isReadable(tempDir));
+            assertTrue(Files.isWritable(tempDir));
+            assertTrue(Files.isExecutable(tempDir));
+        } finally {
+            Files.deleteIfExists(tempDir);
+        }
+
+        // Test with parent directory and prefix
+        Path parentDir = Files.createTempDirectory("parent");
+        try {
+            Path childTempDir = IoUtil.createSecureTempDirectory(parentDir, "child-prefix");
+            try {
+                assertTrue(Files.exists(childTempDir));
+                assertTrue(Files.isDirectory(childTempDir));
+                assertTrue(childTempDir.getFileName().toString().startsWith("child-prefix"));
+                assertEquals(parentDir, childTempDir.getParent());
+            } finally {
+                Files.deleteIfExists(childTempDir);
+            }
+        } finally {
+            Files.deleteIfExists(parentDir);
+        }
+    }
+
+    @Test
+    void testRedirectStandardStreams() throws Exception {
+        // Create a temporary file for redirection
+        Path tempFile = Files.createTempFile("redirect-test", ".txt");
+        try {
+            // Redirect standard streams
+            try (AutoCloseable redirect = IoUtil.redirectStandardStreams(tempFile)) {
+                // Write to System.out and System.err
+                System.out.println("This is a test message to stdout");
+                System.err.println("This is a test message to stderr");
+
+                // Ensure the streams are flushed
+                System.out.flush();
+                System.err.flush();
+            } // AutoCloseable.close() should reset the streams
+
+            // Read the content of the file
+            String content = Files.readString(tempFile);
+
+            // Verify the content contains the expected output
+            assertTrue(content.contains("stdout: This is a test message to stdout"));
+            assertTrue(content.contains("stderr: This is a test message to stderr"));
+
+            // Verify that System.out and System.err are reset to their original values
+            PrintStream originalOut = System.out;
+            PrintStream originalErr = System.err;
+
+            // Write to the streams after redirection is closed
+            ByteArrayOutputStream testOut = new ByteArrayOutputStream();
+            PrintStream testPrintStream = new PrintStream(testOut);
+
+            PrintStream oldOut = System.out;
+            System.setOut(testPrintStream);
+            System.out.println("Test after redirection");
+            System.setOut(oldOut);
+
+            // Verify that the streams were properly reset
+            assertEquals(originalOut, System.out);
+            assertEquals(originalErr, System.err);
+            assertEquals("Test after redirection" + System.lineSeparator(), testOut.toString());
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
     }
 }

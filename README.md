@@ -195,6 +195,11 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
+### 19.1.2
+
+- fix: the comparator returned by IoUtil.lexicalPathComparator() considered null paths to be greater than non-null paths
+- increase unit test coverage
+
 ### 19.1.1
 
 - fix: ClassCastException in ImmutableSortedMap.containsKey()
