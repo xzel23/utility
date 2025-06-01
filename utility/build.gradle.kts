@@ -67,14 +67,11 @@ tasks.named<JavaCompile>("compileTestJava24Java") {
 
     // Make sure the Java 24 test compilation can access the original module info
     options.compilerArgs.addAll(listOf(
-        "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}:${sourceSets.getByName("java24").output.asPath}"
-    ))
+            "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}:${sourceSets.getByName("java24").output.asPath}"
+        ))
 
     // Set the release flag to 24
     options.release.set(24)
-
-    // Enable preview features (in case Gatherer API is still in preview)
-    options.compilerArgs.add("--enable-preview")
 }
 
 // Make sure the java24 compilation happens after the main compilation
