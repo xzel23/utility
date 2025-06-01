@@ -129,6 +129,7 @@ subprojects {
     sonar {
         properties {
             property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
+            property("sonar.coverage.exclusions", "**/com/dua3/utility/samples/**")
         }
     }
 
