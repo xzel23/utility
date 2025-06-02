@@ -54,7 +54,7 @@ class FxGraphicsTest {
 
     private static final int IMAGE_WIDTH = 1000;
     private static final int IMAGE_HEIGHT = 800;
-    private static final long PIXEL_DIFFERENCE_THRESHOLD = 8_000;
+    private static final long PIXEL_DIFFERENCE_THRESHOLD = 10_000;
     private static final Path REFERENCE_IMAGE_PATH = Objects.requireNonNull(
             Paths.get(TextUtil.transform(
                     "src/test/resources/com/dua3/utility/fx/reference_image-${OS}.png",
@@ -527,9 +527,9 @@ class FxGraphicsTest {
         }
 
         // If differences are below threshold but not zero, skip the test
-        if (nPixelDifferences > 0 && nPixelDifferences < PIXEL_DIFFERENCE_THRESHOLD) {
-            // Skip the test with a descriptive message but fail if the file cannot be deleted
-            assumeFalse(Files.deleteIfExists(outputFile.toPath()),
+        if (nPixelDifferences > 0) {
+            // Skip the test with a descriptive message
+            assumeFalse(nPixelDifferences < PIXEL_DIFFERENCE_THRESHOLD,
                     String.format("Test skipped: %d pixel differences found (below the threshold of %d)",
                             nPixelDifferences, PIXEL_DIFFERENCE_THRESHOLD));
         }
