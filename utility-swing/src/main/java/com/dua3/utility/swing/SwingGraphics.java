@@ -333,6 +333,7 @@ public class SwingGraphics implements Graphics {
         path.moveTo(r.xMin(), r.yMin());
         path.lineTo(r.xMax(), r.yMin());
         path.lineTo(r.xMax(), r.yMax());
+        path.lineTo(r.xMin(), r.yMax());
         path.closePath();
         g2d.setClip(path);
     }
