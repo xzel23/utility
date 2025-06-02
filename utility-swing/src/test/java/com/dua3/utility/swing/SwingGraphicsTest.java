@@ -465,7 +465,7 @@ class SwingGraphicsTest {
         File outputFile = Files.createTempFile(getClass().getSimpleName(), ".png").toFile();
         ImageIO.write(image, "png", outputFile);
 
-        System.out.println("Generated test image saved to: " + outputFile.getAbsolutePath());
+        System.out.println("Generated test image saved to: file://" + outputFile.getAbsolutePath());
 
         // Compare the rendered image with the reference image, test is reported as success when no differences are found and failed,
         // when the number of differences is above a certain threshold. Otherwise, the test is skipped.
