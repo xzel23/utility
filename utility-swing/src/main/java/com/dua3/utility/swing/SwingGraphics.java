@@ -317,7 +317,7 @@ public class SwingGraphics implements Graphics {
 
         g2d.drawImage(
                 IMAGE_UTIL.convert(image),
-                g2d.getTransform(),
+                Math.round(x), Math.round(y),
                 null
         );
     }
