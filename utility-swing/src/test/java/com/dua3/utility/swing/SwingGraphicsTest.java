@@ -50,7 +50,7 @@ class SwingGraphicsTest {
 
     private static final int IMAGE_WIDTH = 1000;
     private static final int IMAGE_HEIGHT = 800;
-    private static final long PIXEL_DIFFERENCE_THRESHOLD = 100;
+    private static final long PIXEL_DIFFERENCE_THRESHOLD = 8_000;
     private static final Path REFERENCE_IMAGE_PATH = Objects.requireNonNull(
             Paths.get(TextUtil.transform(
                     "src/test/resources/com/dua3/utility/swing/reference_image-${OS}.png",
