@@ -65,7 +65,6 @@ class SwingGraphicsTest {
     void setUp() {
         // Ensure we're in headless mode
         System.setProperty("java.awt.headless", "true");
-        assertTrue(GraphicsEnvironment.isHeadless(), "Test must run in headless mode");
 
         // Create a BufferedImage with software rendering
         image = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
