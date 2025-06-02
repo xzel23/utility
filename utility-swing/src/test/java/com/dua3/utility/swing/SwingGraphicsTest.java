@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static com.dua3.utility.ui.Graphics.HAnchor;
@@ -49,11 +50,11 @@ class SwingGraphicsTest {
 
     private static final int IMAGE_WIDTH = 1000;
     private static final int IMAGE_HEIGHT = 800;
-    private static final Path REFERENCE_IMAGE_PATH = Paths.get(
-            TextUtil.transform(
+    private static final Path REFERENCE_IMAGE_PATH = Objects.requireNonNull(
+            Paths.get(TextUtil.transform(
                     "src/test/resources/com/dua3/utility/swing/reference_image-${OS}.png",
                     Map.of("OS", Platform.currentPlatform().name())
-            )
+            ))
     );
 
     private BufferedImage image;
@@ -452,7 +453,7 @@ class SwingGraphicsTest {
         graphics.drawText("SwingGraphics Test - All Methods", IMAGE_HEIGHT / 2.0f, 30, HAnchor.CENTER, VAnchor.TOP);
 
         // Create the resources directory if it doesn't exist
-        Path resourcesDir = REFERENCE_IMAGE_PATH.getParent();
+        Path resourcesDir = Objects.requireNonNull(REFERENCE_IMAGE_PATH.getParent());
         if (!Files.exists(resourcesDir)) {
             Files.createDirectories(resourcesDir);
         }
