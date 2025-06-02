@@ -3,6 +3,7 @@ package com.dua3.utility.swing;
 import com.dua3.utility.awt.AwtImageUtil;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Image;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Path2f;
@@ -13,6 +14,7 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 import org.junit.jupiter.api.AfterEach;
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static com.dua3.utility.ui.Graphics.HAnchor;
@@ -46,7 +49,12 @@ class SwingGraphicsTest {
 
     private static final int IMAGE_WIDTH = 1000;
     private static final int IMAGE_HEIGHT = 800;
-    private static final String REFERENCE_IMAGE_PATH = "src/test/resources/com/dua3/utility/swing/reference_image.png";
+    private static final Path REFERENCE_IMAGE_PATH = Paths.get(
+            TextUtil.transform(
+                    "src/test/resources/com/dua3/utility/swing/reference_image-${OS}.png",
+                    Map.of("OS", Platform.currentPlatform().name())
+            )
+    );
 
     private BufferedImage image;
     private Graphics2D g2d;
@@ -444,13 +452,13 @@ class SwingGraphicsTest {
         graphics.drawText("SwingGraphics Test - All Methods", IMAGE_HEIGHT / 2.0f, 30, HAnchor.CENTER, VAnchor.TOP);
 
         // Create the resources directory if it doesn't exist
-        Path resourcesDir = Paths.get(REFERENCE_IMAGE_PATH).getParent();
+        Path resourcesDir = REFERENCE_IMAGE_PATH.getParent();
         if (!Files.exists(resourcesDir)) {
             Files.createDirectories(resourcesDir);
         }
 
         // Load the reference image
-        File referenceFile = new File(REFERENCE_IMAGE_PATH);
+        File referenceFile = REFERENCE_IMAGE_PATH.toFile();
         BufferedImage referenceImage = ImageIO.read(referenceFile);
 
         File outputFile = Files.createTempFile(getClass().getSimpleName(), ".png").toFile();
