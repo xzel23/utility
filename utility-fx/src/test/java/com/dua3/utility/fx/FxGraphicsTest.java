@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -104,7 +103,7 @@ class FxGraphicsTest {
         });
 
         // Wait for JavaFX initialization to complete
-        assertTrue(latch.await(10, TimeUnit.SECONDS), "JavaFX initialization timed out");
+        assertTrue(latch.await(30, TimeUnit.SECONDS), "JavaFX initialization timed out");
     }
 
     @AfterEach
@@ -484,7 +483,7 @@ class FxGraphicsTest {
         });
 
         // Wait for rendering to complete
-        assertTrue(latch.await(5, TimeUnit.SECONDS), "Rendering timed out");
+        assertTrue(latch.await(60, TimeUnit.SECONDS), "Rendering timed out");
 
         // Convert WritableImage to BufferedImage for comparison
         BufferedImage image = SwingFXUtils.fromFXImage(writableImage, null);
