@@ -197,6 +197,8 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ### 19.1.2
 
+- fix: SwingGraphics.drawImage() draws at wroong position
+- fix: SwingGraphics.clip(Rectangle2f) was missing a corner
 - fix: the comparator returned by IoUtil.lexicalPathComparator() considered null paths to be greater than non-null paths
 - increase unit test coverage
 
