@@ -64,7 +64,7 @@ dependencyResolutionManagement {
 
             version("h2database", "2.3.232")
             version("ikonli", "12.4.0")
-            version("javafx", "22")
+            version("javafx", "23") // IMPORTANT: JavaFX 23 is the last version to support Java 21!
             version("jimfs", "1.3.0")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
