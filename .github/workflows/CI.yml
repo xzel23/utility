@@ -68,10 +68,15 @@ jobs:
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Start xvfb
+        run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
       - name: 'Execute Gradle build'
         run: ./gradlew build jacocoTestReport
         id: compile
         continue-on-error: false
+        env:
+          DISPLAY: ":99"
 
       - name: 'Upload test artifacts from all modules'
         if: always()
