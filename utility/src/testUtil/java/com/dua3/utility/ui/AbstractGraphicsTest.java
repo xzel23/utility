@@ -510,7 +510,7 @@ public abstract class AbstractGraphicsTest {
 
         // Save the generated test image to build directory
         Path outputFile = Paths.get("build/test-artifacts", getClass().getSimpleName() + ".png");
-        Files.createDirectories(outputFile.getParent());
+        Files.createDirectories(Objects.requireNonNull(outputFile.getParent(), "could not create the output directory"));
         ImageIO.write(image, "png", outputFile.toFile());
 
         logInfo("Generated test image saved to: file://" + outputFile.toAbsolutePath());
