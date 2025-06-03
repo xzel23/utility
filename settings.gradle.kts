@@ -5,7 +5,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "19.1.2-SNAPSHOT"
+val projectVersion = "19.2.0-SNAPSHOT"
 
 // define subprojects
 include("utility")
@@ -60,6 +60,7 @@ dependencyResolutionManagement {
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
+            plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("h2database", "2.3.232")
             version("ikonli", "12.4.0")
