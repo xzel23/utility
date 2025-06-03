@@ -10,6 +10,8 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The generated image is compared to a reference image stored as a test resource.
  */
 class FxGraphicsTest extends AbstractGraphicsTest {
+    private static final Logger LOG = LogManager.getLogger(FxGraphicsTest.class);
 
     private static final Path REFERENCE_IMAGE_PATH = Objects.requireNonNull(
             Paths.get(TextUtil.transform(
@@ -86,6 +89,18 @@ class FxGraphicsTest extends AbstractGraphicsTest {
     @Override
     public void tearDown() {
         super.tearDown();
+    }
+
+    @Override
+    protected void logInfo(String message) {
+        System.out.println(message);
+        LOG.info("{}", message);
+    }
+
+    @Override
+    protected void logWarning(String message) {
+        System.err.println(message);
+        LOG.warn("{}", message);
     }
 
     @Override

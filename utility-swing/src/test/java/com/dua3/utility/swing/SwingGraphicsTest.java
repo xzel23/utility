@@ -7,6 +7,8 @@ import com.dua3.utility.lang.Platform;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.ui.AbstractGraphicsTest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -25,6 +27,7 @@ import java.util.Objects;
  * The generated image is compared to a reference image stored as a test resource.
  */
 class SwingGraphicsTest extends AbstractGraphicsTest {
+    private static final Logger LOG = LogManager.getLogger(SwingGraphicsTest.class);
 
     private static final int IMAGE_WIDTH = 1000;
     private static final int IMAGE_HEIGHT = 800;
@@ -77,6 +80,18 @@ class SwingGraphicsTest extends AbstractGraphicsTest {
     @AfterEach
     public void tearDown() {
         super.tearDown();
+    }
+
+    @Override
+    protected void logInfo(String message) {
+        System.out.println(message);
+        LOG.info("{}", message);
+    }
+
+    @Override
+    protected void logWarning(String message) {
+        System.err.println(message);
+        LOG.warn("{}", message);
     }
 
     @Override
