@@ -697,6 +697,7 @@ public final class IoUtil {
                     try {
                         t.addSuppressed(t1);
                     } catch (Exception ignore) {
+                        // do nothing
                     }
                 }
             }
