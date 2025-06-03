@@ -34,6 +34,12 @@ public class TeeOutputStream extends OutputStream {
     }
 
     @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        o1.write(b, off, len);
+        o2.write(b, off, len);
+    }
+
+    @Override
     public void close() throws IOException {
         if (close1) {
             o1.close();
