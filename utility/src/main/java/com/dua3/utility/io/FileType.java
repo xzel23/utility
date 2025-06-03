@@ -378,7 +378,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
                 /* add the generic parameter */
                 .map(t -> (FileType<T>) t)
                 /* make it a list */
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
