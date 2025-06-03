@@ -204,6 +204,9 @@ public abstract class AbstractGraphicsTest {
 
         // Test drawImage with Vector2f
         graphics.drawImage(image2, Vector2f.of(200, 50));
+
+        graphics.transform(AffineTransformation2f.rotate(30.0 * Math.PI / 180.0, Vector2f.of(400, 100)));
+        graphics.drawImage(image2, Vector2f.of(350, 50));
     }
 
     protected abstract Image convertImage(BufferedImage testImage);
