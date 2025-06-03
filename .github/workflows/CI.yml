@@ -73,6 +73,15 @@ jobs:
         id: compile
         continue-on-error: false
 
+      - name: 'Upload test artifacts from all modules'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-${{ matrix.os }}
+          path: |
+            **/build/test-artifacts/**
+          if-no-files-found: ignore
+
       - name: 'Create Qodana config'
         if: runner.os == 'Linux'
         run: |
