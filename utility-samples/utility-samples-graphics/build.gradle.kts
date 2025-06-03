@@ -2,6 +2,12 @@ project.description = "Java utilities (samples)"
 
 plugins {
     id("application")
+    alias(libs.plugins.javafx)
+}
+
+javafx {
+    version = libs.versions.javafx.get()
+    modules = listOf("javafx.base", "javafx.controls", "javafx.graphics")
 }
 
 application {

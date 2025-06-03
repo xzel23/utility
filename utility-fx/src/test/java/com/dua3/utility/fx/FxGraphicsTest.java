@@ -1,12 +1,12 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.awt.AwtImageUtil;
 import com.dua3.utility.data.Image;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.ui.AbstractGraphicsTest;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
@@ -132,7 +132,7 @@ class FxGraphicsTest extends AbstractGraphicsTest {
             assertTrue(latch.await(30, TimeUnit.SECONDS), "Rendering timed out");
 
             // Convert WritableImage to BufferedImage for comparison
-            return SwingFXUtils.fromFXImage(writableImage, null);
+            return AwtImageUtil.getInstance().convert(FxImageUtil.getInstance().convert(writableImage));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Interrupted while waiting for rendering to complete", e);
@@ -141,6 +141,6 @@ class FxGraphicsTest extends AbstractGraphicsTest {
 
     @Override
     protected Image convertImage(BufferedImage bi) {
-        return FxImageUtil.getInstance().convert(SwingFXUtils.toFXImage(bi, null));
+        return AwtImageUtil.getInstance().convert(bi);
     }
 }

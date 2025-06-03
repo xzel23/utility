@@ -27,16 +27,10 @@ Source code is available at https://github.com/xzel23/utility.
 
 - JDK 21 or later, version 17 of the library requires JDK 17 or later (except for for JavaFX related modules that already require at least Java 21).
 - Version 17 that still supports Java 17 will receive important bugfix updates until the next LTS release (Java 25) is released.
-- To build the library, JDK 21+ **with a properly configured JavaFX installation** is needed. The StreamGathererUtil 
-  class is compiled using a Java 24 toolchain. **Building on Windows ARM is not supported** due to the incomplete 
-  Gradle support for that platform (details: https://github.com/gradle/gradle/issues/21703).
-
-The requirement to have JavaFX installed and configured correctly on the system is because
-both the Gradle JavaFX plugin and the Foojay toolchain resolver plugin do not yet fully support
-Windows on ARM.
-
-The easiest way to build is to use either Azul Zulu JDK FX or BellSoft Liberica Full JDK
-distributions (the minimum version for both is 21).
+- The project uses Gradle toolchains to automatically download the required JDKs.
+- JavaFX dependencies are managed by the JavaFX plugin.
+- Building on Windows ARM is not supported because of missing support in Gradle and the toolchain resolver and 
+  JavaFX plugins.
 
 ## Using the library
 
@@ -195,9 +189,12 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 
 ## Changes
 
-### 19.1.2
+### 19.2.0
 
-- fix: SwingGraphics.drawImage() draws at wroong position
+- the Gradle build was changed to use the toolchain and JavaFX plugins again. This facilitates building the library
+  on all platforms except Windows ARM. Building on Windows ARM is not supported. This does not affect using the library
+  on that platform.
+- fix: SwingGraphics.drawImage() draws at wrong position
 - fix: SwingGraphics.clip(Rectangle2f) was missing a corner
 - fix: the comparator returned by IoUtil.lexicalPathComparator() considered null paths to be greater than non-null paths
 - the rendered images created during rendering tests can be downloaded from GitHub to check if the rendering works
@@ -310,7 +307,7 @@ different attributes), memory usage went down by 50% without noticeable impact o
 
   A new MutableImage interface has been introduced. The getBuffer() method returns a
   low-level ImageBuffer instance that writes directly through to the pixel data.
-  
+
   To create a MutableImage, use ImageUtil.createBufferedImage(). The returned instance
   is a subclass of java.awt.BufferedImage in both the AWT and JavaFX implementations.
   This makes it possible to use libraries that work directly on java.awt.BufferedImage

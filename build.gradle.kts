@@ -43,18 +43,6 @@ object Meta {
 }
 /////////////////////////////////////////////////////////////////////////////
 
-tasks.register("printStartMessage") {
-    description = "Print message at start of build."
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    doFirst {
-        println("NOTE: A JDK with prepackaged JavaFX (i.e., Azul Zulu 'JDK FX' or Bellsoft 'Full JDK') or a properly configured local JavaFX installation is needed!")
-    }
-}
-
-tasks.named("build") {
-    dependsOn(tasks.named("printStartMessage"))
-}
-
 subprojects {
 
     project.version = rootProject.libs.versions.projectVersion.get()
@@ -87,17 +75,12 @@ subprojects {
     apply(plugin = "me.champeau.jmh")
 
     java {
-        val isWindowsArm = org.gradle.internal.os.OperatingSystem.current().isWindows &&
-                System.getProperty("os.arch").contains("aarch64")
-
-        if (!isWindowsArm) {
-            toolchain {
-                languageVersion.set(JavaLanguageVersion.of(21)) // Beispiel: Java 21
-            }
-
-            targetCompatibility = JavaVersion.VERSION_21
-            sourceCompatibility = targetCompatibility
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21))
         }
+
+        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = targetCompatibility
 
         withJavadocJar()
         withSourcesJar()

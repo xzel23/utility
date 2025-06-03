@@ -51,10 +51,10 @@ public final class FxImageUtil implements ImageUtil<Image> {
 
     @Override
     public Image convert(com.dua3.utility.data.Image img) {
-        if (!(img instanceof FxImage fxImage)) {
-            throw new UnsupportedOperationException("unsupported image class: " + img.getClass());
+        if (img instanceof FxImage fxImage) {
+            return fxImage.fxImage();
         }
-        return fxImage.fxImage();
+        return convert(create(img.width(), img.height(), img.getArgb()));
     }
 
     @Override
