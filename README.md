@@ -187,6 +187,12 @@ This will execute all benchmark tests and generate a results file at `utility/bu
 
 You can customize the benchmark execution by modifying the JMH configuration in the `utility/build.gradle.kts` file.
 
+### Running the JavaFX samples
+
+To run the JavaJF samples right from within your IDE, make sure to use a JDK that comes with JavaFX included like
+Bellsoft Liberica JDK _FULL_ or Azul JDK _FX_. Otherwise you might see an error that the required JavaFX runtime classes
+could not be loaded.
+
 ## Changes
 
 ### 19.2.0
@@ -197,6 +203,7 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - fix: SwingGraphics.drawImage() draws at wrong position
 - fix: SwingGraphics.clip(Rectangle2f) was missing a corner
 - fix: the comparator returned by IoUtil.lexicalPathComparator() considered null paths to be greater than non-null paths
+- updates and fixes to the ProgressView/ProgressTracker and related classes
 - the rendered images created during rendering tests can be downloaded from GitHub to check if the rendering works
   correctly; this is necessary because even on the same OS there may be differences in rendering depending on the
   installed fonts or rendering pipeline (software rendering didn't completely solve this)
