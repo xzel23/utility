@@ -200,6 +200,9 @@ You can customize the benchmark execution by modifying the JMH configuration in 
 - fix: SwingGraphics.drawImage() draws at wroong position
 - fix: SwingGraphics.clip(Rectangle2f) was missing a corner
 - fix: the comparator returned by IoUtil.lexicalPathComparator() considered null paths to be greater than non-null paths
+- the rendered images created during rendering tests can be downloaded from GitHub to check if the rendering works
+  correctly; this is necessary because even on the same OS there may be differences in rendering depending on the
+  installed fonts or rendering pipeline (software rendering didn't completely solve this)
 - increase unit test coverage
 
 ### 19.1.1
