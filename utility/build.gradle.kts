@@ -16,6 +16,18 @@ sourceSets {
         compileClasspath += sourceSets.test.get().output + sourceSets.main.get().output + sourceSets.getByName("java24").output
         runtimeClasspath += sourceSets.test.get().output + sourceSets.main.get().output + sourceSets.getByName("java24").output
     }
+
+    // Define javaTestUtil source set for common test utilities
+    create("javaTestUtil") {
+        java {
+            srcDir("src/testUtil/java")
+        }
+        resources {
+            srcDir("src/testUtil/resources")
+        }
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
 }
 
 // Add dependencies for java24 source set
@@ -39,6 +51,11 @@ dependencies {
     // Explicitly add JUnit dependencies for testJava24
     "testJava24Implementation"("org.junit.jupiter:junit-jupiter-api:5.10.2")
     "testJava24RuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+
+    // Add dependencies for javaTestUtil source set
+    "javaTestUtilImplementation"(sourceSets.main.get().output)
+    "javaTestUtilImplementation"("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    "javaTestUtilRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
 
 
@@ -125,6 +142,34 @@ tasks.named<Jar>("jar") {
 
     // Make sure java24 compilation happens before JAR creation
     dependsOn(tasks.named("compileJava24Java"))
+}
+
+// Create a JAR task for the javaTestUtil source set
+val javaTestUtilJar = tasks.register<Jar>("javaTestUtilJar") {
+    description = "Assembles a jar archive containing the javaTestUtil classes"
+    group = "build"
+
+    archiveBaseName.set("utility-test-util")
+    from(sourceSets.getByName("javaTestUtil").output)
+
+    // Make sure javaTestUtil compilation happens before JAR creation
+    dependsOn(tasks.named("compileJavaTestUtilJava"))
+}
+
+// Create a configuration for the javaTestUtil JAR
+val javaTestUtilConfiguration = configurations.create("javaTestUtil") {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
+// Add the javaTestUtil JAR to the configuration
+artifacts {
+    add("javaTestUtil", javaTestUtilJar)
+}
+
+// Make sure the javaTestUtil JAR is built when the project is built
+tasks.named("build") {
+    dependsOn(javaTestUtilJar)
 }
 
 // Make sure the jar task runs before testJava24 task

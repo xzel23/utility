@@ -9,4 +9,7 @@ dependencies {
     testImplementation(rootProject.libs.log4j.core)
     testImplementation(rootProject.libs.jimfs)
     testImplementation(rootProject.libs.mockito)
+
+    // Add dependency on javaTestUtil for tests
+    testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
 }
