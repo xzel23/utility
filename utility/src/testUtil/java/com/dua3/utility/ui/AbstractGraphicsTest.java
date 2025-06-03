@@ -21,6 +21,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -187,21 +189,21 @@ public abstract class AbstractGraphicsTest {
      * Test for image drawing methods
      */
     protected void testImageDrawingMethods() {
-        // Create a small test image
-        BufferedImage testImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-        java.awt.Graphics2D g2d2 = testImage.createGraphics();
-        g2d2.setColor(java.awt.Color.RED);
-        g2d2.fillRect(0, 0, 100, 100);
-        g2d2.dispose();
+        BufferedImage testImage;
+        try (InputStream in = getClass().getResourceAsStream("/com/dua3/utility/ui/test.jpg")) {
+            testImage = ImageIO.read(Objects.requireNonNull(in, "test image not found"));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
 
         // Convert to the utility Image type
         Image image2 = convertImage(testImage);
 
         // Test drawImage with float coordinates
-        getGraphics().drawImage(image2, 50, 50);
+        graphics.drawImage(image2, 50, 50);
 
         // Test drawImage with Vector2f
-        getGraphics().drawImage(image2, Vector2f.of(200, 50));
+        graphics.drawImage(image2, Vector2f.of(200, 50));
     }
 
     protected abstract Image convertImage(BufferedImage testImage);
