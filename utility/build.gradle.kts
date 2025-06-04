@@ -58,7 +58,6 @@ dependencies {
     "javaTestUtilRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
 
-
 // Configure Java 24 compilation
 tasks.named<JavaCompile>("compileJava24Java") {
     // Use Java 24 toolchain for this task only
@@ -68,8 +67,9 @@ tasks.named<JavaCompile>("compileJava24Java") {
 
     // Make sure the Java 24 compilation can access the original module info
     options.compilerArgs.addAll(listOf(
-        "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}"
-    ))
+            "--patch-module", "com.dua3.utility=${sourceSets.main.get().output.asPath}"
+        )
+    )
 
     // Set the release flag to 24
     options.release.set(24)
@@ -157,7 +157,7 @@ val javaTestUtilJar = tasks.register<Jar>("javaTestUtilJar") {
 }
 
 // Create a configuration for the javaTestUtil JAR
-val javaTestUtilConfiguration = configurations.create("javaTestUtil") {
+configurations.create("javaTestUtil") {
     isCanBeConsumed = true
     isCanBeResolved = false
 }
