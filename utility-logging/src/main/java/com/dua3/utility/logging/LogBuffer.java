@@ -6,6 +6,9 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,8 +54,28 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         BufferState bufferState = getBufferState();
         out.writeInt(bufferState.entries.length);
-        for (Object entry : bufferState.entries) {
-            out.writeObject(entry);
+        for (LogEntry entry : bufferState.entries) {
+            // Serialize individual fields to avoid non-serializable components
+            out.writeObject(entry.message());
+            out.writeObject(entry.loggerName());
+            out.writeObject(entry.time());
+            out.writeObject(entry.level());
+            out.writeObject(entry.marker());
+            out.writeObject(entry.location());
+
+            // Handle throwable carefully
+            Throwable t = entry.throwable();
+            if (t != null) {
+                out.writeBoolean(true);
+                out.writeObject(t.getClass().getName());
+                out.writeObject(t.getMessage());
+                // Serialize stack trace as string to avoid serialization issues
+                StringWriter sw = new StringWriter();
+                t.printStackTrace(new PrintWriter(sw));
+                out.writeObject(sw.toString());
+            } else {
+                out.writeBoolean(false);
+            }
         }
     }
 
@@ -61,8 +84,27 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
         int n = in.readInt();
         List<LogEntry> entries = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
-            entries.add((LogEntry) in.readObject());
+            String message = (String) in.readObject();
+            String loggerName = (String) in.readObject();
+            Instant time = (Instant) in.readObject();
+            LogLevel level = (LogLevel) in.readObject();
+            String marker = (String) in.readObject();
+            String location = (String) in.readObject();
+
+            Throwable throwable = null;
+            if (in.readBoolean()) {
+                String throwableClass = (String) in.readObject();
+                String throwableMessage = (String) in.readObject();
+                String stackTrace = (String) in.readObject();
+                // Create a simple throwable representation
+                throwable = new RuntimeException(
+                        "Deserialized " + throwableClass + ": " + throwableMessage +
+                                "\nOriginal stack trace:\n" + stackTrace);
+            }
+
+            entries.add(new SimpleLogEntry(message, loggerName, time, level, marker, throwable, location));
         }
+
         synchronized (buffer) {
             buffer.clear();
             buffer.addAll(entries);
