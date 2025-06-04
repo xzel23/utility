@@ -9,10 +9,15 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * A log buffer class intended to provide a buffer for log messages to display in GUI applications.
+ * A thread-safe log buffer class intended to provide a buffer for log messages
+ * to display in GUI applications.
+ *
+ * <p>All operations are thread-safe. For compound operations requiring consistency
+ * across multiple calls, use {@link #getBufferState()} to get an atomic snapshot.
  */
 public class LogBuffer implements LogEntryHandler, Externalizable {
 
@@ -22,7 +27,7 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public static final int DEFAULT_CAPACITY = 10_000;
 
     private final RingBuffer<LogEntry> buffer;
-    private final Collection<LogBufferListener> listeners = new ArrayList<>();
+    private final Collection<LogBufferListener> listeners = new CopyOnWriteArrayList<>();
     private final AtomicLong totalAdded = new AtomicLong(0);
     private final AtomicLong totalRemoved = new AtomicLong(0);
 
@@ -44,19 +49,25 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        Object[] entries = buffer.toArray();
-        out.write(entries.length);
-        for (Object entry : entries) {
+        BufferState bufferState = getBufferState();
+        out.writeInt(bufferState.entries.length);
+        for (Object entry : bufferState.entries) {
             out.writeObject(entry);
         }
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        buffer.clear();
         int n = in.readInt();
+        List<LogEntry> entries = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
-            buffer.add((LogEntry) in.readObject());
+            entries.add((LogEntry) in.readObject());
+        }
+        synchronized (buffer) {
+            buffer.clear();
+            buffer.addAll(entries);
+            totalAdded.set(entries.size());
+            totalRemoved.set(0);
         }
     }
 
@@ -190,7 +201,11 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * Returns the size of the LogBuffer.
      *
      * @return the number of LogEntries in the LogBuffer.
+     * @deprecated size() cannot be used reliably in a multi-threaded environment. This is not fixable
+     *             without external locking, which should be avoided. Use {@link #getBufferState()} if
+     *             you need to check the size and then atomically retrieve certain rows.
      */
+    @Deprecated(forRemoval = true)
     public int size() {
         return buffer.size();
     }
