@@ -2,6 +2,7 @@ package com.dua3.utility.fx;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.RGBColor;
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.geometry.FillRule;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
@@ -15,6 +16,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -314,11 +316,17 @@ class FxUtilTest extends FxTestBase {
     void testFontConversion() throws Throwable {
         FxTestUtil.runOnFxThreadAndWait(() -> {
             // Test converting from JavaFX Font to utility Font and back
-            Font fxFont = Font.font("Arial", 12);
+            Platform platform = Platform.currentPlatform();
+            Assumptions.assumeTrue(platform != Platform.UNKNOWN);
+            String family = switch (platform) {
+                case Platform.LINUX -> "DejaVu Sans";
+                default -> "Arial";
+            };
+            Font fxFont = Font.font(family, 12);
             com.dua3.utility.text.Font utilFont = FxUtil.convert(fxFont);
             Font convertedFxFont = FxUtil.convert(utilFont);
 
-            assertEquals("Arial", utilFont.getFamily(), "Font family should be preserved");
+            assertEquals(family, utilFont.getFamily(), "Font family should be preserved");
             assertEquals(12, utilFont.getSizeInPoints(), 0.001, "Font size should be preserved");
             assertEquals(fxFont.getFamily(), convertedFxFont.getFamily(), "Font family should be preserved in round-trip conversion");
             assertEquals(fxFont.getSize(), convertedFxFont.getSize(), 0.001, "Font size should be preserved in round-trip conversion");
