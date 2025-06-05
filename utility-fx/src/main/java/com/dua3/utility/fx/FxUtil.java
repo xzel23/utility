@@ -1,13 +1,11 @@
 package com.dua3.utility.fx;
 
-import com.dua3.utility.concurrent.ReadOnlyValue;
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.shape.ClosePath;
 import org.apache.logging.log4j.LogManager;
