@@ -63,6 +63,54 @@ public class PathBuilder2f {
     }
 
     /**
+     * Moves to a new position specified by the given coordinates.
+     * This implicitly starts a new path.
+     *
+     * @param x the x-coordinate of the new position
+     * @param y the y-coordinate of the new position
+     * @return this PathBuilder2f instance
+     */
+    public PathBuilder2f moveTo(float x, float y) {
+        return moveTo(Vector2f.of(x, y));
+    }
+
+    /**
+     * Moves the current position by a relative offset specified by the given x and y coordinates.
+     * This implicitly starts a new path.
+     *
+     * @param x the relative offset along the x-axis
+     * @param y the relative offset along the y-axis
+     * @return this PathBuilder2f instance
+     */
+    public PathBuilder2f moveRel(float x, float y) {
+        return moveRel(Vector2f.of(x, y));
+    }
+
+    /**
+     * Adds a line from the current position to a new position defined
+     * by the specified x and y coordinates.
+     *
+     * @param x the x-coordinate of the new position
+     * @param y the y-coordinate of the new position
+     * @return this PathBuilder2f instance
+     */
+    public PathBuilder2f lineTo(float x, float y) {
+        return lineTo(Vector2f.of(x, y));
+    }
+
+    /**
+     * Adds a line segment to the path, starting from the current position
+     * and extending to the position defined by the relative offset coordinates.
+     *
+     * @param x the relative offset along the x-axis from the current position
+     * @param y the relative offset along the y-axis from the current position
+     * @return this PathBuilder2f instance
+     */
+    public PathBuilder2f lineRel(float x, float y) {
+        return lineRel(Vector2f.of(x, y));
+    }
+
+    /**
      * Move to a new position.
      * <br>
      * <strong>NOTE:</strong> This implicitly starts a new path.
