@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Timeout;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -256,6 +257,7 @@ class LogBufferThreadSafetyTest {
         for (int threadId = 0; threadId < NUM_THREADS / 2; threadId++) {
             readerExecutor.submit(() -> {
                 try {
+                    Random random = new Random();
                     while (running.get()) {
                         // Perform different read operations
                         try {
@@ -265,7 +267,7 @@ class LogBufferThreadSafetyTest {
                             // If buffer has entries, try different read operations
                             if (state.entries().length > 0) {
                                 // Get a random entry
-                                int randomIndex = (int) (Math.random() * state.entries().length);
+                                int randomIndex = random.nextInt(state.entries().length);
                                 LogEntry entry = logBuffer.get(randomIndex);
                                 assertNotNull(entry, "Entry should not be null");
 

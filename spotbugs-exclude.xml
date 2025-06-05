@@ -23,6 +23,10 @@
     </Match>
 
     <Match>
+        <Class name="com.dua3.utility.logging.LogBufferThreadSafetyTest"/>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
+    </Match>
+    <Match>
         <Class name="com.dua3.utility.fx.icons.IconView"/>
         <Or>
             <Bug pattern="MS_EXPOSE_REP"/>
