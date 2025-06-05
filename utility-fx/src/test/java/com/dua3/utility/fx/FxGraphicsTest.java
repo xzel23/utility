@@ -12,7 +12,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +33,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The generated image is compared to a reference image stored as a test resource.
  */
 class FxGraphicsTest extends AbstractGraphicsTest {
+
+    private static boolean platformInitialized = false;
+    private static final Object lock = new Object();
+
+    /**
+     * Initialize the JavaFX platform if it's not already initialized.
+     * This method is synchronized to prevent multiple concurrent initializations.
+     */
+    @BeforeAll
+    static void initializePlatform() {
+        synchronized (lock) {
+            if (!platformInitialized) {
+                try {
+                    Platform.startup(() -> {
+                        System.out.println("JavaFX Platform initialized");
+                    });
+                    platformInitialized = true;
+                } catch (IllegalStateException e) {
+                    // Platform already running, which is fine
+                    System.out.println("JavaFX Platform was already running");
+                    platformInitialized = true;
+                }
+            }
+        }
+    }
     private static final Logger LOG = LogManager.getLogger(FxGraphicsTest.class);
 
     private static final Path REFERENCE_IMAGE_PATH = Objects.requireNonNull(
@@ -46,19 +70,6 @@ class FxGraphicsTest extends AbstractGraphicsTest {
     private Canvas canvas;
     private GraphicsContext gc;
     private WritableImage writableImage;
-
-    @BeforeAll
-    static void setUpClass() {
-        Platform.startup(() -> {
-            System.out.println("Platform running");
-        });
-    }
-
-    @AfterAll
-    static void tearDownClass() {
-        System.out.println("shutting down Platform");
-        Platform.exit();
-    }
 
     @BeforeEach
     @Override

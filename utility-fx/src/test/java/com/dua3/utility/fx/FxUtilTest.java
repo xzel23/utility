@@ -7,7 +7,6 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.text.RichText;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Bounds;
@@ -16,8 +15,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -29,20 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * <p>
  * These tests run in headless mode and test the utility methods in FxUtil.
  */
-class FxUtilTest {
-
-    @BeforeAll
-    static void setUpClass() {
-        Platform.startup(() -> {
-            System.out.println("Platform running");
-        });
-    }
-
-    @AfterAll
-    static void tearDownClass() {
-        System.out.println("shutting down Platform");
-        Platform.exit();
-    }
+class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertColorToFx() throws Throwable {
@@ -275,15 +259,6 @@ class FxUtilTest {
 
         assertTrue(trueValue.get(), "Value should be true");
         assertFalse(falseValue.get(), "Value should be false");
-
-        // Verify that these are truly constant (cannot be changed)
-        if (trueValue instanceof SimpleBooleanProperty) {
-            // FIXME: FxUtil.constant() returns a SimpleBooleanProperty which is mutable,
-            // not a truly constant value as the method name suggests
-            SimpleBooleanProperty prop = (SimpleBooleanProperty) trueValue;
-            prop.set(false);
-            assertFalse(trueValue.get(), "Value should remain true if it's truly constant");
-        }
     }
 
     @Test

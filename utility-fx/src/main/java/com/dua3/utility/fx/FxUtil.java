@@ -1,12 +1,13 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.concurrent.ReadOnlyValue;
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.ClosePath2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.shape.ClosePath;
 import org.apache.logging.log4j.LogManager;
@@ -851,19 +852,59 @@ public final class FxUtil {
         return screens.isEmpty() ? Screen.getPrimary() : screens.getFirst();
     }
 
+    private static final class ReadOnlyBooleanValue implements ObservableBooleanValue {
+        private final boolean value;
+        private final Boolean wrappedValue;
+
+        private ReadOnlyBooleanValue(boolean value) {
+            this.value = value;
+            this.wrappedValue = value;
+        }
+
+        @Override
+        public boolean get() {
+            return value;
+        }
+
+        @Override
+        public Boolean getValue() {
+            return wrappedValue;
+        }
+
+        @Override
+        public void addListener(ChangeListener<? super Boolean> listener) {
+            // do nothing - the value will never change
+        }
+
+        @Override
+        public void removeListener(ChangeListener<? super Boolean> listener) {
+            // do nothing - the value will never change
+        }
+
+        @Override
+        public void addListener(InvalidationListener listener) {
+            // do nothing - the value will never change
+        }
+
+        @Override
+        public void removeListener(InvalidationListener listener) {
+            // do nothing - the value will never change
+        }
+    }
+
     /**
      * A constant ObservableBooleanValue that always holds the value {@code true}.
      * This variable is immutable and can be reliably used wherever a constant
      * boolean value of {@code true} is required in an observable context.
      */
-    public static final ObservableBooleanValue TRUE = new SimpleBooleanProperty(true);
+    public static final ObservableBooleanValue TRUE = new ReadOnlyBooleanValue(true);
 
     /**
      * A static constant representing a boolean property with a fixed value of {@code false}.
      * This property is immutable and can be used wherever an {@code ObservableBooleanValue}
      * with a value of {@code false} is required.
      */
-    public static final ObservableBooleanValue FALSE = new SimpleBooleanProperty(false);
+    public static final ObservableBooleanValue FALSE = new ReadOnlyBooleanValue(false);
 
     /**
      * Returns an ObservableBooleanValue that represents the specified boolean constant.
