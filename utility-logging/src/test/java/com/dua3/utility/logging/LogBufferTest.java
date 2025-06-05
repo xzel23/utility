@@ -3,6 +3,11 @@ package com.dua3.utility.logging;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -213,6 +218,238 @@ class LogBufferTest {
                 "Should throw IndexOutOfBoundsException for toIndex > size");
         assertThrows(IndexOutOfBoundsException.class, () -> logBuffer.subList(7, 5), 
                 "Should throw IndexOutOfBoundsException for fromIndex > toIndex");
+    }
+
+    @Test
+    void testWriteExternalEmptyBuffer() throws IOException {
+        // Test serializing an empty buffer
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+        // Write the empty buffer
+        logBuffer.writeExternal(oos);
+        oos.flush();
+
+        // Verify the serialized data
+        byte[] serializedData = baos.toByteArray();
+        assertNotNull(serializedData, "Serialized data should not be null");
+
+        // Verify the first 4 bytes represent an integer with value 0 (number of entries)
+        ByteArrayInputStream bais = new ByteArrayInputStream(serializedData);
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        assertEquals(0, ois.readInt(), "Number of entries should be 0");
+
+        ois.close();
+        oos.close();
+    }
+
+    @Test
+    void testWriteExternalWithEntries() throws IOException {
+        // Add some entries to the buffer
+        for (int i = 0; i < 5; i++) {
+            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+        }
+
+        // Serialize the buffer
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+        logBuffer.writeExternal(oos);
+        oos.flush();
+
+        // Verify the serialized data
+        byte[] serializedData = baos.toByteArray();
+        assertNotNull(serializedData, "Serialized data should not be null");
+
+        // Verify the first 4 bytes represent an integer with value 5 (number of entries)
+        ByteArrayInputStream bais = new ByteArrayInputStream(serializedData);
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        assertEquals(5, ois.readInt(), "Number of entries should be 5");
+
+        // We could read more data, but that's tested in the full cycle test
+
+        ois.close();
+        oos.close();
+    }
+
+    @Test
+    void testReadExternalEmptyBuffer() throws IOException, ClassNotFoundException {
+        // Create a serialized representation of an empty buffer
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeInt(0); // No entries
+        oos.flush();
+
+        // Create a new buffer and deserialize into it
+        LogBuffer newBuffer = new LogBuffer();
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+
+        newBuffer.readExternal(ois);
+
+        // Verify the buffer state
+        LogBuffer.BufferState state = newBuffer.getBufferState();
+        assertEquals(0, state.entries().length, "Buffer should be empty");
+        assertEquals(0, state.totalAdded(), "Total added should be 0");
+        assertEquals(0, state.totalRemoved(), "Total removed should be 0");
+
+        ois.close();
+        oos.close();
+    }
+
+    @Test
+    void testReadExternalWithEntries() throws IOException, ClassNotFoundException {
+        // Create a serialized representation of a buffer with entries
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+        // Write 3 entries
+        oos.writeInt(3);
+
+        for (int i = 0; i < 3; i++) {
+            oos.writeObject("Message " + i); // message
+            oos.writeObject("TestLogger"); // loggerName
+            Instant now = Instant.now();
+            oos.writeObject(now); // time
+            oos.writeObject(LogLevel.INFO); // level
+            oos.writeObject(""); // marker
+            oos.writeObject("TestLocation"); // location
+            oos.writeBoolean(false); // no throwable
+        }
+
+        oos.flush();
+
+        // Create a new buffer and deserialize into it
+        LogBuffer newBuffer = new LogBuffer();
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+
+        newBuffer.readExternal(ois);
+
+        // Verify the buffer state
+        LogBuffer.BufferState state = newBuffer.getBufferState();
+        assertEquals(3, state.entries().length, "Buffer should have 3 entries");
+        assertEquals(3, state.totalAdded(), "Total added should be 3");
+        assertEquals(0, state.totalRemoved(), "Total removed should be 0");
+
+        // Verify entry content
+        for (int i = 0; i < 3; i++) {
+            assertEquals("Message " + i, state.entries()[i].message(), "Entry message should match");
+            assertEquals("TestLogger", state.entries()[i].loggerName(), "Entry logger name should match");
+            assertEquals(LogLevel.INFO, state.entries()[i].level(), "Entry level should match");
+            assertEquals("", state.entries()[i].marker(), "Entry marker should match");
+            assertEquals("TestLocation", state.entries()[i].location(), "Entry location should match");
+            assertNull(state.entries()[i].throwable(), "Entry throwable should be null");
+        }
+
+        ois.close();
+        oos.close();
+    }
+
+    @Test
+    void testSerializationCycle() throws IOException, ClassNotFoundException {
+        // Add some entries to the buffer
+        for (int i = 0; i < 5; i++) {
+            logBuffer.handleEntry(createTestLogEntry("Message " + i));
+        }
+
+        // Get the original buffer state
+        LogBuffer.BufferState originalState = logBuffer.getBufferState();
+
+        // Serialize the buffer
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        logBuffer.writeExternal(oos);
+        oos.flush();
+
+        // Deserialize into a new buffer
+        LogBuffer newBuffer = new LogBuffer();
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        newBuffer.readExternal(ois);
+
+        // Get the new buffer state
+        LogBuffer.BufferState newState = newBuffer.getBufferState();
+
+        // Verify the states are equivalent
+        assertEquals(originalState.entries().length, newState.entries().length, "Number of entries should match");
+        assertEquals(originalState.totalAdded(), newState.totalAdded(), "Total added should match");
+        assertEquals(originalState.totalRemoved(), newState.totalRemoved(), "Total removed should match");
+
+        // Verify each entry
+        for (int i = 0; i < originalState.entries().length; i++) {
+            LogEntry originalEntry = originalState.entries()[i];
+            LogEntry newEntry = newState.entries()[i];
+
+            assertEquals(originalEntry.message(), newEntry.message(), "Entry message should match");
+            assertEquals(originalEntry.loggerName(), newEntry.loggerName(), "Entry logger name should match");
+            assertEquals(originalEntry.time(), newEntry.time(), "Entry time should match");
+            assertEquals(originalEntry.level(), newEntry.level(), "Entry level should match");
+            assertEquals(originalEntry.marker(), newEntry.marker(), "Entry marker should match");
+            assertEquals(originalEntry.location(), newEntry.location(), "Entry location should match");
+
+            // For throwable, we can only check if both are null or both are non-null
+            if (originalEntry.throwable() == null) {
+                assertNull(newEntry.throwable(), "Entry throwable should be null");
+            } else {
+                assertNotNull(newEntry.throwable(), "Entry throwable should not be null");
+            }
+        }
+
+        ois.close();
+        oos.close();
+    }
+
+    @Test
+    void testSerializationWithThrowable() throws IOException, ClassNotFoundException {
+        // Create an entry with a throwable
+        RuntimeException exception = new RuntimeException("Test exception");
+        LogEntry entryWithThrowable = new SimpleLogEntry(
+                "Exception message",
+                "TestLogger",
+                Instant.now(),
+                LogLevel.ERROR,
+                "ERROR_MARKER",
+                exception,
+                "TestLocation"
+        );
+
+        // Add the entry to the buffer
+        logBuffer.handleEntry(entryWithThrowable);
+
+        // Serialize the buffer
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        logBuffer.writeExternal(oos);
+        oos.flush();
+
+        // Deserialize into a new buffer
+        LogBuffer newBuffer = new LogBuffer();
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        newBuffer.readExternal(ois);
+
+        // Get the new buffer state
+        LogBuffer.BufferState newState = newBuffer.getBufferState();
+
+        // Verify the entry with throwable
+        assertEquals(1, newState.entries().length, "Buffer should have 1 entry");
+        LogEntry newEntry = newState.entries()[0];
+
+        assertEquals("Exception message", newEntry.message(), "Entry message should match");
+        assertEquals("TestLogger", newEntry.loggerName(), "Entry logger name should match");
+        assertEquals(LogLevel.ERROR, newEntry.level(), "Entry level should match");
+        assertEquals("ERROR_MARKER", newEntry.marker(), "Entry marker should match");
+        assertEquals("TestLocation", newEntry.location(), "Entry location should match");
+
+        // Verify the throwable was deserialized
+        assertNotNull(newEntry.throwable(), "Entry throwable should not be null");
+        assertTrue(newEntry.throwable() instanceof RuntimeException, "Throwable should be a RuntimeException");
+        assertTrue(newEntry.throwable().getMessage().contains("Test exception"), 
+                "Throwable message should contain the original exception message");
+
+        ois.close();
+        oos.close();
     }
 
     /**
