@@ -199,6 +199,7 @@ public final class FxUtil {
                         s.control(1).x(), s.control(1).y(),
                         false, false)
                 );
+                case ClosePath2f s -> jfxPath.getElements().add(new ClosePath());
                 default ->
                         throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass().getName());
             }
@@ -424,10 +425,9 @@ public final class FxUtil {
      * @param img the image
      */
     public static void copyToClipboard(javafx.scene.image.Image img) {
-        final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
         content.putImage(img);
-        clipboard.setContent(content);
+        Clipboard.getSystemClipboard().setContent(content);
     }
 
     /**
