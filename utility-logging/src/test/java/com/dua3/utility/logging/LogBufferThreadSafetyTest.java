@@ -93,17 +93,17 @@ class LogBufferThreadSafetyTest {
         int expectedInBuffer = Math.min(BUFFER_CAPACITY, totalEntries);
         int expectedRemoved = Math.max(0, totalEntries - BUFFER_CAPACITY);
 
-        assertEquals(expectedInBuffer, state.entries().length, 
+        assertEquals(expectedInBuffer, state.entries().length,
                 "Buffer should contain the expected number of entries");
-        assertEquals(totalEntries, state.totalAdded(), 
+        assertEquals(totalEntries, state.totalAdded(),
                 "Total added should match the number of entries added");
-        assertEquals(expectedRemoved, state.totalRemoved(), 
+        assertEquals(expectedRemoved, state.totalRemoved(),
                 "Total removed should match the expected number of removed entries");
 
         // Verify listener counts
-        assertEquals(totalEntries, listenerAddedCount.get(), 
+        assertEquals(totalEntries, listenerAddedCount.get(),
                 "Listener added count should match total entries added");
-        assertEquals(expectedRemoved, listenerRemovedCount.get(), 
+        assertEquals(expectedRemoved, listenerRemovedCount.get(),
                 "Listener removed count should match expected removed entries");
     }
 
@@ -202,11 +202,11 @@ class LogBufferThreadSafetyTest {
 
         // Final buffer state should be consistent
         LogBuffer.BufferState state = logBuffer.getBufferState();
-        assertTrue(state.entries().length <= BUFFER_CAPACITY, 
+        assertTrue(state.entries().length <= BUFFER_CAPACITY,
                 "Buffer should not exceed capacity");
-        assertTrue(state.totalAdded() >= state.entries().length, 
+        assertTrue(state.totalAdded() >= state.entries().length,
                 "Total added should be at least the number of entries in the buffer");
-        assertEquals(state.totalAdded() - state.entries().length, state.totalRemoved(), 
+        assertEquals(state.totalAdded() - state.entries().length, state.totalRemoved(),
                 "Total removed should be consistent with total added and current size");
     }
 
@@ -277,13 +277,13 @@ class LogBufferThreadSafetyTest {
                                     int toIndex = Math.min(fromIndex + 2, state.entries().length);
                                     List<LogEntry> subList = logBuffer.subList(fromIndex, toIndex);
                                     assertNotNull(subList, "Sublist should not be null");
-                                    assertTrue(subList.size() <= toIndex - fromIndex, 
+                                    assertTrue(subList.size() <= toIndex - fromIndex,
                                             "Sublist size should be consistent");
                                 }
 
                                 // Convert to array
                                 LogEntry[] array = logBuffer.toArray();
-                                assertEquals(state.entries().length, array.length, 
+                                assertEquals(state.entries().length, array.length,
                                         "Array length should match buffer size");
                             }
 
@@ -327,18 +327,18 @@ class LogBufferThreadSafetyTest {
 
         // Final buffer state should be consistent
         LogBuffer.BufferState state = logBuffer.getBufferState();
-        assertTrue(state.entries().length <= BUFFER_CAPACITY, 
+        assertTrue(state.entries().length <= BUFFER_CAPACITY,
                 "Buffer should not exceed capacity");
-        assertTrue(state.totalAdded() >= state.entries().length, 
+        assertTrue(state.totalAdded() >= state.entries().length,
                 "Total added should be at least the number of entries in the buffer");
-        assertEquals(state.totalAdded() - state.entries().length, state.totalRemoved(), 
+        assertEquals(state.totalAdded() - state.entries().length, state.totalRemoved(),
                 "Total removed should be consistent with total added and current size");
     }
 
     /**
      * Helper method to create a test log entry.
      */
-    private LogEntry createTestLogEntry(String message) {
+    private static LogEntry createTestLogEntry(String message) {
         return new SimpleLogEntry(
                 message,
                 "TestLogger",
