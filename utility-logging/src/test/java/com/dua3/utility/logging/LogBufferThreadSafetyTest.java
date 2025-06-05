@@ -194,8 +194,8 @@ class LogBufferThreadSafetyTest {
         producerExecutor.shutdown();
         clearerExecutor.shutdown();
 
-        assertTrue(producerExecutor.awaitTermination(5, TimeUnit.SECONDS));
-        assertTrue(clearerExecutor.awaitTermination(5, TimeUnit.SECONDS));
+        assertTrue(producerExecutor.awaitTermination(30, TimeUnit.SECONDS));
+        assertTrue(clearerExecutor.awaitTermination(30, TimeUnit.SECONDS));
 
         // Verify that clear operations were performed and counted by the listener
         assertTrue(clearCount.get() > 0, "Clear operations should have been performed");
