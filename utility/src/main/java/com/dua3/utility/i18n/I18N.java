@@ -62,6 +62,11 @@ public final class I18N {
                 protected Object[][] getContents() {
                     return EMPTY_CONTENT;
                 }
+
+                @Override
+                public Locale getLocale() {
+                    return Locale.getDefault();
+                }
             };
             i18n = create(bundle);
             LOG.warn("No I18N provider found. Creating empty I18N instance.");
