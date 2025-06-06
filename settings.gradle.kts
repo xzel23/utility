@@ -26,7 +26,7 @@ include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver") version "0.10.0"
+    id("org.gradle.toolchains.foojay-resolver") version "1.0.0"
 }
 
 toolchainManagement {
