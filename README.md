@@ -195,6 +195,15 @@ could not be loaded.
 
 ## Changes
 
+### 19.2.1
+
+- fix: incorrect implementation of FxUtil.convert(Affine)
+- fix: ClosePath not implemented by FxUtil.convert(Path2f)
+- fix: LogBuffer thread-safety issues and externalization
+- PathBuilder2f: add overloads for passing float values x, y instead of Vector2f
+- run FX tests in forked mode to avoid exceptions due to starting and stopping the Platform multiple times in the same JVM
+- increase unit test coverage
+
 ### 19.2.0
 
 - the Gradle build was changed to use the toolchain and JavaFX plugins again. This facilitates building the library
@@ -203,15 +212,11 @@ could not be loaded.
 - fix: SwingGraphics.drawImage() draws at wrong position
 - fix: SwingGraphics.clip(Rectangle2f) was missing a corner
 - fix: the comparator returned by IoUtil.lexicalPathComparator() considered null paths to be greater than non-null paths
-- fix: incorrect implementation of FxUtil.convert(Affine)
-- fix: ClosePath not implemented by FxUtil.convert(Path2f)
-- fix: LogBuffer thread-safety issues and externalization
-- PathBuilder2f: add overloads for passing float values x, y instead of Vector2f
+- improve performance of TeeOutputStream
 - updates and fixes to the ProgressView/ProgressTracker and related classes
 - the rendered images created during rendering tests can be downloaded from GitHub to check if the rendering works
   correctly; this is necessary because even on the same OS there may be differences in rendering depending on the
   installed fonts or rendering pipeline (software rendering didn't completely solve this)
-- run FX tests in forked mode to avoid exceptions due to starting and stopping the Platform multiple times in the same JVM
 - increase unit test coverage
 
 ### 19.1.1
