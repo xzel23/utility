@@ -8,7 +8,6 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.text.RichText;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
