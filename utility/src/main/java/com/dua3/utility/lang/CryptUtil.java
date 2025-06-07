@@ -142,7 +142,7 @@ public final class CryptUtil {
      */
     private static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) {
         validateAsymmetricAlgorithm(key.getAlgorithm());
-        
+
         // RSA can only encrypt data smaller than key size minus padding
         if (key instanceof RSAKey rsaKey) {
             LangUtil.check(dataLength <= (rsaKey.getModulus().bitLength() / 8) - 66,
@@ -486,7 +486,7 @@ public final class CryptUtil {
 
     /**
      * Symmetrically encrypt data using a Key object.
-     * 
+     *
      * @param key  the encryption key (must be AES SecretKey)
      * @param data the data to encrypt
      * @return the encrypted message as byte array
@@ -494,7 +494,7 @@ public final class CryptUtil {
      */
     public static byte[] encrypt(Key key, byte[] data) throws GeneralSecurityException {
         validateSymmetricKey(key);
-        
+
         byte[] iv = new byte[IV_LENGTH];
         RANDOM.nextBytes(iv);
 
@@ -697,7 +697,7 @@ public final class CryptUtil {
      */
     public static byte[] decrypt(Key key, byte[] cipherMessage) throws GeneralSecurityException {
         validateSymmetricKey(key);
-        
+
         ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);
         LangUtil.check(cipherMessage.length >= Integer.BYTES, "cipher message too short");
         int ivLength = byteBuffer.getInt();
@@ -737,7 +737,7 @@ public final class CryptUtil {
 
     /**
      * Create a SecretKey from a byte array.
-     * 
+     *
      * @param keyBytes the key bytes (must be 128, 192, or 256 bits)
      * @return SecretKey instance
      */
@@ -793,16 +793,16 @@ public final class CryptUtil {
     public static byte[] decryptAsymmetric(PrivateKey privateKey, byte[] cipherData) throws GeneralSecurityException {
         validateAsymmetricDecryptionKey(privateKey);
         String transformation = getAsymmetricTransformation(privateKey.getAlgorithm());
-        
+
         Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        
+
         return cipher.doFinal(cipherData);
     }
 
     /**
      * Asymmetrically encrypt text using a public key.
-     * 
+     *
      * @param publicKey the public key for encryption
      * @param text the text to encrypt
      * @return the encrypted message as Base64 encoded String
