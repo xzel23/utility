@@ -11,8 +11,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.HexFormat;
+import javax.crypto.SecretKey;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -178,5 +182,273 @@ class CryptUtilTest {
         String decrypted = CryptUtil.decrypt(key, encrypted);
 
         assertEquals(message, decrypted);
+    }
+
+    @Test
+    void testDeriveSecretKeyWithSalt() throws GeneralSecurityException {
+        char[] passphrase = "test-passphrase".toCharArray();
+        byte[] salt = CryptUtil.generateSalt(16);
+
+        // Test with different key sizes
+        for (int keyBits : new int[]{128, 192, 256}) {
+            SecretKey key = CryptUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits);
+
+            // Verify key length
+            assertEquals(keyBits / 8, key.getEncoded().length);
+
+            // Derive the key again with the same parameters and verify it's the same
+            SecretKey sameKey = CryptUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits);
+            assertArrayEquals(key.getEncoded(), sameKey.getEncoded());
+
+            // Derive with different salt and verify it's different
+            byte[] differentSalt = CryptUtil.generateSalt(16);
+            SecretKey differentKey = CryptUtil.deriveSecretKey(passphrase.clone(), differentSalt, 10000, keyBits);
+            assertFalse(Arrays.equals(key.getEncoded(), differentKey.getEncoded()));
+
+            // Test encryption/decryption with the derived key
+            String message = "Test message for derived key";
+            String encrypted = CryptUtil.encrypt(key, message);
+            String decrypted = CryptUtil.decrypt(key, encrypted);
+            assertEquals(message, decrypted);
+        }
+    }
+
+    @Test
+    void testDeriveSecretKeyWithContext() throws GeneralSecurityException {
+        char[] passphrase = "test-passphrase".toCharArray();
+        String context = "user:testuser";
+
+        SecretKey key = CryptUtil.deriveSecretKey(passphrase.clone(), context);
+
+        // Default key size is 256 bits = 32 bytes
+        assertEquals(32, key.getEncoded().length);
+
+        // Derive the key again with the same parameters and verify it's the same
+        SecretKey sameKey = CryptUtil.deriveSecretKey(passphrase.clone(), context);
+        assertArrayEquals(key.getEncoded(), sameKey.getEncoded());
+
+        // Derive with different context and verify it's different
+        String differentContext = "user:otheruser";
+        SecretKey differentKey = CryptUtil.deriveSecretKey(passphrase.clone(), differentContext);
+        assertFalse(Arrays.equals(key.getEncoded(), differentKey.getEncoded()));
+
+        // Test encryption/decryption with the derived key
+        String message = "Test message for context-derived key";
+        String encrypted = CryptUtil.encrypt(key, message);
+        String decrypted = CryptUtil.decrypt(key, encrypted);
+        assertEquals(message, decrypted);
+    }
+
+    @Test
+    void testToSecretKey() throws GeneralSecurityException {
+        // Test with different key sizes
+        for (int keyBits : new int[]{128, 192, 256}) {
+            byte[] keyBytes = CryptUtil.generateKey(keyBits);
+
+            SecretKey secretKey = CryptUtil.toSecretKey(keyBytes);
+
+            // Verify key length
+            assertEquals(keyBits / 8, secretKey.getEncoded().length);
+
+            // Verify the key material is the same
+            assertArrayEquals(keyBytes, secretKey.getEncoded());
+
+            // Test encryption/decryption with the key
+            String message = "Test message for SecretKey";
+            String encrypted = CryptUtil.encrypt(secretKey, message);
+            String decrypted = CryptUtil.decrypt(secretKey, encrypted);
+            assertEquals(message, decrypted);
+        }
+    }
+
+    @Test
+    void testGenerateSecretKey() throws GeneralSecurityException {
+        // Test with different key sizes
+        for (int keyBits : new int[]{128, 192, 256}) {
+            SecretKey key = CryptUtil.generateSecretKey(keyBits);
+
+            // Verify key length
+            assertEquals(keyBits / 8, key.getEncoded().length);
+
+            // Generate another key and verify it's different
+            SecretKey anotherKey = CryptUtil.generateSecretKey(keyBits);
+            assertFalse(Arrays.equals(key.getEncoded(), anotherKey.getEncoded()));
+
+            // Test encryption/decryption with the generated key
+            String message = "Test message for generated SecretKey";
+            String encrypted = CryptUtil.encrypt(key, message);
+            String decrypted = CryptUtil.decrypt(key, encrypted);
+            assertEquals(message, decrypted);
+        }
+    }
+
+    @Test
+    void testKeyConversionMethods() throws GeneralSecurityException {
+        // Generate a key pair for testing
+        KeyPair keyPair = CryptUtil.generateRSAKeyPair();
+        PublicKey originalPublicKey = keyPair.getPublic();
+        PrivateKey originalPrivateKey = keyPair.getPrivate();
+
+        // Test toPublicKey and toPrivateKey with default algorithm
+        byte[] publicKeyBytes = originalPublicKey.getEncoded();
+        byte[] privateKeyBytes = originalPrivateKey.getEncoded();
+
+        PublicKey convertedPublicKey = CryptUtil.toPublicKey(publicKeyBytes);
+        PrivateKey convertedPrivateKey = CryptUtil.toPrivateKey(privateKeyBytes);
+
+        // Verify the converted keys match the originals
+        assertArrayEquals(originalPublicKey.getEncoded(), convertedPublicKey.getEncoded());
+        assertArrayEquals(originalPrivateKey.getEncoded(), convertedPrivateKey.getEncoded());
+
+        // Test toPublicKey and toPrivateKey with explicit algorithm
+        PublicKey convertedPublicKeyWithAlg = CryptUtil.toPublicKey(publicKeyBytes, "RSA");
+        PrivateKey convertedPrivateKeyWithAlg = CryptUtil.toPrivateKey(privateKeyBytes, "RSA");
+
+        assertArrayEquals(originalPublicKey.getEncoded(), convertedPublicKeyWithAlg.getEncoded());
+        assertArrayEquals(originalPrivateKey.getEncoded(), convertedPrivateKeyWithAlg.getEncoded());
+
+        // Test toKeyPair
+        KeyPair convertedKeyPair = CryptUtil.toKeyPair(publicKeyBytes, privateKeyBytes);
+        assertArrayEquals(originalPublicKey.getEncoded(), convertedKeyPair.getPublic().getEncoded());
+        assertArrayEquals(originalPrivateKey.getEncoded(), convertedKeyPair.getPrivate().getEncoded());
+
+        // Test toKeyPair with explicit algorithm
+        KeyPair convertedKeyPairWithAlg = CryptUtil.toKeyPair(publicKeyBytes, privateKeyBytes, "RSA");
+        assertArrayEquals(originalPublicKey.getEncoded(), convertedKeyPairWithAlg.getPublic().getEncoded());
+        assertArrayEquals(originalPrivateKey.getEncoded(), convertedKeyPairWithAlg.getPrivate().getEncoded());
+    }
+
+    @Test
+    void testAsymmetricEncryption() throws GeneralSecurityException {
+        // Generate a key pair for testing
+        KeyPair keyPair = CryptUtil.generateRSAKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        // Test byte array encryption/decryption
+        for (String message : MESSAGES) {
+            if (message.isEmpty()) {
+                continue; // Skip empty message as it might not be supported by RSA
+            }
+
+            byte[] data = message.getBytes(StandardCharsets.UTF_8);
+
+            // Skip if data is too large for RSA encryption
+            if (data.length > 100) {
+                continue;
+            }
+
+            byte[] encrypted = CryptUtil.encryptAsymmetric(publicKey, data);
+            byte[] decrypted = CryptUtil.decryptAsymmetric(privateKey, encrypted);
+
+            assertArrayEquals(data, decrypted);
+        }
+
+        // Test string encryption/decryption
+        String message = "Short test message";
+        String encrypted = CryptUtil.encryptAsymmetric(publicKey, message);
+        String decrypted = CryptUtil.decryptAsymmetric(privateKey, encrypted);
+
+        assertEquals(message, decrypted);
+
+        // Test char array encryption/decryption
+        char[] messageChars = message.toCharArray();
+        String encryptedChars = CryptUtil.encryptAsymmetric(publicKey, messageChars);
+        char[] decryptedChars = CryptUtil.decryptAsymmetricToChars(privateKey, encryptedChars);
+
+        assertEquals(message, new String(decryptedChars));
+    }
+
+    @Test
+    void testSigningAndVerification() throws GeneralSecurityException {
+        // Generate a key pair for testing
+        KeyPair keyPair = CryptUtil.generateRSAKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        // Test byte array signing/verification
+        for (String message : MESSAGES) {
+            byte[] data = message.getBytes(StandardCharsets.UTF_8);
+
+            byte[] signature = CryptUtil.sign(privateKey, data);
+            boolean verified = CryptUtil.verify(publicKey, data, signature);
+
+            assertTrue(verified);
+
+            // Verify that modifying the data invalidates the signature
+            if (data.length > 0) {
+                byte[] modifiedData = Arrays.copyOf(data, data.length);
+                modifiedData[0] = (byte) (modifiedData[0] + 1);
+                boolean verifiedModified = CryptUtil.verify(publicKey, modifiedData, signature);
+                assertFalse(verifiedModified);
+            }
+        }
+
+        // Test string signing/verification
+        String message = "Test message for signing";
+        String signature = CryptUtil.sign(privateKey, message);
+        boolean verified = CryptUtil.verify(publicKey, message, signature);
+
+        assertTrue(verified);
+
+        // Test char array signing/verification
+        char[] messageChars = message.toCharArray();
+        String signatureChars = CryptUtil.sign(privateKey, messageChars);
+        boolean verifiedChars = CryptUtil.verify(publicKey, messageChars, signatureChars);
+
+        assertTrue(verifiedChars);
+    }
+
+    @Test
+    void testHybridEncryption() throws GeneralSecurityException {
+        // Generate a key pair for testing
+        KeyPair keyPair = CryptUtil.generateRSAKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        // Test byte array hybrid encryption/decryption
+        for (String message : MESSAGES) {
+            byte[] data = message.getBytes(StandardCharsets.UTF_8);
+
+            byte[] encrypted = CryptUtil.encryptHybrid(publicKey, data);
+            byte[] decrypted = CryptUtil.decryptHybrid(privateKey, encrypted);
+
+            assertArrayEquals(data, decrypted);
+        }
+
+        // Test string hybrid encryption/decryption
+        String message = "Test message for hybrid encryption";
+        String encrypted = CryptUtil.encryptHybrid(publicKey, message);
+        String decrypted = CryptUtil.decryptHybrid(privateKey, encrypted);
+
+        assertEquals(message, decrypted);
+
+        // Test char array hybrid encryption/decryption
+        char[] messageChars = message.toCharArray();
+        String encryptedChars = CryptUtil.encryptHybrid(publicKey, messageChars);
+        char[] decryptedChars = CryptUtil.decryptHybridToChars(privateKey, encryptedChars);
+
+        assertEquals(message, new String(decryptedChars));
+    }
+
+    @Test
+    void testGenerateKeyPair() throws GeneralSecurityException {
+        // Test RSA key pair generation
+        KeyPair rsaKeyPair = CryptUtil.generateRSAKeyPair();
+        assertNotNull(rsaKeyPair);
+        assertEquals("RSA", rsaKeyPair.getPublic().getAlgorithm());
+        assertEquals("RSA", rsaKeyPair.getPrivate().getAlgorithm());
+
+        // Test custom algorithm and key size
+        KeyPair customKeyPair = CryptUtil.generateKeyPair("RSA", 2048);
+        assertNotNull(customKeyPair);
+        assertEquals("RSA", customKeyPair.getPublic().getAlgorithm());
+        assertEquals("RSA", customKeyPair.getPrivate().getAlgorithm());
+
+        // Test EC key pair generation
+        KeyPair ecKeyPair = CryptUtil.generateECKeyPair("secp256r1");
+        assertNotNull(ecKeyPair);
+        assertEquals("EC", ecKeyPair.getPublic().getAlgorithm());
+        assertEquals("EC", ecKeyPair.getPrivate().getAlgorithm());
     }
 }
