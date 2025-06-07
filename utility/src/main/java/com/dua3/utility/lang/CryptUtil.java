@@ -259,6 +259,68 @@ public final class CryptUtil {
         return deriveKey(passphrase, salt, KEY_DERIVATION_DEFAULT_ITERATIONS, KEY_DERIVATION_DEFAULT_BITS);
     }
 
+
+    /**
+     * Derive a SecretKey from a passphrase using PBKDF2-SHA256.
+     * <p>
+     * <strong>Make sure to store the salt to be able to retrieve the generated key again later.</strong>
+     * <p>
+     * This method provides a type-safe alternative to {@link #deriveKey(char[], byte[], int, int)}
+     * that returns a SecretKey object instead of raw bytes.
+     *
+     * @param passphrase the passphrase (cleared after use)
+     * @param salt random salt (minimum 16 bytes)
+     * @param iterations iteration count (minimum 10000)
+     * @param keyBits key size in bits (128, 192, or 256)
+     * @return derived SecretKey for symmetric encryption
+     * @throws GeneralSecurityException if key derivation fails
+     */
+    public static SecretKey deriveSecretKey(char[] passphrase, byte[] salt, int iterations, int keyBits)
+            throws GeneralSecurityException {
+        byte[] keyBytes = deriveKey(passphrase, salt, iterations, keyBits);
+        try {
+            return toSecretKey(keyBytes);
+        } finally {
+            // Clear the intermediate byte array
+            Arrays.fill(keyBytes, (byte) 0);
+        }
+    }
+
+    /**
+     * Derive a SecretKey using a context-based salt.
+     * The context should be unique and stable for the intended use case.
+     * <p>
+     * <strong>Security Note:</strong> While more secure than a fixed salt, this approach
+     * still produces deterministic results. For maximum security in multi-user systems,
+     * consider using {@link #deriveSecretKey(char[], byte[], int, int)} with a unique random salt
+     * per user/session and store the salt securely.
+     * <p>
+     * This method provides a type-safe alternative to {@link #deriveKey(char[], CharSequence)}
+     * that returns a SecretKey object instead of raw bytes.
+     *
+     * <p><strong>Example usage:</strong></p>
+     * <pre>{@code
+     * char[] password = "mySecretPassword".toCharArray();
+     * SecretKey key = CryptUtil.deriveSecretKey(password, "user:john.doe");
+     * String encrypted = CryptUtil.encrypt(key, "sensitive data");
+     * }</pre>
+     *
+     * @param passphrase the passphrase (cleared after use)
+     * @param context unique context (e.g., "user:john", "file:/path/to/file", "section:config")
+     * @return derived SecretKey for symmetric encryption
+     * @throws GeneralSecurityException if key derivation fails
+     */
+    public static SecretKey deriveSecretKey(char[] passphrase, CharSequence context)
+            throws GeneralSecurityException {
+        byte[] keyBytes = deriveKey(passphrase, context);
+        try {
+            return toSecretKey(keyBytes);
+        } finally {
+            // Clear the intermediate byte array
+            Arrays.fill(keyBytes, (byte) 0);
+        }
+    }
+
     /**
      * Generate random salt for key derivation.
      *
