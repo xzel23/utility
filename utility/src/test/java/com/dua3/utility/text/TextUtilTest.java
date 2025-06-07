@@ -9,6 +9,7 @@ import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,19 +32,38 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static com.dua3.utility.text.TextUtil.*;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class TextUtilTest {
+
+    @Test
+    void testBytesToCharsWithValidInput() {
+        byte[] input = "Hello".getBytes(StandardCharsets.UTF_8);
+        char[] expected = {'H', 'e', 'l', 'l', 'o'};
+        char[] result = TextUtil.bytesToChars(input);
+        Assertions.assertArrayEquals(expected, result, "Expected char array does not match the result.");
+    }
+
+    @Test
+    void testBytesToCharsWithEmptyInput() {
+        byte[] input = {};
+        char[] expected = new char[0];
+        char[] result = TextUtil.bytesToChars(input);
+        Assertions.assertArrayEquals(expected, result, "Expected an empty char array.");
+    }
+
+    @Test
+    void testBytesToCharsWithSpecialCharacters() {
+        String input = "Ω漢字";
+        byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
+        char[] expected = {'Ω', '漢', '字'};
+        char[] result = TextUtil.bytesToChars(bytes);
+        Assertions.assertArrayEquals(expected, result, "Expected char array for special characters does not match the result.");
+    }
 
     @ParameterizedTest
     @MethodSource("generateTestData_transform")
     void testTransform(String template, Function<String, String> env, String expected) {
-        String actual = transform(template, env);
-        assertEquals(expected, actual);
+        String actual = TextUtil.transform(template, env);
+        Assertions.assertEquals(expected, actual);
     }
 
     private static Stream<Arguments> generateTestData_transform() {
@@ -67,8 +87,8 @@ class TextUtilTest {
     @ParameterizedTest
     @MethodSource("generateTestData_transform_RichText")
     void testTransform_RichText(RichText template, Function<String, RichText> env, RichText expected) {
-        RichText actual = transform(template, env);
-        assertEquals(expected, actual);
+        RichText actual = TextUtil.transform(template, env);
+        Assertions.assertEquals(expected, actual);
     }
 
     private static Stream<Arguments> generateTestData_transform_RichText() {
@@ -94,9 +114,9 @@ class TextUtilTest {
         String template = "Hello ${NAME}.";
 
         String expected = "Hello Axel.";
-        String actual = transform(template, Map.of("NAME", "Axel"));
+        String actual = TextUtil.transform(template, Map.of("NAME", "Axel"));
 
-        assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     record TestDataAlign(String text, String expected, int width, Alignment align, Character fill) {}
@@ -105,9 +125,9 @@ class TextUtilTest {
     @MethodSource("generateTestDataAlign")
     void testAlign(TestDataAlign data) {
         if (data.fill() == null) {
-            assertEquals(data.expected(), align(data.text(), data.width(), data.align()));
+            Assertions.assertEquals(data.expected(), TextUtil.align(data.text(), data.width(), data.align()));
         } else {
-            assertEquals(data.expected(), align(data.text(), data.width(), data.align(), data.fill()));
+            Assertions.assertEquals(data.expected(), TextUtil.align(data.text(), data.width(), data.align(), data.fill()));
         }
     }
 
@@ -158,7 +178,7 @@ class TextUtilTest {
     void testWrap(TestDataWrap data) throws IOException {
         TextAssertions.assertEqualsWithEscapedOutput(
                 LangUtil.getResourceAsString(getClass(), data.fileRef()),
-                wrap(LangUtil.getResourceAsString(getClass(), data.fileIn()), data.width, data.align, data.hardWrap),
+                TextUtil.wrap(LangUtil.getResourceAsString(getClass(), data.fileIn()), data.width, data.align, data.hardWrap),
                 data.fileIn()
         );
     }
@@ -179,14 +199,14 @@ class TextUtilTest {
         // Test with non-null, non-empty CharSequence - Expected to return inputString itself
         String input = "Test Input";
         String defaultInput = "Default";
-        assertEquals("Test Input", nonEmptyOr(input, defaultInput));
+        Assertions.assertEquals("Test Input", TextUtil.nonEmptyOr(input, defaultInput));
 
         // Test with empty CharSequence - Expected to return defaultString
         input = "";
-        assertEquals("Default", nonEmptyOr(input, defaultInput));
+        Assertions.assertEquals("Default", TextUtil.nonEmptyOr(input, defaultInput));
 
         // Test with null CharSequence - Expected to return defaultString
-        assertEquals("Default", nonEmptyOr(null, defaultInput));
+        Assertions.assertEquals("Default", TextUtil.nonEmptyOr(null, defaultInput));
     }
 
     @Test
@@ -194,53 +214,53 @@ class TextUtilTest {
         // Test with non-null, non-empty CharSequence - Expected to return inputString itself
         RichText input = RichText.valueOf("Test Input");
         RichText defaultInput = RichText.valueOf("Default");
-        assertEquals(input, nonEmptyOr(input, defaultInput));
+        Assertions.assertEquals(input, TextUtil.nonEmptyOr(input, defaultInput));
 
         // Test with empty CharSequence - Expected to return defaultString
         input = RichText.valueOf("");
-        assertEquals(defaultInput, nonEmptyOr(input, defaultInput));
+        Assertions.assertEquals(defaultInput, TextUtil.nonEmptyOr(input, defaultInput));
 
         // Test with null CharSequence - Expected to return defaultString
-        assertEquals(defaultInput, nonEmptyOr(null, defaultInput));
+        Assertions.assertEquals(defaultInput, TextUtil.nonEmptyOr(null, defaultInput));
     }
 
     @Test
     void testEscapeHTML() {
         String normalString = "<div>Test Content</div>";
-        String escapedString = escapeHTML(normalString);
-        assertEquals("&lt;div&gt;Test Content&lt;/div&gt;", escapedString);
+        String escapedString = TextUtil.escapeHTML(normalString);
+        Assertions.assertEquals("&lt;div&gt;Test Content&lt;/div&gt;", escapedString);
 
         String stringWithAmpersand = "Tom & Jerry";
-        escapedString = escapeHTML(stringWithAmpersand);
-        assertEquals("Tom &amp; Jerry", escapedString);
+        escapedString = TextUtil.escapeHTML(stringWithAmpersand);
+        Assertions.assertEquals("Tom &amp; Jerry", escapedString);
 
         String specialCharactersString = "< > & \" ' /";
-        escapedString = escapeHTML(specialCharactersString);
-        assertEquals("&lt; &gt; &amp; &quot; &apos; /", escapedString);
+        escapedString = TextUtil.escapeHTML(specialCharactersString);
+        Assertions.assertEquals("&lt; &gt; &amp; &quot; &apos; /", escapedString);
     }
 
     @Test
     void testDecodeFontSize() {
         // Test with "pt"
-        assertEquals(10.0f, decodeFontSize("10pt"), 0.001);
+        Assertions.assertEquals(10.0f, TextUtil.decodeFontSize("10pt"), 0.001);
 
         // Test with "em"
-        assertEquals(120.0f, decodeFontSize("10em"), 0.001);
+        Assertions.assertEquals(120.0f, TextUtil.decodeFontSize("10em"), 0.001);
 
         // Test with "px"
-        assertEquals(7.5f, decodeFontSize("10px"), 0.001);
+        Assertions.assertEquals(7.5f, TextUtil.decodeFontSize("10px"), 0.001);
 
         // Test with "%"
-        assertEquals(1.2f, decodeFontSize("10%"), 0.001);
+        Assertions.assertEquals(1.2f, TextUtil.decodeFontSize("10%"), 0.001);
 
         // Test with unknown unit
-        assertThrows(IllegalArgumentException.class, () -> decodeFontSize("10abc"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TextUtil.decodeFontSize("10abc"));
 
         // Test with "vw"
-        assertEquals(120.0f, decodeFontSize("10vw"), 0.001);
+        Assertions.assertEquals(120.0f, TextUtil.decodeFontSize("10vw"), 0.001);
 
         // Test with empty string
-        assertThrows(IllegalArgumentException.class, () -> decodeFontSize(""));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> TextUtil.decodeFontSize(""));
     }
 
     private static Object[][] textDimensionProvider() {
@@ -260,9 +280,9 @@ class TextUtilTest {
     @MethodSource("textDimensionProvider")
     void testGetTextDimension(CharSequence text, Font font, Object expected) {
         if (expected instanceof Dimension2f)
-            assertEquals(expected, getTextDimension(text, font));
+            Assertions.assertEquals(expected, TextUtil.getTextDimension(text, font));
         else if (expected instanceof Class<?> && Exception.class.isAssignableFrom((Class<?>) expected))
-            assertThrows((Class<? extends Throwable>) expected, () -> getTextDimension(text, font));
+            Assertions.assertThrows((Class<? extends Throwable>) expected, () -> TextUtil.getTextDimension(text, font));
     }
 
     @Test
@@ -276,9 +296,9 @@ class TextUtilTest {
                 .append("!")
                 .toRichText();
 
-        Rectangle2f textDimensionHiJohn = getTextDimension(textHiJohn, timesRoman12);
-        Rectangle2f richTextDimensionHiJohn = getRichTextDimension(textHiJohn, timesRoman12);
-        assertEquals(textDimensionHiJohn, richTextDimensionHiJohn);
+        Rectangle2f textDimensionHiJohn = TextUtil.getTextDimension(textHiJohn, timesRoman12);
+        Rectangle2f richTextDimensionHiJohn = TextUtil.getRichTextDimension(textHiJohn, timesRoman12);
+        Assertions.assertEquals(textDimensionHiJohn, richTextDimensionHiJohn);
 
         // the bold font should use more space
         RichText textHiBoldJohn = new RichTextBuilder()
@@ -289,21 +309,21 @@ class TextUtilTest {
                 .append("!")
                 .toRichText();
 
-        Rectangle2f richTextDimensionHiBoldJohn = getRichTextDimension(textHiBoldJohn, timesRoman12);
-        assertTrue(textDimensionHiJohn.height() <= richTextDimensionHiBoldJohn.height());
-        assertTrue(textDimensionHiJohn.width() < richTextDimensionHiBoldJohn.width());
+        Rectangle2f richTextDimensionHiBoldJohn = TextUtil.getRichTextDimension(textHiBoldJohn, timesRoman12);
+        Assertions.assertTrue(textDimensionHiJohn.height() <= richTextDimensionHiBoldJohn.height());
+        Assertions.assertTrue(textDimensionHiJohn.width() < richTextDimensionHiBoldJohn.width());
     }
 
     @Test
     void testToStringWithNonNullObject() {
         String result = TextUtil.toString(123, "default");
-        assertEquals("123", result, "Expected toString() of 123 to be '123'");
+        Assertions.assertEquals("123", result, "Expected toString() of 123 to be '123'");
     }
 
     @Test
     void testToStringWithNullObject() {
         String result = TextUtil.toString(null, "default");
-        assertEquals("default", result, "Expected toString() of null to be 'default'");
+        Assertions.assertEquals("default", result, "Expected toString() of null to be 'default'");
     }
 
     @Test
@@ -315,200 +335,200 @@ class TextUtilTest {
             }
         };
         String result = TextUtil.toString(obj, "default");
-        assertEquals("CustomObject", result, "Expected toString() of custom object to be 'CustomObject'");
+        Assertions.assertEquals("CustomObject", result, "Expected toString() of custom object to be 'CustomObject'");
     }
 
     @Test
     void testToStringWithEmptyValueIfNull() {
         String result = TextUtil.toString(null, "");
-        assertEquals("", result, "Expected toString() of null to be an empty string");
+        Assertions.assertEquals("", result, "Expected toString() of null to be an empty string");
     }
 
     @Test
     void testLexicographicComparatorWithDefaultLocale() {
         Comparator<String> comparator = TextUtil.lexicographicComparator(Locale.getDefault());
-        assertTrue(comparator.compare("apple", "banana") < 0, "Expected 'apple' to come before 'banana'");
-        assertTrue(comparator.compare("banana", "apple") > 0, "Expected 'banana' to come after 'apple'");
-        assertEquals(0, comparator.compare("apple", "apple"), "Expected 'apple' to be equal to 'apple'");
+        Assertions.assertTrue(comparator.compare("apple", "banana") < 0, "Expected 'apple' to come before 'banana'");
+        Assertions.assertTrue(comparator.compare("banana", "apple") > 0, "Expected 'banana' to come after 'apple'");
+        Assertions.assertEquals(0, comparator.compare("apple", "apple"), "Expected 'apple' to be equal to 'apple'");
     }
 
     @Test
     void testLexicographicComparatorWithCustomLocale() {
         Comparator<String> comparator = TextUtil.lexicographicComparator(Locale.FRENCH);
-        assertTrue(comparator.compare("éclair", "ete") < 0, "Expected 'éclair' to come before 'ete' in French locale");
-        assertTrue(comparator.compare("été", "éclair") > 0, "Expected 'été' to come after 'éclair' in French locale");
-        assertEquals(0, comparator.compare("été", "été"), "Expected 'été' to be equal to 'été'");
+        Assertions.assertTrue(comparator.compare("éclair", "ete") < 0, "Expected 'éclair' to come before 'ete' in French locale");
+        Assertions.assertTrue(comparator.compare("été", "éclair") > 0, "Expected 'été' to come after 'éclair' in French locale");
+        Assertions.assertEquals(0, comparator.compare("été", "été"), "Expected 'été' to be equal to 'été'");
     }
 
     @Test
     void testLexicographicComparatorWithNullValues() {
         Comparator<String> comparator = TextUtil.lexicographicComparator(Locale.getDefault());
-        assertTrue(comparator.compare(null, "apple") < 0, "Expected null to come before 'apple'");
-        assertTrue(comparator.compare("apple", null) > 0, "Expected 'apple' to come after null");
-        assertEquals(0, comparator.compare(null, null), "Expected null to be equal to null");
+        Assertions.assertTrue(comparator.compare(null, "apple") < 0, "Expected null to come before 'apple'");
+        Assertions.assertTrue(comparator.compare("apple", null) > 0, "Expected 'apple' to come after null");
+        Assertions.assertEquals(0, comparator.compare(null, null), "Expected null to be equal to null");
     }
 
     @Test
     void testAppendHtmlEscapedCharacters() {
         StringBuilder sb = new StringBuilder();
-        appendHtmlEscapedCharacters(sb, "<div>Test & 'Quote' \"DoubleQuote\"</div>");
-        assertEquals("&lt;div&gt;Test &amp; &apos;Quote&apos; &quot;DoubleQuote&quot;&lt;/div&gt;", sb.toString());
+        TextUtil.appendHtmlEscapedCharacters(sb, "<div>Test & 'Quote' \"DoubleQuote\"</div>");
+        Assertions.assertEquals("&lt;div&gt;Test &amp; &apos;Quote&apos; &quot;DoubleQuote&quot;&lt;/div&gt;", sb.toString());
 
         // Test with empty string
         sb = new StringBuilder();
-        appendHtmlEscapedCharacters(sb, "");
-        assertEquals("", sb.toString());
+        TextUtil.appendHtmlEscapedCharacters(sb, "");
+        Assertions.assertEquals("", sb.toString());
 
         // Test with non-ASCII characters
         sb = new StringBuilder();
-        appendHtmlEscapedCharacters(sb, "Café");
-        assertEquals("Caf&#233;", sb.toString());
+        TextUtil.appendHtmlEscapedCharacters(sb, "Café");
+        Assertions.assertEquals("Caf&#233;", sb.toString());
     }
 
     @Test
     void testEscape() {
         // Test with special characters
-        assertEquals("\\\"Hello\\\"", escape("\"Hello\""));
-        assertEquals("\\\\backslash", escape("\\backslash"));
-        assertEquals("Tab\\tNewline\\n", escape("Tab\tNewline\n"));
-        assertEquals("Carriage\\rReturn", escape("Carriage\rReturn"));
-        assertEquals("Form\\fFeed", escape("Form\fFeed"));
-        assertEquals("Backspace\\b", escape("Backspace\b"));
-        assertEquals("\\'Single Quote\\'", escape("'Single Quote'"));
+        Assertions.assertEquals("\\\"Hello\\\"", TextUtil.escape("\"Hello\""));
+        Assertions.assertEquals("\\\\backslash", TextUtil.escape("\\backslash"));
+        Assertions.assertEquals("Tab\\tNewline\\n", TextUtil.escape("Tab\tNewline\n"));
+        Assertions.assertEquals("Carriage\\rReturn", TextUtil.escape("Carriage\rReturn"));
+        Assertions.assertEquals("Form\\fFeed", TextUtil.escape("Form\fFeed"));
+        Assertions.assertEquals("Backspace\\b", TextUtil.escape("Backspace\b"));
+        Assertions.assertEquals("\\'Single Quote\\'", TextUtil.escape("'Single Quote'"));
 
         // Test with null character
-        assertEquals("Null\\u0000Character", escape("Null\0Character"));
+        Assertions.assertEquals("Null\\u0000Character", TextUtil.escape("Null\0Character"));
 
         // Test with non-ASCII characters
-        assertEquals("Café", escape("Café"));
-        assertEquals("你好!", escape("你好!"));
+        Assertions.assertEquals("Café", TextUtil.escape("Café"));
+        Assertions.assertEquals("你好!", TextUtil.escape("你好!"));
 
         // Test with character not belonging to any of the above classes
-        assertEquals("\\u2603", escapeASCII("☃"));
+        Assertions.assertEquals("\\u2603", TextUtil.escapeASCII("☃"));
 
         // Test with empty string
-        assertEquals("", escape(""));
+        Assertions.assertEquals("", TextUtil.escape(""));
     }
 
     @Test
     void testEscapeASCII() {
         // Test with special characters
-        assertEquals("\\\"Hello\\\"", escapeASCII("\"Hello\""));
-        assertEquals("\\\\backslash", escapeASCII("\\backslash"));
-        assertEquals("Tab\\tNewline\\n", escapeASCII("Tab\tNewline\n"));
-        assertEquals("Carriage\\rReturn", escapeASCII("Carriage\rReturn"));
-        assertEquals("Form\\fFeed", escapeASCII("Form\fFeed"));
-        assertEquals("Backspace\\b", escapeASCII("Backspace\b"));
-        assertEquals("\\'Single Quote\\'", escapeASCII("'Single Quote'"));
+        Assertions.assertEquals("\\\"Hello\\\"", TextUtil.escapeASCII("\"Hello\""));
+        Assertions.assertEquals("\\\\backslash", TextUtil.escapeASCII("\\backslash"));
+        Assertions.assertEquals("Tab\\tNewline\\n", TextUtil.escapeASCII("Tab\tNewline\n"));
+        Assertions.assertEquals("Carriage\\rReturn", TextUtil.escapeASCII("Carriage\rReturn"));
+        Assertions.assertEquals("Form\\fFeed", TextUtil.escapeASCII("Form\fFeed"));
+        Assertions.assertEquals("Backspace\\b", TextUtil.escapeASCII("Backspace\b"));
+        Assertions.assertEquals("\\'Single Quote\\'", TextUtil.escapeASCII("'Single Quote'"));
 
         // Test with null character
-        assertEquals("Null\\u0000Character", escapeASCII("Null\0Character"));
+        Assertions.assertEquals("Null\\u0000Character", TextUtil.escapeASCII("Null\0Character"));
 
         // Test with non-ASCII characters
-        assertEquals("Caf\\u00E9", escapeASCII("Café"));
-        assertEquals("\\u4F60\\u597D!", escapeASCII("你好!"));
+        Assertions.assertEquals("Caf\\u00E9", TextUtil.escapeASCII("Café"));
+        Assertions.assertEquals("\\u4F60\\u597D!", TextUtil.escapeASCII("你好!"));
 
         // Test with empty string
-        assertEquals("", escapeASCII(""));
+        Assertions.assertEquals("", TextUtil.escapeASCII(""));
     }
 
     @Test
     void testContentEquals() {
         // Test with equal content
-        assertTrue(contentEquals("test", "test"));
-        assertTrue(contentEquals(new StringBuilder("test"), "test"));
+        Assertions.assertTrue(TextUtil.contentEquals("test", "test"));
+        Assertions.assertTrue(TextUtil.contentEquals(new StringBuilder("test"), "test"));
 
         // Test with different content
-        assertTrue(!contentEquals("test", "Test"));
-        assertTrue(!contentEquals("test", "test1"));
+        Assertions.assertFalse(TextUtil.contentEquals("test", "Test"));
+        Assertions.assertFalse(TextUtil.contentEquals("test", "test1"));
 
         // Test with empty strings
-        assertTrue(contentEquals("", ""));
+        Assertions.assertTrue(TextUtil.contentEquals("", ""));
     }
 
     @Test
     void testContains() {
         // Test with substring present
-        assertTrue(contains("Hello World", "World"));
-        assertTrue(contains("Hello World", "Hello"));
-        assertTrue(contains("Hello World", "o W"));
+        Assertions.assertTrue(TextUtil.contains("Hello World", "World"));
+        Assertions.assertTrue(TextUtil.contains("Hello World", "Hello"));
+        Assertions.assertTrue(TextUtil.contains("Hello World", "o W"));
 
         // Test with substring not present
-        assertTrue(!contains("Hello World", "world"));
-        assertTrue(!contains("Hello World", "Hello  World"));
+        Assertions.assertFalse(TextUtil.contains("Hello World", "world"));
+        Assertions.assertFalse(TextUtil.contains("Hello World", "Hello  World"));
 
         // Test with empty strings
-        assertTrue(contains("Hello", ""));
-        assertTrue(!contains("", "Hello"));
+        Assertions.assertTrue(TextUtil.contains("Hello", ""));
+        Assertions.assertFalse(TextUtil.contains("", "Hello"));
     }
 
     @Test
     void testContainsNoneOf() {
         // Test with no matching characters
-        assertTrue(containsNoneOf("Hello", "xyz"));
-        assertTrue(containsNoneOf("12345", "abcde"));
+        Assertions.assertTrue(TextUtil.containsNoneOf("Hello", "xyz"));
+        Assertions.assertTrue(TextUtil.containsNoneOf("12345", "abcde"));
 
         // Test with matching characters
-        assertTrue(!containsNoneOf("Hello", "lo"));
-        assertTrue(!containsNoneOf("12345", "56"));
+        Assertions.assertFalse(TextUtil.containsNoneOf("Hello", "lo"));
+        Assertions.assertFalse(TextUtil.containsNoneOf("12345", "56"));
 
         // Test with empty strings
-        assertTrue(containsNoneOf("", "xyz"));
-        assertTrue(containsNoneOf("Hello", ""));
+        Assertions.assertTrue(TextUtil.containsNoneOf("", "xyz"));
+        Assertions.assertTrue(TextUtil.containsNoneOf("Hello", ""));
     }
 
     @Test
     void testContainsAnyOf() {
         // Test with matching characters
-        assertTrue(containsAnyOf("Hello", "lo"));
-        assertTrue(containsAnyOf("12345", "56"));
+        Assertions.assertTrue(TextUtil.containsAnyOf("Hello", "lo"));
+        Assertions.assertTrue(TextUtil.containsAnyOf("12345", "56"));
 
         // Test with no matching characters
-        assertTrue(!containsAnyOf("Hello", "xyz"));
-        assertTrue(!containsAnyOf("12345", "abcde"));
+        Assertions.assertFalse(TextUtil.containsAnyOf("Hello", "xyz"));
+        Assertions.assertFalse(TextUtil.containsAnyOf("12345", "abcde"));
 
         // Test with empty strings
-        assertTrue(!containsAnyOf("", "xyz"));
-        assertTrue(!containsAnyOf("Hello", ""));
+        Assertions.assertFalse(TextUtil.containsAnyOf("", "xyz"));
+        Assertions.assertFalse(TextUtil.containsAnyOf("Hello", ""));
     }
 
     @Test
     void testIndexOf() {
         // Test indexOf(CharSequence, int)
-        assertEquals(1, indexOf("Hello", 'e'));
-        assertEquals(-1, indexOf("Hello", 'x'));
+        Assertions.assertEquals(1, TextUtil.indexOf("Hello", 'e'));
+        Assertions.assertEquals(-1, TextUtil.indexOf("Hello", 'x'));
 
         // Test indexOf(CharSequence, CharSequence)
-        assertEquals(0, indexOf("Hello", "He"));
-        assertEquals(3, indexOf("Hello", "lo"));
-        assertEquals(-1, indexOf("Hello", "hi"));
+        Assertions.assertEquals(0, TextUtil.indexOf("Hello", "He"));
+        Assertions.assertEquals(3, TextUtil.indexOf("Hello", "lo"));
+        Assertions.assertEquals(-1, TextUtil.indexOf("Hello", "hi"));
 
         // Test indexOf(CharSequence, int, int)
-        assertEquals(2, indexOf("Hello", 'l', 0));
-        assertEquals(3, indexOf("Hello", 'l', 3));
-        assertEquals(4, indexOf("Hello", 'o', 0));
-        assertEquals(-1, indexOf("Hello", 'e', 2));
+        Assertions.assertEquals(2, TextUtil.indexOf("Hello", 'l', 0));
+        Assertions.assertEquals(3, TextUtil.indexOf("Hello", 'l', 3));
+        Assertions.assertEquals(4, TextUtil.indexOf("Hello", 'o', 0));
+        Assertions.assertEquals(-1, TextUtil.indexOf("Hello", 'e', 2));
 
         // Test indexOf(CharSequence, CharSequence, int)
-        assertEquals(0, indexOf("Hello", "He", 0));
-        assertEquals(3, indexOf("Hello", "lo", 0));
-        assertEquals(-1, indexOf("Hello", "He", 1));
-        assertEquals(-1, indexOf("Hello", "hi", 0));
+        Assertions.assertEquals(0, TextUtil.indexOf("Hello", "He", 0));
+        Assertions.assertEquals(3, TextUtil.indexOf("Hello", "lo", 0));
+        Assertions.assertEquals(-1, TextUtil.indexOf("Hello", "He", 1));
+        Assertions.assertEquals(-1, TextUtil.indexOf("Hello", "hi", 0));
     }
 
     @Test
     void testStartsWith() {
         // Test with matching prefix
-        assertTrue(startsWith("Hello", "He"));
-        assertTrue(startsWith("Hello", "Hello"));
+        Assertions.assertTrue(TextUtil.startsWith("Hello", "He"));
+        Assertions.assertTrue(TextUtil.startsWith("Hello", "Hello"));
 
         // Test with non-matching prefix
-        assertTrue(!startsWith("Hello", "he"));
-        assertTrue(!startsWith("Hello", "Hello World"));
+        Assertions.assertFalse(TextUtil.startsWith("Hello", "he"));
+        Assertions.assertFalse(TextUtil.startsWith("Hello", "Hello World"));
 
         // Test with empty strings
-        assertTrue(startsWith("Hello", ""));
-        assertTrue(!startsWith("", "Hello"));
+        Assertions.assertTrue(TextUtil.startsWith("Hello", ""));
+        Assertions.assertFalse(TextUtil.startsWith("", "Hello"));
     }
 
     @Test
@@ -517,16 +537,16 @@ class TextUtilTest {
         Pattern pattern = Pattern.compile("(?<prefix>\\w+):(?<value>\\w+)");
         String input = "key:value";
         Matcher matcher = pattern.matcher(input);
-        assertTrue(matcher.matches());
+        Assertions.assertTrue(matcher.matches());
 
-        Optional<CharSequence> prefix = group(matcher, input, "prefix");
-        Optional<CharSequence> value = group(matcher, input, "value");
+        Optional<CharSequence> prefix = TextUtil.group(matcher, input, "prefix");
+        Optional<CharSequence> value = TextUtil.group(matcher, input, "value");
 
-        assertTrue(prefix.isPresent());
-        assertEquals("key", prefix.get().toString());
+        Assertions.assertTrue(prefix.isPresent());
+        Assertions.assertEquals("key", prefix.get().toString());
 
-        assertTrue(value.isPresent());
-        assertEquals("value", value.get().toString());
+        Assertions.assertTrue(value.isPresent());
+        Assertions.assertEquals("value", value.get().toString());
     }
 
     @Test
@@ -535,15 +555,15 @@ class TextUtilTest {
         Pattern pattern = Pattern.compile("(?<prefix>\\w+):(?<value>\\w+)?");
         String input = "key:";
         Matcher matcher = pattern.matcher(input);
-        assertTrue(matcher.matches());
+        Assertions.assertTrue(matcher.matches());
 
-        Optional<CharSequence> prefix = group(matcher, input, "prefix");
-        Optional<CharSequence> value = group(matcher, input, "value");
+        Optional<CharSequence> prefix = TextUtil.group(matcher, input, "prefix");
+        Optional<CharSequence> value = TextUtil.group(matcher, input, "value");
 
-        assertTrue(prefix.isPresent());
-        assertEquals("key", prefix.get().toString());
+        Assertions.assertTrue(prefix.isPresent());
+        Assertions.assertEquals("key", prefix.get().toString());
 
-        assertTrue(value.isEmpty());
+        Assertions.assertTrue(value.isEmpty());
     }
 
     @Test
@@ -552,12 +572,12 @@ class TextUtilTest {
         Pattern pattern = Pattern.compile("(?<prefix>\\w+):(?<value>\\w+)");
         String input = "key:value";
         Matcher matcher = pattern.matcher(input);
-        assertTrue(matcher.matches());
+        Assertions.assertTrue(matcher.matches());
 
         // Test with non-existing group
-        assertThrows(
+        Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> group(matcher, input, "nonexistent"),
+                () -> TextUtil.group(matcher, input, "nonexistent"),
                 "should throw IllegalStateException for non-existing group"
         );
     }
@@ -566,18 +586,18 @@ class TextUtilTest {
     void testGetMD5String() throws IOException {
         // Test with string input
         String input = "Hello, World!";
-        String md5 = getMD5String(input);
-        assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5);
+        String md5 = TextUtil.getMD5String(input);
+        Assertions.assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5);
 
         // Test with byte array input
         byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
-        String md5Bytes = getMD5String(bytes);
-        assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5Bytes);
+        String md5Bytes = TextUtil.getMD5String(bytes);
+        Assertions.assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5Bytes);
 
         // Test with InputStream input
         try (InputStream is = new ByteArrayInputStream(bytes)) {
-            String md5Stream = getMD5String(is);
-            assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5Stream);
+            String md5Stream = TextUtil.getMD5String(is);
+            Assertions.assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5Stream);
         }
     }
 
@@ -585,17 +605,17 @@ class TextUtilTest {
     void testGetMD5() throws IOException {
         // Test with string input
         String input = "Hello, World!";
-        byte[] md5 = getMD5(input);
+        byte[] md5 = TextUtil.getMD5(input);
 
         // Test with byte array input
         byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
-        byte[] md5Bytes = getMD5(bytes);
-        assertArrayEquals(md5, md5Bytes);
+        byte[] md5Bytes = TextUtil.getMD5(bytes);
+        Assertions.assertArrayEquals(md5, md5Bytes);
 
         // Test with InputStream input
         try (InputStream is = new ByteArrayInputStream(bytes)) {
-            byte[] md5Stream = getMD5(is);
-            assertArrayEquals(md5, md5Stream);
+            byte[] md5Stream = TextUtil.getMD5(is);
+            Assertions.assertArrayEquals(md5, md5Stream);
         }
     }
 
@@ -605,13 +625,13 @@ class TextUtilTest {
         String input = "Hello, World!";
         byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
 
-        byte[] sha256 = getDigest("SHA-256", bytes);
-        assertEquals(32, sha256.length); // SHA-256 produces 32 bytes
+        byte[] sha256 = TextUtil.getDigest("SHA-256", bytes);
+        Assertions.assertEquals(32, sha256.length); // SHA-256 produces 32 bytes
 
         // Test with InputStream input
         try (InputStream is = new ByteArrayInputStream(bytes)) {
-            byte[] sha256Stream = getDigest("SHA-256", is);
-            assertArrayEquals(sha256, sha256Stream);
+            byte[] sha256Stream = TextUtil.getDigest("SHA-256", is);
+            Assertions.assertArrayEquals(sha256, sha256Stream);
         }
     }
 
@@ -621,25 +641,25 @@ class TextUtilTest {
         String input = "Hello, World!";
         byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
 
-        String sha256 = getDigestString("SHA-256", bytes);
-        assertEquals(64, sha256.length()); // SHA-256 hex string is 64 characters
+        String sha256 = TextUtil.getDigestString("SHA-256", bytes);
+        Assertions.assertEquals(64, sha256.length()); // SHA-256 hex string is 64 characters
 
         // Test with InputStream input
         try (InputStream is = new ByteArrayInputStream(bytes)) {
-            String sha256Stream = getDigestString("SHA-256", is);
-            assertEquals(sha256, sha256Stream);
+            String sha256Stream = TextUtil.getDigestString("SHA-256", is);
+            Assertions.assertEquals(sha256, sha256Stream);
         }
     }
 
     @Test
     void testGenerateMailToLink() {
         // Test with simple email and subject
-        String link = generateMailToLink("test@example.com", "Test Subject");
-        assertEquals("mailto:test@example.com?subject=Test%20Subject", link);
+        String link = TextUtil.generateMailToLink("test@example.com", "Test Subject");
+        Assertions.assertEquals("mailto:test@example.com?subject=Test%20Subject", link);
 
         // Test with email and subject containing special characters
-        link = generateMailToLink("test@example.com", "Test & Subject");
-        assertEquals("mailto:test@example.com?subject=Test%20%26%20Subject", link);
+        link = TextUtil.generateMailToLink("test@example.com", "Test & Subject");
+        Assertions.assertEquals("mailto:test@example.com?subject=Test%20%26%20Subject", link);
     }
 
     @Test
@@ -648,88 +668,88 @@ class TextUtilTest {
         String mixedText = "Line1\r\nLine2\nLine3\rLine4";
 
         // Test toUnixLineEnds
-        String unixText = toUnixLineEnds(mixedText);
-        assertEquals("Line1\nLine2\nLine3\nLine4", unixText);
+        String unixText = TextUtil.toUnixLineEnds(mixedText);
+        Assertions.assertEquals("Line1\nLine2\nLine3\nLine4", unixText);
 
         // Test toWindowsLineEnds
-        String windowsText = toWindowsLineEnds(mixedText);
-        assertEquals("Line1\r\nLine2\r\nLine3\r\nLine4", windowsText);
+        String windowsText = TextUtil.toWindowsLineEnds(mixedText);
+        Assertions.assertEquals("Line1\r\nLine2\r\nLine3\r\nLine4", windowsText);
 
         // Test setLineEnds with custom line ending
-        String customText = setLineEnds(mixedText, "|");
-        assertEquals("Line1|Line2|Line3|Line4", customText);
+        String customText = TextUtil.setLineEnds(mixedText, "|");
+        Assertions.assertEquals("Line1|Line2|Line3|Line4", customText);
     }
 
     @Test
     void testQuote() {
         // Test with simple string
-        assertEquals("\"Hello\"", quote("Hello"));
+        Assertions.assertEquals("\"Hello\"", TextUtil.quote("Hello"));
 
         // Test with string containing quotes
-        assertEquals("\"Hello \\\"World\\\"\"", quote("Hello \"World\""));
+        Assertions.assertEquals("\"Hello \\\"World\\\"\"", TextUtil.quote("Hello \"World\""));
 
         // Test with string containing special characters
-        assertEquals("\"Tab\\tNewline\\n\"", quote("Tab\tNewline\n"));
+        Assertions.assertEquals("\"Tab\\tNewline\\n\"", TextUtil.quote("Tab\tNewline\n"));
 
         // Test with empty string
-        assertEquals("\"\"", quote(""));
+        Assertions.assertEquals("\"\"", TextUtil.quote(""));
     }
 
     @Test
     void testQuoteIfNeeded() {
         // Test with string that needs quoting
-        assertEquals("\"Hello World\"", quoteIfNeeded("Hello World"));
+        Assertions.assertEquals("\"Hello World\"", TextUtil.quoteIfNeeded("Hello World"));
 
         // Test with string that doesn't need quoting
-        assertEquals("Hello", quoteIfNeeded("Hello"));
+        Assertions.assertEquals("Hello", TextUtil.quoteIfNeeded("Hello"));
 
         // Test with empty string
-        assertEquals("", quoteIfNeeded(""));
+        Assertions.assertEquals("", TextUtil.quoteIfNeeded(""));
     }
 
     @Test
     void testJoinQuotedIfNeeded() {
         // Test with list of strings
         List<String> list = List.of("Hello", "World", "Test");
-        assertEquals("Hello, World, Test", joinQuotedIfNeeded(list));
+        Assertions.assertEquals("Hello, World, Test", TextUtil.joinQuotedIfNeeded(list));
 
         // Test with list containing strings that need quoting
         list = List.of("Hello", "World Test", "End");
-        assertEquals("Hello, \"World Test\", End", joinQuotedIfNeeded(list));
+        Assertions.assertEquals("Hello, \"World Test\", End", TextUtil.joinQuotedIfNeeded(list));
 
         // Test with custom delimiter
-        assertEquals("Hello|\"World Test\"|End", joinQuotedIfNeeded(list, "|"));
+        Assertions.assertEquals("Hello|\"World Test\"|End", TextUtil.joinQuotedIfNeeded(list, "|"));
 
         // Test with empty list
-        assertEquals("", joinQuotedIfNeeded(List.of()));
+        Assertions.assertEquals("", TextUtil.joinQuotedIfNeeded(List.of()));
     }
 
     @Test
     void testJoinQuoted() {
         // Test with list of strings
         List<String> list = List.of("Hello", "World", "Test");
-        assertEquals("\"Hello\", \"World\", \"Test\"", joinQuoted(list));
+        Assertions.assertEquals("\"Hello\", \"World\", \"Test\"", TextUtil.joinQuoted(list));
 
         // Test with custom delimiter
-        assertEquals("\"Hello\"|\"World\"|\"Test\"", joinQuoted(list, "|"));
+        Assertions.assertEquals("\"Hello\"|\"World\"|\"Test\"", TextUtil.joinQuoted(list, "|"));
 
         // Test with empty list
-        assertEquals("", joinQuoted(List.of()));
+        Assertions.assertEquals("", TextUtil.joinQuoted(List.of()));
     }
 
     @Test
     void testIsBlank() {
         // Test with blank strings
-        assertTrue(isBlank(""));
-        assertTrue(isBlank(" "));
-        assertTrue(isBlank("\t"));
-        assertTrue(isBlank("\n"));
-        assertTrue(isBlank(" \t\n\r"));
+        Assertions.assertTrue(TextUtil.isBlank(""));
+        Assertions.assertTrue(TextUtil.isBlank(" "));
+        Assertions.assertTrue(TextUtil.isBlank("\t"));
+        Assertions.assertTrue(TextUtil.isBlank("\n"));
+        Assertions.assertTrue(TextUtil.isBlank(" \t\n\r"));
 
         // Test with non-blank strings
-        assertTrue(!isBlank("a"));
-        assertTrue(!isBlank(" a "));
-        assertTrue(!isBlank("\ta\n"));
+        Assertions.assertFalse(TextUtil.isBlank("a"));
+        Assertions.assertFalse(TextUtil.isBlank(" a "));
+        Assertions.assertFalse(TextUtil.isBlank("\ta\n"));
     }
 
     @Test
@@ -764,23 +784,23 @@ class TextUtilTest {
 
         // Test with HTML special characters
         TestAppendable app = new TestAppendable();
-        appendHtmlEscapedCharacters(app, "<div>Test & 'Quote' \"DoubleQuote\"</div>");
-        assertEquals("&lt;div&gt;Test &amp; &apos;Quote&apos; &quot;DoubleQuote&quot;&lt;/div&gt;", app.toString());
+        TextUtil.appendHtmlEscapedCharacters(app, "<div>Test & 'Quote' \"DoubleQuote\"</div>");
+        Assertions.assertEquals("&lt;div&gt;Test &amp; &apos;Quote&apos; &quot;DoubleQuote&quot;&lt;/div&gt;", app.toString());
 
         // Test with empty string
         app = new TestAppendable();
-        appendHtmlEscapedCharacters(app, "");
-        assertEquals("", app.toString());
+        TextUtil.appendHtmlEscapedCharacters(app, "");
+        Assertions.assertEquals("", app.toString());
 
         // Test with non-ASCII characters
         app = new TestAppendable();
-        appendHtmlEscapedCharacters(app, "Café");
-        assertEquals("Caf&#233;", app.toString());
+        TextUtil.appendHtmlEscapedCharacters(app, "Café");
+        Assertions.assertEquals("Caf&#233;", app.toString());
 
         // Test with null character
         app = new TestAppendable();
-        appendHtmlEscapedCharacters(app, "\0");
-        assertEquals("&#0;", app.toString());
+        TextUtil.appendHtmlEscapedCharacters(app, "\0");
+        Assertions.assertEquals("&#0;", app.toString());
     }
 
     @Test
@@ -791,69 +811,127 @@ class TextUtilTest {
         Map.Entry<String, String> entry1 = Map.entry("NAME", "John");
         Map.Entry<String, String> entry2 = Map.entry("PLACE", "Wonderland");
 
-        String result = transform(template, entry1, entry2);
-        assertEquals("Hello John, welcome to Wonderland!", result);
+        String result = TextUtil.transform(template, entry1, entry2);
+        Assertions.assertEquals("Hello John, welcome to Wonderland!", result);
 
         // Test with single entry
         template = "Hello ${NAME}!";
-        result = transform(template, Map.entry("NAME", "Alice"));
-        assertEquals("Hello Alice!", result);
+        result = TextUtil.transform(template, Map.entry("NAME", "Alice"));
+        Assertions.assertEquals("Hello Alice!", result);
 
         // Test with non-existent placeholder
         template = "Hello ${NAME}, how are you ${MOOD}?";
-        result = transform(template, Map.entry("NAME", "Bob"));
-        assertEquals("Hello Bob, how are you MOOD?", result);
+        result = TextUtil.transform(template, Map.entry("NAME", "Bob"));
+        Assertions.assertEquals("Hello Bob, how are you MOOD?", result);
 
         // Test with empty template
         template = "";
-        result = transform(template, Map.entry("NAME", "Charlie"));
-        assertEquals("", result);
+        result = TextUtil.transform(template, Map.entry("NAME", "Charlie"));
+        Assertions.assertEquals("", result);
 
         // Test with null value using AbstractMap.SimpleEntry which allows null values
         template = "Hello ${NAME}!";
-        result = transform(template, new AbstractMap.SimpleEntry<>("NAME", null));
-        assertEquals("Hello null!", result);
+        result = TextUtil.transform(template, new AbstractMap.SimpleEntry<>("NAME", null));
+        Assertions.assertEquals("Hello null!", result);
     }
 
     @Test
     void testContainsNoneOfWithCharArray() {
         // Test with no matching characters
-        assertTrue(containsNoneOf("Hello", 'x', 'y', 'z'));
-        assertTrue(containsNoneOf("12345", 'a', 'b', 'c'));
+        Assertions.assertTrue(TextUtil.containsNoneOf("Hello", 'x', 'y', 'z'));
+        Assertions.assertTrue(TextUtil.containsNoneOf("12345", 'a', 'b', 'c'));
 
         // Test with matching characters
-        assertTrue(!containsNoneOf("Hello", 'l', 'o', 'z'));
-        assertTrue(!containsNoneOf("12345", '3', '6', '9'));
+        Assertions.assertFalse(TextUtil.containsNoneOf("Hello", 'l', 'o', 'z'));
+        Assertions.assertFalse(TextUtil.containsNoneOf("12345", '3', '6', '9'));
 
         // Test with empty string
-        assertTrue(containsNoneOf("", 'a', 'b', 'c'));
+        Assertions.assertTrue(TextUtil.containsNoneOf("", 'a', 'b', 'c'));
 
         // Test with empty char array
-        assertTrue(containsNoneOf("Hello"));
+        Assertions.assertTrue(TextUtil.containsNoneOf("Hello"));
 
         // Test with single character
-        assertTrue(containsNoneOf("a", 'b'));
-        assertTrue(!containsNoneOf("a", 'a'));
+        Assertions.assertTrue(TextUtil.containsNoneOf("a", 'b'));
+        Assertions.assertFalse(TextUtil.containsNoneOf("a", 'a'));
     }
 
     @Test
     void testContainsAnyOfWithCharArray() {
         // Test with matching characters
-        assertTrue(containsAnyOf("Hello", 'l', 'o', 'z'));
-        assertTrue(containsAnyOf("12345", '3', '6', '9'));
+        Assertions.assertTrue(TextUtil.containsAnyOf("Hello", 'l', 'o', 'z'));
+        Assertions.assertTrue(TextUtil.containsAnyOf("12345", '3', '6', '9'));
 
         // Test with no matching characters
-        assertTrue(!containsAnyOf("Hello", 'x', 'y', 'z'));
-        assertTrue(!containsAnyOf("12345", 'a', 'b', 'c'));
+        Assertions.assertFalse(TextUtil.containsAnyOf("Hello", 'x', 'y', 'z'));
+        Assertions.assertFalse(TextUtil.containsAnyOf("12345", 'a', 'b', 'c'));
 
         // Test with empty string
-        assertTrue(!containsAnyOf("", 'a', 'b', 'c'));
+        Assertions.assertFalse(TextUtil.containsAnyOf("", 'a', 'b', 'c'));
 
         // Test with empty char array
-        assertTrue(!containsAnyOf("Hello"));
+        Assertions.assertFalse(TextUtil.containsAnyOf("Hello"));
 
         // Test with single character
-        assertTrue(!containsAnyOf("a", 'b'));
-        assertTrue(containsAnyOf("a", 'a'));
+        Assertions.assertFalse(TextUtil.containsAnyOf("a", 'b'));
+        Assertions.assertTrue(TextUtil.containsAnyOf("a", 'a'));
+    }
+
+    @Test
+    void testToCharArray() {
+        // Test with a regular string
+        String input = "Hello World";
+        char[] expected = {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd'};
+        Assertions.assertArrayEquals(expected, TextUtil.toCharArray(input));
+
+        // Test with an empty string
+        input = "";
+        expected = new char[0];
+        Assertions.assertArrayEquals(expected, TextUtil.toCharArray(input));
+
+        // Test with a single character string
+        input = "A";
+        expected = new char[]{'A'};
+        Assertions.assertArrayEquals(expected, TextUtil.toCharArray(input));
+
+        // Test with a string containing special characters
+        input = "Text!$&*(){}[]";
+        expected = new char[]{'T', 'e', 'x', 't', '!', '$', '&', '*', '(', ')', '{', '}', '[', ']'};
+        Assertions.assertArrayEquals(expected, TextUtil.toCharArray(input));
+
+        // Test with a StringBuilder
+        StringBuilder builder = new StringBuilder("BuilderTest");
+        expected = new char[]{'B', 'u', 'i', 'l', 'd', 'e', 'r', 'T', 'e', 's', 't'};
+        Assertions.assertArrayEquals(expected, TextUtil.toCharArray(builder));
+
+        // Test with a large string
+        input = "A".repeat(1000);
+        expected = input.toCharArray();
+        Assertions.assertArrayEquals(expected, TextUtil.toCharArray(input));
+    }
+
+    @Test
+    void testCharsToBytesWithValidInput() {
+        char[] input = {'H', 'e', 'l', 'l', 'o'};
+        byte[] expected = "Hello".getBytes(StandardCharsets.UTF_8);
+        byte[] result = TextUtil.charsToBytes(input);
+        Assertions.assertArrayEquals(expected, result, "Expected byte array does not match the result.");
+    }
+
+    @Test
+    void testCharsToBytesWithEmptyInput() {
+        char[] input = {};
+        byte[] expected = new byte[0];
+        byte[] result = TextUtil.charsToBytes(input);
+        Assertions.assertArrayEquals(expected, result, "Expected an empty byte array.");
+    }
+
+    @Test
+    void testCharsToBytesWithSpecialCharacters() {
+        char[] input = {'Ω', '漢', '字'};
+        String expectedString = new String(input);
+        byte[] expected = expectedString.getBytes(StandardCharsets.UTF_8);
+        byte[] result = TextUtil.charsToBytes(input);
+        Assertions.assertArrayEquals(expected, result, "Expected byte array for special characters does not match the result.");
     }
 }
