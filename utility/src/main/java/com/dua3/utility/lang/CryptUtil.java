@@ -20,6 +20,7 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -864,9 +865,8 @@ public final class CryptUtil {
      * @param algorithm the algorithm (RSA, EC, DSA)
      * @param keySize the key size in bits
      * @return the generated key pair
-     * @throws GeneralSecurityException if key generation fails
      */
-    public static KeyPair generateKeyPair(String algorithm, int keySize) throws GeneralSecurityException {
+    public static KeyPair generateKeyPair(String algorithm, int keySize) {
         validateAsymmetricAlgorithm(algorithm);
         validateAsymmetricKeySize(algorithm, keySize);
 
@@ -883,9 +883,8 @@ public final class CryptUtil {
      * Generate an RSA key pair with default key size (2048 bits).
      *
      * @return the generated RSA key pair
-     * @throws GeneralSecurityException if key generation fails
      */
-    public static KeyPair generateRSAKeyPair() throws GeneralSecurityException {
+    public static KeyPair generateRSAKeyPair() {
         return generateKeyPair(ASYMMETRIC_ALGORITHM_RSA, 2048);
     }
 
@@ -1031,5 +1030,213 @@ public final class CryptUtil {
      */
     private static void validateAsymmetricVerificationKey(PublicKey publicKey) {
         validateAsymmetricAlgorithm(publicKey.getAlgorithm());
+    }
+
+    /**
+     * Hybrid encryption for large data using RSA/EC for key encryption and AES for data encryption.
+     * <p>
+     * This method generates a random AES key, encrypts the data with AES-GCM, then encrypts
+     * the AES key with the provided public key using asymmetric encryption. The result combines
+     * both the encrypted AES key and the encrypted data in a single Base64-encoded string.
+     * <p>
+     * Format: [4 bytes: encrypted key length][encrypted AES key][encrypted data]
+     *
+     * @param publicKey the public key for encrypting the AES key (RSA, EC, or ECIES)
+     * @param data the data to encrypt
+     * @return the hybrid encrypted data as a byte array
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static byte[] encryptHybrid(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
+        // Generate random AES-256 key
+        SecretKey aesKey = generateSecretKey(256);
+
+        try {
+            // Encrypt data with AES
+            byte[] encryptedData = encrypt(aesKey, data);
+
+            // Encrypt AES key with public key
+            byte[] encryptedKey = encryptAsymmetric(publicKey, aesKey.getEncoded());
+
+            // Combine encrypted key and data
+            // Format: [4 bytes: key length][encrypted key][encrypted data]
+            ByteBuffer result = ByteBuffer.allocate(4 + encryptedKey.length + encryptedData.length);
+            result.putInt(encryptedKey.length);
+            result.put(encryptedKey);
+            result.put(encryptedData);
+
+            return result.array();
+        } finally {
+            // Clear the AES key from memory
+            Arrays.fill(aesKey.getEncoded(), (byte) 0);
+        }
+    }
+
+    /**
+     * Generate an Elliptic Curve key pair using a named curve.
+     * <p>
+     * Supported standard curves:
+     * <ul>
+     *   <li>"secp256r1" (P-256) - 256-bit curve</li>
+     *   <li>"secp384r1" (P-384) - 384-bit curve</li>
+     *   <li>"secp521r1" (P-521) - 521-bit curve</li>
+     * </ul>
+     *
+     * @param curveName the name of the elliptic curve ("secp256r1", "secp384r1", "secp521r1")
+     * @return the generated EC key pair
+     * @throws GeneralSecurityException if key generation fails or the curve is not supported
+     */
+    public static KeyPair generateECKeyPair(String curveName) throws GeneralSecurityException {
+        // Validate curve name
+        if (!Set.of("secp256r1", "secp384r1", "secp521r1").contains(curveName)) {
+            throw new IllegalArgumentException("Unsupported curve: " + curveName +
+                    ". Supported curves: secp256r1, secp384r1, secp521r1");
+        }
+
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+
+            // Use ECGenParameterSpec to specify the named curve
+            java.security.spec.ECGenParameterSpec ecSpec =
+                    new java.security.spec.ECGenParameterSpec(curveName);
+            keyGen.initialize(ecSpec, RANDOM);
+
+            return keyGen.generateKeyPair();
+        } catch (GeneralSecurityException e) {
+            throw new GeneralSecurityException("Failed to generate EC key pair with curve " + curveName, e);
+        }
+    }
+
+    /**
+     * Decrypt hybrid encrypted data using the corresponding private key.
+     * <p>
+     * This method reverses the hybrid encryption process by first extracting and decrypting
+     * the AES key using the private key, then using that AES key to decrypt the actual data.
+     *
+     * @param privateKey the private key corresponding to the public key used for encryption
+     * @param cipherData the hybrid encrypted data as a byte array
+     * @return the decrypted data
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static byte[] decryptHybrid(PrivateKey privateKey, byte[] cipherData) throws GeneralSecurityException {
+        if (cipherData.length < 4) {
+            throw new GeneralSecurityException("Invalid hybrid cipher data: too short");
+        }
+
+        ByteBuffer buffer = ByteBuffer.wrap(cipherData);
+
+        // Read encrypted key length
+        int keyLength = buffer.getInt();
+        if (keyLength <= 0 || keyLength > cipherData.length - 4) {
+            throw new GeneralSecurityException("Invalid encrypted key length");
+        }
+
+        // Extract encrypted AES key
+        byte[] encryptedKey = new byte[keyLength];
+        buffer.get(encryptedKey);
+
+        // Extract encrypted data
+        byte[] encryptedData = new byte[buffer.remaining()];
+        buffer.get(encryptedData);
+
+        try {
+            // Decrypt AES key
+            byte[] aesKeyBytes = decryptAsymmetric(privateKey, encryptedKey);
+            SecretKey aesKey = toSecretKey(aesKeyBytes);
+
+            try {
+                // Decrypt data with AES key
+                return decrypt(aesKey, encryptedData);
+            } finally {
+                // Clear sensitive data
+                Arrays.fill(aesKeyBytes, (byte) 0);
+                Arrays.fill(aesKey.getEncoded(), (byte) 0);
+            }
+        } finally {
+            // Clear temporary arrays
+            Arrays.fill(encryptedKey, (byte) 0);
+            Arrays.fill(encryptedData, (byte) 0);
+        }
+    }
+
+    /**
+     * Encrypts the provided text using a hybrid encryption scheme with the given public key.
+     * <p>
+     * This method first converts the provided text to a character array, encrypts it using
+     * the specified public key, and encodes the result in Base64 format. Once the encryption
+     * is complete, the character array is cleared to ensure sensitive data is not retained
+     * in memory.
+     *
+     * @param publicKey the public key used for encrypting the data
+     * @param text the text to be encrypted, provided as a sequence of characters
+     * @return the encrypted text, encoded as a Base64 string
+     * @throws GeneralSecurityException if an error occurs during encryption
+     */
+    public static String encryptHybrid(PublicKey publicKey, CharSequence text) throws GeneralSecurityException {
+        char[] data = toCharArray(text);
+        try {
+            byte[] encrypted = encryptHybrid(publicKey, charsToBytes(data));
+            return TextUtil.base64Encode(encrypted);
+        } finally {
+            Arrays.fill(data, (char) 0);
+        }
+    }
+
+    /**
+     * Decrypts a base64-encoded ciphertext using a hybrid encryption scheme.
+     * This method combines the use of public-private key cryptography and symmetric key encryption.
+     *
+     * @param privateKey the private key used for decryption in the hybrid encryption process
+     * @param base64CipherText the encrypted text encoded in base64 format to be decrypted
+     * @return the decrypted plaintext as a string in UTF-8 encoding
+     * @throws GeneralSecurityException if there is an error during the decryption process
+     */
+    public static String decryptHybrid(PrivateKey privateKey, String base64CipherText) throws GeneralSecurityException {
+        byte[] cipherData = TextUtil.base64Decode(base64CipherText);
+        byte[] decrypted = decryptHybrid(privateKey, cipherData);
+        try {
+            return new String(decrypted, StandardCharsets.UTF_8);
+        } finally {
+            Arrays.fill(decrypted, (byte) 0);
+        }
+    }
+
+    /**
+     * Encrypts the provided text using a hybrid encryption mechanism that combines
+     * public key encryption for secure key exchange and symmetric encryption for
+     * encrypting the provided text. The input text is securely cleared after processing.
+     *
+     * @param publicKey the public key used for encrypting the symmetric key
+     * @param text the text to be encrypted, provided as a char array
+     * @return the encrypted text encoded in Base64 format
+     * @throws GeneralSecurityException if any encryption-related error occurs
+     */
+    public static String encryptHybrid(PublicKey publicKey, char[] text) throws GeneralSecurityException {
+        try {
+            byte[] encrypted = encryptHybrid(publicKey, charsToBytes(text));
+            return TextUtil.base64Encode(encrypted);
+        } finally {
+            Arrays.fill(text, (char) 0);
+        }
+    }
+
+    /**
+     * Decrypts a hybrid encrypted Base64-encoded cipher text to a character array.
+     * This method first decodes the Base64-encoded cipher text, decrypts it using
+     * the provided private key, and then converts the decrypted byte array to a character array.
+     * The decrypted byte array is cleared after conversion to ensure sensitive data is not exposed.
+     *
+     * @param privateKey the private key used for decryption
+     * @param base64CipherText the Base64-encoded cipher text to be decrypted
+     * @return a character array containing the decrypted data
+     * @throws GeneralSecurityException if any decryption error occurs
+     */
+    public static char[] decryptHybridToChars(PrivateKey privateKey, String base64CipherText) throws GeneralSecurityException {
+        byte[] cipherData = TextUtil.base64Decode(base64CipherText);
+        byte[] decrypted = decryptHybrid(privateKey, cipherData);
+        try {
+            return bytesToChars(decrypted);
+        } finally {
+            Arrays.fill(decrypted, (byte) 0);
+        }
     }
 }
