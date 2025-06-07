@@ -197,15 +197,18 @@ could not be loaded.
 
 ### 19.3.0
 
-- CryptUtil:
+- CryptUtil got a major update:
     - POSSIBLY BREAKING: change the message argument type from String to CharSequence to allow passing
       StringBuilder or other CharSequence implementing classes and prevent the clear text message from being
       interned of visible as a String instance in heap dumps; This change is compile-time compatible
       but might break when updating the library without recompiling the code
-    - improve security of key generation
-    - add overloads taking char[] instead of String 
-    - add key derivation from a passphrase with either salt or context
-    - fix some Javadoc issues
+    - key generation
+    - add key derivation from passphrase with either salt or context
+    - signing and signature validation
+    - asymmetric encryption/decryption
+    - improved security of key generation
+    - add overloads taking char[] instead of String
+- TextUtil.toCharArray()|charsToBytes()|bytesToChars()
 
 ### 19.2.1
 
