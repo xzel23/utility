@@ -202,6 +202,16 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     }
 
     /**
+     * Checks whether the current arguments instance is empty.
+     * An instance is considered empty if both the options and arguments collections are empty.
+     *
+     * @return true if both options and args are empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return options.isEmpty() && args.isEmpty();
+    }
+
+    /**
      * Get positional arguments.
      *
      * @return the positional arguments
