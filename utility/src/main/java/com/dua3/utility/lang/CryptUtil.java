@@ -14,7 +14,6 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
@@ -365,7 +364,7 @@ public final class CryptUtil {
      */
     public static String encrypt(byte[] key, CharSequence text) throws GeneralSecurityException {
         validateKeyLength(key);
-        char[] textChars = toCharArray(text);
+        char[] textChars = TextUtil.toCharArray(text);
         try {
             return encrypt(key, textChars);
         } finally {
@@ -383,7 +382,7 @@ public final class CryptUtil {
      */
     public static String encrypt(Key key, CharSequence text) throws GeneralSecurityException {
         validateSymmetricKey(key);
-        char[] textChars = toCharArray(text);
+        char[] textChars = TextUtil.toCharArray(text);
         try {
             return encrypt(key, textChars);
         } finally {
@@ -403,7 +402,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static String encrypt(byte[] key, char[] text) throws GeneralSecurityException {
-        byte[] data = charsToBytes(text);
+        byte[] data = TextUtil.charsToBytes(text);
         try {
             byte[] cipherMessage = encrypt(key, data);
             return TextUtil.base64Encode(cipherMessage);
@@ -446,7 +445,7 @@ public final class CryptUtil {
         byte[] cipherMessage = TextUtil.base64Decode(cipherText);
         byte[] data = decrypt(key, cipherMessage);
         try {
-            return bytesToChars(data);
+            return TextUtil.bytesToChars(data);
         } finally {
             Arrays.fill(data, (byte) 0);
         }
@@ -620,53 +619,6 @@ public final class CryptUtil {
     }
 
     /**
-     * Converts a {@code CharSequence} into a {@code char[]} array.
-     * If the input is a {@code String}, its {@code toCharArray()} method is used directly.
-     * Otherwise, the characters are extracted manually.
-     * <p>
-     * <strong>Security Note:</strong> This method avoids calling {@code toString()} on
-     * non-String inputs, preventing potential string interning of sensitive data.
-     * This allows complete cleanup of sensitive character data from memory.
-     *
-     * @param text the {@code CharSequence} to be converted to a {@code char[]} array
-     * @return a {@code char[]} array representation of the input {@code CharSequence}
-     */
-    private static char[] toCharArray(CharSequence text) {
-        if (text instanceof String s) {
-            return s.toCharArray();
-        }
-
-        char[] textChars = new char[text.length()];
-        for (int i = 0; i < text.length(); i++) {
-            textChars[i] = text.charAt(i);
-        }
-        return textChars;
-    }
-
-    /**
-     * Convert a char array to a byte array using UTF-8 encoding.
-     *
-     * @param chars the char array to convert
-     * @return the byte array
-     */
-    private static byte[] charsToBytes(char[] chars) {
-        ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars));
-        byte[] bytes = new byte[buffer.remaining()];
-        buffer.get(bytes);
-        return bytes;
-    }
-
-    /**
-     * Convert a byte array to a char array using UTF-8 encoding.
-     *
-     * @param bytes the byte array to convert
-     * @return the char array
-     */
-    private static char[] bytesToChars(byte[] bytes) {
-        return new String(bytes, StandardCharsets.UTF_8).toCharArray();
-    }
-
-    /**
      * Validates the length of a cryptographic key to ensure it adheres to the expected lengths.
      * The allowed key lengths are 128, 192, or 256 bits.
      *
@@ -727,7 +679,7 @@ public final class CryptUtil {
         byte[] cipherMessage = TextUtil.base64Decode(cipherText);
         byte[] data = decrypt(key, cipherMessage);
         try {
-            return bytesToChars(data);
+            return TextUtil.bytesToChars(data);
         } finally {
             Arrays.fill(data, (byte) 0);
         }
@@ -774,7 +726,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static String encrypt(Key key, char[] text) throws GeneralSecurityException {
-        byte[] data = charsToBytes(text);
+        byte[] data = TextUtil.charsToBytes(text);
         try {
             byte[] cipherMessage = encrypt(key, data);
             return TextUtil.base64Encode(cipherMessage);
@@ -857,7 +809,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static String encryptAsymmetric(PublicKey publicKey, CharSequence text) throws GeneralSecurityException {
-        char[] textChars = toCharArray(text);
+        char[] textChars = TextUtil.toCharArray(text);
         try {
             return encryptAsymmetric(publicKey, textChars);
         } finally {
@@ -876,7 +828,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if an error occurs during the encryption process
      */
     public static String encryptAsymmetric(PublicKey publicKey, char[] text) throws GeneralSecurityException {
-        byte[] data = charsToBytes(text);
+        byte[] data = TextUtil.charsToBytes(text);
         try {
             byte[] encrypted = encryptAsymmetric(publicKey, data);
             return TextUtil.base64Encode(encrypted);
@@ -915,7 +867,7 @@ public final class CryptUtil {
         byte[] cipherData = TextUtil.base64Decode(cipherText);
         byte[] data = decryptAsymmetric(privateKey, cipherData);
         try {
-            return bytesToChars(data);
+            return TextUtil.bytesToChars(data);
         } finally {
             Arrays.fill(data, (byte) 0);
         }
@@ -998,7 +950,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if signing fails
      */
     public static String sign(PrivateKey privateKey, CharSequence text) throws GeneralSecurityException {
-        char[] textChars = toCharArray(text);
+        char[] textChars = TextUtil.toCharArray(text);
         try {
             return sign(privateKey, textChars);
         } finally {
@@ -1015,7 +967,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if signing fails
      */
     public static String sign(PrivateKey privateKey, char[] text) throws GeneralSecurityException {
-        byte[] data = charsToBytes(text);
+        byte[] data = TextUtil.charsToBytes(text);
         try {
             byte[] signature = sign(privateKey, data);
             return TextUtil.base64Encode(signature);
@@ -1034,7 +986,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if verification fails
      */
     public static boolean verify(PublicKey publicKey, CharSequence text, String signatureBase64) throws GeneralSecurityException {
-        char[] textChars = toCharArray(text);
+        char[] textChars = TextUtil.toCharArray(text);
         try {
             return verify(publicKey, textChars, signatureBase64);
         } finally {
@@ -1052,7 +1004,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if verification fails
      */
     public static boolean verify(PublicKey publicKey, char[] text, String signatureBase64) throws GeneralSecurityException {
-        byte[] data = charsToBytes(text);
+        byte[] data = TextUtil.charsToBytes(text);
         try {
             byte[] signature = TextUtil.base64Decode(signatureBase64);
             return verify(publicKey, data, signature);
@@ -1234,9 +1186,9 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if an error occurs during encryption
      */
     public static String encryptHybrid(PublicKey publicKey, CharSequence text) throws GeneralSecurityException {
-        char[] data = toCharArray(text);
+        char[] data = TextUtil.toCharArray(text);
         try {
-            byte[] encrypted = encryptHybrid(publicKey, charsToBytes(data));
+            byte[] encrypted = encryptHybrid(publicKey, TextUtil.charsToBytes(data));
             return TextUtil.base64Encode(encrypted);
         } finally {
             Arrays.fill(data, (char) 0);
@@ -1274,7 +1226,7 @@ public final class CryptUtil {
      */
     public static String encryptHybrid(PublicKey publicKey, char[] text) throws GeneralSecurityException {
         try {
-            byte[] encrypted = encryptHybrid(publicKey, charsToBytes(text));
+            byte[] encrypted = encryptHybrid(publicKey, TextUtil.charsToBytes(text));
             return TextUtil.base64Encode(encrypted);
         } finally {
             Arrays.fill(text, (char) 0);
@@ -1296,7 +1248,7 @@ public final class CryptUtil {
         byte[] cipherData = TextUtil.base64Decode(base64CipherText);
         byte[] decrypted = decryptHybrid(privateKey, cipherData);
         try {
-            return bytesToChars(decrypted);
+            return TextUtil.bytesToChars(decrypted);
         } finally {
             Arrays.fill(decrypted, (byte) 0);
         }

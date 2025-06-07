@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -1123,5 +1125,52 @@ public final class TextUtil {
      */
     public static String toString(@Nullable Object obj, String valueIfNull) {
         return obj != null ? obj.toString() : valueIfNull;
+    }
+
+    /**
+     * Converts a {@code CharSequence} into a {@code char[]} array.
+     * If the input is a {@code String}, its {@code toCharArray()} method is used directly.
+     * Otherwise, the characters are extracted manually.
+     * <p>
+     * <strong>Security Note:</strong> This method avoids calling {@code toString()} on
+     * non-String inputs, preventing potential string interning of sensitive data.
+     * This allows complete cleanup of sensitive character data from memory.
+     *
+     * @param text the {@code CharSequence} to be converted to a {@code char[]} array
+     * @return a {@code char[]} array representation of the input {@code CharSequence}
+     */
+    public static char[] toCharArray(CharSequence text) {
+        if (text instanceof String s) {
+            return s.toCharArray();
+        }
+
+        char[] textChars = new char[text.length()];
+        for (int i = 0; i < text.length(); i++) {
+            textChars[i] = text.charAt(i);
+        }
+        return textChars;
+    }
+
+    /**
+     * Convert a char array to a byte array using UTF-8 encoding.
+     *
+     * @param chars the char array to convert
+     * @return the byte array
+     */
+    public static byte[] charsToBytes(char[] chars) {
+        ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars));
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        return bytes;
+    }
+
+    /**
+     * Convert a byte array to a char array using UTF-8 encoding.
+     *
+     * @param bytes the byte array to convert
+     * @return the char array
+     */
+    public static char[] bytesToChars(byte[] bytes) {
+        return new String(bytes, StandardCharsets.UTF_8).toCharArray();
     }
 }
