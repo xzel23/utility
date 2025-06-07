@@ -195,6 +195,18 @@ could not be loaded.
 
 ## Changes
 
+### 19.3.0
+
+- CryptUtil:
+    - POSSIBLY BREAKING: change the message argument type from String to CharSequence to allow passing
+      StringBuilder or other CharSequence implementing classes and prevent the clear text message from being
+      interned of visible as a String instance in heap dumps; This change is compile-time compatible
+      but might break when updating the library without recompiling the code
+    - improve security of key generation
+    - add overloads taking char[] instead of String 
+    - add key derivation from a passphrase with either salt or context
+    - fix some Javadoc issues
+
 ### 19.2.1
 
 - fix: incorrect implementation of FxUtil.convert(Affine)
