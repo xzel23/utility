@@ -909,7 +909,9 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if signing fails
      */
     public static byte[] sign(PrivateKey privateKey, byte[] data) throws GeneralSecurityException {
-        String signatureAlgorithm = getSignatureAlgorithm(AsymmetricAlgorithm.valueOf(privateKey.getAlgorithm()));
+        AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(privateKey.getAlgorithm());
+        String signatureAlgorithm = algorithm.getSignatureAlgorithm()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported signature algorithm: " + algorithm));
 
         java.security.Signature signature = java.security.Signature.getInstance(signatureAlgorithm);
         signature.initSign(privateKey, RandomHolder.RANDOM);
@@ -928,7 +930,9 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if verification fails
      */
     public static boolean verify(PublicKey publicKey, byte[] data, byte[] signature) throws GeneralSecurityException {
-        String signatureAlgorithm = getSignatureAlgorithm(AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm()));
+        AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
+        String signatureAlgorithm = algorithm.getSignatureAlgorithm()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported signature algorithm: " + algorithm));
 
         java.security.Signature sig = java.security.Signature.getInstance(signatureAlgorithm);
         sig.initVerify(publicKey);
@@ -1007,21 +1011,6 @@ public final class CryptUtil {
         } finally {
             Arrays.fill(data, (byte) 0);
         }
-    }
-
-    /**
-     * Get the appropriate signature algorithm for a given key algorithm.
-     *
-     * @param keyAlgorithm the key algorithm (RSA, EC, DSA)
-     * @return the signature algorithm to use
-     */
-    private static String getSignatureAlgorithm(AsymmetricAlgorithm keyAlgorithm) {
-        return switch (keyAlgorithm) {
-            case RSA -> "SHA256withRSA";
-            case EC -> "SHA256withECDSA";
-            case DSA -> "SHA256withDSA";
-            default -> throw new IllegalArgumentException("Unsupported key algorithm for signing: " + keyAlgorithm);
-        };
     }
 
     /**
