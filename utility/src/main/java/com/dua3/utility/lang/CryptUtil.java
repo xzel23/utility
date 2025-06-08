@@ -1,6 +1,7 @@
 package com.dua3.utility.lang;
 
 import com.dua3.utility.text.TextUtil;
+import org.jspecify.annotations.Nullable;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -25,6 +26,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Arrays;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.crypto.SecretKey;
 
@@ -37,49 +39,69 @@ import javax.crypto.SecretKey;
  */
 public final class CryptUtil {
     /**
-     * Represents the constant value for the RSA asymmetric encryption algorithm.
-     * RSA (Rivest-Shamir-Adleman) is one of the widely used algorithms for secure data transmission.
+     * Enum representing asymmetric encryption algorithms and their transformations.
      */
-    public static final String ASYMMETRIC_ALGORITHM_RSA = "RSA";
-    /**
-     * A constant representing the Elliptic Curve (EC) algorithm for asymmetric cryptographic operations.
-     */
-    public static final String ASYMMETRIC_ALGORITHM_EC = "EC";
-    /**
-     * A constant that represents the identifier for the ECIES asymmetric encryption algorithm.
-     * ECIES stands for Elliptic Curve Integrated Encryption Scheme, a hybrid encryption
-     * method used for secure communication. It combines elliptic curve cryptography for
-     * confidentiality and additional mechanisms for integrity and authentication.
-     */
-    public static final String ASYMMETRIC_ALGORITHM_ECIES = "ECIES";
-    /**
-     * A constant that represents the "DSA" (Digital Signature Algorithm) asymmetric cryptographic algorithm.
-     */
-    public static final String ASYMMETRIC_ALGORITHM_DSA = "DSA";
-    /**
-     * A set of strings representing the supported asymmetric cryptographic algorithms.
-     * These algorithms include RSA, EC (Elliptic Curve), ECIES (Elliptic Curve Integrated Encryption Scheme),
-     * and DSA (Digital Signature Algorithm).
-     */
-    public static final Set<String> ASYMMETRIC_ALGORITHMS = Set.of(ASYMMETRIC_ALGORITHM_RSA, ASYMMETRIC_ALGORITHM_EC, ASYMMETRIC_ALGORITHM_ECIES, ASYMMETRIC_ALGORITHM_DSA);
-    /**
-     * A constant that defines the cryptographic transformation used for asymmetric encryption.
-     * This transformation specifies the RSA algorithm in ECB mode with OAEP padding. The OAEP scheme
-     * uses SHA-256 as the message digest algorithm and MGF1 (Mask Generation Function 1) for padding.
-     */
-    public static final String ASYMMETRIC_TRANSFORMATION_RSA_ECB_OAEPWITHSHA_256_ANDMGF_1_PADDING = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
-    /**
-     * A constant representing the asymmetric transformation mode named "ECIES" (Elliptic Curve Integrated Encryption Scheme).
-     * This encryption scheme combines public-key cryptography with symmetric encryption
-     * to provide a secure and efficient method for data encryption and decryption.
-     */
-    public static final String ASYMMETRIC_TRANSFORMATION_ECIES = "ECIES";
+    public enum AsymmetricAlgorithm {
+        /**
+         * RSA (Rivest-Shamir-Adleman) algorithm with OAEP padding
+         */
+        RSA("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING", "SHA256withRSA"),
+        /**
+         * Elliptic Curve Cryptography
+         */
+        EC("ECIES", "SHA256withECDSA"),
+        /**
+         * Elliptic Curve Integrated Encryption Scheme
+         */
+        ECIES("ECIES", null),
+        /**
+         * Digital Signature Algorithm (for signatures only)
+         */
+        DSA("DSA", "SHA256withDSA");
+
+        private final String transformation;
+        private final @Nullable String signatureAlgorithm;
+
+        AsymmetricAlgorithm(String transformation, @Nullable String signatureAlgorithm) {
+            this.transformation = transformation;
+            this.signatureAlgorithm = signatureAlgorithm;
+        }
+
+        /**
+         * Retrieves the name of the algorithm represented by this instance.
+         *
+         * @return the name of the algorithm as a string
+         */
+        public String algorithm() {
+            return name();
+        }
+
+        /**
+         * Retrieves the signature algorithm associated with this asymmetric algorithm, if available.
+         *
+         * @return an {@code Optional} containing the signature algorithm as a string, or an empty
+         *         {@code Optional} if no signature algorithm is defined.
+         */
+        public Optional<String> getSignatureAlgorithm() {
+            return Optional.ofNullable(signatureAlgorithm);
+        }
+
+        /**
+         * Retrieves the transformation string associated with the asymmetric algorithm.
+         *
+         * @return the transformation string, which specifies the cipher transformation
+         *         used by this asymmetric algorithm
+         */
+        public String transformation() {
+            return transformation;
+        }
+    }
 
     private static final int GCM_TAG_LENGTH = 128;
     private static final int IV_LENGTH = 12;
     private static final String CIPHER = "AES/GCM/NoPadding";
     private static final String SYMMETRIC_ALGORITHM = "AES";
-    private static final String ASYMMETRIC_ALGORITHM_DEFAULT = ASYMMETRIC_ALGORITHM_RSA;  // Better default for asymmetric
+    private static final AsymmetricAlgorithm ASYMMETRIC_ALGORITHM_DEFAULT = AsymmetricAlgorithm.RSA;
     private static final int KEY_DERIVATION_DEFAULT_ITERATIONS = 10000;
     private static final int KEY_DERIVATION_DEFAULT_BITS = 256;
 
@@ -115,13 +137,16 @@ public final class CryptUtil {
      * @throws IllegalArgumentException if DSA is provided or algorithm is unsupported
      */
     private static String getAsymmetricTransformation(String algorithm) {
-        return switch (algorithm) {
-            case ASYMMETRIC_ALGORITHM_RSA -> ASYMMETRIC_TRANSFORMATION_RSA_ECB_OAEPWITHSHA_256_ANDMGF_1_PADDING; // Secure padding
-            case ASYMMETRIC_ALGORITHM_EC, ASYMMETRIC_ALGORITHM_ECIES -> ASYMMETRIC_TRANSFORMATION_ECIES;
-            case ASYMMETRIC_ALGORITHM_DSA ->
-                    throw new IllegalArgumentException("DSA is for signatures only, not encryption");
-            default -> algorithm; // Fallback to algorithm name
-        };
+        return Arrays.stream(AsymmetricAlgorithm.values())
+                .filter(a -> a.algorithm().equals(algorithm))
+                .map(AsymmetricAlgorithm::transformation)
+                .findFirst()
+                .orElseGet(() -> {
+                    if (AsymmetricAlgorithm.DSA.algorithm().equals(algorithm)) {
+                        throw new IllegalArgumentException("DSA is for signatures only, not encryption");
+                    }
+                    return algorithm; // Fallback to algorithm name
+                });
     }
 
     /**
@@ -136,23 +161,11 @@ public final class CryptUtil {
      * @param dataLength the length of the data that is intended to be encrypted
      */
     private static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) {
-        validateAsymmetricAlgorithm(key.getAlgorithm());
-
         // RSA can only encrypt data smaller than key size minus padding
         if (key instanceof RSAKey rsaKey) {
             LangUtil.check(dataLength <= (rsaKey.getModulus().bitLength() / 8) - 66,
                     "Data too large for RSA encryption: %d bytes", dataLength);
         }
-    }
-
-    /**
-     * Validates that the provided private key is suitable for asymmetric decryption.
-     * This method ensures the key's algorithm is compatible with the supported asymmetric algorithms.
-     *
-     * @param key the private key to be validated; must not be null and must correspond to a valid asymmetric algorithm
-     */
-    private static void validateAsymmetricDecryptionKey(PrivateKey key) {
-        validateAsymmetricAlgorithm(key.getAlgorithm());
     }
 
     /**
@@ -168,26 +181,15 @@ public final class CryptUtil {
      *                  If the key size does not satisfy the constraints for the selected algorithm,
      *                  an exception will be thrown.
      */
-    private static void validateAsymmetricKeySize(String algorithm, int keySize) {
+    private static void validateAsymmetricKeySize(AsymmetricAlgorithm algorithm, int keySize) {
         switch (algorithm) {
-            case ASYMMETRIC_ALGORITHM_RSA -> LangUtil.check(keySize >= 2048, "RSA key size must be at least 2048 bits, got %d", keySize);
-            case ASYMMETRIC_ALGORITHM_EC, ASYMMETRIC_ALGORITHM_ECIES -> // EC/ECIES uses curve names, not just bit sizes
+            case RSA -> LangUtil.check(keySize >= 2048, "RSA key size must be at least 2048 bits, got %d", keySize);
+            case EC, ECIES -> // EC/ECIES uses curve names, not just bit sizes
                     LangUtil.check(List.of(256, 384, 521).contains(keySize),
                             "EC key size must be 256 (P-256), 384 (P-384), or 521 (P-521) bits, got %d", keySize);
-            case ASYMMETRIC_ALGORITHM_DSA -> LangUtil.check(keySize >= 2048, "DSA key size must be at least 2048 bits, got %d", keySize);
+            case DSA -> LangUtil.check(keySize >= 2048, "DSA key size must be at least 2048 bits, got %d", keySize);
             default -> throw new IllegalArgumentException("unsupported asymmetric algorithm: " + algorithm);
         }
-    }
-
-    /**
-     * Validates whether the provided algorithm is a supported asymmetric algorithm.
-     * Supported algorithms are "RSA", "EC", and "DSA". If the input algorithm is not
-     * among these, an exception is thrown.
-     *
-     * @param algorithm the name of the asymmetric algorithm to validate
-     */
-    private static void validateAsymmetricAlgorithm(String algorithm) {
-        LangUtil.check(ASYMMETRIC_ALGORITHMS.contains(algorithm), "Unsupported asymmetric algorithm: %s", algorithm);
     }
 
     /**
@@ -542,10 +544,9 @@ public final class CryptUtil {
      * @return a {@code PrivateKey} created from the provided byte array and algorithm
      * @throws GeneralSecurityException if the key conversion fails
      */
-    public static PrivateKey toPrivateKey(byte[] bytes, String algorithm) throws GeneralSecurityException {
-        validateAsymmetricAlgorithm(algorithm);
+    public static PrivateKey toPrivateKey(byte[] bytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm.algorithm());
         return keyFactory.generatePrivate(keySpec);
     }
 
@@ -569,10 +570,9 @@ public final class CryptUtil {
      * @return the generated {@code PublicKey}
      * @throws GeneralSecurityException if the key conversion fails
      */
-    public static PublicKey toPublicKey(byte[] bytes, String algorithm) throws GeneralSecurityException {
-        validateAsymmetricAlgorithm(algorithm);
+    public static PublicKey toPublicKey(byte[] bytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm.algorithm());
         return keyFactory.generatePublic(keySpec);
     }
 
@@ -596,7 +596,7 @@ public final class CryptUtil {
      * @return a {@code KeyPair} consisting of the public and private keys
      * @throws GeneralSecurityException if the key conversion fails
      */
-    public static KeyPair toKeyPair(byte[] publicKeyBytes, byte[] privateKeyBytes, String algorithm) throws GeneralSecurityException {
+    public static KeyPair toKeyPair(byte[] publicKeyBytes, byte[] privateKeyBytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         return new KeyPair(toPublicKey(publicKeyBytes, algorithm), toPrivateKey(privateKeyBytes, algorithm));
     }
 
@@ -786,7 +786,6 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if decryption fails
      */
     public static byte[] decryptAsymmetric(PrivateKey privateKey, byte[] cipherData) throws GeneralSecurityException {
-        validateAsymmetricDecryptionKey(privateKey);
         String transformation = getAsymmetricTransformation(privateKey.getAlgorithm());
 
         Cipher cipher = Cipher.getInstance(transformation);
@@ -875,12 +874,11 @@ public final class CryptUtil {
      * @param keySize the key size in bits
      * @return the generated key pair
      */
-    public static KeyPair generateKeyPair(String algorithm, int keySize) {
-        validateAsymmetricAlgorithm(algorithm);
+    public static KeyPair generateKeyPair(AsymmetricAlgorithm algorithm, int keySize) {
         validateAsymmetricKeySize(algorithm, keySize);
 
         try {
-            java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance(algorithm);
+            java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance(algorithm.algorithm());
             keyGen.initialize(keySize, RANDOM);
             return keyGen.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
@@ -894,7 +892,7 @@ public final class CryptUtil {
      * @return the generated RSA key pair
      */
     public static KeyPair generateRSAKeyPair() {
-        return generateKeyPair(ASYMMETRIC_ALGORITHM_RSA, 2048);
+        return generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
     }
 
     /**
@@ -906,8 +904,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if signing fails
      */
     public static byte[] sign(PrivateKey privateKey, byte[] data) throws GeneralSecurityException {
-        validateAsymmetricSigningKey(privateKey);
-        String signatureAlgorithm = getSignatureAlgorithm(privateKey.getAlgorithm());
+        String signatureAlgorithm = getSignatureAlgorithm(AsymmetricAlgorithm.valueOf(privateKey.getAlgorithm()));
 
         java.security.Signature signature = java.security.Signature.getInstance(signatureAlgorithm);
         signature.initSign(privateKey, RANDOM);
@@ -926,8 +923,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if verification fails
      */
     public static boolean verify(PublicKey publicKey, byte[] data, byte[] signature) throws GeneralSecurityException {
-        validateAsymmetricVerificationKey(publicKey);
-        String signatureAlgorithm = getSignatureAlgorithm(publicKey.getAlgorithm());
+        String signatureAlgorithm = getSignatureAlgorithm(AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm()));
 
         java.security.Signature sig = java.security.Signature.getInstance(signatureAlgorithm);
         sig.initVerify(publicKey);
@@ -1014,31 +1010,13 @@ public final class CryptUtil {
      * @param keyAlgorithm the key algorithm (RSA, EC, DSA)
      * @return the signature algorithm to use
      */
-    private static String getSignatureAlgorithm(String keyAlgorithm) {
+    private static String getSignatureAlgorithm(AsymmetricAlgorithm keyAlgorithm) {
         return switch (keyAlgorithm) {
-            case ASYMMETRIC_ALGORITHM_RSA -> "SHA256withRSA";
-            case ASYMMETRIC_ALGORITHM_EC -> "SHA256withECDSA";
-            case ASYMMETRIC_ALGORITHM_DSA -> "SHA256withDSA";
+            case RSA -> "SHA256withRSA";
+            case EC -> "SHA256withECDSA";
+            case DSA -> "SHA256withDSA";
             default -> throw new IllegalArgumentException("Unsupported key algorithm for signing: " + keyAlgorithm);
         };
-    }
-
-    /**
-     * Validate a private key for signing operations.
-     *
-     * @param privateKey the private key to validate
-     */
-    private static void validateAsymmetricSigningKey(PrivateKey privateKey) {
-        validateAsymmetricAlgorithm(privateKey.getAlgorithm());
-    }
-
-    /**
-     * Validate a public key for verification operations.
-     *
-     * @param publicKey the public key to validate
-     */
-    private static void validateAsymmetricVerificationKey(PublicKey publicKey) {
-        validateAsymmetricAlgorithm(publicKey.getAlgorithm());
     }
 
     /**

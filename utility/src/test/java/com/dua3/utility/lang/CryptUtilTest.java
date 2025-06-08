@@ -301,8 +301,8 @@ class CryptUtilTest {
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedPrivateKey.getEncoded());
 
         // Test toPublicKey and toPrivateKey with explicit algorithm
-        PublicKey convertedPublicKeyWithAlg = CryptUtil.toPublicKey(publicKeyBytes, "RSA");
-        PrivateKey convertedPrivateKeyWithAlg = CryptUtil.toPrivateKey(privateKeyBytes, "RSA");
+        PublicKey convertedPublicKeyWithAlg = CryptUtil.toPublicKey(publicKeyBytes, CryptUtil.AsymmetricAlgorithm.RSA);
+        PrivateKey convertedPrivateKeyWithAlg = CryptUtil.toPrivateKey(privateKeyBytes, CryptUtil.AsymmetricAlgorithm.RSA);
 
         assertArrayEquals(originalPublicKey.getEncoded(), convertedPublicKeyWithAlg.getEncoded());
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedPrivateKeyWithAlg.getEncoded());
@@ -313,7 +313,7 @@ class CryptUtilTest {
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedKeyPair.getPrivate().getEncoded());
 
         // Test toKeyPair with explicit algorithm
-        KeyPair convertedKeyPairWithAlg = CryptUtil.toKeyPair(publicKeyBytes, privateKeyBytes, "RSA");
+        KeyPair convertedKeyPairWithAlg = CryptUtil.toKeyPair(publicKeyBytes, privateKeyBytes, CryptUtil.AsymmetricAlgorithm.RSA);
         assertArrayEquals(originalPublicKey.getEncoded(), convertedKeyPairWithAlg.getPublic().getEncoded());
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedKeyPairWithAlg.getPrivate().getEncoded());
     }
@@ -436,14 +436,14 @@ class CryptUtilTest {
         // Test RSA key pair generation
         KeyPair rsaKeyPair = CryptUtil.generateRSAKeyPair();
         assertNotNull(rsaKeyPair);
-        assertEquals("RSA", rsaKeyPair.getPublic().getAlgorithm());
-        assertEquals("RSA", rsaKeyPair.getPrivate().getAlgorithm());
+        assertEquals(CryptUtil.AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPublic().getAlgorithm());
+        assertEquals(CryptUtil.AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPrivate().getAlgorithm());
 
         // Test custom algorithm and key size
-        KeyPair customKeyPair = CryptUtil.generateKeyPair("RSA", 2048);
+        KeyPair customKeyPair = CryptUtil.generateKeyPair(CryptUtil.AsymmetricAlgorithm.RSA, 2048);
         assertNotNull(customKeyPair);
-        assertEquals("RSA", customKeyPair.getPublic().getAlgorithm());
-        assertEquals("RSA", customKeyPair.getPrivate().getAlgorithm());
+        assertEquals(CryptUtil.AsymmetricAlgorithm.RSA.name(), customKeyPair.getPublic().getAlgorithm());
+        assertEquals(CryptUtil.AsymmetricAlgorithm.RSA.name(), customKeyPair.getPrivate().getAlgorithm());
 
         // Test EC key pair generation
         KeyPair ecKeyPair = CryptUtil.generateECKeyPair("secp256r1");
