@@ -80,7 +80,7 @@ public final class CryptUtil {
          * Retrieves the signature algorithm associated with this asymmetric algorithm, if available.
          *
          * @return an {@code Optional} containing the signature algorithm as a string, or an empty
-         *         {@code Optional} if no signature algorithm is defined.
+         * {@code Optional} if no signature algorithm is defined.
          */
         public Optional<String> getSignatureAlgorithm() {
             return Optional.ofNullable(signatureAlgorithm);
@@ -90,7 +90,7 @@ public final class CryptUtil {
          * Retrieves the transformation string associated with the asymmetric algorithm.
          *
          * @return the transformation string, which specifies the cipher transformation
-         *         used by this asymmetric algorithm
+         * used by this asymmetric algorithm
          */
         public String transformation() {
             return transformation;
@@ -105,13 +105,18 @@ public final class CryptUtil {
     private static final int KEY_DERIVATION_DEFAULT_ITERATIONS = 10000;
     private static final int KEY_DERIVATION_DEFAULT_BITS = 256;
 
-    private static final SecureRandom RANDOM;
+    /**
+     * Singleton holder for the {@link SecureRandom} instance, achieves lazy initialization.
+     */
+    private static final class RandomHolder {
+        private static final SecureRandom RANDOM;
 
-    static {
-        try {
-            RANDOM = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("could not get a secure random instance", e);
+        static {
+            try {
+                RANDOM = SecureRandom.getInstanceStrong();
+            } catch (NoSuchAlgorithmException e) {
+                throw new IllegalStateException("could not get a secure random instance", e);
+            }
         }
     }
 
@@ -325,7 +330,7 @@ public final class CryptUtil {
      */
     public static byte[] generateSalt(int length) {
         byte[] salt = new byte[length];
-        RANDOM.nextBytes(salt);
+        RandomHolder.RANDOM.nextBytes(salt);
         return salt;
     }
 
@@ -465,7 +470,7 @@ public final class CryptUtil {
         Key secretKey = new SecretKeySpec(key, SYMMETRIC_ALGORITHM);
 
         byte[] iv = new byte[IV_LENGTH];
-        RANDOM.nextBytes(iv);
+        RandomHolder.RANDOM.nextBytes(iv);
 
         final Cipher cipher = Cipher.getInstance(CIPHER);
         AlgorithmParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
@@ -493,7 +498,7 @@ public final class CryptUtil {
         validateSymmetricKey(key);
 
         byte[] iv = new byte[IV_LENGTH];
-        RANDOM.nextBytes(iv);
+        RandomHolder.RANDOM.nextBytes(iv);
 
         final Cipher cipher = Cipher.getInstance(CIPHER);
         AlgorithmParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
@@ -879,7 +884,7 @@ public final class CryptUtil {
 
         try {
             java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance(algorithm.algorithm());
-            keyGen.initialize(keySize, RANDOM);
+            keyGen.initialize(keySize, RandomHolder.RANDOM);
             return keyGen.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
@@ -907,7 +912,7 @@ public final class CryptUtil {
         String signatureAlgorithm = getSignatureAlgorithm(AsymmetricAlgorithm.valueOf(privateKey.getAlgorithm()));
 
         java.security.Signature signature = java.security.Signature.getInstance(signatureAlgorithm);
-        signature.initSign(privateKey, RANDOM);
+        signature.initSign(privateKey, RandomHolder.RANDOM);
         signature.update(data);
 
         return signature.sign();
@@ -1085,7 +1090,7 @@ public final class CryptUtil {
             // Use ECGenParameterSpec to specify the named curve
             java.security.spec.ECGenParameterSpec ecSpec =
                     new java.security.spec.ECGenParameterSpec(curveName);
-            keyGen.initialize(ecSpec, RANDOM);
+            keyGen.initialize(ecSpec, RandomHolder.RANDOM);
 
             return keyGen.generateKeyPair();
         } catch (GeneralSecurityException e) {
