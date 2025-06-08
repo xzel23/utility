@@ -55,7 +55,7 @@ dependencyResolutionManagement {
             plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.1.13")
-            plugin("cabe", "com.dua3.cabe").version("3.0.2")
+            plugin("cabe", "com.dua3.cabe").version("3.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
@@ -64,7 +64,7 @@ dependencyResolutionManagement {
 
             version("h2database", "2.3.232")
             version("ikonli", "12.4.0")
-            version("javafx", "23") // IMPORTANT: JavaFX 23 is the last version to support Java 21!
+            version("javafx", "23.0.2") // IMPORTANT: JavaFX 23 is the last version to support Java 21!
             version("jimfs", "1.3.0")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
