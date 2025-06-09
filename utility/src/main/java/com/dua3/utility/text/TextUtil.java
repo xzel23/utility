@@ -1196,4 +1196,14 @@ public final class TextUtil {
     public static char[] toCharArray(byte[] bytes) {
         return new String(bytes, StandardCharsets.UTF_8).toCharArray();
     }
+
+    /**
+     * Decodes the given byte array into a string using UTF-8 character encoding.
+     *
+     * @param bytes the byte array to decode
+     * @return the resulting string after decoding the byte array
+     */
+    public static String decodeToString(byte[] bytes) {
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
 }
