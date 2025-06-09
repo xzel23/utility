@@ -288,7 +288,7 @@ public final class CryptUtil {
      * @return the encrypted message as byte array
      * @throws GeneralSecurityException if encryption fails
      */
-    public static byte[] encrypt(Key key, byte[] data, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
+    public static byte[] encryptSymmetric(Key key, byte[] data, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
         return encryptSymmetric(SYMMETRIC_ALGORITHM_DEFAULT, key, data, inputBufferHandling);
     }
 
