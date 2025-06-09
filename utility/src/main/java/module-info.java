@@ -55,6 +55,7 @@ open module com.dua3.utility {
     exports com.dua3.utility.ui;
     exports com.dua3.utility.xml;
     exports com.dua3.utility.awt;
+    exports com.dua3.utility.encryption;
 
     requires java.xml;
     requires static java.desktop;

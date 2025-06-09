@@ -5,6 +5,8 @@
 
 package com.dua3.utility.lang;
 
+import com.dua3.utility.encryption.AsymmetricAlgorithm;
+import com.dua3.utility.encryption.CryptUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -310,8 +312,8 @@ class CryptUtilTest {
     }
 
     @ParameterizedTest
-    @EnumSource(CryptUtil.AsymmetricAlgorithm.class)
-    void testKeyConversionMethodsWithAlgorithm(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+    @EnumSource(AsymmetricAlgorithm.class)
+    void testKeyConversionMethodsWithAlgorithm(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         // Generate appropriate key pair based on algorithm
         KeyPair keyPair = generateKeyPairForAlgorithm(algorithm);
         PublicKey originalPublicKey = keyPair.getPublic();
@@ -334,7 +336,7 @@ class CryptUtilTest {
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedKeyPairWithAlg.getPrivate().getEncoded());
     }
 
-    private KeyPair generateKeyPairForAlgorithm(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+    private KeyPair generateKeyPairForAlgorithm(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         switch (algorithm) {
             case RSA:
                 return CryptUtil.generateRSAKeyPair();
@@ -425,14 +427,14 @@ class CryptUtilTest {
         // Test RSA key pair generation
         KeyPair rsaKeyPair = CryptUtil.generateRSAKeyPair();
         assertNotNull(rsaKeyPair);
-        assertEquals(CryptUtil.AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPublic().getAlgorithm());
-        assertEquals(CryptUtil.AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPrivate().getAlgorithm());
+        assertEquals(AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPublic().getAlgorithm());
+        assertEquals(AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPrivate().getAlgorithm());
 
         // Test custom algorithm and key size
-        KeyPair customKeyPair = CryptUtil.generateKeyPair(CryptUtil.AsymmetricAlgorithm.RSA, 2048);
+        KeyPair customKeyPair = CryptUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
         assertNotNull(customKeyPair);
-        assertEquals(CryptUtil.AsymmetricAlgorithm.RSA.name(), customKeyPair.getPublic().getAlgorithm());
-        assertEquals(CryptUtil.AsymmetricAlgorithm.RSA.name(), customKeyPair.getPrivate().getAlgorithm());
+        assertEquals(AsymmetricAlgorithm.RSA.name(), customKeyPair.getPublic().getAlgorithm());
+        assertEquals(AsymmetricAlgorithm.RSA.name(), customKeyPair.getPrivate().getAlgorithm());
 
         // Test EC key pair generation
         KeyPair ecKeyPair = CryptUtil.generateECKeyPair("secp256r1");
@@ -442,8 +444,8 @@ class CryptUtilTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = CryptUtil.AsymmetricAlgorithm.class)
-    void testAsymmetricEncryption(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+    @EnumSource(value = AsymmetricAlgorithm.class)
+    void testAsymmetricEncryption(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         KeyPair keyPair = generateKeyPairForAlgorithm(algorithm);
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
@@ -577,8 +579,8 @@ class CryptUtilTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = CryptUtil.AsymmetricAlgorithm.class)
-    void testHybridEncryption(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+    @EnumSource(value = AsymmetricAlgorithm.class)
+    void testHybridEncryption(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         KeyPair keyPair = generateKeyPairForAlgorithm(algorithm);
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
@@ -656,8 +658,8 @@ class CryptUtilTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = CryptUtil.AsymmetricAlgorithm.class)
-    void testAsymmetricEncryptionSupport(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+    @EnumSource(value = AsymmetricAlgorithm.class)
+    void testAsymmetricEncryptionSupport(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         KeyPair keyPair = generateKeyPairForAlgorithm(algorithm);
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
