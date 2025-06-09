@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.spec.*;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -79,11 +78,10 @@ public final class CryptUtil {
      *
      * @param key the asymmetric encryption key to validate
      * @param dataLength the length of the data that is intended to be encrypted
-     * @param isHybridEncryption whether this is for hybrid encryption (affects validation)
      * @throws InvalidKeyException if the algorithm doesn't support direct encryption
      * @throws IllegalBlockSizeException if the data is too large for the key/algorithm
      */
-    private static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength, boolean isHybridEncryption) throws GeneralSecurityException {
+    private static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
         String algorithm = key.getAlgorithm();
 
         switch (algorithm.toUpperCase()) {
@@ -144,19 +142,16 @@ public final class CryptUtil {
      */
     private static void validateAsymmetricKeySize(AsymmetricAlgorithm algorithm, int keySize) {
         switch (algorithm) {
-            case RSA:
-            case DSA:
+            case RSA, DSA -> {
                 if (keySize < 2048) {
                     throw new IllegalArgumentException(algorithm + " key size must be at least 2048 bits, but was: " + keySize);
                 }
-                break;
-            case EC:
+            }
+            case EC -> {
                 if (keySize != 256 && keySize != 384 && keySize != 521) {
                     throw new IllegalArgumentException("EC key size must be 256, 384, or 521 bits, but was: " + keySize);
                 }
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
+            }
         }
     }
 
@@ -196,7 +191,7 @@ public final class CryptUtil {
             spec.clearPassword();
             return keyBytes;
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.encryption.InputBufferHandling.PRESERVE) {
                 Arrays.fill(passphrase, '\0');
                 Arrays.fill(salt, (byte) 0);
             }
@@ -331,7 +326,7 @@ public final class CryptUtil {
                 return cipher.doFinal(data);
             }
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.encryption.InputBufferHandling.PRESERVE) {
                 Arrays.fill(data, (byte) 0);
             }
         }
@@ -532,7 +527,7 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static byte[] encryptAsymmetric(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
-        validateAsymmetricEncryptionKey(publicKey, data.length, false);
+        validateAsymmetricEncryptionKey(publicKey, data.length);
 
         AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
         String transformation = getAsymmetricTransformation(algorithm);
@@ -580,6 +575,27 @@ public final class CryptUtil {
     }
 
     /**
+     * Generate an Elliptic Curve key pair using a named curve.
+     * <p>
+     * Supported standard curves:
+     * <ul>
+     *   <li>"secp256r1" (P-256) - 256-bit curve</li>
+     *   <li>"secp384r1" (P-384) - 384-bit curve</li>
+     *   <li>"secp521r1" (P-521) - 521-bit curve</li>
+     * </ul>
+     *
+     * @param curveName the name of the elliptic curve ("secp256r1", "secp384r1", "secp521r1")
+     * @return the generated EC key pair
+     * @throws GeneralSecurityException if key generation fails or the curve is not supported
+     */
+    public static KeyPair generateECKeyPair(String curveName) throws GeneralSecurityException {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+        ECGenParameterSpec ecSpec = new ECGenParameterSpec(curveName);
+        keyGen.initialize(ecSpec, RandomHolder.RANDOM);
+        return keyGen.generateKeyPair();
+    }
+
+    /**
      * Generate an RSA key pair with default key size (2048 bits).
      *
      * @return the generated RSA key pair
@@ -609,10 +625,44 @@ public final class CryptUtil {
             signature.update(data);
             return signature.sign();
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.encryption.InputBufferHandling.PRESERVE) {
                 Arrays.fill(data, (byte) 0);
             }
         }
+    }
+
+    /**
+     * Sign text using a private key.
+     *
+     * @param privateKey the private key for signing
+     * @param text the text to sign
+     * @return the digital signature as Base64 encoded String
+     * @throws GeneralSecurityException if signing fails
+     */
+    public static byte[] sign(PrivateKey privateKey, CharSequence text) throws GeneralSecurityException {
+        byte[] data = TextUtil.toByteArray(text);
+        return sign(privateKey, data, com.dua3.utility.encryption.InputBufferHandling.CLEAR_AFTER_USE);
+    }
+
+    /**
+     * Sign text using a private key.
+     * <p>
+     * <strong>Security Note:</strong> This method clears (overwrites with null characters)
+     * the input char array after use to prevent sensitive data from remaining in memory.
+     * Do not reuse the same array for subsequent operations.
+     *
+     * @param privateKey the private key for signing
+     * @param text the text to sign
+     * @param inputBufferHandling how to handle input buffers
+     * @return the digital signature as Base64 encoded String
+     * @throws GeneralSecurityException if signing fails
+     */
+    public static byte[] sign(PrivateKey privateKey, char[] text, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
+        byte[] data = TextUtil.toByteArray(text);
+        if (inputBufferHandling != com.dua3.utility.encryption.InputBufferHandling.PRESERVE) {
+            Arrays.fill(text, (char) 0);
+        }
+        return sign(privateKey, data, com.dua3.utility.encryption.InputBufferHandling.CLEAR_AFTER_USE);
     }
 
     /**
@@ -637,42 +687,11 @@ public final class CryptUtil {
             sig.update(data);
             return sig.verify(signature);
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.encryption.InputBufferHandling.PRESERVE) {
                 Arrays.fill(data, (byte) 0);
                 Arrays.fill(signature, (byte) 0);
             }
         }
-    }
-
-    /**
-     * Sign text using a private key.
-     *
-     * @param privateKey the private key for signing
-     * @param text the text to sign
-     * @return the digital signature as Base64 encoded String
-     * @throws GeneralSecurityException if signing fails
-     */
-    public static byte[] sign(PrivateKey privateKey, CharSequence text) throws GeneralSecurityException {
-        byte[] data = TextUtil.toByteArray(text);
-        return sign(privateKey, data, InputBufferHandling.CLEAR_AFTER_USE);
-    }
-
-    /**
-     * Sign text using a private key.
-     * <p>
-     * <strong>Security Note:</strong> This method clears (overwrites with null characters)
-     * the input char array after use to prevent sensitive data from remaining in memory.
-     * Do not reuse the same array for subsequent operations.
-     *
-     * @param privateKey the private key for signing
-     * @param text the text to sign
-     * @param inputBufferHandling how to handle input buffers
-     * @return the digital signature as Base64 encoded String
-     * @throws GeneralSecurityException if signing fails
-     */
-    public static byte[] sign(PrivateKey privateKey, char[] text, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
-        byte[] data = TextUtil.toByteArray(text);
-        return sign(privateKey, data, InputBufferHandling.CLEAR_AFTER_USE);
     }
 
     /**
@@ -686,7 +705,7 @@ public final class CryptUtil {
      */
     public static boolean verify(PublicKey publicKey, CharSequence text, byte[] signature) throws GeneralSecurityException {
         char[] data = TextUtil.toCharArray(text);
-        return verify(publicKey, data, signature, InputBufferHandling.CLEAR_AFTER_USE);
+        return verify(publicKey, data, signature, com.dua3.utility.encryption.InputBufferHandling.CLEAR_AFTER_USE);
     }
 
     /**
@@ -706,9 +725,9 @@ public final class CryptUtil {
     public static boolean verify(PublicKey publicKey, char[] text, byte[] signature, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
         byte[] data = TextUtil.toByteArray(text);
         try {
-            return verify(publicKey, data, signature, InputBufferHandling.PRESERVE);
+            return verify(publicKey, data, signature, com.dua3.utility.encryption.InputBufferHandling.PRESERVE);
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.encryption.InputBufferHandling.PRESERVE) {
                 Arrays.fill(text, '\0');
                 Arrays.fill(signature, (byte) 0);
             }
@@ -733,7 +752,7 @@ public final class CryptUtil {
      */
     public static byte[] encryptHybrid(PublicKey publicKey, byte[] data, InputBufferHandling inputBufferHandling) throws GeneralSecurityException {
         try {
-            validateAsymmetricEncryptionKey(publicKey, 32, true); // 32 bytes = 256-bit AES key
+            validateAsymmetricEncryptionKey(publicKey, 32); // 32 bytes = 256-bit AES key
 
             // Generate random AES key
             SecretKey aesKey = generateSecretKey(256, SYMMETRIC_ALGORITHM_DEFAULT);
@@ -752,31 +771,10 @@ public final class CryptUtil {
 
             return buffer.array();
         } finally {
-            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != com.dua3.utility.encryption.InputBufferHandling.PRESERVE) {
                 Arrays.fill(data, (byte) 0);
             }
         }
-    }
-
-    /**
-     * Generate an Elliptic Curve key pair using a named curve.
-     * <p>
-     * Supported standard curves:
-     * <ul>
-     *   <li>"secp256r1" (P-256) - 256-bit curve</li>
-     *   <li>"secp384r1" (P-384) - 384-bit curve</li>
-     *   <li>"secp521r1" (P-521) - 521-bit curve</li>
-     * </ul>
-     *
-     * @param curveName the name of the elliptic curve ("secp256r1", "secp384r1", "secp521r1")
-     * @return the generated EC key pair
-     * @throws GeneralSecurityException if key generation fails or the curve is not supported
-     */
-    public static KeyPair generateECKeyPair(String curveName) throws GeneralSecurityException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-        ECGenParameterSpec ecSpec = new ECGenParameterSpec(curveName);
-        keyGen.initialize(ecSpec, RandomHolder.RANDOM);
-        return keyGen.generateKeyPair();
     }
 
     /**
