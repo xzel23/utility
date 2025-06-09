@@ -13,13 +13,9 @@ public enum AsymmetricAlgorithm {
      */
     RSA("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING", "SHA256withRSA", "RSA"),
     /**
-     * Elliptic Curve Cryptography (primarily for signatures and key agreement)
+     * Elliptic Curve Cryptography, requires special provider for encryption (not signatures and key agreement)
      */
-    EC(null, "SHA256withECDSA", "EC"),
-    /**
-     * Elliptic Curve Integrated Encryption Scheme (requires special provider)
-     */
-    ECIES("ECIES", null, "EC"),
+    EC("ECIES", "SHA256withECDSA", "EC"),
     /**
      * Digital Signature Algorithm (for signatures only)
      */

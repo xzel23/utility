@@ -74,6 +74,7 @@ dependencyResolutionManagement {
             version("mockito", "5.18.0")
             version("slf4j", "2.0.17")
             version("spotbugs", "4.9.3")
+            version("bouncycastle", "1.81")
 
             library("jspecify", "org.jspecify", "jspecify").versionRef("jspecify")
 
@@ -99,6 +100,7 @@ dependencyResolutionManagement {
 
             library("junit4", "junit", "junit").versionRef("junit4")
             library("h2", "com.h2database", "h2").versionRef("h2database")
+            library("bouncycastle", "org.bouncycastle", "bcprov-jdk18on").versionRef("bouncycastle")
         }
     }
 

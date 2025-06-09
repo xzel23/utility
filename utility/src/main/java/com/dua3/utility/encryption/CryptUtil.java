@@ -11,6 +11,8 @@ import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.spec.*;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Cryptographic utilities.
@@ -51,17 +53,20 @@ public final class CryptUtil {
      * Supported algorithms:
      * <ul>
      *   <li>RSA: Returns RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING for secure padding</li>
-     *   <li>ECIES: Returns ECIES (requires special provider like Bouncy Castle)</li>
-     *   <li>EC/DSA: Throws exception as these are for signatures/key agreement only</li>
+     *   <li>EC: Returns ECIES (requires special provider like Bouncy Castle)</li>
+     *   <li>DSA: Throws exception as DSA is for signatures/key agreement only</li>
      * </ul>
      *
      * @param algorithm the asymmetric algorithm
      * @return the transformation string corresponding to the given algorithm
      * @throws IllegalArgumentException if algorithm doesn't support direct encryption
      */
-    private static String getAsymmetricTransformation(AsymmetricAlgorithm algorithm) {
-        return algorithm.getTransformation()
-                .orElseThrow(() -> new IllegalArgumentException("Algorithm " + algorithm + " does not support direct encryption"));
+    private static String getAsymmetricTransformation(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        Optional<String> transformation = algorithm.getTransformation();
+        if (!transformation.isPresent()) {
+            throw new InvalidKeyException("Algorithm " + algorithm + " does not support direct encryption");
+        }
+        return transformation.get();
     }
 
     /**
@@ -85,15 +90,10 @@ public final class CryptUtil {
             case "RSA":
                 validateRSAEncryptionKey(key, dataLength);
                 break;
-            case "EC":
-                if (!isHybridEncryption) {
-                    throw new InvalidKeyException("EC keys do not support direct encryption. Use hybrid encryption or ECIES instead.");
-                }
-                break;
             case "DSA":
                 throw new InvalidKeyException("DSA keys are for signatures only, not encryption");
             default:
-                // For other algorithms like ECIES, assume they're valid if they got here
+                // for EC the validity cannot be checked here
                 break;
         }
     }
@@ -151,7 +151,6 @@ public final class CryptUtil {
                 }
                 break;
             case EC:
-            case ECIES:
                 if (keySize != 256 && keySize != 384 && keySize != 521) {
                     throw new IllegalArgumentException("EC key size must be 256, 384, or 521 bits, but was: " + keySize);
                 }
@@ -535,9 +534,8 @@ public final class CryptUtil {
     public static byte[] encryptAsymmetric(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
         validateAsymmetricEncryptionKey(publicKey, data.length, false);
 
-        String algorithm = publicKey.getAlgorithm();
-        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
-        String transformation = getAsymmetricTransformation(asymmAlg);
+        AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
+        String transformation = getAsymmetricTransformation(algorithm);
 
         Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);

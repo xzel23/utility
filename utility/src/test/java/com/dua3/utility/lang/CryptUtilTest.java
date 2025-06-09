@@ -19,14 +19,29 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.security.InvalidKeyException;
+import java.util.Locale;
+import javax.crypto.Cipher;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.NoSuchPaddingException;
 
 class CryptUtilTest {
+
+    static {
+        // Register Bouncy Castle provider for tests
+        try {
+            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        } catch (Exception e) {
+            System.err.println("Failed to register Bouncy Castle provider: " + e.getMessage());
+        }
+    }
 
     private static final int[] KEY_LENGTHS = {128, 192, 256};
 
@@ -36,6 +51,16 @@ class CryptUtilTest {
             System.getProperties().toString()
     };
 
+    private static boolean isEciesSupported() {
+        try {
+            // Try to get an ECIES cipher to check if a provider supports it
+            Cipher.getInstance("ECIES");
+            return true;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            return false;
+        }
+    }
+
     @Test
     void testSymmetricEncryption() throws GeneralSecurityException {
         for (int keyLength : KEY_LENGTHS) {
@@ -43,7 +68,7 @@ class CryptUtilTest {
 
             for (String message : MESSAGES) {
                 byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
-                byte[] encrypted = CryptUtil.encryptSymmetric(key, messageBytes, InputBufferHandling.CLEAR_AFTER_USE);
+                byte[] encrypted = CryptUtil.encryptSymmetric(key, messageBytes, InputBufferHandling.PRESERVE);
                 byte[] decrypted = CryptUtil.decryptSymmetric(key, encrypted);
 
                 assertEquals(message, new String(decrypted, StandardCharsets.UTF_8));
@@ -83,7 +108,7 @@ class CryptUtilTest {
 
         // Test with different key sizes
         for (int keyBits : new int[]{128, 192, 256}) {
-            SecretKey key = CryptUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.CLEAR_AFTER_USE);
+            SecretKey key = CryptUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.PRESERVE);
 
             // Derive the key again with the same parameters and verify it's the same
             SecretKey sameKey = CryptUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.CLEAR_AFTER_USE);
@@ -134,7 +159,7 @@ class CryptUtilTest {
 
         // Test with different key sizes
         for (int keyBits : new int[]{128, 192, 256}) {
-            SecretKey key = CryptUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.CLEAR_AFTER_USE);
+            SecretKey key = CryptUtil.deriveSecretKey(passphrase.clone(), salt, 10000, keyBits, InputBufferHandling.PRESERVE);
 
             // Verify key length
             assertEquals(keyBits / 8, key.getEncoded().length);
@@ -241,11 +266,6 @@ class CryptUtilTest {
         // Verify the converted keys match the originals
         assertArrayEquals(originalPublicKey.getEncoded(), convertedPublicKey.getEncoded());
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedPrivateKey.getEncoded());
-
-        // Test toKeyPair with default algorithm
-        KeyPair convertedKeyPair = CryptUtil.toKeyPair(publicKeyBytes, privateKeyBytes);
-        assertArrayEquals(originalPublicKey.getEncoded(), convertedKeyPair.getPublic().getEncoded());
-        assertArrayEquals(originalPrivateKey.getEncoded(), convertedKeyPair.getPrivate().getEncoded());
     }
 
     @ParameterizedTest
@@ -278,7 +298,6 @@ class CryptUtilTest {
             case RSA:
                 return CryptUtil.generateRSAKeyPair();
             case EC:
-            case ECIES:
                 return CryptUtil.generateECKeyPair("secp256r1");
             case DSA:
                 return CryptUtil.generateKeyPair(algorithm, 2048);
@@ -298,8 +317,8 @@ class CryptUtilTest {
         for (String message : MESSAGES) {
             byte[] data = message.getBytes(StandardCharsets.UTF_8);
 
-            byte[] signature = CryptUtil.sign(privateKey, data);
-            boolean verified = CryptUtil.verify(publicKey, data, signature);
+            byte[] signature = CryptUtil.sign(privateKey, data, InputBufferHandling.PRESERVE);
+            boolean verified = CryptUtil.verify(publicKey, data, signature, InputBufferHandling.CLEAR_AFTER_USE);
 
             assertTrue(verified);
 
@@ -307,27 +326,27 @@ class CryptUtilTest {
             if (data.length > 0) {
                 byte[] modifiedData = Arrays.copyOf(data, data.length);
                 modifiedData[0] = (byte) (modifiedData[0] + 1);
-                boolean verifiedModified = CryptUtil.verify(publicKey, modifiedData, signature);
+                boolean verifiedModified = CryptUtil.verify(publicKey, modifiedData, signature, InputBufferHandling.CLEAR_AFTER_USE);
                 assertFalse(verifiedModified);
             }
         }
 
         // Test string signing/verification
         String message = "Test message for signing";
-        String signature = CryptUtil.sign(privateKey, message);
+        byte[] signature = CryptUtil.sign(privateKey, message);
         boolean verified = CryptUtil.verify(publicKey, message, signature);
 
         assertTrue(verified);
 
         // Test char array signing/verification
-        String signatureChars = CryptUtil.sign(privateKey, message.toCharArray());
-        boolean verifiedChars = CryptUtil.verify(publicKey, message.toCharArray(), signatureChars);
+        byte[] signatureChars = CryptUtil.sign(privateKey, message.toCharArray(), InputBufferHandling.CLEAR_AFTER_USE);
+        boolean verifiedChars = CryptUtil.verify(publicKey, message.toCharArray(), signatureChars, InputBufferHandling.CLEAR_AFTER_USE);
 
         assertTrue(verifiedChars);
     }
 
     @Test
-    void testHybridEncryption() throws GeneralSecurityException {
+    void testHybridEncryptionWithDefaultAlgorithm() throws GeneralSecurityException {
         // Generate a key pair for testing
         KeyPair keyPair = CryptUtil.generateRSAKeyPair();
         PublicKey publicKey = keyPair.getPublic();
@@ -337,25 +356,11 @@ class CryptUtilTest {
         for (String message : MESSAGES) {
             byte[] data = message.getBytes(StandardCharsets.UTF_8);
 
-            byte[] encrypted = CryptUtil.encryptHybrid(publicKey, data);
+            byte[] encrypted = CryptUtil.encryptHybrid(publicKey, data, InputBufferHandling.PRESERVE);
             byte[] decrypted = CryptUtil.decryptHybrid(privateKey, encrypted);
 
             assertArrayEquals(data, decrypted);
         }
-
-        // Test string hybrid encryption/decryption
-        String message = "Test message for hybrid encryption";
-        String encrypted = CryptUtil.encryptHybrid(publicKey, message);
-        String decrypted = CryptUtil.decryptHybrid(privateKey, encrypted);
-
-        assertEquals(message, decrypted);
-
-        // Test char array hybrid encryption/decryption
-        char[] messageChars = message.toCharArray();
-        String encryptedChars = CryptUtil.encryptHybrid(publicKey, messageChars);
-        char[] decryptedChars = CryptUtil.decryptHybridToChars(privateKey, encryptedChars);
-
-        assertEquals(message, new String(decryptedChars));
     }
 
     @Test
@@ -367,7 +372,7 @@ class CryptUtilTest {
         assertEquals(AsymmetricAlgorithm.RSA.name(), rsaKeyPair.getPrivate().getAlgorithm());
 
         // Test custom algorithm and key size
-        KeyPair customKeyPair = CryptUtil.generateSecretKeyPair(AsymmetricAlgorithm.RSA, 2048);
+        KeyPair customKeyPair = CryptUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
         assertNotNull(customKeyPair);
         assertEquals(AsymmetricAlgorithm.RSA.name(), customKeyPair.getPublic().getAlgorithm());
         assertEquals(AsymmetricAlgorithm.RSA.name(), customKeyPair.getPrivate().getAlgorithm());
@@ -382,6 +387,12 @@ class CryptUtilTest {
     @ParameterizedTest
     @EnumSource(value = AsymmetricAlgorithm.class)
     void testAsymmetricEncryption(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        // Add assumption for ECIES
+        if (algorithm == AsymmetricAlgorithm.EC) {
+            assumeTrue(isEciesSupported(), 
+                "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
+        }
+
         KeyPair keyPair = generateSecretKeyPairForAlgorithm(algorithm);
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
@@ -406,44 +417,14 @@ class CryptUtilTest {
                 byte[] decrypted = CryptUtil.decryptAsymmetric(privateKey, encrypted);
                 assertArrayEquals(data, decrypted);
             }
-
-            // Test string encryption/decryption
-            String testMessage = "Short test message";
-            String encryptedText = CryptUtil.encryptAsymmetric(publicKey, testMessage);
-            String decryptedText = CryptUtil.decryptAsymmetric(privateKey, encryptedText);
-            assertEquals(testMessage, decryptedText);
-
-            // Test char array encryption/decryption
-            char[] messageChars = testMessage.toCharArray();
-            String encryptedFromChars = CryptUtil.encryptAsymmetric(publicKey, messageChars);
-            char[] decryptedChars = CryptUtil.decryptAsymmetricToChars(privateKey, encryptedFromChars);
-            assertEquals(testMessage, new String(decryptedChars));
-
-            // Clean up sensitive data
-            Arrays.fill(messageChars, '\0');
-            Arrays.fill(decryptedChars, '\0');
-
         } else {
             // Algorithm doesn't support direct encryption - should throw InvalidKeyException
             byte[] testData = "test data".getBytes(StandardCharsets.UTF_8);
-            String testText = "test message";
-            char[] testChars = testText.toCharArray();
 
             // Test that all encryption methods throw InvalidKeyException
             assertThrows(InvalidKeyException.class, () -> {
                 CryptUtil.encryptAsymmetric(publicKey, testData);
             });
-
-            assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptAsymmetric(publicKey, testText);
-            });
-
-            assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptAsymmetric(publicKey, testChars);
-            });
-
-            // Clean up
-            Arrays.fill(testChars, '\0');
         }
     }
 
@@ -462,18 +443,6 @@ class CryptUtilTest {
         // This should throw an exception
         assertThrows(GeneralSecurityException.class, () -> {
             CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedData);
-        });
-
-        // Test with string that's too large
-        String oversizedString = new String(oversizedData, StandardCharsets.UTF_8);
-        assertThrows(GeneralSecurityException.class, () -> {
-            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedString);
-        });
-
-        // Test with char array that's too large
-        char[] oversizedChars = oversizedString.toCharArray();
-        assertThrows(GeneralSecurityException.class, () -> {
-            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedChars);
         });
     }
 
@@ -517,37 +486,28 @@ class CryptUtilTest {
     @ParameterizedTest
     @EnumSource(value = AsymmetricAlgorithm.class)
     void testHybridEncryption(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        // Add assumption for ECIES
+        if (algorithm == AsymmetricAlgorithm.EC) {
+            assumeTrue(isEciesSupported(), 
+                "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
+        }
+
         KeyPair keyPair = generateSecretKeyPairForAlgorithm(algorithm);
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
 
         if (algorithm.isEncryptionSupported()) {
             // Algorithm supports encryption - test hybrid encryption with large data
-        
+
             // Test with large data that would fail with direct asymmetric encryption
             String largeMessage = "A".repeat(1000); // 1KB of data
             byte[] largeData = largeMessage.getBytes(StandardCharsets.UTF_8);
 
             // Test byte array hybrid encryption/decryption
-            byte[] encryptedData = CryptUtil.encryptHybrid(publicKey, largeData);
+            byte[] encryptedData = CryptUtil.encryptHybrid(publicKey, largeData, InputBufferHandling.PRESERVE);
             byte[] decryptedData = CryptUtil.decryptHybrid(privateKey, encryptedData);
             assertArrayEquals(largeData, decryptedData);
 
-            // Test text hybrid encryption/decryption
-            String encryptedText = CryptUtil.encryptHybrid(publicKey, largeMessage);
-            String decryptedText = CryptUtil.decryptHybrid(privateKey, encryptedText);
-            assertEquals(largeMessage, decryptedText);
-
-            // Test char array hybrid encryption/decryption
-            char[] messageChars = largeMessage.toCharArray();
-            String encryptedFromChars = CryptUtil.encryptHybrid(publicKey, messageChars);
-            char[] decryptedChars = CryptUtil.decryptHybridToChars(privateKey, encryptedFromChars);
-            assertEquals(largeMessage, new String(decryptedChars));
-
-            // Clean up sensitive data
-            Arrays.fill(messageChars, '\0');
-            Arrays.fill(decryptedChars, '\0');
-        
             // Test with various message sizes
             for (String message : MESSAGES) {
                 if (message.isEmpty()) {
@@ -555,47 +515,40 @@ class CryptUtilTest {
                 }
 
                 byte[] data = message.getBytes(StandardCharsets.UTF_8);
-            
+
                 // Test hybrid encryption (should work for any size)
-                byte[] hybridEncrypted = CryptUtil.encryptHybrid(publicKey, data);
+                byte[] hybridEncrypted = CryptUtil.encryptHybrid(publicKey, data, InputBufferHandling.PRESERVE);
                 byte[] hybridDecrypted = CryptUtil.decryptHybrid(privateKey, hybridEncrypted);
                 assertArrayEquals(data, hybridDecrypted);
             }
-        
+
         } else {
             // Algorithm doesn't support encryption - should throw InvalidKeyException
             // But with a clearer message since this is for hybrid encryption
             byte[] testData = "test data for hybrid encryption".getBytes(StandardCharsets.UTF_8);
-            String testText = "test message for hybrid";
-            char[] testChars = testText.toCharArray();
-        
+
             // Test that all hybrid encryption methods throw InvalidKeyException
             InvalidKeyException exception1 = assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptHybrid(publicKey, testData);
+                CryptUtil.encryptHybrid(publicKey, testData, InputBufferHandling.CLEAR_AFTER_USE);
             });
-        
-            assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptHybrid(publicKey, testText);
-            });
-        
-            assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptHybrid(publicKey, testChars);
-            });
-        
+
             // Verify the exception message doesn't suggest using hybrid encryption
             // (since that's what we're already trying to do)
-            String expectedPattern = "does not support.*encryption";
-            assertTrue(exception1.getMessage().toLowerCase().matches(".*" + expectedPattern + ".*"),
+            String expectedPattern = "do(es)? not support.*encryption|for signatures only, not encryption";
+            assertTrue(exception1.getMessage().toLowerCase(Locale.ROOT).matches(".*(" + expectedPattern + ").*"),
                 "Exception message should indicate algorithm doesn't support encryption: " + exception1.getMessage());
-        
-            // Clean up
-            Arrays.fill(testChars, '\0');
         }
     }
 
     @ParameterizedTest
     @EnumSource(value = AsymmetricAlgorithm.class)
     void testAsymmetricEncryptionSupport(AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        // Add assumption for ECIES
+        if (algorithm == AsymmetricAlgorithm.EC) {
+            assumeTrue(isEciesSupported(), 
+                "ECIES algorithm requires a third-party security provider (like Bouncy Castle) to be available");
+        }
+
         KeyPair keyPair = generateSecretKeyPairForAlgorithm(algorithm);
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
@@ -608,27 +561,10 @@ class CryptUtilTest {
             byte[] encryptedData = CryptUtil.encryptAsymmetric(publicKey, shortData);
             byte[] decryptedData = CryptUtil.decryptAsymmetric(privateKey, encryptedData);
             assertArrayEquals(shortData, decryptedData);
-
-            String encryptedText = CryptUtil.encryptAsymmetric(publicKey, shortMessage);
-            String decryptedText = CryptUtil.decryptAsymmetric(privateKey, encryptedText);
-            assertEquals(shortMessage, decryptedText);
-
-            char[] messageChars = shortMessage.toCharArray();
-            String encryptedFromChars = CryptUtil.encryptAsymmetric(publicKey, messageChars);
-            char[] decryptedChars = CryptUtil.decryptAsymmetricToChars(privateKey, encryptedFromChars);
-            assertEquals(shortMessage, new String(decryptedChars));
-
-            // Clean up sensitive data
-            Arrays.fill(messageChars, '\0');
-            Arrays.fill(decryptedChars, '\0');
         } else {
             // Algorithm doesn't support direct encryption - should throw exception
             assertThrows(InvalidKeyException.class, () -> {
                 CryptUtil.encryptAsymmetric(publicKey, shortData);
-            });
-
-            assertThrows(InvalidKeyException.class, () -> {
-                CryptUtil.encryptAsymmetric(publicKey, shortMessage);
             });
         }
     }

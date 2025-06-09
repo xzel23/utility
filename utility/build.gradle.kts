@@ -30,6 +30,10 @@ sourceSets {
     }
 }
 
+dependencies {
+    testImplementation(rootProject.libs.bouncycastle)
+}
+
 // Add dependencies for java24 source set
 dependencies {
     "java24Implementation"(sourceSets.main.get().output)
