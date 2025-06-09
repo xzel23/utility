@@ -391,7 +391,7 @@ public final class TextUtil {
      * @return a comparator that compares strings lexicographically based on the specified locale.
      */
     public static Comparator<@Nullable String> lexicographicComparator(Locale locale) {
-        Collator collator = Collator.getInstance(Locale.getDefault());
+        Collator collator = Collator.getInstance(locale);
         collator.setStrength(Collator.SECONDARY);
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
 
