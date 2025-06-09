@@ -1,45 +1,25 @@
 package com.dua3.utility.encryption;
 
-import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKeyFactory;
+import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.*;
+import java.security.spec.*;
 import java.util.Arrays;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
-import java.util.List;
-import java.util.Set;
-import javax.crypto.SecretKey;
 
 /**
  * Cryptographic utilities.
  */
 public final class CryptUtil {
 
+    private static final SymmetricAlgorithm SYMMETRIC_ALGORITHM_DEFAULT = SymmetricAlgorithm.AES;
     private static final int GCM_TAG_LENGTH = 128;
-    private static final int IV_LENGTH = 12;
-    private static final String SYMMETRIC_CIPHER = "AES/GCM/NoPadding";
-    private static final String SYMMETRIC_ALGORITHM = "AES";
     private static final AsymmetricAlgorithm ASYMMETRIC_ALGORITHM_DEFAULT = AsymmetricAlgorithm.RSA;
     private static final int KEY_DERIVATION_DEFAULT_ITERATIONS = 10000;
     private static final int KEY_DERIVATION_DEFAULT_BITS = 256;
@@ -76,18 +56,13 @@ public final class CryptUtil {
      *   <li>EC/DSA: Throws exception as these are for signatures/key agreement only</li>
      * </ul>
      *
-     * @param algorithm the name of the algorithm ("RSA", "ECIES")
+     * @param algorithm the asymmetric algorithm
      * @return the transformation string corresponding to the given algorithm
      * @throws IllegalArgumentException if algorithm doesn't support direct encryption
      */
-    private static String getAsymmetricTransformation(String algorithm) {
-        return Arrays.stream(AsymmetricAlgorithm.values())
-                .filter(a -> a.algorithm().equals(algorithm))
-                .flatMap(a -> a.getTransformation().stream())
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Algorithm " + algorithm + " does not support direct asymmetric encryption. " +
-                                "Use hybrid encryption instead, or use this algorithm for signatures only."));
+    private static String getAsymmetricTransformation(AsymmetricAlgorithm algorithm) {
+        return algorithm.getTransformation()
+                .orElseThrow(() -> new IllegalArgumentException("Algorithm " + algorithm + " does not support direct encryption"));
     }
 
     /**
@@ -100,35 +75,26 @@ public final class CryptUtil {
      *
      * @param key the asymmetric encryption key to validate
      * @param dataLength the length of the data that is intended to be encrypted
+     * @param isHybridEncryption whether this is for hybrid encryption (affects validation)
      * @throws InvalidKeyException if the algorithm doesn't support direct encryption
      * @throws IllegalBlockSizeException if the data is too large for the key/algorithm
      */
     private static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength, boolean isHybridEncryption) throws GeneralSecurityException {
         String algorithm = key.getAlgorithm();
 
-        // Check if the algorithm supports direct encryption
-        AsymmetricAlgorithm asymAlg = Arrays.stream(AsymmetricAlgorithm.values())
-                .filter(a -> a.algorithm().equals(algorithm))
-                .findFirst()
-                .orElse(null);
-
-        if (asymAlg == null || !asymAlg.isEncryptionSupported()) {
-            String context = isHybridEncryption ? "hybrid encryption" : "direct asymmetric encryption";
-            throw new InvalidKeyException(
-                    "Algorithm " + algorithm + " does not support encryption and cannot be used for " + context + ". " +
-                            "This algorithm is suitable for signatures only.");
-        }
-
-        // Algorithm-specific validation
-        switch (algorithm) {
+        switch (algorithm.toUpperCase()) {
             case "RSA":
                 validateRSAEncryptionKey(key, dataLength);
                 break;
-            case "ECIES":
-                // ECIES validation would go here if needed
+            case "EC":
+                if (!isHybridEncryption) {
+                    throw new InvalidKeyException("EC keys do not support direct encryption. Use hybrid encryption or ECIES instead.");
+                }
                 break;
+            case "DSA":
+                throw new InvalidKeyException("DSA keys are for signatures only, not encryption");
             default:
-                // For other algorithms, basic validation or none
+                // For other algorithms like ECIES, assume they're valid if they got here
                 break;
         }
     }
@@ -165,19 +131,20 @@ public final class CryptUtil {
      *         exceeds the maximum allowed size for the given RSA key
      */
     private static void validateRSAEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
-        if (!(key instanceof java.security.interfaces.RSAPublicKey rsaKey)) {
-            throw new InvalidKeyException("Expected RSA public key, but got: " + key.getClass().getSimpleName());
+        if (!(key instanceof java.security.interfaces.RSAPublicKey)) {
+            throw new InvalidKeyException("Expected RSA key, but got: " + key.getClass().getSimpleName());
         }
 
+        java.security.interfaces.RSAPublicKey rsaKey = (java.security.interfaces.RSAPublicKey) key;
         int keySize = rsaKey.getModulus().bitLength();
-        // For RSA with OAEP SHA-256: max_data = (key_size_bytes - 2 - 2*hash_size)
-        int maxDataLength = (keySize / 8) - 2 - (2 * 32); // 32 bytes for SHA-256
 
-        if (dataLength > maxDataLength) {
+        // OAEP padding overhead: 2 + 2*hLen where hLen is 32 for SHA-256
+        int maxDataSize = (keySize / 8) - 2 - (2 * 32);
+
+        if (dataLength > maxDataSize) {
             throw new IllegalBlockSizeException(
-                    String.format("Data length (%d bytes) exceeds maximum for %d-bit RSA key (%d bytes). " +
-                                    "Use hybrid encryption for larger data.",
-                            dataLength, keySize, maxDataLength));
+                    String.format("Data too large for RSA key. Max size: %d bytes, actual: %d bytes",
+                            maxDataSize, dataLength));
         }
     }
 
@@ -185,8 +152,7 @@ public final class CryptUtil {
      * Validates the size of an asymmetric key based on the specified algorithm.
      * Ensures that the key size meets the minimum or required standards for security purposes.
      *
-     * @param algorithm the name of the asymmetric algorithm (e.g., "RSA", "EC", "ECIES", "DSA").
-     *                  Must be a supported algorithm; otherwise, an exception will be thrown.
+     * @param algorithm the asymmetric algorithm
      * @param keySize   the size of the key in bits, which will be checked against the requirements
      *                  specified for the given algorithm.
      *                  For RSA and DSA, the minimum is 2048 bits.
@@ -196,12 +162,20 @@ public final class CryptUtil {
      */
     private static void validateAsymmetricKeySize(AsymmetricAlgorithm algorithm, int keySize) {
         switch (algorithm) {
-            case RSA -> LangUtil.check(keySize >= 2048, "RSA key size must be at least 2048 bits, got %d", keySize);
-            case EC, ECIES -> // EC/ECIES uses curve names, not just bit sizes
-                    LangUtil.check(List.of(256, 384, 521).contains(keySize),
-                            "EC key size must be 256 (P-256), 384 (P-384), or 521 (P-521) bits, got %d", keySize);
-            case DSA -> LangUtil.check(keySize >= 2048, "DSA key size must be at least 2048 bits, got %d", keySize);
-            default -> throw new IllegalArgumentException("unsupported asymmetric algorithm: " + algorithm);
+            case RSA:
+            case DSA:
+                if (keySize < 2048) {
+                    throw new IllegalArgumentException(algorithm + " key size must be at least 2048 bits, but was: " + keySize);
+                }
+                break;
+            case EC:
+            case ECIES:
+                if (keySize != 256 && keySize != 384 && keySize != 521) {
+                    throw new IllegalArgumentException("EC key size must be 256, 384, or 521 bits, but was: " + keySize);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
         }
     }
 
@@ -220,21 +194,23 @@ public final class CryptUtil {
     public static byte[] deriveKey(char[] passphrase, byte[] salt, int iterations, int keyBits)
             throws GeneralSecurityException {
 
-        LangUtil.check(salt.length >= 16, "salt must be at least 16 bytes");
-        LangUtil.check(iterations >= 10000, "iterations must be at least 10000");
-        LangUtil.check(keyBits == 128 || keyBits == 192 || keyBits == 256,
-                "key size must be 128, 192, or 256 bits");
+        if (salt.length < 16) {
+            throw new IllegalArgumentException("Salt must be at least 16 bytes");
+        }
+        if (iterations < 10000) {
+            throw new IllegalArgumentException("Iterations must be at least 10000");
+        }
+        SYMMETRIC_ALGORITHM_DEFAULT.validateKeySize(keyBits);
 
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             PBEKeySpec spec = new PBEKeySpec(passphrase, salt, iterations, keyBits);
-            try {
-                return factory.generateSecret(spec).getEncoded();
-            } finally {
-                spec.clearPassword(); // Clear the spec
-            }
+            SecretKey key = factory.generateSecret(spec);
+            byte[] keyBytes = key.getEncoded();
+            spec.clearPassword();
+            return keyBytes;
         } finally {
-            Arrays.fill(passphrase, '\0'); // Clear the passphrase
+            Arrays.fill(passphrase, '\0');
         }
     }
 
@@ -261,13 +237,13 @@ public final class CryptUtil {
      */
     public static byte[] deriveKey(char[] passphrase, CharSequence context)
             throws GeneralSecurityException {
-        LangUtil.check(context.length() > 0, "context must not be null or empty");
+        byte[] contextSalt = context.toString().getBytes(StandardCharsets.UTF_8);
+        // Pad salt to minimum 16 bytes
+        byte[] salt = new byte[Math.max(16, contextSalt.length)];
+        System.arraycopy(contextSalt, 0, salt, 0, contextSalt.length);
 
-        String saltInput = "app.salt:" + context; // Version prefix for future upgrades
-        byte[] salt = TextUtil.getDigest("SHA-256", saltInput.getBytes(StandardCharsets.UTF_8));
         return deriveKey(passphrase, salt, KEY_DERIVATION_DEFAULT_ITERATIONS, KEY_DERIVATION_DEFAULT_BITS);
     }
-
 
     /**
      * Derive a SecretKey from a passphrase using PBKDF2-SHA256.
@@ -290,7 +266,6 @@ public final class CryptUtil {
         try {
             return toSecretKey(keyBytes);
         } finally {
-            // Clear the intermediate byte array
             Arrays.fill(keyBytes, (byte) 0);
         }
     }
@@ -325,7 +300,6 @@ public final class CryptUtil {
         try {
             return toSecretKey(keyBytes);
         } finally {
-            // Clear the intermediate byte array
             Arrays.fill(keyBytes, (byte) 0);
         }
     }
@@ -349,22 +323,20 @@ public final class CryptUtil {
      * @return the generated key
      */
     public static byte[] generateKey(int bits) {
-        int nBytes = bits / 8;
-        LangUtil.check(nBytes * 8 == bits, "the bit length of the key must be a multiple of 8");
-
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM);
-            keyGen.init(bits);
-            return keyGen.generateKey().getEncoded();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
+        if (bits % 8 != 0) {
+            throw new IllegalArgumentException("Key size must be a multiple of 8 bits");
         }
+        SYMMETRIC_ALGORITHM_DEFAULT.validateKeySize(bits);
+
+        byte[] key = new byte[bits / 8];
+        RandomHolder.RANDOM.nextBytes(key);
+        return key;
     }
 
     /**
-     * Symmetrically encrypt text.
+     * Symmetrically encrypt text using the default algorithm (AES-GCM).
      * <p>
-     * The text is encrypted using AES and the resulting ciphertext is converted to
+     * The text is encrypted using AES-GCM and the resulting ciphertext is converted to
      * a String by applying the Base64 algorithm.
      *
      * @param key  the encryption key
@@ -373,37 +345,61 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static String encrypt(byte[] key, CharSequence text) throws GeneralSecurityException {
-        validateKeyLength(key);
-        char[] textChars = TextUtil.toCharArray(text);
+        return encrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, text);
+    }
+
+    /**
+     * Symmetrically encrypt text using the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm to use
+     * @param key  the encryption key
+     * @param text the text to encrypt
+     * @return the encrypted message as a Base64 encoded String
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static String encrypt(SymmetricAlgorithm algorithm, byte[] key, CharSequence text) throws GeneralSecurityException {
+        char[] chars = text.toString().toCharArray();
         try {
-            return encrypt(key, textChars);
+            return encrypt(algorithm, key, chars);
         } finally {
-            Arrays.fill(textChars, '\0');
+            Arrays.fill(chars, '\0');
         }
     }
 
     /**
-     * Symmetrically encrypt text using a Key object.
+     * Symmetrically encrypt text using a Key object with the default algorithm.
      *
-     * @param key  the encryption key (must be AES SecretKey)
+     * @param key  the encryption key (must be compatible with the algorithm)
      * @param text the text to encrypt
      * @return the encrypted message as a Base64 encoded String
      * @throws GeneralSecurityException if encryption fails
      */
     public static String encrypt(Key key, CharSequence text) throws GeneralSecurityException {
-        validateSymmetricKey(key);
-        char[] textChars = TextUtil.toCharArray(text);
+        return encrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, text);
+    }
+
+    /**
+     * Symmetrically encrypt text using a Key object with the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm to use
+     * @param key  the encryption key (must be compatible with the algorithm)
+     * @param text the text to encrypt
+     * @return the encrypted message as a Base64 encoded String
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static String encrypt(SymmetricAlgorithm algorithm, Key key, CharSequence text) throws GeneralSecurityException {
+        char[] chars = text.toString().toCharArray();
         try {
-            return encrypt(key, textChars);
+            return encrypt(algorithm, key, chars);
         } finally {
-            Arrays.fill(textChars, '\0');
+            Arrays.fill(chars, '\0');
         }
     }
 
     /**
-     * Symmetrically encrypt text.
+     * Symmetrically encrypt text using the default algorithm (AES-GCM).
      * <p>
-     * The text is encrypted using the AES algorithm, and the resulting ciphertext is converted to
+     * The text is encrypted using AES-GCM, and the resulting ciphertext is converted to
      * a String by applying the Base64 algorithm.
      *
      * @param key  the encryption key
@@ -412,19 +408,65 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static String encrypt(byte[] key, char[] text) throws GeneralSecurityException {
-        byte[] data = TextUtil.charsToBytes(text);
+        return encrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, text);
+    }
+
+    /**
+     * Symmetrically encrypt text using the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm to use
+     * @param key  the encryption key
+     * @param text the text to encrypt
+     * @return the encrypted message as a Base64 encoded String
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static String encrypt(SymmetricAlgorithm algorithm, byte[] key, char[] text) throws GeneralSecurityException {
+        byte[] data = new String(text).getBytes(StandardCharsets.UTF_8);
+        Arrays.fill(text, '\0');
         try {
-            byte[] cipherMessage = encrypt(key, data);
-            return TextUtil.base64Encode(cipherMessage);
+            byte[] encrypted = encrypt(algorithm, key, data);
+            return TextUtil.base64Encode(encrypted);
         } finally {
             Arrays.fill(data, (byte) 0);
         }
     }
 
     /**
-     * Symmetrically decrypt text.
+     * Symmetrically encrypt text using a Key object with the default algorithm.
+     *
+     * @param key  the encryption key (must be compatible with the algorithm)
+     * @param text the text to encrypt
+     * @return the encrypted message as a Base64 encoded String
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static String encrypt(Key key, char[] text) throws GeneralSecurityException {
+        return encrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, text);
+    }
+
+    /**
+     * Symmetrically encrypt text using a Key object with the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm to use
+     * @param key  the encryption key (must be compatible with the algorithm)
+     * @param text the text to encrypt
+     * @return the encrypted message as a Base64 encoded String
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static String encrypt(SymmetricAlgorithm algorithm, Key key, char[] text) throws GeneralSecurityException {
+        byte[] data = new String(text).getBytes(StandardCharsets.UTF_8);
+        Arrays.fill(text, '\0');
+        try {
+            byte[] encrypted = encrypt(algorithm, key, data);
+            return TextUtil.base64Encode(encrypted);
+        } finally {
+            Arrays.fill(data, (byte) 0);
+        }
+    }
+
+    /**
+     * Symmetrically decrypt text using the default algorithm (AES-GCM).
      * <p>
-     * The ciphertext is decrypted using AES after being decoded from Base64.
+     * The ciphertext is decrypted using AES-GCM after being decoded from Base64.
      *
      * @param key        the encryption key used
      * @param cipherText the Base64 encoded encrypted ciphertext
@@ -432,18 +474,31 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if decryption fails
      */
     public static String decrypt(byte[] key, String cipherText) throws GeneralSecurityException {
-        char[] decryptedChars = decryptToChars(key, cipherText);
+        return decrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherText);
+    }
+
+    /**
+     * Symmetrically decrypt text using the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm that was used for encryption
+     * @param key        the encryption key used
+     * @param cipherText the Base64 encoded encrypted ciphertext
+     * @return the decrypted message
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static String decrypt(SymmetricAlgorithm algorithm, byte[] key, String cipherText) throws GeneralSecurityException {
+        char[] chars = decryptToChars(algorithm, key, cipherText);
         try {
-            return new String(decryptedChars);
+            return new String(chars);
         } finally {
-            Arrays.fill(decryptedChars, '\0');
+            Arrays.fill(chars, '\0');
         }
     }
 
     /**
-     * Symmetrically decrypt text to a char array.
+     * Symmetrically decrypt text to a char array using the default algorithm.
      * <p>
-     * The ciphertext is decrypted using AES after being decoded from Base64.
+     * The ciphertext is decrypted using AES-GCM after being decoded from Base64.
      * The caller is responsible for clearing the returned char array after use.
      *
      * @param key        the encryption key used
@@ -452,19 +507,35 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if decryption fails
      */
     public static char[] decryptToChars(byte[] key, String cipherText) throws GeneralSecurityException {
-        byte[] cipherMessage = TextUtil.base64Decode(cipherText);
-        byte[] data = decrypt(key, cipherMessage);
+        return decryptToChars(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherText);
+    }
+
+    /**
+     * Symmetrically decrypt text to a char array using the specified algorithm.
+     * <p>
+     * The ciphertext is decrypted after being decoded from Base64.
+     * The caller is responsible for clearing the returned char array after use.
+     *
+     * @param algorithm the symmetric algorithm that was used for encryption
+     * @param key        the encryption key used
+     * @param cipherText the Base64 encoded encrypted ciphertext
+     * @return the decrypted message as char array
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static char[] decryptToChars(SymmetricAlgorithm algorithm, byte[] key, String cipherText) throws GeneralSecurityException {
+        byte[] cipherData = TextUtil.base64Decode(cipherText);
+        byte[] decrypted = decrypt(algorithm, key, cipherData);
         try {
-            return TextUtil.bytesToChars(data);
+            return new String(decrypted, StandardCharsets.UTF_8).toCharArray();
         } finally {
-            Arrays.fill(data, (byte) 0);
+            Arrays.fill(decrypted, (byte) 0);
         }
     }
 
     /**
-     * Symmetrically encrypt data.
+     * Symmetrically encrypt data using the default algorithm (AES-GCM).
      * <p>
-     * The data is encrypted using AES.
+     * The data is encrypted using AES-GCM.
      *
      * @param key  the encryption key
      * @param data the data to encrypt
@@ -472,60 +543,104 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static byte[] encrypt(byte[] key, byte[] data) throws GeneralSecurityException {
-        validateKeyLength(key);
-
-        // use AES encryption
-        Key secretKey = new SecretKeySpec(key, SYMMETRIC_ALGORITHM);
-
-        byte[] iv = new byte[IV_LENGTH];
-        RandomHolder.RANDOM.nextBytes(iv);
-
-        final Cipher cipher = Cipher.getInstance(SYMMETRIC_CIPHER);
-        AlgorithmParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
-
-        byte[] cipherText = cipher.doFinal(data);
-
-        ByteBuffer byteBuffer = ByteBuffer.allocate(Integer.BYTES + iv.length + cipherText.length);
-        byteBuffer.putInt(iv.length);
-        byteBuffer.put(iv);
-        byteBuffer.put(cipherText);
-
-        return byteBuffer.array();
+        return encrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, data);
     }
 
     /**
-     * Symmetrically encrypt data using a Key object.
+     * Symmetrically encrypt data using the specified algorithm.
      *
-     * @param key  the encryption key (must be AES SecretKey)
+     * @param algorithm the symmetric algorithm to use
+     * @param key  the encryption key
+     * @param data the data to encrypt
+     * @return the encrypted message as byte array
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static byte[] encrypt(SymmetricAlgorithm algorithm, byte[] key, byte[] data) throws GeneralSecurityException {
+        algorithm.validateKeySize(key.length * 8);
+
+        Cipher cipher = Cipher.getInstance(algorithm.getTransformation());
+        SecretKeySpec keySpec = new SecretKeySpec(key, algorithm.getKeyAlgorithm());
+
+        if (algorithm.requiresIv()) {
+            byte[] iv = new byte[algorithm.getIvLength()];
+            RandomHolder.RANDOM.nextBytes(iv);
+
+            if (algorithm.isAuthenticated()) {
+                GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+                cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmSpec);
+            } else {
+                IvParameterSpec ivSpec = new IvParameterSpec(iv);
+                cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+            }
+
+            byte[] encrypted = cipher.doFinal(data);
+
+            // Prepend IV to encrypted data
+            byte[] result = new byte[iv.length + encrypted.length];
+            System.arraycopy(iv, 0, result, 0, iv.length);
+            System.arraycopy(encrypted, 0, result, iv.length, encrypted.length);
+            return result;
+        } else {
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+            return cipher.doFinal(data);
+        }
+    }
+
+    /**
+     * Symmetrically encrypt data using a Key object with the default algorithm.
+     *
+     * @param key  the encryption key (must be compatible with the algorithm)
      * @param data the data to encrypt
      * @return the encrypted message as byte array
      * @throws GeneralSecurityException if encryption fails
      */
     public static byte[] encrypt(Key key, byte[] data) throws GeneralSecurityException {
-        validateSymmetricKey(key);
-
-        byte[] iv = new byte[IV_LENGTH];
-        RandomHolder.RANDOM.nextBytes(iv);
-
-        final Cipher cipher = Cipher.getInstance(SYMMETRIC_CIPHER);
-        AlgorithmParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-        cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);  // Use Key directly
-
-        byte[] cipherText = cipher.doFinal(data);
-
-        ByteBuffer byteBuffer = ByteBuffer.allocate(Integer.BYTES + iv.length + cipherText.length);
-        byteBuffer.putInt(iv.length);
-        byteBuffer.put(iv);
-        byteBuffer.put(cipherText);
-
-        return byteBuffer.array();
+        return encrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, data);
     }
 
     /**
-     * Symmetrically decrypt data.
+     * Symmetrically encrypt data using a Key object with the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm to use
+     * @param key  the encryption key (must be compatible with the algorithm)
+     * @param data the data to encrypt
+     * @return the encrypted message as byte array
+     * @throws GeneralSecurityException if encryption fails
+     */
+    public static byte[] encrypt(SymmetricAlgorithm algorithm, Key key, byte[] data) throws GeneralSecurityException {
+        validateSymmetricKey(key, algorithm);
+
+        Cipher cipher = Cipher.getInstance(algorithm.getTransformation());
+
+        if (algorithm.requiresIv()) {
+            byte[] iv = new byte[algorithm.getIvLength()];
+            RandomHolder.RANDOM.nextBytes(iv);
+
+            if (algorithm.isAuthenticated()) {
+                GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+                cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
+            } else {
+                IvParameterSpec ivSpec = new IvParameterSpec(iv);
+                cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+            }
+
+            byte[] encrypted = cipher.doFinal(data);
+
+            // Prepend IV to encrypted data
+            byte[] result = new byte[iv.length + encrypted.length];
+            System.arraycopy(iv, 0, result, 0, iv.length);
+            System.arraycopy(encrypted, 0, result, iv.length, encrypted.length);
+            return result;
+        } else {
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return cipher.doFinal(data);
+        }
+    }
+
+    /**
+     * Symmetrically decrypt data using the default algorithm (AES-GCM).
      * <p>
-     * The data is decrypted using AES.
+     * The data is decrypted using AES-GCM.
      *
      * @param key           the encryption key
      * @param cipherMessage the encrypted data
@@ -533,27 +648,263 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if decryption fails
      */
     public static byte[] decrypt(byte[] key, byte[] cipherMessage) throws GeneralSecurityException {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);
-        LangUtil.check(cipherMessage.length >= Integer.BYTES, "cipher message too short");
-        int ivLength = byteBuffer.getInt();
-        LangUtil.check(ivLength == IV_LENGTH, "invalid iv length, expected %d", IV_LENGTH);
-
-        byte[] iv = new byte[ivLength];
-        byteBuffer.get(iv);
-        byte[] cipherText = new byte[byteBuffer.remaining()];
-        byteBuffer.get(cipherText);
-
-        final Cipher cipher = Cipher.getInstance(SYMMETRIC_CIPHER);
-        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, SYMMETRIC_ALGORITHM), new GCMParameterSpec(GCM_TAG_LENGTH, iv));
-
-        return cipher.doFinal(cipherText);
+        return decrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherMessage);
     }
+
+    /**
+     * Symmetrically decrypt data using the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm that was used for encryption
+     * @param key           the encryption key
+     * @param cipherMessage the encrypted data
+     * @return the decrypted message as a byte array
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static byte[] decrypt(SymmetricAlgorithm algorithm, byte[] key, byte[] cipherMessage) throws GeneralSecurityException {
+        algorithm.validateKeySize(key.length * 8);
+
+        Cipher cipher = Cipher.getInstance(algorithm.getTransformation());
+        SecretKeySpec keySpec = new SecretKeySpec(key, algorithm.getKeyAlgorithm());
+
+        if (algorithm.requiresIv()) {
+            int ivLength = algorithm.getIvLength();
+            if (cipherMessage.length < ivLength) {
+                throw new IllegalArgumentException("Cipher message too short to contain IV");
+            }
+
+            byte[] iv = Arrays.copyOfRange(cipherMessage, 0, ivLength);
+            byte[] encrypted = Arrays.copyOfRange(cipherMessage, ivLength, cipherMessage.length);
+
+            if (algorithm.isAuthenticated()) {
+                GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+                cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmSpec);
+            } else {
+                IvParameterSpec ivSpec = new IvParameterSpec(iv);
+                cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+            }
+
+            return cipher.doFinal(encrypted);
+        } else {
+            cipher.init(Cipher.DECRYPT_MODE, keySpec);
+            return cipher.doFinal(cipherMessage);
+        }
+    }
+
+    /**
+     * Symmetrically decrypt data using a Key object with the default algorithm.
+     * <p>
+     * The data is decrypted using AES-GCM.
+     *
+     * @param key           the encryption key (must be compatible with the algorithm)
+     * @param cipherMessage the encrypted data
+     * @return the decrypted message as a byte array
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static byte[] decrypt(Key key, byte[] cipherMessage) throws GeneralSecurityException {
+        return decrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherMessage);
+    }
+
+    /**
+     * Symmetrically decrypt data using a Key object with the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm that was used for encryption
+     * @param key           the encryption key (must be compatible with the algorithm)
+     * @param cipherMessage the encrypted data
+     * @return the decrypted message as a byte array
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static byte[] decrypt(SymmetricAlgorithm algorithm, Key key, byte[] cipherMessage) throws GeneralSecurityException {
+        validateSymmetricKey(key, algorithm);
+
+        Cipher cipher = Cipher.getInstance(algorithm.getTransformation());
+
+        if (algorithm.requiresIv()) {
+            int ivLength = algorithm.getIvLength();
+            if (cipherMessage.length < ivLength) {
+                throw new IllegalArgumentException("Cipher message too short to contain IV");
+            }
+
+            byte[] iv = Arrays.copyOfRange(cipherMessage, 0, ivLength);
+            byte[] encrypted = Arrays.copyOfRange(cipherMessage, ivLength, cipherMessage.length);
+
+            if (algorithm.isAuthenticated()) {
+                GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+                cipher.init(Cipher.DECRYPT_MODE, key, gcmSpec);
+            } else {
+                IvParameterSpec ivSpec = new IvParameterSpec(iv);
+                cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+            }
+
+            return cipher.doFinal(encrypted);
+        } else {
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return cipher.doFinal(cipherMessage);
+        }
+    }
+
+    /**
+     * Symmetrically decrypt text using a Key object with the default algorithm.
+     * <p>
+     * The ciphertext is decrypted using AES-GCM after being decoded from Base64.
+     *
+     * @param key        the encryption key used (must be compatible with the algorithm)
+     * @param cipherText the Base64 encoded encrypted ciphertext
+     * @return the decrypted message
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static String decrypt(Key key, String cipherText) throws GeneralSecurityException {
+        return decrypt(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherText);
+    }
+
+    /**
+     * Symmetrically decrypt text using a Key object with the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm that was used for encryption
+     * @param key        the encryption key used (must be compatible with the algorithm)
+     * @param cipherText the Base64 encoded encrypted ciphertext
+     * @return the decrypted message
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static String decrypt(SymmetricAlgorithm algorithm, Key key, String cipherText) throws GeneralSecurityException {
+        char[] chars = decryptToChars(algorithm, key, cipherText);
+        try {
+            return new String(chars);
+        } finally {
+            Arrays.fill(chars, '\0');
+        }
+    }
+
+    /**
+     * Symmetrically decrypt text to a char array using a Key object with the default algorithm.
+     * <p>
+     * The ciphertext is decrypted using AES-GCM after being decoded from Base64.
+     * The caller is responsible for clearing the returned char array after use.
+     *
+     * @param key        the encryption key used (must be compatible with the algorithm)
+     * @param cipherText the Base64 encoded encrypted ciphertext
+     * @return the decrypted message as char array
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static char[] decryptToChars(Key key, String cipherText) throws GeneralSecurityException {
+        return decryptToChars(SYMMETRIC_ALGORITHM_DEFAULT, key, cipherText);
+    }
+
+    /**
+     * Symmetrically decrypt text to a char array using a Key object with the specified algorithm.
+     *
+     * @param algorithm the symmetric algorithm that was used for encryption
+     * @param key        the encryption key used (must be compatible with the algorithm)
+     * @param cipherText the Base64 encoded encrypted ciphertext
+     * @return the decrypted message as char array
+     * @throws GeneralSecurityException if decryption fails
+     */
+    public static char[] decryptToChars(SymmetricAlgorithm algorithm, Key key, String cipherText) throws GeneralSecurityException {
+        byte[] cipherData = TextUtil.base64Decode(cipherText);
+        byte[] decrypted = decrypt(algorithm, key, cipherData);
+        try {
+            return new String(decrypted, StandardCharsets.UTF_8).toCharArray();
+        } finally {
+            Arrays.fill(decrypted, (byte) 0);
+        }
+    }
+
+    /**
+     * Validates the length of a cryptographic key to ensure it adheres to the expected lengths.
+     * The allowed key lengths are 128, 192, or 256 bits for AES.
+     *
+     * @param key the byte array representing the cryptographic key whose length is to be validated.
+     * @throws IllegalArgumentException if the key length does not match one of the allowed values.
+     */
+    private static void validateKeyLength(byte[] key) {
+        SYMMETRIC_ALGORITHM_DEFAULT.validateKeySize(key.length * 8);
+    }
+
+    /**
+     * Validates a symmetric key for use with the default algorithm.
+     *
+     * @param key the key to validate
+     * @throws IllegalArgumentException if the key is not compatible
+     */
+    private static void validateSymmetricKey(Key key) {
+        validateSymmetricKey(key, SYMMETRIC_ALGORITHM_DEFAULT);
+    }
+
+    /**
+     * Validates a symmetric key for use with the specified algorithm.
+     *
+     * @param key the key to validate
+     * @param algorithm the algorithm the key will be used with
+     * @throws IllegalArgumentException if the key is not compatible
+     */
+    private static void validateSymmetricKey(Key key, SymmetricAlgorithm algorithm) {
+        if (!algorithm.getKeyAlgorithm().equals(key.getAlgorithm())) {
+            throw new IllegalArgumentException(
+                    String.format("Key algorithm mismatch. Expected: %s, got: %s",
+                            algorithm.getKeyAlgorithm(), key.getAlgorithm()));
+        }
+
+        if (key.getEncoded() != null) {
+            algorithm.validateKeySize(key.getEncoded().length * 8);
+        }
+    }
+
+    /**
+     * Create a SecretKey from a byte array using the default algorithm.
+     *
+     * @param keyBytes the key bytes (must be 128, 192, or 256 bits for AES)
+     * @return SecretKey instance
+     */
+    public static SecretKey toSecretKey(byte[] keyBytes) {
+        return toSecretKey(keyBytes, SYMMETRIC_ALGORITHM_DEFAULT);
+    }
+
+    /**
+     * Create a SecretKey from a byte array for the specified algorithm.
+     *
+     * @param keyBytes the key bytes
+     * @param algorithm the symmetric algorithm
+     * @return SecretKey instance
+     */
+    public static SecretKey toSecretKey(byte[] keyBytes, SymmetricAlgorithm algorithm) {
+        algorithm.validateKeySize(keyBytes.length * 8);
+        return new SecretKeySpec(keyBytes, algorithm.getKeyAlgorithm());
+    }
+
+    /**
+     * Generate SecretKey using the default algorithm.
+     *
+     * @param bits the number of bits (128, 192, or 256 for AES)
+     * @return the generated SecretKey
+     * @throws GeneralSecurityException if key generation fails
+     */
+    public static SecretKey generateSecretKey(int bits) throws GeneralSecurityException {
+        return generateSecretKey(bits, SYMMETRIC_ALGORITHM_DEFAULT);
+    }
+
+    /**
+     * Generate SecretKey for the specified algorithm.
+     *
+     * @param bits the number of bits
+     * @param algorithm the symmetric algorithm
+     * @return the generated SecretKey
+     * @throws GeneralSecurityException if key generation fails
+     */
+    public static SecretKey generateSecretKey(int bits, SymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        algorithm.validateKeySize(bits);
+
+        KeyGenerator keyGen = KeyGenerator.getInstance(algorithm.getKeyAlgorithm());
+        keyGen.init(bits, RandomHolder.RANDOM);
+        return keyGen.generateKey();
+    }
+
+    // Asymmetric encryption methods continue to use the existing AsymmetricAlgorithm enum...
+    // [Rest of the asymmetric methods would continue as before, but I'll include key ones for completeness]
 
     /**
      * Converts a given byte array into a {@code PrivateKey} instance using the specified algorithm.
      *
      * @param bytes the private key in encoded byte format
-     * @param algorithm the name of the key algorithm (e.g., "RSA", "EC")
+     * @param algorithm the asymmetric algorithm
      * @return a {@code PrivateKey} created from the provided byte array and algorithm
      * @throws GeneralSecurityException if the key conversion fails
      */
@@ -579,7 +930,7 @@ public final class CryptUtil {
      * Converts the provided byte array into a {@code PublicKey} instance using the specified algorithm.
      *
      * @param bytes the byte array containing the key data
-     * @param algorithm the algorithm used to generate the {@code PublicKey} (e.g., "RSA", "EC")
+     * @param algorithm the asymmetric algorithm
      * @return the generated {@code PublicKey}
      * @throws GeneralSecurityException if the key conversion fails
      */
@@ -605,17 +956,19 @@ public final class CryptUtil {
      *
      * @param publicKeyBytes the byte array representation of the public key
      * @param privateKeyBytes the byte array representation of the private key
-     * @param algorithm the algorithm used for generating the key pair (e.g., RSA, DSA, EC)
+     * @param algorithm the asymmetric algorithm
      * @return a {@code KeyPair} consisting of the public and private keys
      * @throws GeneralSecurityException if the key conversion fails
      */
     public static KeyPair toKeyPair(byte[] publicKeyBytes, byte[] privateKeyBytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
-        return new KeyPair(toPublicKey(publicKeyBytes, algorithm), toPrivateKey(privateKeyBytes, algorithm));
+        PublicKey publicKey = toPublicKey(publicKeyBytes, algorithm);
+        PrivateKey privateKey = toPrivateKey(privateKeyBytes, algorithm);
+        return new KeyPair(publicKey, privateKey);
     }
 
     /**
      * Converts the given byte arrays representing a public key and a private key
-     * into a {@link KeyPair} using the specified algorithm.
+     * into a {@link KeyPair} using the default algorithm.
      *
      * @param publicKeyBytes the byte array representing the public key
      * @param privateKeyBytes the byte array representing the private key
@@ -624,151 +977,6 @@ public final class CryptUtil {
      */
     public static KeyPair toKeyPair(byte[] publicKeyBytes, byte[] privateKeyBytes) throws GeneralSecurityException {
         return toKeyPair(publicKeyBytes, privateKeyBytes, ASYMMETRIC_ALGORITHM_DEFAULT);
-    }
-
-    /**
-     * Validates the length of a cryptographic key to ensure it adheres to the expected lengths.
-     * The allowed key lengths are 128, 192, or 256 bits.
-     *
-     * @param key the byte array representing the cryptographic key whose length is to be validated.
-     *            The length must translate to 128, 192, or 256 bits.
-     * @throws IllegalArgumentException if the key length does not match one of the allowed values.
-     */
-    private static void validateKeyLength(byte[] key) {
-        int bits = key.length * 8;
-        LangUtil.check(bits == 128 || bits == 192 || bits == 256,
-                "Invalid AES key length: %d bits. AES requires 128, 192, or 256 bits", bits);
-    }
-
-    private static void validateSymmetricKey(Key key) {
-        LangUtil.check(SYMMETRIC_ALGORITHM.equals(key.getAlgorithm()),
-                "Key algorithm must be %s, got %s", SYMMETRIC_ALGORITHM, key.getAlgorithm());
-
-        // Additional validation for extractable keys
-        if ("RAW".equals(key.getFormat())) {
-            byte[] encoded = key.getEncoded();
-            if (encoded != null) {
-                validateKeyLength(encoded);
-            }
-        }
-    }
-
-    /**
-     * Symmetrically decrypt text using a Key object.
-     * <p>
-     * The ciphertext is decrypted using AES after being decoded from Base64.
-     *
-     * @param key        the encryption key used (must be AES SecretKey)
-     * @param cipherText the Base64 encoded encrypted ciphertext
-     * @return the decrypted message
-     * @throws GeneralSecurityException if decryption fails
-     */
-    public static String decrypt(Key key, String cipherText) throws GeneralSecurityException {
-        char[] decryptedChars = decryptToChars(key, cipherText);
-        try {
-            return new String(decryptedChars);
-        } finally {
-            Arrays.fill(decryptedChars, '\0');
-        }
-    }
-
-    /**
-     * Symmetrically decrypt text to a char array using a Key object.
-     * <p>
-     * The ciphertext is decrypted using AES after being decoded from Base64.
-     * The caller is responsible for clearing the returned char array after use.
-     *
-     * @param key        the encryption key used (must be AES SecretKey)
-     * @param cipherText the Base64 encoded encrypted ciphertext
-     * @return the decrypted message as char array
-     * @throws GeneralSecurityException if decryption fails
-     */
-    public static char[] decryptToChars(Key key, String cipherText) throws GeneralSecurityException {
-        byte[] cipherMessage = TextUtil.base64Decode(cipherText);
-        byte[] data = decrypt(key, cipherMessage);
-        try {
-            return TextUtil.bytesToChars(data);
-        } finally {
-            Arrays.fill(data, (byte) 0);
-        }
-    }
-
-    /**
-     * Symmetrically decrypt data using a Key object.
-     * <p>
-     * The data is decrypted using AES.
-     *
-     * @param key           the encryption key (must be AES SecretKey)
-     * @param cipherMessage the encrypted data
-     * @return the decrypted message as a byte array
-     * @throws GeneralSecurityException if decryption fails
-     */
-    public static byte[] decrypt(Key key, byte[] cipherMessage) throws GeneralSecurityException {
-        validateSymmetricKey(key);
-
-        ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);
-        LangUtil.check(cipherMessage.length >= Integer.BYTES, "cipher message too short");
-        int ivLength = byteBuffer.getInt();
-        LangUtil.check(ivLength == IV_LENGTH, "invalid iv length, expected %d", IV_LENGTH);
-
-        byte[] iv = new byte[ivLength];
-        byteBuffer.get(iv);
-        byte[] cipherText = new byte[byteBuffer.remaining()];
-        byteBuffer.get(cipherText);
-
-        final Cipher cipher = Cipher.getInstance(SYMMETRIC_CIPHER);
-        cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(GCM_TAG_LENGTH, iv));
-
-        return cipher.doFinal(cipherText);
-    }
-
-    /**
-     * Symmetrically encrypt text using a Key object.
-     * <p>
-     * The text is encrypted using the AES algorithm, and the resulting ciphertext is converted to
-     * a String by applying the Base64 algorithm.
-     *
-     * @param key  the encryption key (must be AES SecretKey)
-     * @param text the text to encrypt
-     * @return the encrypted message as a Base64 encoded String
-     * @throws GeneralSecurityException if encryption fails
-     */
-    public static String encrypt(Key key, char[] text) throws GeneralSecurityException {
-        byte[] data = TextUtil.charsToBytes(text);
-        try {
-            byte[] cipherMessage = encrypt(key, data);
-            return TextUtil.base64Encode(cipherMessage);
-        } finally {
-            Arrays.fill(data, (byte) 0);
-        }
-    }
-
-    /**
-     * Create a SecretKey from a byte array.
-     *
-     * @param keyBytes the key bytes (must be 128, 192, or 256 bits)
-     * @return SecretKey instance
-     */
-    public static SecretKey toSecretKey(byte[] keyBytes) {
-        validateKeyLength(keyBytes);
-        return new SecretKeySpec(keyBytes, SYMMETRIC_ALGORITHM);
-    }
-
-    /**
-     * Generate SecretKey.
-     *
-     * @param bits the number of bits (128, 192, or 256)
-     * @return the generated SecretKey
-     * @throws GeneralSecurityException if key generation fails
-     */
-    public static SecretKey generateSecretKey(int bits) throws GeneralSecurityException {
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM);
-            keyGen.init(bits);
-            return keyGen.generateKey();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     /**
@@ -782,11 +990,12 @@ public final class CryptUtil {
     public static byte[] encryptAsymmetric(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
         validateAsymmetricEncryptionKey(publicKey, data.length);
 
-        String transformation = getAsymmetricTransformation(publicKey.getAlgorithm());
+        String algorithm = publicKey.getAlgorithm();
+        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
+        String transformation = getAsymmetricTransformation(asymmAlg);
 
         Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-
         return cipher.doFinal(data);
     }
 
@@ -799,11 +1008,12 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if decryption fails
      */
     public static byte[] decryptAsymmetric(PrivateKey privateKey, byte[] cipherData) throws GeneralSecurityException {
-        String transformation = getAsymmetricTransformation(privateKey.getAlgorithm());
+        String algorithm = privateKey.getAlgorithm();
+        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
+        String transformation = getAsymmetricTransformation(asymmAlg);
 
         Cipher cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
         return cipher.doFinal(cipherData);
     }
 
@@ -816,12 +1026,9 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static String encryptAsymmetric(PublicKey publicKey, CharSequence text) throws GeneralSecurityException {
-        char[] textChars = TextUtil.toCharArray(text);
-        try {
-            return encryptAsymmetric(publicKey, textChars);
-        } finally {
-            Arrays.fill(textChars, '\0');
-        }
+        byte[] data = text.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] encrypted = encryptAsymmetric(publicKey, data);
+        return TextUtil.base64Encode(encrypted);
     }
 
     /**
@@ -835,7 +1042,8 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if an error occurs during the encryption process
      */
     public static String encryptAsymmetric(PublicKey publicKey, char[] text) throws GeneralSecurityException {
-        byte[] data = TextUtil.charsToBytes(text);
+        byte[] data = new String(text).getBytes(StandardCharsets.UTF_8);
+        Arrays.fill(text, '\0');
         try {
             byte[] encrypted = encryptAsymmetric(publicKey, data);
             return TextUtil.base64Encode(encrypted);
@@ -854,12 +1062,9 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if decryption fails due to invalid keys or other security errors.
      */
     public static String decryptAsymmetric(PrivateKey privateKey, String cipherText) throws GeneralSecurityException {
-        char[] decryptedChars = decryptAsymmetricToChars(privateKey, cipherText);
-        try {
-            return new String(decryptedChars);
-        } finally {
-            Arrays.fill(decryptedChars, '\0');
-        }
+        byte[] cipherData = TextUtil.base64Decode(cipherText);
+        byte[] decrypted = decryptAsymmetric(privateKey, cipherData);
+        return new String(decrypted, StandardCharsets.UTF_8);
     }
 
     /**
@@ -872,18 +1077,18 @@ public final class CryptUtil {
      */
     public static char[] decryptAsymmetricToChars(PrivateKey privateKey, String cipherText) throws GeneralSecurityException {
         byte[] cipherData = TextUtil.base64Decode(cipherText);
-        byte[] data = decryptAsymmetric(privateKey, cipherData);
+        byte[] decrypted = decryptAsymmetric(privateKey, cipherData);
         try {
-            return TextUtil.bytesToChars(data);
+            return new String(decrypted, StandardCharsets.UTF_8).toCharArray();
         } finally {
-            Arrays.fill(data, (byte) 0);
+            Arrays.fill(decrypted, (byte) 0);
         }
     }
 
     /**
      * Generate an asymmetric key pair.
      *
-     * @param algorithm the algorithm (RSA, EC, DSA)
+     * @param algorithm the asymmetric algorithm
      * @param keySize the key size in bits
      * @return the generated key pair
      */
@@ -891,11 +1096,11 @@ public final class CryptUtil {
         validateAsymmetricKeySize(algorithm, keySize);
 
         try {
-            java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance(algorithm.algorithm());
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(algorithm.keyFactoryAlgorithm());
             keyGen.initialize(keySize, RandomHolder.RANDOM);
             return keyGen.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Algorithm not available: " + algorithm, e);
         }
     }
 
@@ -917,14 +1122,14 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if signing fails
      */
     public static byte[] sign(PrivateKey privateKey, byte[] data) throws GeneralSecurityException {
-        AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(privateKey.getAlgorithm());
-        String signatureAlgorithm = algorithm.getSignatureAlgorithm()
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported signature algorithm: " + algorithm));
+        String algorithm = privateKey.getAlgorithm();
+        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
+        String signatureAlgorithm = asymmAlg.getSignatureAlgorithm()
+                .orElseThrow(() -> new UnsupportedOperationException("Algorithm " + asymmAlg + " does not support signing"));
 
-        java.security.Signature signature = java.security.Signature.getInstance(signatureAlgorithm);
+        Signature signature = Signature.getInstance(signatureAlgorithm);
         signature.initSign(privateKey, RandomHolder.RANDOM);
         signature.update(data);
-
         return signature.sign();
     }
 
@@ -938,14 +1143,14 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if verification fails
      */
     public static boolean verify(PublicKey publicKey, byte[] data, byte[] signature) throws GeneralSecurityException {
-        AsymmetricAlgorithm algorithm = AsymmetricAlgorithm.valueOf(publicKey.getAlgorithm());
-        String signatureAlgorithm = algorithm.getSignatureAlgorithm()
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported signature algorithm: " + algorithm));
+        String algorithm = publicKey.getAlgorithm();
+        AsymmetricAlgorithm asymmAlg = AsymmetricAlgorithm.valueOf(algorithm.toUpperCase());
+        String signatureAlgorithm = asymmAlg.getSignatureAlgorithm()
+                .orElseThrow(() -> new UnsupportedOperationException("Algorithm " + asymmAlg + " does not support verification"));
 
-        java.security.Signature sig = java.security.Signature.getInstance(signatureAlgorithm);
+        Signature sig = Signature.getInstance(signatureAlgorithm);
         sig.initVerify(publicKey);
         sig.update(data);
-
         return sig.verify(signature);
     }
 
@@ -958,12 +1163,9 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if signing fails
      */
     public static String sign(PrivateKey privateKey, CharSequence text) throws GeneralSecurityException {
-        char[] textChars = TextUtil.toCharArray(text);
-        try {
-            return sign(privateKey, textChars);
-        } finally {
-            Arrays.fill(textChars, '\0');
-        }
+        byte[] data = text.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] signature = sign(privateKey, data);
+        return TextUtil.base64Encode(signature);
     }
 
     /**
@@ -975,7 +1177,8 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if signing fails
      */
     public static String sign(PrivateKey privateKey, char[] text) throws GeneralSecurityException {
-        byte[] data = TextUtil.charsToBytes(text);
+        byte[] data = new String(text).getBytes(StandardCharsets.UTF_8);
+        Arrays.fill(text, '\0');
         try {
             byte[] signature = sign(privateKey, data);
             return TextUtil.base64Encode(signature);
@@ -994,12 +1197,9 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if verification fails
      */
     public static boolean verify(PublicKey publicKey, CharSequence text, String signatureBase64) throws GeneralSecurityException {
-        char[] textChars = TextUtil.toCharArray(text);
-        try {
-            return verify(publicKey, textChars, signatureBase64);
-        } finally {
-            Arrays.fill(textChars, '\0');
-        }
+        byte[] data = text.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] signature = TextUtil.base64Decode(signatureBase64);
+        return verify(publicKey, data, signature);
     }
 
     /**
@@ -1012,7 +1212,8 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if verification fails
      */
     public static boolean verify(PublicKey publicKey, char[] text, String signatureBase64) throws GeneralSecurityException {
-        byte[] data = TextUtil.charsToBytes(text);
+        byte[] data = new String(text).getBytes(StandardCharsets.UTF_8);
+        Arrays.fill(text, '\0');
         try {
             byte[] signature = TextUtil.base64Decode(signatureBase64);
             return verify(publicKey, data, signature);
@@ -1022,11 +1223,11 @@ public final class CryptUtil {
     }
 
     /**
-     * Hybrid encryption for large data using RSA/EC for key encryption and AES for data encryption.
+     * Hybrid encryption for large data using RSA/EC for key encryption and AES-GCM for data encryption.
      * <p>
      * This method generates a random AES key, encrypts the data with AES-GCM, then encrypts
      * the AES key with the provided public key using asymmetric encryption. The result combines
-     * both the encrypted AES key and the encrypted data in a single Base64-encoded string.
+     * both the encrypted AES key and the encrypted data in a single byte array.
      * <p>
      * Format: [4 bytes: encrypted key length][encrypted AES key][encrypted data]
      *
@@ -1036,25 +1237,29 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static byte[] encryptHybrid(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
+        validateAsymmetricEncryptionKey(publicKey, 32, true); // 32 bytes = 256-bit AES key
+
         // Generate random AES key
-        SecretKey aesKey = generateSecretKey(256);
+        SecretKey aesKey = generateSecretKey(256, SYMMETRIC_ALGORITHM_DEFAULT);
+        byte[] aesKeyBytes = aesKey.getEncoded();
 
-        // Validate that the public key can be used for encryption (with hybrid context)
-        validateAsymmetricEncryptionKey(publicKey, aesKey.getEncoded().length, true);
+        try {
+            // Encrypt data with AES
+            byte[] encryptedData = encrypt(SYMMETRIC_ALGORITHM_DEFAULT, aesKeyBytes, data);
 
-        // Encrypt data with AES
-        byte[] encryptedData = encrypt(aesKey, data);
+            // Encrypt AES key with public key
+            byte[] encryptedKey = encryptAsymmetric(publicKey, aesKeyBytes);
 
-        // Encrypt AES key with public key
-        byte[] encryptedKey = encryptAsymmetric(publicKey, aesKey.getEncoded());
+            // Combine: [4 bytes: key length][encrypted key][encrypted data]
+            ByteBuffer buffer = ByteBuffer.allocate(4 + encryptedKey.length + encryptedData.length);
+            buffer.putInt(encryptedKey.length);
+            buffer.put(encryptedKey);
+            buffer.put(encryptedData);
 
-        // Combine: [key length][encrypted key][encrypted data]
-        ByteBuffer result = ByteBuffer.allocate(4 + encryptedKey.length + encryptedData.length);
-        result.putInt(encryptedKey.length);
-        result.put(encryptedKey);
-        result.put(encryptedData);
-
-        return result.array();
+            return buffer.array();
+        } finally {
+            Arrays.fill(aesKeyBytes, (byte) 0);
+        }
     }
 
     /**
@@ -1071,11 +1276,12 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if an error occurs during encryption
      */
     public static String encryptHybrid(PublicKey publicKey, CharSequence text) throws GeneralSecurityException {
-        char[] chars = text.toString().toCharArray();
+        byte[] data = text.toString().getBytes(StandardCharsets.UTF_8);
         try {
-            return encryptHybrid(publicKey, chars);
+            byte[] encrypted = encryptHybrid(publicKey, data);
+            return TextUtil.base64Encode(encrypted);
         } finally {
-            Arrays.fill(chars, '\0');
+            Arrays.fill(data, (byte) 0);
         }
     }
 
@@ -1091,9 +1297,10 @@ public final class CryptUtil {
      */
     public static String encryptHybrid(PublicKey publicKey, char[] text) throws GeneralSecurityException {
         byte[] data = new String(text).getBytes(StandardCharsets.UTF_8);
+        Arrays.fill(text, '\0');
         try {
             byte[] encrypted = encryptHybrid(publicKey, data);
-            return Base64.getEncoder().encodeToString(encrypted);
+            return TextUtil.base64Encode(encrypted);
         } finally {
             Arrays.fill(data, (byte) 0);
         }
@@ -1114,24 +1321,10 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if key generation fails or the curve is not supported
      */
     public static KeyPair generateECKeyPair(String curveName) throws GeneralSecurityException {
-        // Validate curve name
-        if (!Set.of("secp256r1", "secp384r1", "secp521r1").contains(curveName)) {
-            throw new IllegalArgumentException("Unsupported curve: " + curveName +
-                    ". Supported curves: secp256r1, secp384r1, secp521r1");
-        }
-
-        try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-
-            // Use ECGenParameterSpec to specify the named curve
-            java.security.spec.ECGenParameterSpec ecSpec =
-                    new java.security.spec.ECGenParameterSpec(curveName);
-            keyGen.initialize(ecSpec, RandomHolder.RANDOM);
-
-            return keyGen.generateKeyPair();
-        } catch (GeneralSecurityException e) {
-            throw new GeneralSecurityException("Failed to generate EC key pair with curve " + curveName, e);
-        }
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+        ECGenParameterSpec ecSpec = new ECGenParameterSpec(curveName);
+        keyGen.initialize(ecSpec, RandomHolder.RANDOM);
+        return keyGen.generateKeyPair();
     }
 
     /**
@@ -1147,42 +1340,30 @@ public final class CryptUtil {
      */
     public static byte[] decryptHybrid(PrivateKey privateKey, byte[] cipherData) throws GeneralSecurityException {
         if (cipherData.length < 4) {
-            throw new GeneralSecurityException("Invalid hybrid cipher data: too short");
+            throw new IllegalArgumentException("Invalid hybrid encrypted data");
         }
 
         ByteBuffer buffer = ByteBuffer.wrap(cipherData);
-
-        // Read encrypted key length
         int keyLength = buffer.getInt();
-        if (keyLength <= 0 || keyLength > cipherData.length - 4) {
-            throw new GeneralSecurityException("Invalid encrypted key length");
+
+        if (keyLength < 0 || keyLength > cipherData.length - 4) {
+            throw new IllegalArgumentException("Invalid encrypted key length");
         }
 
-        // Extract encrypted AES key
         byte[] encryptedKey = new byte[keyLength];
         buffer.get(encryptedKey);
 
-        // Extract encrypted data
-        byte[] encryptedData = new byte[buffer.remaining()];
+        byte[] encryptedData = new byte[cipherData.length - 4 - keyLength];
         buffer.get(encryptedData);
 
-        try {
-            // Decrypt AES key
-            byte[] aesKeyBytes = decryptAsymmetric(privateKey, encryptedKey);
-            SecretKey aesKey = toSecretKey(aesKeyBytes);
+        // Decrypt AES key
+        byte[] aesKeyBytes = decryptAsymmetric(privateKey, encryptedKey);
 
-            try {
-                // Decrypt data with AES key
-                return decrypt(aesKey, encryptedData);
-            } finally {
-                // Clear sensitive data
-                Arrays.fill(aesKeyBytes, (byte) 0);
-                Arrays.fill(aesKey.getEncoded(), (byte) 0);
-            }
+        try {
+            // Decrypt data with AES key
+            return decrypt(SYMMETRIC_ALGORITHM_DEFAULT, aesKeyBytes, encryptedData);
         } finally {
-            // Clear temporary arrays
-            Arrays.fill(encryptedKey, (byte) 0);
-            Arrays.fill(encryptedData, (byte) 0);
+            Arrays.fill(aesKeyBytes, (byte) 0);
         }
     }
 
@@ -1198,11 +1379,7 @@ public final class CryptUtil {
     public static String decryptHybrid(PrivateKey privateKey, String base64CipherText) throws GeneralSecurityException {
         byte[] cipherData = TextUtil.base64Decode(base64CipherText);
         byte[] decrypted = decryptHybrid(privateKey, cipherData);
-        try {
-            return new String(decrypted, StandardCharsets.UTF_8);
-        } finally {
-            Arrays.fill(decrypted, (byte) 0);
-        }
+        return new String(decrypted, StandardCharsets.UTF_8);
     }
 
     /**
@@ -1220,7 +1397,7 @@ public final class CryptUtil {
         byte[] cipherData = TextUtil.base64Decode(base64CipherText);
         byte[] decrypted = decryptHybrid(privateKey, cipherData);
         try {
-            return TextUtil.bytesToChars(decrypted);
+            return new String(decrypted, StandardCharsets.UTF_8).toCharArray();
         } finally {
             Arrays.fill(decrypted, (byte) 0);
         }

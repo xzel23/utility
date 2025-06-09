@@ -383,9 +383,8 @@ class CryptUtilTest {
         assertTrue(verified);
 
         // Test char array signing/verification
-        char[] messageChars = message.toCharArray();
-        String signatureChars = CryptUtil.sign(privateKey, messageChars);
-        boolean verifiedChars = CryptUtil.verify(publicKey, messageChars, signatureChars);
+        String signatureChars = CryptUtil.sign(privateKey, message.toCharArray());
+        boolean verifiedChars = CryptUtil.verify(publicKey, message.toCharArray(), signatureChars);
 
         assertTrue(verifiedChars);
     }
