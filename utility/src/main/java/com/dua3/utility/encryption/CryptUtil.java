@@ -170,6 +170,7 @@ public final class CryptUtil {
      * @param keyBits key size in bits (128, 192, or 256)
      * @param inputBufferHandling how to handle input buffers
      * @return derived encryption key
+     * @throws IllegalArgumentException if salt is too short, iterations too low, or key size invalid
      * @throws GeneralSecurityException if key derivation fails
      */
     private static byte[] deriveKey(char[] passphrase, byte[] salt, int iterations, int keyBits, InputBufferHandling inputBufferHandling)
@@ -191,7 +192,7 @@ public final class CryptUtil {
             spec.clearPassword();
             return keyBytes;
         } finally {
-            if (inputBufferHandling != com.dua3.utility.encryption.InputBufferHandling.PRESERVE) {
+            if (inputBufferHandling != InputBufferHandling.PRESERVE) {
                 Arrays.fill(passphrase, '\0');
                 Arrays.fill(salt, (byte) 0);
             }
