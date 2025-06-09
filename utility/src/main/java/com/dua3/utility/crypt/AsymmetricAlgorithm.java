@@ -1,4 +1,4 @@
-package com.dua3.utility.encryption;
+package com.dua3.utility.crypt;
 
 import org.jspecify.annotations.Nullable;
 

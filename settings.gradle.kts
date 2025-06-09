@@ -100,7 +100,8 @@ dependencyResolutionManagement {
 
             library("junit4", "junit", "junit").versionRef("junit4")
             library("h2", "com.h2database", "h2").versionRef("h2database")
-            library("bouncycastle", "org.bouncycastle", "bcprov-jdk18on").versionRef("bouncycastle")
+            library("bouncycastle-provider", "org.bouncycastle", "bcprov-jdk18on").versionRef("bouncycastle")
+            library("bouncycastle-pkix", "org.bouncycastle", "bcpkix-jdk18on").versionRef("bouncycastle")
         }
     }
 

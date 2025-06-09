@@ -1,4 +1,6 @@
-package com.dua3.utility.encryption;
+package com.dua3.utility.crypt;
+
+import java.security.InvalidAlgorithmParameterException;
 
 /**
  * Enum representing symmetric encryption algorithms.
@@ -81,15 +83,15 @@ public enum SymmetricAlgorithm {
      * Validates that the given key size is valid for this algorithm.
      *
      * @param keySize the key size in bits to validate
-     * @throws IllegalArgumentException if the key size is not valid for this algorithm
+     * @throws InvalidAlgorithmParameterException if the key size is not valid for this algorithm
      */
-    public void validateKeySize(int keySize) {
+    public void validateKeySize(int keySize) throws InvalidAlgorithmParameterException {
         if (this == AES) {
             if (keySize != 128 && keySize != 192 && keySize != 256) {
-                throw new IllegalArgumentException("AES key size must be 128, 192, or 256 bits, but was: " + keySize);
+                throw new InvalidAlgorithmParameterException("AES key size must be 128, 192, or 256 bits, but was: " + keySize);
             }
         } else {
-            throw new IllegalArgumentException("Unknown algorithm: " + this);
+            throw new InvalidAlgorithmParameterException("Unknown algorithm: " + this);
         }
     }
 

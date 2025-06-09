@@ -55,12 +55,14 @@ open module com.dua3.utility {
     exports com.dua3.utility.ui;
     exports com.dua3.utility.xml;
     exports com.dua3.utility.awt;
-    exports com.dua3.utility.encryption;
+    exports com.dua3.utility.crypt;
 
     requires java.xml;
     requires static java.desktop;
     requires org.apache.logging.log4j;
     requires org.jspecify;
+    requires static org.bouncycastle.provider;
+    requires static org.bouncycastle.pkix;
 
     uses FileType;
     uses I18NProvider;

@@ -1,4 +1,4 @@
-package com.dua3.utility.encryption;
+package com.dua3.utility.crypt;
 
 /**
  * Defines how input buffers containing sensitive data should be handled after processing.

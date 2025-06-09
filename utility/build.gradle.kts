@@ -31,7 +31,10 @@ sourceSets {
 }
 
 dependencies {
-    testImplementation(rootProject.libs.bouncycastle)
+    compileOnly(rootProject.libs.bouncycastle.provider)
+    compileOnly(rootProject.libs.bouncycastle.pkix)
+    testImplementation(rootProject.libs.bouncycastle.provider)
+    testImplementation(rootProject.libs.bouncycastle.pkix)
 }
 
 // Add dependencies for java24 source set
