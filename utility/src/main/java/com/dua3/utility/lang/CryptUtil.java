@@ -45,26 +45,28 @@ public final class CryptUtil {
         /**
          * RSA (Rivest-Shamir-Adleman) algorithm with OAEP padding
          */
-        RSA("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING", "SHA256withRSA"),
+        RSA("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING", "SHA256withRSA", "RSA"),
         /**
          * Elliptic Curve Cryptography
          */
-        EC("ECIES", "SHA256withECDSA"),
+        EC("ECIES", "SHA256withECDSA", "EC"),
         /**
          * Elliptic Curve Integrated Encryption Scheme
          */
-        ECIES("ECIES", null),
+        ECIES("ECIES", null, "EC"),
         /**
          * Digital Signature Algorithm (for signatures only)
          */
-        DSA("DSA", "SHA256withDSA");
+        DSA("DSA", "SHA256withDSA", "DSA");
 
         private final String transformation;
         private final @Nullable String signatureAlgorithm;
+        private final String keyFactoryAlgorithm;
 
-        AsymmetricAlgorithm(String transformation, @Nullable String signatureAlgorithm) {
+        AsymmetricAlgorithm(String transformation, @Nullable String signatureAlgorithm, String keyFactoryAlgorithm) {
             this.transformation = transformation;
             this.signatureAlgorithm = signatureAlgorithm;
+            this.keyFactoryAlgorithm = keyFactoryAlgorithm;
         }
 
         /**
@@ -74,6 +76,17 @@ public final class CryptUtil {
          */
         public String algorithm() {
             return name();
+        }
+
+        /**
+         * Retrieves the algorithm name to use for KeyFactory operations.
+         * This may differ from the algorithm name for schemes like ECIES,
+         * which use EC keys internally.
+         *
+         * @return the KeyFactory algorithm name
+         */
+        public String keyFactoryAlgorithm() {
+            return keyFactoryAlgorithm;
         }
 
         /**
@@ -551,7 +564,7 @@ public final class CryptUtil {
      */
     public static PrivateKey toPrivateKey(byte[] bytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm.algorithm());
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm.keyFactoryAlgorithm());
         return keyFactory.generatePrivate(keySpec);
     }
 
@@ -577,7 +590,7 @@ public final class CryptUtil {
      */
     public static PublicKey toPublicKey(byte[] bytes, AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm.algorithm());
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm.keyFactoryAlgorithm());
         return keyFactory.generatePublic(keySpec);
     }
 

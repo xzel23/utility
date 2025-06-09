@@ -7,6 +7,7 @@ package com.dua3.utility.lang;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.nio.charset.StandardCharsets;
@@ -283,8 +284,8 @@ class CryptUtilTest {
     }
 
     @Test
-    void testKeyConversionMethods() throws GeneralSecurityException {
-        // Generate a key pair for testing
+    void testKeyConversionMethodsDefault() throws GeneralSecurityException {
+        // Generate a key pair for testing with default algorithm (RSA)
         KeyPair keyPair = CryptUtil.generateRSAKeyPair();
         PublicKey originalPublicKey = keyPair.getPublic();
         PrivateKey originalPrivateKey = keyPair.getPrivate();
@@ -300,23 +301,51 @@ class CryptUtilTest {
         assertArrayEquals(originalPublicKey.getEncoded(), convertedPublicKey.getEncoded());
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedPrivateKey.getEncoded());
 
-        // Test toPublicKey and toPrivateKey with explicit algorithm
-        PublicKey convertedPublicKeyWithAlg = CryptUtil.toPublicKey(publicKeyBytes, CryptUtil.AsymmetricAlgorithm.RSA);
-        PrivateKey convertedPrivateKeyWithAlg = CryptUtil.toPrivateKey(privateKeyBytes, CryptUtil.AsymmetricAlgorithm.RSA);
-
-        assertArrayEquals(originalPublicKey.getEncoded(), convertedPublicKeyWithAlg.getEncoded());
-        assertArrayEquals(originalPrivateKey.getEncoded(), convertedPrivateKeyWithAlg.getEncoded());
-
-        // Test toKeyPair
+        // Test toKeyPair with default algorithm
         KeyPair convertedKeyPair = CryptUtil.toKeyPair(publicKeyBytes, privateKeyBytes);
         assertArrayEquals(originalPublicKey.getEncoded(), convertedKeyPair.getPublic().getEncoded());
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedKeyPair.getPrivate().getEncoded());
+    }
+
+    @ParameterizedTest
+    @EnumSource(CryptUtil.AsymmetricAlgorithm.class)
+    void testKeyConversionMethodsWithAlgorithm(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        // Generate appropriate key pair based on algorithm
+        KeyPair keyPair = generateKeyPairForAlgorithm(algorithm);
+        PublicKey originalPublicKey = keyPair.getPublic();
+        PrivateKey originalPrivateKey = keyPair.getPrivate();
+
+        // Test toPublicKey and toPrivateKey with explicit algorithm
+        byte[] publicKeyBytes = originalPublicKey.getEncoded();
+        byte[] privateKeyBytes = originalPrivateKey.getEncoded();
+
+        PublicKey convertedPublicKeyWithAlg = CryptUtil.toPublicKey(publicKeyBytes, algorithm);
+        PrivateKey convertedPrivateKeyWithAlg = CryptUtil.toPrivateKey(privateKeyBytes, algorithm);
+
+        // Verify the converted keys match the originals
+        assertArrayEquals(originalPublicKey.getEncoded(), convertedPublicKeyWithAlg.getEncoded());
+        assertArrayEquals(originalPrivateKey.getEncoded(), convertedPrivateKeyWithAlg.getEncoded());
 
         // Test toKeyPair with explicit algorithm
-        KeyPair convertedKeyPairWithAlg = CryptUtil.toKeyPair(publicKeyBytes, privateKeyBytes, CryptUtil.AsymmetricAlgorithm.RSA);
+        KeyPair convertedKeyPairWithAlg = CryptUtil.toKeyPair(publicKeyBytes, privateKeyBytes, algorithm);
         assertArrayEquals(originalPublicKey.getEncoded(), convertedKeyPairWithAlg.getPublic().getEncoded());
         assertArrayEquals(originalPrivateKey.getEncoded(), convertedKeyPairWithAlg.getPrivate().getEncoded());
     }
+
+    private KeyPair generateKeyPairForAlgorithm(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        switch (algorithm) {
+            case RSA:
+                return CryptUtil.generateRSAKeyPair();
+            case EC:
+            case ECIES:
+                return CryptUtil.generateECKeyPair("secp256r1");
+            case DSA:
+                return CryptUtil.generateKeyPair(algorithm, 2048);
+            default:
+                throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
+        }
+    }
+
 
     @Test
     void testAsymmetricEncryption() throws GeneralSecurityException {
