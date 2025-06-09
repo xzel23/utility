@@ -758,8 +758,18 @@ public final class TextUtil {
      * @param text the Base64-encoded data
      * @return the decoded data
      */
-    public static byte[] base64Decode(String text) {
-        return Base64.getMimeDecoder().decode(text);
+    public static byte[] base64Decode(CharSequence text) {
+        return Base64.getMimeDecoder().decode(toByteArray(text));
+    }
+
+    /**
+     * Base64-decode data.
+     *
+     * @param text the Base64-encoded data
+     * @return the decoded data
+     */
+    public static byte[] base64Decode(char[] text) {
+        return Base64.getMimeDecoder().decode(toByteArray(text));
     }
 
     /**
@@ -1157,7 +1167,20 @@ public final class TextUtil {
      * @param chars the char array to convert
      * @return the byte array
      */
-    public static byte[] charsToBytes(char[] chars) {
+    public static byte[] toByteArray(char[] chars) {
+        ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars));
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        return bytes;
+    }
+
+    /**
+     * Convert a char array to a byte array using UTF-8 encoding.
+     *
+     * @param chars the char array to convert
+     * @return the byte array
+     */
+    public static byte[] toByteArray(CharSequence chars) {
         ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars));
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
@@ -1170,7 +1193,7 @@ public final class TextUtil {
      * @param bytes the byte array to convert
      * @return the char array
      */
-    public static char[] bytesToChars(byte[] bytes) {
+    public static char[] toCharArray(byte[] bytes) {
         return new String(bytes, StandardCharsets.UTF_8).toCharArray();
     }
 }

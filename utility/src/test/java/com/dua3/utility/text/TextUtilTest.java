@@ -38,7 +38,7 @@ class TextUtilTest {
     void testBytesToCharsWithValidInput() {
         byte[] input = "Hello".getBytes(StandardCharsets.UTF_8);
         char[] expected = {'H', 'e', 'l', 'l', 'o'};
-        char[] result = TextUtil.bytesToChars(input);
+        char[] result = TextUtil.toCharArray(input);
         Assertions.assertArrayEquals(expected, result, "Expected char array does not match the result.");
     }
 
@@ -46,7 +46,7 @@ class TextUtilTest {
     void testBytesToCharsWithEmptyInput() {
         byte[] input = {};
         char[] expected = new char[0];
-        char[] result = TextUtil.bytesToChars(input);
+        char[] result = TextUtil.toCharArray(input);
         Assertions.assertArrayEquals(expected, result, "Expected an empty char array.");
     }
 
@@ -55,7 +55,7 @@ class TextUtilTest {
         String input = "Ω漢字";
         byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
         char[] expected = {'Ω', '漢', '字'};
-        char[] result = TextUtil.bytesToChars(bytes);
+        char[] result = TextUtil.toCharArray(bytes);
         Assertions.assertArrayEquals(expected, result, "Expected char array for special characters does not match the result.");
     }
 
@@ -914,7 +914,7 @@ class TextUtilTest {
     void testCharsToBytesWithValidInput() {
         char[] input = {'H', 'e', 'l', 'l', 'o'};
         byte[] expected = "Hello".getBytes(StandardCharsets.UTF_8);
-        byte[] result = TextUtil.charsToBytes(input);
+        byte[] result = TextUtil.toByteArray(input);
         Assertions.assertArrayEquals(expected, result, "Expected byte array does not match the result.");
     }
 
@@ -922,7 +922,7 @@ class TextUtilTest {
     void testCharsToBytesWithEmptyInput() {
         char[] input = {};
         byte[] expected = new byte[0];
-        byte[] result = TextUtil.charsToBytes(input);
+        byte[] result = TextUtil.toByteArray(input);
         Assertions.assertArrayEquals(expected, result, "Expected an empty byte array.");
     }
 
@@ -931,7 +931,7 @@ class TextUtilTest {
         char[] input = {'Ω', '漢', '字'};
         String expectedString = new String(input);
         byte[] expected = expectedString.getBytes(StandardCharsets.UTF_8);
-        byte[] result = TextUtil.charsToBytes(input);
+        byte[] result = TextUtil.toByteArray(input);
         Assertions.assertArrayEquals(expected, result, "Expected byte array for special characters does not match the result.");
     }
 }
