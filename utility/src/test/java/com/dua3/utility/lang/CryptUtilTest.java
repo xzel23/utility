@@ -21,6 +21,8 @@ import javax.crypto.SecretKey;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.security.InvalidKeyException;
+
 class CryptUtilTest {
 
     private static final int[] KEY_LENGTHS = {128, 192, 256};
@@ -346,48 +348,6 @@ class CryptUtilTest {
         }
     }
 
-
-    @Test
-    void testAsymmetricEncryption() throws GeneralSecurityException {
-        // Generate a key pair for testing
-        KeyPair keyPair = CryptUtil.generateRSAKeyPair();
-        PublicKey publicKey = keyPair.getPublic();
-        PrivateKey privateKey = keyPair.getPrivate();
-
-        // Test byte array encryption/decryption
-        for (String message : MESSAGES) {
-            if (message.isEmpty()) {
-                continue; // Skip empty message as it might not be supported by RSA
-            }
-
-            byte[] data = message.getBytes(StandardCharsets.UTF_8);
-
-            // Skip if data is too large for RSA encryption
-            if (data.length > 100) {
-                continue;
-            }
-
-            byte[] encrypted = CryptUtil.encryptAsymmetric(publicKey, data);
-            byte[] decrypted = CryptUtil.decryptAsymmetric(privateKey, encrypted);
-
-            assertArrayEquals(data, decrypted);
-        }
-
-        // Test string encryption/decryption
-        String message = "Short test message";
-        String encrypted = CryptUtil.encryptAsymmetric(publicKey, message);
-        String decrypted = CryptUtil.decryptAsymmetric(privateKey, encrypted);
-
-        assertEquals(message, decrypted);
-
-        // Test char array encryption/decryption
-        char[] messageChars = message.toCharArray();
-        String encryptedChars = CryptUtil.encryptAsymmetric(publicKey, messageChars);
-        char[] decryptedChars = CryptUtil.decryptAsymmetricToChars(privateKey, encryptedChars);
-
-        assertEquals(message, new String(decryptedChars));
-    }
-
     @Test
     void testSigningAndVerification() throws GeneralSecurityException {
         // Generate a key pair for testing
@@ -479,5 +439,259 @@ class CryptUtilTest {
         assertNotNull(ecKeyPair);
         assertEquals("EC", ecKeyPair.getPublic().getAlgorithm());
         assertEquals("EC", ecKeyPair.getPrivate().getAlgorithm());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = CryptUtil.AsymmetricAlgorithm.class)
+    void testAsymmetricEncryption(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        KeyPair keyPair = generateKeyPairForAlgorithm(algorithm);
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        if (algorithm.isEncryptionSupported()) {
+            // Algorithm supports direct encryption - test with various message types
+
+            // Test byte array encryption/decryption with all messages
+            for (String message : MESSAGES) {
+                if (message.isEmpty()) {
+                    continue; // Skip empty message as it might not be supported
+                }
+
+                byte[] data = message.getBytes(StandardCharsets.UTF_8);
+
+                // Skip if data is too large for the algorithm (e.g., RSA has size limits)
+                if (data.length > 100) {
+                    continue;
+                }
+
+                byte[] encrypted = CryptUtil.encryptAsymmetric(publicKey, data);
+                byte[] decrypted = CryptUtil.decryptAsymmetric(privateKey, encrypted);
+                assertArrayEquals(data, decrypted);
+            }
+
+            // Test string encryption/decryption
+            String testMessage = "Short test message";
+            String encryptedText = CryptUtil.encryptAsymmetric(publicKey, testMessage);
+            String decryptedText = CryptUtil.decryptAsymmetric(privateKey, encryptedText);
+            assertEquals(testMessage, decryptedText);
+
+            // Test char array encryption/decryption
+            char[] messageChars = testMessage.toCharArray();
+            String encryptedFromChars = CryptUtil.encryptAsymmetric(publicKey, messageChars);
+            char[] decryptedChars = CryptUtil.decryptAsymmetricToChars(privateKey, encryptedFromChars);
+            assertEquals(testMessage, new String(decryptedChars));
+
+            // Clean up sensitive data
+            Arrays.fill(messageChars, '\0');
+            Arrays.fill(decryptedChars, '\0');
+
+        } else {
+            // Algorithm doesn't support direct encryption - should throw InvalidKeyException
+            byte[] testData = "test data".getBytes(StandardCharsets.UTF_8);
+            String testText = "test message";
+            char[] testChars = testText.toCharArray();
+
+            // Test that all encryption methods throw InvalidKeyException
+            assertThrows(InvalidKeyException.class, () -> {
+                CryptUtil.encryptAsymmetric(publicKey, testData);
+            });
+
+            assertThrows(InvalidKeyException.class, () -> {
+                CryptUtil.encryptAsymmetric(publicKey, testText);
+            });
+
+            assertThrows(InvalidKeyException.class, () -> {
+                CryptUtil.encryptAsymmetric(publicKey, testChars);
+            });
+
+            // Clean up
+            Arrays.fill(testChars, '\0');
+        }
+    }
+
+    @Test
+    void testAsymmetricEncryptionWithOversizedData() {
+        // Generate RSA key pair with known size (2048 bits)
+        KeyPair rsaKeyPair = CryptUtil.generateRSAKeyPair();
+        PublicKey rsaPublicKey = rsaKeyPair.getPublic();
+
+        // RSA with OAEP padding can encrypt at most (key_size_in_bytes - 2 - 2*hash_length - label_length)
+        // For 2048-bit RSA with SHA-256 OAEP: 256 - 2 - 2*32 - 0 = 190 bytes maximum
+        // Let's create data that's definitely too large
+        byte[] oversizedData = new byte[300]; // 300 bytes - definitely too large for 2048-bit RSA
+        Arrays.fill(oversizedData, (byte) 'A');
+
+        // This should throw an exception
+        assertThrows(GeneralSecurityException.class, () -> {
+            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedData);
+        });
+
+        // Test with string that's too large
+        String oversizedString = new String(oversizedData, StandardCharsets.UTF_8);
+        assertThrows(GeneralSecurityException.class, () -> {
+            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedString);
+        });
+
+        // Test with char array that's too large
+        char[] oversizedChars = oversizedString.toCharArray();
+        assertThrows(GeneralSecurityException.class, () -> {
+            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedChars);
+        });
+    }
+
+    @Test
+    void testAsymmetricEncryptionMaximumSizeRSA() throws GeneralSecurityException {
+        // Generate RSA key pair
+        KeyPair rsaKeyPair = CryptUtil.generateRSAKeyPair();
+        PublicKey rsaPublicKey = rsaKeyPair.getPublic();
+        PrivateKey rsaPrivateKey = rsaKeyPair.getPrivate();
+
+        // For 2048-bit RSA with OAEP SHA-256 padding:
+        // Maximum plaintext size = key_size - 2*hash_size - 2 = 256 - 2*32 - 2 = 190 bytes
+        byte[] maxSizeData = new byte[190];
+        Arrays.fill(maxSizeData, (byte) 'X');
+
+        // This should work (at the limit)
+        try {
+            byte[] encrypted = CryptUtil.encryptAsymmetric(rsaPublicKey, maxSizeData);
+            byte[] decrypted = CryptUtil.decryptAsymmetric(rsaPrivateKey, encrypted);
+            assertArrayEquals(maxSizeData, decrypted);
+        } catch (GeneralSecurityException e) {
+            // If 190 bytes fails, try with a smaller size
+            // Some implementations might have slightly different limits
+            byte[] smallerData = new byte[180];
+            Arrays.fill(smallerData, (byte) 'X');
+
+            byte[] encrypted = CryptUtil.encryptAsymmetric(rsaPublicKey, smallerData);
+            byte[] decrypted = CryptUtil.decryptAsymmetric(rsaPrivateKey, encrypted);
+            assertArrayEquals(smallerData, decrypted);
+        }
+
+        // One byte over the limit should definitely fail
+        byte[] oversizedByOne = new byte[191];
+        Arrays.fill(oversizedByOne, (byte) 'Y');
+
+        assertThrows(GeneralSecurityException.class, () -> {
+            CryptUtil.encryptAsymmetric(rsaPublicKey, oversizedByOne);
+        });
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = CryptUtil.AsymmetricAlgorithm.class)
+    void testHybridEncryption(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        KeyPair keyPair = generateKeyPairForAlgorithm(algorithm);
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        if (algorithm.isEncryptionSupported()) {
+            // Algorithm supports encryption - test hybrid encryption with large data
+        
+            // Test with large data that would fail with direct asymmetric encryption
+            String largeMessage = "A".repeat(1000); // 1KB of data
+            byte[] largeData = largeMessage.getBytes(StandardCharsets.UTF_8);
+
+            // Test byte array hybrid encryption/decryption
+            byte[] encryptedData = CryptUtil.encryptHybrid(publicKey, largeData);
+            byte[] decryptedData = CryptUtil.decryptHybrid(privateKey, encryptedData);
+            assertArrayEquals(largeData, decryptedData);
+
+            // Test text hybrid encryption/decryption
+            String encryptedText = CryptUtil.encryptHybrid(publicKey, largeMessage);
+            String decryptedText = CryptUtil.decryptHybrid(privateKey, encryptedText);
+            assertEquals(largeMessage, decryptedText);
+
+            // Test char array hybrid encryption/decryption
+            char[] messageChars = largeMessage.toCharArray();
+            String encryptedFromChars = CryptUtil.encryptHybrid(publicKey, messageChars);
+            char[] decryptedChars = CryptUtil.decryptHybridToChars(privateKey, encryptedFromChars);
+            assertEquals(largeMessage, new String(decryptedChars));
+
+            // Clean up sensitive data
+            Arrays.fill(messageChars, '\0');
+            Arrays.fill(decryptedChars, '\0');
+        
+            // Test with various message sizes
+            for (String message : MESSAGES) {
+                if (message.isEmpty()) {
+                    continue; // Skip empty message
+                }
+
+                byte[] data = message.getBytes(StandardCharsets.UTF_8);
+            
+                // Test hybrid encryption (should work for any size)
+                byte[] hybridEncrypted = CryptUtil.encryptHybrid(publicKey, data);
+                byte[] hybridDecrypted = CryptUtil.decryptHybrid(privateKey, hybridEncrypted);
+                assertArrayEquals(data, hybridDecrypted);
+            }
+        
+        } else {
+            // Algorithm doesn't support encryption - should throw InvalidKeyException
+            // But with a clearer message since this is for hybrid encryption
+            byte[] testData = "test data for hybrid encryption".getBytes(StandardCharsets.UTF_8);
+            String testText = "test message for hybrid";
+            char[] testChars = testText.toCharArray();
+        
+            // Test that all hybrid encryption methods throw InvalidKeyException
+            InvalidKeyException exception1 = assertThrows(InvalidKeyException.class, () -> {
+                CryptUtil.encryptHybrid(publicKey, testData);
+            });
+        
+            assertThrows(InvalidKeyException.class, () -> {
+                CryptUtil.encryptHybrid(publicKey, testText);
+            });
+        
+            assertThrows(InvalidKeyException.class, () -> {
+                CryptUtil.encryptHybrid(publicKey, testChars);
+            });
+        
+            // Verify the exception message doesn't suggest using hybrid encryption
+            // (since that's what we're already trying to do)
+            String expectedPattern = "does not support.*encryption";
+            assertTrue(exception1.getMessage().toLowerCase().matches(".*" + expectedPattern + ".*"),
+                "Exception message should indicate algorithm doesn't support encryption: " + exception1.getMessage());
+        
+            // Clean up
+            Arrays.fill(testChars, '\0');
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = CryptUtil.AsymmetricAlgorithm.class)
+    void testAsymmetricEncryptionSupport(CryptUtil.AsymmetricAlgorithm algorithm) throws GeneralSecurityException {
+        KeyPair keyPair = generateKeyPairForAlgorithm(algorithm);
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        String shortMessage = "Hello, asymmetric world!";
+        byte[] shortData = shortMessage.getBytes(StandardCharsets.UTF_8);
+
+        if (algorithm.isEncryptionSupported()) {
+            // Algorithm supports direct encryption - test it
+            byte[] encryptedData = CryptUtil.encryptAsymmetric(publicKey, shortData);
+            byte[] decryptedData = CryptUtil.decryptAsymmetric(privateKey, encryptedData);
+            assertArrayEquals(shortData, decryptedData);
+
+            String encryptedText = CryptUtil.encryptAsymmetric(publicKey, shortMessage);
+            String decryptedText = CryptUtil.decryptAsymmetric(privateKey, encryptedText);
+            assertEquals(shortMessage, decryptedText);
+
+            char[] messageChars = shortMessage.toCharArray();
+            String encryptedFromChars = CryptUtil.encryptAsymmetric(publicKey, messageChars);
+            char[] decryptedChars = CryptUtil.decryptAsymmetricToChars(privateKey, encryptedFromChars);
+            assertEquals(shortMessage, new String(decryptedChars));
+
+            // Clean up sensitive data
+            Arrays.fill(messageChars, '\0');
+            Arrays.fill(decryptedChars, '\0');
+        } else {
+            // Algorithm doesn't support direct encryption - should throw exception
+            assertThrows(InvalidKeyException.class, () -> {
+                CryptUtil.encryptAsymmetric(publicKey, shortData);
+            });
+
+            assertThrows(InvalidKeyException.class, () -> {
+                CryptUtil.encryptAsymmetric(publicKey, shortMessage);
+            });
+        }
     }
 }

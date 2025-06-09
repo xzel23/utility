@@ -4,6 +4,7 @@ import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
 
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
@@ -12,6 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -20,11 +22,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.interfaces.RSAKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Arrays;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,10 +34,6 @@ import javax.crypto.SecretKey;
 
 /**
  * Cryptographic utilities.
- * <p>
- * Code is based on an
- * <a href="https://proandroiddev.com/security-best-practices-symmetric-encryption-with-aes-in-java-7616beaaade9">article</a>
- * by Patrick Favre-Bulle.
  */
 public final class CryptUtil {
     /**
@@ -47,23 +45,23 @@ public final class CryptUtil {
          */
         RSA("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING", "SHA256withRSA", "RSA"),
         /**
-         * Elliptic Curve Cryptography
+         * Elliptic Curve Cryptography (primarily for signatures and key agreement)
          */
-        EC("ECIES", "SHA256withECDSA", "EC"),
+        EC(null, "SHA256withECDSA", "EC"),
         /**
-         * Elliptic Curve Integrated Encryption Scheme
+         * Elliptic Curve Integrated Encryption Scheme (requires special provider)
          */
         ECIES("ECIES", null, "EC"),
         /**
          * Digital Signature Algorithm (for signatures only)
          */
-        DSA("DSA", "SHA256withDSA", "DSA");
+        DSA(null, "SHA256withDSA", "DSA");
 
-        private final String transformation;
+        private final @Nullable String transformation;
         private final @Nullable String signatureAlgorithm;
         private final String keyFactoryAlgorithm;
 
-        AsymmetricAlgorithm(String transformation, @Nullable String signatureAlgorithm, String keyFactoryAlgorithm) {
+        AsymmetricAlgorithm(@Nullable String transformation, @Nullable String signatureAlgorithm, String keyFactoryAlgorithm) {
             this.transformation = transformation;
             this.signatureAlgorithm = signatureAlgorithm;
             this.keyFactoryAlgorithm = keyFactoryAlgorithm;
@@ -102,17 +100,26 @@ public final class CryptUtil {
         /**
          * Retrieves the transformation string associated with the asymmetric algorithm.
          *
-         * @return the transformation string, which specifies the cipher transformation
-         * used by this asymmetric algorithm
+         * @return an {@code Optional} containing the transformation string, or empty if
+         * this algorithm doesn't support direct encryption
          */
-        public String transformation() {
-            return transformation;
+        public Optional<String> getTransformation() {
+            return Optional.ofNullable(transformation);
+        }
+
+        /**
+         * Checks if this algorithm supports direct asymmetric encryption.
+         *
+         * @return true if the algorithm supports direct encryption, false otherwise
+         */
+        public boolean isEncryptionSupported() {
+            return transformation != null;
         }
     }
 
     private static final int GCM_TAG_LENGTH = 128;
     private static final int IV_LENGTH = 12;
-    private static final String CIPHER = "AES/GCM/NoPadding";
+    private static final String SYMMETRIC_CIPHER = "AES/GCM/NoPadding";
     private static final String SYMMETRIC_ALGORITHM = "AES";
     private static final AsymmetricAlgorithm ASYMMETRIC_ALGORITHM_DEFAULT = AsymmetricAlgorithm.RSA;
     private static final int KEY_DERIVATION_DEFAULT_ITERATIONS = 10000;
@@ -146,25 +153,22 @@ public final class CryptUtil {
      * Supported algorithms:
      * <ul>
      *   <li>RSA: Returns RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING for secure padding</li>
-     *   <li>EC/ECIES: Returns ECIES (available in Java 21+ per JEP 452)</li>
-     *   <li>DSA: Throws exception as DSA is for signatures only</li>
+     *   <li>ECIES: Returns ECIES (requires special provider like Bouncy Castle)</li>
+     *   <li>EC/DSA: Throws exception as these are for signatures/key agreement only</li>
      * </ul>
      *
-     * @param algorithm the name of the algorithm ("RSA", "EC", "ECIES")
+     * @param algorithm the name of the algorithm ("RSA", "ECIES")
      * @return the transformation string corresponding to the given algorithm
-     * @throws IllegalArgumentException if DSA is provided or algorithm is unsupported
+     * @throws IllegalArgumentException if algorithm doesn't support direct encryption
      */
     private static String getAsymmetricTransformation(String algorithm) {
         return Arrays.stream(AsymmetricAlgorithm.values())
                 .filter(a -> a.algorithm().equals(algorithm))
-                .map(AsymmetricAlgorithm::transformation)
+                .flatMap(a -> a.getTransformation().stream())
                 .findFirst()
-                .orElseGet(() -> {
-                    if (AsymmetricAlgorithm.DSA.algorithm().equals(algorithm)) {
-                        throw new IllegalArgumentException("DSA is for signatures only, not encryption");
-                    }
-                    return algorithm; // Fallback to algorithm name
-                });
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Algorithm " + algorithm + " does not support direct asymmetric encryption. " +
+                                "Use hybrid encryption instead, or use this algorithm for signatures only."));
     }
 
     /**
@@ -177,12 +181,84 @@ public final class CryptUtil {
      *
      * @param key the asymmetric encryption key to validate
      * @param dataLength the length of the data that is intended to be encrypted
+     * @throws InvalidKeyException if the algorithm doesn't support direct encryption
+     * @throws IllegalBlockSizeException if the data is too large for the key/algorithm
      */
-    private static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) {
-        // RSA can only encrypt data smaller than key size minus padding
-        if (key instanceof RSAKey rsaKey) {
-            LangUtil.check(dataLength <= (rsaKey.getModulus().bitLength() / 8) - 66,
-                    "Data too large for RSA encryption: %d bytes", dataLength);
+    private static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength, boolean isHybridEncryption) throws GeneralSecurityException {
+        String algorithm = key.getAlgorithm();
+
+        // Check if the algorithm supports direct encryption
+        AsymmetricAlgorithm asymAlg = Arrays.stream(AsymmetricAlgorithm.values())
+                .filter(a -> a.algorithm().equals(algorithm))
+                .findFirst()
+                .orElse(null);
+
+        if (asymAlg == null || !asymAlg.isEncryptionSupported()) {
+            String context = isHybridEncryption ? "hybrid encryption" : "direct asymmetric encryption";
+            throw new InvalidKeyException(
+                    "Algorithm " + algorithm + " does not support encryption and cannot be used for " + context + ". " +
+                            "This algorithm is suitable for signatures only.");
+        }
+
+        // Algorithm-specific validation
+        switch (algorithm) {
+            case "RSA":
+                validateRSAEncryptionKey(key, dataLength);
+                break;
+            case "ECIES":
+                // ECIES validation would go here if needed
+                break;
+            default:
+                // For other algorithms, basic validation or none
+                break;
+        }
+    }
+
+    /**
+     * Validates the provided asymmetric encryption key to ensure it satisfies the requirements
+     * for encrypting data of the specified length.
+     * <p>
+     * This method performs validation specific to the algorithm of the key. For RSA keys,
+     * it ensures that the data length does not exceed the maximum allowed size based on
+     * the key's modulus and padding restrictions.
+     *
+     * @param key the asymmetric encryption key to validate
+     * @param dataLength the length of the data that is intended to be encrypted
+     * @throws InvalidKeyException if the algorithm doesn't support direct encryption
+     * @throws IllegalBlockSizeException if the data is too large for the key/algorithm
+     */
+    private static void validateAsymmetricEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
+        validateAsymmetricEncryptionKey(key, dataLength, false);
+    }
+
+    /**
+     * Validates the provided RSA encryption key and checks if the data length
+     * is suitable for the key size.
+     * <p>
+     * This method ensures that the provided key is an RSA public key and calculates
+     * the maximum permissible data size for the key, verifying that the input data length
+     * does not exceed this limit. If the key type or data length is invalid, an
+     * appropriate exception is thrown.
+     *
+     * @param key the public key to be validated; must be an RSA public key
+     * @param dataLength the length of the data intended for encryption, in bytes
+     * @throws GeneralSecurityException if the encryption key is not valid or if the data length
+     *         exceeds the maximum allowed size for the given RSA key
+     */
+    private static void validateRSAEncryptionKey(PublicKey key, int dataLength) throws GeneralSecurityException {
+        if (!(key instanceof java.security.interfaces.RSAPublicKey rsaKey)) {
+            throw new InvalidKeyException("Expected RSA public key, but got: " + key.getClass().getSimpleName());
+        }
+
+        int keySize = rsaKey.getModulus().bitLength();
+        // For RSA with OAEP SHA-256: max_data = (key_size_bytes - 2 - 2*hash_size)
+        int maxDataLength = (keySize / 8) - 2 - (2 * 32); // 32 bytes for SHA-256
+
+        if (dataLength > maxDataLength) {
+            throw new IllegalBlockSizeException(
+                    String.format("Data length (%d bytes) exceeds maximum for %d-bit RSA key (%d bytes). " +
+                                    "Use hybrid encryption for larger data.",
+                            dataLength, keySize, maxDataLength));
         }
     }
 
@@ -485,7 +561,7 @@ public final class CryptUtil {
         byte[] iv = new byte[IV_LENGTH];
         RandomHolder.RANDOM.nextBytes(iv);
 
-        final Cipher cipher = Cipher.getInstance(CIPHER);
+        final Cipher cipher = Cipher.getInstance(SYMMETRIC_CIPHER);
         AlgorithmParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
 
@@ -513,7 +589,7 @@ public final class CryptUtil {
         byte[] iv = new byte[IV_LENGTH];
         RandomHolder.RANDOM.nextBytes(iv);
 
-        final Cipher cipher = Cipher.getInstance(CIPHER);
+        final Cipher cipher = Cipher.getInstance(SYMMETRIC_CIPHER);
         AlgorithmParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);  // Use Key directly
 
@@ -548,7 +624,7 @@ public final class CryptUtil {
         byte[] cipherText = new byte[byteBuffer.remaining()];
         byteBuffer.get(cipherText);
 
-        final Cipher cipher = Cipher.getInstance(CIPHER);
+        final Cipher cipher = Cipher.getInstance(SYMMETRIC_CIPHER);
         cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, SYMMETRIC_ALGORITHM), new GCMParameterSpec(GCM_TAG_LENGTH, iv));
 
         return cipher.doFinal(cipherText);
@@ -721,7 +797,7 @@ public final class CryptUtil {
         byte[] cipherText = new byte[byteBuffer.remaining()];
         byteBuffer.get(cipherText);
 
-        final Cipher cipher = Cipher.getInstance(CIPHER);
+        final Cipher cipher = Cipher.getInstance(SYMMETRIC_CIPHER);
         cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(GCM_TAG_LENGTH, iv));
 
         return cipher.doFinal(cipherText);
@@ -1041,27 +1117,66 @@ public final class CryptUtil {
      * @throws GeneralSecurityException if encryption fails
      */
     public static byte[] encryptHybrid(PublicKey publicKey, byte[] data) throws GeneralSecurityException {
-        // Generate random AES-256 key
+        // Generate random AES key
         SecretKey aesKey = generateSecretKey(256);
 
+        // Validate that the public key can be used for encryption (with hybrid context)
+        validateAsymmetricEncryptionKey(publicKey, aesKey.getEncoded().length, true);
+
+        // Encrypt data with AES
+        byte[] encryptedData = encrypt(aesKey, data);
+
+        // Encrypt AES key with public key
+        byte[] encryptedKey = encryptAsymmetric(publicKey, aesKey.getEncoded());
+
+        // Combine: [key length][encrypted key][encrypted data]
+        ByteBuffer result = ByteBuffer.allocate(4 + encryptedKey.length + encryptedData.length);
+        result.putInt(encryptedKey.length);
+        result.put(encryptedKey);
+        result.put(encryptedData);
+
+        return result.array();
+    }
+
+    /**
+     * Encrypts the provided text using a hybrid encryption scheme with the given public key.
+     * <p>
+     * This method first converts the provided text to a character array, encrypts it using
+     * the specified public key, and encodes the result in Base64 format. Once the encryption
+     * is complete, the character array is cleared to ensure sensitive data is not retained
+     * in memory.
+     *
+     * @param publicKey the public key used for encrypting the data
+     * @param text the text to be encrypted, provided as a sequence of characters
+     * @return the encrypted text, encoded as a Base64 string
+     * @throws GeneralSecurityException if an error occurs during encryption
+     */
+    public static String encryptHybrid(PublicKey publicKey, CharSequence text) throws GeneralSecurityException {
+        char[] chars = text.toString().toCharArray();
         try {
-            // Encrypt data with AES
-            byte[] encryptedData = encrypt(aesKey, data);
-
-            // Encrypt AES key with public key
-            byte[] encryptedKey = encryptAsymmetric(publicKey, aesKey.getEncoded());
-
-            // Combine encrypted key and data
-            // Format: [4 bytes: key length][encrypted key][encrypted data]
-            ByteBuffer result = ByteBuffer.allocate(4 + encryptedKey.length + encryptedData.length);
-            result.putInt(encryptedKey.length);
-            result.put(encryptedKey);
-            result.put(encryptedData);
-
-            return result.array();
+            return encryptHybrid(publicKey, chars);
         } finally {
-            // Clear the AES key from memory
-            Arrays.fill(aesKey.getEncoded(), (byte) 0);
+            Arrays.fill(chars, '\0');
+        }
+    }
+
+    /**
+     * Encrypts the provided text using a hybrid encryption mechanism that combines
+     * public key encryption for secure key exchange and symmetric encryption for
+     * encrypting the provided text. The input text is securely cleared after processing.
+     *
+     * @param publicKey the public key used for encrypting the symmetric key
+     * @param text the text to be encrypted, provided as a char array
+     * @return the encrypted text encoded in Base64 format
+     * @throws GeneralSecurityException if any encryption-related error occurs
+     */
+    public static String encryptHybrid(PublicKey publicKey, char[] text) throws GeneralSecurityException {
+        byte[] data = new String(text).getBytes(StandardCharsets.UTF_8);
+        try {
+            byte[] encrypted = encryptHybrid(publicKey, data);
+            return Base64.getEncoder().encodeToString(encrypted);
+        } finally {
+            Arrays.fill(data, (byte) 0);
         }
     }
 
@@ -1153,29 +1268,6 @@ public final class CryptUtil {
     }
 
     /**
-     * Encrypts the provided text using a hybrid encryption scheme with the given public key.
-     * <p>
-     * This method first converts the provided text to a character array, encrypts it using
-     * the specified public key, and encodes the result in Base64 format. Once the encryption
-     * is complete, the character array is cleared to ensure sensitive data is not retained
-     * in memory.
-     *
-     * @param publicKey the public key used for encrypting the data
-     * @param text the text to be encrypted, provided as a sequence of characters
-     * @return the encrypted text, encoded as a Base64 string
-     * @throws GeneralSecurityException if an error occurs during encryption
-     */
-    public static String encryptHybrid(PublicKey publicKey, CharSequence text) throws GeneralSecurityException {
-        char[] data = TextUtil.toCharArray(text);
-        try {
-            byte[] encrypted = encryptHybrid(publicKey, TextUtil.charsToBytes(data));
-            return TextUtil.base64Encode(encrypted);
-        } finally {
-            Arrays.fill(data, (char) 0);
-        }
-    }
-
-    /**
      * Decrypts a base64-encoded ciphertext using a hybrid encryption scheme.
      * This method combines the use of public-private key cryptography and symmetric key encryption.
      *
@@ -1191,25 +1283,6 @@ public final class CryptUtil {
             return new String(decrypted, StandardCharsets.UTF_8);
         } finally {
             Arrays.fill(decrypted, (byte) 0);
-        }
-    }
-
-    /**
-     * Encrypts the provided text using a hybrid encryption mechanism that combines
-     * public key encryption for secure key exchange and symmetric encryption for
-     * encrypting the provided text. The input text is securely cleared after processing.
-     *
-     * @param publicKey the public key used for encrypting the symmetric key
-     * @param text the text to be encrypted, provided as a char array
-     * @return the encrypted text encoded in Base64 format
-     * @throws GeneralSecurityException if any encryption-related error occurs
-     */
-    public static String encryptHybrid(PublicKey publicKey, char[] text) throws GeneralSecurityException {
-        try {
-            byte[] encrypted = encryptHybrid(publicKey, TextUtil.charsToBytes(text));
-            return TextUtil.base64Encode(encrypted);
-        } finally {
-            Arrays.fill(text, (char) 0);
         }
     }
 
