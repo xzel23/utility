@@ -42,7 +42,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt <value>
+                    --opt <value>    (optional)
 
                 """;
         assertEquals(expected, parser.help());
@@ -84,7 +84,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt <value>
+                    --opt <value>    (required)
 
                 """;
         assertEquals(expected, parser.help());
@@ -126,7 +126,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt <value>
+                    --opt <value>    (repeatable up to 3 times)
 
                 """;
         assertEquals(expected, parser.help());
@@ -182,7 +182,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt <value>
+                    --opt <value>    (2-4 times)
 
                 """;
         assertEquals(expected, parser.help());
@@ -244,7 +244,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt <value>
+                    --opt <value>    (repeatable)
 
                 """;
         assertEquals(expected, parser.help());
@@ -286,7 +286,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt [<first>] [<second>]
+                    --opt [<first>] [<second>]    (required)
 
                 """;
         assertEquals(expected, parser.help());
@@ -337,7 +337,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt <first> <second> [<third>] [<fourth>]
+                    --opt <first> <second> [<third>] [<fourth>]    (required)
 
                 """;
         assertEquals(expected, parser.help());
@@ -394,7 +394,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt [<arg> ...]
+                    --opt [<arg> ...]    (required)
 
                 """;
         assertEquals(expected, parser.help());
@@ -439,7 +439,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --opt [<first>] [<second>]
+                    --opt [<first>] [<second>]    (repeatable up to 2 times)
 
                 """;
         assertEquals(expected, parser.help());
@@ -507,7 +507,7 @@ class ArgumentsParserOptionTest {
                 testOption <options> [<arg> ...]
 
                   <options>:
-                    --files <source> [<destination>] [<backup>]
+                    --files <source> [<destination>] [<backup>]    (required)
 
                 """;
         assertEquals(expected, parser.help());
@@ -559,11 +559,11 @@ class ArgumentsParserOptionTest {
                 testMultipleOptions <options> [<arg> ...]
 
                   <options>:
-                    --opt-a <value>
+                    --opt-a <value>    (required)
 
-                    --opt-b [<value>]
+                    --opt-b [<value>]    (repeatable up to 2 times)
 
-                    --opt-c <key> <value>
+                    --opt-c <key> <value>    (repeatable)
 
                 """;
         assertEquals(expected, parser.help());

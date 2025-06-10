@@ -50,7 +50,7 @@ class ArgumentsParserTest {
                 testFlag <options> [<arg> ...]
                                 
                   <options>:
-                    --print|-p
+                    --print, -p    (optional)
                             print result to terminal
                                 
                 """;
@@ -102,12 +102,12 @@ class ArgumentsParserTest {
                 testChoiceOption <options> [<arg> ...]
                 
                   <options>:
-                    --product|-p <arg>
+                    --product, -p <arg>    (required)
                             the product
                 
-                    --size <size>
+                    --size <size>    (optional)
                 
-                    --tags [<main tag>] [<secondary tag>] [<tag1>] ... [<tag3>]
+                    --tags [<main tag>] [<secondary tag>] [<tag1>] ... [<tag3>]    (repeatable)
                 
                 """;
 
@@ -151,10 +151,10 @@ class ArgumentsParserTest {
                 testChoiceOptionRequired <options> [<arg> ...]
                 
                   <options>:
-                    --product|-p <arg>
+                    --product, -p <arg>    (required)
                             set the product name
                 
-                    --size <size>
+                    --size <size>    (required)
                 
                 """;
 
@@ -193,9 +193,9 @@ class ArgumentsParserTest {
                 testSimpleOption <options> [<arg> ...]
                 
                   <options>:
-                    --age|-a <age>
+                    --age, -a <age>    (optional)
                 
-                    --name|-n <name>
+                    --name, -n <name>    (optional)
                             set name
                 
                 """;
@@ -244,9 +244,9 @@ class ArgumentsParserTest {
                 testSimpleOptionRequired <options> [<arg> ...]
                 
                   <options>:
-                    --age|-a <age>
+                    --age, -a <age>    (optional)
                 
-                    --name|-n <name>
+                    --name, -n <name>    (required)
                             set name
                 
                 """;

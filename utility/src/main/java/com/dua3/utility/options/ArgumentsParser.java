@@ -198,8 +198,10 @@ public class ArgumentsParser {
                 // get argument text
                 String argText = getArgText(option.minArity(), option.maxArity(), option.argNames().toArray(String[]::new));
 
+                String occurenceText = getOccurrenceText(option.minOccurrences(), option. maxOccurrences());
+
                 // print option names and arguments
-                fmt.format("    %s%s\n", String.join("|", option.names()), argText);
+                fmt.format("    %s%s%s\n", String.join(", ", option.names()), argText, occurenceText);
 
                 // print option description
                 if (!option.description().isEmpty()) {
@@ -208,6 +210,22 @@ public class ArgumentsParser {
 
                 fmt.format("\n");
             });
+        }
+    }
+
+    private String getOccurrenceText(int min, int max) {
+        assert max > 0 : "invalid interval: min=" + min + ", max=" + max;
+
+        if (min == max) {
+            return min == 1 ? "    (required)" : "    (required %d times)".formatted(min);
+        } else if (min == 0) {
+            return max == 1 ? "    (optional)" : (
+                    max == Integer.MAX_VALUE ? "    (repeatable)" : "    (repeatable up to %d times)".formatted(max)
+            );
+        } else if (min == 1) {
+            return max == Integer.MAX_VALUE ? "    (required, repeatable)" : "    (required, up to %d times)".formatted(max);
+        } else {
+            return max == Integer.MAX_VALUE ? "    (at least %d times)".formatted(min) : "    (%d-%d times)".formatted(min,max);
         }
     }
 
