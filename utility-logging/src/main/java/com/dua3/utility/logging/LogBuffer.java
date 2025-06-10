@@ -240,19 +240,6 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     }
 
     /**
-     * Returns the size of the LogBuffer.
-     *
-     * @return the number of LogEntries in the LogBuffer.
-     * @deprecated size() cannot be used reliably in a multi-threaded environment. This is not fixable
-     *             without external locking, which should be avoided. Use {@link #getBufferState()} if
-     *             you need to check the size and then atomically retrieve certain rows.
-     */
-    @Deprecated(forRemoval = true)
-    public int size() {
-        return buffer.size();
-    }
-
-    /**
      * Returns a view of the portion of this LogBuffer between the specified
      * {@code fromIndex}, inclusive, and {@code toIndex}, exclusive.
      *
