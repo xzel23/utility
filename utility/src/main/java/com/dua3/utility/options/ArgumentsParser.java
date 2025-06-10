@@ -274,6 +274,7 @@ public class ArgumentsParser {
      * @return the formatted argument text
      */
     private static String getArgText(int min, int max, String[] args) {
+        assert args.length > 0 : "no argument names given";
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
 
         boolean useNumberingForArg = max == Integer.MAX_VALUE ? args.length < min + 1 : args.length < max;
@@ -281,34 +282,17 @@ public class ArgumentsParser {
 
         // append the first min arguments
         Formatter argText = new Formatter();
-        if (args.length > 0) {
-            for (int i = 0; i < min; i++) {
-                if (i < args.length - 1) {
-                    argText.format(" <%s>", args[i]);
-                } else {
-                    argNr = appendArg(argText, args[args.length - 1], false, useNumberingForArg, false, argNr);
-                }
-            }
-        } else {
-            String arg = "arg";
-            switch (min) {
-                case 0 -> { /* nothing to do */ }
-                case 1 -> argNr = appendArg(argText, "arg", false, useNumberingForArg, false, argNr);
-                case 2 -> {
-                    argNr = appendArg(argText, "arg", false, useNumberingForArg, false, argNr);
-                    argNr = appendArg(argText, "arg", false, useNumberingForArg, false, argNr);
-                }
-                default -> {
-                    argNr = appendArg(argText, "arg", false, useNumberingForArg, false, argNr);
-                    argNr += min - 1;
-                    argNr = appendArg(argText, "arg", false, useNumberingForArg, false, argNr);
-                }
+        for (int i = 0; i < min; i++) {
+            if (i < args.length - 1) {
+                argText.format(" <%s>", args[i]);
+            } else {
+                argNr = appendArg(argText, args[args.length - 1], false, useNumberingForArg, false, argNr);
             }
         }
 
         // append remaining arguments
         if (max == Integer.MAX_VALUE) {
-            String arg = args.length == 0 ? "arg" : args[Math.min(min, args.length -1)];
+            String arg = args[Math.min(min, args.length -1)];
             for (int i = min; i < args.length - 1; i++) {
                 argText.format(" [<%s>]".formatted(arg));
                 arg = args[i + 1];
@@ -322,14 +306,14 @@ public class ArgumentsParser {
             int optionalCount = max - min;
             if (optionalCount > 0) {
                 if (args.length > 1) {
-                    for (int i = min; i < Math.min(args.length, max); i++) {
-                        String arg = i < args.length ? args[i] : "arg";
+                    for (int i = min; i < Math.min(args.length - 1, max); i++) {
+                        String arg = args[Math.min(i, args.length - 1)];
                         argNr = appendArg(argText, arg, true, i >= args.length - 1 && useNumberingForArg, false, argNr);
                         optionalCount--;
                     }
                 }
                 if (optionalCount > 0) {
-                    String arg = args.length == 0 ? "arg" : args[Math.min(max - 1, args.length - 1)];
+                    String arg = args[Math.min(max - 1, args.length - 1)];
                     switch (optionalCount) {
                         case 1 -> {
                             argNr = appendArg(argText, arg, true, useNumberingForArg, false, argNr);

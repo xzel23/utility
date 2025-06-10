@@ -75,8 +75,8 @@ public final class SimpleOption<T> extends Option<T> {
     }
 
     @Override
-    public SimpleOption<T> argNames(String... argNames) {
-        super.argNames(argNames);
+    public SimpleOption<T> argNames(String firstArgName, String... remainingArgNames) {
+        super.argNames(firstArgName, remainingArgNames);
         return this;
     }
 

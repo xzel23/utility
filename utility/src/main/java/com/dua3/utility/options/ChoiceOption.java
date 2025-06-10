@@ -168,8 +168,8 @@ public final class ChoiceOption<T> extends Option<T> {
     }
 
     @Override
-    public ChoiceOption<T> argNames(String... argNames) {
-        super.argNames(argNames);
+    public ChoiceOption<T> argNames(String firstArgName, String... remainingArgNames) {
+        super.argNames(firstArgName, remainingArgNames);
         return this;
     }
 

@@ -116,12 +116,14 @@ public abstract class Option<T> {
     /**
      * Set the argument name.
      *
-     * @param argNames the argument name
+     * @param remainingArgNames the argument name
      * @return this option
      */
-    protected Option<T> argNames(String... argNames) {
-        LangUtil.check(Arrays.stream(argNames).noneMatch(String::isBlank), "argument names must not be blank");
-        this.argNames = argNames;
+    protected Option<T> argNames(String firstArgName, String... remainingArgNames) {
+        LangUtil.check(!firstArgName.isBlank() && Arrays.stream(remainingArgNames).noneMatch(String::isBlank), "argument names must not be blank");
+        this.argNames = new String[1 + remainingArgNames.length];
+        this.argNames[0] = firstArgName;
+        System.arraycopy(remainingArgNames, 0, this.argNames, 1, remainingArgNames.length);
         return this;
     }
 
