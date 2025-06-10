@@ -2,8 +2,6 @@ package com.dua3.utility.options;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Formatter;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -21,9 +19,16 @@ class ArgumentsParserHelpTest {
                 .description("Test description");
         ArgumentsParser parser = builder.build();
 
+        String expected = """
+                Test description
+
+                <program> [<arg> ...]
+
+                """;
+
         // Get the actual output and use it as the expected output
         String actual = parser.help();
-        assertEquals(actual, actual);
+        assertEquals(expected, actual);
     }
 
     /**
