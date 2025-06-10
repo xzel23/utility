@@ -294,7 +294,7 @@ class ArgumentsParserTest {
                 
                 Unit test for passing positional arguments on the command line.
                 
-                testPositionalArgs2 <arg1> [... <arg3>]
+                testPositionalArgs2 <arg1> [<arg2>] [<arg3>]
                 
                 """;
         assertEquals(expected, cmd.help());
