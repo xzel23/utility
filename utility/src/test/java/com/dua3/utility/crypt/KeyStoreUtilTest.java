@@ -18,7 +18,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,7 +46,7 @@ class KeyStoreUtilTest {
 
         // Verify the KeyStore was created
         assertNotNull(keyStore);
-        assertTrue(keyStore.aliases().hasMoreElements() == false, "New KeyStore should be empty");
+        assertFalse(keyStore.aliases().hasMoreElements(), "New KeyStore should be empty");
     }
 
     @Test
@@ -56,7 +56,7 @@ class KeyStoreUtilTest {
 
         // Verify the KeyStore was created
         assertNotNull(keyStore);
-        assertTrue(keyStore.aliases().hasMoreElements() == false, "New KeyStore should be empty");
+        assertFalse(keyStore.aliases().hasMoreElements(), "New KeyStore should be empty");
     }
 
     @Test
@@ -73,7 +73,7 @@ class KeyStoreUtilTest {
 
         // Verify KeyStore is created successfully
         assertNotNull(keyStore);
-        assertTrue(keyStore.aliases().hasMoreElements() == false, "New KeyStore should be empty");
+        assertFalse(keyStore.aliases().hasMoreElements(), "New KeyStore should be empty");
     }
 
     @Test
