@@ -29,6 +29,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The {@code BouncyCastleX509CertificateBuilder} is an implementation of the {@code X509CertificateBuilder}
@@ -36,21 +37,41 @@ import java.util.List;
  * Bouncy Castle library for certificate generation and offers methods to specify certificate details such as
  * the subject and issuer, validity period, signature algorithm, and certificate chain.
  */
-public class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder {
+public final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder {
+
+    private static final @Nullable Provider provider = Security.getProvider("BC");
 
     private @Nullable String subjectDn;
     private @Nullable String issuerDn;
     private int validityDays = 365;
     private String signatureAlgorithm = "SHA256withRSA";
-    private Provider provider = Security.getProvider("BC");
 
     private @Nullable X509Certificate issuerCert;
     private @Nullable PrivateKey issuerKey;
     private final List<X509Certificate> chain = new ArrayList<>();
 
-    public BouncyCastleX509CertificateBuilder provider(Provider provider) {
-        this.provider = provider;
-        return this;
+    /**
+     * Creates and returns an optional instance of {@code X509CertificateBuilder}.
+     * This method provides a new instance of {@code BouncyCastleX509CertificateBuilder}
+     * if the required cryptographic provider is configured, enabling X.509 certificate
+     * creation and customization.
+     *
+     * @return an {@code Optional} containing an instance of {@code X509CertificateBuilder}
+     *         if the required cryptographic provider is available; otherwise, an empty
+     *         {@code Optional}.
+     */
+    public static Optional<X509CertificateBuilder> create() {
+        return provider == null ? Optional.empty() : Optional.of(new BouncyCastleX509CertificateBuilder());
+    }
+
+    /**
+     * Private default constructor for the {@code BouncyCastleX509CertificateBuilder} class.
+     *
+     * This constructor prevents external instantiation of the {@code BouncyCastleX509CertificateBuilder}
+     * class. Access to an instance is provided via the {@link #create()} method.
+     */
+    private BouncyCastleX509CertificateBuilder() {
+        // do nothing;
     }
 
     @Override

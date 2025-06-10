@@ -4,6 +4,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 
 /**
  * Interface for building custom X.509 certificates. It provides methods
@@ -92,13 +93,15 @@ public interface X509CertificateBuilder {
     X509CertificateBuilder addToChain(X509Certificate... additionalCerts);
 
     /**
-     * Creates and returns a new instance of {@code X509CertificateBuilder}. The returned builder
-     * provides methods for configuring and creating X.509 certificates with various parameters
-     * such as subject, issuer, validity period, and signature algorithm.
+     * Retrieves an optional instance of {@code X509CertificateBuilder}.
+     * This method creates a new instance of the {@code BouncyCastleX509CertificateBuilder} if the
+     * required provider is available in the security configuration, allowing users to configure
+     * and generate X.509 certificates.
      *
-     * @return a new instance of {@code X509CertificateBuilder} for constructing X.509 certificates
+     * @return an {@code Optional} containing an instance of {@code X509CertificateBuilder}
+     *         if the required provider is available, otherwise an empty {@code Optional}.
      */
-    static X509CertificateBuilder getBuilder() {
-        return new BouncyCastleX509CertificateBuilder();
+    static Optional<X509CertificateBuilder> getBuilder() {
+        return BouncyCastleX509CertificateBuilder.create();
     }
 }

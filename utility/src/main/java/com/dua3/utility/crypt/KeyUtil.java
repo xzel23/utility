@@ -33,9 +33,7 @@ public final class KeyUtil {
     /**
      * Utility class private constructor.
      */
-    private KeyUtil() {
-        // nothing to do
-    }
+    private KeyUtil() { /* nothing to do */ }
 
     /**
      * Validates the size of an asymmetric key based on the specified algorithm.
@@ -213,12 +211,12 @@ public final class KeyUtil {
     }
 
     /**
-     * Create a SecretKey from a byte array for the specified algorithm.
+     * Converts the provided byte array into a {@link SecretKey} using the specified symmetric algorithm.
      *
-     * @param keyBytes the key bytes
-     * @param algorithm the symmetric algorithm
-     * @return SecretKey instance
-     * @throws GeneralSecurityException if the byte array can not be converted to a secret key
+     * @param keyBytes the byte array representing the key material
+     * @param algorithm the symmetric algorithm used to validate the key size and determine the key algorithm
+     * @return a {@link SecretKey} generated from the provided key material and algorithm
+     * @throws InvalidAlgorithmParameterException if the key size is invalid for the specified algorithm
      */
     public static SecretKey toSecretKey(byte[] keyBytes, SymmetricAlgorithm algorithm) throws InvalidAlgorithmParameterException {
         algorithm.validateKeySize(keyBytes.length * 8);

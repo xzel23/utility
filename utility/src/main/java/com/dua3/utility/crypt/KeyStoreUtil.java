@@ -31,9 +31,7 @@ public final class KeyStoreUtil {
     /**
      * Utility class private constructor.
      */
-    private KeyStoreUtil() {
-        // nothing to do
-    }
+    private KeyStoreUtil() { /* nothing to do */ }
 
     /**
      * Creates a new empty KeyStore of the specified type.
