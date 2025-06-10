@@ -257,8 +257,8 @@ class FileInputTest {
     private JTextField findTextFieldInComponent(FileInput fileInput) {
         // The FileInput uses BoxLayout and contains a JTextField followed by a JButton
         for (int i = 0; i < fileInput.getComponentCount(); i++) {
-            if (fileInput.getComponent(i) instanceof JTextField) {
-                return (JTextField) fileInput.getComponent(i);
+            if (fileInput.getComponent(i) instanceof JTextField jTextField) {
+                return jTextField;
             }
         }
         throw new IllegalStateException("No JTextField found in FileInput component");

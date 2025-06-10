@@ -230,11 +230,11 @@ public final class WebViews {
         private static String formatMessage(JSObject args) {
             Object objLength = args.getMember("length");
 
-            if (!(objLength instanceof Integer)) {
+            if (!(objLength instanceof Integer integerObjLength)) {
                 return String.valueOf(args);
             }
 
-            int length = (int) objLength;
+            int length = integerObjLength;
 
             String msg = String.valueOf(args.getSlot(0));
 
