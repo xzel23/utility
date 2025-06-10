@@ -207,7 +207,7 @@ could not be loaded.
     - message signing
     - ECIES support depends on BouncyCastle being present
 - ArgumentsParser argName(String) was changed to argNames(String...) (varargs method) to allow using different names 
-  for each position
+  for each position; reformatted help() output
 - TextUtil.toCharArray()|charsToBytes()|bytesToChars()
 - removed LogBuffer.size() - the method could not be used meaningfully in a multithreaded environment
 - removed StreamGathererUtil.filterAndMap() and related methods - these did offer significant value over chaining filter() and map()
