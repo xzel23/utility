@@ -116,6 +116,7 @@ public abstract class Option<T> {
     /**
      * Set the argument name.
      *
+     * @param firstArgName the first argument name
      * @param remainingArgNames the argument name
      * @return this option
      */

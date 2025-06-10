@@ -76,7 +76,7 @@ class ArgumentsParserTest {
                 .displayName("product name")
                 .required();
 
-        Option<String> oTags = builder.option(String.class, "--tags")
+        builder.option(String.class, "--tags")
                 .occurrence(0, Integer.MAX_VALUE)
                 .arity(0, 5)
                 .argNames("main tag", "secondary tag", "tag");

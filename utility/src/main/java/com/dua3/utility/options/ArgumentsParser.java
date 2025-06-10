@@ -315,11 +315,7 @@ public class ArgumentsParser {
                 argText.format(" [<%s>]".formatted(arg));
                 arg = args[i + 1];
             }
-            if (args.length == min + 1) {
-                argNr = appendArg(argText, arg, true, useNumberingForArg, true, argNr);
-            } else {
-                argNr = appendArg(argText, arg, true, useNumberingForArg, true, argNr);
-            }
+            argNr = appendArg(argText, arg, true, useNumberingForArg, true, argNr);
         } else {
             int optionalCount = max - min;
             if (optionalCount > 0) {
