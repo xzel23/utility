@@ -26,7 +26,7 @@ public class ArgumentsParser {
 
     private final int maxPositionalArgs;
 
-    private final String positionalArgDisplayName;
+    private final String[] positionalArgDisplayNames;
 
     private final String name;
 
@@ -54,7 +54,7 @@ public class ArgumentsParser {
      * @param options                     the map of options to be parsed
      * @param minPositionalArgs           the minimum number of positional arguments
      * @param maxPositionalArgs           the maximum number of positional arguments
-     * @param positionalArgDisplayName    the display name for positional arguments
+     * @param positionalArgDisplayNames   the display names for positional arguments
      * @param validationOverridingOptions options that disable validation when present
      */
     ArgumentsParser(
@@ -64,7 +64,7 @@ public class ArgumentsParser {
             Map<String, Option<?>> options,
             int minPositionalArgs,
             int maxPositionalArgs,
-            String positionalArgDisplayName,
+            String[] positionalArgDisplayNames,
             Option<?>[] validationOverridingOptions) {
         this.name = name;
         this.description = description;
@@ -72,7 +72,7 @@ public class ArgumentsParser {
         this.options = Map.copyOf(options);
         this.minPositionalArgs = minPositionalArgs;
         this.maxPositionalArgs = maxPositionalArgs;
-        this.positionalArgDisplayName = positionalArgDisplayName;
+        this.positionalArgDisplayNames = positionalArgDisplayNames;
         this.validationOverridingOptions = Set.of(validationOverridingOptions);
     }
 
@@ -183,7 +183,7 @@ public class ArgumentsParser {
         if (hasOptions()) {
             cmdText += " <options>";
         }
-        cmdText += getArgText(minPositionalArgs, maxPositionalArgs, positionalArgDisplayName);
+        cmdText += getArgText(minPositionalArgs, maxPositionalArgs, positionalArgDisplayNames);
         fmt.format("%s\n\n", cmdText);
 
         if (!argsDescription.isEmpty()) {
@@ -196,7 +196,7 @@ public class ArgumentsParser {
             fmt.format("  <options>:\n");
             options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
                 // get argument text
-                String argText = getArgText(option.minArity(), option.maxArity(), option.argName());
+                String argText = getArgText(option.minArity(), option.maxArity(), option.argNames().toArray(String[]::new));
 
                 // print option names and arguments
                 fmt.format("    %s%s\n", String.join("|", option.names()), argText);
@@ -270,36 +270,61 @@ public class ArgumentsParser {
      *
      * @param min the minimum number of arguments
      * @param max the maximum number of arguments
-     * @param arg the name of the argument
+     * @param args the names of the arguments
      * @return the formatted argument text
      */
-    private static String getArgText(int min, int max, String arg) {
-        assert !arg.isBlank() : "arg must not be the empty string";
+    private static String getArgText(int min, int max, String[] args) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
 
-        String argText = switch (min) {
-            case 0 -> "";
-            case 1 -> " <%s%s>".formatted(arg, min == max ? "" : "1");
-            case 2 -> " <%1$s1> <%1$s2>".formatted(arg);
-            case 3 -> " <%1$s1> <%1$s2> <%1$s3>";
-            default -> " <%1$s1> ... <%1$s%2$d>".formatted(arg, max);
-        };
+        // append the first min arguments
+        StringBuilder argText = new StringBuilder();
+        if (args.length > 1) {
+            for (int i = 0; i < min; i++) {
+                argText.append(" <%s>".formatted(i < args.length ? args[i] : args[args.length - 1] + (i - args.length + 1)));
+            }
+        } else {
+            String arg = args.length == 1 ? args[0] : "arg";
+            argText.append(switch (min) {
+                case 0 -> "";
+                case 1 -> " <%s%s>".formatted(arg, min == max ? "" : "1");
+                case 2 -> " <%1$s1> <%1$s2>".formatted(arg);
+                case 3 -> " <%1$s1> <%1$s2> <%1$s3>";
+                default -> " <%1$s1> ... <%1$s%2$d>".formatted(arg, max);
+            });
+        }
 
+        // append remaining arguments
         if (max == Integer.MAX_VALUE) {
-            if (min == 0) {
-                argText += " [<%1$s> ...]".formatted(arg);
+            String arg = args.length == 1 ? args[0] : "arg";
+            for (int i = min; i < args.length - 1; i++) {
+                argText.append(" [<%s>]".formatted(arg));
+                arg = args[i + 1];
+            }
+            if (args.length == min + 1) {
+                argText.append(" [<%1$s> ...]".formatted(arg));
             } else {
-                argText += " [<%1$s%2$d> ...]".formatted(arg, min + 1);
+                argText.append(" [<%1$s%2$d> ...]".formatted(arg, min + 1));
             }
         } else {
             int optionalCount = max - min;
-            switch (optionalCount) {
-                case 0 -> { /* do nothing */ }
-                case 1 -> argText += " [<%s%d>]".formatted(arg, min + 1);
-                default -> argText += " [... <%1$s%2$d>]".formatted(arg, min + optionalCount);
+            if (optionalCount > 0) {
+                String arg = args.length > 0 ? args[min] : "arg";
+                for (int i = min; i + 1 < Math.min(args.length, max); i++) {
+                    argText.append(" [<%s>]".formatted(arg));
+                    optionalCount--;
+                    arg = args[i + 1];
+                }
+                if (max > args.length) {
+                    arg = args.length == 0 ? "arg" : args[Math.min(max - 1, args.length - 1)];
+                    switch (optionalCount) {
+                        case 1 -> argText.append(" [<%1$s>]".formatted(arg));
+                        case 2 -> argText.append(" [<%1$s%2$d>] [<%1$s%3$d>]".formatted(arg, 1, optionalCount));
+                        default -> argText.append(" [<%1$s%2$d>] ... [<%1$s%3$d>]".formatted(arg, 1, optionalCount));
+                    }
+                }
             }
         }
-        return argText;
+        return argText.toString();
     }
 
 }

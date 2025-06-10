@@ -21,7 +21,7 @@ public class ArgumentsParserBuilder {
     private final Map<String, Option<?>> options = new LinkedHashMap<>();
     private int minPositionalArgs = 0;
     private int maxPositionalArgs = Integer.MAX_VALUE;
-    private String positionalArgDisplayName = DEFAULT_ARG_DISPLAY_NAME;
+    private String[] positionalArgDisplayNames = new String[]{DEFAULT_ARG_DISPLAY_NAME};
 
     ArgumentsParserBuilder() {
     }
@@ -65,17 +65,17 @@ public class ArgumentsParserBuilder {
      *
      * @param minArgs         the minimum number of positional arguments
      * @param maxArgs         the maximum number of positional arguments
-     * @param argDisplayName  the display name for the positional arguments
+     * @param argDisplayNames the display names for the positional arguments
      * @return the ArgumentsParserBuilder instance
      * @throws IllegalArgumentException if the minArgs is less than 0, maxArgs is less than 0, or minArgs is greater than maxArgs
      */
-    public ArgumentsParserBuilder positionalArgs(int minArgs, int maxArgs, String argDisplayName) {
+    public ArgumentsParserBuilder positionalArgs(int minArgs, int maxArgs, String... argDisplayNames) {
         if (minArgs < 0 || maxArgs < 0 || minArgs > maxArgs) {
             throw new IllegalArgumentException("Invalid positional arguments range");
         }
         this.minPositionalArgs = minArgs;
         this.maxPositionalArgs = maxArgs;
-        this.positionalArgDisplayName = argDisplayName;
+        this.positionalArgDisplayNames = argDisplayNames;
         return this;
     }
 
@@ -189,7 +189,7 @@ public class ArgumentsParserBuilder {
                 options,
                 minPositionalArgs,
                 maxPositionalArgs,
-                positionalArgDisplayName,
+                positionalArgDisplayNames,
                 validationOverridingOptions
         );
     }

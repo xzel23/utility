@@ -75,7 +75,13 @@ class ArgumentsParserTest {
                 .description("the product")
                 .displayName("product name")
                 .required();
-        ChoiceOption<E> oSize = builder.choiceOption(E.class, "--size").defaultValue(E.GRANDE);
+
+        Option<String> oTags = builder.option(String.class, "--tags")
+                .occurrence(0, Integer.MAX_VALUE)
+                .arity(0, 5)
+                .argNames("main tag", "secondary tag", "tag");
+
+        ChoiceOption<E> oSize = builder.choiceOption(E.class, "--size").argNames("size").defaultValue(E.GRANDE);
         ArgumentsParser cmd = builder.build();
 
         assertEquals("MACCHIATO", cmd.parse("--product MACCHIATO --size VENTI".split(" ")).getOrThrow(oProduct));
@@ -99,7 +105,9 @@ class ArgumentsParserTest {
                     --product|-p <arg>
                             the product
                 
-                    --size <arg>
+                    --size <size>
+                
+                    --tags [<main tag>] [<secondary tag>] [<tag1>] ... [<tag3>]
                 
                 """;
 
@@ -120,7 +128,7 @@ class ArgumentsParserTest {
                 .name("testChoiceOptionRequired")
                 .description("Unit test for passing choices on the command line.");
         ChoiceOption<E> oSize = builder.choiceOption(E.class, "--size")
-                .argName("size")
+                .argNames("size")
                 .required();
         SimpleOption<String> oProduct = builder.simpleOption(String.class, "--product", "-p")
                 .description("set the product name")
@@ -160,9 +168,9 @@ class ArgumentsParserTest {
                 .description("Unit test for passing simple options on the command line.");
         SimpleOption<String> optionName = builder.simpleOption(String.class, "--name", "-n")
                 .description("set name")
-                .argName("name");
+                .argNames("name");
         SimpleOption<Integer> optionAge = builder.simpleOption(Integer.class, "--age", "-a")
-                .argName("age");
+                .argNames("age");
         ArgumentsParser cmd = builder.build();
 
         assertFalse(cmd.parse().get(optionName).isPresent());
@@ -209,10 +217,10 @@ class ArgumentsParserTest {
                 .description("Unit test for passing simple options on the command line.");
         SimpleOption<String> optionName = builder.simpleOption(String.class, "--name", "-n")
                 .description("set name")
-                .argName("name")
+                .argNames("name")
                 .required();
         SimpleOption<Integer> optionAge = builder.simpleOption(Integer.class, "--age", "-a")
-                .argName("age");
+                .argNames("age");
         ArgumentsParser cmd = builder.build();
 
         assertThrows(OptionException.class, cmd::parse);

@@ -24,7 +24,7 @@ public abstract class Option<T> {
 
     private String displayName = "";
     private String description = "";
-    private String argName = "arg";
+    private String[] argNames = { "arg" };
     private int minArity;
     private int maxArity;
     private int minOccurrences;
@@ -116,12 +116,12 @@ public abstract class Option<T> {
     /**
      * Set the argument name.
      *
-     * @param argName the argument name
+     * @param argNames the argument name
      * @return this option
      */
-    protected Option<T> argName(String argName) {
-        LangUtil.check(!argName.isEmpty(), "argument name must not be empty");
-        this.argName = argName;
+    protected Option<T> argNames(String... argNames) {
+        LangUtil.check(Arrays.stream(argNames).noneMatch(String::isBlank), "argument names must not be blank");
+        this.argNames = argNames;
         return this;
     }
 
@@ -182,12 +182,12 @@ public abstract class Option<T> {
     }
 
     /**
-     * Retrieves the argument name of this option.
+     * Retrieves the list of argument names associated with this option.
      *
-     * @return The argument name of this option.
+     * @return a list containing the argument names
      */
-    public String argName() {
-        return argName;
+    public List<String> argNames() {
+        return List.of(argNames);
     }
 
     /**
@@ -195,7 +195,7 @@ public abstract class Option<T> {
      *
      * @return collection containing all names for this option
      */
-    public Collection<String> names() {
+    public List<String> names() {
         return List.of(names);
     }
 
@@ -296,6 +296,7 @@ public abstract class Option<T> {
                 "displayName='" + displayName + '\'' +
                 ", description='" + description + '\'' +
                 ", names=" + Arrays.toString(names) +
+                ", argNames=" + Arrays.toString(argNames) +
                 ", minArity=" + minArity +
                 ", maxArity=" + maxArity +
                 ", minOccurrences=" + minOccurrences +
