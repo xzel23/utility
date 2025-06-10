@@ -15,11 +15,12 @@ import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * MathUtil is a utility class that provides various static methods for mathematical calculations
- * and operations. These methods include range clamping, root finding, GCD calculation, logarithmic
- * operations, rounding, and others. It also contains mathematical constants.
- *
- * <p>This class cannot be instantiated and should be used purely as a utility class.
+ * Utility class providing various mathematical helper functions and constants.
+ * <p>
+ * This class contains methods for root finding, angle normalization,
+ * logarithmic and power calculations, rounding, and quadrant/octant
+ * determination, among others. It also includes constants commonly
+ * used in mathematical calculations.
  */
 public final class MathUtil {
 
@@ -28,8 +29,7 @@ public final class MathUtil {
     /**
      * Utility class - private constructor.
      */
-    private MathUtil() {
-    }
+    private MathUtil() { /* nothing to do */ }
 
     /**
      * Find root of function.
@@ -313,7 +313,7 @@ public final class MathUtil {
      */
     public static DoubleUnaryOperator roundingOperation(int n, RoundingMode mode) {
         // special case: no rounding
-        if (mode == RoundingMode.UNNECESSARY) {
+        if (mode == java.math.RoundingMode.UNNECESSARY) {
             return x -> x;
         }
 
