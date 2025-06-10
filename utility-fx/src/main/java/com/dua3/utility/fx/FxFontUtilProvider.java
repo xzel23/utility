@@ -11,9 +11,7 @@ public class FxFontUtilProvider implements FontUtilProvider {
     /**
      * Default constructor, called by SPI.
      */
-    public FxFontUtilProvider() {
-        // nothing to do
-    }
+    public FxFontUtilProvider() { /* nothing to do */ }
 
     @Override
     public FontUtil<?> get() {

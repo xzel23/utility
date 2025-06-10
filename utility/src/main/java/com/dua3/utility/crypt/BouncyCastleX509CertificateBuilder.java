@@ -37,7 +37,7 @@ import java.util.Optional;
  * Bouncy Castle library for certificate generation and offers methods to specify certificate details such as
  * the subject and issuer, validity period, signature algorithm, and certificate chain.
  */
-public final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder {
+final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder {
 
     private static final @Nullable Provider provider = Security.getProvider("BC");
 
@@ -70,9 +70,7 @@ public final class BouncyCastleX509CertificateBuilder implements X509Certificate
      * This constructor prevents external instantiation of the {@code BouncyCastleX509CertificateBuilder}
      * class. Access to an instance is provided via the {@link #create()} method.
      */
-    private BouncyCastleX509CertificateBuilder() {
-        // do nothing;
-    }
+    private BouncyCastleX509CertificateBuilder() { /* nothing to do */ }
 
     @Override
     public BouncyCastleX509CertificateBuilder signatureAlgorithm(String algorithm) {

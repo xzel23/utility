@@ -109,9 +109,7 @@ public final class DbUtil {
 
     }
 
-    private DbUtil() {
-        // utility class
-    }
+    private DbUtil() { /* utility class private constructor */ }
 
     /**
      * Get Map with known JDBC drivers.

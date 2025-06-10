@@ -58,9 +58,7 @@ public class LogAppenderLog4j extends AbstractAppender {
         /**
          * Constructor.
          */
-        public LogEntryDispatcherLog4J() {
-            // nothing to do
-        }
+        public LogEntryDispatcherLog4J() { /* nothing to do */ }
 
         @Override
         public void addLogEntryHandler(LogEntryHandler handler) {

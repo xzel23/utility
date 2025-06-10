@@ -11,9 +11,7 @@ public class FxImageUtilProvider implements ImageUtilProvider {
     /**
      * Default constructor, called by SPI.
      */
-    public FxImageUtilProvider() {
-        // nothing to do
-    }
+    public FxImageUtilProvider() { /* nothing to do */ }
 
     @Override
     public ImageUtil<?> get() {

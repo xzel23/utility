@@ -16,9 +16,7 @@ public class LoggingServiceProviderSlf4j implements SLF4JServiceProvider {
     /**
      * Constructor, called by SPI
      */
-    public LoggingServiceProviderSlf4j() {
-        // nothing to do
-    }
+    public LoggingServiceProviderSlf4j() { /* nothing to do */ }
 
     private final LoggerFactorySlf4j loggerFactory = new LoggerFactorySlf4j();
     private final IMarkerFactory markerFactory = new BasicMarkerFactory();
@@ -45,7 +43,5 @@ public class LoggingServiceProviderSlf4j implements SLF4JServiceProvider {
     }
 
     @Override
-    public void initialize() {
-        // nothing to do
-    }
+    public void initialize() { /* nothing to do */ }
 }

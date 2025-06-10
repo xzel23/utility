@@ -14,9 +14,7 @@ public class LogEntryDispatcherFactoryLog4j implements ILogEntryDispatcherFactor
     /**
      * Constructor, called by SPI.
      */
-    public LogEntryDispatcherFactoryLog4j() {
-        // nothing to do
-    }
+    public LogEntryDispatcherFactoryLog4j() { /* nothing to do */ }
 
     @Override
     public LogEntryDispatcher getDispatcher() {

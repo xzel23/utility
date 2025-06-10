@@ -166,9 +166,7 @@ public class ProgressView<T> implements ProgressTracker<T> {
          * Pauses the task. This is a default no-operation implementation, intended
          * to be overridden by concrete implementations if custom behavior is needed.
          */
-        default void pause() {
-            // do nothing
-        }
+        default void pause() { /* nothing to do */ }
 
         /**
          * Update task progress.

@@ -35,9 +35,7 @@ public abstract class InputDialogPane<R> extends DialogPane implements Supplier<
     /**
      * Constructor.
      */
-    protected InputDialogPane() {
-        // nothing to do
-    }
+    protected InputDialogPane() { /* nothing to do */ }
 
     /**
      * Represents a property that indicates whether the current state of the input dialog pane is valid.

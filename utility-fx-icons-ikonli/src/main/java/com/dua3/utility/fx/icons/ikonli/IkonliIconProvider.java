@@ -26,9 +26,7 @@ public class IkonliIconProvider implements IconProvider {
     /**
      * Constructs a new instance of {@code IkonliIconProvider} which provides icons using the Ikonli library.
      */
-    public IkonliIconProvider() {
-        // nothing to do
-    }
+    public IkonliIconProvider() { /* nothing to do */ }
 
     @Override
     public String name() {

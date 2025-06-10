@@ -82,10 +82,7 @@ public final class FxUtil {
     private static final Pattern PATTERN_FILENAME_AND_DOT = Pattern.compile("^\\*\\.");
     private static final FxFontUtil FX_FONT_UTIL = FxFontUtil.getInstance();
 
-    /**
-     * Private constructor.
-     */
-    private FxUtil() {}
+    private FxUtil() { /* utility class private constructor */ }
 
     /**
      * Convert {@link com.dua3.utility.data.Color} to {@link Color}.
@@ -870,24 +867,16 @@ public final class FxUtil {
         }
 
         @Override
-        public void addListener(ChangeListener<? super Boolean> listener) {
-            // do nothing - the value will never change
-        }
+        public void addListener(ChangeListener<? super Boolean> listener) { /* nothing to do */ }
 
         @Override
-        public void removeListener(ChangeListener<? super Boolean> listener) {
-            // do nothing - the value will never change
-        }
+        public void removeListener(ChangeListener<? super Boolean> listener) { /* nothing to do */ }
 
         @Override
-        public void addListener(InvalidationListener listener) {
-            // do nothing - the value will never change
-        }
+        public void addListener(InvalidationListener listener) { /* nothing to do */ }
 
         @Override
-        public void removeListener(InvalidationListener listener) {
-            // do nothing - the value will never change
-        }
+        public void removeListener(InvalidationListener listener) { /* nothing to do */ }
     }
 
     /**

@@ -11,8 +11,7 @@ import java.util.ServiceLoader;
  * Utility class for logging operations.
  */
 public final class LogUtil {
-    private LogUtil() {
-    }
+    private LogUtil() { /* utility class private constructor */ }
 
     private static final Logger LOG = LogManager.getLogger(LogUtil.class);
 

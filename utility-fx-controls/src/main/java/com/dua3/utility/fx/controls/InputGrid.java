@@ -58,9 +58,7 @@ public class InputGrid extends GridPane {
     /**
      * Constructs a new instance of the InputGrid class.
      */
-    public InputGrid() {
-        // nothing to do
-    }
+    public InputGrid() { /* nothing to do */ }
 
     /**
      * Get valid state property.

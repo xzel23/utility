@@ -14,9 +14,7 @@ public class PathBuilder2f {
     /**
      * Constructor.
      */
-    PathBuilder2f() {
-        // nothing to do
-    }
+    PathBuilder2f() { /* nothing to do */ }
 
     /**
      * Initialize this instance before creating a new path.

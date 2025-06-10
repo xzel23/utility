@@ -26,10 +26,7 @@ public final class MathUtil {
 
     private static final Logger LOG = LogManager.getLogger(MathUtil.class);
 
-    /**
-     * Utility class - private constructor.
-     */
-    private MathUtil() { /* nothing to do */ }
+    private MathUtil() { /* utility class private constructor */ }
 
     /**
      * Find root of function.

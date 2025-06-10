@@ -70,9 +70,7 @@ public class CustomControl<C extends Pane> extends Control {
             }
 
             @Override
-            public void dispose() {
-                // nothing to dispose
-            }
+            public void dispose() { /* nothing to do */ }
         };
     }
 }
