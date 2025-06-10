@@ -197,18 +197,18 @@ could not be loaded.
 
 ### 20.0.0
 
-- CryptUtil completely rewritten and moved to its own package:
-    - changed the message argument type from String to CharSequence to allow passing
-      StringBuilder or other CharSequence implementing classes and prevent the clear text message from being
-      interned of visible as a String instance in heap dumps; This change is compile-time compatible
-      but might break when updating the library without recompiling the code
-    - key generation
-    - add key derivation from passphrase with either salt or context
-    - signing and signature validation
-    - asymmetric encryption/decryption
-    - improved security of key generation
-    - add overloads taking char[] instead of String
+- CryptUtil completely rewritten and moved to its own package com.dua3.utility.crypt that offers much more functionality
+  and has a more secure API, i.e., automatic clearing of input arrays etc.
+  Added features:
+    - certificate creation (depends on BouncyCastle being in the dependencies)
+    - key generation and handling
+    - key store handling
+    - asymmetric encryption
+    - message signing
+    - ECIES support depends on BouncyCastle being present
 - TextUtil.toCharArray()|charsToBytes()|bytesToChars()
+- removed LogBuffer.size() - the method could not be used meaningfully in a multithreaded environment
+- removed StreamGathererUtil.filterAndMap() and related methods - these did offer significant value over chaining filter() and map()
 
 ### 19.2.1
 
