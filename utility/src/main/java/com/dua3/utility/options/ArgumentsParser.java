@@ -276,7 +276,7 @@ public class ArgumentsParser {
     private static String getArgText(int min, int max, String[] args) {
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
 
-        boolean useNumberingForArg = max == Integer.MAX_VALUE ? args.length < min : args.length + 1 < max;
+        boolean useNumberingForArg = max == Integer.MAX_VALUE ? args.length < min + 1 : args.length < max;
         int argNr = 1;
 
         // append the first min arguments
@@ -321,14 +321,15 @@ public class ArgumentsParser {
         } else {
             int optionalCount = max - min;
             if (optionalCount > 0) {
-                String arg = args.length > 0 ? args[Math.min(min, args.length -1)] : "arg";
-                for (int i = min; i + 1 < Math.min(args.length, max); i++) {
-                    argText.format(" [<%s>]", arg);
-                    optionalCount--;
-                    arg = args[i + 1];
+                if (args.length > 1) {
+                    for (int i = min; i < Math.min(args.length, max); i++) {
+                        String arg = i < args.length ? args[i] : "arg";
+                        argNr = appendArg(argText, arg, true, i >= args.length - 1 && useNumberingForArg, false, argNr);
+                        optionalCount--;
+                    }
                 }
-                if (max > args.length) {
-                    arg = args.length == 0 ? "arg" : args[Math.min(max - 1, args.length - 1)];
+                if (optionalCount > 0) {
+                    String arg = args.length == 0 ? "arg" : args[Math.min(max - 1, args.length - 1)];
                     switch (optionalCount) {
                         case 1 -> {
                             argNr = appendArg(argText, arg, true, useNumberingForArg, false, argNr);

@@ -237,7 +237,7 @@ class ArgumentsParserHelpTest {
 
                 Test description
 
-                TestName
+                TestName [<arg>]
 
                 """;
         assertEquals(expected, parser.help());
@@ -261,7 +261,7 @@ class ArgumentsParserHelpTest {
 
                 Test description
 
-                TestName [<arg>] [<arg>]
+                TestName [<arg1>] [<arg2>]
 
                 """;
         assertEquals(expected, parser.help());
@@ -525,7 +525,7 @@ class ArgumentsParserHelpTest {
 
                 Test description
 
-                TestName <file> [directory]
+                TestName <file> [<directory>]
 
                 """;
         assertEquals(expected, parser.help());
