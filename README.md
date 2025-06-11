@@ -215,13 +215,16 @@ could not be loaded.
       to display a help message in the system terminal.
     - Use `Option.isEquivalent()` instead of `equals()` when checking for specific options.
 
-- `TextUtil`
-    - Added `TextUtil.toCharArray()|charsToBytes()|bytesToChars()`.
-    - Added `removeLeading|Trailing|LeadingAndTrailing()` to efficently strip elements from the start or end of a list.
+- Package `utility.text`
+    - `TextUtil`
+        - Added `TextUtil.toCharArray()|charsToBytes()|bytesToChars()`.
+        - Added `removeLeading|Trailing|LeadingAndTrailing()` to efficently strip elements from the start or end of a list.
+    - `RichText`
+        - Fix some RichText.split() issues; the method should now always produce results consistent with String.split()
 
 - Other changes
-    - removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
-    - removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
+    - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
+    - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
       `filter()` and `map()`.
 
 ### 19.2.1
