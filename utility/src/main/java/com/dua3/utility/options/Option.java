@@ -56,6 +56,15 @@ public abstract class Option<T> {
     }
 
     /**
+     * Retrieves the target type of this option.
+     *
+     * @return the {@code Class} object representing the target type of the option
+     */
+    public Class<T> getTargetType() {
+        return targetType;
+    }
+
+    /**
      * Sets the arity (minimum and maximum number of arguments) for this option.
      *
      * @param minArity the minimum number of arguments required
