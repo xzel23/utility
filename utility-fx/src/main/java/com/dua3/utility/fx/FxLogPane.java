@@ -154,26 +154,7 @@ public class FxLogPane extends BorderPane {
         TextField tfMessageContent = new TextField();
         tfMessageContent.setPrefWidth(tfWidth);
 
-        Runnable updateFilter = () -> {
-            LogLevel level = cbLogLevel.getSelectionModel().getSelectedItem();
-
-            BiPredicate<String, LogLevel> predicateLoggerName;
-            String loggerText = tfLoggerName.getText().toLowerCase(Locale.ROOT).strip();
-            if (loggerText.isEmpty()) {
-                predicateLoggerName = (String name, LogLevel lvl) -> true;
-            } else {
-                predicateLoggerName = (name, lvl) -> name.toLowerCase(Locale.ROOT).contains(loggerText);
-            }
-
-            BiPredicate<String, LogLevel> predicateContent;
-            String messageContent = tfMessageContent.getText();
-            if (messageContent.isEmpty()) {
-                predicateContent = (String text, LogLevel lvl) -> true;
-            } else {
-                predicateContent = (text, lvl) -> text.contains(messageContent);
-            }
-            entries.setPredicate(new DefaultLogEntryFilter(level, predicateLoggerName, predicateContent));
-        };
+        Runnable updateFilter = () -> updateFilter(cbLogLevel, tfLoggerName, tfMessageContent, entries);
 
         cbLogLevel.valueProperty().addListener((v, o, n) -> updateFilter.run());
         tfLoggerName.textProperty().addListener((v, o, n) -> updateFilter.run());
@@ -189,22 +170,7 @@ public class FxLogPane extends BorderPane {
         Button btnSearchUp = new Button("▲");
         Button btnSearchDown = new Button("▼");
 
-        BiConsumer<String, Boolean> searchAction = (text, up) -> {
-            String lowercaseText = text.toLowerCase(Locale.ROOT);
-            int step = up ? -1 : 1;
-            LogEntry current = selectedItem;
-            List<LogEntry> items = List.copyOf(entries);
-            int n = items.size();
-            int pos = current != null ? Math.max(0, items.indexOf(current)) : 0;
-            for (int i = 0; i < n; i++) {
-                int j = Math.floorMod(pos + step * i, n);
-                LogEntry logEntry = items.get(j);
-                if (logEntry.message().toLowerCase(Locale.ROOT).contains(lowercaseText) && (i != 0 || current == null)) { // skip current entry if selected
-                    selectLogEntry(logEntry);
-                    break;
-                }
-            }
-        };
+        BiConsumer<String, Boolean> searchAction = (text, up) -> searchAction(text, up, entries);
 
         tfSearchText.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.ENTER) {
@@ -275,6 +241,60 @@ public class FxLogPane extends BorderPane {
 
         setTop(toolBar);
         setCenter(splitPane);
+    }
+
+    /**
+     * Searches within the provided list of log entries for a log entry containing the specified text.
+     * The search direction is determined by the `up` parameter and wraps around the list if necessary.
+     *
+     * @param text    the text to search for in the log entries
+     * @param up      a boolean indicating the search direction; true for upward search, false for downward search
+     * @param entries the list of log entries to search through; must be a FilteredList of LogEntry objects
+     */
+    private void searchAction(String text, Boolean up, FilteredList<LogEntry> entries) {
+        String lowercaseText = text.toLowerCase(Locale.ROOT);
+        int step = up ? -1 : 1;
+        LogEntry current = selectedItem;
+        List<LogEntry> items = List.copyOf(entries);
+        int n = items.size();
+        int pos = current != null ? Math.max(0, items.indexOf(current)) : 0;
+        for (int i = 0; i < n; i++) {
+            int j = Math.floorMod(pos + step * i, n);
+            LogEntry logEntry = items.get(j);
+            if (logEntry.message().toLowerCase(Locale.ROOT).contains(lowercaseText) && (i != 0 || current == null)) { // skip current entry if selected
+                selectLogEntry(logEntry);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Updates the filter applied to a list of log entries based on the provided log level, logger name, and message content.
+     *
+     * @param cbLogLevel     the ComboBox component used to select the log level filter
+     * @param tfLoggerName   the TextField used to input the logger name filter
+     * @param tfMessageContent the TextField used to input the message content filter
+     * @param entries        the FilteredList containing the log entries to be filtered
+     */
+    private static void updateFilter(ComboBox<LogLevel> cbLogLevel, TextField tfLoggerName, TextField tfMessageContent, FilteredList<LogEntry> entries) {
+        LogLevel level = cbLogLevel.getSelectionModel().getSelectedItem();
+
+        BiPredicate<String, LogLevel> predicateLoggerName;
+        String loggerText = tfLoggerName.getText().toLowerCase(Locale.ROOT).strip();
+        if (loggerText.isEmpty()) {
+            predicateLoggerName = (String name, LogLevel lvl) -> true;
+        } else {
+            predicateLoggerName = (name, lvl) -> name.toLowerCase(Locale.ROOT).contains(loggerText);
+        }
+
+        BiPredicate<String, LogLevel> predicateContent;
+        String messageContent = tfMessageContent.getText();
+        if (messageContent.isEmpty()) {
+            predicateContent = (String text, LogLevel lvl) -> true;
+        } else {
+            predicateContent = (text, lvl) -> text.contains(messageContent);
+        }
+        entries.setPredicate(new DefaultLogEntryFilter(level, predicateLoggerName, predicateContent));
     }
 
     private void selectLogEntry(LogEntry logEntry) {
