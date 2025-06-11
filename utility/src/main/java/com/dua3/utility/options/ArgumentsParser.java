@@ -188,7 +188,7 @@ public class ArgumentsParser {
         fmt.format("%s%n%n", cmdText);
 
         if (!argsDescription.isEmpty()) {
-            fmt.format("%s%n", argsDescription.indent(2));
+            fmt.format("%s%n", TextUtil.toSystemLineEnds(argsDescription.indent(2)));
             fmt.format("%n");
         }
 
