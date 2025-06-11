@@ -199,7 +199,7 @@ public class ArgumentsParser {
                 // get argument text
                 String argText = getArgText(option.minArity(), option.maxArity(), option.argNames().toArray(String[]::new));
 
-                String occurenceText = getOccurrenceText(option.minOccurrences(), option. maxOccurrences());
+                String occurenceText = getOccurrenceText(option.minOccurrences(), option. maxOccurrences(), option instanceof Flag);
 
                 // print option names and arguments
                 fmt.format("    %s%s%s%n", String.join(", ", option.names()), argText, occurenceText);
@@ -214,10 +214,12 @@ public class ArgumentsParser {
         }
     }
 
-    private String getOccurrenceText(int min, int max) {
+    private String getOccurrenceText(int min, int max, boolean isFlag) {
         assert max > 0 : "invalid interval: min=" + min + ", max=" + max;
 
-        if (min == max) {
+        if (isFlag) {
+            return "";
+        } else if (min == max) {
             return min == 1 ? "    (required)" : "    (required %d times)".formatted(min);
         } else if (min == 0) {
             return max == 1 ? "    (optional)" : (

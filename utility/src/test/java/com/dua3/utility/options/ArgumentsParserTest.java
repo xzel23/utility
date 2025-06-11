@@ -45,15 +45,15 @@ class ArgumentsParserTest {
                 
                 testFlag
                 --------
-                                
+                
                 Unit test for passing flags on the command line.
-                                
+                
                 testFlag <options> [<arg> ...]
-                                
+                
                   <options>:
-                    --print, -p    (optional)
+                    --print, -p
                             print result to terminal
-                                
+                
                 """;
 
         assertEquals(TextUtil.toSystemLineEnds(expected), cmd.help());
