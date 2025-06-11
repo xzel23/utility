@@ -225,15 +225,7 @@ public record FragmentedText(
             case TOP -> translateFragments(fragmentLines, tx, ty);
             case MIDDLE -> translateFragments(fragmentLines, tx, ty - verticalSpace / 2.0f);
             case BOTTOM -> translateFragments(fragmentLines, tx, ty - verticalSpace);
-            case DISTRIBUTED -> {
-                int n = fragmentLines.size();
-                float k = n > 1 ? verticalSpace / (n - 1) : 0.0f;
-                for (int i = 0; i < n; i++) {
-                    float dy = i * k;
-                    fragmentLines.get(i).replaceAll(fragment -> fragment.translate(tx, ty + dy));
-                }
-                textHeight += (n - 1) * k;
-            }
+            case DISTRIBUTED -> textHeight = distributeLines(fragmentLines, verticalSpace, tx, ty, textHeight);
         }
 
         return new FragmentedText(
@@ -244,6 +236,30 @@ public record FragmentedText(
                 textWidth,
                 textHeight
         );
+    }
+
+    /**
+     * Distributes a set of fragment lines vertically within the specified vertical space and
+     * adjusts their positions based on the provided offsets. The method calculates the appropriate
+     * vertical distance between lines, applies translation to each fragment in each line, and updates
+     * the text height to account for the distributed spacing.
+     *
+     * @param fragmentLines a list of fragment lines where each line consists of multiple fragments
+     * @param verticalSpace the total vertical space across which the lines will be distributed
+     * @param tx the horizontal translation offset to apply to each fragment
+     * @param ty the starting vertical translation offset for the first line
+     * @param textHeight the initial text height that will be updated to include the distributed spacing
+     * @return the updated text height after applying the vertical distribution
+     */
+    private static float distributeLines(List<List<Fragment>> fragmentLines, float verticalSpace, float tx, float ty, float textHeight) {
+        int n = fragmentLines.size();
+        float k = n > 1 ? verticalSpace / (n - 1) : 0.0f;
+        for (int i = 0; i < n; i++) {
+            float dy = i * k;
+            fragmentLines.get(i).replaceAll(fragment -> fragment.translate(tx, ty + dy));
+        }
+        textHeight += (n - 1) * k;
+        return textHeight;
     }
 
     private static Alignment getEffectiveHAlign(Alignment hAlign, boolean isLastLine) {
