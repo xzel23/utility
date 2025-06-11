@@ -792,7 +792,8 @@ public final class RichText
      * Splits the current text into an array of RichText objects based on the given pattern and limit.
      *
      * @param pattern the regular expression pattern used to define delimiters for splitting the text
-     * @param limit the maximum number of elements in the result array; if limit is less than or equal to zero, splits are unlimited
+     * @param limit the maximum number of elements in the result array; if limit is less than or equal to zero,
+     *              splits are unlimited; if limit is 0, trailing empty matches are removed from the result
      * @return an array of RichText objects, split from the current text based on the specified pattern and limit
      * @see String#split(String, int)
      */
