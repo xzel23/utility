@@ -197,20 +197,26 @@ could not be loaded.
 
 ### 20.0.0
 
-- CryptUtil completely rewritten and moved to its own package com.dua3.utility.crypt that offers much more functionality
-  and has a more secure API, i.e., automatic clearing of input arrays etc.
-  Added features:
-    - certificate creation (depends on BouncyCastle being in the dependencies)
-    - key generation and handling
-    - key store handling
-    - asymmetric encryption
-    - message signing
-    - ECIES support depends on BouncyCastle being present
-- ArgumentsParser argName(String) was changed to argNames(String...) (varargs method) to allow using different names 
-  for each position; reformatted help() output
-- TextUtil.toCharArray()|charsToBytes()|bytesToChars()
-- removed LogBuffer.size() - the method could not be used meaningfully in a multithreaded environment
-- removed StreamGathererUtil.filterAndMap() and related methods - these did offer significant value over chaining filter() and map()
+- Package `utility.crypt`
+    - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
+      that has a more secure API and adds many new features:
+        - certificate creation (depends on BouncyCastle being present)
+        - key generation and handling
+        - key store handling
+        - asymmetric encryption
+        - message signing
+        - ECIES support depends on BouncyCastle being present
+
+- Package `utility.options`
+    - Added `Option.getTargetType()` to get an option's target type.
+    - ArgumentsParser `argName(String)` was changed to argNames(String...) (varargs method) to allow using different names
+      for each position; reformatted help() output to be more informative
+
+- Other changes
+    - Added `TextUtil.toCharArray()|charsToBytes()|bytesToChars()`
+    - removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment
+    - removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
+      `filter()` and `map()`
 
 ### 19.2.1
 
