@@ -274,9 +274,10 @@ public record FragmentedText(
      *         If the alignment is not {@code JUSTIFY}, it returns the provided alignment setting.
      */
     private static Alignment getEffectiveHAlign(Alignment hAlign, boolean isLastLine) {
-        return hAlign == Alignment.JUSTIFY
-                ? (isLastLine ? Alignment.LEFT : Alignment.DISTRIBUTE)
-                : hAlign;
+        if (hAlign == Alignment.JUSTIFY) {
+            return isLastLine ? Alignment.LEFT : Alignment.DISTRIBUTE;
+        }
+        return hAlign;
     }
 
     /**
