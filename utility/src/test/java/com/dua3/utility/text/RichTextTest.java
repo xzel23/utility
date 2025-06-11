@@ -606,7 +606,7 @@ class RichTextTest {
 
     @ParameterizedTest
     @MethodSource("provideSplitTestCases")
-    void xtestSplitUsingStringPattern(TestCaseSplit tc) {
+    void testSplitUsingStringPattern(TestCaseSplit tc) {
         RichText[] expected = Arrays.stream(tc.text().split(tc.regex(), tc.limit()))
                 .map(RichText::valueOf)
                 .toArray(RichText[]::new);

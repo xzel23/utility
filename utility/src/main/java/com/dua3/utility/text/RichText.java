@@ -785,56 +785,6 @@ public final class RichText
      * @see String#split(String, int)
      */
     public RichText[] split(String regex, int limit) {
-        /* fastpath if the regex is a
-         * (1) one-char String and this character is not one of the
-         *     RegEx's meta characters ".$|()[{^?*+\\", or
-         * (2) two-char String and the first char is the backslash and
-         *     the second is not the ascii digit or ascii letter.
-         */
-        char ch;
-        //noinspection CharacterComparison - by design
-        if (((regex.length() == 1 &&
-                ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
-                (regex.length() == 2 &&
-                        regex.charAt(0) == '\\' &&
-                        (((ch = regex.charAt(1)) - '0') | ('9' - ch)) < 0 &&
-                        ((ch - 'a') | ('z' - ch)) < 0 &&
-                        ((ch - 'A') | ('Z' - ch)) < 0)) &&
-                (ch < Character.MIN_HIGH_SURROGATE || ch > Character.MAX_LOW_SURROGATE)) {
-            int off = 0;
-            int next;
-            boolean unlimited = limit <= 0;
-            List<RichText> list = new ArrayList<>();
-            while ((next = indexOf(ch, off)) != -1) {
-                if (unlimited || list.size() < limit - 1) {
-                    list.add(subSequence(off, next));
-                    off = next + 1;
-                } else {    // last one
-                    int last = length();
-                    list.add(subSequence(off, last));
-                    off = last;
-                    break;
-                }
-            }
-            // If no match was found, return this
-            if (off == 0)
-                return new RichText[]{this};
-
-            // Add the remaining segment
-            if (unlimited || list.size() < limit)
-                list.add(subSequence(off, length()));
-
-            // Construct result
-            int resultSize = list.size();
-            if (limit == 0) {
-                while (resultSize > 0 && list.getLast().isEmpty()) {
-                    resultSize--;
-                }
-            }
-            return list.subList(0, resultSize).toArray(RichText[]::new);
-        }
-
-        // create a matcher and split using matcher
         return split(Pattern.compile(regex), limit);
     }
 
@@ -852,7 +802,7 @@ public final class RichText
         boolean unlimited = limit <= 0;
         List<RichText> result = new ArrayList<>();
         int index = 0;
-        while (m.find()) {
+        while (m.find() && (unlimited || result.size() < limit - 1)) {
             int end = unlimited || result.size() < limit - 1 ? m.start() : length;
             result.add(subSequence(index, end));
             index = m.end();
@@ -864,9 +814,12 @@ public final class RichText
         }
 
         // Add remaining segment and remove empty trailing segments
-        if (unlimited) {
+        if (unlimited || result.size() < limit) {
             result.add(subSequence(index, length()));
-            LangUtil.removeLeadingAndTrailing(result, RichText::isEmpty);
+        }
+
+        if (limit == 0) {
+            LangUtil.removeTrailing(result, RichText::isEmpty);
         }
 
         return result.toArray(RichText[]::new);
