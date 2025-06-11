@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -45,7 +46,7 @@ class ArgumentsParserOptionTest {
                     --opt <value>    (optional)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present
         assertTrue(parser.parse().stream(option).findFirst().isEmpty());
@@ -87,7 +88,7 @@ class ArgumentsParserOptionTest {
                     --opt <value>    (required)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present (should throw exception)
         assertThrows(OptionException.class, parser::parse);
@@ -129,7 +130,7 @@ class ArgumentsParserOptionTest {
                     --opt <value>    (repeatable up to 3 times)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present
         assertTrue(parser.parse().stream(option).findFirst().isEmpty());
@@ -185,7 +186,7 @@ class ArgumentsParserOptionTest {
                     --opt <value>    (2-4 times)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present (should throw exception)
         assertThrows(OptionException.class, parser::parse);
@@ -247,7 +248,7 @@ class ArgumentsParserOptionTest {
                     --opt <value>    (repeatable)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present
         assertTrue(parser.parse().stream(option).findFirst().isEmpty());
@@ -289,7 +290,7 @@ class ArgumentsParserOptionTest {
                     --opt [<first>] [<second>]    (required)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present (should throw exception)
         assertThrows(OptionException.class, parser::parse);
@@ -340,7 +341,7 @@ class ArgumentsParserOptionTest {
                     --opt <first> <second> [<third>] [<fourth>]    (required)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present (should throw exception)
         assertThrows(OptionException.class, parser::parse);
@@ -397,7 +398,7 @@ class ArgumentsParserOptionTest {
                     --opt [<arg> ...]    (required)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present (should throw exception)
         assertThrows(OptionException.class, parser::parse);
@@ -442,7 +443,7 @@ class ArgumentsParserOptionTest {
                     --opt [<first>] [<second>]    (repeatable up to 2 times)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option not present
         assertTrue(parser.parse().stream(option).findFirst().isEmpty());
@@ -510,7 +511,7 @@ class ArgumentsParserOptionTest {
                     --files <source> [<destination>] [<backup>]    (required)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with option present with one argument
         assertEquals(List.of(List.of("file1")), parser.parse("--files", "file1").stream(option).toList());
@@ -566,7 +567,7 @@ class ArgumentsParserOptionTest {
                     --opt-c <key> <value>    (repeatable)
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with all options
         Arguments args = parser.parse(

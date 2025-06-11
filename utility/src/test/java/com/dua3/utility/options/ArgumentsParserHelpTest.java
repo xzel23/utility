@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +29,7 @@ class ArgumentsParserHelpTest {
 
         // Get the actual output and use it as the expected output
         String actual = parser.help();
-        assertEquals(expected, actual);
+        assertEquals(TextUtil.toSystemLineEnds(expected), actual);
     }
 
     /**
@@ -49,7 +50,7 @@ class ArgumentsParserHelpTest {
                 TestName [<arg> ...]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -73,7 +74,7 @@ class ArgumentsParserHelpTest {
                 TestName [<arg> ...]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -102,7 +103,7 @@ class ArgumentsParserHelpTest {
                 
                 """;
 
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -125,7 +126,7 @@ class ArgumentsParserHelpTest {
                 TestName [<arg> ...]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -149,7 +150,7 @@ class ArgumentsParserHelpTest {
                 TestName
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -173,7 +174,7 @@ class ArgumentsParserHelpTest {
                 TestName <arg>
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -197,7 +198,7 @@ class ArgumentsParserHelpTest {
                 TestName <arg1> <arg2>
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -221,7 +222,7 @@ class ArgumentsParserHelpTest {
                 TestName <arg1> <arg2> <arg3>
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -245,7 +246,7 @@ class ArgumentsParserHelpTest {
                 TestName [<arg>]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -269,7 +270,7 @@ class ArgumentsParserHelpTest {
                 TestName [<arg1>] [<arg2>]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -293,7 +294,7 @@ class ArgumentsParserHelpTest {
                 TestName [<arg1>] ... [<arg3>]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -317,7 +318,7 @@ class ArgumentsParserHelpTest {
                 TestName <arg1> [<arg2>] [<arg3>]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -341,7 +342,7 @@ class ArgumentsParserHelpTest {
                 TestName <arg1> <arg2> [<arg3>]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -365,7 +366,7 @@ class ArgumentsParserHelpTest {
                 TestName [<arg> ...]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -389,7 +390,7 @@ class ArgumentsParserHelpTest {
                 TestName <arg1> [<arg2> ...]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -413,7 +414,7 @@ class ArgumentsParserHelpTest {
                 TestName <arg1> <arg2> [<arg3> ...]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -437,7 +438,7 @@ class ArgumentsParserHelpTest {
                 TestName <arg1> <arg2> <arg3> [<arg4> ...]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -461,7 +462,7 @@ class ArgumentsParserHelpTest {
                 TestName <file> <directory> [<source>] [<destination>]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -485,7 +486,7 @@ class ArgumentsParserHelpTest {
                 TestName <file> <directory> [<source> ...]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -509,7 +510,7 @@ class ArgumentsParserHelpTest {
                 TestName <file1> <file2> <file3> [<file4>] [<file5>]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 
     /**
@@ -533,6 +534,6 @@ class ArgumentsParserHelpTest {
                 TestName <file> [<directory>]
 
                 """;
-        assertEquals(expected, parser.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
     }
 }

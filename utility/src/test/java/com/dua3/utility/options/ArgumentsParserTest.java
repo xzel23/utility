@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.text.TextUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ class ArgumentsParserTest {
                                 
                 """;
 
-        assertEquals(expected, cmd.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), cmd.help());
 
         Arguments args = cmd.parse("-p", "hello", "Bob");
         String expectedToString = """
@@ -111,7 +112,7 @@ class ArgumentsParserTest {
                 
                 """;
 
-        assertEquals(expected, cmd.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), cmd.help());
 
         Arguments args = cmd.parse("--product", "MACCHIATO", "--size", "VENTI");
         String expectedToString = """
@@ -158,7 +159,7 @@ class ArgumentsParserTest {
                 
                 """;
 
-        assertEquals(expected, cmd.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), cmd.help());
     }
 
     @Test
@@ -199,7 +200,7 @@ class ArgumentsParserTest {
                             set name
                 
                 """;
-        assertEquals(expected, cmd.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), cmd.help());
 
         Arguments args = cmd.parse("-n", "Eve", "--age", "30");
         String expectedToString = """
@@ -250,7 +251,7 @@ class ArgumentsParserTest {
                             set name
                 
                 """;
-        assertEquals(expected, cmd.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), cmd.help());
     }
 
     @Test
@@ -270,7 +271,7 @@ class ArgumentsParserTest {
                 testPositionalArgs1 [<arg> ...]
                 
                 """;
-        assertEquals(expected, cmd.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), cmd.help());
 
         Arguments args1 = cmd.parse();
         assertTrue(args1.positionalArgs().isEmpty());
@@ -297,7 +298,7 @@ class ArgumentsParserTest {
                 testPositionalArgs2 <arg1> [<arg2>] [<arg3>]
                 
                 """;
-        assertEquals(expected, cmd.help());
+        assertEquals(TextUtil.toSystemLineEnds(expected), cmd.help());
 
         // min arity is 1!
         assertThrows(ArgumentsException.class, cmd::parse);
