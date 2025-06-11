@@ -13,7 +13,7 @@ public final class CertificateUtil {
     /**
      * Utility class private constructor.
      */
-    private CertificateUtil() { /* nothing to do */ }
+    private CertificateUtil() { /* utility class */ }
 
     /**
      * Creates a self-signed X.509 certificate using the provided key pair, subject distinguished

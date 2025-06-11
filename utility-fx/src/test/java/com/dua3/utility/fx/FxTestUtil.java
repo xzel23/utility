@@ -16,9 +16,7 @@ public final class FxTestUtil {
     /**
      * Utility class construvtor.
      */
-    private FxTestUtil() {
-        // utility class
-    }
+    private FxTestUtil() { /* utility class */ }
 
     /**
      * Helper method to run code on the JavaFX Application Thread and wait for it to complete.

@@ -26,9 +26,7 @@ public final class PropertyConverter {
     /**
      * Private constructor for utility class.
      */
-    private PropertyConverter() {
-        // utility class!
-    }
+    private PropertyConverter() { /* utility class */ }
 
     /**
      * Converts a property of one type to another type using the provided converter,

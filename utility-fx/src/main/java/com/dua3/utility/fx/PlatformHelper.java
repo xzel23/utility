@@ -24,9 +24,7 @@ public final class PlatformHelper {
     /**
      * Utility class private constructor.
      */
-    private PlatformHelper() {
-        // utility class
-    }
+    private PlatformHelper() { /* utility class */ }
 
     /**
      * Run a task on the JavaFX application thread and wait for completion.

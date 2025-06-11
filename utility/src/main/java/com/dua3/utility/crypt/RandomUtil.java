@@ -26,7 +26,7 @@ public final class RandomUtil {
     /**
      * Utility class private constructor.
      */
-    private RandomUtil() { /* nothing to do */ }
+    private RandomUtil() { /* utility class */ }
 
     /**
      * Get the secure random instance.

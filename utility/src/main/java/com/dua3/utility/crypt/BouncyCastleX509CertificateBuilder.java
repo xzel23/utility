@@ -70,7 +70,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
      * This constructor prevents external instantiation of the {@code BouncyCastleX509CertificateBuilder}
      * class. Access to an instance is provided via the {@link #create()} method.
      */
-    private BouncyCastleX509CertificateBuilder() { /* nothing to do */ }
+    private BouncyCastleX509CertificateBuilder() { /* utility class */ }
 
     @Override
     public BouncyCastleX509CertificateBuilder signatureAlgorithm(String algorithm) {

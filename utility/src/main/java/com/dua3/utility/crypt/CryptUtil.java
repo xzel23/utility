@@ -26,7 +26,7 @@ public final class CryptUtil {
     /**
      * Utility class private constructor.
      */
-    private CryptUtil() { /* nothing to do */ }
+    private CryptUtil() { /* utility class */ }
 
     /**
      * Returns the asymmetric transformation string for the given algorithm.

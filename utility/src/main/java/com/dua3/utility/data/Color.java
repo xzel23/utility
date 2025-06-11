@@ -950,7 +950,5 @@ public interface Color {
 final class Colors {
     static final Map<String, Color> COLORS = new LinkedHashMap<>();
 
-    private Colors() {
-        // utility class
-    }
+    private Colors() { /* utility class */ }
 }

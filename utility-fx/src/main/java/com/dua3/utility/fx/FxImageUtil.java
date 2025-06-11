@@ -17,7 +17,7 @@ public final class FxImageUtil implements ImageUtil<Image> {
         private static final FxImageUtil INSTANCE = new FxImageUtil();
     }
 
-    private FxImageUtil() {} // utility class constructor
+    private FxImageUtil() { /* utility class */ }
 
     /**
      * Returns the instance of FxImageUtil. Only use this if your program uses different implementations of

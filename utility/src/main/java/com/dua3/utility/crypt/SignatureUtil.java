@@ -17,7 +17,7 @@ public final class SignatureUtil {
     /**
      * Utility class private constructor.
      */
-    private SignatureUtil() { /* nothing to do */ }
+    private SignatureUtil() { /* utility class */ }
 
     /**
      * Sign data using a private key.

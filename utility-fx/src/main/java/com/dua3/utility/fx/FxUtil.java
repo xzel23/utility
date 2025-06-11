@@ -82,7 +82,7 @@ public final class FxUtil {
     private static final Pattern PATTERN_FILENAME_AND_DOT = Pattern.compile("^\\*\\.");
     private static final FxFontUtil FX_FONT_UTIL = FxFontUtil.getInstance();
 
-    private FxUtil() { /* utility class private constructor */ }
+    private FxUtil() { /* utility class */ }
 
     /**
      * Convert {@link com.dua3.utility.data.Color} to {@link Color}.

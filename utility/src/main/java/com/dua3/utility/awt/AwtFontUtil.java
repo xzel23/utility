@@ -80,7 +80,7 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
     private AwtFontUtil() {
         graphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB_PRE).createGraphics();
         defaultFont = convert(getAwtFont(List.of(DEFAULT_FAMILY), DEFAULT_SIZE, false, false));
-    } // utility class constructor
+    }
 
     /**
      * Retrieves an instance of the AwtFontUtil class.

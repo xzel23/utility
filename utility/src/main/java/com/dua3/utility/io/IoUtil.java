@@ -87,9 +87,7 @@ public final class IoUtil {
         CHARSETS = charsets.toArray(new Charset[0]);
     }
 
-    private IoUtil() {
-        // utility class
-    }
+    private IoUtil() { /* utility class */ }
 
     private record FileNameInfo(int idxStart, int idxEnd) {}
 

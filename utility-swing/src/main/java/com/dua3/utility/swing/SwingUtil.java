@@ -86,9 +86,7 @@ public final class SwingUtil {
     }
 
     // Utility class, should not be instantiated
-    private SwingUtil() {
-        // nop
-    }
+    private SwingUtil() { /* utility class */ }
 
     /**
      * Retrieves the display scale of a given {@code Component}.

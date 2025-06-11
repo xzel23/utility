@@ -75,9 +75,7 @@ public final class AnsiCode {
      */
     public static final char BACKGROUND_COLOR = 48;
 
-    private AnsiCode() {
-        // utility class
-    }
+    private AnsiCode() { /* utility class */ }
 
     /**
      * Create an escape sequence.

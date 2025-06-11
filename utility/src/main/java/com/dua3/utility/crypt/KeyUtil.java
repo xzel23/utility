@@ -33,7 +33,7 @@ public final class KeyUtil {
     /**
      * Utility class private constructor.
      */
-    private KeyUtil() { /* nothing to do */ }
+    private KeyUtil() { /* utility class */ }
 
     /**
      * Validates the size of an asymmetric key based on the specified algorithm.

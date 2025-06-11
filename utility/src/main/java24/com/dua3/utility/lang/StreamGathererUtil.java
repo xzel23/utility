@@ -19,9 +19,7 @@ public final class StreamGathererUtil {
     /**
      * Private constructor to prevent instantiation.
      */
-    private StreamGathererUtil() {
-        // utility class
-    }
+    private StreamGathererUtil() { /* utility class */ }
 
     /**
      * Groups consecutive elements from a stream based on the provided predicate,

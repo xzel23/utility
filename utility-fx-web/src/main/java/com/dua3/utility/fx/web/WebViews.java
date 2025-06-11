@@ -40,9 +40,7 @@ import java.util.function.Predicate;
 public final class WebViews {
     private static final Logger LOG = LogManager.getLogger(WebViews.class);
 
-    private WebViews() {
-        // utility class
-    }
+    private WebViews() { /* utility class */ }
 
     /**
      * Sets up the WebEngine with alert, confirmation, prompt handlers, and a logger.

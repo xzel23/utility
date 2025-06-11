@@ -12,9 +12,7 @@ final class InternalUtil {
 
     static final Predicate<String> IS_QUOTING_NEEDED = Pattern.compile("[\\p{L}\\d,.;+-]*").asMatchPredicate().negate();
 
-    private InternalUtil() {
-        // utility class
-    }
+    private InternalUtil() { /* utility class */ }
 
     static String quote(String text) {
         return "\"" +
