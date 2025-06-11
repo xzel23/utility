@@ -160,34 +160,26 @@ public class NamedParameterStatement implements AutoCloseable {
 
         for (int i = 0; i < length; i++) {
             char c = query.charAt(i);
-            if (inSingleQuote) {
-                if (c == '\'') {
-                    inSingleQuote = false;
-                }
-            } else if (inDoubleQuote) {
-                if (c == '"') {
-                    inDoubleQuote = false;
-                }
-            } else {
-                if (c == '\'') {
-                    inSingleQuote = true;
-                } else if (c == '"') {
-                    inDoubleQuote = true;
-                } else if (c == ':' && i + 1 < length
-                        && Character.isJavaIdentifierStart(query.charAt(i + 1))) {
-                    int j = i + 2;
-                    while (j < length && Character.isJavaIdentifierPart(query.charAt(j))) {
-                        j++;
+            switch (c) {
+                case '\'' -> inSingleQuote = !inSingleQuote;
+                case '"' -> inDoubleQuote = !inDoubleQuote;
+                case ':' -> {
+                    if (!inSingleQuote && ! inDoubleQuote && i + 1 < length && Character.isJavaIdentifierStart(query.charAt(i + 1))) {
+                        int j = i + 2;
+                        while (j < length && Character.isJavaIdentifierPart(query.charAt(j))) {
+                            j++;
+                        }
+                        String name = query.substring(i + 1, j);
+                        c = '?'; // replace the parameter with a question mark
+                        i += name.length(); // skip past the end if the parameter
+
+                        ParameterInfo info = paramMap.computeIfAbsent(name, ParameterInfo::new);
+                        info.addIndex(index);
+
+                        index++;
                     }
-                    String name = query.substring(i + 1, j);
-                    c = '?'; // replace the parameter with a question mark
-                    i += name.length(); // skip past the end if the parameter
-
-                    ParameterInfo info = paramMap.computeIfAbsent(name, ParameterInfo::new);
-                    info.addIndex(index);
-
-                    index++;
                 }
+                default -> { /* do nothing */ }
             }
             parsedQuery.append(c);
         }
