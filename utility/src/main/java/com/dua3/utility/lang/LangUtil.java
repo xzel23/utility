@@ -891,7 +891,10 @@ public final class LangUtil {
      * @return one of the parameters whenTrue, whenFalse, otherwise depending on the value of b
      */
     public static <T extends @Nullable Object> T triStateSelect(@Nullable Boolean b, T whenTrue, T whenFalse, T otherwise) {
-        return b != null ? (b ? whenTrue : whenFalse) : otherwise;
+        if (b == null) {
+            return otherwise;
+        }
+        return b ? whenTrue : whenFalse;
     }
 
     /**
