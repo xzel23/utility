@@ -195,7 +195,7 @@ could not be loaded.
 
 ## Changes
 
-### 20.0.0
+### 20.0.0 (work in progress)
 
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
@@ -209,14 +209,17 @@ could not be loaded.
 
 - Package `utility.options`
     - Added `Option.getTargetType()` to get an option's target type.
-    - ArgumentsParser `argName(String)` was changed to argNames(String...) (varargs method) to allow using different names
-      for each position; reformatted help() output to be more informative
+    - ArgumentsParser `argName(String)` was changed to argNames(String...) (varargs method) to allow using different
+      names for each position.
+    - `ArgumentsParser.help()` output was changed to be more informative and use system line ends as its intended use is
+      to display a help message in the system terminal.
+    - Use `Option.isEquivalent()` instead of `equals()` when checking for specific options.
 
 - Other changes
-    - Added `TextUtil.toCharArray()|charsToBytes()|bytesToChars()`
-    - removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment
+    - Added `TextUtil.toCharArray()|charsToBytes()|bytesToChars()`.
+    - removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
     - removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
-      `filter()` and `map()`
+      `filter()` and `map()`.
 
 ### 19.2.1
 
