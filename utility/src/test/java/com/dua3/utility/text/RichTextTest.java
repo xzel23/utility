@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -551,6 +553,140 @@ class RichTextTest {
         assertTrue(result[4].isEmpty());
         assertTrue(result[5].isEmpty());
         assertTrue(result[6].isEmpty());
+    }
+
+    @Test
+    void testSplitWithLimit() {
+        RichText text = RichText.valueOf("a,b,c,d");
+        Pattern pattern = Pattern.compile(",");
+
+        // Test limit = 0 (unlimited, remove trailing empty)
+        RichText[] result0 = text.split(pattern, 0);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b"),
+                RichText.valueOf("c"),
+                RichText.valueOf("d")
+        }, result0);
+
+        // Test limit = 1 (only first part)
+        RichText[] result1 = text.split(pattern, 1);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a,b,c,d")
+        }, result1);
+
+        // Test limit = 2 (split into 2 parts)
+        RichText[] result2 = text.split(pattern, 2);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b,c,d")
+        }, result2);
+
+        // Test limit = 3 (split into 3 parts)
+        RichText[] result3 = text.split(pattern, 3);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b"),
+                RichText.valueOf("c,d")
+        }, result3);
+
+        // Test limit = 5 (more than available splits)
+        RichText[] result5 = text.split(pattern, 5);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b"),
+                RichText.valueOf("c"),
+                RichText.valueOf("d")
+        }, result5);
+    }
+
+    @Test
+    void testSplitEdgeCases() {
+        Pattern comma = Pattern.compile(",");
+
+        // Test empty string
+        RichText empty = RichText.valueOf("");
+        RichText[] emptyResult = empty.split(comma, 0);
+        assertArrayEquals(new RichText[]{RichText.valueOf("")}, emptyResult);
+
+        // Test string with no matches
+        RichText noMatch = RichText.valueOf("abcd");
+        RichText[] noMatchResult = noMatch.split(comma, 0);
+        assertArrayEquals(new RichText[]{RichText.valueOf("abcd")}, noMatchResult);
+
+        // Test string starting with delimiter
+        RichText startDelim = RichText.valueOf(",a,b");
+        RichText[] startDelimResult = startDelim.split(comma, 0);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b")
+        }, startDelimResult);
+
+        // Test string ending with delimiter
+        RichText endDelim = RichText.valueOf("a,b,");
+        RichText[] endDelimResult = endDelim.split(comma, 0);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b")
+        }, endDelimResult);
+
+        // Test string with consecutive delimiters
+        RichText consecutive = RichText.valueOf("a,,b");
+        RichText[] consecutiveResult = consecutive.split(comma, 0);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b")
+        }, consecutiveResult);
+
+        // Test string with only delimiters
+        RichText onlyDelims = RichText.valueOf(",,,");
+        RichText[] onlyDelimsResult = onlyDelims.split(comma, 0);
+        assertArrayEquals(new RichText[]{}, onlyDelimsResult);
+    }
+
+    @Test
+    void testSplitWithLimitAndEmptySegments() {
+        Pattern comma = Pattern.compile(",");
+
+        // Test with limit and leading empty
+        RichText leadingEmpty = RichText.valueOf(",a,b");
+        RichText[] leadingEmptyResult = leadingEmpty.split(comma, 2);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf(""),
+                RichText.valueOf("a,b")
+        }, leadingEmptyResult);
+
+        // Test with limit and trailing empty
+        RichText trailingEmpty = RichText.valueOf("a,b,");
+        RichText[] trailingEmptyResult = trailingEmpty.split(comma, 3);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b"),
+                RichText.valueOf("")
+        }, trailingEmptyResult);
+
+        // Test with limit and consecutive empty
+        RichText consecutiveEmpty = RichText.valueOf("a,,b");
+        RichText[] consecutiveEmptyResult = consecutiveEmpty.split(comma, 3);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf(""),
+                RichText.valueOf("b")
+        }, consecutiveEmptyResult);
+    }
+
+    @Test
+    void testSplitNegativeLimit() {
+        RichText text = RichText.valueOf("a,b,c,");
+        Pattern pattern = Pattern.compile(",");
+
+        // Test negative limit (should behave like unlimited)
+        RichText[] result = text.split(pattern, -1);
+        assertArrayEquals(new RichText[]{
+                RichText.valueOf("a"),
+                RichText.valueOf("b"),
+                RichText.valueOf("c")
+        }, result);
     }
 
     @ParameterizedTest
