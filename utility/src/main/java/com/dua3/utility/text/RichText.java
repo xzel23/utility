@@ -1090,13 +1090,13 @@ public final class RichText
                 FontDef fda = runA.getFontDef();
                 FontDef fdb = runB.getFontDef();
 
-                if (!s.ignoreFontSize() && !Objects.equals(fda.getSize(), fdb.getSize())
-                        || !s.ignoreFontWeight() && !Objects.equals(fda.getBold(), fdb.getBold())
-                        || !s.ignoreItalic() && !Objects.equals(fda.getItalic(), fdb.getItalic())
-                        || !s.ignoreTextColor() && !Objects.equals(fda.getColor(), fdb.getColor())
-                        || !s.ignoreUnderline() && !Objects.equals(fda.getUnderline(), fdb.getUnderline())
-                        || !s.ignoreStrikeThrough() && !Objects.equals(fda.getStrikeThrough(), fdb.getStrikeThrough())
-                        || !s.ignoreFontFamily() && !Objects.equals(s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
+                if (!isIgnoredOrEqual(s.ignoreFontSize(), fda.getSize(), fdb.getSize())
+                        || !isIgnoredOrEqual(s.ignoreFontWeight(), fda.getBold(), fdb.getBold())
+                        || !isIgnoredOrEqual(s.ignoreItalic(), fda.getItalic(), fdb.getItalic())
+                        || !isIgnoredOrEqual(s.ignoreTextColor(), fda.getColor(), fdb.getColor())
+                        || !isIgnoredOrEqual(s.ignoreUnderline(), fda.getUnderline(), fdb.getUnderline())
+                        || !isIgnoredOrEqual(s.ignoreStrikeThrough(), fda.getStrikeThrough(), fdb.getStrikeThrough())
+                        || !isIgnoredOrEqual(s.ignoreFontFamily(), s.fontMapper().apply(fda.getFamily()), s.fontMapper().apply(fdb.getFamily()))) {
                     return false;
                 }
 
@@ -1107,6 +1107,18 @@ public final class RichText
 
             return true;
         };
+    }
+
+    /**
+     * Determines if the given condition is considered ignored or if two objects are equal.
+     *
+     * @param ignored a boolean value indicating whether the condition should be ignored
+     * @param a the first object to be compared, can be null
+     * @param b the second object to be compared, can be null
+     * @return true if the condition is ignored, or if the two objects are equal; false otherwise
+     */
+    private static boolean isIgnoredOrEqual(boolean ignored, @Nullable Object a, @Nullable Object b) {
+        return ignored || Objects.equals(a, b);
     }
 
     /**
