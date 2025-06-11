@@ -7,6 +7,7 @@ import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -179,13 +180,13 @@ public class JdbcDriverInfo {
         String dflt = arguments.get("default");
         return switch (type) {
             case OPTION_TYPE_STRING ->
-                    SimpleOption.create(Function.identity(), name).description(name).defaultValue(dflt);
+                    SimpleOption.create(String.class, Function.identity(), name).description(name).defaultValue(dflt);
             case OPTION_TYPE_PATH ->
-                    SimpleOption.create(Paths::get, name).description(name).defaultValue(dflt == null ? null : Paths.get(dflt));
+                    SimpleOption.create(Path.class, Paths::get, name).description(name).defaultValue(dflt == null ? null : Paths.get(dflt));
             case OPTION_TYPE_INTEGER ->
-                    SimpleOption.create(Integer::valueOf, name).description(name).defaultValue(dflt == null ? null : Integer.valueOf(dflt));
+                    SimpleOption.create(Integer.class, Integer::valueOf, name).description(name).defaultValue(dflt == null ? null : Integer.valueOf(dflt));
             case OPTION_TYPE_DOUBLE ->
-                    SimpleOption.create(Double::valueOf, name).description(name).defaultValue(dflt == null ? null : Double.valueOf(dflt));
+                    SimpleOption.create(Double.class, Double::valueOf, name).description(name).defaultValue(dflt == null ? null : Double.valueOf(dflt));
             default -> throw new IllegalStateException("unsupported type: " + type);
         };
     }

@@ -17,7 +17,7 @@ public final class Flag extends Option<Boolean> {
      * @param names names for the flag, at least one.
      */
     private Flag(String[] names) {
-        super(Flag::mapToBoolean, b -> Boolean.toString(b), names);
+        super(Boolean.class, Flag::mapToBoolean, b -> Boolean.toString(b), names);
         occurrence(0, 1);
         arity(0, 0);
     }

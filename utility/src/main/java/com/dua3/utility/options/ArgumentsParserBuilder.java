@@ -105,12 +105,14 @@ public class ArgumentsParserBuilder {
      * Creates a SimpleOption with the given mapper function and names.
      *
      * @param <T>    the option's argument type.
-     * @param type   {@link Class} instance of the option's argument type
      * @param names  the names for the option, at least one
      * @return the created SimpleOption
      */
-    public <T> SimpleOption<T> simpleOption(Class<? extends T> type, String... names) {
-        return simpleOption(s -> DataUtil.convert(s, type, true), names);
+    public <T> SimpleOption<T> simpleOption(
+            Class<T> targetType,
+            String... names
+    ) {
+        return simpleOption(targetType, s -> DataUtil.convert(s, targetType, true), names);
     }
 
     /**
@@ -121,32 +123,39 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one.
      * @return the created SimpleOption.
      */
-    public <T> SimpleOption<T> simpleOption(Function<@Nullable String, ? extends @Nullable T> mapper, String... names) {
-        return addOption(SimpleOption.create(mapper, names));
+    public <T> SimpleOption<T> simpleOption(
+            Class<T> targetType,
+            Function<@Nullable String, ? extends @Nullable T> mapper,
+            String... names
+    ) {
+        return addOption(SimpleOption.create(targetType, mapper, names));
     }
 
     /**
      * Adds a choice option with a limited set of possible values to the ArgumentsParserBuilder instance being built.
      *
      * @param <E>        the enum type
-     * @param enumClass  the enum class representing the possible values
+     * @param targetType  the enum class representing the possible values
      * @param names      the names for the choice option
      * @return the ArgumentsParserBuilder instance
      */
-    public <E extends Enum<E>> ChoiceOption<E> choiceOption(Class<? extends E> enumClass, String... names) {
-        return addOption(ChoiceOption.create(enumClass, names));
+    public <E extends Enum<E>> ChoiceOption<E> choiceOption(Class<E> targetType, String... names) {
+        return addOption(ChoiceOption.create(targetType, names));
     }
 
     /**
      * Adds a standard option to the ArgumentsParserBuilder instance being built.
      *
      * @param <T>    the option's argument type.
-     * @param type   {@link Class} instance of the option's argument type
+     * @param targetType   {@link Class} instance of the option's argument type
      * @param names  the names for the option, at least one.
      * @return the created StandardOption.
      */
-    public <T> StandardOption<T> option(Class<? extends T> type, String... names) {
-        return option(s -> DataUtil.convert(s, type, true), names);
+    public <T> StandardOption<T> option(
+            Class<T> targetType,
+            String... names
+    ) {
+        return option(targetType, s -> DataUtil.convert(s, targetType, true), names);
     }
 
     /**
@@ -157,8 +166,12 @@ public class ArgumentsParserBuilder {
      * @param names  the names for the option, at least one.
      * @return the created StandardOption.
      */
-    public <T> StandardOption<T> option(Function<@Nullable String, ? extends @Nullable T> mapper, String... names) {
-        return addOption(StandardOption.create(mapper, names));
+    public <T> StandardOption<T> option(
+            Class<T> targetType,
+            Function<@Nullable String, ? extends @Nullable T> mapper,
+            String... names
+    ) {
+        return addOption(StandardOption.create(targetType, mapper, names));
     }
 
     /**
@@ -169,8 +182,8 @@ public class ArgumentsParserBuilder {
      * @return the added option
      */
     public <O extends Option<?>> O addOption(O option) {
-        for (String name : option.names()) {
-            LangUtil.check(options.putIfAbsent(name, option) == null, "duplicate option name: %s", name);
+        for (String optName : option.names()) {
+            LangUtil.check(options.putIfAbsent(optName, option) == null, "duplicate option name: %s", optName);
         }
         return option;
     }

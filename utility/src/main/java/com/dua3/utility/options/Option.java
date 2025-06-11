@@ -17,6 +17,7 @@ import java.util.function.Function;
  */
 @SuppressWarnings("MagicCharacter")
 public abstract class Option<T> {
+    private final Class<T> targetType;
     private final Function<String, ? extends T> mapper;
     private final Function<? super T, String> formatter;
 
@@ -35,15 +36,20 @@ public abstract class Option<T> {
     /**
      * Represents an option with a set of names, a mapper function to convert from String to the option's type, and a formatter function to convert the option's type to a String.
      *
-     * @param mapper    the function to map a String to the option's type
-     * @param formatter the function to format the option's type to a String
-     * @param names     the names associated with the option
+     * @param targetType  the target type of the option
+     * @param mapper      the function to map a String to the option's type
+     * @param formatter   the function to format the option's type to a String
+     * @param names       the names associated with the option
      */
-    protected Option(Function<String, ? extends T> mapper,
-                     Function<? super T, String> formatter,
-                     String... names) {
+    protected Option(
+            Class<T> targetType,
+            Function<String, ? extends T> mapper,
+            Function<? super T, String> formatter,
+            String... names
+    ) {
         LangUtil.check(names.length > 0, "at least one name must be given");
 
+        this.targetType = targetType;
         this.mapper = mapper;
         this.formatter = formatter;
         this.names = names.clone();
@@ -257,12 +263,27 @@ public abstract class Option<T> {
         return formatter.apply(v);
     }
 
+    /**
+     * Determines if this option is equivalent to the provided option.
+     * Two options are considered equivalent if they have the same target type
+     * and their associated names are identical.
+     *
+     * @param other the option to compare this option against; may be null
+     * @return true if the options are equivalent, false otherwise
+     */
+    public final boolean isEquivalent(@Nullable Option<?> other) {
+        if (this == other) return true;
+        if (other == null) return false;
+        if (other.targetType != targetType) return false;
+        return Arrays.equals(names, other.names);
+    }
+
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Option<?> option = (Option<?>) obj;
-        return Arrays.equals(names, option.names);
+        if (!(obj instanceof Option<?> other)) {
+            return false;
+        }
+        return isEquivalent(other);
     }
 
     @Override

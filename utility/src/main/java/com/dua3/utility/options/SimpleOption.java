@@ -3,6 +3,7 @@ package com.dua3.utility.options;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -23,13 +24,17 @@ public final class SimpleOption<T> extends Option<T> {
     /**
      * Construct a new simple option with the given name(s).
      *
+     * @param targetType  the target type of the option
      * @param mapper the mapping function to the target type
      * @param names  names for the flag, at least one.
      */
-    private SimpleOption(Function<String, ? extends T> mapper,
-                         Function<? super T, String> formatter,
-                         String... names) {
-        super(mapper, formatter, names);
+    private SimpleOption(
+            Class<T> targetType,
+            Function<String, ? extends T> mapper,
+            Function<? super T, String> formatter,
+            String... names
+    ) {
+        super(targetType, mapper, formatter, names);
         occurrence(0, 1);
         arity(1, 1);
     }
@@ -38,28 +43,36 @@ public final class SimpleOption<T> extends Option<T> {
      * Creates a new instance of SimpleOption with the given mapper function and names.
      *
      * @param <T> the option's argument type.
+     * @param targetType  the target type of the option
      * @param mapper the mapping function to the target type
      * @param names  names for the flag, at least one
      * @return a new instance of SimpleOption with the specified mapper function and names
      */
-    public static <T> SimpleOption<T> create(Function<String, ? extends T> mapper,
-                                             String... names) {
-        return new SimpleOption<>(mapper, Object::toString, names);
+    public static <T> SimpleOption<T> create(
+            Class<T> targetType,
+            Function<String, ? extends T> mapper,
+            String... names
+    ) {
+        return new SimpleOption<>(targetType, mapper, Object::toString, names);
     }
 
     /**
      * Create a new SimpleOption with the given mapper, formatter, and names.
      *
+     * @param targetType  the target type of the option
      * @param mapper    the mapping function to the target type
      * @param formatter the function to format the target type as a string
      * @param names     the names for the flag, at least one
      * @param <T>       the type of the target value
      * @return a new SimpleOption
      */
-    public static <T> SimpleOption<T> create(Function<String, ? extends T> mapper,
-                                             Function<? super T, String> formatter,
-                                             String... names) {
-        return new SimpleOption<>(mapper, formatter, names);
+    public static <T> SimpleOption<T> create(
+            Class<T> targetType,
+            Function<String, ? extends T> mapper,
+            Function<? super T, String> formatter,
+            String... names
+    ) {
+        return new SimpleOption<>(targetType, mapper, formatter, names);
     }
 
     @Override
@@ -127,4 +140,15 @@ public final class SimpleOption<T> extends Option<T> {
         return Optional.ofNullable(defaultSupplier.get());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof SimpleOption<?> that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(defaultSupplier, that.defaultSupplier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), defaultSupplier);
+    }
 }

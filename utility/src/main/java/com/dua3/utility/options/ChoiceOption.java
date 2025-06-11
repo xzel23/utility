@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,16 +25,20 @@ public final class ChoiceOption<T> extends Option<T> {
     /**
      * Constructor.
      *
+     * @param targetType  the target type of the option
      * @param valueMapper the mapper that maps strings to values
      * @param formatter   the formatter that creates strings from values
      * @param values      list of valid strings
      * @param names       the option names
      */
-    private ChoiceOption(Function<String, ? extends T> valueMapper,
-                         Function<? super T, String> formatter,
-                         Supplier<? extends Collection<? extends T>> values,
-                         String... names) {
-        super(valueMapper, formatter, names);
+    private ChoiceOption(
+            Class<T> targetType,
+            Function<String, ? extends T> valueMapper,
+            Function<? super T, String> formatter,
+            Supplier<? extends Collection<? extends T>> values,
+            String... names
+    ) {
+        super(targetType, valueMapper, formatter, names);
         occurrence(0, 1);
         arity(1, 1);
         this.values = values;
@@ -61,33 +66,39 @@ public final class ChoiceOption<T> extends Option<T> {
      * Create a choice option of enum-type with the enum values as possible option values.
      *
      * @param <E>   the enum type
-     * @param cls   the enum class
+     * @param targetType   the enum class
      * @param names the option names
      * @return choice option
      */
-    public static <E extends Enum<E>> ChoiceOption<E> create(Class<? extends E> cls,
-                                                             String... names) {
-        Function<String, E> parser = s -> valueOf(cls, s);
+    public static <E extends Enum<E>> ChoiceOption<E> create(
+            Class<E> targetType,
+            String... names
+    ) {
+        Function<String, E> parser = s -> valueOf(targetType, s);
         Function<E, String> formatter = Object::toString;
-        Supplier<Collection<E>> values = () -> enumValues(cls);
-        return new ChoiceOption<>(parser, formatter, values, names);
+        Supplier<Collection<E>> values = () -> enumValues(targetType);
+        return new ChoiceOption<>(targetType, parser, formatter, values, names);
     }
 
     /**
      * Create a choice option that maps strings in a list to values.
      *
      * @param <T>         the option type
+     * @param targetType  the target type
      * @param valueMapper the mapper that maps strings to values
      * @param formatter   the formatter that creates strings from values
      * @param values      list of valid strings
      * @param names       the option names
      * @return choice option
      */
-    public static <T extends @Nullable Object> ChoiceOption<T> create(Function<String, ? extends T> valueMapper,
-                                                                      Function<? super T, String> formatter,
-                                                                      Supplier<? extends Collection<? extends T>> values,
-                                                                      String... names) {
-        return new ChoiceOption<>(valueMapper, formatter, values, names);
+    public static <T extends @Nullable Object> ChoiceOption<T> create(
+            Class<T> targetType,
+            Function<String, ? extends T> valueMapper,
+            Function<? super T, String> formatter,
+            Supplier<? extends Collection<? extends T>> values,
+            String... names
+    ) {
+        return new ChoiceOption<>(targetType, valueMapper, formatter, values, names);
     }
 
     /**
@@ -197,4 +208,15 @@ public final class ChoiceOption<T> extends Option<T> {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ChoiceOption<?> that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(values, that.values) && Objects.equals(defaultSupplier, that.defaultSupplier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), values, defaultSupplier);
+    }
 }

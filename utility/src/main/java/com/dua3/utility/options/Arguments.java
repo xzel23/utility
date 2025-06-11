@@ -308,7 +308,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     @SuppressWarnings("unchecked")
     public <T> Stream<List<T>> stream(Option<T> option) {
         return options.stream()
-                .filter(entry -> entry.option.equals(option))
+                .filter(entry -> entry.option.isEquivalent(option))
                 .map(entry -> ((Entry<T>) entry).getParams());
     }
 

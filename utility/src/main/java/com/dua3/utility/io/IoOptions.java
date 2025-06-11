@@ -30,6 +30,7 @@ public final class IoOptions {
      */
     public static ChoiceOption<Charset> charset() {
         return ChoiceOption.create(
+                        Charset.class,
                         Charset::forName,
                         Object::toString,
                         () -> Collections.unmodifiableCollection(Charset.availableCharsets().values()),
@@ -47,6 +48,7 @@ public final class IoOptions {
      */
     public static ChoiceOption<Locale> locale() {
         return ChoiceOption.create(
+                        Locale.class,
                         Locale::forLanguageTag,
                         Object::toString,
                         () -> List.of(Locale.getAvailableLocales()),
@@ -62,7 +64,7 @@ public final class IoOptions {
      * @return a SimpleOption object representing the input option
      */
     public static SimpleOption<Path> input() {
-        return SimpleOption.create(Paths::get, "-i", "--input")
+        return SimpleOption.create(Path.class, Paths::get, "-i", "--input")
                 .displayName("Input")
                 .description("set input");
     }
@@ -73,7 +75,7 @@ public final class IoOptions {
      * @return a SimpleOption object representing the output option
      */
     public static SimpleOption<Path> output() {
-        return SimpleOption.create(Paths::get, "-o", "--output")
+        return SimpleOption.create(Path.class, Paths::get, "-o", "--output")
                 .displayName("Output")
                 .description("set output");
     }
@@ -85,6 +87,7 @@ public final class IoOptions {
      */
     public static ChoiceOption<Character> textDelimiter() {
         return ChoiceOption.create(
+                        Character.class,
                         (String s) -> s.charAt(0),
                         Object::toString,
                         () -> List.of('"', '\''),
@@ -101,6 +104,7 @@ public final class IoOptions {
      */
     public static ChoiceOption<Character> fieldSeparator() {
         return ChoiceOption.create(
+                        Character.class,
                         (String s) -> s.charAt(0),
                         Object::toString,
                         () -> List.of(',', ';'),
