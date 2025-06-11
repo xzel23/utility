@@ -7,8 +7,14 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
+/**
+ * A utility class used for splitting text into lines or chunks based on different criteria.
+ * Supports operations like tokenization, line wrapping, and handling line breaks.
+ *
+ * @param <S> the type of the character sequence to be processed
+ */
 @SuppressWarnings("MagicCharacter")
-final class LineSplitter<S extends CharSequence, R extends Appendable> {
+final class LineSplitter<S extends CharSequence> {
     private final S seq;
 
     /** The current codepoint. */
@@ -182,7 +188,7 @@ final class LineSplitter<S extends CharSequence, R extends Appendable> {
             ToIntFunction<R> bufferLength
     ) throws IOException {
         // tokenize the text
-        LineSplitter<S, R> splitter = new LineSplitter<>(inputText);
+        LineSplitter<S> splitter = new LineSplitter<>(inputText);
         List<Chunk<S>> chunks = splitter.tokenize();
         //
         List<List<S>> paragraphs = new ArrayList<>();
