@@ -853,16 +853,14 @@ public final class RichText
         int index = 0;
         while (m.find()) {
             if (unlimited || result.size() < limit - 1) {
-                if (index == 0 && m.end() == index) {
+                if (index == 0 && m.end() == 0) {
                     // skip empty leading substring at beginning
                     continue;
                 }
-                RichText match = subSequence(index, m.start());
-                result.add(match);
+                result.add(subSequence(index, m.start()));
                 index = m.end();
             } else if (result.size() == limit - 1) { // last one
-                RichText match = subSequence(index, length());
-                result.add(match);
+                result.add(subSequence(index, length()));
                 index = m.end();
             }
         }
