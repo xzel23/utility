@@ -863,13 +863,9 @@ public final class RichText
             return new RichText[]{this};
         }
 
-        // Add remaining segment
-        if (unlimited || result.size() < limit) {
+        // Add remaining segment and remove empty trailing segments
+        if (unlimited) {
             result.add(subSequence(index, length()));
-        }
-
-        // remove trailing empty segments
-        if (limit == 0) {
             LangUtil.removeLeadingAndTrailing(result, RichText::isEmpty);
         }
 
