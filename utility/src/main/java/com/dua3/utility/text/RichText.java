@@ -5,6 +5,7 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -852,17 +853,9 @@ public final class RichText
         List<RichText> result = new ArrayList<>();
         int index = 0;
         while (m.find()) {
-            if (unlimited || result.size() < limit - 1) {
-                if (index == 0 && m.end() == 0) {
-                    // skip empty leading substring at beginning
-                    continue;
-                }
-                result.add(subSequence(index, m.start()));
-                index = m.end();
-            } else if (result.size() == limit - 1) { // last one
-                result.add(subSequence(index, length()));
-                index = m.end();
-            }
+            int end = unlimited || result.size() < limit - 1 ? m.start() : length;
+            result.add(subSequence(index, end));
+            index = m.end();
         }
 
         // If no match was found, return this
@@ -877,11 +870,7 @@ public final class RichText
 
         // remove trailing empty segments
         if (limit == 0) {
-            int s = result.size();
-            while (s > 0 && result.get(s - 1).isEmpty()) {
-                s--;
-            }
-            result = result.subList(0, s);
+            LangUtil.removeLeadingAndTrailing(result, RichText::isEmpty);
         }
 
         return result.toArray(RichText[]::new);
