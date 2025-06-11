@@ -329,18 +329,15 @@ public class ArgumentsParser {
                 if (optionalCount > 0) {
                     String arg = args[Math.min(max - 1, args.length - 1)];
                     switch (optionalCount) {
-                        case 1 -> {
-                            argNr = appendArg(argText, arg, true, useNumberingForArg, false, argNr);
-                        }
+                        case 1 -> appendArg(argText, arg, true, useNumberingForArg, false, argNr);
                         case 2 -> {
-                            argNr = appendArg(argText, arg, true, useNumberingForArg, false, argNr);
-                            argNr = appendArg(argText, arg, true, useNumberingForArg, false, argNr);
+                            appendArg(argText, arg, true, useNumberingForArg, false, argNr);
+                            appendArg(argText, arg, true, useNumberingForArg, false, argNr + 1);
                         }
                         default -> {
-                            argNr = appendArg(argText, arg, true, useNumberingForArg, false, argNr);
+                            appendArg(argText, arg, true, useNumberingForArg, false, argNr);
                             argText.format(" ...");
-                            argNr += optionalCount - 2;
-                            argNr = appendArg(argText, arg, true, useNumberingForArg, false, argNr);
+                            appendArg(argText, arg, true, useNumberingForArg, false, argNr + optionalCount - 1);
                         }
                     }
                 }
