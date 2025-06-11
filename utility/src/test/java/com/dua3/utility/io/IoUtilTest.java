@@ -600,7 +600,7 @@ class IoUtilTest {
     void testToURLFromURI() throws Exception {
         URI uri = new URI("https://example.com");
         URL url = IoUtil.toURL(uri);
-        assertEquals(uri.toURL(), url);
+        assertEquals(uri.toURL().toString(), url.toString());
     }
 
     @Test
