@@ -223,7 +223,8 @@ public final class RichText
 
         assert a.length == b.length : "a and b should have the same length since textEquals() returned true";
 
-        for (int idx = 0; idx < a.length(); ) {
+        int step;
+        for (int idx = 0; idx < a.length(); idx += step) {
             Run runA = a.runAt(idx);
             Run runB = b.runAt(idx);
 
@@ -231,9 +232,8 @@ public final class RichText
                 return false;
             }
 
-            int step = Math.min(runA.getEnd() - a.start, runB.getEnd() - b.start);
+            step = Math.min(runA.getEnd() - a.start, runB.getEnd() - b.start);
             assert step > 0 : "invalid step: " + step;
-            idx += step;
         }
 
         return true;
@@ -352,9 +352,9 @@ public final class RichText
 
     private boolean checkAllRunsHaveTextAsBase() {
         boolean ok = true;
-        for (Run run : run) {
+        for (Run r : run) {
             //noinspection ObjectEquality - we explicitly want to check for identity not equality
-            ok = ok && (run.base() == text);
+            ok = ok && (r.base() == text);
         }
         return ok;
     }
@@ -1020,7 +1020,8 @@ public final class RichText
             // b cannot be null: if b were null, above test a == null || !compareText.test(a, b) would be true
             assert b != null;
 
-            for (int idx = 0; idx < a.length(); ) {
+            int step;
+            for (int idx = 0; idx < a.length(); idx += step) {
                 Run runA = a.runAt(idx);
                 Run runB = b.runAt(idx);
 
@@ -1037,9 +1038,8 @@ public final class RichText
                     return false;
                 }
 
-                int step = Math.min(runA.getEnd() - a.start, runB.getEnd() - b.start);
+                step = Math.min(runA.getEnd() - a.start, runB.getEnd() - b.start);
                 assert step > 0 : "invalid step: " + step;
-                idx += step;
             }
 
             return true;
