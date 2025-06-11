@@ -1823,4 +1823,49 @@ public final class LangUtil {
         };
     }
 
+    /**
+     * Removes trailing elements from the provided list that match the given predicate.
+     *
+     * @param <T> the type of the elements in the list
+     * @param list the list from which trailing elements will be removed
+     * @param predicate a predicate used to test elements; elements matching this predicate will be removed from the end of the list
+     */
+    public static <T> void removeTrailing(List<T> list, Predicate<? super T> predicate) {
+        int i = list.size() - 1;
+        while (i >= 0 && predicate.test(list.get(i))) {
+            i--;
+        }
+        list.subList(i + 1, list.size()).clear();
+    }
+
+    /**
+     * Removes leading elements from the list that satisfy the given predicate.
+     * Iterates through the list from the start and removes all consecutive elements
+     * that match the predicate until an element does not satisfy the condition.
+     *
+     * @param <T> the type of elements in the list
+     * @param list the list from which leading elements are to be removed
+     * @param predicate the predicate used to test each element for removal
+     */
+    public static <T> void removeLeading(List<T> list, Predicate<? super T> predicate) {
+        int i = 0;
+        while (i < list.size() && predicate.test(list.get(i))) {
+            i++;
+        }
+        list.subList(0, i).clear();
+    }
+
+    /**
+     * Removes elements from the beginning and the end of the specified list
+     * that match the given predicate.
+     *
+     * @param list the list from which leading and trailing elements will be removed
+     * @param predicate the condition used to determine which elements should be removed
+     * @param <T> the type of elements in the list
+     */
+    public static <T> void removeLeadingAndTrailing(List<T> list, Predicate<? super T> predicate) {
+        removeLeading(list, predicate);
+        removeTrailing(list, predicate);
+    }
+
 }
