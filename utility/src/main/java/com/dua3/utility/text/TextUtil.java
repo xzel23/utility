@@ -396,8 +396,11 @@ public final class TextUtil {
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
 
         return (a, b) -> {
-            if (a == null || b == null) {
-                return a == null ? b == null ? 0 : -1 : 1;
+            if (a == null) {
+                return b == null ? 0 : -1;
+            }
+            if (b == null) {
+                return 1;
             }
 
             int c = collator.compare(a, b);
@@ -561,19 +564,20 @@ public final class TextUtil {
         final int haystackLength = haystack.length();
         final int needleLength = needle.length();
 
-        outer:
         for (int pos = fromIndex; pos < haystackLength - needleLength + 1; pos++) {
-            for (int i = 0; i < needleLength; i++) {
+            int i;
+            for (i = 0; i < needleLength; i++) {
                 if (haystack.charAt(pos + i) != needle.charAt(i)) {
-                    continue outer;
+                    break;
                 }
             }
-            return pos;
+            if (i == needleLength) {
+                return pos;
+            }
         }
 
         return -1;
     }
-
     /**
      * Test whether a {@link CharSequence} starts with another {@link CharSequence}.
      *
