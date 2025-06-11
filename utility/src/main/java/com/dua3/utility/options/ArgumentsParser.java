@@ -1,6 +1,7 @@
 package com.dua3.utility.options;
 
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.TextUtil;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -205,7 +206,7 @@ public class ArgumentsParser {
 
                 // print option description
                 if (!option.description().isEmpty()) {
-                    fmt.format("%s", option.description().indent(12));
+                    fmt.format("%s", TextUtil.toSystemLineEnds(option.description().indent(12)));
                 }
 
                 fmt.format("%n");
