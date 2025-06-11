@@ -262,6 +262,17 @@ public record FragmentedText(
         return textHeight;
     }
 
+    /**
+     * Determines the effective horizontal alignment based on the provided alignment setting
+     * and whether the line is the last line of the text.
+     *
+     * @param hAlign the initial horizontal alignment setting, which could be one of the values
+     *               from the {@link Alignment} enumeration
+     * @param isLastLine a boolean indicating whether the line is the last line
+     * @return the effective horizontal alignment. For a justified alignment, it returns
+     *         {@code Alignment.LEFT} for the last line and {@code Alignment.DISTRIBUTE} otherwise.
+     *         If the alignment is not {@code JUSTIFY}, it returns the provided alignment setting.
+     */
     private static Alignment getEffectiveHAlign(Alignment hAlign, boolean isLastLine) {
         return hAlign == Alignment.JUSTIFY
                 ? (isLastLine ? Alignment.LEFT : Alignment.DISTRIBUTE)
@@ -313,25 +324,7 @@ public record FragmentedText(
             case LEFT -> { /* nothing to do */ }
             case RIGHT -> line.replaceAll(fragment -> fragment.translate(availableSpace, 0.0f));
             case CENTER -> line.replaceAll(fragment -> fragment.translate(availableSpace / 2.0f, 0.0f));
-            case DISTRIBUTE -> {
-                // distribute the remaining space by evenly expanding existing whitespace
-                float x = 0.0f;
-                for (int i = 0; i < line.size(); i++) {
-                    Fragment original = line.get(i);
-                    float w = original.w() * (TextUtil.isBlank(original.text()) ? f : 1.0f);
-                    Fragment aligned = new Fragment(
-                            x,
-                            original.y(),
-                            w,
-                            original.h(),
-                            original.baseLine(),
-                            original.font(),
-                            original.text()
-                    );
-                    line.set(i, aligned);
-                    x += w;
-                }
-            }
+            case DISTRIBUTE -> distributrWhitespace(line, f);
             default -> throw new IllegalStateException(effectiveHAlign.name() + " is not allowed here");
         }
 
@@ -341,6 +334,35 @@ public record FragmentedText(
             Fragment first = line.getFirst();
             Fragment last = line.getLast();
             return last.x() + last.w() - first.x();
+        }
+    }
+
+    /**
+     * Distributes the remaining horizontal space within a line of text by proportionally
+     * expanding existing whitespace. The method adjusts each fragment's width based
+     * on whether the fragment represents whitespace or regular text and updates the
+     * line with the aligned fragments.
+     *
+     * @param line the list of fragments representing the line of text to be adjusted
+     * @param f    the factor by which whitespace fragments should be expanded
+     */
+    private static void distributrWhitespace(List<Fragment> line, float f) {
+        // distribute the remaining space by evenly expanding existing whitespace
+        float x = 0.0f;
+        for (int i = 0; i < line.size(); i++) {
+            Fragment original = line.get(i);
+            float w = original.w() * (TextUtil.isBlank(original.text()) ? f : 1.0f);
+            Fragment aligned = new Fragment(
+                    x,
+                    original.y(),
+                    w,
+                    original.h(),
+                    original.baseLine(),
+                    original.font(),
+                    original.text()
+            );
+            line.set(i, aligned);
+            x += w;
         }
     }
 
