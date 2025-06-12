@@ -97,6 +97,7 @@ dependencyResolutionManagement {
 
             library("jimfs", "com.google.jimfs", "jimfs").versionRef("jimfs")
             library("mockito", "org.mockito", "mockito-core").versionRef("mockito")
+            library("mockito-junit-jupiter", "org.mockito", "mockito-junit-jupiter").versionRef("mockito")
 
             library("junit4", "junit", "junit").versionRef("junit4")
             library("h2", "com.h2database", "h2").versionRef("h2database")

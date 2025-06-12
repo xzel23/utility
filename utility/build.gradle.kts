@@ -35,6 +35,7 @@ dependencies {
     compileOnly(rootProject.libs.bouncycastle.pkix)
     testImplementation(rootProject.libs.bouncycastle.provider)
     testImplementation(rootProject.libs.bouncycastle.pkix)
+    testImplementation(rootProject.libs.mockito.junit.jupiter)
 }
 
 // Add dependencies for java24 source set

@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -577,16 +578,19 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         return Collections.emptyList();
     }
 
-    // all instances of the same class are considered equal
     @Override
-    public boolean equals(@Nullable Object obj) {
-        return obj != null && obj.getClass() == getClass();
+    public boolean equals(Object o) {
+        if (!(o instanceof FileType<?> fileType)) return false;
+        return Objects.equals(name, fileType.name)
+                && Objects.equals(cls, fileType.cls)
+                && Objects.equals(clsWriteable, fileType.clsWriteable)
+                && mode == fileType.mode
+                && Objects.equals(extensions, fileType.extensions);
     }
 
-    // consistent with equals()
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(name, cls, clsWriteable, mode, extensions);
     }
 
     @Override
