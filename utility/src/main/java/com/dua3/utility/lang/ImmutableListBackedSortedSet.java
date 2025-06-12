@@ -391,8 +391,6 @@ public final class ImmutableListBackedSortedSet<T extends Comparable<T>> extends
             int start = original.getIndex(toElement);
             if (start < 0) {
                 start = -start - 1;
-            } else if (start + 1 == size()) {
-                // nothing to do: start = size() - 1
             } else if (start + 1 < size()) {
                 start++;
             }

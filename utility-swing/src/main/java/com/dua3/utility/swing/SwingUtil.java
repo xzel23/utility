@@ -643,8 +643,10 @@ public final class SwingUtil {
             }
         }
 
+        @Serial
         private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {throw new java.io.NotSerializableException("com.dua3.utility.swing.SwingUtil.SwingDropTarget");}
 
+        @Serial
         private void writeObject(java.io.ObjectOutputStream out) throws IOException {throw new java.io.NotSerializableException("com.dua3.utility.swing.SwingUtil.SwingDropTarget");}
     }
 
