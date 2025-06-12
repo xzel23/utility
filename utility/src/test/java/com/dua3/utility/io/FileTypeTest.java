@@ -2,7 +2,6 @@ package com.dua3.utility.io;
 
 import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -68,7 +67,7 @@ class FileTypeTest {
         assertTrue(fileTypes.contains(compoundFileType));
 
         // Test immutability
-        assertThrows(UnsupportedOperationException.class, () -> fileTypes.clear());
+        assertThrows(UnsupportedOperationException.class, fileTypes::clear);
     }
 
     @Test
@@ -109,7 +108,7 @@ class FileTypeTest {
         assertTrue(results.contains(textFileType));
 
         // Test immutability
-        assertThrows(UnsupportedOperationException.class, () -> results.clear());
+        assertThrows(UnsupportedOperationException.class, results::clear);
     }
 
     @Test
@@ -206,7 +205,7 @@ class FileTypeTest {
         assertEquals(List.of("txt", "text"), extensions);
 
         // Test immutability
-        assertThrows(UnsupportedOperationException.class, () -> extensions.clear());
+        assertThrows(UnsupportedOperationException.class, extensions::clear);
     }
 
     @Test
@@ -252,10 +251,10 @@ class FileTypeTest {
         TestFileType sameType = new TestFileType("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text");
         TestFileType differentType = new TestFileType("Different", OpenMode.READ, Integer.class, "int");
 
-        assertEquals(textFileType, sameType);
-        assertNotEquals(textFileType, differentType);
-        assertNotEquals(textFileType, null);
-        assertNotEquals(textFileType, "not a file type");
+        assertTrue(textFileType.equals(sameType), "equals with same type");
+        assertFalse(textFileType.equals(differentType), "equals with different type");
+        assertFalse(textFileType.equals(null), "equals with null");
+        assertFalse(textFileType.equals("not a file type"), "equals with non-FileType object");
     }
 
     @Test
