@@ -447,6 +447,10 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * @return true, if mode is supported by this file type
      */
     public boolean isSupported(OpenMode mode) {
+        // Special case for NONE: always return false
+        if (mode == OpenMode.NONE) {
+            return false;
+        }
         return (this.mode.n & mode.n) == mode.n;
     }
 
@@ -579,7 +583,8 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
+        if (o == null) return false;
         if (!(o instanceof FileType<?> fileType)) return false;
         return Objects.equals(name, fileType.name)
                 && Objects.equals(cls, fileType.cls)
