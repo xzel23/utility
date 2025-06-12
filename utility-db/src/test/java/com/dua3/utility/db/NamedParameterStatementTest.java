@@ -5,7 +5,9 @@
 
 package com.dua3.utility.db;
 
+import org.h2.jdbc.JdbcSQLFeatureNotSupportedException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -17,7 +19,9 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.JDBCType;
+import java.sql.Ref;
 import java.sql.ResultSet;
+import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
@@ -899,7 +903,7 @@ class NamedParameterStatementTest {
     }
 
     @Test
-    void testSetCharacterStream() throws SQLException, java.io.IOException {
+    void testSetCharacterStream() throws SQLException {
         String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :charStream)";
         String testString = "test character stream";
 
@@ -921,7 +925,7 @@ class NamedParameterStatementTest {
     }
 
     @Test
-    void testSetNCharacterStream() throws SQLException, java.io.IOException {
+    void testSetNCharacterStream() throws SQLException {
         String sql = "INSERT INTO test_table (id, clob_val) VALUES (:id, :nCharStream)";
         String testString = "test N character stream";
 
@@ -1030,30 +1034,122 @@ class NamedParameterStatementTest {
                 String result = rs.getString("string_val");
                 assertEquals(url.toString(), result);
             }
-        } catch (SQLException e) {
-            // If the database doesn't support URL type, mark the test as a FIXME
-            System.out.println("FIXME: Database doesn't support URL type: " + e.getMessage());
+        } catch (JdbcSQLFeatureNotSupportedException e) {
+            Assumptions.assumeTrue(false, e.getMessage());
         }
     }
 
     @Test
     void testSetRowId() throws SQLException {
-        // FIXME: This test is skipped because H2 doesn't support RowId
-        // This is just a placeholder to acknowledge that the method exists
-        System.out.println("FIXME: setRowId test skipped - H2 doesn't support RowId");
+        // This test will likely fail with H2 database, but we're implementing it anyway
+        try {
+            String sql = "INSERT INTO test_table (id, string_val) VALUES (:id, :rowIdVal)";
+
+            // In a real database that supports RowId, we would get a RowId from a previous query
+            // For testing purposes, we'll mock a RowId
+            RowId mockRowId = new RowId() {
+                private final byte[] data = "test_row_id".getBytes(StandardCharsets.UTF_8);
+
+                @Override
+                public byte[] getBytes() {
+                    return data;
+                }
+            };
+
+            try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+                stmt.setInt("id", 35);
+                stmt.setRowId("rowIdVal", mockRowId);
+                stmt.executeUpdate();
+            }
+
+            // Verify - in a real database, we would query by RowId
+            // Here we just check if the record was inserted
+            try (Statement stmt = connection.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM test_table WHERE id = 35")) {
+                assertTrue(rs.next());
+                assertNotNull(rs.getObject("string_val"));
+            }
+        } catch (JdbcSQLFeatureNotSupportedException e) {
+            Assumptions.assumeTrue(false, e.getMessage());
+        }
     }
 
     @Test
     void testSetRef() throws SQLException {
-        // FIXME: This test is skipped because H2 doesn't support Ref
-        // This is just a placeholder to acknowledge that the method exists
-        System.out.println("FIXME: setRef test skipped - H2 doesn't support Ref");
+        // This test will likely fail with H2 database, but we're implementing it anyway
+        try {
+            String sql = "INSERT INTO test_table (id, string_val) VALUES (:id, :refVal)";
+
+            // In a real database that supports Ref, we would get a Ref from a previous query
+            // For testing purposes, we'll mock a Ref
+            Ref mockRef = new Ref() {
+                @Override
+                public String getBaseTypeName() throws SQLException {
+                    return "VARCHAR";
+                }
+
+                @Override
+                public Object getObject() throws SQLException {
+                    return "test_ref_value";
+                }
+
+                @Override
+                public Object getObject(Map<String, Class<?>> map) throws SQLException {
+                    return "test_ref_value";
+                }
+
+                @Override
+                public void setObject(Object value) throws SQLException {
+                    // Not needed for this test
+                }
+            };
+
+            try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+                stmt.setInt("id", 36);
+                stmt.setRef("refVal", mockRef);
+                stmt.executeUpdate();
+            }
+
+            // Verify - in a real database, we would query by Ref
+            // Here we just check if the record was inserted
+            try (Statement stmt = connection.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM test_table WHERE id = 36")) {
+                assertTrue(rs.next());
+                assertNotNull(rs.getObject("string_val"));
+            }
+        } catch (JdbcSQLFeatureNotSupportedException e) {
+            Assumptions.assumeTrue(false, e.getMessage());
+        }
     }
 
     @Test
     void testSetSQLXML() throws SQLException {
-        // FIXME: This test is skipped because H2 doesn't support SQLXML
-        // This is just a placeholder to acknowledge that the method exists
-        System.out.println("FIXME: setSQLXML test skipped - H2 doesn't support SQLXML");
+        // This test will likely fail with H2 database, but we're implementing it anyway
+        try {
+            String sql = "INSERT INTO test_table (id, string_val) VALUES (:id, :xmlVal)";
+
+            // In a real database that supports SQLXML, we would get a SQLXML from a previous query
+            // For testing purposes, we'll mock a SQLXML
+            // Creating a mock SQLXML is complex due to the interface requirements
+            // In a real test with a database that supports SQLXML, we would use the database's SQLXML implementation
+            // For this test, we'll use a simpler approach and just test that the method doesn't throw an exception
+            // when called with null (which is valid according to the method signature)
+
+            try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+                stmt.setInt("id", 37);
+                stmt.setSQLXML("xmlVal", null);
+                stmt.executeUpdate();
+            }
+
+            // Verify - in a real database, we would query the XML data
+            // Here we just check if the record was inserted with null value
+            try (Statement stmt = connection.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM test_table WHERE id = 37")) {
+                assertTrue(rs.next());
+                assertNull(rs.getObject("string_val"));
+            }
+        } catch (JdbcSQLFeatureNotSupportedException e) {
+            Assumptions.assumeTrue(false, e.getMessage());
+        }
     }
 }
