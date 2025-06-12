@@ -12,6 +12,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -1011,10 +1012,10 @@ class NamedParameterStatementTest {
     }
 
     @Test
-    void testSetURL() throws SQLException, java.net.MalformedURLException {
+    void testSetURL() throws Exception {
         try {
             String sql = "INSERT INTO test_table (id, string_val) VALUES (:id, :urlVal)";
-            java.net.URL url = new java.net.URL("https://example.com");
+            java.net.URL url = new URI("https://example.com").toURL();
 
             try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
                 stmt.setInt("id", 34);
