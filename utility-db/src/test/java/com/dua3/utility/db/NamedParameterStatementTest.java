@@ -8,6 +8,8 @@ package com.dua3.utility.db;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test class for NamedParameterStatement.
  */
+@Execution(ExecutionMode.SAME_THREAD) // all tests use the same Database instance
 class NamedParameterStatementTest {
 
     private Connection connection;

@@ -32,8 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class XmlUtilTest {
 
-    private static final XmlUtil XML_UTIL = XmlUtil.defaultInstance();
-
     private static final String XML = """
             <?xml version="1.0" encoding="UTF-8"?>
             <Countries>
@@ -176,13 +174,13 @@ class XmlUtilTest {
 
     @Test
     void parseString() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XmlUtil.defaultInstance().parse(XML);
         assertNotNull(document);
     }
 
     @Test
     void parseStream() throws Exception {
-        Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML));
+        Document document = XmlUtil.defaultInstance().parse(IoUtil.stringInputStream(XML));
         assertNotNull(document);
     }
 
@@ -190,8 +188,8 @@ class XmlUtilTest {
     @ValueSource(strings = {XML, /* don't run because Transformer formats multi-line comments differently: XML_WITH_COMMENT, */ XML_WITH_NAMESPACES, XML_EXAMPLE})
     void prettyPrintDocument(String xml) throws Exception {
         String input = prepareInput(xml);
-        Document document = XML_UTIL.parse(input);
-        String result = XML_UTIL.prettyPrint(document);
+        Document document = XmlUtil.defaultInstance().parse(input);
+        String result = XmlUtil.defaultInstance().prettyPrint(document);
         assertLinesMatch(xml.lines(), result.lines());
     }
 
@@ -199,26 +197,26 @@ class XmlUtilTest {
     @ValueSource(strings = {XML, XML_WITH_COMMENT, XML_WITH_NAMESPACES, XML_EXAMPLE})
     void prettyPrintText(String xml) {
         String input = prepareInput(xml);
-        String result = XML_UTIL.prettyPrint(input);
+        String result = XmlUtil.defaultInstance().prettyPrint(input);
         assertLinesMatch(xml.lines(), result.lines());
     }
 
     @Test
     void parseString_withNamespace() throws Exception {
-        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        Document document = XmlUtil.defaultInstance().parse(XML_WITH_NAMESPACES);
         assertNotNull(document);
     }
 
     @Test
     void parseStream_withNamespace() throws Exception {
-        Document document = XML_UTIL.parse(IoUtil.stringInputStream(XML_WITH_NAMESPACES));
+        Document document = XmlUtil.defaultInstance().parse(IoUtil.stringInputStream(XML_WITH_NAMESPACES));
         assertNotNull(document);
     }
 
     @Test
     void xpath() throws Exception {
-        Document document = XML_UTIL.parse(XML);
-        XPath xpath = XML_UTIL.xpath();
+        Document document = XmlUtil.defaultInstance().parse(XML);
+        XPath xpath = XmlUtil.defaultInstance().xpath();
 
         String expected = "Canada";
         String actual = xpath.evaluate("//Country[@ShortName='CA']/@LongName", document);
@@ -228,8 +226,8 @@ class XmlUtilTest {
 
     @Test
     void xpath_withNamespace() throws Exception {
-        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
-        XPath xpath = XML_UTIL.xpath(document.getDocumentElement());
+        Document document = XmlUtil.defaultInstance().parse(XML_WITH_NAMESPACES);
+        XPath xpath = XmlUtil.defaultInstance().xpath(document.getDocumentElement());
 
         String expected = "Canada";
         String actual = xpath.evaluate("//c:Country[@ShortName='CA']/@LongName", document);
@@ -261,27 +259,27 @@ class XmlUtilTest {
     @Test
     void parseReader() throws Exception {
         try (Reader reader = new StringReader(XML)) {
-            Document document = XML_UTIL.parse(reader);
+            Document document = XmlUtil.defaultInstance().parse(reader);
             assertNotNull(document);
         }
     }
 
     @Test
     void testDocumentBuilder() {
-        assertNotNull(XML_UTIL.documentBuilder());
+        assertNotNull(XmlUtil.defaultInstance().documentBuilder());
     }
 
     @Test
     void testFormat() throws Exception {
-        Document document = XML_UTIL.parse(XML);
-        String formatted = XML_UTIL.format(document);
+        Document document = XmlUtil.defaultInstance().parse(XML);
+        String formatted = XmlUtil.defaultInstance().format(document);
         assertNotNull(formatted);
     }
 
     @Test
     void testXpathWithDefaultNamespace() throws Exception {
-        Document document = XML_UTIL.parse(XML);
-        XPath xpath = XML_UTIL.xpath("https://www.dua3.com/countries");
+        Document document = XmlUtil.defaultInstance().parse(XML);
+        XPath xpath = XmlUtil.defaultInstance().xpath("https://www.dua3.com/countries");
         assertNotNull(xpath);
 
         // Select an element from the document and verify the result
@@ -292,11 +290,11 @@ class XmlUtilTest {
 
     @Test
     void testXpathWithNamespaceContext() throws Exception {
-        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        Document document = XmlUtil.defaultInstance().parse(XML_WITH_NAMESPACES);
         Map<String, String> nsMap = new HashMap<>();
         nsMap.put("c", "https://www.dua3.com/countries");
         NamespaceContext ctx = new SimpleNamespaceContext(nsMap);
-        XPath xpath = XML_UTIL.xpath(ctx);
+        XPath xpath = XmlUtil.defaultInstance().xpath(ctx);
         assertNotNull(xpath);
 
         // Select an element from the document and verify the result
@@ -307,11 +305,11 @@ class XmlUtilTest {
 
     @Test
     void testXpathWithNamespaceMap() throws Exception {
-        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        Document document = XmlUtil.defaultInstance().parse(XML_WITH_NAMESPACES);
         Map<String, String> nsMap = new HashMap<>();
         nsMap.put("c", "https://www.dua3.com/countries");
         nsMap.put("d", "https://www.dua3.com/other_countries");
-        XPath xpath = XML_UTIL.xpath(nsMap, "https://www.dua3.com/default");
+        XPath xpath = XmlUtil.defaultInstance().xpath(nsMap, "https://www.dua3.com/default");
         assertNotNull(xpath);
 
         // Select elements from the document and verify the results
@@ -328,9 +326,9 @@ class XmlUtilTest {
 
     @Test
     void testPrettyPrintWriterDocument() throws Exception {
-        Document document = XML_UTIL.parse(UNINDENTED_XML);
+        Document document = XmlUtil.defaultInstance().parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
-        XML_UTIL.prettyPrint(writer, document);
+        XmlUtil.defaultInstance().prettyPrint(writer, document);
         String result = writer.toString();
         assertLinesMatch(EXPECTED_PRETTY_PRINTED_XML.lines(), result.lines());
     }
@@ -338,16 +336,16 @@ class XmlUtilTest {
     @Test
     void testPrettyPrintWriterString() throws Exception {
         StringWriter writer = new StringWriter();
-        XML_UTIL.prettyPrint(writer, UNINDENTED_XML);
+        XmlUtil.defaultInstance().prettyPrint(writer, UNINDENTED_XML);
         String result = writer.toString();
         assertLinesMatch(EXPECTED_PRETTY_PRINTED_XML.lines(), result.lines());
     }
 
     @Test
     void testPrettyPrintOutputStream() throws Exception {
-        Document document = XML_UTIL.parse(UNINDENTED_XML);
+        Document document = XmlUtil.defaultInstance().parse(UNINDENTED_XML);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XML_UTIL.prettyPrint(out, document);
+        XmlUtil.defaultInstance().prettyPrint(out, document);
         String result = out.toString(StandardCharsets.UTF_8);
         assertLinesMatch(EXPECTED_PRETTY_PRINTED_XML.lines(), result.lines());
     }
@@ -355,57 +353,57 @@ class XmlUtilTest {
     @Test
     void testPrettyPrintOutputStreamString() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XML_UTIL.prettyPrint(out, UNINDENTED_XML);
+        XmlUtil.defaultInstance().prettyPrint(out, UNINDENTED_XML);
         String result = out.toString(StandardCharsets.UTF_8);
         assertLinesMatch(EXPECTED_PRETTY_PRINTED_XML.lines(), result.lines());
     }
 
     @Test
     void testFormatOutputStream() throws Exception {
-        Document document = XML_UTIL.parse(UNINDENTED_XML);
+        Document document = XmlUtil.defaultInstance().parse(UNINDENTED_XML);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XML_UTIL.format(out, document);
+        XmlUtil.defaultInstance().format(out, document);
         String result = out.toString(StandardCharsets.UTF_8);
         assertLinesMatch(EXPECTED_FORMATTED_XML.lines(), result.lines());
     }
 
     @Test
     void testFormatOutputStreamWithCharset() throws Exception {
-        Document document = XML_UTIL.parse(UNINDENTED_XML);
+        Document document = XmlUtil.defaultInstance().parse(UNINDENTED_XML);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XML_UTIL.format(out, document, StandardCharsets.UTF_8);
+        XmlUtil.defaultInstance().format(out, document, StandardCharsets.UTF_8);
         String result = out.toString(StandardCharsets.UTF_8);
         assertLinesMatch(EXPECTED_FORMATTED_XML.lines(), result.lines());
     }
 
     @Test
     void testFormatWriter() throws Exception {
-        Document document = XML_UTIL.parse(UNINDENTED_XML);
+        Document document = XmlUtil.defaultInstance().parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
-        XML_UTIL.format(writer, document);
+        XmlUtil.defaultInstance().format(writer, document);
         String result = writer.toString();
         assertLinesMatch(EXPECTED_FORMATTED_XML.lines(), result.lines());
     }
 
     @Test
     void testFormatWriterWithCharset() throws Exception {
-        Document document = XML_UTIL.parse(UNINDENTED_XML);
+        Document document = XmlUtil.defaultInstance().parse(UNINDENTED_XML);
         StringWriter writer = new StringWriter();
-        XML_UTIL.format(writer, document, StandardCharsets.UTF_8);
+        XmlUtil.defaultInstance().format(writer, document, StandardCharsets.UTF_8);
         String result = TextUtil.normalizeLineEnds(writer.toString());
         assertLinesMatch(EXPECTED_FORMATTED_XML.lines(), result.lines());
     }
 
     @Test
     void testChildren() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XmlUtil.defaultInstance().parse(XML);
         Node root = document.getDocumentElement();
 
         // Define expected tag names for children of the root element
         List<String> expectedTagNames = List.of("Country", "Country");
 
         // Collect actual tag names from the children stream, filtering out non-element nodes
-        List<String> actualTagNames = XML_UTIL.children(root)
+        List<String> actualTagNames = XmlUtil.defaultInstance().children(root)
                 .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
                 .map(Node::getNodeName)
                 .toList();
@@ -416,14 +414,14 @@ class XmlUtilTest {
 
     @Test
     void testNodeStream() throws Exception {
-        Document document = XML_UTIL.parse(XML);
+        Document document = XmlUtil.defaultInstance().parse(XML);
         NodeList nodeList = document.getChildNodes();
 
         // Define expected tag names for child nodes of the document
         List<String> expectedTagNames = List.of("Countries");
 
         // Collect actual tag names from the node stream, filtering out non-element nodes
-        List<String> actualTagNames = XML_UTIL.nodeStream(nodeList)
+        List<String> actualTagNames = XmlUtil.defaultInstance().nodeStream(nodeList)
                 .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
                 .map(Node::getNodeName)
                 .toList();
@@ -434,7 +432,7 @@ class XmlUtilTest {
 
     @Test
     void testCollectNamespaces() throws Exception {
-        Document document = XML_UTIL.parse(XML_WITH_NAMESPACES);
+        Document document = XmlUtil.defaultInstance().parse(XML_WITH_NAMESPACES);
         Element root = document.getDocumentElement();
         Map<String, String> namespaces = XmlUtil.collectNamespaces(root);
         assertFalse(namespaces.isEmpty());
@@ -447,8 +445,8 @@ class XmlUtilTest {
 
     @Test
     void testNormalizeDocumentNameSpaces() throws Exception {
-        Document document1 = XML_UTIL.parse(XML_WITH_NAMESPACES);
-        Document document2 = XML_UTIL.parse(XML_EXAMPLE);
+        Document document1 = XmlUtil.defaultInstance().parse(XML_WITH_NAMESPACES);
+        Document document2 = XmlUtil.defaultInstance().parse(XML_EXAMPLE);
         List<XmlUtil.DocumentWithNamespace> normalized = XmlUtil.normalizeDocumentNameSpaces(document1, document2);
 
         // Verify basic structure

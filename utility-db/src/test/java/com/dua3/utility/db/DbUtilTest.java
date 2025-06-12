@@ -8,6 +8,8 @@ package com.dua3.utility.db;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test class for DbUtil.
  */
+@Execution(ExecutionMode.SAME_THREAD) // all tests use the same Database instance
 class DbUtilTest {
 
     private Connection connection;

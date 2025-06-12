@@ -1,6 +1,7 @@
 package com.dua3.utility.io;
 
 import com.dua3.utility.options.Arguments;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,12 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class FileTypeTest {
 
-    private TestFileType textFileType;
-    private TestFileType documentFileType;
-    private TestCompoundFileType compoundFileType;
+    private static TestFileType textFileType;
+    private static TestFileType documentFileType;
+    private static TestCompoundFileType compoundFileType;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         // Create test file types
         textFileType = new TestFileType("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text");
         documentFileType = new TestFileType("Document", OpenMode.READ, TestDocument.class, "doc", "docx");
