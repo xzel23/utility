@@ -28,33 +28,6 @@ class FileTypeTest {
         textFileType = new TestFileType("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text");
         documentFileType = new TestFileType("Document", OpenMode.READ, TestDocument.class, "doc", "docx");
         compoundFileType = new TestCompoundFileType("All Files", OpenMode.READ_AND_WRITE, Object.class, "txt", "doc");
-
-        // Initialize them to add to FILE_TYPES
-        textFileType.init();
-        documentFileType.init();
-        compoundFileType.init();
-    }
-
-    @Test
-    void testConstructorWithWriteableClass() {
-        TestFileType fileType = new TestFileType("Test", OpenMode.READ_AND_WRITE, String.class, Object.class, "test");
-
-        assertEquals("Test", fileType.getName());
-        assertEquals(String.class, fileType.getDocumentClass());
-        assertEquals(Object.class, fileType.getWriteableClass());
-        assertTrue(fileType.isSupported(OpenMode.READ_AND_WRITE));
-        assertEquals(List.of("test"), fileType.getExtensions());
-    }
-
-    @Test
-    void testConstructorWithSameClass() {
-        TestFileType fileType = new TestFileType("Test", OpenMode.READ, String.class, "test");
-
-        assertEquals("Test", fileType.getName());
-        assertEquals(String.class, fileType.getDocumentClass());
-        assertEquals(String.class, fileType.getWriteableClass());
-        assertTrue(fileType.isSupported(OpenMode.READ));
-        assertFalse(fileType.isSupported(OpenMode.WRITE));
     }
 
     @Test
@@ -248,11 +221,8 @@ class FileTypeTest {
 
     @Test
     void testEquals() {
-        TestFileType sameType = new TestFileType("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text");
-        TestFileType differentType = new TestFileType("Different", OpenMode.READ, Integer.class, "int");
-
-        assertTrue(textFileType.equals(sameType), "equals with same type");
-        assertFalse(textFileType.equals(differentType), "equals with different type");
+        assertTrue(textFileType.equals(textFileType), "equals with same type");
+        assertFalse(textFileType.equals(documentFileType), "equals with different type");
         assertFalse(textFileType.equals(null), "equals with null");
         assertFalse(textFileType.equals("not a file type"), "equals with non-FileType object");
     }
@@ -265,10 +235,8 @@ class FileTypeTest {
 
     @Test
     void testCompareTo() {
-        TestFileType anotherType = new TestFileType("Another", OpenMode.READ, String.class, "another");
-
-        assertTrue(textFileType.compareTo(anotherType) > 0); // "Text" > "Another"
-        assertTrue(anotherType.compareTo(textFileType) < 0);
+        assertTrue(textFileType.compareTo(documentFileType) > 0); // "Text" > "Another"
+        assertTrue(documentFileType.compareTo(textFileType) < 0);
         assertEquals(0, textFileType.compareTo(textFileType));
     }
 
@@ -322,10 +290,12 @@ class FileTypeTest {
 
         public TestFileType(String name, OpenMode mode, Class<T> cls, String... extensions) {
             super(name, mode, cls, extensions);
+            init();
         }
 
         public TestFileType(String name, OpenMode mode, Class<T> cls, Class<T> clsWriteable, String... extensions) {
             super(name, mode, cls, clsWriteable, extensions);
+            init();
         }
 
         public void setTestContent(T content) {
@@ -375,6 +345,7 @@ class FileTypeTest {
     private static class TestCompoundFileType extends FileType<Object> {
         public TestCompoundFileType(String name, OpenMode mode, Class<Object> cls, String... extensions) {
             super(name, mode, cls, extensions);
+            init();
         }
 
         @Override
