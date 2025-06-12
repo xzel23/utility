@@ -48,7 +48,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     // Load FileType  implementations
     static {
-        ServiceLoader.load(FileType.class).forEach(FileType::init);
+        ServiceLoader.load(FileType.class).forEach(FileType::addType);
     }
 
     private final String name;
@@ -88,11 +88,14 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
 
     /**
      * Add a file type to the set of available file types.
+     * <p>
+     * Note: this method is automatically called for FileType instances loaded via SPI
      *
      * @param ft  the type to add
      * @param <T> the file type's document type
      */
-    protected static <T> void addType(FileType<T> ft) {
+    public static <T> void addType(FileType<T> ft) {
+        ft.onAdd();
         FILE_TYPES.add(ft);
     }
 
@@ -383,11 +386,10 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     }
 
     /**
-     * Initialise and add this type to the set of available file types.
+     * This method is called when the file type is added to the repository.
+     * It can be used for custom initialisation tasks.
      */
-    protected void init() {
-        addType(this);
-    }
+    protected void onAdd() { /* do nothing */ }
 
     /**
      * Get name.

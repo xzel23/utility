@@ -4,17 +4,14 @@ import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,10 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests for the SwingFileFilter class.
  * <p>
  * These tests verify that the filter correctly accepts or rejects files based on the FileType.
- * 
- * FIXME: The original tests were failing because there are no FileType instances registered for String.class
- * with OpenMode.READ. We've modified the tests to create a mock FileType for testing instead of relying on
- * registered FileTypes.
  */
 class SwingFileFilterTest {
 
@@ -35,12 +28,10 @@ class SwingFileFilterTest {
 
         public TestFileType(String name, OpenMode mode, Class<T> cls, String... extensions) {
             super(name, mode, cls, extensions);
-            init();
         }
 
         public TestFileType(String name, OpenMode mode, Class<T> cls, Class<T> clsWriteable, String... extensions) {
             super(name, mode, cls, clsWriteable, extensions);
-            init();
         }
 
         public void setTestContent(T content) {
@@ -62,8 +53,8 @@ class SwingFileFilterTest {
     @BeforeAll
     static void setUp() {
         // Create mock FileTypes
-        new TestFileType("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text");
-        new TestFileType("Document", OpenMode.READ, String.class, "doc", "docx");
+        FileType.addType(new TestFileType("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text"));
+        FileType.addType(new TestFileType("Document", OpenMode.READ, String.class, "doc", "docx"));
     }
 
     /**

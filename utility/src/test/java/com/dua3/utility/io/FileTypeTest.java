@@ -28,6 +28,10 @@ class FileTypeTest {
         textFileType = new TestFileType("Text", OpenMode.READ_AND_WRITE, String.class, "txt", "text");
         documentFileType = new TestFileType("Document", OpenMode.READ, TestDocument.class, "doc", "docx");
         compoundFileType = new TestCompoundFileType("All Files", OpenMode.READ_AND_WRITE, Object.class, "txt", "doc");
+
+        FileType.addType(textFileType);
+        FileType.addType(documentFileType);
+        FileType.addType(compoundFileType);
     }
 
     @Test
@@ -266,7 +270,7 @@ class FileTypeTest {
     }
 
     @Test
-    void testWriteMethods() throws IOException {
+    void testWriteMethods() {
         URI uri = URI.create("file:///test.txt");
         Path path = Paths.get("test.txt");
         String content = "test content";
@@ -290,12 +294,10 @@ class FileTypeTest {
 
         public TestFileType(String name, OpenMode mode, Class<T> cls, String... extensions) {
             super(name, mode, cls, extensions);
-            init();
         }
 
         public TestFileType(String name, OpenMode mode, Class<T> cls, Class<T> clsWriteable, String... extensions) {
             super(name, mode, cls, clsWriteable, extensions);
-            init();
         }
 
         public void setTestContent(T content) {
@@ -345,7 +347,6 @@ class FileTypeTest {
     private static class TestCompoundFileType extends FileType<Object> {
         public TestCompoundFileType(String name, OpenMode mode, Class<Object> cls, String... extensions) {
             super(name, mode, cls, extensions);
-            init();
         }
 
         @Override
