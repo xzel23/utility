@@ -2,21 +2,19 @@ package com.dua3.utility.swing;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -121,9 +119,11 @@ class SwingUtilTest {
         // Create a graphics context
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         
         // Set rendering quality high
         SwingUtil.setRenderingQualityHigh(g2d);
+        assertEquals(RenderingHints.VALUE_RENDER_QUALITY, g2d.getRenderingHint(RenderingHints.KEY_RENDERING));
         
         // Clean up
         g2d.dispose();
@@ -136,11 +136,11 @@ class SwingUtilTest {
     @Test
     void testAddDropFilesSupport() {
         // Add drop files support to the test component
-        SwingUtil.addDropFilesSupport(testComponent, files -> {
-            // Do nothing in this test
-        });
-        
-        // No assertions needed - we're just verifying the method doesn't throw exceptions
+        assertDoesNotThrow( () ->
+                SwingUtil.addDropFilesSupport(testComponent, files -> {
+                    // Do nothing in this test
+                })
+        );
     }
 
     /**
@@ -150,10 +150,10 @@ class SwingUtilTest {
     @Test
     void testAddDropTextSupport() {
         // Add drop text support to the test component
-        SwingUtil.addDropTextSupport(testComponent, text -> {
-            // Do nothing in this test
-        });
-        
-        // No assertions needed - we're just verifying the method doesn't throw exceptions
+        assertDoesNotThrow( () ->
+                SwingUtil.addDropTextSupport(testComponent, text -> {
+                    // Do nothing in this test
+                })
+        );
     }
 }
