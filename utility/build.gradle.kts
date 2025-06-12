@@ -127,19 +127,11 @@ val testJava24 = tasks.register<Test>("testJava24") {
 
     // Configure JUnit Platform for running tests
     useJUnitPlatform()
-
-    // Make sure tests run in a forked VM to prevent interference with registered file types
-    // This is especially important for FileTypeTest which registers file types that could affect other tests
-    forkEvery = 1
 }
 
 // Make the main test task depend on the Java 24 test task
 tasks.test {
     dependsOn(testJava24)
-
-    // Make sure tests run in a forked VM to prevent interference with registered file types
-    // This is especially important for FileTypeTest which registers file types that could affect other tests
-    forkEvery = 1
 }
 
 // Configure the JAR task to include Java 24 classes as a multi-release JAR
