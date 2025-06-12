@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +24,7 @@ import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLXML;
 import java.sql.Statement;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -1124,32 +1126,55 @@ class NamedParameterStatementTest {
 
     @Test
     void testSetSQLXML() throws SQLException {
-        // This test will likely fail with H2 database, but we're implementing it anyway
-        try {
-            String sql = "INSERT INTO test_table (id, string_val) VALUES (:id, :xmlVal)";
+        // H2 database supports SQLXML according to documentation
+        String sql = "INSERT INTO test_table (id, string_val) VALUES (:id, :xmlVal)";
+        String xmlContent = "<test>This is a test XML</test>";
 
-            // In a real database that supports SQLXML, we would get a SQLXML from a previous query
-            // For testing purposes, we'll mock a SQLXML
-            // Creating a mock SQLXML is complex due to the interface requirements
-            // In a real test with a database that supports SQLXML, we would use the database's SQLXML implementation
-            // For this test, we'll use a simpler approach and just test that the method doesn't throw an exception
-            // when called with null (which is valid according to the method signature)
+        // Create an SQLXML object using the connection
+        SQLXML sqlxml = null;
+        try {
+            sqlxml = connection.createSQLXML();
+            // Set the XML content
+            try (Writer writer = sqlxml.setCharacterStream()) {
+                writer.write(xmlContent);
+            } catch (Exception e) {
+                fail("Failed to write XML content: " + e.getMessage());
+            }
 
             try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
                 stmt.setInt("id", 37);
-                stmt.setSQLXML("xmlVal", null);
+                stmt.setSQLXML("xmlVal", sqlxml);
                 stmt.executeUpdate();
             }
 
-            // Verify - in a real database, we would query the XML data
-            // Here we just check if the record was inserted with null value
+            // Verify the XML was stored (as a string in this case)
             try (Statement stmt = connection.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT * FROM test_table WHERE id = 37")) {
+                 ResultSet rs = stmt.executeQuery("SELECT string_val FROM test_table WHERE id = 37")) {
                 assertTrue(rs.next());
-                assertNull(rs.getObject("string_val"));
+                String storedValue = rs.getString("string_val");
+                assertNotNull(storedValue);
+                assertTrue(storedValue.contains("This is a test XML"));
             }
-        } catch (JdbcSQLFeatureNotSupportedException e) {
-            Assumptions.assumeTrue(false, e.getMessage());
+        } finally {
+            // Free the SQLXML resource
+            if (sqlxml != null) {
+                sqlxml.free();
+            }
+        }
+
+        // Test with null value
+        sql = "UPDATE test_table SET string_val = :xmlVal WHERE id = :id";
+        try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+            stmt.setInt("id", 37);
+            stmt.setSQLXML("xmlVal", null);
+            stmt.executeUpdate();
+        }
+
+        // Verify null value was stored
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT string_val FROM test_table WHERE id = 37")) {
+            assertTrue(rs.next());
+            assertNull(rs.getString("string_val"));
         }
     }
 }
