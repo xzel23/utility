@@ -23,6 +23,11 @@
     </Match>
 
     <Match>
+        <Class name="com.dua3.utility.io.FileTypeTest"/>
+        <Bug pattern="EC_UNRELATED_TYPES"/>
+    </Match>
+
+    <Match>
         <Class name="com.dua3.utility.logging.LogBufferThreadSafetyTest"/>
         <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
     </Match>
