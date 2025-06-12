@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EventListener;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiPredicate;
@@ -291,6 +292,20 @@ public class ComboBoxEx<T> extends JPanel {
      */
     public void addPopupMenuListener(PopupMenuListener listener) {
         comboBox.addPopupMenuListener(listener);
+    }
+
+    @Override
+    public <T extends EventListener> T[] getListeners(Class<T> listenerType) {
+        if (listenerType == ActionListener.class) {
+            return (T[]) comboBox.getActionListeners();
+        }
+        if (listenerType == ItemListener.class) {
+            return (T[]) comboBox.getItemListeners();
+        }
+        if (listenerType == PopupMenuListener.class) {
+            return (T[]) comboBox.getPopupMenuListeners();
+        }
+        return super.getListeners(listenerType);
     }
 
     /**

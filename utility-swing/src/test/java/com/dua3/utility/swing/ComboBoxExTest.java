@@ -3,18 +3,16 @@ package com.dua3.utility.swing;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.awt.event.ActionEvent;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -144,16 +142,46 @@ class ComboBoxExTest {
         // Create listeners
         ActionListener actionListener = e -> { /* Do nothing */ };
         ItemListener itemListener = e -> { /* Do nothing */ };
+        PopupMenuListener popupMenuListenerListener = new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                // do nothing
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                // do nothing
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+                // do nothing
+            }
+        };
+
+        int nActionListeners = comboBox.getListeners(ActionListener.class).length;
+        int nItemListeners = comboBox.getListeners(ItemListener.class).length;
+        int nPopupMenuListeners = comboBox.getListeners(PopupMenuListener.class).length;
 
         // Add listeners
         comboBox.addActionListener(actionListener);
+        assertEquals(nActionListeners + 1, comboBox.getListeners(ActionListener.class).length);
+
         comboBox.addItemListener(itemListener);
+        assertEquals(nItemListeners + 1, comboBox.getListeners(ItemListener.class).length);
+
+        comboBox.addPopupMenuListener(popupMenuListenerListener);
+        assertEquals(nPopupMenuListeners + 1, comboBox.getListeners(PopupMenuListener.class).length);
 
         // Remove listeners
         comboBox.removeActionListener(actionListener);
-        comboBox.removeItemListener(itemListener);
+        assertEquals(nActionListeners, comboBox.getListeners(ActionListener.class).length);
 
-        // No assertions needed - we're just verifying the methods don't throw exceptions
+        comboBox.removeItemListener(itemListener);
+        assertEquals(nItemListeners, comboBox.getListeners(ItemListener.class).length);
+
+        comboBox.removePopupMenuListener(popupMenuListenerListener);
+        assertEquals(nPopupMenuListeners, comboBox.getListeners(PopupMenuListener.class).length);
     }
 
     /**
