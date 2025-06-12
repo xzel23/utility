@@ -295,15 +295,15 @@ public class ComboBoxEx<T> extends JPanel {
     }
 
     @Override
-    public <T extends EventListener> T[] getListeners(Class<T> listenerType) {
+    public <L extends EventListener> L[] getListeners(Class<L> listenerType) {
         if (listenerType == ActionListener.class) {
-            return (T[]) comboBox.getActionListeners();
+            return (L[]) comboBox.getActionListeners();
         }
         if (listenerType == ItemListener.class) {
-            return (T[]) comboBox.getItemListeners();
+            return (L[]) comboBox.getItemListeners();
         }
         if (listenerType == PopupMenuListener.class) {
-            return (T[]) comboBox.getPopupMenuListeners();
+            return (L[]) comboBox.getPopupMenuListeners();
         }
         return super.getListeners(listenerType);
     }
