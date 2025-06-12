@@ -208,6 +208,34 @@ public record FragmentedText(
         }
 
         // apply anchor and vertical alignment
+        textHeight = applyAnchorAndVerticalAlignment(width, height, vAlign, hAnchor, vAnchor, textHeight, baseLine, fragmentLines);
+
+        return new FragmentedText(
+                fragmentLines,
+                width,
+                height,
+                baseLine,
+                textWidth,
+                textHeight
+        );
+    }
+
+    /**
+     * Adjusts the position and alignment of text fragments based on specified horizontal anchor, vertical anchor,
+     * vertical alignment, and layout properties such as width, height, and baseline.
+     *
+     * @param width the total width available for the text layout
+     * @param height the total height available for the text layout
+     * @param vAlign the vertical alignment strategy used for the text (e.g., TOP, MIDDLE, BOTTOM, DISTRIBUTED)
+     * @param hAnchor the horizontal alignment anchor point (e.g., LEFT, CENTER, RIGHT)
+     * @param vAnchor the vertical alignment anchor point (e.g., TOP, BASELINE, MIDDLE, BOTTOM)
+     * @param textHeight the height of the text being aligned
+     * @param baseLine the baseline offset used for BASELINE vertical anchor positioning
+     * @param fragmentLines a list of lines, where each line is represented as a list of {@code Fragment} objects,
+     *                      defining the text fragments to be aligned
+     * @return the updated total height of the text after distribution or alignment adjustments
+     */
+    private static float applyAnchorAndVerticalAlignment(float width, float height, VerticalAlignment vAlign, Graphics.HAnchor hAnchor, Graphics.VAnchor vAnchor, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
         float tx = switch (hAnchor) {
             case LEFT -> 0.0f;
             case RIGHT -> -width;
@@ -227,15 +255,7 @@ public record FragmentedText(
             case BOTTOM -> translateFragments(fragmentLines, tx, ty - verticalSpace);
             case DISTRIBUTED -> textHeight = distributeLines(fragmentLines, verticalSpace, tx, ty, textHeight);
         }
-
-        return new FragmentedText(
-                fragmentLines,
-                width,
-                height,
-                baseLine,
-                textWidth,
-                textHeight
-        );
+        return textHeight;
     }
 
     /**
