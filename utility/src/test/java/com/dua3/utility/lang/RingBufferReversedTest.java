@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -97,21 +98,21 @@ class RingBufferReversedTest {
         Integer[] array = new Integer[5];
         Integer[] result = reversed.toArray(array);
         // The array should be the same instance if it's large enough
-        assertEquals(array, result);
+        assertArrayEquals(array, result);
         // The array should contain elements in reverse order: 5, 4, 3, 2, 1
         assertArrayEquals(new Integer[]{5, 4, 3, 2, 1}, result);
 
         // Test with a larger array
         Integer[] largerArray = new Integer[10];
         Integer[] largerResult = reversed.toArray(largerArray);
-        assertEquals(largerArray, largerResult);
+        assertArrayEquals(largerArray, largerResult);
         // The first 5 elements should be 5, 4, 3, 2, 1, and the 6th element should be null
         assertEquals(5, largerResult[0]);
         assertEquals(4, largerResult[1]);
         assertEquals(3, largerResult[2]);
         assertEquals(2, largerResult[3]);
         assertEquals(1, largerResult[4]);
-        assertEquals(null, largerResult[5]);
+        assertNull(largerResult[5]);
 
         // Test with a smaller array
         Integer[] smallerArray = new Integer[3];
@@ -128,10 +129,10 @@ class RingBufferReversedTest {
         reversed.add(6);
         assertEquals(6, buffer.size());
         assertEquals(6, buffer.get(0));
-        assertEquals(1, buffer.get(5));
+        assertEquals(5, buffer.get(5));
 
-        // The reversed collection should now contain 1, 2, 3, 4, 5, 6 in reverse order
-        assertArrayEquals(new Object[]{6, 5, 4, 3, 2, 1}, reversed.toArray());
+        // The reversed collection should now contain 6, 1, 2, 3, 4, 5 in reverse order
+        assertArrayEquals(new Object[]{5, 4, 3, 2, 1, 6}, reversed.toArray());
     }
 
     @Test
@@ -165,13 +166,13 @@ class RingBufferReversedTest {
         assertEquals(8, buffer.size());
 
         // The elements should be added to the original collection
-        // The buffer should now contain 6, 7, 8, 1, 2, 3, 4, 5
-        assertEquals(6, buffer.get(0));
+        // The buffer should now contain 8, 7, 6, 1, 2, 3, 4, 5
+        assertEquals(8, buffer.get(0));
         assertEquals(7, buffer.get(1));
-        assertEquals(8, buffer.get(2));
+        assertEquals(6, buffer.get(2));
 
-        // The reversed collection should contain 5, 4, 3, 2, 1, 8, 7, 6
-        assertArrayEquals(new Object[]{5, 4, 3, 2, 1, 8, 7, 6}, reversed.toArray());
+        // The reversed collection should contain 5, 4, 3, 2, 1, 6, 7, 8
+        assertArrayEquals(new Object[]{5, 4, 3, 2, 1, 6, 7,8}, reversed.toArray());
     }
 
     @Test

@@ -85,7 +85,42 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
 
     @Override
     public boolean remove(@Nullable Object o) {
-        throw new UnsupportedOperationException("remove() is not supported");
+        if (isEmpty()) {
+            return false;
+        }
+
+        int i = indexOf(o);
+        if (i < 0) {
+            return false;
+        }
+
+        T current = data[start];
+        data[start] = null;
+        for (int j = 1; j <= i; j++) {
+            int idx = index(j);
+            T next = data[idx];
+            data[idx] = current;
+            current = next;
+        }
+        start = (start + 1) % capacity();
+        entries--;
+        return true;
+    }
+
+    /**
+     * Finds the index of the first occurrence of the specified object in the buffer,
+     * starting from the defined start position and including the entire range of entries.
+     *
+     * @param o the object to locate in the buffer. Can be null.
+     * @return the index of the first occurrence of the specified object, or -1 if the object is not found.
+     */
+    private int indexOf(Object o) {
+        for (int i = 0; i < size(); i++) {
+            if (Objects.equals(get(i), o)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -344,8 +379,7 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
             throw new NoSuchElementException("RingBuffer is empty");
         }
 
-        int n = capacity();
-        int idx = index(n - 1);
+        int idx = index(size() - 1);
         T tmp = data[idx];
         data[idx] = null;
         entries--;
@@ -365,16 +399,24 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
         if (isEmpty()) {
             throw new NoSuchElementException("RingBuffer is empty");
         }
-        return data[index(capacity() - 1)];
+        return data[index(size() - 1)];
     }
 
     @Override
     public void addFirst(T t) {
-        if (entries < capacity()) {
-            start = (start + capacity() - 1) % capacity();
+        if (capacity() == 0) {
+            return;
+        }
+        int n = capacity();
+        if (entries >= n) {
+            int idx = index(n - 1);
+            data[idx] = t;
+            start = Math.floorMod((start - 1), n);
+        } else {
+            start = Math.floorMod((start - 1), n);
             entries++;
             data[start] = t;
-        };
+        }
     }
 
     @Override

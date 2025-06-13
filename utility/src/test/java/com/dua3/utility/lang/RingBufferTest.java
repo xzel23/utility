@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -233,5 +234,291 @@ class RingBufferTest {
 
         // contains should return false
         assertFalse(zeroBuffer.contains(null));
+    }
+    @Test
+    void testRemoveFirst() {
+        buffer.clear();
+
+        // Test removing from empty buffer
+        assertThrows(NoSuchElementException.class, buffer::removeFirst);
+
+        // Test removing from buffer with one element
+        buffer.add("Test1");
+        assertEquals("Test1", buffer.removeFirst());
+        assertTrue(buffer.isEmpty());
+
+        // Test removing from buffer with multiple elements
+        buffer.addAll(List.of("Test1", "Test2", "Test3"));
+        assertEquals("Test1", buffer.removeFirst());
+        assertEquals(2, buffer.size());
+        assertEquals("Test2", buffer.get(0));
+        assertEquals("Test3", buffer.get(1));
+
+        // Test removing after buffer has wrapped around
+        buffer.clear();
+        for (int i = 0; i < CAPACITY + 5; i++) {
+            buffer.add("item" + i);
+        }
+        assertEquals("item" + 5, buffer.removeFirst());
+        assertEquals(CAPACITY - 1, buffer.size());
+        assertEquals("item" + 6, buffer.get(0));
+    }
+
+    @Test
+    void testRemoveLast() {
+        buffer.clear();
+
+        // Test removing from empty buffer
+        assertThrows(NoSuchElementException.class, buffer::removeLast);
+
+        // Test removing from buffer with one element
+        buffer.add("Test1");
+        assertEquals("Test1", buffer.removeLast());
+        assertTrue(buffer.isEmpty());
+
+        // Test removing from buffer with multiple elements
+        buffer.addAll(List.of("Test1", "Test2", "Test3"));
+        assertEquals("Test3", buffer.removeLast());
+        assertEquals(2, buffer.size());
+        assertEquals("Test1", buffer.get(0));
+        assertEquals("Test2", buffer.get(1));
+
+        // Test removing after buffer has wrapped around
+        buffer.clear();
+        for (int i = 0; i < CAPACITY + 5; i++) {
+            buffer.add("item" + i);
+        }
+        assertEquals("item" + (CAPACITY + 4), buffer.removeLast());
+        assertEquals(CAPACITY - 1, buffer.size());
+        assertEquals("item" + 5, buffer.get(0));
+    }
+
+    @Test
+    void testGetFirst() {
+        buffer.clear();
+
+        // Test getting from empty buffer
+        assertThrows(NoSuchElementException.class, buffer::getFirst);
+
+        // Test getting from buffer with one element
+        buffer.add("Test1");
+        assertEquals("Test1", buffer.getFirst());
+        assertEquals(1, buffer.size()); // Size should not change
+
+        // Test getting from buffer with multiple elements
+        buffer.add("Test2");
+        buffer.add("Test3");
+        assertEquals("Test1", buffer.getFirst());
+        assertEquals(3, buffer.size()); // Size should not change
+
+        // Test getting after buffer has wrapped around
+        buffer.clear();
+        for (int i = 0; i < CAPACITY + 5; i++) {
+            buffer.add("item" + i);
+        }
+        assertEquals("item" + 5, buffer.getFirst());
+        assertEquals(CAPACITY, buffer.size()); // Size should not change
+    }
+
+    @Test
+    void testGetLast() {
+        buffer.clear();
+
+        // Test getting from empty buffer
+        assertThrows(NoSuchElementException.class, buffer::getLast);
+
+        // Test getting from buffer with one element
+        buffer.add("Test1");
+        assertEquals("Test1", buffer.getLast());
+        assertEquals(1, buffer.size()); // Size should not change
+
+        // Test getting from buffer with multiple elements
+        buffer.add("Test2");
+        buffer.add("Test3");
+        assertEquals("Test3", buffer.getLast());
+        assertEquals(3, buffer.size()); // Size should not change
+
+        // Test getting after buffer has wrapped around
+        buffer.clear();
+        for (int i = 0; i < CAPACITY + 5; i++) {
+            buffer.add("item" + i);
+        }
+        assertEquals("item" + (CAPACITY + 4), buffer.getLast());
+        assertEquals(CAPACITY, buffer.size()); // Size should not change
+    }
+
+    @Test
+    void testAddFirst() {
+        buffer.clear();
+
+        // Test adding to empty buffer
+        buffer.addFirst("Test1");
+        assertEquals(1, buffer.size());
+        assertEquals("Test1", buffer.get(0));
+
+        // Test adding to buffer with elements
+        buffer.addFirst("Test2");
+        assertEquals(2, buffer.size());
+        assertEquals("Test2", buffer.get(0));
+        assertEquals("Test1", buffer.get(1));
+
+        // Test adding to full buffer
+        buffer.clear();
+        for (int i = 0; i < CAPACITY; i++) {
+            buffer.add("item" + i);
+        }
+        buffer.addFirst("newItem");
+        assertEquals(CAPACITY, buffer.size());
+        assertEquals("newItem", buffer.get(0));
+        assertEquals("item0", buffer.get(1));
+        // Last item should be dropped
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.get(CAPACITY));
+
+        // Test with zero capacity buffer
+        RingBuffer<Object> zeroBuffer = new RingBuffer<>(0);
+        zeroBuffer.addFirst("test");
+        assertEquals(0, zeroBuffer.size());
+        assertTrue(zeroBuffer.isEmpty());
+    }
+
+    @Test
+    void testAddLast() {
+        buffer.clear();
+
+        // Test adding to empty buffer
+        buffer.addLast("Test1");
+        assertEquals(1, buffer.size());
+        assertEquals("Test1", buffer.get(0));
+
+        // Test adding to buffer with elements
+        buffer.addLast("Test2");
+        assertEquals(2, buffer.size());
+        assertEquals("Test1", buffer.get(0));
+        assertEquals("Test2", buffer.get(1));
+
+        // Test adding to full buffer
+        buffer.clear();
+        for (int i = 0; i < CAPACITY; i++) {
+            buffer.add("item" + i);
+        }
+        buffer.addLast("newItem");
+        assertEquals(CAPACITY, buffer.size());
+        // First item should be dropped
+        assertEquals("item1", buffer.get(0));
+        assertEquals("newItem", buffer.get(CAPACITY - 1));
+
+        // Test with zero capacity buffer
+        RingBuffer<Object> zeroBuffer = new RingBuffer<>(0);
+        zeroBuffer.addLast("test");
+        assertEquals(0, zeroBuffer.size());
+        assertTrue(zeroBuffer.isEmpty());
+    }
+
+    @Test
+    void testRemoveIf() {
+        buffer.clear();
+
+        // Test on empty buffer
+        assertFalse(buffer.removeIf(e -> true));
+        assertTrue(buffer.isEmpty());
+
+        // Test with no matching elements
+        buffer.addAll(List.of("Test1", "Test2", "Test3"));
+        assertFalse(buffer.removeIf(e -> e.equals("Test4")));
+        assertEquals(3, buffer.size());
+        assertEquals("Test1", buffer.get(0));
+        assertEquals("Test2", buffer.get(1));
+        assertEquals("Test3", buffer.get(2));
+
+        // Test with some matching elements
+        assertTrue(buffer.removeIf(e -> e.equals("Test2")));
+        assertEquals(2, buffer.size());
+        assertEquals("Test1", buffer.get(0));
+        assertEquals("Test3", buffer.get(1));
+
+        // Test with all matching elements
+        assertTrue(buffer.removeIf(e -> true));
+        assertTrue(buffer.isEmpty());
+
+        // Test with wrapped buffer
+        buffer.clear();
+        for (int i = 0; i < CAPACITY + 5; i++) {
+            buffer.add("item" + i);
+        }
+        assertTrue(buffer.removeIf(e -> ((String)e).contains("8") || ((String)e).contains("9")));
+        assertEquals(8, buffer.size());
+        // items 5, 6, 7, 10, 11, 12, 13, 14 should remain
+        assertEquals("item5", buffer.get(0));
+        assertEquals("item6", buffer.get(1));
+        assertEquals("item7", buffer.get(2));
+        assertEquals("item10", buffer.get(3));
+    }
+
+    @Test
+    void testRemoveAll() {
+        buffer.clear();
+
+        // Test on empty buffer
+        assertFalse(buffer.removeAll(List.of("Test1")));
+        assertTrue(buffer.isEmpty());
+
+        // Test with no matching elements
+        buffer.addAll(List.of("Test1", "Test2", "Test3"));
+        assertFalse(buffer.removeAll(List.of("Test4")));
+        assertEquals(3, buffer.size());
+
+        // Test with some matching elements
+        assertTrue(buffer.removeAll(List.of("Test1", "Test3")));
+        assertEquals(1, buffer.size());
+        assertEquals("Test2", buffer.get(0));
+
+        // Test with all matching elements
+        buffer.clear();
+        buffer.addAll(List.of("Test1", "Test2", "Test3"));
+        assertTrue(buffer.removeAll(List.of("Test1", "Test2", "Test3")));
+        assertTrue(buffer.isEmpty());
+
+        // Test with wrapped buffer
+        buffer.clear();
+        for (int i = 0; i < CAPACITY + 5; i++) {
+            buffer.add("item" + i);
+        }
+        assertTrue(buffer.removeAll(List.of("item8", "item9", "item10")));
+        assertEquals(7, buffer.size());
+    }
+
+    @Test
+    void testRetainAll() {
+        buffer.clear();
+
+        // Test on empty buffer
+        assertFalse(buffer.retainAll(List.of("Test1")));
+        assertTrue(buffer.isEmpty());
+
+        // Test with all elements to be retained
+        buffer.addAll(List.of("Test1", "Test2", "Test3"));
+        assertFalse(buffer.retainAll(List.of("Test1", "Test2", "Test3")));
+        assertEquals(3, buffer.size());
+
+        // Test with some elements to be retained
+        assertTrue(buffer.retainAll(List.of("Test1", "Test3")));
+        assertEquals(2, buffer.size());
+        assertEquals("Test1", buffer.get(0));
+        assertEquals("Test3", buffer.get(1));
+
+        // Test with no elements to be retained
+        assertTrue(buffer.retainAll(List.of("Test4")));
+        assertTrue(buffer.isEmpty());
+
+        // Test with wrapped buffer
+        buffer.clear();
+        for (int i = 0; i < CAPACITY + 5; i++) {
+            buffer.add("item" + i);
+        }
+        assertTrue(buffer.retainAll(List.of("item5", "item6", "item7")));
+        assertEquals(3, buffer.size());
+        assertEquals("item5", buffer.get(0));
+        assertEquals("item6", buffer.get(1));
+        assertEquals("item7", buffer.get(2));
     }
 }

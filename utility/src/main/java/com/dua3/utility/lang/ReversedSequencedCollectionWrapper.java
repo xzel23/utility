@@ -71,7 +71,12 @@ public class ReversedSequencedCollectionWrapper<T extends @Nullable Object> impl
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        return delegate.addAll(c);
+        if (c.isEmpty()) {
+            return false;
+        }
+
+        c.forEach(delegate::addFirst);
+        return true;
     }
 
     @Override
