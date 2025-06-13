@@ -782,5 +782,29 @@ class LangUtilTest {
         assertArrayEquals(new Integer[]{4, 3, 2, 1}, arr4);
     }
 
+    @Test
+    void testReverseInPlaceWithRange() {
+        Integer[] arr = {1, 2, 3, 4, 5, 6, 7};
+        LangUtil.reverseInPlace(arr, 2, 5);
+        assertArrayEquals(new Integer[]{1, 2, 5, 4, 3, 6, 7}, arr);
+
+        Integer[] arr2 = {1, 2, 3, 4, 5};
+        LangUtil.reverseInPlace(arr2, 0, 5);
+        assertArrayEquals(new Integer[]{5, 4, 3, 2, 1}, arr2);
+
+        Integer[] arr3 = {1, 2, 3, 4, 5};
+        LangUtil.reverseInPlace(arr3, 1, 4);
+        assertArrayEquals(new Integer[]{1, 4, 3, 2, 5}, arr3);
+    }
+
+    @Test
+    void testReverseInPlaceInvalidRange() {
+        Integer[] arr = {1, 2, 3, 4, 5};
+
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.reverseInPlace(arr, 3, 2));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.reverseInPlace(arr, -1, 3));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.reverseInPlace(arr, 0, 6));
+    }
+
 
 }

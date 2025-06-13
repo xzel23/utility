@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.SequencedCollection;
+import java.util.function.Predicate;
 
 /**
  * A ring buffer implementation.
@@ -52,12 +53,11 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
      * Add item to end of collection.
      *
      * @param item the item to add
-     * @return true
+     * @return true, if the item was added; false if the capacity is zero
      */
     @Override
     public boolean add(T item) {
-        put(item);
-        return true;
+        return put(item);
     }
 
     /**
@@ -115,16 +115,6 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
         }
 
         return true;
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException("removeAll() is not supported");
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        throw new UnsupportedOperationException("retainAll() is not supported");
     }
 
     /**
@@ -331,5 +321,103 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
     @Override
     public SequencedCollection<T> reversed() {
         return new ReversedSequencedCollectionWrapper<>(this);
+    }
+
+    @Override
+    public T removeFirst() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("RingBuffer is empty");
+        }
+
+        int n = capacity();
+        int idx = index(0);
+        T tmp = data[idx];
+        data[idx] = null;
+        start = (start + 1) % n;
+        entries--;
+        return tmp;
+    }
+
+    @Override
+    public T removeLast() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("RingBuffer is empty");
+        }
+
+        int n = capacity();
+        int idx = index(n - 1);
+        T tmp = data[idx];
+        data[idx] = null;
+        entries--;
+        return tmp;
+    }
+
+    @Override
+    public T getFirst() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("RingBuffer is empty");
+        }
+        return data[index(0)];
+    }
+
+    @Override
+    public T getLast() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("RingBuffer is empty");
+        }
+        return data[index(capacity() - 1)];
+    }
+
+    @Override
+    public void addFirst(T t) {
+        if (entries < capacity()) {
+            start = (start + capacity() - 1) % capacity();
+            entries++;
+            data[start] = t;
+        };
+    }
+
+    @Override
+    public void addLast(T t) {
+        put(t);
+    }
+
+    @Override
+    public boolean removeIf(Predicate<? super T> filter) {
+        int initialSize = size();
+        int currentSize = initialSize;
+        int readIndex = 0;
+        int writeIndex = 0;
+
+        while (readIndex < currentSize) {
+            T item = get(readIndex);
+            if (!filter.test(item)) {
+                if (writeIndex != readIndex) {
+                    data[index(writeIndex)] = item;
+                }
+                writeIndex++;
+            }
+            readIndex++;
+        }
+
+        if (writeIndex != currentSize) {
+            // Clear any remaining elements
+            for (int i = writeIndex; i < currentSize; i++) {
+                data[index(i)] = null;
+            }
+            entries = writeIndex;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return removeIf(c::contains);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return removeIf(item -> !c.contains(item));
     }
 }

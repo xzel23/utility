@@ -36,6 +36,36 @@ class RingBufferTest {
     }
 
     @Test
+    void testAddWorksCorrectly() {
+        buffer.clear();
+        for (int i = 0; i < CAPACITY; i++) {
+            assertTrue(buffer.add("element " + i));
+            assertEquals(i + 1, buffer.size());
+            assertEquals("element " + i, buffer.get(buffer.size() - 1));
+        }
+    }
+
+    @Test
+    void testAddBeyondCapacity() {
+        buffer.clear();
+        for (int i = 0; i < CAPACITY * 2; i++) {
+            buffer.add("item " + i);
+        }
+        assertEquals(CAPACITY, buffer.size());
+        for (int i = 0; i < CAPACITY; i++) {
+            assertEquals("item " + (CAPACITY + i), buffer.get(i));
+        }
+    }
+
+    @Test
+    void testAddWithZeroCapacity() {
+        RingBuffer<Object> zeroCapacityBuffer = new RingBuffer<>(0);
+        assertFalse(zeroCapacityBuffer.add("test"));
+        assertEquals(0, zeroCapacityBuffer.size());
+        assertTrue(zeroCapacityBuffer.isEmpty());
+    }
+
+    @Test
     void testCapacity() {
         assertEquals(CAPACITY, buffer.capacity());
         for (int i = 0; i < 2 * CAPACITY; i++) {
