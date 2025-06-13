@@ -25,12 +25,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,7 +44,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
     /**
      * Set of defined file types.
      */
-    private static final Set<FileType<?>> FILE_TYPES = new LinkedHashSet<>();
+    private static final Set<FileType<?>> FILE_TYPES = new CopyOnWriteArraySet<>();
 
     // Load FileType  implementations
     static {
@@ -93,10 +93,14 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      *
      * @param ft  the type to add
      * @param <T> the file type's document type
+     * @return true, if the type was added, false, if it was already added before
      */
-    public static <T> void addType(FileType<T> ft) {
-        ft.onAdd();
-        FILE_TYPES.add(ft);
+    public static <T> boolean addType(FileType<T> ft) {
+        boolean added = FILE_TYPES.add(ft);
+        if (added) {
+            ft.onAdd();
+        }
+        return added;
     }
 
     /**
@@ -235,7 +239,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
         //noinspection unchecked
         return FILE_TYPES.stream()
                 .filter(t -> !t.isCompound() && t.isSupported(OpenMode.WRITE) && t.getWriteableClass().isAssignableFrom(cls))
-                .map( t -> (FileType<? super T>) t)
+                .map(t -> (FileType<? super T>) t)
                 .collect(Collectors.toUnmodifiableList());
     }
 
