@@ -2,7 +2,6 @@ package com.dua3.utility.lang;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.SequencedCollection;
@@ -42,7 +41,7 @@ public class ReversedSequencedCollectionWrapper<T extends @Nullable Object> impl
 
     @Override
     public Object[] toArray() {
-        Object[] array = delegate.reversed().toArray();
+        Object[] array = delegate.toArray();
         LangUtil.reverseInPlace(array);
         return array;
     }
@@ -50,7 +49,7 @@ public class ReversedSequencedCollectionWrapper<T extends @Nullable Object> impl
     @Override
     public <T1> T1[] toArray(T1[] a) {
         T1[] array = delegate.toArray(a);
-        LangUtil.reverseInPlace(array);
+        LangUtil.reverseInPlace(array, 0, size());
         return array;
     }
 

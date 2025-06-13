@@ -1880,8 +1880,28 @@ public final class LangUtil {
      * @param array The array whose elements will be reversed. This array is modified in place.
      */
     public static <T> void reverseInPlace(T[] array) {
-        int i = 0;
-        int j = array.length - 1;
+        reverseInPlace(array, 0, array.length);
+    }
+
+    /**
+     * Reverses the elements of the specified array within the given range in place.
+     *
+     * @param <T>   the type of the array elements
+     * @param array the array whose elements are to be reversed
+     * @param from  the starting index of the range, inclusive
+     * @param to    the ending index of the range, exclusive; must be greater than or equal to {@code from}
+     *              and less than or equal to the array length
+     * @throws IllegalArgumentException if the specified range is invalid (i.e., {@code from < 0}, {@code from > to},
+     *                                  or {@code to > array.length})
+     */
+    public static <T> void reverseInPlace(T[] array, int from, int to) {
+        check(
+                from>=0 && from <= to && to <= array.length,
+                () -> new IllegalArgumentException("invalid range: from=%d, to=%d, length=%d".formatted(from, to, array.length))
+        );
+
+        int i = from;
+        int j = to - 1;
         T tmp;
         while (j > i) {
             tmp = array[j];
@@ -1890,5 +1910,7 @@ public final class LangUtil {
             j--;
             i++;
         }
+
     }
+
 }
