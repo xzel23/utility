@@ -198,7 +198,7 @@ class RingBufferTest {
         // toArray should return empty array
         assertArrayEquals(new Object[0], zeroBuffer.toArray());
 
-        // subList with valid indices should return empty list
+        // subList with valid indices should return an empty list
         assertEquals(Collections.emptyList(), zeroBuffer.subList(0, 0));
 
         // contains should return false
