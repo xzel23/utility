@@ -6,9 +6,23 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.SequencedCollection;
 
+/**
+ * A wrapper class that reverses the order of elements in a {@link SequencedCollection}.
+ * This class delegates the underlying operations to the provided {@link SequencedCollection}
+ * while ensuring that the order of elements appears reversed when accessed through this wrapper.
+ *
+ * @param <T> the type of elements in the collection, which allows nullable elements
+ */
 public class ReversedSequencedCollectionWrapper<T extends @Nullable Object> implements SequencedCollection<T> {
     private final SequencedCollection<T> delegate;
 
+    /**
+     * Constructs a new {@code ReversedSequencedCollectionWrapper} that wraps the specified
+     * {@link SequencedCollection}. The underlying collection's order will appear reversed
+     * when accessed through this wrapper.
+     *
+     * @param delegate the {@link SequencedCollection} to be wrapped and reversed
+     */
     public ReversedSequencedCollectionWrapper(SequencedCollection<T> delegate) {
         this.delegate = delegate;
     }
