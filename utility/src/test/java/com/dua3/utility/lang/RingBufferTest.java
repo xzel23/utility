@@ -75,6 +75,8 @@ class RingBufferTest {
         }
         assertEquals(CAPACITY, buffer.capacity());
         assertEquals(CAPACITY, buffer.size());
+        assertEquals("test " + CAPACITY, buffer.get(0));
+        assertEquals("test " + (2 * CAPACITY - 1), buffer.get(CAPACITY - 1));
 
         // elements should be retained when capacity is increased
         String asText = buffer.toString(); // compare content after resetting capacity
@@ -82,20 +84,25 @@ class RingBufferTest {
         assertEquals(2 * CAPACITY, buffer.capacity());
         assertEquals(CAPACITY, buffer.size());
         assertEquals(asText, buffer.toString());
+        assertEquals("test " + CAPACITY, buffer.get(0));
+        assertEquals("test " + (2 * CAPACITY - 1), buffer.get(CAPACITY - 1));
 
         // add elements to see if capacity is set as expected
         for (int i = 0; i < 2 * CAPACITY; i++) {
-            buffer.add("test " + i);
+            buffer.add("test " + (2 * CAPACITY +i));
         }
         assertEquals(2 * CAPACITY, buffer.capacity());
         assertEquals(2 * CAPACITY, buffer.size());
+        assertEquals("test " + (2 * CAPACITY), buffer.get(0));
+        assertEquals("test " + (3 * CAPACITY - 1), buffer.get(CAPACITY - 1));
+        assertEquals("test " + (4 * CAPACITY - 1), buffer.get(2 * CAPACITY - 1));
 
         // now reduce the size
         buffer.setCapacity(CAPACITY);
         assertEquals(CAPACITY, buffer.capacity());
         assertEquals(CAPACITY, buffer.size());
         for (int i = 0; i < CAPACITY; i++) {
-            assertEquals("test " + (CAPACITY + i), buffer.get(i));
+            assertEquals("test " + (3 * CAPACITY + i), buffer.get(i));
         }
     }
 
