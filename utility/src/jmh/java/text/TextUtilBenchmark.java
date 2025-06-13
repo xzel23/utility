@@ -113,11 +113,6 @@ public class TextUtilBenchmark {
     }
 
     @Benchmark
-    public void getMD5String(Blackhole blackhole) {
-        blackhole.consume(TextUtil.getMD5String(longText));
-    }
-
-    @Benchmark
     public void base64Encode(Blackhole blackhole) {
         blackhole.consume(TextUtil.base64Encode(longText.getBytes(StandardCharsets.UTF_8)));
     }

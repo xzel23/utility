@@ -615,81 +615,12 @@ public final class TextUtil {
     }
 
     /**
-     * Get MD5 digest as hex string.
-     *
-     * @param text the text for which to calculate the digest
-     * @return the MD5 digest as hex string
-     */
-    public static String getMD5String(String text) {
-        return HexFormat.of().formatHex(getMD5(text));
-    }
-
-    /**
-     * Get MD5 digest as hex string.
-     *
-     * @param data the data for which to calculate the digest
-     * @return the MD5 digest as hex string
-     */
-    public static String getMD5String(byte[] data) {
-        return HexFormat.of().formatHex(getMD5(data));
-    }
-
-    /**
-     * Get MD5 digest as hex string.
-     *
-     * @param in the stream to read data from
-     * @return the MD5 digest as hex string
-     * @throws IOException if an I/O error occurs
-     */
-    public static String getMD5String(InputStream in) throws IOException {
-        return HexFormat.of().formatHex(getMD5(in));
-    }
-
-    /**
-     * Get MD5 digest.
-     *
-     * @param text the text for which to calculate the digest
-     * @return the MD5 digest as byte array
-     */
-    public static byte[] getMD5(String text) {
-        try {
-            return getDigest("MD5", text.getBytes(StandardCharsets.UTF_8));
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
-     * Get MD5 digest.
-     *
-     * @param data the data for which to calculate the digest
-     * @return the MD5 digest as byte array
-     */
-    public static byte[] getMD5(byte[] data) {
-        try {
-            return getDigest("MD5", data);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
-     * Get MD5 digest.
-     *
-     * @param in the stream to read data from
-     * @return the MD5 digest as byte array
-     * @throws IOException if an I/O error occurs
-     */
-    public static byte[] getMD5(InputStream in) throws IOException {
-        try {
-            return getDigest("MD5", in);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
      * Get digest.
+     * <p>
+     * For a list of possible algorithms see
+     * <a href="https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html#messagedigest-algorithms">
+     *     Java Security Standard Algorithm Names
+     * </a>.
      *
      * @param algorithm the algorithm to use
      * @param data the data for which to calculate the digest
@@ -726,7 +657,7 @@ public final class TextUtil {
      *
      * @param algorithm the algorithm to use
      * @param data the data for which to calculate the digest
-     * @return the MD5 digest as hex string
+     * @return the digest as hex string
      * @throws NoSuchAlgorithmException if the algorithm is not implemented
      */
     public static String getDigestString(String algorithm, byte[] data) throws NoSuchAlgorithmException {
@@ -738,7 +669,7 @@ public final class TextUtil {
      *
      * @param algorithm the algorithm to use
      * @param in the stream to read data from
-     * @return the MD5 digest as hex string
+     * @return the digest as hex string
      * @throws IOException if an I/O error occurs
      * @throws NoSuchAlgorithmException if the algorithm is not implemented
      */

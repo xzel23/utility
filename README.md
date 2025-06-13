@@ -219,6 +219,10 @@ could not be loaded.
     - `TextUtil`
         - Added `TextUtil.toCharArray()|charsToBytes()|bytesToChars()`.
         - Added `removeLeading|Trailing|LeadingAndTrailing()` to efficently strip elements from the start or end of a list.
+        - Removed the MD5-methods. MD5 can still be used by passing "MD5" as algorithm name. Reason: MD5 is considered
+          cryptographically weak and insecure, and the API should not make using an unsecure algorithm easier to use than
+          a secure one. Which algorithms are considered safe is always subject to ongoing research, so be neutral about
+          algorithms.
     - `RichText`
         - Fix some RichText.split() issues; the method should now always produce results consistent with String.split()
 

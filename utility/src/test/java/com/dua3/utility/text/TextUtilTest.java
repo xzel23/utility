@@ -583,43 +583,6 @@ class TextUtilTest {
     }
 
     @Test
-    void testGetMD5String() throws IOException {
-        // Test with string input
-        String input = "Hello, World!";
-        String md5 = TextUtil.getMD5String(input);
-        Assertions.assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5);
-
-        // Test with byte array input
-        byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
-        String md5Bytes = TextUtil.getMD5String(bytes);
-        Assertions.assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5Bytes);
-
-        // Test with InputStream input
-        try (InputStream is = new ByteArrayInputStream(bytes)) {
-            String md5Stream = TextUtil.getMD5String(is);
-            Assertions.assertEquals("65a8e27d8879283831b664bd8b7f0ad4", md5Stream);
-        }
-    }
-
-    @Test
-    void testGetMD5() throws IOException {
-        // Test with string input
-        String input = "Hello, World!";
-        byte[] md5 = TextUtil.getMD5(input);
-
-        // Test with byte array input
-        byte[] bytes = input.getBytes(StandardCharsets.UTF_8);
-        byte[] md5Bytes = TextUtil.getMD5(bytes);
-        Assertions.assertArrayEquals(md5, md5Bytes);
-
-        // Test with InputStream input
-        try (InputStream is = new ByteArrayInputStream(bytes)) {
-            byte[] md5Stream = TextUtil.getMD5(is);
-            Assertions.assertArrayEquals(md5, md5Stream);
-        }
-    }
-
-    @Test
     void testGetDigest() throws NoSuchAlgorithmException, IOException {
         // Test with byte array input
         String input = "Hello, World!";
