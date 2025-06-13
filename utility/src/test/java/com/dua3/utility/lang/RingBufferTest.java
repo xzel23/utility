@@ -172,4 +172,36 @@ class RingBufferTest {
         buffer.addAll(List.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
         assertArrayEquals(List.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15).toArray(), buffer.toArray());
     }
+
+    @Test
+    void testZeroCapacityBuffer() {
+        // Create a zero capacity buffer
+        RingBuffer<Object> zeroBuffer = new RingBuffer<>(0);
+
+        // Test basic properties
+        assertEquals(0, zeroBuffer.capacity());
+        assertEquals(0, zeroBuffer.size());
+        assertTrue(zeroBuffer.isEmpty());
+
+        // Adding elements should have no effect
+        zeroBuffer.add("test");
+        assertEquals(0, zeroBuffer.size());
+        assertTrue(zeroBuffer.isEmpty());
+
+        // Adding collections should have no effect and return false
+        assertFalse(zeroBuffer.addAll(List.of(1, 2, 3)));
+        assertEquals(0, zeroBuffer.size());
+
+        // toString should show empty buffer
+        assertEquals("[]", zeroBuffer.toString());
+
+        // toArray should return empty array
+        assertArrayEquals(new Object[0], zeroBuffer.toArray());
+
+        // subList with valid indices should return empty list
+        assertEquals(Collections.emptyList(), zeroBuffer.subList(0, 0));
+
+        // contains should return false
+        assertFalse(zeroBuffer.contains(null));
+    }
 }

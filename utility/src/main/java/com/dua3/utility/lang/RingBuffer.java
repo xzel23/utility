@@ -17,18 +17,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.SequencedCollection;
 
 /**
  * A ring buffer implementation.
  * This class behaves much like @see {@link ArrayList}, but with a fixed maximum
  * size.
+ * <p>
  * The collection grows when new elements are added until the capacity is reached. If even more items are added, the
  * oldest element is removed and the new element appended to the collection.
  * Adding is O(1).
  *
  * @param <T> the element type
  */
-public class RingBuffer<T extends @Nullable Object> implements Collection<@Nullable T> {
+public class RingBuffer<T extends @Nullable Object> implements SequencedCollection<T> {
 
     private @Nullable T[] data;
     private int entries;
@@ -67,11 +69,15 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
      *               previously contained in the buffer was replaced)
      */
     public boolean put(T item) {
-        if (entries < capacity()) {
+        int n = capacity();
+        if (n <= 0) {
+            return false;
+        }
+        if (entries < n) {
             data[index(entries++)] = item;
             return true;
         } else {
-            start = (start + 1) % capacity();
+            start = (start + 1) % n;
             data[index(entries - 1)] = item;
             return false;
         }
@@ -95,7 +101,7 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
      */
     @Override
     public boolean addAll(Collection<? extends @Nullable T> items) {
-        if (items.isEmpty()) {
+        if (items.isEmpty() || capacity() == 0) {
             return false;
         }
 
@@ -135,8 +141,10 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
      */
     @Override
     public void clear() {
-        start = entries = 0;
-        Arrays.fill(data, null);
+        if (capacity() > 0) {
+            start = entries = 0;
+            Arrays.fill(data, null);
+        }
     }
 
     /**
@@ -161,7 +169,7 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
     }
 
     @Override
-    public boolean contains(Object o) {
+    public boolean contains(@Nullable Object o) {
         for (T item : this) {
             if (Objects.equals(item, o)) {
                 return true;
@@ -318,5 +326,10 @@ public class RingBuffer<T extends @Nullable Object> implements Collection<@Nulla
                 return sz;
             }
         };
+    }
+
+    @Override
+    public SequencedCollection<T> reversed() {
+        return new ReversedSequencedCollectionWrapper<>(this);
     }
 }

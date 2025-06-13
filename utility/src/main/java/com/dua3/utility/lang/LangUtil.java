@@ -1871,4 +1871,24 @@ public final class LangUtil {
         removeTrailing(list, predicate);
     }
 
+    /**
+     * Reverses the elements of the given array in place. The first element swaps with
+     * the last, the second element swaps with the second-to-last, and so on, until
+     * the entire array is reversed.
+     *
+     * @param <T> The type of the elements in the array.
+     * @param array The array whose elements will be reversed. This array is modified in place.
+     */
+    public static <T> void reverseInPlace(T[] array) {
+        int i = 0;
+        int j = array.length - 1;
+        T tmp;
+        while (j > i) {
+            tmp = array[j];
+            array[j] = array[i];
+            array[i] = tmp;
+            j--;
+            i++;
+        }
+    }
 }
