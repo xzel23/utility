@@ -50,6 +50,16 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
         buffer = new RingBuffer<>(capacity);
     }
 
+    /**
+     * Updates the capacity of the buffer while retaining the existing elements. If the new capacity is less than
+     * the current size of the buffer, only the most recent elements within the new capacity are retained.
+     *
+     * @param n the new capacity for the buffer. Must be a non-negative integer.
+     */
+    public void setCapacity(int n) {
+        buffer.setCapacity(n);
+    }
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         BufferState bufferState = getBufferState();
