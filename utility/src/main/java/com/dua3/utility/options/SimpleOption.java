@@ -94,6 +94,12 @@ public final class SimpleOption<T> extends Option<T> {
     }
 
     @Override
+    public SimpleOption<T> argName(String argName) {
+        super.argName(argName);
+        return this;
+    }
+
+    @Override
     public SimpleOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;

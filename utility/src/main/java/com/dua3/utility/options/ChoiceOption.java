@@ -184,6 +184,12 @@ public final class ChoiceOption<T> extends Option<T> {
         return this;
     }
 
+    @Override
+    public ChoiceOption<T> argName(String argName) {
+        super.argName(argName);
+        return this;
+    }
+
     /**
      * Get the default value.
      *

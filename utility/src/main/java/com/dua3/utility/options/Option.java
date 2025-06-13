@@ -129,7 +129,7 @@ public abstract class Option<T> {
     }
 
     /**
-     * Set the argument name.
+     * Set the argument names.
      *
      * @param firstArgName the first argument name
      * @param remainingArgNames the argument name
@@ -140,6 +140,17 @@ public abstract class Option<T> {
         this.argNames = new String[1 + remainingArgNames.length];
         this.argNames[0] = firstArgName;
         System.arraycopy(remainingArgNames, 0, this.argNames, 1, remainingArgNames.length);
+        return this;
+    }
+
+    /**
+     * Set the single argument name.
+     *
+     * @param argName the first argument name
+     * @return this option
+     */
+    protected Option<T> argName(String argName) {
+        this.argNames = new String[]{argName};
         return this;
     }
 
