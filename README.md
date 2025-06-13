@@ -197,6 +197,13 @@ could not be loaded.
 
 ### 20.0.0 (work in progress)
 
+- Package `utility`
+    - `LangUtil.reverseInPlace()` to reverse array contents
+    - `RingBuffer` implements `SequencedCollection`
+    - `LogBuffer.setCapacity()` to change the capacity of an existing buffer
+    - Added `ReversedSequencedCollectionWrapper` to facilitate implementing `reversed()` for `SequencedCollection` 
+      implementations
+
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
       that has a more secure API and adds many new features:
