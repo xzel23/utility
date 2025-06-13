@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Text related utility class.
+ * Text-related utility class.
  */
 public final class TextUtil {
 
