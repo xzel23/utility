@@ -763,4 +763,24 @@ class LangUtilTest {
         assertThrows(IllegalArgumentException.class, () -> LangUtil.requireInInterval(5, 6, 10, "Error: %s", 5));
     }
 
+    @Test
+    void testReverseInPlace() {
+        Integer[] arr1 = {1, 2, 3, 4, 5};
+        LangUtil.reverseInPlace(arr1);
+        assertArrayEquals(new Integer[]{5, 4, 3, 2, 1}, arr1);
+
+        Integer[] arr2 = {1};
+        LangUtil.reverseInPlace(arr2);
+        assertArrayEquals(new Integer[]{1}, arr2);
+
+        Integer[] arr3 = {};
+        LangUtil.reverseInPlace(arr3);
+        assertArrayEquals(new Integer[]{}, arr3);
+
+        Integer[] arr4 = {1, 2, 3, 4};
+        LangUtil.reverseInPlace(arr4);
+        assertArrayEquals(new Integer[]{4, 3, 2, 1}, arr4);
+    }
+
+
 }
