@@ -93,6 +93,18 @@ public final class StandardOption<T> extends Option<T> {
     }
 
     @Override
+    public StandardOption<T> argNames(String firstArgName, String... remainingArgNames) {
+        super.argNames(firstArgName, remainingArgNames);
+        return this;
+    }
+
+    @Override
+    public StandardOption<T> argName(String argName) {
+        super.argName(argName);
+        return this;
+    }
+
+    @Override
     public StandardOption<T> handler(Consumer<Collection<T>> handler) {
         super.handler(handler);
         return this;
