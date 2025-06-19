@@ -2,8 +2,8 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
+import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Formatter;
@@ -88,22 +88,11 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      *
      * @param <T>    the option type
      * @param option the option for the entry
-     * @param args   the arguments belonging to the option
+     * @param value  the value set for option
      * @return new {@link Entry}
      */
-    @SafeVarargs
-    public static <T> Entry<T> createEntry(Option<T> option, T... args) {
-        LangUtil.check(
-                option.minArity() >= args.length && args.length <= option.maxArity(),
-                () -> new OptionException(option, "The option '%s' requires %d to %d arguments, but %d were given".formatted(option.name(), option.minArity(), option.maxArity(), args.length))
-        );
-
-        Entry<T> entry = new Entry<>(option);
-        for (var arg : args) {
-            entry.addArg(arg);
-        }
-        
-        return entry;
+    public static <T> Entry<T> createEntry(Option<T> option, @Nullable T value) {
+        return new Entry<>(option, value);
     }
 
     /**
@@ -136,22 +125,23 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
                     Option<?> option = oo.option();
                     int occurrences = oo.occurrences();
 
-                    int minOccurrences = option.minOccurrences();
-                    int maxOccurrences = option.maxOccurrences();
+                    Repetitions repetitions = option.repetitions();
+                    int minOccurrences = repetitions.min();
+                    int maxOccurrences = repetitions.max();
 
                     // check min occurrences
                     if (minOccurrences == 1) {
                         LangUtil.check(1 <= occurrences,
                                 () -> new OptionException(
                                         option,
-                                        "missing required option '%s'".formatted(option.name()
+                                        "missing required option '%s'".formatted(option.displayName()
                                         )));
                     } else {
                         LangUtil.check(minOccurrences <= occurrences,
                                 () -> new OptionException(
                                         option,
                                         "option '%s' must be specified at least %d time(s), but was only %d times".formatted(
-                                                option.name(), minOccurrences, occurrences
+                                                option.displayName(), minOccurrences, occurrences
                                         )));
                     }
 
@@ -160,37 +150,9 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
                             () -> new OptionException(
                                     option,
                                     "option '%s' must be specified at most %d time(s), but was %d times".formatted(
-                                            option.name(), maxOccurrences, occurrences
+                                            option.displayName(), maxOccurrences, occurrences
                                     )));
                 });
-
-        // check arity
-        options.forEach(entry -> {
-            Option<?> option = entry.option;
-            int nParams = entry.params.size();
-            LangUtil.check(
-                    option.minArity() <= nParams,
-                    () -> new OptionException(
-                            option,
-                            "option '%s' must have at least %d parameters, but has only %d".formatted(
-                                    option.name(),
-                                    option.minArity(),
-                                    nParams
-                            )
-                    )
-            );
-            LangUtil.check(
-                    nParams <= option.maxArity(),
-                    () -> new OptionException(
-                            option,
-                            "option '%s' must have at most %d parameters, but has %d".formatted(
-                                    option.name(),
-                                    option.maxArity(),
-                                    nParams
-                            )
-                    )
-            );
-        });
 
         if (args.size() < minArgs) {
             throw new ArgumentsException("missing argument (at least " + minArgs + " arguments must be given)");
@@ -221,50 +183,27 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
     }
 
     /**
-     * Get value of {@link SimpleOption}.
-     *
-     * @param option the option
-     * @param <T>    the generic type of the option
-     * @return the parameter passed to the option, or the option's default value (if set)
-     * @throws OptionException if neither is set
-     */
-    public <T> T getOrThrow(SimpleOption<T> option) {
-        return get(option).orElseThrow(() -> new OptionException(option, "missing required option: " + option.name()));
-    }
-
-    /**
-     * Get value of {@link SimpleOption}.
+     * Get value of {@link Option}.
      *
      * @param option the option
      * @param <T>    the generic type of the option
      * @return Optional holding the argument passed to this option, the option's default value, or an empty Optional
      * if neither is provided
      */
-    public <T> Optional<T> get(SimpleOption<T> option) {
-        return stream(option).findFirst().map(List::getFirst).or(option::getDefault);
+    public <T> Optional<T> get(Option<T> option) {
+        return stream(option).findFirst().or(option::getDefault);
     }
 
     /**
-     * Get value of {@link ChoiceOption}.
+     * Get value of {@link Option}.
      *
      * @param option the option
      * @param <T>    the generic type of the option
      * @return the parameter passed to the option, or the option's default value (if set)
      * @throws OptionException if neither is set
      */
-    public <T> T getOrThrow(ChoiceOption<T> option) {
-        return get(option).orElseThrow(() -> new OptionException(option, "missing required option: " + option.name()));
-    }
-
-    /**
-     * Get value of {@link ChoiceOption}.
-     *
-     * @param option the option
-     * @param <T>    the generic type of the option
-     * @return the option's value
-     */
-    public <T> Optional<T> get(ChoiceOption<T> option) {
-        return stream(option).findFirst().map(List::getFirst).or(option::getDefault);
+    public <T> T getOrThrow(Option<T> option) {
+        return get(option).orElseThrow(() -> new OptionException(option, "missing required option: " + option.displayName()));
     }
 
     /**
@@ -273,17 +212,33 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @param flag the flag
      * @return true, if the flag is set
      */
-    public boolean isSet(Flag flag) {
-        return stream().anyMatch(entry -> entry.option.equals(flag));
+    public boolean isSet(Option<Boolean> flag) {
+        return Optional.ofNullable(
+                        stream()
+                                .filter(entry -> entry.option.isEquivalent(flag))
+                                .map(Entry::getValue)
+                                .map(Boolean.class::cast)
+                                .reduce(null, (@Nullable Boolean a,@Nullable Boolean b) -> {
+                                    if (a == null) {
+                                        return b;
+                                    }
+                                    if (b == null) {
+                                        return a;
+                                    }
+                                    return a || b;
+                                })
+                )
+                .or(flag::getDefault)
+                .orElse(false);
     }
 
     /**
-     * Execute action if {@link Flag} is set.
+     * Execute action if the boolean option is set to {@code true}.
      *
      * @param flag   the flag
      * @param action the action to execute
      */
-    public void ifSet(Flag flag, Runnable action) {
+    public void ifSet(Option<Boolean> flag, Runnable action) {
         if (isSet(flag)) {
             action.run();
         }
@@ -306,31 +261,20 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * @return stream of lists containing the arguments for each appearance of the given option
      */
     @SuppressWarnings("unchecked")
-    public <T> Stream<List<T>> stream(Option<T> option) {
+    public <T> Stream<T> stream(Option<T> option) {
         return options.stream()
                 .filter(entry -> entry.option.isEquivalent(option))
-                .map(entry -> ((Entry<T>) entry).getParams());
+                .map(entry -> ((Entry<T>) entry).getValue());
     }
 
     /**
-     * Execute an action if {@link SimpleOption} is present.
+     * Execute an action if {@link Option} is present.
      *
      * @param option the option
      * @param action the action to execute
      * @param <T>    the parameter type
      */
-    public <T> void ifPresent(SimpleOption<T> option, Consumer<? super T> action) {
-        stream(option).map(List::getFirst).forEach(action);
-    }
-
-    /**
-     * Execute an action for every instance of the given {@link Option}.
-     *
-     * @param option the option
-     * @param action the action to execute
-     * @param <T>    the parameter type
-     */
-    public <T> void forEach(Option<T> option, Consumer<? super List<T>> action) {
+    public <T> void ifPresent(Option<T> option, Consumer<? super T> action) {
         stream(option).forEach(action);
     }
 
@@ -338,7 +282,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * Call the handlers for all passed options.
      */
     public void handle() {
-        options.forEach(Entry::handle);
+        options.forEach(entry -> entry.handle());
     }
 
     @Override
@@ -351,10 +295,10 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
         try (Formatter fmt = new Formatter()) {
             fmt.format("Arguments{\n");
             for (Entry<?> entry : options) {
-                if (entry.option instanceof Flag) {
-                    fmt.format("  %s\n", entry.option.name());
+                if (entry.option.isFlag()) {
+                    fmt.format("  %s\n", entry.option.switches().getFirst());
                 } else {
-                    fmt.format("  %s %s\n", entry.option.name(), TextUtil.joinQuoted(entry.getParams(), " "));
+                    fmt.format("  %s \"%s\"\n", entry.option.switches().getFirst(), entry.getValue());
                 }
             }
             if (!positionalArgs().isEmpty()) {
@@ -373,33 +317,23 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      */
     public static final class Entry<T> {
         final Option<T> option;
-        final List<T> params;
+        final @Nullable T value;
 
-        Entry(Option<T> option) {
+        Entry(Option<T> option, @Nullable T value) {
             this.option = option;
-            this.params = new ArrayList<>();
-        }
-
-        static Entry<?> create(Option<?> option) {
-            return new Entry<>(option);
+            this.value = value;
         }
 
         /**
-         * Adds a parameter to the entry.
+         * Creates a new entry that represents an option and its associated value.
          *
-         * @param s the parameter to be added
+         * @param <U> the type of the value associated with the option
+         * @param option the option to associate with the entry; must not be null
+         * @param value the value associated with the option; may be null
+         * @return a new entry containing the specified option and value
          */
-        public void addParameter(String s) {
-            addArg(option.map(s));
-        }
-
-        /**
-         * Adds an argument to the entry.
-         *
-         * @param v the argument to be added
-         */
-        public void addArg(T v) {
-            params.add(v);
+        public static <U> Entry<U> create(Option<U> option, @Nullable U value) {
+            return new Entry<>(option, value);
         }
 
         /**
@@ -416,15 +350,16 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
          *
          * @return list of option parameters, converted to the target type
          */
-        public List<T> getParams() {
-            return Collections.unmodifiableList(params);
+        public @Nullable T getValue() {
+            return value;
         }
 
         /**
-         * Call the handler registered with the option and pass the parameters.
+         * Invokes the handler associated with the option and passes the value of the option to it.
+         * This method is used to process the option value using the predefined behavior specified by the handler.
          */
         public void handle() {
-            option.handle(params);
+            option.handler().accept(value);
         }
     }
 

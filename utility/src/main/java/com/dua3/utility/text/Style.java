@@ -406,7 +406,7 @@ public final class Style implements Iterable<Map.Entry<String, Object>> {
      */
     @SuppressWarnings("unchecked")
     public <T extends @Nullable Object> void ifPresentOrElseGet(String key,
-                                                                Supplier<T> defaultSupplier,
+                                                                Supplier<@Nullable T> defaultSupplier,
                                                                 Consumer<? super T> action) {
         Object raw = get(key);
         try {

@@ -73,17 +73,18 @@ public abstract class CsvIo implements AutoCloseable {
      * Constructor for creating a CsvIo object.
      * Initializes the CsvIo object with the provided options.
      *
-     * @param options The options to be used for configuring the CsvIo object.
+     * @param arguments The options to be used for configuring the CsvIo object.
      */
-    protected CsvIo(Arguments options) {
-        this.separator = IoOptions.getFieldSeparator(options);
-        this.delimiter = IoOptions.getTextDelimiter(options);
+    protected CsvIo(Arguments arguments) {
+        this.separator = arguments.getOrThrow(IoOptions.OPTION_FIELD_SEPARATOR);
+        this.delimiter = arguments.getOrThrow(IoOptions.OPTION_TEXT_DELIMITER);
         this.lineDelimiter = "\r\n";
-        this.locale = IoOptions.getLocale(options);
-        this.dateTimeFormatter = IoOptions.getDateTimeFormat(options).getDateTimeFormatter(locale);
-        this.dateFormatter = IoOptions.getDateFormat(options).getDateFormatter(locale);
-        this.timeFormatter = IoOptions.getDateFormat(options).getTimeFormatter(locale);
-        this.numberFormat = NumberFormat.getInstance(locale);
+        this.locale = arguments.getOrThrow(IoOptions.OPTION_LOCALE);
+        PredefinedDateTimeFormat dateTimeFormat = arguments.getOrThrow(IoOptions.OPTION_DATE_TIME_FORMAT);
+        this.dateTimeFormatter = dateTimeFormat.getDateTimeFormatter(this.locale);
+        this.dateFormatter = dateTimeFormat.getDateFormatter(this.locale);
+        this.timeFormatter = dateTimeFormat.getTimeFormatter(this.locale);
+        this.numberFormat = NumberFormat.getInstance(this.locale);
         numberFormat.setGroupingUsed(false);
         numberFormat.setMinimumFractionDigits(0);
         numberFormat.setMaximumFractionDigits(15);
@@ -96,10 +97,10 @@ public abstract class CsvIo implements AutoCloseable {
      */
     public static Collection<Option<?>> getOptions() {
         return List.of(
-                IoOptions.textDelimiter(),
-                IoOptions.fieldSeparator(),
-                IoOptions.locale(),
-                IoOptions.dateTimeFormat()
+                IoOptions.OPTION_TEXT_DELIMITER,
+                IoOptions.OPTION_FIELD_SEPARATOR,
+                IoOptions.OPTION_LOCALE,
+                IoOptions.OPTION_DATE_TIME_FORMAT
         );
     }
 

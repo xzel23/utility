@@ -162,9 +162,10 @@ public class ArgumentsDialog extends JDialog {
         public Arguments getArguments() {
             List<Arguments.Entry<?>> parsedOptions = inputs.values().stream()
                     .map(oi -> {
-                        Arguments.Entry<?> entry = Arguments.createEntry(oi.option);
-                        oi.getParameter().get().forEach(entry::addParameter);
-                        return entry;
+                        List<String> strings = oi.getParameter().get();
+                        return oi.option.isFlag() && strings.size() == 1
+                                ? Arguments.Entry.create((Option<Boolean>) oi.option, Boolean.parseBoolean(strings.getFirst()))
+                                : oi.option.map(strings);
                     })
                     .collect(Collectors.toUnmodifiableList());
             return new Arguments(parsedOptions, Collections.emptyList());

@@ -3,7 +3,8 @@ package com.dua3.utility.swing;
 
 import com.dua3.utility.options.ArgumentsParser;
 import com.dua3.utility.options.ArgumentsParserBuilder;
-import com.dua3.utility.options.SimpleOption;
+import com.dua3.utility.options.Option;
+import com.dua3.utility.options.Repetitions;
 
 import javax.swing.*;
 import java.awt.Component;
@@ -68,14 +69,21 @@ public class SwingTestUtil {
     /**
      * Creates a simple String option.
      *
-     * @param builder the ArgumentsParserBuilder to use
-     * @param name the option name
+     * @param builder     the ArgumentsParserBuilder to use
+     * @param name        the option name
      * @param displayName the display name for the option
+     * @param dflt
      * @return the created SimpleOption
      */
-    public static SimpleOption<String> createStringOption(ArgumentsParserBuilder builder, String name, String displayName) {
-        return builder.simpleOption(String.class, name)
-                .displayName(displayName);
+    public static Option<String> createStringOption(ArgumentsParserBuilder builder, String name, String displayName, String dflt) {
+        return builder.addStringOption(
+                displayName,
+                "Set the value of " + displayName + ".",
+                Repetitions.EXACTLY_ONE,
+                name,
+                () -> dflt,
+                name.replace(' ', '_')
+        );
     }
 
     /**
@@ -86,9 +94,15 @@ public class SwingTestUtil {
      * @param displayName the display name for the option
      * @return the created SimpleOption
      */
-    public static SimpleOption<Integer> createIntegerOption(ArgumentsParserBuilder builder, String name, String displayName) {
-        return builder.simpleOption(Integer.class, name)
-                .displayName(displayName);
+    public static Option<Integer> createIntegerOption(ArgumentsParserBuilder builder, String name, String displayName, Integer dflt) {
+        return builder.addIntegerOption(
+                displayName,
+                "Set the value of " + displayName + ".",
+                Repetitions.EXACTLY_ONE,
+                name,
+                () -> dflt,
+                name.replace(' ', '_')
+        );
     }
 
     /**
@@ -99,9 +113,8 @@ public class SwingTestUtil {
      * @param displayName the display name for the option
      * @return the created SimpleOption
      */
-    public static SimpleOption<Boolean> createBooleanOption(ArgumentsParserBuilder builder, String name, String displayName) {
-        return builder.simpleOption(Boolean.class, name)
-                .displayName(displayName);
+    public static Option<Boolean> createBooleanOption(ArgumentsParserBuilder builder, String name, String displayName) {
+        return builder.addFlag(displayName, "Set the value of " + displayName + " to true.", name.replace(' ', '_'));
     }
 
     /**

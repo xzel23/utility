@@ -59,7 +59,7 @@ public class OptionException extends ArgumentsException {
          * @param e         the parent exception
          */
         public ParameterConversionException(Option<?> option, String parameter, Exception e) {
-            super(option, "invalid value passed to " + option.name() + ": " + parameter, e);
+            super(option, "invalid value passed to " + option.displayName() + ": " + parameter, e);
             this.parameter = parameter;
         }
 
@@ -70,7 +70,7 @@ public class OptionException extends ArgumentsException {
          * @param parameter the parameter value as String
          */
         public ParameterConversionException(Option<?> option, String parameter) {
-            super(option, "invalid value passed to " + option.name() + ": " + parameter);
+            super(option, "invalid value passed to " + option.displayName() + ": " + parameter);
             this.parameter = parameter;
         }
 

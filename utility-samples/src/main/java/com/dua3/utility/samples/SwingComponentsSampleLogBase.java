@@ -123,8 +123,20 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
     private Person showPersonDialog(Person initialPerson) {
         Optional<Person> op = Optional.ofNullable(initialPerson);
         ArgumentsParserBuilder builder = ArgumentsParser.builder();
-        var optFirstName = builder.simpleOption(String.class, "firstName").displayName("First Name").defaultValue(op.map(pp -> pp.firstName).orElse(""));
-        var optLastName = builder.simpleOption(String.class, "lastName").displayName("Last Name").defaultValue(op.map(pp -> pp.lastName).orElse(""));
+        var optFirstName = builder.option(
+                        "First name",
+                        "The person's first name.",
+                        String.class
+                )
+                .defaultSupplier(() -> op.map(pp -> pp.firstName).orElse(""))
+                .build("--first-name");
+        var optLastName = builder.option(
+                        "Last name",
+                        "The person's last or family name.",
+                        String.class
+                )
+                .defaultSupplier(() -> op.map(pp -> pp.lastName).orElse(""))
+                .build("--last-name");
         ArgumentsParser parser = builder.build();
         return ArgumentsDialog.showDialog(this, parser)
                 .map(args -> {

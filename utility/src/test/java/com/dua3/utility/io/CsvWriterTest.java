@@ -90,8 +90,8 @@ class CsvWriterTest {
     void testWriteCsvWithCustomOptions() throws IOException {
         // Create arguments with custom options
         Arguments arguments = Arguments.of(
-                Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
-                Arguments.createEntry(IoOptions.textDelimiter(), '\'')
+                Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ';'),
+                Arguments.createEntry(IoOptions.OPTION_TEXT_DELIMITER, '\'')
         );
         
         // Create a StringWriter to capture the output
@@ -136,7 +136,7 @@ class CsvWriterTest {
     void testWriteCsvWithDifferentDataTypes() throws IOException {
         // Create arguments with custom locale
         Arguments arguments = Arguments.of(
-                Arguments.createEntry(IoOptions.locale(), Locale.US)
+                Arguments.createEntry(IoOptions.OPTION_LOCALE, Locale.US)
         );
         
         // Create a StringWriter to capture the output

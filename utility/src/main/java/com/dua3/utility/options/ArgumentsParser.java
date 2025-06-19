@@ -2,16 +2,17 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Formatter;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
+import java.util.SequencedMap;
 import java.util.Set;
 
 /**
@@ -21,7 +22,7 @@ public class ArgumentsParser {
 
     private static final String POSITIONAL_MARKER = "--";
 
-    private final Map<String, Option<?>> options;
+    private final SequencedMap<String, Option<?>> options;
 
     private final int minPositionalArgs;
 
@@ -62,7 +63,7 @@ public class ArgumentsParser {
             String name,
             String description,
             String argsDescription,
-            Map<String, Option<?>> options,
+            SequencedMap<String, Option<?>> options,
             int minPositionalArgs,
             int maxPositionalArgs,
             String[] positionalArgDisplayNames,
@@ -70,7 +71,7 @@ public class ArgumentsParser {
         this.name = name;
         this.description = description;
         this.argsDescription = argsDescription;
-        this.options = Map.copyOf(options);
+        this.options = new LinkedHashMap<>(options);
         this.minPositionalArgs = minPositionalArgs;
         this.maxPositionalArgs = maxPositionalArgs;
         this.positionalArgDisplayNames = positionalArgDisplayNames;
@@ -89,14 +90,16 @@ public class ArgumentsParser {
 
         Queue<Arguments.Entry<?>> parsedOptions = new ArrayDeque<>();
         List<String> positionalArgs = new ArrayList<>();
-        Arguments.Entry<?> currentEntry = null;
+        Option<?> currentOption = null;
 
         boolean parsingPositional = false;
         boolean remainingAllPositional = false;
+        List<String> currentArgs = new ArrayList<>();
 
-        for (int idx = 0; idx < args.length; idx++) {
+        int idx = 0;
+        while (idx < argList.size()) {
             // get next arg
-            String arg = argList.get(idx);
+            String arg = argList.get(idx++);
 
             // shortcut if positional marker has been encountered
             if (remainingAllPositional) {
@@ -112,24 +115,33 @@ public class ArgumentsParser {
             }
 
             // if the maximum number of args is consumed, reset the current entry
-            if (currentEntry != null && currentEntry.getParams().size() == currentEntry.getOption().maxArity()) {
-                currentEntry = null;
+            if (currentOption != null && currentArgs.size() == currentOption.maxArgs()) {
+                parsedOptions.add(currentOption.map(currentArgs));
+                currentOption = null;
+                currentArgs.clear();
             }
 
             // is the argument the start of a new option?
             Option<?> option = options.get(arg);
             if (option != null) {
-                // start processing of the next option
-                currentEntry = Arguments.Entry.create(option);
-                parsedOptions.add(currentEntry);
+                if (currentOption != null) {
+                    checkArgsCount(currentArgs, currentOption);
+                    parsedOptions.add(currentOption.map(currentArgs));
+                    currentArgs.clear();
+                }
 
-                if (currentEntry.getOption().maxArity() == 0) {
-                    currentEntry = null;
+                // start processing of the next option
+                currentOption = option;
+
+                if (currentOption.maxArgs() == 0) {
+                    parsedOptions.add(currentOption.map(currentArgs));
+                    currentOption = null;
+                    currentArgs.clear();
                 }
             } else {
                 // add an option to the current entry or positional args
-                if (currentEntry != null) {
-                    currentEntry.addParameter(arg);
+                if (currentOption != null) {
+                    currentArgs.add(arg);
                 } else {
                     if (!parsingPositional) {
                         parsingPositional = true;
@@ -137,6 +149,13 @@ public class ArgumentsParser {
                     positionalArgs.add(arg);
                 }
             }
+        }
+
+        if (currentOption != null) {
+            checkArgsCount(currentArgs, currentOption);
+            parsedOptions.add(currentOption.map(currentArgs));
+            currentOption = null;
+            currentArgs.clear();
         }
 
         Arguments arguments = new Arguments(parsedOptions, positionalArgs, minPositionalArgs, maxPositionalArgs);
@@ -147,6 +166,32 @@ public class ArgumentsParser {
         }
 
         return arguments;
+    }
+
+    private static void checkArgsCount(List<String> currentArgs, Option<?> option) {
+        LangUtil.check(
+                LangUtil.isBetween(currentArgs.size(), option.minArgs(), option.maxArgs()),
+                () -> new OptionException(
+                        option,
+                        getArgsCountmismatchText(currentArgs, option)
+                )
+        );
+    }
+
+    private static @NonNull String getArgsCountmismatchText(List<String> currentArgs, Option<?> option) {
+        if (option.minArgs() == option.maxArgs()) {
+            return "expected exactly %d arguments for option '%s', got %d".formatted(
+                    option.minArgs(), option.displayName(), currentArgs.size()
+            );
+        }
+        if (option.minArgs() > 0 && option.maxArgs() == Integer.MAX_VALUE) {
+            return "expected at least %d arguments for option '%s', got %d".formatted(
+                    option.minArgs(), option.displayName(), currentArgs.size()
+            );
+        }
+        return "expected %d to %d arguments for option '%s', got %d".formatted(
+                option.minArgs(), option.maxArgs(), option.displayName(), currentArgs.size()
+        );
     }
 
     /**
@@ -195,14 +240,14 @@ public class ArgumentsParser {
         // print options
         if (hasOptions()) {
             fmt.format("  <options>:%n");
-            options.values().stream().sorted(Comparator.comparing(Option::name)).distinct().forEach(option -> {
+            options.values().stream().distinct().forEach(option -> {
                 // get argument text
-                String argText = getArgText(option.minArity(), option.maxArity(), option.argNames().toArray(String[]::new));
+                String argText = getArgText(option.minArgs(), option.maxArgs(), option.params().stream().map(Param::argName).toArray(String[]::new));
 
-                String occurenceText = getOccurrenceText(option.minOccurrences(), option. maxOccurrences(), option instanceof Flag);
+                String occurenceText = getOccurrenceText(option.repetitions(), option.isFlag());
 
                 // print option names and arguments
-                fmt.format("    %s%s%s%n", String.join(", ", option.names()), argText, occurenceText);
+                fmt.format("    %s%s%s%n", String.join(", ", option.switches()), argText, occurenceText);
 
                 // print option description
                 if (!option.description().isEmpty()) {
@@ -214,22 +259,35 @@ public class ArgumentsParser {
         }
     }
 
-    private String getOccurrenceText(int min, int max, boolean isFlag) {
-        assert max > 0 : "invalid interval: min=" + min + ", max=" + max;
-
+    private String getOccurrenceText(Repetitions repetitions, boolean isFlag) {
         if (isFlag) {
             return "";
-        } else if (min == max) {
-            return min == 1 ? "    (required)" : "    (required %d times)".formatted(min);
-        } else if (min == 0) {
-            return max == 1 ? "    (optional)" : (
-                    max == Integer.MAX_VALUE ? "    (repeatable)" : "    (repeatable up to %d times)".formatted(max)
-            );
-        } else if (min == 1) {
-            return max == Integer.MAX_VALUE ? "    (required, repeatable)" : "    (required, up to %d times)".formatted(max);
-        } else {
-            return max == Integer.MAX_VALUE ? "    (at least %d times)".formatted(min) : "    (%d-%d times)".formatted(min,max);
         }
+        if (repetitions.equals(Repetitions.ZERO_OR_ONE)) {
+            return "    (optional)";
+        }
+        if (repetitions.equals(Repetitions.ZERO_OR_MORE)) {
+            return "    (zero or more)";
+        }
+        if (repetitions.equals(Repetitions.ONE_OR_MORE)) {
+            return "    (one or more)";
+        }
+        if (repetitions.equals(Repetitions.EXACTLY_ONE)) {
+            return "    (required)";
+        }
+        if (repetitions.min() == repetitions.max()) {
+            return "    (required %d times)".formatted(repetitions.min());
+        }
+        if (repetitions.min() == 0) {
+            return "    (repeatable up to %d times)".formatted(repetitions.max());
+        }
+        if (repetitions.min() == 1) {
+            return "    (required, up to %d times)".formatted(repetitions.max());
+        }
+        if (repetitions.max() == Integer.MAX_VALUE) {
+            return "    (at least %d times)".formatted(repetitions.min());
+        }
+        return "    (%d-%d times)".formatted(repetitions.min(), repetitions.max());
     }
 
     /**
@@ -295,7 +353,7 @@ public class ArgumentsParser {
      * @return the formatted argument text
      */
     private static String getArgText(int min, int max, String[] args) {
-        assert args.length > 0 : "no argument names given";
+        assert args.length > 0 || max == 0: "no argument names given";
         assert min <= max : "invalid interval: min=" + min + ", max=" + max;
 
         boolean useNumberingForArg = max == Integer.MAX_VALUE ? args.length < min + 1 : args.length < max;

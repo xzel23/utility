@@ -12,7 +12,7 @@
  */
 package com.dua3.utility.io;
 
-import com.dua3.utility.options.Flag;
+import com.dua3.utility.options.Option;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
@@ -63,13 +63,23 @@ public final class CsvReader extends CsvIo {
      * When set, the reader will attempt to parse and interpret the first row of the CSV file as
      * column names.
      */
-    public static final Flag READ_COLUMN_NAMES = Flag.create("--read-column-names");
+    public static final Option<Boolean> READ_COLUMN_NAMES = Option.flag(
+            "Read column names",
+            "If true, Column names are read from the first row of data.",
+            "--read-column-names"
+    );
+
     /**
      * Specifies a flag to ignore excessive fields in CSV data during parsing.
      * If enabled, fields beyond the expected number in a CSV row are ignored without raising an error.
      * This is useful when dealing with unexpected data formats or when strict validation is not required.
      */
-    public static final Flag IGNORE_EXCESSIVE_FIELDS = Flag.create("--ignore-excessive-fields");
+    public static final Option<Boolean> IGNORE_EXCESSIVE_FIELDS = Option.flag(
+            "Ignore excessive fields",
+            "If ture, fields outside of the range of columns defined by reading the column names are ignored",
+            "--ignore-excessive-fields"
+    );
+
     /**
      * A flag indicating whether missing fields in the CSV data should be ignored during parsing.
      * When this flag is set, missing fields in the CSV input will not raise errors or exceptions.
@@ -77,7 +87,10 @@ public final class CsvReader extends CsvIo {
      * This can be useful when dealing with files where some rows may have fewer fields
      * than specified or expected.
      */
-    public static final Flag IGNORE_MISSING_FIELDS = Flag.create("--ignore-missing-fields");
+    public static final Option<Boolean> IGNORE_MISSING_FIELDS = Option.flag(
+            "Ignore missing fields",
+            "If true, missing fields are ignored; otherwise, an exception is thrown for incomplete rows.",
+            "--ignore-missing-fields");
 
     /**
      * A utility class for reading CSV files.
@@ -159,13 +172,13 @@ public final class CsvReader extends CsvIo {
      *
      * @param builder  the row builder for creating CSV rows
      * @param path      the path to the CSV file
-     * @param options     the arguments for configuring the CSV reader
+     * @param arguments     the arguments for configuring the CSV reader
      * @return a new instance of `CsvReader`
      * @throws IOException if an I/O error occurs while reading the CSV file
      */
-    public static CsvReader create(RowBuilder builder, Path path, Arguments options) throws IOException {
-        Charset cs = IoOptions.getCharset(options);
-        return create(builder, Files.newBufferedReader(path, cs), options);
+    public static CsvReader create(RowBuilder builder, Path path, Arguments arguments) throws IOException {
+        Charset cs = arguments.getOrThrow(IoOptions.OPTION_CHARSET);
+        return create(builder, Files.newBufferedReader(path, cs), arguments);
     }
 
     /**
@@ -173,14 +186,14 @@ public final class CsvReader extends CsvIo {
      *
      * @param builder  the row builder for creating CSV rows
      * @param in       the input stream of the CSV data
-     * @param options  the arguments for configuring the CSV reader
+     * @param arguments  the arguments for configuring the CSV reader
      * @return a new instance of `CsvReader`
      * @throws IOException if an I/O error occurs while reading the CSV data
      */
-    public static CsvReader create(RowBuilder builder, InputStream in, Arguments options) throws IOException {
+    public static CsvReader create(RowBuilder builder, InputStream in, Arguments arguments) throws IOException {
         // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
         // selection in options)
-        Charset charset = IoOptions.getCharset(options);
+        Charset cs = arguments.getOrThrow(IoOptions.OPTION_CHARSET);
         if (in.markSupported()) {
             int bomLength = UTF8_BOM_BYTES.length;
             byte[] buffer = new byte[bomLength];
@@ -188,12 +201,12 @@ public final class CsvReader extends CsvIo {
             if (in.read(buffer) != bomLength || !Arrays.equals(UTF8_BOM_BYTES, buffer)) {
                 in.reset();
             } else {
-                charset = StandardCharsets.UTF_8;
+                cs = StandardCharsets.UTF_8;
             }
         }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
-        return create(builder, reader, options);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in, cs));
+        return create(builder, reader, arguments);
     }
 
     @Override

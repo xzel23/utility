@@ -1,16 +1,19 @@
 package com.dua3.utility.io;
 
-import com.dua3.utility.options.Arguments;
-import com.dua3.utility.options.ChoiceOption;
-import com.dua3.utility.options.SimpleOption;
+import com.dua3.utility.data.Converter;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.options.Option;
+import com.dua3.utility.options.Param;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Helper class defining some common {@link com.dua3.utility.options.Option} instances
@@ -19,189 +22,258 @@ import java.util.Locale;
 @SuppressWarnings("MagicCharacter")
 public final class IoOptions {
 
+    /**
+     * Represents an option for specifying the character encoding to be used in various text-based operations.
+     * This option allows users to define a custom character encoding, and defaults to UTF-8 if no encoding is specified.
+     */
+    public static final Option<Charset> OPTION_CHARSET =
+            charset(() -> StandardCharsets.UTF_8);
+    /**
+     * Represents an option for specifying the date and time format to be used in various operations.
+     * This option allows the user to select a predefined date and time format, enabling consistent parsing
+     * or formatting of date-time values.
+     * <p>
+     * The default value for this option is {@link PredefinedDateTimeFormat#ISO_DATE_TIME}, which supports
+     * the ISO-8601 date-time format.
+     */
+    public static final Option<PredefinedDateTimeFormat> OPTION_DATE_TIME_FORMAT =
+            dateFormat(() -> PredefinedDateTimeFormat.ISO_DATE_TIME);
+    /**
+     * Defines an option for specifying the field separator character.
+     * This option allows customization of the character used to separate fields
+     * within the same row during data processing, such as in CSV files.
+     * <p>
+     * The default field separator is provided by a {@link Supplier} that
+     * specifies a default value, which is a comma (`,`).
+     * <p>
+     * This option can be used to align the field separator configuration
+     * with the data formatting requirements of specific use cases.
+     */
+    public static final Option<Character> OPTION_FIELD_SEPARATOR = fieldSeparator(() -> ',');
+    /**
+     * Represents an optional configuration for specifying the character used as a text delimiter
+     * in input or output operations. This option is typically used to define the character
+     * that delimits quoted text, such as when handling CSV or similar structured text formats.
+     * <p>
+     * By default, the text delimiter is set to the double-quote character (`"`).
+     * <p>
+     * The {@code textDelimiter} method is used to initialize this option with a default character,
+     * supplied through a {@code Supplier<Character>}.
+     * <p>
+     * This option allows flexibility by enabling customization of the quoted text delimiter
+     * to suit various input or output data formats.
+     */
+    public static final Option<Character> OPTION_TEXT_DELIMITER = textDelimiter(() -> '"');
+    /**
+     * A predefined constant representing the input path option.
+     * This option allows the user to specify the path to the input data.
+     * The default path is determined by the provided supplier, which can return {@code null}.
+     *
+     * @see IoOptions#input(Supplier)
+     */
+    public static final Option<Path> OPTION_INPUT = input(() -> null);
+    /**
+     * An option for specifying the output path. This option allows users to define the
+     * path where the output data will be written.
+     * <p>
+     * The option is created using a default {@code Supplier} that can provide a default
+     * output path if none is explicitly specified.
+     * <p>
+     * The provided {@code Supplier} for the default value returns {@code null} by default,
+     * indicating that no output path is specified unless explicitly set.
+     */
+    public static final Option<Path> OPTION_OUTPUT = output(() -> null);
+    /**
+     * Represents an option for specifying the {@code Locale} to be used in various operations.
+     * This option allows configuring regional settings, such as language and formatting conventions,
+     * applicable for tasks like reading or writing files.
+     * <p>
+     * The default locale is provided by invoking the {@code Locale::getDefault} method,
+     * which retrieves the system's default locale settings.
+     * <p>
+     * Use this option when a specific locale must be set or when the default system locale suffices.
+     */
+    public static final Option<Locale> OPTION_LOCALE = locale(Locale::getDefault);
+
     private IoOptions() {
     }
 
     /**
-     * Returns a ChoiceOption object that represents a choice option for selecting the character encoding.
-     * The returned ChoiceOption object allows the user to choose from a collection of available character encodings.
+     * Creates an option for character encoding selection. This method defines a customizable option
+     * that allows the user to specify a character encoding from the available system character sets.
      *
-     * @return a ChoiceOption object representing the character encoding choice option
+     * @param defaultSupplier a {@code Supplier} that provides the default character encoding if none is specified
+     * @return an {@code Option<Charset>} representing the character encoding selection
      */
-    public static ChoiceOption<Charset> charset() {
-        return ChoiceOption.create(
+    public static Option<Charset> charset(Supplier<Charset> defaultSupplier) {
+        return Option.listOption(
+                "Charset",
+                "The character encoding.",
+                Param.ofConstants(
+                        "Charset",
+                        "The character encoding to use.", "charset",
+                        Param.Required.REQUIRED,
                         Charset.class,
-                        Charset::forName,
-                        Object::toString,
-                        () -> Collections.unmodifiableCollection(Charset.availableCharsets().values()),
-                        "--charset")
-                .displayName("Character Encoding")
-                .description("set character encoding")
-                .defaultValue(StandardCharsets.UTF_8);
+                        Converter.create(Charset::forName, Charset::displayName),
+                        Charset.availableCharsets()
+                                .values()
+                                .stream()
+                                .sorted(Comparator.comparing(Charset::displayName))
+                                .toList()
+                ),
+                defaultSupplier,
+                "--charset", "-cs"
+        );
     }
 
     /**
-     * Returns a ChoiceOption object that represents a choice option for selecting the locale.
-     * The returned ChoiceOption object allows the user to choose from a collection of available locales.
+     * Creates an option for selecting the locale. This option allows specifying
+     * the locale to be used when performing operations such as reading or writing
+     * files. The locale defines regional settings such as language and formatting
+     * conventions.
      *
-     * @return a ChoiceOption object representing the locale choice option
+     * @param defaultSupplier a {@code Supplier} that provides the default locale
+     *                        if none is explicitly specified
+     * @return an {@code Option<Locale>} representing the locale selection
      */
-    public static ChoiceOption<Locale> locale() {
-        return ChoiceOption.create(
+    public static Option<Locale> locale(Supplier<Locale> defaultSupplier) {
+        return Option.listOption(
+                "Locale",
+                "The locale to use when reading or writing files.",
+                Param.ofConstants(
+                        "Locale",
+                        "" +
+                                "The locale to use.", "locale",
+                        Param.Required.REQUIRED,
                         Locale.class,
-                        Locale::forLanguageTag,
-                        Object::toString,
-                        () -> List.of(Locale.getAvailableLocales()),
-                        "--locale")
-                .displayName("Locale")
-                .description("set locale")
-                .defaultSupplier(Locale::getDefault);
+                        Converter.create(Locale::forLanguageTag, Locale::getLanguage),
+                        LangUtil.asUnmodifiableList(Locale.getAvailableLocales())
+                ),
+                defaultSupplier,
+                "--locale", "-lc"
+        );
     }
 
     /**
-     * Returns a SimpleOption object that represents an option for setting the input path.
+     * Creates an option for specifying the input path.
+     * This option allows the user to define the path where the input data is located.
      *
-     * @return a SimpleOption object representing the input option
+     * @param defaultSupplier a {@code Supplier} that provides the default input path if none is explicitly specified.
+     *                        The supplied path can be {@code null}.
+     * @return an {@code Option<Path>} representing the input path option.
      */
-    public static SimpleOption<Path> input() {
-        return SimpleOption.create(Path.class, Paths::get, "-i", "--input")
-                .displayName("Input")
-                .description("set input");
+    public static Option<Path> input(Supplier<@Nullable Path> defaultSupplier) {
+        return Option.simpleOption(
+                "Input path",
+                "The path of the input data.",
+                Param.ofPath(
+                        "Input path",
+                        "The path of the input data", "in",
+                        Param.Required.REQUIRED,
+                        Objects::nonNull
+                ),
+                defaultSupplier,
+                "--input", "-i"
+        );
     }
 
     /**
-     * Returns a SimpleOption object that represents an option for setting the output path.
+     * Creates an option for specifying the output path. This option allows the user to define the
+     * path where the output data will be written.
      *
-     * @return a SimpleOption object representing the output option
+     * @param defaultSupplier a {@code Supplier} that provides the default output path if none
+     *                        is explicitly specified. The supplied path can be {@code null}.
+     * @return an {@code Option<Path>} representing the output path option.
      */
-    public static SimpleOption<Path> output() {
-        return SimpleOption.create(Path.class, Paths::get, "-o", "--output")
-                .displayName("Output")
-                .description("set output");
+    public static Option<Path> output(Supplier<@Nullable Path> defaultSupplier) {
+        return Option.simpleOption(
+                "Output path",
+                "The path of the output data.",
+                Param.ofPath(
+                        "Output path",
+                        "The path of the output data", "out",
+                        Param.Required.REQUIRED,
+                        Objects::nonNull
+                ),
+                defaultSupplier,
+                "--output", "-o"
+        );
     }
 
     /**
-     * Returns a ChoiceOption object that represents an option for setting the text delimiter character.
+     * Creates an option for specifying the text delimiter for quoted texts.
+     * This option allows the user to define the character used as a text delimiter
+     * when handling quoted text in input or output operations.
      *
-     * @return a ChoiceOption object representing the text delimiter option
+     * @param defaultSupplier a {@code Supplier} that provides the default text delimiter
+     *                        if none is explicitly specified
+     * @return an {@code Option<Character>} representing the text delimiter option
      */
-    public static ChoiceOption<Character> textDelimiter() {
-        return ChoiceOption.create(
+    public static Option<Character> textDelimiter(Supplier<Character> defaultSupplier) {
+        return Option.listOption(
+                "Text delimiter",
+                "The character to use as the text delimiter for quoted texts.",
+                Param.ofConstants(
+                        "Text delimiter",
+                        "" +
+                                "The text delimiter to use.", "deilimter",
+                        Param.Required.REQUIRED,
                         Character.class,
-                        (String s) -> s.charAt(0),
-                        Object::toString,
-                        () -> List.of('"', '\''),
-                        "-t", "--text-delimiter")
-                .displayName("Text Delimiter")
-                .description("set text delimiter")
-                .defaultValue('"');
+                        Converter.create(s -> s.charAt(0), Object::toString),
+                        List.of('"', '\'')
+                ),
+                defaultSupplier,
+                "--text-delimiter", "-d"
+        );
     }
 
     /**
-     * Returns a ChoiceOption object that represents an option for setting the field separator character.
+     * Creates an option for specifying the field separator character.
+     * This option allows the user to define the character used to
+     * separate fields within the same row of data.
      *
-     * @return a ChoiceOption object representing the field separator option
+     * @param defaultSupplier a {@code Supplier<Character>} that provides the default
+     *                        field separator character if none is explicitly specified
+     * @return an {@code Option<Character>} representing the field separator option
      */
-    public static ChoiceOption<Character> fieldSeparator() {
-        return ChoiceOption.create(
+    public static Option<Character> fieldSeparator(Supplier<Character> defaultSupplier) {
+        return Option.listOption(
+                "Field separator",
+                "The character used to separate fields belonging to the same row.",
+                Param.ofConstants(
+                        "Field separator",
+                        "" +
+                                "The field separator to use.", "separator",
+                        Param.Required.REQUIRED,
                         Character.class,
-                        (String s) -> s.charAt(0),
-                        Object::toString,
-                        () -> List.of(',', ';'),
-                        "-s", "--field-separator")
-                .displayName("Field Separator")
-                .description("set field separator")
-                .defaultValue(',');
+                        Converter.create(s -> s.charAt(0), Object::toString),
+                        List.of(';', ',', '|')
+                ),
+                defaultSupplier,
+                "--field-separator", "-s"
+        );
     }
 
     /**
-     * Returns a ChoiceOption object that represents an option for setting the date format.
+     * Creates an option for specifying the date format to be used in various operations.
+     * This method allows the user to select a predefined date and time format.
      *
-     * @return a ChoiceOption object representing the date format option
+     * @param defaultSupplier a {@code Supplier} that provides the default date format
+     *                        if none is explicitly specified
+     * @return an {@code Option<PredefinedDateTimeFormat>} representing the configurable date format option
      */
-    public static ChoiceOption<PredefinedDateTimeFormat> dateFormat() {
-        return ChoiceOption.create(
-                        PredefinedDateTimeFormat.class,
-                        "--date-format")
-                .displayName("Date Format")
-                .description("set date format")
-                .defaultValue(PredefinedDateTimeFormat.ISO_DATE_TIME);
+    public static Option<PredefinedDateTimeFormat> dateFormat(Supplier<PredefinedDateTimeFormat> defaultSupplier) {
+        return Option.listOption(
+                "Date Format",
+                "The date format to use.",
+                Param.ofEnum(
+                        "Date format",
+                        "The date format to use.", "dateformat",
+                        Param.Required.REQUIRED,
+                        PredefinedDateTimeFormat.class
+                ),
+                defaultSupplier,
+                "--date-format", "-df"
+        );
     }
-
-    /**
-     * Returns a ChoiceOption object that represents an option for setting the date and time format.
-     *
-     * @return a ChoiceOption object representing the date and time format option
-     */
-    public static ChoiceOption<PredefinedDateTimeFormat> dateTimeFormat() {
-        return ChoiceOption.create(
-                        PredefinedDateTimeFormat.class,
-                        "--date-time-format")
-                .displayName("Date and Time Format")
-                .description("set date and time format")
-                .defaultValue(PredefinedDateTimeFormat.ISO_DATE_TIME);
-    }
-
-    // get values from arguments
-
-    /**
-     * Returns the charset specified in the given Arguments object.
-     *
-     * @param cmd the Arguments object containing the command line arguments
-     * @return the Charset object representing the specified character encoding
-     */
-    public static Charset getCharset(Arguments cmd) {
-        return cmd.getOrThrow(charset());
-    }
-
-    /**
-     * Returns the locale specified in the given Arguments object.
-     *
-     * @param cmd the Arguments object containing the command line arguments
-     * @return the Locale object representing the specified locale
-     */
-    public static Locale getLocale(Arguments cmd) {
-        return cmd.getOrThrow(locale());
-    }
-
-    /**
-     * Returns the predefined date format specified in the given Arguments object.
-     *
-     * @param cmd the Arguments object containing the command line arguments
-     * @return the PredefinedDateFormat object representing the specified date format
-     */
-    public static PredefinedDateTimeFormat getDateFormat(Arguments cmd) {
-        return cmd.getOrThrow(dateFormat());
-    }
-
-    /**
-     * Returns the predefined date and time format specified in the given Arguments object.
-     *
-     * @param cmd the Arguments object containing the command line arguments
-     * @return the PredefinedDateTimeFormat object representing the specified date and time format
-     */
-    public static PredefinedDateTimeFormat getDateTimeFormat(Arguments cmd) {
-        return cmd.getOrThrow(dateTimeFormat());
-    }
-
-    /**
-     * Returns the text delimiter specified in the given Arguments object.
-     *
-     * @param cmd the Arguments object containing the command line arguments
-     * @return the Character representing the specified text delimiter
-     */
-    public static Character getTextDelimiter(Arguments cmd) {
-        return cmd.getOrThrow(textDelimiter());
-    }
-
-    /**
-     * Returns the field separator specified in the given Arguments object.
-     *
-     * @param cmd the Arguments object containing the command line arguments
-     * @return the Character representing the specified field separator
-     */
-    public static Character getFieldSeparator(Arguments cmd) {
-        return cmd.getOrThrow(fieldSeparator());
-    }
-
 }

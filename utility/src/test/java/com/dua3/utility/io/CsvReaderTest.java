@@ -38,8 +38,8 @@ class CsvReaderTest {
     @Test
     void testReadCsv() throws IOException {
         Arguments arguments = Arguments.of(
-                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES),
-                Arguments.createEntry(CsvReader.IGNORE_MISSING_FIELDS)
+                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES, true),
+                Arguments.createEntry(CsvReader.IGNORE_MISSING_FIELDS, true)
         );
         List<List<String>> actualRows = new ArrayList<>();
         CsvReader.RowBuilder rowBuilder = new CsvReader.ListRowBuilder(actualRows::add);
@@ -54,7 +54,7 @@ class CsvReaderTest {
     @Test
     void testReadCsv_reportMissingFields() throws IOException {
         Arguments arguments = Arguments.of(
-                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES)
+                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES, true)
         );
         List<List<String>> actualRows = new ArrayList<>();
         CsvReader.RowBuilder rowBuilder = new CsvReader.ListRowBuilder(actualRows::add);
@@ -67,8 +67,8 @@ class CsvReaderTest {
     @Test
     void testReadCsvFromInputStream() throws IOException {
         Arguments arguments = Arguments.of(
-                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES),
-                Arguments.createEntry(CsvReader.IGNORE_MISSING_FIELDS)
+                Arguments.createEntry(CsvReader.READ_COLUMN_NAMES, true),
+                Arguments.createEntry(CsvReader.IGNORE_MISSING_FIELDS, true)
         );
         List<List<String>> actualRows = new ArrayList<>();
         CsvReader.RowBuilder rowBuilder = new CsvReader.ListRowBuilder(actualRows::add);

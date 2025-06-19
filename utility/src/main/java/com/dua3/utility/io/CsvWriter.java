@@ -58,13 +58,13 @@ public class CsvWriter extends CsvIo implements Flushable {
      * The method reads the charset from the options and creates a BufferedWriter from the file path using the charset.
      *
      * @param path    the path of the file to write the CSV data to
-     * @param options the Arguments object representing the options for writing CSV formatted data
+     * @param arguments the Arguments object representing the options for writing CSV formatted data
      * @return a new CsvWriter instance
      * @throws IOException if an I/O error occurs
      */
-    public static CsvWriter create(Path path, Arguments options) throws IOException {
-        Charset cs = IoOptions.getCharset(options);
-        return create(Files.newBufferedWriter(path, cs), options);
+    public static CsvWriter create(Path path, Arguments arguments) throws IOException {
+        Charset cs = arguments.getOrThrow(IoOptions.OPTION_CHARSET);
+        return create(Files.newBufferedWriter(path, cs), arguments);
     }
 
     /**
@@ -72,13 +72,13 @@ public class CsvWriter extends CsvIo implements Flushable {
      * The method creates a BufferedWriter from the OutputStream using the charset from the options.
      *
      * @param out     the OutputStream to write the CSV data to
-     * @param options the Arguments object representing the options for writing CSV formatted data
+     * @param arguments the Arguments object representing the options for writing CSV formatted data
      * @return a new CsvWriter instance
      */
-    public static CsvWriter create(OutputStream out, Arguments options) {
-        Charset cs = IoOptions.getCharset(options);
+    public static CsvWriter create(OutputStream out, Arguments arguments) {
+        Charset cs = arguments.getOrThrow(IoOptions.OPTION_CHARSET);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
-        return create(writer, options);
+        return create(writer, arguments);
     }
 
     /**

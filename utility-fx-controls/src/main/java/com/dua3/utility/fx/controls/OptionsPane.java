@@ -1,18 +1,15 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.options.Param;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.options.Arguments;
-import com.dua3.utility.options.ChoiceOption;
-import com.dua3.utility.options.Flag;
 import com.dua3.utility.options.Option;
-import com.dua3.utility.options.SimpleOption;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
@@ -21,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -132,40 +130,60 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
 
     @SuppressWarnings("unchecked")
     private <T> InputControl<T> createControl(Arguments values, Option<T> option) {
-        switch (option) {
-            case ChoiceOption<T> co -> {
-                return new ChoiceInputControl<>(co, supplyDefault(co, values));
-            }
-            case Flag f -> {
-                CheckBox checkBox = new CheckBox(f.displayName());
-                return (InputControl<T>) new SimpleInputControl<>(checkBox, checkBox.selectedProperty(), supplyDefault(f, values), nopValidator());
-            }
-            case SimpleOption<T> so -> {
-                StringConverter<T> converter = new StringConverter<>() {
-                    @Override
-                    public String toString(T v) {
-                        return option.format(v);
-                    }
+        List<Param<?>> params = option.params();
+        return switch (params.size()) {
+            case 0 -> createFlagControl(values, option);
+            case 1 -> createSimpleControl(option, values, (Param<T>) params.getFirst());
+            default -> throw new IllegalArgumentException("option has more than one parameter");
+        };
+    }
 
-                    @Override
-                    public T fromString(String s) {
-                        return option.map(s);
-                    }
-                };
-                return InputControl.stringInput(supplyDefault(so, values), nopValidator(), converter);
-            }
-            default -> throw new UnsupportedOperationException("unsupported input type: " + option.getClass().getName());
+    private <T extends @Nullable Object> Optional<String> validateNonNull(Option<T> option, @Nullable Object v) {
+        if (v == null) {
+            return Optional.of("No value for '" + option.displayName() + "'.");
         }
+        return Optional.empty();
+    }
+
+    private <T> InputControl<T> createSimpleControl(Option<T> option, Arguments values, Param<T> param) {
+        Supplier<@Nullable T> defaultSupplier = () -> values.get(option).orElse(null);
+        if (param.hasAllowedValues()) {
+            return InputControl.comboBoxInput(
+                    param.allowedValues(),
+                    defaultSupplier,
+                    v -> validateNonNull(option, v)
+            );
+        } else {
+            StringConverter<T> converter = new StringConverter<>() {
+                @Override
+                public String toString(T v) {
+                    return option.format(v);
+                }
+
+                @Override
+                public T fromString(String s) {
+                    return option.map(Collections.singletonList(s)).getValue();
+                }
+            };
+            return InputControl.stringInput(supplyDefault(option, values), nopValidator(), converter);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> InputControl<T> createFlagControl(Arguments values, Option<T> option) {
+        Supplier<@Nullable Boolean> defaultSupplier = option.getTargetType() == Boolean.class
+                ? () -> values.get(option).map(Boolean.class::cast).orElse(Boolean.FALSE)
+                : () -> values.get(option).isPresent();
+        return (InputControl<T>) InputControl.checkBoxInput(
+                defaultSupplier,
+                option.displayName(),
+                v -> validateNonNull(option, v)
+        );
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> T getValue(Option<T> option, Arguments values) {
-        return switch (option) {
-            case Flag flag -> (T) (Object) values.isSet(flag);
-            case SimpleOption so -> (T) values.get(so).orElse(so.getDefault());
-            case ChoiceOption co -> (T) values.get(co).orElse(co.getDefault());
-            case null, default -> throw new IllegalArgumentException("Unknown option type: " + option);
-        };
+        return values.get(option).orElseGet(() -> option.getDefault().orElse(null));
     }
 
     private static <T> Function<T, Optional<String>> nopValidator() {

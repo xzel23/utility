@@ -77,7 +77,7 @@ public final class DbUtil {
                     CsvReader reader = CsvReader.create(
                             rb,
                             new BufferedReader(new StringReader(Objects.toString(value))),
-                            Arguments.of(Arguments.createEntry(IoOptions.fieldSeparator(), ';')));
+                            Arguments.of(Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ';')));
                     int n = reader.readSome(1);
                     assert n == 1;
                     List<String> data = rb.getRow();

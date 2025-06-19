@@ -2,12 +2,12 @@ package com.dua3.utility.db;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.options.Arguments;
-import com.dua3.utility.options.SimpleOption;
+import com.dua3.utility.options.Option;
+import com.dua3.utility.options.Param;
 import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,7 +83,7 @@ public class JdbcDriverInfo {
     /**
      * This driver's options.
      */
-    public final Collection<SimpleOption<?>> options;
+    public final Collection<Option<?>> options;
 
     /**
      * Constructor.
@@ -101,7 +100,7 @@ public class JdbcDriverInfo {
         this.urlPrefix = urlPrefix;
         this.link = link;
 
-        Pair<String, List<SimpleOption<?>>> parsed = parseScheme(urlScheme);
+        Pair<String, List<Option<?>>> parsed = parseScheme(urlScheme);
         this.urlScheme = parsed.first();
         this.options = parsed.second();
     }
@@ -118,14 +117,14 @@ public class JdbcDriverInfo {
      *     <li>scheme with var arguments removed
      * </ul>
      */
-    private static Pair<String, List<SimpleOption<?>>> parseScheme(CharSequence s) {
+    private static Pair<String, List<Option<?>>> parseScheme(CharSequence s) {
         // extract options
-        List<SimpleOption<?>> list = new ArrayList<>();
+        List<Option<?>> list = new ArrayList<>();
         Matcher matcher = PATTERN_VAR.matcher(s);
         while (matcher.find()) {
             String name = matcher.group("name");
             Map<String, String> arguments = extractArgs(matcher);
-            SimpleOption<?> option = createOption(name, arguments);
+            Option<?> option = createOption(name, arguments);
             list.add(option);
         }
 
@@ -175,18 +174,34 @@ public class JdbcDriverInfo {
      * @param arguments the option's arguments
      * @return new option instance
      */
-    private static SimpleOption<?> createOption(String name, Map<String, String> arguments) {
+    private static Option<?> createOption(String name, Map<String, String> arguments) {
         String type = arguments.getOrDefault(OPTION_TYPE, OPTION_TYPE_STRING);
         String dflt = arguments.get("default");
         return switch (type) {
-            case OPTION_TYPE_STRING ->
-                    SimpleOption.create(String.class, Function.identity(), name).description(name).defaultValue(dflt);
-            case OPTION_TYPE_PATH ->
-                    SimpleOption.create(Path.class, Paths::get, name).description(name).defaultValue(dflt == null ? null : Paths.get(dflt));
-            case OPTION_TYPE_INTEGER ->
-                    SimpleOption.create(Integer.class, Integer::valueOf, name).description(name).defaultValue(dflt == null ? null : Integer.valueOf(dflt));
-            case OPTION_TYPE_DOUBLE ->
-                    SimpleOption.create(Double.class, Double::valueOf, name).description(name).defaultValue(dflt == null ? null : Double.valueOf(dflt));
+            case OPTION_TYPE_STRING -> Option.simpleOption(name,
+                    "Set the " + name + ".",
+                    Param.ofString(name, "The " + name + ".", name, Param.Required.REQUIRED),
+                    () -> dflt,
+                    "--" + name
+            );
+            case OPTION_TYPE_PATH -> Option.simpleOption(name,
+                    "Set the " + name + ".",
+                    Param.ofPath(name, "The " + name + ".", name, Param.Required.REQUIRED, Objects::nonNull),
+                    () -> dflt == null ? null : Paths.get(dflt),
+                    "--" + name
+            );
+            case OPTION_TYPE_INTEGER -> Option.simpleOption(name,
+                    "Set the " + name + ".",
+                    Param.ofInt(name, "The " + name + ".", name, Param.Required.REQUIRED),
+                    () -> dflt == null ? null : Integer.valueOf(dflt),
+                    "--" + name
+            );
+            case OPTION_TYPE_DOUBLE -> Option.simpleOption(name,
+                    "Set the " + name + ".",
+                    Param.ofDouble(name, "The " + name + ".", name, Param.Required.REQUIRED),
+                    () -> dflt == null ? null : Double.valueOf(dflt),
+                    "--" + name
+            );
             default -> throw new IllegalStateException("unsupported type: " + type);
         };
     }
@@ -228,7 +243,7 @@ public class JdbcDriverInfo {
         );
     }
 
-    private Optional<SimpleOption<?>> getOption(String s) {
-        return options.stream().filter(opt -> opt.names().contains(s)).findFirst();
+    private Optional<Option<?>> getOption(String s) {
+        return options.stream().filter(opt -> opt.switches().contains(s)).findFirst();
     }
 }

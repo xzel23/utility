@@ -63,6 +63,8 @@ open module com.dua3.utility {
     requires org.jspecify;
     requires static org.bouncycastle.provider;
     requires static org.bouncycastle.pkix;
+    requires jdk.jdi;
+    requires jdk.jfr;
 
     uses FileType;
     uses I18NProvider;
