@@ -282,7 +282,7 @@ public class Arguments implements Iterable<Arguments.Entry<?>> {
      * Call the handlers for all passed options.
      */
     public void handle() {
-        options.forEach(entry -> entry.handle());
+        options.forEach(Entry::handle);
     }
 
     @Override

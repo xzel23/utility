@@ -154,7 +154,6 @@ public class ArgumentsParser {
         if (currentOption != null) {
             checkArgsCount(currentArgs, currentOption);
             parsedOptions.add(currentOption.map(currentArgs));
-            currentOption = null;
             currentArgs.clear();
         }
 

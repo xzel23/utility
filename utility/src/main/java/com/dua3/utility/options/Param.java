@@ -422,7 +422,6 @@ public record Param<T>(
                 displayName,
                 description,
                 argName,
-                String.class,
                 Converter.identity(),
                 repetitions
         );
@@ -433,12 +432,11 @@ public record Param<T>(
             String displayName,
             String description,
             String argName,
-            Class<T> elementType,
             Converter<String, T> elementConverter,
             Repetitions repetitions
     ) {
         Class<List<T>> targetClass = (Class<List<T>>) (Class<?>) List.class;
-        return new Param<List<T>>(
+        return new Param<>(
                 displayName,
                 description,
                 argName,

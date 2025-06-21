@@ -278,7 +278,6 @@ class ArgumentsParserOptionTest {
                 .param(Param.ofList(
                         "Option",
                         "The value for the option.", "value",
-                        String.class,
                         Converter.identity(),
                         Repetitions.atMost(2)
                 ))
@@ -336,7 +335,6 @@ class ArgumentsParserOptionTest {
                 .param(Param.ofList(
                         "Option",
                         "The value for the option.", "value",
-                        String.class,
                         Converter.identity(),
                         Repetitions.between(2, 4)
                 ))
@@ -400,7 +398,6 @@ class ArgumentsParserOptionTest {
                 .param(Param.ofList(
                         "Option",
                         "The value for the option.", "value",
-                        String.class,
                         Converter.identity(),
                         Repetitions.ZERO_OR_MORE
                 ))
@@ -452,7 +449,6 @@ class ArgumentsParserOptionTest {
                 .param(Param.ofList(
                         "Option",
                         "The value for the option.", "value",
-                        String.class,
                         Converter.identity(),
                         Repetitions.atMost(2)
                 ))
@@ -757,9 +753,6 @@ class ArgumentsParserOptionTest {
 
     /**
      * Test for the addRecordOption() method.
-     * FIXME: This test fails because the addRecordOption() method doesn't set a mapper function,
-     * which is required by the OptionBuilder to convert the parsed values into a record instance.
-     * The error is: "mapper function not set" at AbstractOptionBuilder.build() line 212.
      */
     @Test
     void testAddRecordOption() {

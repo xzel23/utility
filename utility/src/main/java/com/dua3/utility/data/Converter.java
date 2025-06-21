@@ -154,7 +154,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
         }
 
         // does the class declare public T(String)?
-        for (Constructor c : type.getDeclaredConstructors()) {
+        for (Constructor<?> c : type.getDeclaredConstructors()) {
             // check in order: public static T valueOf(String)
             if ((c.getModifiers() & Modifier.PUBLIC) != 0
                     && c.getParameterCount() == 1
@@ -200,7 +200,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @throws ConverterException if the object cannot be created, either due to an instantiation error
      * or if the specified string cannot be converted properly
      */
-    private static <T> T create(String s, Class<T> type, Constructor c) throws ConverterException {
+    private static <T> T create(String s, Class<T> type, Constructor<?> c) throws ConverterException {
         try {
             return type.cast(c.newInstance(s));
         } catch (Exception e) {

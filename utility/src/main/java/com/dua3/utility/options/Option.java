@@ -263,10 +263,13 @@ public class Option<T extends @Nullable Object> {
      * @throws IllegalStateException if an instance of the target type cannot be created
      */
     public Arguments.Entry<T> map(List<String> args) {
-        assert LangUtil.isBetween(args.size(), minArgs(), maxArgs()) : "wrong argument count for option " + displayName + ": " + args.size();
+        LangUtil.check(
+                LangUtil.isBetween(args.size(), minArgs(), maxArgs()),
+                () -> new IllegalArgumentException(String.format("wrong argument count for option %s: %d", displayName, args.size()))
+        );
 
         @Nullable Object[] builderArgs = new Object[params().size()];
-        
+
         int idxArg = 0;
         List<Param<?>> params = params();
         for (int i = 0; i < params.size(); i++) {
@@ -340,7 +343,7 @@ public class Option<T extends @Nullable Object> {
             return 0;
         } else {
             return Math.toIntExact(Math.min(Integer.MAX_VALUE, params().stream()
-                    .mapToLong(param -> param.argRepetitions().min())
+                    .mapToLong(p -> p.argRepetitions().min())
                     .sum()));
         }
     }
@@ -356,7 +359,7 @@ public class Option<T extends @Nullable Object> {
             return 0;
         } else {
             return Math.toIntExact(Math.min(Integer.MAX_VALUE, params().stream()
-                    .mapToLong(param -> param.argRepetitions().max())
+                    .mapToLong(p -> p.argRepetitions().max())
                     .sum()));
         }
     }

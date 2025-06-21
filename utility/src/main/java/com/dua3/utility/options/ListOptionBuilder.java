@@ -35,13 +35,7 @@ public class ListOptionBuilder<T> extends AbstractOptionBuilder<T, ListOptionBui
         return super.mapper(mapper);
     }
 
-    /**
-     * Sets the repetitions constraint for this option, specifying the minimum and maximum
-     * number of times the option can be repeated.
-     *
-     * @param repetitions the repetition constraints specifying the minimum and maximum repetitions
-     * @return this builder instance with the updated repetitions constraint
-     */
+    @Override
     public ListOptionBuilder<T> repetitions(Repetitions repetitions) {
         return super.repetitions(repetitions);
     }

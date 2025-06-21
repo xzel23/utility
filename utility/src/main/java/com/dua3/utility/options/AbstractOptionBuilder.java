@@ -168,7 +168,7 @@ public abstract class AbstractOptionBuilder<T extends @Nullable Object, B extend
     public Option<T> build(String firstSwitch, String... moreSwitches) {
         LangUtil.check(isParameterSet(), "parameters not set");
 
-        LinkedHashSet<String> switches = new LinkedHashSet<>(moreSwitches.length + 1);
+        LinkedHashSet<String> switches = LinkedHashSet.newLinkedHashSet(moreSwitches.length + 1);
         switches.add(firstSwitch);
         switches.addAll(LangUtil.asUnmodifiableList(moreSwitches));
         LangUtil.check(switches.size() == 1 + moreSwitches.length, "duplicate switches detected for option %s", displayName);

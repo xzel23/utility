@@ -42,7 +42,7 @@ public class ChoiceInputControl<T> implements InputControl<T> {
         control.getItems().setAll(choices.values());
 
         control.valueProperty().addListener(
-                (ObservableValue<? extends Choice<T>> v, @Nullable Choice<T> o, @Nullable Choice<T> n)
+                (ObservableValue<? extends Choice<@Nullable T>> v, @Nullable Choice<T> o, @Nullable Choice<T> n)
                         -> valueProperty.setValue(n == null ? null : n.value())
         );
 

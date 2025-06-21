@@ -53,11 +53,7 @@ public class OptionBuilder<T> extends AbstractOptionBuilder<T, OptionBuilder<T>>
         return super.mapper(mapper);
     }
 
-    /**
-     * Mark this option as required.
-     *
-     * @return this builder instance
-     */
+    @Override
     public OptionBuilder<T> repetitions(Repetitions repetitions) {
         super.repetitions(repetitions);
         return self();
