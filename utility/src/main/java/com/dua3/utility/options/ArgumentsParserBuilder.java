@@ -386,7 +386,10 @@ public class ArgumentsParserBuilder {
                         Param.Required.REQUIRED
                 );
             } else {
-                throw new IllegalArgumentException("Unsupported record component type: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Unsupported record component type '%s' for component '%s' in option '%s'"
+                                .formatted(type.getName(), component.getName(), displayName)
+                );
             }
 
             params[i] = param;
