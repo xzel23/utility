@@ -323,7 +323,7 @@ public class ArgumentsParserBuilder {
      * @param defaultSupplier a supplier of the default value for the record instance
      * @param targetClass the class representing the record type
      * @param firstSwitch the primary command-line switch associated with this option
-     * @param moreswitches additional command-line switches associated with this option
+     * @param moreSwitches additional command-line switches associated with this option
      * @return an {@link Option} representing the configured option for the specified record type
      * @throws IllegalArgumentException if a record component's type is unsupported
      */
@@ -334,12 +334,12 @@ public class ArgumentsParserBuilder {
             Supplier<@Nullable T> defaultSupplier,
             Class<T> targetClass,
             String firstSwitch,
-            String... moreswitches
+            String... moreSwitches
     ) {
         RecordComponent[] recordComponents = targetClass.getRecordComponents();
         Param<?>[] params = new Param<?>[recordComponents.length];
         Class<?>[] constructorArgTypes = new Class<?>[params.length];
-        for (int i = 0, recordComponentsLength = recordComponents.length; i < recordComponentsLength; i++) {
+        for (int i = 0, nRecordComponents = recordComponents.length; i < nRecordComponents; i++) {
             RecordComponent component = recordComponents[i];
             Class<?> type = component.getType();
             Param<?> param;
@@ -416,7 +416,7 @@ public class ArgumentsParserBuilder {
                 .param(params)
                 .mapper(mapper)
                 .defaultSupplier(defaultSupplier)
-                .build(firstSwitch, moreswitches);
+                .build(firstSwitch, moreSwitches);
     }
 
     /**
