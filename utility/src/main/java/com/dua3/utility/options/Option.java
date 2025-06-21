@@ -428,7 +428,16 @@ public class Option<T extends @Nullable Object> {
                 && maxArgs() == 0;
     }
 
-    public boolean isRestricted() {
+    /**
+     * Determines if the current object has allowed values based on its arguments and parameters.
+     * <p>
+     * If an option has allowed values, a list of possible values is assigned to the option and
+     * only values contained within that list may be used.
+     *
+     * @return true if the object has exactly one minimum argument, one maximum argument,
+     *         and the first parameter of the object has allowed values; false otherwise.
+     */
+    public boolean hasAllowedValues() {
         return minArgs() == 1 && maxArgs() == 1 && params().get(0).hasAllowedValues();
     }
 }

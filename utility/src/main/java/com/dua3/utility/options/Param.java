@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @param converter A converter used to transform a string array representation of the argument into the specified type.
  * @param allowedValues A list of allowed values for the parameter, limiting what it can accept.
  * @param validate A function used to validate the parameter value. It returns an optional error message if validation fails.
- * @param argRepetitions The allowed repetitions for the argument (e.g., exact, zero or one).
+ * @param argRepetitions The allowed repetitions for the argument (e.g., exact, zero, or one).
  */
 public record Param<T>(
         String displayName,
@@ -98,6 +98,15 @@ public record Param<T>(
         }
     }
 
+    /**
+     * Creates a {@code Param<String>} instance configured to handle string parameter values.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description a descriptive text explaining the purpose or usage of the parameter
+     * @param argName the name of the argument associated with the parameter
+     * @param required a flag indicating whether the parameter is mandatory or optional
+     * @return a {@code Param<String>} instance representing the configured string parameter
+     */
     public static Param<String> ofString(
             String displayName,
             String description,
@@ -115,6 +124,17 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@code Param<String>} instance configured to handle string parameter values
+     * with an additional validation predicate.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description a description explaining the purpose or usage of the parameter
+     * @param argName the name of the argument associated with the parameter
+     * @param required a flag indicating whether the parameter is mandatory or optional
+     * @param validatPredicate a predicate for validating the parameter value
+     * @return a {@code Param<String>} instance representing the configured string parameter
+     */
     public static Param<String> ofString(
             String displayName,
             String description,
@@ -141,6 +161,17 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@code Param<String>} instance configured to handle string parameter values
+     * with an additional validation regex pattern.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description a description explaining the purpose or usage of the parameter
+     * @param argName the name of the argument associated with the parameter
+     * @param required a flag indicating whether the parameter is mandatory or optional
+     * @param regexValid a regular expression used to validate the parameter value
+     * @return a {@code Param<String>} instance representing the configured string parameter
+     */
     public static Param<String> ofString(
             String displayName,
             String description,
@@ -158,6 +189,15 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@code Param<Boolean>} instance configured to handle boolean parameter values.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description a descriptive text explaining the purpose or usage of the parameter
+     * @param argName the name of the argument associated with the parameter
+     * @param required a flag indicating whether the parameter is mandatory or optional
+     * @return a {@code Param<Boolean>} instance representing the configured boolean parameter
+     */
     public static Param<Boolean> ofBoolean(
             String displayName,
             String description,
@@ -175,6 +215,15 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@code Param<Integer>} instance configured to handle integer parameter values.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description a description explaining the purpose or usage of the parameter
+     * @param argName the name of the argument associated with the parameter
+     * @param required a flag indicating whether the parameter is mandatory or optional
+     * @return a {@code Param<Integer>} instance representing the configured integer parameter
+     */
     public static Param<Integer> ofInt(
             String displayName,
             String description,
@@ -193,6 +242,12 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@code Param<Integer>} instance configured to handle integer parameter values
+     * with an additional validation predicate.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description*/
     public static Param<Integer> ofInt(
             String displayName,
             String description,
@@ -220,6 +275,15 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@code Param<Long>} instance configured to handle long parameter values.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description a descriptive text explaining the purpose or usage of the parameter
+     * @param argName the name of the argument associated with the parameter
+     * @param required a flag indicating whether the parameter is mandatory or optional
+     * @return a {@code Param<Long>} instance representing the configured long parameter
+     */
     public static Param<Long> ofLong(
             String displayName,
             String description,
@@ -238,6 +302,15 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@code Param<Double>} instance configured to handle double parameter values.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description a descriptive text explaining the purpose or usage of the parameter
+     * @param argName the name of the argument associated with the parameter
+     * @param required a flag indicating whether the parameter is mandatory or optional
+     * @return a {@code Param<Double>} instance representing the configured double parameter
+     */
     public static Param<Double> ofDouble(
             String displayName,
             String description,
@@ -256,6 +329,15 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@code Param<Path>} instance configured to handle {@code Path} parameter values.
+     *
+     * @param displayName the name to display for the parameter
+     * @param description a descriptive text explaining the purpose or usage of the parameter
+     * @param argName the name of the argument associated with the parameter
+     * @param required a flag indicating whether the parameter is mandatory or optional
+     * @return a {@code Param<Path>} instance representing the configured {@code Path} parameter
+     */
     public static Param<Path> ofPath(
             String displayName,
             String description,
@@ -274,6 +356,16 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a new instance of {@link Param} for a {@link Path}.
+     *
+     * @param displayName the human-readable name of the parameter
+     * @param description the detailed description of the parameter
+     * @param argName the argument name associated with this parameter
+     * @param required an enum indicating if the parameter is mandatory
+     * @param validatPredicate a predicate to validate the {@link Path} value
+     * @return a new {@link Param} instance configured for a {@link Path}
+     */
     public static Param<Path> ofPath(
             String displayName,
             String description,
@@ -301,6 +393,15 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a parameter of type URI with the specified configurations.
+     *
+     * @param displayName the name of the parameter to be displayed
+     * @param description the description of the parameter
+     * @param argName the argument name for the parameter
+     * @param required indicates whether the parameter is required
+     * @return a Param instance of type URI configured with the given attributes
+     */
     public static Param<URI> ofUri(
             String displayName,
             String description,
@@ -319,6 +420,16 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a new parameter of type URI with the specified properties.
+     *
+     * @param displayName  the display name for the parameter
+     * @param description  a brief description of the parameter
+     * @param argName      the argument name associated with this parameter, used in user inputs
+     * @param required     the requirement indicator specifying whether the parameter is mandatory
+     * @param validatPredicate  a predicate to validate the provided URI parameter value
+     * @return a new instance of {@code Param<URI>} configured with the specified properties
+     */
     public static Param<URI> ofUri(
             String displayName,
             String description,
@@ -346,6 +457,14 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Converts the given string into a URI object. If the string cannot be converted
+     * into a valid URI, an ArgumentsException is thrown.
+     *
+     * @param s the string to convert into a URI
+     * @return the URI object corresponding to the given string
+     * @throws ArgumentsException if the string is not a valid URI
+     */
     private static URI toUri(String s) {
         try {
             return new URI(s);
@@ -354,6 +473,18 @@ public record Param<T>(
         }
     }
 
+    /**
+     * Creates a parameter instance with a list of predefined constant values.
+     *
+     * @param <T>          The type of the parameter's value.
+     * @param displayName  The user-friendly name of the parameter.
+     * @param description  A detailed description of the parameter.
+     * @param argName      The argument name to be used in external representations, such as CLI or configuration.
+     * @param required     Indicates whether the parameter is mandatory.
+     * @param targetType   The class type of the allowed parameter values.
+     * @param allowedValues A list of allowed constant values for this parameter.
+     * @return A parameter instance with the specified options and constraints.
+     */
     public static <T> Param<T> ofConstants(
             String displayName,
             String description,
@@ -373,6 +504,19 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a parameter that accepts only a predefined set of constant values.
+     *
+     * @param <T> the type of the parameter value
+     * @param displayName the display name of the parameter
+     * @param description a description of the parameter
+     * @param argName the argument name used for the parameter
+     * @param required indicates whether the parameter is required or optional
+     * @param targetType the class type of the parameter value
+     * @param converter a converter to transform the input string into the target type
+     * @param allowedValues a list of allowed constant values for the parameter
+     * @return a new instance of {@code Param<T>} initialized with the specified values
+     */
     public static <T> Param<T> ofConstants(
             String displayName,
             String description,
@@ -394,6 +538,17 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a parameter of an enum type with the specified attributes.
+     *
+     * @param <T>        the type of the enum
+     * @param displayName the human-readable name of the parameter
+     * @param description a brief description of the parameter's purpose
+     * @param argName     the argument name to be used for the parameter
+     * @param required    the requirement status of the parameter
+     * @param targetType  the enum class type to which this parameter belongs
+     * @return a {@code Param<T>} object configured with the specified details
+     */
     public static <T extends Enum<T>> Param<T> ofEnum(
             String displayName,
             String description,
@@ -413,6 +568,16 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a parameter for a list of strings, taking in display name, description,
+     * argument name, and repetition rules.
+     *
+     * @param displayName The display name of the parameter.
+     * @param description A description of the parameter.
+     * @param argName The name of the argument.
+     * @param repetitions Specifies the allowed repetition rules for the parameter.
+     * @return A parameter representing a list of strings.
+     */
     @SuppressWarnings("unchecked")
     public static Param<List<String>> ofStrings(
             String displayName, String description, String argName,
@@ -427,6 +592,18 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a {@link Param} instance that represents a parameter expecting a list
+     * of values with specified validation constraints.
+     *
+     * @param <T> The type of elements within the list.
+     * @param displayName The name to display for the parameter in user interfaces or messages.
+     * @param description A textual description of the parameter to explain its purpose.
+     * @param argName The argument name used to represent this parameter.
+     * @param elementConverter A converter that transforms input strings into elements of type {@code T}.
+     * @param repetitions A constraint specifying the minimum and maximum number of elements allowed in the list.
+     * @return A {@link Param} object configured to represent a list of values of type {@code T}, with specified constraints.
+     */
     @SuppressWarnings("unchecked")
     public static <T> Param<List<T>> ofList(
             String displayName,
@@ -450,6 +627,15 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Creates a Converter that transforms a String array into a List of a specified type
+     * and vice versa, using a provided element converter.
+     *
+     * @param elementConverter the Converter used to handle transformation of individual elements
+     *                         between their String representation and the target type
+     * @return a Converter that processes String arrays into Lists of the target type and
+     *         Lists of the target type back into String arrays
+     */
     private static <T> Converter<String[], List<T>> listConverter(Converter<String, T> elementConverter) {
         return Converter.create(
                 s -> mapList(s, elementConverter.a2b()),
@@ -457,6 +643,14 @@ public record Param<T>(
         );
     }
 
+    /**
+     * Maps an array of strings to a list of elements of type T using the provided mapping function.
+     *
+     * @param <T> the type of elements in the resulting list
+     * @param strings an array of strings to be mapped
+     * @param elementMapper a function that defines how each string in the array is mapped to an element of type T
+     * @return an unmodifiable list of elements of type T resulting from the transformation of the input array
+     */
     private static <T> List<T> mapList(String[] strings, Function<String, T> elementMapper) {
         List<T> elements = new ArrayList<>(strings.length);
         for (String part : strings) {
@@ -465,6 +659,14 @@ public record Param<T>(
         return Collections.unmodifiableList(elements);
     }
 
+    /**
+     * Formats a list of elements into an array of strings using the provided formatting function.
+     *
+     * @param <T>              the type of elements in the list
+     * @param elements         the list of elements to be formatted
+     * @param elementFormatter a function that formats each element of the list into a string
+     * @return an array of formatted strings representing the elements in the list
+     */
     private static <T> String[] formatList(List<T> elements, Function<T, String> elementFormatter) {
         return elements.stream().map(elementFormatter).toArray(String[]::new);
     }

@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * A generic builder class used to define and configure options. This class provides
+ * methods to set parameters, mappers, repetitions, default values, and other
+ * configurations required to build an option instance.
+ *
+ * @param <T> the type of the target object for the option being constructed
+ */
 public class OptionBuilder<T> extends AbstractOptionBuilder<T, OptionBuilder<T>> {
     /**
      * Constructs an instance of OptionBuilder with the provided parameters.
