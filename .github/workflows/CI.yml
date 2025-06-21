@@ -58,28 +58,6 @@ jobs:
             **/build/test-artifacts/**
           if-no-files-found: ignore
 
-      - name: 'Create Qodana config'
-        if: runner.os == 'Linux'
-        run: |
-          cat > qodana.yaml << 'EOF'
-          version: "1.0"
-          linter: jetbrains/qodana-jvm-community:2025.1
-          profile:
-            name: qodana.starter
-          exclude:
-            - name: All
-              paths:
-                - "**/jmh/**"
-          EOF
-
-      - name: 'Qodana Scan'
-        if: runner.os == 'Linux'
-        uses: JetBrains/qodana-action@v2025.1
-        with:
-          args: --property,idea.kotlin.plugin.use.k2=false
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-
       - name: 'Cache SonarCloud packages'
         if: runner.os == 'Linux'
         uses: actions/cache@v4
