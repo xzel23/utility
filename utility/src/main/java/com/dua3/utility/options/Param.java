@@ -41,15 +41,42 @@ public record Param<T>(
         Function<T, Optional<String>> validate,
         Repetitions argRepetitions
 ) {
+    /**
+     * An enumeration defining whether a value is required or optional.
+     */
     public enum Required {
+        /**
+         * Indicates that a value is required.
+         */
         REQUIRED,
+        /**
+         * Indicates that a value is optional.
+         */
         OPTIONAL;
 
+        /**
+         * Converts the current {@code Required} instance to a corresponding {@link Repetitions} value.
+         *
+         * @return {@link Repetitions#EXACTLY_ONE} if the current value is {@code REQUIRED},
+         *         otherwise {@link Repetitions#ZERO_OR_ONE}.
+         */
         public Repetitions toRepetitions() {
             return this == REQUIRED ? Repetitions.EXACTLY_ONE : Repetitions.ZERO_OR_ONE;
         }
     }
 
+    /**
+     * Represents a parameter with metadata and validation logic for use in a system.
+     *
+     * @param displayName the name of the parameter to be displayed to users
+     * @param description a brief description of what the parameter is for
+     * @param argName the argument name to be used when passing this parameter
+     * @param targetType the class type of the parameter's expected value
+     * @param converter a converter that transforms string input into the target type
+     * @param allowedValues a list of permissible values for the parameter; can be null if no restrictions apply
+     * @param validate a validation function that checks the parameter value and returns an optional validation error message
+     * @param required specifies if this parameter is mandatory or optional
+     */
     public Param(
             String displayName,
             String description,
@@ -243,11 +270,15 @@ public record Param<T>(
     }
 
     /**
-     * Creates a {@code Param<Integer>} instance configured to handle integer parameter values
-     * with an additional validation predicate.
+     * Creates a new integer parameter with validation.
      *
-     * @param displayName the name to display for the parameter
-     * @param description*/
+     * @param displayName The name of the parameter to be displayed.
+     * @param description A brief description of the parameter.
+     * @param argName The name of the argument associated with the parameter.
+     * @param required Specifies whether the parameter is required.
+     * @param validatPredicate A predicate to validate the integer value of the parameter.
+     * @return A new {@code Param<Integer>} instance based on the provided inputs.
+     */
     public static Param<Integer> ofInt(
             String displayName,
             String description,
