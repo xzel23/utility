@@ -9,6 +9,7 @@ val projectVersion = "20.0.0-SNAPSHOT"
 
 // define subprojects
 include("utility")
+include("utility-bom")
 include("utility-db")
 include("utility-swing")
 include("utility-fx")
@@ -24,6 +25,7 @@ include("utility-samples:utility-samples-slf4j")
 include("utility-samples:utility-samples-log4j")
 include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
+include("utility-samples:utility-samples-bom")
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver") version "1.0.0"
@@ -75,6 +77,7 @@ dependencyResolutionManagement {
             version("slf4j", "2.0.17")
             version("spotbugs", "4.9.3")
             version("bouncycastle", "1.81")
+            version("utility-bom", projectVersion)
 
             library("jspecify", "org.jspecify", "jspecify").versionRef("jspecify")
 
@@ -83,6 +86,8 @@ dependencyResolutionManagement {
             library("jul-to-slf4j", "org.slf4j", "jul-to-slf4j").versionRef("slf4j")
 
             library("miglayout-swing", "com.miglayout", "miglayout-swing").versionRef("miglayout")
+
+            library("utility-bom", "com.dua3.utility", "utility-bom").versionRef("utility-bom")
 
             library("log4j-bom", "org.apache.logging.log4j", "log4j-bom").versionRef("log4j-bom")
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").withoutVersion()

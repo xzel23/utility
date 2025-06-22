@@ -197,6 +197,7 @@ could not be loaded.
 
 ### 20.0.0 (work in progress)
 
+- A new artefact `utility-bom` has been introduced that specifies the version for all modules.
 - Package `utility`
     - `LangUtil.reverseInPlace()` to reverse array contents
     - `RingBuffer` implements `SequencedCollection`
@@ -215,9 +216,9 @@ could not be loaded.
         - ECIES support depends on BouncyCastle being present
 
 - Package `utility.options`
-    - Added `Option.getTargetType()` to get an option's target type.
-    - ArgumentsParser `argName(String)` was changed to argNames(String...) (varargs method) to allow using different
-      names for each position.
+    - The package has been completely refactored to be more consistent and allow for finer control.
+      It is now for example easier to create options that have enum or record generic type.
+      The different `Option` implementing classes have been replaced by a single `Option<T>` generic class.
     - `ArgumentsParser.help()` output was changed to be more informative and use system line ends as its intended use is
       to display a help message in the system terminal.
     - Use `Option.isEquivalent()` instead of `equals()` when checking for specific options.

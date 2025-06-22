@@ -60,52 +60,60 @@ subprojects {
     val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
     val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
 
-    apply(plugin = "java-library")
-    apply(plugin = "jvm-test-suite")
+    // Skip java-library plugin for utility-bom as it uses java-platform instead
+    if (project.name != "utility-bom") {
+        apply(plugin = "java-library")
+        apply(plugin = "jvm-test-suite")
+        apply(plugin = "jacoco")
+        apply(plugin = "com.github.spotbugs")
+        apply(plugin = "com.dua3.cabe")
+        apply(plugin = "de.thetaphi.forbiddenapis")
+        apply(plugin = "me.champeau.jmh")
+    }
+
+    // These plugins are compatible with both java-library and java-platform
     apply(plugin = "maven-publish")
     apply(plugin = "version-catalog")
     apply(plugin = "signing")
     apply(plugin = "idea")
-    apply(plugin = "jacoco")
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "com.adarshr.test-logger")
-    apply(plugin = "com.github.spotbugs")
-    apply(plugin = "com.dua3.cabe")
-    apply(plugin = "de.thetaphi.forbiddenapis")
-    apply(plugin = "me.champeau.jmh")
 
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+    // Java configuration only for projects with java-library plugin
+    if (project.name != "utility-bom") {
+        java {
+            toolchain {
+                languageVersion.set(JavaLanguageVersion.of(21))
+            }
+
+            targetCompatibility = JavaVersion.VERSION_21
+            sourceCompatibility = targetCompatibility
+
+            withJavadocJar()
+            withSourcesJar()
         }
 
-        targetCompatibility = JavaVersion.VERSION_21
-        sourceCompatibility = targetCompatibility
-
-        withJavadocJar()
-        withSourcesJar()
-    }
-
-    cabe {
-        if (isReleaseVersion) {
-            config.set(Configuration.parse("publicApi=THROW_IAE:privateApi=ASSERT"))
-        } else {
-            config.set(Configuration.DEVELOPMENT)
+        cabe {
+            if (isReleaseVersion) {
+                config.set(Configuration.parse("publicApi=THROW_IAE:privateApi=ASSERT"))
+            } else {
+                config.set(Configuration.DEVELOPMENT)
+            }
         }
-    }
 
-    // JaCoCo
-    tasks.withType<JacocoReport> {
-        reports {
-            xml.required.set(true)
-            html.required.set(false)
+        // JaCoCo
+        tasks.withType<JacocoReport> {
+            reports {
+                xml.required.set(true)
+                html.required.set(false)
+            }
         }
-    }
 
-    // Configure test task to use JaCoCo
-    tasks.withType<Test> {
-        useJUnitPlatform()
-        finalizedBy(tasks.jacocoTestReport)
+        // Configure test task to use JaCoCo
+        tasks.withType<Test> {
+            useJUnitPlatform()
+            finalizedBy(tasks.jacocoTestReport)
+        }
     }
 
     // Sonar
@@ -116,47 +124,50 @@ subprojects {
         }
     }
 
-    // dependencies
-    dependencies {
-        // source annotations
-        implementation(rootProject.libs.jspecify)
+    // Only apply these configurations to non-BOM projects
+    if (project.name != "utility-bom") {
+        // dependencies
+        dependencies {
+            // source annotations
+            implementation(rootProject.libs.jspecify)
 
-        // LOG4J
-        implementation(platform(rootProject.libs.log4j.bom))
-        implementation(rootProject.libs.log4j.api)
-    }
-
-    idea {
-        module {
-            inheritOutputDirs = false
-            outputDir = project.layout.buildDirectory.file("classes/java/main/").get().asFile
-            testOutputDir = project.layout.buildDirectory.file("classes/java/test/").get().asFile
+            // LOG4J
+            implementation(platform(rootProject.libs.log4j.bom))
+            implementation(rootProject.libs.log4j.api)
         }
-    }
 
-    testing {
-        suites {
-            val test by getting(JvmTestSuite::class) {
-                useJUnitJupiter()
+        idea {
+            module {
+                inheritOutputDirs = false
+                outputDir = project.layout.buildDirectory.file("classes/java/main/").get().asFile
+                testOutputDir = project.layout.buildDirectory.file("classes/java/test/").get().asFile
+            }
+        }
 
-                dependencies {
-                    implementation(rootProject.libs.log4j.core)
-                    implementation(rootProject.libs.jimfs)
-                    implementation(rootProject.libs.mockito)
-                }
+        testing {
+            suites {
+                val test by getting(JvmTestSuite::class) {
+                    useJUnitJupiter()
 
-                targets {
-                    all {
-                        testTask {
-                            // enable assertions and use headless mode for AWT in unit tests
-                            jvmArgs(
-                                "-ea",
-                                "-Djava.awt.headless=true",
-                                "-Dprism.order=sw",
-                                "-Dsun.java2d.d3d=false",
-                                "-Dsun.java2d.opengl=false",
-                                "-Dsun.java2d.pmoffscreen=false"
-                            )
+                    dependencies {
+                        implementation(rootProject.libs.log4j.core)
+                        implementation(rootProject.libs.jimfs)
+                        implementation(rootProject.libs.mockito)
+                    }
+
+                    targets {
+                        all {
+                            testTask {
+                                // enable assertions and use headless mode for AWT in unit tests
+                                jvmArgs(
+                                    "-ea",
+                                    "-Djava.awt.headless=true",
+                                    "-Dprism.order=sw",
+                                    "-Dsun.java2d.d3d=false",
+                                    "-Dsun.java2d.opengl=false",
+                                    "-Dsun.java2d.pmoffscreen=false"
+                                )
+                            }
                         }
                     }
                 }
@@ -168,22 +179,25 @@ subprojects {
         theme = ThemeType.MOCHA_PARALLEL
     }
 
-    tasks.compileJava {
-        options.encoding = "UTF-8"
-        options.compilerArgs.add("-Xlint:deprecation")
-        options.compilerArgs.add("-Xlint:-module")
-        options.javaModuleVersion.set(provider { project.version as String })
-        options.release.set(java.targetCompatibility.majorVersion.toInt())
-    }
+    // Only apply Java-specific tasks to non-BOM projects
+    if (project.name != "utility-bom") {
+        tasks.compileJava {
+            options.encoding = "UTF-8"
+            options.compilerArgs.add("-Xlint:deprecation")
+            options.compilerArgs.add("-Xlint:-module")
+            options.javaModuleVersion.set(provider { project.version as String })
+            options.release.set(java.targetCompatibility.majorVersion.toInt())
+        }
 
-    tasks.compileTestJava {
-        options.encoding = "UTF-8"
-    }
+        tasks.compileTestJava {
+            options.encoding = "UTF-8"
+        }
 
-    tasks.javadoc {
-        (options as StandardJavadocDocletOptions).apply {
-            encoding = "UTF-8"
-            addStringOption("Xdoclint:all,-missing/private")
+        tasks.javadoc {
+            (options as StandardJavadocDocletOptions).apply {
+                encoding = "UTF-8"
+                addStringOption("Xdoclint:all,-missing/private")
+            }
         }
     }
 
@@ -192,39 +206,42 @@ subprojects {
     // Create the publication with the pom configuration:
     publishing {
         publications {
-            create<MavenPublication>("maven") {
-                groupId = Meta.GROUP
-                artifactId = project.name
-                version = project.version.toString()
+            // Skip creating the maven publication for utility-bom as it has its own publication
+            if (project.name != "utility-bom") {
+                create<MavenPublication>("maven") {
+                    groupId = Meta.GROUP
+                    artifactId = project.name
+                    version = project.version.toString()
 
-                from(components["java"])
+                    from(components["java"])
 
-                pom {
-                    withXml {
-                        val root = asNode()
-                        root.appendNode("description", project.description)
-                        root.appendNode("name", project.name)
-                        root.appendNode("url", Meta.SCM)
-                    }
-
-                    licenses {
-                        license {
-                            name.set(Meta.LICENSE_NAME)
-                            url.set(Meta.LICENSE_URL)
+                    pom {
+                        withXml {
+                            val root = asNode()
+                            root.appendNode("description", project.description)
+                            root.appendNode("name", project.name)
+                            root.appendNode("url", Meta.SCM)
                         }
-                    }
-                    developers {
-                        developer {
-                            id.set(Meta.DEVELOPER_ID)
-                            name.set(Meta.DEVELOPER_NAME)
-                            email.set(Meta.DEVELOPER_EMAIL)
-                            organization.set(Meta.ORGANIZATION_NAME)
-                            organizationUrl.set(Meta.ORGANIZATION_URL)
-                        }
-                    }
 
-                    scm {
-                        url.set(Meta.SCM)
+                        licenses {
+                            license {
+                                name.set(Meta.LICENSE_NAME)
+                                url.set(Meta.LICENSE_URL)
+                            }
+                        }
+                        developers {
+                            developer {
+                                id.set(Meta.DEVELOPER_ID)
+                                name.set(Meta.DEVELOPER_NAME)
+                                email.set(Meta.DEVELOPER_EMAIL)
+                                organization.set(Meta.ORGANIZATION_NAME)
+                                organizationUrl.set(Meta.ORGANIZATION_URL)
+                            }
+                        }
+
+                        scm {
+                            url.set(Meta.SCM)
+                        }
                     }
                 }
             }
@@ -247,36 +264,46 @@ subprojects {
     // === sign artifacts
     signing {
         isRequired = isReleaseVersion && gradle.taskGraph.hasTask("publish")
-        sign(publishing.publications["maven"])
+        // Only sign the maven publication for non-BOM projects
+        // The BOM project has its own signing configuration
+        if (project.name != "utility-bom") {
+            sign(publishing.publications["maven"])
+        }
     }
 
     // === JMH ===
-    jmh {
-        jmhVersion = rootProject.libs.versions.jmh
-        warmupIterations = 2
-        iterations = 5
-        fork = 1
-    }
-
-    // === FORBIDDEN APIS ===
-    forbiddenApis {
-        bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
-        ignoreFailures = false
-    }
-
-    // === SPOTBUGS ===
-    spotbugs.toolVersion.set(rootProject.libs.versions.spotbugs)
-    spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
-
-    tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
-        reports.create("html") {
-            required.set(true)
-            outputLocation = project.layout.buildDirectory.file("reports/spotbugs.html").get().asFile
-            setStylesheet("fancy-hist.xsl")
+    // Only apply JMH configuration to non-BOM projects
+    if (project.name != "utility-bom") {
+        jmh {
+            jmhVersion = rootProject.libs.versions.jmh
+            warmupIterations = 2
+            iterations = 5
+            fork = 1
         }
-        reports.create("xml") {
-            required.set(true)
-            outputLocation = project.layout.buildDirectory.file("reports/spotbugs.xml").get().asFile
+    }
+
+    // Only apply these configurations to non-BOM projects
+    if (project.name != "utility-bom") {
+        // === FORBIDDEN APIS ===
+        forbiddenApis {
+            bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
+            ignoreFailures = false
+        }
+
+        // === SPOTBUGS ===
+        spotbugs.toolVersion.set(rootProject.libs.versions.spotbugs)
+        spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
+
+        tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
+            reports.create("html") {
+                required.set(true)
+                outputLocation = project.layout.buildDirectory.file("reports/spotbugs.html").get().asFile
+                setStylesheet("fancy-hist.xsl")
+            }
+            reports.create("xml") {
+                required.set(true)
+                outputLocation = project.layout.buildDirectory.file("reports/spotbugs.xml").get().asFile
+            }
         }
     }
 
@@ -285,8 +312,11 @@ subprojects {
         dependsOn(tasks.publishToMavenLocal)
     }
 
-    tasks.withType<Jar> {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    // Only apply Jar configuration to non-BOM projects
+    if (project.name != "utility-bom") {
+        tasks.withType<Jar> {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
     }
 
 }
