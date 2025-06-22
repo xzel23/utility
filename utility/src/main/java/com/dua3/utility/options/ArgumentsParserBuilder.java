@@ -343,52 +343,62 @@ public class ArgumentsParserBuilder {
             RecordComponent component = recordComponents[i];
             Class<?> type = component.getType();
             Param<?> param;
+            String componentName = component.getName();
+            String componentDescription = "Set the value of " + componentName;
             if (type == int.class || type == Integer.class) {
                 param = Param.ofInt(
-                        component.getName(),
-                        "Set the value of " + component.getName(),
-                        component.getName(),
+                        componentName,
+                        componentDescription,
+                        componentName,
                         Param.Required.REQUIRED
                 );
             } else if (type == long.class || type == Long.class) {
                 param = Param.ofLong(
-                        component.getName(),
-                        "Set the value of " + component.getName(),
-                        component.getName(),
+                        componentName,
+                        componentDescription,
+                        componentName,
                         Param.Required.REQUIRED
                 );
             } else if (type == double.class || type == Double.class) {
                 param = Param.ofDouble(
-                        component.getName(),
-                        "Set the value of " + component.getName(),
-                        component.getName(),
+                        componentName,
+                        componentDescription,
+                        componentName,
                         Param.Required.REQUIRED
                 );
             } else if (type == String.class) {
                 param = Param.ofString(
-                        component.getName(),
-                        "Set the value of " + component.getName(),
-                        component.getName(),
+                        componentName,
+                        componentDescription,
+                        componentName,
                         Param.Required.REQUIRED
                 );
             } else if (type == Path.class) {
                 param = Param.ofPath(
-                        component.getName(),
-                        "Set the value of " + component.getName(),
-                        component.getName(),
+                        componentName,
+                        componentDescription,
+                        componentName,
                         Param.Required.REQUIRED
                 );
             } else if (type == URI.class) {
                 param = Param.ofUri(
-                        component.getName(),
-                        "Set the value of " + component.getName(),
-                        component.getName(),
+                        componentName,
+                        componentDescription,
+                        componentName,
                         Param.Required.REQUIRED
+                );
+            } else if (type.isEnum()) {
+                param = Param.ofEnum(
+                        componentName,
+                        componentDescription,
+                        componentName,
+                        Param.Required.REQUIRED,
+                        type.asSubclass(Enum.class)
                 );
             } else {
                 throw new IllegalArgumentException(
                         "Unsupported record component type '%s' for component '%s' in option '%s'"
-                                .formatted(type.getName(), component.getName(), displayName)
+                                .formatted(type.getName(), componentName, displayName)
                 );
             }
 
