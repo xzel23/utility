@@ -440,4 +440,18 @@ public class Option<T extends @Nullable Object> {
     public boolean hasAllowedValues() {
         return minArgs() == 1 && maxArgs() == 1 && params().get(0).hasAllowedValues();
     }
+
+    /**
+     * Retrieves a list of allowed values for the current parameter, if available.
+     * If no allowed values are defined, returns an empty list.
+     *
+     * @return a list of allowed values of type T, or an empty list if no allowed values are defined
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> allowedValues() {
+        if (!hasAllowedValues()) {
+            return Collections.emptyList();
+        }
+        return (List<T>) params().getFirst().allowedValues();
+    }
 }
