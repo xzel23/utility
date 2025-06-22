@@ -30,7 +30,14 @@ public class ChoiceInputControl<T> implements InputControl<T> {
     private record Choice<T>(@Nullable T value, String text) {}
 
     /**
-     * Constructs a ChoiceInputControl with the given options and default value supplier.
+     * Constructs a ChoiceInputControl, which represents an input control that allows for selecting one
+     * option from a predefined list of choices. The control is initialized with a list of allowed values
+     * and supports a default value that can be set upon creation.
+     *
+     * @param param     the parameter defining the allowed values and associated display text for
+     *                  each choice
+     * @param dfltValue a supplier that provides the default value to be selected when the control
+     *                  is initialized
      */
     public ChoiceInputControl(Param<T> param, Supplier<? extends @Nullable T> dfltValue) {
         this.dfltValue = dfltValue;
