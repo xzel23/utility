@@ -173,7 +173,7 @@ public record Param<T>(
             if (validatPredicate.test(v)) {
                 return Optional.empty();
             } else {
-                return Optional.of("invalid value for %s (%s): %s".formatted(displayName, argName, v));
+                return Optional.of(getInvalidValueMessage(displayName, argName, v));
             }
         };
 
@@ -186,6 +186,18 @@ public record Param<T>(
                 validator,
                 required
         );
+    }
+
+    /**
+     * Constructs and returns a message indicating an invalid value for a given argument.
+     *
+     * @param displayName the display name of the related entity or field
+     * @param argName the name of the argument that has the invalid value
+     * @param v the invalid value causing the issue
+     * @return a formatted string containing the invalid value message
+     */
+    private static String getInvalidValueMessage(String displayName, String argName, Object v) {
+        return "invalid value for %s (%s): %s".formatted(displayName, argName, v);
     }
 
     /**
@@ -408,7 +420,7 @@ public record Param<T>(
             if (validatPredicate.test(v)) {
                 return Optional.empty();
             } else {
-                return Optional.of("invalid value for %s (%s): %s".formatted(displayName, argName, v));
+                return Optional.of(getInvalidValueMessage(displayName, argName, v));
             }
         };
 
@@ -472,7 +484,7 @@ public record Param<T>(
             if (validatPredicate.test(v)) {
                 return Optional.empty();
             } else {
-                return Optional.of("invalid value for %s (%s): %s".formatted(displayName, argName, v));
+                return Optional.of(getInvalidValueMessage(displayName, argName, v));
             }
         };
 
