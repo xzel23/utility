@@ -612,6 +612,38 @@ public record Param<T>(
     }
 
     /**
+     * Creates a new instance of {@code Param} for an object parameter.
+     *
+     * @param <T> the type of the parameter's value
+     * @param displayName the display name of the parameter
+     * @param description a description providing details about the parameter
+     * @param argName the argument name used in command-line or user input
+     * @param required specifies whether the parameter is required
+     * @param targetType the class type of the parameter's value
+     * @param converter the converter used to transform the input string into the target type
+     * @return a new instance of {@code Param} configured for an object parameter
+     */
+    public static <T> Param<T> ofObject(
+            String displayName,
+            String description,
+            String argName,
+            Required required,
+            Class<T> targetType,
+            Converter<String, T> converter
+    ) {
+        return new Param<>(
+                displayName,
+                description,
+                argName,
+                targetType,
+                converter,
+                Collections.emptyList(),
+                v -> Optional.empty(),
+                required
+        );
+    }
+
+    /**
      * Creates a parameter for a list of strings, taking in display name, description,
      * argument name, and repetition rules.
      *

@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
@@ -306,6 +307,44 @@ public class ArgumentsParserBuilder {
         return new OptionBuilder<>(this, displayName, description, targetClass)
                 .repetitions(repetitions)
                 .param(Param.ofEnum(displayName, description, argName, Param.Required.REQUIRED, targetClass))
+                .defaultSupplier(defaultSupplier)
+                .build(firstSwitch, moreSwitches);
+    }
+
+    /**
+     * Adds an object option to be parsed with specific parameters and switches.
+     * This method allows setting a display name, description, argument name, default value,
+     * type, and converter for the option. It also specifies the first switch and additional
+     * switches associated with this option.
+     *
+     * @param displayName the name displayed for the option in usage or help output
+     * @param description a brief explanation of the purpose of the option
+     * @param repetitions the number of times the option may appear or is required;
+     *                    it determines if the option is mandatory or optional
+     * @param argName the name used to indicate the argument for the option
+     * @param defaultSupplier a supplier that provides a default value if the option is not specified;
+     *                        null indicates no default value is provided
+     * @param targetClass the class type of the option's target value
+     * @param converter a converter function used to transform the string argument into the target type
+     * @param firstSwitch the primary switch that triggers this option
+     * @param moreSwitches additional switches that can also be used to trigger this option
+     * @param <T> the type of the resulting option value
+     * @return an Option object representing the configured option with the specified parameters and switches
+     */
+    public <T> Option<T> addObjectOption(
+            String displayName,
+            String description,
+            Repetitions repetitions,
+            String argName,
+            Supplier<@Nullable T> defaultSupplier,
+            Class<T> targetClass,
+            Converter<String, T> converter,
+            String firstSwitch,
+            String... moreSwitches
+    ) {
+        return new OptionBuilder<>(this, displayName, description, targetClass)
+                .repetitions(repetitions)
+                .param(Param.ofObject(displayName, description, argName, Param.Required.REQUIRED, targetClass, converter))
                 .defaultSupplier(defaultSupplier)
                 .build(firstSwitch, moreSwitches);
     }
