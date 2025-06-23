@@ -63,7 +63,7 @@ public final class CsvReader extends CsvIo {
      * When set, the reader will attempt to parse and interpret the first row of the CSV file as
      * column names.
      */
-    public static final Option<Boolean> READ_COLUMN_NAMES = Option.flag(
+    public static final Option<Boolean> READ_COLUMN_NAMES = Option.createFlag(
             "Read column names",
             "If true, Column names are read from the first row of data.",
             "--read-column-names"
@@ -74,7 +74,7 @@ public final class CsvReader extends CsvIo {
      * If enabled, fields beyond the expected number in a CSV row are ignored without raising an error.
      * This is useful when dealing with unexpected data formats or when strict validation is not required.
      */
-    public static final Option<Boolean> IGNORE_EXCESSIVE_FIELDS = Option.flag(
+    public static final Option<Boolean> IGNORE_EXCESSIVE_FIELDS = Option.createFlag(
             "Ignore excessive fields",
             "If ture, fields outside of the range of columns defined by reading the column names are ignored",
             "--ignore-excessive-fields"
@@ -87,7 +87,7 @@ public final class CsvReader extends CsvIo {
      * This can be useful when dealing with files where some rows may have fewer fields
      * than specified or expected.
      */
-    public static final Option<Boolean> IGNORE_MISSING_FIELDS = Option.flag(
+    public static final Option<Boolean> IGNORE_MISSING_FIELDS = Option.createFlag(
             "Ignore missing fields",
             "If true, missing fields are ignored; otherwise, an exception is thrown for incomplete rows.",
             "--ignore-missing-fields");

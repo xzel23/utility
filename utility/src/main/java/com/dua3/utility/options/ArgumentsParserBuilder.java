@@ -100,20 +100,22 @@ public class ArgumentsParserBuilder {
     }
 
     /**
-     * Adds a new flag to the builder with the specified display name and description.
+     * Creates a new {@link FlagBuilder} that will add the created flag to this builder when its {@code build()} method
+     * is called.
+     * <p>
      * A flag is a boolean option that can either be present (true) or absent (false) in the arguments.
      *
      * @param displayName the display name of the flag
      * @param description the description of the flag, providing details about its purpose
      * @return a {@code FlagBuilder} instance for further configuration of the flag
      */
-    public FlagBuilder flag(String displayName, String description) {
+    public FlagBuilder flagBuilder(String displayName, String description) {
         return new FlagBuilder(this, displayName, description);
     }
 
     /**
-     * Creates a new {@code OptionBuilder} instance to define an option with the specified display name, description,
-     * and target type.
+     * Creates a new {@code OptionBuilder} that will add the created flag to this builder when its {@code build()}
+     * method is called.
      *
      * @param <T>        the type of the value the option will accept
      * @param displayName the display name of the option, used for identification during argument parsing
@@ -121,27 +123,12 @@ public class ArgumentsParserBuilder {
      * @param targetType  the type of value the option will handle or accept
      * @return an {@code OptionBuilder} instance for further configuration of the option
      */
-    public <T> OptionBuilder<T> option(
+    public <T> OptionBuilder<T> optionBuilder(
             String displayName,
             String description,
             Class<T> targetType
     ) {
         return new OptionBuilder<>(this, displayName, description, targetType);
-    }
-
-    /**
-     * Creates a new {@code ListOptionBuilder} instance to define an option with the specified display name,
-     * description, and target type, which is constrained to enumerations. This method allows configuring
-     * options that accept a list of values corresponding to the enumeration type.
-     *
-     * @param <E>         the type of the enumeration the list option will accept
-     * @param displayName the display name of the option, used for identification during argument parsing
-     * @param description the description of the option, providing details about its purpose
-     * @param targetType  the class of the enumeration type the option will accept
-     * @return a {@code ListOptionBuilder} instance for further configuration of the list option
-     */
-    public <E extends Enum<E>> ListOptionBuilder<E> listOption(String displayName, String description, Class<E> targetType) {
-        return new ListOptionBuilder<>(this, displayName, description, targetType);
     }
 
     /**

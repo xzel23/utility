@@ -45,7 +45,7 @@ public class Option<T extends @Nullable Object> {
      * @param moreSwitches additional switches that can be used as aliases for the flag
      * @return an {@code Option<Boolean>} instance configured as a flag
      */
-    public static Option<Boolean> flag(
+    public static Option<Boolean> createFlag(
             String displayName,
             String description,
             String firstSwitch,
@@ -69,7 +69,7 @@ public class Option<T extends @Nullable Object> {
      * @param moreSwitches additional switches or aliases for the option
      * @return an {@code Option<T>} instance configured with the specified properties
      */
-    public static <T> Option<T> simpleOption(
+    public static <T> Option<T> createSimpleOption(
             String displayName,
             String description,
             Param<T> param,
@@ -84,28 +84,79 @@ public class Option<T extends @Nullable Object> {
     }
 
     /**
-     * Creates an {@code Option} representing a list parameter with an associated name,
-     * description, and default value. The list parameter allows multiple values
-     * and is configured using one or more switches (e.g., command-line flags or aliases).
+     * Creates a selection option that associates display attributes, type information,
+     * allowed values, a converter for parsing input, and default supplier logic.
      *
-     * @param <T> the type of the parameter values
-     * @param displayName the human-readable name of the option, typically used for display or documentation
-     * @param description a brief description explaining the purpose or functionality of the option
-     * @param param the parameter instance associated with this option, defining its type and behavior
-     * @param defaultSupplier a supplier providing the default value for the option; can supply {@code null}
-     * @param firstSwitch the primary switch associated with the option (e.g., command-line argument or alias)
-     * @param moreSwitches additional switches or aliases for the option
-     * @return an {@code Option<T>} instance configured as a list option with the specified properties
+     * @param <T> The type of the option's selectable values.
+     * @param displayName The name displayed for the option.
+     * @param description A description providing details about the option.
+     * @param targetType The type of values that the option accepts.
+     * @param argName The name used for the argument associated with this option.
+     * @param allowedValues A list of predefined values that can be selected for this option.
+     *                       Can include null if the list permits nullable values.
+     * @param converter A converter that transforms a string input into the expected type.
+     * @param defaultSupplier A supplier function to provide a default value if no specific value is provided.
+     * @param firstSwitch The first switch string to use for this option (e.g., "--flag").
+     * @param moreSwitches Additional switches that can be used as aliases for the option.
+     * @return A configured {@link Option} instance encapsulating the provided selection data and behavior.
      */
-    public static <T> Option<T> listOption(
+    public static <T> Option<T> createSelectionOption(
             String displayName,
             String description,
-            Param<T> param,
+            Class<T> targetType,
+            String argName,
+            List<@Nullable T> allowedValues,
+            Converter<String, @Nullable T> converter,
             Supplier<@Nullable T> defaultSupplier,
             String firstSwitch,
             String... moreSwitches
     ) {
-        return new OptionBuilder<T>(null, displayName, description, param.targetType())
+        Param<T> param = Param.ofConstants(
+                displayName,
+                description,
+                argName,
+                Param.Required.REQUIRED,
+                targetType,
+                converter,
+                allowedValues
+        );
+        return new OptionBuilder<T>(null, displayName, description, targetType)
+                .param(param)
+                .defaultSupplier(defaultSupplier)
+                .build(firstSwitch, moreSwitches);
+    }
+
+    /**
+     * Creates an {@link Option} for handling enum-type parameters. This method simplifies
+     * the creation and configuration of options that are based on enumerations.
+     *
+     * @param <E> The type of the enum.
+     * @param displayName The user-facing name of the option.
+     * @param description A description of the option's purpose or usage.
+     * @param targetType The enum class type to which this option corresponds.
+     * @param argName The argument name used to represent the option in a command-line or configuration context.
+     * @param defaultSupplier A supplier that provides the default enum value for this option. Can be {@code null}.
+     * @param firstSwitch The primary switch name(s) or flag(s) for the option.
+     * @param moreSwitches Additional switch names or flags that the option can be identified with.
+     * @return An {@link Option} configured for the specified enum type.
+     */
+    public static <E extends Enum<E>> Option<E> createEnumOption(
+            String displayName,
+            String description,
+            Class<E> targetType,
+            String argName,
+            Supplier<@Nullable E> defaultSupplier,
+            String firstSwitch,
+            String... moreSwitches
+    ) {
+        Param<E> param = Param.ofEnum(
+                displayName,
+                description,
+                argName,
+                Param.Required.REQUIRED,
+                targetType
+        );
+        return new OptionBuilder<>(null, displayName, description, targetType)
                 .param(param)
                 .defaultSupplier(defaultSupplier)
                 .build(firstSwitch, moreSwitches);
@@ -294,7 +345,7 @@ public class Option<T extends @Nullable Object> {
             }
             idxArg += to - idxArg;
         }
-        
+
         try {
             return Arguments.Entry.create(this, mapper.apply(builderArgs));
         } catch (RuntimeException e) {

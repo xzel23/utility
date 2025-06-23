@@ -27,7 +27,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with occurrence(0, 1) and arity(1).");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofString("Option", "--opt", "value", Param.Required.REQUIRED))
                 .build("--opt");
 
@@ -69,7 +69,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with occurrence(1, 1) and arity(1).");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofString("Option", "--opt", "value", Param.Required.REQUIRED))
                 .repetitions(Repetitions.EXACTLY_ONE)
                 .build("--opt");
@@ -112,7 +112,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with occurrence(0, 3) and arity(1).");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofString("Option", "--opt", "value", Param.Required.REQUIRED))
                 .repetitions(Repetitions.atMost(3))
                 .build("--opt");
@@ -169,7 +169,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with occurrence(2, 4) and arity(1).");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofString("Option", "--opt", "value", Param.Required.REQUIRED))
                 .repetitions(Repetitions.between(2, 4))
                 .build("--opt");
@@ -232,7 +232,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with occurrence(0, Integer.MAX_VALUE) and arity(1).");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofString("Option", "--opt", "value", Param.Required.REQUIRED))
                 .repetitions(Repetitions.ZERO_OR_MORE)
                 .build("--opt");
@@ -274,7 +274,7 @@ class ArgumentsParserOptionTest {
         ArgumentsParserBuilder builder = ArgumentsParser.builder()
                 .name("testOption")
                 .description("Unit test for option with occurrence(1) and arity(0, 2).");
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofList(
                         "Option",
                         "The value for the option.", "value",
@@ -331,7 +331,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with occurrence(1) and arity(2, 4).");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofList(
                         "Option",
                         "The value for the option.", "value",
@@ -394,7 +394,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with occurrence(1) and arity(0, Integer.MAX_VALUE).");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofList(
                         "Option",
                         "The value for the option.", "value",
@@ -445,7 +445,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with occurrence(0, 2) and arity(0, 2).");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(Param.ofList(
                         "Option",
                         "The value for the option.", "value",
@@ -519,7 +519,7 @@ class ArgumentsParserOptionTest {
                 .name("testOption")
                 .description("Unit test for option with custom arg names.");
 
-        Option<String> option = builder.option("Option", "The option.", String.class)
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
                 .param(
                         Param.ofString("Source", "The source value.", "source", Param.Required.REQUIRED),
                         Param.ofString("Destination", "The destination value.", "destination", Param.Required.OPTIONAL),
@@ -575,14 +575,14 @@ class ArgumentsParserOptionTest {
                 "--opt-a"
         );
 
-        Option<String> optionB = builder.option("Option B", "Set the value for option B.", String.class)
+        Option<String> optionB = builder.optionBuilder("Option B", "Set the value for option B.", String.class)
                 .repetitions(Repetitions.atMost(2))
                 .optionalParam(
                         Param.ofString("Option B", "Set the value for option B.", "value B", Param.Required.OPTIONAL)
                 )
                 .build("--opt-b");
 
-        Option<String> optionC = builder.option("Option C", "Set the value for option C.", String.class)
+        Option<String> optionC = builder.optionBuilder("Option C", "Set the value for option C.", String.class)
                 .repetitions(Repetitions.atMost(2))
                 .param(
                         Param.ofString("Argument C1", "Set first part of C.", "c1", Param.Required.REQUIRED),

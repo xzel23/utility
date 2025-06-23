@@ -106,21 +106,17 @@ public final class IoOptions {
      * @return an {@code Option<Charset>} representing the character encoding selection
      */
     public static Option<Charset> charset(Supplier<Charset> defaultSupplier) {
-        return Option.listOption(
+        return Option.createSelectionOption(
                 "Charset",
                 "The character encoding.",
-                Param.ofConstants(
-                        "Charset",
-                        "The character encoding to use.", "charset",
-                        Param.Required.REQUIRED,
-                        Charset.class,
-                        Converter.create(Charset::forName, Charset::displayName),
-                        Charset.availableCharsets()
-                                .values()
-                                .stream()
-                                .sorted(Comparator.comparing(Charset::displayName))
-                                .toList()
-                ),
+                Charset.class,
+                "charset",
+                Charset.availableCharsets()
+                        .values()
+                        .stream()
+                        .sorted(Comparator.comparing(Charset::displayName))
+                        .toList(),
+                Converter.create(Charset::forName, Charset::displayName),
                 defaultSupplier,
                 "--charset", "-cs"
         );
@@ -137,18 +133,13 @@ public final class IoOptions {
      * @return an {@code Option<Locale>} representing the locale selection
      */
     public static Option<Locale> locale(Supplier<Locale> defaultSupplier) {
-        return Option.listOption(
+        return Option.createSelectionOption(
                 "Locale",
                 "The locale to use when reading or writing files.",
-                Param.ofConstants(
-                        "Locale",
-                        "" +
-                                "The locale to use.", "locale",
-                        Param.Required.REQUIRED,
-                        Locale.class,
-                        Converter.create(Locale::forLanguageTag, Locale::getLanguage),
-                        LangUtil.asUnmodifiableList(Locale.getAvailableLocales())
-                ),
+                Locale.class,
+                "locale",
+                LangUtil.asUnmodifiableList(Locale.getAvailableLocales()),
+                Converter.create(Locale::forLanguageTag, locale -> LangUtil.orElseGet(locale, Locale::getDefault).getLanguage()),
                 defaultSupplier,
                 "--locale", "-lc"
         );
@@ -163,7 +154,7 @@ public final class IoOptions {
      * @return an {@code Option<Path>} representing the input path option.
      */
     public static Option<Path> input(Supplier<@Nullable Path> defaultSupplier) {
-        return Option.simpleOption(
+        return Option.createSimpleOption(
                 "Input path",
                 "The path of the input data.",
                 Param.ofPath(
@@ -186,7 +177,7 @@ public final class IoOptions {
      * @return an {@code Option<Path>} representing the output path option.
      */
     public static Option<Path> output(Supplier<@Nullable Path> defaultSupplier) {
-        return Option.simpleOption(
+        return Option.createSimpleOption(
                 "Output path",
                 "The path of the output data.",
                 Param.ofPath(
@@ -210,18 +201,13 @@ public final class IoOptions {
      * @return an {@code Option<Character>} representing the text delimiter option
      */
     public static Option<Character> textDelimiter(Supplier<Character> defaultSupplier) {
-        return Option.listOption(
+        return Option.createSelectionOption(
                 "Text delimiter",
                 "The character to use as the text delimiter for quoted texts.",
-                Param.ofConstants(
-                        "Text delimiter",
-                        "" +
-                                "The text delimiter to use.", "deilimter",
-                        Param.Required.REQUIRED,
-                        Character.class,
-                        Converter.create(s -> s.charAt(0), Object::toString),
-                        List.of('"', '\'')
-                ),
+                Character.class,
+                "delimiter",
+                List.of('"', '\''),
+                Converter.create(s -> s.charAt(0), Object::toString),
                 defaultSupplier,
                 "--text-delimiter", "-d"
         );
@@ -237,18 +223,13 @@ public final class IoOptions {
      * @return an {@code Option<Character>} representing the field separator option
      */
     public static Option<Character> fieldSeparator(Supplier<Character> defaultSupplier) {
-        return Option.listOption(
+        return Option.createSelectionOption(
                 "Field separator",
                 "The character used to separate fields belonging to the same row.",
-                Param.ofConstants(
-                        "Field separator",
-                        "" +
-                                "The field separator to use.", "separator",
-                        Param.Required.REQUIRED,
-                        Character.class,
-                        Converter.create(s -> s.charAt(0), Object::toString),
-                        List.of(';', ',', '|')
-                ),
+                Character.class,
+                "separator",
+                List.of(';', ',', '|'),
+                Converter.create(s -> s.charAt(0), String::valueOf),
                 defaultSupplier,
                 "--field-separator", "-s"
         );
@@ -263,15 +244,11 @@ public final class IoOptions {
      * @return an {@code Option<PredefinedDateTimeFormat>} representing the configurable date format option
      */
     public static Option<PredefinedDateTimeFormat> dateFormat(Supplier<PredefinedDateTimeFormat> defaultSupplier) {
-        return Option.listOption(
+        return Option.createEnumOption(
                 "Date Format",
                 "The date format to use.",
-                Param.ofEnum(
-                        "Date format",
-                        "The date format to use.", "dateformat",
-                        Param.Required.REQUIRED,
-                        PredefinedDateTimeFormat.class
-                ),
+                PredefinedDateTimeFormat.class,
+                "date-format",
                 defaultSupplier,
                 "--date-format", "-df"
         );

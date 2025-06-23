@@ -73,12 +73,12 @@ class ArgumentsParserTest {
                 .name("testChoiceOption")
                 .description("Unit test for passing choices on the command line.");
 
-        Option<String> oProduct = builder.option("product name", "the product" ,String.class)
+        Option<String> oProduct = builder.optionBuilder("product name", "the product" ,String.class)
                 .param(Param.ofString("product name", "the product", "product", Param.Required.REQUIRED))
                 .repetitions(Repetitions.EXACTLY_ONE)
                 .build("--product", "-p");
 
-        Option<E> oSize = builder.option("Size", "the size of the serving", E.class)
+        Option<E> oSize = builder.optionBuilder("Size", "the size of the serving", E.class)
                 .param(
                         Param.ofEnum(
                                 "serving size",
@@ -91,7 +91,7 @@ class ArgumentsParserTest {
                 .defaultSupplier(() -> E.GRANDE)
                 .build("--size");
 
-        builder.option("tag", "the tag", String.class)
+        builder.optionBuilder("tag", "the tag", String.class)
                 .repetitions(Repetitions.ZERO_OR_MORE)
                 .optionalParam(
                         Param.ofString("tag 1", "the main tag", "main tag", Param.Required.OPTIONAL),
@@ -363,14 +363,14 @@ class ArgumentsParserTest {
                 .description("Unit test for option handling.");
 
         List<String> yeaSayer = new ArrayList<>();
-        builder.option("yeasayer", "add a yeasayer", String.class)
+        builder.optionBuilder("yeasayer", "add a yeasayer", String.class)
                 .repetitions(Repetitions.ZERO_OR_MORE)
                 .param(Param.ofString("yeasayer", "the yeasayer", "who", Param.Required.REQUIRED))
                 .handler(yeaSayer::add)
                 .build("-y");
 
         List<String> naySayer = new ArrayList<>();
-        builder.option("naysayer", "add a naysayer", String.class)
+        builder.optionBuilder("naysayer", "add a naysayer", String.class)
                 .repetitions(Repetitions.ZERO_OR_MORE)
                 .param(Param.ofString("naysayer", "the naysayer", "who", Param.Required.REQUIRED))
                 .handler(naySayer::add)
@@ -390,28 +390,28 @@ class ArgumentsParserTest {
                 .name("testOption")
                 .description("Unit test for passing simple options on the command line.");
 
-        Option<String> optionExactlyTwice = builder.option("2x", "2x", String.class)
+        Option<String> optionExactlyTwice = builder.optionBuilder("2x", "2x", String.class)
                 .param(
                         Param.ofString("argument", "the argument", "arg", Param.Required.OPTIONAL)
                 )
                 .repetitions(Repetitions.exactly(2))
                 .build("--exactly-twice");
 
-        Option<String> optionAtMostTwice = builder.option("0 - 2x", "0 - 2x", String.class)
+        Option<String> optionAtMostTwice = builder.optionBuilder("0 - 2x", "0 - 2x", String.class)
                 .param(
                         Param.ofString("argument", "the argument", "arg", Param.Required.OPTIONAL)
                 )
                 .repetitions(Repetitions.atMost(2))
                 .build("--at-most-twice");
 
-        Option<String> optionTwoOrThreeTimes = builder.option("2 - 3x", "2 - 3x", String.class)
+        Option<String> optionTwoOrThreeTimes = builder.optionBuilder("2 - 3x", "2 - 3x", String.class)
                 .param(
                         Param.ofString("argument", "the argument", "arg", Param.Required.OPTIONAL)
                 )
                 .repetitions(Repetitions.between(2, 3))
                 .build("--two-or-three-times");
 
-        Option<String> optionAtLeastTwice = builder.option("2 - ... x", "2 - ... x", String.class)
+        Option<String> optionAtLeastTwice = builder.optionBuilder("2 - ... x", "2 - ... x", String.class)
                 .param(
                         Param.ofString("argument", "the argument", "arg", Param.Required.OPTIONAL)
                 )
@@ -536,16 +536,16 @@ class ArgumentsParserTest {
                 .description("Unit test for testing opzion arity on the command line.")
                 .positionalArgs(0, 0);
 
-        Option<List<String>> optionAtMostTwoArgs = builder.option("0 - 2 args", "0 - 2 args", (Class<List<String>>) ((Class) List.class))
+        Option<List<String>> optionAtMostTwoArgs = builder.optionBuilder("0 - 2 args", "0 - 2 args", (Class<List<String>>) ((Class) List.class))
                 .param(Param.ofStrings("0 - 2 args", "0 - 2 args", "arg", Repetitions.between(0, 2)))
                 .mapper(OptionBuilder.toStringListMapper())
                 .build("--at-most-two-args");
 
-        Option<String> optionExactlyTwoArgs = builder.option("2 args", "2 args", String.class)
+        Option<String> optionExactlyTwoArgs = builder.optionBuilder("2 args", "2 args", String.class)
                 .param(Param.ofStrings("2 args", "2 args", "arg", Repetitions.exactly(2)))
                 .build("--exactly-two-args");
 
-        Option<List<String>> optionTwoOrMoreArgs = builder.option("2 - ... args", "2 - ... args", (Class<List<String>>)((Class)List.class))
+        Option<List<String>> optionTwoOrMoreArgs = builder.optionBuilder("2 - ... args", "2 - ... args", (Class<List<String>>)((Class)List.class))
                 .param(Param.ofStrings("2 - ... args", "2 - ... args", "arg", Repetitions.atLeast(2)))
                 .mapper(OptionBuilder.toStringListMapper())
                 .build("--at-least-two-args");

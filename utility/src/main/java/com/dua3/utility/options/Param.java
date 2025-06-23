@@ -83,7 +83,7 @@ public record Param<T>(
             String argName,
             Class<T> targetType,
             Converter<String, T> converter,
-            List<T> allowedValues,
+            List<@Nullable T> allowedValues,
             Function<T, Optional<String>> validate,
             Required required
     ) {
@@ -567,7 +567,7 @@ public record Param<T>(
             Required required,
             Class<T> targetType,
             Converter<String, T> converter,
-            List<T> allowedValues
+            List<@Nullable T> allowedValues
     ) {
         return new Param<>(
                 displayName,

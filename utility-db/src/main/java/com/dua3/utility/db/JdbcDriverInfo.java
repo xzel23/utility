@@ -179,25 +179,25 @@ public class JdbcDriverInfo {
         String dflt = arguments.get("default");
         String description = "Set the " + name + ".";
         return switch (type) {
-            case OPTION_TYPE_STRING -> Option.simpleOption(name,
+            case OPTION_TYPE_STRING -> Option.createSimpleOption(name,
                     description,
                     Param.ofString(name, "The " + name + ".", name, Param.Required.REQUIRED),
                     () -> dflt,
                     "--" + name
             );
-            case OPTION_TYPE_PATH -> Option.simpleOption(name,
+            case OPTION_TYPE_PATH -> Option.createSimpleOption(name,
                     description,
                     Param.ofPath(name, "The " + name + ".", name, Param.Required.REQUIRED, Objects::nonNull),
                     () -> dflt == null ? null : Paths.get(dflt),
                     "--" + name
             );
-            case OPTION_TYPE_INTEGER -> Option.simpleOption(name,
+            case OPTION_TYPE_INTEGER -> Option.createSimpleOption(name,
                     description,
                     Param.ofInt(name, "The " + name + ".", name, Param.Required.REQUIRED),
                     () -> dflt == null ? null : Integer.valueOf(dflt),
                     "--" + name
             );
-            case OPTION_TYPE_DOUBLE -> Option.simpleOption(name,
+            case OPTION_TYPE_DOUBLE -> Option.createSimpleOption(name,
                     description,
                     Param.ofDouble(name, "The " + name + ".", name, Param.Required.REQUIRED),
                     () -> dflt == null ? null : Double.valueOf(dflt),
