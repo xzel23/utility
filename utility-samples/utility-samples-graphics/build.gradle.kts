@@ -28,3 +28,27 @@ dependencies {
     implementation(rootProject.libs.log4j.slf4j2)
     implementation(rootProject.libs.slf4j.api)
 }
+
+tasks.register<JavaExec>("runFxGraphicsSample") {
+    description = "Run the FxGraphicsSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.graphics.FxGraphicsSample")
+    enableAssertions = true
+}
+
+tasks.register<JavaExec>("runFxTextRendering") {
+    description = "Run the FxTextRendering application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.graphics.FxTextRendering")
+    enableAssertions = true
+}
+
+tasks.register<JavaExec>("runSwingGraphicsSample") {
+    description = "Run the SwingGraphicsSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.graphics.SwingGraphicsSample")
+    enableAssertions = true
+}

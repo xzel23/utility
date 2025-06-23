@@ -1,7 +1,17 @@
 project.description = "Java utilities (samples - JavaFX Log Pane)"
 
 plugins {
+    id("application")
     alias(libs.plugins.javafx)
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 javafx {
@@ -24,4 +34,52 @@ dependencies {
     implementation(rootProject.libs.slf4j.api)
     runtimeOnly(rootProject.libs.ikonli.fontawesome)
     runtimeOnly(rootProject.libs.ikonli.javafx)
+}
+
+tasks.register<JavaExec>("runDialogSample") {
+    description = "Run the DialogSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.fx.DialogSample")
+    enableAssertions = true
+}
+
+tasks.register<JavaExec>("runFxLogPaneSample") {
+    description = "Run the FxLogPaneSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.fx.FxLogPaneSample")
+    enableAssertions = true
+}
+
+tasks.register<JavaExec>("runIconViewSample") {
+    description = "Run the IconViewSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.fx.IconViewSample")
+    enableAssertions = true
+}
+
+tasks.register<JavaExec>("runPinBoardSample") {
+    description = "Run the PinBoardSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.fx.PinBoardSample")
+    enableAssertions = true
+}
+
+tasks.register<JavaExec>("runProgressViewSample") {
+    description = "Run the ProgressViewSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.fx.ProgressViewSample")
+    enableAssertions = true
+}
+
+tasks.register<JavaExec>("runShapeFx") {
+    description = "Run the ShapeFx application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.fx.ShapeFx")
+    enableAssertions = true
 }

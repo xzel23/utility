@@ -19,3 +19,11 @@ dependencies {
 tasks.named("compileJava") {
     dependsOn(":utility-logging:cabe", ":utility:cabe")
 }
+
+tasks.register<JavaExec>("runBomSample") {
+    description = "Run the BomSample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.utility.samples.bom.BomSample")
+    enableAssertions = true
+}
