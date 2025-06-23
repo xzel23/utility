@@ -63,12 +63,11 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
             }
 
             // add current page to the stack, then build and return the result map
-            pageStack.add(Objects.requireNonNull(current, "no pages"));
+            addPageToStack(Objects.requireNonNull(current, "no pages"));
 
             // WARNING: do not use collect(Collectors.toMap(...)) because it cannot handle null
             LinkedHashMap<String, Object> result = new LinkedHashMap<>();
             pageStack.forEach(p -> {
-                assert p.second().result != null;
                 result.put(p.first(), p.second().result);
             });
 
@@ -145,7 +144,7 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
                 page.addButton(
                         ButtonType.NEXT,
                         p -> {
-                            pageStack.add(Pair.of(name, page));
+                            addPageToStack(Pair.of(name, page));
                             setPage(page.getNext());
                         },
                         pane.validProperty()
@@ -161,6 +160,10 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
                 );
             }
         }
+    }
+
+    private void addPageToStack(Pair<String, Page<?, ?>> pair) {
+        pageStack.add(pair);
     }
 
     private void setPage(String pageName) {
