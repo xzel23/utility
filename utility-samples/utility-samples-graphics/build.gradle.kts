@@ -29,21 +29,26 @@ dependencies {
     implementation(rootProject.libs.slf4j.api)
 }
 
-tasks.register<JavaExec>("runFxGraphicsSample") {
-    description = "Run the FxGraphicsSample application."
-    group = ApplicationPlugin.APPLICATION_GROUP
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.utility.samples.graphics.FxGraphicsSample")
-    enableAssertions = true
+fun createJavaFxRunTask(taskName: String, mainClassName: String, description: String) {
+    tasks.register<JavaExec>(taskName) {
+        this.description = description
+        group = ApplicationPlugin.APPLICATION_GROUP
+        classpath = sourceSets["main"].runtimeClasspath
+        mainClass.set(mainClassName)
+        enableAssertions = true
+
+        doFirst {
+            val javaFxModules = listOf("javafx.base", "javafx.controls", "javafx.graphics")
+            jvmArgs = listOf(
+                "--module-path", classpath.asPath,
+                "--add-modules", javaFxModules.joinToString(",")
+            )
+        }
+    }
 }
 
-tasks.register<JavaExec>("runFxTextRendering") {
-    description = "Run the FxTextRendering application."
-    group = ApplicationPlugin.APPLICATION_GROUP
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.utility.samples.graphics.FxTextRendering")
-    enableAssertions = true
-}
+createJavaFxRunTask("runFxGraphicsSample", "com.dua3.utility.samples.graphics.FxGraphicsSample", "Run the FxGraphicsSample application.")
+createJavaFxRunTask("runFxTextRendering", "com.dua3.utility.samples.graphics.FxTextRendering", "Run the FxTextRendering application.")
 
 tasks.register<JavaExec>("runSwingGraphicsSample") {
     description = "Run the SwingGraphicsSample application."
