@@ -247,18 +247,6 @@ public final class I18N {
     }
 
     /**
-     * Retrieves the localized string for the given key from the resource bundle.
-     *
-     * @param key The key that represents the string to be retrieved.
-     * @param defaultValue the value to use when no localized string can be found
-     * @return The localized string for the given key.
-     * @see ResourceBundle#getString(String)
-     */
-    public String getOrDefault(String key, String defaultValue) {
-        return lookupBundle(key).getString(key);
-    }
-
-    /**
      * Retrieves the localized string for the given key from the resource bundle
      * or computes a result if the key is not mapped.
      * <p>
