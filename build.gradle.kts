@@ -18,7 +18,7 @@ plugins {
     id("version-catalog")
     id("signing")
     id("idea")
-    id("jacoco")
+    id("jacoco-report-aggregation")
     alias(libs.plugins.versions)
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
@@ -32,7 +32,6 @@ plugins {
 object Meta {
     const val GROUP = "com.dua3.utility"
     const val SCM = "https://github.com/xzel23/utility.git"
-    const val REPO = "public"
     const val LICENSE_NAME = "MIT"
     const val LICENSE_URL = "https://opensource.org/licenses/MIT"
     const val DEVELOPER_ID = "axh"
@@ -42,6 +41,36 @@ object Meta {
     const val ORGANIZATION_URL = "https://www.dua3.com"
 }
 /////////////////////////////////////////////////////////////////////////////
+
+dependencies {
+    // Add all subprojects to aggregation
+    jacocoAggregation(project(":utility"))
+    jacocoAggregation(project(":utility-db"))
+    jacocoAggregation(project(":utility-swing"))
+    jacocoAggregation(project(":utility-fx"))
+    jacocoAggregation(project(":utility-fx-icons"))
+    jacocoAggregation(project(":utility-fx-icons-ikonli"))
+    jacocoAggregation(project(":utility-fx-controls"))
+    jacocoAggregation(project(":utility-fx-db"))
+    jacocoAggregation(project(":utility-fx-web"))
+    jacocoAggregation(project(":utility-logging"))
+    jacocoAggregation(project(":utility-logging-slf4j"))
+    jacocoAggregation(project(":utility-logging-log4j"))
+}
+
+tasks.named<JacocoReport>("testCodeCoverageReport") {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+// Root project SonarQube configuration - use aggregated report
+sonar {
+    properties {
+        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+    }
+}
 
 subprojects {
 

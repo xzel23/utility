@@ -17,6 +17,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 'Cache JDKs'
+        if: runner.os == 'Linux'
+        id: cache-jdks
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.os == 'Linux' && '/usr/lib/jvm/bellsoft-java21-full-amd64' || 'C:\Program Files\BellSoft\LibericaJDK-21' }}
+          key: ${{ runner.os }}-liberica-jdk-21-${{ hashFiles('.github/workflows/CI.yml') }}
+
       - name: 'Set up JDK 24'
         uses: actions/setup-java@v4
         with:
@@ -43,7 +52,7 @@ jobs:
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: 'Execute Gradle build'
-        run: ./gradlew build jacocoTestReport
+        run: ./gradlew build testCodeCoverageReport
         id: compile
         continue-on-error: false
         env:
@@ -57,6 +66,28 @@ jobs:
           path: |
             **/build/test-artifacts/**
           if-no-files-found: ignore
+
+      - name: 'Create Qodana config'
+        if: runner.os == 'Linux'
+        run: |
+          cat > qodana.yaml << 'EOF'
+          version: "1.0"
+          linter: jetbrains/qodana-jvm-community:2025.1
+          profile:
+            name: qodana.starter
+          exclude:
+            - name: All
+              paths:
+                - "**/jmh/**"
+          EOF
+
+      - name: 'Qodana Scan'
+        if: runner.os == 'Linux'
+        uses: JetBrains/qodana-action@v2025.1
+        with:
+          args: --property,idea.kotlin.plugin.use.k2=false
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
       - name: 'Cache SonarCloud packages'
         if: runner.os == 'Linux'
