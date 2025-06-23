@@ -30,6 +30,14 @@ import java.util.stream.Stream;
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait", "NonConstantLogger", "UseOfSystemOutOrSystemErr"})
 public class SwingComboBoxExSample extends JFrame {
 
+    /**
+     * The entry point to execute the `SwingComboBoxExSample` application.
+     * This method sets the native look and feel of the UI, and then initializes
+     * and displays the application's main frame using the Swing event dispatch thread.
+     *
+     * @param args Command-line arguments passed to the program. These arguments
+     *             are not used in this application.
+     */
     public static void main(String[] args) {
         SwingUtil.setNativeLookAndFeel();
 
