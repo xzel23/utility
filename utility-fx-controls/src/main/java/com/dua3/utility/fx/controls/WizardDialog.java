@@ -67,9 +67,7 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
 
             // WARNING: do not use collect(Collectors.toMap(...)) because it cannot handle null
             LinkedHashMap<String, Object> result = new LinkedHashMap<>();
-            pageStack.forEach(p -> {
-                result.put(p.first(), p.second().result);
-            });
+            pageStack.forEach(p -> result.put(p.first(), p.second().result));
 
             return result;
         });
@@ -222,9 +220,9 @@ public class WizardDialog extends Dialog<@Nullable Map<String, Object>> {
 
         Page(D pane, ResultHandler<R> resultHandler) {
             this.pane = pane;
-            this.resultHandler = (btn, result) -> {
-                boolean ok = resultHandler.handleResult(btn, result);
-                this.result = result;
+            this.resultHandler = (btn, r) -> {
+                boolean ok = resultHandler.handleResult(btn, r);
+                this.result = r;
                 return ok;
             };
         }

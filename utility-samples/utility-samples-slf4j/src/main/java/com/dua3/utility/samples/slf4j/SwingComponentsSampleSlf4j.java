@@ -20,6 +20,6 @@ public class SwingComponentsSampleSlf4j extends SwingComponentsSampleLogBase {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        start(SwingComponentsSampleSlf4j::new, args);
+        start(SwingComponentsSampleSlf4j::new);
     }
 }

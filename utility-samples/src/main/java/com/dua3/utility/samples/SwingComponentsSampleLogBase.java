@@ -2,10 +2,6 @@ package com.dua3.utility.samples;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.LogLevel;
-import com.dua3.utility.options.ArgumentsParser;
-import com.dua3.utility.options.ArgumentsParserBuilder;
-import com.dua3.utility.swing.ArgumentsDialog;
-import com.dua3.utility.swing.ComboBoxEx;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
@@ -18,17 +14,12 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * An abstract base class for demonstrating logging using various frameworks in a Swing application.
@@ -73,9 +64,8 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
      * creating an instance of SwingComponentsSampleLogBase using a provided factory.
      *
      * @param factory A supplier that provides an instance of SwingComponentsSampleLogBase.
-     * @param args Command-line arguments passed to the application.
      */
-    public static void start(Supplier<? extends SwingComponentsSampleLogBase> factory, String[] args) {
+    public static void start(Supplier<? extends SwingComponentsSampleLogBase> factory) {
         SwingUtil.setNativeLookAndFeel();
 
         SwingUtilities.invokeLater(() -> {
