@@ -71,7 +71,7 @@ dependencyResolutionManagement {
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
             version("junit4", "4.13.2")
-            version("junit-jupiter", "5.10.2")
+            version("junit-jupiter", "5.11.4")
             version("log4j-bom", "2.25.0")
             version("miglayout", "11.4.2")
             version("mockito", "5.18.0")
