@@ -20,7 +20,7 @@ import java.util.Optional;
  * Sample Application.
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class DialogSample extends Application {
+public class FxDialogSample extends Application {
 
     private static final String ANSWER = "Answer: ";
     private static final String NO_ANSWER = "No answer";

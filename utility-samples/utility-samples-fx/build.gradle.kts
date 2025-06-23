@@ -54,7 +54,7 @@ fun createJavaFxRunTask(taskName: String, mainClassName: String, description: St
     }
 }
 
-createJavaFxRunTask("runDialogSample", "com.dua3.utility.samples.fx.DialogSample", "Run the DialogSample application.")
+createJavaFxRunTask("runFxDialogSample", "com.dua3.utility.samples.fx.FxDialogSample", "Run the DialogSample application.")
 createJavaFxRunTask("runFxLogPaneSample", "com.dua3.utility.samples.fx.FxLogPaneSample", "Run the FxLogPaneSample application.")
 createJavaFxRunTask("runIconViewSample", "com.dua3.utility.samples.fx.IconViewSample", "Run the IconViewSample application.")
 createJavaFxRunTask("runPinBoardSample", "com.dua3.utility.samples.fx.PinBoardSample", "Run the PinBoardSample application.")

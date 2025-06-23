@@ -19,19 +19,22 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * An abstract base class for demonstrating logging using various frameworks in a Swing application.
- * This class extends {@link JFrame} and initializes multiple logging frameworks (SLF4J, JUL, LOG4J).
- * It also sets up and manages the Swing UI components, including a ComboBox with custom objects,
- * a progress view, and a log pane.
+ * The SwingComboBoxExSample class demonstrates a sample Swing application
+ * with an enhanced ComboBox component using {@code ComboBoxEx}. This application
+ * allows for adding, editing, and removing {@code Person} objects in the ComboBox,
+ * with user-friendly interaction dialogs.
+ * <p>
+ * This class extends {@code JFrame} to create the Swing GUI and uses the
+ * {@code MigLayout} layout manager for flexible component positioning.
  */
 @SuppressWarnings({"ClassWithMultipleLoggers", "BusyWait", "NonConstantLogger", "UseOfSystemOutOrSystemErr"})
-public class SwingComboboxExSample extends JFrame {
+public class SwingComboBoxExSample extends JFrame {
 
     public static void main(String[] args) {
         SwingUtil.setNativeLookAndFeel();
 
         SwingUtilities.invokeLater(() -> {
-            SwingComboboxExSample instance = ((Supplier<? extends SwingComboboxExSample>) SwingComboboxExSample::new).get();
+            SwingComboBoxExSample instance = ((Supplier<? extends SwingComboBoxExSample>) SwingComboBoxExSample::new).get();
             instance.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             instance.setVisible(true);
         });
@@ -45,7 +48,7 @@ public class SwingComboboxExSample extends JFrame {
      * it calls the {@code init()} method to set up the frame's components and
      * functionalities.
      */
-    protected SwingComboboxExSample() {
+    protected SwingComboBoxExSample() {
         setLayout(new MigLayout("fill", "[grow,fill]", "[][][grow,fill]"));
         setMinimumSize(new Dimension(400, 400));
         setSize(800, 600);

@@ -101,72 +101,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         init();
     }
 
-    static class Person {
-        String firstName;
-        String lastName;
-
-        public Person(String firstName, String lastName) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-        }
-
-        @Override
-        public String toString() {
-            return Stream.of(lastName, firstName).filter(Objects::nonNull).collect(Collectors.joining(", "));
-        }
-    }
-
-    private Person showPersonDialog() {
-        return showPersonDialog(null);
-    }
-
-    private Person showPersonDialog(Person initialPerson) {
-        Optional<Person> op = Optional.ofNullable(initialPerson);
-        ArgumentsParserBuilder builder = ArgumentsParser.builder();
-        var optFirstName = builder.optionBuilder(
-                        "First name",
-                        "The person's first name.",
-                        String.class
-                )
-                .defaultSupplier(() -> op.map(pp -> pp.firstName).orElse(""))
-                .build("--first-name");
-        var optLastName = builder.optionBuilder(
-                        "Last name",
-                        "The person's last or family name.",
-                        String.class
-                )
-                .defaultSupplier(() -> op.map(pp -> pp.lastName).orElse(""))
-                .build("--last-name");
-        ArgumentsParser parser = builder.build();
-        return ArgumentsDialog.showDialog(this, parser)
-                .map(args -> {
-                    Person p = new Person("", "");
-                    p.firstName = args.get(optFirstName).orElse("");
-                    p.lastName = args.get(optLastName).orElse("");
-                    return p;
-                })
-                .orElse(null);
-    }
-
     private void init() {
-
-        // -- ComboboxEx
-        ComboBoxEx<Person> comboBoxEx = new ComboBoxEx<>(
-                this::showPersonDialog,
-                this::showPersonDialog,
-                ComboBoxEx::askBeforeRemoveSelectedItem,
-                Object::toString,
-                new Person("John", "Doe"),
-                new Person("Jane", "Doe"),
-                new Person("Baby", "Doe"),
-                new Person("Richard", "Roe"),
-                new Person("Jeanny", "Roe")
-        );
-        comboBoxEx.setComparator(Comparator.comparing(Person::toString));
-
-        // -- Spacer
-        JSeparator separator1 = new JSeparator(SwingConstants.HORIZONTAL);
-        separator1.setMinimumSize(new Dimension(8, 8));
 
         // -- SwingProcessView
         SwingProgressView<Object> progress = new SwingProgressView<>();
@@ -187,8 +122,6 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         SwingLogPane logPane = new SwingLogPane(LOG_BUFFER_SIZE);
 
         // add components
-        add(comboBoxEx, "wrap");
-        add(separator1, "grow x, wrap");
         add(progress, "wrap");
         add(separator2, "grow x, wrap");
         add(logPane);
