@@ -36,50 +36,27 @@ dependencies {
     runtimeOnly(rootProject.libs.ikonli.javafx)
 }
 
-tasks.register<JavaExec>("runDialogSample") {
-    description = "Run the DialogSample application."
-    group = ApplicationPlugin.APPLICATION_GROUP
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.utility.samples.fx.DialogSample")
-    enableAssertions = true
+fun createJavaFxRunTask(taskName: String, mainClassName: String, description: String) {
+    tasks.register<JavaExec>(taskName) {
+        this.description = description
+        group = ApplicationPlugin.APPLICATION_GROUP
+        classpath = sourceSets["main"].runtimeClasspath
+        mainClass.set(mainClassName)
+        enableAssertions = true
+
+        doFirst {
+            val javaFxModules = listOf("javafx.base", "javafx.controls", "javafx.graphics")
+            jvmArgs = listOf(
+                "--module-path", classpath.asPath,
+                "--add-modules", javaFxModules.joinToString(",")
+            )
+        }
+    }
 }
 
-tasks.register<JavaExec>("runFxLogPaneSample") {
-    description = "Run the FxLogPaneSample application."
-    group = ApplicationPlugin.APPLICATION_GROUP
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.utility.samples.fx.FxLogPaneSample")
-    enableAssertions = true
-}
-
-tasks.register<JavaExec>("runIconViewSample") {
-    description = "Run the IconViewSample application."
-    group = ApplicationPlugin.APPLICATION_GROUP
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.utility.samples.fx.IconViewSample")
-    enableAssertions = true
-}
-
-tasks.register<JavaExec>("runPinBoardSample") {
-    description = "Run the PinBoardSample application."
-    group = ApplicationPlugin.APPLICATION_GROUP
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.utility.samples.fx.PinBoardSample")
-    enableAssertions = true
-}
-
-tasks.register<JavaExec>("runProgressViewSample") {
-    description = "Run the ProgressViewSample application."
-    group = ApplicationPlugin.APPLICATION_GROUP
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.utility.samples.fx.ProgressViewSample")
-    enableAssertions = true
-}
-
-tasks.register<JavaExec>("runShapeFx") {
-    description = "Run the ShapeFx application."
-    group = ApplicationPlugin.APPLICATION_GROUP
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.utility.samples.fx.ShapeFx")
-    enableAssertions = true
-}
+createJavaFxRunTask("runDialogSample", "com.dua3.utility.samples.fx.DialogSample", "Run the DialogSample application.")
+createJavaFxRunTask("runFxLogPaneSample", "com.dua3.utility.samples.fx.FxLogPaneSample", "Run the FxLogPaneSample application.")
+createJavaFxRunTask("runIconViewSample", "com.dua3.utility.samples.fx.IconViewSample", "Run the IconViewSample application.")
+createJavaFxRunTask("runPinBoardSample", "com.dua3.utility.samples.fx.PinBoardSample", "Run the PinBoardSample application.")
+createJavaFxRunTask("runProgressViewSample", "com.dua3.utility.samples.fx.ProgressViewSample", "Run the ProgressViewSample application.")
+createJavaFxRunTask("runShapeFx", "com.dua3.utility.samples.fx.ShapeFx", "Run the ShapeFx application.")
