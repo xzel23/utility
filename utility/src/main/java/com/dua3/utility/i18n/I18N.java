@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -240,21 +241,11 @@ public final class I18N {
      *
      * @param key The key that represents the string to be retrieved.
      * @return The localized string for the given key.
+     * @throws MissingResourceException – if no object for the given key can be found
+     * @throws ClassCastException – if the object found for the given key is not a string
      * @see ResourceBundle#getString(String)
      */
     public String get(String key) {
-        return lookupBundle(key).getString(key);
-    }
-
-    /**
-     * Retrieves the localized string for the given key from the resource bundle.
-     *
-     * @param key The key that represents the string to be retrieved.
-     * @param defaultValue the value to use when no localized string can be found
-     * @return The localized string for the given key.
-     * @see ResourceBundle#getString(String)
-     */
-    public String getOrDefault(String key, String defaultValue) {
         return lookupBundle(key).getString(key);
     }
 
