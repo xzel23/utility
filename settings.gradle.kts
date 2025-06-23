@@ -71,6 +71,7 @@ dependencyResolutionManagement {
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
             version("junit4", "4.13.2")
+            version("junit-jupiter", "5.10.2")
             version("log4j-bom", "2.25.0")
             version("miglayout", "11.4.2")
             version("mockito", "5.18.0")
@@ -105,6 +106,8 @@ dependencyResolutionManagement {
             library("mockito-junit-jupiter", "org.mockito", "mockito-junit-jupiter").versionRef("mockito")
 
             library("junit4", "junit", "junit").versionRef("junit4")
+            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit-jupiter")
+            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit-jupiter")
             library("h2", "com.h2database", "h2").versionRef("h2database")
             library("bouncycastle-provider", "org.bouncycastle", "bcprov-jdk18on").versionRef("bouncycastle")
             library("bouncycastle-pkix", "org.bouncycastle", "bcpkix-jdk18on").versionRef("bouncycastle")
