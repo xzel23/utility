@@ -198,6 +198,7 @@ could not be loaded.
 ### 20.0.0 (work in progress)
 
 - A new artefact `utility-bom` has been introduced that specifies the version for all modules.
+
 - Package `utility`
     - `LangUtil.reverseInPlace()` to reverse array contents
     - `RingBuffer` implements `SequencedCollection`
@@ -235,6 +236,7 @@ could not be loaded.
         - Fix some RichText.split() issues; the method should now always produce results consistent with String.split()
 
 - Other changes
+    - Run tasks have been added for the sample applications.
     - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
     - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
       `filter()` and `map()`.
