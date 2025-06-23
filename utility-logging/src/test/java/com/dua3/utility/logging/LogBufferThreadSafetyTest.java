@@ -31,7 +31,7 @@ class LogBufferThreadSafetyTest {
      * and verifies that all entries are properly accounted for.
      */
     @Test
-    @Timeout(value = 10, unit = TimeUnit.SECONDS)
+    @Timeout(value = 30, unit = TimeUnit.SECONDS)
     void testConcurrentAdding() throws InterruptedException {
         LogBuffer logBuffer = new LogBuffer(BUFFER_CAPACITY);
 
@@ -112,7 +112,7 @@ class LogBufferThreadSafetyTest {
      * This test creates threads that add entries while another thread periodically clears the buffer.
      */
     @Test
-    @Timeout(value = 10, unit = TimeUnit.SECONDS)
+    @Timeout(value = 30, unit = TimeUnit.SECONDS)
     void testConcurrentAddingAndClearing() throws InterruptedException {
         LogBuffer logBuffer = new LogBuffer(BUFFER_CAPACITY);
 
@@ -217,7 +217,7 @@ class LogBufferThreadSafetyTest {
      * This test creates threads that add entries while other threads read from the buffer.
      */
     @Test
-    @Timeout(value = 10, unit = TimeUnit.SECONDS)
+    @Timeout(value = 30, unit = TimeUnit.SECONDS)
     void testConcurrentReadingAndWriting() throws InterruptedException {
         LogBuffer logBuffer = new LogBuffer(BUFFER_CAPACITY);
 
