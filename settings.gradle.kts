@@ -56,7 +56,7 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.2.0")
+            plugin("spotbugs", "com.github.spotbugs").version("6.2.1")
             plugin("cabe", "com.dua3.cabe").version("3.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
