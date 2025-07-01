@@ -976,7 +976,7 @@ public final class IoUtil {
             super(out);
             this.maxBytes = maxBytes;
             this.maxCompressionRatio = maxCompressionRatio;
-            this.compressedSize = compressedSize > 0 ? compressedSize : 1; // avoid div-by-zero
+            this.compressedSize = compressedSize;
         }
 
         @Override
@@ -997,7 +997,7 @@ public final class IoUtil {
             if (bytesWritten + newBytes > maxBytes) {
                 throw new ZipException("Uncompressed size exceeds allowed limit: " + maxBytes);
             }
-            if (((double) (bytesWritten + newBytes)) / compressedSize > maxCompressionRatio) {
+            if (compressedSize > 0 && ((double) (bytesWritten + newBytes)) / compressedSize > maxCompressionRatio) {
                 throw new ZipException("Compression ratio exceeds allowed limit: " + maxCompressionRatio);
             }
         }
