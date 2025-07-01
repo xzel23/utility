@@ -1,5 +1,6 @@
 package com.dua3.utility.swing;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
@@ -41,6 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A Swing component that displays logging messages.
@@ -125,86 +127,13 @@ public class SwingLogPane extends JPanel {
             }
         };
 
-        // create the table
-        table = new JTable(model) {
-            @Override
-            public void paintComponent(Graphics g) {
-                model.executeRead(() -> super.paintComponent(g));
-            }
-        };
-
         // create the detail pane
         details = new JTextArea(5, 80);
 
-        // column settings
-        AwtFontUtil fu = AwtFontUtil.getInstance();
-
-        TableColumnModel columnModel = table.getColumnModel();
-        for (int i = 0; i < columnModel.getColumnCount(); i++) {
-            Column cd = COLUMNS[i];
-            TableColumn column = columnModel.getColumn(i);
-            TableCellRenderer r = new LogEntryFieldCellRenderer(cd.field());
-            column.setCellRenderer(r);
-
-            java.awt.Font font = table.getFont();
-            int chars = cd.preferredCharWidth();
-            //noinspection NumericCastThatLosesPrecision
-            int width = (int) Math.ceil(fu.getTextWidth("M".repeat(Math.abs(chars)), font));
-            if (chars >= 0) {
-                column.setPreferredWidth(width);
-            } else {
-                column.setMinWidth(width);
-                column.setMaxWidth(width);
-                column.setWidth(width);
-            }
-        }
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        this.table = createLogTable();
 
         // update detail pane when entry is selected
-        table.getSelectionModel().addListSelectionListener(evt -> model.executeRead(() -> {
-            ListSelectionModel lsm = (ListSelectionModel) evt.getSource();
-
-            if (evt.getValueIsAdjusting()) {
-                return;
-            }
-
-            SwingUtilities.invokeLater(() -> {
-                final List<LogEntry> newEntries = new ArrayList<>(lsm.getMaxSelectionIndex() - lsm.getMinSelectionIndex() + 1);
-                for (int i = lsm.getMinSelectionIndex(); i <= lsm.getMaxSelectionIndex(); i++) {
-                    if (lsm.isSelectedIndex(i)) {
-                        int idxModel = tableRowSorter.convertRowIndexToModel(i);
-                        newEntries.add(model.getValueAt(idxModel, 0));
-                    }
-                }
-
-                boolean changed = newEntries.size() != selectedEntries.size();
-                if (!changed) {
-                    for (int i = 0; i < newEntries.size(); i++) {
-                        if (newEntries.get(i) != selectedEntries.get(i)) {
-                            changed = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!changed) {
-                    return;
-                }
-
-                final String text;
-                Function<? super LogEntry, String> fmt = format;
-                StringBuilder sb = new StringBuilder(128 * newEntries.size());
-                for (LogEntry entry : newEntries) {
-                    sb.append(fmt.apply(entry)).append("\n");
-                }
-                text = sb.toString();
-
-                details.setText(text);
-                details.setCaretPosition(0);
-
-                selectedEntries = newEntries;
-            });
-        }));
+        setupLogTableSelectionListener();
 
         table.setRowSorter(tableRowSorter);
 
@@ -236,6 +165,149 @@ public class SwingLogPane extends JPanel {
         );
 
         // create toolbar
+        JToolBar toolBar = createToolBar();
+
+        add(toolBar, BorderLayout.PAGE_START);
+        add(splitPane, BorderLayout.CENTER);
+    }
+
+    /**
+     * Sets up a selection listener for the log table to handle user selection events.
+     * The method listens to changes in the table's selection, retrieves the selected log entries,
+     * and updates the detailed view based on the selected entries.
+     *
+     * If the selection changes, the method ensures the detailed text view is updated with
+     * the formatted content of the newly selected log entries.
+     *
+     * The listener is executed on the Event Dispatch Thread to ensure thread safety with
+     * Swing components.
+     */
+    private void setupLogTableSelectionListener() {
+        table.getSelectionModel().addListSelectionListener(evt -> model.executeRead(() -> {
+            ListSelectionModel lsm = (ListSelectionModel) evt.getSource();
+
+            if (evt.getValueIsAdjusting()) {
+                return;
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                final List<LogEntry> newEntries = getSelectedLogEntries(lsm);
+
+                if (!hasChangedLogEntries(newEntries)) {
+                    return;
+                }
+
+                Function<? super LogEntry, String> fmt = format;
+                String text = newEntries.stream().map(entry -> fmt.apply(entry) + "\n").collect(Collectors.joining());
+
+                details.setText(text);
+                details.setCaretPosition(0);
+
+                selectedEntries = newEntries;
+            });
+        }));
+    }
+
+    /**
+     * Compares a new list of log entries with the currently selected log entries to determine
+     * if there are any changes.
+     * <p>
+     * The method checks if the sizes of the two lists differ, and if their elements are the same
+     * in the same order. If either the size or the content differs, it indicates that there have
+     * been changes.
+     *
+     * @param newEntries the list of {@code LogEntry} objects to compare with the currently
+     *                   selected entries
+     * @return {@code true} if the new list of log entries differs in size or content from
+     *         the selected entries; {@code false} otherwise
+     */
+    private boolean hasChangedLogEntries(List<LogEntry> newEntries) {
+        boolean changed = newEntries.size() != selectedEntries.size();
+        if (!changed) {
+            for (int i = 0; i < newEntries.size(); i++) {
+                if (newEntries.get(i) != selectedEntries.get(i)) {
+                    changed = true;
+                    break;
+                }
+            }
+        }
+        return changed;
+    }
+
+    /**
+     * Retrieves a list of log entries that correspond to the currently selected rows in the table model.
+     * The method iterates over the selection indices provided by the {@code ListSelectionModel},
+     * converts them to the model's row indices using the table row sorter, and fetches log entries from the model.
+     *
+     * @param lsm the {@code ListSelectionModel} that provides the selected row indices in the view
+     * @return a list of {@code LogEntry} objects corresponding to the selected rows in the model
+     */
+    private @NonNull List<LogEntry> getSelectedLogEntries(ListSelectionModel lsm) {
+        final List<LogEntry> newEntries = new ArrayList<>(lsm.getMaxSelectionIndex() - lsm.getMinSelectionIndex() + 1);
+        for (int i = lsm.getMinSelectionIndex(); i <= lsm.getMaxSelectionIndex(); i++) {
+            if (lsm.isSelectedIndex(i)) {
+                int idxModel = tableRowSorter.convertRowIndexToModel(i);
+                newEntries.add(model.getValueAt(idxModel, 0));
+            }
+        }
+        return newEntries;
+    }
+
+    /**
+     * Creates and configures a new {@code JTable} instance for displaying log entries
+     * with custom column settings. The table uses a specific model and ensures thread-safe
+     * rendering by executing paint tasks within a read lock. Each column is customized
+     * with a specific renderer and width settings based on predefined column attributes.
+     *
+     * @return a configured {@code JTable} instance for displaying log entries
+     */
+    private @NonNull JTable createLogTable() {
+        JTable t = new JTable(model) {
+            @Override
+            public void paintComponent(Graphics g) {
+                model.executeRead(() -> super.paintComponent(g));
+            }
+        };
+
+        // column settings
+        AwtFontUtil fu = AwtFontUtil.getInstance();
+
+        TableColumnModel columnModel = t.getColumnModel();
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            Column cd = COLUMNS[i];
+            TableColumn column = columnModel.getColumn(i);
+            TableCellRenderer r = new LogEntryFieldCellRenderer(cd.field());
+            column.setCellRenderer(r);
+
+            java.awt.Font font = t.getFont();
+            int chars = cd.preferredCharWidth();
+            //noinspection NumericCastThatLosesPrecision
+            int width = (int) Math.ceil(fu.getTextWidth("M".repeat(Math.abs(chars)), font));
+            if (chars >= 0) {
+                column.setPreferredWidth(width);
+            } else {
+                column.setMinWidth(width);
+                column.setMaxWidth(width);
+                column.setWidth(width);
+            }
+        }
+        t.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        return t;
+    }
+
+    /**
+     * Creates a new toolbar for log pane functionality. The toolbar includes components for
+     * filtering log levels, toggling text-only display, and buttons for clearing and copying
+     * the log buffer.
+     * <p>
+     * The toolbar includes the following components:
+     * - A dropdown menu to select the minimum log level for filtering displayed entries.
+     * - A checkbox to toggle between showing only text or other log details.
+     * - Buttons to clear the log buffer and copy its contents.
+     *
+     * @return the configured {@code JToolBar} instance with added components for log pane controls
+     */
+    private JToolBar createToolBar() {
         JToolBar toolBar = new JToolBar(SwingConstants.HORIZONTAL);
 
         // add filtering based on level
@@ -255,11 +327,7 @@ public class SwingLogPane extends JPanel {
         toolBar.add(new JSeparator(SwingConstants.VERTICAL));
         toolBar.add(SwingUtil.createAction("Clear", this::clearBuffer));
         toolBar.add(SwingUtil.createAction("Copy", this::copyBuffer));
-
-        add(toolBar, BorderLayout.PAGE_START);
-        add(splitPane, BorderLayout.CENTER);
-
-        setTextOnly(cbTextOnly.isSelected());
+        return toolBar;
     }
 
     private static Color defaultColorize(LogEntry entry) {
