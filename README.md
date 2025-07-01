@@ -241,6 +241,8 @@ could not be loaded.
     - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
     - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
       `filter()` and `map()`.
+    - Fix a race condition that sometimes would lead to a failure of the `IoUtil.testRedirectStandardStreams()`
+      tests when a test on another thread used standard I/O at the same time (which it really should not).
 
 ### 19.2.1
 
