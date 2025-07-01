@@ -914,7 +914,11 @@ public final class IoUtil {
                 }
 
                 // Create parent directories
-                Files.createDirectories(destinationPath.getParent());
+                Path parent = destinationPath.getParent();
+                if (parent == null) {
+                    throw new ZipException("Invalid zip entry - path has no parent: " + entryName);
+                }
+                Files.createDirectories(parent);
 
                 // Extract file with limits
                 long compressedSize = entry.getCompressedSize();
