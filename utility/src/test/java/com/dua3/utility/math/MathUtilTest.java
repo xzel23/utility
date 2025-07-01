@@ -23,17 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SuppressWarnings("BoundedWildcard")
 class MathUtilTest {
 
-    private static void checkRounding(Map<RoundingMode, DoubleUnaryOperator> operations, double x, double xUP, double xDOWN, double xCEILING, double xFLOOR, double xHALF_UP, double xHALF_DOWN, double xHALF_EVEN) {
-        assertEquals(xUP, operations.get(RoundingMode.UP).applyAsDouble(x));
-        assertEquals(xDOWN, operations.get(RoundingMode.DOWN).applyAsDouble(x));
-        assertEquals(xCEILING, operations.get(RoundingMode.CEILING).applyAsDouble(x));
-        assertEquals(xFLOOR, operations.get(RoundingMode.FLOOR).applyAsDouble(x));
-        assertEquals(xHALF_UP, operations.get(RoundingMode.HALF_UP).applyAsDouble(x));
-        assertEquals(xHALF_DOWN, operations.get(RoundingMode.HALF_DOWN).applyAsDouble(x));
-        assertEquals(xHALF_EVEN, operations.get(RoundingMode.HALF_EVEN).applyAsDouble(x));
+    private static void checkRounding(Map<RoundingMode, DoubleUnaryOperator> operations, double x, double xUp, double xDown, double xCeiling, double xFloor, double xHalfUp, double xHalfDown, double xHalfEven) {
+        assertEquals(xUp, operations.get(RoundingMode.UP).applyAsDouble(x));
+        assertEquals(xDown, operations.get(RoundingMode.DOWN).applyAsDouble(x));
+        assertEquals(xCeiling, operations.get(RoundingMode.CEILING).applyAsDouble(x));
+        assertEquals(xFloor, operations.get(RoundingMode.FLOOR).applyAsDouble(x));
+        assertEquals(xHalfUp, operations.get(RoundingMode.HALF_UP).applyAsDouble(x));
+        assertEquals(xHalfDown, operations.get(RoundingMode.HALF_DOWN).applyAsDouble(x));
+        assertEquals(xHalfEven, operations.get(RoundingMode.HALF_EVEN).applyAsDouble(x));
         assertEquals(x, operations.get(RoundingMode.UNNECESSARY).applyAsDouble(x));
     }
-
     /**
      * Test of findRoot method, of class MathUtil.
      */

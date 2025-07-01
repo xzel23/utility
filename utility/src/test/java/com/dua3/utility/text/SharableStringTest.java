@@ -31,15 +31,15 @@ class SharableStringTest {
     @Test
     void testSharedSubSequence() {
         String original = "0123456789abcdefghijklmnopqrstuvwxyz";
-        String original_sub1 = original.substring(5, 15);
-        String original_sub2 = original_sub1.substring(2, 8);
+        String originalSub1 = original.substring(5, 15);
+        String originalSub2 = originalSub1.substring(2, 8);
 
         SharableString actual = new SharableString(original);
-        SharedString actual_sub1 = actual.subSequence(5, 15);
-        SharedString actual_sub2 = actual_sub1.subSequence(2, 8);
+        SharedString actualSub1 = actual.subSequence(5, 15);
+        SharedString actualSub2 = actualSub1.subSequence(2, 8);
 
         assertEquals(original, actual.toString());
-        assertEquals(original_sub1, actual_sub1.toString());
-        assertEquals(original_sub2, actual_sub2.toString());
+        assertEquals(originalSub1, actualSub1.toString());
+        assertEquals(originalSub2, actualSub2.toString());
     }
 }
