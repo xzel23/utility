@@ -205,6 +205,7 @@ could not be loaded.
     - `LogBuffer.setCapacity()` to change the capacity of an existing buffer
     - Added `ReversedSequencedCollectionWrapper` to facilitate implementing `reversed()` for `SequencedCollection` 
       implementations
+    - hardened `IoUtil.unzip()` and provided an overload to use custom limits for unzipping.
 
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
