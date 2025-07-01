@@ -1,5 +1,6 @@
 package com.dua3.utility.data;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 
@@ -100,32 +101,25 @@ public final class DataUtil {
             return null;
         }
 
-        // assignment compatible?
         Class<?> sourceClass = value.getClass();
-        if (targetClass.isAssignableFrom(sourceClass)) {
-            return (T) value;
+        T result;
+
+        // assignment compatible?
+        result = (T) convertIf(targetClass.isAssignableFrom(sourceClass), targetClass::cast, value);
+        if (result != null) {
+            return result;
         }
 
         // target is String -> use toString()
-        if (targetClass == String.class) {
-            return (T) value.toString();
+        result = (T) convertIf(targetClass == String.class, Object::toString, value);
+        if (result != null) {
+            return result;
         }
 
         // convert floating point numbers without fractional part to integer types
-        if (value instanceof Double || value instanceof Float) {
-            double d = ((Number) value).doubleValue();
-            if (targetClass == Integer.class) {
-                //noinspection NumericCastThatLosesPrecision
-                int n = (int) d;
-                //noinspection FloatingPointEquality
-                LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
-                return (T) (Integer) n;
-            } else if (targetClass == Long.class) {
-                //noinspection NumericCastThatLosesPrecision
-                long n = (long) d;
-                LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to long without loss of precision: " + value));
-                return (T) (Long) n;
-            }
+        result = (T) convertIf(value instanceof Double || value instanceof Float, v -> convertToIntegralNumber(targetClass, sourceClass, v), value);
+        if (result != null) {
+            return result;
         }
 
         // convert other numbers to double
@@ -151,108 +145,52 @@ public final class DataUtil {
         // convert String to Boolean
         // Don't rely on Boolean.valueOf(String) because it might introduce subtle bugs,
         // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw IllegalArgumentException instead.
-        if (targetClass == Boolean.class && sourceClass == String.class) {
-            return switch (((String) value).toLowerCase(Locale.ROOT)) {
-                case "true" -> (T) Boolean.TRUE;
-                case "false" -> (T) Boolean.FALSE;
-                default -> throw new IllegalArgumentException("invalid text for boolean conversion: " + value);
-            };
+        result = (T) convertIf(targetClass == Boolean.class && sourceClass == String.class, v -> convertToBoolean(targetClass, sourceClass, v), value);
+        if (result != null) {
+            return result;
         }
 
         // convert to Path
-        if (targetClass == Path.class) {
-            if (sourceClass == String.class) {
-                return (T) Paths.get(value.toString());
-            }
-            if (sourceClass == File.class) {
-                return (T) ((File) value).toPath();
-            }
-            if (sourceClass == URI.class) {
-                return (T) Paths.get((URI) value);
-            }
-            if (sourceClass == URL.class) {
-                try {
-                    return (T) Paths.get(((URL) value).toURI());
-                } catch (URISyntaxException e) {
-                    throw new ConversionException(sourceClass, targetClass, e);
-                }
-            }
+        result = (T) convertIf(targetClass == Path.class, v -> convertToPath(targetClass, sourceClass, v), value);
+        if (result != null) {
+            return result;
         }
 
         // convert to File
-        if (targetClass == File.class) {
-            if (sourceClass == String.class) {
-                return (T) new File(value.toString());
-            }
-            if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary
-                assert value instanceof Path;
-                return (T) ((Path) value).toFile();
-            }
-            if (sourceClass == URI.class) {
-                return (T) Paths.get((URI) value).toFile();
-            }
-            if (sourceClass == URL.class) {
-                try {
-                    return (T) Paths.get(((URL) value).toURI()).toFile();
-                } catch (URISyntaxException e) {
-                    throw new ConversionException(sourceClass, targetClass, e);
-                }
-            }
+        result = (T) convertIf(targetClass == File.class, v -> convertToFile(targetClass, sourceClass, v), value);
+        if (result != null) {
+            return result;
         }
 
         // convert to URI
-        if (targetClass == URI.class) {
-            if (sourceClass == String.class) {
-                return (T) URI.create(value.toString());
-            }
-            if (sourceClass == File.class) {
-                return (T) ((File) value).toURI();
-            }
-            if (sourceClass == URL.class) {
-                try {
-                    return (T) ((URL) value).toURI();
-                } catch (URISyntaxException e) {
-                    throw new ConversionException(sourceClass, targetClass, e);
-                }
-            }
-            if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
-                return (T) ((Path) value).toUri();
-            }
+        result = (T) convertIf(targetClass == URI.class, v -> convertToUri(targetClass, sourceClass, v), value);
+        if (result != null) {
+            return result;
         }
 
         // convert to URL
-        if (targetClass == URL.class) {
-            if (sourceClass == String.class) {
-                try {
-                    return (T) URI.create(value.toString()).toURL();
-                } catch (MalformedURLException e) {
-                    throw new ConversionException(sourceClass, targetClass, e);
-                }
-            }
-            if (sourceClass == File.class) {
-                try {
-                    return (T) ((File) value).toURI().toURL();
-                } catch (MalformedURLException e) {
-                    throw new ConversionException(sourceClass, targetClass, e);
-                }
-            }
-            if (sourceClass == URI.class) {
-                try {
-                    return (T) ((URI) value).toURL();
-                } catch (MalformedURLException e) {
-                    throw new ConversionException(sourceClass, targetClass, e);
-                }
-            }
-            if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
-                try {
-                    return (T) ((Path) value).toUri().toURL();
-                } catch (MalformedURLException e) {
-                    throw new ConversionException(sourceClass, targetClass, e);
-                }
-            }
+        result = (T) convertIf(targetClass == URL.class, v -> convertToUrl(targetClass, sourceClass, v), value);
+        if (result != null) {
+            return result;
         }
 
         // target provides public static valueOf(U) where value is instance of U
+        // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
+        result = convertUsingValueOf(targetClass, sourceClass, value);
+        if (result != null) {
+            return result;
+        }
+
+        // ... or provides a public constructor taking the value's class (and is enabled by parameter)
+        result = convertIf(useConstructor, v -> convertUsingConstructor(targetClass, sourceClass, v), value);
+        if (result != null) {
+            return result;
+        }
+
+        throw new ConversionException(sourceClass, targetClass, "unsupported conversion");
+    }
+
+    private static <T> @Nullable T convertUsingValueOf(Class<T> targetClass, Class<?> sourceClass, @NonNull Object value) {
         // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
         for (Method method : targetClass.getDeclaredMethods()) {
             if (method.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC)
@@ -267,23 +205,144 @@ public final class DataUtil {
                 }
             }
         }
+        return null;
+    }
 
-        // ... or provides a public constructor taking the value's class (and is enabled by parameter)
-        if (useConstructor) {
-            for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
-                if (constructor.getModifiers() == (Modifier.PUBLIC)
-                        && constructor.getParameterCount() == 1
-                        && constructor.getParameterTypes()[0] == sourceClass) {
-                    try {
-                        return (T) constructor.newInstance(value);
-                    } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                        throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
-                    }
+    private static <T> @Nullable T convertUsingConstructor(Class<T> targetClass, Class<?> sourceClass, @NonNull Object value) {
+        for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
+            if (constructor.getModifiers() == (Modifier.PUBLIC)
+                    && constructor.getParameterCount() == 1
+                    && constructor.getParameterTypes()[0] == sourceClass) {
+                try {
+                    return (T) constructor.newInstance(value);
+                } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                    throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
                 }
             }
         }
+        return null;
+    }
 
-        throw new ConversionException(sourceClass, targetClass, "unsupported conversion");
+    private static <T> @Nullable Boolean convertToBoolean(Class<T> targetClass, Class<?> sourceClass, Object value) {
+        return switch (((String) value).toLowerCase(Locale.ROOT)) {
+            case "true" -> Boolean.TRUE;
+            case "false" -> Boolean.FALSE;
+            default -> throw new IllegalArgumentException("invalid text for boolean conversion: " + value);
+        };
+    }
+
+    private static <T> @Nullable Number convertToIntegralNumber(Class<T> targetClass, Class<?> sourceClass, Object value) {
+        double d = ((Number) value).doubleValue();
+        if (targetClass == Integer.class) {
+            //noinspection NumericCastThatLosesPrecision
+            int n = (int) d;
+            //noinspection FloatingPointEquality
+            LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
+            return n;
+        } else if (targetClass == Long.class) {
+            //noinspection NumericCastThatLosesPrecision
+            long n = (long) d;
+            LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to long without loss of precision: " + value));
+            return n;
+        }
+        return null;
+    }
+
+    private static <T> @Nullable Path convertToPath(Class<T> targetClass, Class<?> sourceClass, Object value) {
+        if (sourceClass == String.class) {
+            return Paths.get(value.toString());
+        }
+        if (sourceClass == File.class) {
+            return ((File) value).toPath();
+        }
+        if (sourceClass == URI.class) {
+            return Paths.get((URI) value);
+        }
+        if (sourceClass == URL.class) {
+            try {
+                return Paths.get(((URL) value).toURI());
+            } catch (URISyntaxException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        return null;
+    }
+
+    private static <T> @Nullable File convertToFile(Class<T> targetClass, Class<?> sourceClass, Object value) {
+        if (sourceClass == String.class) {
+            return new File(value.toString());
+        }
+        if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary
+            assert value instanceof Path;
+            return ((Path) value).toFile();
+        }
+        if (sourceClass == URI.class) {
+            return Paths.get((URI) value).toFile();
+        }
+        if (sourceClass == URL.class) {
+            try {
+                return Paths.get(((URL) value).toURI()).toFile();
+            } catch (URISyntaxException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        return null;
+    }
+
+    private static <T> @Nullable URI convertToUri(Class<T> targetClass, Class<?> sourceClass, Object value) {
+        if (sourceClass == String.class) {
+            return URI.create(value.toString());
+        }
+        if (sourceClass == File.class) {
+            return ((File) value).toURI();
+        }
+        if (sourceClass == URL.class) {
+            try {
+                return ((URL) value).toURI();
+            } catch (URISyntaxException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
+            return ((Path) value).toUri();
+        }
+        return null;
+    }
+
+    private static <T> @Nullable URL convertToUrl(Class<T> targetClass, Class<?> sourceClass, Object value) {
+        if (sourceClass == String.class) {
+            try {
+                return URI.create(value.toString()).toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (sourceClass == File.class) {
+            try {
+                return ((File) value).toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (sourceClass == URI.class) {
+            try {
+                return ((URI) value).toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
+            try {
+                return ((Path) value).toUri().toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        return null;
+    }
+
+    private static <T> @Nullable T convertIf(boolean condition, Function<Object, @Nullable T> convert, Object value) {
+        return condition ? convert.apply(value) : null;
     }
 
     /**
