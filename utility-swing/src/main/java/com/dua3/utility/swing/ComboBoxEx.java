@@ -38,7 +38,7 @@ import java.util.function.UnaryOperator;
 public class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
-    private @Nullable Comparator<? super T> comparator;
+    private transient @Nullable Comparator<? super T> comparator;
     private final @Nullable Function<T, @Nullable T> edit;
     private final @Nullable Supplier<? extends T> add;
     private final @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
