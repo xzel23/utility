@@ -259,7 +259,7 @@ public final class IoUtil {
             return path;
         }
 
-        filename = Paths.get(replaceExtension(filename.toString(), extension));
+        filename = path.getFileSystem().getPath(replaceExtension(filename.toString(), extension));
 
         return parent == null ? filename : parent.resolve(filename);
     }
@@ -875,6 +875,8 @@ public final class IoUtil {
             throw new IllegalArgumentException("Destination does not exist or is not a directory: " + destination);
         }
 
+        FileSystem fs = destination.getFileSystem();
+
         try (InputStream in = zipUrl.openStream();
              ZipInputStream zipInputStream = new ZipInputStream(in)) {
 
@@ -886,12 +888,12 @@ public final class IoUtil {
                 String entryName = entry.getName();
 
                 // Normalize and validate entry path (ZIP slip prevention)
-                Path normalizedEntryPath = Paths.get(entryName).normalize();
+                Path normalizedEntryPath = fs.getPath(entryName).normalize();
                 if (normalizedEntryPath.isAbsolute() || normalizedEntryPath.startsWith("..")) {
                     throw new ZipException("Invalid zip entry path: " + entryName);
                 }
 
-                Path destinationPath = destination.resolve(normalizedEntryPath.toString()).normalize();
+                Path destinationPath = destination.resolve(normalizedEntryPath).normalize();
                 if (!destinationPath.startsWith(destination)) {
                     throw new ZipException("Resolved path escapes destination directory: " + destinationPath);
                 }
