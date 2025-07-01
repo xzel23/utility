@@ -1,10 +1,13 @@
 package com.dua3.utility.text;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AnsiConverterTest {
+    private static final Logger LOG = LogManager.getLogger(AnsiConverterTest.class);
 
     @Test
     void create() {
@@ -39,7 +42,7 @@ class AnsiConverterTest {
 
         AnsiConverter converter = AnsiConverter.create();
         String s = converter.convert(rt);
-        System.out.println(s);
+        LOG.debug("ANSI converter output: {}", s);
         String expected = """
                 [1mAnsiConverterTest[22m
                 Styles:

@@ -5,6 +5,8 @@
 
 package com.dua3.utility.text;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
@@ -15,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests for {@link RichTextMatcher}.
  */
 class RichTextMatcherTest {
+    private static final Logger LOG = LogManager.getLogger(RichTextMatcherTest.class);
 
     @Test
     void testMatcher() {
@@ -152,23 +155,23 @@ class RichTextMatcherTest {
         assertTrue(replaced.subSequence(0, 2).runs().get(0).getStyles().contains(Style.BOLD));
 
         // Print the entire replaced text for debugging
-        System.out.println("[DEBUG_LOG] Replaced text: " + replaced);
+        LOG.debug("Replaced text: {}", replaced);
 
         // Find the position of the second "Hi"
         int secondHiPos = replaced.toString().indexOf("Hi", 3);
-        System.out.println("[DEBUG_LOG] Second Hi position: " + secondHiPos);
+        LOG.debug("Second Hi position: {}", secondHiPos);
 
         // The second replacement should be at the found position
         RichText secondReplacement = replaced.subSequence(secondHiPos, secondHiPos + 2);
-        System.out.println("[DEBUG_LOG] Second replacement: " + secondReplacement);
-        System.out.println("[DEBUG_LOG] Second replacement runs: " + secondReplacement.runs().size());
+        LOG.debug("Second replacement: {}", secondReplacement);
+        LOG.debug("Second replacement runs: {}", secondReplacement.runs().size());
 
         // Check if the style was applied to the second replacement
         if (secondReplacement.runs().size() > 0) {
-            System.out.println("[DEBUG_LOG] Second replacement styles: " + secondReplacement.runs().get(0).getStyles());
+            LOG.debug("Second replacement styles: {}", secondReplacement.runs().get(0).getStyles());
             assertTrue(secondReplacement.runs().get(0).getStyles().contains(Style.BOLD));
         } else {
-            System.out.println("[DEBUG_LOG] Second replacement has no runs");
+            LOG.debug("Second replacement has no runs");
             fail("Second replacement has no runs");
         }
     }

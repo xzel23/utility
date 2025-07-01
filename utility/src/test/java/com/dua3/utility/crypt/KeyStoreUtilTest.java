@@ -5,6 +5,8 @@
 
 package com.dua3.utility.crypt;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -24,13 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KeyStoreUtilTest {
+    private static final Logger LOG = LogManager.getLogger(KeyStoreUtilTest.class);
 
     static {
         // Register Bouncy Castle provider for tests
         try {
             Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         } catch (Exception e) {
-            System.err.println("Failed to register Bouncy Castle provider: " + e.getMessage());
+            LOG.error("Failed to register Bouncy Castle provider: {}", e.getMessage());
         }
     }
 

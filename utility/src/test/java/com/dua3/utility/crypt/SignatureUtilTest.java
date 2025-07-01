@@ -5,6 +5,8 @@
 
 package com.dua3.utility.crypt;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -18,13 +20,14 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SignatureUtilTest {
+    private static final Logger LOG = LogManager.getLogger(SignatureUtilTest.class);
 
     static {
         // Register Bouncy Castle provider for tests
         try {
             Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         } catch (Exception e) {
-            System.err.println("Failed to register Bouncy Castle provider: " + e.getMessage());
+            LOG.error("Failed to register Bouncy Castle provider: {}", e.getMessage(), e);
         }
     }
 

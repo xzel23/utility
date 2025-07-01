@@ -5,6 +5,8 @@
 
 package com.dua3.utility.text;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @SuppressWarnings({"UnnecessaryLocalVariable", "StringBufferWithoutInitialCapacity", "SpellCheckingInspection", "EqualsWithItself"})
 class RichTextTest {
+    private static final Logger LOG = LogManager.getLogger(RichTextTest.class);
 
     @Test
     void testValueOf() {
@@ -282,7 +285,7 @@ class RichTextTest {
         for (int i = 0; i < s.length() - 1; i++) {
             for (int j = i; j < s.length(); j++) {
                 CharSequence expected = s.subSequence(i, j);
-                System.out.println(expected);
+                LOG.debug("Subsequence: {}", expected);
                 RichText subSequence = r.subSequence(i, j);
                 String actual = subSequence.toString();
                 // test the current subsequence

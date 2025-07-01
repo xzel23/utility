@@ -6,6 +6,8 @@
 package com.dua3.utility.crypt;
 
 import com.dua3.utility.text.TextUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -29,13 +31,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class CryptUtilTest {
+    private static final Logger LOG = LogManager.getLogger(CryptUtilTest.class);
 
     static {
         // Register Bouncy Castle provider for tests
         try {
             Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         } catch (Exception e) {
-            System.err.println("Failed to register Bouncy Castle provider: " + e.getMessage());
+            LOG.error("Failed to register Bouncy Castle provider: {}", e.getMessage());
         }
     }
 

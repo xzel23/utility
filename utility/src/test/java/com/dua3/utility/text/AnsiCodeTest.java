@@ -1,6 +1,8 @@
 package com.dua3.utility.text;
 
 import com.dua3.utility.io.AnsiCode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
@@ -8,6 +10,7 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AnsiCodeTest {
+    private static final Logger LOG = LogManager.getLogger(AnsiCodeTest.class);
 
     @Test
     void testStyles() {
@@ -17,7 +20,7 @@ class AnsiCodeTest {
                         + String.format(Locale.ROOT, "This is %sstrikethrough%s text\n", AnsiCode.strikeThrough(true), AnsiCode.strikeThrough(false))
                         + String.format(Locale.ROOT, "This is %sitalic%s text\n", AnsiCode.italic(true), AnsiCode.italic(false));
 
-        System.out.println(actual);
+        LOG.debug("ANSI code test output: {}", actual);
 
         String expected = """
                 This is \u001B[1mbold\u001B[22m text
