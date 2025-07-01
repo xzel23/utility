@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
+import java.util.zip.ZipException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -451,6 +452,43 @@ class IoUtilTest {
 
             Map<String, String> destinationHashes = createHashes(destinationFolder.resolve("test"));
             assertEquals(expected, destinationHashes);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("jimFsConfigurations")
+    void testUnzipSafetyLimits(Configuration configuration) throws IOException {
+        URL zipUrl = LangUtil.getResourceURL(getClass(), "test.zip");
+
+        String rootPath = "/testUnzipSafetyLimits";
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            Path root = fs.getPath(normalize(configuration, rootPath));
+            Files.createDirectories(root);
+
+            // Test maxFiles limit
+            Path destinationMaxFiles = root.resolve("maxFiles");
+            Files.createDirectories(destinationMaxFiles);
+            ZipException maxFilesException = assertThrows(ZipException.class, () ->
+                IoUtil.unzip(zipUrl, destinationMaxFiles, 1, IoUtil.DEFAULT_MAX_BYTES, IoUtil.DEFAULT_MAX_COMPRESSION_RATIO)
+            );
+            assertTrue(maxFilesException.getMessage().contains("Maximum number of files exceeded"), 
+                    "Exception message should mention files limit: " + maxFilesException.getMessage());
+
+            // Test maxBytes limit
+            Path destinationMaxBytes = root.resolve("maxBytes");
+            Files.createDirectories(destinationMaxBytes);
+            ZipException maxBytesException = assertThrows(ZipException.class, () ->
+                IoUtil.unzip(zipUrl, destinationMaxBytes, IoUtil.DEFAULT_MAX_FILES, 10, IoUtil.DEFAULT_MAX_COMPRESSION_RATIO)
+            );
+            assertEquals("Uncompressed size exceeds allowed limit: 10", maxBytesException.getMessage(), "Exception message should mention bytes limit: " + maxBytesException.getMessage());
+
+            // Test maxCompressionRatio limit
+            Path destinationMaxRatio = root.resolve("maxRatio");
+            Files.createDirectories(destinationMaxRatio);
+            ZipException maxRatioException = assertThrows(ZipException.class, () -> 
+                IoUtil.unzip(zipUrl, destinationMaxRatio, IoUtil.DEFAULT_MAX_FILES, IoUtil.DEFAULT_MAX_BYTES, 0.1)
+            );
+            assertEquals("Compression ratio exceeds allowed limit: 0.1", maxRatioException.getMessage(), "Exception message should mention compression ratio limit: " + maxRatioException.getMessage());
         }
     }
 

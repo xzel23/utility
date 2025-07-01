@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,6 +54,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -808,48 +810,142 @@ public final class IoUtil {
         }
     }
 
+    /** Default maximum number of files to extract from a zip archive */
+    public static final long DEFAULT_MAX_FILES = 1000;
+
+    /** Default maximum total bytes to extract from a zip archive */
+    public static final long DEFAULT_MAX_BYTES = 1_000_000_000L; // 1 GB
+
+    /** Default maximum compression ratio for zip extraction */
+    public static final double DEFAULT_MAX_COMPRESSION_RATIO = 100.0;
+
     /**
      * Unzips the contents of a ZIP file to the specified destination directory.
      * If the entry is a file, it will be extracted. If the entry is a directory, the directory will be created.
+     * 
+     * This method uses default safety limits to protect against zip bombs and other malicious zip files.
+     * The default limits are:
+     * <ul>
+     *   <li>Maximum number of files: {@value #DEFAULT_MAX_FILES}</li>
+     *   <li>Maximum total bytes: {@value #DEFAULT_MAX_BYTES}</li>
+     *   <li>Maximum compression ratio: {@value #DEFAULT_MAX_COMPRESSION_RATIO}</li>
+     * </ul>
+     * 
+     * The implementation enforces these limits during streaming, without buffering the entire file content
+     * in memory. It also does not rely solely on the compressed size reported in the zip file, which can
+     * be spoofed in malicious zip files.
      *
      * @param zipUrl The URL of the ZIP file to unzip.
      * @param destination The destination directory where the contents will be extracted to.
      * @throws IOException if an I/O error occurs while reading or writing the ZIP file.
      * @throws IllegalArgumentException if the destination is not an existing directory.
+     * @throws ZipException if the extraction exceeds any of the safety limits.
+     * @see #unzip(URL, Path, long, long, double)
      */
     public static void unzip(URL zipUrl, Path destination) throws IOException {
-        LangUtil.check(Files.isDirectory(destination), "destination does not exist or is not a directory: %s", destination);
+        unzip(zipUrl, destination, DEFAULT_MAX_FILES, DEFAULT_MAX_BYTES, DEFAULT_MAX_COMPRESSION_RATIO);
+    }
+
+    /**
+     * Unzips the contents of a ZIP file to the specified destination directory with safety limits.
+     * If the entry is a file, it will be extracted. If the entry is a directory, the directory will be created.
+     * 
+     * This method includes safety parameters to protect against zip bombs and other malicious zip files:
+     * <ul>
+     *   <li>maxFiles: Maximum number of files to extract</li>
+     *   <li>maxBytes: Maximum total bytes to extract</li>
+     *   <li>maxCompressionRatio: Maximum allowed compression ratio</li>
+     * </ul>
+     * 
+     * The implementation enforces these limits during streaming, without buffering the entire file content
+     * in memory. It also does not rely solely on the compressed size reported in the zip file, which can
+     * be spoofed in malicious zip files.
+     *
+     * @param zipUrl The URL of the ZIP file to unzip.
+     * @param destination The destination directory where the contents will be extracted to.
+     * @param maxFiles The maximum number of files to extract.
+     * @param maxBytes The maximum total bytes to extract.
+     * @param maxCompressionRatio The maximum allowed compression ratio.
+     * @throws IOException if an I/O error occurs while reading or writing the ZIP file.
+     * @throws IllegalArgumentException if the destination is not an existing directory.
+     * @throws ZipException if the extraction exceeds any of the safety limits.
+     */
+    public static void unzip(URL zipUrl, Path destination, long maxFiles, long maxBytes, double maxCompressionRatio) throws IOException {
+        if (!Files.isDirectory(destination)) {
+            throw new IllegalArgumentException("Destination does not exist or is not a directory: " + destination);
+        }
 
         try (InputStream in = zipUrl.openStream();
              ZipInputStream zipInputStream = new ZipInputStream(in)) {
-            ZipEntry entry = zipInputStream.getNextEntry();
 
-            while (entry != null) {
-                Path destinationPath = destination.resolve(entry.getName()).normalize();
+            ZipEntry entry;
+            long fileCount = 0;
+            long totalBytesExtracted = 0;
 
+            while ((entry = zipInputStream.getNextEntry()) != null) {
+                String entryName = entry.getName();
+
+                // Normalize and validate entry path (ZIP slip prevention)
+                Path normalizedEntryPath = Paths.get(entryName).normalize();
+                if (normalizedEntryPath.isAbsolute() || normalizedEntryPath.startsWith("..")) {
+                    throw new ZipException("Invalid zip entry path: " + entryName);
+                }
+
+                Path destinationPath = destination.resolve(normalizedEntryPath.toString()).normalize();
                 if (!destinationPath.startsWith(destination)) {
-                    LOG.warn("possible zip slip attack detected! destination path {} does not start with {}.", destinationPath, destination);
-                    throw new IllegalStateException("invalid path: " + entry.getName());
+                    throw new ZipException("Resolved path escapes destination directory: " + destinationPath);
                 }
 
-                if (entry.isDirectory()) {
-                    // if the entry is a directory, create the directory
-                    Files.createDirectories(destinationPath);
-                } else {
-                    // if the entry is a file, extracts it
-                    Path parent = destinationPath.getParent();
-                    LangUtil.check(parent != null, "destination does not have a parent: %s", destination);
-                    if (!Files.isDirectory(destinationPath)) {
-                        Files.createDirectories(parent);
-                    }
-                    try (OutputStream out = Files.newOutputStream(destinationPath)) {
-                        zipInputStream.transferTo(out);
-                    }
+                // File count limit
+                fileCount++;
+                if (fileCount > maxFiles) {
+                    throw new ZipException("Maximum number of files exceeded: " + maxFiles);
                 }
+
+                // Create directories
+                if (entry.isDirectory()) {
+                    Files.createDirectories(destinationPath);
+                    continue;
+                }
+
+                // Refuse to overwrite existing symlinks
+                if (Files.exists(destinationPath) && Files.isSymbolicLink(destinationPath)) {
+                    throw new ZipException("Refusing to overwrite symbolic link: " + destinationPath);
+                }
+
+                // Create parent directories
+                Files.createDirectories(destinationPath.getParent());
+
+                // Extract file with limits
+                long compressedSize = entry.getCompressedSize();
+                long remainingBytes = maxBytes - totalBytesExtracted;
+
+                try (OutputStream fileOut = Files.newOutputStream(destinationPath);
+                     LimitedOutputStream limitedOut = new LimitedOutputStream(fileOut, remainingBytes, maxCompressionRatio, compressedSize)) {
+
+                    zipInputStream.transferTo(limitedOut);
+                    totalBytesExtracted += limitedOut.getBytesWritten();
+                }
+
                 zipInputStream.closeEntry();
-                entry = zipInputStream.getNextEntry();
             }
         }
+    }
+
+    /**
+     * Relativize the given path relative to the specified root path.
+     *
+     * @param root the root path against which to relativize the path
+     * @param path the path to be relativized
+     * @return the relativized path
+     * @throws UncheckedIOException if the relativized path is not a sibling of the root path
+     */
+    private static Path relativizeZipPath(Path root, Path path) {
+        Path relativizedPath = root.relativize(path).normalize();
+        if (relativizedPath.startsWith("..")) {
+            throw new UncheckedIOException(new IOException(path + " is not a sibling of " + root));
+        }
+        return relativizedPath;
     }
 
     /**
@@ -868,19 +964,47 @@ public final class IoUtil {
     }
 
     /**
-     * Relativize the given path relative to the specified root path.
-     *
-     * @param root the root path against which to relativize the path
-     * @param path the path to be relativized
-     * @return the relativized path
-     * @throws UncheckedIOException if the relativized path is not a sibling of the root path
+     * Output stream wrapper that enforces byte limits and compression ratio.
      */
-    private static Path relativizeZipPath(Path root, Path path) {
-        Path relativizedPath = root.relativize(path).normalize();
-        if (relativizedPath.startsWith("..")) {
-            throw new UncheckedIOException(new IOException(path + " is not a sibling of " + root));
+    static class LimitedOutputStream extends FilterOutputStream {
+        private final long maxBytes;
+        private final double maxCompressionRatio;
+        private final long compressedSize;
+        private long bytesWritten = 0;
+
+        public LimitedOutputStream(OutputStream out, long maxBytes, double maxCompressionRatio, long compressedSize) {
+            super(out);
+            this.maxBytes = maxBytes;
+            this.maxCompressionRatio = maxCompressionRatio;
+            this.compressedSize = compressedSize > 0 ? compressedSize : 1; // avoid div-by-zero
         }
-        return relativizedPath;
+
+        @Override
+        public void write(int b) throws IOException {
+            checkLimits(1);
+            out.write(b);
+            bytesWritten++;
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            checkLimits(len);
+            out.write(b, off, len);
+            bytesWritten += len;
+        }
+
+        private void checkLimits(int newBytes) throws IOException {
+            if (bytesWritten + newBytes > maxBytes) {
+                throw new ZipException("Uncompressed size exceeds allowed limit: " + maxBytes);
+            }
+            if (((double) (bytesWritten + newBytes)) / compressedSize > maxCompressionRatio) {
+                throw new ZipException("Compression ratio exceeds allowed limit: " + maxCompressionRatio);
+            }
+        }
+
+        public long getBytesWritten() {
+            return bytesWritten;
+        }
     }
 
     /**
