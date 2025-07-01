@@ -521,7 +521,8 @@ public interface Graphics extends AutoCloseable {
     default void drawText(CharSequence text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
         Rectangle2f r = getFontUtil().getTextDimension(text, getFont());
 
-        float tx, ty;
+        float tx;
+        float ty;
 
         tx = switch (hAnchor) {
             case LEFT -> x;
@@ -674,10 +675,10 @@ public interface Graphics extends AutoCloseable {
             case ROTATE_AND_TRANSLATE -> {
                 FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
                 Vector2f tl = getBlockTranslation(AffineTransformation2f.rotate(angle), fragments, hAnchor, vAnchor);
-                AffineTransformation2f R = AffineTransformation2f.rotate(angle, pos);
-                AffineTransformation2f t = transform(R, AffineTransformation2f.translate(tl));
+                AffineTransformation2f rotate = AffineTransformation2f.rotate(angle, pos);
+                AffineTransformation2f transform = transform(rotate, AffineTransformation2f.translate(tl));
                 renderFragments(pos, fragments, 0.0);
-                setTransformation(t);
+                setTransformation(transform);
             }
             case ROTATE_LINES -> {
                 FragmentedText fragments = FragmentedText.generateFragments(text, getFontUtil(), getFont(), width, height, hAlign, vAlign, hAnchor, vAnchor, wrapWidth);
@@ -729,13 +730,13 @@ public interface Graphics extends AutoCloseable {
      * based on a specified horizontal and vertical anchor, after applying a given
      * affine transformation to the block.
      *
-     * @param M the affine transformation applied to the fragmented text.
+     * @param at the affine transformation applied to the fragmented text.
      * @param fragments the fragmented text containing geometric and structural data.
      * @param hAnchor the horizontal anchor indicating alignment (e.g., LEFT, RIGHT, CENTER).
      * @param vAnchor the vertical anchor indicating alignment (e.g., TOP, BOTTOM, MIDDLE, BASELINE).
      * @return a {@link Vector2f} representing the computed translation to align the text block.
      */
-    private static Vector2f getBlockTranslation(AffineTransformation2f M, FragmentedText fragments, HAnchor hAnchor, VAnchor vAnchor) {
+    private static Vector2f getBlockTranslation(AffineTransformation2f at, FragmentedText fragments, HAnchor hAnchor, VAnchor vAnchor) {
         Rectangle2f r = fragments.getTextRec();
         DoubleBinaryOperator reduceX = switch (hAnchor) {
             case LEFT -> Math::min;
@@ -749,10 +750,10 @@ public interface Graphics extends AutoCloseable {
         };
 
         List<Vector2f> corners = List.of(
-                M.transform(new Vector2f(r.x(), r.y())),
-                M.transform(new Vector2f(r.x() + r.width(), r.y())),
-                M.transform(new Vector2f(r.x(), r.y() + r.height())),
-                M.transform(new Vector2f(r.x() + r.width(), r.y() + r.height()))
+                at.transform(new Vector2f(r.x(), r.y())),
+                at.transform(new Vector2f(r.x() + r.width(), r.y())),
+                at.transform(new Vector2f(r.x(), r.y() + r.height())),
+                at.transform(new Vector2f(r.x() + r.width(), r.y() + r.height()))
         );
 
         float fx = hAnchor == HAnchor.CENTER ? 0.25f : 1.0f;
@@ -798,32 +799,32 @@ public interface Graphics extends AutoCloseable {
         AffineTransformation2f t = getTransformation();
 
         try {
-            float sx_y;
-            float sx_h;
+            float sxY;
+            float sxH;
 
             if (angle == 0.0) {
                 transform(AffineTransformation2f.translate(pos));
-                sx_y = 0.0f;
-                sx_h = 0.0f;
+                sxY = 0.0f;
+                sxH = 0.0f;
             } else {
                 transform(AffineTransformation2f.translate(pos), AffineTransformation2f.rotate(angle, pos));
                 int layoutCase = (int) (angle / MathUtil.PI_QUARTER) % 4;
                 switch (layoutCase) {
                     case 0 -> {
-                        sx_y = (float) (Math.tan(angle));
-                        sx_h = sx_y;
+                        sxY = (float) (Math.tan(angle));
+                        sxH = sxY;
                     }
                     case 1 -> {
-                        sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
-                        sx_h = 0;
+                        sxY = (float) (Math.tan(angle + MathUtil.PI_HALF));
+                        sxH = 0;
                     }
                     case 2 -> {
-                        sx_y = (float) (Math.tan(angle + MathUtil.PI_HALF));
-                        sx_h = sx_y;
+                        sxY = (float) (Math.tan(angle + MathUtil.PI_HALF));
+                        sxH = sxY;
                     }
                     case 3 -> {
-                        sx_y = (float) (Math.tan(angle));
-                        sx_h = 0;
+                        sxY = (float) (Math.tan(angle));
+                        sxH = 0;
                     }
                     default -> throw new IllegalStateException("invalid octant");
                 }
@@ -836,7 +837,7 @@ public interface Graphics extends AutoCloseable {
                     setFont(fragment.font());
                     drawText(
                             fragment.text().toString(),
-                            fragment.x() + sx_y * fragment.y() + sx_h * fragment.h(),
+                            fragment.x() + sxY * fragment.y() + sxH * fragment.h(),
                             fragment.y(),
                             HAnchor.LEFT,
                             VAnchor.TOP
@@ -914,17 +915,17 @@ public interface Graphics extends AutoCloseable {
         }
 
         // 2. Rotate to the standard coordinate System to align the ellipsis' axes with the x- and y-axes of the coordinate system
-        AffineTransformation2f M = AffineTransformation2f.combine(
+        AffineTransformation2f at = AffineTransformation2f.combine(
                 AffineTransformation2f.rotate(-angle),
                 AffineTransformation2f.scale(1 / r.x(), 1 / r.y())
         );
-        AffineTransformation2f MI = AffineTransformation2f.combine(
+        AffineTransformation2f atI = AffineTransformation2f.combine(
                 AffineTransformation2f.scale(r.x(), r.y()),
                 AffineTransformation2f.rotate(angle)
         );
 
-        Vector2f p0l = M.transform(p0);
-        Vector2f p1l = M.transform(p1);
+        Vector2f p0l = at.transform(p0);
+        Vector2f p1l = at.transform(p1);
 
         // 3. find circle's center
         double sign = sweep != largeArc ? -1.0f : 1.0f;
@@ -956,15 +957,15 @@ public interface Graphics extends AutoCloseable {
         }
 
         int segments = (int) Math.ceil(Math.abs(sweepAngle) / (Math.PI / 4));
-        AffineTransformation2f MB = AffineTransformation2f.combine(
+        AffineTransformation2f atB = AffineTransformation2f.combine(
                 AffineTransformation2f.translate(cl.x(), cl.y()),
-                MI
+                atI
         );
         double cosCurrent = Math.cos(startAngle);
         double sinCurrent = Math.sin(startAngle);
         double stepAngle = sweepAngle / segments;
         double f = (4.0 / 3.0) * Math.tan(stepAngle / 4.0);
-        moveTo.accept(MB.transform(Vector2f.of((float) (cosCurrent), (float) (sinCurrent))));
+        moveTo.accept(atB.transform(Vector2f.of((float) (cosCurrent), (float) (sinCurrent))));
         for (int i = 0; i < segments; i++) {
             double nextAngle = startAngle + (i + 1) * sweepAngle / segments;
             double cosNext = Math.cos(nextAngle);
@@ -976,9 +977,9 @@ public interface Graphics extends AutoCloseable {
             double y1T = -f * cosNext;
 
             generateBezierSegment.accept(new Vector2f[]{
-                    MB.transform(Vector2f.of((float) (cosCurrent + x0T), (float) (sinCurrent + y0T))),
-                    MB.transform(Vector2f.of((float) (cosNext + x1T), (float) (sinNext + y1T))),
-                    MB.transform(Vector2f.of((float) (cosNext), (float) (sinNext))),
+                    atB.transform(Vector2f.of((float) (cosCurrent + x0T), (float) (sinCurrent + y0T))),
+                    atB.transform(Vector2f.of((float) (cosNext + x1T), (float) (sinNext + y1T))),
+                    atB.transform(Vector2f.of((float) (cosNext), (float) (sinNext))),
             });
 
             sinCurrent = sinNext;

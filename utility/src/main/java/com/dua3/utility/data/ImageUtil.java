@@ -55,12 +55,12 @@ public interface ImageUtil<I> {
     /**
      * Create an empty {@link BufferedImage}.
      *
-     * @param <BI> the generic type of the {@link BufferedImage} subclass that is returned
+     * @param <I1> the generic type of the {@link BufferedImage} subclass that is returned
      * @param w the image width
      * @param h the image height
      * @return new {@link BufferedImage}
      */
-    <BI extends BufferedImage & Image> BI createBufferedImage(int w, int h);
+    <I1 extends BufferedImage & Image> I1 createBufferedImage(int w, int h);
 
     /**
      * Convert {@link Image} instance to underlying implementation.

@@ -137,14 +137,14 @@ public class FxTextRendering extends Application {
         // ROTATE_BLOCK
         Color color = Color.GREEN;
 
-        AffineTransformation2f M = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.rotate(phi, pos));
-        M = AffineTransformation2f.combine(AffineTransformation2f.translate(pos), M);
+        AffineTransformation2f at = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.rotate(phi, pos));
+        at = AffineTransformation2f.combine(AffineTransformation2f.translate(pos), at);
         g.setStroke(color, 1.0f);
         g.strokePolygon(
-                M.transform(Vector2f.ORIGIN),
-                M.transform(Vector2f.ORIGIN.translate(dim.width(), 0)),
-                M.transform(Vector2f.ORIGIN.translate(dim.width(), dim.height())),
-                M.transform(Vector2f.ORIGIN.translate(0, dim.height()))
+                at.transform(Vector2f.ORIGIN),
+                at.transform(Vector2f.ORIGIN.translate(dim.width(), 0)),
+                at.transform(Vector2f.ORIGIN.translate(dim.width(), dim.height())),
+                at.transform(Vector2f.ORIGIN.translate(0, dim.height()))
         );
 
         g.setFont(g.getFont().withColor(color));
@@ -154,13 +154,13 @@ public class FxTextRendering extends Application {
 
         // ROTATE_AND_TRANSLATE_BLOCK
         color = Color.BLUE;
-        M = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.translate(pos));
+        at = AffineTransformation2f.combine(g.getTransformation(), AffineTransformation2f.translate(pos));
         g.setStroke(color, 1.0f);
         g.strokePolygon(
-                M.transform(Vector2f.ORIGIN),
-                M.transform(Vector2f.ORIGIN.translate(dim.width(), 0)),
-                M.transform(Vector2f.ORIGIN.translate(dim.width(), dim.height())),
-                M.transform(Vector2f.ORIGIN.translate(0, dim.height()))
+                at.transform(Vector2f.ORIGIN),
+                at.transform(Vector2f.ORIGIN.translate(dim.width(), 0)),
+                at.transform(Vector2f.ORIGIN.translate(dim.width(), dim.height())),
+                at.transform(Vector2f.ORIGIN.translate(0, dim.height()))
         );
 
         g.setFont(g.getFont().withColor(color));

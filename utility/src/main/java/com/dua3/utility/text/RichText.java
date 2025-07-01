@@ -495,23 +495,13 @@ public final class RichText
     }
 
     /**
-     * Test if empty.
-     *
-     * @return true, if the text is empty.
-     */
-    @Override
-    public boolean isEmpty() {
-        return length() == 0;
-    }
-
-    /**
      * Test if blank.
      *
      * @return {@code true} if this instance is empty or contains only whitespace characters,
      *         {@code false} otherwise
      */
     public boolean isBlank() {
-        return length() == 0 || TextUtil.isBlank(this);
+        return isEmpty() || TextUtil.isBlank(this);
     }
 
     @Override

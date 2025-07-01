@@ -15,10 +15,10 @@ import java.util.function.Supplier;
  * An abstract base class for building nodes, providing a fluent API for configuring and creating instances
  * of the node type specified by the generic parameter {@code N}.
  *
- * @param <N>  the type of node to be built
- * @param <NN> the type of the concrete builder
+ * @param <S> the type of node to be built
+ * @param <B> the type of the concrete builder
  */
-public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, NN>> extends NodeBuilder<N, NN> {
+public abstract class ShapeBuilder<S extends Shape, B extends ShapeBuilder<S, B>> extends NodeBuilder<S, B> {
     private @Nullable ObservableValue<? extends Paint> fill = null;
     private @Nullable ObservableValue<? extends Paint> stroke = null;
 
@@ -27,7 +27,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      *
      * @param factory the supplier that provides a new instance of the node type to be built
      */
-    protected ShapeBuilder(Supplier<? extends N> factory) {
+    protected ShapeBuilder(Supplier<? extends S> factory) {
         super(factory);
     }
 
@@ -37,8 +37,8 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @return new Control instance
      */
     @Override
-    public N build() {
-        N node = super.build();
+    public S build() {
+        S node = super.build();
         apply(fill, node.fillProperty());
         apply(stroke, node.strokeProperty());
         return node;
@@ -50,7 +50,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @param fill the {@link Paint} to be used as the fill for the shape
      * @return this builder instance
      */
-    public NN fill(Paint fill) {
+    public B fill(Paint fill) {
         this.fill = new SimpleObjectProperty<>(fill);
         return self();
     }
@@ -61,7 +61,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @param fill the {@link Paint} to be used as the fill for the shape
      * @return this builder instance
      */
-    public NN fill(Color fill) {
+    public B fill(Color fill) {
         this.fill = new SimpleObjectProperty<>(FxUtil.convert(fill));
         return self();
     }
@@ -73,7 +73,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @param fill the {@link ObservableValue} representing the fill value to be bound
      * @return this instance of the builder
      */
-    public NN bindFillFx(ObservableValue<Paint> fill) {
+    public B bindFillFx(ObservableValue<Paint> fill) {
         this.fill = fill;
         return self();
     }
@@ -85,7 +85,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @param fill the {@link ObservableValue} representing the fill value to be bound
      * @return this instance of the builder
      */
-    public NN bindFill(ObservableValue<Color> fill) {
+    public B bindFill(ObservableValue<Color> fill) {
         this.fill = PropertyConverter.convertReadOnly(fill, FxUtil.colorConverter());
         return self();
     }
@@ -96,7 +96,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @param stroke the {@link Paint} to be applied as the stroke for the shape
      * @return this builder instance
      */
-    public NN stroke(Paint stroke) {
+    public B stroke(Paint stroke) {
         this.stroke = new SimpleObjectProperty<>(stroke);
         return self();
     }
@@ -107,7 +107,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @param stroke the {@link Paint} to be applied as the stroke for the shape
      * @return this builder instance
      */
-    public NN stroke(Color stroke) {
+    public B stroke(Color stroke) {
         this.stroke = new SimpleObjectProperty<>(FxUtil.convert(stroke));
         return self();
     }
@@ -119,7 +119,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @param stroke the {@link ObservableValue} to bind to the node's stroke property
      * @return the current instance of the builder
      */
-    public NN bindStrokeFx(ObservableValue<Paint> stroke) {
+    public B bindStrokeFx(ObservableValue<Paint> stroke) {
         this.stroke = stroke;
         return self();
     }
@@ -131,7 +131,7 @@ public abstract class ShapeBuilder<N extends Shape, NN extends ShapeBuilder<N, N
      * @param stroke the {@link ObservableValue} to bind to the node's stroke property
      * @return the current instance of the builder
      */
-    public NN bindStroke(ObservableValue<Color> stroke) {
+    public B bindStroke(ObservableValue<Color> stroke) {
         this.stroke = PropertyConverter.convertReadOnly(stroke, FxUtil.colorConverter());
         return self();
     }

@@ -20,10 +20,10 @@ import java.util.function.Supplier;
  * It provides a fluent API for configuring properties such as text and graphics,
  * allowing subclasses to create customized Labeled instances.
  *
- * @param <N>  the type of Labeled node to be built
- * @param <NN> the type of the concrete builder
+ * @param <C>  the type of control (Labeled node) to be built
+ * @param <B> the type of the concrete builder
  */
-public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilder<N, NN>> extends ControlBuilder<N, NN> {
+public abstract class LabeledBuilder<C extends Labeled, B extends LabeledBuilder<C, B>> extends ControlBuilder<C, B> {
     private @Nullable ObservableValue<String> text;
     private @Nullable ObservableValue<javafx.scene.text.Font> font = null;
     private @Nullable ObservableValue<Node> graphic;
@@ -33,7 +33,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      *
      * @param factory the factory method for Labeled instances
      */
-    protected LabeledBuilder(Supplier<? extends N> factory) {
+    protected LabeledBuilder(Supplier<? extends C> factory) {
         super(factory);
     }
 
@@ -43,8 +43,8 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @return the new Labeled instance
      */
     @Override
-    public N build() {
-        N node = super.build();
+    public C build() {
+        C node = super.build();
         apply(text, node.textProperty());
         apply(graphic, node.graphicProperty());
         apply(font, node.fontProperty());
@@ -57,7 +57,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @param text the text
      * @return this LabeledBuilder instance
      */
-    public NN text(String text) {
+    public B text(String text) {
         this.text = new SimpleStringProperty(text);
         return self();
     }
@@ -68,7 +68,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @param text the text
      * @return this LabeledBuilder instance
      */
-    public NN bindText(ObservableValue<String> text) {
+    public B bindText(ObservableValue<String> text) {
         this.text = text;
         return self();
     }
@@ -79,7 +79,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @param graphic the graphic to use
      * @return this LabeledBuilder instance
      */
-    public NN graphic(Node graphic) {
+    public B graphic(Node graphic) {
         this.graphic = new SimpleObjectProperty<>(graphic);
         return self();
     }
@@ -90,7 +90,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @param graphic the graphic to use
      * @return this LabeledBuilder instance
      */
-    public NN graphic(ObservableValue<Node> graphic) {
+    public B graphic(ObservableValue<Node> graphic) {
         this.graphic = graphic;
         return self();
     }
@@ -101,7 +101,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @param font the {@link Font} to set for the text node
      * @return this TextBuilder instance for fluent method chaining
      */
-    public NN font(javafx.scene.text.Font font) {
+    public B font(javafx.scene.text.Font font) {
         this.font = new SimpleObjectProperty<>(font);
         return self();
     }
@@ -112,7 +112,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @param font the {@link Font} to set for the text node
      * @return this TextBuilder instance for fluent method chaining
      */
-    public NN font(Font font) {
+    public B font(Font font) {
         this.font = new SimpleObjectProperty<>(FxFontUtil.getInstance().convert(font));
         return self();
     }
@@ -126,7 +126,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
      * @return this {@link LabelBuilder} instance for method chaining
      */
-    public NN bindFxFont(ObservableValue<javafx.scene.text.Font> font) {
+    public B bindFxFont(ObservableValue<javafx.scene.text.Font> font) {
         this.font = font;
         return self();
     }
@@ -140,7 +140,7 @@ public abstract class LabeledBuilder<N extends Labeled, NN extends LabeledBuilde
      * @param font the {@link ObservableValue} providing the font to bind to the node's font property
      * @return this {@link LabelBuilder} instance for method chaining
      */
-    public NN bindFont(ObservableValue<Font> font) {
+    public B bindFont(ObservableValue<Font> font) {
         this.font = PropertyConverter.convertReadOnly(font, FxUtil.fontConverter());
         return self();
     }

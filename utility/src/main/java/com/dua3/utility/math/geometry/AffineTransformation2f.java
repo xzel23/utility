@@ -155,13 +155,13 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
     /**
      * Combine affine transformations.
      *
-     * @param A the affine transformation to append
+     * @param at the affine transformation to append
      * @return affine transformation (combination of this and A)
      */
-    public AffineTransformation2f append(AffineTransformation2f A) {
+    public AffineTransformation2f append(AffineTransformation2f at) {
         return new AffineTransformation2f(
-                A.a * a + A.b * d, A.a * b + A.b * e, A.a * c + A.b * f + A.c,
-                A.d * a + A.e * d, A.d * b + A.e * e, A.d * c + A.e * f + A.f
+                at.a * a + at.b * d, at.a * b + at.b * e, at.a * c + at.b * f + at.c,
+                at.d * a + at.e * d, at.d * b + at.e * e, at.d * c + at.e * f + at.f
         );
     }
 

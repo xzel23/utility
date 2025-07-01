@@ -64,7 +64,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
 
         // create a map reverse mappings
         this.uriToNs = new HashMap<>();
-        nsToUri.forEach((k, v) -> uriToNs.computeIfAbsent(v, k_ -> new ArrayList<>()).add(k));
+        nsToUri.forEach((k, v) -> uriToNs.computeIfAbsent(v, k1 -> new ArrayList<>(nsToUri.size())).add(k));
     }
 
     @Override

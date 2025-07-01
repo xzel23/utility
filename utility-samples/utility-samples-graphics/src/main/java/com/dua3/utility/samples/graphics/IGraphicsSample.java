@@ -16,11 +16,11 @@ import java.util.function.Supplier;
  * for rendering purposes. It provides a structure for generating and rendering
  * content for graphical user interfaces or other rendering contexts.
  *
- * @param <TAB> The type of container used to hold the rendered graphical content,
- *              such as a JComponent in Swing or a Tab in JavaFX.
+ * @param <T> The type of container used to hold the rendered graphical content,
+ *            such as a JComponent in Swing or a Tab in JavaFX.
  */
 @FunctionalInterface
-public interface IGraphicsSample<TAB> {
+public interface IGraphicsSample<T> {
     /**
      * The Slide interface represents a component that can render graphical content
      * on a slide. Implementations of this interface define specific slide content
@@ -58,8 +58,8 @@ public interface IGraphicsSample<TAB> {
      * @param h The height of the slides to be created.
      * @return A list of tabs, where each tab holds the content of a generated slide.
      */
-    default List<TAB> createSlides(float w, float h) {
-        List<TAB> tabs = new ArrayList<>(List.of(
+    default List<T> createSlides(float w, float h) {
+        List<T> tabs = new ArrayList<>(List.of(
                 createSlide(ArcToAndEllipse::new, w, h),
                 createSlide(DrawText::new, w, h),
                 createSlide(RenderText::new, w, h)
@@ -88,5 +88,5 @@ public interface IGraphicsSample<TAB> {
      * @return The created tab containing the slide, which holds the rendered graphical content
      *         provided by the factory.
      */
-    TAB createSlide(Supplier<Slide> factory, float w, float h);
+    T createSlide(Supplier<Slide> factory, float w, float h);
 }

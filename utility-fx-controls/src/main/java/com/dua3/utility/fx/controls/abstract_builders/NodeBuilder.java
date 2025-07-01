@@ -14,10 +14,10 @@ import java.util.function.Supplier;
  * An abstract base class for building nodes, providing a fluent API for configuring and creating instances
  * of the node type specified by the generic parameter {@code N}.
  *
- * @param <N>  the type of node to be built
- * @param <NN> the type of the concrete builder
+ * @param <N> the type of node to be built
+ * @param <B> the type of the concrete builder
  */
-public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>> {
+public abstract class NodeBuilder<N extends Node, B extends NodeBuilder<N, B>> {
     private final Supplier<? extends N> factory;
     private @Nullable ObservableValue<Boolean> disabled = null;
     private @Nullable Double width = null;
@@ -37,9 +37,9 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      *
      * @return this instance of the builder
      */
-    protected final NN self() {
+    protected final B self() {
         //noinspection unchecked
-        return (NN) this;
+        return (B) this;
     }
 
     /**
@@ -101,7 +101,7 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      * @param disabled the value to bind the node's disableProperty to
      * @return this NodeBuilder instance
      */
-    public NN disabled(boolean disabled) {
+    public B disabled(boolean disabled) {
         this.disabled = new SimpleBooleanProperty(disabled);
         return self();
     }
@@ -114,7 +114,7 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      * @param disabled the value to bind the node's disableProperty to
      * @return this NodeBuilder instance
      */
-    public NN bindDisabled(ObservableValue<Boolean> disabled) {
+    public B bindDisabled(ObservableValue<Boolean> disabled) {
         this.disabled = disabled;
         return self();
     }
@@ -127,7 +127,7 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      * @param enabled the value to bind the button's disableProperty to
      * @return this NodeBuilder instance
      */
-    public NN bindEnabled(ObservableValue<Boolean> enabled) {
+    public B bindEnabled(ObservableValue<Boolean> enabled) {
         this.disabled = Bindings.createBooleanBinding(() -> !enabled.getValue(), enabled);
         return self();
     }
@@ -138,7 +138,7 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      * @param width the preferred width to set for the node
      * @return this instance of the builder
      */
-    public NN prefWidth(double width) {
+    public B prefWidth(double width) {
         this.width = width;
         return self();
     }
@@ -149,7 +149,7 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      * @param height the preferred height to set
      * @return this instance of the builder
      */
-    public NN prefHeight(double height) {
+    public B prefHeight(double height) {
         this.height = height;
         return self();
     }
@@ -161,7 +161,7 @@ public abstract class NodeBuilder<N extends Node, NN extends NodeBuilder<N, NN>>
      * @param height the preferred height to set for the node
      * @return this instance of the builder
      */
-    public NN prefSize(double width, double height) {
+    public B prefSize(double width, double height) {
         this.width = width;
         this.height = height;
         return self();
