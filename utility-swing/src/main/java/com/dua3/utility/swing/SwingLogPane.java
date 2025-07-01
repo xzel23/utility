@@ -61,14 +61,14 @@ public class SwingLogPane extends JPanel {
     private final JTable table;
     private final JTextArea details;
     private final LogTableModel model;
-    private final Function<LogEntry, Color> colorize;
     private final JSplitPane splitPane;
     private final java.util.List<TableColumn> tableColumns = new ArrayList<>();
-    private final TableRowSorter<AbstractTableModel> tableRowSorter;
-    private Function<? super LogEntry, String> format = LogEntry::toString;
+    private final transient Function<LogEntry, Color> colorize;
+    private final transient TableRowSorter<AbstractTableModel> tableRowSorter;
+    private transient Function<? super LogEntry, String> format = LogEntry::toString;
     private double dividerLocation = 0.5;
     private final JScrollPane scrollPaneTable;
-    private List<LogEntry> selectedEntries = Collections.emptyList();
+    private transient List<LogEntry> selectedEntries = Collections.emptyList();
 
     /**
      * Creates a new instance of SwingLogPane with the default buffer size and connects all known loggers.
