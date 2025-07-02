@@ -217,10 +217,12 @@ public final class DataUtil {
      * @throws ConversionException if there is an error invoking the constructor
      */
     private static @Nullable Object convertUsingConstructor(Class<?> targetClass, Class<?> sourceClass, @NonNull Object value) {
+        // try exact match
         for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
             if (constructor.getModifiers() == (Modifier.PUBLIC)
                     && constructor.getParameterCount() == 1
-                    && constructor.getParameterTypes()[0] == sourceClass) {
+                    && constructor.getParameterTypes()[0] == sourceClass
+            ) {
                 try {
                     return constructor.newInstance(value);
                 } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
@@ -228,6 +230,23 @@ public final class DataUtil {
                 }
             }
         }
+
+        // else try primitives
+        for(Constructor<?> constructor :targetClass.getDeclaredConstructors()) {
+            try {
+                if (constructor.getModifiers() == (Modifier.PUBLIC)
+                        && constructor.getParameterCount() == 1
+                        && constructor.getParameterTypes()[0].isPrimitive()
+                        && constructor.getParameterTypes()[0] == sourceClass.getDeclaredField("TYPE").get(null)
+                ) {
+                    return constructor.newInstance(value);
+                }
+            } catch (IllegalAccessException | InvocationTargetException | InstantiationException |
+                     NoSuchFieldException e) {
+                throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
+            }
+        }
+
         return null;
     }
 

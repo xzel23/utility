@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -141,6 +142,11 @@ class DataUtilTest {
         assertEquals(file, DataUtil.convert(file.toPath(), File.class).getAbsoluteFile());
         assertEquals(file, DataUtil.convert(path.toUri(), File.class).getAbsoluteFile());
         assertEquals(file, DataUtil.convert(path.toUri().toURL(), File.class).getAbsoluteFile());
+
+        // use BigDecimal to test conversion using constructor, first with a primitive type
+        assertEquals(BigDecimal.valueOf(123), DataUtil.convert(123, BigDecimal.class, true));
+        assertEquals(BigDecimal.valueOf(123), DataUtil.convert(Integer.valueOf(123), BigDecimal.class, true));
+        assertEquals(BigDecimal.valueOf(123), DataUtil.convert("123", BigDecimal.class, true));
     }
 
     @Test
