@@ -71,6 +71,385 @@ public final class DataUtil {
     }
 
     /**
+     * A functional interface that defines a method for attempting to convert an object of one type
+     * to another target type.
+     */
+    @FunctionalInterface
+    private interface TryConvert {
+        /**
+         * Attempts to convert an object of the specified source class to the target class.
+         * If the conversion is not possible, returns {@code null}.
+         *
+         * @param targetClass the target class to which the object should be converted
+         * @param sourceClass the source class of the object being converted
+         * @param value the object to be converted
+         * @return the converted object if conversion is successful; otherwise {@code null}
+         */
+        @Nullable Object tryConvert(Class<?> targetClass, Class<?> sourceClass, Object value);
+    }
+
+    /**
+     * An array of {@code TryConvert} instances that define various conversion strategies between types.
+     * These converters handle a wide range of type conversions, including compatibility checks,
+     * string conversions, number format conversions, date/time parsing, and object instantiation
+     * from provided classes.
+     * <p>
+     * The priority of the converters is based on their order within the array. The first matching
+     * converter that can handle the conversion is executed.
+     */
+    private static final TryConvert[] CONVERTERS = {
+            // assignment compatible?
+            (t, s, v) -> t.isAssignableFrom(s) ? t.cast(v) : null,
+            // target is String -> use toString()
+            (t, s, v) -> t == String.class ? v.toString() : null,
+            // convert floating point numbers without fractional part to integer types
+            DataUtil::convertToIntegralNumber,
+            // convert other numbers to double
+            DataUtil::convertToDouble,
+            // convert other numbers to float
+            DataUtil::convertToFloat,
+            // convert String to LocalDate using the ISO format
+            DataUtil::convertToLocalDate,
+            // convert String to LocalDateTime using the ISO format
+            DataUtil::convertToLocalDateTime,
+            // Don't rely on Boolean.vOf(String) because it might introduce subtle bugs,
+            // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw IllegalArgumentException instead.
+            DataUtil::convertToBoolean,
+            // convert to Path
+            DataUtil::convertToPath,
+            // convert to File
+            DataUtil::convertToFile,
+            // convert to URI
+            DataUtil::convertToUri,
+            // convert to URL
+            DataUtil::convertToUrl,
+            // target provides public static vOf(U) where v is instance of U
+            // (reason for iterating methods: getDeclaredMethod() will throw if vOf is not present)
+            DataUtil::convertUsingValueOf,
+    };
+
+    /**
+     * Converts the provided object to a Float if the target class is Float and the source class
+     * is a subclass of Number. If these conditions are not met, returns null.
+     *
+     * @param t the target class type to which the object is to be converted
+     * @param s the source class type of the provided object
+     * @param v the object to be converted to a Float
+     * @return the converted Float value if the criteria are met, or null otherwise
+     */
+    private static @Nullable Float convertToFloat(Class<?> t, Class<?> s, Object v) {
+        return t == Float.class && Number.class.isAssignableFrom(s) ? ((Number) v).floatValue() : null;
+    }
+
+    /**
+     * Converts the given object to a Double if the provided target class is Double
+     * and the source class is assignable from Number. If the conditions are not
+     * met, returns null.
+     *
+     * @param t the target class to which the value should be converted
+     * @param s the source class of the value
+     * @param v the object to be converted
+     * @return the converted Double value if the conditions are satisfied; otherwise null
+     */
+    private static @Nullable Double convertToDouble(Class<?> t, Class<?> s, Object v) {
+        return t == Double.class && Number.class.isAssignableFrom(s) ? ((Number) v).doubleValue() : null;
+    }
+
+    /**
+     * Converts the given object to a {@code LocalDate} if the specified target class is {@code LocalDate}
+     * and the source class is assignable from {@code CharSequence}. If the conditions are not met,
+     * the method returns {@code null}.
+     *
+     * @param t the target class to which the object might be converted
+     * @param s the source class of the object
+     * @param v the object to be converted
+     * @return the converted {@code LocalDate} object if conditions are met, otherwise {@code null}
+     */
+    private static @Nullable Object convertToLocalDate(Class<?> t, Class<?> s, Object v) {
+        return t == LocalDate.class && CharSequence.class.isAssignableFrom(s)
+                ? LocalDate.parse(v.toString(), DateTimeFormatter.ISO_DATE)
+                : null;
+    }
+
+    /**
+     * Converts the given object to a LocalDateTime instance if the target class is LocalDateTime
+     * and the source class is assignable from CharSequence. Otherwise, returns null.
+     *
+     * @param t the target class type to which the conversion is to be applied
+     * @param s the source class type of the provided object
+     * @param v the value to be converted
+     * @return the converted LocalDateTime object if the target class is LocalDateTime and the source
+     *         class is assignable from CharSequence, or null otherwise
+     */
+    private static @Nullable Object convertToLocalDateTime(Class<?> t, Class<?> s, Object v) {
+        return t == LocalDateTime.class && CharSequence.class.isAssignableFrom(s)
+                ? LocalDateTime.parse(v.toString(), DateTimeFormatter.ISO_DATE_TIME)
+                : null;
+    }
+
+    private static @Nullable Object convertUsingValueOf(Class<?> targetClass, Class<?> sourceClass, @NonNull Object value) {
+        // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
+        for (Method method : targetClass.getDeclaredMethods()) {
+            if (method.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC)
+                    && method.getName().equals("valueOf")
+                    && method.getParameterCount() == 1
+                    && method.getParameterTypes()[0] == sourceClass
+                    && targetClass.isAssignableFrom(method.getReturnType())) {
+                try {
+                    return method.invoke(null, value);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new ConversionException(sourceClass, targetClass, "error invoking valueOf(String)", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given value into an instance of the target class using a public single-argument constructor
+     * that matches the provided source class. If no suitable constructor is found, or if an exception occurs
+     * during instantiation, the method either returns null or throws a {@link ConversionException}.
+     *
+     * @param targetClass the class to which the value should be converted
+     * @param sourceClass the class of the source value that matches the constructor parameter type
+     * @param value the source object to convert
+     * @return an instance of the target class created using the matched constructor, or null if no matching constructor exists
+     * @throws ConversionException if there is an error invoking the constructor
+     */
+    private static @Nullable Object convertUsingConstructor(Class<?> targetClass, Class<?> sourceClass, @NonNull Object value) {
+        for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
+            if (constructor.getModifiers() == (Modifier.PUBLIC)
+                    && constructor.getParameterCount() == 1
+                    && constructor.getParameterTypes()[0] == sourceClass) {
+                try {
+                    return constructor.newInstance(value);
+                } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                    throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given value to a {@link Boolean} if the target class is {@link Boolean}
+     * and the source class is assignable from {@link CharSequence}.
+     * If the conditions are not met, the method returns {@code null}.
+     *
+     * @param targetClass The target class to which the value is expected to be converted.
+     *                    It should be {@link Boolean} for successful conversion.
+     * @param sourceClass The source class of the value being converted.
+     *                    It should be assignable from {@link CharSequence}.
+     * @param value The object to be converted to a {@link Boolean}.
+     *              This method expects the {@code value} to represent a boolean textual
+     *              value (e.g., "true" or "false").
+     * @return A {@link Boolean} if the conversion is successful; otherwise, {@code null}.
+     * @throws IllegalArgumentException if {@code value} contains invalid text
+     *                                  that cannot be converted to a boolean.
+     */
+    private static @Nullable Object convertToBoolean(Class<?> targetClass, Class<?> sourceClass, Object value) {
+        if (targetClass != Boolean.class || !CharSequence.class.isAssignableFrom(sourceClass)) {
+            return null;
+        }
+
+        return switch (value.toString().toLowerCase(Locale.ROOT)) {
+            case "true" -> Boolean.TRUE;
+            case "false" -> Boolean.FALSE;
+            default -> throw new IllegalArgumentException("invalid text for boolean conversion: " + value);
+        };
+    }
+
+    /**
+     * Converts a floating-point number to an integral number of the specified target class
+     * if and only if the conversion does not result in a loss of precision.
+     *
+     * @param targetClass the target integral type class, such as {@code Integer.class} or {@code Long.class}
+     * @param sourceClass the source type class, which must be {@code Double.class} or {@code Float.class}
+     * @param value the floating-point number to be converted
+     * @return a {@code Number} representing the converted value as an instance of the target class,
+     *         or {@code null} if the conversion is not applicable
+     * @throws IllegalArgumentException if the value cannot be converted to the target class
+     *         without loss of precision
+     */
+    private static @Nullable Object convertToIntegralNumber(Class<?> targetClass, Class<?> sourceClass, Object value) {
+        if (sourceClass != Double.class && sourceClass != Float.class) {
+            return null;
+        }
+
+        double d = ((Number) value).doubleValue();
+        if (targetClass == Integer.class) {
+            //noinspection NumericCastThatLosesPrecision
+            int n = (int) d;
+            //noinspection FloatingPointEquality
+            LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
+            return n;
+        } else if (targetClass == Long.class) {
+            //noinspection NumericCastThatLosesPrecision
+            long n = (long) d;
+            LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to long without loss of precision: " + value));
+            return n;
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given value to a {@link Path} if the target class is {@link Path}
+     * and the source class matches one of the supported types. Supported source
+     * types include {@link String}, {@link File}, {@link URI}, and {@link URL}.
+     *
+     * @param targetClass The target class to which the value is to be converted. It must be {@link Path}.
+     * @param sourceClass The source class of the value being converted. Supported classes include {@link String}, {@link File}, {@link URI}, and {@link URL}.
+     * @param value The value to be converted to a {@link Path}. The type of the value must match the source class.
+     * @return A {@link Path} object resulting from the conversion if successful, or {@code null} if the target class is not {@link Path}
+     *         or the source class is unsupported.
+     * @throws ConversionException If the source class is {@link URL} and the value cannot be successfully converted to a {@link URI}.
+     */
+    private static @Nullable Object convertToPath(Class<?> targetClass, Class<?> sourceClass, Object value) {
+        if (targetClass != Path.class) {
+            return null;
+        }
+
+        if (CharSequence.class.isAssignableFrom(sourceClass)) {
+            return Paths.get(value.toString());
+        }
+        if (sourceClass == File.class) {
+            return ((File) value).toPath();
+        }
+        if (sourceClass == URI.class) {
+            return Paths.get((URI) value);
+        }
+        if (sourceClass == URL.class) {
+            try {
+                return Paths.get(((URL) value).toURI());
+            } catch (URISyntaxException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given value to a {@code File} object based on the source class provided.
+     * This method supports multiple source types, such as {@code String}, {@code Path}, {@code URI}, and {@code URL}.
+     * If the target class is not {@code File}, the method returns {@code null}.
+     *
+     * @param targetClass the class of the target type to which the value needs to be converted
+     * @param sourceClass the class of the source type of the provided value
+     * @param value the object to be converted to a {@code File}
+     * @return a {@code File} object if the conversion is successful and the target class is {@code File},
+     * or {@code null} if the target class is not {@code File} or the conversion cannot be performed
+     * @throws ConversionException if the source class is {@code URL} and the conversion to {@code File} fails
+     * due to a {@code URISyntaxException}
+     */
+    private static @Nullable Object convertToFile(Class<?> targetClass, Class<?> sourceClass, Object value) {
+        if (targetClass != File.class) {
+            return null;
+        }
+
+        if (CharSequence.class.isAssignableFrom(sourceClass)) {
+            return new File(value.toString());
+        }
+        if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary
+            assert value instanceof Path;
+            return ((Path) value).toFile();
+        }
+        if (sourceClass == URI.class) {
+            return Paths.get((URI) value).toFile();
+        }
+        if (sourceClass == URL.class) {
+            try {
+                return Paths.get(((URL) value).toURI()).toFile();
+            } catch (URISyntaxException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given value to a URI if the target class is {@link URI}.
+     * Supports conversion from the source classes {@link String}, {@link File}, {@link URL}, and {@link Path}.
+     * If the target class is not {@link URI} or the source class is not supported, returns null.
+     *
+     * @param targetClass the desired target class for the conversion, expected to be {@link URI}
+     * @param sourceClass the actual class type of the provided value
+     * @param value the object to be converted to a URI; must be compatible with the supplied source class
+     * @return a URI representation of the given value if conversion is possible, or null if the target class
+     *         is not {@link URI} or the source class is unsupported
+     */
+    private static @Nullable Object convertToUri(Class<?> targetClass, Class<?> sourceClass, Object value) {
+        if (targetClass != URI.class) {
+            return null;
+        }
+
+        if (CharSequence.class.isAssignableFrom(sourceClass)) {
+            return URI.create(value.toString());
+        }
+        if (sourceClass == File.class) {
+            return ((File) value).toURI();
+        }
+        if (sourceClass == URL.class) {
+            try {
+                return ((URL) value).toURI();
+            } catch (URISyntaxException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
+            return ((Path) value).toUri();
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given value to a {@link URL} if the target class is {@link URL},
+     * based on the type of the source class. If the conversion is unsupported
+     * or fails, a {@link ConversionException} is thrown for invalid conversions.
+     *
+     * @param targetClass the class to which the value is being converted; must be {@link URL}
+     * @param sourceClass the class of the input value; determines the conversion logic
+     * @param value the input object to be converted to a {@link URL}
+     * @return the corresponding {@link URL} if conversion is successful, or {@code null}
+     *         if the target class is not {@link URL} or conversion is unsupported
+     * @throws ConversionException if the conversion fails
+     */
+    private static @Nullable Object convertToUrl(Class<?> targetClass, Class<?> sourceClass, Object value) {
+        if (targetClass != URL.class) {
+            return null;
+        }
+
+        if (CharSequence.class.isAssignableFrom(sourceClass)) {
+            try {
+                return URI.create(value.toString()).toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (sourceClass == File.class) {
+            try {
+                return ((File) value).toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (sourceClass == URI.class) {
+            try {
+                return ((URI) value).toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
+            try {
+                return ((Path) value).toUri().toURL();
+            } catch (MalformedURLException e) {
+                throw new ConversionException(sourceClass, targetClass, e);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Convert an object to a different class.
      * <p>
      * Conversion works as follows:
@@ -102,247 +481,23 @@ public final class DataUtil {
         }
 
         Class<?> sourceClass = value.getClass();
-        T result;
 
-        // assignment compatible?
-        result = (T) convertIf(targetClass.isAssignableFrom(sourceClass), targetClass::cast, value);
-        if (result != null) {
-            return result;
-        }
-
-        // target is String -> use toString()
-        result = (T) convertIf(targetClass == String.class, Object::toString, value);
-        if (result != null) {
-            return result;
-        }
-
-        // convert floating point numbers without fractional part to integer types
-        result = (T) convertIf(value instanceof Double || value instanceof Float, v -> convertToIntegralNumber(targetClass, sourceClass, v), value);
-        if (result != null) {
-            return result;
-        }
-
-        // convert other numbers to double
-        if (targetClass == Double.class && Number.class.isAssignableFrom(sourceClass)) {
-            return (T) (Double) (((Number) value).doubleValue());
-        }
-
-        // convert other numbers to float
-        if (targetClass == Float.class && Number.class.isAssignableFrom(sourceClass)) {
-            return (T) (Float) (((Number) value).floatValue());
-        }
-
-        // convert String to LocalDate using the ISO format
-        if (targetClass == LocalDate.class && sourceClass == String.class) {
-            return (T) LocalDate.parse(value.toString(), DateTimeFormatter.ISO_DATE);
-        }
-
-        // convert String to LocalDateTime using the ISO format
-        if (targetClass == LocalDateTime.class && sourceClass == String.class) {
-            return (T) LocalDateTime.parse(value.toString(), DateTimeFormatter.ISO_DATE_TIME);
-        }
-
-        // convert String to Boolean
-        // Don't rely on Boolean.valueOf(String) because it might introduce subtle bugs,
-        // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw IllegalArgumentException instead.
-        result = (T) convertIf(targetClass == Boolean.class && sourceClass == String.class, v -> convertToBoolean(targetClass, sourceClass, v), value);
-        if (result != null) {
-            return result;
-        }
-
-        // convert to Path
-        result = (T) convertIf(targetClass == Path.class, v -> convertToPath(targetClass, sourceClass, v), value);
-        if (result != null) {
-            return result;
-        }
-
-        // convert to File
-        result = (T) convertIf(targetClass == File.class, v -> convertToFile(targetClass, sourceClass, v), value);
-        if (result != null) {
-            return result;
-        }
-
-        // convert to URI
-        result = (T) convertIf(targetClass == URI.class, v -> convertToUri(targetClass, sourceClass, v), value);
-        if (result != null) {
-            return result;
-        }
-
-        // convert to URL
-        result = (T) convertIf(targetClass == URL.class, v -> convertToUrl(targetClass, sourceClass, v), value);
-        if (result != null) {
-            return result;
-        }
-
-        // target provides public static valueOf(U) where value is instance of U
-        // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
-        result = convertUsingValueOf(targetClass, sourceClass, value);
-        if (result != null) {
-            return result;
+        for (var c : CONVERTERS) {
+            Object r = c.tryConvert(targetClass, sourceClass, value);
+            if (r != null) {
+                return (T) r;
+            }
         }
 
         // ... or provides a public constructor taking the value's class (and is enabled by parameter)
-        result = convertIf(useConstructor, v -> convertUsingConstructor(targetClass, sourceClass, v), value);
-        if (result != null) {
-            return result;
+        if (useConstructor) {
+            Object r = convertUsingConstructor(targetClass, sourceClass, value);
+            if (r != null) {
+                return (T) r;
+            }
         }
 
         throw new ConversionException(sourceClass, targetClass, "unsupported conversion");
-    }
-
-    private static <T> @Nullable T convertUsingValueOf(Class<T> targetClass, Class<?> sourceClass, @NonNull Object value) {
-        // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
-        for (Method method : targetClass.getDeclaredMethods()) {
-            if (method.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC)
-                    && method.getName().equals("valueOf")
-                    && method.getParameterCount() == 1
-                    && method.getParameterTypes()[0] == sourceClass
-                    && targetClass.isAssignableFrom(method.getReturnType())) {
-                try {
-                    return (T) method.invoke(null, value);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new ConversionException(sourceClass, targetClass, "error invoking valueOf(String)", e);
-                }
-            }
-        }
-        return null;
-    }
-
-    private static <T> @Nullable T convertUsingConstructor(Class<T> targetClass, Class<?> sourceClass, @NonNull Object value) {
-        for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
-            if (constructor.getModifiers() == (Modifier.PUBLIC)
-                    && constructor.getParameterCount() == 1
-                    && constructor.getParameterTypes()[0] == sourceClass) {
-                try {
-                    return (T) constructor.newInstance(value);
-                } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
-                }
-            }
-        }
-        return null;
-    }
-
-    private static <T> @Nullable Boolean convertToBoolean(Class<T> targetClass, Class<?> sourceClass, Object value) {
-        return switch (((String) value).toLowerCase(Locale.ROOT)) {
-            case "true" -> Boolean.TRUE;
-            case "false" -> Boolean.FALSE;
-            default -> throw new IllegalArgumentException("invalid text for boolean conversion: " + value);
-        };
-    }
-
-    private static <T> @Nullable Number convertToIntegralNumber(Class<T> targetClass, Class<?> sourceClass, Object value) {
-        double d = ((Number) value).doubleValue();
-        if (targetClass == Integer.class) {
-            //noinspection NumericCastThatLosesPrecision
-            int n = (int) d;
-            //noinspection FloatingPointEquality
-            LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
-            return n;
-        } else if (targetClass == Long.class) {
-            //noinspection NumericCastThatLosesPrecision
-            long n = (long) d;
-            LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to long without loss of precision: " + value));
-            return n;
-        }
-        return null;
-    }
-
-    private static <T> @Nullable Path convertToPath(Class<T> targetClass, Class<?> sourceClass, Object value) {
-        if (sourceClass == String.class) {
-            return Paths.get(value.toString());
-        }
-        if (sourceClass == File.class) {
-            return ((File) value).toPath();
-        }
-        if (sourceClass == URI.class) {
-            return Paths.get((URI) value);
-        }
-        if (sourceClass == URL.class) {
-            try {
-                return Paths.get(((URL) value).toURI());
-            } catch (URISyntaxException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
-        }
-        return null;
-    }
-
-    private static <T> @Nullable File convertToFile(Class<T> targetClass, Class<?> sourceClass, Object value) {
-        if (sourceClass == String.class) {
-            return new File(value.toString());
-        }
-        if (Path.class.isAssignableFrom(sourceClass)) { // for Path the concrete implementation may vary
-            assert value instanceof Path;
-            return ((Path) value).toFile();
-        }
-        if (sourceClass == URI.class) {
-            return Paths.get((URI) value).toFile();
-        }
-        if (sourceClass == URL.class) {
-            try {
-                return Paths.get(((URL) value).toURI()).toFile();
-            } catch (URISyntaxException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
-        }
-        return null;
-    }
-
-    private static <T> @Nullable URI convertToUri(Class<T> targetClass, Class<?> sourceClass, Object value) {
-        if (sourceClass == String.class) {
-            return URI.create(value.toString());
-        }
-        if (sourceClass == File.class) {
-            return ((File) value).toURI();
-        }
-        if (sourceClass == URL.class) {
-            try {
-                return ((URL) value).toURI();
-            } catch (URISyntaxException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
-        }
-        if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
-            return ((Path) value).toUri();
-        }
-        return null;
-    }
-
-    private static <T> @Nullable URL convertToUrl(Class<T> targetClass, Class<?> sourceClass, Object value) {
-        if (sourceClass == String.class) {
-            try {
-                return URI.create(value.toString()).toURL();
-            } catch (MalformedURLException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
-        }
-        if (sourceClass == File.class) {
-            try {
-                return ((File) value).toURI().toURL();
-            } catch (MalformedURLException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
-        }
-        if (sourceClass == URI.class) {
-            try {
-                return ((URI) value).toURL();
-            } catch (MalformedURLException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
-        }
-        if (Path.class.isAssignableFrom(sourceClass)) { // Path is abstract
-            try {
-                return ((Path) value).toUri().toURL();
-            } catch (MalformedURLException e) {
-                throw new ConversionException(sourceClass, targetClass, e);
-            }
-        }
-        return null;
-    }
-
-    private static <T> @Nullable T convertIf(boolean condition, Function<Object, @Nullable T> convert, Object value) {
-        return condition ? convert.apply(value) : null;
     }
 
     /**
