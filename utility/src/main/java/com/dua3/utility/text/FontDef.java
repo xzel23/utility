@@ -257,14 +257,14 @@ public final class FontDef {
     }
 
     static @Nullable List<String> parseFontFamilies(@Nullable String s, boolean strict) {
-        if (s == null || s.isBlank()) {
+        if (TextUtil.isNullOrBlank(s)) {
             return null;
         }
 
-        if (!s.contains(",") && !s.contains("\"")) {
+        if (!TextUtil.containsAnyOf(s, ',', '"')) {
             // allow spaces in non-strict mode only
             String family = s.strip();
-            LangUtil.check(!strict || family.indexOf(' ') < 0, () -> new IllegalArgumentException("invalid font declaration: " + s));
+            LangUtil.check(!strict || !family.contains(" "), () -> new IllegalArgumentException("invalid font declaration: " + s));
             return s.equals(INHERIT) ? null : List.of(family);
         }
 
@@ -326,8 +326,7 @@ public final class FontDef {
         }
 
         // "inherit" is treated the same as not present and it must not be combined
-        int idxInherit = families.indexOf(INHERIT);
-        if (idxInherit >= 0) {
+        if (families.contains(INHERIT)) {
             LangUtil.check(families.size() == 1, () -> new IllegalArgumentException("'inherit' must not be combined: " + s));
             return null;
         }

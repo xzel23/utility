@@ -208,6 +208,7 @@ could not be loaded.
       implementations
     - hardened `IoUtil.unzip()` and provided an overload to use custom limits for unzipping.
     - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
+    - Added `TextUtil.isNullOrBlank()`
 
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.

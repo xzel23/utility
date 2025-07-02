@@ -1014,6 +1014,16 @@ public final class TextUtil {
     }
 
     /**
+     * Checks if the provided {@code CharSequence} is either {@code null} or blank (consists only of whitespace characters).
+     *
+     * @param s the {@code CharSequence} to be checked, may be {@code null}
+     * @return {@code true} if the {@code CharSequence} is {@code null} or blank, otherwise {@code false}
+     */
+    public static boolean isNullOrBlank(@Nullable CharSequence s) {
+        return s == null || isBlank(s);
+    }
+
+    /**
      * Wraps a given string `s` into multiple lines based on the specified `width`, alignment, and hard wrap options.
      * <p>
      *     This method uses the "\n" as line separator.
