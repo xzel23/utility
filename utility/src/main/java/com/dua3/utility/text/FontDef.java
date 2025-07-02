@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.SequencedCollection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -586,17 +587,21 @@ public final class FontDef {
                 (families == null ? "" : "font-family: " + families.stream()
                         .map(InternalUtil::quoteIfNeeded)
                         .collect(Collectors.joining(", ")) + "; ") +
-                        (size == null ? "" : "font-size: " + size + "pt; ") +
-                        (bold == null ? "" : "font-weight: " + (bold ? "bold" : "normal") + "; ") +
-                        (italic == null ? "" : "font-style: " + (italic ? "italic" : "normal") + "; ") +
+                        textIfNonNull(size, () -> "font-size: " + size + "pt; ") +
+                        textIfNonNull(bold, () -> "font-weight: " + (bold ? "bold" : "normal") + "; ") +
+                        textIfNonNull(italic, () -> "font-style: " + (italic ? "italic" : "normal") + "; ") +
                         (isStrikeThrough || isUnderline
                                 ? "text-decoration:" +
                                 (isUnderline ? " underline" : "") +
                                 (isStrikeThrough ? " line-through" : "") +
                                 "; "
                                 : "") +
-                        (color == null ? "" : "color: " + color + ";");
+                        textIfNonNull(color, () -> "color: " + color + "; ");
         return css.stripTrailing();
+    }
+
+    private String textIfNonNull(@Nullable Object obj, Supplier<String> sIfTrue) {
+        return obj != null ? sIfTrue.get() : "";
     }
 
     /**
