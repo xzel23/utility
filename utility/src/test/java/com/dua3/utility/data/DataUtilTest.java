@@ -143,10 +143,14 @@ class DataUtilTest {
         assertEquals(file, DataUtil.convert(path.toUri(), File.class).getAbsoluteFile());
         assertEquals(file, DataUtil.convert(path.toUri().toURL(), File.class).getAbsoluteFile());
 
-        // use BigDecimal to test conversion using constructor, first with a primitive type
+        // use BigDecimal to test conversion using valueOf() and constructor
+        // these use BigDecimal constructors
         assertEquals(BigDecimal.valueOf(123), DataUtil.convert(123, BigDecimal.class, true));
         assertEquals(BigDecimal.valueOf(123), DataUtil.convert(Integer.valueOf(123), BigDecimal.class, true));
         assertEquals(BigDecimal.valueOf(123), DataUtil.convert("123", BigDecimal.class, true));
+        // these use BigDecimal.valueOf()
+        assertEquals(BigDecimal.valueOf(123), DataUtil.convert(123L, BigDecimal.class, true));
+        assertEquals(BigDecimal.valueOf(123), DataUtil.convert(Long.valueOf(123), BigDecimal.class, true));
     }
 
     @Test

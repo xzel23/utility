@@ -807,4 +807,27 @@ class LangUtilTest {
     }
 
 
+    @Test
+    void testIsWrapperFor() {
+        // Test valid wrapper-class pairings
+        assertTrue(LangUtil.isWrapperFor(Integer.class, int.class));
+        assertTrue(LangUtil.isWrapperFor(Double.class, double.class));
+        assertTrue(LangUtil.isWrapperFor(Float.class, float.class));
+        assertTrue(LangUtil.isWrapperFor(Long.class, long.class));
+        assertTrue(LangUtil.isWrapperFor(Short.class, short.class));
+        assertTrue(LangUtil.isWrapperFor(Byte.class, byte.class));
+        assertTrue(LangUtil.isWrapperFor(Character.class, char.class));
+        assertTrue(LangUtil.isWrapperFor(Boolean.class, boolean.class));
+
+        // Test invalid wrapper-class pairings
+        assertFalse(LangUtil.isWrapperFor(String.class, int.class));
+        assertFalse(LangUtil.isWrapperFor(Object.class, int.class));
+        assertFalse(LangUtil.isWrapperFor(Integer.class, double.class));
+        assertFalse(LangUtil.isWrapperFor(Double.class, boolean.class));
+        assertFalse(LangUtil.isWrapperFor(Integer.class, String.class));
+        assertFalse(LangUtil.isWrapperFor(String.class, String.class));
+
+        // Test non-primitive second argument
+        assertFalse(LangUtil.isWrapperFor(Integer.class, Integer.class));
+    }
 }

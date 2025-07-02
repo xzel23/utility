@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.io.Serial;
 import java.io.UncheckedIOException;
 import java.lang.ref.Cleaner;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
@@ -915,6 +916,30 @@ public final class LangUtil {
      */
     public static Cleaner getCleaner() {
         return CLEANER;
+    }
+
+    /**
+     * Determines if the given class `clsA` is a wrapper for the primitive class `clsB`.
+     * This method checks if the `clsA` class is associated with the `TYPE` field pointing to the specified primitive type.
+     *
+     * @param clsA the class to check if it acts as a wrapper
+     * @param clsB the primitive class to match against
+     * @return true if `clsA` is a wrapper for the primitive class `clsB`, otherwise false
+     */
+    public static boolean isWrapperFor(Class<?> clsA, Class<?> clsB) {
+        if (!clsB.isPrimitive()) {
+            return false;
+        }
+        try {
+            for (Field field : clsA.getDeclaredFields()) {
+                if (field.getName().equals("TYPE") && field.get(null) == clsB) {
+                    return true;
+                }
+            }
+        } catch (IllegalAccessException e) {
+            return false;
+        }
+        return false;
     }
 
     /**

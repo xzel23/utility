@@ -188,6 +188,7 @@ public final class DataUtil {
     }
 
     private static @Nullable Object convertUsingValueOf(Class<?> targetClass, Class<?> sourceClass, @NonNull Object value) {
+        // first try exact match of parameter type
         // (reason for iterating methods: getDeclaredMethod() will throw if valueOf is not present)
         for (Method method : targetClass.getDeclaredMethods()) {
             if (method.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC)
@@ -202,6 +203,22 @@ public final class DataUtil {
                 }
             }
         }
+
+        // else try primitives
+        for (Method method : targetClass.getDeclaredMethods()) {
+            if (method.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC)
+                    && method.getName().equals("valueOf")
+                    && method.getParameterCount() == 1
+                    && LangUtil.isWrapperFor(sourceClass, method.getParameterTypes()[0])
+                    && targetClass.isAssignableFrom(method.getReturnType())) {
+                try {
+                    return method.invoke(null, value);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new ConversionException(sourceClass, targetClass, "error invoking valueOf(String)", e);
+                }
+            }
+        }
+
         return null;
     }
 
@@ -236,13 +253,11 @@ public final class DataUtil {
             try {
                 if (constructor.getModifiers() == (Modifier.PUBLIC)
                         && constructor.getParameterCount() == 1
-                        && constructor.getParameterTypes()[0].isPrimitive()
-                        && constructor.getParameterTypes()[0] == sourceClass.getDeclaredField("TYPE").get(null)
+                        && LangUtil.isWrapperFor(sourceClass, constructor.getParameterTypes()[0])
                 ) {
                     return constructor.newInstance(value);
                 }
-            } catch (IllegalAccessException | InvocationTargetException | InstantiationException |
-                     NoSuchFieldException e) {
+            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 throw new ConversionException(sourceClass, targetClass, "error invoking constructor " + targetClass.getName() + "(String)", e);
             }
         }
