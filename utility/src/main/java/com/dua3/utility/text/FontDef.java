@@ -1,5 +1,6 @@
 package com.dua3.utility.text;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
@@ -273,56 +274,7 @@ public final class FontDef {
 
         List<String> families = new ArrayList<>();
         while (idx < end) {
-            // skip whitespace
-            while (idx < end && Character.isWhitespace(s.charAt(idx))) {
-                idx++;
-            }
-
-            int partStart = idx;
-            if (partStart < end) {
-                char c = s.charAt(idx);
-                String part;
-                if (c == '"') {
-                    // read quoted family name
-
-                    // move after quote
-                    idx++;
-                    partStart++;
-                    while (idx < end && s.charAt(idx) != '"') {
-                        idx++;
-                    }
-                    if (idx == end) {
-                        throw new IllegalArgumentException("unmatched quote in argument: " + s);
-                    }
-
-                    // get current family name
-                    part = s.substring(partStart, idx);
-
-                    // move to character after quote
-                    idx++;
-                } else {
-                    // read unquoted family name
-                    while (idx < end && !Character.isWhitespace(c = s.charAt(idx)) && c != ',' && c != ';') {
-                        idx++;
-                    }
-                    part = s.substring(partStart, idx);
-                }
-                families.add(part);
-
-                // skip whitespace
-                while (idx < end && Character.isWhitespace(s.charAt(idx))) {
-                    idx++;
-                }
-
-                // read comma
-                if (idx < end) {
-                    if (s.charAt(idx) == ',') {
-                        idx++;
-                    } else {
-                        throw new IllegalArgumentException("invalid font declaration: " + s);
-                    }
-                }
-            }
+            idx = readAndAddFontFamilies(s, idx, end, families);
         }
 
         // "inherit" is treated the same as not present and it must not be combined
@@ -334,6 +286,104 @@ public final class FontDef {
         return families.isEmpty() ? null : families;
     }
 
+    /**
+     * Reads and adds font family names from a given string to a list of families. The method parses
+     * the string starting at a specified index, extracts font family names (quoted or unquoted),
+     * and handles whitespace and delimiters. If an invalid format is encountered, an exception is thrown.
+     *
+     * @param s the input string containing font family declarations
+     * @param idx the starting index from which font family names are read
+     * @param end the index indicating the end of the substring to be parsed
+     * @param families the list to which extracted font family names will be added
+     * @return the updated index position after processing the input string
+     * @throws IllegalArgumentException if the input string contains unmatched quotes
+     *                                   or an invalid font declaration
+     */
+    private static int readAndAddFontFamilies(@NonNull String s, int idx, int end, List<String> families) {
+        // skip whitespace
+        idx = skipWhitespace(s, idx, end);
+
+        if (idx < end) {
+            int partStart = idx;
+
+            char c = s.charAt(idx);
+            String part;
+            if (c == '"') {
+                // read quoted family name
+
+                // move after quote
+                idx++;
+                partStart++;
+                idx = skipWhile(s, idx, end, ch -> ch != '"');
+                if (idx == end) {
+                    throw new IllegalArgumentException("unmatched quote in argument: " + s);
+                }
+
+                // get current family name
+                part = s.substring(partStart, idx);
+
+                // move to character after quote
+                idx++;
+            } else {
+                // read unquoted family name
+                idx = skipWhile(s, idx, end, ch -> !Character.isWhitespace(ch) && ch != ',' && ch != ';');
+                part = s.substring(partStart, idx);
+            }
+            families.add(part);
+
+            // skip whitespace
+            idx = skipWhitespace(s, idx, end);
+
+            // read comma
+            if (idx < end) {
+                if (s.charAt(idx) == ',') {
+                    idx++;
+                } else {
+                    throw new IllegalArgumentException("invalid font declaration: " + s);
+                }
+            }
+        }
+
+        return idx;
+    }
+
+    /**
+     * Skips over any whitespace characters in the given string starting from the specified index.
+     * The method stops either when it reaches a non-whitespace character or the specified end index.
+     *
+     * @param s   the input string to process; must not be null
+     * @param idx the starting index in the string from which to begin skipping whitespace
+     * @param end the end index up to which the method will check for whitespace characters
+     * @return the index of the first non-whitespace character, or the end index if only whitespace is found
+     */
+    private static int skipWhitespace(String s, int idx, int end) {
+        return skipWhile(s, idx, end, Character::isWhitespace);
+    }
+
+    /**
+     * Skips characters in the given string starting from the specified index while the characters satisfy the given predicate.
+     *
+     * @param s    the string to process
+     * @param idx  the starting index to check
+     * @param end  the exclusive end index of the range to check
+     * @param p    the predicate to test each character
+     * @return the index of the first character that does not satisfy the predicate, or the end index if all characters satisfy the predicate
+     */
+    private static int skipWhile(String s, int idx, int end, CharPredicate p) {
+        while (idx < end && p.test(s.charAt(idx))) {
+            idx++;
+        }
+        return idx;
+    }
+
+    /**
+     * Parses a CSS rule into a key-value pair, where the key is the CSS attribute
+     * and the value is the corresponding value of the rule.
+     *
+     * @param rule the CSS rule as a string in the format "attribute: value"
+     * @return a Pair containing the attribute as the first element and the value as the second element
+     * @throws IllegalArgumentException if the input string is not a valid CSS rule
+     */
     private static Pair<String, String> parseCssRule(String rule) {
         int splitIdx = rule.indexOf(':');
 
@@ -345,11 +395,25 @@ public final class FontDef {
         return Pair.ofNonNull(attribute, value);
     }
 
+    /**
+     * Determines if either of the given objects is null or if they are equal.
+     *
+     * @param a the first object to compare, may be null
+     * @param b the second object to compare, may be null
+     * @return true if either object is null or if the two objects are equal; false otherwise
+     */
     private static boolean nullOrEquals(@Nullable Object a, @Nullable Object b) {
         return a == null || b == null || a.equals(b);
     }
 
-    // a little helper for the consumeIfDefined... methods
+    /**
+     * Executes the given consumer with the provided value if the value is not null.
+     *
+     * @param <T> the type of the value to be consumed
+     * @param v the value to be checked and potentially consumed
+     * @param c the consumer to execute if the value is not null
+     * @return true if the value is not null and the consumer has been executed, false otherwise
+     */
     private static <T> boolean consumeIfDefined(@Nullable T v, Consumer<T> c) {
         boolean run = v != null;
         if (run) {
