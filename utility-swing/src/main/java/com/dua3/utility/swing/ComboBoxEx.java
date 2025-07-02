@@ -39,10 +39,10 @@ public class ComboBoxEx<T> extends JPanel {
     private static final Logger LOG = LogManager.getLogger(ComboBoxEx.class);
 
     private transient @Nullable Comparator<? super T> comparator;
-    private final @Nullable Function<T, @Nullable T> edit;
-    private final @Nullable Supplier<? extends T> add;
-    private final @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
-    private final Function<T, String> format;
+    private final transient @Nullable Function<T, @Nullable T> edit;
+    private final transient @Nullable Supplier<? extends T> add;
+    private final transient @Nullable BiPredicate<ComboBoxEx<T>, @Nullable T> remove;
+    private final transient Function<T, String> format;
     private final DefaultComboBoxModel<T> model;
     private final JComboBox<T> comboBox;
     private final @Nullable JButton buttonEdit;
