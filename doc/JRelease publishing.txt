@@ -1,0 +1,64 @@
+Publishing to Maven Central
+
+Maven Central is the defacto artifact repository for JVM based projects. Anyone can publish artifacts to it as long as they follow the rules. Follow this guide to register an account. You also must comply with all requirements otherwise deployment will fail. Fortunately JReleaser can verify many of those requirements before any artifacts are deployed.
+Before continuing make sure that all artifacts to be deployed have been staged. Missing this step will make the deployment phase fail! We recommend performing deployments from a clean state.
+Maven Central requires artifacts to be signed with PGP. The MavenCentral deployer automatically enables applyMavenCentralRules. The Nexus2 deployer automatically enables applyMavenCentralRules when the publication url contains oss.sonatype.org. This setting performs the following tasks:
+verify POMs comply with publication rules (using PomChecker).
+assert that matching -sources.jar and -javadoc.jar artifacts have been staged (when applicable).
+calculate md5, sha1, sha256, and sha512 checksums for all staged artifacts.
+sign all staged artifacts.
+You have the option to close and release the staged repository automatically right after deployment, or keep the staged repository open and perform close and release operations using the UI. You must login into Sonatype OSSRH using your Sonatype account to do so.
+Portal Publisher API
+Publishing using the Portal Publisher API requires using the MavenCentral deployer.
+```
+jreleaser {
+  signing {
+    active = 'ALWAYS'
+    armored = true
+  }
+  deploy {
+    maven {
+      mavenCentral {
+        sonatype {
+          active = 'ALWAYS'
+          url = 'https://central.sonatype.com/api/v1/publisher'
+          stagingRepository('target/staging-deploy')
+        }
+      }
+    }
+  }
+}
+```
+
+Publishing Snapshots
+Publishing snapshots to the Maven Central Portal requires an additional Nexus2 deployer as shown next:
+```
+jreleaser {
+  signing {
+    active = 'ALWAYS'
+    armored = true
+  }
+  deploy {
+    maven {
+      mavenCentral {
+        'release-deploy' {
+          active = 'RELEASE'
+          url = 'https://central.sonatype.com/api/v1/publisher'
+          stagingRepository('target/staging-deploy')
+        }
+      }
+      nexus2 {
+        'snapshot-deploy' {
+          active = 'SNAPSHOT'
+          snapshotUrl = 'https://central.sonatype.com/repository/maven-snapshots/'
+          applyMavenCentralRules = true
+          snapshotSupported = true
+          closeRepository = true
+          releaseRepository = true
+          stagingRepository('target/staging-deploy')
+        }
+      }
+    }
+  }
+}
+```

@@ -9,7 +9,7 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
-import java.net.URI
+import java.io.ByteArrayOutputStream
 
 plugins {
     id("java-library")
@@ -376,11 +376,29 @@ subprojects {
     }
 }
 
+fun Project.readSecretFromKeychain(service: String): String {
+    val result = ByteArrayOutputStream()
+    this.exec {
+        commandLine("security", "find-generic-password", "-a", "gradle", "-s", service, "-w")
+        standardOutput = result
+        isIgnoreExitValue = true
+    }
+    return result.toString().trim()
+}
+
+fun getSecret(key: String, fallbackEnv: String): String =
+    try {
+        readSecretFromKeychain(key)
+    } catch (e: Exception) {
+        System.getenv(fallbackEnv) ?: error("Missing secret for $key")
+    }
+
 // JReleaser configuration
 jreleaser {
     project {
         name.set(rootProject.name)
         version.set(rootProject.libs.versions.projectVersion.get())
+        group = Meta.GROUP
         description.set("Utility libraries for Java")
         authors.set(listOf(Meta.DEVELOPER_NAME))
         license.set(Meta.LICENSE_NAME)
@@ -392,16 +410,30 @@ jreleaser {
     }
 
     signing {
+        publicKey.set("<KEY>")
+        secretKey.set(readSecretFromKeychain("SIGNING_SECRET_KEY"))
+        passphrase.set(readSecretFromKeychain("SIGNING_PASSWORD"))
         active.set(org.jreleaser.model.Active.ALWAYS)
         armored.set(true)
     }
 
     deploy {
         maven {
-            nexus2 {
-                create("maven-central") {
-                    active.set(org.jreleaser.model.Active.ALWAYS)
+            mavenCentral {
+                create("release-deploy") {
+                    active.set(org.jreleaser.model.Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
+                    stagingRepositories.add("build/staging-deploy")
+                    username.set("\${sonatypeUsername}")
+                    password.set("\${sonatypePassword}")
+                }
+            }
+            nexus2 {
+                create("snapshot-deploy") {
+                    active.set(org.jreleaser.model.Active.SNAPSHOT)
+                    snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
+                    applyMavenCentralRules.set(true)
+                    snapshotSupported.set(true)
                     closeRepository.set(true)
                     releaseRepository.set(true)
                     stagingRepositories.add("build/staging-deploy")
