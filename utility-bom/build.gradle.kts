@@ -2,6 +2,7 @@ description = "Bill of Materials (BOM) for utility libraries"
 
 plugins {
     id("java-platform")
+    id("maven-publish")
 }
 
 dependencies {
@@ -84,11 +85,8 @@ publishing {
             }
         }
     }
+
+    // Repositories are now configured in the root build.gradle.kts file
 }
 
-// Configure signing for BOM
-signing {
-    val isReleaseVersion = !project.version.toString().lowercase().contains("snapshot")
-    isRequired = isReleaseVersion && gradle.taskGraph.hasTask("publish")
-    sign(publishing.publications["bomPublication"])
-}
+// Signing is now configured in the root build.gradle.kts file

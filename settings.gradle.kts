@@ -63,6 +63,7 @@ dependencyResolutionManagement {
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
+            plugin("jreleaser", "org.jreleaser").version("1.19.0")
 
             version("h2database", "2.3.232")
             version("ikonli", "12.4.0")

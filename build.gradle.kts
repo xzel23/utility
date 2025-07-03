@@ -14,7 +14,6 @@ import java.net.URI
 plugins {
     id("java-library")
     id("jvm-test-suite")
-    id("maven-publish")
     id("version-catalog")
     id("signing")
     id("idea")
@@ -26,6 +25,7 @@ plugins {
     alias(libs.plugins.forbiddenapis)
     alias(libs.plugins.jmh)
     alias(libs.plugins.sonar)
+    alias(libs.plugins.jreleaser)
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,6 +89,9 @@ subprojects {
     val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
     val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
 
+    // Apply maven-publish plugin to all subprojects for snapshot publishing
+    apply(plugin = "maven-publish")
+
     // Skip java-library plugin for utility-bom as it uses java-platform instead
     if (project.name != "utility-bom") {
         apply(plugin = "java-library")
@@ -101,7 +104,6 @@ subprojects {
     }
 
     // These plugins are compatible with both java-library and java-platform
-    apply(plugin = "maven-publish")
     apply(plugin = "version-catalog")
     apply(plugin = "signing")
     apply(plugin = "idea")
@@ -231,74 +233,10 @@ subprojects {
     }
 
     // === publication: MAVEN = == >
-
-    // Create the publication with the pom configuration:
-    publishing {
-        publications {
-            // Skip creating the maven publication for utility-bom as it has its own publication
-            if (project.name != "utility-bom") {
-                create<MavenPublication>("maven") {
-                    groupId = Meta.GROUP
-                    artifactId = project.name
-                    version = project.version.toString()
-
-                    from(components["java"])
-
-                    pom {
-                        withXml {
-                            val root = asNode()
-                            root.appendNode("description", project.description)
-                            root.appendNode("name", project.name)
-                            root.appendNode("url", Meta.SCM)
-                        }
-
-                        licenses {
-                            license {
-                                name.set(Meta.LICENSE_NAME)
-                                url.set(Meta.LICENSE_URL)
-                            }
-                        }
-                        developers {
-                            developer {
-                                id.set(Meta.DEVELOPER_ID)
-                                name.set(Meta.DEVELOPER_NAME)
-                                email.set(Meta.DEVELOPER_EMAIL)
-                                organization.set(Meta.ORGANIZATION_NAME)
-                                organizationUrl.set(Meta.ORGANIZATION_URL)
-                            }
-                        }
-
-                        scm {
-                            url.set(Meta.SCM)
-                        }
-                    }
-                }
-            }
-        }
-
-        repositories {
-            // Sonatype OSSRH
-            maven {
-                val releaseRepo = URI("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                val snapshotRepo = URI("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                url = if (isSnapshot) snapshotRepo else releaseRepo
-                credentials {
-                    username = project.properties["ossrhUsername"].toString()
-                    password = project.properties["ossrhPassword"].toString()
-                }
-            }
-        }
-    }
+    // Publication is now handled by JReleaser
 
     // === sign artifacts
-    signing {
-        isRequired = isReleaseVersion && gradle.taskGraph.hasTask("publish")
-        // Only sign the maven publication for non-BOM projects
-        // The BOM project has its own signing configuration
-        if (project.name != "utility-bom") {
-            sign(publishing.publications["maven"])
-        }
-    }
+    // Signing is now handled by JReleaser
 
     // === JMH ===
     // Only apply JMH configuration to non-BOM projects
@@ -337,9 +275,7 @@ subprojects {
     }
 
     // === PUBLISHING ===
-    tasks.withType<PublishToMavenRepository> {
-        dependsOn(tasks.publishToMavenLocal)
-    }
+    // Publishing is now handled by JReleaser
 
     // Only apply Jar configuration to non-BOM projects
     if (project.name != "utility-bom") {
@@ -348,6 +284,153 @@ subprojects {
         }
     }
 
+    // Configure publishing for all subprojects
+    configure<PublishingExtension> {
+        // Add repositories for publishing
+        repositories {
+            // For snapshot versions, publish to Sonatype Snapshots repository
+            if (isSnapshot) {
+                maven {
+                    name = "sonatypeSnapshots"
+                    url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                    credentials {
+                        username = project.findProperty("sonatypeUsername") as String? ?: System.getenv("SONATYPE_USERNAME")
+                        password = project.findProperty("sonatypePassword") as String? ?: System.getenv("SONATYPE_PASSWORD")
+                    }
+                }
+            }
+        }
+
+        // Configure publications for non-BOM projects
+        if (project.name != "utility-bom") {
+            publications {
+                create<MavenPublication>("mavenJava") {
+                    from(components["java"])
+
+                    groupId = "com.dua3.utility"
+                    artifactId = project.name
+                    version = project.version.toString()
+
+                    pom {
+                        name.set(project.name)
+                        description.set("Utility library for Java")
+                        url.set("https://github.com/xzel23/utility.git")
+
+                        licenses {
+                            license {
+                                name.set("MIT")
+                                url.set("https://opensource.org/licenses/MIT")
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id.set("axh")
+                                name.set("Axel Howind")
+                                email.set("axh@dua3.com")
+                                organization.set("dua3")
+                                organizationUrl.set("https://www.dua3.com")
+                            }
+                        }
+
+                        scm {
+                            connection.set("scm:git:https://github.com/xzel23/utility.git")
+                            developerConnection.set("scm:git:https://github.com/xzel23/utility.git")
+                            url.set("https://github.com/xzel23/utility.git")
+                        }
+
+                        // Add inceptionYear
+                        withXml {
+                            val root = asNode()
+                            root.appendNode("inceptionYear", "2019")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Configure signing for all subprojects
+    // Defer signing configuration until publications are set up
+    afterEvaluate {
+        configure<SigningExtension> {
+            val shouldSign = !project.version.toString().lowercase().contains("snapshot")
+            setRequired(shouldSign && gradle.taskGraph.hasTask("publish"))
+
+            // Get the publishing extension
+            val publishing = project.extensions.getByType<PublishingExtension>()
+
+            // Sign the appropriate publication based on the project
+            if (project.name == "utility-bom") {
+                // Only sign if the publication exists
+                if (publishing.publications.names.contains("bomPublication")) {
+                    sign(publishing.publications["bomPublication"])
+                }
+            } else {
+                // Only sign if the publication exists
+                if (publishing.publications.names.contains("mavenJava")) {
+                    sign(publishing.publications["mavenJava"])
+                }
+            }
+        }
+    }
+}
+
+// JReleaser configuration
+jreleaser {
+    project {
+        name.set(rootProject.name)
+        version.set(rootProject.libs.versions.projectVersion.get())
+        description.set("Utility libraries for Java")
+        authors.set(listOf(Meta.DEVELOPER_NAME))
+        license.set(Meta.LICENSE_NAME)
+        links {
+            homepage.set(Meta.ORGANIZATION_URL)
+        }
+        inceptionYear.set("2019")
+        gitRootSearch.set(true)
+    }
+
+    signing {
+        active.set(org.jreleaser.model.Active.ALWAYS)
+        armored.set(true)
+    }
+
+    deploy {
+        maven {
+            nexus2 {
+                create("maven-central") {
+                    active.set(org.jreleaser.model.Active.ALWAYS)
+                    url.set("https://central.sonatype.com/service/local")
+                    closeRepository.set(true)
+                    releaseRepository.set(true)
+                    stagingRepositories.add("build/staging-deploy")
+                    username.set("\${sonatypeUsername}")
+                    password.set("\${sonatypePassword}")
+                }
+            }
+        }
+    }
+}
+
+// Task to generate JReleaser configuration file for reference
+tasks.register("generateJReleaserConfig") {
+    description = "Generates JReleaser configuration file for reference"
+    group = "documentation"
+
+    doLast {
+        // Use ProcessBuilder instead of deprecated exec
+        val process = ProcessBuilder("./gradlew", "jreleaserConfig", "-PconfigFile=jreleaser-config.yml")
+            .directory(project.rootDir)
+            .inheritIO()
+            .start()
+        val exitCode = process.waitFor()
+        if (exitCode == 0) {
+            println("JReleaser configuration file generated at: jreleaser-config.yml")
+        } else {
+            println("Failed to generate JReleaser configuration file. Exit code: $exitCode")
+        }
+    }
 }
 
 allprojects {
