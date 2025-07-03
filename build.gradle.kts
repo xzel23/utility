@@ -425,7 +425,7 @@ jreleaser {
     }
 
     signing {
-        publicKey.set("<KEY>")
+        publicKey.set(readSecretFromKeychain("SIGNING_PUBLIC_KEY"))
         secretKey.set(readSecretFromKeychain("SIGNING_SECRET_KEY"))
         passphrase.set(readSecretFromKeychain("SIGNING_PASSWORD"))
         active.set(org.jreleaser.model.Active.ALWAYS)
