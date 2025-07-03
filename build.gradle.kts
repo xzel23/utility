@@ -9,6 +9,7 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -377,13 +378,24 @@ subprojects {
 }
 
 fun Project.readSecretFromKeychain(service: String): String {
-    val result = ByteArrayOutputStream()
-    this.exec {
+    val hexOut = ByteArrayOutputStream()
+    exec {
         commandLine("security", "find-generic-password", "-a", "gradle", "-s", service, "-w")
-        standardOutput = result
+        standardOutput = hexOut
         isIgnoreExitValue = true
     }
-    return result.toString().trim()
+
+    val hex = hexOut.toString().trim()
+
+    // Use xxd to convert hex back to original bytes
+    val decodedOut = ByteArrayOutputStream()
+    exec {
+        commandLine("xxd", "-r", "-p")
+        standardInput = ByteArrayInputStream(hex.toByteArray())
+        standardOutput = decodedOut
+    }
+
+    return String(decodedOut.toByteArray(), Charsets.UTF_8)
 }
 
 fun getSecret(key: String, fallbackEnv: String): String =
