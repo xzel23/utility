@@ -123,8 +123,8 @@ dependencyResolutionManagement {
 
         // Sonatype Releases
         maven {
-            name = "oss.sonatype.org-releases"
-            url = java.net.URI("https://s01.oss.sonatype.org/content/repositories/releases/")
+            name = "central.sonatype.com-releases"
+            url = java.net.URI("https://central.sonatype.com/content/repositories/releases/")
             mavenContent {
                 releasesOnly()
             }
@@ -145,8 +145,8 @@ dependencyResolutionManagement {
 
             // Sonatype Snapshots
             maven {
-                name = "oss.sonatype.org-snapshots"
-                url = java.net.URI("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                name = "central.sonatype.com-snapshots"
+                url = java.net.URI("https://central.sonatype.com/repository/maven-snapshots/")
                 mavenContent {
                     snapshotsOnly()
                 }

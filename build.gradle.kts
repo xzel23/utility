@@ -292,7 +292,7 @@ subprojects {
             if (isSnapshot) {
                 maven {
                     name = "sonatypeSnapshots"
-                    url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                    url = uri("https://central.sonatype.com/repository/maven-snapshots/")
                     credentials {
                         username = project.findProperty("sonatypeUsername") as String? ?: System.getenv("SONATYPE_USERNAME")
                         password = project.findProperty("sonatypePassword") as String? ?: System.getenv("SONATYPE_PASSWORD")
@@ -401,7 +401,7 @@ jreleaser {
             nexus2 {
                 create("maven-central") {
                     active.set(org.jreleaser.model.Active.ALWAYS)
-                    url.set("https://central.sonatype.com/service/local")
+                    url.set("https://central.sonatype.com/api/v1/publisher")
                     closeRepository.set(true)
                     releaseRepository.set(true)
                     stagingRepositories.add("build/staging-deploy")

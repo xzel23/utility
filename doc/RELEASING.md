@@ -128,7 +128,7 @@ The prerequisites for publishing snapshots are the same as for releasing:
 4. **Verify the Snapshot**
 
    Check that the artifacts are available on the Sonatype Snapshots repository:
-   https://s01.oss.sonatype.org/content/repositories/snapshots/com/dua3/utility/
+   https://central.sonatype.com/repository/maven-snapshots/com/dua3/utility/
 
 ## Advanced Configuration
 
