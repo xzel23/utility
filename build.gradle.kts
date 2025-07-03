@@ -394,6 +394,21 @@ fun getSecret(key: String, fallbackEnv: String): String =
     }
 
 // JReleaser configuration
+// Create staging directory for JReleaser
+tasks.register("createStagingDirectory") {
+    description = "Creates the staging directory for JReleaser"
+    group = "publishing"
+
+    doLast {
+        mkdir("build/staging-deploy")
+    }
+}
+
+// Make jreleaserDeploy depend on createStagingDirectory
+tasks.named("jreleaserDeploy") {
+    dependsOn("createStagingDirectory")
+}
+
 jreleaser {
     project {
         name.set(rootProject.name)
