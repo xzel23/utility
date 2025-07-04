@@ -9,8 +9,6 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 
 plugins {
     id("java-library")
@@ -377,34 +375,6 @@ subprojects {
     }
 }
 
-fun Project.readSecretFromKeychain(service: String): String {
-    val hexOut = ByteArrayOutputStream()
-    exec {
-        commandLine("security", "find-generic-password", "-a", "gradle", "-s", service, "-w")
-        standardOutput = hexOut
-        isIgnoreExitValue = true
-    }
-
-    val hex = hexOut.toString().trim()
-
-    // Use xxd to convert hex back to original bytes
-    val decodedOut = ByteArrayOutputStream()
-    exec {
-        commandLine("xxd", "-r", "-p")
-        standardInput = ByteArrayInputStream(hex.toByteArray())
-        standardOutput = decodedOut
-    }
-
-    return String(decodedOut.toByteArray(), Charsets.UTF_8)
-}
-
-fun getSecret(key: String, fallbackEnv: String): String =
-    try {
-        readSecretFromKeychain(key)
-    } catch (e: Exception) {
-        System.getenv(fallbackEnv) ?: error("Missing secret for $key")
-    }
-
 // JReleaser configuration
 // Create staging directory for JReleaser
 tasks.register("createStagingDirectory") {
@@ -437,9 +407,9 @@ jreleaser {
     }
 
     signing {
-        publicKey.set(readSecretFromKeychain("SIGNING_PUBLIC_KEY"))
-        secretKey.set(readSecretFromKeychain("SIGNING_SECRET_KEY"))
-        passphrase.set(readSecretFromKeychain("SIGNING_PASSWORD"))
+        publicKey.set(System.getenv("SIGNING_PUBLIC_KEY"))
+        secretKey.set(System.getenv("SIGNING_SECRET_KEY"))
+        passphrase.set(System.getenv("SIGNING_PASSWORD"))
         active.set(org.jreleaser.model.Active.ALWAYS)
         armored.set(true)
     }
