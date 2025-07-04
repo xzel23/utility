@@ -197,7 +197,12 @@ could not be loaded.
 
 ### 20.0.0 (work in progress)
 
-- A new artefact `utility-bom` has been introduced that specifies the version for all modules.
+- Non-code changes
+    - The Project has been migrated from OSS-RH to Maven Central Portal.
+    - Deployments are done through GitHub actions using JReleaser.
+    - Successful CI builds are now published as snapshots to the Maven snapshots repository.
+    - A new artefact `utility-bom` has been introduced that specifies the version for all modules.
+    - Run tasks have been added for the sample applications.
 
 - Package `utility`
     - `LangUtil.reverseInPlace()` to reverse array contents
@@ -240,7 +245,6 @@ could not be loaded.
         - Fix some RichText.split() issues; the method should now always produce results consistent with String.split()
 
 - Other changes
-    - Run tasks have been added for the sample applications.
     - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
     - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
       `filter()` and `map()`.
