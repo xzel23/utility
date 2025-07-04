@@ -684,9 +684,9 @@ public final class XmlUtil {
     private static void collectNamespaces(Element element, Map<String, String> namespaceMap) {
         // Process this element's namespace
         String nsUri = element.getNamespaceURI();
-        if (nsUri != null && !nsUri.isEmpty() && !namespaceMap.containsKey(nsUri)) {
+        if (!TextUtil.isNullOrBlank(nsUri) && !namespaceMap.containsKey(nsUri)) {
             // Store with original prefix, but we'll normalize later
-            String prefix = element.getPrefix() != null ? element.getPrefix() : "";
+            String prefix = Objects.requireNonNullElse(element.getPrefix(), "");
             namespaceMap.put(prefix, nsUri);
         }
 
@@ -697,10 +697,10 @@ public final class XmlUtil {
 
             // Attribute namespace
             String attrNsUri = attr.getNamespaceURI();
-            if (attrNsUri != null && !attrNsUri.isEmpty() &&
+            if (!TextUtil.isNullOrBlank(attrNsUri) &&
                     !attrNsUri.equals("http://www.w3.org/2000/xmlns/") &&
                     !namespaceMap.containsValue(attrNsUri)) {
-                String prefix = attr.getPrefix() != null ? attr.getPrefix() : "";
+                String prefix = Objects.requireNonNullElse(attr.getPrefix(), "");
                 namespaceMap.put(prefix, attrNsUri);
             }
 
