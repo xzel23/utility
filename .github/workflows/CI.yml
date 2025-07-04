@@ -67,6 +67,10 @@ jobs:
             **/build/test-artifacts/**
           if-no-files-found: ignore
 
+      - name: 'publish snapshot build'
+        if: runner.os == 'Linux' && endsWith(github.ref, '-SNAPSHOT') && success()
+        run: ./gradlew jreleaserDeploy
+
       - name: 'Create Qodana config'
         if: runner.os == 'Linux'
         run: |
