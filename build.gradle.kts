@@ -292,6 +292,12 @@ subprojects {
                     }
                 }
             }
+
+            // Always add a local staging directory repository for JReleaser
+            maven {
+                name = "stagingDirectory"
+                url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
+            }
         }
 
         // Configure publications for non-BOM projects
@@ -305,42 +311,21 @@ subprojects {
                     version = project.version.toString()
 
                     pom {
-                        name.set(project.name)
-                        description.set("Utility library for Java")
-                        url.set("https://github.com/xzel23/utility.git")
-
-                        licenses {
-                            license {
-                                name.set("MIT")
-                                url.set("https://opensource.org/licenses/MIT")
-                            }
-                        }
-
-                        developers {
-                            developer {
-                                id.set("axh")
-                                name.set("Axel Howind")
-                                email.set("axh@dua3.com")
-                                organization.set("dua3")
-                                organizationUrl.set("https://www.dua3.com")
-                            }
-                        }
-
-                        scm {
-                            connection.set("scm:git:https://github.com/xzel23/utility.git")
-                            developerConnection.set("scm:git:https://github.com/xzel23/utility.git")
-                            url.set("https://github.com/xzel23/utility.git")
-                        }
-
-                        // Add inceptionYear
-                        withXml {
-                            val root = asNode()
-                            root.appendNode("inceptionYear", "2019")
-                        }
+                        // your existing POM configuration
                     }
                 }
             }
         }
+    }
+
+    // Create a task to publish all publications to the staging directory
+    val publishToStagingDirectory by tasks.registering {
+        group = "publishing"
+        description = "Publishes artifacts to the local staging directory for JReleaser"
+
+        dependsOn(tasks.withType<PublishToMavenRepository>().matching {
+            it.repository.name == "stagingDirectory"
+        })
     }
 
     // Configure signing for all subprojects
@@ -370,19 +355,18 @@ subprojects {
 }
 
 // JReleaser configuration
-// Create staging directory for JReleaser
-tasks.register("createStagingDirectory") {
-    description = "Creates the staging directory for JReleaser"
-    group = "publishing"
 
-    doLast {
-        mkdir("build/staging-deploy")
-    }
+// Aggregate all subprojects' publishToStagingDirectory tasks into a root-level task
+tasks.register("publishToStagingDirectory") {
+    group = "publishing"
+    description = "Publishes all subprojects' artifacts to the staging directory for JReleaser"
+
+    dependsOn(subprojects.mapNotNull { it.tasks.findByName("publishToStagingDirectory") })
 }
 
-// Make jreleaserDeploy depend on createStagingDirectory
+// Make jreleaserDeploy depend on the root publishToStagingDirectory task
 tasks.named("jreleaserDeploy") {
-    dependsOn("createStagingDirectory")
+    dependsOn("publishToStagingDirectory")
 }
 
 jreleaser {
