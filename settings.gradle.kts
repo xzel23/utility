@@ -44,11 +44,8 @@ toolchainManagement {
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
-    val isSnapshot = projectVersion.toDefaultLowerCase().contains("snapshot")
-
-    if (isSnapshot) {
-        println("SNAPSHOT version detected, using local Maven repository")
-    }
+    val isSnapshot = projectVersion.toDefaultLowerCase().contains("-snapshot")
+    val isReleaseCandidate = projectVersion.toDefaultLowerCase().contains("-rc")
 
     versionCatalogs {
         create("libs") {
@@ -140,24 +137,14 @@ dependencyResolutionManagement {
         }
 
         if (isSnapshot) {
-            // local maven repository
-            mavenLocal()
+            println("snapshot version detected, adding Maven snapshot repositories")
 
             // Sonatype Snapshots
             maven {
-                name = "central.sonatype.com-snapshots"
+                name = "Central Portal Snapshots"
                 url = java.net.URI("https://central.sonatype.com/repository/maven-snapshots/")
                 mavenContent {
                     snapshotsOnly()
-                }
-            }
-
-            // Apache staging
-            maven {
-                name = "apache-staging"
-                url = java.net.URI("https://repository.apache.org/content/repositories/staging/")
-                mavenContent {
-                    releasesOnly()
                 }
             }
 
@@ -167,6 +154,19 @@ dependencyResolutionManagement {
                 url = java.net.URI("https://repository.apache.org/content/repositories/snapshots/")
                 mavenContent {
                     snapshotsOnly()
+                }
+            }
+        }
+
+        if (isReleaseCandidate) {
+            println("release candidate version detected, adding Maven staging repositories")
+
+            // Apache staging
+            maven {
+                name = "apache-staging"
+                url = java.net.URI("https://repository.apache.org/content/repositories/staging/")
+                mavenContent {
+                    releasesOnly()
                 }
             }
         }
