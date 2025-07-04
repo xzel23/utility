@@ -231,12 +231,6 @@ subprojects {
         }
     }
 
-    // === publication: MAVEN = == >
-    // Publication is now handled by JReleaser
-
-    // === sign artifacts
-    // Signing is now handled by JReleaser
-
     // === JMH ===
     // Only apply JMH configuration to non-BOM projects
     if (project.name != "utility-bom") {
@@ -274,7 +268,7 @@ subprojects {
     }
 
     // === PUBLISHING ===
-    // Publishing is now handled by JReleaser
+    // (handled by JReleaser)
 
     // Only apply Jar configuration to non-BOM projects
     if (project.name != "utility-bom") {
