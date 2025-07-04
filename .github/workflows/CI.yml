@@ -58,15 +58,6 @@ jobs:
         env:
           DISPLAY: ":99"
 
-      - name: 'Upload test artifacts from all modules'
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-artifacts-${{ matrix.os }}
-          path: |
-            **/build/test-artifacts/**
-          if-no-files-found: ignore
-
       - name: 'publish snapshot build'
         if: runner.os == 'Linux' && success()
         run: ./gradlew jreleaserDeploy
@@ -74,6 +65,17 @@ jobs:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+
+      - name: 'Upload test artifacts from all modules'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ matrix.os }}
+          path: |
+            **/build/test-artifacts/**
+            **/build/jreleaser/output.properties
+            **/build/jreleaser/trace.log
+          if-no-files-found: ignore
 
       - name: 'Create Qodana config'
         if: runner.os == 'Linux'
