@@ -28,6 +28,8 @@ plugins {
 }
 
 /////////////////////////////////////////////////////////////////////////////
+// Meta data object
+/////////////////////////////////////////////////////////////////////////////
 object Meta {
     const val GROUP = "com.dua3.utility"
     const val SCM = "https://github.com/xzel23/utility.git"
@@ -39,10 +41,13 @@ object Meta {
     const val ORGANIZATION_NAME = "dua3"
     const val ORGANIZATION_URL = "https://www.dua3.com"
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// Root project configuration
 /////////////////////////////////////////////////////////////////////////////
 
 dependencies {
-    // Add all subprojects to aggregation
+    // Aggregate all subprojects for JaCoCo report aggregation
     jacocoAggregation(project(":utility"))
     jacocoAggregation(project(":utility-db"))
     jacocoAggregation(project(":utility-swing"))
@@ -64,34 +69,43 @@ tasks.named<JacocoReport>("testCodeCoverageReport") {
     }
 }
 
-// Root project SonarQube configuration - use aggregated report
+// SonarQube root project config
 sonar {
     properties {
-        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        )
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// Subprojects configuration
+/////////////////////////////////////////////////////////////////////////////
+
 subprojects {
 
+    // Set project version from root libs.versions
     project.version = rootProject.libs.versions.projectVersion.get()
 
-    fun isDevelopmentVersion(versionString : String) : Boolean {
+    fun isDevelopmentVersion(versionString: String): Boolean {
         val v = versionString.toDefaultLowerCase()
         val markers = listOf("snapshot", "alpha", "beta")
-        for (marker in markers) {
-            if (v.contains("-$marker") || v.contains(".$marker")) {
-                return true
-            }
-        }
-        return false
+        return markers.any { marker -> v.contains("-$marker") || v.contains(".$marker") }
     }
+
     val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
     val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
 
-    // Apply maven-publish plugin to all subprojects for snapshot publishing
+    // Apply common plugins
     apply(plugin = "maven-publish")
+    apply(plugin = "version-catalog")
+    apply(plugin = "signing")
+    apply(plugin = "idea")
+    apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "com.adarshr.test-logger")
 
-    // Skip java-library plugin for utility-bom as it uses java-platform instead
+    // Skip some plugins for BOM project
     if (project.name != "utility-bom") {
         apply(plugin = "java-library")
         apply(plugin = "jvm-test-suite")
@@ -102,20 +116,12 @@ subprojects {
         apply(plugin = "me.champeau.jmh")
     }
 
-    // These plugins are compatible with both java-library and java-platform
-    apply(plugin = "version-catalog")
-    apply(plugin = "signing")
-    apply(plugin = "idea")
-    apply(plugin = "com.github.ben-manes.versions")
-    apply(plugin = "com.adarshr.test-logger")
-
-    // Java configuration only for projects with java-library plugin
+    // Java configuration for non-BOM projects
     if (project.name != "utility-bom") {
         java {
             toolchain {
                 languageVersion.set(JavaLanguageVersion.of(21))
             }
-
             targetCompatibility = JavaVersion.VERSION_21
             sourceCompatibility = targetCompatibility
 
@@ -139,14 +145,13 @@ subprojects {
             }
         }
 
-        // Configure test task to use JaCoCo
         tasks.withType<Test> {
             useJUnitPlatform()
             finalizedBy(tasks.jacocoTestReport)
         }
     }
 
-    // Sonar
+    // SonarQube properties
     sonar {
         properties {
             property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
@@ -154,14 +159,10 @@ subprojects {
         }
     }
 
-    // Only apply these configurations to non-BOM projects
+    // Dependencies for non-BOM projects
     if (project.name != "utility-bom") {
-        // dependencies
         dependencies {
-            // source annotations
             implementation(rootProject.libs.jspecify)
-
-            // LOG4J
             implementation(platform(rootProject.libs.log4j.bom))
             implementation(rootProject.libs.log4j.api)
         }
@@ -178,13 +179,11 @@ subprojects {
             suites {
                 val test by getting(JvmTestSuite::class) {
                     useJUnitJupiter()
-
                     dependencies {
                         implementation(rootProject.libs.log4j.core)
                         implementation(rootProject.libs.jimfs)
                         implementation(rootProject.libs.mockito)
                     }
-
                     targets {
                         all {
                             testTask {
@@ -209,20 +208,17 @@ subprojects {
         theme = ThemeType.MOCHA_PARALLEL
     }
 
-    // Only apply Java-specific tasks to non-BOM projects
+    // Java compilation and Javadoc config for non-BOM projects
     if (project.name != "utility-bom") {
         tasks.compileJava {
             options.encoding = "UTF-8"
-            options.compilerArgs.add("-Xlint:deprecation")
-            options.compilerArgs.add("-Xlint:-module")
+            options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:-module"))
             options.javaModuleVersion.set(provider { project.version as String })
             options.release.set(java.targetCompatibility.majorVersion.toInt())
         }
-
         tasks.compileTestJava {
             options.encoding = "UTF-8"
         }
-
         tasks.javadoc {
             (options as StandardJavadocDocletOptions).apply {
                 encoding = "UTF-8"
@@ -231,8 +227,7 @@ subprojects {
         }
     }
 
-    // === JMH ===
-    // Only apply JMH configuration to non-BOM projects
+    // JMH config for non-BOM projects
     if (project.name != "utility-bom") {
         jmh {
             jmhVersion = rootProject.libs.versions.jmh
@@ -242,7 +237,7 @@ subprojects {
         }
     }
 
-    // Only apply these configurations to non-BOM projects
+    // Forbidden APIs and SpotBugs for non-BOM projects
     if (project.name != "utility-bom") {
         // === FORBIDDEN APIS ===
         forbiddenApis {
@@ -253,7 +248,6 @@ subprojects {
         // === SPOTBUGS ===
         spotbugs.toolVersion.set(rootProject.libs.versions.spotbugs)
         spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
-
         tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
             reports.create("html") {
                 required.set(true)
@@ -267,21 +261,19 @@ subprojects {
         }
     }
 
-    // === PUBLISHING ===
-    // (handled by JReleaser)
-
-    // Only apply Jar configuration to non-BOM projects
+    // Jar duplicates strategy for non-BOM projects
     if (project.name != "utility-bom") {
         tasks.withType<Jar> {
             duplicatesStrategy = DuplicatesStrategy.INCLUDE
         }
     }
 
-    // Configure publishing for all subprojects
+    // --- PUBLISHING ---
+
     configure<PublishingExtension> {
-        // Add repositories for publishing
+        // Repositories for publishing
         repositories {
-            // For snapshot versions, publish to Sonatype Snapshots repository
+            // Sonatype snapshots for snapshot versions
             if (isSnapshot) {
                 maven {
                     name = "sonatypeSnapshots"
@@ -293,59 +285,84 @@ subprojects {
                 }
             }
 
-            // Always add a local staging directory repository for JReleaser
+            // Always add root-level staging directory for JReleaser
             maven {
                 name = "stagingDirectory"
-                url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
+                url = rootProject.layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
             }
         }
 
-        // Configure publications for non-BOM projects
+        // Publications for non-BOM projects
         if (project.name != "utility-bom") {
             publications {
                 create<MavenPublication>("mavenJava") {
                     from(components["java"])
 
-                    groupId = "com.dua3.utility"
+                    groupId = Meta.GROUP
                     artifactId = project.name
                     version = project.version.toString()
 
                     pom {
-                        // your existing POM configuration
+                        name.set(project.name)
+                        description.set("Utility library for Java")
+                        url.set(Meta.SCM)
+
+                        licenses {
+                            license {
+                                name.set(Meta.LICENSE_NAME)
+                                url.set(Meta.LICENSE_URL)
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id.set(Meta.DEVELOPER_ID)
+                                name.set(Meta.DEVELOPER_NAME)
+                                email.set(Meta.DEVELOPER_EMAIL)
+                                organization.set(Meta.ORGANIZATION_NAME)
+                                organizationUrl.set(Meta.ORGANIZATION_URL)
+                            }
+                        }
+
+                        scm {
+                            connection.set("scm:git:${Meta.SCM}")
+                            developerConnection.set("scm:git:${Meta.SCM}")
+                            url.set(Meta.SCM)
+                        }
+
+                        withXml {
+                            val root = asNode()
+                            root.appendNode("inceptionYear", "2019")
+                        }
                     }
                 }
             }
         }
     }
 
-    // Create a task to publish all publications to the staging directory
+    // Task to publish to staging directory per subproject
     val publishToStagingDirectory by tasks.registering {
         group = "publishing"
-        description = "Publishes artifacts to the local staging directory for JReleaser"
+        description = "Publish artifacts to root staging directory for JReleaser"
 
         dependsOn(tasks.withType<PublishToMavenRepository>().matching {
             it.repository.name == "stagingDirectory"
         })
     }
 
-    // Configure signing for all subprojects
-    // Defer signing configuration until publications are set up
+    // Signing configuration deferred until after evaluation
     afterEvaluate {
         configure<SigningExtension> {
             val shouldSign = !project.version.toString().lowercase().contains("snapshot")
             setRequired(shouldSign && gradle.taskGraph.hasTask("publish"))
 
-            // Get the publishing extension
             val publishing = project.extensions.getByType<PublishingExtension>()
 
-            // Sign the appropriate publication based on the project
             if (project.name == "utility-bom") {
-                // Only sign if the publication exists
                 if (publishing.publications.names.contains("bomPublication")) {
                     sign(publishing.publications["bomPublication"])
                 }
             } else {
-                // Only sign if the publication exists
                 if (publishing.publications.names.contains("mavenJava")) {
                     sign(publishing.publications["mavenJava"])
                 }
@@ -354,17 +371,19 @@ subprojects {
     }
 }
 
-// JReleaser configuration
+/////////////////////////////////////////////////////////////////////////////
+// Root project tasks and JReleaser configuration
+/////////////////////////////////////////////////////////////////////////////
 
 // Aggregate all subprojects' publishToStagingDirectory tasks into a root-level task
 tasks.register("publishToStagingDirectory") {
     group = "publishing"
-    description = "Publishes all subprojects' artifacts to the staging directory for JReleaser"
+    description = "Publish all subprojects' artifacts to root staging directory for JReleaser"
 
     dependsOn(subprojects.mapNotNull { it.tasks.findByName("publishToStagingDirectory") })
 }
 
-// Make jreleaserDeploy depend on the root publishToStagingDirectory task
+// Make jreleaserDeploy depend on the root-level publishToStagingDirectory task
 tasks.named("jreleaserDeploy") {
     dependsOn("publishToStagingDirectory")
 }
@@ -420,13 +439,16 @@ jreleaser {
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// Utility tasks
+/////////////////////////////////////////////////////////////////////////////
+
 // Task to generate JReleaser configuration file for reference
 tasks.register("generateJReleaserConfig") {
     description = "Generates JReleaser configuration file for reference"
     group = "documentation"
 
     doLast {
-        // Use ProcessBuilder instead of deprecated exec
         val process = ProcessBuilder("./gradlew", "jreleaserConfig", "-PconfigFile=jreleaser-config.yml")
             .directory(project.rootDir)
             .inheritIO()
@@ -440,13 +462,15 @@ tasks.register("generateJReleaserConfig") {
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// Versions plugin configuration for all projects
+/////////////////////////////////////////////////////////////////////////////
+
 allprojects {
-    // versions plugin configuration
     fun isStable(version: String): Boolean {
         val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
         val regex = "[0-9,.v-]+-(rc|alpha|beta|b|M)(-?[0-9]*)?".toRegex()
-        val isStable = stableKeyword || !regex.matches(version)
-        return isStable
+        return stableKeyword || !regex.matches(version)
     }
 
     tasks.withType<DependencyUpdatesTask> {
