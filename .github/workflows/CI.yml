@@ -68,7 +68,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: 'publish snapshot build'
-        if: runner.os == 'Linux' && endsWith(github.ref, '-SNAPSHOT') && success()
+        if: runner.os == 'Linux' && success()
         run: ./gradlew jreleaserDeploy
 
       - name: 'Create Qodana config'
