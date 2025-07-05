@@ -2,17 +2,21 @@ package com.dua3.utility.samples;
 
 import com.dua3.utility.concurrent.ProgressTracker;
 import com.dua3.utility.logging.LogLevel;
+import com.dua3.utility.swing.FileInput;
 import com.dua3.utility.swing.SwingLogPane;
 import com.dua3.utility.swing.SwingProgressView;
 import com.dua3.utility.swing.SwingUtil;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
@@ -92,6 +96,10 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
     }
 
     private void init() {
+        // -- FileInput
+        FileInput fileInputF = new FileInput(FileInput.SelectionMode.SELECT_FILE, Paths.get("."), 20);
+        FileInput fileInputD = new FileInput(FileInput.SelectionMode.SELECT_DIRECTORY, Paths.get("."), 20);
+        FileInput fileInputFD = new FileInput(FileInput.SelectionMode.SELECT_FILE_OR_DIRECTORY, Paths.get("."), 20);
 
         // -- SwingProcessView
         SwingProgressView<Object> progress = new SwingProgressView<>();
@@ -112,6 +120,15 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         SwingLogPane logPane = new SwingLogPane(LOG_BUFFER_SIZE);
 
         // add components
+        add(new JLabel("File"), "width 100, span x, split 2");
+        add(fileInputF, "grow x, wrap");
+
+        add(new JLabel("Directory"), "width 100, span x, split 2");
+        add(fileInputD, "grow x, wrap");
+
+        add(new JLabel("File or Directory"), "width 100, span x, split 2");
+        add(fileInputFD, "grow x, wrap");
+
         add(progress, "wrap");
         add(separator2, "grow x, wrap");
         add(logPane);

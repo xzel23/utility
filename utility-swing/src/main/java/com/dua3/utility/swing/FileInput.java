@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -80,8 +81,13 @@ public class FileInput extends JPanel {
 
         JFileChooser jFileChooser = new JFileChooser(initialPath.toFile());
         jFileChooser.setFileSelectionMode(mode.fileSelectionMode);
-        int rc = jFileChooser.showOpenDialog(this);
 
+        // use a custom dialog to make sure the "New Folder" button is shown (macOS issue)
+        jFileChooser.setDialogType(JFileChooser.CUSTOM_DIALOG);
+        jFileChooser.setDialogTitle(UIManager.getString("FileChooser.openDialogTitleText"));
+        jFileChooser.setApproveButtonText(UIManager.getString("FileChooser.openButtonText"));
+
+        int rc = jFileChooser.showDialog(this, null);
         if (rc == JFileChooser.APPROVE_OPTION) {
             textField.setText(String.valueOf(jFileChooser.getSelectedFile()));
         }

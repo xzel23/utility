@@ -244,6 +244,9 @@ could not be loaded.
     - `RichText`
         - Fix some RichText.split() issues; the method should now always produce results consistent with String.split()
 
+- Package `utility.swing`
+    - `FileInput` was changed to work around the missing "New Directory" button in open dialogs on macOS.
+
 - Other changes
     - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.
     - Removed `StreamGathererUtil.filterAndMap()` and related methods - these did offer significant value over chaining
