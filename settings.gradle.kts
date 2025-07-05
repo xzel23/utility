@@ -25,7 +25,6 @@ include("utility-samples:utility-samples-slf4j")
 include("utility-samples:utility-samples-log4j")
 include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
-include("utility-samples:utility-samples-bom")
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver") version "1.0.0"
@@ -51,16 +50,16 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
-            plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.2.1")
             plugin("cabe", "com.dua3.cabe").version("3.1.0")
-            plugin("jmh", "me.champeau.jmh").version("0.7.3")
-            plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
+            plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
+            plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.19.0")
+            plugin("spotbugs", "com.github.spotbugs").version("6.2.1")
+            plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
+            plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
 
             version("h2database", "2.3.232")
             version("ikonli", "12.4.0")

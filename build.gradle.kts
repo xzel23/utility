@@ -31,6 +31,8 @@ plugins {
 // Meta data object
 /////////////////////////////////////////////////////////////////////////////
 object Meta {
+    const val DESCRIPTION = "Utility library for Java"
+    const val INCEPTION_YEAR = "2019"
     const val GROUP = "com.dua3.utility"
     const val SCM = "https://github.com/xzel23/utility.git"
     const val LICENSE_NAME = "MIT"
@@ -45,6 +47,8 @@ object Meta {
 /////////////////////////////////////////////////////////////////////////////
 // Root project configuration
 /////////////////////////////////////////////////////////////////////////////
+
+project.description = Meta.DESCRIPTION
 
 dependencies {
     // Aggregate all subprojects for JaCoCo report aggregation
@@ -102,22 +106,22 @@ subprojects {
     apply(plugin = "version-catalog")
     apply(plugin = "signing")
     apply(plugin = "idea")
-    apply(plugin = "com.github.ben-manes.versions")
-    apply(plugin = "com.adarshr.test-logger")
+    apply(plugin = rootProject.libs.plugins.versions.get().pluginId)
+    apply(plugin = rootProject.libs.plugins.test.logger.get().pluginId)
 
     // Skip some plugins for BOM project
-    if (project.name != "utility-bom") {
+    if (!project.name.endsWith("-bom")) {
+        apply(plugin = "jacoco")
         apply(plugin = "java-library")
         apply(plugin = "jvm-test-suite")
-        apply(plugin = "jacoco")
-        apply(plugin = "com.github.spotbugs")
-        apply(plugin = "com.dua3.cabe")
-        apply(plugin = "de.thetaphi.forbiddenapis")
-        apply(plugin = "me.champeau.jmh")
+        apply(plugin = rootProject.libs.plugins.spotbugs.get().pluginId)
+        apply(plugin = rootProject.libs.plugins.cabe.get().pluginId)
+        apply(plugin = rootProject.libs.plugins.forbiddenapis.get().pluginId)
+        apply(plugin = rootProject.libs.plugins.jmh.get().pluginId)
     }
 
     // Java configuration for non-BOM projects
-    if (project.name != "utility-bom") {
+    if (!project.name.endsWith("-bom")) {
         java {
             toolchain {
                 languageVersion.set(JavaLanguageVersion.of(21))
@@ -155,12 +159,12 @@ subprojects {
     sonar {
         properties {
             property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
-            property("sonar.coverage.exclusions", "**/com/dua3/utility/samples/**")
+            property("sonar.coverage.exclusions", "**/samples/**")
         }
     }
 
     // Dependencies for non-BOM projects
-    if (project.name != "utility-bom") {
+    if (!project.name.endsWith("-bom")) {
         dependencies {
             implementation(rootProject.libs.jspecify)
             implementation(platform(rootProject.libs.log4j.bom))
@@ -209,7 +213,7 @@ subprojects {
     }
 
     // Java compilation and Javadoc config for non-BOM projects
-    if (project.name != "utility-bom") {
+    if (!project.name.endsWith("-bom")) {
         tasks.compileJava {
             options.encoding = "UTF-8"
             options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:-module"))
@@ -228,7 +232,7 @@ subprojects {
     }
 
     // JMH config for non-BOM projects
-    if (project.name != "utility-bom") {
+    if (!project.name.endsWith("-bom")) {
         jmh {
             jmhVersion = rootProject.libs.versions.jmh
             warmupIterations = 2
@@ -238,7 +242,7 @@ subprojects {
     }
 
     // Forbidden APIs and SpotBugs for non-BOM projects
-    if (project.name != "utility-bom") {
+    if (!project.name.endsWith("-bom")) {
         // === FORBIDDEN APIS ===
         forbiddenApis {
             bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
@@ -262,7 +266,7 @@ subprojects {
     }
 
     // Jar duplicates strategy for non-BOM projects
-    if (project.name != "utility-bom") {
+    if (!project.name.endsWith("-bom")) {
         tasks.withType<Jar> {
             duplicatesStrategy = DuplicatesStrategy.INCLUDE
         }
@@ -293,7 +297,7 @@ subprojects {
         }
 
         // Publications for non-BOM projects
-        if (project.name != "utility-bom") {
+        if (!project.name.endsWith("-bom")) {
             publications {
                 create<MavenPublication>("mavenJava") {
                     from(components["java"])
@@ -304,7 +308,7 @@ subprojects {
 
                     pom {
                         name.set(project.name)
-                        description.set("Utility library for Java")
+                        description.set(project.description)
                         url.set(Meta.SCM)
 
                         licenses {
@@ -358,7 +362,7 @@ subprojects {
 
             val publishing = project.extensions.getByType<PublishingExtension>()
 
-            if (project.name == "utility-bom") {
+            if (project.name.endsWith("-bom")) {
                 if (publishing.publications.names.contains("bomPublication")) {
                     sign(publishing.publications["bomPublication"])
                 }
@@ -393,13 +397,13 @@ jreleaser {
         name.set(rootProject.name)
         version.set(rootProject.libs.versions.projectVersion.get())
         group = Meta.GROUP
-        description.set("Utility libraries for Java")
+        description.set(project.description)
         authors.set(listOf(Meta.DEVELOPER_NAME))
         license.set(Meta.LICENSE_NAME)
         links {
             homepage.set(Meta.ORGANIZATION_URL)
         }
-        inceptionYear.set("2019")
+        inceptionYear.set(Meta.INCEPTION_YEAR)
         gitRootSearch.set(true)
     }
 
