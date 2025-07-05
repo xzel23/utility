@@ -393,6 +393,7 @@ tasks.named("jreleaserDeploy") {
 jreleaser {
     project {
         name.set(rootProject.name)
+        description.set(rootProject.description)
         version.set(rootProject.libs.versions.projectVersion.get())
         group = Meta.GROUP
         authors.set(listOf(Meta.DEVELOPER_NAME))
