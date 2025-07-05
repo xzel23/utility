@@ -397,7 +397,6 @@ jreleaser {
         name.set(rootProject.name)
         version.set(rootProject.libs.versions.projectVersion.get())
         group = Meta.GROUP
-        description.set(rootProject.description)
         authors.set(listOf(Meta.DEVELOPER_NAME))
         license.set(Meta.LICENSE_NAME)
         links {
