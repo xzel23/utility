@@ -1,4 +1,4 @@
-description = "JavaFX utilities (icons)"
+project.description = "JavaFX utilities (icons)"
 
 plugins {
     alias(libs.plugins.javafx)

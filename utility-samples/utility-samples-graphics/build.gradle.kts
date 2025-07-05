@@ -14,7 +14,7 @@ application {
     mainClass.set("com.dua3.utility.samples.graphics.FxGraphicsSample")
 }
 
-description = "samples"
+project.description = "samples"
 
 dependencies {
     implementation(project(":utility"))

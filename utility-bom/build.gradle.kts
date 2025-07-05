@@ -1,4 +1,4 @@
-description = "Bill of Materials (BOM) for utility libraries"
+project.description = "Bill of Materials (BOM) for utility libraries"
 
 plugins {
     id("java-platform")

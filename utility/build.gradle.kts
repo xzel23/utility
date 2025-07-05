@@ -1,4 +1,4 @@
-description = "Java utilities (core)"
+project.description = "Java utilities (core)"
 
 // Define Java 24 source set
 sourceSets {

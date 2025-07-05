@@ -1,4 +1,4 @@
-description = "Java utilities (logging, Log4J)"
+project.description = "Java utilities (logging, Log4J)"
 
 dependencies {
     implementation(project(":utility"))
