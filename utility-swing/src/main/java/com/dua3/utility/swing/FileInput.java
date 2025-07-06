@@ -20,7 +20,7 @@ import java.util.Optional;
  * A Swing component for file/directory inputs. The component consists of a JTextField that can be edited to enter a file path
  * and a button that opens a file/directory selection dialog, where a file/directory can be selected.
  */
-public class FileInput extends JPanel {
+public final class FileInput extends JPanel {
     private static final Logger LOG = LogManager.getLogger(FileInput.class);
 
     /**
