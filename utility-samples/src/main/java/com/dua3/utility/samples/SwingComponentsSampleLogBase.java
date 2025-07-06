@@ -9,7 +9,6 @@ import com.dua3.utility.swing.SwingUtil;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
@@ -120,17 +119,20 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         SwingLogPane logPane = new SwingLogPane(LOG_BUFFER_SIZE);
 
         // add components
-        add(new JLabel("File"), "width 100, span x, split 2");
-        add(fileInputF, "grow x, wrap");
+        String labelConstraints = "width 100, span x, split 2";
+        String inputConstraints = "grow x, wrap";
 
-        add(new JLabel("Directory"), "width 100, span x, split 2");
-        add(fileInputD, "grow x, wrap");
+        add(new JLabel("File"), labelConstraints);
+        add(fileInputF, inputConstraints);
 
-        add(new JLabel("File or Directory"), "width 100, span x, split 2");
-        add(fileInputFD, "grow x, wrap");
+        add(new JLabel("Directory"), labelConstraints);
+        add(fileInputD, inputConstraints);
+
+        add(new JLabel("File or Directory"), labelConstraints);
+        add(fileInputFD, inputConstraints);
 
         add(progress, "wrap");
-        add(separator2, "grow x, wrap");
+        add(separator2, inputConstraints);
         add(logPane);
 
         // start threads
