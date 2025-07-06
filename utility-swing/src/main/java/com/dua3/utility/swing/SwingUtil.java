@@ -247,7 +247,7 @@ public final class SwingUtil {
      *                dialog opens
      * @return Optional containing the path to the selected file.
      */
-    public static Optional<Path> showDirectoryOpenDialog(Component parent, Path current) {
+    public static Optional<Path> showDirectoryOpenDialog(@Nullable Component parent, Path current) {
         return showOpenDialog(parent, current, JFileChooser.DIRECTORIES_ONLY);
     }
 
@@ -263,7 +263,7 @@ public final class SwingUtil {
      * @return Optional containing the path to the selected file.
      */
     @SafeVarargs
-    public static Optional<Path> showFileOpenDialog(Component parent, Path current, Pair<String, String[]>... types) {
+    public static Optional<Path> showFileOpenDialog(@Nullable Component parent, Path current, Pair<String, String[]>... types) {
         return showOpenDialog(parent, current, JFileChooser.FILES_ONLY, types);
     }
 
@@ -278,7 +278,7 @@ public final class SwingUtil {
      * @return Optional containing the path to the selected file.
      */
     @SafeVarargs
-    public static Optional<Path> showFileSaveDialog(Component parent, Path current, Pair<String, String[]>... types) {
+    public static Optional<Path> showFileSaveDialog(@Nullable Component parent, Path current, Pair<String, String[]>... types) {
         return showFileDialog(parent, current, JFileChooser.FILES_ONLY, JFileChooser::showSaveDialog, types);
     }
 
@@ -397,13 +397,13 @@ public final class SwingUtil {
      * @return an Optional holding the selected path or an empty Optional if nothing was selected
      */
     @SafeVarargs
-    public static Optional<Path> showOpenDialog(Component parent, Path current, int selectionMode,
+    public static Optional<Path> showOpenDialog(@Nullable Component parent, Path current, int selectionMode,
                                                 Pair<String, String[]>... types) {
         return showFileDialog(parent, current, selectionMode, JFileChooser::showOpenDialog, types);
     }
 
     @SafeVarargs
-    private static Optional<Path> showFileDialog(Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super Component, Integer> showDialog,
+    private static Optional<Path> showFileDialog(@Nullable Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super Component, Integer> showDialog,
                                                  Pair<@NonNull String, @NonNull String @NonNull []>... types) {
         File file;
         try {
