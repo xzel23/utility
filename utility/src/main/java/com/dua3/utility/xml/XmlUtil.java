@@ -683,12 +683,7 @@ public final class XmlUtil {
      */
     private static void collectNamespaces(Element element, Map<String, String> namespaceMap) {
         // Process this element's namespace
-        String nsUri = element.getNamespaceURI();
-        if (!TextUtil.isNullOrBlank(nsUri) && !namespaceMap.containsKey(nsUri)) {
-            // Store with original prefix, but we'll normalize later
-            String prefix = Objects.requireNonNullElse(element.getPrefix(), "");
-            namespaceMap.put(prefix, nsUri);
-        }
+        addToNamespaceMap(namespaceMap, element.getNamespaceURI(), element);
 
         // Process attributes with namespaces
         NamedNodeMap attrs = element.getAttributes();
@@ -696,13 +691,7 @@ public final class XmlUtil {
             Node attr = attrs.item(i);
 
             // Attribute namespace
-            String attrNsUri = attr.getNamespaceURI();
-            if (!TextUtil.isNullOrBlank(attrNsUri) &&
-                    !attrNsUri.equals("http://www.w3.org/2000/xmlns/") &&
-                    !namespaceMap.containsValue(attrNsUri)) {
-                String prefix = Objects.requireNonNullElse(attr.getPrefix(), "");
-                namespaceMap.put(prefix, attrNsUri);
-            }
+            addToNamespaceMap(namespaceMap, attr.getNamespaceURI(), attr);
 
             // Namespace declarations
             if (attr.getNodeName().startsWith(XMLNS_SCHEME)) {
@@ -726,6 +715,24 @@ public final class XmlUtil {
             if (child.getNodeType() == Node.ELEMENT_NODE) {
                 collectNamespaces((Element) child, namespaceMap);
             }
+        }
+    }
+
+    /**
+     * Updates the provided namespace map with a namespace URI if it is not already mapped
+     * and is not the XML namespace URI. The prefix associated with the attribute is used
+     * as the key.
+     *
+     * @param namespaceMap the map containing namespace URIs and their associated prefixes
+     * @param nsUri the namespace URI of the attribute
+     * @param attr the attribute node being inspected
+     */
+    private static void addToNamespaceMap(Map<String, String> namespaceMap, @Nullable String nsUri, Node attr) {
+        if (!TextUtil.isNullOrBlank(nsUri)
+                && !Objects.equals(nsUri, "http://www.w3.org/2000/xmlns/")
+                && !namespaceMap.containsKey(nsUri)) {
+            String prefix = Objects.requireNonNullElse(attr.getPrefix(), "");
+            namespaceMap.put(prefix, nsUri);
         }
     }
 
@@ -831,11 +838,13 @@ public final class XmlUtil {
         String nsUri = original.getNamespaceURI();
         Element newElement;
 
-        if (nsUri != null && !nsUri.isEmpty()) {
-            String normalizedPrefix = namespaceContext.getPrefix(nsUri);
-            newElement = newDoc.createElementNS(nsUri, normalizedPrefix + ":" + original.getLocalName());
-        } else {
+        if (TextUtil.isNullOrBlank(nsUri)) {
             newElement = newDoc.createElement(original.getNodeName());
+        } else {
+            newElement = newDoc.createElementNS(
+                    nsUri,
+                    namespaceContext.getPrefix(nsUri) + ":" + original.getLocalName()
+            );
         }
 
         // Copy attributes
@@ -843,26 +852,28 @@ public final class XmlUtil {
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attr = attributes.item(i);
             // Skip xmlns attributes as we'll define them at the root
-            if (attr.getNodeName().startsWith(XMLNS_SCHEME) || attr.getNodeName().equals(XMLNS)) {
+            if (isXmlnsAttribute(attr)) {
                 continue;
             }
 
             String attrNsUri = attr.getNamespaceURI();
-            if (attrNsUri != null && !attrNsUri.isEmpty()) {
-                String normalizedPrefix = namespaceContext.getPrefix(attrNsUri);
-                newElement.setAttributeNS(attrNsUri,
-                        normalizedPrefix + ":" + attr.getLocalName(),
-                        attr.getNodeValue());
-            } else {
+            if (TextUtil.isNullOrBlank(attrNsUri)) {
                 newElement.setAttribute(attr.getNodeName(), attr.getNodeValue());
+            } else {
+                newElement.setAttributeNS(attrNsUri,
+                        namespaceContext.getPrefix(attrNsUri) + ":" + attr.getLocalName(),
+                        attr.getNodeValue());
             }
         }
 
         // Declare all namespaces at the root level
         if (original == original.getOwnerDocument().getDocumentElement()) {
             for (String prefix : namespaceContext.getPrefixes()) {
-                String uri = namespaceContext.getNamespaceURI(prefix);
-                newElement.setAttributeNS("http://www.w3.org/2000/xmlns/", XMLNS_SCHEME + prefix, uri);
+                newElement.setAttributeNS(
+                        "http://www.w3.org/2000/xmlns/",
+                        XMLNS_SCHEME + prefix,
+                        namespaceContext.getNamespaceURI(prefix)
+                );
             }
         }
 
@@ -871,14 +882,42 @@ public final class XmlUtil {
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
 
-            if (child.getNodeType() == Node.ELEMENT_NODE) {
-                newElement.appendChild(copyElementWithNormalizedNamespaces((Element) child, newDoc, namespaceContext));
-            } else if (child.getNodeType() == Node.TEXT_NODE || child.getNodeType() == Node.CDATA_SECTION_NODE) {
-                newElement.appendChild(newDoc.importNode(child, true));
-            }
+            copyNode(newDoc, namespaceContext, newElement, child);
         }
 
         return newElement;
+    }
+
+    /**
+     * Copies a node into a target document while normalizing namespaces for element nodes
+     * and importing text or CDATA section nodes.
+     *
+     * @param doc               The target document where the node should be copied.
+     * @param namespaceContext  The namespace context used to resolve and handle namespaces.
+     * @param element           The target element to which the copied node will be appended.
+     * @param child             The source node to be copied and appended to the target element.
+     */
+    private static void copyNode(Document doc, SimpleNamespaceContext namespaceContext, Element element, Node child) {
+        if (child.getNodeType() == Node.ELEMENT_NODE) {
+            element.appendChild(copyElementWithNormalizedNamespaces((Element) child, doc, namespaceContext));
+        } else if (child.getNodeType() == Node.TEXT_NODE || child.getNodeType() == Node.CDATA_SECTION_NODE) {
+            element.appendChild(doc.importNode(child, true));
+        }
+    }
+
+    /**
+     * Checks if the given Node represents an XML namespace (xmlns) attribute.
+     *
+     * This method evaluates whether the specified node's name starts with the
+     * XML namespace scheme prefix or matches the exact XML namespace identifier.
+     *
+     * @param attr the Node to be checked. It is expected to represent an attribute
+     *             in an XML document.
+     * @return true if the node represents an XML namespace attribute;
+     *         false otherwise.
+     */
+    private static boolean isXmlnsAttribute(Node attr) {
+        return attr.getNodeName().startsWith(XMLNS_SCHEME) || attr.getNodeName().equals(XMLNS);
     }
 
     /**
