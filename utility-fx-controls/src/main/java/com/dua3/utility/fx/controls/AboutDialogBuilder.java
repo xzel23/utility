@@ -14,6 +14,14 @@
 
 package com.dua3.utility.fx.controls;
 
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -24,8 +32,11 @@ import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
 
 
 /**
@@ -37,11 +48,13 @@ public class AboutDialogBuilder {
     private static final Logger LOG = LogManager.getLogger(AboutDialogBuilder.class);
 
     private String title = "";
-    private String name = "";
+    private String applicationName = "";
     private String copyright = "";
     private String version = "";
     private String mailText = "";
     private String mailAddress = "";
+    private String licenseText = "";
+    private @Nullable Runnable showLicenseDetails;
 
     private final @Nullable Window parentWindow;
     private @Nullable URL css;
@@ -69,13 +82,24 @@ public class AboutDialogBuilder {
     }
 
     /**
-     * Sets the name to be used in the AboutDialog.
+     * Sets the license text to be used in the AboutDialog.
      *
-     * @param name the name to set
+     * @param licenseText the license text to set
      * @return the current instance of AboutDialogBuilder
      */
-    public AboutDialogBuilder name(String name) {
-        this.name = name;
+    public AboutDialogBuilder licenseText(String licenseText) {
+        this.licenseText = licenseText;
+        return this;
+    }
+
+    /**
+     * Sets the name to be used in the AboutDialog.
+     *
+     * @param applicationName the application name to set
+     * @return the current instance of AboutDialogBuilder
+     */
+    public AboutDialogBuilder applicationName(String applicationName) {
+        this.applicationName = applicationName;
         return this;
     }
 
@@ -216,8 +240,57 @@ public class AboutDialogBuilder {
      *
      * @return a configured AboutDialog instance
      */
-    public AboutDialog build() {
-        AboutDialog dlg = new AboutDialog(css);
+    public Dialog<Void> build() {
+        VBox vBox = new VBox();
+        vBox.setMaxHeight(Double.NEGATIVE_INFINITY);
+        vBox.setMaxWidth(Double.POSITIVE_INFINITY);
+        vBox.setAlignment(Pos.CENTER);
+
+        ObservableList<Node> children = vBox.getChildren();
+        addLabel(children,"application-name", applicationName);
+        addLabel(children,"version", version);
+        addLabel(children,"copyright", copyright);
+
+        if (!mailText.isEmpty()) {
+            Hyperlink hlMail = new Hyperlink(mailText);
+            hlMail.setId("mail");
+            hlMail.setOnAction(e -> sendMailTo(mailAddress));
+            children.add(hlMail);
+        }
+
+        if (!licenseText.isEmpty()) {
+            if (showLicenseDetails != null) {
+                Hyperlink hlLicense = new Hyperlink(licenseText);
+                hlLicense.setText(mailText.isBlank() ? "Email" : mailText);
+                hlLicense.setId("license");
+                hlLicense.setOnAction(e -> showLicenseDetails.run());
+                children.add(hlLicense);
+            } else {
+                addLabel(children, "license", licenseText);
+            }
+        }
+
+        StackPane content = new StackPane(vBox);
+        content.setId("content");
+        content.setMaxHeight(Double.NEGATIVE_INFINITY);
+        content.setMaxWidth(Double.POSITIVE_INFINITY);
+
+        DialogPane dialogPane = new DialogPane();
+        dialogPane.setContent(content);
+
+        URL dialogCss = css != null ? css : AboutDialogBuilder.class.getResource("about.css");
+        assert dialogCss != null;
+        dialogPane.getStylesheets().add(dialogCss.toExternalForm());
+
+        Dialog<Void> dlg = new Dialog<>();
+        dlg.setDialogPane(dialogPane);
+
+        if (!title.isBlank()) {
+            dlg.setTitle(title);
+        } else if (!applicationName.isBlank()) {
+            dlg.setTitle("About " + applicationName);
+        }
+        dialogPane.getButtonTypes().addAll(ButtonType.OK);
 
         if (parentWindow != null) {
             Stage stage = (Stage) dlg.getDialogPane().getScene().getWindow();
@@ -226,28 +299,31 @@ public class AboutDialogBuilder {
         if (graphic != null) {
             dlg.setGraphic(graphic);
         }
-        if (!title.isBlank()) {
-            dlg.setTitle(title);
-        }
-        if (!name.isBlank()) {
-            dlg.setName(name);
-        }
-        if (!copyright.isBlank()) {
-            dlg.setCopyright(copyright);
-        }
-        if (!version.isBlank()) {
-            dlg.setVersion(version);
-        }
-        if (!mailText.isBlank()) {
-            dlg.setEmailText(mailText);
-        }
-        if (!mailAddress.isBlank()) {
-            dlg.setEmailAddress(mailAddress);
-        }
         if (expandableContent != null) {
-            dlg.getDialogPane().setExpandableContent(expandableContent);
+            dialogPane.setExpandableContent(expandableContent);
         }
 
+
         return dlg;
+    }
+
+    private static void addLabel(Collection<Node> nodes, String id, String text) {
+        if (!text.isEmpty()) {
+            Label label = new Label(text);
+            label.setId(id);
+            nodes.add(label);
+        }
+    }
+
+    private static void sendMailTo(String address) {
+        Desktop desktop = Desktop.getDesktop();
+        if (desktop.isSupported(Desktop.Action.MAIL)) {
+            try {
+                LOG.info("opening mail application");
+                desktop.mail(URI.create(address));
+            } catch (IOException | IllegalArgumentException e) {
+                LOG.warn("could not open mail application", e);
+            }
+        }
     }
 }

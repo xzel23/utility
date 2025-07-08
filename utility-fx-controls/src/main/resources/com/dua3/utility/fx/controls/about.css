@@ -4,7 +4,7 @@
     -fx-spacing: 4px;
 }
 
-#title {
+#application-name {
     -fx-alignment: "CENTER";
     -fx-content-display: "CENTER";
     -fx-font-family: "System Font";
@@ -13,6 +13,7 @@
 
 #version,
 #copyright,
+#license,
 #mail {
     -fx-alignment: "CENTER";
     -fx-content-display: "CENTER";

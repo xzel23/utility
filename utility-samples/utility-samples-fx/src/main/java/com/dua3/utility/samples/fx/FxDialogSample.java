@@ -46,7 +46,7 @@ public class FxDialogSample extends Application {
         container.getChildren().add(createButton("About", () -> {
             Dialogs.about(primaryStage)
                     .title("About…")
-                    .name("Dialog Sample")
+                    .applicationName("Dialog Sample")
                     .version("v 0.1")
                     .copyright("(c) 2021 Axel Howind")
                     .mail("info@example.com")
