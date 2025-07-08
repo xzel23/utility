@@ -1938,4 +1938,39 @@ public final class LangUtil {
 
     }
 
+    /**
+     * Adds the specified items to a collection if they satisfy the given predicate.
+     * This method evaluates each item using the predicate and adds it to the collection
+     * only if the predicate returns true.
+     * <p>
+     * The method returns true if at least one item is successfully added to the collection,
+     * otherwise returns false.
+     *
+     * @param <T> the type of elements handled by the predicate and collection
+     * @param predicate a predicate to test each item before adding it to the collection
+     * @param collection the collection to which items should be added if they satisfy the predicate
+     * @param items the items to be evaluated and potentially added to the collection
+     * @return true if at least one item was added to the collection; false otherwise
+     */
+    public static <T extends @Nullable Object> boolean addIf(Predicate<? super T> predicate, Collection<? super T> collection, @Nullable T... items) {
+        boolean changed = false;
+        for (T item : items) {
+            if (predicate.test(item)) {
+                changed = collection.add(item) || changed;
+            }
+        }
+        return changed;
+    }
+
+    /**
+     * Adds the given non-null items to the collection. Items that are null are ignored.
+     *
+     * @param <T> the type of elements in the collection
+     * @param collection the collection to which non-null items will be added
+     * @param items the items to add to the collection, some of which may be null
+     * @return true if the collection was modified as a result of the operation, false otherwise
+     */
+    public static <T extends @Nullable Object> boolean addIfNonNull(Collection<? super T> collection, @Nullable T... items) {
+        return addIf(Objects::nonNull, collection, items);
+    }
 }
