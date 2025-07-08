@@ -207,11 +207,14 @@ could not be loaded.
 - Package `utility`
     - `LangUtil.reverseInPlace()` to reverse array contents
     - `LangUtil.isWrapperFor()` to test if a class is a primitive wrapper for another class
+    - Added `LangUtil.addIf()` and `LangUtil.addIfNonNull()`.
     - `RingBuffer` implements `SequencedCollection`
     - `LogBuffer.setCapacity()` to change the capacity of an existing buffer
     - Added `ReversedSequencedCollectionWrapper` to facilitate implementing `reversed()` for `SequencedCollection` 
       implementations
     - hardened `IoUtil.unzip()` and provided an overload to use custom limits for unzipping.
+    - added `IoUtil.getApplicationDataDir()` and `IoUtil.ensureApplicationDataDir()`  to get the canonical directory
+      for application data storage of the platform. 
     - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
     - Added `TextUtil.isNullOrBlank()`
 
