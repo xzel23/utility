@@ -89,6 +89,22 @@ public class AboutDialogBuilder {
      */
     public AboutDialogBuilder licenseText(String licenseText) {
         this.licenseText = licenseText;
+        this.showLicenseDetails = null;
+        return this;
+    }
+
+    /**
+     * Sets the license information for the AboutDialog, including the license text
+     * and an optional action to show detailed license information.
+     *
+     * @param licenseText the license text to set for the dialog
+     * @param showLicenseDetails a {@link Runnable} that will be invoked to display additional details
+     *                           about the license when requested, or null if no action is needed
+     * @return the current instance of AboutDialogBuilder for method chaining
+     */
+    public AboutDialogBuilder license(String licenseText, Runnable showLicenseDetails) {
+        this.licenseText = licenseText;
+        this.showLicenseDetails = showLicenseDetails;
         return this;
     }
 
