@@ -46,6 +46,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -1374,5 +1375,54 @@ public final class IoUtil {
                 LOG.warn("could not delete temp directory {}", dir);
             }
         }));
+    }
+
+    /**
+     * Retrieves the directory path for storing application data, tailored to the
+     * current platform's conventions. The directory location varies based on the
+     * operating system:
+     * - On Windows, it utilizes the %APPDATA% environment variable or the user's home directory as a fallback.
+     * - On macOS, it uses the Library/Application Support directory within the user's home folder.
+     * - On other platforms, the XDG_CONFIG_HOME environment variable or a default .config directory under the user's home folder is used.
+     *
+     * @param appName the name of the application for which the data directory is being retrieved. It is used to append
+     *                a subfolder specific to the application.
+     * @return the platform-specific Path representing the directory where the application's data should be stored.
+     *         The returned path will include a subdirectory with the given application name.
+     */
+    public static Path getApplicationDataDir(String appName) {
+        return switch (Platform.currentPlatform()) {
+            case WINDOWS -> Paths.get(
+                    Objects.requireNonNullElse(
+                            System.getenv("APPDATA"),
+                            System.getProperty("user.home")
+                    ),
+                    appName
+            );
+            case MACOS -> Paths.get(System.getProperty("user.home"), "Library", "Application Support", appName);
+            default -> Paths.get(
+                    Objects.requireNonNullElse(
+                            System.getenv("XDG_CONFIG_HOME"),
+                            System.getProperty("user.home") + ".config"
+                    ),
+                    appName
+            );
+        };
+    }
+
+    /**
+     * Ensures the existence of a data directory for the specified application.
+     * If the directory does not exist, it will be created.
+     *
+     * @param appName the name of the application for which the data directory is required
+     * @return the {@code Path} of the data directory
+     * @throws IOException if an I/O error occurs while creating the directory
+     */
+    public static Path ensureApplicationDataDir(String appName) throws IOException {
+        Path dataDir = getApplicationDataDir(appName);
+        if (!Files.exists(dataDir)) {
+            Files.createDirectories(dataDir);
+        }
+        return dataDir;
     }
 }
