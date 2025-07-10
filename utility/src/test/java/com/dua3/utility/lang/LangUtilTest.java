@@ -843,7 +843,6 @@ class LangUtilTest {
         // In Java, the variant for RFC 4122 UUIDs is represented by the constant UUID.VARIANT_RFC_4122
         // which is 2 according to the documentation, but the actual implementation might return a different value
         // The important thing is that the most significant bits of the 8th octet are '10'
-        long msb = uuid.getMostSignificantBits();
         long lsb = uuid.getLeastSignificantBits();
         // Check that the variant bits (the most significant bits of the 8th octet) are '10'
         assertTrue((lsb & 0xC000000000000000L) == 0x8000000000000000L, 
