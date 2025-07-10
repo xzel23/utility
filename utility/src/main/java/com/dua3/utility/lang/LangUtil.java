@@ -798,8 +798,8 @@ public final class LangUtil {
         int lastIndex = -1;
         for (int i = 0; i < list.size(); i++) {
             // find next difference
-            while (i < list.size() && !test.test(list.get(i))) {
-                i++;
+            for (; i < list.size() && !test.test(list.get(i)); i++) {
+                // nothing to do
             }
 
             // not found
@@ -816,8 +816,8 @@ public final class LangUtil {
             }
 
             // find end of difference
-            while (i < list.size() && test.test(list.get(i))) {
-                i++;
+            for (; i < list.size() && test.test(list.get(i)); i++) {
+                // nothing to do
             }
             int endIndex = i;
 
