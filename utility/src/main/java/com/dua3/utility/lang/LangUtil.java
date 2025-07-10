@@ -2107,10 +2107,31 @@ public final class LangUtil {
      * @return a byte array representing the UUID
      */
     public static byte[] toByteArray(UUID uuid) {
-        ByteBuffer buffer = ByteBuffer.allocate(16);
-        buffer.putLong(uuid.getMostSignificantBits());
-        buffer.putLong(uuid.getLeastSignificantBits());
-        return buffer.array();
+        byte[] bytes = new byte[16];
+        long mostSigBits = uuid.getMostSignificantBits();
+        long leastSigBits = uuid.getLeastSignificantBits();
+
+        // Store most significant bits (first 8 bytes)
+        bytes[0] = (byte) (mostSigBits >>> 56);
+        bytes[1] = (byte) (mostSigBits >>> 48);
+        bytes[2] = (byte) (mostSigBits >>> 40);
+        bytes[3] = (byte) (mostSigBits >>> 32);
+        bytes[4] = (byte) (mostSigBits >>> 24);
+        bytes[5] = (byte) (mostSigBits >>> 16);
+        bytes[6] = (byte) (mostSigBits >>> 8);
+        bytes[7] = (byte) mostSigBits;
+
+        // Store least significant bits (last 8 bytes)
+        bytes[8] = (byte) (leastSigBits >>> 56);
+        bytes[9] = (byte) (leastSigBits >>> 48);
+        bytes[10] = (byte) (leastSigBits >>> 40);
+        bytes[11] = (byte) (leastSigBits >>> 32);
+        bytes[12] = (byte) (leastSigBits >>> 24);
+        bytes[13] = (byte) (leastSigBits >>> 16);
+        bytes[14] = (byte) (leastSigBits >>> 8);
+        bytes[15] = (byte) leastSigBits;
+
+        return bytes;
     }
 
     /**
@@ -2125,9 +2146,27 @@ public final class LangUtil {
         if (bytes.length != 16) {
             throw new IllegalArgumentException("Byte array must be 16 bytes long");
         }
-        ByteBuffer buffer = ByteBuffer.wrap(bytes);
-        long firstLong = buffer.getLong();
-        long secondLong = buffer.getLong();
-        return new UUID(firstLong, secondLong);
+
+        // Reconstruct most significant bits from first 8 bytes
+        long mostSigBits = ((long) bytes[0] << 56) |
+                ((long) (bytes[1] & 0xFF) << 48) |
+                ((long) (bytes[2] & 0xFF) << 40) |
+                ((long) (bytes[3] & 0xFF) << 32) |
+                ((long) (bytes[4] & 0xFF) << 24) |
+                ((long) (bytes[5] & 0xFF) << 16) |
+                ((long) (bytes[6] & 0xFF) << 8) |
+                ((long) (bytes[7] & 0xFF));
+
+        // Reconstruct least significant bits from last 8 bytes
+        long leastSigBits = ((long) bytes[8] << 56) |
+                ((long) (bytes[9] & 0xFF) << 48) |
+                ((long) (bytes[10] & 0xFF) << 40) |
+                ((long) (bytes[11] & 0xFF) << 32) |
+                ((long) (bytes[12] & 0xFF) << 24) |
+                ((long) (bytes[13] & 0xFF) << 16) |
+                ((long) (bytes[14] & 0xFF) << 8) |
+                ((long) (bytes[15] & 0xFF));
+
+        return new UUID(mostSigBits, leastSigBits);
     }
 }
