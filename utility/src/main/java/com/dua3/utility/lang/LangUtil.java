@@ -796,14 +796,15 @@ public final class LangUtil {
     private static <T extends @Nullable Object> List<T> surroundingItemsInternal(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
-        for (int i = 0; i < list.size(); i++) {
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
             // find next difference
-            for (; i < list.size() && !test.test(list.get(i)); i++) {
-                // nothing to do
+            while (i < size && !test.test(list.get(i))) {
+                i++;
             }
 
             // not found
-            if (i >= list.size()) {
+            if (i >= size) {
                 break;
             }
 
@@ -816,20 +817,20 @@ public final class LangUtil {
             }
 
             // find end of difference
-            for (; i < list.size() && test.test(list.get(i)); i++) {
-                // nothing to do
+            while (i < size && test.test(list.get(i))) {
+                i++;
             }
             int endIndex = i;
 
             // print changes
             int from = Math.max(startIndex - before, Math.max(0, lastIndex + 1));
-            int to = Math.min(endIndex + after, list.size());
+            int to = Math.min(endIndex + after, size);
 
             filtered.addAll(list.subList(from, to));
             lastIndex = to - 1;
         }
-        if (placeHolder != null && lastIndex < list.size() - 1) {
-            int count = list.size() - (lastIndex + 1);
+        if (placeHolder != null && lastIndex < size - 1) {
+            int count = size - (lastIndex + 1);
             filtered.add(placeHolder.apply(count, lastIndex + 1));
         }
 
@@ -2169,7 +2170,7 @@ public final class LangUtil {
                 ((long) (bytes[4] & 0xFF) << 24) |
                 ((long) (bytes[5] & 0xFF) << 16) |
                 ((long) (bytes[6] & 0xFF) << 8) |
-                ((long) (bytes[7] & 0xFF));
+                (bytes[7] & 0xFF);
 
         // Reconstruct least significant bits from last 8 bytes
         long leastSigBits = ((long) bytes[8] << 56) |
@@ -2179,7 +2180,7 @@ public final class LangUtil {
                 ((long) (bytes[12] & 0xFF) << 24) |
                 ((long) (bytes[13] & 0xFF) << 16) |
                 ((long) (bytes[14] & 0xFF) << 8) |
-                ((long) (bytes[15] & 0xFF));
+                (bytes[15] & 0xFF);
 
         return new UUID(mostSigBits, leastSigBits);
     }
