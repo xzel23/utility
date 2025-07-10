@@ -26,7 +26,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -779,6 +778,21 @@ public final class LangUtil {
         return surroundingItemsInternal(list, test, before, after, placeHolder);
     }
 
+    /**
+     * Extracts specific items from the input list based on a given predicate and includes additional
+     * items surrounding the matched elements within the specified range. This method supports optional
+     * placeholders for omitted items in the result.
+     *
+     * @param <T> the type of elements in the list, which may be nullable
+     * @param list the input list from which items will be filtered
+     * @param test a predicate to determine the items of interest in the list
+     * @param before the number of additional items to include before each matched element
+     * @param after the number of additional items to include after each matched element
+     * @param placeHolder an optional function to generate placeholder items for omitted sections;
+     *                    takes the count of skipped elements and the starting index of those elements
+     * @return a list containing the matched items along with the surrounding items and optional
+     *         placeholders for omitted sections
+     */
     private static <T extends @Nullable Object> List<T> surroundingItemsInternal(List<? extends T> list, Predicate<? super T> test, int before, int after, @Nullable BiFunction<? super Integer, ? super Integer, ? extends T> placeHolder) {
         List<T> filtered = new ArrayList<>();
         int lastIndex = -1;
