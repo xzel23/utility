@@ -29,6 +29,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -55,6 +56,7 @@ import java.util.OptionalLong;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -72,6 +74,29 @@ import java.util.stream.Stream;
  */
 public final class LangUtil {
     private static final Logger LOG = LogManager.getLogger(LangUtil.class);
+
+    /**
+     * A holder class for a securely initialized instance of {@link SecureRandom}.
+     * This class ensures a single instance of SecureRandom is lazily initialized
+     * and safely published for use in cryptographic operations.
+     */
+    private static final class SecureRandomHolder {
+        private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    }
+
+    /**
+     * Provides a thread-safe instance of SecureRandom.
+     *
+     * The method accesses a lazily initialized SecureRandom instance
+     * that ensures cryptographic security and should be preferred for
+     * generating secure random values.
+     *
+     * @return a SecureRandom instance with cryptographically strong
+     *         random number generation.
+     */
+    private static SecureRandom secureRandom() {
+        return SecureRandomHolder.SECURE_RANDOM;
+    }
 
     /**
      * The byte order mark in UTF files
@@ -1972,5 +1997,106 @@ public final class LangUtil {
      */
     public static <T extends @Nullable Object> boolean addIfNonNull(Collection<? super T> collection, @Nullable T... items) {
         return addIf(Objects::nonNull, collection, items);
+    }
+
+    /**
+     * Generates a new UUID version 7 (UUIDv7) according to RFC 9562.
+     * UUIDv7 is a time-ordered UUID format that uses Unix timestamp with millisecond precision
+     * in the most significant 48 bits, followed by a random component.
+     *
+     * @return a new UUIDv7 with the current timestamp
+     */
+    public static UUID newUuidV7() {
+        return newUuidV7(System.currentTimeMillis());
+    }
+
+    /**
+     * Generates a new UUID version 7 (UUIDv7) according to RFC 9562 with the specified timestamp.
+     * UUIDv7 is a time-ordered UUID format that uses Unix timestamp with millisecond precision
+     * in the most significant 48 bits, followed by a random component.
+     *
+     * @param timestamp the timestamp to use for the UUID
+     * @return a new UUIDv7 with the specified timestamp
+     */
+    public static UUID newUuidV7(Instant timestamp) {
+        return newUuidV7(timestamp.toEpochMilli());
+    }
+
+    /**
+     * Generates a new UUIDv7 based on the provided Unix timestamp in milliseconds.
+     * UUIDv7 incorporates a 48-bit timestamp derived from Unix epoch time, ensuring
+     * temporal ordering when UUIDs are generated.
+     *
+     * @param unixTimestampMs the Unix timestamp in milliseconds to be embedded into the UUID.
+     *                        It must not exceed the 48-bit limit (up to 281474976710655 milliseconds since epoch).
+     *                        If the value exceeds the permissible range, an {@link IllegalArgumentException} is thrown.
+     * @return a new UUIDv7 with the specified timestamp and randomly generated portions for
+     *         uniqueness and compliance with the UUIDv7 specification.
+     * @throws IllegalArgumentException if the provided timestamp exceeds the allowable 48-bit limit.
+     */
+    public static UUID newUuidV7(long unixTimestampMs) {
+        if ((unixTimestampMs & ~0xFFFFFFFFFFFFL) != 0) {
+            throw new IllegalArgumentException("Timestamp exceeds 48-bit limit for UUIDv7: " + unixTimestampMs);
+        }
+
+        long version = 0x7L << 12;
+        long rand12 = secureRandom().nextLong(0x1000L);
+        long msb = (unixTimestampMs << 16) | version | rand12;
+
+        long rand62 = secureRandom().nextLong(1L << 62);
+        long lsb = (1L << 63) | rand62; // Variant '10' + 62 random bits
+
+        return new UUID(msb, lsb);
+    }
+
+    /**
+     * Extracts the raw timestamp value from the given UUID.
+     * <p>
+     * For UUIDv7, this returns the 48-bit Unix timestamp in milliseconds since the epoch (1970-01-01T00:00:00Z).
+     * For UUIDv1, this returns the 60-bit timestamp in 100-nanosecond intervals since the UUID epoch
+     * (1582-10-15T00:00:00Z), as defined by RFC 4122.
+     *
+     * @param uuid the UUID from which to extract the raw timestamp
+     * @return the raw timestamp value encoded in the UUID
+     * @throws UnsupportedOperationException if the UUID version does not include a timestamp (e.g. v4, v8)
+     */
+    public static long getTimestampRaw(UUID uuid) {
+        if (uuid.version() == 7) {
+            return (uuid.getMostSignificantBits() >>> 16) & 0xFFFFFFFFFFFFL;
+        } else {
+            return uuid.timestamp();
+        }
+    }
+
+    /**
+     * Converts the timestamp in the given UUID to a {@link Instant}.
+     * <p>
+     * For UUIDv7, this returns an {@code Instant} from the embedded Unix millisecond timestamp.
+     * For UUIDv1, this returns an {@code Instant} converted from 100-nanosecond intervals since
+     * the UUID epoch (1582-10-15T00:00:00Z).
+     *
+     * @param uuid the UUID containing a timestamp
+     * @return the extracted timestamp as an {@link Instant}
+     * @throws UnsupportedOperationException if the UUID version does not support timestamp extraction (e.g. v4, v8)
+     */
+    public static Instant getTimestampAsInstant(UUID uuid) {
+        switch (uuid.version()) {
+            case 7: {
+                long epochMillis = getTimestampRaw(uuid);
+                return Instant.ofEpochMilli(epochMillis);
+            }
+            case 1: {
+                long timestamp100ns = getTimestampRaw(uuid);
+                long uuidEpochMillis = -12219292800000L; // 1582-10-15T00:00:00Z
+                long millisSinceEpoch = timestamp100ns / 10_000;
+                long nanosRemainder = (timestamp100ns % 10_000) * 100;
+                return Instant.ofEpochSecond(
+                        (uuidEpochMillis + millisSinceEpoch) / 1000,
+                        ((uuidEpochMillis + millisSinceEpoch) % 1000) * 1_000_000 + nanosRemainder
+                );
+            }
+            default:
+                throw new UnsupportedOperationException("Only UUID versions 1 and 7 support timestamps");
+        }
     }
 }

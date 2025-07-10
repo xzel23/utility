@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -26,6 +27,7 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -829,5 +831,118 @@ class LangUtilTest {
 
         // Test non-primitive second argument
         assertFalse(LangUtil.isWrapperFor(Integer.class, Integer.class));
+    }
+
+    @Test
+    void testNewUuidV7() {
+        // Test that the generated UUID has the correct version (7)
+        UUID uuid = LangUtil.newUuidV7();
+        assertEquals(7, uuid.version());
+
+        // Test that the generated UUID has the correct variant (RFC 4122 variant)
+        // In Java, the variant for RFC 4122 UUIDs is represented by the constant UUID.VARIANT_RFC_4122
+        // which is 2 according to the documentation, but the actual implementation might return a different value
+        // The important thing is that the most significant bits of the 8th octet are '10'
+        long msb = uuid.getMostSignificantBits();
+        long lsb = uuid.getLeastSignificantBits();
+        // Check that the variant bits (the most significant bits of the 8th octet) are '10'
+        assertTrue((lsb & 0xC000000000000000L) == 0x8000000000000000L, 
+                   "Variant bits should be '10' for RFC 4122 UUIDs");
+
+        // Test that two UUIDs generated in sequence are different
+        UUID uuid2 = LangUtil.newUuidV7();
+        assertNotEquals(uuid, uuid2);
+    }
+
+    @Test
+    void testNewUuidV7WithTimestamp() {
+        // Create a specific timestamp
+        Instant timestamp = Instant.ofEpochMilli(1625097600000L); // 2021-07-01T00:00:00Z
+
+        // Generate a UUID with the timestamp
+        UUID uuid = LangUtil.newUuidV7(timestamp);
+
+        // Test that the generated UUID has the correct version (7)
+        assertEquals(7, uuid.version());
+
+        // Test that the generated UUID has the correct variant (RFC 4122 variant)
+        // In Java, the variant for RFC 4122 UUIDs is represented by the constant UUID.VARIANT_RFC_4122
+        // which is 2 according to the documentation, but the actual implementation might return a different value
+        // The important thing is that the most significant bits of the 8th octet are '10'
+        long lsb = uuid.getLeastSignificantBits();
+        // Check that the variant bits (the most significant bits of the 8th octet) are '10'
+        assertTrue((lsb & 0xC000000000000000L) == 0x8000000000000000L, 
+                   "Variant bits should be '10' for RFC 4122 UUIDs");
+
+        // Test that the timestamp in the UUID matches the provided timestamp
+        // The timestamp is stored in the most significant 48 bits of the UUID
+        long uuidTimestamp = uuid.getMostSignificantBits() >>> 16;
+        assertEquals(timestamp.toEpochMilli(), uuidTimestamp);
+
+        // Test that two UUIDs generated with the same timestamp are different
+        UUID uuid2 = LangUtil.newUuidV7(timestamp);
+        assertNotEquals(uuid, uuid2);
+    }
+
+    @Test
+    void testNewUuidV7WithLongTimestamp() {
+        // Create a specific timestamp
+        long timestamp = 1625097600000L; // 2021-07-01T00:00:00Z
+
+        // Generate a UUID with the timestamp
+        UUID uuid = LangUtil.newUuidV7(timestamp);
+
+        // Test that the generated UUID has the correct version (7)
+        assertEquals(7, uuid.version());
+
+        // Test that the generated UUID has the correct variant (RFC 4122 variant)
+        long lsb = uuid.getLeastSignificantBits();
+        assertTrue((lsb & 0xC000000000000000L) == 0x8000000000000000L, 
+                   "Variant bits should be '10' for RFC 4122 UUIDs");
+
+        // Test that the timestamp in the UUID matches the provided timestamp
+        long uuidTimestamp = uuid.getMostSignificantBits() >>> 16;
+        assertEquals(timestamp, uuidTimestamp);
+
+        // Test that two UUIDs generated with the same timestamp are different
+        UUID uuid2 = LangUtil.newUuidV7(timestamp);
+        assertNotEquals(uuid, uuid2);
+    }
+
+    @Test
+    void testGetTimestampRaw() {
+        // Test with UUIDv7
+        Instant timestamp = Instant.ofEpochMilli(1625097600000L); // 2021-07-01T00:00:00Z
+        UUID uuidV7 = LangUtil.newUuidV7(timestamp);
+
+        long extractedTimestamp = LangUtil.getTimestampRaw(uuidV7);
+        assertEquals(timestamp.toEpochMilli(), extractedTimestamp);
+
+        // Test with UUIDv1 (using a predefined UUIDv1 for testing)
+        UUID uuidV1 = UUID.fromString("c9aec320-8b57-11eb-8dcd-0242ac130003"); // Version 1 UUID
+        assertDoesNotThrow(() -> LangUtil.getTimestampRaw(uuidV1));
+
+        // Test with unsupported version (UUIDv4)
+        UUID uuidV4 = UUID.randomUUID(); // Version 4 UUID
+        // UUIDv4 is not time-based, so it should throw an exception
+        assertThrows(UnsupportedOperationException.class, () -> LangUtil.getTimestampRaw(uuidV4));
+    }
+
+    @Test
+    void testGetTimestampAsInstant() {
+        // Test with UUIDv7
+        Instant timestamp = Instant.ofEpochMilli(1625097600000L); // 2021-07-01T00:00:00Z
+        UUID uuidV7 = LangUtil.newUuidV7(timestamp);
+
+        Instant extractedInstant = LangUtil.getTimestampAsInstant(uuidV7);
+        assertEquals(timestamp, extractedInstant);
+
+        // Test with UUIDv1 (using a predefined UUIDv1 for testing)
+        UUID uuidV1 = UUID.fromString("c9aec320-8b57-11eb-8dcd-0242ac130003"); // Version 1 UUID
+        assertDoesNotThrow(() -> LangUtil.getTimestampAsInstant(uuidV1));
+
+        // Test with unsupported version (UUIDv4)
+        UUID uuidV4 = UUID.randomUUID(); // Version 4 UUID
+        assertThrows(UnsupportedOperationException.class, () -> LangUtil.getTimestampAsInstant(uuidV4));
     }
 }
