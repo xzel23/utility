@@ -205,6 +205,7 @@ could not be loaded.
     - Run tasks have been added for the sample applications.
 
 - Package `utility`
+    - `LangUtil.newUuidV7()` to create UUID v7 instances.
     - `LangUtil.reverseInPlace()` to reverse array contents
     - `LangUtil.isWrapperFor()` to test if a class is a primitive wrapper for another class
     - Added `LangUtil.addIf()` and `LangUtil.addIfNonNull()`.
@@ -380,10 +381,10 @@ different attributes), memory usage went down by 50% without noticeable impact o
 - This version brings many changes for image handling.
 
   BREAKING CHANGES
-  - The pixel format has been changed from INT_ARGB to INT_ARGB_PRE. This was
-    necessary to be able to share the image data between JavaFX and AWT implementations.
-  - AwtImage.bufferedImage() was removed as AwtImage is now derived from BufferedImae.
-    Pass the AwtImage instance directly whenever a BufferedImage is needed.
+    - The pixel format has been changed from INT_ARGB to INT_ARGB_PRE. This was
+      necessary to be able to share the image data between JavaFX and AWT implementations.
+    - AwtImage.bufferedImage() was removed as AwtImage is now derived from BufferedImae.
+      Pass the AwtImage instance directly whenever a BufferedImage is needed.
 
   DESCRIPTION OF THE CHANGES
 
