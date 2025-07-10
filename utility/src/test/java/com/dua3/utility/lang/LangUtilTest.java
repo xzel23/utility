@@ -854,6 +854,45 @@ class LangUtilTest {
     }
 
     @Test
+    void testToByteArray() {
+        UUID uuid = UUID.randomUUID();
+        byte[] bytes = LangUtil.toByteArray(uuid);
+
+        // Ensure the resulting byte array is exactly 16 bytes
+        assertEquals(16, bytes.length);
+
+        // Convert the byte array back to a UUID
+        UUID reconstructedUuid = LangUtil.fromByteArray(bytes);
+
+        // Verify that the reconstructed UUID matches the original
+        assertEquals(uuid, reconstructedUuid);
+    }
+
+    @Test
+    void testToByteArrayInvalid() {
+        // Validate behavior when an invalid byte array length is passed
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.fromByteArray(new byte[10]));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.fromByteArray(new byte[20]));
+    }
+
+    @Test
+    void testFromByteArrayValid() {
+        UUID uuid = UUID.randomUUID();
+        byte[] bytes = LangUtil.toByteArray(uuid);
+
+        // Convert the bytes back to UUID and verify it matches the original UUID
+        UUID result = LangUtil.fromByteArray(bytes);
+        assertEquals(uuid, result);
+    }
+
+    @Test
+    void testFromByteArrayInvalid() {
+        // Test that exceptions are thrown for invalid byte arrays
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.fromByteArray(new byte[8]));
+        assertThrows(IllegalArgumentException.class, () -> LangUtil.fromByteArray(new byte[24]));
+    }
+
+    @Test
     void testNewUuidV7WithTimestamp() {
         // Create a specific timestamp
         Instant timestamp = Instant.ofEpochMilli(1625097600000L); // 2021-07-01T00:00:00Z

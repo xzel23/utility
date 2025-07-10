@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -2098,5 +2099,36 @@ public final class LangUtil {
             default:
                 throw new UnsupportedOperationException("Only UUID versions 1 and 7 support timestamps");
         }
+    }
+
+    /**
+     * Converts the given UUID to a byte array representation.
+     *
+     * @param uuid the UUID to be converted to a byte array
+     * @return a byte array representing the UUID
+     */
+    public static byte[] toByteArray(UUID uuid) {
+        ByteBuffer buffer = ByteBuffer.allocate(16);
+        buffer.putLong(uuid.getMostSignificantBits());
+        buffer.putLong(uuid.getLeastSignificantBits());
+        return buffer.array();
+    }
+
+    /**
+     * Converts a 16-byte array into a {@code UUID} instance.
+     *
+     * @param bytes a byte array representing the {@code UUID}.
+     *              The array must be exactly 16 bytes in length.
+     * @return a {@code UUID} created from the byte array.
+     * @throws IllegalArgumentException if the provided byte array is not 16 bytes long.
+     */
+    public static UUID fromByteArray(byte[] bytes) {
+        if (bytes.length != 16) {
+            throw new IllegalArgumentException("Byte array must be 16 bytes long");
+        }
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        long firstLong = buffer.getLong();
+        long secondLong = buffer.getLong();
+        return new UUID(firstLong, secondLong);
     }
 }
