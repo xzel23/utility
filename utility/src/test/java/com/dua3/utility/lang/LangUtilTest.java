@@ -845,8 +845,7 @@ class LangUtilTest {
         // The important thing is that the most significant bits of the 8th octet are '10'
         long lsb = uuid.getLeastSignificantBits();
         // Check that the variant bits (the most significant bits of the 8th octet) are '10'
-        assertTrue((lsb & 0xC000000000000000L) == 0x8000000000000000L, 
-                   "Variant bits should be '10' for RFC 4122 UUIDs");
+        assertEquals(0x8000000000000000L, lsb & 0xC000000000000000L, "Variant bits should be '10' for RFC 4122 UUIDs");
 
         // Test that two UUIDs generated in sequence are different
         UUID uuid2 = LangUtil.newUuidV7();
@@ -909,8 +908,7 @@ class LangUtilTest {
         // The important thing is that the most significant bits of the 8th octet are '10'
         long lsb = uuid.getLeastSignificantBits();
         // Check that the variant bits (the most significant bits of the 8th octet) are '10'
-        assertTrue((lsb & 0xC000000000000000L) == 0x8000000000000000L, 
-                   "Variant bits should be '10' for RFC 4122 UUIDs");
+        assertEquals(0x8000000000000000L, lsb & 0xC000000000000000L, "Variant bits should be '10' for RFC 4122 UUIDs");
 
         // Test that the timestamp in the UUID matches the provided timestamp
         // The timestamp is stored in the most significant 48 bits of the UUID
@@ -935,8 +933,7 @@ class LangUtilTest {
 
         // Test that the generated UUID has the correct variant (RFC 4122 variant)
         long lsb = uuid.getLeastSignificantBits();
-        assertTrue((lsb & 0xC000000000000000L) == 0x8000000000000000L, 
-                   "Variant bits should be '10' for RFC 4122 UUIDs");
+        assertEquals(0x8000000000000000L, lsb & 0xC000000000000000L, "Variant bits should be '10' for RFC 4122 UUIDs");
 
         // Test that the timestamp in the UUID matches the provided timestamp
         long uuidTimestamp = uuid.getMostSignificantBits() >>> 16;
