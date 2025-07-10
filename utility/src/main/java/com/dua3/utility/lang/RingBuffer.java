@@ -50,7 +50,7 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
     }
 
     /**
-     * Add item to end of collection.
+     * Add item to the end of the collection.
      *
      * @param item the item to add
      * @return true, if the item was added; false if the capacity is zero
@@ -114,7 +114,7 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
      * @param o the object to locate in the buffer. Can be null.
      * @return the index of the first occurrence of the specified object, or -1 if the object is not found.
      */
-    private int indexOf(Object o) {
+    private int indexOf(@Nullable Object o) {
         for (int i = 0; i < size(); i++) {
             if (Objects.equals(get(i), o)) {
                 return i;
@@ -426,8 +426,7 @@ public class RingBuffer<T extends @Nullable Object> implements SequencedCollecti
 
     @Override
     public boolean removeIf(Predicate<? super T> filter) {
-        int initialSize = size();
-        int currentSize = initialSize;
+        int currentSize = size();
         int readIndex = 0;
         int writeIndex = 0;
 
