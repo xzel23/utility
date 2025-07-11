@@ -225,6 +225,33 @@ class IoUtilTest {
         }
     }
 
+    @Test
+    void testGetApplicationDataDirCreatesIfNotExist() throws Exception {
+        String appName = "TestApp";
+        Path appDataDir = IoUtil.getApplicationDataDir(appName);
+
+        try {
+            assertTrue(Files.exists(appDataDir), "Application data directory should be created if it does not exist");
+            assertTrue(Files.isDirectory(appDataDir), "Application data directory should be a directory");
+        } finally {
+            IoUtil.deleteRecursive(appDataDir); // Clean up after the test
+        }
+    }
+
+    @Test
+    void testGetApplicationDataDirReturnsExistingDir() throws Exception {
+        String appName = "ExistingApp";
+        Path appDataDir = IoUtil.getApplicationDataDir(appName);
+
+        try {
+            // Call again to ensure the same directory is returned
+            Path retrievedAppDataDir = IoUtil.getApplicationDataDir(appName);
+            assertEquals(appDataDir, retrievedAppDataDir, "Should return the same directory if it exists");
+        } finally {
+            IoUtil.deleteRecursive(appDataDir); // Clean up after the test
+        }
+    }
+
     @ParameterizedTest
     @MethodSource("jimFsConfigurations")
     void glob_absoluteBase_absolutePattern(Configuration configuration) throws IOException {
@@ -752,6 +779,16 @@ class IoUtilTest {
         } finally {
             Files.deleteIfExists(tempFile);
         }
+    }
+
+    @Test
+    void testGetUserDir () {
+        Path expectedUserDir = Paths.get(System.getProperty("user.home", "."));
+        Path actualUserDir = IoUtil.getUserDir();
+
+        assertEquals(expectedUserDir, actualUserDir, "getUserDir should return the user's home directory");
+        assertTrue(Files.exists(actualUserDir), "The returned user directory path should exist");
+        assertTrue(Files.isDirectory(actualUserDir), "The returned user directory path should be a directory");
     }
 
     @Test

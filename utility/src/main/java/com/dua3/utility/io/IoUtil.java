@@ -1390,7 +1390,7 @@ public final class IoUtil {
      * @return the platform-specific Path representing the directory where the application's data should be stored.
      *         The returned path will include a subdirectory with the given application name.
      */
-    public static Path getApplicationDataDir(String appName) {
+    private static Path getApplicationDataDirPath(String appName) {
         return switch (Platform.currentPlatform()) {
             case WINDOWS -> Paths.get(
                     Objects.requireNonNullElse(
@@ -1418,11 +1418,23 @@ public final class IoUtil {
      * @return the {@code Path} of the data directory
      * @throws IOException if an I/O error occurs while creating the directory
      */
-    public static Path ensureApplicationDataDir(String appName) throws IOException {
-        Path dataDir = getApplicationDataDir(appName);
+    public static Path getApplicationDataDir(String appName) throws IOException {
+        Path dataDir = getApplicationDataDirPath(appName);
         if (!Files.exists(dataDir)) {
             Files.createDirectories(dataDir);
         }
         return dataDir;
+    }
+
+    /**
+     * Retrieves the user's home directory as a {@link Path}.
+     * This method obtains the path to the user's home directory from the
+     * "user.home" system property. If the property is not set,
+     * it defaults to the current directory (".").
+     *
+     * @return a {@link Path} representing the user's home directory
+     */
+    public static Path getUserDir() {
+        return Paths.get(System.getProperty("user.home", "."));
     }
 }

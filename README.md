@@ -214,8 +214,8 @@ could not be loaded.
     - Added `ReversedSequencedCollectionWrapper` to facilitate implementing `reversed()` for `SequencedCollection` 
       implementations
     - hardened `IoUtil.unzip()` and provided an overload to use custom limits for unzipping.
-    - added `IoUtil.getApplicationDataDir()` and `IoUtil.ensureApplicationDataDir()`  to get the canonical directory
-      for application data storage of the platform. 
+    - added `IoUtil.getApplicationDataDir()` and `IoUtil.getUserDir()`  to get the canonical directory
+      for application data storage of the platform and the user's home directory. 
     - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
     - Added `TextUtil.isNullOrBlank()`
 
