@@ -80,9 +80,13 @@ public final class IoUtil {
      * The character encodings used to load files.
      */
     private static final Charset[] CHARSETS;
+    /**
+     * The property holding the path to the user home.
+     */
+    private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
 
     static {
-        // setup list of charset; use a set to avoid duplicate entries
+        // setup list of charsets; use a set to avoid duplicate entries
         Set<Charset> charsets = new LinkedHashSet<>();
         charsets.add(DEFAULT_CHARSET);
         charsets.add(PLATFORM_CHARSET);
@@ -1392,21 +1396,18 @@ public final class IoUtil {
      */
     private static Path getApplicationDataDirPath(String appName) {
         return switch (Platform.currentPlatform()) {
-            case WINDOWS -> Paths.get(
-                    Objects.requireNonNullElse(
-                            System.getenv("APPDATA"),
-                            System.getProperty("user.home")
-                    ),
-                    appName
-            );
-            case MACOS -> Paths.get(System.getProperty("user.home"), "Library", "Application Support", appName);
-            default -> Paths.get(
-                    Objects.requireNonNullElse(
-                            System.getenv("XDG_CONFIG_HOME"),
-                            System.getProperty("user.home") + ".config"
-                    ),
-                    appName
-            );
+            case WINDOWS -> Objects.requireNonNullElse(
+                    LangUtil.mapNonNull(System.getenv("APPDATA"), Paths::get),
+                    USER_HOME
+            ).resolve(appName);
+            case MACOS -> USER_HOME
+                    .resolve("Library")
+                    .resolve("Application Support")
+                    .resolve(appName);
+            default -> Objects.requireNonNullElse(
+                    LangUtil.mapNonNull(System.getenv("XDG_CONFIG_HOME"), Paths::get),
+                    USER_HOME.resolve(".config")
+            ).resolve(appName);
         };
     }
 
@@ -1435,6 +1436,6 @@ public final class IoUtil {
      * @return a {@link Path} representing the user's home directory
      */
     public static Path getUserDir() {
-        return Paths.get(System.getProperty("user.home", "."));
+        return USER_HOME;
     }
 }

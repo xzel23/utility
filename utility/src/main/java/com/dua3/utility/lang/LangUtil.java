@@ -2184,4 +2184,18 @@ public final class LangUtil {
 
         return new UUID(mostSigBits, leastSigBits);
     }
+
+    /**
+     * Applies the given mapping function to the provided value if it is not null.
+     * If the value is null, returns null directly.
+     *
+     * @param <T> the type of the input value
+     * @param <U> the type of the result produced by the mapping function
+     * @param value the input value to be mapped, can be null
+     * @param mapper the function to apply to the input value, must not be null
+     * @return the result of applying the mapper function to the value, or null if the value is null
+     */
+    public static <T,U> U mapNonNull (@Nullable T value, Function<T, U> mapper) {
+        return value == null ? null : mapper.apply(value);
+    }
 }
