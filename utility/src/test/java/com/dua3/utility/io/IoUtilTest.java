@@ -52,7 +52,7 @@ class IoUtilTest {
 
     /**
      * The filesystem configurations to use in tests.
-     * @return stream of file system configurationss
+     * @return stream of file system configurations
      */
     public static Stream<Configuration> jimFsConfigurations() {
         return Stream.of(Configuration.unix(), Configuration.windows(), Configuration.osX());
