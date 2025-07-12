@@ -80,6 +80,30 @@ public class InputPaneBuilder
     }
 
     @Override
+    public InputPaneBuilder text(String text) {
+        pb.text(text);
+        return this;
+    }
+
+    @Override
+    public InputPaneBuilder text(String label, String text) {
+        pb.text(label, text);
+        return this;
+    }
+
+    @Override
+    public <T> InputPaneBuilder constant(String id, String label, Supplier<T> value, Class<T> cls) {
+        pb.constant(id, label, value, cls);
+        return this;
+    }
+
+    @Override
+    public <T> InputPaneBuilder constant(String id, String label, T value) {
+        pb.constant(id, label, value);
+        return this;
+    }
+
+    @Override
     public InputPaneBuilder string(String id, String label, Supplier<String> dflt, Function<String, Optional<String>> validate) {
         pb.string(id, label, dflt, validate);
         return this;

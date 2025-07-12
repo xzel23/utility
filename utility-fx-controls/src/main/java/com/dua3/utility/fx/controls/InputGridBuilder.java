@@ -14,6 +14,8 @@
 
 package com.dua3.utility.fx.controls;
 
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.controls.InputGrid.Meta;
 import com.dua3.utility.lang.LangUtil;
@@ -142,6 +144,36 @@ public class InputGridBuilder
     public InputGridBuilder columns(int columns) {
         this.columns = LangUtil.requirePositive(columns);
         return this;
+    }
+
+    @Override
+    public InputGridBuilder text(String text) {
+        Label node = new Label(text);
+        return addNode("#" + System.identityHashCode(node) + "#", node);
+    }
+
+    @Override
+    public InputGridBuilder text(String label, String text) {
+        Label node = new Label(text);
+        return addNode("#" + System.identityHashCode(node) + "#", label, node);
+    }
+
+    @Override
+    public <T> InputGridBuilder constant(String id, String label, Supplier<T> value, Class<T> cls) {
+        Property<T> property = new SimpleObjectProperty<>(value.get());
+        TextField tf = new TextField();
+        tf.setDisable(true);
+        tf.textProperty().bind(property.map(String::valueOf));
+        InputControl<T> ic = new SimpleInputControl<>(tf, property, value, v -> Optional.empty());
+        return add(id, label, cls, value, ic);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> InputGridBuilder constant(String id, String label, T value) {
+        Class<T> cls = (Class<T>) value.getClass();
+        Supplier<T> dflt = () -> value;
+        return constant(id, label, dflt, cls);
     }
 
     @Override

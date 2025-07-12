@@ -91,6 +91,61 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B columns(int columns);
 
     /**
+     * Add a static text without label.
+     *
+     * @param text the text to show.
+     * @return {@code this}
+     */
+    B text(String text
+    );
+
+    /**
+     * Add a static text without label.
+     *
+     * @param label the label text
+     * @param text the text to show.
+     * @return {@code this}
+     */
+    B text(String label,
+           String text
+    );
+
+    /**
+     * Creates a disabled input field with the specified configurations.
+     * <p>
+     * Use this method to include values in the form data that are not editable by the user.
+     *
+     * @param <T>   The type of the value managed by this input.
+     * @param id    The unique identifier for the input field.
+     * @param label The label to display for the input field.
+     * @param value A supplier that provides the value to be displayed in the input field.
+     * @param cls   The class type of the value provided.
+     * @return An instance of `B` representing the configured disabled input field.
+     */
+    <T> B constant(
+            String id,
+            String label,
+            Supplier<T> value,
+            Class<T> cls
+    );
+
+    /**
+     * Configures a non-editable input field with the specified parameters.
+     * <p>
+     * Use this method to include values in the form data that are not editable by the user.
+     *
+     * @param id    the unique identifier for the input field
+     * @param label the label associated with the input field
+     * @param value the value to be displayed in the disabled input field
+     * @param <T>   the type of the value contained in the input field
+     * @return an instance of type B representing the configured disabled input field
+     */
+    <T> B constant(
+            String id,
+            String label,
+            T value    );
+
+    /**
      * Add a labeled string input.
      *
      * @param id    the ID

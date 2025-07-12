@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -111,6 +112,10 @@ public class FxDialogSample extends Application {
                 Dialogs.input(primaryStage)
                         .title("Input")
                         .header("This is an input dialog.")
+                        .text("This is some text without label.")
+                        .text("static text", "This is some labeled text.")
+                        .constant("readonly", "readonly", "This is the value of the readonly field.")
+                        .constant("readonly2", "readonly date", LocalDate::now, LocalDate.class)
                         .string("txt", "enter text", () -> "dflt")
                         .integer("integer", "enter number", () -> 0)
                         .integer("integer from 4 to 7", "enter number [4-7]", () -> 0,
