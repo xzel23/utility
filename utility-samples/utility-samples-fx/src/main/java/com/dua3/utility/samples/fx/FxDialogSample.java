@@ -107,6 +107,20 @@ public class FxDialogSample extends Application {
                         .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
         ));
 
+        // File selection
+        container.getChildren().add(createButton("File selection", () ->
+                Dialogs.chooseFile()
+                        .showOpenDialog(primaryStage)
+                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
+        ));
+
+        // Directory selection
+        container.getChildren().add(createButton("Direcory selection", () ->
+                Dialogs.chooseDirectory()
+                        .showDialog(primaryStage)
+                        .ifPresentOrElse(answer -> println(ANSWER + answer), () -> println(NO_ANSWER))
+        ));
+
         // Input
         container.getChildren().add(createButton("Input", () ->
                 Dialogs.input(primaryStage)
