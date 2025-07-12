@@ -7,8 +7,8 @@ dependencies {
     compileOnly(rootProject.libs.log4j.core)
 
     testImplementation(rootProject.libs.junit.jupiter.api)
-    testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
     testImplementation(rootProject.libs.log4j.core)
+    testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
 }
 
 tasks.withType<Test> {
