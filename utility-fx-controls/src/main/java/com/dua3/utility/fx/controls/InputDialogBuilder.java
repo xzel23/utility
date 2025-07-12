@@ -67,8 +67,8 @@ public class InputDialogBuilder
     }
 
     @Override
-    public <T> InputDialogBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control) {
-        pb.add(id, label, type, dflt, control);
+    public <T> InputDialogBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control, boolean hidden) {
+        pb.add(id, label, type, dflt, control, hidden);
         return this;
     }
 
@@ -117,6 +117,18 @@ public class InputDialogBuilder
     @Override
     public <T> InputDialogBuilder constant(String id, String label, T value) {
         pb.constant(id, label, value);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder hidden(String id, Supplier<T> value, Class<T> cls) {
+        pb.hidden(id, value, cls);
+        return this;
+    }
+
+    @Override
+    public <T> InputDialogBuilder hidden(String id, T value) {
+        pb.hidden(id, value);
         return this;
     }
 

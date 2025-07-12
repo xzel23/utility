@@ -70,8 +70,8 @@ public class InputGridBuilder
     }
 
     @Override
-    public <T> InputGridBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control) {
-        return doAdd(id, label, type, dflt, control);
+    public <T> InputGridBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control, boolean hidden) {
+        return doAdd(id, label, type, dflt, control, hidden);
     }
 
     static class ControlWrapper implements InputControl<Void> {
@@ -112,11 +112,11 @@ public class InputGridBuilder
 
     @Override
     public <T> InputGridBuilder add(String id, Class<T> type, Supplier<T> dflt, InputControl<T> control) {
-        return doAdd(id, null, type, dflt, control);
+        return doAdd(id, null, type, dflt, control, false);
     }
 
-    private <T> InputGridBuilder doAdd(String id, @Nullable String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control) {
-        Meta<T> meta = new Meta<>(id, label, type, dflt, control);
+    private <T> InputGridBuilder doAdd(String id, @Nullable String label, Class<T> type, Supplier<@Nullable T> dflt, InputControl<T> control, boolean hidden) {
+        Meta<T> meta = new Meta<>(id, label, type, dflt, control, hidden);
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, INPUT_WITH_ID_ALREADY_DEFINED, id);
         return this;
@@ -125,7 +125,7 @@ public class InputGridBuilder
     @Override
     public InputGridBuilder addNode(String id, @Nullable String label, Node node) {
         //noinspection DataFlowIssue - false positive; parameter is defined as Supplier<T extends @Nullable Object>
-        Meta<Void> meta = new Meta<>(id, label, Void.class, () -> null, new ControlWrapper(node));
+        Meta<Void> meta = new Meta<>(id, label, Void.class, () -> null, new ControlWrapper(node), false);
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, INPUT_WITH_ID_ALREADY_DEFINED, id);
         return this;
@@ -134,7 +134,7 @@ public class InputGridBuilder
     @Override
     public InputGridBuilder addNode(String id, Node node) {
         //noinspection DataFlowIssue - false positive; parameter is defined as Supplier<T extends @Nullable Object>
-        Meta<Void> meta = new Meta<>(id, null, Void.class, () -> null, new ControlWrapper(node));
+        Meta<Void> meta = new Meta<>(id, null, Void.class, () -> null, new ControlWrapper(node), false);
         Meta<?> prev = data.put(id, meta);
         LangUtil.check(prev == null, INPUT_WITH_ID_ALREADY_DEFINED, id);
         return this;
@@ -149,13 +149,13 @@ public class InputGridBuilder
     @Override
     public InputGridBuilder text(String text) {
         Label node = new Label(text);
-        return addNode("#" + System.identityHashCode(node) + "#", node);
+        return addNode("$ignored$" + System.identityHashCode(node), node);
     }
 
     @Override
     public InputGridBuilder text(String label, String text) {
         Label node = new Label(text);
-        return addNode("#" + System.identityHashCode(node) + "#", label, node);
+        return addNode("$ignored$" + System.identityHashCode(node) + "#", label, node);
     }
 
     @Override
@@ -165,7 +165,7 @@ public class InputGridBuilder
         tf.setDisable(true);
         tf.textProperty().bind(property.map(String::valueOf));
         InputControl<T> ic = new SimpleInputControl<>(tf, property, value, v -> Optional.empty());
-        return add(id, label, cls, value, ic);
+        return add(id, label, cls, value, ic, false);
     }
 
     @SuppressWarnings("unchecked")
@@ -177,28 +177,43 @@ public class InputGridBuilder
     }
 
     @Override
+    public <T> InputGridBuilder hidden(String id, Supplier<T> value, Class<T> cls) {
+        Property<T> property = new SimpleObjectProperty<>(value.get());
+        InputControl<T> ic = new SimpleInputControl<>(new Label(), property, value, v -> Optional.empty());
+        return add(id, "", cls, value, ic, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> InputGridBuilder hidden(String id, T value) {
+        Class<T> cls = (Class<T>) value.getClass();
+        Supplier<T> dflt = () -> value;
+        return hidden(id, dflt, cls);
+    }
+
+    @Override
     public InputGridBuilder string(String id, String label, Supplier<String> dflt, Function<String, Optional<String>> validate) {
-        return add(id, label, String.class, dflt, InputControl.stringInput(dflt, validate));
+        return add(id, label, String.class, dflt, InputControl.stringInput(dflt, validate), false);
     }
 
     @Override
     public InputGridBuilder integer(String id, String label, Supplier<Integer> dflt, Function<Integer, Optional<String>> validate) {
-        return add(id, label, Integer.class, dflt, InputControl.integerInput(dflt, validate));
+        return add(id, label, Integer.class, dflt, InputControl.integerInput(dflt, validate), false);
     }
 
     @Override
     public InputGridBuilder decimal(String id, String label, Supplier<Double> dflt, Function<Double, Optional<String>> validate) {
-        return add(id, label, Double.class, dflt, InputControl.decimalInput(dflt, validate));
+        return add(id, label, Double.class, dflt, InputControl.decimalInput(dflt, validate), false);
     }
 
     @Override
     public InputGridBuilder checkBox(String id, String label, Supplier<Boolean> dflt, String text, Function<Boolean, Optional<String>> validate) {
-        return add(id, label, Boolean.class, dflt, InputControl.checkBoxInput(dflt, text, validate));
+        return add(id, label, Boolean.class, dflt, InputControl.checkBoxInput(dflt, text, validate), false);
     }
 
     @Override
     public <T> InputGridBuilder comboBox(String id, String label, Supplier<T> dflt, Class<T> cls, Collection<T> items, Function<T, Optional<String>> validate) {
-        return add(id, label, cls, dflt, InputControl.comboBoxInput(items, dflt, validate));
+        return add(id, label, cls, dflt, InputControl.comboBoxInput(items, dflt, validate), false);
     }
 
     @Override
@@ -213,23 +228,23 @@ public class InputGridBuilder
             Class<T> cls,
             Collection<T> items,
             Function<T, Optional<String>> validate) {
-        return add(id, label, cls, dflt, InputControl.comboBoxExInput(items, dflt, edit, add, remove, format, validate));
+        return add(id, label, cls, dflt, InputControl.comboBoxExInput(items, dflt, edit, add, remove, format, validate), false);
     }
 
     @Override
     public <T> InputGridBuilder radioList(String id, String label, Supplier<T> dflt, Class<T> cls, Collection<T> items,
                                           Function<T, Optional<String>> validate) {
-        return add(id, label, cls, dflt, new RadioPane<>(items, null, validate));
+        return add(id, label, cls, dflt, new RadioPane<>(items, null, validate), false);
     }
 
     @Override
     public InputGridBuilder slider(String id, String label, Supplier<Double> dflt, double min, double max) {
-        return add(id, label, Double.class, dflt, Controls.slider().min(min).max(max).setDefault(dflt).build());
+        return add(id, label, Double.class, dflt, Controls.slider().min(min).max(max).setDefault(dflt).build(), false);
     }
 
     @Override
     public InputGridBuilder options(String id, String label, Supplier<Arguments> dflt, Supplier<Collection<Option<?>>> options) {
-        return add(id, label, Arguments.class, dflt, new OptionsPane(options, dflt));
+        return add(id, label, Arguments.class, dflt, new OptionsPane(options, dflt), false);
     }
 
     @Override
@@ -239,16 +254,16 @@ public class InputGridBuilder
 
     @Override
     public InputGridBuilder chooseFile(String id, String label, Supplier<Path> dflt, FileDialogMode mode, boolean existingOnly, Collection<FileChooser.ExtensionFilter> filter, Function<Path, Optional<String>> validate) {
-        return add(id, label, Path.class, dflt, new FileInput(mode, existingOnly, dflt, filter, validate));
+        return add(id, label, Path.class, dflt, new FileInput(mode, existingOnly, dflt, filter, validate), false);
     }
 
     @Override
     public InputGridBuilder node(String id, Node node) {
-        return doAdd(id, null, Void.class, () -> null, new ControlWrapper(node));
+        return doAdd(id, null, Void.class, () -> null, new ControlWrapper(node), false);
     }
 
     @Override
     public InputGridBuilder node(String id, String label, Node node) {
-        return doAdd(id, label, Void.class, () -> null, new ControlWrapper(node));
+        return doAdd(id, label, Void.class, () -> null, new ControlWrapper(node), false);
     }
 }

@@ -36,6 +36,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param type    the result type
      * @param dflt    supplier of default value
      * @param control the control
+     * @param hidden
      * @return {@code this}
      */
     <T> B add(
@@ -43,8 +44,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String label,
             Class<T> type,
             Supplier<T> dflt,
-            InputControl<T> control
-    );
+            InputControl<T> control,
+            boolean hidden);
 
     /**
      * Add an unlabeled input control.
@@ -144,6 +145,38 @@ public interface InputBuilder<B extends InputBuilder<B>> {
             String id,
             String label,
             T value    );
+
+    /**
+     * Creates a hidden field with the specified configurations.
+     * <p>
+     * Use this method to include values in the form data that are not visible to the user.
+     *
+     * @param <T>   The type of the value managed by this input.
+     * @param id    The unique identifier for the input field.
+     * @param value A supplier that provides the value to be displayed in the input field.
+     * @param cls   The class type of the value provided.
+     * @return An instance of `B` representing the configured disabled input field.
+     */
+    <T> B hidden(
+            String id,
+            Supplier<T> value,
+            Class<T> cls
+    );
+
+    /**
+     * Configures a non-editable input field with the specified parameters.
+     * <p>
+     * Use this method to include values in the form data that are not visible to the user.
+     *
+     * @param <T>   the type of the value contained in the input field
+     * @param id    the unique identifier for the input field
+     * @param value the value to be displayed in the disabled input field
+     * @return an instance of type B representing the configured disabled input field
+     */
+    <T> B hidden(
+            String id,
+            T value
+    );
 
     /**
      * Add a labeled string input.

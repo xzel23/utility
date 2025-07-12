@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SequencedCollection;
@@ -76,9 +76,13 @@ public class InputGrid extends GridPane {
      * result might contain keys that map to {@code null} values.
      */
     public Map<String, Object> get() {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new LinkedHashMap<>();
         //noinspection SimplifyForEach - Collectors.toMap() does not support null values!
-        data.forEach(e -> result.put(e.id, e.control.get()));
+        data.forEach(e -> {
+            if (!e.id.startsWith("$ignored$")) {
+                result.put(e.id, e.control.get());
+            }
+        });
         return result;
     }
 
@@ -109,6 +113,13 @@ public class InputGrid extends GridPane {
         int r = 0;
         int c = 0;
         for (var entry : data) {
+            controls.add(entry.control);
+
+            if (entry.hidden) {
+                // do not add cotrols for hidden fields
+                continue;
+            }
+
             // add label and control
             int gridX = 3 * c;
             int gridY = r;
@@ -121,8 +132,6 @@ public class InputGrid extends GridPane {
             } else {
                 span = 2;
             }
-
-            controls.add(entry.control);
 
             addToGrid(entry.control.node(), gridX, gridY, span, insets);
             gridX += span;
@@ -182,13 +191,15 @@ public class InputGrid extends GridPane {
         final InputControl<? super T> control;
         final @Nullable Label label;
         final Label marker = new Label();
+        final boolean hidden;
 
-        Meta(String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control) {
+        Meta(String id, @Nullable String label, Class<T> cls, Supplier<? extends @Nullable T> dflt, InputControl<? super T> control, boolean hidden) {
             this.id = id;
             this.label = label != null ? new Label(label) : null;
             this.cls = cls;
             this.dflt = dflt;
             this.control = control;
+            this.hidden = hidden;
 
             Dimension2D dimMarker = new Dimension2D(0, 0);
             dimMarker = FxUtil.growToFit(dimMarker, marker.getBoundsInLocal());

@@ -50,8 +50,8 @@ public class InputPaneBuilder
     }
 
     @Override
-    public <T> InputPaneBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control) {
-        pb.add(id, label, type, dflt, control);
+    public <T> InputPaneBuilder add(String id, String label, Class<T> type, Supplier<T> dflt, InputControl<T> control, boolean hidden) {
+        pb.add(id, label, type, dflt, control, hidden);
         return this;
     }
 
@@ -100,6 +100,18 @@ public class InputPaneBuilder
     @Override
     public <T> InputPaneBuilder constant(String id, String label, T value) {
         pb.constant(id, label, value);
+        return this;
+    }
+
+    @Override
+    public <T> InputPaneBuilder hidden(String id, Supplier<T> value, Class<T> cls) {
+        pb.hidden(id, value, cls);
+        return this;
+    }
+
+    @Override
+    public <T> InputPaneBuilder hidden(String id, T value) {
+        pb.hidden(id, value);
         return this;
     }
 

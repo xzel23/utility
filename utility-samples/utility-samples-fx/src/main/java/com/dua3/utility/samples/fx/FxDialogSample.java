@@ -131,13 +131,15 @@ public class FxDialogSample extends Application {
                         .constant("readonly", "readonly", "This is the value of the readonly field.")
                         .constant("readonly2", "readonly date", LocalDate::now, LocalDate.class)
                         .string("txt", "enter text", () -> "dflt")
+                        .hidden("secret1", "A")
+                        .hidden("secret2", "B")
                         .integer("integer", "enter number", () -> 0)
                         .integer("integer from 4 to 7", "enter number [4-7]", () -> 0,
                                 i -> i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
                         .decimal("decimal", "decimal", () -> 0.0)
                         .comboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
                         .checkBox("bool", "Yes or No:", () -> false, "yes")
-                        .chooseFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(new FileChooser.ExtensionFilter("all files", "*")))
+                        .chooseFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(new FileChooser.ExtensionFilter("all files", "*.*", "*")))
                         .chooseFile("directory", "Directory", () -> null, FileDialogMode.DIRECTORY, true, List.of(new FileChooser.ExtensionFilter("all files", "*")))
                         .comboBoxEx("listEx",
                                 "edit items and choose one",
