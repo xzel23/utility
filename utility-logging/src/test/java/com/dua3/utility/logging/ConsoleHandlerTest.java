@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +31,7 @@ class ConsoleHandlerTest {
 
         // Set up a new ByteArrayOutputStream to capture output
         outContent = new ByteArrayOutputStream();
-        PrintStream testOut = new PrintStream(outContent);
+        PrintStream testOut = new PrintStream(outContent, true, StandardCharsets.UTF_8);
 
         // Create a ConsoleHandler with the test PrintStream
         handler = new ConsoleHandler(testOut, true);
@@ -51,7 +52,7 @@ class ConsoleHandlerTest {
         assertTrue(handler.isColored(), "Handler should be colored by default when constructed with colored=true");
 
         // Create a non-colored handler
-        ConsoleHandler nonColoredHandler = new ConsoleHandler(new PrintStream(outContent), false);
+        ConsoleHandler nonColoredHandler = new ConsoleHandler(new PrintStream(outContent, true, StandardCharsets.UTF_8), false);
         assertFalse(nonColoredHandler.isColored(), "Handler should not be colored when constructed with colored=false");
     }
 
@@ -61,7 +62,7 @@ class ConsoleHandlerTest {
         handler.handleEntry(testEntry);
 
         // Get the output
-        String output = outContent.toString();
+        String output = outContent.toString(StandardCharsets.UTF_8);
 
         // Test that the output contains the expected parts
         assertTrue(output.contains("[INFO]"), "Output should contain the log level");
@@ -80,7 +81,7 @@ class ConsoleHandlerTest {
         handler.handleEntry(entryWithThrowable);
 
         // Get the output
-        String output = outContent.toString();
+        String output = outContent.toString(StandardCharsets.UTF_8);
 
         // Test that the output contains the expected parts
         assertTrue(output.contains("[ERROR]"), "Output should contain the log level");
@@ -114,7 +115,7 @@ class ConsoleHandlerTest {
         handler.handleEntry(testEntry);
 
         // Get the colored output
-        String coloredOutput = outContent.toString();
+        String coloredOutput = outContent.toString(StandardCharsets.UTF_8);
         outContent.reset();
 
         // Handle the test entry with non-colored output
@@ -122,7 +123,7 @@ class ConsoleHandlerTest {
         handler.handleEntry(testEntry);
 
         // Get the non-colored output
-        String nonColoredOutput = outContent.toString();
+        String nonColoredOutput = outContent.toString(StandardCharsets.UTF_8);
 
         // Test that the colored output is different from the non-colored output
         assertNotEquals(coloredOutput, nonColoredOutput, "Colored output should be different from non-colored output");
@@ -149,7 +150,7 @@ class ConsoleHandlerTest {
         handler.handleEntry(infoEntry);
 
         // The output should be empty because the INFO entry should be filtered out
-        String infoOutput = outContent.toString();
+        String infoOutput = outContent.toString(StandardCharsets.UTF_8);
         assertEquals("", infoOutput, "INFO level entry should be filtered out");
 
         // Now, handle an ERROR level entry (should pass through the filter)
@@ -158,7 +159,7 @@ class ConsoleHandlerTest {
         handler.handleEntry(errorEntry);
 
         // The output should contain the error message because the ERROR entry should pass through the filter
-        String errorOutput = outContent.toString();
+        String errorOutput = outContent.toString(StandardCharsets.UTF_8);
         assertTrue(errorOutput.contains("Error message"), "ERROR level entry should pass through the filter");
     }
 }
