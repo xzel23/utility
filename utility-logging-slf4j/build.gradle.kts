@@ -1,8 +1,8 @@
 project.description = "Java utilities (logging, SLF4J)"
 
 dependencies {
-    implementation(project(":utility"))
     api(project(":utility-logging"))
+    implementation(project(":utility"))
     implementation(rootProject.libs.slf4j.api)
 
     testImplementation(rootProject.libs.junit.jupiter.api)

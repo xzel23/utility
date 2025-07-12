@@ -35,8 +35,8 @@ public final class LogEntryLog4J implements LogEntry {
         var instant = event.getInstant();
         this.time = Instant.ofEpochSecond(instant.getEpochSecond(), instant.getNanoOfSecond());
         this.level = LogUtilLog4J.translate(event.getLevel());
-        var marker = event.getMarker();
-        this.marker = marker == null ? "" : marker.getName();
+        var m = event.getMarker();
+        this.marker = m == null ? "" : m.getName();
         this.source = event.getSource();
         Message message = event.getMessage();
         if (message instanceof ReusableMessage rm) {

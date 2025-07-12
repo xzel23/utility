@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for the {@link ILogEntryDispatcherFactory} interface.
@@ -39,7 +38,7 @@ class ILogEntryDispatcherFactoryTest {
     @Test
     void testLambdaImplementation() {
         // Create a factory using a lambda expression
-        ILogEntryDispatcherFactory factory = () -> new MockLogEntryDispatcher();
+        ILogEntryDispatcherFactory factory = MockLogEntryDispatcher::new;
 
         // Test that the factory returns a non-null dispatcher
         LogEntryDispatcher returnedDispatcher = factory.getDispatcher();

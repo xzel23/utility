@@ -7,7 +7,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for the {@link LogEntryDispatcherFactorySlf4j} class.
