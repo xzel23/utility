@@ -22,8 +22,7 @@ class LogUtilLog4JTest {
     void testIsDefaultImplementation() {
         // This test may pass or fail depending on the environment
         // Just call the method to ensure it doesn't throw an exception
-        boolean result = LogUtilLog4J.isDefaultImplementation();
-        // No assertion, just make sure it runs
+        assertDoesNotThrow(LogUtilLog4J::isDefaultImplementation);
     }
 
     @Test
