@@ -5,8 +5,10 @@
 
 package com.dua3.utility.text;
 
+import com.dua3.utility.data.Color;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -168,5 +170,108 @@ class RichTextBuilderTest {
         RichTextBuilder builder = new RichTextBuilder();
         RichText rt = builder.toRichText();
         assertEquals(rt, RichText.emptyText());
+    }
+    @Test
+    void testComposeDecompose() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello");
+
+        // Compose a new attribute
+        builder.compose("color", (name, value) -> Color.RED);
+        builder.append(" World");
+
+        // Decompose to revert the attribute
+        builder.decompose("color");
+        builder.append("!");
+
+        RichText rt = builder.toRichText();
+        assertEquals("Hello World!", rt.toString());
+
+        // The middle part should have the color attribute
+        assertEquals(3, rt.stream().count());
+    }
+
+    @Test
+    void testApply() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello World");
+
+        Style style = Style.create("test", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
+        builder.apply(style);
+
+        RichText rt = builder.toRichText();
+        assertEquals("Hello World", rt.toString());
+
+        // Check that the style was applied
+        Object styleList = rt.stream().findFirst().get().getAttributes().get(RichText.ATTRIBUTE_NAME_STYLE_LIST);
+        assertEquals(true, styleList instanceof List);
+        assertEquals(1, ((List<?>) styleList).size());
+    }
+
+    @Test
+    void testEnsureCapacity() {
+        RichTextBuilder builder = new RichTextBuilder(5);
+        builder.ensureCapacity(20);
+        builder.append("This is a test string longer than the initial capacity");
+
+        RichText rt = builder.toRichText();
+        assertEquals("This is a test string longer than the initial capacity", rt.toString());
+    }
+
+    @Test
+    void testCharAt() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello World");
+
+        assertEquals('H', builder.charAt(0));
+        assertEquals('e', builder.charAt(1));
+        assertEquals('l', builder.charAt(2));
+        assertEquals('d', builder.charAt(10));
+    }
+
+    @Test
+    void testSubSequence() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello World");
+
+        assertEquals("Hello", builder.subSequence(0, 5).toString());
+        assertEquals("World", builder.subSequence(6, 11).toString());
+        assertEquals("lo Wo", builder.subSequence(3, 8).toString());
+    }
+
+    @Test
+    void testAppendRun() {
+        RichTextBuilder builder1 = new RichTextBuilder();
+        builder1.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder1.append("Bold");
+        builder1.pop(Style.FONT_WEIGHT);
+        RichText rt1 = builder1.toRichText();
+
+        RichTextBuilder builder2 = new RichTextBuilder();
+        builder2.append("Hello ");
+        builder2.appendRun(rt1.stream().findFirst().get());
+        builder2.append("!");
+
+        RichText rt2 = builder2.toRichText();
+        assertEquals("Hello Bold!", rt2.toString());
+        assertEquals(3, rt2.stream().count());
+    }
+
+    @Test
+    void testGetAndGetOrDefault() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+
+        // Test get method
+        Object fontWeight = builder.get(Style.FONT_WEIGHT);
+        assertEquals(Style.FONT_WEIGHT_VALUE_BOLD, fontWeight);
+
+        // Test getOrDefault with existing attribute
+        Object fontWeightDefault = builder.getOrDefault(Style.FONT_WEIGHT, "normal");
+        assertEquals(Style.FONT_WEIGHT_VALUE_BOLD, fontWeightDefault);
+
+        // Test getOrDefault with non-existing attribute
+        Object colorDefault = builder.getOrDefault("color", "black");
+        assertEquals("black", colorDefault);
     }
 }
