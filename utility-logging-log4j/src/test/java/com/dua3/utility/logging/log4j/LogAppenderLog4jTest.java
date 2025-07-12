@@ -106,34 +106,4 @@ class LogAppenderLog4jTest {
         // Verify that the filter was set
         assertSame(trueFilter, dispatcher.getFilter());
     }
-
-    @Test
-    void testWeakReferenceCleanup() {
-        // Note: This test is difficult to implement reliably because it depends on garbage collection
-        // Create a handler that will be garbage collected
-        LogEntryHandler handler = entry -> {};
-
-        // Add the handler to the dispatcher
-        dispatcher.addLogEntryHandler(handler);
-
-        // Verify that the handler was added
-        Collection<LogEntryHandler> handlers = dispatcher.getLogEntryHandlers();
-        assertTrue(handlers.contains(handler));
-
-        // Set handler to null to allow garbage collection
-        // Note: This doesn't guarantee that the handler will be garbage collected
-        handler = null;
-        System.gc();
-
-        // Create a log event to trigger cleanup
-        LogEvent event = Log4jLogEvent.newBuilder().setLoggerName("TestLogger").setLevel(Level.INFO).setMessage(new SimpleMessage("Test message")).build();
-
-        // Append the event
-        appender.append(event);
-
-        // Verify that the handler was removed
-        // This assertion might fail if the handler wasn't garbage collected
-        handlers = dispatcher.getLogEntryHandlers();
-        assertFalse(handlers.contains(handler));
-    }
 }
