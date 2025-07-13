@@ -7,23 +7,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A record class representing build information, including build time and version components.
  *
  * @param buildTime  the build timestamp
- * @param major      the major version
- * @param minor      the minor version
- * @param patchLevel the patch level of the version
- * @param separator  the separator used between version components
- * @param suffix     the suffix associated with this version
+ * @param version    the version
  */
-public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patchLevel, String separator,
-                        String suffix) {
+public record BuildInfo(ZonedDateTime buildTime, Version version) {
 
     /**
      * Key to use for the build version in properties files.
@@ -39,27 +31,15 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
     /**
      * Create from a version and timestamp
      *
-     * @param version            the version string
+     * @param versionString      the version string
      * @param zonedDateTimeBuild the timestamp, compatible with {@link ZonedDateTime#parse(CharSequence)}
      * @return BuildInfo instance
      */
-    public static BuildInfo create(CharSequence version, CharSequence zonedDateTimeBuild) {
-        Pattern pattern = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?(?<separator>[-_.])?(?<suffix>\\w+)?");
-        Matcher m = pattern.matcher(version);
-
-        if (!m.matches()) {
-            throw new IllegalArgumentException("Version does not match pattern: " + version);
-        }
-
-        int major = Integer.parseInt(m.group("major"));
-        int minor = group(m, "minor").map(Integer::parseInt).orElse(0);
-        int patch = group(m, "patch").map(Integer::parseInt).orElse(0);
-        String separator = group(m, "separator").orElse("");
-        String suffix = group(m, "suffix").orElse("");
-
+    public static BuildInfo create(CharSequence versionString, CharSequence zonedDateTimeBuild) {
+        Version version = Version.valueOf(versionString.toString());
         ZonedDateTime buildTime = ZonedDateTime.parse(zonedDateTimeBuild);
 
-        BuildInfo buildInfo = new BuildInfo(buildTime, major, minor, patch, separator, suffix);
+        BuildInfo buildInfo = new BuildInfo(buildTime, version);
 
         LOG.debug("BuildInfo: {}", buildInfo);
 
@@ -92,19 +72,6 @@ public record BuildInfo(ZonedDateTime buildTime, int major, int minor, int patch
         try (InputStream in = cls.getResourceAsStream(resource)) {
             return create(LangUtil.loadProperties(Objects.requireNonNull(in, () -> "resource not found: " + resource)));
         }
-    }
-
-    private static Optional<String> group(Matcher m, String group) {
-        return Optional.ofNullable(m.group(group));
-    }
-
-    /**
-     * Get version string.
-     *
-     * @return the version string
-     */
-    public String version() {
-        return "%d.%d.%d%s%s".formatted(major, minor, patchLevel, separator, suffix);
     }
 
     @Override
