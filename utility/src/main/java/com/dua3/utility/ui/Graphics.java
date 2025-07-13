@@ -413,7 +413,7 @@ public interface Graphics extends AutoCloseable {
      * @param p the point to transform
      * @return the point transformed to local coordinates as described above
      */
-    default Vector2f tansform(Vector2f p) {
+    default Vector2f transform(Vector2f p) {
         return getTransformation().transform(p);
     }
 
