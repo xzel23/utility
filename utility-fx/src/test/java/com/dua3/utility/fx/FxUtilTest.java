@@ -1,14 +1,21 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.concurrent.Value;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.Image;
+import com.dua3.utility.data.ImageUtil;
 import com.dua3.utility.data.RGBColor;
 import com.dua3.utility.lang.Platform;
+import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.FillRule;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
 import com.dua3.utility.text.RichText;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
@@ -19,6 +26,8 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -331,4 +340,85 @@ class FxUtilTest extends FxTestBase {
             assertEquals(fxFont.getSize(), convertedFxFont.getSize(), 0.001, "Font size should be preserved in round-trip conversion");
         });
     }
+
+    @Test
+    void testConvertDimension2DtoDimension2f() {
+        // Test converting from JavaFX Dimension2D to utility Dimension2f
+        Dimension2D dim = new Dimension2D(100, 50);
+        Dimension2f dim2f = FxUtil.convert(dim);
+
+        assertEquals(100, dim2f.width(), "Width should be 100");
+        assertEquals(50, dim2f.height(), "Height should be 50");
+    }
+
+    @Test
+    void testConvertDimension2ftoDimension2D() {
+        // Test converting from utility Dimension2f to JavaFX Dimension2D
+        Dimension2f dim2f = new Dimension2f(100, 50);
+        Dimension2D dim = FxUtil.convert(dim2f);
+
+        assertEquals(100, dim.getWidth(), "Width should be 100");
+        assertEquals(50, dim.getHeight(), "Height should be 50");
+    }
+
+    @Test
+    void testCopyToClipboardImage() throws Throwable {
+        // Skip this test on headless environments
+        if (java.awt.GraphicsEnvironment.isHeadless()) {
+            return;
+        }
+
+        FxTestUtil.runOnFxThreadAndWait(() -> {
+            // Create a simple 1x1 image
+            Image img = ImageUtil.getInstance().create(1, 1, new int[1]);
+
+            // Test copying image to clipboard
+            FxUtil.copyToClipboard(img);
+
+            // Verify the clipboard content
+            Optional<Image> clipboardImage = FxUtil.getImageFromClipboard();
+            assertTrue(clipboardImage.isPresent(), "Clipboard should contain an image");
+            assertNotNull(clipboardImage.get(), "Image should not be null");
+        });
+    }
+
+    @Test
+    void testToObservableValue() {
+        // Test converting a Value to an ObservableValue
+        Value<String> value = Value.create("test");
+        ObservableValue<String> observable = FxUtil.toObservableValue(value);
+
+        assertEquals("test", observable.getValue(), "Initial value should match");
+
+        // Test that changes to the Value are reflected in the ObservableValue
+        AtomicReference<String> newValue = new AtomicReference<>();
+        observable.addListener((obs, oldVal, newVal) -> newValue.set(newVal));
+
+        value.set("updated");
+        assertEquals("updated", observable.getValue(), "Updated value should match");
+        assertEquals("updated", newValue.get(), "Listener should be notified of the change");
+    }
+
+    @Test
+    void testMap() {
+        // Test mapping an ObservableList
+        ObservableList<Integer> numbers = FXCollections.observableArrayList(1, 2, 3);
+        Function<Integer, String> mapper = Object::toString;
+        ObservableList<String> strings = FxUtil.map(numbers, mapper);
+
+        assertEquals(3, strings.size(), "Mapped list should have the same size");
+        assertEquals("1", strings.get(0), "First element should be mapped correctly");
+        assertEquals("2", strings.get(1), "Second element should be mapped correctly");
+        assertEquals("3", strings.get(2), "Third element should be mapped correctly");
+
+        // Test that changes to the original list are reflected in the mapped list
+        numbers.add(4);
+        assertEquals(4, strings.size(), "Mapped list should be updated");
+        assertEquals("4", strings.get(3), "New element should be mapped correctly");
+
+        numbers.remove(0);
+        assertEquals(3, strings.size(), "Mapped list should be updated after removal");
+        assertEquals("2", strings.get(0), "First element should now be the second original element");
+    }
+
 }

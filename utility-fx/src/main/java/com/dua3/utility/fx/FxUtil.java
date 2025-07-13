@@ -3,6 +3,7 @@ package com.dua3.utility.fx;
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.ClosePath2f;
+import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.HtmlConverter;
 import com.dua3.utility.text.RichText;
 import javafx.animation.AnimationTimer;
@@ -231,6 +232,27 @@ public final class FxUtil {
      */
     public static Rectangle2f convert(Bounds b) {
         return new Rectangle2f((float) b.getMinX(), (float) b.getMinY(), (float) b.getWidth(), (float) b.getHeight());
+    }
+
+    /**
+     * Converts a Dimension2D object to a Dimension2f object.
+     *
+     * @param d the Dimension2D object to be converted
+     * @return a new Dimension2f object with the width and height values
+     *         of the provided Dimension2D object, cast to float
+     */
+    public static Dimension2f convert(Dimension2D d) {
+        return new Dimension2f((float) d.getWidth(), (float) d.getHeight());
+    }
+
+    /**
+     * Converts a Dimension2f object to a Dimension2D object.
+     *
+     * @param d the Dimension2f object to be converted
+     * @return a new Dimension2D object with the width and height values from the given Dimension2f
+     */
+    public static Dimension2D convert(Dimension2f d) {
+        return new Dimension2D(d.width(), d.height());
     }
 
     /**
