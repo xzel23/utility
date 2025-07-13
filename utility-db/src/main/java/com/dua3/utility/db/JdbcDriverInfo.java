@@ -2,6 +2,8 @@ package com.dua3.utility.db;
 
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.ArgumentsParser;
+import com.dua3.utility.options.ArgumentsParserBuilder;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.Param;
 import com.dua3.utility.text.TextUtil;
@@ -238,13 +240,34 @@ public class JdbcDriverInfo {
         return TextUtil.transform(urlScheme,
                 s -> Objects.toString(
                         values.get(
-                                getOption(s).orElseThrow(() -> new NoSuchElementException("No value present"))
+                                getOption(s).orElseThrow(() -> new NoSuchElementException("No value present for option " + s))
                         ).orElseThrow(),
                         "")
         );
     }
 
+    /**
+     * Creates and configures an instance of {@link ArgumentsParser} tailored for JDBC Driver arguments.
+     * The parser is initialized with a predefined name and no positional arguments,
+     * and specific options are added to the parser during its construction.
+     *
+     * @return a fully configured {@link ArgumentsParser} instance for processing JDBC Driver arguments
+     */
+    public ArgumentsParser createArgumentsParser() {
+        ArgumentsParserBuilder apb = ArgumentsParser.builder()
+                .name("JDBC Driver")
+                .positionalArgs(0, 0);
+        options.forEach(apb::addOption);
+        return apb.build();
+    }
+
+    /**
+     * Retrieves an {@code Option} from the available options based on the specified display name.
+     *
+     * @param s the display name of the option to search for
+     * @return an {@code Optional} containing the matching {@code Option} if found, or an empty {@code Optional} if no match is found
+     */
     private Optional<Option<?>> getOption(String s) {
-        return options.stream().filter(opt -> opt.switches().contains(s)).findFirst();
+        return options.stream().filter(opt -> opt.displayName().equals(s)).findFirst();
     }
 }
