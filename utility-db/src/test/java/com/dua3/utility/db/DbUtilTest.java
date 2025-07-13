@@ -11,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import javax.sql.DataSource;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -24,7 +28,13 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for DbUtil.
@@ -41,13 +51,7 @@ class DbUtilTest {
 
         // Create a test table
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("CREATE TABLE test_table (" +
-                    "id INT PRIMARY KEY, " +
-                    "string_val VARCHAR(255), " +
-                    "int_val INT, " +
-                    "date_val DATE, " +
-                    "time_val TIME, " +
-                    "timestamp_val TIMESTAMP)");
+            stmt.execute("CREATE TABLE test_table (" + "id INT PRIMARY KEY, " + "string_val VARCHAR(255), " + "int_val INT, " + "date_val DATE, " + "time_val TIME, " + "timestamp_val TIMESTAMP)");
 
             // Insert some test data
             stmt.execute("INSERT INTO test_table VALUES (1, 'test1', 100, '2023-01-15', '14:30:15', '2023-01-15 14:30:15')");
@@ -150,8 +154,7 @@ class DbUtilTest {
     @Test
     void testStream() throws SQLException {
         // Test streaming results from a query
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM test_table ORDER BY id")) {
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery("SELECT * FROM test_table ORDER BY id")) {
 
             // Use DbUtil.stream to convert ResultSet to Stream
             Stream<Integer> idStream = DbUtil.stream(rs, resultSet -> {
@@ -176,8 +179,7 @@ class DbUtilTest {
         }
 
         // Test streaming results from a query with multiple rows
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM test_table ORDER BY id")) {
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery("SELECT * FROM test_table ORDER BY id")) {
 
             // Use DbUtil.stream to convert ResultSet to Stream
             Stream<String> stringStream = DbUtil.stream(rs, resultSet -> {
@@ -206,16 +208,105 @@ class DbUtilTest {
             // The H2 driver should be available
             assertTrue(driver.isPresent());
             assertNotNull(driver.get());
-            assertTrue(driver.get().getClass().getName().contains("h2") || 
-                       driver.get().getClass().getName().contains("H2"),
-                      "Expected H2 driver but got: " + driver.get().getClass().getName());
+            assertTrue(driver.get().getClass().getName().contains("h2") || driver.get().getClass().getName().contains("H2"), "Expected H2 driver but got: " + driver.get().getClass().getName());
         } catch (ClassNotFoundException | SQLException e) {
             fail("Exception while testing loadDriver: " + e.getMessage());
         }
     }
 
-    // Note: We can't test createDataSource directly because it requires a Driver instance,
-    // which we would normally get from the private getDriver method.
+    @Test
+    void testLoadDriverWithURLs() throws URISyntaxException {
+        // Test loading driver using URLs
+        try {
+            // Get the URL of the H2 driver JAR that's already in the classpath
+            // This is a bit of a hack, but it allows us to test the method without needing external files
+            String h2ClassName = "org.h2.Driver";
+            URL h2ClassUrl = getClass().getClassLoader().getResource(h2ClassName.replace('.', '/') + ".class");
+            assertNotNull(h2ClassUrl, "Could not find H2 driver class URL");
 
-    // Note: We can't test UncheckedCloser because it's a private interface in DbUtil.
+            // Convert the class URL to the JAR URL
+            String urlString = h2ClassUrl.toString();
+            // Extract the JAR URL part (everything before the ! character)
+            String jarUrlString = urlString.substring(0, urlString.indexOf('!'));
+            // Remove the "jar:" prefix if present
+            if (jarUrlString.startsWith("jar:")) {
+                jarUrlString = jarUrlString.substring(4);
+            }
+            URL jarUrl = new URI(jarUrlString).toURL();
+
+            // Test the loadDriver method with the JAR URL
+            Optional<Driver> driver = DbUtil.loadDriver(jarUrl);
+
+            // The H2 driver should be available
+            assertTrue(driver.isPresent(), "Driver should be present");
+            assertNotNull(driver.get(), "Driver should not be null");
+            assertTrue(driver.get().getClass().getName().contains("h2") || driver.get().getClass().getName().contains("H2"), "Expected H2 driver but got: " + driver.get().getClass().getName());
+        } catch (ClassNotFoundException | SQLException | java.net.MalformedURLException e) {
+            fail("Exception while testing loadDriver with URLs: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testCreateDataSource() {
+        // Test creating a DataSource with a Driver
+        try {
+            // First, get a Driver instance
+            Optional<Driver> driverOpt = DbUtil.loadDriver(getClass().getClassLoader());
+            assertTrue(driverOpt.isPresent(), "Driver should be present");
+            Driver driver = driverOpt.get();
+
+            // Test URL, user, and password for H2 in-memory database
+            String url = "jdbc:h2:mem:testdb";
+            String user = "sa";
+            String password = "";
+
+            // Create the DataSource
+            DataSource dataSource = DbUtil.createDataSource(driver, url, user, password);
+
+            // Verify the DataSource is not null
+            assertNotNull(dataSource, "DataSource should not be null");
+
+            // Verify we can get a connection from the DataSource
+            try (Connection conn = dataSource.getConnection()) {
+                assertNotNull(conn, "Connection should not be null");
+                assertFalse(conn.isClosed(), "Connection should be open");
+
+                // Verify we can execute a simple query
+                try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT 1")) {
+                    assertTrue(rs.next(), "ResultSet should have at least one row");
+                    assertEquals(1, rs.getInt(1), "Query result should be 1");
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            fail("Exception while testing createDataSource: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testCreateDataSourceWithInvalidURL() {
+        // Test creating a DataSource with an invalid URL
+        try {
+            // First, get a Driver instance
+            Optional<Driver> driverOpt = DbUtil.loadDriver(getClass().getClassLoader());
+            assertTrue(driverOpt.isPresent(), "Driver should be present");
+            Driver driver = driverOpt.get();
+
+            // Invalid URL for H2 driver
+            String url = "jdbc:invalid:mem:testdb";
+            String user = "sa";
+            String password = "";
+
+            // Attempt to create the DataSource with invalid URL
+            // This should throw a SQLException
+            SQLException exception = assertThrows(SQLException.class, () -> {
+                DbUtil.createDataSource(driver, url, user, password);
+            });
+
+            // Verify the exception message
+            assertTrue(exception.getMessage().contains("URL not accepted by driver"), "Exception message should indicate URL is not accepted");
+        } catch (ClassNotFoundException | SQLException e) {
+            fail("Exception while testing createDataSource with invalid URL: " + e.getMessage());
+        }
+    }
+
 }

@@ -219,6 +219,8 @@ could not be loaded.
     - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
     - Added `TextUtil.isNullOrBlank()`
 
+- Package `utility.db`
+    - Fixed a bug that prevented parsing of command line options to specify a
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
       that has a more secure API and adds many new features:
