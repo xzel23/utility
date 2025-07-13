@@ -288,9 +288,14 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
     private FontData getFontData(java.awt.Font awtFont) {
         String family = awtFont.getName();
         float size = awtFont.getSize2D();
+
+        // a sufficient large font size is needed for the fontmetrics because stringwidth() returns int values
+        float vSize = 100.0f;
+        float factor = size / vSize;
+
         boolean bold = awtFont.isBold();
         boolean monospaced = isMonospaced(awtFont);
-        FontMetrics fontMetrics = graphics.getFontMetrics(awtFont);
+        FontMetrics fontMetrics = graphics.getFontMetrics(awtFont.deriveFont(vSize));
         return FontData.get(
                 List.of(family),
                 size,
@@ -299,10 +304,10 @@ public final class AwtFontUtil implements FontUtil<java.awt.Font> {
                 awtFont.isItalic(),
                 false,
                 false,
-                fontMetrics.getAscent(),
-                fontMetrics.getDescent(),
-                fontMetrics.getHeight(),
-                fontMetrics.stringWidth(" ")
+                factor * fontMetrics.getAscent(),
+                factor * fontMetrics.getDescent(),
+                factor * fontMetrics.getHeight(),
+                factor * fontMetrics.stringWidth(" ")
         );
     }
 
