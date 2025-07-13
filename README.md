@@ -220,7 +220,9 @@ could not be loaded.
     - Added `TextUtil.isNullOrBlank()`
 
 - Package `utility.db`
-    - Fixed a bug that prevented parsing of command line options to specify a
+    - Fixed a bug that prevented parsing of command line options to specify a JDBC connection
+    - Added convenience method `createArgumentsParser()`.
+
 - Package `utility.crypt`
     - Introduced a new package that replaces the old `CryptUtil` class in `utility.lang`.
       that has a more secure API and adds many new features:
