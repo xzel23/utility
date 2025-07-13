@@ -31,6 +31,7 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SequencedCollection;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -138,15 +140,18 @@ public final class FxFontUtil implements FontUtil<Font> {
         bounds = text.getBoundsInLocal();
         float spaceWidth = (float) bounds.getWidth();
 
-        String style = fxFont.getStyle();
+        Set<String> styles = Arrays.stream(fxFont.getStyle().split(" "))
+                .map(s -> s.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+
         return FontData.get(
                 List.of(fxFont.getFamily()),
                 (float) fxFont.getSize(),
                 monospaced,
-                style.contains("bold"),
-                style.contains("italic") || style.contains("oblique"),
-                style.contains("line-under"),
-                style.contains("line-through"),
+                styles.contains("bold"),
+                styles.contains("italic") || styles.contains("oblique"),
+                styles.contains("line-under"),
+                styles.contains("line-through"),
                 ascent,
                 descent,
                 height,
