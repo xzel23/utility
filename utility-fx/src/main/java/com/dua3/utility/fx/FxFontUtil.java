@@ -31,7 +31,6 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -140,9 +139,7 @@ public final class FxFontUtil implements FontUtil<Font> {
         bounds = text.getBoundsInLocal();
         float spaceWidth = (float) bounds.getWidth();
 
-        Set<String> styles = Arrays.stream(fxFont.getStyle().split(" "))
-                .map(s -> s.toLowerCase(Locale.ROOT))
-                .collect(Collectors.toSet());
+        Set<String> styles = Set.of(fxFont.getStyle().toLowerCase(Locale.ROOT).split(" "));
 
         return FontData.get(
                 List.of(fxFont.getFamily()),
@@ -167,14 +164,14 @@ public final class FxFontUtil implements FontUtil<Font> {
      *         italic, underline, and strikethrough
      */
     public static FontDef getFontDef(Font fxFont) {
-        String style = fxFont.getStyle().toLowerCase(Locale.ROOT);
+        Set<String> styles = Set.of(fxFont.getStyle().toLowerCase(Locale.ROOT).split(" "));
         FontDef fontDef = new FontDef();
         fontDef.setFamilies(List.of(fxFont.getFamily()));
         fontDef.setSize((float) fxFont.getSize());
-        fontDef.setBold(style.contains("bold"));
-        fontDef.setItalic(style.contains("italic") || style.contains("oblique"));
-        fontDef.setUnderline(style.contains("line-under"));
-        fontDef.setStrikeThrough(style.contains("line-through"));
+        fontDef.setBold(styles.contains("bold"));
+        fontDef.setItalic(styles.contains("italic") || styles.contains("oblique"));
+        fontDef.setUnderline(styles.contains("line-under"));
+        fontDef.setStrikeThrough(styles.contains("line-through"));
         return fontDef;
     }
 

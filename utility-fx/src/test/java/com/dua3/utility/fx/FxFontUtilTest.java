@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.lang.Platform;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontData;
@@ -7,11 +8,13 @@ import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.SequencedCollection;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,9 +47,11 @@ class FxFontUtilTest extends FxTestBase {
 
     @Test
     void testConvertFontToFx() {
+        String family = getDefaultFontFamily();
+
         // Create a font definition
         FontDef fontDef = new FontDef();
-        fontDef.setFamily("Arial");
+        fontDef.setFamily(family);
         fontDef.setSize(16f);
         fontDef.setBold(true);
         fontDef.setItalic(true);
@@ -58,14 +63,19 @@ class FxFontUtilTest extends FxTestBase {
         javafx.scene.text.Font fxFont = fontUtil.convert(font);
 
         assertNotNull(fxFont);
+        assertEquals(family, fxFont.getFamily());
         assertEquals(16.0, fxFont.getSize(), 0.001);
-        // Note: We can't directly check bold/italic on JavaFX Font objects
+        String styles = fxFont.getStyle().toLowerCase(Locale.ROOT);
+        assertTrue(styles.contains("bold"));
+        assertTrue(styles.contains("italic"));
     }
 
     @Test
     void testConvertFontFromFx() {
+        String family = getDefaultFontFamily();
+
         // Create a JavaFX font
-        javafx.scene.text.Font fxFont = javafx.scene.text.Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 16);
+        javafx.scene.text.Font fxFont = javafx.scene.text.Font.font(family, FontWeight.BOLD, FontPosture.ITALIC, 16);
 
         // Convert to utility Font
         Font font = fontUtil.convert(fxFont);
@@ -74,13 +84,15 @@ class FxFontUtilTest extends FxTestBase {
         assertEquals(16f, font.getSizeInPoints(), 0.001);
         assertTrue(font.isBold());
         assertTrue(font.isItalic());
-        assertTrue(font.getFamilies().contains("Arial"));
+        assertTrue(font.getFamilies().contains(family));
     }
 
     @Test
     void testGetFontData() {
         // Create a JavaFX font
-        javafx.scene.text.Font fxFont = javafx.scene.text.Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 16);
+        String family = getDefaultFontFamily();
+
+        javafx.scene.text.Font fxFont = javafx.scene.text.Font.font(family, FontWeight.BOLD, FontPosture.ITALIC, 16);
 
         // Convert to utility Font
         Font font = fontUtil.convert(fxFont);
@@ -92,13 +104,29 @@ class FxFontUtilTest extends FxTestBase {
         assertEquals(16.0f, fontData.size(), 0.001);
         assertTrue(fontData.bold());
         assertTrue(fontData.italic());
-        assertTrue(fontData.families().contains("Arial"));
+        assertTrue(fontData.families().contains(family));
+    }
+
+    /**
+     * Determines the default font family based on the detected platform.
+     * For Windows and macOS platforms, the default is "Arial".
+     * For all other platforms, the default is "Liberation Sans".
+     *
+     * @return the default font family as a non-null string
+     */
+    private static @NonNull String getDefaultFontFamily() {
+        return switch (Platform.currentPlatform()) {
+            case WINDOWS, MACOS -> "Arial";
+            default -> "Liberation Sans";
+        };
     }
 
     @Test
     void testGetFontDef() {
+        String family = getDefaultFontFamily();
+
         // Create a JavaFX font
-        javafx.scene.text.Font fxFont = javafx.scene.text.Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 16);
+        javafx.scene.text.Font fxFont = javafx.scene.text.Font.font(family, FontWeight.BOLD, FontPosture.ITALIC, 16);
 
         // Get the font definition
         FontDef fontDef = fontUtil.getFontDef(fxFont);
@@ -107,7 +135,7 @@ class FxFontUtilTest extends FxTestBase {
         assertEquals(16f, fontDef.getSize(), 0.001);
         assertTrue(fontDef.getBold());
         assertTrue(fontDef.getItalic());
-        assertEquals("Arial", fontDef.getFamily());
+        assertEquals(family, fontDef.getFamily());
     }
 
     @Test
@@ -170,9 +198,11 @@ class FxFontUtilTest extends FxTestBase {
 
     @Test
     void testDeriveFont() {
+        String family = getDefaultFontFamily();
+
         // Create a font definition with different properties
         FontDef fontDef = new FontDef();
-        fontDef.setFamily("Arial");
+        fontDef.setFamily(family);
         fontDef.setSize(16f);
         fontDef.setBold(true);
         fontDef.setItalic(true);
@@ -181,6 +211,7 @@ class FxFontUtilTest extends FxTestBase {
         Font derivedFont = fontUtil.deriveFont(defaultFont, fontDef);
 
         assertNotNull(derivedFont);
+        assertEquals(family, derivedFont.getFamily());
         assertEquals(16f, derivedFont.getSizeInPoints(), 0.001);
         assertTrue(derivedFont.isBold());
         assertTrue(derivedFont.isItalic());
@@ -188,9 +219,11 @@ class FxFontUtilTest extends FxTestBase {
 
     @Test
     void testGetFxFont() {
+        String family = getDefaultFontFamily();
+
         // This is a private method, so we test it indirectly through convert
         FontDef fontDef = new FontDef();
-        fontDef.setFamily("Arial");
+        fontDef.setFamily(family);
         fontDef.setSize(16f);
         fontDef.setBold(true);
         fontDef.setItalic(true);
@@ -200,6 +233,6 @@ class FxFontUtilTest extends FxTestBase {
 
         assertNotNull(fxFont);
         assertEquals(16.0, fxFont.getSize(), 0.001);
-        assertEquals("Arial Bold Italic", fxFont.getName());
+        assertEquals(family + " Bold Italic", fxFont.getName());
     }
 }
