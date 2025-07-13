@@ -85,10 +85,15 @@ public final class AwtImage extends BufferedImage implements MutableImage {
             }
 
             ImageReader reader = iter.next();
-            BufferedImage image = reader.read(0);
-            AwtImage awtImage = create(image.getWidth(), image.getHeight());
-            awtImage.getGraphics().drawImage(image, 0, 0, null);
-            return awtImage;
+            try {
+                reader.setInput(iis);
+                BufferedImage image = reader.read(0);
+                AwtImage awtImage = create(image.getWidth(), image.getHeight());
+                awtImage.getGraphics().drawImage(image, 0, 0, null);
+                return awtImage;
+            } finally {
+                reader.dispose();  // Clean up the reader
+            }
         }
     }
 
