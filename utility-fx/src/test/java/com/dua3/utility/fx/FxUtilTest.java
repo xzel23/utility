@@ -22,10 +22,16 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
+import javafx.stage.FileChooser;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+import java.io.File;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -421,4 +427,93 @@ class FxUtilTest extends FxTestBase {
         assertEquals("2", strings.get(0), "First element should now be the second original element");
     }
 
+    @Test
+    void testMatchesExtensionFilterWithPath() {
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.text");
+
+        java.nio.file.Path txtFile = Paths.get("test.txt");
+        java.nio.file.Path textFile = Paths.get("test.text");
+        java.nio.file.Path docFile = Paths.get("test.doc");
+
+        assertTrue(FxUtil.matches(filter, txtFile), "Should match .txt file");
+        assertTrue(FxUtil.matches(filter, textFile), "Should match .text file");
+        assertFalse(FxUtil.matches(filter, docFile), "Should not match .doc file");
+    }
+
+    @Test
+    void testMatchesExtensionFilterWithString() {
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.text");
+
+        String txtFile = "test.txt";
+        String textFile = "test.text";
+        String docFile = "test.doc";
+
+        assertTrue(FxUtil.matches(filter, txtFile), "Should match .txt file");
+        assertTrue(FxUtil.matches(filter, textFile), "Should match .text file");
+        assertFalse(FxUtil.matches(filter, docFile), "Should not match .doc file");
+    }
+
+    @Test
+    void testMatchesExtensionFilterWithFile() {
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.text");
+
+        File txtFile = new File("test.txt");
+        File textFile = new File("test.text");
+        File docFile = new File("test.doc");
+
+        assertTrue(FxUtil.matches(filter, txtFile), "Should match .txt file");
+        assertTrue(FxUtil.matches(filter, textFile), "Should match .text file");
+        assertFalse(FxUtil.matches(filter, docFile), "Should not match .doc file");
+    }
+
+    @Test
+    void testMatchesExtensionFilterWithURI() {
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.text");
+
+        URI txtFile = URI.create("file:///test.txt");
+        URI textFile = URI.create("file:///test.text");
+        URI docFile = URI.create("file:///test.doc");
+
+        assertTrue(FxUtil.matches(filter, txtFile), "Should match .txt file");
+        assertTrue(FxUtil.matches(filter, textFile), "Should match .text file");
+        assertFalse(FxUtil.matches(filter, docFile), "Should not match .doc file");
+    }
+
+    @Test
+    void testFontConverter() throws Throwable {
+        FxTestUtil.runOnFxThreadAndWait(() -> {
+            // Create a JavaFX font
+            javafx.scene.text.Font fxFont = javafx.scene.text.Font.font("Arial", 12);
+
+            // Convert to utility font using FxUtil directly
+            com.dua3.utility.text.Font utilFont = FxUtil.convert(fxFont);
+
+            // Convert back to JavaFX font using FxUtil directly
+            javafx.scene.text.Font convertedFxFont = FxUtil.convert(utilFont);
+
+            // Verify the conversion
+            assertEquals(fxFont.getFamily(), convertedFxFont.getFamily(), "Font family should be preserved");
+            assertEquals(fxFont.getSize(), convertedFxFont.getSize(), 0.001, "Font size should be preserved");
+        });
+    }
+
+    @Test
+    void testColorConverter() throws Throwable {
+        FxTestUtil.runOnFxThreadAndWait(() -> {
+            // Create a JavaFX color
+            javafx.scene.paint.Color fxColor = javafx.scene.paint.Color.rgb(255, 0, 0, 0.5); // Semi-transparent red
+
+            // Convert to utility color using FxUtil directly
+            com.dua3.utility.data.Color utilColor = FxUtil.convert(fxColor);
+
+            // Convert back to JavaFX color using FxUtil directly
+            javafx.scene.paint.Color convertedFxColor = FxUtil.convert(utilColor);
+
+            // Verify the conversion (with some tolerance for floating point precision)
+            assertEquals(fxColor.getRed(), convertedFxColor.getRed(), 0.01, "Red component should be preserved");
+            assertEquals(fxColor.getGreen(), convertedFxColor.getGreen(), 0.01, "Green component should be preserved");
+            assertEquals(fxColor.getBlue(), convertedFxColor.getBlue(), 0.01, "Blue component should be preserved");
+            assertEquals(fxColor.getOpacity(), convertedFxColor.getOpacity(), 0.01, "Alpha component should be preserved");
+        });
+    }
 }
