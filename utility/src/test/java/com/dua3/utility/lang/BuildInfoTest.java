@@ -2,6 +2,7 @@ package com.dua3.utility.lang;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Properties;
 
@@ -102,8 +103,29 @@ class BuildInfoTest {
 
     @Test
     void testInvalidVersionFormat() {
-        assertThrows(IllegalArgumentException.class, () -> 
-            BuildInfo.create("1.2", ZonedDateTime.now().toString())
+        assertThrows(IllegalArgumentException.class, () ->
+                BuildInfo.create("1.2", ZonedDateTime.now().toString())
+        );
+    }
+
+    @Test
+    void testCreateFromResource() throws IOException {
+        // Test loading from an existing resource
+        BuildInfo bi = BuildInfo.create(BuildInfoTest.class, "buildinfo.properties");
+
+        assertEquals(3, bi.version().major());
+        assertEquals(4, bi.version().minor());
+        assertEquals(5, bi.version().patch());
+        assertEquals("test", bi.version().suffix());
+        assertEquals("3.4.5-test", bi.version().toString());
+        assertEquals("2023-02-02T14:30Z[UTC]", bi.buildTime().toString());
+    }
+
+    @Test
+    void testCreateFromNonExistentResource() {
+        // Test loading from a non-existent resource
+        assertThrows(NullPointerException.class, () ->
+                BuildInfo.create(BuildInfoTest.class, "non-existent.properties")
         );
     }
 }
