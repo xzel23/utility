@@ -205,6 +205,7 @@ could not be loaded.
     - Run tasks have been added for the sample applications.
 
 - Package `utility`
+    - Added `Version` class and refactored BuildInfo class to use it.
     - `LangUtil.newUuidV7()` to create UUID v7 instances.
     - `LangUtil.reverseInPlace()` to reverse array contents
     - `LangUtil.isWrapperFor()` to test if a class is a primitive wrapper for another class
