@@ -72,4 +72,30 @@ public record Dimension2f(float width, float height) {
     public Dimension2f addMargin(float mx, float my) {
         return new Dimension2f(width + 2 * mx, height + 2 * my);
     }
+
+    /**
+     * Computes the maximum of two {@code Dimension2f} objects based on their width and height.
+     *
+     * @param a the first {@code Dimension2f} object
+     * @param b the second {@code Dimension2f} object
+     * @return a new {@code Dimension2f} object with the maximum width and height values
+     *         from the two input dimensions
+     */
+    public static Dimension2f max(Dimension2f a, Dimension2f b) {
+        return new Dimension2f(Math.max(a.width(), b.width()), Math.max(a.height(), b.height()));
+    }
+
+    /**
+     * Computes the minimum of two {@code Dimension2f} objects based on their dimensions.
+     * The resulting {@code Dimension2f} has the lesser width of the two input dimensions
+     * and the greater height of the two input dimensions.
+     *
+     * @param a the first {@code Dimension2f} object
+     * @param b the second {@code Dimension2f} object
+     * @return a new {@code Dimension2f} object with the minimum width and maximum height
+     *         from the two input dimensions
+     */
+    public static Dimension2f min(Dimension2f a, Dimension2f b) {
+        return new Dimension2f(Math.min(a.width(), b.width()), Math.min(a.height(), b.height()));
+    }
 }
