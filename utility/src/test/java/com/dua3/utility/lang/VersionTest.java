@@ -3,6 +3,7 @@ package com.dua3.utility.lang;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -146,5 +147,76 @@ class VersionTest {
 
         assertEquals(0, v1.compareMajorTo(v2));
         assertEquals(0, v2.compareMajorTo(v1));
+    }
+
+    @Test
+    void testIsBetween_WithinRange() {
+        // Test version within a range
+        Version lower = new Version(1, 0, 0, "");
+        Version middle = new Version(1, 5, 0, "");
+        Version upper = new Version(2, 0, 0, "");
+
+        assertTrue(middle.isBetween(lower, upper));
+    }
+
+    @Test
+    void testIsBetween_EqualToLowerBound() {
+        // Test version equal to lower bound
+        Version lower = new Version(1, 0, 0, "");
+        Version upper = new Version(2, 0, 0, "");
+
+        assertTrue(lower.isBetween(lower, upper));
+    }
+
+    @Test
+    void testIsBetween_EqualToUpperBound() {
+        // Test version equal to upper bound
+        Version lower = new Version(1, 0, 0, "");
+        Version upper = new Version(2, 0, 0, "");
+
+        assertTrue(upper.isBetween(lower, upper));
+    }
+
+    @Test
+    void testIsBetween_BelowRange() {
+        // Test version below range
+        Version below = new Version(0, 9, 0, "");
+        Version lower = new Version(1, 0, 0, "");
+        Version upper = new Version(2, 0, 0, "");
+
+        assertFalse(below.isBetween(lower, upper));
+    }
+
+    @Test
+    void testIsBetween_AboveRange() {
+        // Test version above range
+        Version lower = new Version(1, 0, 0, "");
+        Version upper = new Version(2, 0, 0, "");
+        Version above = new Version(2, 1, 0, "");
+
+        assertFalse(above.isBetween(lower, upper));
+    }
+
+    @Test
+    void testIsBetween_WithSuffixes() {
+        // Test versions with suffixes
+        Version lower = new Version(1, 0, 0, "alpha");
+        Version middle = new Version(1, 0, 0, "beta");
+        Version upper = new Version(1, 0, 0, "rc");
+
+        assertTrue(middle.isBetween(lower, upper));
+    }
+
+    @Test
+    void testIsBetween_WithAndWithoutSuffixes() {
+        // Test with and without suffixes, where versions without suffixes are considered greater
+        Version v1 = new Version(1, 0, 0, "alpha");
+        Version v2 = new Version(1, 0, 0, "");
+        Version v3 = new Version(1, 1, 0, "");
+
+        // v1 (1.0.0-alpha) is less than v2 (1.0.0) which is less than v3 (1.1.0)
+        assertTrue(v1.isBetween(v1, v3));
+        assertTrue(v2.isBetween(v1, v3));
+        assertFalse(v3.isBetween(v1, v2));
     }
 }

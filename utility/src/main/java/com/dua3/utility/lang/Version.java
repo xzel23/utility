@@ -98,4 +98,16 @@ public record Version(int major, int minor, int patch, String suffix) implements
         }
         return result;
     }
+
+    /**
+     * Determines whether this version is within the range of the specified versions, inclusive.
+     *
+     * @param fromInclusive the lower bound of the range (inclusive)
+     * @param toInclusive the upper bound of the range (inclusive)
+     * @return {@code true} if this version is greater than or equal to {@code fromInclusive}
+     *         and less than or equal to {@code toInclusive}, otherwise {@code false}
+     */
+    public boolean isBetween(Version fromInclusive, Version toInclusive) {
+        return compareTo(fromInclusive) >= 0 && compareTo(toInclusive) <= 0;
+    }
 }
