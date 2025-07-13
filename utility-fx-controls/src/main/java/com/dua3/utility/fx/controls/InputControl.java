@@ -3,15 +3,11 @@ package com.dua3.utility.fx.controls;
 import org.jspecify.annotations.Nullable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -33,7 +29,9 @@ import java.text.ParsePosition;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -44,6 +42,9 @@ import java.util.function.UnaryOperator;
  * @param <T> the input result type
  */
 public interface InputControl<T> {
+
+    String INVALID_VALUE = "Invalid value";
+
     /**
      * Creates a {@link SimpleInputControl} for a TextField with String input.
      *
@@ -80,13 +81,9 @@ public interface InputControl<T> {
      * @param validate the {@link Function} to validate the integer input
      * @return a {@link SimpleInputControl} for integer input
      */
-    static SimpleInputControl<TextField, Integer> integerInput(Supplier<@Nullable Integer> dflt, Function<@Nullable Integer, Optional<String>> validate) {
-        TextField control = new TextField();
-        StringProperty textProperty = control.textProperty();
-        IntegerProperty value = new SimpleIntegerProperty();
+    static SimpleInputControl<TextField, Long> integerInput(Supplier<@Nullable Long> dflt, Function<@Nullable Long, Optional<String>> validate) {
         Format format = new FormatWithDefaultValue(NumberFormat.getIntegerInstance(Locale.getDefault()), dflt);
-        textProperty.bindBidirectional(value, format);
-        return new SimpleInputControl<>(control, value.asObject(), dflt, validate);
+        return formattableInput(Long.class, format, dflt, validate);
     }
 
     /**
@@ -97,12 +94,66 @@ public interface InputControl<T> {
      * @return a {@link SimpleInputControl} that manages a TextField for Decimal input
      */
     static SimpleInputControl<TextField, Double> decimalInput(Supplier<@Nullable Double> dflt, Function<@Nullable Double, Optional<String>> validate) {
+        Format format = new FormatWithDefaultValue(NumberFormat.getInstance(Locale.getDefault()), dflt);
+        return formattableInput(Double.class, format, dflt, validate);
+    }
+
+    static <U> SimpleInputControl<TextField,U> formattableInput(Class<U> cls, Format format, Supplier<@Nullable U> dflt, Function<@Nullable U, Optional<String>> validate) {
         TextField control = new TextField();
         StringProperty textProperty = control.textProperty();
-        DoubleProperty value = new SimpleDoubleProperty();
-        Format format = new FormatWithDefaultValue(NumberFormat.getInstance(Locale.getDefault()), dflt);
-        textProperty.bindBidirectional(value, format);
-        return new SimpleInputControl<>(control, value.asObject(), dflt, validate);
+        Property<U> value = new SimpleObjectProperty<>();
+        AtomicReference<@Nullable String> err = new AtomicReference<>(null);
+        textProperty.bindBidirectional(value, createStrictStringConverter(cls, format, err::set));
+
+        Function<@Nullable U, Optional<String>> strictValidate = d ->
+                d != null ? validate.apply(d) : Optional.ofNullable(err.get());
+
+        return new SimpleInputControl<>(control, value, dflt, strictValidate);
+    }
+
+    private static <T> StringConverter<T> createStrictStringConverter(Class<T> cls, Format format, Consumer<String> setErrorMessage) {
+        return new StringConverter<T>() {
+            @Override
+            public String toString(@Nullable T object) {
+                return object == null ? "" : format.format(object);
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public @Nullable T fromString(String string) {
+                if (string.isEmpty()) {
+                    setErrorMessage.accept("");
+                    return null;
+                }
+
+                try {
+                    ParsePosition pos = new ParsePosition(0);
+                    Object result = format.parseObject(string, pos);
+
+                    if (result == null || pos.getIndex() != string.length()) {
+                        setErrorMessage.accept(INVALID_VALUE);
+                        return null;
+                    }
+
+                    if (result instanceof Number n && !cls.isAssignableFrom(result.getClass())) {
+                        if (cls.isAssignableFrom(Integer.class)) {
+                            result = n.intValue();
+                        } else if (cls.isAssignableFrom(Long.class)) {
+                            result = n.longValue();
+                        } else if (cls.isAssignableFrom(Double.class)) {
+                            result = n.doubleValue();
+                        } else if (cls.isAssignableFrom(Float.class)) {
+                            result = n.floatValue();
+                        }
+                    }
+
+                    return cls.cast(result);
+                } catch (Exception e) {
+                    setErrorMessage.accept(INVALID_VALUE);
+                    return null;
+                }
+            }
+        };
     }
 
     /**
@@ -264,7 +315,6 @@ public interface InputControl<T> {
          */
         public State(Property<R> value) {
             this(value, freeze(value));
-
         }
 
         /**
@@ -367,6 +417,25 @@ public interface InputControl<T> {
         public void reset() {
             value.setValue(dflt.get());
         }
+
+        /**
+         * Validates the current state based on the value and validation function provided during
+         * the creation of the State object or set later and updates the valid state of the control.
+         *
+         * @return true if the current value of the property is valid, otherwise false
+         */
+        boolean validate() {
+            Optional<String> result;
+            try {
+                result = validate.apply(valueProperty().getValue());
+            } catch (Exception e) {
+                result = Optional.of(INVALID_VALUE);
+            }
+            valid.setValue(result.isEmpty());
+            error.setValue(result.orElse(""));
+            return result.isEmpty();
+        }
+
     }
 }
 
@@ -380,17 +449,17 @@ class FormatWithDefaultValue extends Format {
     }
 
     @Override
-    public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-        return baseFormat.format(obj, toAppendTo, pos);
+    public StringBuffer format(@Nullable Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+        return obj == null ? toAppendTo : baseFormat.format(obj, toAppendTo, pos);
     }
 
     @Override
-    public Object parseObject(String source, ParsePosition pos) {
+    public @Nullable Object parseObject(String source, ParsePosition pos) {
         return source.isEmpty() ? defaultValue.get() : baseFormat.parseObject(source, pos);
     }
 
     @Override
-    public Object parseObject(String source) throws ParseException {
+    public @Nullable Object parseObject(String source) throws ParseException {
         return source.isEmpty() ? defaultValue.get() : super.parseObject(source);
     }
 }

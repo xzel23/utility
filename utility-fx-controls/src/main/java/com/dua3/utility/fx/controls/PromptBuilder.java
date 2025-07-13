@@ -35,6 +35,7 @@ public class PromptBuilder extends DialogBuilder<TextInputDialog, PromptBuilder,
     PromptBuilder(@Nullable Window parentWindow) {
         super(parentWindow);
         setDialogSupplier(this::createDialog);
+        header("");
     }
 
     /**

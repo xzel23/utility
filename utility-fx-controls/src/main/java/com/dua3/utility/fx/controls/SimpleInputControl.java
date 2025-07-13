@@ -37,6 +37,9 @@ public class SimpleInputControl<C extends Control, R extends @Nullable Object> i
         this.dflt = dflt;
 
         reset();
+
+        control.focusedProperty().addListener((v, o, n) -> state.validate());
+        valueProperty().addListener((v, o, n) -> state.validate());
     }
 
     @Override

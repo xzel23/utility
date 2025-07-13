@@ -197,8 +197,8 @@ public class InputGridBuilder
     }
 
     @Override
-    public InputGridBuilder integer(String id, String label, Supplier<Integer> dflt, Function<Integer, Optional<String>> validate) {
-        return add(id, label, Integer.class, dflt, InputControl.integerInput(dflt, validate), false);
+    public InputGridBuilder integer(String id, String label, Supplier<Long> dflt, Function<Long, Optional<String>> validate) {
+        return add(id, label, Long.class, dflt, InputControl.integerInput(dflt, validate), false);
     }
 
     @Override

@@ -148,6 +148,7 @@ public class FileInput extends CustomControl<HBox> implements InputControl<@Null
 
         // valid property
         valid.bind(Bindings.createBooleanBinding(() -> validate.apply(getPath()).isEmpty(), value));
+        valueProperty().addListener((v, o, n) -> validate.apply(n));
 
         // enable drag&drop
         Function<List<Path>, List<TransferMode>> acceptPath = list ->

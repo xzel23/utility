@@ -221,7 +221,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     default B integer(
             String id,
             String label,
-            Supplier<Integer> dflt
+            Supplier<Long> dflt
     ) {
         return integer(id, label, dflt, i -> Optional.empty());
     }
@@ -238,8 +238,8 @@ public interface InputBuilder<B extends InputBuilder<B>> {
     B integer(
             String id,
             String label,
-            Supplier<Integer> dflt,
-            Function<Integer, Optional<String>> validate
+            Supplier<Long> dflt,
+            Function<Long, Optional<String>> validate
     );
 
     /**

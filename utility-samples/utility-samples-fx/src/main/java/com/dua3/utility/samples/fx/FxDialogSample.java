@@ -133,10 +133,10 @@ public class FxDialogSample extends Application {
                         .string("txt", "enter text", () -> "dflt")
                         .hidden("secret1", "A")
                         .hidden("secret2", "B")
-                        .integer("integer", "enter number", () -> 0)
-                        .integer("integer from 4 to 7", "enter number [4-7]", () -> 0,
+                        .integer("integer", "enter number", () -> 0L)
+                        .integer("integer from 4 to 7", "enter number [4-7]", () -> null,
                                 i -> i >= 4 && i <= 7 ? Optional.empty() : Optional.of(i + " is not between 4 and 7"))
-                        .decimal("decimal", "decimal", () -> 0.0)
+                        .decimal("decimal", "decimal", () -> null)
                         .comboBox("list", "choose one", () -> "Maybe", String.class, List.of("Yes", "No", "Maybe"))
                         .checkBox("bool", "Yes or No:", () -> false, "yes")
                         .chooseFile("file", "File", () -> null, FileDialogMode.OPEN, true, List.of(new FileChooser.ExtensionFilter("all files", "*.*", "*")))
@@ -144,7 +144,7 @@ public class FxDialogSample extends Application {
                         .comboBoxEx("listEx",
                                 "edit items and choose one",
                                 s -> Dialogs.prompt(primaryStage).title("Edit item").defaultValue("%s", Objects.requireNonNullElse(s, "")).build().showAndWait().orElse(null),
-                                () -> Dialogs.prompt(primaryStage).title("Edit item").build().showAndWait().orElse(null),
+                                () -> Dialogs.prompt(primaryStage).title("Add item").build().showAndWait().orElse(null),
                                 (cb, item) -> true,
                                 Objects::toString,
                                 () -> null,

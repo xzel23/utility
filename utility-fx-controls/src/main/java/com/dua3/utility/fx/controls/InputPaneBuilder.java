@@ -122,7 +122,7 @@ public class InputPaneBuilder
     }
 
     @Override
-    public InputPaneBuilder integer(String id, String label, Supplier<Integer> dflt, Function<Integer, Optional<String>> validate) {
+    public InputPaneBuilder integer(String id, String label, Supplier<Long> dflt, Function<Long, Optional<String>> validate) {
         pb.integer(id, label, dflt, validate);
         return this;
     }

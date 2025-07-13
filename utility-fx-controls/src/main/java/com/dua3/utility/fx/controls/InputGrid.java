@@ -1,5 +1,9 @@
 package com.dua3.utility.fx.controls;
 
+import com.dua3.utility.fx.FxFontUtil;
+import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
 import com.dua3.utility.fx.FxUtil;
 import javafx.beans.binding.Bindings;
@@ -20,6 +24,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SequencedCollection;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -38,8 +43,16 @@ public class InputGrid extends GridPane {
     protected static final Logger LOG = LogManager.getLogger(InputGrid.class);
 
     private static final String MARKER_INITIAL = "";
-    private static final String MARKER_ERROR = "⚠";
+    private static final String MARKER_ERROR = "❌";
     private static final String MARKER_OK = "";
+
+    private static final Font LABEL_FONT = FxFontUtil.getInstance().convert(new Label().getFont());
+    private static final Dimension2D MARKSER_SIZE = FxUtil.convert(
+            Stream.of(MARKER_INITIAL, MARKER_OK, MARKER_ERROR)
+                    .map(m -> TextUtil.getTextDimension(m, LABEL_FONT).getDimension())
+                    .reduce(Dimension2f::max)
+                    .orElse(Dimension2f.of(0,0))
+    );
 
     /**
      * A {@link BooleanProperty} representing the overall validity state of the input grid.
@@ -133,7 +146,16 @@ public class InputGrid extends GridPane {
                 span = 2;
             }
 
-            addToGrid(entry.control.node(), gridX, gridY, span, insets);
+            Node node = entry.control.node();
+            node.focusedProperty().addListener((v, o, n) -> {
+                if (Objects.equals(n, Boolean.FALSE)) {
+                    LOG.info("input control lost focus: {}", entry.id);
+                    updateMarker(entry);
+                }
+            });
+            entry.control.valueProperty().addListener((v, o, n) -> updateMarker(entry));
+
+            addToGrid(node, gridX, gridY, span, insets);
             gridX += span;
 
             addToGrid(entry.marker, gridX, gridY, 1, markerInsets);
@@ -160,6 +182,14 @@ public class InputGrid extends GridPane {
         // request focus for the first control
         if (!data.isEmpty()) {
             data.getFirst().control.node().requestFocus();
+        }
+    }
+
+    private static void updateMarker(Meta<?> entry) {
+        if (entry.control.isValid()) {
+            entry.marker.setText(MARKER_OK);
+        } else {
+            entry.marker.setText(MARKER_ERROR);
         }
     }
 
@@ -201,10 +231,8 @@ public class InputGrid extends GridPane {
             this.control = control;
             this.hidden = hidden;
 
-            Dimension2D dimMarker = new Dimension2D(0, 0);
-            dimMarker = FxUtil.growToFit(dimMarker, marker.getBoundsInLocal());
-            marker.setMinSize(dimMarker.getWidth(), dimMarker.getHeight());
             marker.setText(MARKER_INITIAL);
+            marker.setMinSize(MARKSER_SIZE.getWidth(), MARKSER_SIZE.getHeight());
         }
 
         void reset() {

@@ -258,6 +258,9 @@ could not be loaded.
 
 - Package `utility.fx`
     - `AboutDialogBuilder.name()` was changed to `AboutDialogBuilder.applicationName()` and `AboutDialog` was removed.
+    - Fixed validation of numeric fields in Dialogs created using `Dialogs.input()`.
+    - Show markers vor invalid input in Dialogs created using `Dialogs.input()`.
+    - Small fixes and improvements.
 
 - Other changes
     - Removed `LogBuffer.size()` - the method could not be used meaningfully in a multithreaded environment.

@@ -67,7 +67,7 @@ public class PinBoardSample extends Application {
         BooleanProperty inputValid = new SimpleBooleanProperty(false);
         input = Dialogs.inputPane()
                 .header("Input target coordinates.")
-                .integer("item", "item", () -> 0)
+                .integer("item", "item", () -> 0L)
                 .decimal("x", "x", () -> 0.0)
                 .decimal("y", "y", () -> 0.0)
                 .decimal("xrelvp", "x relative in VP", () -> 0.0)
