@@ -2,6 +2,7 @@ package com.dua3.utility.math.geometry;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -273,17 +274,29 @@ public record AffineTransformation2f(float a, float b, float c, float d, float e
 
     /**
      * a string representation of the matrix elements for the affine transformation.
+     * <p>
+     * This method uses the root locale for formatting.
      *
-     * <p><b>Example:</b><br>
-     * <pre>
-     *     ⎡  1,50   3,70   0,00⎤
-     *     ⎢ -4,00   1,50   0,00⎥
-     *     ⎣  0,00   0,00   1,00⎦
-     * </pre>
      * @return a string containing the affine transformation in matrix representation
      */
     public String toMatrixString() {
-        return String.format("""
+        return toMatrixString(Locale.ROOT);
+    }
+
+    /**
+     * a string representation of the matrix elements for the affine transformation.
+     * <p><b>Example:</b><br>
+     * <pre>
+     *     ⎡  1.50   3.70   0.00⎤
+     *     ⎢ -4.00   1.50   0.00⎥
+     *     ⎣  0.00   0.00   1.00⎦
+     * </pre>
+     *
+     * @param locale the {@link Locale} used for formatting
+     * @return a string containing the affine transformation in matrix representation
+     */
+    public String toMatrixString(Locale locale) {
+        return String.format(locale, """
                         ⎡%6.2f %6.2f %6.2f⎤
                         ⎢%6.2f %6.2f %6.2f⎥
                         ⎣%6.2f %6.2f %6.2f⎦
