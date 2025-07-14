@@ -157,7 +157,7 @@ class OptionTest {
         assertNotEquals(option1, option3);
 
         // Test inequality with a different type
-        assertNotEquals(option1, "not an option");
+        assertNotEquals("not an option", option1);
     }
 
     @Test
