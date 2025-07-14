@@ -210,12 +210,12 @@ public final class MathUtil {
      */
     public static double pow10(int i) {
         return switch (i) {
-            case -10 -> 0.00000000001;
-            case -9 -> 0.0000000001;
-            case -8 -> 0.000000001;
-            case -7 -> 0.00000001;
-            case -6 -> 0.0000001;
-            case -5 -> 0.000001;
+            case -10 -> 0.0000000001;
+            case -9 -> 0.000000001;
+            case -8 -> 0.00000001;
+            case -7 -> 0.0000001;
+            case -6 -> 0.000001;
+            case -5 -> 0.00001;
             case -4 -> 0.0001;
             case -3 -> 0.001;
             case -2 -> 0.01;

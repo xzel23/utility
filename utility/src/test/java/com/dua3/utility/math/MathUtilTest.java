@@ -102,11 +102,12 @@ class MathUtilTest {
      */
     @Test
     void testPow10() {
-        assertEquals(0.01, MathUtil.pow10(-2), 1.0e-15);
-        assertEquals(0.1, MathUtil.pow10(-1), 1.0e-15);
-        assertEquals(1.0, MathUtil.pow10(0), 1.0e-15);
-        assertEquals(10.0, MathUtil.pow10(1), 1.0e-15);
-        assertEquals(100.0, MathUtil.pow10(2), 1.0e-15);
+        long pow = 1;
+        for (int i = 0; i < 19; i++) {
+            assertEquals(1.0/pow, MathUtil.pow10(-i), 1.0e-15);
+            assertEquals((double) pow, MathUtil.pow10(i), 1.0e-15);
+            pow *= 10;
+        }
     }
 
     /**
