@@ -58,7 +58,7 @@ jobs:
         env:
           DISPLAY: ":99"
 
-      - name: 'publish snapshot build'
+      - name: 'publish build'
         if: runner.os == 'Linux' && success()
         run: ./gradlew jreleaserDeploy
         env:
