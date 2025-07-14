@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.security.SecureRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -31,7 +31,9 @@ public class FxLogPaneSample extends Application {
     private static final Log JCL_LOGGER = LogFactory.getLog("JCL." + FxLogPaneSample.class.getName());
     private static final java.util.logging.Logger JUL_LOGGER = java.util.logging.Logger.getLogger("JUL." + FxLogPaneSample.class.getName());
     private static final org.apache.logging.log4j.Logger LOG4J_LOGGER = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + FxLogPaneSample.class.getName());
+    private final SecureRandom random = new SecureRandom();
     private final AtomicInteger n = new AtomicInteger();
+
 
     /**
      * The main entry point for the application.
@@ -69,7 +71,7 @@ public class FxLogPaneSample extends Application {
 
                 while (true) {
                     if (AVERAGE_SLEEP_MILLIS > 0) {
-                        long wait = ThreadLocalRandom.current().nextLong(2L * AVERAGE_SLEEP_MILLIS * numberOfImplementations);
+                        long wait = random.nextLong(2L * AVERAGE_SLEEP_MILLIS * numberOfImplementations);
                         try {
                             Thread.sleep(wait);
                         } catch (InterruptedException e) {
@@ -84,7 +86,7 @@ public class FxLogPaneSample extends Application {
                         default -> 5;
                     };
 
-                    int levelInt = ThreadLocalRandom.current().nextInt(bound);
+                    int levelInt = random.nextInt(bound);
                     LogLevel level = LogLevel.values()[implementation == 1 || implementation == 3 ? Math.max(0, levelInt - 1) : levelInt];
 
                     String msg = "Message #%d, imp %s, original integer level %d, level %s".formatted(nr, implementation, levelInt, level);
@@ -150,7 +152,7 @@ public class FxLogPaneSample extends Application {
     }
 
     private IllegalStateException generateThrowable() {
-        if (ThreadLocalRandom.current().nextBoolean()) {
+        if (random.nextBoolean()) {
             return new IllegalStateException("Why?", new UnsupportedOperationException("Because of me!"));
         } else {
             return new IllegalStateException("What happened?");

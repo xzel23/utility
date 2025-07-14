@@ -16,10 +16,10 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -51,6 +51,12 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
      * The Log4J2 logger.
      */
     private final transient org.apache.logging.log4j.Logger log4JLogger = org.apache.logging.log4j.LogManager.getLogger("LOG4J." + getClass().getName());
+
+    /**
+     * A cryptographically strong random generator used for securely generating
+     * random numbers.
+     */
+    private final SecureRandom random = new SecureRandom();
 
     /**
      * An AtomicInteger to count the number of messages sent to the various logging frameworks.
@@ -148,7 +154,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                         }
 
                         while (!done) {
-                            long wait = ThreadLocalRandom.current().nextLong(2L * AVERAGE_SLEEP_MILLIS * numberOfImplementations);
+                            long wait = random.nextLong(2L * AVERAGE_SLEEP_MILLIS * numberOfImplementations);
                             try {
                                 Thread.sleep(wait);
                             } catch (InterruptedException e) {
@@ -158,7 +164,7 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
                             int nr = n.incrementAndGet();
 
                             int bound = implementation == 1 ? 6 : 5;
-                            int levelInt = ThreadLocalRandom.current().nextInt(bound);
+                            int levelInt = random.nextInt(bound);
                             LogLevel level = LogLevel.values()[implementation == 1 ? Math.max(0, levelInt - 1) : levelInt];
 
                             String msg = "Message #%d, imp %s, original integer level %d, level %s".formatted(nr, implementation, levelInt, level);
@@ -240,8 +246,8 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
         });
     }
 
-    private static IllegalStateException generateThrowable() {
-        if (ThreadLocalRandom.current().nextBoolean()) {
+    private IllegalStateException generateThrowable() {
+        if (random.nextBoolean()) {
             return new IllegalStateException("Why?", new UnsupportedOperationException("Because of me!"));
         } else {
             return new IllegalStateException("What happened?");
@@ -252,5 +258,9 @@ public abstract class SwingComponentsSampleLogBase extends JFrame {
     public void dispose() {
         done = true;
         super.dispose();
+    }
+
+    public SecureRandom getRandom() {
+        return random;
     }
 }

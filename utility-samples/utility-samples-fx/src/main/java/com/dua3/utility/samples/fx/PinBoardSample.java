@@ -23,8 +23,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 
+import java.security.SecureRandom;
 import java.util.Formatter;
-import java.util.Random;
 
 /**
  * A sample JavaFX application demonstrating the use of a PinBoard component.
@@ -34,7 +34,7 @@ import java.util.Random;
  */
 public class PinBoardSample extends Application {
 
-    private static final Random RANDOM = new Random();
+    private static final SecureRandom RANDOM = new SecureRandom();
     private final PinBoard pinBoard = new PinBoard();
     private @Nullable InputPane input;
 
