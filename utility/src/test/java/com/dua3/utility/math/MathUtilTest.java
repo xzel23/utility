@@ -38,7 +38,6 @@ class MathUtilTest {
      */
     @Test
     void testFindRoot() {
-
         double result = MathUtil.findRoot(x -> (x - 5) * (x + 2), 4, 10, 1.0e-15);
         double expResult = 5;
         assertEquals(expResult, result, 1.0e-15);
@@ -492,5 +491,28 @@ class MathUtilTest {
         assertEquals(1, MathUtil.octantIndexDegrees(405.0));
         assertEquals(0, MathUtil.octantIndexDegrees(-720.0));
         assertEquals(7, MathUtil.octantIndexDegrees(-22.5));
+    }
+
+    @Test
+    void testGetRoundingOperation() {
+        // Test each rounding mode
+        assertEquals(1.0, MathUtil.getRoundingOperation(RoundingMode.HALF_UP).applyAsDouble(0.5), 1.0e-15);
+        assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.HALF_DOWN).applyAsDouble(0.5), 1.0e-15);
+        assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.HALF_EVEN).applyAsDouble(0.5), 1.0e-15);
+        assertEquals(1.0, MathUtil.getRoundingOperation(RoundingMode.UP).applyAsDouble(0.1), 1.0e-15);
+        assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.DOWN).applyAsDouble(0.9), 1.0e-15);
+        assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.FLOOR).applyAsDouble(0.9), 1.0e-15);
+        assertEquals(1.0, MathUtil.getRoundingOperation(RoundingMode.CEILING).applyAsDouble(0.1), 1.0e-15);
+        assertEquals(0.5, MathUtil.getRoundingOperation(RoundingMode.UNNECESSARY).applyAsDouble(0.5), 1.0e-15);
+
+        // Test negative numbers
+        assertEquals(-1.0, MathUtil.getRoundingOperation(RoundingMode.HALF_UP).applyAsDouble(-0.5), 1.0e-15);
+        assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.HALF_DOWN).applyAsDouble(-0.5), 1.0e-15);
+        assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.HALF_EVEN).applyAsDouble(-0.5), 1.0e-15);
+        assertEquals(-1.0, MathUtil.getRoundingOperation(RoundingMode.UP).applyAsDouble(-0.1), 1.0e-15);
+        assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.DOWN).applyAsDouble(-0.9), 1.0e-15);
+        assertEquals(-1.0, MathUtil.getRoundingOperation(RoundingMode.FLOOR).applyAsDouble(-0.1), 1.0e-15);
+        assertEquals(0.0, MathUtil.getRoundingOperation(RoundingMode.CEILING).applyAsDouble(-0.9), 1.0e-15);
+        assertEquals(-0.5, MathUtil.getRoundingOperation(RoundingMode.UNNECESSARY).applyAsDouble(-0.5), 1.0e-15);
     }
 }
