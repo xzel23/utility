@@ -219,6 +219,7 @@ could not be loaded.
       for application data storage of the platform and the user's home directory. 
     - `DataUtil.convert()` now supports `valueOf(primitive)` and primitive arguement constructors.
     - Added `TextUtil.isNullOrBlank()`
+    - Fixed an issue where `TextUtil.wrap()` would drop the last line if not ended with a line-end character.
 
 - Package `utility.db`
     - Fixed a bug that prevented parsing of command line options to specify a JDBC connection
