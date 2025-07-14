@@ -1,6 +1,6 @@
 package com.dua3.utility.text;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class TextAssertions {
     public static void assertEqualsWithEscapedOutput(String expected, String actual, String name) {
@@ -9,7 +9,7 @@ public final class TextAssertions {
             String escapedExpected = TextUtil.escape(expected);
             String escapedActual = TextUtil.escape(actual);
             // Fail the test with detailed message
-            fail("[" + name + "]Expected:\n" + escapedExpected + "\nActual:\n" + escapedActual);
+            assertEquals(escapedExpected, escapedActual, "\"" + name + "\"\nexpected: \"" + escapedExpected + "\"\nbut was:  \"" + escapedActual + "\"\n");
         }
     }
 }

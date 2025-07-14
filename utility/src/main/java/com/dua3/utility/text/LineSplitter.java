@@ -104,6 +104,7 @@ final class LineSplitter<S extends CharSequence> {
         while (!isEOT()) {
             chunks.add(readChunk());
         }
+        chunks.add(new Chunk<>(ChunkType.EOT, seq, pos, pos));
         return chunks;
     }
 
@@ -198,10 +199,7 @@ final class LineSplitter<S extends CharSequence> {
 
         for (Chunk<S> chunk : chunks) {
             switch (chunk.type()) {
-                case EOT -> {
-                    handleEndOfText(readBuffer, currentLines, buffer);
-                    return paragraphs;
-                }
+                case EOT -> handleEndOfText(readBuffer, currentLines, buffer);
                 case PARAGRAPH_BREAK -> {
                     Result<R, S> result = handleParagraphBreak(readBuffer, bufferFactory, paragraphs, currentLines, buffer);
                     buffer = result.newBuffer();
@@ -220,7 +218,10 @@ final class LineSplitter<S extends CharSequence> {
     }
 
     private static <S extends CharSequence, R extends Appendable> void handleEndOfText(Function<R, S> readBuffer, List<S> currentLines, R buffer) {
-        currentLines.add(readBuffer.apply(buffer));
+        S seq = readBuffer.apply(buffer);
+        if (!seq.isEmpty()) {
+            currentLines.add(seq);
+        }
     }
 
     private static <S extends CharSequence, R extends Appendable> Result<R, S> handleParagraphBreak(
@@ -256,9 +257,9 @@ final class LineSplitter<S extends CharSequence> {
                 }
                 buffer.append(cs);
             } else {
-                // the line is empty
+                // the line is still empty
                 assert bufferLength.applyAsInt(buffer) == 0 : "buffer should be empty!";
-                if (bufferLength.applyAsInt(buffer) <= maxWidth || isHardWrap) {
+                if (isHardWrap) {
                     // chop and add after maxWidth characters until the rest fits into a line
                     while (cs.length() > maxWidth) {
                         // split word
