@@ -41,6 +41,9 @@ class MathUtilTest {
         double result = MathUtil.findRoot(x -> (x - 5) * (x + 2), 4, 10, 1.0e-15);
         double expResult = 5;
         assertEquals(expResult, result, 1.0e-15);
+
+        double result2 = MathUtil.findRoot(x -> (x - 5) * (x + 2), 20, -20, 1.0e-15);
+        assertEquals(expResult, result2, 1.0e-15);
     }
 
     /**
