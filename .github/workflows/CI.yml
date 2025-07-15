@@ -11,6 +11,9 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+      pages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -58,7 +61,7 @@ jobs:
         env:
           DISPLAY: ":99"
 
-      - name: 'publish build'
+      - name: 'publish build and Javadoc'
         if: runner.os == 'Linux' && success()
         run: ./gradlew jreleaserDeploy jreleaserUpload
         env:
