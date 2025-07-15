@@ -429,6 +429,7 @@ jreleaser {
     deploy {
         maven {
             if (!isSnapshot) {
+                println("adding release-deploy")
                 mavenCentral {
                     create("release-deploy") {
                         active.set(org.jreleaser.model.Active.RELEASE)
@@ -439,6 +440,7 @@ jreleaser {
                     }
                 }
             } else {
+                println("adding snapshot-deploy")
                 nexus2 {
                     create("snapshot-deploy") {
                         active.set(org.jreleaser.model.Active.SNAPSHOT)
