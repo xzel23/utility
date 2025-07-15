@@ -8,6 +8,10 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 plugins {
@@ -402,6 +406,62 @@ tasks.register("publishToStagingDirectory") {
 // Make jreleaserDeploy depend on the root-level publishToStagingDirectory task
 tasks.named("jreleaserDeploy") {
     dependsOn("publishToStagingDirectory")
+}
+
+// add a task to create aggregate javadoc in the root projects build/docs/javadoc folder
+tasks.register<Javadoc>("aggregateJavadoc") {
+    group = "documentation"
+    description = "Generates aggregated Javadoc for all subprojects"
+
+    setDestinationDir(layout.buildDirectory.dir("docs/javadoc").get().asFile)
+    setTitle("${rootProject.name} ${project.version} API")
+
+    // Disable module path inference
+    modularity.inferModulePath.set(false)
+
+    // Configure the task to depend on all subprojects' javadoc tasks
+    val filteredProjects = subprojects.filter { 
+        !it.name.endsWith("-bom") && !it.name.contains("samples") 
+    }
+
+    dependsOn(filteredProjects.map { it.tasks.named("javadoc") })
+
+    // Collect all Java source directories from subprojects, excluding module-info.java files
+    source(filteredProjects.flatMap { project ->
+        val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
+        val main = sourceSets.findByName("main")
+        main?.allJava?.filter { file ->
+            !file.name.equals("module-info.java")
+        } ?: files()
+    })
+
+    // Collect all classpaths from subprojects
+    classpath = files(filteredProjects.flatMap { project ->
+        val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
+        val main = sourceSets.findByName("main")
+        main?.compileClasspath ?: files()
+    })
+
+    // Add runtime classpath to ensure all dependencies are available
+    classpath += files(filteredProjects.flatMap { project ->
+        val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
+        val main = sourceSets.findByName("main")
+        main?.runtimeClasspath ?: files()
+    })
+
+    // Apply the same Javadoc options as in subprojects
+    (options as StandardJavadocDocletOptions).apply {
+        encoding = "UTF-8"
+        addStringOption("Xdoclint:all,-missing/private")
+        links("https://docs.oracle.com/en/java/javase/21/docs/api/")
+        use(true)
+        noTimestamp(true)
+        windowTitle = "${rootProject.name} ${project.version} API"
+        docTitle = "${rootProject.name} ${project.version} API"
+        header = "${rootProject.name} ${project.version} API"
+        // Disable module path to avoid module-related errors
+        addBooleanOption("module-path", false)
+    }
 }
 
 jreleaser {
