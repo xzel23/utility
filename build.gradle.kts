@@ -8,7 +8,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
@@ -230,6 +229,7 @@ subprojects {
             (options as StandardJavadocDocletOptions).apply {
                 encoding = "UTF-8"
                 addStringOption("Xdoclint:all,-missing/private")
+                locale = "en_US"
             }
         }
     }
@@ -459,6 +459,8 @@ tasks.register<Javadoc>("aggregateJavadoc") {
         windowTitle = "${rootProject.name} ${project.version} API"
         docTitle = "${rootProject.name} ${project.version} API"
         header = "${rootProject.name} ${project.version} API"
+        // Set locale to English to ensure consistent language in generated documentation
+        locale = "en_US"
         // Disable module path to avoid module-related errors
         addBooleanOption("module-path", false)
     }
