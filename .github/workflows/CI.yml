@@ -60,7 +60,7 @@ jobs:
 
       - name: 'publish build'
         if: runner.os == 'Linux' && success()
-        run: ./gradlew jreleaserDeploy
+        run: ./gradlew jreleaserDeploy jreleaserUpload
         env:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
