@@ -38,7 +38,8 @@ class VersionTest {
         // Test null input
         // Note: When assertions are enabled, an AssertionError is thrown for null input
         // before our explicit null check can throw an IllegalArgumentException
-        assertThrows(AssertionError.class, () -> Version.valueOf(null));
+        Throwable t = assertThrows(Throwable.class, () -> Version.valueOf(null));
+        assertTrue((t instanceof IllegalArgumentException) || (t instanceof AssertionError), "invalid exception thrown: " + t.getClass());
 
         // Test empty input
         assertThrows(IllegalArgumentException.class, () -> Version.valueOf(""));
