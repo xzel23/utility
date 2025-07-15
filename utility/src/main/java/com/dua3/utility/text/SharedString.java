@@ -42,7 +42,10 @@ public final class SharedString implements CharSequence {
 
     @Override
     public SharedString subSequence(int start, int end) {
-        LangUtil.check(end >= start && this.start + end <= this.end);
+        LangUtil.check(
+                end >= start && this.start + end <= this.end,
+                () -> new IndexOutOfBoundsException(end < start ? "end < start" : "end > length")
+        );
         return new SharedString(base, this.start + start, this.start + end);
     }
 
