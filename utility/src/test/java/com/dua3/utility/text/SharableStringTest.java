@@ -39,6 +39,23 @@ class SharableStringTest {
     }
 
     @Test
+    void testHashCodeConsistency() {
+        String original = "0123456789abcdefghijklmnopqrstuvwxyz";
+        SharableString sharable1 = new SharableString(original);
+        SharableString sharable2 = new SharableString(original);
+        SharableString sharable3 = new SharableString("different");
+
+        // Test hashCode consistency with equals
+        assertEquals(sharable1.equals(sharable2), sharable1.hashCode() == sharable2.hashCode());
+        assertEquals(sharable1.equals(sharable3), sharable1.hashCode() == sharable3.hashCode());
+
+        // Test hashCode consistency across multiple calls
+        int hash1 = sharable1.hashCode();
+        int hash2 = sharable1.hashCode();
+        assertEquals(hash1, hash2);
+    }
+
+    @Test
     void testLength() {
         String original = "0123456789abcdefghijklmnopqrstuvwxyz";
         SharableString sharable = new SharableString(original);
