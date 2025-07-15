@@ -463,6 +463,50 @@ jreleaser {
 // Utility tasks
 /////////////////////////////////////////////////////////////////////////////
 
+// Task to generate aggregated Javadoc for all modules
+tasks.register<Javadoc>("aggregateJavadoc") {
+    description = "Generates aggregated Javadoc for all modules"
+    group = "documentation"
+
+    setDestinationDir(file("${layout.buildDirectory.get()}/docs/aggregateJavadoc"))
+    title = "Utility Libraries API Documentation (${project.version})"
+
+    // Only include non-BOM projects
+    val javadocProjects = subprojects.filter { !it.name.endsWith("-bom") && !it.name.contains("samples") }
+
+    // Configure source files
+    source(javadocProjects.map { it.sourceSets.main.get().allJava })
+
+    // Configure classpath
+    classpath = files(javadocProjects.map { it.sourceSets.main.get().compileClasspath })
+
+    // Configure Javadoc options
+    (options as StandardJavadocDocletOptions).apply {
+        encoding = "UTF-8"
+        addStringOption("Xdoclint:all,-missing/private")
+        addBooleanOption("html5", true)
+        links("https://docs.oracle.com/en/java/javase/21/docs/api/")
+        use(true)
+        noTimestamp(true)
+        windowTitle = "Utility Libraries API Documentation (${project.version})"
+        docTitle = "Utility Libraries API Documentation (${project.version})"
+        bottom = "&copy; ${Meta.INCEPTION_YEAR}-2024 ${Meta.DEVELOPER_NAME}. All rights reserved."
+    }
+}
+
+// Task to create a zip file of the aggregated Javadoc
+tasks.register<Zip>("zipAggregateJavadoc") {
+    description = "Creates a zip file of the aggregated Javadoc"
+    group = "documentation"
+
+    dependsOn("aggregateJavadoc")
+
+    archiveFileName.set("${rootProject.name}-${project.version}-javadoc.zip")
+    destinationDirectory.set(layout.buildDirectory.get().asFile)
+
+    from(layout.buildDirectory.file("docs/aggregateJavadoc"))
+}
+
 // Task to generate JReleaser configuration file for reference
 tasks.register("generateJReleaserConfig") {
     description = "Generates JReleaser configuration file for reference"
