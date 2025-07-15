@@ -5,7 +5,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.0.0-beta3-snapshot"
+val projectVersion = "20.0.0-beta3-SNAPSHOT"
 
 // define subprojects
 include("utility")
@@ -45,6 +45,10 @@ dependencyResolutionManagement {
 
     val isSnapshot = projectVersion.toDefaultLowerCase().contains("-snapshot")
     val isReleaseCandidate = projectVersion.toDefaultLowerCase().contains("-rc")
+
+    if (isSnapshot && !projectVersion.endsWith("-SNAPSHOT")) {
+        throw GradleException("inconsistent version definition: $projectVersion does not end with SNAPSHOT")
+    }
 
     versionCatalogs {
         create("libs") {
