@@ -251,7 +251,7 @@ public final class HtmlConverter extends TagBasedConverter<String> {
      * @return converter
      */
     public static HtmlConverter createBlank(HtmlConversionOption... options) {
-        return create(List.of(options));
+        return createBlank(List.of(options));
     }
 
     @Override
