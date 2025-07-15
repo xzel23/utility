@@ -488,16 +488,6 @@ jreleaser {
         armored.set(true)
     }
 
-    files {
-        create("javadoc") {
-            active.set(org.jreleaser.model.Active.ALWAYS)
-            artifact {
-                path.set(layout.buildDirectory.dir("docs/javadoc").get().asFile)
-                transform.set(true)
-            }
-        }
-    }
-
     deploy {
         maven {
             if (!isSnapshot) {
@@ -530,21 +520,6 @@ jreleaser {
         }
     }
 
-    upload {
-        // Upload Javadoc to gh-pages branch
-        github {
-            pages {
-                create("gh-pages") {
-                    active.set(org.jreleaser.model.Active.ALWAYS)
-                    branch.set("gh-pages")
-                    commitMessage.set("Publish Javadoc for version {{projectVersion}}")
-                    contents {
-                        put("javadoc", "javadoc") // (distributionName, outputPath)
-                    }
-                }
-            }
-        }
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
