@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link RichTextBuilder} unit test.
@@ -204,7 +205,7 @@ class RichTextBuilderTest {
 
         // Check that the style was applied
         Object styleList = rt.stream().findFirst().get().getAttributes().get(RichText.ATTRIBUTE_NAME_STYLE_LIST);
-        assertEquals(true, styleList instanceof List);
+        assertTrue(styleList instanceof List);
         assertEquals(1, ((List<?>) styleList).size());
     }
 
@@ -273,5 +274,148 @@ class RichTextBuilderTest {
         // Test getOrDefault with non-existing attribute
         Object colorDefault = builder.getOrDefault("color", "black");
         assertEquals("black", colorDefault);
+    }
+
+    @Test
+    void testAppendChar() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append('H');
+        builder.append('e');
+        builder.append('l');
+        builder.append('l');
+        builder.append('o');
+
+        RichText rt = builder.toRichText();
+        assertEquals("Hello", rt.toString());
+    }
+
+    @Test
+    void testAppendCharSequence() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello");
+        builder.append(" ");
+        builder.append("World");
+
+        RichText rt = builder.toRichText();
+        assertEquals("Hello World", rt.toString());
+
+        // Test with another RichTextBuilder as input
+        RichTextBuilder builder2 = new RichTextBuilder();
+        builder2.append("!");
+        builder.append(builder2);
+
+        rt = builder.toRichText();
+        assertEquals("Hello World!", rt.toString());
+    }
+
+    @Test
+    void testAppendCharSequenceWithRange() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello World", 0, 5); // "Hello"
+        builder.append(" ");
+        builder.append("Hello World", 6, 11); // "World"
+
+        RichText rt = builder.toRichText();
+        assertEquals("Hello World", rt.toString());
+
+        // Test with another RichText as input
+        RichTextBuilder sourceBuilder = new RichTextBuilder();
+        sourceBuilder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        sourceBuilder.append("Bold Text");
+        sourceBuilder.pop(Style.FONT_WEIGHT);
+        RichText sourceRt = sourceBuilder.toRichText();
+
+        builder.append(" in ");
+        builder.append(sourceRt, 0, 4); // "Bold"
+
+        rt = builder.toRichText();
+        assertEquals("Hello World in Bold", rt.toString());
+    }
+
+    @Test
+    void testToString() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.append("Hello World");
+
+        assertEquals("Hello World", builder.toString());
+
+        // Test with attributes
+        builder = new RichTextBuilder();
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("Bold");
+        builder.pop(Style.FONT_WEIGHT);
+        builder.append(" Normal");
+
+        assertEquals("Bold Normal", builder.toString());
+    }
+
+    @Test
+    void testAppendTo() {
+        RichTextBuilder source = new RichTextBuilder();
+        source.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        source.append("Bold");
+        source.pop(Style.FONT_WEIGHT);
+
+        RichTextBuilder target = new RichTextBuilder();
+        target.append("Normal ");
+
+        source.appendTo(target);
+
+        RichText rt = target.toRichText();
+        assertEquals("Normal Bold", rt.toString());
+        assertEquals(2, rt.stream().count()); // Should have two runs with different attributes
+    }
+
+    @Test
+    void testLength() {
+        RichTextBuilder builder = new RichTextBuilder();
+        assertEquals(0, builder.length());
+
+        builder.append("Hello");
+        assertEquals(5, builder.length());
+
+        builder.append(" World");
+        assertEquals(11, builder.length());
+
+        builder.deleteCharAt(5); // Delete the space
+        assertEquals(10, builder.length());
+    }
+
+    // Note: split() is a private method and cannot be directly tested
+
+    // Note: compactParts() is a private method and cannot be directly tested
+    // However, we can test the normalization behavior which uses compactParts() internally
+    @Test
+    void testNormalizationWithSameAttributes() {
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder.append("Bold");
+        builder.pop(Style.FONT_WEIGHT);
+        builder.push(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD);
+        builder.append(" Still Bold");
+
+        // toRichText() calls normalize() which should compact parts with the same attributes
+        RichText rt = builder.toRichText();
+        assertEquals("Bold Still Bold", rt.toString());
+        assertEquals(1, rt.stream().count()); // After normalization, should be just one run
+    }
+
+    @Test
+    void testPushPopStyle() {
+        Style boldStyle = Style.create("bold", Map.entry(Style.FONT_WEIGHT, Style.FONT_WEIGHT_VALUE_BOLD));
+        Style italicStyle = Style.create("italic", Map.entry(Style.FONT_STYLE, Style.FONT_STYLE_VALUE_ITALIC));
+
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.push(boldStyle);
+        builder.append("Bold");
+        builder.push(italicStyle);
+        builder.append(" and Italic");
+        builder.pop(italicStyle);
+        builder.append(" just Bold");
+        builder.pop(boldStyle);
+
+        RichText rt = builder.toRichText();
+        assertEquals("Bold and Italic just Bold", rt.toString());
+        assertEquals(3, rt.stream().count()); // Should have three runs with different attributes
     }
 }
