@@ -545,6 +545,59 @@ tasks.register("generateJReleaserConfig") {
     }
 }
 
+// Task to publish the aggregated Javadoc to GitHub Pages
+tasks.register("publishJavadocToGitHubPages") {
+    description = "Publishes the aggregated Javadoc to GitHub Pages"
+    group = "documentation"
+
+    // Depend on the aggregateJavadoc task to ensure the Javadoc is generated
+    dependsOn("aggregateJavadoc")
+
+    doLast {
+        // Create a temporary JReleaser configuration file for GitHub Pages publishing
+        val configFile = layout.buildDirectory.file("tmp/jreleaser-gh-pages.yml").get().asFile
+        configFile.parentFile.mkdirs()
+        configFile.writeText("""
+            project:
+              name: ${rootProject.name}
+              version: ${rootProject.libs.versions.projectVersion.get()}
+
+            release:
+              github:
+                owner: ${Meta.ORGANIZATION_NAME}
+                name: ${rootProject.name}
+
+            files:
+              artifacts:
+                - path: ${layout.buildDirectory.dir("docs/javadoc").get().asFile}
+                  extraProperties:
+                    docs: true
+
+            upload:
+              github:
+                docs:
+                  active: ALWAYS
+                  branch: gh-pages
+                  artifacts:
+                    - glob: "**/*"
+                      extraProperties:
+                        docs: true
+        """.trimIndent())
+
+        // Run JReleaser to publish the Javadoc to GitHub Pages
+        val process = ProcessBuilder("./gradlew", "jreleaserUpload", "-PconfigFile=${configFile.absolutePath}")
+            .directory(project.rootDir)
+            .inheritIO()
+            .start()
+        val exitCode = process.waitFor()
+        if (exitCode == 0) {
+            println("Successfully published Javadoc to GitHub Pages")
+        } else {
+            println("Failed to publish Javadoc to GitHub Pages. Exit code: $exitCode")
+        }
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // Versions plugin configuration for all projects
 /////////////////////////////////////////////////////////////////////////////
