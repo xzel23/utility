@@ -23,11 +23,11 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * A class for rich text, i.e. text together with attributes like color, font
+ * A class for rich text, i.e., text together with attributes like color, font
  * etc.
  * <p>
  * Sequences of characters that share the same formatting attributes form a
- * {@link Run}.
+ * {@link Run}. Use {@link RichTextBuilder} create {@code RichText} instances.
  */
 @SuppressWarnings("MagicCharacter")
 public final class RichText

@@ -566,7 +566,7 @@ public abstract class FileType<T> implements Comparable<FileType<?>> {
      * <p>
      * <strong>NOTE:</strong> Compound file types are excluded when looking up a file type by supported extensions.
      * <p>
-     * Some file types are used in dialogs to group together different other types that have common properties, i.e.
+     * Some file types are used in dialogs to group together different other types that have common properties, i.e.,
      * "All supported files" of an application. These compound file types can be useful to offer a better user experience
      * but are not suitable for determining in what file format data should be written (an example being "Excel files"
      * which refers to both XLS and XLSX files).

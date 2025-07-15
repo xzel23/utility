@@ -205,7 +205,7 @@ public final class XmlUtil {
      * @param in the stream to read the XML from
      * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
-     * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
+     * @throws SAXException if an exception is thrown during parsing, i.e., the input is not valid
      */
     public Document parse(InputStream in) throws IOException, SAXException {
         return documentBuilder().parse(in);
@@ -217,7 +217,7 @@ public final class XmlUtil {
      * @param reader the {@link Reader} to read the XML from
      * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
-     * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
+     * @throws SAXException if an exception is thrown during parsing, i.e., the input is not valid
      */
     public Document parse(Reader reader) throws IOException, SAXException {
         return documentBuilder().parse(new InputSource(reader));
@@ -229,7 +229,7 @@ public final class XmlUtil {
      * @param uri the URI to read the XML from
      * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
-     * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
+     * @throws SAXException if an exception is thrown during parsing, i.e., the input is not valid
      */
     public Document parse(URI uri) throws IOException, SAXException {
         return documentBuilder().parse(uri.toString());
@@ -241,7 +241,7 @@ public final class XmlUtil {
      * @param path the path to read the XML from
      * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
-     * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
+     * @throws SAXException if an exception is thrown during parsing, i.e., the input is not valid
      */
     public Document parse(Path path) throws IOException, SAXException {
         return documentBuilder().parse(path.toFile());
@@ -253,7 +253,7 @@ public final class XmlUtil {
      * @param text the XML as a String
      * @return the parsed {@link Document}
      * @throws IOException  in case of an I/O error
-     * @throws SAXException if an exception is thrown during parsing, i.e. the input is not valid
+     * @throws SAXException if an exception is thrown during parsing, i.e., the input is not valid
      */
     public Document parse(String text) throws IOException, SAXException {
         try (Reader reader = new StringReader(text)) {
