@@ -523,29 +523,6 @@ jreleaser {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Utility tasks
-/////////////////////////////////////////////////////////////////////////////
-
-// Task to generate JReleaser configuration file for reference
-tasks.register("generateJReleaserConfig") {
-    description = "Generates JReleaser configuration file for reference"
-    group = "documentation"
-
-    doLast {
-        val process = ProcessBuilder("./gradlew", "jreleaserConfig", "-PconfigFile=jreleaser-config.yml")
-            .directory(project.rootDir)
-            .inheritIO()
-            .start()
-        val exitCode = process.waitFor()
-        if (exitCode == 0) {
-            println("JReleaser configuration file generated at: jreleaser-config.yml")
-        } else {
-            println("Failed to generate JReleaser configuration file. Exit code: $exitCode")
-        }
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////
 // Versions plugin configuration for all projects
 /////////////////////////////////////////////////////////////////////////////
 
