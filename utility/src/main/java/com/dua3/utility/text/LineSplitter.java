@@ -269,17 +269,14 @@ final class LineSplitter<S extends CharSequence> {
                         currentLines.add(readBuffer.apply(buffer));
                         buffer = bufferFactory.get();
                     }
-                    // append the rest
-                    buffer.append(cs);
-                    currentLines.add(readBuffer.apply(buffer));
-                    buffer = bufferFactory.get();
                 } else {
                     // just add and wrap after adding
                     buffer = bufferFactory.get();
-                    buffer.append(cs);
-                    currentLines.add(readBuffer.apply(buffer));
-                    buffer = bufferFactory.get();
                 }
+                // append
+                buffer.append(cs);
+                currentLines.add(readBuffer.apply(buffer));
+                buffer = bufferFactory.get();
             }
         }
         return buffer;
