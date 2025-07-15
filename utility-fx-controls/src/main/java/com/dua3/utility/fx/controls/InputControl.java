@@ -43,6 +43,9 @@ import java.util.function.UnaryOperator;
  */
 public interface InputControl<T> {
 
+    /**
+     * The constant string "Invalid value".
+     */
     String INVALID_VALUE = "Invalid value";
 
     /**
@@ -98,6 +101,19 @@ public interface InputControl<T> {
         return formattableInput(Double.class, format, dflt, validate);
     }
 
+    /**
+     * Creates a {@link SimpleInputControl} for a {@link TextField} with a formattable input,
+     * allowing bidirectional binding and validation of the input using a specified {@link Format}.
+     *
+     * @param <U>     The type of the value for the input field.
+     * @param cls     The class of the value type to be formatted and validated.
+     * @param format  The {@link Format} used for converting the value to and from its string representation.
+     * @param dflt    A {@link Supplier} providing the default value for the input field.
+     * @param validate A {@link Function} that validates the input value and returns an {@link Optional} containing
+     *                 an error message if validation fails; otherwise, an empty {@link Optional}.
+     * @return A {@link SimpleInputControl} containing a {@link TextField} for the formattable input and
+     *         associated properties, including validation.
+     */
     static <U> SimpleInputControl<TextField,U> formattableInput(Class<U> cls, Format format, Supplier<@Nullable U> dflt, Function<@Nullable U, Optional<String>> validate) {
         TextField control = new TextField();
         StringProperty textProperty = control.textProperty();

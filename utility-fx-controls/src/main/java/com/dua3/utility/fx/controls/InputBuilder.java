@@ -36,7 +36,7 @@ public interface InputBuilder<B extends InputBuilder<B>> {
      * @param type    the result type
      * @param dflt    supplier of default value
      * @param control the control
-     * @param hidden
+     * @param hidden  flag, indicating whether the input us hidden from the user (no control is visible on the UI)
      * @return {@code this}
      */
     <T> B add(
