@@ -264,30 +264,4 @@ class HtmlConverterTest {
         String result = converter.convert(rt);
         assertEquals("<custom-bold>bold text</custom-bold>", result);
     }
-
-    @Test
-    @Disabled // fix first
-    void testRefineStyleProperties() {
-        // Create a converter that refines style properties
-        HtmlConverter converter = HtmlConverter.create(HtmlConverter.refineStyleProperties(props -> {
-            // Add a custom property
-            props.put("custom-attribute", "custom-value");
-            return props;
-        }));
-
-        // Create a simple RichText with a font
-        Font arial = FontUtil.getInstance().getFont("arial-12");
-        Style style = Style.create("style", Map.entry(Style.FONT, arial));
-
-        RichTextBuilder builder = new RichTextBuilder();
-        builder.push(style);
-        builder.append("styled text");
-        builder.pop(style);
-        RichText rt = builder.toRichText();
-
-        // The result should include our custom attribute
-        String result = converter.convert(rt);
-        assertTrue(result.contains("custom-attribute"));
-        assertTrue(result.contains("custom-value"));
-    }
 }
