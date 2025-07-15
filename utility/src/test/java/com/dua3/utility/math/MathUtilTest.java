@@ -33,6 +33,7 @@ class MathUtilTest {
         assertEquals(xHalfEven, operations.get(RoundingMode.HALF_EVEN).applyAsDouble(x));
         assertEquals(x, operations.get(RoundingMode.UNNECESSARY).applyAsDouble(x));
     }
+
     /**
      * Test of findRoot method, of class MathUtil.
      */
@@ -51,8 +52,12 @@ class MathUtilTest {
      */
     @Test
     void testFindRootsInInterval() {
-
         List<Double> result = MathUtil.findRootsInInterval(x -> 3 * x * (x - 2.0 / 3.0), -10.5, +10.5, 20, 1.0e-15);
+        assertEquals(2, result.size());
+        assertEquals(0, result.get(0), 1.0e-15);
+        assertEquals(2.0 / 3.0, result.get(1), 1.0e-15);
+
+        result = MathUtil.findRootsInInterval(x -> 3 * x * (x - 2.0 / 3.0), 11, -20, 20, 1.0e-15);
         assertEquals(2, result.size());
         assertEquals(0, result.get(0), 1.0e-15);
         assertEquals(2.0 / 3.0, result.get(1), 1.0e-15);
