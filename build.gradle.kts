@@ -81,6 +81,16 @@ sonar {
     }
 }
 
+fun isDevelopmentVersion(versionString: String): Boolean {
+    val v = versionString.toDefaultLowerCase()
+    val markers = listOf("snapshot", "alpha", "beta")
+    return markers.any { marker -> v.contains("-$marker") || v.contains(".$marker") }
+}
+
+val isReleaseVersion = !isDevelopmentVersion(rootProject.version.toString())
+val isSnapshot = rootProject.version.toString().toDefaultLowerCase().contains("snapshot")
+
+
 /////////////////////////////////////////////////////////////////////////////
 // Subprojects configuration
 /////////////////////////////////////////////////////////////////////////////
@@ -89,15 +99,6 @@ subprojects {
 
     // Set project version from root libs.versions
     project.version = rootProject.libs.versions.projectVersion.get()
-
-    fun isDevelopmentVersion(versionString: String): Boolean {
-        val v = versionString.toDefaultLowerCase()
-        val markers = listOf("snapshot", "alpha", "beta")
-        return markers.any { marker -> v.contains("-$marker") || v.contains(".$marker") }
-    }
-
-    val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
-    val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
 
     // Apply common plugins
     apply(plugin = "maven-publish")
@@ -427,26 +428,29 @@ jreleaser {
 
     deploy {
         maven {
-            mavenCentral {
-                create("release-deploy") {
-                    active.set(org.jreleaser.model.Active.RELEASE)
-                    url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepositories.add("build/staging-deploy")
-                    username.set(System.getenv("SONATYPE_USERNAME"))
-                    password.set(System.getenv("SONATYPE_PASSWORD"))
+            if (!isSnapshot) {
+                mavenCentral {
+                    create("release-deploy") {
+                        active.set(org.jreleaser.model.Active.RELEASE)
+                        url.set("https://central.sonatype.com/api/v1/publisher")
+                        stagingRepositories.add("build/staging-deploy")
+                        username.set(System.getenv("SONATYPE_USERNAME"))
+                        password.set(System.getenv("SONATYPE_PASSWORD"))
+                    }
                 }
-            }
-            nexus2 {
-                create("snapshot-deploy") {
-                    active.set(org.jreleaser.model.Active.SNAPSHOT)
-                    snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
-                    applyMavenCentralRules.set(true)
-                    snapshotSupported.set(true)
-                    closeRepository.set(true)
-                    releaseRepository.set(true)
-                    stagingRepositories.add("build/staging-deploy")
-                    username.set(System.getenv("SONATYPE_USERNAME"))
-                    password.set(System.getenv("SONATYPE_PASSWORD"))
+            } else {
+                nexus2 {
+                    create("snapshot-deploy") {
+                        active.set(org.jreleaser.model.Active.SNAPSHOT)
+                        snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
+                        applyMavenCentralRules.set(true)
+                        snapshotSupported.set(true)
+                        closeRepository.set(true)
+                        releaseRepository.set(true)
+                        stagingRepositories.add("build/staging-deploy")
+                        username.set(System.getenv("SONATYPE_USERNAME"))
+                        password.set(System.getenv("SONATYPE_PASSWORD"))
+                    }
                 }
             }
         }
