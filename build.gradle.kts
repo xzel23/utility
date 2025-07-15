@@ -48,6 +48,7 @@ object Meta {
 // Root project configuration
 /////////////////////////////////////////////////////////////////////////////
 
+project.version = libs.versions.projectVersion.get()
 project.description = Meta.DESCRIPTION
 
 dependencies {
@@ -87,9 +88,8 @@ fun isDevelopmentVersion(versionString: String): Boolean {
     return markers.any { marker -> v.contains("-$marker") || v.contains(".$marker") }
 }
 
-val isReleaseVersion = !isDevelopmentVersion(rootProject.version.toString())
-val isSnapshot = rootProject.version.toString().toDefaultLowerCase().contains("snapshot")
-
+val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
+val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
 
 /////////////////////////////////////////////////////////////////////////////
 // Subprojects configuration
