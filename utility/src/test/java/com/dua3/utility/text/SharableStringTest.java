@@ -34,8 +34,8 @@ class SharableStringTest {
         assertEquals(sharable1.hashCode(), sharable2.hashCode());
 
         assertNotEquals(sharable1, sharable3); // Different content
-        assertNotEquals(sharable1, null); // Null comparison
-        assertNotEquals(sharable1, "not a SharableString"); // Different type
+        assertNotEquals(null, sharable1); // Null comparison
+        assertNotEquals("not a SharableString", sharable1); // Different type
     }
 
     @Test
