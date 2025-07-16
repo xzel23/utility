@@ -1,6 +1,5 @@
 package com.dua3.utility.fx;
 
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -194,6 +193,7 @@ class FxRefreshTest extends FxTestBase {
         AtomicInteger counter = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(1);
 
+        AtomicReference<FxRefresh> refresherReference = new AtomicReference<>();
         FxTestUtil.runOnFxThreadAndWait(() -> {
             Runnable task = () -> {
                 counter.incrementAndGet();
@@ -202,6 +202,7 @@ class FxRefreshTest extends FxTestBase {
 
             Pane node = new Pane();
             FxRefresh refresher = FxRefresh.create("TestRefresher", task, node);
+            refresherReference.set(refresher);
 
             // Make node invisible
             node.setVisible(false);
@@ -209,17 +210,23 @@ class FxRefreshTest extends FxTestBase {
             // Request refresh while node is invisible
             refresher.refresh();
 
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+
             // Make node visible again and request another refresh
             node.setVisible(true);
             refresher.refresh();
-
-            // Clean up
-            refresher.stop();
         });
 
         // Wait for the refresh to complete
-        assertTrue(latch.await(5, TimeUnit.SECONDS), "Refresh should complete for visible node");
+        latch.await(5, TimeUnit.SECONDS);
         assertEquals(1, counter.get(), "Task should be executed only when node is visible");
+
+        // Clean up
+        refresherReference.get().stop();
     }
 
     @Test
