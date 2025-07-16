@@ -40,7 +40,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li><a href="#nested-class-summary">Nested</a></li>
+<li>Nested</li>
 <li>Field</li>
 <li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
@@ -60,7 +60,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -101,24 +101,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<li>
-<section class="nested-class-summary" id="nested-class-summary">
-<h2>Nested Class Summary</h2>
-<div class="caption"><span>Nested Classes</span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Interface</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static class&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="Converter.ConverterException.html" class="type-name-link" title="class in com.dua3.utility.data">Converter.ConverterException</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">This exception is thrown to indicate that an error occurred during the
- conversion process in the Converter class or related utilities.</div>
-</div>
-</div>
-</section>
-</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -289,7 +271,7 @@ B&gt;&nbsp;<a href="Converter.html" title="interface in com.dua3.utility.data">C
 <section class="detail" id="stringConverter(java.lang.Class)">
 <h3>stringConverter</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="Converter.html" title="interface in com.dua3.utility.data">Converter</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>T&gt;</span>&nbsp;<span class="element-name">stringConverter</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</span>
-                                        throws <span class="exceptions"><a href="Converter.ConverterException.html" title="class in com.dua3.utility.data">Converter.ConverterException</a></span></div>
+                                        throws <span class="exceptions"><a href="ConversionException.html" title="class in com.dua3.utility.data">ConversionException</a></span></div>
 <div class="block">Creates a converter to transform objects of type T to their String representation
  and parse Strings back to objects of type T using either the method <code>public static T valueOf(String)</code>
  in the specified class (preferred) or the constructor <code>public T(String)</code> of the class. If neither are
@@ -304,7 +286,7 @@ B&gt;&nbsp;<a href="Converter.html" title="interface in com.dua3.utility.data">C
 <dt>Returns:</dt>
 <dd>a Converter that handles the bidirectional conversion between objects of type T and Strings</dd>
 <dt>Throws:</dt>
-<dd><code><a href="Converter.ConverterException.html" title="class in com.dua3.utility.data">Converter.ConverterException</a></code> - if the specified class does not declare the matching factory method or constructor</dd>
+<dd><code><a href="ConversionException.html" title="class in com.dua3.utility.data">ConversionException</a></code> - if the specified class does not declare the matching factory method or constructor</dd>
 </dl>
 </section>
 </li>

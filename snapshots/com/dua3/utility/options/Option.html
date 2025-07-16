@@ -567,7 +567,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="map(java.util.List)">
 <h3>map</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Arguments.Entry.html" title="class in com.dua3.utility.options">Arguments.Entry</a>&lt;<a href="Option.html" title="type parameter in Option">T</a>&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;args)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Arguments.Entry.html" title="class in com.dua3.utility.options">Arguments.Entry</a>&lt;<a href="Option.html" title="type parameter in Option">T</a>&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;args)</span>
+                       throws <span class="exceptions"><a href="ArgumentsException.html" title="class in com.dua3.utility.options">ArgumentsException</a></span></div>
 <div class="block">Maps the given list of argument strings to an <a href="Arguments.Entry.html" title="class in com.dua3.utility.options"><code>Arguments.Entry</code></a> instance.
  <p>
  This method validates the number of arguments against the expected range,
@@ -587,6 +588,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AssertionError.html" title="class or interface in java.lang" class="external-link">AssertionError</a></code> - if the number of arguments is not within the expected range</dd>
 <dd><code><a href="OptionException.html" title="class in com.dua3.utility.options">OptionException</a></code> - if any argument fails to convert to its target type</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if an instance of the target type cannot be created</dd>
+<dd><code><a href="ArgumentsException.html" title="class in com.dua3.utility.options">ArgumentsException</a></code></dd>
 </dl>
 </section>
 </li>
