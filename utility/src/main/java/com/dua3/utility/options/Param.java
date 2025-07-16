@@ -2,7 +2,6 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
