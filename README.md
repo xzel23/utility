@@ -2,6 +2,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Language](https://img.shields.io/badge/language-Java-blue.svg?style=flat-square)](https://github.com/topics/java)
 [![build](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
+[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://xzel23.github.io/utility/)
 
 Some libraries with utility classes.
 
