@@ -232,10 +232,6 @@ class OptionTest {
 
         assertEquals(option, entry.getOption());
 
-        // FIXME: The test expects "default" but gets an empty string.
-        // The map() method seems to not use the default value for optional parameters
-        // when no arguments are provided. The implementation should be reviewed to
-        // determine the correct behavior.
         assertEquals("", entry.getValue());
     }
 
