@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
@@ -19,6 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class FxRefresh {
     private static final Logger LOG = LogManager.getLogger(FxRefresh.class);
+    private static final long MAX_WAIT_MILLISECONDS = 1000;
 
     /**
      * The instance name (used in logging).
@@ -73,41 +75,47 @@ public final class FxRefresh {
      */
     private void refreshLoop() {
         LOG.debug("[{}] entering refresh loop", name);
-        do {
+
+        while (true) {
             lock.lock();
             try {
-                // stay in loop as long as stop is not requested (updateThread!=null) and
-                // refresher is inactive or no redraw request has been issued
-                while (updateThread != null
-                        && (!active.get() || requestedRevision.get() <= currentRevision.get())) {
-                    trigger.await();
+                // Wait for conditions to be met: thread not stopped, active, and new revision requested
+                while (updateThread != null && (!active.get() || requestedRevision.get() <= currentRevision.get())) {
+                    if (!trigger.await(MAX_WAIT_MILLISECONDS, TimeUnit.MILLISECONDS)) {
+                        LOG.debug("[{}] timeout, force check", name);
+                    }
+                }
+
+                // Check if we should exit
+                if (updateThread == null) {
+                    break;
+                }
+
+                // Execute task if still active and there's a new revision
+                if (active.get()) {
+                    long myRevision = requestedRevision.get();
+                    if (myRevision > currentRevision.get()) {
+                        try {
+                            LOG.debug("[{}] starting refresh with revision: {}", name, myRevision);
+                            task.run();
+                            LOG.debug("[{}] refreshed to revision: {}", name, myRevision);
+                        } catch (Exception e) {
+                            LOG.warn("task aborted, exception swallowed, current revision {} might have inconsistent state", myRevision, e);
+                        }
+                        currentRevision.set(myRevision);
+                    } else {
+                        LOG.debug("[{}] already at revision: {}", name, myRevision);
+                    }
                 }
             } catch (InterruptedException e) {
-                LOG.debug("[{}] interrupted, shutting down", name);
+                LOG.debug("[{}] interrupted", name);
                 Thread.currentThread().interrupt();
-                stop();
+                break;
             } finally {
                 lock.unlock();
             }
+        }
 
-            // run task and update revision
-            if (active.get()) {
-                long myRevision = requestedRevision.get();
-                if (myRevision != currentRevision.getAndSet(myRevision)) {
-                    try {
-                        LOG.debug("[{}] starting refresh with revision: {}", name, myRevision);
-                        task.run();
-                        LOG.debug("[{}] refreshed to revision: {}", name, myRevision);
-                    } catch (Exception e) {
-                        LOG.warn("task aborted, exception swallowed, current revision {} might have inconsistent state", myRevision, e);
-                    } finally {
-                        currentRevision.set(myRevision);
-                    }
-                } else {
-                    LOG.debug("[{}] already at revision: {}", name, myRevision);
-                }
-            }
-        } while (updateThread != null);
         LOG.debug("[{}] exiting refresh loop", name);
     }
 
@@ -116,10 +124,13 @@ public final class FxRefresh {
      */
     public void stop() {
         LOG.debug("[{}] stopping", name);
-        synchronized (this) {
-            setActive(false);
+        lock.lock();
+        try {
+            active.set(false);
             this.updateThread = null;
-            signal();
+            trigger.signalAll();
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -146,19 +157,6 @@ public final class FxRefresh {
         FxRefresh r = new FxRefresh(name, task);
         r.setActive(active);
         return r;
-    }
-
-    /**
-     * Wake up the update thread.
-     */
-    private void signal() {
-        LOG.debug("[{}] raise signal", name);
-        lock.lock();
-        try {
-            trigger.signalAll();
-        } finally {
-            lock.unlock();
-        }
     }
 
     /**
@@ -223,7 +221,12 @@ public final class FxRefresh {
      * @return true, if the refresher is running
      */
     public boolean isRunning() {
-        return updateThread != null;
+        lock.lock();
+        try {
+            return updateThread != null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -242,9 +245,12 @@ public final class FxRefresh {
      */
     public void setActive(boolean flag) {
         LOG.debug("[{}] setActive({})", name, flag);
-        synchronized (this) {
+        lock.lock();
+        try {
             active.set(flag);
-            signal();
+            trigger.signalAll();
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -259,11 +265,11 @@ public final class FxRefresh {
      */
     public void refresh() {
         LOG.debug("[{}] refresh requested", name);
-        if (updateThread == null) {
-            return;
-        }
         lock.lock();
         try {
+            if (updateThread == null) {
+                return;
+            }
             long revision = requestedRevision.incrementAndGet();
             LOG.debug("[{}] requested revision {}", name, revision);
             trigger.signalAll();
@@ -271,5 +277,4 @@ public final class FxRefresh {
             lock.unlock();
         }
     }
-
 }
