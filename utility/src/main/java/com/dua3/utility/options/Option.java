@@ -316,7 +316,7 @@ public class Option<T extends @Nullable Object> {
     public Arguments.Entry<T> map(List<String> args) {
         LangUtil.check(
                 LangUtil.isBetween(args.size(), minArgs(), maxArgs()),
-                () -> new IllegalArgumentException(String.format("wrong argument count for option %s: %d", displayName, args.size()))
+                () -> new OptionException(this, String.format("wrong argument count for option %s: %d", displayName, args.size()))
         );
 
         @Nullable Object[] builderArgs = new Object[params().size()];
