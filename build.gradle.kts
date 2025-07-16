@@ -55,6 +55,8 @@ project.version = libs.versions.projectVersion.get()
 project.description = Meta.DESCRIPTION
 
 tasks.register("printVersion") {
+    description = "Print the project version to stdout."
+    group = HelpTasksPlugin.HELP_GROUP
     doLast { println(project.version) }
 }
 
