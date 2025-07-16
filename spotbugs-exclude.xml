@@ -21,6 +21,10 @@
         <Bug pattern="RV_RETURN_VALUE_IGNORED_INFERRED"/>
     </Match>
 
+    <Match class="com.dua3.utility.options.ParamTest">
+        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+    </Match>
+
     <Match>
         <Class name="com.dua3.utility.swing.FileInputTest"/>
         <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
