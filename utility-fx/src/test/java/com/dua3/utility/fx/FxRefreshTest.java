@@ -222,7 +222,7 @@ class FxRefreshTest extends FxTestBase {
         });
 
         // Wait for the refresh to complete
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "Timeout while waiting for refresh to complete");
         assertEquals(1, counter.get(), "Task should be executed only when node is visible");
 
         // Clean up
