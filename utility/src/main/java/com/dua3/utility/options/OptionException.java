@@ -41,46 +41,4 @@ public class OptionException extends ArgumentsException {
     public Option<?> getOption() {
         return option;
     }
-
-    /**
-     * Exception thrown when a parameter argument's String value could not be converted to the target type.
-     */
-    public static class ParameterConversionException extends OptionException {
-        /**
-         * The string value of the parameter that could not be converted.
-         */
-        private final String parameter;
-
-        /**
-         * Constructor.
-         *
-         * @param option    the option the argument belongs to
-         * @param parameter the parameter value as String
-         * @param e         the parent exception
-         */
-        public ParameterConversionException(Option<?> option, String parameter, Exception e) {
-            super(option, "invalid value passed to " + option.displayName() + ": " + parameter, e);
-            this.parameter = parameter;
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param option    the option the argument belongs to
-         * @param parameter the parameter value as String
-         */
-        public ParameterConversionException(Option<?> option, String parameter) {
-            super(option, "invalid value passed to " + option.displayName() + ": " + parameter);
-            this.parameter = parameter;
-        }
-
-        /**
-         * Retrieves the parameter associated with this exception.
-         *
-         * @return the parameter associated with this exception
-         */
-        public String getParameter() {
-            return parameter;
-        }
-    }
 }
