@@ -13,7 +13,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
-      pages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,13 +54,13 @@ jobs:
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: 'Execute Gradle build'
-        run: ./gradlew build testCodeCoverageReport
+        run: ./gradlew build testCodeCoverageReport aggregateJavadoc
         id: compile
         continue-on-error: false
         env:
           DISPLAY: ":99"
 
-      - name: 'publish build and Javadoc'
+      - name: 'publish build'
         if: runner.os == 'Linux' && success()
         run: ./gradlew jreleaserDeploy jreleaserUpload
         env:
@@ -71,6 +70,32 @@ jobs:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+      - name: 'Get project version'
+        if: runner.os == 'Linux' && success()
+        id: version
+        run: echo "version=$(./gradlew -q printVersion)" >> "$GITHUB_OUTPUT"
+
+      - name: 'Determine Javadoc folder'
+        if: runner.os == 'Linux' && success()
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ "$VERSION" == *"-SNAPSHOT" ]]; then
+            echo "DOC_PATH=snapshots" >> "$GITHUB_ENV"
+          elif [[ "$VERSION" == v* ]]; then
+            echo "DOC_PATH=$VERSION" >> "$GITHUB_ENV"
+          else
+            echo "DOC_PATH=latest" >> "$GITHUB_ENV"
+          fi
+
+      - name: 'Deploy versioned Javadoc'
+        if: runner.os == 'Linux' && github.ref == 'refs/heads/main' && success()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/docs/javadoc
+          destination_dir: ${{ env.DOC_PATH }}
+          keep_files: true
 
       - name: 'Upload test artifacts from all modules'
         if: always()

@@ -54,6 +54,10 @@ object Meta {
 project.version = libs.versions.projectVersion.get()
 project.description = Meta.DESCRIPTION
 
+tasks.register("printVersion") {
+    doLast { println(project.version) }
+}
+
 dependencies {
     // Aggregate all subprojects for JaCoCo report aggregation
     jacocoAggregation(project(":utility"))
@@ -519,7 +523,6 @@ jreleaser {
             }
         }
     }
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
