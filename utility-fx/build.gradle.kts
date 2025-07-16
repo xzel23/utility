@@ -15,6 +15,8 @@ dependencies {
 
     // Add dependency on javaTestUtil for tests
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
+    testImplementation(project(":utility-logging"))
+    testRuntimeOnly(project(":utility-logging-log4j"))
 }
 
 // Configure tests to run in a forked JVM
