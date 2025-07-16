@@ -210,39 +210,44 @@ implements <a href="LogEntryHandler.html" title="interface in com.dua3.utility.l
 <div class="block">Retrieves the current state of the buffer, encapsulating the entries within the buffer,
  the total number of entries removed, and the total number of entries added.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleEntry(com.dua3.utility.logging.LogEntry)" class="member-name-link">handleEntry</a><wbr>(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;entry)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSequenceNumber()" class="member-name-link">getSequenceNumber</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the sequence number of the log buffer.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleEntry(com.dua3.utility.logging.LogEntry)" class="member-name-link">handleEntry</a><wbr>(<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&nbsp;entry)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles a log entry.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#readExternal(java.io.ObjectInput)" class="member-name-link">readExternal</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/ObjectInput.html" title="class or interface in java.io" class="external-link">ObjectInput</a>&nbsp;in)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeLogBufferListener(com.dua3.utility.logging.LogBuffer.LogBufferListener)" class="member-name-link">removeLogBufferListener</a><wbr>(<a href="LogBuffer.LogBufferListener.html" title="interface in com.dua3.utility.logging">LogBuffer.LogBufferListener</a>&nbsp;listener)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#readExternal(java.io.ObjectInput)" class="member-name-link">readExternal</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/ObjectInput.html" title="class or interface in java.io" class="external-link">ObjectInput</a>&nbsp;in)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeLogBufferListener(com.dua3.utility.logging.LogBuffer.LogBufferListener)" class="member-name-link">removeLogBufferListener</a><wbr>(<a href="LogBuffer.LogBufferListener.html" title="interface in com.dua3.utility.logging">LogBuffer.LogBufferListener</a>&nbsp;listener)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Remove LogBufferListener.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setCapacity(int)" class="member-name-link">setCapacity</a><wbr>(int&nbsp;n)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setCapacity(int)" class="member-name-link">setCapacity</a><wbr>(int&nbsp;n)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates the capacity of the buffer while retaining the existing elements.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#subList(int,int)" class="member-name-link">subList</a><wbr>(int&nbsp;fromIndex,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#subList(int,int)" class="member-name-link">subList</a><wbr>(int&nbsp;fromIndex,
  int&nbsp;toIndex)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a view of the portion of this LogBuffer between the specified
  <code>fromIndex</code>, inclusive, and <code>toIndex</code>, exclusive.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toArray()" class="member-name-link">toArray</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LogEntry.html" title="interface in com.dua3.utility.logging">LogEntry</a>[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toArray()" class="member-name-link">toArray</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Converts the LogBuffer into an array of LogEntry objects.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#writeExternal(java.io.ObjectOutput)" class="member-name-link">writeExternal</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/ObjectOutput.html" title="class or interface in java.io" class="external-link">ObjectOutput</a>&nbsp;out)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#writeExternal(java.io.ObjectOutput)" class="member-name-link">writeExternal</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/ObjectOutput.html" title="class or interface in java.io" class="external-link">ObjectOutput</a>&nbsp;out)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -415,6 +420,19 @@ implements <a href="LogEntryHandler.html" title="interface in com.dua3.utility.l
 <dt>Returns:</dt>
 <dd>a <code>BufferState</code> instance containing the current buffer entries,
          total removed entries, and total added entries</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSequenceNumber()">
+<h3>getSequenceNumber</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">getSequenceNumber</span>()</div>
+<div class="block">Retrieves the sequence number of the log buffer. The sequence number is calculated
+ as the sum of the total added entries and the total removed entries in the buffer.
+ This method is thread-safe as it synchronizes on the buffer during execution.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the calculated sequence number of the log buffer as a long value</dd>
 </dl>
 </section>
 </li>
