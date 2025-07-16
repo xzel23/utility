@@ -1,5 +1,6 @@
 package com.dua3.utility.options;
 
+import com.dua3.utility.data.ConversionException;
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
@@ -329,7 +330,7 @@ public class Option<T extends @Nullable Object> {
             String[] paramArgs = args.subList(idxArg, to).toArray(String[]::new);
             try {
                 builderArgs[i] = p.converter().convert(paramArgs);
-            } catch (Converter.ConverterException e) {
+            } catch (ConversionException e) {
                 throw new OptionException(
                         this,
                         String.format(

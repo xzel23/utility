@@ -113,7 +113,7 @@ public final class DataUtil {
             // convert String to LocalDateTime using the ISO format
             DataUtil::convertToLocalDateTime,
             // Don't rely on Boolean.vOf(String) because it might introduce subtle bugs,
-            // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw IllegalArgumentException instead.
+            // i. e. "TRUE()", "yes", "hello" all evaluate to false; throw ConversionException instead.
             DataUtil::convertToBoolean,
             // convert to Path
             DataUtil::convertToPath,
@@ -278,7 +278,7 @@ public final class DataUtil {
      *              This method expects the {@code value} to represent a boolean textual
      *              value (e.g., "true" or "false").
      * @return A {@link Boolean} if the conversion is successful; otherwise, {@code null}.
-     * @throws IllegalArgumentException if {@code value} contains invalid text
+     * @throws ConversionException if {@code value} contains invalid text
      *                                  that cannot be converted to a boolean.
      */
     private static @Nullable Object convertToBoolean(Class<?> targetClass, Class<?> sourceClass, Object value) {
@@ -289,7 +289,7 @@ public final class DataUtil {
         return switch (value.toString().toLowerCase(Locale.ROOT)) {
             case "true" -> Boolean.TRUE;
             case "false" -> Boolean.FALSE;
-            default -> throw new IllegalArgumentException("invalid text for boolean conversion: " + value);
+            default -> throw new ConversionException("invalid text for boolean conversion: " + value);
         };
     }
 
@@ -302,7 +302,7 @@ public final class DataUtil {
      * @param value the floating-point number to be converted
      * @return a {@code Number} representing the converted value as an instance of the target class,
      *         or {@code null} if the conversion is not applicable
-     * @throws IllegalArgumentException if the value cannot be converted to the target class
+     * @throws ConversionException if the value cannot be converted to the target class
      *         without loss of precision
      */
     private static @Nullable Object convertToIntegralNumber(Class<?> targetClass, Class<?> sourceClass, Object value) {
@@ -315,12 +315,12 @@ public final class DataUtil {
             //noinspection NumericCastThatLosesPrecision
             int n = (int) d;
             //noinspection FloatingPointEquality
-            LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to int without loss of precision: " + value));
+            LangUtil.check(n == d, () -> new ConversionException("value cannot be converted to int without loss of precision: " + value));
             return n;
         } else if (targetClass == Long.class) {
             //noinspection NumericCastThatLosesPrecision
             long n = (long) d;
-            LangUtil.check(n == d, () -> new IllegalArgumentException("value cannot be converted to long without loss of precision: " + value));
+            LangUtil.check(n == d, () -> new ConversionException("value cannot be converted to long without loss of precision: " + value));
             return n;
         }
         return null;
@@ -866,41 +866,6 @@ public final class DataUtil {
 
         action.accept(value);
         return true;
-    }
-
-    /**
-     * Exception thrown when data conversion fails.
-     */
-    public static class ConversionException extends IllegalArgumentException {
-        /**
-         * The name of the source class.
-         */
-        private final String sourceClassName;
-        /**
-         * The name of the target class.
-         */
-        private final String targetClassName;
-
-        ConversionException(Class<?> sourceClass, Class<?> targetClass, Throwable cause) {
-            this(sourceClass, targetClass, "could not convert from " + sourceClass.getSimpleName() + " to " + targetClass.getSimpleName(), cause);
-        }
-
-        ConversionException(Class<?> sourceClass, Class<?> targetClass, String message) {
-            super(message);
-            this.sourceClassName = sourceClass.getName();
-            this.targetClassName = targetClass.getName();
-        }
-
-        ConversionException(Class<?> sourceClass, Class<?> targetClass, String message, Throwable cause) {
-            super(message, cause);
-            this.sourceClassName = sourceClass.getName();
-            this.targetClassName = targetClass.getName();
-        }
-
-        @Override
-        public String getMessage() {
-            return String.format(Locale.ROOT, "%s\n[trying to convert %s -> %s]", super.getMessage(), sourceClassName, targetClassName);
-        }
     }
 
     /**

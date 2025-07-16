@@ -72,20 +72,20 @@ class DataUtilTest {
         assertEquals(Double.class, DataUtil.convert("123", Double.class).getClass());
         assertEquals(-0.5f, DataUtil.convert("-0.5", Float.class));
         assertEquals(Float.class, DataUtil.convert("-0.5", Float.class).getClass());
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert("", Integer.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert("", Integer.class));
         assertNull(DataUtil.convert((Object) null, Integer.class));
 
         // Number to Number
         assertEquals(123, DataUtil.convert(123.0, Integer.class));
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert("2147483648", Integer.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert("2147483648", Integer.class));
         assertEquals(2147483648L, DataUtil.convert("2147483648", Long.class));
         assertEquals(-2147483648, DataUtil.convert("-2147483648", Integer.class));
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert("-2147483649", Integer.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert("-2147483649", Integer.class));
         assertEquals(-2147483649L, DataUtil.convert("-2147483649", Long.class));
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert(123.5, Integer.class));
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert(123.5, Integer.class));
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert(123.5, Integer.class));
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert(123.5, Long.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert(123.5, Integer.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert(123.5, Integer.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert(123.5, Integer.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert(123.5, Long.class));
         assertEquals(Integer.class, DataUtil.convert(123.0, Integer.class).getClass());
         assertEquals(123.0, DataUtil.convert(123, Double.class));
         assertEquals(Double.class, DataUtil.convert(123, Double.class).getClass());
@@ -107,9 +107,9 @@ class DataUtilTest {
         assertEquals(false, DataUtil.convert("False", Boolean.class));
         assertEquals(Boolean.class, DataUtil.convert("False", Boolean.class).getClass());
 
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert("yes", Boolean.class));
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert("no", Boolean.class));
-        assertThrows(IllegalArgumentException.class, () -> DataUtil.convert("", Boolean.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert("yes", Boolean.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert("no", Boolean.class));
+        assertThrows(ConversionException.class, () -> DataUtil.convert("", Boolean.class));
 
         // String to LocalDate
         assertEquals(LocalDate.of(2019, 6, 30), DataUtil.convert("2019-06-30", LocalDate.class));
@@ -395,7 +395,7 @@ class DataUtilTest {
     void testConversionException() {
         // Test ConversionException constructor with cause
         Exception cause = new Exception("Test cause");
-        DataUtil.ConversionException exception1 = new DataUtil.ConversionException(String.class, Integer.class, cause);
+        ConversionException exception1 = new ConversionException(String.class, Integer.class, cause);
 
         assertTrue(exception1.getMessage().contains(String.class.getName()));
         assertTrue(exception1.getMessage().contains(Integer.class.getName()));
@@ -403,14 +403,14 @@ class DataUtilTest {
 
         // Test ConversionException constructor with message
         String message = "Test message";
-        DataUtil.ConversionException exception2 = new DataUtil.ConversionException(String.class, Integer.class, message);
+        ConversionException exception2 = new ConversionException(String.class, Integer.class, message);
 
         assertTrue(exception2.getMessage().contains(message));
         assertTrue(exception2.getMessage().contains(String.class.getName()));
         assertTrue(exception2.getMessage().contains(Integer.class.getName()));
 
         // Test ConversionException constructor with message and cause
-        DataUtil.ConversionException exception3 = new DataUtil.ConversionException(String.class, Integer.class, message, cause);
+        ConversionException exception3 = new ConversionException(String.class, Integer.class, message, cause);
 
         assertTrue(exception3.getMessage().contains(message));
         assertTrue(exception3.getMessage().contains(String.class.getName()));

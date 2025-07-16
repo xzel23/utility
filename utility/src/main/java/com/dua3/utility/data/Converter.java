@@ -19,44 +19,6 @@ import java.util.function.Function;
 public interface Converter<A extends @Nullable Object, B extends @Nullable Object> {
 
     /**
-     * This exception is thrown to indicate that an error occurred during the
-     * conversion process in the Converter class or related utilities.
-     */
-    class ConverterException extends RuntimeException {
-        /**
-         * Constructs a new {@code ConverterException} with the specified detail message.
-         *
-         * @param message the detail message, providing information about the reason for the exception
-         */
-        public ConverterException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructs a new {@code ConverterException} with the specified detail message
-         * and cause.
-         *
-         * @param message the detail message, providing information about the reason
-         *                for the exception
-         * @param cause   the cause of the exception, which can be another throwable
-         *                that led to this exception
-         */
-        public ConverterException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        /**
-         * Constructs a new {@code ConverterException} with the specified cause.
-         *
-         * @param cause the cause of the exception, which can be another throwable
-         *              that led to this exception
-         */
-        public ConverterException(Throwable cause) {
-            super(cause);
-        }
-    }
-
-    /**
      * Provides a function to convert an object of type A to an object of type B.
      *
      * @return a function that takes an instance of type A and returns an instance of type B
@@ -130,9 +92,9 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @param <T> the type of the object to convert to and from a String
      * @param type the class type for which the converter is created, requiring a public static {@code valueOf(String)} method
      * @return a Converter that handles the bidirectional conversion between objects of type T and Strings
-     * @throws ConverterException if the specified class does not declare the matching factory method or constructor
+     * @throws ConversionException if the specified class does not declare the matching factory method or constructor
      */
-    static <T> Converter<String, T> stringConverter(Class<T> type) throws ConverterException {
+    static <T> Converter<String, T> stringConverter(Class<T> type) throws ConversionException {
         if (type.isEnum()) {
             return new SimpleConverter<>(
                     s -> (T) Enum.valueOf((Class<? extends Enum>) type, s),
@@ -163,7 +125,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
             }
         }
 
-        throw new ConverterException(
+        throw new ConversionException(
                 "%s declares neither `public static valueOf(String)` nor `public %s(String)`".formatted(
                         type.getName(),
                         type.getSimpleName()
@@ -179,13 +141,13 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @param type the class of the object to which the string will be converted
      * @param m the method used to parse the string, typically a static method like {@code valueOf(String)} or similar
      * @return the parsed object of the specified type
-     * @throws ConverterException if unable to parse the string into the specified type
+     * @throws ConversionException if unable to parse the string into the specified type
      */
-    private static <T> T parse(String s, Class<T> type, Method m) throws ConverterException {
+    private static <T> T parse(String s, Class<T> type, Method m) throws ConversionException {
         try {
             return type.cast(m.invoke(null, s));
         } catch (Exception e) {
-            throw new ConverterException("cannot parse string \""+s+"\" to "+type.getName(), e);
+            throw new ConversionException("cannot parse string \""+s+"\" to "+type.getName(), e);
         }
     }
 
@@ -197,14 +159,14 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      * @param type the class of the object to be created
      * @param c the constructor used to create the object
      * @return an instance of the specified type created using the provided constructor
-     * @throws ConverterException if the object cannot be created, either due to an instantiation error
+     * @throws ConversionException if the object cannot be created, either due to an instantiation error
      * or if the specified string cannot be converted properly
      */
-    private static <T> T create(String s, Class<T> type, Constructor<?> c) throws ConverterException {
+    private static <T> T create(String s, Class<T> type, Constructor<?> c) throws ConversionException {
         try {
             return type.cast(c.newInstance(s));
         } catch (Exception e) {
-            throw new ConverterException("cannot parse string \""+s+"\" to "+type.getName(), e);
+            throw new ConversionException("cannot parse string \""+s+"\" to "+type.getName(), e);
         }
     }
 
