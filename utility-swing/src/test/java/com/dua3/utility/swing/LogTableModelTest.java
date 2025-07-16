@@ -4,6 +4,7 @@ import com.dua3.utility.logging.LogBuffer;
 import com.dua3.utility.logging.LogEntry;
 import com.dua3.utility.logging.LogLevel;
 import com.dua3.utility.logging.SimpleLogEntry;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,13 @@ class LogTableModelTest {
     void setUp() {
         buffer = new LogBuffer(100);
         model = new LogTableModel(buffer);
+    }
+
+    @AfterEach
+    void tearDown() {
+        model.shutdown();
+        buffer = null;
+        model = null;
     }
 
     @Test
@@ -131,10 +139,8 @@ class LogTableModelTest {
         }
 
         // Add all entries in a synchronized block to ensure they're added as a batch
-        synchronized (buffer) {
-            for (LogEntry entry : entries) {
-                buffer.handleEntry(entry);
-            }
+        for (LogEntry entry : entries) {
+            buffer.handleEntry(entry);
         }
 
         // Wait for the model to stabilize
