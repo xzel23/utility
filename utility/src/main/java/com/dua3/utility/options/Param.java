@@ -784,7 +784,7 @@ public record Param<T>(
         for (String s : strings) {
             sb.append(d);
             sb.append(openQuote);
-            sb.append(TextUtil.quoteIfNeeded(s));
+            sb.append(s);
             sb.append(closeQuote);
             d = delimiter;
         }

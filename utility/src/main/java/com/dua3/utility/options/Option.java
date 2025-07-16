@@ -314,7 +314,7 @@ public class Option<T extends @Nullable Object> {
      * @throws OptionException if any argument fails to convert to its target type
      * @throws IllegalStateException if an instance of the target type cannot be created
      */
-    public Arguments.Entry<T> map(List<String> args) {
+    public Arguments.Entry<T> map(List<String> args) throws ArgumentsException {
         LangUtil.check(
                 LangUtil.isBetween(args.size(), minArgs(), maxArgs()),
                 () -> new OptionException(this, String.format("wrong argument count for option %s: %d", displayName, args.size()))
@@ -348,7 +348,14 @@ public class Option<T extends @Nullable Object> {
         }
 
         try {
-            return Arguments.Entry.create(this, mapper.apply(builderArgs));
+            T value = mapper.apply(builderArgs);
+            if (hasAllowedValues() && !allowedValues().contains(value)) {
+                throw new ArgumentsException(
+                        "The value '" + format(value) + "' is not allowed for this option."
+                                + " Allowed values are: " + allowedValues().stream().map(this::format)
+                );
+            }
+            return Arguments.Entry.create(this, value);
         } catch (RuntimeException e) {
             throw new IllegalStateException("could not create an instance of type " + targetType, e);
         }
