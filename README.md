@@ -3,6 +3,7 @@
 [![Language](https://img.shields.io/badge/language-Java-blue.svg?style=flat-square)](https://github.com/topics/java)
 [![build](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://xzel23.github.io/utility/)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=xzel23_utility&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=xzel23_utility)
 
 Some libraries with utility classes.
 
