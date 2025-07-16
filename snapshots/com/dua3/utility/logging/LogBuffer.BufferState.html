@@ -154,7 +154,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSequenceNumber()" class="member-name-link">getSequenceNumber</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Calculates and retrieves the current sequence number of the buffer state.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -260,6 +262,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getSequenceNumber()">
 <h3>getSequenceNumber</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">getSequenceNumber</span>()</div>
+<div class="block">Calculates and retrieves the current sequence number of the buffer state.
+ The sequence number is determined by summing the total number of log entries
+ that have been added and removed from the buffer.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the sequence number, calculated as the sum of totalAdded and totalRemoved values</dd>
+</dl>
 </section>
 </li>
 <li>
