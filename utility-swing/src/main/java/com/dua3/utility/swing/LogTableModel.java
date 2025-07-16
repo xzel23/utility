@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.table.AbstractTableModel;
 import java.io.Serial;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -20,9 +21,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     private static final Logger LOG = LogManager.getLogger(LogTableModel.class);
     public static final LogEntry[] EMPTY_LOG_ENTRIES = {};
 
-    private final LogBuffer buffer;
-    @SuppressWarnings("VolatileArrayField")
-    private volatile LogEntry[] data = EMPTY_LOG_ENTRIES;
+    private final AtomicReference<LogEntry[]> data = new AtomicReference<>(EMPTY_LOG_ENTRIES);
     private final AtomicInteger queuedRemoves = new AtomicInteger();
 
     private final ReadWriteLock updateLock = new ReentrantReadWriteLock();
@@ -37,7 +36,6 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
      * @throws NullPointerException if the buffer is null
      */
     LogTableModel(LogBuffer buffer) {
-        this.buffer = buffer;
         buffer.addLogBufferListener(this);
 
         Thread updateThread = new Thread(() -> {
@@ -46,9 +44,9 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
                 try {
                     updatesAvailableCondition.await();
 
-                    int oldSz = data.length;
-                    data = this.buffer.toArray();
-                    int sz = data.length;
+                    LogEntry[] bufferArray = buffer.toArray();
+                    int oldSz = data.getAndSet(bufferArray).length;
+                    int sz = bufferArray.length;
                     int remove = queuedRemoves.getAndSet(0);
 
                     if (remove > 0) {
@@ -74,7 +72,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
 
     @Override
     public int getRowCount() {
-        return data.length;
+        return data.get().length;
     }
 
     @Override
@@ -84,7 +82,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
 
     @Override
     public LogEntry getValueAt(int rowIndex, int columnIndex) {
-        return data[rowIndex];
+        return data.get()[rowIndex];
     }
 
     @Override
@@ -112,7 +110,7 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     public void clear() {
         updateWriteLock.lock();
         try {
-            queuedRemoves.set(data.length);
+            queuedRemoves.set(data.get().length);
             updatesAvailableCondition.signalAll();
         } finally {
             updateWriteLock.unlock();

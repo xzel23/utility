@@ -57,7 +57,12 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * @param n the new capacity for the buffer. Must be a non-negative integer.
      */
     public void setCapacity(int n) {
-        buffer.setCapacity(n);
+        if (n < 0) {
+            throw new IllegalArgumentException("Capacity cannot be negative: " + n);
+        }
+        synchronized (buffer) {
+            buffer.setCapacity(n);
+        }
     }
 
     @Override
@@ -80,9 +85,10 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
                 out.writeObject(t.getClass().getName());
                 out.writeObject(t.getMessage());
                 // Serialize stack trace as string to avoid serialization issues
-                StringWriter sw = new StringWriter();
-                t.printStackTrace(new PrintWriter(sw));
-                out.writeObject(sw.toString());
+                try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
+                    t.printStackTrace(pw);
+                    out.writeObject(sw.toString());
+                }
             } else {
                 out.writeBoolean(false);
             }
@@ -115,11 +121,22 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
             entries.add(new SimpleLogEntry(message, loggerName, time, level, marker, throwable, location));
         }
 
+        // Update buffer state and notify listeners
+        int removed;
         synchronized (buffer) {
+            removed = buffer.size();
             buffer.clear();
             buffer.addAll(entries);
             totalAdded.set(entries.size());
             totalRemoved.set(0);
+        }
+
+        // Notify listeners about the state change
+        if (removed > 0) {
+            listeners.forEach(LogBufferListener::clear);
+        }
+        if (!entries.isEmpty()) {
+            listeners.forEach(listener -> listener.entries(0, entries.size()));
         }
     }
 
@@ -143,15 +160,15 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
 
     @Override
     public void handleEntry(LogEntry entry) {
-        synchronized (listeners) {
-            int removed;
-            synchronized (buffer) {
-                removed = buffer.put(entry) ? 0 : 1;
-                this.totalAdded.incrementAndGet();
-                this.totalRemoved.addAndGet(removed);
-            }
-            listeners.forEach(listener -> listener.entries(removed, 1));
+        int removed;
+        synchronized (buffer) {
+            removed = buffer.put(entry) ? 0 : 1;
+            this.totalAdded.incrementAndGet();
+            this.totalRemoved.addAndGet(removed);
         }
+        
+        // Notify listeners outside the buffer synchronization to avoid deadlock
+        listeners.forEach(listener -> listener.entries(removed, 1));
     }
 
     /**
@@ -159,13 +176,13 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
      * Synchronized method that clears the buffer and notifies all registered LogBufferListeners to clear their logs as well.
      */
     public void clear() {
-        synchronized (listeners) {
-            synchronized (buffer) {
-                totalRemoved.addAndGet(buffer.size());
-                buffer.clear();
-            }
-            listeners.forEach(LogBufferListener::clear);
+        synchronized (buffer) {
+            totalRemoved.addAndGet(buffer.size());
+            buffer.clear();
         }
+        
+        // Notify listeners outside the buffer synchronization to avoid deadlock
+        listeners.forEach(LogBufferListener::clear);
     }
 
     /**
@@ -193,12 +210,12 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
     public record BufferState(LogEntry[] entries, long totalRemoved, long totalAdded) {
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof BufferState other)) {
+            if (!(o instanceof BufferState(LogEntry[] entries1, long removed, long added))) {
                 return false;
             }
-            return totalRemoved == other.totalRemoved
-                    && totalAdded == other.totalAdded
-                    && java.util.Arrays.equals(entries, other.entries);
+            return totalRemoved == removed
+                    && totalAdded == added
+                    && java.util.Arrays.equals(entries, entries1);
         }
 
         @Override
