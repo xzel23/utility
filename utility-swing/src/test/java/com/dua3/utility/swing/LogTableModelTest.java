@@ -58,7 +58,6 @@ class LogTableModelTest {
             if (System.currentTimeMillis() - startTime > timeout) {
                 throw new AssertionError("Timeout waiting for row count to reach " + expectedCount + ", current count: " + model.getRowCount());
             }
-            Thread.sleep(10); // Wait a bit before checking again
         }
     }
 
@@ -67,8 +66,6 @@ class LogTableModelTest {
         // Add some log entries one by one with small delays to ensure proper processing
         for (int i = 0; i < 5; i++) {
             buffer.handleEntry(new SimpleLogEntry("Test message " + i, "test.logger", Instant.now(), LogLevel.INFO, "", null, null));
-            // Small delay to help ensure each entry is processed
-            Thread.sleep(10);
         }
 
         // Wait for the model to update asynchronously
@@ -110,9 +107,7 @@ class LogTableModelTest {
         LogEntry entry3 = new SimpleLogEntry("Error message", "test.logger", Instant.now(), LogLevel.ERROR, "", null, null);
 
         buffer.handleEntry(entry1);
-        Thread.sleep(10); // Small delay
         buffer.handleEntry(entry2);
-        Thread.sleep(10); // Small delay
         buffer.handleEntry(entry3);
 
         // Wait for the model to update asynchronously
@@ -180,7 +175,6 @@ class LogTableModelTest {
             if (System.currentTimeMillis() - startTime > timeout) {
                 throw new AssertionError("Timeout waiting for stable row count of " + expectedCount + ", current count: " + currentCount);
             }
-            Thread.sleep(10); // Wait a bit before checking again
         }
     }
 }

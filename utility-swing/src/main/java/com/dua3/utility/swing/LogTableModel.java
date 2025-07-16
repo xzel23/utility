@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.table.AbstractTableModel;
 import java.io.Serial;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
@@ -19,7 +20,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
     private static final Logger LOG = LogManager.getLogger(LogTableModel.class);
-    public static final LogEntry[] EMPTY_LOG_ENTRIES = {};
+    private static final LogEntry[] EMPTY_LOG_ENTRIES = {};
+    private static final int MAX_UPDATE_SECONDS = 3;
 
     private final AtomicReference<LogEntry[]> data = new AtomicReference<>(EMPTY_LOG_ENTRIES);
     private final AtomicInteger queuedRemoves = new AtomicInteger();
@@ -28,6 +30,8 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     private final Lock updateReadLock = updateLock.readLock();
     private final Lock updateWriteLock = updateLock.writeLock();
     private final Condition updatesAvailableCondition = updateWriteLock.newCondition();
+
+    private volatile boolean shutdown = false;
 
     /**
      * Constructs a new LogTableModel with the specified LogBuffer.
@@ -39,10 +43,13 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
         buffer.addLogBufferListener(this);
 
         Thread updateThread = new Thread(() -> {
-            while (true) {
+            while (!shutdown) {
                 updateWriteLock.lock();
                 try {
-                    updatesAvailableCondition.await();
+                    boolean hasUpdates = updatesAvailableCondition.await(MAX_UPDATE_SECONDS, TimeUnit.SECONDS);
+                    if (!hasUpdates) {
+                        LOG.debug("timeout waiting for updates, forcing update now");
+                    }
 
                     LogEntry[] bufferArray = buffer.toArray();
                     int oldSz = data.getAndSet(bufferArray).length;
@@ -118,7 +125,14 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
     }
 
     /**
+     * Executes a read task using the updateReadLock to ensure thread-safe access.
+     * The provided {@code readTask} is run within a lock to prevent data race
+     * conditions or concurrent modification issues during read operations.
      *
+     * @param readTask the task to be executed. This should be a {@link Runnable}
+     *                 that encapsulates the code to perform read operations.
+     *                 Cannot be null.
+     * @throws NullPointerException if {@code readTask} is null
      */
     public void executeRead(Runnable readTask) {
         updateReadLock.lock();
@@ -126,6 +140,25 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
             readTask.run();
         } finally {
             updateReadLock.unlock();
+        }
+    }
+
+    /**
+     * Initiates the shutdown process for the LogTableModel. This sets the internal shutdown
+     * flag to true and signals any waiting threads that updates are no longer available.
+     * This method ensures proper handling of thread-safe operations using a lock to avoid
+     * concurrent modification issues.
+     *
+     * Thread safety is achieved by acquiring a write lock before modifying the condition
+     * variable and releasing it after signaling all waiting threads.
+     */
+    public void shutdown() {
+        shutdown = true;
+        updateWriteLock.lock();
+        try {
+            updatesAvailableCondition.signalAll();
+        } finally {
+            updateWriteLock.unlock();
         }
     }
 
