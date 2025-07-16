@@ -206,6 +206,7 @@ could not be loaded.
 - Non-code changes
     - The Project has been migrated from OSS-RH to Maven Central Portal.
     - Deployments are done through GitHub actions using JReleaser.
+    - Javadoc is automatically published to GitHub Pages after each succesfull CI build.
     - Successful CI builds are now published as snapshots to the Maven snapshots repository.
     - A new artefact `utility-bom` has been introduced that specifies the version for all modules.
     - Run tasks have been added for the sample applications.
@@ -262,6 +263,7 @@ could not be loaded.
 
 - Package `utility.swing`
     - `FileInput` was changed to work around the missing "New Directory" button in open dialogs on macOS.
+    - Race conditions and missed updates in `LogTableModel` have been fixed.
 
 - Package `utility.fx`
     - `AboutDialogBuilder.name()` was changed to `AboutDialogBuilder.applicationName()` and `AboutDialog` was removed.
