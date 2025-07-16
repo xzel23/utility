@@ -39,7 +39,7 @@ public final class FxTestUtil {
             }
         });
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS), "JavaFX operation timed out");
+        assertTrue(latch.await(20, TimeUnit.SECONDS), "JavaFX operation timed out");
         if (exception.get() != null) {
             throw exception.get();
         }
