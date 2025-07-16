@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Tests for the SwingLogPane class.
@@ -25,9 +26,7 @@ class SwingLogPaneTest {
     @Test
     void testConstructorWithDefaultBuffer() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingLogPane pane = new SwingLogPane();
         assertNotNull(pane, "SwingLogPane should be created successfully");
@@ -44,9 +43,7 @@ class SwingLogPaneTest {
     @Test
     void testConstructorWithCustomBufferSize() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         int bufferSize = 50;
         SwingLogPane pane = new SwingLogPane(bufferSize);
@@ -56,9 +53,7 @@ class SwingLogPaneTest {
     @Test
     void testConstructorWithCustomBuffer() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         LogBuffer buffer = new LogBuffer(100);
         SwingLogPane pane = new SwingLogPane(buffer);
@@ -68,9 +63,7 @@ class SwingLogPaneTest {
     @Test
     void testAddLogEntryToBuffer() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         LogBuffer buffer = new LogBuffer(100);
         SwingLogPane pane = new SwingLogPane(buffer);
@@ -98,9 +91,7 @@ class SwingLogPaneTest {
     @Test
     void testClearBuffer() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         LogBuffer buffer = new LogBuffer(100);
         SwingLogPane pane = new SwingLogPane(buffer);
@@ -142,9 +133,7 @@ class SwingLogPaneTest {
     @Test
     void testScrollRowIntoView() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         assertDoesNotThrow(() -> {
             LogBuffer buffer = new LogBuffer(100);
@@ -173,9 +162,7 @@ class SwingLogPaneTest {
     @Test
     void testSetDividerLocation() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         assertDoesNotThrow(() -> {
             SwingLogPane pane = new SwingLogPane();

@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Tests for the SwingProgressView class.
@@ -21,9 +22,7 @@ class SwingProgressViewTest {
     @Test
     void testConstructor() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingProgressView<String> view = new SwingProgressView<>();
         assertNotNull(view, "SwingProgressView should be created successfully");
@@ -32,9 +31,7 @@ class SwingProgressViewTest {
     @Test
     void testScheduleTask() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingProgressView<String> view = new SwingProgressView<>();
         String task = "Test Task";
@@ -65,9 +62,7 @@ class SwingProgressViewTest {
     @Test
     void testUpdateTask() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingProgressView<String> view = new SwingProgressView<>();
         String task = "Test Task";
@@ -99,9 +94,7 @@ class SwingProgressViewTest {
     @Test
     void testUpdateTaskWithPercentage() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingProgressView<String> view = new SwingProgressView<>();
         String task = "Test Task";
@@ -133,9 +126,7 @@ class SwingProgressViewTest {
     @Test
     void testFinishTask() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingProgressView<String> view = new SwingProgressView<>();
         String task = "Test Task";

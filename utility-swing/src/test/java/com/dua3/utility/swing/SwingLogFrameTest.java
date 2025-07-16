@@ -8,6 +8,7 @@ import java.awt.GraphicsEnvironment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Tests for the SwingLogFrame class.
@@ -17,9 +18,7 @@ class SwingLogFrameTest {
     @Test
     void testConstructorWithDefaultTitle() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingLogFrame frame = null;
         try {
@@ -37,9 +36,7 @@ class SwingLogFrameTest {
     @Test
     void testConstructorWithCustomTitle() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingLogFrame frame = null;
         try {
@@ -58,9 +55,7 @@ class SwingLogFrameTest {
     @Test
     void testConstructorWithCustomTitleAndBuffer() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingLogFrame frame = null;
         try {
@@ -80,9 +75,7 @@ class SwingLogFrameTest {
     @Test
     void testFrameSize() {
         // Skip test in headless environment
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
+        assumeFalse(GraphicsEnvironment.isHeadless());
 
         SwingLogFrame frame = null;
         try {
