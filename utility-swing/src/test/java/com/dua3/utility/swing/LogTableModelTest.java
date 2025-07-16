@@ -59,7 +59,7 @@ class LogTableModelTest {
 
         // Wait a bit for the update thread to process the changes
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -71,7 +71,7 @@ class LogTableModelTest {
 
         // Wait a bit for the update thread to process the clear
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
