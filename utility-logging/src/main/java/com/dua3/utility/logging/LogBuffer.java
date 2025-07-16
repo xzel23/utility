@@ -163,8 +163,8 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
         int removed;
         synchronized (buffer) {
             removed = buffer.put(entry) ? 0 : 1;
-            this.totalAdded.incrementAndGet();
-            this.totalRemoved.addAndGet(removed);
+            totalAdded.incrementAndGet();
+            totalRemoved.addAndGet(removed);
         }
         
         // Notify listeners outside the buffer synchronization to avoid deadlock
@@ -233,6 +233,13 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
                     ", totalAdded=" + totalAdded + "]";
         }
 
+        /**
+         * Calculates and retrieves the current sequence number of the buffer state.
+         * The sequence number is determined by summing the total number of log entries
+         * that have been added and removed from the buffer.
+         *
+         * @return the sequence number, calculated as the sum of totalAdded and totalRemoved values
+         */
         public long getSequenceNumber() {
             return totalAdded + totalRemoved;
         }
