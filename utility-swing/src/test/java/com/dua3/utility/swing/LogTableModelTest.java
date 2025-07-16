@@ -42,7 +42,7 @@ class LogTableModelTest {
     }
 
     @Test
-    void testAddLogEntry() throws InterruptedException {
+    void testAddLogEntry() {
         // Add a log entry to the buffer
         LogEntry entry = new SimpleLogEntry("Test message", "test.logger", Instant.now(), LogLevel.INFO, "", null, null);
         buffer.handleEntry(entry);
@@ -58,7 +58,7 @@ class LogTableModelTest {
      * Helper method to wait for the model to reach the expected row count.
      * This is necessary because the LogTableModel updates asynchronously.
      */
-    private void waitForRowCount(int expectedCount) throws InterruptedException {
+    private void waitForRowCount(int expectedCount) {
         long startTime = System.currentTimeMillis();
         long timeout = 5000; // 5 second timeout
 
@@ -70,7 +70,7 @@ class LogTableModelTest {
     }
 
     @Test
-    void testClearBuffer() throws InterruptedException {
+    void testClearBuffer() {
         // Add some log entries one by one with small delays to ensure proper processing
         for (int i = 0; i < 5; i++) {
             buffer.handleEntry(new SimpleLogEntry("Test message " + i, "test.logger", Instant.now(), LogLevel.INFO, "", null, null));
@@ -108,7 +108,7 @@ class LogTableModelTest {
     }
 
     @Test
-    void testMultipleEntries() throws InterruptedException {
+    void testMultipleEntries() {
         // Add multiple log entries with different levels
         LogEntry entry1 = new SimpleLogEntry("Info message", "test.logger", Instant.now(), LogLevel.INFO, "", null, null);
         LogEntry entry2 = new SimpleLogEntry("Warning message", "test.logger", Instant.now(), LogLevel.WARN, "", null, null);
@@ -158,7 +158,7 @@ class LogTableModelTest {
      * Helper method to wait for the model to stabilize at the expected row count.
      * This waits for the count to be stable for a short period.
      */
-    private void waitForStableRowCount(int expectedCount) throws InterruptedException {
+    private void waitForStableRowCount(int expectedCount) {
         long startTime = System.currentTimeMillis();
         long timeout = 5000; // 5 second timeout
         long stableStartTime = -1;
