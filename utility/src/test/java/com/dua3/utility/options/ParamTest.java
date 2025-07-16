@@ -48,8 +48,9 @@ class ParamTest {
     private static String normalize(Configuration configuration, String pathStr) {
         if (configuration.equals(Configuration.windows())) {
             if (pathStr.startsWith("/")) {
-                pathStr = "C:" + pathStr;
+                pathStr = "c:" + pathStr;
             }
+            pathStr = pathStr.replace("/", "\\");
         }
         return pathStr;
     }
