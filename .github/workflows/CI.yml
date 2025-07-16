@@ -74,12 +74,17 @@ jobs:
       - name: 'Get project version'
         if: runner.os == 'Linux' && success()
         id: version
-        run: echo "version=$(./gradlew -q printVersion)" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION=$(./gradlew -q printVersion | tail -n 1)
+          echo "Detected version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Determine Javadoc folder'
         if: runner.os == 'Linux' && success()
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          echo "Evaluating DOC_PATH for version: $VERSION"
           if [[ "$VERSION" == *"-SNAPSHOT" ]]; then
             echo "DOC_PATH=snapshots" >> "$GITHUB_ENV"
           elif [[ "$VERSION" == v* ]]; then
@@ -90,7 +95,7 @@ jobs:
 
       - name: 'Deploy versioned Javadoc'
         if: runner.os == 'Linux' && github.ref == 'refs/heads/main' && success()
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: build/docs/javadoc
