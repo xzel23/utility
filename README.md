@@ -21,6 +21,10 @@ Some libraries with utility classes.
 This library is developed by Axel Howind and available under the MIT License. Refer to the accompanying
 file [LICENSE](LICENSE) for details.
 
+## Javadoc
+
+The aggregated Javadoc for all modules is available on [GitHub Pages](https://xzel23.github.io/utility/).
+
 ## Source
 
 Source code is available at https://github.com/xzel23/utility.
