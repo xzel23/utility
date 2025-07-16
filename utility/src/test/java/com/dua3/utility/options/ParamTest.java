@@ -2,15 +2,22 @@ package com.dua3.utility.options;
 
 import com.dua3.utility.data.ConversionException;
 import com.dua3.utility.data.Converter;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -22,6 +29,42 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests for the Param class.
  */
 class ParamTest {
+
+    /**
+     * The filesystem configurations to use in tests.
+     * @return stream of file system configurations
+     */
+    public static Stream<Configuration> fileSystemConfigurations() {
+        return Stream.of(Configuration.unix(), Configuration.windows(), Configuration.osX());
+    }
+
+    /**
+     * Normalize a path for testing, i.e., makes sure that absolute windows paths are
+     * prefixed with a drive letter.
+     * @param configuration the {@link Configuration} according to which the path should be normalized
+     * @param pathStr the path as a String
+     * @return the normalized path
+     */
+    private static String normalize(Configuration configuration, String pathStr) {
+        if (configuration.equals(Configuration.windows())) {
+            if (pathStr.startsWith("/")) {
+                pathStr = "C:" + pathStr;
+            }
+        }
+        return pathStr;
+    }
+
+    /**
+     * Get a path for testing, i.e., makes sure that absolute windows paths are
+     * prefixed with a drive letter.
+     * @param configuration the {@link Configuration} according to which the path should be normalized
+     * @param fs the file system
+     * @param pathStr the path as a String
+     * @return the normalized path
+     */
+    private static Path getPath(Configuration configuration, FileSystem fs, String pathStr) {
+        return fs.getPath(normalize(configuration, pathStr));
+    }
 
     @Test
     void testOfString() {
@@ -193,25 +236,52 @@ class ParamTest {
         assertEquals(Paths.get("/tmp/test"), param.converter().a2b().apply(new String[]{"/tmp/test"}));
     }
 
-    @Test
-    void testOfPathWithPredicate() {
-        Predicate<Path> predicate = p -> p.toString().startsWith("/tmp");
-        Param<Path> param = Param.ofPath("Path Param", "A path parameter", "arg", Param.Required.REQUIRED, predicate);
+    @ParameterizedTest
+    @MethodSource("fileSystemConfigurations")
+    void testOfPathWithPredicate(Configuration configuration) throws IOException {
+        try (FileSystem fs = Jimfs.newFileSystem(configuration)) {
+            String tmpDir = "/tmp";
+            String testDir = tmpDir + "/test";
+            String homeDir = "/home";
+            String homeTestDir = homeDir + "/test";
 
-        assertEquals("Path Param", param.displayName());
-        assertEquals("A path parameter", param.description());
-        assertEquals("arg", param.argName());
-        assertSame(Path.class, param.targetType());
-        assertEquals(Repetitions.EXACTLY_ONE, param.argRepetitions());
-        assertFalse(param.hasAllowedValues());
+            // Create a path for the tmp directory
+            Path tmpPath = getPath(configuration, fs, tmpDir);
 
-        // Test validation
-        Optional<String> validResult = param.validate().apply(Paths.get("/tmp/test"));
-        assertTrue(validResult.isEmpty());
+            // Create a predicate that checks if the path is in the tmp directory
+            Predicate<Path> predicate = p -> {
+                // Convert both paths to absolute paths to ensure consistent comparison
+                Path absolutePath = p.isAbsolute() ? p : p.toAbsolutePath();
+                Path absoluteTmpPath = tmpPath.isAbsolute() ? tmpPath : tmpPath.toAbsolutePath();
 
-        Optional<String> invalidResult = param.validate().apply(Paths.get("/home/test"));
-        assertTrue(invalidResult.isPresent());
-        assertTrue(invalidResult.get().contains("invalid value"));
+                // Check if the absolute path starts with the absolute tmp path
+                String pathStr = absolutePath.toString();
+                String tmpPathStr = absoluteTmpPath.toString();
+
+                return pathStr.startsWith(tmpPathStr);
+            };
+
+            Param<Path> param = Param.ofPath("Path Param", "A path parameter", "arg", Param.Required.REQUIRED, predicate);
+
+            assertEquals("Path Param", param.displayName());
+            assertEquals("A path parameter", param.description());
+            assertEquals("arg", param.argName());
+            assertSame(Path.class, param.targetType());
+            assertEquals(Repetitions.EXACTLY_ONE, param.argRepetitions());
+            assertFalse(param.hasAllowedValues());
+
+            // Test validation with a valid path (in tmp directory)
+            Path validPath = getPath(configuration, fs, testDir);
+            Optional<String> validResult = param.validate().apply(validPath);
+            assertTrue(validResult.isEmpty(), "Path " + validPath + " should be valid");
+
+            // Test validation with an invalid path (not in tmp directory)
+            Path invalidPath = getPath(configuration, fs, homeTestDir);
+
+            Optional<String> invalidResult = param.validate().apply(invalidPath);
+            assertTrue(invalidResult.isPresent(), "Path " + invalidPath + " should be invalid");
+            assertTrue(invalidResult.get().contains("invalid value"));
+        }
     }
 
     @Test
