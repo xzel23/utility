@@ -232,6 +232,10 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
                     ", totalRemoved=" + totalRemoved +
                     ", totalAdded=" + totalAdded + "]";
         }
+
+        public long getSequenceNumber() {
+            return totalAdded + totalRemoved;
+        }
     }
 
     /**
@@ -249,6 +253,19 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
             long a = totalAdded.get();
             assert array.length == a - r;
             return new BufferState(array, r, a);
+        }
+    }
+
+    /**
+     * Retrieves the sequence number of the log buffer. The sequence number is calculated
+     * as the sum of the total added entries and the total removed entries in the buffer.
+     * This method is thread-safe as it synchronizes on the buffer during execution.
+     *
+     * @return the calculated sequence number of the log buffer as a long value
+     */
+    public long getSequenceNumber() {
+        synchronized (buffer) {
+            return totalAdded.get() + totalRemoved.get();
         }
     }
 

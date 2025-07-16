@@ -17,11 +17,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * This class represents a table model for displaying log entries in a Swing LogPane.
+ *
+ * <p>The model uses an asynchronous update thread that processes buffer changes
+ * and fires appropriate table events. Updates are batched and optimized using
+ * sequence numbers to avoid unnecessary processing.
  */
 final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBufferListener {
     private static final Logger LOG = LogManager.getLogger(LogTableModel.class);
     private static final LogEntry[] EMPTY_LOG_ENTRIES = {};
-    private static final int MAX_UPDATE_SECONDS = 3;
+    private static final int MAX_UPDATE_MILLISECONDS = 1000;
 
     private final AtomicReference<LogEntry[]> data = new AtomicReference<>(EMPTY_LOG_ENTRIES);
     private final AtomicInteger queuedRemoves = new AtomicInteger();
@@ -43,15 +47,23 @@ final class LogTableModel extends AbstractTableModel implements LogBuffer.LogBuf
         buffer.addLogBufferListener(this);
 
         Thread updateThread = new Thread(() -> {
+            long sequence = 0L;
             while (!shutdown) {
                 updateWriteLock.lock();
                 try {
-                    boolean hasUpdates = updatesAvailableCondition.await(MAX_UPDATE_SECONDS, TimeUnit.SECONDS);
+                    boolean hasUpdates = updatesAvailableCondition.await(MAX_UPDATE_MILLISECONDS, TimeUnit.MILLISECONDS);
                     if (!hasUpdates) {
-                        LOG.debug("timeout waiting for updates, forcing update now");
+                        if (sequence == buffer.getSequenceNumber()) {
+                            LOG.debug("no updates available");
+                            continue;
+                        } else {
+                            LOG.debug("updates detected after timeout");
+                        }
                     }
 
-                    LogEntry[] bufferArray = buffer.toArray();
+                    LogBuffer.BufferState bufferState = buffer.getBufferState();
+                    LogEntry[] bufferArray = bufferState.entries();
+                    sequence = bufferState.getSequenceNumber();
                     int oldSz = data.getAndSet(bufferArray).length;
                     int sz = bufferArray.length;
                     int remove = queuedRemoves.getAndSet(0);
