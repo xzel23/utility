@@ -1,5 +1,6 @@
 package com.dua3.utility.fx.controls;
 
+import javafx.application.Platform;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -239,24 +240,31 @@ class PinBoardTest extends FxTestBase {
      */
     @Test
     void testGetItemAt() throws Exception {
-        runOnFxThreadAndWait(() -> {
-            PinBoard pinBoard = new PinBoard();
+        PinBoard pinBoard = new PinBoard();
 
+        runOnFxThreadAndWait(() -> {
             // Add to scene to ensure skin is initialized
             addToScene(pinBoard);
+            pinBoard.setVisible(true);
 
             // Add test items
             PinBoard.Item item1 = createTestItem("Item1", 0, 0, 100, 100);
             PinBoard.Item item2 = createTestItem("Item2", 150, 150, 100, 100);
             pinBoard.pin(item1);
             pinBoard.pin(item2);
+        });
 
+        // give JavaFX the oppurtunity to run a layout pass
+        Platform.requestNextPulse();
+        Thread.sleep(10);
+
+        runOnFxThreadAndWait(() -> {
             // Now that the skin is properly initialized, we can test getItemAt
             Optional<PinBoard.Item> foundItem = pinBoard.getItemAt(50, 50);
 
             // Verify the result
             assertTrue(foundItem.isPresent(), "Should find an item at position (50, 50)");
-            assertEquals(item1, foundItem.get(), "Should find item1 at position (50, 50)");
+            assertEquals("Item1", foundItem.get().name(), "Should find item1 at position (50, 50)");
         });
     }
 
@@ -265,9 +273,8 @@ class PinBoardTest extends FxTestBase {
      */
     @Test
     void testGetPositionInItem() throws Exception {
+        PinBoard pinBoard = new PinBoard();
         runOnFxThreadAndWait(() -> {
-            PinBoard pinBoard = new PinBoard();
-
             // Add to scene to ensure skin is initialized
             addToScene(pinBoard);
 
@@ -276,13 +283,19 @@ class PinBoardTest extends FxTestBase {
             PinBoard.Item item2 = createTestItem("Item2", 150, 150, 100, 100);
             pinBoard.pin(item1);
             pinBoard.pin(item2);
+        });
 
+        // give JavaFX the oppurtunity to run a layout pass
+        Platform.requestNextPulse();
+        Thread.sleep(10);
+
+        runOnFxThreadAndWait(() -> {
             // Now that the skin is properly initialized, we can test getPositionInItem
             Optional<PinBoard.PositionInItem> position = pinBoard.getPositionInItem(50, 50);
 
             // Verify the result
             assertTrue(position.isPresent(), "Should find a position in item at (50, 50)");
-            assertEquals(item1, position.get().item(), "Should find position in item1");
+            assertEquals("Item1", position.get().item().name(), "Should find position in item1");
             assertEquals(50, position.get().x(), "X coordinate should be 50");
             assertEquals(50, position.get().y(), "Y coordinate should be 50");
         });

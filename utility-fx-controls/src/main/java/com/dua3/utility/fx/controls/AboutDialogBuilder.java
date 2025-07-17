@@ -305,6 +305,8 @@ public class AboutDialogBuilder {
             dlg.setTitle(title);
         } else if (!applicationName.isBlank()) {
             dlg.setTitle("About " + applicationName);
+        } else {
+            dlg.setTitle("About");
         }
         dialogPane.getButtonTypes().addAll(ButtonType.OK);
 

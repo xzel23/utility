@@ -77,11 +77,12 @@ public abstract class FxTestBase {
     public static void runOnFxThreadAndWait(Runnable runnable) throws Exception {
         CountDownLatch latch = new CountDownLatch(1);
 
-        AtomicReference<Exception> exception = new AtomicReference<>();
+        AtomicReference<Throwable> exception = new AtomicReference<>();
         PlatformHelper.runLater(() -> {
             try {
                 runnable.run();
-            } catch (Exception t) {
+            } catch (Throwable t) {
+                // we need to catch Throwable so that AssertionErrors thrown by JUnit asseertions don't get swallowed by JavaFX
                 exception.set(t);
             } finally {
                 latch.countDown();
@@ -89,8 +90,15 @@ public abstract class FxTestBase {
         });
 
         assertTrue(latch.await(20, TimeUnit.SECONDS), "JavaFX operation timed out");
-        if (exception.get() != null) {
-            throw exception.get();
+        Throwable throwable = exception.get();
+        if (throwable != null) {
+            if (throwable instanceof RuntimeException re) {
+                throw re;
+            } else if (throwable instanceof Error e) {
+                throw e;
+            } else {
+                throw new RuntimeException(throwable);
+            }
         }
     }
 

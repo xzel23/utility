@@ -4,6 +4,7 @@ import com.dua3.utility.fx.PlatformHelper;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterAll;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class FxTestBase {
 
     private static boolean platformInitialized = false;
-    private static Stage sharedStage;
+    private static Stage stage;
     private static final Object lock = new Object();
 
     /**
@@ -42,12 +44,6 @@ public abstract class FxTestBase {
                         System.out.println("JavaFX Platform initialized");
                     });
                     platformInitialized = true;
-                    PlatformHelper.runAndWait(() -> {
-                        sharedStage = new Stage();
-                        sharedStage.setTitle("FxTestBase");
-                        sharedStage.setWidth(800);
-                        sharedStage.setHeight(600);
-                    });
                 } catch (IllegalStateException e) {
                     // Platform already running, which is fine
                     System.out.println("JavaFX Platform was already running");
@@ -78,11 +74,12 @@ public abstract class FxTestBase {
     public static void runOnFxThreadAndWait(Runnable runnable) throws Exception {
         CountDownLatch latch = new CountDownLatch(1);
 
-        AtomicReference<Exception> exception = new AtomicReference<>();
+        AtomicReference<Throwable> exception = new AtomicReference<>();
         PlatformHelper.runLater(() -> {
             try {
                 runnable.run();
-            } catch (Exception t) {
+            } catch (Throwable t) {
+                // we need to catch Throwable so that AssertionErrors thrown by JUnit asseertions don't get swallowed by JavaFX
                 exception.set(t);
             } finally {
                 latch.countDown();
@@ -90,8 +87,15 @@ public abstract class FxTestBase {
         });
 
         assertTrue(latch.await(20, TimeUnit.SECONDS), "JavaFX operation timed out");
-        if (exception.get() != null) {
-            throw exception.get();
+        Throwable throwable = exception.get();
+        if (throwable != null) {
+            if (throwable instanceof RuntimeException re) {
+                throw re;
+            } else if (throwable instanceof Error e) {
+                throw e;
+            } else {
+                throw new RuntimeException(throwable);
+            }
         }
     }
 
@@ -102,24 +106,42 @@ public abstract class FxTestBase {
      * @return the created Scene containing the PinBoard
      */
     public static Scene addToScene(Node node) {
-        StackPane root = new StackPane();
-        root.getChildren().add(node);
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = PlatformHelper.runAndWait(() -> {
+            stage = new Stage();
+            stage.setTitle("FxTestBase");
+            stage.setWidth(800);
+            stage.setHeight(600);
+            StackPane root = new StackPane();
+            root.getChildren().add(node);
+            Scene scn = new Scene(root, 800, 600);
 
-        // Use the shared Stage to ensure the skin is initialized
-        PlatformHelper.runAndWait(() -> {
             // Set the scene on the shared stage
-            sharedStage.setScene(scene);
+            stage.setScene(scn);
 
             // Make sure the stage is showing
-            if (!sharedStage.isShowing()) {
-                sharedStage.show();
+            if (!stage.isShowing()) {
+                stage.show();
             }
 
-            // Process a pulse to ensure the scene graph is processed
             Platform.requestNextPulse();
+
+            return scn;
         });
 
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         return scene;
+    }
+
+    public static Stream<Node> getChildrenRecursive(Node node) {
+        if (node instanceof Pane pane) {
+            return Stream.concat(pane.getChildren().stream(), pane.getChildrenUnmodifiable().stream().flatMap(FxTestBase::getChildrenRecursive));
+        } else {
+            return Stream.of(node);
+        }
     }
 }
