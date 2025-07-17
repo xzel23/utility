@@ -1,5 +1,6 @@
 package com.dua3.utility.fx;
 
+import com.dua3.utility.data.ConversionException;
 import com.dua3.utility.data.Converter;
 import com.dua3.utility.lang.LangUtil;
 import javafx.beans.property.DoubleProperty;
@@ -43,12 +44,24 @@ public final class PropertyConverter {
      * @return a new Property with a value of type B, synchronized with the original property
      */
     public static <A, B, P extends Property<A>> Property<B> convert(P property, Converter<A, B> converter) {
-        LangUtil.check(!property.isBound(), "property must not be bound!");
+        LangUtil.check(!property.isBound(), () -> new IllegalArgumentException("property must not be bound!"));
 
         Property<B> convertedProperty = new SimpleObjectProperty<>(converter.convert(property.getValue()));
 
-        property.addListener((obs, oldValue, newValue) -> convertedProperty.setValue(converter.convert(newValue)));
-        convertedProperty.addListener((obs, oldValue, newValue) -> property.setValue(converter.convertBack(newValue)));
+        property.addListener((obs, oldValue, newValue) -> {
+            try {
+                convertedProperty.setValue(converter.convert(newValue));
+            } catch (ConversionException e) {
+                convertedProperty.setValue(null);
+            }
+        });
+        convertedProperty.addListener((obs, oldValue, newValue) -> {
+            try {
+                property.setValue(converter.convertBack(newValue));
+            } catch (ConversionException e) {
+                property.setValue(null);
+            }
+        });
 
         return convertedProperty;
     }

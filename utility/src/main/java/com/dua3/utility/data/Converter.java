@@ -186,6 +186,8 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
 
     /**
      * Creates a bidirectional converter between two types A and B.
+     * <p>
+     * If the conversion fails, the bound property is set to {@code null}.
      *
      * @param <A> the source type
      * @param <B> the target type

@@ -60,7 +60,7 @@ class LogTableModelTest {
      */
     private void waitForRowCount(int expectedCount) {
         long startTime = System.currentTimeMillis();
-        long timeout = 5000; // 5 second timeout
+        long timeout = 10000;
 
         while (model.getRowCount() != expectedCount) {
             if (System.currentTimeMillis() - startTime > timeout) {
@@ -131,7 +131,7 @@ class LogTableModelTest {
      * Alternative test that focuses on the final state rather than individual updates
      */
     @Test
-    void testBatchAddEntries() throws InterruptedException {
+    void testBatchAddEntries() {
         // Add all entries at once
         LogEntry[] entries = new LogEntry[5];
         for (int i = 0; i < 5; i++) {

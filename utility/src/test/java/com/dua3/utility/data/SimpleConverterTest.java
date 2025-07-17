@@ -44,7 +44,7 @@ class SimpleConverterTest {
         assertEquals(123, converter.convert("123"));
         assertEquals(0, converter.convert("0"));
         assertEquals(-456, converter.convert("-456"));
-        
+
         // Test with invalid input
         assertThrows(ConversionException.class, () -> converter.convert("not a number"));
     }
