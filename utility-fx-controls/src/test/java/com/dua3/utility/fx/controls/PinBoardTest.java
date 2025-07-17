@@ -256,7 +256,8 @@ class PinBoardTest extends FxTestBase {
 
         // give JavaFX the oppurtunity to run a layout pass
         Platform.requestNextPulse();
-        Thread.sleep(10);
+        Thread.sleep(500);
+        Platform.requestNextPulse();
 
         runOnFxThreadAndWait(() -> {
             // Now that the skin is properly initialized, we can test getItemAt
@@ -287,7 +288,8 @@ class PinBoardTest extends FxTestBase {
 
         // give JavaFX the oppurtunity to run a layout pass
         Platform.requestNextPulse();
-        Thread.sleep(10);
+        Thread.sleep(500);
+        Platform.requestNextPulse();
 
         runOnFxThreadAndWait(() -> {
             // Now that the skin is properly initialized, we can test getPositionInItem
