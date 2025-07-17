@@ -45,7 +45,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertColorToFx() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test converting from utility Color to JavaFX Color
             Color color = Color.rgba(255, 0, 0, 128); // Semi-transparent red
             javafx.scene.paint.Color fxColor = FxUtil.convert(color);
@@ -60,7 +60,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertColorFromFx() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test converting from JavaFX Color to utility Color
             javafx.scene.paint.Color fxColor = javafx.scene.paint.Color.rgb(0, 255, 0, 0.75); // Semi-transparent green
             Color color = FxUtil.convert(fxColor);
@@ -96,7 +96,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertAffineTransformationToFx() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test converting from utility AffineTransformation2f to JavaFX Affine
             // Create a transformation by combining translate, scale, and rotate
             AffineTransformation2f at = AffineTransformation2f.combine(
@@ -119,7 +119,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertAffineFromFx() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test converting from JavaFX Affine to utility AffineTransformation2f
             Affine affine = new Affine();
             affine.setMxx(1.5);
@@ -153,7 +153,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertRectangle2fToRectangle() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test converting from utility Rectangle2f to JavaFX Rectangle
             Rectangle2f rect = new Rectangle2f(10, 20, 30, 40);
             javafx.scene.shape.Rectangle fxRect = FxUtil.convert(rect);
@@ -179,7 +179,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertBoundsToRectangle2f() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a Text node to get its bounds
             javafx.scene.text.Text text = new javafx.scene.text.Text("Test");
             Bounds bounds = text.getBoundsInLocal();
@@ -195,7 +195,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testGetTextBounds() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test getting text bounds
             Font font = Font.font("Arial", 12);
             Bounds bounds = FxUtil.getTextBounds("Test", font);
@@ -208,7 +208,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testGetTextWidth() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test getting text width
             Font fxFont = Font.font("Arial", 12);
             // Convert JavaFX Font to utility Font
@@ -221,7 +221,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testGetTextHeight() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test getting text height
             Font fxFont = Font.font("Arial", 12);
             // Convert JavaFX Font to utility Font
@@ -278,7 +278,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testCopyToClipboardString() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test copying a string to the clipboard
             String text = "Test clipboard text";
             FxUtil.copyToClipboard(text);
@@ -292,7 +292,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testCopyToClipboardRichText() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test copying rich text to the clipboard
             RichText richText = RichText.valueOf("Test rich text");
             FxUtil.copyToClipboard(richText);
@@ -306,7 +306,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertPath() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a path with various segment types including Curve2f and Arc2f
             Path2f path2f = Path2f.builder()
                     .moveTo(10f, 10f)
@@ -334,7 +334,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testConvertToJavaFxPath() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a path with various segment types including Curve2f and Arc2f
             Path2f path2f = Path2f.builder().moveTo(10.0f, 10.0f).lineTo(100.0f, 10.0f)
                     // Add a quadratic curve (Curve2f with one control point)
@@ -358,7 +358,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testFontConversion() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Test converting from JavaFX Font to utility Font and back
             Platform platform = Platform.currentPlatform();
             Assumptions.assumeTrue(platform != Platform.UNKNOWN);
@@ -404,7 +404,7 @@ class FxUtilTest extends FxTestBase {
             return;
         }
 
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a simple 1x1 image
             Image img = ImageUtil.getInstance().create(1, 1, new int[1]);
 
@@ -511,7 +511,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testFontConverter() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a JavaFX font
             javafx.scene.text.Font fxFont = javafx.scene.text.Font.font("Arial", 12);
 
@@ -529,7 +529,7 @@ class FxUtilTest extends FxTestBase {
 
     @Test
     void testColorConverter() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a JavaFX color
             javafx.scene.paint.Color fxColor = javafx.scene.paint.Color.rgb(255, 0, 0, 0.5); // Semi-transparent red
 

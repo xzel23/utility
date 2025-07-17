@@ -18,7 +18,7 @@ class FxBufferedImageTest extends FxTestBase {
      */
     @Test
     void testCreateFxBufferedImage() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxBufferedImage image = new FxBufferedImage(100, 150);
             assertNotNull(image, "FxBufferedImage should not be null");
             assertEquals(100, image.width(), "Width should be 100");
@@ -31,7 +31,7 @@ class FxBufferedImageTest extends FxTestBase {
      */
     @Test
     void testWidthAndHeight() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxBufferedImage image = new FxBufferedImage(200, 300);
             assertEquals(200, image.width(), "Width should be 200");
             assertEquals(300, image.height(), "Height should be 300");
@@ -45,7 +45,7 @@ class FxBufferedImageTest extends FxTestBase {
      */
     @Test
     void testGetArgb() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             int width = 50;
             int height = 60;
             FxBufferedImage image = new FxBufferedImage(width, height);
@@ -61,7 +61,7 @@ class FxBufferedImageTest extends FxTestBase {
      */
     @Test
     void testFxImage() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxBufferedImage image = new FxBufferedImage(100, 100);
 
             Image fxImage = image.fxImage();
@@ -76,7 +76,7 @@ class FxBufferedImageTest extends FxTestBase {
      */
     @Test
     void testGetBuffer() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             int width = 75;
             int height = 85;
             FxBufferedImage image = new FxBufferedImage(width, height);
@@ -94,7 +94,7 @@ class FxBufferedImageTest extends FxTestBase {
      */
     @Test
     void testArgbArraysAreSame() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxBufferedImage image = new FxBufferedImage(50, 50);
 
             int[] argbDirect = image.getArgb();
@@ -109,7 +109,7 @@ class FxBufferedImageTest extends FxTestBase {
      */
     @Test
     void testModifyImage() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             int width = 10;
             int height = 10;
             FxBufferedImage image = new FxBufferedImage(width, height);

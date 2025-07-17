@@ -31,7 +31,7 @@ class PropertyConverterTest extends FxTestBase {
      */
     @Test
     void testConvertWithConverter() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a converter from String to Integer
             Converter<String, Integer> converter = Converter.create(Integer::valueOf, String::valueOf);
 
@@ -63,7 +63,7 @@ class PropertyConverterTest extends FxTestBase {
      */
     @Test
     void testConvertReadOnlyWithConverter() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a converter from String to Integer
             Converter<String, Integer> converter = Converter.create(Integer::valueOf, String::valueOf);
 
@@ -88,7 +88,7 @@ class PropertyConverterTest extends FxTestBase {
      */
     @Test
     void testConvertReadOnlyWithFunction() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a function from String to Integer
             Function<String, Integer> converter = Integer::valueOf;
 
@@ -113,7 +113,7 @@ class PropertyConverterTest extends FxTestBase {
      */
     @Test
     void testConvertToStringReadOnly() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a function from Integer to String
             Function<Integer, String> converter = n -> "Number: " + n;
 
@@ -138,7 +138,7 @@ class PropertyConverterTest extends FxTestBase {
      */
     @Test
     void testConvertToDoubleReadOnly() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a function from String to Double
             Function<String, Double> converter = s -> Double.parseDouble(s) * 2;
 
@@ -163,7 +163,7 @@ class PropertyConverterTest extends FxTestBase {
      */
     @Test
     void testConvertDoubleProperty() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a DoubleProperty
             DoubleProperty doubleProperty = new SimpleDoubleProperty(123.45);
 
@@ -188,7 +188,7 @@ class PropertyConverterTest extends FxTestBase {
      */
     @Test
     void testConvertWithBoundProperty() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a converter from String to Integer
             Converter<String, Integer> converter = Converter.create(Integer::valueOf, String::valueOf);
 

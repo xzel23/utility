@@ -23,7 +23,7 @@ class FxLogPaneTest extends FxTestBase {
 
     @Test
     void testConstructorWithDefaultBuffer() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxLogPane pane = new FxLogPane();
             assertNotNull(pane, "FxLogPane should be created successfully");
         });
@@ -31,7 +31,7 @@ class FxLogPaneTest extends FxTestBase {
 
     @Test
     void testUIComponents() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxLogPane pane = new FxLogPane();
             assertNotNull(findToolBar(pane), "FxLogPane should contain a ToolBar");
         });
@@ -39,7 +39,7 @@ class FxLogPaneTest extends FxTestBase {
 
     @Test
     void testConstructorWithBufferSize() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             int bufferSize = 200;
             FxLogPane pane = new FxLogPane(bufferSize);
             assertNotNull(pane, "FxLogPane should be created successfully with custom buffer size");
@@ -52,7 +52,7 @@ class FxLogPaneTest extends FxTestBase {
 
     @Test
     void testConstructorWithLogBuffer() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             LogBuffer buffer = new LogBuffer(150);
             FxLogPane pane = new FxLogPane(buffer);
             assertNotNull(pane, "FxLogPane should be created successfully with custom LogBuffer");
@@ -64,7 +64,7 @@ class FxLogPaneTest extends FxTestBase {
 
     @Test
     void testConstructorWithLogBufferAndColorize() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             LogBuffer buffer = new LogBuffer(150);
             Function<LogEntry, Color> colorize = entry -> Color.RED; // Simple colorize function that always returns red
 
@@ -78,7 +78,7 @@ class FxLogPaneTest extends FxTestBase {
 
     @Test
     void testGetLogBuffer() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             // Create a pane with a specific buffer
             LogBuffer buffer = new LogBuffer(250);
             FxLogPane pane = new FxLogPane(buffer);

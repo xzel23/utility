@@ -18,7 +18,7 @@ class FxLogWindowTest extends FxTestBase {
 
     @Test
     void testConstructorWithDefaultBuffer() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxLogWindow window = new FxLogWindow();
             assertNotNull(window, "FxLogWindow should be created successfully");
 
@@ -34,7 +34,7 @@ class FxLogWindowTest extends FxTestBase {
 
     @Test
     void testConstructorWithTitle() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             String title = "Test Log Window";
             FxLogWindow window = new FxLogWindow(title);
             assertNotNull(window, "FxLogWindow should be created successfully");
@@ -44,7 +44,7 @@ class FxLogWindowTest extends FxTestBase {
 
     @Test
     void testConstructorWithMaxLines() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             int maxLines = 100;
             FxLogWindow window = new FxLogWindow(maxLines);
             assertNotNull(window, "FxLogWindow should be created successfully");
@@ -53,7 +53,7 @@ class FxLogWindowTest extends FxTestBase {
 
     @Test
     void testConstructorWithTitleAndMaxLines() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             String title = "Test Log Window";
             int maxLines = 100;
             FxLogWindow window = new FxLogWindow(title, maxLines);
@@ -64,7 +64,7 @@ class FxLogWindowTest extends FxTestBase {
 
     @Test
     void testConstructorWithLogBuffer() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             LogBuffer buffer = new LogBuffer();
             FxLogWindow window = new FxLogWindow(buffer);
             assertNotNull(window, "FxLogWindow should be created successfully");
@@ -74,7 +74,7 @@ class FxLogWindowTest extends FxTestBase {
 
     @Test
     void testGetLogBuffer() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             LogBuffer buffer = new LogBuffer();
             FxLogWindow window = new FxLogWindow(buffer);
             LogBuffer retrievedBuffer = window.getLogBuffer();

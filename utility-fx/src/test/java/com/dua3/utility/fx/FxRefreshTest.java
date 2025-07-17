@@ -21,7 +21,7 @@ class FxRefreshTest extends FxTestBase {
 
     @Test
     void testCreateWithNameAndTask() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             AtomicBoolean taskExecuted = new AtomicBoolean(false);
             Runnable task = () -> taskExecuted.set(true);
 
@@ -38,7 +38,7 @@ class FxRefreshTest extends FxTestBase {
 
     @Test
     void testCreateWithNameTaskAndActiveState() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             AtomicBoolean taskExecuted = new AtomicBoolean(false);
             Runnable task = () -> taskExecuted.set(true);
 
@@ -55,7 +55,7 @@ class FxRefreshTest extends FxTestBase {
 
     @Test
     void testCreateWithNode() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             AtomicBoolean taskExecuted = new AtomicBoolean(false);
             Runnable task = () -> taskExecuted.set(true);
             Pane node = new Pane();
@@ -72,7 +72,7 @@ class FxRefreshTest extends FxTestBase {
 
     @Test
     void testCreateWithNodeAndActiveState() throws Throwable {
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             AtomicBoolean taskExecuted = new AtomicBoolean(false);
             Runnable task = () -> taskExecuted.set(true);
             Pane node = new Pane();
@@ -93,7 +93,7 @@ class FxRefreshTest extends FxTestBase {
         AtomicInteger counter = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(1);
 
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             Runnable task = () -> {
                 counter.incrementAndGet();
                 latch.countDown();
@@ -113,7 +113,7 @@ class FxRefreshTest extends FxTestBase {
         AtomicInteger counter = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(1);
 
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             Runnable task = () -> {
                 try {
                     // Simulate a long-running task
@@ -152,7 +152,7 @@ class FxRefreshTest extends FxTestBase {
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<FxRefresh> refresherRef = new AtomicReference<>();
 
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             Runnable task = () -> {
                 counter.incrementAndGet();
                 latch.countDown();
@@ -171,7 +171,7 @@ class FxRefreshTest extends FxTestBase {
         assertEquals(0, counter.get(), "Task should not be executed when refresher is inactive");
 
         // Activate the refresher
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxRefresh refresher = refresherRef.get();
             refresher.setActive(true);
             refresher.refresh();
@@ -182,7 +182,7 @@ class FxRefreshTest extends FxTestBase {
         assertEquals(1, counter.get(), "Task should be executed after activation");
 
         // Clean up
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             FxRefresh refresher = refresherRef.get();
             refresher.stop();
         });
@@ -194,7 +194,7 @@ class FxRefreshTest extends FxTestBase {
         CountDownLatch latch = new CountDownLatch(1);
 
         AtomicReference<FxRefresh> refresherReference = new AtomicReference<>();
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             Runnable task = () -> {
                 counter.incrementAndGet();
                 latch.countDown();
@@ -237,7 +237,7 @@ class FxRefreshTest extends FxTestBase {
         Pane parentNode = new Pane();
         Pane childNode = new Pane();
 
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             Runnable task = () -> { /* Do nothing */ };
 
             parentNode.getChildren().add(childNode);
@@ -248,7 +248,7 @@ class FxRefreshTest extends FxTestBase {
         });
 
         // Remove node from parent
-        FxTestUtil.runOnFxThreadAndWait(() -> {
+        FxTestBase.runOnFxThreadAndWait(() -> {
             parentNode.getChildren().remove(childNode);
 
             // Wait a bit for the listener to be called
