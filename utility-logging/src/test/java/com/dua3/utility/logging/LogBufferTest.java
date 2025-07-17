@@ -502,11 +502,6 @@ class LogBufferTest {
         state = logBuffer.getBufferState();
         assertEquals(15, state.entries().length, "Buffer should contain 15 entries");
 
-        // FIXME: The test fails with an AssertionError in LogBuffer.getBufferState() at line 261.
-        // The assertion "array.length == a - r" is failing after decreasing the capacity.
-        // This suggests that when setCapacity() removes entries due to capacity reduction,
-        // it's not properly updating the totalRemoved counter to maintain the relationship:
-        // entries.length == totalAdded - totalRemoved
         // Test decreasing capacity
         logBuffer.setCapacity(10);
         state = logBuffer.getBufferState();
