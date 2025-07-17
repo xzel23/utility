@@ -3,7 +3,6 @@ package com.dua3.utility.fx.controls;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import org.junit.jupiter.api.Test;
@@ -220,7 +219,7 @@ class PinBoardTest extends FxTestBase {
             assertEquals(1, pinBoard.getItems().size());
 
             // Check item position (should be centered horizontally at the bottom)
-            PinBoard.Item item = pinBoard.getItems().get(0);
+            PinBoard.Item item = pinBoard.getItems().getFirst();
             assertEquals("BottomItem", item.name());
 
             // The item should be centered horizontally (x = -50) and at y = 0
