@@ -727,7 +727,7 @@ class IoUtilTest {
     }
 
     @Test
-    void testGetExtensionURL() throws Exception {
+    void testGetExtensionURL() {
         // Test with a URL that has a file extension
         URL url = IoUtil.toURL("file:///path/to/file.txt");
         assertEquals("txt", IoUtil.getExtension(url));
