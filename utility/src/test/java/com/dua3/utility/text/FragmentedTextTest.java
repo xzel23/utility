@@ -7,6 +7,7 @@ import com.dua3.utility.ui.Graphics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -281,5 +282,111 @@ class FragmentedTextTest {
         assertTrue(fragText.lines().get(1).getFirst().font().isItalic());
         assertFalse(fragText.lines().get(2).getFirst().font().isBold());
         assertFalse(fragText.lines().get(2).getFirst().font().isItalic());
+    }
+
+    @Test
+    void testGenerateFragmentsWithDistributedVerticalAlignment() {
+        // Create a multi-line text to test distributed vertical alignment
+        RichText text = RichText.valueOf("Line 1\nLine 2\nLine 3\nLine 4");
+        float width = 200.0f;
+        float height = 200.0f; // Enough height to distribute lines
+
+        // Generate fragments with DISTRIBUTED vertical alignment
+        FragmentedText distributedAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.LEFT, VerticalAlignment.DISTRIBUTED, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP, FragmentedText.NO_WRAP);
+
+        // Verify that we have multiple lines
+        List<List<FragmentedText.Fragment>> lines = distributedAligned.lines();
+        assertTrue(lines.size() > 1, "Should have multiple lines for distributed alignment test");
+
+        // Verify that the lines are distributed by checking that the vertical spacing is consistent
+        if (lines.size() > 2) {
+            float firstGap = lines.get(1).getFirst().y() - lines.get(0).getFirst().y();
+            float secondGap = lines.get(2).getFirst().y() - lines.get(1).getFirst().y();
+
+            // The gaps should be approximately equal for distributed alignment
+            assertEquals(firstGap, secondGap, 0.1f, "Vertical gaps between lines should be equal with DISTRIBUTED alignment");
+        }
+    }
+
+    @Test
+    void testGenerateFragmentsWithDistributeAlignment() {
+        // Create a text with multiple words to test distribute alignment
+        RichText text = RichText.valueOf("This is a test with multiple words for distribute alignment");
+        float width = 300.0f; // Wide enough to fit the text but with some extra space
+        float height = 50.0f;
+
+        // Generate fragments with DISTRIBUTE alignment
+        FragmentedText distributeAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.DISTRIBUTE, VerticalAlignment.TOP, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP, width);
+
+        // Verify that we have at least one line
+        List<List<FragmentedText.Fragment>> lines = distributeAligned.lines();
+        assertFalse(lines.isEmpty(), "Should have at least one line");
+
+        // Get the first line
+        List<FragmentedText.Fragment> line = lines.getFirst();
+
+        // Verify that there are multiple fragments in the line
+        assertTrue(line.size() > 1, "Line should have multiple fragments");
+
+        // Check that the fragments are distributed by verifying that the whitespace
+        // between fragments is consistent
+        if (line.size() > 2) {
+            // Find fragments with whitespace
+            List<Integer> whitespaceIndices = new ArrayList<>();
+            for (int i = 0; i < line.size(); i++) {
+                if (TextUtil.isBlank(line.get(i).text())) {
+                    whitespaceIndices.add(i);
+                }
+            }
+
+            // If we have at least two whitespace fragments, check that they have similar widths
+            if (whitespaceIndices.size() >= 2) {
+                float firstWidth = line.get(whitespaceIndices.get(0)).w();
+                float secondWidth = line.get(whitespaceIndices.get(1)).w();
+
+                // The widths should be approximately equal for distribute alignment
+                assertEquals(firstWidth, secondWidth, 0.1f, "Whitespace widths should be equal with DISTRIBUTE alignment");
+            }
+        }
+    }
+
+    @Test
+    void testGenerateFragmentsWithJustifyAlignment() {
+        // Create a text with multiple lines to test justify alignment
+        // Using a long text that will be wrapped to multiple lines
+        RichText text = RichText.valueOf("This is a long text that should be wrapped to multiple lines. " + "We need to make sure it's long enough to wrap. The justify alignment should distribute " + "whitespace evenly in all lines except the last one.");
+        float width = 200.0f; // Narrow enough to force wrapping
+        float height = 200.0f; // Tall enough for multiple lines
+        float wrapWidth = 150.0f; // Force wrapping
+
+        // Generate fragments with JUSTIFY alignment and wrapping
+        FragmentedText justifyAligned = FragmentedText.generateFragments(text, fontUtil, defaultFont, width, height, Alignment.JUSTIFY, VerticalAlignment.TOP, Graphics.HAnchor.LEFT, Graphics.VAnchor.TOP, wrapWidth);
+
+        // Verify that we have multiple lines
+        List<List<FragmentedText.Fragment>> lines = justifyAligned.lines();
+        assertTrue(lines.size() > 1, "Should have multiple lines for justify alignment test");
+
+        // For each line except the last one, check that it has multiple fragments
+        for (int i = 0; i < lines.size() - 1; i++) {
+            List<FragmentedText.Fragment> line = lines.get(i);
+            assertTrue(line.size() > 1, "Line " + i + " should have multiple fragments");
+
+            // Find fragments with whitespace
+            List<Integer> whitespaceIndices = new ArrayList<>();
+            for (int j = 0; j < line.size(); j++) {
+                if (TextUtil.isBlank(line.get(j).text())) {
+                    whitespaceIndices.add(j);
+                }
+            }
+
+            // If we have at least two whitespace fragments, check that they have similar widths
+            if (whitespaceIndices.size() >= 2) {
+                float firstWidth = line.get(whitespaceIndices.get(0)).w();
+                float secondWidth = line.get(whitespaceIndices.get(1)).w();
+
+                // The widths should be approximately equal for justify alignment (which uses distribute for non-last lines)
+                assertEquals(firstWidth, secondWidth, 0.1f, "Whitespace widths should be equal with JUSTIFY alignment for non-last line " + i);
+            }
+        }
     }
 }
