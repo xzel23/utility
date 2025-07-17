@@ -324,6 +324,21 @@ public final class IoUtil {
     }
 
     /**
+     * Get URL for string.
+     *
+     * @param url the URL as string
+     * @return the URL
+     * @throws IllegalArgumentException if conversion fails
+     */
+    public static URL toURL(String url) {
+        try {
+            return toURI(url).toURL();
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("string could not be converted to URL: " + url, e);
+        }
+    }
+
+    /**
      * Get URL for path.
      *
      * @param path the path

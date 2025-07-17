@@ -729,19 +729,19 @@ class IoUtilTest {
     @Test
     void testGetExtensionURL() throws Exception {
         // Test with a URL that has a file extension
-        URL url = new URL("file:///path/to/file.txt");
+        URL url = IoUtil.toURL("file:///path/to/file.txt");
         assertEquals("txt", IoUtil.getExtension(url));
 
         // Test with a URL that has no file extension
-        URL urlNoExt = new URL("file:///path/to/file");
+        URL urlNoExt = IoUtil.toURL("file:///path/to/file");
         assertEquals("", IoUtil.getExtension(urlNoExt));
 
         // Test with a URL that has multiple dots
-        URL urlMultipleDots = new URL("file:///path/to/file.name.txt");
+        URL urlMultipleDots = IoUtil.toURL("file:///path/to/file.name.txt");
         assertEquals("txt", IoUtil.getExtension(urlMultipleDots));
 
         // Test with a URL that has query parameters
-        URL urlWithQuery = new URL("https://example.com/file.txt?param=value");
+        URL urlWithQuery = IoUtil.toURL("https://example.com/file.txt?param=value");
         assertEquals("txt", IoUtil.getExtension(urlWithQuery));
     }
 
