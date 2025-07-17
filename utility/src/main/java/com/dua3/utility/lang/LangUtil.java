@@ -248,7 +248,9 @@ public final class LangUtil {
     public static <E extends Enum<E>> E[] enumValues(Class<? extends E> clazz) {
         try {
             return (E[]) clazz.getMethod("values").invoke(null);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Cannot access enum values() method - ensure enum class is public and accessible", e);
+        } catch (InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException("calling Enum.values() failed", e);
         }
     }
