@@ -17,6 +17,7 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.JDBCType;
@@ -24,6 +25,7 @@ import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLXML;
 import java.sql.Statement;
 import java.time.Instant;
@@ -968,6 +970,104 @@ class NamedParameterStatementTest {
             assertTrue(rs.next());
             byte[] result = rs.getBytes("blob_val");
             assertArrayEquals(testBytes, result);
+        }
+    }
+
+    @Test
+    void testSetBlobWithBlobObject() throws SQLException {
+        // This test will test the setBlob method with a Blob object parameter
+        try {
+            String sql = "INSERT INTO test_table (id, blob_val) VALUES (:id, :blobVal)";
+            byte[] testBytes = "test blob object data".getBytes(StandardCharsets.UTF_8);
+
+            // Create a mock Blob object
+            Blob mockBlob = new Blob() {
+                private final byte[] data = testBytes;
+
+                @Override
+                public long length() throws SQLException {
+                    return data.length;
+                }
+
+                @Override
+                public byte[] getBytes(long pos, int length) throws SQLException {
+                    if (pos < 1 || pos > data.length) {
+                        throw new SQLException("Invalid position: " + pos);
+                    }
+
+                    int offset = (int) (pos - 1); // JDBC uses 1-based indexing
+                    int len = Math.min(length, data.length - offset);
+                    byte[] result = new byte[len];
+                    System.arraycopy(data, offset, result, 0, len);
+                    return result;
+                }
+
+                @Override
+                public java.io.InputStream getBinaryStream() throws SQLException {
+                    return new java.io.ByteArrayInputStream(data);
+                }
+
+                @Override
+                public long position(byte[] pattern, long start) throws SQLException {
+                    throw new SQLFeatureNotSupportedException("Not implemented for mock");
+                }
+
+                @Override
+                public long position(Blob pattern, long start) throws SQLException {
+                    throw new SQLFeatureNotSupportedException("Not implemented for mock");
+                }
+
+                @Override
+                public int setBytes(long pos, byte[] bytes) throws SQLException {
+                    throw new SQLFeatureNotSupportedException("Not implemented for mock");
+                }
+
+                @Override
+                public int setBytes(long pos, byte[] bytes, int offset, int len) throws SQLException {
+                    throw new SQLFeatureNotSupportedException("Not implemented for mock");
+                }
+
+                @Override
+                public java.io.OutputStream setBinaryStream(long pos) throws SQLException {
+                    throw new SQLFeatureNotSupportedException("Not implemented for mock");
+                }
+
+                @Override
+                public void truncate(long len) throws SQLException {
+                    throw new SQLFeatureNotSupportedException("Not implemented for mock");
+                }
+
+                @Override
+                public void free() throws SQLException {
+                    // No-op for mock
+                }
+
+                @Override
+                public java.io.InputStream getBinaryStream(long pos, long length) throws SQLException {
+                    if (pos < 1 || pos > data.length) {
+                        throw new SQLException("Invalid position: " + pos);
+                    }
+
+                    int offset = (int) (pos - 1); // JDBC uses 1-based indexing
+                    int len = (int) Math.min(length, data.length - offset);
+                    return new java.io.ByteArrayInputStream(data, offset, len);
+                }
+            };
+
+            try (NamedParameterStatement stmt = new NamedParameterStatement(connection, sql)) {
+                stmt.setInt("id", 38);
+                stmt.setBlob("blobVal", mockBlob);
+                stmt.executeUpdate();
+            }
+
+            // Verify
+            try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery("SELECT blob_val FROM test_table WHERE id = 38")) {
+                assertTrue(rs.next());
+                byte[] result = rs.getBytes("blob_val");
+                assertArrayEquals(testBytes, result);
+            }
+        } catch (JdbcSQLFeatureNotSupportedException e) {
+            Assumptions.assumeTrue(false, e.getMessage());
         }
     }
 
