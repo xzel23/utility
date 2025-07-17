@@ -19,6 +19,8 @@ dependencies {
     testImplementation(project(path = ":utility", configuration = "javaTestUtil"))
     testImplementation(project(":utility-logging"))
     testRuntimeOnly(project(":utility-logging-log4j"))
+    testRuntimeOnly(project(":utility-fx-icons-ikonli"))
+    testRuntimeOnly(libs.ikonli.fontawesome6)
 }
 
 // Configure tests to run in a forked JVM

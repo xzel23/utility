@@ -99,7 +99,7 @@ dependencyResolutionManagement {
             library("log4j-slf4j2", "org.apache.logging.log4j", "log4j-slf4j2-impl").withoutVersion()
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").withoutVersion()
 
-            library("ikonli-fontawesome", "org.kordamp.ikonli", "ikonli-fontawesome-pack").versionRef("ikonli")
+            library("ikonli-fontawesome6", "org.kordamp.ikonli", "ikonli-fontawesome6-pack").versionRef("ikonli")
             library("ikonli-javafx", "org.kordamp.ikonli", "ikonli-javafx").versionRef("ikonli")
 
             library("jimfs", "com.google.jimfs", "jimfs").versionRef("jimfs")

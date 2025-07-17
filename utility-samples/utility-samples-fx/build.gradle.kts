@@ -32,7 +32,7 @@ dependencies {
     implementation(rootProject.libs.log4j.jul)
     implementation(rootProject.libs.log4j.slf4j2)
     implementation(rootProject.libs.slf4j.api)
-    runtimeOnly(rootProject.libs.ikonli.fontawesome)
+    runtimeOnly(rootProject.libs.ikonli.fontawesome6)
     runtimeOnly(rootProject.libs.ikonli.javafx)
 }
 
