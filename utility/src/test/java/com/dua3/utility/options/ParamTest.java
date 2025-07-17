@@ -372,7 +372,7 @@ class ParamTest {
         assertEquals(TestEnum.ONE, param.converter().a2b().apply(new String[]{"ONE"}));
 
         // Test invalid conversion
-        assertThrows(IllegalArgumentException.class, () -> param.converter().a2b().apply(new String[]{"FOUR"}));
+        assertThrows(ConversionException.class, () -> param.converter().a2b().apply(new String[]{"FOUR"}));
     }
 
     @Test
@@ -391,7 +391,7 @@ class ParamTest {
         assertEquals(42, param.converter().a2b().apply(new String[]{"42"}));
 
         // Test invalid conversion
-        assertThrows(NumberFormatException.class, () -> param.converter().a2b().apply(new String[]{"invalid"}));
+        assertThrows(ConversionException.class, () -> param.converter().a2b().apply(new String[]{"invalid"}));
     }
 
     @Test
