@@ -242,4 +242,73 @@ class PathBuilder2fTest {
         assertEquals(point1, builder.vertex(0), "First vertex should match point1");
         assertEquals(point2, builder.vertex(1), "Second vertex should match point2");
     }
+
+    /**
+     * Test the moveTo method with float parameters.
+     */
+    @Test
+    void testMoveToWithFloats() {
+        PathBuilder2f builder = new PathBuilder2f();
+        float x = 10f;
+        float y = 20f;
+        Vector2f expectedPoint = new Vector2f(x, y);
+
+        builder.moveTo(x, y);
+
+        assertFalse(builder.isEmpty(), "Builder should not be empty after moveTo");
+        assertEquals(expectedPoint, builder.current(), "Current point should be the moved-to point");
+    }
+
+    /**
+     * Test the moveRel method with float parameters.
+     */
+    @Test
+    void testMoveRelWithFloats() {
+        PathBuilder2f builder = new PathBuilder2f();
+        float initialX = 10f;
+        float initialY = 20f;
+        float offsetX = 5f;
+        float offsetY = 10f;
+        Vector2f initialPoint = new Vector2f(initialX, initialY);
+        Vector2f expectedPoint = new Vector2f(15f, 30f);
+
+        builder.moveTo(initialPoint);
+        builder.moveRel(offsetX, offsetY);
+
+        assertEquals(expectedPoint, builder.current(), "Current point should be the initial point plus offset");
+    }
+
+    /**
+     * Test the lineTo method with float parameters.
+     */
+    @Test
+    void testLineToWithFloats() {
+        PathBuilder2f builder = new PathBuilder2f();
+        Vector2f startPoint = new Vector2f(10f, 20f);
+        float endX = 30f;
+        float endY = 40f;
+        Vector2f expectedPoint = new Vector2f(endX, endY);
+
+        builder.moveTo(startPoint);
+        builder.lineTo(endX, endY);
+
+        assertEquals(expectedPoint, builder.current(), "Current point should be the end point");
+    }
+
+    /**
+     * Test the lineRel method with float parameters.
+     */
+    @Test
+    void testLineRelWithFloats() {
+        PathBuilder2f builder = new PathBuilder2f();
+        Vector2f startPoint = new Vector2f(10f, 20f);
+        float offsetX = 20f;
+        float offsetY = 20f;
+        Vector2f expectedPoint = new Vector2f(30f, 40f);
+
+        builder.moveTo(startPoint);
+        builder.lineRel(offsetX, offsetY);
+
+        assertEquals(expectedPoint, builder.current(), "Current point should be the start point plus offset");
+    }
 }
