@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,18 +36,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(0, 1) and arity(1).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt <value>    (optional)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -78,18 +79,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(1, 1) and arity(1).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt <value>    (required)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -121,18 +122,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(0, 3) and arity(1).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt <value>    (repeatable up to 3 times)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -143,21 +144,13 @@ class ArgumentsParserOptionTest {
         assertEquals(List.of("test1"), parser.parse("--opt", "test1").stream(option).toList());
 
         // Test parsing with option present twice
-        assertEquals(
-            List.of("test1", "test2"),
-            parser.parse("--opt", "test1", "--opt", "test2").stream(option).toList()
-        );
+        assertEquals(List.of("test1", "test2"), parser.parse("--opt", "test1", "--opt", "test2").stream(option).toList());
 
         // Test parsing with option present three times
-        assertEquals(
-            List.of("test1", "test2", "test3"),
-            parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3").stream(option).toList()
-        );
+        assertEquals(List.of("test1", "test2", "test3"), parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3").stream(option).toList());
 
         // Test parsing with option present four times (should throw exception)
-        assertThrows(OptionException.class, () -> 
-            parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3", "--opt", "test4")
-        );
+        assertThrows(OptionException.class, () -> parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3", "--opt", "test4"));
     }
 
     /**
@@ -178,18 +171,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(2, 4) and arity(1).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt <value>    (2-4 times)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -200,27 +193,16 @@ class ArgumentsParserOptionTest {
         assertThrows(OptionException.class, () -> parser.parse("--opt", "test1"));
 
         // Test parsing with option present twice
-        assertEquals(
-            List.of("test1", "test2"),
-            parser.parse("--opt", "test1", "--opt", "test2").stream(option).toList()
-        );
+        assertEquals(List.of("test1", "test2"), parser.parse("--opt", "test1", "--opt", "test2").stream(option).toList());
 
         // Test parsing with option present three times
-        assertEquals(
-            List.of("test1", "test2", "test3"),
-            parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3").stream(option).toList()
-        );
+        assertEquals(List.of("test1", "test2", "test3"), parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3").stream(option).toList());
 
         // Test parsing with option present four times
-        assertEquals(
-            List.of("test1", "test2", "test3", "test4"),
-            parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3", "--opt", "test4").stream(option).toList()
-        );
+        assertEquals(List.of("test1", "test2", "test3", "test4"), parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3", "--opt", "test4").stream(option).toList());
 
         // Test parsing with option present five times (should throw exception)
-        assertThrows(OptionException.class, () -> 
-            parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3", "--opt", "test4", "--opt", "test5")
-        );
+        assertThrows(OptionException.class, () -> parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3", "--opt", "test4", "--opt", "test5"));
     }
 
     /**
@@ -241,18 +223,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(0, Integer.MAX_VALUE) and arity(1).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt <value>    (zero or more)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -260,10 +242,7 @@ class ArgumentsParserOptionTest {
         assertTrue(parser.parse().stream(option).findFirst().isEmpty());
 
         // Test parsing with option present multiple times
-        assertEquals(
-            List.of("test1", "test2", "test3", "test4", "test5"),
-            parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3", "--opt", "test4", "--opt", "test5").stream(option).toList()
-        );
+        assertEquals(List.of("test1", "test2", "test3", "test4", "test5"), parser.parse("--opt", "test1", "--opt", "test2", "--opt", "test3", "--opt", "test4", "--opt", "test5").stream(option).toList());
     }
 
     /**
@@ -271,35 +250,25 @@ class ArgumentsParserOptionTest {
      */
     @Test
     void testSimpleOptionOccurrence1Arity0to2() {
-        ArgumentsParserBuilder builder = ArgumentsParser.builder()
-                .name("testOption")
-                .description("Unit test for option with occurrence(1) and arity(0, 2).");
-        Option<String> option = builder.optionBuilder("Option", "The option.", String.class)
-                .param(Param.ofList(
-                        "Option",
-                        "The value for the option.", "value",
-                        Converter.identity(),
-                        Repetitions.atMost(2)
-                ))
-                .repetitions(Repetitions.EXACTLY_ONE)
-                .build("--opt");
+        ArgumentsParserBuilder builder = ArgumentsParser.builder().name("testOption").description("Unit test for option with occurrence(1) and arity(0, 2).");
+        Option<String> option = builder.optionBuilder("Option", "The option.", String.class).param(Param.ofList("Option", "The value for the option.", "value", Converter.identity(), Repetitions.atMost(2))).repetitions(Repetitions.EXACTLY_ONE).build("--opt");
 
         ArgumentsParser parser = builder.build();
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(1) and arity(0, 2).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt [<value1>] [<value2>]    (required)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -345,18 +314,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(1) and arity(2, 4).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt <value1> <value2> [<value3>] [<value4>]    (required)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -408,18 +377,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(1) and arity(0, Integer.MAX_VALUE).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt [<value> ...]    (required)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -430,10 +399,7 @@ class ArgumentsParserOptionTest {
         assertEquals(List.of(""), parser.parse("--opt").stream(option).toList());
 
         // Test parsing with option present with multiple arguments
-        assertEquals(
-            List.of("arg1 arg2 arg3 arg4 arg5"),
-            parser.parse("--opt", "arg1", "arg2", "arg3", "arg4", "arg5").stream(option).toList()
-        );
+        assertEquals(List.of("arg1 arg2 arg3 arg4 arg5"), parser.parse("--opt", "arg1", "arg2", "arg3", "arg4", "arg5").stream(option).toList());
     }
 
     /**
@@ -459,18 +425,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with occurrence(0, 2) and arity(0, 2).
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --opt [<value1>] [<value2>]    (repeatable up to 2 times)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -487,21 +453,13 @@ class ArgumentsParserOptionTest {
         assertEquals(List.of("arg1 arg2"), parser.parse("--opt", "arg1", "arg2").stream(option).toList());
 
         // Test parsing with option present twice with different numbers of arguments
-        assertEquals(
-            List.of("", "arg1"),
-            parser.parse("--opt", "--opt", "arg1").stream(option).toList()
-        );
+        assertEquals(List.of("", "arg1"), parser.parse("--opt", "--opt", "arg1").stream(option).toList());
 
         // Test parsing with option present twice with maximum arguments
-        assertEquals(
-            List.of("arg1 arg2", "arg3 arg4"),
-            parser.parse("--opt", "arg1", "arg2", "--opt", "arg3", "arg4").stream(option).toList()
-        );
+        assertEquals(List.of("arg1 arg2", "arg3 arg4"), parser.parse("--opt", "arg1", "arg2", "--opt", "arg3", "arg4").stream(option).toList());
 
         // Test parsing with option present three times (should throw exception)
-        assertThrows(OptionException.class, () -> 
-            parser.parse("--opt", "--opt", "--opt")
-        );
+        assertThrows(OptionException.class, () -> parser.parse("--opt", "--opt", "--opt"));
 
         // Test parsing with option present with too many arguments
         // The implementation is more permissive than expected and doesn't throw an exception,
@@ -532,18 +490,18 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testOption
                 ----------
-
+                
                 Unit test for option with custom arg names.
-
+                
                 testOption <options> [<arg> ...]
-
+                
                   <options>:
                     --files <source> [<destination>] [<backup>]    (required)
                             The option.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
@@ -594,34 +552,29 @@ class ArgumentsParserOptionTest {
 
         // Test help output
         String expected = """
-
+                
                 testMultipleOptions
                 -------------------
-
+                
                 Unit test for multiple options with different configurations.
-
+                
                 testMultipleOptions <options> [<arg> ...]
-
+                
                   <options>:
                     --opt-a <value A>    (required)
                             Set the value for option A.
-
+                
                     --opt-b [<value B>]    (repeatable up to 2 times)
                             Set the value for option B.
-
+                
                     --opt-c <c1> <c2>    (repeatable up to 2 times)
                             Set the value for option C.
-
+                
                 """;
         assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
 
         // Test parsing with all options
-        Arguments args = parser.parse(
-                "--opt-a", "valueA",
-                "--opt-b",
-                "--opt-b", "valueB",
-                "--opt-c", "key1", "value1",
-                "--opt-c", "key2", "value2"
+        Arguments args = parser.parse("--opt-a", "valueA", "--opt-b", "--opt-b", "valueB", "--opt-c", "key1", "value1", "--opt-c", "key2", "value2"
         );
 
         assertEquals(List.of("valueA"), args.stream(optionA).toList());
@@ -743,11 +696,11 @@ class ArgumentsParserOptionTest {
             if (o == null || getClass() != o.getClass()) return false;
             TestRecord that = (TestRecord) o;
             return intValue == that.intValue &&
-                   longValue == that.longValue &&
-                   Double.compare(doubleValue, that.doubleValue) == 0 &&
-                   Objects.equals(stringValue, that.stringValue) &&
-                   Objects.equals(pathValue, that.pathValue) &&
-                   Objects.equals(uriValue, that.uriValue);
+                    longValue == that.longValue &&
+                    Double.compare(doubleValue, that.doubleValue) == 0 &&
+                    Objects.equals(stringValue, that.stringValue) &&
+                    Objects.equals(pathValue, that.pathValue) &&
+                    Objects.equals(uriValue, that.uriValue);
         }
     }
 
@@ -842,5 +795,222 @@ class ArgumentsParserOptionTest {
                         // Missing URI
                 )
         );
+    }
+
+    /**
+     * Enum for testing addRecordOption with enum type.
+     */
+    public enum TestEnum {
+        SMALL, MEDIUM, LARGE, EXTRA_LARGE
+    }
+
+    /**
+     * Record with enum field for testing addRecordOption with enum type.
+     */
+    record TestRecordWithEnum(
+            String name,
+            int quantity,
+            TestEnum size
+    ) {
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TestRecordWithEnum that = (TestRecordWithEnum) o;
+            return quantity == that.quantity &&
+                    Objects.equals(name, that.name) &&
+                    size == that.size;
+        }
+    }
+
+    /**
+     * Test for the addRecordOption() method with enum type.
+     */
+    @Test
+    void testAddRecordOptionWithEnum() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder()
+                .name("testRecordOptionWithEnum")
+                .description("Unit test for the addRecordOption method with enum type.");
+
+        Option<TestRecordWithEnum> recordOption = builder.addRecordOption(
+                "Record With Enum Option",
+                "Set the record values including an enum.",
+                Repetitions.EXACTLY_ONE,
+                () -> null,
+                TestRecordWithEnum.class,
+                "--record-enum", "-e"
+        );
+
+        ArgumentsParser parser = builder.build();
+
+        // Test help output
+        String expected = """
+                
+                testRecordOptionWithEnum
+                ------------------------
+                
+                Unit test for the addRecordOption method with enum type.
+                
+                testRecordOptionWithEnum <options> [<arg> ...]
+                
+                  <options>:
+                    --record-enum, -e <name> <quantity> <size>    (required)
+                            Set the record values including an enum.
+                
+                """;
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
+
+        // Test parsing with option not present (should throw exception)
+        assertThrows(OptionException.class, parser::parse);
+
+        // Test parsing with option present
+        TestRecordWithEnum expectedRecord = new TestRecordWithEnum(
+                "test-item",
+                5,
+                TestEnum.LARGE
+        );
+
+        // Parse with all required values
+        assertEquals(
+                List.of(expectedRecord),
+                parser.parse(
+                        "--record-enum",
+                        "test-item",
+                        "5",
+                        "LARGE"
+                ).stream(recordOption).toList()
+        );
+
+        // Test with alternate switch
+        assertEquals(
+                List.of(expectedRecord),
+                parser.parse(
+                        "-e",
+                        "test-item",
+                        "5",
+                        "LARGE"
+                ).stream(recordOption).toList()
+        );
+
+        // Test with invalid enum value (should throw exception)
+        assertThrows(
+                OptionException.class,
+                () -> parser.parse(
+                        "--record-enum",
+                        "test-item",
+                        "5",
+                        "INVALID_SIZE"
+                )
+        );
+
+        // Test with missing values (should throw exception)
+        assertThrows(
+                OptionException.class,
+                () -> parser.parse(
+                        "--record-enum",
+                        "test-item",
+                        "5"
+                        // Missing size
+                )
+        );
+    }
+
+    /**
+     * Test for the addObjectOption() method.
+     */
+    @Test
+    void testAddObjectOption() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder()
+                .name("testAddObjectOption")
+                .description("Unit test for the addObjectOption method.");
+
+        // Create a custom converter for String to Integer
+        Converter<String, Integer> converter = Converter.create(
+                Integer::valueOf,
+                String::valueOf
+        );
+
+        // Add an object option
+        Option<Integer> objectOption = builder.addObjectOption(
+                "Integer Option",
+                "A test integer option",
+                Repetitions.EXACTLY_ONE,
+                "number",
+                () -> null,
+                Integer.class,
+                converter,
+                "--number", "-n"
+        );
+
+        ArgumentsParser parser = builder.build();
+
+        // Test help output
+        String expected = """
+                
+                testAddObjectOption
+                -------------------
+                
+                Unit test for the addObjectOption method.
+                
+                testAddObjectOption <options> [<arg> ...]
+                
+                  <options>:
+                    --number, -n <number>    (required)
+                            A test integer option
+                
+                """;
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
+
+        // Test parsing with option present
+        assertEquals(Integer.valueOf(42), parser.parse("--number", "42").getOrThrow(objectOption));
+        assertEquals(Integer.valueOf(42), parser.parse("-n", "42").getOrThrow(objectOption));
+
+        // Test with invalid value (should throw exception)
+        assertThrows(OptionException.class, () -> parser.parse("--number", "not-a-number"));
+    }
+
+    /**
+     * Test for the flagBuilder() method.
+     */
+    @Test
+    void testFlagBuilder() {
+        ArgumentsParserBuilder builder = ArgumentsParser.builder()
+                .name("testFlagBuilder")
+                .description("Unit test for the flagBuilder method.");
+
+        // Create a flag using flagBuilder
+        FlagBuilder flagBuilder = builder.flagBuilder("Flag Option", "A test flag option");
+        Option<Boolean> flagOption = flagBuilder.build("--flag", "-f");
+
+        ArgumentsParser parser = builder.build();
+
+        // Test help output
+        String expected = """
+                
+                testFlagBuilder
+                ---------------
+                
+                Unit test for the flagBuilder method.
+                
+                testFlagBuilder <options> [<arg> ...]
+                
+                  <options>:
+                    --flag, -f
+                            A test flag option
+                
+                """;
+        assertEquals(TextUtil.toSystemLineEnds(expected), parser.help());
+
+        // Test parsing with flag not present
+        assertFalse(parser.parse().isSet(flagOption));
+
+        // Test parsing with flag present
+        assertTrue(parser.parse("--flag").isSet(flagOption));
+        assertTrue(parser.parse("-f").isSet(flagOption));
+
+        // Test with positional arguments
+        assertTrue(parser.parse("--flag", "arg1", "arg2").isSet(flagOption));
+        assertTrue(parser.parse("arg1", "--flag", "arg2").isSet(flagOption));
+        assertTrue(parser.parse("arg1", "arg2", "--flag").isSet(flagOption));
     }
 }
