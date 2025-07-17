@@ -61,7 +61,13 @@ public class LogBuffer implements LogEntryHandler, Externalizable {
             throw new IllegalArgumentException("Capacity cannot be negative: " + n);
         }
         synchronized (buffer) {
+            int oldSize = buffer.size();
             buffer.setCapacity(n);
+            int removed = Math.max(0, oldSize - buffer.size());
+            totalRemoved.addAndGet(removed);
+            if (removed > 0) {
+                listeners.forEach(listener -> listener.entries(removed, 0));
+            }
         }
     }
 
