@@ -1,23 +1,17 @@
 package com.dua3.utility.fx.controls;
 
-import com.dua3.utility.fx.PlatformHelper;
-import javafx.application.Platform;
-import javafx.stage.Stage;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.StackPane;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -27,55 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests for the {@link PinBoard} class.
  */
 @Timeout(value = 30, unit = TimeUnit.SECONDS) // Add a global timeout to prevent tests from hanging
-class PinBoardTest {
-
-    private static final Object lock = new Object();
-    private static boolean platformInitialized = false;
-    private static Stage sharedStage;
-
-    /**
-     * Initialize the JavaFX platform if it's not already initialized and create the shared Stage.
-     */
-    @BeforeAll
-    public static void initializePlatform() {
-        synchronized (lock) {
-            if (!platformInitialized) {
-                try {
-                    Platform.startup(() -> {
-                        System.out.println("JavaFX Platform initialized");
-                    });
-                    platformInitialized = true;
-                } catch (IllegalStateException e) {
-                    // Platform already running, which is fine
-                    System.out.println("JavaFX Platform was already running");
-                    platformInitialized = true;
-                }
-            }
-            
-            // Initialize the shared Stage
-            CountDownLatch stageLatch = new CountDownLatch(1);
-            Platform.runLater(() -> {
-                try {
-                    sharedStage = new Stage();
-                    sharedStage.setTitle("PinBoard Test");
-                    sharedStage.setWidth(800);
-                    sharedStage.setHeight(600);
-                } finally {
-                    stageLatch.countDown();
-                }
-            });
-            
-            try {
-                // Wait for the stage to be created with a timeout
-                if (!stageLatch.await(10, TimeUnit.SECONDS)) {
-                    throw new RuntimeException("Timed out waiting for Stage to be created");
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException("Interrupted while waiting for Stage to be created", e);
-            }
-        }
-    }
+class PinBoardTest extends FxTestBase {
 
     /**
      * Test the constructor and initial state of the PinBoard.
@@ -100,30 +46,6 @@ class PinBoardTest {
             // Verify the skin is properly initialized
             assertTrue(pinBoard.getSkin() instanceof PinBoardSkin, "PinBoard should have a PinBoardSkin");
         });
-    }
-
-    /**
-     * Utility method to run code on the JavaFX thread and wait for completion with a timeout.
-     */
-    private void runOnFxThreadAndWait(Runnable action) throws Exception {
-        if (Platform.isFxApplicationThread()) {
-            action.run();
-            return;
-        }
-        
-        final CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try {
-                action.run();
-            } finally {
-                latch.countDown();
-            }
-        });
-        
-        // Add a timeout of 30 seconds to prevent tests from hanging
-        if (!latch.await(30, java.util.concurrent.TimeUnit.SECONDS)) {
-            throw new java.util.concurrent.TimeoutException("Timed out waiting for JavaFX thread to complete");
-        }
     }
 
     /**
@@ -167,36 +89,6 @@ class PinBoardTest {
         Rectangle2D area = new Rectangle2D(x, y, width, height);
         Supplier<Node> nodeBuilder = () -> new Label(name);
         return new PinBoard.Item(name, area, nodeBuilder);
-    }
-    
-    /**
-     * Helper method to add a PinBoard to a Scene and Stage to ensure the skin is properly initialized.
-     * This is necessary because the skin is only set when the control is added to the scene graph
-     * and the Stage is shown.
-     * 
-     * @param pinBoard the PinBoard to add to a scene
-     * @return the created Scene containing the PinBoard
-     */
-    private Scene addToScene(PinBoard pinBoard) {
-        StackPane root = new StackPane();
-        root.getChildren().add(pinBoard);
-        Scene scene = new Scene(root, 800, 600);
-        
-        // Use the shared Stage to ensure the skin is initialized
-        PlatformHelper.runAndWait(() -> {
-            // Set the scene on the shared stage
-            sharedStage.setScene(scene);
-
-            // Make sure the stage is showing
-            if (!sharedStage.isShowing()) {
-                sharedStage.show();
-            }
-
-            // Process a pulse to ensure the scene graph is processed
-            Platform.requestNextPulse();
-        });
-
-        return scene;
     }
 
     /**
