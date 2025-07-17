@@ -209,6 +209,8 @@ B&gt;&nbsp;<a href="Converter.html" title="interface in com.dua3.utility.data">C
 <dd><code>a</code> - the object of type A to be converted</dd>
 <dt>Returns:</dt>
 <dd>the converted object of type B</dd>
+<dt>Throws:</dt>
+<dd><code><a href="ConversionException.html" title="class in com.dua3.utility.data">ConversionException</a></code> - if the conversion fails</dd>
 </dl>
 </section>
 </li>
@@ -222,6 +224,8 @@ B&gt;&nbsp;<a href="Converter.html" title="interface in com.dua3.utility.data">C
 <dd><code>b</code> - the object of type B to be converted back to type A</dd>
 <dt>Returns:</dt>
 <dd>the converted object of type A</dd>
+<dt>Throws:</dt>
+<dd><code><a href="ConversionException.html" title="class in com.dua3.utility.data">ConversionException</a></code> - if the conversion fails</dd>
 </dl>
 </section>
 </li>
@@ -296,7 +300,9 @@ B&gt;&nbsp;<a href="Converter.html" title="interface in com.dua3.utility.data">C
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
 B&gt;</span>&nbsp;<span class="return-type"><a href="Converter.html" title="interface in com.dua3.utility.data">Converter</a>&lt;A,<wbr>B&gt;</span>&nbsp;<span class="element-name">create</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;a2b,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>A&gt;&nbsp;b2a)</span></div>
-<div class="block">Creates a bidirectional converter between two types A and B.</div>
+<div class="block">Creates a bidirectional converter between two types A and B.
+ <p>
+ If the conversion fails, the bound property is set to <code>null</code>.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
 <dd><code>A</code> - the source type</dd>
