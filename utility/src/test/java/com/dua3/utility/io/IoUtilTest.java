@@ -727,6 +727,81 @@ class IoUtilTest {
     }
 
     @Test
+    void testGetExtensionURL() throws Exception {
+        // Test with a URL that has a file extension
+        URL url = new URL("file:///path/to/file.txt");
+        assertEquals("txt", IoUtil.getExtension(url));
+
+        // Test with a URL that has no file extension
+        URL urlNoExt = new URL("file:///path/to/file");
+        assertEquals("", IoUtil.getExtension(urlNoExt));
+
+        // Test with a URL that has multiple dots
+        URL urlMultipleDots = new URL("file:///path/to/file.name.txt");
+        assertEquals("txt", IoUtil.getExtension(urlMultipleDots));
+
+        // Test with a URL that has query parameters
+        URL urlWithQuery = new URL("https://example.com/file.txt?param=value");
+        assertEquals("txt", IoUtil.getExtension(urlWithQuery));
+    }
+
+    @Test
+    void testReadURL() throws Exception {
+        // Create a temporary file with known content
+        Path tempFile = Files.createTempFile("read-url-test", ".txt");
+        String content = "Test content for URL reading";
+        Files.write(tempFile, content.getBytes(StandardCharsets.UTF_8));
+
+        try {
+            // Get URL from the file and read its content
+            URL url = tempFile.toUri().toURL();
+            String readContent = IoUtil.read(url, StandardCharsets.UTF_8);
+
+            // Verify the content was read correctly
+            assertEquals(content, readContent);
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testReadURI() throws Exception {
+        // Create a temporary file with known content
+        Path tempFile = Files.createTempFile("read-uri-test", ".txt");
+        String content = "Test content for URI reading";
+        Files.write(tempFile, content.getBytes(StandardCharsets.UTF_8));
+
+        try {
+            // Get URI from the file and read its content
+            URI uri = tempFile.toUri();
+            String readContent = IoUtil.read(uri, StandardCharsets.UTF_8);
+
+            // Verify the content was read correctly
+            assertEquals(content, readContent);
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
+    }
+
+    @Test
+    void testToURIString() {
+        // Test with a URI string
+        String uriStr = "file:///tmp/test.txt";
+        URI uriFromURIStr = IoUtil.toURI(uriStr);
+        assertEquals(URI.create(uriStr), uriFromURIStr);
+
+        // Test with a regular path string
+        String pathStr = "/tmp/test.txt";
+        URI uriFromPathStr = IoUtil.toURI(pathStr);
+        assertEquals(Paths.get(pathStr).toUri(), uriFromPathStr);
+
+        // Test with a relative path string
+        String relativePathStr = "tmp/test.txt";
+        URI uriFromRelativePathStr = IoUtil.toURI(relativePathStr);
+        assertEquals(Paths.get(relativePathStr).toUri(), uriFromRelativePathStr);
+    }
+
+    @Test
     void testDeleteRecursive() throws Exception {
         // Create a temporary directory with some files and subdirectories
         Path tempDir = Files.createTempDirectory("delete-test");

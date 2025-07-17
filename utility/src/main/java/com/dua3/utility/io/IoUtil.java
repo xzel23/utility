@@ -168,7 +168,7 @@ public final class IoUtil {
      * @return the extension
      */
     public static String getExtension(URL url) {
-        return getExtension(url.getFile());
+        return getExtension(toURI(url));
     }
 
     /**
@@ -178,7 +178,7 @@ public final class IoUtil {
      * @return the extension
      */
     public static String getExtension(URI uri) {
-        return getExtension(uri.getSchemeSpecificPart());
+        return getExtension(uri.getPath());
     }
 
     /**
