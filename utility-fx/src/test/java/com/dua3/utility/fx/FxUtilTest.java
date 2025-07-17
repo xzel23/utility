@@ -326,7 +326,31 @@ class FxUtilTest extends FxTestBase {
             // Basic validation
             assertNotNull(path, "Converted path should not be null");
             assertFalse(path.getElements().isEmpty(), "Path should have elements");
-            
+
+            // The path should have at least 6 elements: MoveTo, LineTo, QuadCurveTo, CubicCurveTo, ArcTo, ClosePath
+            assertTrue(path.getElements().size() >= 6, "Path should have at least 6 elements");
+        });
+    }
+
+    @Test
+    void testConvertToJavaFxPath() throws Throwable {
+        FxTestUtil.runOnFxThreadAndWait(() -> {
+            // Create a path with various segment types including Curve2f and Arc2f
+            Path2f path2f = Path2f.builder().moveTo(10.0f, 10.0f).lineTo(100.0f, 10.0f)
+                    // Add a quadratic curve (Curve2f with one control point)
+                    .curveTo(new Vector2f(150.0f, 50.0f), new Vector2f(100.0f, 100.0f))
+                    // Add a cubic curve (Curve2f with two control points)
+                    .curveTo(new Vector2f(80.0f, 120.0f), new Vector2f(40.0f, 120.0f), new Vector2f(10.0f, 100.0f))
+                    // Add an arc (Arc2f)
+                    .arcTo(new Vector2f(10.0f, 10.0f), new Vector2f(50.0f, 50.0f), 45.0f, false, false).closePath().build();
+
+            // Convert to JavaFX Path using convertToJavaFxPath
+            Path path = FxUtil.convertToJavaFxPath(path2f);
+
+            // Basic validation
+            assertNotNull(path, "Converted path should not be null");
+            assertFalse(path.getElements().isEmpty(), "Path should have elements");
+
             // The path should have at least 6 elements: MoveTo, LineTo, QuadCurveTo, CubicCurveTo, ArcTo, ClosePath
             assertTrue(path.getElements().size() >= 6, "Path should have at least 6 elements");
         });
