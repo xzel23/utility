@@ -37,16 +37,30 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      *
      * @param a the object of type A to be converted
      * @return the converted object of type B
+     * @throws ConversionException, if the conversion fails
      */
-    default B convert(A a) {return a2b().apply(a);}
+    default B convert(A a) {
+        try {
+            return a2b().apply(a);
+        } catch (Exception e) {
+            throw new ConversionException(e);
+        }
+    }
 
     /**
      * Converts the target object of type B back to a source object of type A using the provided conversion function.
      *
      * @param b the object of type B to be converted back to type A
      * @return the converted object of type A
+     * @throws ConversionException, if the conversion fails
      */
-    default A convertBack(B b) {return b2a().apply(b);}
+    default A convertBack(B b) {
+        try {
+            return b2a().apply(b);
+        } catch (Exception e) {
+            throw new ConversionException(e);
+        }
+    }
 
     /**
      * Returns the inverse of this converter, swapping the source and target types.
