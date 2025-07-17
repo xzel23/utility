@@ -11,6 +11,7 @@ import com.dua3.utility.math.geometry.FillRule;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Path2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.text.RichText;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
@@ -306,12 +307,16 @@ class FxUtilTest extends FxTestBase {
     @Test
     void testConvertPath() throws Throwable {
         FxTestUtil.runOnFxThreadAndWait(() -> {
-            // Create a simple path
+            // Create a path with various segment types including Curve2f and Arc2f
             Path2f path2f = Path2f.builder()
                     .moveTo(10f, 10f)
                     .lineTo(100f, 10f)
-                    .lineTo(100f, 100f)
-                    .lineTo(10f, 100f)
+                    // Add a quadratic curve (Curve2f with one control point)
+                    .curveTo(new Vector2f(150f, 50f), new Vector2f(100f, 100f))
+                    // Add a cubic curve (Curve2f with two control points)
+                    .curveTo(new Vector2f(80f, 120f), new Vector2f(40f, 120f), new Vector2f(10f, 100f))
+                    // Add an arc (Arc2f)
+                    .arcTo(new Vector2f(10f, 10f), new Vector2f(50f, 50f), 45f, false, false)
                     .closePath()
                     .build();
 
@@ -321,6 +326,9 @@ class FxUtilTest extends FxTestBase {
             // Basic validation
             assertNotNull(path, "Converted path should not be null");
             assertFalse(path.getElements().isEmpty(), "Path should have elements");
+            
+            // The path should have at least 6 elements: MoveTo, LineTo, QuadCurveTo, CubicCurveTo, ArcTo, ClosePath
+            assertTrue(path.getElements().size() >= 6, "Path should have at least 6 elements");
         });
     }
 

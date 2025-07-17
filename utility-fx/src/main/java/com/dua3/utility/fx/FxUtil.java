@@ -158,8 +158,8 @@ public final class FxUtil {
      */
     public static AffineTransformation2f convert(Affine a) {
         return new AffineTransformation2f(
-            (float) a.getMxx(), (float) a.getMxy(), (float) a.getTx(),
-            (float) a.getMyx(), (float) a.getMyy(), (float) a.getTy()
+                (float) a.getMxx(), (float) a.getMxy(), (float) a.getTx(),
+                (float) a.getMyx(), (float) a.getMyy(), (float) a.getTy()
         );
     }
 
