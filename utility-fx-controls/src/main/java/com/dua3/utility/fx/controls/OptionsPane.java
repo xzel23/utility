@@ -156,8 +156,8 @@ public class OptionsPane extends GridPane implements InputControl<Arguments> {
         } else {
             StringConverter<T> converter = new StringConverter<>() {
                 @Override
-                public String toString(T v) {
-                    return option.format(v);
+                public String toString(@Nullable T v) {
+                    return v == null ? "" : option.format(v);
                 }
 
                 @Override
