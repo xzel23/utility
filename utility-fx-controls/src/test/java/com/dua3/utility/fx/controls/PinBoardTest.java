@@ -15,7 +15,11 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link PinBoard} class.
@@ -30,10 +34,10 @@ class PinBoardTest extends FxTestBase {
     void testConstructor() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Check initial state
             assertEquals(Rectangle2D.EMPTY, pinBoard.getArea());
             assertTrue(pinBoard.getItems().isEmpty());
@@ -42,9 +46,9 @@ class PinBoardTest extends FxTestBase {
             assertEquals(1.0, pinBoard.getDisplayScale());
             assertEquals(0.0, pinBoard.scrollHValuePropertyProperty().get());
             assertEquals(0.0, pinBoard.scrollVValuePropertyProperty().get());
-            
+
             // Verify the skin is properly initialized
-            assertTrue(pinBoard.getSkin() instanceof PinBoardSkin, "PinBoard should have a PinBoardSkin");
+            assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
         });
     }
 
@@ -55,30 +59,30 @@ class PinBoardTest extends FxTestBase {
     void testPinItems() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Create test items
             PinBoard.Item item1 = createTestItem("Item1", 0, 0, 100, 100);
             PinBoard.Item item2 = createTestItem("Item2", 150, 150, 100, 100);
-            
+
             // Pin items
             pinBoard.pin(item1);
             assertEquals(1, pinBoard.getItems().size());
             assertTrue(pinBoard.getItems().contains(item1));
-            
+
             // Pin another item
             pinBoard.pin(item2);
             assertEquals(2, pinBoard.getItems().size());
             assertTrue(pinBoard.getItems().contains(item2));
-            
+
             // Check area is updated
             Rectangle2D expectedArea = new Rectangle2D(0, 0, 250, 250);
             assertEquals(expectedArea, pinBoard.getArea());
-            
+
             // Verify the skin is properly initialized
-            assertTrue(pinBoard.getSkin() instanceof PinBoardSkin, "PinBoard should have a PinBoardSkin");
+            assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
         });
     }
 
@@ -98,23 +102,23 @@ class PinBoardTest extends FxTestBase {
     void testClear() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Add items
             pinBoard.pin(createTestItem("Item1", 0, 0, 100, 100));
             pinBoard.pin(createTestItem("Item2", 150, 150, 100, 100));
-            
+
             // Clear the board
             pinBoard.clear();
-            
+
             // Check state after clearing
             assertTrue(pinBoard.getItems().isEmpty());
             assertEquals(Rectangle2D.EMPTY, pinBoard.getArea());
-            
+
             // Verify the skin is properly initialized
-            assertTrue(pinBoard.getSkin() instanceof PinBoardSkin, "PinBoard should have a PinBoardSkin");
+            assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
         });
     }
 
@@ -125,28 +129,28 @@ class PinBoardTest extends FxTestBase {
     void testPinMultipleItems() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Create test items
             List<PinBoard.Item> items = new ArrayList<>();
             items.add(createTestItem("Item1", 0, 0, 100, 100));
             items.add(createTestItem("Item2", 150, 150, 100, 100));
             items.add(createTestItem("Item3", 300, 300, 100, 100));
-            
+
             // Pin all items at once
             pinBoard.pin(items);
-            
+
             // Check all items are added
             assertEquals(3, pinBoard.getItems().size());
-            
+
             // Check area is updated correctly
             Rectangle2D expectedArea = new Rectangle2D(0, 0, 400, 400);
             assertEquals(expectedArea, pinBoard.getArea());
-            
+
             // Verify the skin is properly initialized
-            assertTrue(pinBoard.getSkin() instanceof PinBoardSkin, "PinBoard should have a PinBoardSkin");
+            assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
         });
     }
 
@@ -157,23 +161,23 @@ class PinBoardTest extends FxTestBase {
     void testDisplayScale() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Test initial scale
             assertEquals(1.0, pinBoard.getDisplayScale());
-            
+
             // Test setting scale
             pinBoard.setDisplayScale(2.0);
             assertEquals(2.0, pinBoard.getDisplayScale());
-            
+
             // Test property binding
             pinBoard.displayScaleProperty().set(0.5);
             assertEquals(0.5, pinBoard.getDisplayScale());
-            
+
             // Verify the skin is properly initialized
-            assertTrue(pinBoard.getSkin() instanceof PinBoardSkin, "PinBoard should have a PinBoardSkin");
+            assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
         });
     }
 
@@ -184,16 +188,16 @@ class PinBoardTest extends FxTestBase {
     void testScrollBarPolicies() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Set policies
             pinBoard.setHBarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
             pinBoard.setVBarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            
+
             // Now we can verify the skin is properly initialized
-            assertTrue(pinBoard.getSkin() instanceof PinBoardSkin, "PinBoard should have a PinBoardSkin");
+            assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
         });
     }
 
@@ -204,30 +208,30 @@ class PinBoardTest extends FxTestBase {
     void testPinBottom() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Pin an item at the bottom
             Dimension2D dimension = new Dimension2D(100, 50);
             pinBoard.pinBottom("BottomItem", () -> new Label("Bottom"), dimension);
-            
+
             // Check item was added
             assertEquals(1, pinBoard.getItems().size());
-            
+
             // Check item position (should be centered horizontally at the bottom)
             PinBoard.Item item = pinBoard.getItems().get(0);
             assertEquals("BottomItem", item.name());
-            
+
             // The item should be centered horizontally (x = -50) and at y = 0
             Rectangle2D area = item.area();
             assertEquals(-50, area.getMinX());
             assertEquals(0, area.getMinY());
             assertEquals(100, area.getWidth());
             assertEquals(50, area.getHeight());
-            
+
             // Verify the skin is properly initialized
-            assertTrue(pinBoard.getSkin() instanceof PinBoardSkin, "PinBoard should have a PinBoardSkin");
+            assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
         });
     }
 
@@ -238,19 +242,19 @@ class PinBoardTest extends FxTestBase {
     void testGetItemAt() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Add test items
             PinBoard.Item item1 = createTestItem("Item1", 0, 0, 100, 100);
             PinBoard.Item item2 = createTestItem("Item2", 150, 150, 100, 100);
             pinBoard.pin(item1);
             pinBoard.pin(item2);
-            
+
             // Now that the skin is properly initialized, we can test getItemAt
             Optional<PinBoard.Item> foundItem = pinBoard.getItemAt(50, 50);
-            
+
             // Verify the result
             assertTrue(foundItem.isPresent(), "Should find an item at position (50, 50)");
             assertEquals(item1, foundItem.get(), "Should find item1 at position (50, 50)");
@@ -264,19 +268,19 @@ class PinBoardTest extends FxTestBase {
     void testGetPositionInItem() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Add test items
             PinBoard.Item item1 = createTestItem("Item1", 0, 0, 100, 100);
             PinBoard.Item item2 = createTestItem("Item2", 150, 150, 100, 100);
             pinBoard.pin(item1);
             pinBoard.pin(item2);
-            
+
             // Now that the skin is properly initialized, we can test getPositionInItem
             Optional<PinBoard.PositionInItem> position = pinBoard.getPositionInItem(50, 50);
-            
+
             // Verify the result
             assertTrue(position.isPresent(), "Should find a position in item at (50, 50)");
             assertEquals(item1, position.get().item(), "Should find position in item1");
@@ -292,13 +296,13 @@ class PinBoardTest extends FxTestBase {
     void testGetPositionInBoard() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Now that the skin is properly initialized, we can test getPositionInBoard
             PinBoard.BoardPosition position = pinBoard.getPositionInBoard(50, 50);
-            
+
             // Verify the result
             assertNotNull(position, "Position should not be null");
             // The actual position values will depend on the skin's implementation,
@@ -314,16 +318,16 @@ class PinBoardTest extends FxTestBase {
     void testScrollPosition() throws Exception {
         runOnFxThreadAndWait(() -> {
             PinBoard pinBoard = new PinBoard();
-            
+
             // Add to scene to ensure skin is initialized
-            Scene scene = addToScene(pinBoard);
-            
+            addToScene(pinBoard);
+
             // Set scroll position
             pinBoard.setScrollPosition(0.5, 0.5);
-            
+
             // Now that the skin is properly initialized, we can test getScrollPosition
             ScrollPosition position = pinBoard.getScrollPosition();
-            
+
             // Verify the result
             assertNotNull(position, "ScrollPosition should not be null");
             assertEquals(0.5, position.hValue(), 0.01, "Horizontal scroll value should be 0.5");
