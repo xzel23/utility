@@ -37,7 +37,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      *
      * @param a the object of type A to be converted
      * @return the converted object of type B
-     * @throws ConversionException, if the conversion fails
+     * @throws ConversionException if the conversion fails
      */
     default B convert(A a) {
         try {
@@ -52,7 +52,7 @@ public interface Converter<A extends @Nullable Object, B extends @Nullable Objec
      *
      * @param b the object of type B to be converted back to type A
      * @return the converted object of type A
-     * @throws ConversionException, if the conversion fails
+     * @throws ConversionException if the conversion fails
      */
     default A convertBack(B b) {
         try {
