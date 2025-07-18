@@ -43,9 +43,10 @@ jobs:
             notifications
             jdks
             wrapper
+          arguments: --build-cache
 
       - name: 'Execute Gradle build'
-        run: gradle --no-daemon assemble testClasses aggregateJavadoc publishToStagingDirectory
+        run: gradle --no-daemon --build-cache --scan assemble testClasses aggregateJavadoc publishToStagingDirectory
         id: compile
 
       # Upload build artifacts for other jobs to use
@@ -110,6 +111,7 @@ jobs:
             notifications
             jdks
             wrapper
+          arguments: --build-cache
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -121,7 +123,7 @@ jobs:
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: Run tests
-        run: gradle --no-daemon test testCodeCoverageReport
+        run: gradle --no-daemon --build-cache --scan test testCodeCoverageReport
         env:
           DISPLAY: ":99"
 
@@ -168,6 +170,7 @@ jobs:
             notifications
             jdks
             wrapper
+          arguments: --build-cache
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -176,7 +179,7 @@ jobs:
           path: ${{ github.workspace }}
 
       - name: Run tests
-        run: gradle --no-daemon test
+        run: gradle --no-daemon --build-cache --scan test
 
   sonar:
     needs: test-linux
@@ -210,6 +213,7 @@ jobs:
             notifications
             jdks
             wrapper
+          arguments: --build-cache
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -234,7 +238,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
-          gradle --no-daemon sonar
+          gradle --no-daemon --build-cache --scan sonar
           -Dsonar.projectKey=xzel23_utility
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
@@ -272,6 +276,7 @@ jobs:
             notifications
             jdks
             wrapper
+          arguments: --build-cache
 
       - name: 'Create Qodana config'
         run: |
@@ -326,6 +331,7 @@ jobs:
             notifications
             jdks
             wrapper
+          arguments: --build-cache
 
       # Download staging directory
       - name: Download staging directory
@@ -342,7 +348,7 @@ jobs:
           path: build/docs/javadoc
 
       - name: 'publish build'
-        run: gradle --no-daemon jreleaserDeploy jreleaserUpload
+        run: gradle --no-daemon --build-cache --scan jreleaserDeploy jreleaserUpload
         env:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
@@ -354,7 +360,7 @@ jobs:
       - name: 'Get project version'
         id: version
         run: |
-          VERSION=$(gradle --no-daemon -q printVersion | tail -n 1)
+          VERSION=$(gradle --no-daemon --build-cache -q printVersion | tail -n 1)
           echo "Detected version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
