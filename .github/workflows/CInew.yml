@@ -45,16 +45,12 @@ jobs:
             wrapper
 
       - name: 'Execute Gradle build'
-        run: gradle assemble testClasses
+        run: gradle assemble testClasses aggregateJavadoc
         id: compile
 
       # Publish to staging directory
       - name: 'Publish to staging directory'
         run: gradle publishToStagingDirectory
-
-      # Generate Javadoc
-      - name: 'Generate Javadoc'
-        run: gradle aggregateJavadoc
 
       # Upload build artifacts for other jobs to use
       - name: Upload build artifacts
