@@ -40,7 +40,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-cleanup: true
 
       - name: 'Execute Gradle build'
         run: ./gradlew assemble
@@ -79,7 +78,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-cleanup: true
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -117,7 +115,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-cleanup: true
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -150,7 +147,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-cleanup: true
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -197,7 +193,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-cleanup: true
 
       - name: 'Create Qodana config'
         run: |
@@ -243,7 +238,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-cleanup: true
 
       - name: 'publish build'
         run: ./gradlew jreleaserDeploy jreleaserUpload
