@@ -56,13 +56,14 @@ dependencies {
     }
 
     // Explicitly add JUnit dependencies for testJava24
+    "testJava24Implementation"(platform(rootProject.libs.junit.bom))
     "testJava24Implementation"(rootProject.libs.junit.jupiter.api)
     "testJava24RuntimeOnly"(rootProject.libs.junit.jupiter.engine)
 
     // Add dependencies for javaTestUtil source set
     "javaTestUtilImplementation"(sourceSets.main.get().output)
+    "javaTestUtilImplementation"(platform(rootProject.libs.junit.bom))
     "javaTestUtilImplementation"(rootProject.libs.junit.jupiter.api)
-    "javaTestUtilRuntimeOnly"(rootProject.libs.junit.jupiter.engine)
 }
 
 // Configure Java 24 compilation
