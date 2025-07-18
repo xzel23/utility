@@ -31,6 +31,17 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+          
+      # Extract Gradle version from wrapper properties for cache key
+      - name: 'Extract Gradle Version'
+        id: gradle-version
+        run: |
+          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          echo "Detected Gradle version: $GRADLE_VERSION"
+          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
+          # Create a file with the Gradle version for other jobs to use
+          mkdir -p build/gradle-version
+          echo "$GRADLE_VERSION" > build/gradle-version/version.txt
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
@@ -40,6 +51,8 @@ jobs:
             notifications
             jdks
             wrapper
+          gradle-home-cache-key: |
+            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: 'Execute Gradle build'
         run: ./gradlew assemble
@@ -53,6 +66,7 @@ jobs:
           path: |
             **/build/libs/*.jar
             **/build/classes/
+            build/gradle-version/version.txt
           if-no-files-found: error
 
   test-linux:
@@ -69,6 +83,14 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
+          
+      # Extract Gradle version from wrapper properties for cache key
+      - name: 'Extract Gradle Version'
+        id: gradle-version
+        run: |
+          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          echo "Detected Gradle version: $GRADLE_VERSION"
+          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
@@ -78,6 +100,8 @@ jobs:
             notifications
             jdks
             wrapper
+          gradle-home-cache-key: |
+            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -106,6 +130,15 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
+          
+      # Extract Gradle version from wrapper properties for cache key
+      - name: 'Extract Gradle Version'
+        id: gradle-version
+        shell: bash
+        run: |
+          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          echo "Detected Gradle version: $GRADLE_VERSION"
+          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
@@ -115,6 +148,8 @@ jobs:
             notifications
             jdks
             wrapper
+          gradle-home-cache-key: |
+            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -138,6 +173,14 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
+          
+      # Extract Gradle version from wrapper properties for cache key
+      - name: 'Extract Gradle Version'
+        id: gradle-version
+        run: |
+          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          echo "Detected Gradle version: $GRADLE_VERSION"
+          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
@@ -147,6 +190,8 @@ jobs:
             notifications
             jdks
             wrapper
+          gradle-home-cache-key: |
+            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -181,9 +226,17 @@ jobs:
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '24'
           java-package: 'jdk+fx'
+          
+      # Extract Gradle version from wrapper properties for cache key
+      - name: 'Extract Gradle Version'
+        id: gradle-version
+        run: |
+          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          echo "Detected Gradle version: $GRADLE_VERSION"
+          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
@@ -193,6 +246,8 @@ jobs:
             notifications
             jdks
             wrapper
+          gradle-home-cache-key: |
+            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: 'Create Qodana config'
         run: |
@@ -229,6 +284,14 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+          
+      # Extract Gradle version from wrapper properties for cache key
+      - name: 'Extract Gradle Version'
+        id: gradle-version
+        run: |
+          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          echo "Detected Gradle version: $GRADLE_VERSION"
+          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
@@ -238,6 +301,8 @@ jobs:
             notifications
             jdks
             wrapper
+          gradle-home-cache-key: |
+            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: 'publish build'
         run: ./gradlew jreleaserDeploy jreleaserUpload
