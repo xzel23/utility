@@ -1,8 +1,8 @@
 # com.dua3.utility
 [![MIT License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Language](https://img.shields.io/badge/language-Java-blue.svg?style=flat-square)](https://github.com/topics/java)
-[![build](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://xzel23.github.io/utility/)
+[![build](https://github.com/xzel23/utility/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=xzel23_utility&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=xzel23_utility)
 
 Some libraries with utility classes.
@@ -203,12 +203,17 @@ could not be loaded.
 
 ### 20.0.0 (work in progress)
 
-- Non-code changes
+- CI workflow and deployment
+    - The CI workflow has been completely rewritten.
     - The Project has been migrated from OSS-RH to Maven Central Portal.
     - Deployments are done through GitHub actions using JReleaser.
     - Javadoc is automatically published to GitHub Pages after each succesfull CI build.
-    - Successful CI builds are now published as snapshots to the Maven snapshots repository.
+    - Builds are now automatically published to either the Maven snapshots repository or Maven Central.
+
+- Introduce a BOM artifact
     - A new artefact `utility-bom` has been introduced that specifies the version for all modules.
+
+- Run tasks for samples
     - Run tasks have been added for the sample applications.
 
 - Package `utility`
