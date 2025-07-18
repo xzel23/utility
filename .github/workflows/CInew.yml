@@ -47,6 +47,8 @@ jobs:
       - name: 'Execute Gradle build'
         run: gradle --no-daemon --build-cache --scan assemble testClasses aggregateJavadoc publishToStagingDirectory
         id: compile
+        env:
+          ENABLE_GRADLE_SCAN: true
 
       # Upload build artifacts for other jobs to use
       - name: Upload build artifacts
@@ -123,6 +125,7 @@ jobs:
       - name: Run tests
         run: gradle --no-daemon --build-cache --scan test testCodeCoverageReport
         env:
+          ENABLE_GRADLE_SCAN: true
           DISPLAY: ":99"
 
       # Upload coverage reports
@@ -177,6 +180,8 @@ jobs:
 
       - name: Run tests
         run: gradle --no-daemon --build-cache --scan test
+        env:
+          ENABLE_GRADLE_SCAN: true
 
   sonar:
     needs: test-linux
@@ -344,6 +349,7 @@ jobs:
       - name: 'publish build'
         run: gradle --no-daemon --build-cache --scan jreleaserDeploy jreleaserUpload
         env:
+          ENABLE_GRADLE_SCAN: true
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}

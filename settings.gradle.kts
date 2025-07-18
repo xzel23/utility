@@ -43,8 +43,11 @@ toolchainManagement {
 }
 
 // ToS for Gradle build scans
+val isBuildScanAllowed = System.getenv("CI") == "true" &&
+        System.getenv("ENABLE_GRADLE_SCAN") == "true"
+
 develocity {
-    if (System.getenv("CI") == "true") {
+    if (isBuildScanAllowed) {
         buildScan {
             termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
             termsOfUseAgree.set("yes")
