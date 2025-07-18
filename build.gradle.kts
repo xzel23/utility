@@ -410,11 +410,6 @@ tasks.register("publishToStagingDirectory") {
     dependsOn(subprojects.mapNotNull { it.tasks.findByName("publishToStagingDirectory") })
 }
 
-// Make jreleaserDeploy depend on the root-level publishToStagingDirectory task
-tasks.named("jreleaserDeploy") {
-    dependsOn("publishToStagingDirectory")
-}
-
 // add a task to create aggregate javadoc in the root projects build/docs/javadoc folder
 tasks.register<Javadoc>("aggregateJavadoc") {
     group = "documentation"
@@ -427,8 +422,8 @@ tasks.register<Javadoc>("aggregateJavadoc") {
     modularity.inferModulePath.set(false)
 
     // Configure the task to depend on all subprojects' javadoc tasks
-    val filteredProjects = subprojects.filter { 
-        !it.name.endsWith("-bom") && !it.name.contains("samples") 
+    val filteredProjects = subprojects.filter {
+        !it.name.endsWith("-bom") && !it.name.contains("samples")
     }
 
     dependsOn(filteredProjects.map { it.tasks.named("javadoc") })
