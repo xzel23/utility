@@ -6,7 +6,6 @@ dependencies {
     implementation(rootProject.libs.slf4j.api)
 
     testImplementation(rootProject.libs.junit.jupiter.api)
-    testImplementation(rootProject.libs.mockito)
     testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
 }
 

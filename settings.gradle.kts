@@ -76,7 +76,6 @@ dependencyResolutionManagement {
             version("junit-jupiter", "5.11.4")
             version("log4j-bom", "2.25.1")
             version("miglayout", "11.4.2")
-            version("mockito", "5.18.0")
             version("slf4j", "2.0.17")
             version("spotbugs", "4.9.3")
             version("bouncycastle", "1.81")
@@ -104,7 +103,6 @@ dependencyResolutionManagement {
             library("ikonli-javafx", "org.kordamp.ikonli", "ikonli-javafx").versionRef("ikonli")
 
             library("jimfs", "com.google.jimfs", "jimfs").versionRef("jimfs")
-            library("mockito", "org.mockito", "mockito-core").versionRef("mockito")
 
             library("junit4", "junit", "junit").versionRef("junit4")
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit-jupiter")

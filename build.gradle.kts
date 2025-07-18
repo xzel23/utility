@@ -196,7 +196,6 @@ subprojects {
                     dependencies {
                         implementation(rootProject.libs.log4j.core)
                         implementation(rootProject.libs.jimfs)
-                        implementation(rootProject.libs.mockito)
                     }
                     targets {
                         all {
