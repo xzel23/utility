@@ -43,7 +43,6 @@ jobs:
             notifications
             jdks
             wrapper
-          arguments: --build-cache
 
       - name: 'Execute Gradle build'
         run: gradle --no-daemon --build-cache --scan assemble testClasses aggregateJavadoc publishToStagingDirectory
@@ -111,7 +110,6 @@ jobs:
             notifications
             jdks
             wrapper
-          arguments: --build-cache
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -170,7 +168,6 @@ jobs:
             notifications
             jdks
             wrapper
-          arguments: --build-cache
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -213,7 +210,6 @@ jobs:
             notifications
             jdks
             wrapper
-          arguments: --build-cache
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -276,7 +272,6 @@ jobs:
             notifications
             jdks
             wrapper
-          arguments: --build-cache
 
       - name: 'Create Qodana config'
         run: |
@@ -331,7 +326,6 @@ jobs:
             notifications
             jdks
             wrapper
-          arguments: --build-cache
 
       # Download staging directory
       - name: Download staging directory
