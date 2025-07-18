@@ -61,8 +61,9 @@ tasks.register("printVersion") {
     doLast { println(project.version) }
 }
 
+// Aggregate all subprojects for JaCoCo report aggregation
+
 dependencies {
-    // Aggregate all subprojects for JaCoCo report aggregation
     jacocoAggregation(project(":utility"))
     jacocoAggregation(project(":utility-db"))
     jacocoAggregation(project(":utility-swing"))

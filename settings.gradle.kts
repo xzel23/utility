@@ -28,14 +28,26 @@ include("utility-samples:utility-samples-fx")
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver") version "1.0.0"
+    id("com.gradle.develocity") version "4.1"
 }
 
+// toolchain configuration
 toolchainManagement {
     jvm {
         javaRepositories {
             repository("foojay") {
                 resolverClass.set(org.gradle.toolchains.foojay.FoojayToolchainResolver::class.java)
             }
+        }
+    }
+}
+
+// ToS for Gradle build scans
+develocity {
+    if (System.getenv("CI") == "true") {
+        buildScan {
+            termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
+            termsOfUseAgree.set("yes")
         }
     }
 }
