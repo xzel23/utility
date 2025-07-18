@@ -51,8 +51,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-key: |
-            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: 'Execute Gradle build'
         run: gradle assemble
@@ -133,8 +131,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-key: |
-            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -191,8 +187,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-key: |
-            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -242,8 +236,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-key: |
-            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -307,8 +299,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-key: |
-            ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: 'Create Qodana config'
         run: |
@@ -371,8 +361,6 @@ jobs:
             notifications
             jdks
             wrapper
-          gradle-home-cache-key: |
-            ${{ steps.gradle-version.outputs.gradle_version }}
 
       # Download staging directory
       - name: Download staging directory
