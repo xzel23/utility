@@ -55,7 +55,7 @@ jobs:
             ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: 'Execute Gradle build'
-        run: gradlew assemble
+        run: gradle assemble
         id: compile
 
       # Upload build artifacts for other jobs to use
@@ -121,7 +121,7 @@ jobs:
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: Run tests
-        run: gradlew test testCodeCoverageReport
+        run: gradle test testCodeCoverageReport
         env:
           DISPLAY: ":99"
 
@@ -176,7 +176,7 @@ jobs:
           name: build-artifacts
 
       - name: Run tests
-        run: gradlew test
+        run: gradle test
 
   sonar:
     needs: build
@@ -237,7 +237,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
-          gradlew sonar
+          gradle sonar
           -Dsonar.projectKey=xzel23_utility
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
@@ -351,7 +351,7 @@ jobs:
             ${{ steps.gradle-version.outputs.gradle_version }}
 
       - name: 'publish build'
-        run: gradlew jreleaserDeploy jreleaserUpload
+        run: gradle jreleaserDeploy jreleaserUpload
         env:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
@@ -363,12 +363,12 @@ jobs:
       - name: 'Get project version'
         id: version
         run: |
-          VERSION=$(./gradlew -q printVersion | tail -n 1)
+          VERSION=$(gradle -q printVersion | tail -n 1)
           echo "Detected version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Generate Javadoc'
-        run: gradlew aggregateJavadoc
+        run: gradle aggregateJavadoc
 
       - name: 'Determine Javadoc folder'
         env:
