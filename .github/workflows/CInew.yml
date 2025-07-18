@@ -22,7 +22,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'gradle'  # Enable built-in caching
+          cache: 'gradle'
 
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
@@ -45,10 +45,8 @@ jobs:
             wrapper
 
       - name: 'Execute Gradle build'
-        run: gradle --no-daemon --build-cache --scan assemble testClasses aggregateJavadoc publishToStagingDirectory
+        run: gradle --no-daemon --build-cache assemble testClasses aggregateJavadoc publishToStagingDirectory
         id: compile
-        env:
-          ENABLE_GRADLE_SCAN: true
 
       # Upload build artifacts for other jobs to use
       - name: Upload build artifacts
@@ -123,9 +121,8 @@ jobs:
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: Run tests
-        run: gradle --no-daemon --build-cache --scan test testCodeCoverageReport
+        run: gradle --no-daemon --build-cache test testCodeCoverageReport
         env:
-          ENABLE_GRADLE_SCAN: true
           DISPLAY: ":99"
 
       # Upload coverage reports
@@ -179,9 +176,7 @@ jobs:
           path: ${{ github.workspace }}
 
       - name: Run tests
-        run: gradle --no-daemon --build-cache --scan test
-        env:
-          ENABLE_GRADLE_SCAN: true
+        run: gradle --no-daemon --build-cache test
 
   sonar:
     needs: test-linux
@@ -239,7 +234,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
-          gradle --no-daemon --build-cache --scan sonar
+          gradle --no-daemon --build-cache sonar
           -Dsonar.projectKey=xzel23_utility
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
@@ -347,9 +342,8 @@ jobs:
           path: build/docs/javadoc
 
       - name: 'publish build'
-        run: gradle --no-daemon --build-cache --scan jreleaserDeploy jreleaserUpload
+        run: gradle --no-daemon --build-cache jreleaserDeploy jreleaserUpload
         env:
-          ENABLE_GRADLE_SCAN: true
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
