@@ -1,0 +1,238 @@
+name: CI
+on:
+  push:
+    branches: [ "cinew" ]
+  pull_request:
+    branches: [ "cinew" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Setup JDK 21 for build
+      - name: 'Set up JDK 21'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: 'Execute Gradle build'
+        run: ./gradlew assemble
+        id: compile
+
+      # Upload build artifacts for other jobs to use
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            **/build/libs/*.jar
+            **/build/classes/
+          if-no-files-found: error
+
+  test-linux:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup JDK 24 + JavaFX
+      - name: 'Setup JavaFX'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          java-package: 'jdk+fx'
+
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Start xvfb
+        run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+      - name: Run tests
+        run: ./gradlew test testCodeCoverageReport
+        env:
+          DISPLAY: ":99"
+
+  test-windows:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup JDK 24 with JavaFX
+      - name: 'Set up JDK 24 with JavaFX'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          java-package: 'jdk+fx'
+
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Run tests
+        run: ./gradlew test
+
+  sonar:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup JDK 24 with JavaFX
+      - name: 'Set up JDK 24 with JavaFX'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          java-package: 'jdk+fx'
+
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: 'Cache SonarCloud packages'
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: 'Sonar Scan'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          ./gradlew sonar
+          -Dsonar.projectKey=xzel23_utility
+          -Dsonar.organization=xzel23
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/test/jacocoTestReport.xml
+
+  qodana:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup JDK 24 with JavaFX
+      - name: 'Set up JDK 24 with JavaFX'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          java-package: 'jdk+fx'
+
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: 'Create Qodana config'
+        run: |
+          cat > qodana.yaml << 'EOF'
+          version: "1.0"
+          linter: jetbrains/qodana-jvm-community:2025.1
+          profile:
+            name: qodana.starter
+          exclude:
+            - name: All
+              paths:
+                - "**/jmh/**"
+          EOF
+
+      - name: 'Qodana Scan'
+        uses: JetBrains/qodana-action@v2025.1.1
+        with:
+          args: --property,idea.kotlin.plugin.use.k2=false
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+
+  publish:
+    needs: [test-linux, test-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup JDK 24 with JavaFX
+      - name: 'Set up JDK 24 with JavaFX'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          java-package: 'jdk+fx'
+
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: 'publish build'
+        run: ./gradlew jreleaserDeploy
+        env:
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+      - name: 'Get project version'
+        id: version
+        run: |
+          VERSION=$(./gradlew -q printVersion | tail -n 1)
+          echo "Detected version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: 'Generate Javadoc'
+        run: ./gradlew aggregateJavadoc
+
+      - name: 'Determine Javadoc folder'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          echo "Evaluating DOC_PATH for version: $VERSION"
+          if [[ "$VERSION" == *"-SNAPSHOT" ]]; then
+            echo "DOC_PATH=snapshots" >> "$GITHUB_ENV"
+          elif [[ "$VERSION" == v* ]]; then
+            echo "DOC_PATH=$VERSION" >> "$GITHUB_ENV"
+          else
+            echo "DOC_PATH=latest" >> "$GITHUB_ENV"
+          fi
+
+      - name: 'Deploy versioned Javadoc'
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/docs/javadoc
+          destination_dir: ${{ env.DOC_PATH }}
+          keep_files: true
