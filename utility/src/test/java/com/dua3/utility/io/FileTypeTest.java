@@ -3,8 +3,6 @@ package com.dua3.utility.io;
 import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,7 +13,6 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
 class FileTypeTest {
 
     private static TestFileType textFileType;
@@ -227,7 +224,7 @@ class FileTypeTest {
     void testEquals() {
         assertTrue(textFileType.equals(textFileType), "equals with same type");
         assertFalse(textFileType.equals(documentFileType), "equals with different type");
-        assertFalse(textFileType.equals(null), "equals with null");
+        assertNotEquals(null, textFileType, "equals with null");
         assertFalse(textFileType.equals("not a file type"), "equals with non-FileType object");
     }
 
