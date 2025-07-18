@@ -13,8 +13,6 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.wrapper.Wrapper
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
-import java.util.Properties
-import java.util.concurrent.TimeUnit
 
 plugins {
     id("java-library")
@@ -415,61 +413,6 @@ tasks.register("publishToStagingDirectory") {
 // Make jreleaserDeploy depend on the root-level publishToStagingDirectory task
 tasks.named("jreleaserDeploy") {
     dependsOn("publishToStagingDirectory")
-}
-
-// Configure Gradle wrapper task to improve caching in CI environments
-// This configuration helps prevent the Gradle distribution from being downloaded in every CI build
-// by dynamically reading the Gradle version from gradle-wrapper.properties and setting the SHA-256 checksum
-tasks.named<Wrapper>("wrapper") {
-    // Read Gradle version from gradle-wrapper.properties to avoid hardcoding
-    val gradleWrapperProperties = Properties()
-    val gradleWrapperPropertiesFile = rootProject.file("gradle/wrapper/gradle-wrapper.properties")
-    gradleWrapperProperties.load(gradleWrapperPropertiesFile.inputStream())
-    
-    // Extract Gradle version from distributionUrl
-    val distributionUrl = gradleWrapperProperties.getProperty("distributionUrl", "")
-    val gradleVersionRegex = "gradle-([\\d.]+)-bin\\.zip".toRegex()
-    val matchResult = gradleVersionRegex.find(distributionUrl)
-    val extractedGradleVersion = matchResult?.groupValues?.get(1) ?: "8.14.3" // Fallback if not found
-    
-    // Set the Gradle version dynamically
-    gradleVersion = extractedGradleVersion
-    distributionType = Wrapper.DistributionType.BIN
-    
-    // Map of known Gradle versions to their SHA-256 checksums
-    // This map should be updated when new Gradle versions are released
-    val gradleChecksums = mapOf(
-        "8.14.3" to "f2b9ed0faf8472cbe469255ae6c86eddb77076c75191741b4a462f33128dd419",
-        "8.14.2" to "40cc02d4c255d9b2ca6db9872e3c5368e1a6d5ca2c5e309e3b8c6a152722bf6a",
-        "8.14.1" to "e9d5aaa33232bb7f0a3d5d7e1e9d86b8d6d8d1c1c3f6c7a0a7f2c5c7d2c7a2c7",
-        "8.14.0" to "f5e977c0bf0c0e7100c5713e5e05df1c1c9c6b5e7c7d7c7d7c7d7c7d7c7d7c7d"
-        // Add more versions as needed
-    )
-    
-    // Set the SHA-256 checksum if available for this version
-    if (gradleChecksums.containsKey(extractedGradleVersion)) {
-        distributionSha256Sum = gradleChecksums[extractedGradleVersion]
-        logger.lifecycle("Using SHA-256 checksum for Gradle $extractedGradleVersion: ${gradleChecksums[extractedGradleVersion]}")
-    } else {
-        logger.warn("No SHA-256 checksum available for Gradle $extractedGradleVersion. " +
-                   "Please add it to the gradleChecksums map in build.gradle.kts")
-    }
-    
-    // Use the same networkTimeout as in gradle-wrapper.properties or default to 60 seconds
-    val networkTimeoutFromProperties = gradleWrapperProperties.getProperty("networkTimeout", "60000").toInt()
-    networkTimeout.set(networkTimeoutFromProperties)
-    
-    // Add CI-specific configuration
-    doFirst {
-        if (System.getenv("CI") == "true") {
-            logger.lifecycle("Running in CI environment, configuring wrapper for optimal caching")
-            // Use the Gradle wrapper's built-in caching mechanism
-            // Setting distributionBase to PROJECT ensures the distribution is cached within the project
-            // This works better with GitHub Actions cache than the default USER_HOME location
-            distributionBase = Wrapper.PathBase.PROJECT
-            distributionPath = "gradle/wrapper/dists"
-        }
-    }
 }
 
 // add a task to create aggregate javadoc in the root projects build/docs/javadoc folder
