@@ -31,7 +31,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          
+
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
         id: gradle-version
@@ -83,7 +83,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
-          
+
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
         id: gradle-version
@@ -130,7 +130,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
-          
+
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
         id: gradle-version
@@ -173,7 +173,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
-          
+
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
         id: gradle-version
@@ -226,10 +226,10 @@ jobs:
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
-          
+
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
         id: gradle-version
@@ -284,7 +284,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          
+
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
         id: gradle-version
