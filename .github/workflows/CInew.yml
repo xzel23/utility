@@ -23,7 +23,7 @@ jobs:
           path: |
             ~/.jdks
             ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
-          key: ${{ runner.os }}-jdk-${{ hashFiles('.github/workflows/CInew.yml') }}
+          key: ${{ runner.os }}-jdk-temurin-21-${{ hashFiles('.github/workflows/CInew.yml') }}
       
       # Setup JDK 21 for build
       - name: 'Set up JDK 21'
@@ -76,6 +76,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Cache JDK
+      - name: 'Cache JDK'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.jdks
+            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
+          key: ${{ runner.os }}-jdk-zulu-24-fx-${{ hashFiles('.github/workflows/CInew.yml') }}
+
       # Setup JDK 24 + JavaFX
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
@@ -123,6 +132,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Cache JDK
+      - name: 'Cache JDK'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.jdks
+            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
+            ${{ runner.os == 'Windows' && 'C:\Program Files\Zulu' || '' }}
+          key: ${{ runner.os }}-jdk-zulu-24-fx-${{ hashFiles('.github/workflows/CInew.yml') }}
+
       # Setup JDK 24 with JavaFX
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
@@ -165,6 +184,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Cache JDK
+      - name: 'Cache JDK'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.jdks
+            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
+          key: ${{ runner.os }}-jdk-zulu-24-fx-${{ hashFiles('.github/workflows/CInew.yml') }}
 
       # Setup JDK 24 with JavaFX
       - name: 'Set up JDK 24 with JavaFX'
@@ -222,6 +250,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Cache JDK
+      - name: 'Cache JDK'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.jdks
+            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
+          key: ${{ runner.os }}-jdk-zulu-24-fx-${{ hashFiles('.github/workflows/CInew.yml') }}
+
       # Setup JDK 24 with JavaFX
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
@@ -277,6 +314,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Cache JDK
+      - name: 'Cache JDK'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.jdks
+            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
+          key: ${{ runner.os }}-jdk-temurin-21-${{ hashFiles('.github/workflows/CInew.yml') }}
 
       # Setup JDK 21 for publishing
       - name: 'Set up JDK 21'
