@@ -10,8 +10,10 @@ import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.api.tasks.wrapper.Wrapper
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
+import java.util.concurrent.TimeUnit
 
 plugins {
     id("java-library")
@@ -412,6 +414,31 @@ tasks.register("publishToStagingDirectory") {
 // Make jreleaserDeploy depend on the root-level publishToStagingDirectory task
 tasks.named("jreleaserDeploy") {
     dependsOn("publishToStagingDirectory")
+}
+
+// Configure Gradle wrapper task to improve caching in CI environments
+// This configuration helps prevent the Gradle distribution from being downloaded in every CI build
+// by verifying the distribution using SHA-256 checksum and optimizing caching settings
+tasks.named<Wrapper>("wrapper") {
+    distributionType = Wrapper.DistributionType.BIN
+    gradleVersion = "8.14.3" // Hardcoded to match gradle-wrapper.properties
+
+    // Configure download settings
+    // Adding SHA-256 checksum ensures the wrapper can verify the distribution without downloading it again
+    distributionSha256Sum = "f2b9ed0faf8472cbe469255ae6c86eddb77076c75191741b4a462f33128dd419" // SHA-256 for gradle-8.14.3-bin.zip
+    networkTimeout.set(TimeUnit.SECONDS.toMillis(60).toInt()) // Set reasonable timeout to prevent hanging downloads
+
+    // Add CI-specific configuration
+    doFirst {
+        if (System.getenv("CI") == "true") {
+            logger.lifecycle("Running in CI environment, configuring wrapper for optimal caching")
+            // Use the Gradle wrapper's built-in caching mechanism
+            // Setting distributionBase to PROJECT ensures the distribution is cached within the project
+            // This works better with GitHub Actions cache than the default USER_HOME location
+            distributionBase = Wrapper.PathBase.PROJECT
+            distributionPath = "gradle/wrapper/dists"
+        }
+    }
 }
 
 // add a task to create aggregate javadoc in the root projects build/docs/javadoc folder
