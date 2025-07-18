@@ -72,7 +72,6 @@ dependencyResolutionManagement {
             version("jimfs", "1.3.1")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
-            version("junit4", "4.13.2")
             version("junit-jupiter", "5.11.4")
             version("log4j-bom", "2.25.1")
             version("miglayout", "11.4.2")
@@ -104,7 +103,6 @@ dependencyResolutionManagement {
 
             library("jimfs", "com.google.jimfs", "jimfs").versionRef("jimfs")
 
-            library("junit4", "junit", "junit").versionRef("junit4")
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit-jupiter")
             library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit-jupiter")
             library("h2", "com.h2database", "h2").versionRef("h2database")

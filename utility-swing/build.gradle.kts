@@ -3,7 +3,6 @@ dependencies {
     compileOnly(project(":utility-logging"))
 
     // Test dependencies
-    testImplementation(rootProject.libs.junit4)
     testImplementation(project(":utility-logging"))
 
     // Use the regular logging setup for tests
