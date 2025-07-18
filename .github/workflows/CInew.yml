@@ -16,21 +16,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Cache JDK
-      - name: 'Cache JDK'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.jdks
-            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
-          key: ${{ runner.os }}-jdk-temurin-21-${{ hashFiles('.github/workflows/CInew.yml') }}
-
       # Setup JDK 21 for build
       - name: 'Set up JDK 21'
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
+          cache: 'gradle'  # Enable built-in caching
 
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
@@ -98,15 +90,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Cache JDK
-      - name: 'Cache JDK'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.jdks
-            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
-          key: ${{ runner.os }}-jdk-zulu-24-fx-${{ hashFiles('.github/workflows/CInew.yml') }}
-
       # Setup JDK 24 + JavaFX
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
@@ -114,6 +97,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
+          cache: 'gradle'  # Enable built-in caching
 
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
@@ -152,16 +136,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Cache JDK
-      - name: 'Cache JDK'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.jdks
-            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
-            ${{ runner.os == 'Windows' && 'C:\Program Files\Zulu' || '' }}
-          key: ${{ runner.os }}-jdk-zulu-24-fx-${{ hashFiles('.github/workflows/CInew.yml') }}
-
       # Setup JDK 24 with JavaFX
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
@@ -169,6 +143,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
+          cache: 'gradle'  # Enable built-in caching
 
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
@@ -203,15 +178,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Cache JDK
-      - name: 'Cache JDK'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.jdks
-            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
-          key: ${{ runner.os }}-jdk-zulu-24-fx-${{ hashFiles('.github/workflows/CInew.yml') }}
-
       # Setup JDK 24 with JavaFX
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
@@ -219,6 +185,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
+          cache: 'gradle'  # Enable built-in caching
 
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
@@ -266,15 +233,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Cache JDK
-      - name: 'Cache JDK'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.jdks
-            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
-          key: ${{ runner.os }}-jdk-zulu-24-fx-${{ hashFiles('.github/workflows/CInew.yml') }}
-
       # Setup JDK 24 with JavaFX
       - name: 'Set up JDK 24 with JavaFX'
         uses: actions/setup-java@v4
@@ -282,6 +240,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
+          cache: 'gradle'  # Enable built-in caching
 
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
@@ -329,21 +288,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Cache JDK
-      - name: 'Cache JDK'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.jdks
-            ${{ runner.os == 'Linux' && '/usr/lib/jvm' || 'C:\Program Files\Eclipse Adoptium' }}
-          key: ${{ runner.os }}-jdk-temurin-21-${{ hashFiles('.github/workflows/CInew.yml') }}
-
       # Setup JDK 21 for publishing
       - name: 'Set up JDK 21'
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
+          cache: 'gradle'  # Enable built-in caching
 
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
@@ -377,7 +328,7 @@ jobs:
           path: build/docs/javadoc
 
       - name: 'publish build'
-        run: gradle jreleaserDeploy
+        run: gradle jreleaserDeploy jreleaserUpload
         env:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
