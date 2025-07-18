@@ -45,7 +45,7 @@ jobs:
             wrapper
 
       - name: 'Execute Gradle build'
-        run: gradle assemble
+        run: gradle assemble testClasses
         id: compile
 
       # Publish to staging directory
@@ -64,6 +64,8 @@ jobs:
           path: |
             **/build/libs/*.jar
             **/build/classes/
+            **/build/classes/java/test/
+            **/build/classes/kotlin/test/
             build/gradle-version/version.txt
           path-root: ${{ github.workspace }}
           if-no-files-found: error
