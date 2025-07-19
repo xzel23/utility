@@ -28,7 +28,7 @@ jobs:
       - name: 'Extract Gradle Version'
         id: gradle-version
         run: |
-          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          GRADLE_VERSION=$(sed -n -e 's!.*gradle-!!' -e 's!-bin.zip!!p' < gradle/wrapper/gradle-wrapper.properties)
           echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
           # Create a file with the Gradle version for other jobs to use
@@ -95,13 +95,13 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'  # Enable built-in caching
 
-      # Extract Gradle version from wrapper properties for cache key
-      - name: 'Extract Gradle Version'
+      # Read Gradle version from the file created in the build job
+      - name: 'Read Gradle Version'
         id: gradle-version
         run: |
-          GRADLE_VERSION=$(sed -n -e 's!.*gradle-!!' -e 's!-bin.zip!!p' < gradle/wrapper/gradle-wrapper.properties)
+          GRADLE_VERSION=$(cat build/gradle-version/version.txt)
           echo "Detected Gradle version: $GRADLE_VERSION"
-          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"      # Extract Gradle version from wrapper properties for cache key
+          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v4
@@ -153,12 +153,12 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'  # Enable built-in caching
 
-      # Extract Gradle version from wrapper properties for cache key
-      - name: 'Extract Gradle Version'
+      # Read Gradle version from the file created in the build job
+      - name: 'Read Gradle Version'
         id: gradle-version
         shell: bash
         run: |
-          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          GRADLE_VERSION=$(cat build/gradle-version/version.txt)
           echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -197,11 +197,11 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'  # Enable built-in caching
 
-      # Extract Gradle version from wrapper properties for cache key
-      - name: 'Extract Gradle Version'
+      # Read Gradle version from the file created in the build job
+      - name: 'Read Gradle Version'
         id: gradle-version
         run: |
-          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          GRADLE_VERSION=$(cat build/gradle-version/version.txt)
           echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -260,11 +260,11 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'  # Enable built-in caching
 
-      # Extract Gradle version from wrapper properties for cache key
-      - name: 'Extract Gradle Version'
+      # Read Gradle version from the file created in the build job
+      - name: 'Read Gradle Version'
         id: gradle-version
         run: |
-          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          GRADLE_VERSION=$(cat build/gradle-version/version.txt)
           echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -315,11 +315,11 @@ jobs:
           java-version: '21'
           cache: 'gradle'  # Enable built-in caching
 
-      # Extract Gradle version from wrapper properties for cache key
-      - name: 'Extract Gradle Version'
+      # Read Gradle version from the file created in the build job
+      - name: 'Read Gradle Version'
         id: gradle-version
         run: |
-          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          GRADLE_VERSION=$(cat build/gradle-version/version.txt)
           echo "Detected Gradle version: $GRADLE_VERSION"
           echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
 
