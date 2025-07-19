@@ -99,9 +99,9 @@ jobs:
       - name: 'Extract Gradle Version'
         id: gradle-version
         run: |
-          GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")
+          GRADLE_VERSION=$(sed -n -e 's!.*gradle-!!' -e 's!-bin.zip!!p' < gradle/wrapper/gradle-wrapper.properties)
           echo "Detected Gradle version: $GRADLE_VERSION"
-          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "gradle_version=$GRADLE_VERSION" >> "$GITHUB_OUTPUT"      # Extract Gradle version from wrapper properties for cache key
 
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v4
