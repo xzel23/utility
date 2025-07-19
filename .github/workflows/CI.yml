@@ -95,6 +95,13 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'  # Enable built-in caching
 
+      # Download build artifacts first to get the Gradle version file
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ${{ github.workspace }}
+
       # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
         id: gradle-version
@@ -112,12 +119,6 @@ jobs:
             notifications
             jdks
             wrapper
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: ${{ github.workspace }}
 
       - name: Start xvfb
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
@@ -153,6 +154,13 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'  # Enable built-in caching
 
+      # Download build artifacts first to get the Gradle version file
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ${{ github.workspace }}
+
       # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
         id: gradle-version
@@ -171,12 +179,6 @@ jobs:
             notifications
             jdks
             wrapper
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: ${{ github.workspace }}
 
       - name: Run tests
         run: gradle --no-daemon --build-cache test
@@ -197,6 +199,13 @@ jobs:
           java-package: 'jdk+fx'
           cache: 'gradle'  # Enable built-in caching
 
+      # Download build artifacts first to get the Gradle version file
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ${{ github.workspace }}
+
       # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
         id: gradle-version
@@ -214,12 +223,6 @@ jobs:
             notifications
             jdks
             wrapper
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: ${{ github.workspace }}
 
       # Download coverage reports
       - name: Download coverage reports
@@ -259,6 +262,13 @@ jobs:
           java-version: '24'
           java-package: 'jdk+fx'
           cache: 'gradle'  # Enable built-in caching
+
+      # Download build artifacts first to get the Gradle version file
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ${{ github.workspace }}
 
       # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
@@ -314,6 +324,13 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           cache: 'gradle'  # Enable built-in caching
+
+      # Download build artifacts first to get the Gradle version file
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ${{ github.workspace }}
 
       # Read Gradle version from the file created in the build job
       - name: 'Read Gradle Version'
