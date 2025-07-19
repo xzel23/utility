@@ -90,6 +90,7 @@ sonar {
     properties {
         property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
         property("sonar.coverage.exclusions", "**/samples/**")
+        property("sonar.java.binaries", "**/build/classes/java/main")
     }
 }
 
@@ -170,6 +171,7 @@ subprojects {
         properties {
             property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
             property("sonar.coverage.exclusions", "**/samples/**")
+            property("sonar.java.binaries", "**/build/classes/java/main")
         }
     }
 
