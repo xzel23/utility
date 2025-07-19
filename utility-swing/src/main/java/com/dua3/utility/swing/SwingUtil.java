@@ -57,6 +57,7 @@ import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -405,15 +406,27 @@ public final class SwingUtil {
     @SafeVarargs
     private static Optional<Path> showFileDialog(@Nullable Component parent, Path current, int selectionMode, BiFunction<? super JFileChooser, ? super Component, Integer> showDialog,
                                                  Pair<@NonNull String, @NonNull String @NonNull []>... types) {
-        File file;
+        boolean isFileOnlySelection = selectionMode == JFileChooser.FILES_ONLY;
+        File file = null;
+        File directory = null;
         try {
-            file = current.toFile().getAbsoluteFile();
+            if (!Files.exists(current)) {
+                file = current.toFile().getAbsoluteFile();
+                directory = file;
+            } else {
+                if (Files.isDirectory(current)) {
+                    directory = current.toFile().getAbsoluteFile();
+                    file = isFileOnlySelection ? null : directory;
+                } else {
+                    file = current.toFile().getAbsoluteFile();
+                }
+            }
         } catch (UnsupportedOperationException | SecurityException e) {
             LOG.warn("path cannot be converted to file: {}", current, e);
             file = new File(".").getAbsoluteFile();
         }
 
-        JFileChooser jfc = new JFileChooser();
+        JFileChooser jfc = new JFileChooser(directory);
         for (var entry : types) {
             jfc.addChoosableFileFilter(new FileNameExtensionFilter(entry.first(), entry.second()));
         }
