@@ -38,6 +38,38 @@ Source code is available at https://github.com/xzel23/utility.
 - Building on Windows ARM is not supported because of missing support in Gradle and the toolchain resolver and 
   JavaFX plugins.
 
+## Gradle Tasks
+
+### Inspecting Task Inputs and Outputs
+
+The project includes a custom Gradle task called `showTaskIO` that displays the inputs and outputs of any specified Gradle task. This is useful for:
+
+- Debugging build issues
+- Understanding task dependencies
+- Analyzing what affects task up-to-date checks
+- Optimizing build performance
+
+To use this task, run:
+
+```bash
+./gradlew showTaskIO -PtaskName=<taskName>
+```
+
+Replace `<taskName>` with the name of the task you want to inspect (e.g., `compileJava`, `jar`, `test`).
+
+The output includes:
+- Input properties with their values
+- Input files with existence status
+- Output files with existence status
+- Output directories with existence status
+
+Example:
+```bash
+./gradlew showTaskIO -PtaskName=jar
+```
+
+If no task name is provided, it defaults to the `help` task.
+
 ## Using the library
 
 The Binaries are available on Maven Central Repository.
