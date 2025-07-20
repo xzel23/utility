@@ -55,7 +55,7 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("cabe", "com.dua3.cabe").version("3.2.0")
+            plugin("cabe", "com.dua3.cabe").version("3.2.1-SNAPSHOT")
             plugin("foojay-resolver-convention", "org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
