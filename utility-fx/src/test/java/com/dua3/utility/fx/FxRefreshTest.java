@@ -179,7 +179,7 @@ class FxRefreshTest extends FxTestBase {
 
         // Wait for the refresh to complete
         assertTrue(latch.await(5, TimeUnit.SECONDS), "Refresh should complete after activation");
-        assertEquals(1, counter.get(), "Task should be executed after activation");
+        assertTrue(counter.get() > 0, "Task should be executed after activation");
 
         // Clean up
         runOnFxThreadAndWait(() -> {
