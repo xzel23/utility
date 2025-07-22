@@ -44,6 +44,7 @@ jobs:
             notifications
             jdks
             wrapper
+            toolchains
 
       - name: 'Execute Gradle build'
         run: gradle --no-daemon --build-cache assemble testClasses aggregateJavadoc publishToStagingDirectory
@@ -93,7 +94,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
-          cache: 'gradle'  # Enable built-in caching
+          cache: 'gradle'
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
@@ -119,6 +120,7 @@ jobs:
             notifications
             jdks
             wrapper
+            toolchains
 
       - name: Start xvfb
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
@@ -152,7 +154,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
-          cache: 'gradle'  # Enable built-in caching
+          cache: 'gradle'
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
@@ -179,6 +181,7 @@ jobs:
             notifications
             jdks
             wrapper
+            toolchains
 
       - name: Run tests
         run: gradle --no-daemon --build-cache test
@@ -197,7 +200,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
-          cache: 'gradle'  # Enable built-in caching
+          cache: 'gradle'
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
@@ -223,6 +226,7 @@ jobs:
             notifications
             jdks
             wrapper
+            toolchains
 
       # Download coverage reports
       - name: Download coverage reports
@@ -261,7 +265,7 @@ jobs:
           distribution: 'zulu'
           java-version: '24'
           java-package: 'jdk+fx'
-          cache: 'gradle'  # Enable built-in caching
+          cache: 'gradle'
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
@@ -287,6 +291,7 @@ jobs:
             notifications
             jdks
             wrapper
+            toolchains
 
       - name: 'Create Qodana config'
         run: |
@@ -323,7 +328,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'gradle'  # Enable built-in caching
+          cache: 'gradle'
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
@@ -349,6 +354,7 @@ jobs:
             notifications
             jdks
             wrapper
+            toolchains
 
       # Download staging directory
       - name: Download staging directory
