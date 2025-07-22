@@ -72,7 +72,7 @@ dependencyResolutionManagement {
             version("jimfs", "1.3.1")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
-            version("junit-bom", "5.13.3")
+            version("junit-bom", "5.13.4")
             version("log4j-bom", "2.25.1")
             version("miglayout", "11.4.2")
             version("slf4j", "2.0.17")
