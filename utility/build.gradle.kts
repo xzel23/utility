@@ -186,7 +186,14 @@ tasks.named("testJava24") {
     dependsOn(tasks.jar)
 }
 
-// Disable forbiddenapis for java24 source set
-tasks.matching { it.name == "forbiddenApisJava24" }.configureEach {
+// Disable forbiddenapis for some source sets
+tasks.matching {
+    listOf(
+        "forbiddenApisJava24",
+        "forbiddenApisJmh",
+        "forbiddenApisJavaTestUtil",
+        "forbiddenApisTest"
+    ).contains(it.name)
+}.configureEach {
     enabled = false
 }
