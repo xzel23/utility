@@ -338,7 +338,7 @@ subprojects {
     // Forbidden APIs and SpotBugs for non-BOM projects
     if (!project.name.endsWith("-bom")) {
         // === FORBIDDEN APIS ===
-        forbiddenApis {
+        tasks.withType(de.thetaphi.forbiddenapis.gradle.CheckForbiddenApis::class).configureEach {
             bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
             ignoreFailures = false
         }
