@@ -344,17 +344,22 @@ subprojects {
         }
 
         // === SPOTBUGS ===
-        spotbugs.toolVersion.set(rootProject.libs.versions.spotbugs)
-        spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
-        tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
+        spotbugs {
+            toolVersion.set(rootProject.libs.versions.spotbugs)
+            excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
+        }
+
+        tasks.named<com.github.spotbugs.snom.SpotBugsTask>("spotbugsMain") {
             reports.create("html") {
                 required.set(true)
-                outputLocation = project.layout.buildDirectory.file("reports/spotbugs.html").get().asFile
-                setStylesheet("fancy-hist.xsl")
+                outputLocation.set(layout.buildDirectory.file("reports/spotbugs/main.html"))
             }
-            reports.create("xml") {
+        }
+
+        tasks.named<com.github.spotbugs.snom.SpotBugsTask>("spotbugsTest") {
+            reports.create("html") {
                 required.set(true)
-                outputLocation = project.layout.buildDirectory.file("reports/spotbugs.xml").get().asFile
+                outputLocation.set(layout.buildDirectory.file("reports/spotbugs/test.html"))
             }
         }
     }
