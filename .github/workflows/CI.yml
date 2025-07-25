@@ -245,7 +245,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
-          gradle --no-daemon --build-cache sonar --info --stacktrace
+          gradle --no-daemon --build-cache sonar
           -Dsonar.projectKey=xzel23_utility
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
