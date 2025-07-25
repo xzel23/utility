@@ -5,7 +5,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-utility"
-val projectVersion = "20.0.0-beta4"
+val projectVersion = "20.0.0-beta5-SNAPSHOT"
 
 // define subprojects
 include("utility")
@@ -27,18 +27,7 @@ include("utility-samples:utility-samples-graphics")
 include("utility-samples:utility-samples-fx")
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver") version "1.0.0"
-}
-
-// toolchain configuration
-toolchainManagement {
-    jvm {
-        javaRepositories {
-            repository("foojay") {
-                resolverClass.set(org.gradle.toolchains.foojay.FoojayToolchainResolver::class.java)
-            }
-        }
-    }
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 // define dependency versions and repositories
