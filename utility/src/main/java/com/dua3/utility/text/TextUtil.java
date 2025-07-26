@@ -844,7 +844,7 @@ public final class TextUtil {
     }
 
     /**
-     * Returns the given string if it is not null or empty, otherwise returns the specified value.
+     * Returns the given character sequence if it is not {@code null} or empty, otherwise returns the specified value.
      *
      * @param <T> the generic type of the CharSequence
      * @param t The string to check.
