@@ -57,7 +57,7 @@ public final class RGBColor implements Color {
     }
 
     private static int shiftComponentValue(int value, int bits) {
-        LangUtil.check(value >= 0 && value <= 255, () -> new IllegalArgumentException("value out of range: " + value));
+        LangUtil.checkArg(value >= 0 && value <= 255, () -> "value out of range: " + value);
         return value << bits;
     }
 

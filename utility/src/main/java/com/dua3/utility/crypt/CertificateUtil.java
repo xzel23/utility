@@ -76,7 +76,7 @@ public final class CertificateUtil {
      */
     public static X509Certificate[] createX509Certificate(KeyPair keyPair, String subject, int validityDays, X509Certificate parentCertificate, PrivateKey parentPrivateKey) throws GeneralSecurityException {
         try {
-            LangUtil.check(validityDays > 0, () -> new IllegalArgumentException("Validity days must be positive"));
+            LangUtil.checkArg(validityDays > 0, () -> "Validity days must be positive: " + validityDays);
 
             // Validate subject DN format
             try {

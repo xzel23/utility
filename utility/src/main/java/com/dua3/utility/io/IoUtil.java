@@ -232,7 +232,7 @@ public final class IoUtil {
      * @return filename with replaced extension
      */
     public static String replaceExtension(String path, String extension) {
-        LangUtil.check(!path.isEmpty(), () -> new IllegalArgumentException("path must ot be empty"));
+        LangUtil.checkArg(!path.isEmpty(), () -> "path must ot be empty");
         FileNameInfo fi = getFilenameInfo(path);
 
         // find dot

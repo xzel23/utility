@@ -59,8 +59,8 @@ public class Zip implements AutoCloseable, Flushable {
     }
 
     private void addFileEntry(String filename) throws IOException {
-        LangUtil.check(!filename.isEmpty(), "the filename must not be empty");
-        LangUtil.check(filename.indexOf('/') == -1, "the filename must not contain any '/'");
+        LangUtil.checkArg(!filename.isEmpty(), () -> "filename must not be empty");
+        LangUtil.checkArg(filename.indexOf('/') == -1, () -> "the filename must not contain any '/'");
         ZipEntry entry = new ZipEntry(path + filename);
         zout.putNextEntry(entry);
     }
@@ -74,7 +74,7 @@ public class Zip implements AutoCloseable, Flushable {
      * @throws IOException on error
      */
     public void directory(String dirname) throws IOException {
-        LangUtil.check(!dirname.isEmpty(), "directory name must not be empty");
+        LangUtil.checkArg(!dirname.isEmpty(), () -> "directory name must not be empty");
 
         // append '/' if needed
         dirname = dirname.endsWith("/") ? dirname : dirname + "/";

@@ -43,6 +43,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -73,6 +74,7 @@ import java.util.stream.Stream;
  */
 public final class LangUtil {
     private static final Logger LOG = LogManager.getLogger(LangUtil.class);
+    public static final String INVALID_FORMATTING = "format String does not match arguments";
 
     /**
      * A holder class for a securely initialized instance of {@link SecureRandom}.
@@ -126,6 +128,53 @@ public final class LangUtil {
     }
 
     /**
+     * Validates the provided boolean condition and throws an IllegalArgumentException with the
+     * specified message if the condition is false.
+     *
+     * @param condition the boolean condition to be checked
+     * @param msg a supplier that provides the exception message if the condition is false
+     * @throws IllegalArgumentException if the condition is false
+     */
+    public static void checkArg(boolean condition, Supplier<String> msg) throws IllegalArgumentException {
+        if (!condition) {
+            throw new IllegalArgumentException(msg.get());
+        }
+    }
+
+    /**
+     * Checks a condition and throws an {@link IllegalArgumentException} with a formatted message
+     * if the condition is false.
+     *
+     * @param condition the boolean condition to check; if false, an exception is thrown
+     * @param fmt the format string used to construct the exception message
+     * @param fmtArgs the arguments referenced by the format specifiers in the format string
+     * @throws IllegalArgumentException if the specified condition is false
+     */
+    public static void checkArg(boolean condition, String fmt, Object... fmtArgs) throws IllegalArgumentException {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
+        if (!condition) {
+            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
+        }
+    }
+
+    /**
+     * Validates whether the provided format string and arguments are compatible.
+     *
+     * @param fmt the format string to be validated
+     * @param fmtArgs the arguments to be applied to the format string
+     * @return true if the format string is valid with the provided arguments, false otherwise
+     */
+    private static boolean isFormatValid(String fmt, Object[] fmtArgs) {
+        try {
+            String.format(fmt, fmtArgs);
+            return true;
+        } catch (IllegalFormatException e) {
+            LOG.error("Invalid format string: {}", fmt, e);
+            return false;
+        }
+    }
+
+    /**
      * Check that condition is fulfilled.
      *
      * @param condition condition to test
@@ -157,12 +206,13 @@ public final class LangUtil {
      * @param condition condition to test
      * @param fmt       message format (@see
      *                  {@link String#format(String, Object...)})
-     * @param args      format arguments
+     * @param fmtArgs      format arguments
      * @throws FailedCheckException if condition does not evaluate to {@code true}
      */
-    public static void check(boolean condition, String fmt, Object... args) {
+    public static void check(boolean condition, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!condition) {
-            String message = String.format(Locale.ROOT, fmt, args);
+            String message = String.format(Locale.ROOT, fmt, fmtArgs);
             throw new FailedCheckException(message);
         }
     }
@@ -1235,13 +1285,14 @@ public final class LangUtil {
         private volatile @Nullable String s;
         private volatile @Nullable Object @Nullable [] args;
 
-        private LazyFormatter(@Nullable String fmt, Object... args) {
+        private LazyFormatter(@Nullable String fmt, Object... fmtArgs) {
+            assert fmt == null || isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
             if (fmt == null) {
                 this.s = NULL_STRING;
                 this.args = null;
             } else {
                 this.s = fmt;
-                this.args = args;
+                this.args = fmtArgs;
             }
         }
 
@@ -1265,11 +1316,11 @@ public final class LangUtil {
      * Creates a lazy formatted string using the given format string and arguments.
      *
      * @param fmt   the format string
-     * @param args  the arguments to be formatted
+     * @param fmtArgs  the arguments to be formatted
      * @return a lazy formatter object
      */
-    public static Object formatLazy(@Nullable String fmt, Object... args) {
-        return new LazyFormatter(fmt, args);
+    public static Object formatLazy(@Nullable String fmt, Object... fmtArgs) {
+        return new LazyFormatter(fmt, fmtArgs);
     }
 
     /**
@@ -1289,15 +1340,16 @@ public final class LangUtil {
      *
      * @param value the long value to ensure non-negativity
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or {@link Double#NaN}
      */
-    public static double requireNonNegative(double value, String fmt, Object... args) {
+    public static double requireNonNegative(double value, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value >= 0.0) {
             return value;
         }
-        throw new IllegalArgumentException(fmt.formatted(args));
+        throw new IllegalArgumentException(fmt.formatted(fmtArgs));
     }
 
     /**
@@ -1317,12 +1369,12 @@ public final class LangUtil {
      *
      * @param value the long value to ensure non-negativity
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative
      */
-    public static float requireNonNegative(float value, String fmt, Object... args) {
-        return (float) requireNonNegative((double) value, fmt, args);
+    public static float requireNonNegative(float value, String fmt, Object... fmtArgs) {
+        return (float) requireNonNegative((double) value, fmt, fmtArgs);
     }
 
     /**
@@ -1342,13 +1394,14 @@ public final class LangUtil {
      *
      * @param value the long value to ensure non-negativity
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative
      */
-    public static long requireNonNegative(long value, String fmt, Object... args) {
+    public static long requireNonNegative(long value, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value < 0) {
-            throw new IllegalArgumentException(fmt.formatted(args));
+            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
         }
         return value;
     }
@@ -1369,12 +1422,12 @@ public final class LangUtil {
      *
      * @param value The value to be checked.
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative
      */
-    public static int requireNonNegative(int value, String fmt, Object... args) {
-        return (int) requireNonNegative((long) value, fmt, args);
+    public static int requireNonNegative(int value, String fmt, Object... fmtArgs) {
+        return (int) requireNonNegative((long) value, fmt, fmtArgs);
     }
 
     /**
@@ -1393,12 +1446,12 @@ public final class LangUtil {
      *
      * @param value The value to be checked.
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative
      */
-    public static short requireNonNegative(short value, String fmt, Object... args) {
-        return (short) requireNonNegative((long) value, fmt, args);
+    public static short requireNonNegative(short value, String fmt, Object... fmtArgs) {
+        return (short) requireNonNegative((long) value, fmt, fmtArgs);
     }
 
     /**
@@ -1418,15 +1471,16 @@ public final class LangUtil {
      *
      * @param value the value to check if it is positive
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
      */
-    public static double requirePositive(double value, String fmt, Object... args) {
+    public static double requirePositive(double value, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value > 0.0) {
             return value;
         }
-        throw new IllegalArgumentException(fmt.formatted(args));
+        throw new IllegalArgumentException(fmt.formatted(fmtArgs));
     }
 
     /**
@@ -1446,12 +1500,12 @@ public final class LangUtil {
      *
      * @param value the value to check if it is positive
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
      */
-    public static float requirePositive(float value, String fmt, Object... args) {
-        return (float) requirePositive((double) value, fmt, args);
+    public static float requirePositive(float value, String fmt, Object... fmtArgs) {
+        return (float) requirePositive((double) value, fmt, fmtArgs);
     }
 
     /**
@@ -1471,13 +1525,14 @@ public final class LangUtil {
      *
      * @param value the value to check if it is positive
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
      */
-    public static long requirePositive(long value, String fmt, Object... args) {
+    public static long requirePositive(long value, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value <= 0) {
-            throw new IllegalArgumentException(fmt.formatted(args));
+            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
         }
         return value;
     }
@@ -1500,12 +1555,12 @@ public final class LangUtil {
      *
      * @param value The integer value to be checked.
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
      */
-    public static int requirePositive(int value, String fmt, Object... args) {
-        return (int) requirePositive((long) value, fmt, args);
+    public static int requirePositive(int value, String fmt, Object... fmtArgs) {
+        return (int) requirePositive((long) value, fmt, fmtArgs);
     }
 
     /**
@@ -1526,12 +1581,12 @@ public final class LangUtil {
      *
      * @param value The integer value to be checked.
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is negative or zero
      */
-    public static short requirePositive(short value, String fmt, Object... args) {
-        return (short) requirePositive((long) value, fmt, args);
+    public static short requirePositive(short value, String fmt, Object... fmtArgs) {
+        return (short) requirePositive((long) value, fmt, fmtArgs);
     }
 
     /**
@@ -1550,15 +1605,16 @@ public final class LangUtil {
      *
      * @param value the value to check
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
      */
-    public static double requireNegative(double value, String fmt, Object... args) {
+    public static double requireNegative(double value, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value < 0.0) {
             return value;
         }
-        throw new IllegalArgumentException(fmt.formatted(args));
+        throw new IllegalArgumentException(fmt.formatted(fmtArgs));
     }
 
     /**
@@ -1577,12 +1633,12 @@ public final class LangUtil {
      *
      * @param value the value to check
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
      */
-    public static float requireNegative(float value, String fmt, Object... args) {
-        return (float) requireNegative((double) value, fmt, args);
+    public static float requireNegative(float value, String fmt, Object... fmtArgs) {
+        return (float) requireNegative((double) value, fmt, fmtArgs);
     }
 
     /**
@@ -1601,13 +1657,14 @@ public final class LangUtil {
      *
      * @param value the value to check
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
      */
-    public static long requireNegative(long value, String fmt, Object... args) {
+    public static long requireNegative(long value, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (value >= 0) {
-            throw new IllegalArgumentException(fmt.formatted(args));
+            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
         }
         return value;
     }
@@ -1630,12 +1687,12 @@ public final class LangUtil {
      *
      * @param value the integer value to be checked
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
      */
-    public static int requireNegative(int value, String fmt, Object... args) {
-        return (int) requireNegative((long) value, fmt, args);
+    public static int requireNegative(int value, String fmt, Object... fmtArgs) {
+        return (int) requireNegative((long) value, fmt, fmtArgs);
     }
 
     /**
@@ -1656,12 +1713,12 @@ public final class LangUtil {
      *
      * @param value the integer value to be checked
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not negative
      */
-    public static short requireNegative(short value, String fmt, Object... args) {
-        return (short) requireNegative((long) value, fmt, args);
+    public static short requireNegative(short value, String fmt, Object... fmtArgs) {
+        return (short) requireNegative((long) value, fmt, fmtArgs);
     }
 
     /**
@@ -1684,13 +1741,14 @@ public final class LangUtil {
      * @param min   the minimum value of the interval (inclusive)
      * @param max   the maximum value of the interval (inclusive)
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not within the interval
      */
-    public static double requireInInterval(double value, double min, double max, String fmt, Object... args) {
+    public static double requireInInterval(double value, double min, double max, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!isBetween(value, min, max)) {
-            throw new IllegalArgumentException(fmt.formatted(args));
+            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
         }
         return value;
     }
@@ -1715,12 +1773,12 @@ public final class LangUtil {
      * @param min   the minimum value of the interval (inclusive)
      * @param max   the maximum value of the interval (inclusive)
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not within the interval
      */
-    public static float requireInInterval(float value, float min, float max, String fmt, Object... args) {
-        return (float) requireInInterval(value, min, (double) max, fmt, args);
+    public static float requireInInterval(float value, float min, float max, String fmt, Object... fmtArgs) {
+        return (float) requireInInterval(value, min, (double) max, fmt, fmtArgs);
     }
 
     /**
@@ -1743,13 +1801,14 @@ public final class LangUtil {
      * @param min   the minimum value of the interval (inclusive)
      * @param max   the maximum value of the interval (inclusive)
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is not within the interval
      */
-    public static long requireInInterval(long value, long min, long max, String fmt, Object... args) {
+    public static long requireInInterval(long value, long min, long max, String fmt, Object... fmtArgs) {
+        assert isFormatValid(fmt, fmtArgs) : INVALID_FORMATTING;
         if (!isBetween(value, min, max)) {
-            throw new IllegalArgumentException(fmt.formatted(args));
+            throw new IllegalArgumentException(fmt.formatted(fmtArgs));
         }
         return value;
     }
@@ -1775,12 +1834,12 @@ public final class LangUtil {
      * @param min   the minimum value in the interval (inclusive)
      * @param max   the maximum value in the interval (inclusive)
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is outside the interval
      */
-    public static int requireInInterval(int value, int min, int max, String fmt, Object... args) {
-        return (int) requireInInterval(value, min, (long) max, fmt, args);
+    public static int requireInInterval(int value, int min, int max, String fmt, Object... fmtArgs) {
+        return (int) requireInInterval(value, min, (long) max, fmt, fmtArgs);
     }
 
     /**
@@ -1804,12 +1863,12 @@ public final class LangUtil {
      * @param min   the minimum value in the interval (inclusive)
      * @param max   the maximum value in the interval (inclusive)
      * @param fmt   the format string for the error message
-     * @param args  the arguments to be formatted in the error message
+     * @param fmtArgs  the arguments to be formatted in the error message
      * @return the given value
      * @throws IllegalArgumentException if the value is outside the interval
      */
-    public static short requireInInterval(short value, short min, short max, String fmt, Object... args) {
-        return (short) requireInInterval(value, min, (long) max, fmt, args);
+    public static short requireInInterval(short value, short min, short max, String fmt, Object... fmtArgs) {
+        return (short) requireInInterval(value, min, (long) max, fmt, fmtArgs);
     }
 
     /**

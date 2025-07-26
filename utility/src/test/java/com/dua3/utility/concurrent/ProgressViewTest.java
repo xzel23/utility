@@ -105,7 +105,7 @@ class ProgressViewTest {
         progressView.schedule("task1");
 
         // Trying to finish with a non-terminal state should throw an exception
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             progressView.finish("task1", State.SCHEDULED);
         });
         assertTrue(exception.getMessage().contains("not a terminal state"));

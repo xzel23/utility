@@ -61,7 +61,7 @@ class LangUtilTest {
 
     @Test
     void testCheckWithFormatter() {
-        assertDoesNotThrow(() -> LangUtil.check(true, "test %", "succeeded"));
+        assertDoesNotThrow(() -> LangUtil.check(true, "test %s", "succeeded"));
         assertThrows(LangUtil.FailedCheckException.class, () -> LangUtil.check(false, "test %s", "succeeded"), "test succeeded");
     }
 
