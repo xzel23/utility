@@ -110,6 +110,22 @@ public final class LangUtil {
     }
 
     /**
+     * Validates the provided argument based on the specified condition. If the condition is not met,
+     * an IllegalArgumentException is thrown with a descriptive message.
+     *
+     * @param <T> The type of the argument to validate.
+     * @param argName The name of the argument being validated. Used for logging or debugging purposes.
+     * @param condition A Predicate representing the condition that the argument must satisfy.
+     * @param value The value of the argument to validate against the specified condition.
+     * @throws IllegalArgumentException if the provided value does not satisfy the condition.
+     */
+    public static <T> void checkArg(String argName, Predicate<T> condition, T value) {
+        if (!condition.test(value)) {
+            throw new IllegalArgumentException("invalid argument '" + argName + "': " + value);
+        }
+    }
+
+    /**
      * Check that condition is fulfilled.
      *
      * @param condition condition to test
