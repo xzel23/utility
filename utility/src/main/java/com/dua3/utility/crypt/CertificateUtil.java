@@ -21,24 +21,27 @@ public final class CertificateUtil {
     private CertificateUtil() { /* utility class */ }
 
     /**
-     * Creates a self-signed X.509 certificate using the provided key pair, subject distinguished
-     * name, and validity period in days. The certificate is generated with the subject name
-     * and validity period specified, and it is signed using the private key from the provided key pair.
+     * Creates a self-signed X.509 certificate using the provided key pair, subject distinguished name,
+     * validity duration, and a flag to enable Certificate Authority (CA) settings.
      *
-     * @param keyPair the key pair containing the private key used to sign the certificate
-     *                and the public key embedded within the certificate
-     * @param subject the distinguished name (DN) of the certificate's subject, formatted as
-     *                a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
+     * @param keyPair     the key pair containing the private key used to sign the certificate
+     *                    and the public key embedded within the certificate
+     * @param subject     the distinguished name (DN) of the certificate's subject, formatted as
+     *                    a standard X.500 DN string (e.g., "CN=Subject, O=Organization, C=Country")
      * @param validityDays the number of days from the current date for which the certificate
      *                     will be valid
+     * @param enableCA     a boolean flag indicating whether the certificate should include settings
+     *                    for acting as a Certificate Authority (CA). If {@code true}, the certificate
+     *                    will be configured as a CA.
      * @return an array of X.509 certificates, with the first certificate being the newly created
-     *         self-signed certificate and any additional certificates in the chain
+     *         self-signed certificate. The array may include additional certificates if the chain
+     *         requires it.
      * @throws GeneralSecurityException if an error occurs during the certificate generation
-     *         or signing process
+     *                                  or signing process
      */
-    public static X509Certificate[] createSelfSignedX509Certificate(KeyPair keyPair, String subject, int validityDays, boolean enbleCA) throws GeneralSecurityException {
+    public static X509Certificate[] createSelfSignedX509Certificate(KeyPair keyPair, String subject, int validityDays, boolean enableCA) throws GeneralSecurityException {
         try {
-            Optional<X509CertificateBuilder> builder = X509CertificateBuilder.getBuilder(enbleCA);
+            Optional<X509CertificateBuilder> builder = X509CertificateBuilder.getBuilder(enableCA);
             if (builder.isEmpty()) {
                 throw new GeneralSecurityException("No X.509 certificate builder available");
             }
