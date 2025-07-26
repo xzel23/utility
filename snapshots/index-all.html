@@ -1537,6 +1537,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks if the current thread is the FX Application Thread.</div>
 </dd>
+<dt><a href="com/dua3/utility/lang/LangUtil.html#checkArg(java.lang.String,java.util.function.Predicate,T)" class="member-name-link">checkArg(String, Predicate&lt;T&gt;, T)</a> - Static method in class com.dua3.utility.lang.<a href="com/dua3/utility/lang/LangUtil.html" title="class in com.dua3.utility.lang">LangUtil</a></dt>
+<dd>
+<div class="block">Validates the provided argument based on the specified condition.</div>
+</dd>
 <dt><a href="com/dua3/utility/fx/controls/Controls.html#checkbox()" class="member-name-link">checkbox()</a> - Static method in class com.dua3.utility.fx.controls.<a href="com/dua3/utility/fx/controls/Controls.html" title="class in com.dua3.utility.fx.controls">Controls</a></dt>
 <dd>
 <div class="block">Create <a href="com/dua3/utility/fx/controls/ButtonBuilder.html" title="class in com.dua3.utility.fx.controls"><code>ButtonBuilder</code></a> instance for checkboxes.</div>
@@ -2880,7 +2884,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a selection option that associates display attributes, type information,
  allowed values, a converter for parsing input, and default supplier logic.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#createSelfSignedX509Certificate(java.security.KeyPair,java.lang.String,int)" class="member-name-link">createSelfSignedX509Certificate(KeyPair, String, int)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#createSelfSignedX509Certificate(java.security.KeyPair,java.lang.String,int,boolean)" class="member-name-link">createSelfSignedX509Certificate(KeyPair, String, int, boolean)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
 <dd>
 <div class="block">Creates a self-signed X.509 certificate using the provided key pair, subject distinguished
  name, and validity period in days.</div>
@@ -2892,6 +2896,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/dua3/utility/fx/FxService.html#createTask()" class="member-name-link">createTask()</a> - Method in class com.dua3.utility.fx.<a href="com/dua3/utility/fx/FxService.html" title="class in com.dua3.utility.fx">FxService</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/dua3/utility/crypt/CertificateUtil.html#createX509Certificate(java.security.KeyPair,java.lang.String,int,java.security.cert.X509Certificate,java.security.PrivateKey)" class="member-name-link">createX509Certificate(KeyPair, String, int, X509Certificate, PrivateKey)</a> - Static method in class com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/CertificateUtil.html" title="class in com.dua3.utility.crypt">CertificateUtil</a></dt>
+<dd>
+<div class="block">Creates an X.509 certificate using the provided key pair, subject distinguished name,
+ validity period, and a parent certificate.</div>
+</dd>
 <dt><a href="com/dua3/utility/data/Color.html#CRIMSON" class="member-name-link">CRIMSON</a> - Static variable in interface com.dua3.utility.data.<a href="com/dua3/utility/data/Color.html" title="interface in com.dua3.utility.data">Color</a></dt>
 <dd>
 <div class="block">The color CRIMSON.</div>
@@ -5083,9 +5092,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Retrieves the current state of the buffer, encapsulating the entries within the buffer,
  the total number of entries removed, and the total number of entries added.</div>
 </dd>
-<dt><a href="com/dua3/utility/crypt/X509CertificateBuilder.html#getBuilder()" class="member-name-link">getBuilder()</a> - Static method in interface com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/X509CertificateBuilder.html" title="interface in com.dua3.utility.crypt">X509CertificateBuilder</a></dt>
+<dt><a href="com/dua3/utility/crypt/X509CertificateBuilder.html#getBuilder(boolean)" class="member-name-link">getBuilder(boolean)</a> - Static method in interface com.dua3.utility.crypt.<a href="com/dua3/utility/crypt/X509CertificateBuilder.html" title="interface in com.dua3.utility.crypt">X509CertificateBuilder</a></dt>
 <dd>
-<div class="block">Retrieves an optional instance of <code>X509CertificateBuilder</code>.</div>
+<div class="block">Returns an <code>Optional</code> containing an instance of <code>X509CertificateBuilder</code>,
+ used for constructing X.509 certificates.</div>
 </dd>
 <dt><a href="com/dua3/utility/i18n/I18N.html#getBundle(java.lang.String)" class="member-name-link">getBundle(String)</a> - Method in class com.dua3.utility.i18n.<a href="com/dua3/utility/i18n/I18N.html" title="class in com.dua3.utility.i18n">I18N</a></dt>
 <dd>
