@@ -11,11 +11,17 @@ import org.junit.jupiter.api.Test;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class CertificateUtilTest {
     private static final Logger LOG = LogManager.getLogger(CertificateUtilTest.class);
@@ -37,7 +43,7 @@ class CertificateUtilTest {
         int validityDays = 365;
 
         // Create a self-signed certificate
-        Certificate[] certificates = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays);
+        Certificate[] certificates = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays, true);
 
         // Verify the certificate was created
         assertNotNull(certificates);
@@ -62,4 +68,63 @@ class CertificateUtilTest {
             assertTrue(certificates[0].toString().contains(strippedPart), "Certificate string should contain '" + strippedPart + "'");
         }
     }
+
+    @Test
+    void testCreateX509Certificate() throws GeneralSecurityException {
+        // Generate a key pair for the certificate to be tested
+        KeyPair childKeyPair = KeyUtil.generateRSAKeyPair();
+        String subject = "CN=Child, O=Test Organization, C=US";
+        int validityDays = 180;
+
+        // Create a parent certificate
+        Map<String, Object> parentInfo = createTestParentCertificate();
+        X509Certificate parentCertificate = (X509Certificate) parentInfo.get("certificate");
+        PrivateKey parentPrivateKey = (PrivateKey) parentInfo.get("privateKey");
+
+        // Create a certificate signed by the parent
+        X509Certificate[] certificates = CertificateUtil.createX509Certificate(
+                childKeyPair, subject, validityDays, parentCertificate, parentPrivateKey);
+
+        // Verify the certificate was created
+        assertNotNull(certificates);
+        assertTrue(certificates.length > 0);
+        assertNotNull(certificates[0]);
+
+        // Verify the certificate contains the expected public key
+        PublicKey certPublicKey = certificates[0].getPublicKey();
+        assertNotNull(certPublicKey);
+        assertArrayEquals(childKeyPair.getPublic().getEncoded(), certPublicKey.getEncoded());
+
+        // Verify the certificate was signed by the parent
+        try {
+            certificates[0].verify(parentCertificate.getPublicKey());
+        } catch (Exception e) {
+            fail("Certificate verification with parent certificate failed: " + e.getMessage());
+        }
+
+        // Verify the certificate's string representation contains the subject
+        for (String part : subject.split("[,\n]")) {
+            String strippedPart = part.strip();
+            assertTrue(certificates[0].toString().contains(strippedPart),
+                    "Certificate string should contain '" + strippedPart + "'");
+        }
+    }
+
+    /**
+     * Helper method to create a self-signed parent certificate for testing.
+     */
+    private Map<String, Object> createTestParentCertificate() throws GeneralSecurityException {
+        KeyPair parentKeyPair = KeyUtil.generateRSAKeyPair();
+        String parentSubject = "CN=Parent, O=Test Organization, C=US";
+        int parentValidityDays = 365;
+
+        X509Certificate[] parentCertificates = CertificateUtil.createSelfSignedX509Certificate(
+                parentKeyPair, parentSubject, parentValidityDays, true);
+
+        return Map.of(
+                "certificate", parentCertificates[0],
+                "privateKey", parentKeyPair.getPrivate()
+        );
+    }
+
 }

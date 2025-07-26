@@ -233,13 +233,7 @@ public final class KeyStoreUtil {
      * @throws GeneralSecurityException if loading the key fails or key is not found
      */
     public static PublicKey loadPublicKey(KeyStore keyStore, String alias) throws GeneralSecurityException {
-        Certificate certificate = keyStore.getCertificate(alias);
-
-        if (certificate == null) {
-            throw new GeneralSecurityException("Certificate not found with alias: " + alias);
-        }
-
-        return certificate.getPublicKey();
+        return loadCertificate(keyStore, alias).getPublicKey();
     }
 
     /**
@@ -378,7 +372,7 @@ public final class KeyStoreUtil {
      */
     public static void generateAndStoreKeyPairWithX509Certificate(KeyStore keyStore, String alias, AsymmetricAlgorithm algorithm, int keySize, char[] password, String subject, int validityDays) throws GeneralSecurityException {
         KeyPair keyPair = KeyUtil.generateKeyPair(algorithm, keySize);
-        Certificate[] certificateChain = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays);
+        Certificate[] certificateChain = CertificateUtil.createSelfSignedX509Certificate(keyPair, subject, validityDays, false);
         storeKeyPair(keyStore, alias, keyPair, certificateChain, password);
     }
 }

@@ -41,6 +41,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
 
     private static final @Nullable Provider provider = Security.getProvider("BC");
 
+    private final boolean enableCA;
     private @Nullable String subjectDn;
     private @Nullable String issuerDn;
     private int validityDays = 365;
@@ -60,17 +61,19 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
      *         if the required cryptographic provider is available; otherwise, an empty
      *         {@code Optional}.
      */
-    public static Optional<X509CertificateBuilder> create() {
-        return provider == null ? Optional.empty() : Optional.of(new BouncyCastleX509CertificateBuilder());
+    public static Optional<X509CertificateBuilder> create(boolean enableCA) {
+        return provider == null ? Optional.empty() : Optional.of(new BouncyCastleX509CertificateBuilder(enableCA));
     }
 
     /**
      * Private default constructor for the {@code BouncyCastleX509CertificateBuilder} class.
-     *
+     * <p>
      * This constructor prevents external instantiation of the {@code BouncyCastleX509CertificateBuilder}
-     * class. Access to an instance is provided via the {@link #create()} method.
+     * class. Access to an instance is provided via the {@link #create(boolean)} method.
      */
-    private BouncyCastleX509CertificateBuilder() { /* utility class */ }
+    private BouncyCastleX509CertificateBuilder(boolean enableCA) {
+        this.enableCA = enableCA;
+    }
 
     @Override
     public BouncyCastleX509CertificateBuilder signatureAlgorithm(String algorithm) {
@@ -143,10 +146,10 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
 
             // Add X.509 extensions
             certBuilder.addExtension(Extension.basicConstraints, true,
-                    new BasicConstraints(false)); // not a CA
+                    new BasicConstraints(enableCA));
 
             certBuilder.addExtension(Extension.keyUsage, true,
-                    new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment));
+                    new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment | (enableCA ? KeyUsage.keyCertSign : 0)));
 
             // Subject Key Identifier
             SubjectPublicKeyInfo pubKeyInfo = SubjectPublicKeyInfo.getInstance(keyPair.getPublic().getEncoded());

@@ -93,15 +93,17 @@ public interface X509CertificateBuilder {
     X509CertificateBuilder addToChain(X509Certificate... additionalCerts);
 
     /**
-     * Retrieves an optional instance of {@code X509CertificateBuilder}.
-     * This method creates a new instance of the {@code BouncyCastleX509CertificateBuilder} if the
-     * required provider is available in the security configuration, allowing users to configure
-     * and generate X.509 certificates.
+     * Returns an {@code Optional} containing an instance of {@code X509CertificateBuilder},
+     * used for constructing X.509 certificates. The builder can be configured for creating
+     * either a Certificate Authority (CA) certificate or a regular certificate.
      *
-     * @return an {@code Optional} containing an instance of {@code X509CertificateBuilder}
-     *         if the required provider is available, otherwise an empty {@code Optional}.
+     * @param enableCA a boolean flag indicating whether to enable Certificate Authority (CA) mode.
+     *                 If {@code true}, the builder will configure the certificate as a CA.
+     *                 If {@code false}, the builder will configure the certificate as a non-CA.
+     * @return an {@code Optional} containing a configured {@code X509CertificateBuilder} instance,
+     *         or an empty {@code Optional} if the creation of the builder fails.
      */
-    static Optional<X509CertificateBuilder> getBuilder() {
-        return BouncyCastleX509CertificateBuilder.create();
+    static Optional<X509CertificateBuilder> getBuilder(boolean enableCA) {
+        return BouncyCastleX509CertificateBuilder.create(enableCA);
     }
 }

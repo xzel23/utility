@@ -108,7 +108,7 @@ class KeyStoreUtilTest {
 
         // Generate a key pair
         KeyPair keyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
-        Certificate[] cert = CertificateUtil.createSelfSignedX509Certificate(keyPair, "CN=Test", 1);
+        Certificate[] cert = CertificateUtil.createSelfSignedX509Certificate(keyPair, "CN=Test", 1, false);
 
         // Store the key pair
         KeyStoreUtil.storeKeyPair(keyStore, KEY_PAIR_ALIAS, keyPair, cert, PASSWORD);
@@ -134,7 +134,7 @@ class KeyStoreUtilTest {
 
         // Generate a self-signed certificate
         KeyPair keyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
-        Certificate[] cert = CertificateUtil.createSelfSignedX509Certificate(keyPair, "CN=Test", 10);
+        Certificate[] cert = CertificateUtil.createSelfSignedX509Certificate(keyPair, "CN=Test", 10, false);
 
         // Store the certificate
         KeyStoreUtil.storeCertificate(keyStore, CERTIFICATE_ALIAS, cert[0]);
@@ -160,7 +160,7 @@ class KeyStoreUtilTest {
         KeyStoreUtil.storeSecretKey(keyStore, SECRET_KEY_ALIAS, secretKey, PASSWORD);
 
         KeyPair keyPair = KeyUtil.generateKeyPair(AsymmetricAlgorithm.RSA, 2048);
-        Certificate[] cert = CertificateUtil.createSelfSignedX509Certificate(keyPair, "CN=Test", 7);
+        Certificate[] cert = CertificateUtil.createSelfSignedX509Certificate(keyPair, "CN=Test", 7, false);
         KeyStoreUtil.storeKeyPair(keyStore, KEY_PAIR_ALIAS, keyPair, cert, PASSWORD);
 
         KeyStoreUtil.storeCertificate(keyStore, CERTIFICATE_ALIAS, cert[0]);
