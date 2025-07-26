@@ -250,6 +250,8 @@ could not be loaded.
 
 - Package `utility`
     - Added `Version` class and refactored BuildInfo class to use it.
+    - Added `LangUtil.checkArg()` that throws `IllegalArgumentException`.
+    - Check format string matches arguments in `LangUtil.check()` and `LangUtil.checkArg()`.
     - `LangUtil.newUuidV7()` to create UUID v7 instances.
     - `LangUtil.reverseInPlace()` to reverse array contents
     - `LangUtil.isWrapperFor()` to test if a class is a primitive wrapper for another class
